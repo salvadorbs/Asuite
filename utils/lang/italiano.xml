@@ -1,0 +1,333 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ASuite>
+  <Info>
+	<PathReadme>docs\leggimi.rtf</PathReadme>
+  </Info>
+  <Form1><!--ASuite-->
+	<!--Software's Menu-->
+	<TabListCaption>Lista</TabListCaption>
+	<TabSearchCaption>Cerca</TabSearchCaption>
+	<ButtonSearch>Cerca</ButtonSearch>
+	<ColumnName>Nome</ColumnName>
+	<ColumnCategory>Categoria</ColumnCategory>
+	<!--ASuite's Menu-->
+	<!--File Menu-->
+	<MenuFile>File</MenuFile>
+	<MenuOption>Opzioni...</MenuOption>
+	<MenuSave>Salva lista</MenuSave>
+	<MenuImportList>Importa lista...</MenuImportList>
+	<MenuExportList>Esporta lista...</MenuExportList>
+	<MenuScanExecutables>Ricerca file...</MenuScanExecutables>
+	<MenuExit>Esci</MenuExit>
+	<!--Edit List Menu/PopUp Menu-->
+	<MenuSortList>Ordina lista</MenuSortList>
+	<MenuRun>Avvia</MenuRun>
+	<MenuRunAs>Avvia come...</MenuRunAs>
+	<MenuOpenFolder>Apri cartella programma</MenuOpenFolder>
+	<MenuVisitWebSite>Visita sito</MenuVisitWebSite>
+	<MenuEdit>Modifica</MenuEdit>
+	<MenuSortCategoryItems>Ordina voci della categoria</MenuSortCategoryItems>
+	<MenuAddCat>Aggiungi categoria</MenuAddCat>
+	<MenuAddSw>Aggiungi programma</MenuAddSw>
+	<MenuAddGroupSw>Aggiungi gruppo di programmi</MenuAddGroupSw>
+	<MenuAddFolder>Aggiungi cartella</MenuAddFolder>
+	<MenuAddSeparator>Aggiungi separatore</MenuAddSeparator>
+	<MenuCut>Taglia</MenuCut>
+	<MenuCopy>Copia</MenuCopy>
+	<MenuPaste>Incolla</MenuPaste>
+	<MenuDelete>Elimina</MenuDelete>
+	<MenuProperty>Proprietà</MenuProperty>
+	<!--Help Menu-->
+	<MenuCheckUpdates>Controlla gli aggiornamenti</MenuCheckUpdates>
+	<MenuHelp>Aiuto</MenuHelp>
+	<MenuStats>Statistiche</MenuStats>
+	<MenuASuiteInfo>Info ASuite</MenuASuiteInfo>
+	<!--Trayicon Menu-->
+	<TrayiconShowASuite>Visualizza ASuite</TrayiconShowASuite>
+	<TrayiconMRU>Recenti</TrayiconMRU>
+	<TrayiconEject>Rimozione sicura hardware</TrayiconEject>
+	<TrayiconExit>Esci</TrayiconExit>
+	<!--Trayicon Default Menu-->
+	<DefaultMenuButtonOptions>Opzioni...</DefaultMenuButtonOptions>
+	<DefaultMenuButtonSearch>Cerca...</DefaultMenuButtonSearch>
+	<DefaultMenuButtonAbout>Info ASuite</DefaultMenuButtonAbout>
+  </Form1>
+  <Form2><!--Card-->
+	<!--ASuite's Page-->
+	<FormCaptionAbout>Info ASuite</FormCaptionAbout>
+	<LabelASVersion>Versione </LabelASVersion>
+	<LabelIntro>ASuite è un launcher per la gestione di un illimitato numero di file, cartelle e indirizzi web per un accesso comodo e veloce. E' sviluppato per essere eseguito su qualsiasi supporto come Hard Disk, Pen Drive, IPod e altri supporti.[br][br]ASuite utilizza i percorsi relativi, rendendolo adatto all'utilizzo insieme ai programmi portable</LabelIntro>
+	<LabelInfo>Per maggiori info visita</LabelInfo>
+	<!--Software's Page-->
+	<FormCaptionCard>Scheda</FormCaptionCard>
+	<GroupBoxSoftware>Programma</GroupBoxSoftware>
+	<LabelNameSw>Nome</LabelNameSw>
+	<LabelDeveloper>Software House</LabelDeveloper>
+	<LabelVersion>Versione</LabelVersion>
+	<LabelWebSite>Home page</LabelWebSite>
+	<LabelDescription>Descrizione</LabelDescription>
+	<LabelNote>Note</LabelNote>
+	<LabelOpinion>Parere</LabelOpinion>
+  </Form2>
+  <Form3><!--Option-->
+	<Form3Caption>Opzioni</Form3Caption>
+	<!--General-->
+	<TabGeneralCaption>Generale</TabGeneralCaption>
+	<!--Startup-->
+	<GroupBoxStartup>Avvio</GroupBoxStartup>
+	<CheckBoxWindowsStartup>Esegui ASuite all'avvio di Windows</CheckBoxWindowsStartup>
+	<CheckBoxStartUp>Visualizza la finestra all'avvio</CheckBoxStartUp>
+	<CheckBoxMenuStartUp>Visualizza il menu trayicon all'avvio</CheckBoxMenuStartUp>
+	<CheckBoxAutorun>Abilita esecuzioni automatiche</CheckBoxAutorun>
+	<!--Window-->
+	<GroupBoxWindow>Finestra</GroupBoxWindow>
+	<CheckBoxHoldSize>Blocca le dimensioni della finestra</CheckBoxHoldSize>
+	<CheckBoxFormCard>Visualizza le schede dei software</CheckBoxFormCard>
+	<CheckBoxWindowOnTop>Finestra in primo piano</CheckBoxWindowOnTop>
+	<CheckBoxWindowHotkey>Visualizza finestra alla pressione dei tasti</CheckBoxWindowHotkey>
+	<CheckBoxMenuHotkey>Visualizza il menu alla pressione dei tasti</CheckBoxMenuHotkey>
+	<CheckBoxCustomTitle>Titolo finestra personalizzata</CheckBoxCustomTitle>
+	<LabelLanguage>Lingua</LabelLanguage>
+	<!--Treeview-->
+	<GroupBoxTreeView>Treeview</GroupBoxTreeView>
+	<ButtonFontSettings>Opzioni Font...</ButtonFontSettings>
+	<CheckBoxAutoOpClCat>Apertura/chiusura automatica delle categorie</CheckBoxAutoOpClCat>
+	<CheckBoxBackground>Attiva sfondo</CheckBoxBackground>
+	<ButtonBrowseBackground>Sfoglia</ButtonBrowseBackground>
+	<!--Tabs-->
+	<GroupBoxTabs>Linguette</GroupBoxTabs> 
+	<CheckBoxHideSearch>Nascondi la linguetta ricerca</CheckBoxHideSearch>
+	<!--Advanced-->
+	<TabAdvancedCaption>Avanzate</TabAdvancedCaption>
+	<!--MRU-->
+	<GroupBoxMRU>Recenti</GroupBoxMRU>
+	<CheckBoxMRU>Abilita i programmi recenti (MRU)</CheckBoxMRU>
+	<CheckBoxSubMenuMRU>MRU in un sottomenu</CheckBoxSubMenuMRU>
+	<LabelMRUMax>Numero massimo MRU</LabelMRUMax>
+	<ButtonClearMRU>Elimina MRU</ButtonClearMRU>
+	<!--Backup-->
+	<GroupBoxBackup>Backup</GroupBoxBackup>
+	<CheckBoxBackup>Abilita il backup</CheckBoxBackup>
+	<LabelBackupMax>Numero massimo backup</LabelBackupMax>
+	<ButtonClearBackup>Rimuovi tutti i backup</ButtonClearBackup>
+	<!--Check list-->
+	<GroupBoxCheckList>Controllo lista</GroupBoxCheckList>
+	<CheckBoxCheckList>Abilita controllo lista</CheckBoxCheckList>
+	<LabelCheckListTime>Intervallo di tempo</LabelCheckListTime>
+	<!--Other functions-->
+	<GroupBoxOtherFunctions>Altre funzioni</GroupBoxOtherFunctions>
+	<CheckBoxHotKey>Attiva HotKey</CheckBoxHotKey>
+	<CheckBoxCache>Attiva cache</CheckBoxCache>
+	<CheckBoxSaveSecurity>Attiva salvataggio di sicurezza</CheckBoxSaveSecurity>
+	<CheckBoxScheduler>Attiva scheduler</CheckBoxScheduler>
+	<!--Clear elements-->
+	<GroupBoxClearElements>Svuota elementi</GroupBoxClearElements>
+	<LabelClearElements>Svuota i recenti, i backup e/o le icone cache</LabelClearElements>
+	<ButtonClearElements>Svuota elementi...</ButtonClearElements>
+	<!--Various-->
+	<TabVariousCaption>Varie</TabVariousCaption>
+	<!--Execution-->
+	<GroupBoxExecution>Esecuzione</GroupBoxExecution>
+	<CheckBoxSingleClick>Esegui con singolo click</CheckBoxSingleClick>
+	<LabelActionOnExe>All'esecuzione</LabelActionOnExe>
+	<ListActionOnExe1>Esegui solo il file</ListActionOnExe1>
+	<ListActionOnExe2>Esegui e nascondi ASuite</ListActionOnExe2>
+	<ListActionOnExe3>Esegui e chiudi ASuite</ListActionOnExe3>
+	<!--System Tray-->
+	<GroupBoxTrayicon>Trayicon</GroupBoxTrayicon>
+	<ButtonCustomTrayicon>Scegli icona</ButtonCustomTrayicon>
+	<CheckBoxTrayicon>Attiva Trayicon</CheckBoxTrayicon>
+	<LabelLeftClick>Click sinistro</LabelLeftClick>
+	<LabelRightClick>Click destro</LabelRightClick>
+	<ListActionTrayicon1>Nessuna azione</ListActionTrayicon1>
+	<ListActionTrayicon2>Visualizza finestra</ListActionTrayicon2>
+	<ListActionTrayicon3>Visualizza menu</ListActionTrayicon3>
+	<CheckBoxClassicMenu>Utilizza il menu classico</CheckBoxClassicMenu>
+	<!--Trayicon Default Menu-->
+	<LabelMenuTheme>Tema</LabelMenuTheme>
+	<ButtonMenuButtons>Bottoni menu</ButtonMenuButtons>
+	<CheckBoxMenuFade>Attiva dissolvenza del menu</CheckBoxMenuFade>
+	<!--Mouse-->
+	<GroupBoxMouse>Sensori mouse</GroupBoxMouse>
+	<LabelSide>Lato</LabelSide>
+	<LabelTop>Alto</LabelTop>
+	<LabelLeft>Sinistra</LabelLeft>
+	<LabelRight>Destra</LabelRight>
+	<LabelBottom>Basso</LabelBottom>
+	<ListActionMouse1>Disabilitato</ListActionMouse1>
+	<ListActionMouse2>Finestra</ListActionMouse2>
+	<ListActionMouse3>Default menu</ListActionMouse3>
+	<ListActionMouse4>Menu classico</ListActionMouse4>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>Annulla</ButtonCancel>
+  </Form3>
+  <Form45><!--Property Sw/Cat/GroupSW-->
+	<Form45Caption>Proprietà</Form45Caption>
+	<TabGeneralCaption>Generale</TabGeneralCaption>
+	<TabAdvancedCaption>Avanzate</TabAdvancedCaption>
+	<TabInfoCaption>Informazioni</TabInfoCaption>
+	<LabelName>Nome</LabelName>
+	<LabelVersion>Versione</LabelVersion>
+	<LabelDeveloper>Autore</LabelDeveloper>
+	<LabelWebSite>Sito Internet</LabelWebSite>
+	<LabelPathExeA>Percorso eseguibile/cartella/pagina web</LabelPathExeA>
+	<LabelPathExeB>Percorsi eseguibili/cartelle/pagine web</LabelPathExeB>
+	<LabelParameters>Parametri (facoltativo)</LabelParameters>
+	<LabelWorkingDir>Cartella di lavoro alternativa (facoltativo)</LabelWorkingDir>
+	<LabelPathIcon>Icona personalizzata (facoltativo)</LabelPathIcon>
+	<HideWindow>Nascondi finestra all'esecuzione</HideWindow>
+	<LabelDescription>Descrizione</LabelDescription>
+	<LabelOpinion>Parere</LabelOpinion>
+	<LabelNote>Note</LabelNote>
+	<LabelInformation1>Per creare una scheda di un software, bisogna inserire alcune informazioni sul software stesso. E' possibile omettere tutte le informazioni, ad eccezione del nome.</LabelInformation1>
+	<LabelInformation3>Nota: E' possibile utilizzare $ASuite nel caso in cui la cartella del programma si trovi nella cartella di ASuite.</LabelInformation3>
+	<ButtonBrowse>Sfoglia</ButtonBrowse>
+	<ButtonRetrieve>Recupera informazioni</ButtonRetrieve>
+	<LabelAutoExecute>Esegui automaticamente</LabelAutoExecute>
+	<ButtonChangeOrder>Modifica ordine</ButtonChangeOrder>
+	<ComboBoxAutoExecute0>Mai</ComboBoxAutoExecute0>
+	<ComboBoxAutoExecute1>All'avvio sempre</ComboBoxAutoExecute1>
+	<ComboBoxAutoExecute2A>All'avvio se non è già in esecuzione</ComboBoxAutoExecute2A>
+	<ComboBoxAutoExecute2B>All'avvio se non sono già in esecuzione</ComboBoxAutoExecute2B>
+	<ComboBoxAutoExecute3>Alla chiusura sempre</ComboBoxAutoExecute3>
+	<LabelOnExecution>All'esecuzione</LabelOnExecution>
+	<ComboBoxActionOnExe0>Predefinito (opzioni)</ComboBoxActionOnExe0>
+	<ComboBoxActionOnExe1A>Esegui solo il file</ComboBoxActionOnExe1A>
+	<ComboBoxActionOnExe1B>Esegui solo i file</ComboBoxActionOnExe1B>
+	<ComboBoxActionOnExe2>Esegui e nascondi ASuite</ComboBoxActionOnExe2>
+	<ComboBoxActionOnExe3>Esegui e chiudi ASuite</ComboBoxActionOnExe3>
+	<CheckBoxHotKey>Attiva hotkey</CheckBoxHotKey>
+	<LabelWindowState>Stato della finestra</LabelWindowState>
+	<ComboBoxWSNormal>Normale</ComboBoxWSNormal>
+	<ComboBoxWSMinimized>Minimizzato</ComboBoxWSMinimized>
+	<ComboBoxWSMaximized>Massimizzato</ComboBoxWSMaximized>
+	<LabelDontInsertMRUA>Non inserire questo programma nei recenti</LabelDontInsertMRUA>
+	<LabelDontInsertMRUB>Non inserire questo gruppo di programmi nei recenti</LabelDontInsertMRUB>
+	<LabelShortcutDesktop>Crea collegamento nel desktop quando ASuite è in esecuzione</LabelShortcutDesktop>
+	<LabelHideSoftwareMenuA>Nascondi questo software dal menu</LabelHideSoftwareMenuA>
+	<LabelHideSoftwareMenuB>Nascondi questo gruppo di software dal menu</LabelHideSoftwareMenuB>
+	<LabelScheduler>Scheduler</LabelScheduler>
+	<ComboBoxSchedulerMode0>Disabilitato</ComboBoxSchedulerMode0>
+	<ComboBoxSchedulerMode1>Una volta</ComboBoxSchedulerMode1>
+	<ComboBoxSchedulerMode2>Ogni ora</ComboBoxSchedulerMode2>
+	<ComboBoxSchedulerMode3>Ogni giorno</ComboBoxSchedulerMode3>
+	<ButtonAddPath>Aggiungi</ButtonAddPath>
+	<ButtonReplacePath>Sostituisci</ButtonReplacePath>
+	<ButtonDeletePath>Elimina</ButtonDeletePath>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>Annulla</ButtonCancel>
+  </Form45>
+  <Form6><!--Import List-->
+	<Form6Caption>Importa lista</Form6Caption>
+	<LabelPathList>Percorso della lista da importare</LabelPathList>
+	<LabelList>Scegliere i programmi della lista da importare</LabelList>
+	<ButtonSelectAll>Seleziona tutto</ButtonSelectAll>
+	<ButtonDeSelectAll>Deseleziona tutto</ButtonDeSelectAll>
+	<ButtonBrowse>Sfoglia</ButtonBrowse>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>Annulla</ButtonCancel>
+  </Form6>
+  <Form7>
+	<Form7Caption>Scansione cartella</Form7Caption>
+	<LabelFolderPath>Percorso cartella</LabelFolderPath>
+	<ButtonBrowse>Sfoglia</ButtonBrowse>
+	<CheckboxSubFolders>Scansiona sottocartelle</CheckboxSubFolders>
+	<LabelTypes>Tipi di file</LabelTypes>
+	<LabelExclude>File da escludere</LabelExclude>
+	<ButtonAdd>Aggiungi</ButtonAdd>
+	<ButtonReplace>Sostituisci</ButtonReplace>
+	<ButtonDelete>Elimina</ButtonDelete>
+	<CheckboxRetrieveInfo>Recupera informazioni dagli eseguibili</CheckboxRetrieveInfo>
+	<ButtonScan>Scansiona</ButtonScan>
+	<ButtonCancel>Annulla</ButtonCancel>
+  </Form7>
+  <Form8>
+	<GroupboxCurrentTask>Attività corrente</GroupboxCurrentTask>
+	<MessageDownload>Scaricamento %s</MessageDownload>
+	<GroupboxDownloadInfo>Download info</GroupboxDownloadInfo>
+	<LabelFileName>Nome file</LabelFileName>
+	<LabelSpeed>Velocità</LabelSpeed>
+	<LabelTotalSize>Dimensione</LabelTotalSize>
+	<LabelBytesReceived>Byte ricevuti</LabelBytesReceived>
+	<ButtonCancel>Annulla</ButtonCancel>
+  </Form8>
+  <Form9>
+	<Form9Caption>Svuota elementi</Form9Caption>
+	<LabelClearElements>Svuota adesso i seguenti elementi:</LabelClearElements>
+	<CheckBoxMRU>Recenti</CheckBoxMRU>
+	<CheckBoxBackup>Backup</CheckBoxBackup>
+	<CheckBoxCache>Icone cache</CheckBoxCache>
+	<ButtonClear>Svuota</ButtonClear>
+	<ButtonCancel>Annulla</ButtonCancel>
+  </Form9>
+  <Form10>
+	<Form10Caption>Ordine software</Form10Caption>
+	<LabelInfoStartupOrder>Ordine dei software all'avvio di ASuite</LabelInfoStartupOrder>
+	<LabelInfoShutdownOrder>Ordine dei software alla chiusura di ASuite</LabelInfoShutdownOrder>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>Annulla</ButtonCancel>
+  </Form10>
+  <Form11>
+	<Form11Caption>Esegui come</Form11Caption>
+	<LabelUsername>Nome utente</LabelUsername>
+	<LabelPassword>Password</LabelPassword>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>Annulla</ButtonCancel>
+  </Form11>
+  <Form12>
+	<Form12Caption>Cambia bottoni del menu</Form12Caption>
+	<LabelName>Nome</LabelName>
+	<LabelPathExe>Percorso eseguibile/cartella/pagina web</LabelPathExe>
+	<LabelPathIcon>Icona personalizzata (facoltativo)</LabelPathIcon>
+	<CheckBoxActiveButton>Attiva questo bottone</CheckBoxActiveButton>
+	<ButtonBrowse>Sfoglia</ButtonBrowse>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>Annulla</ButtonCancel>
+  </Form12>
+  <Form13>
+	<Form13Caption>Statistiche</Form13Caption>
+	<!--System-->
+	<GroupBoxSystem>Sistema</GroupBoxSystem>
+	<LabelOperatingSystem>Sistema operativo</LabelOperatingSystem>
+	<LabelPcName>Nome computer</LabelPcName>
+	<LabelCurrentUser>Utente corrente</LabelCurrentUser>
+	<!--Drive-->
+	<GroupBoxDrive>Supporto %s</GroupBoxDrive>
+	<LabelSize>Capienza</LabelSize>
+	<LabelFreeSpace>Spazio libero</LabelFreeSpace>
+	<LabelUsedSpace>Spazio utilizzato</LabelUsedSpace>
+	<!--Launcher-->
+	<GroupBoxASuite>ASuite</GroupBoxASuite>
+	<LabelSwInserted>Programmi inseriti</LabelSwInserted>
+	<LabelSwGroupInserted>Gruppi di software inseriti</LabelSwGroupInserted>
+	<LabelCatInserted>Categorie inserite</LabelCatInserted>
+	<LabelTotal>Totale: </LabelTotal>
+  </Form13>
+  <String>
+	<string01>File non trovato</string01>
+	<string02>Errore nel nome della categoria: %s</string02>
+	<string03>Errore nel nome della scheda: %s</string03>
+	<string04>Senza nome</string04>
+	<string05>Senza descrizione</string05>  
+	<string06>Senza parere</string06>   
+	<string07>Senza note</string07>
+	<string08>Sei sicuro?</string08>
+	<string09>Impossibile avviare %s</string09>
+	<string10>Errore nel caricare il file xml</string10>
+	<string11>Si è verificato un errore %s con il seguente messaggio: %s</string11>
+	<string12>Non e' stato inserito il nome del programma</string12>
+	<string13>Il percorso dell'eseguibile non è valido</string13>
+	<string14>Massimo 10 programmi nei gruppi di software</string14>
+	<string15>Impossibile utilizzare l'icona %s</string15>
+	<string16>Non è stato trovata l'icona %s</string16>
+	<string17>Salvataggio completato</string17>
+	<string18>Salvataggio non completato a causa d’un errore</string18>
+	<string19>Importazione in corso...</string19>
+	<string20>Importazione non completata a causa d’un errore</string20>
+	<string21>ASuite non è stato chiuso correttamente. Ripristinare la sessione precedente?</string21>
+	<string22>Impossibile associare questo hotkey al programma selezionato</string22>
+	<string23>Scansione in corso...</string23>
+	<string24>E' disponibile una nuova versione di ASuite. Vuoi scaricarla ed installarla?</string24>
+	<string25>Non vi sono nuove versioni disponibili</string25>
+  </String>
+</ASuite>

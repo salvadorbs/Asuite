@@ -1,0 +1,111 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: appconfig.msgclose
+msgid "Close"
+msgstr ""
+
+#: appconfig.msgconfirm
+msgid "Are you sure?"
+msgstr ""
+
+#: appconfig.msgcopy
+msgid "Copy_"
+msgstr ""
+
+#: appconfig.msgerremptyname
+msgid "Application's name field is empty"
+msgstr ""
+
+#: appconfig.msgerrgeneric
+msgid "%s error raised, with message: %s"
+msgstr ""
+
+#: appconfig.msgerricon
+msgid "Cannot use icon %s"
+msgstr ""
+
+#: appconfig.msgerrnoicon
+msgid "Couldn't find the icon %s"
+msgstr ""
+
+#: appconfig.msgerrrun
+msgid "Cannot run %s"
+msgstr ""
+
+#: appconfig.msgerrsave
+msgid "Save failed because of an error"
+msgstr ""
+
+#: appconfig.msgfilenotfound
+msgid "File not found"
+msgstr ""
+
+#: appconfig.msgimport
+msgid "Import"
+msgstr ""
+
+#: appconfig.msgimportfailed
+msgid "Import failed because of an error"
+msgstr ""
+
+#: appconfig.msgimportprogress
+msgid "Import in progress..."
+msgstr ""
+
+#: appconfig.msgitemsimported
+msgid "Import finished. %d items imported"
+msgstr ""
+
+#: appconfig.msglist
+msgid "List"
+msgstr ""
+
+#: appconfig.msglongmfu
+msgid "Most Frequently Used"
+msgstr ""
+
+#: appconfig.msglongmru
+msgid "Recents"
+msgstr ""
+
+#: appconfig.msgnext
+msgid "Next >"
+msgstr ""
+
+#: appconfig.msgnoname
+msgid "No name"
+msgstr ""
+
+#: appconfig.msgprocessingitems
+msgid "Processing items (%.0f%%): %d"
+msgstr ""
+
+#: appconfig.msgsavecompleted
+msgid "Save completed"
+msgstr ""
+
+#: appconfig.msgshortmfu
+msgid "MFU"
+msgstr ""
+
+#: appconfig.msgshortmru
+msgid "MRU"
+msgstr ""
+
+#: appconfig.msgtitle1
+msgid "Select a launcher from which to import list and settings"
+msgstr ""
+
+#: appconfig.msgtitle2
+msgid "Where do you want to import your list and settings from"
+msgstr ""
+
+#: appconfig.msgtitle3
+msgid "Select which items to import"
+msgstr ""
+
+#: appconfig.msgtitle4
+msgid "Complete"
+msgstr ""
+

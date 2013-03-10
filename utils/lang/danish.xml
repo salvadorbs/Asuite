@@ -1,0 +1,353 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ASuite>
+ <Info>
+   <PathReadme>readme.rtf</PathReadme>
+ </Info>
+ <Form1><!--List-->
+   <!--Software's Menu-->
+   <TabListCaption>List</TabListCaption>
+   <TabSearchCaption>Søg</TabSearchCaption>
+   <ButtonSearch>Søg</ButtonSearch>
+   <ColumnName>Navn</ColumnName>
+   <ColumnCategory>Katagori</ColumnCategory>
+   <!--ASuite's Menu-->
+   <!--File Menu-->
+   <MenuFile>Fil</MenuFile>
+   <MenuOption>Indstillinger</MenuOption>
+   <MenuSave>Gem liste</MenuSave>
+   <MenuImportList>Importer liste...</MenuImportList>
+       <MenuExportList>Eksporter liste...</MenuExportList>
+       <MenuScanExecutables>Autosøg...</MenuScanExecutables>
+   <MenuExit>Luk</MenuExit>
+   <!--Edit List Menu/PopUp Menu-->
+       <MenuSortList>Sorter liste</MenuSortList>
+   <MenuEdit>Rediger</MenuEdit>
+       <MenuSortCategoryItems>Sorter katagori ting</MenuSortCategoryItems>
+   <MenuRun>Kør</MenuRun>
+	<MenuRunAs>Run as...</MenuRunAs>
+   <MenuOpenFolder>Vis programmappe</MenuOpenFolder>
+       <MenuVisitWebSite>Gå til hjemmeside</MenuVisitWebSite>
+   <MenuAddCat>Tilføj katagori</MenuAddCat>
+   <MenuAddSw>Tilføj software</MenuAddSw>
+       <MenuAddGroupSw>Tilføj software gruppe</MenuAddGroupSw>
+   <MenuAddFolder>Tilføj mappe</MenuAddFolder>
+       <MenuAddSeparator>Tilføj separator</MenuAddSeparator>
+	<MenuCut>Cut</MenuCut>
+	<MenuCopy>Copy</MenuCopy>
+	<MenuPaste>Paste</MenuPaste>
+   <MenuDelete>Slet</MenuDelete>
+   <MenuProperty>Egenskaber</MenuProperty>
+   <!--Help Menu-->
+       <MenuCheckUpdates>Check for opdateringer</MenuCheckUpdates>
+   <MenuHelp>Hjælp</MenuHelp>
+   <MenuStats>Stat</MenuStats>
+   <MenuASuiteInfo>Om ASuite</MenuASuiteInfo>
+   <!--Trayicon Menu-->
+   <TrayiconShowASuite>Vis ASuite</TrayiconShowASuite>
+       <TrayiconMRU>Sidst brugt</TrayiconMRU>
+	<TrayiconEject>Safely remove hardware</TrayiconEject>
+   <TrayiconExit>Luk</TrayiconExit>
+	<!--Trayicon Default Menu-->
+	<DefaultMenuButtonOptions>Options...</DefaultMenuButtonOptions>
+	<DefaultMenuButtonSearch>Search...</DefaultMenuButtonSearch>
+	<DefaultMenuButtonAbout>About ASuite</DefaultMenuButtonAbout>
+ </Form1>
+ <Form2><!--Card-->
+   <!--ASuite's Page-->
+       <FormCaptionAbout>Om</FormCaptionAbout>
+   <LabelASVersion>Version </LabelASVersion>
+   <LabelIntro>ASuite is an application launcher. It is designed to word
+with removable storage media like USB sticks, hard drives, iPods,
+etc.[br][br]Since ASuite uses relatives paths, it is perfectly suited for
+use with portable applications.</LabelIntro>
+   <LabelInfo>For mere information besøg</LabelInfo>
+       <!--Software's Page-->
+       <FormCaptionCard>Info</FormCaptionCard>
+   <GroupBoxSoftware>Software</GroupBoxSoftware>
+   <LabelNameSw>Navn</LabelNameSw>
+   <LabelDeveloper>Udvikler</LabelDeveloper>
+   <LabelVersion>Version</LabelVersion>
+   <LabelWebSite>Hjemmeside</LabelWebSite>
+   <LabelDescription>Description</LabelDescription>
+   <LabelNote>Noter</LabelNote>
+   <LabelOpinion>Karakter</LabelOpinion>
+ </Form2>
+ <Form3><!--Option-->
+   <Form3Caption>Indstillinger</Form3Caption>
+       <!--General-->
+       <TabGeneralCaption>Generalt</TabGeneralCaption>
+       <!--Startup-->
+       <GroupBoxStartup>Opstart</GroupBoxStartup>
+       <CheckBoxWindowsStartup>Start ASuite sammen med
+systemet</CheckBoxWindowsStartup>
+       <CheckBoxStartUp>Vis vindue ved opstart</CheckBoxStartUp>
+	<CheckBoxMenuStartUp>Show trayicon menu on startup</CheckBoxMenuStartUp>
+       <CheckBoxAutorun>Aktiver autorun</CheckBoxAutorun>
+       <!--Window-->
+       <GroupBoxWindow>Vindue</GroupBoxWindow>
+       <CheckBoxHoldSize>Hold vindue størrelse</CheckBoxHoldSize>
+       <CheckBoxFormCard>Vis program information</CheckBoxFormCard>
+       <CheckBoxWindowOnTop>Vindue øverst</CheckBoxWindowOnTop>
+       <CheckBoxWindowHotkey>Vis vindue ved
+tastekombination</CheckBoxWindowHotkey>
+	<CheckBoxMenuHotkey>Show trayicon menu when hotkey is pressed</CheckBoxMenuHotkey>
+       <CheckBoxCustomTitle>Custom window title</CheckBoxCustomTitle>
+       <LabelLanguage>Sprog</LabelLanguage>
+       <!--Treeview-->
+       <GroupBoxTreeView>Strukturet</GroupBoxTreeView>
+       <ButtonCustomTrayicon>Vælg ikon</ButtonCustomTrayicon>
+       <ButtonFontSettings>Skrifttype...</ButtonFontSettings>
+	<CheckBoxAutoOpClCat>Automatic Opening/Closing Categories</CheckBoxAutoOpClCat>
+       <CheckBoxBackground>Aktiv baggrund</CheckBoxBackground>
+       <ButtonBrowseBackground>Gennemse</ButtonBrowseBackground>
+       <!--Tabs-->
+       <GroupBoxTabs>Tabs</GroupBoxTabs>
+       <CheckBoxHideSearch>Skjul søge tab</CheckBoxHideSearch>
+       <CheckBoxHideStats>Skjul statestik tab</CheckBoxHideStats>
+       <!--Advanced-->
+       <TabAdvancedCaption>Avanceret</TabAdvancedCaption>
+       <!--MRU-->
+       <GroupBoxMRU>Sidste brugte</GroupBoxMRU>
+       <CheckBoxMRU>Aktiver sidst brugte</CheckBoxMRU>
+       <CheckBoxSubMenuMRU>Sidste brugte i systemlinje
+menu</CheckBoxSubMenuMRU>
+       <LabelMRUMax>Maks antal sidst brugte</LabelMRUMax>
+       <ButtonClearMRU>Slet alle sidste brugte</ButtonClearMRU>
+       <!--Backup-->
+       <GroupBoxBackup>Backup</GroupBoxBackup>
+       <CheckBoxBackup>Aktiver backup</CheckBoxBackup>
+       <LabelBackupMax>Maks antal backup</LabelBackupMax>
+       <ButtonClearBackup>Slet alle backups</ButtonClearBackup>
+       <!--Check list-->
+       <GroupBoxCheckList>Check list</GroupBoxCheckList>
+       <CheckBoxCheckList>Aktiver check list</CheckBoxCheckList>
+       <LabelCheckListTime>Tidsinterval</LabelCheckListTime>
+       <!--Other functions-->
+       <GroupBoxOtherFunctions>Andre funktioner</GroupBoxOtherFunctions>
+       <CheckBoxHotKey>Aktiver genvejstast</CheckBoxHotKey>
+       <CheckBoxCache>Aktiver cache</CheckBoxCache>
+       <CheckBoxSaveSecurity>Aktiver sikker gem</CheckBoxSaveSecurity>
+       <CheckBoxScheduler>Aktiver planlægning</CheckBoxScheduler>
+       <!--Clear elements-->
+	<GroupBoxClearElements>Clear elements</GroupBoxClearElements>
+       <LabelClearElements>Clear all MRU, backups and/or cache icons</LabelClearElements>
+       <ButtonClearElements>Clear elements...</ButtonClearElements>
+       <!--Various-->
+       <TabVariousCaption>Andet</TabVariousCaption>
+       <!--Execution-->
+       <GroupBoxExecution>Kør</GroupBoxExecution>
+       <CheckBoxSingleClick>Kør med et enkelt klik</CheckBoxSingleClick>
+       <LabelActionOnExe>Ved kørsel</LabelActionOnExe>
+       <ListActionOnExe1>Kør kun fil</ListActionOnExe1>
+       <ListActionOnExe2>Kør og gem ASuite</ListActionOnExe2>
+       <ListActionOnExe3>Kør og luk ASuite</ListActionOnExe3>
+       <!--System Tray-->
+       <GroupBoxTrayicon>Systemlinje</GroupBoxTrayicon>
+       <CheckBoxTrayicon>Aktiver systemlinje ikon</CheckBoxTrayicon>
+       <ListActionTrayicon1>Ingen</ListActionTrayicon1>
+       <ListActionTrayicon2>Vis Vindue</ListActionTrayicon2>
+       <ListActionTrayicon3>Vis menu</ListActionTrayicon3>
+	<CheckBoxClassicMenu>Use classic menu</CheckBoxClassicMenu>
+	<!--Trayicon Default Menu-->
+	<LabelMenuTheme>Theme</LabelMenuTheme>
+	<ButtonMenuButtons>Menu folders</ButtonMenuButtons>
+	<CheckBoxMenuFade>Enable fade menu</CheckBoxMenuFade>
+       <!--Mouse-->
+       <GroupBoxMouse>Muse sensor</GroupBoxMouse>
+       <LabelSide>Side</LabelSide>
+       <LabelTop>Top</LabelTop>
+       <LabelLeft>Venste</LabelLeft>
+       <LabelRight>Højre</LabelRight>
+       <LabelBottom>Bund</LabelBottom>
+       <LabelLeftClick>Venstre klik</LabelLeftClick>
+       <LabelRightClick>Højre klik</LabelRightClick>
+       <ListActionMouse1>Deaktiveret</ListActionMouse1>
+       <ListActionMouse2>Vis vindue</ListActionMouse2>
+	<ListActionMouse3>Show default menu</ListActionMouse3>
+	<ListActionMouse4>Show classic menu</ListActionMouse4>
+   <ButtonOk>Ok</ButtonOk>
+   <ButtonCancel>Annuller</ButtonCancel>
+ </Form3>
+ <Form45><!--Property Sw/Cat-->
+   <Form45Caption>Egenskaber</Form45Caption>
+   <TabGeneralCaption>Generelt</TabGeneralCaption>
+   <TabAdvancedCaption>Avanceret</TabAdvancedCaption>
+   <TabInfoCaption>Information</TabInfoCaption>
+   <LabelName>Navn</LabelName>
+   <LabelVersion>Version</LabelVersion>
+   <LabelDeveloper>Udvikler</LabelDeveloper>
+   <LabelWebSite>Hjemmeside</LabelWebSite>
+   <LabelPathExeA>Program/Mappe/Hjemmeside</LabelPathExeA>
+       <LabelPathExeB>Programmer/Mapper/Hjemmesider</LabelPathExeB>
+   <LabelParameters>Parametere (valgfrit)</LabelParameters>
+       <LabelWorkingDir>Start i (valgfrit)</LabelWorkingDir>
+   <LabelPathIcon>Alternativ ikon (valgfrit)</LabelPathIcon>
+       <HideWindow>Ved start skjul vindue</HideWindow>
+   <LabelDescription>Beskrivelse</LabelDescription>
+   <LabelOpinion>Karakter</LabelOpinion>
+   <LabelNote>Noter</LabelNote>
+   <LabelInformation1>Alle sider i ASuite kræver noget information om
+programmet. Alle felter er valgfrie undtagen programmets
+navn.</LabelInformation1>
+   <LabelInformation3>Note: Du kan bruge $ASuite selv når programmerne
+ligger i samme mappe som ASuite.</LabelInformation3>
+   <ButtonBrowse>Gennemse</ButtonBrowse>
+   <ButtonRetrieve>Hent</ButtonRetrieve>
+       <LabelAutoExecute>Autostart</LabelAutoExecute>
+	<ButtonChangeOrder>Change order</ButtonChangeOrder>
+       <ComboBoxAutoExecute0>Aldrig</ComboBoxAutoExecute0>
+       <ComboBoxAutoExecute1>Altid ved opstart</ComboBoxAutoExecute1>
+       <ComboBoxAutoExecute2A>Kun hvis ingen tidligere instanser
+kører</ComboBoxAutoExecute2A>
+       <ComboBoxAutoExecute2B>Kun hvis ingen tidligere instanser
+kører</ComboBoxAutoExecute2B>
+       <ComboBoxAutoExecute3>Altid ved lukning</ComboBoxAutoExecute3>
+       <LabelOnExecution>Ved kørsel</LabelOnExecution>
+       <ComboBoxActionOnExe0>Standart (Indstillinger)</ComboBoxActionOnExe0>
+       <ComboBoxActionOnExe1A>Bare kør fil</ComboBoxActionOnExe1A>
+       <ComboBoxActionOnExe1B>Bare kør fil</ComboBoxActionOnExe1B>
+       <ComboBoxActionOnExe2>Kør og gem ASuite</ComboBoxActionOnExe2>
+       <ComboBoxActionOnExe3>Kør og luk ASuite</ComboBoxActionOnExe3>
+   <CheckBoxHotKey>Aktiver genvejstast</CheckBoxHotKey>
+       <LabelWindowState>Vidues tilstand</LabelWindowState>
+       <ComboBoxWSNormal>Normal</ComboBoxWSNormal>
+       <ComboBoxWSMinimized>Minimieret</ComboBoxWSMinimized>
+       <ComboBoxWSMaximized>Maksimeret</ComboBoxWSMaximized>
+       <LabelDontInsertMRUA>Tilføj ikke dette program til liste over seneste
+brugte programmer</LabelDontInsertMRUA>
+       <LabelDontInsertMRUB>Tilføj ikke dette program til liste over seneste
+brugte programmer</LabelDontInsertMRUB>
+       <LabelShortcutDesktop>Opret genvej på skrivebordet når ASuite
+kører</LabelShortcutDesktop>
+       <LabelHideSoftwareMenuA>Skjul dette program i
+menuen</LabelHideSoftwareMenuA>
+       <LabelHideSoftwareMenuB>Skjul denne programgruppe i
+menuen</LabelHideSoftwareMenuB>
+       <LabelScheduler>Plalæg</LabelScheduler>
+       <ComboBoxSchedulerMode0>Deaktiveret</ComboBoxSchedulerMode0>
+       <ComboBoxSchedulerMode1>En gang</ComboBoxSchedulerMode1>
+       <ComboBoxSchedulerMode2>Hver time</ComboBoxSchedulerMode2>
+       <ComboBoxSchedulerMode3>Hver dag</ComboBoxSchedulerMode3>
+       <ButtonAddPath>Tilføj</ButtonAddPath>
+       <ButtonReplacePath>Erstat</ButtonReplacePath>
+       <ButtonDeletePath>Slet</ButtonDeletePath>
+       <ButtonOk>Ok</ButtonOk>
+       <ButtonCancel>Annuller</ButtonCancel>
+ </Form45>
+ <Form6><!--Import List-->
+   <Form6Caption>Importer liste</Form6Caption>
+   <LabelPathList>Sti til liste</LabelPathList>
+   <LabelList>Vælg programmer til import</LabelList>
+   <ButtonSelectAll>Vælg alle</ButtonSelectAll>
+   <ButtonDeSelectAll>Fravælg alle</ButtonDeSelectAll>
+       <ButtonBrowse>Gennemse</ButtonBrowse>
+   <ButtonOk>Ok</ButtonOk>
+   <ButtonCancel>Annuller</ButtonCancel>
+ </Form6>
+ <Form7>
+       <Form7Caption>Scan mappe</Form7Caption>
+       <LabelFolderPath>Sti</LabelFolderPath>
+       <ButtonBrowse>Gennemse</ButtonBrowse>
+       <CheckboxSubFolders>Scan undermapper</CheckboxSubFolders>
+       <LabelTypes>Fil typer</LabelTypes>
+       <LabelExclude>Undlad fil</LabelExclude>
+       <ButtonAdd>Tilføj</ButtonAdd>
+       <ButtonReplace>Erstat</ButtonReplace>
+       <ButtonDelete>Slet</ButtonDelete>
+       <CheckboxRetrieveInfo>Hent information fra filen</CheckboxRetrieveInfo>
+       <ButtonScan>Scan</ButtonScan>
+       <ButtonCancel>Annuller</ButtonCancel>
+ </Form7>
+ <Form8>
+       <GroupboxCurrentTask>Nuværende opgave</GroupboxCurrentTask>
+       <MessageDownload>Downloading %s</MessageDownload>
+       <GroupboxDownloadInfo>Download info</GroupboxDownloadInfo>
+       <LabelFileName>Fil navn</LabelFileName>
+       <LabelSpeed>Hastighed</LabelSpeed>
+       <LabelTotalSize>Total størrelse</LabelTotalSize>
+       <LabelBytesReceived>Bytes modtaget</LabelBytesReceived>
+       <ButtonCancel>Annuller</ButtonCancel>
+ </Form8>
+  <Form9>
+       <Form9Caption>Clear elements</Form9Caption>
+       <LabelClearElements>Clear the following elements now:</LabelClearElements>
+       <CheckBoxMRU>MRU</CheckBoxMRU>
+       <CheckBoxBackup>Backups</CheckBoxBackup>
+       <CheckBoxCache>Cache icons</CheckBoxCache>
+       <ButtonClear>Clear</ButtonClear>
+       <ButtonCancel>Cancel</ButtonCancel>
+  </Form9>
+  <Form10>
+	<Form10Caption>Software order</Form10Caption>
+	<LabelInfoStartupOrder>Order list of software in ASuite startup</LabelInfoStartupOrder>
+	<LabelInfoShutdownOrder>Order list of software in ASuite shutdown</LabelInfoShutdownOrder>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>Cancel</ButtonCancel>
+  </Form10>
+  <Form11>
+	<Form11Caption>Run as</Form11Caption>
+	<LabelUsername>Username</LabelUsername>
+	<LabelPassword>Password</LabelPassword>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>Cancel</ButtonCancel>
+  </Form11>
+  <Form12>	
+	<Form12Caption>Change menu buttons</Form12Caption>
+	<LabelName>Name</LabelName>
+	<LabelPathExe>Executable/folder/web page path</LabelPathExe>
+	<LabelPathIcon>Custom icon path (optional)</LabelPathIcon>
+	<CheckBoxActiveButton>Active this button</CheckBoxActiveButton>
+	<ButtonBrowse>Browse</ButtonBrowse>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>Cancel</ButtonCancel>
+  </Form12>
+  <Form13>
+	<Form13Caption>Stats</Form13Caption>
+       <!--System-->
+   <GroupBoxSystem>System</GroupBoxSystem>
+	<LabelOperatingSystem>Operating system</LabelOperatingSystem>
+   <LabelPcName>Computer navn: </LabelPcName>
+   <LabelCurrentUser>Bruger: </LabelCurrentUser>
+       <!--Drive-->
+       <GroupBoxDrive>Drev %s:</GroupBoxDrive>
+   <LabelSize>Størrelse: </LabelSize>
+   <LabelFreeSpace>Fri: </LabelFreeSpace>
+       <LabelUsedSpace>Brugt: </LabelUsedSpace>
+       <!--Launcher-->
+       <GroupBoxASuite>ASuite</GroupBoxASuite>
+       <LabelSwInserted>Software tilføjet: </LabelSwInserted>>
+	<LabelSwGroupInserted>Software group added</LabelSwGroupInserted>
+       <LabelCatInserted>Katagori tilføjet: </LabelCatInserted>
+       <LabelTotal>Total: </LabelTotal>
+  </Form13>
+ <String>
+   <string01>Fil ikke fundet</string01>
+   <string02>Fejl i katagorinavn: %s</string02>
+   <string03>Fejl i programnavn: %s</string03>
+   <string04>Intet navn</string04>
+   <string05>Ingen beskrivelse</string05>
+   <string06>Ingen karakter</string06>
+   <string07>Ingen noter</string07>
+   <string08>Er du sikker?</string08>
+   <string09>Kan ikke starte %s</string09>
+   <string10>Åbning af xml filen blev ikke fuldført grundet en
+fejl</string10>
+   <string11>%s error raised, with message: %s</string11>
+   <string12>Programnavn tomt</string12>
+   <string13>Ugyldig sti</string13>
+   <string14></string14>
+   <string15>Kan ikke benytte ikon %s</string15>
+   <string16>Kan ikke finde ikon %s</string16>
+   <string17>Gemt</string17>
+   <string18>Listen blev ikke gemt grundet en fejl</string18>
+   <string19>Importere...</string19>
+   <string20>Importering fejlede på grund af en fejlerror</string20>
+       <string21>ASuite blev ikke lukket korrekt. Gendan seneste
+session?</string21>
+       <string22>Kan ikke registerede genvejstasten</string22>
+       <string23>Scanner...</string23>
+       <string24>En ny version af Asuite er tilgængelig. Ønsker du at
+downlaode og installer denne?</string24>
+       <string25>Ingen ny version tilgængelig</string25>
+ </String>
+</ASuite>

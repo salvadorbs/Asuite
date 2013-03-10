@@ -1,0 +1,4 @@
+VirtualTree (included in ASuite Source, folder 3p) http://wiki.freepascal.org/VirtualTreeview
+LCLExtensions (included in ASuite Source, folder 3p) https://code.google.com/p/luipack/wiki/LCLExtensions
+TButtonedEdit (included in ASuite Source, folder 3p)
+KControls (included in ASuite Source, folder 3p) http://www.tkweb.eu/en/delphicomp/

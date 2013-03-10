@@ -1,0 +1,210 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="9"/>
+    <BuildModes Active="Default"/>
+    <Units Count="27">
+      <Unit0>
+        <Filename Value="ASuite.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UsageCount Value="20"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="library\ulCommonUtils.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="ulCommonUtils"/>
+        <UsageCount Value="20"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="library\ulCommonClasses.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="ulCommonClasses"/>
+        <UsageCount Value="20"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="AppConfig.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="AppConfig"/>
+        <UsageCount Value="20"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="library\ulAppConfig.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="ulAppConfig"/>
+        <UsageCount Value="20"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="Main.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmMain"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Main"/>
+        <UsageCount Value="20"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="PropertyFile.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmPropertyFile"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="PropertyFile"/>
+        <UsageCount Value="20"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="PropertyCat.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmPropertyCat"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="PropertyCat"/>
+        <UsageCount Value="20"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="3p\VirtualTreeHDrop.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="VirtualTreeHDrop"/>
+        <UsageCount Value="20"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="About.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmAbout"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="About"/>
+        <UsageCount Value="20"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="ClearElements.pas"/>
+        <IsPartOfProject Value="True"/>
+        <HasResources Value="True"/>
+        <UnitName Value="ClearElements"/>
+        <UsageCount Value="20"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="Option.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmOption"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Option"/>
+        <UsageCount Value="20"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="3p\CheckPrevious.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="CheckPrevious"/>
+        <UsageCount Value="20"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="library\ulNodeDataTypes.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="ulNodeDataTypes"/>
+        <UsageCount Value="20"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="OrderSoftware.pas"/>
+        <IsPartOfProject Value="True"/>
+        <HasResources Value="True"/>
+        <UnitName Value="OrderSoftware"/>
+        <UsageCount Value="20"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="library\ulEnumerations.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="ulEnumerations"/>
+        <UsageCount Value="20"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="library\ulSysUtils.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="ulSysUtils"/>
+        <UsageCount Value="20"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="library\ulStringUtils.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="ulStringUtils"/>
+        <UsageCount Value="20"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="udImages.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ImagesDM"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="DataModule"/>
+        <UnitName Value="udImages"/>
+        <UsageCount Value="20"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="library\ulDatabase.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="ulDatabase"/>
+        <UsageCount Value="20"/>
+      </Unit19>
+      <Unit20>
+        <Filename Value="udClassicMenu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ClassicMenu"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="DataModule"/>
+        <UnitName Value="udClassicMenu"/>
+        <UsageCount Value="20"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="PropertySeparator.pas"/>
+        <IsPartOfProject Value="True"/>
+        <HasResources Value="True"/>
+        <UnitName Value="PropertySeparator"/>
+        <UsageCount Value="20"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="library\ulExeUtils.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="ulExeUtils"/>
+        <UsageCount Value="20"/>
+      </Unit22>
+      <Unit23>
+        <Filename Value="ImportList.pas"/>
+        <IsPartOfProject Value="True"/>
+        <HasResources Value="True"/>
+        <UnitName Value="ImportList"/>
+        <UsageCount Value="20"/>
+      </Unit23>
+      <Unit24>
+        <Filename Value="library\ASuiteForm.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ASuiteForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="ASuiteForm"/>
+        <UsageCount Value="20"/>
+      </Unit24>
+      <Unit25>
+        <Filename Value="library\ulTreeView.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="ulTreeView"/>
+        <UsageCount Value="20"/>
+      </Unit25>
+      <Unit26>
+        <Filename Value="library\ulSQLite.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="ulSQLite"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="0"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit26>
+    </Units>
+    <General>
+      <ActiveWindowIndexAtStart Value="0"/>
+    </General>
+    <JumpHistory Count="0" HistoryIndex="-1"/>
+  </ProjectSession>
+</CONFIG>

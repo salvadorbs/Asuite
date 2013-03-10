@@ -1,0 +1,334 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ASuite>
+  <Info>
+	<PathReadme>docs\olvassel.rtf</PathReadme>
+  </Info>
+  <Form1><!--List-->
+	<!--Software's Menu-->
+	<TabListCaption>Lista</TabListCaption>
+	<TabSearchCaption>Keresés</TabSearchCaption>
+	<ButtonSearch>Keres</ButtonSearch>
+	<ColumnName>Név</ColumnName>
+	<ColumnCategory>Kategória</ColumnCategory>
+	<!--ASuite's Menu-->
+	<!--File Menu-->
+	<MenuFile>Fájl</MenuFile>
+	<MenuOption>Opciók</MenuOption>
+	<MenuSave>Lista mentése</MenuSave>
+	<MenuImportList>Lista importálása...</MenuImportList>
+	<MenuExportList>Export list...</MenuExportList>
+	<MenuScanExecutables>Scan for files...</MenuScanExecutables>
+	<MenuExit>Kilépés</MenuExit>
+	<!--Edit List Menu/PopUp Menu-->
+	<MenuSortList>Sort list</MenuSortList>
+	<MenuEdit>Szerkesztés</MenuEdit>
+	<MenuSortCategoryItems>Sort category's items</MenuSortCategoryItems>
+	<MenuRun>Futtat</MenuRun>
+	<MenuRunAs>Run as...</MenuRunAs>
+	<MenuOpenFolder>Program mappájának megnyitása</MenuOpenFolder>
+	<MenuVisitWebSite>Weboldal</MenuVisitWebSite>
+	<MenuAddCat>Kategória hozzáadása</MenuAddCat>
+	<MenuAddSw>Szoftver hozzáadása</MenuAddSw>
+	<MenuAddGroupSw>Szoftvercsoport hozzáadása</MenuAddGroupSw>
+	<MenuAddFolder>Mappa hozzáadása</MenuAddFolder>
+	<MenuAddSeparator>Elválasztó hozzáadása</MenuAddSeparator>
+	<MenuCut>Cut</MenuCut>
+	<MenuCopy>Copy</MenuCopy>
+	<MenuPaste>Paste</MenuPaste>
+	<MenuDelete>Törlés</MenuDelete>
+	<MenuProperty>Tulajdonságok</MenuProperty>
+	<!--Help Menu-->
+	<MenuCheckUpdates>Check updates</MenuCheckUpdates>
+	<MenuHelp>Segítség</MenuHelp>
+	<MenuStats>Státusz</MenuStats>
+	<MenuASuiteInfo>Az ASuite-ról</MenuASuiteInfo>
+	<!--Trayicon Menu-->
+	<TrayiconShowASuite>ASuite menü</TrayiconShowASuite>
+	<TrayiconMRU>Gyakori elemek</TrayiconMRU>
+	<TrayiconEject>Safely remove hardware</TrayiconEject>
+	<TrayiconExit>Kilépés</TrayiconExit>
+	<!--Trayicon Default Menu-->
+	<DefaultMenuButtonOptions>Options...</DefaultMenuButtonOptions>
+	<DefaultMenuButtonSearch>Search...</DefaultMenuButtonSearch>
+	<DefaultMenuButtonAbout>About ASuite</DefaultMenuButtonAbout>
+  </Form1>
+  <Form2><!--Card-->
+	<!--ASuite's Page-->
+	<FormCaptionAbout>A Programról</FormCaptionAbout>
+	<LabelASVersion>Verzió </LabelASVersion>
+	<LabelIntro>ASuite egy programindító/vezérlő alkalmazás. Elsősorban hordozható USB-s eszközökkel való munkához terveztem, olyanokhoz mint pendrive-ok, USB-s merevlemezek, iPOD-ok, stb.[br][br]Amióta az ASuite relativ elérési címeket használ, azóta tökéletesen illeszkedik mindenféle hordozható alkalmazáshoz.</LabelIntro>
+	<LabelInfo>További információ:</LabelInfo>
+	<!--Software's Page-->
+	<FormCaptionCard>Információk</FormCaptionCard>
+	<GroupBoxSoftware>Szoftver</GroupBoxSoftware>
+	<LabelNameSw>Név</LabelNameSw>
+	<LabelDeveloper>Fejlesztő</LabelDeveloper>
+	<LabelVersion>Verzió</LabelVersion>
+	<LabelWebSite>Honlap</LabelWebSite>
+	<LabelDescription>Leírás</LabelDescription>
+	<LabelNote>Megjegyzés</LabelNote>
+	<LabelOpinion>Minősítés</LabelOpinion> 
+  </Form2>
+  <Form3><!--Option-->
+	<Form3Caption>Opciók</Form3Caption>
+	<!--Interface-->
+	<TabGeneralCaption>Kezelőfelület</TabGeneralCaption>
+	<!--Startup-->
+	<GroupBoxStartup>Indítás</GroupBoxStartup>
+	<CheckBoxWindowsStartup>ASuite futtatása rendszerindításkor</CheckBoxWindowsStartup>
+	<CheckBoxStartUp>Ablak mutatása induláskor</CheckBoxStartUp>
+	<CheckBoxMenuStartUp>Show trayicon menu on startup</CheckBoxMenuStartUp>
+	<CheckBoxAutorun>Automatikus indítás engedélyezése</CheckBoxAutorun>
+	<!--Window-->
+	<GroupBoxWindow>Ablak</GroupBoxWindow>
+	<CheckBoxHoldSize>Program info mutatása</CheckBoxHoldSize>
+	<CheckBoxFormCard>Ablakméret rögzítése</CheckBoxFormCard>
+	<CheckBoxWindowOnTop>Az ablakot legfelülre</CheckBoxWindowOnTop>
+	<CheckBoxWindowHotkey>Ablak mejelenítése gyorsbill. használatakor</CheckBoxWindowHotkey>
+	<CheckBoxMenuHotkey>Show trayicon menu when hotkey is pressed</CheckBoxMenuHotkey>
+	<CheckBoxCustomTitle>Custom window title</CheckBoxCustomTitle>
+	<LabelLanguage>Nyelv</LabelLanguage>
+	<!--Treeview-->
+	<GroupBoxTreeView>Fastruktúra-nézet</GroupBoxTreeView>
+	<ButtonFontSettings>Font settings...</ButtonFontSettings>
+	<CheckBoxAutoOpClCat>Automatic Opening/Closing Categories</CheckBoxAutoOpClCat>
+	<CheckBoxBackground>Aktív háttér</CheckBoxBackground>
+	<ButtonBrowseBackground>Keres</ButtonBrowseBackground>
+	<!--Tabs-->
+	<GroupBoxTabs>Tabs</GroupBoxTabs> 
+	<CheckBoxHideSearch>Hide tab search</CheckBoxHideSearch>
+	<CheckBoxHideStats>Hide tab stats</CheckBoxHideStats>
+	<!--Advanced-->
+	<TabAdvancedCaption>Haladó beállítások</TabAdvancedCaption>
+	<!--MRU-->
+	<GroupBoxMRU>Gyakori elemek (MRU)</GroupBoxMRU>
+	<CheckBoxMRU>Aktív MRU</CheckBoxMRU>
+	<CheckBoxSubMenuMRU>MRU a tálcán külön almenüben</CheckBoxSubMenuMRU>
+	<LabelMRUMax>Max. MRU elem:</LabelMRUMax>
+	<ButtonClearMRU>Összes MRU törlése</ButtonClearMRU>
+	<!--Backup-->
+	<GroupBoxBackup>Bizt. mentés</GroupBoxBackup>
+	<CheckBoxBackup>Aktív mentés</CheckBoxBackup>
+	<LabelBackupMax>Max. bizt. mentések</LabelBackupMax>
+	<ButtonClearBackup>Összes bizt. mentés törlése</ButtonClearBackup>
+	<!--Check list-->
+	<GroupBoxCheckList>Check list</GroupBoxCheckList>
+	<CheckBoxCheckList>Enable check list</CheckBoxCheckList>
+	<LabelCheckListTime>Time interval</LabelCheckListTime>
+	<!--Other functions-->
+	<GroupBoxOtherFunctions>További funkciók</GroupBoxOtherFunctions>
+	<CheckBoxHotKey>Gyorsbillentyűk engedélyezése</CheckBoxHotKey>
+	<CheckBoxCache>Gyorstárazás engedélyezése</CheckBoxCache>
+	<CheckBoxSaveSecurity>Biztonsági beállítások mentése</CheckBoxSaveSecurity>
+	<CheckBoxScheduler>Enable scheduler</CheckBoxScheduler>
+	<!--Clear elements-->
+	<GroupBoxClearElements>Clear elements</GroupBoxClearElements>
+	<LabelClearElements>Clear all MRU, backups and/or cache icons</LabelClearElements>
+	<ButtonClearElements>Clear elements...</ButtonClearElements>
+	<!--Various-->
+	<TabVariousCaption>Egyebek</TabVariousCaption>
+	<!--Execution-->
+	<GroupBoxExecution>Végrehajtás</GroupBoxExecution>
+	<CheckBoxSingleClick>Futtatás egyetlen klikkre</CheckBoxSingleClick>
+	<LabelActionOnExe>Futtatáskor</LabelActionOnExe>
+	<ListActionOnExe1>Csak a futtasd a fájlt</ListActionOnExe1>
+	<ListActionOnExe2>Futtatás és ASuite elrejti</ListActionOnExe2>
+	<ListActionOnExe3>Futtatás és ASuite bezár</ListActionOnExe3>
+	<!--System Tray-->
+	<GroupBoxTrayicon>Tálcaikon</GroupBoxTrayicon>
+	<ButtonCustomTrayicon>Choose icon</ButtonCustomTrayicon>
+	<CheckBoxTrayicon>Tálcaikon engedélyezése</CheckBoxTrayicon>
+	<ListActionTrayicon1>Nincs művelet</ListActionTrayicon1>
+	<ListActionTrayicon2>Indító-ablak mutatása</ListActionTrayicon2>
+	<ListActionTrayicon3>Menü mutatása</ListActionTrayicon3>
+	<CheckBoxClassicMenu>Use classic menu</CheckBoxClassicMenu>
+	<!--Trayicon Default Menu-->
+	<LabelMenuTheme>Theme</LabelMenuTheme>
+	<ButtonMenuButtons>Menu folders</ButtonMenuButtons>
+	<CheckBoxMenuFade>Enable fade menu</CheckBoxMenuFade>
+	<!--Mouse-->
+	<GroupBoxMouse>Egérkurzor érzékelők</GroupBoxMouse>
+	<LabelSide>Oldalt</LabelSide>
+	<LabelTop>Felül</LabelTop>
+	<LabelLeft>Balra</LabelLeft>
+	<LabelRight>Jobbra</LabelRight>
+	<LabelBottom>Lent</LabelBottom>
+	<LabelLeftClick>Bal klikk</LabelLeftClick>
+	<LabelRightClick>Jobb klikk</LabelRightClick>
+	<ListActionMouse1>Kikapcsolva</ListActionMouse1>
+	<ListActionMouse2>Ablakot mutatja</ListActionMouse2>
+	<ListActionMouse3>Show default menu</ListActionMouse3>
+	<ListActionMouse4>Show classic menu</ListActionMouse4>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>Mégsem</ButtonCancel>
+  </Form3>
+  <Form45><!--Property Sw/Cat-->
+	<Form45Caption>Tulajdonságok</Form45Caption>
+	<TabGeneralCaption>Általános</TabGeneralCaption>
+	<TabAdvancedCaption>Haladó</TabAdvancedCaption>
+	<TabInfoCaption>Információk</TabInfoCaption>
+	<LabelName>Név</LabelName>
+	<LabelVersion>Verzió</LabelVersion>
+	<LabelDeveloper>Fejlesztő</LabelDeveloper>
+	<LabelWebSite>Honlap</LabelWebSite>
+	<LabelPathExeA>Exe / Mappa / Weboldal címe</LabelPathExeA>
+	<LabelPathExeB>Exe-ék / Mappák / Weboldalak címei</LabelPathExeB>
+	<LabelParameters>Paraméterek (opcionális)</LabelParameters>
+	<LabelWorkingDir>Egyéni műk. mappa (opcionális)</LabelWorkingDir>
+	<LabelPathIcon>Egyéni ikon helye (opcionális)</LabelPathIcon>
+	<HideWindow>Végrehajtásnál ablak elrejtése</HideWindow>
+	<LabelDescription>Leírás</LabelDescription>
+	<LabelOpinion>Minősítés</LabelOpinion>
+	<LabelNote>Jegyzet</LabelNote>
+	<LabelInformation1>Minden oldalnál az ASuite-ban szügséges némi információ az épp szóban forgó programról. Minden mező opcionális, kivéve a program nevét.</LabelInformation1>
+	<LabelInformation3>Megjegyzés: A $ASuite akkor is használható, ha a programok ugyanabban mappában vannak, mint maga az ASuite.</LabelInformation3>
+	<ButtonBrowse>Keres</ButtonBrowse>
+	<ButtonRetrieve>Infot Kivonatol</ButtonRetrieve>
+	<LabelAutoExecute>Automata indítás</LabelAutoExecute>
+	<ButtonChangeOrder>Change order</ButtonChangeOrder>
+	<ComboBoxAutoExecute0>Soha</ComboBoxAutoExecute0>
+	<ComboBoxAutoExecute1>Mindig rendszerindításkor</ComboBoxAutoExecute1>
+	<ComboBoxAutoExecute2A>Csak ha még korábbi példány(ok) nem fut(nak)</ComboBoxAutoExecute2A>
+	<ComboBoxAutoExecute2B>Csak ha még korábbi példány(ok) nem fut(nak)</ComboBoxAutoExecute2B>
+	<ComboBoxAutoExecute3>Mindig leállításkor</ComboBoxAutoExecute3>
+	<LabelOnExecution>Végrehajtáskor</LabelOnExecution>
+	<ComboBoxActionOnExe0>Alapértelmezett (opciók)</ComboBoxActionOnExe0>
+	<ComboBoxActionOnExe1A>Csak futtasd a fájlt</ComboBoxActionOnExe1A>
+	<ComboBoxActionOnExe1B>Csak futtasd a fájlokat</ComboBoxActionOnExe1B>
+	<ComboBoxActionOnExe2>Futtasd és rejtsd el az ASuite-ot</ComboBoxActionOnExe2>
+	<ComboBoxActionOnExe3>Futtasd és zárd be az ASuite-ot</ComboBoxActionOnExe3>
+	<CheckBoxHotKey>Aktív gyorsbillentyű</CheckBoxHotKey>
+	<LabelWindowState>Ablak állapota</LabelWindowState>
+	<ComboBoxWSNormal>Normál</ComboBoxWSNormal>
+	<ComboBoxWSMinimized>Lekicsinyítve</ComboBoxWSMinimized>
+	<ComboBoxWSMaximized>Telj. kinyitva</ComboBoxWSMaximized>
+	<LabelDontInsertMRUA>Prog kihagyása a Gyakori Elemekből</LabelDontInsertMRUA>
+	<LabelDontInsertMRUB>Szoftvercsoport kihagyása a Gyakori Elemekből</LabelDontInsertMRUB>
+	<LabelShortcutDesktop>Parancsikont az Asztalra, ha az ASuite fut</LabelShortcutDesktop>
+	<LabelHideSoftwareMenuA>Hide this software from menu</LabelHideSoftwareMenuA>
+	<LabelHideSoftwareMenuB>Hide this software group from menu</LabelHideSoftwareMenuB>
+	<LabelScheduler>Scheduler</LabelScheduler>
+	<ComboBoxSchedulerMode0>Disabled</ComboBoxSchedulerMode0>
+	<ComboBoxSchedulerMode1>Once</ComboBoxSchedulerMode1>
+	<ComboBoxSchedulerMode2>Hourly</ComboBoxSchedulerMode2>
+	<ComboBoxSchedulerMode3>Daily</ComboBoxSchedulerMode3>
+	<ButtonAddPath>Hozzáad</ButtonAddPath>
+	<ButtonReplacePath>Lecserél</ButtonReplacePath>
+	<ButtonDeletePath>Töröl</ButtonDeletePath>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>Mégsem</ButtonCancel>
+  </Form45>
+  <Form6><!--Import List-->
+	<Form6Caption>Lista importálása</Form6Caption>
+	<LabelPathList>Lista elérési útja</LabelPathList>
+	<LabelList>Válassza ki a programokat importáláshoz</LabelList>
+	<ButtonSelectAll>Mind kiválasztása</ButtonSelectAll>
+	<ButtonDeSelectAll>Mind elhagyása</ButtonDeSelectAll>
+	<ButtonBrowse>Keres</ButtonBrowse>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>Mégsem</ButtonCancel>
+  </Form6>
+  <Form7>
+	<Form7Caption>Scan folder</Form7Caption>
+	<LabelFolderPath>Folder path</LabelFolderPath>
+	<ButtonBrowse>Browse</ButtonBrowse>
+	<CheckboxSubFolders>Scan subfolders</CheckboxSubFolders>
+	<LabelTypes>File types</LabelTypes>
+	<LabelExclude>Exclude file</LabelExclude>
+	<ButtonAdd>Add</ButtonAdd>
+	<ButtonReplace>Replace</ButtonReplace>
+	<ButtonDelete>Delete</ButtonDelete>
+	<CheckboxRetrieveInfo>Retrieve informations from executables</CheckboxRetrieveInfo>
+	<ButtonScan>Scan</ButtonScan>
+	<ButtonCancel>Cancel</ButtonCancel>
+  </Form7>
+  <Form8>
+	<GroupboxCurrentTask>Current task</GroupboxCurrentTask>
+	<MessageDownload>Downloading %s</MessageDownload>
+	<GroupboxDownloadInfo>Download info</GroupboxDownloadInfo>
+	<LabelFileName>File name</LabelFileName>
+	<LabelSpeed>Speed</LabelSpeed>
+	<LabelTotalSize>Total size</LabelTotalSize>
+	<LabelBytesReceived>Bytes received</LabelBytesReceived>
+	<ButtonCancel>Cancel</ButtonCancel>
+  </Form8>
+  <Form9>
+	<Form9Caption>Clear elements</Form9Caption>
+	<LabelClearElements>Clear the following elements now:</LabelClearElements>
+	<CheckBoxMRU>MRU</CheckBoxMRU>
+	<CheckBoxBackup>Backups</CheckBoxBackup>
+	<CheckBoxCache>Cache icons</CheckBoxCache>
+	<ButtonClear>Clear</ButtonClear>
+	<ButtonCancel>Cancel</ButtonCancel>
+  </Form9>
+  <Form10>
+	<Form10Caption>Software order</Form10Caption>
+	<LabelInfoStartupOrder>Order list of software in ASuite startup</LabelInfoStartupOrder>
+	<LabelInfoShutdownOrder>Order list of software in ASuite shutdown</LabelInfoShutdownOrder>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>Cancel</ButtonCancel>
+  </Form10>
+  <Form11>
+	<Form11Caption>Run as</Form11Caption>
+	<LabelUsername>Username</LabelUsername>
+	<LabelPassword>Password</LabelPassword>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>Cancel</ButtonCancel>
+  </Form11>
+  <Form12>	
+	<Form12Caption>Change menu buttons</Form12Caption>
+	<LabelName>Name</LabelName>
+	<LabelPathExe>Executable/folder/web page path</LabelPathExe>
+	<LabelPathIcon>Custom icon path (optional)</LabelPathIcon>
+	<CheckBoxActiveButton>Active this button</CheckBoxActiveButton>
+	<ButtonBrowse>Browse</ButtonBrowse>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>Cancel</ButtonCancel>
+  </Form12>
+  <Form13>
+	<Form13Caption>Stats</Form13Caption>
+	<!--System-->
+	<GroupBoxSystem> Rendszer </GroupBoxSystem>
+	<LabelOperatingSystem>Operating system</LabelOperatingSystem>
+	<LabelPcName>Számítógép</LabelPcName>
+	<LabelCurrentUser>Jelen felhasználó</LabelCurrentUser>
+	<!--Drive-->
+	<GroupBoxDrive> %s: meghajtó </GroupBoxDrive>
+	<LabelSize> Kapacitás</LabelSize>
+	<LabelFreeSpace> Szabad még</LabelFreeSpace>
+	<LabelUsedSpace> Felhasznált</LabelUsedSpace>
+	<!--Launcher-->
+	<GroupBoxASuite> ASuite statisztika </GroupBoxASuite>
+	<LabelSwInserted>Szoftver hozzáadva</LabelSwInserted>
+	<LabelSwGroupInserted>Software group added</LabelSwGroupInserted>
+	<LabelCatInserted>Kategóriák hozzáadva</LabelCatInserted>
+	<LabelTotal>Összesen</LabelTotal>
+  </Form13>
+  <String>
+	<string01>Fájl nem található</string01>
+	<string02>Hiba a kategória nevében: %s</string02>
+	<string03>Hiba a program nevében: %s</string03>
+	<string04>Nincs név</string04>
+	<string05>Nincs leírás</string05>  
+	<string06>Nincs minősítve</string06>   
+	<string07>Nincs megjegyzés</string07>
+	<string08>Biztos benne?</string08>
+	<string09>Nem tudom futtatni ezt: %s !</string09>
+	<string10>Az XML fájl betöltése hiba miatt nem sikerült.</string10>
+	<string11>%s error raised, with message: %s</string11>
+	<string12>A program NÉV mezője üres.</string12>
+	<string13>Érvénytelen elérési út az EXE-hez!</string13>
+	<string14>Max 10 programs in software group</string14>
+	<string15>Az ikont nem tudom felhasználni ehhez: %s .</string15>
+	<string16>Ikon nem található ehhez: %s .</string16>
+	<string17>Mentés befejeződött.</string17>
+	<string18>Mentés hiba miatt nem sikerült.</string18>
+	<string19>Importálás folyamatban...</string19>
+	<string20>Importálás hiba miatt nem sikerült.</string20>
+	<string21>ASuite nem állt le helyesen korábban. Utolsó állapot visszaállítása?</string21>
+	<string22>Ezt a gyorsbillentyűt nem lehet regisztrálni</string22>
+	<string23>Keresés folyamatban...</string23>
+	<string24>A new version of ASuite is available. Do you want to download and install it?</string24>
+	<string25>No version available</string25>
+  </String>
+</ASuite>

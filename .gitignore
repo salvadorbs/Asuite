@@ -1,0 +1,6 @@
+bck/
+lib/
+tmp/
+backup/
+
+*.exe

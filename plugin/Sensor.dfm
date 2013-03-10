@@ -1,0 +1,21 @@
+object frmSensor: TfrmSensor
+  Left = 0
+  Top = 0
+  AlphaBlendValue = 1
+  BorderStyle = bsNone
+  Caption = 'frmSensor'
+  ClientHeight = 10
+  ClientWidth = 10
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  OnCreate = FormCreate
+  OnMouseDown = FormMouseDown
+  OnMouseMove = FormMouseMove
+  PixelsPerInch = 96
+  TextHeight = 13
+end

@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ASuite>
+  <Info>
+	<PathReadme>docs\readme.rtf</PathReadme>
+  </Info>
+  <Form1><!--List-->
+	<!--Software's Menu-->
+	<TabListCaption>Zoznam</TabListCaption>
+	<TabSearchCaption>Hľadať</TabSearchCaption>
+	<ButtonSearch>Hľadať</ButtonSearch>
+	<ColumnName>Názov</ColumnName>
+	<ColumnCategory>Kategória</ColumnCategory>
+	<!--ASuite's Menu-->
+	<!--File Menu-->
+	<MenuFile>Súbor</MenuFile>
+	<MenuOption>Možnosti</MenuOption>
+	<MenuSave>Uložiť zoznam</MenuSave>
+	<MenuImportList>Importovať zoznam...</MenuImportList>
+	<MenuExportList>Exportovať zoznam...</MenuExportList>
+	<MenuScanExecutables>Hľadať súbory...</MenuScanExecutables>
+	<MenuExit>Konec</MenuExit>
+	<!--Edit List Menu/PopUp Menu-->
+	<MenuSortList>Triediť zoznam</MenuSortList>
+	<MenuEdit>Úpravy</MenuEdit>
+	<MenuSortCategoryItems>Triediť položky kategórie</MenuSortCategoryItems>
+	<MenuRun>Spustit</MenuRun>
+	<MenuRunAs>Run as...</MenuRunAs>
+	<MenuOpenFolder>Zobraziť zložku aplikácie</MenuOpenFolder>
+	<MenuVisitWebSite>Navštíviť web</MenuVisitWebSite>
+	<MenuAddCat>Pridať kategóriu</MenuAddCat>
+	<MenuAddSw>Pridať program</MenuAddSw>
+	<MenuAddGroupSw>Pridať skupinu programov</MenuAddGroupSw>
+	<MenuAddFolder>Pridať zložku</MenuAddFolder>
+	<MenuAddSeparator>Pridať oddelovač</MenuAddSeparator>
+	<MenuCut>Cut</MenuCut>
+	<MenuCopy>Copy</MenuCopy>
+	<MenuPaste>Paste</MenuPaste>
+	<MenuDelete>Zmazať</MenuDelete>
+	<MenuProperty>Vlastnosti</MenuProperty>
+	<!--Help Menu-->
+	<MenuCheckUpdates>Zistiť aktualizácie</MenuCheckUpdates>
+	<MenuHelp>Pomoc</MenuHelp>
+	<MenuStats>Štatistika</MenuStats>
+	<MenuASuiteInfo>O programe ASuite</MenuASuiteInfo>
+	<!--Trayicon Menu-->
+	<TrayiconShowASuite>Zobraziť ASuite</TrayiconShowASuite>
+	<TrayiconMRU>Posledné</TrayiconMRU>
+	<TrayiconEject>Safely remove hardware</TrayiconEject>
+	<TrayiconExit>Koniec</TrayiconExit>
+	<!--Trayicon Default Menu-->
+	<DefaultMenuButtonOptions>Options...</DefaultMenuButtonOptions>
+	<DefaultMenuButtonSearch>Search...</DefaultMenuButtonSearch>
+	<DefaultMenuButtonAbout>About ASuite</DefaultMenuButtonAbout>
+  </Form1>
+  <Form2><!--Card-->
+	<!--ASuite's Page-->
+	<FormCaptionAbout>O programe</FormCaptionAbout>
+	<LabelASVersion>Verzia </LabelASVersion>
+	<LabelIntro>ASUITE je "spúšťač" aplikácií. Je navrhnutý na prácu s vymeniteľnými úložnými médiami ako sú USB kľúče, pevné disky, iPody, atď.[br][br]Nakoľko ASuite využíva relatívne cesty, je vhodný pre použitie s portable aplikáciami.[br][br]Slovenský preklad: Jozef Ševčík </LabelIntro>
+	<LabelInfo>Pre viac informácií navštívte</LabelInfo>
+	<!--Software's Page-->
+	<FormCaptionCard>Info</FormCaptionCard>
+	<GroupBoxSoftware>Program</GroupBoxSoftware>
+	<LabelNameSw>Názov</LabelNameSw>
+	<LabelDeveloper>Výrobca</LabelDeveloper>
+	<LabelVersion>Verzia</LabelVersion>
+	<LabelWebSite>Domáca stránka</LabelWebSite>
+	<LabelDescription>Popis</LabelDescription>
+	<LabelNote>Poznámka</LabelNote>
+	<LabelOpinion>Hodnotenie</LabelOpinion> 
+  </Form2>
+  <Form3><!--Option-->
+	<Form3Caption>Možnosti</Form3Caption>
+	<!--General-->
+	<TabGeneralCaption>Hlavné</TabGeneralCaption>
+	<!--Startup-->
+	<GroupBoxStartup>Po spustení</GroupBoxStartup>
+	<CheckBoxWindowsStartup>Spustiť ASuite pri štarte systému</CheckBoxWindowsStartup>
+	<CheckBoxStartUp>Pri štarte zobraziť okno</CheckBoxStartUp>
+	<CheckBoxMenuStartUp>Show trayicon menu on startup</CheckBoxMenuStartUp>
+	<CheckBoxAutorun>Povoliť autorun</CheckBoxAutorun>
+	<!--Window-->
+	<GroupBoxWindow>Okno</GroupBoxWindow>
+	<CheckBoxHoldSize>Zachovať veľkosť okna</CheckBoxHoldSize>
+	<CheckBoxFormCard>Zobraziť info o programe</CheckBoxFormCard>
+	<CheckBoxWindowOnTop>Okno na vrchu plochy</CheckBoxWindowOnTop>
+	<CheckBoxWindowHotkey>Po stlačení klávesovej skratky zobraziť okno</CheckBoxWindowHotkey>
+	<CheckBoxMenuHotkey>Show trayicon menu when hotkey is pressed</CheckBoxMenuHotkey>
+	<CheckBoxCustomTitle>Vlastný názov okna</CheckBoxCustomTitle>
+	<LabelLanguage>Jazyk</LabelLanguage>
+	<!--Treeview-->
+	<GroupBoxTreeView>Zobraziť strom</GroupBoxTreeView>
+	<ButtonCustomTrayicon>Vybrať ikonu</ButtonCustomTrayicon>
+	<ButtonFontSettings>Nastavenie písma...</ButtonFontSettings>
+	<CheckBoxAutoOpClCat>Automatic Opening/Closing Categories</CheckBoxAutoOpClCat>
+	<CheckBoxBackground>Aktívne pozadie</CheckBoxBackground>
+	<ButtonBrowseBackground>Prechádzať</ButtonBrowseBackground>
+	<!--Tabs-->
+	<GroupBoxTabs>Záložky</GroupBoxTabs> 
+	<CheckBoxHideSearch>Skryť záložku hľadania</CheckBoxHideSearch>
+	<CheckBoxHideStats>Skryť záložku štatistiky</CheckBoxHideStats>
+	<!--Advanced-->
+	<TabAdvancedCaption>Rozšírené</TabAdvancedCaption>
+	<!--MRU-->
+	<GroupBoxMRU>Posledné</GroupBoxMRU>
+	<CheckBoxMRU>Aktívne MRU</CheckBoxMRU>
+	<CheckBoxSubMenuMRU>MRU v podmenu ikony systémovej lišty</CheckBoxSubMenuMRU>
+	<LabelMRUMax>Max. počet MRU</LabelMRUMax>
+	<ButtonClearMRU>Zmazať všetky MRU</ButtonClearMRU>
+	<!--Backup-->
+	<GroupBoxBackup>Záloha</GroupBoxBackup>
+	<CheckBoxBackup>Aktívne zálohovanie</CheckBoxBackup>
+	<LabelBackupMax>Max. počet záloh</LabelBackupMax>
+	<ButtonClearBackup>Zmazať všetky zálohy</ButtonClearBackup>
+	<!--Check list-->
+	<GroupBoxCheckList>Ovoriť zoznam</GroupBoxCheckList>
+	<CheckBoxCheckList>Povoliť overenie zoznamu</CheckBoxCheckList>
+	<LabelCheckListTime>Časový interval</LabelCheckListTime>
+	<!--Other functions-->
+	<GroupBoxOtherFunctions>Ostatné funkcie</GroupBoxOtherFunctions>
+	<CheckBoxHotKey>Povoliť klávesové skratky</CheckBoxHotKey>
+	<CheckBoxCache>Povoliť vyrovnávaciu pamäť</CheckBoxCache>
+	<CheckBoxSaveSecurity>Povoliť zabezpečenie ukladania</CheckBoxSaveSecurity>
+	<CheckBoxScheduler>Povoliť plánovač</CheckBoxScheduler>
+	<!--Clear elements-->
+	<GroupBoxClearElements>Clear elements</GroupBoxClearElements>
+	<LabelClearElements>Zmazať všetky MRU, zálohy a/alebo vyr. pamäť</LabelClearElements>
+	<ButtonClearElements>Vymazať položky...</ButtonClearElements>
+	<!--Various-->
+	<TabVariousCaption>Rôzne</TabVariousCaption>
+	<!--Execution-->
+	<GroupBoxExecution>Spúšťanie</GroupBoxExecution>
+	<CheckBoxSingleClick>Spúšťať jedným kliknutím</CheckBoxSingleClick>
+	<LabelActionOnExe>Pri spustení</LabelActionOnExe>
+	<ListActionOnExe1>Iba spustiť súbor</ListActionOnExe1>
+	<ListActionOnExe2>Spustiť a skryť ASuite</ListActionOnExe2>
+	<ListActionOnExe3>Spustiť a skončiť ASuite</ListActionOnExe3>
+	<!--System Tray-->
+	<GroupBoxTrayicon>Systémová lišta</GroupBoxTrayicon>
+	<CheckBoxTrayicon>Povoliť ikonu v systémovej lište</CheckBoxTrayicon>
+	<ListActionTrayicon1>Žiadna akcia</ListActionTrayicon1>
+	<ListActionTrayicon2>Zobraziť okno</ListActionTrayicon2>
+	<ListActionTrayicon3>Zobraziť menu</ListActionTrayicon3>
+	<CheckBoxClassicMenu>Use classic menu</CheckBoxClassicMenu>
+	<!--Trayicon Default Menu-->
+	<LabelMenuTheme>Theme</LabelMenuTheme>
+	<ButtonMenuButtons>Menu folders</ButtonMenuButtons>
+	<CheckBoxMenuFade>Enable fade menu</CheckBoxMenuFade>
+	<!--Mouse-->
+	<GroupBoxMouse>Senzory myši</GroupBoxMouse>
+	<LabelSide>Strana</LabelSide>
+	<LabelTop>Hore</LabelTop>
+	<LabelLeft>Vľavo</LabelLeft>
+	<LabelRight>Vpravo</LabelRight>
+	<LabelBottom>Dole</LabelBottom>
+	<LabelLeftClick>Ľavé kliknutie</LabelLeftClick>
+	<LabelRightClick>Pravé kliknutie</LabelRightClick>
+	<ListActionMouse1>Zakázaný</ListActionMouse1>
+	<ListActionMouse2>Zobraziť okno</ListActionMouse2>
+	<ListActionMouse3>Show default menu</ListActionMouse3>
+	<ListActionMouse4>Show classic menu</ListActionMouse4>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>Zrušiť</ButtonCancel>
+  </Form3>
+  <Form45><!--Property Sw/Cat-->
+	<Form45Caption>Vlastnosti</Form45Caption>
+	<TabGeneralCaption>Hlavné</TabGeneralCaption>
+	<TabAdvancedCaption>Rozšírené</TabAdvancedCaption>
+	<TabInfoCaption>Informácie</TabInfoCaption>
+	<LabelName>Názov</LabelName>
+	<LabelVersion>Verzia</LabelVersion>
+	<LabelDeveloper>Výrobca</LabelDeveloper>
+	<LabelWebSite>Domáca stránka</LabelWebSite>
+	<LabelPathExeA>Spustiteľný/zložka/cesta k web stránke</LabelPathExeA>
+	<LabelPathExeB>Spustiteľné/zložky/cesta k web stránkam</LabelPathExeB>
+	<LabelParameters>Parametre (voliteľné)</LabelParameters>
+	<LabelWorkingDir>Vlastná pracovná zložka (voliteľné)</LabelWorkingDir>
+	<LabelPathIcon>Cesta k vlastnej ikone (voliteľné)</LabelPathIcon>
+	<HideWindow>Po spustení skryť okno</HideWindow>
+	<LabelDescription>Popis</LabelDescription>
+	<LabelOpinion>Hodnotenie</LabelOpinion>
+	<LabelNote>Poznámka</LabelNote>
+	<LabelInformation1>Každá stránka v ASuite vyžaduje niektoré informácie o príslušnom programe. Všetky polia s výnimkou názvu programu sú voliteľné.</LabelInformation1>
+	<LabelInformation3>Poznámka: ASuite môžete použiť aj keď sú programy v rovnakej zložke ako ASuite.</LabelInformation3>
+	<ButtonBrowse>Prechádzať</ButtonBrowse>
+	<ButtonRetrieve>Získať</ButtonRetrieve>
+	<LabelAutoExecute>Automatické spustenie</LabelAutoExecute>
+	<ButtonChangeOrder>Zmena poradia</ButtonChangeOrder>
+	<ComboBoxAutoExecute0>Nikdy</ComboBoxAutoExecute0>
+	<ComboBoxAutoExecute1>Vždy pri štarte</ComboBoxAutoExecute1>
+	<ComboBoxAutoExecute2A>Iba pokiaľ nie sú spustené žiadne predchádzajúce inštancie</ComboBoxAutoExecute2A>
+	<ComboBoxAutoExecute2B>Iba pokiaľ nie sú spustené žiadne predchádzajúce inštancie</ComboBoxAutoExecute2B>
+	<ComboBoxAutoExecute3>Vždy pri vypnutí</ComboBoxAutoExecute3>
+	<LabelOnExecution>Pri spustení</LabelOnExecution>
+	<ComboBoxActionOnExe0>Základné (voľby)</ComboBoxActionOnExe0>
+	<ComboBoxActionOnExe1A>Iba spustiť súbor</ComboBoxActionOnExe1A>
+	<ComboBoxActionOnExe1B>Iba spustiť súbory</ComboBoxActionOnExe1B>
+	<ComboBoxActionOnExe2>Spustiť a skryť ASuite</ComboBoxActionOnExe2>
+	<ComboBoxActionOnExe3>Spustiť a ukončiť ASuite</ComboBoxActionOnExe3>
+	<CheckBoxHotKey>Povoliť klávesové skratky</CheckBoxHotKey>
+	<LabelWindowState>Stav okna</LabelWindowState>
+	<ComboBoxWSNormal>Normálne</ComboBoxWSNormal>
+	<ComboBoxWSMinimized>Minimalizované</ComboBoxWSMinimized>
+	<ComboBoxWSMaximized>Maximalizované</ComboBoxWSMaximized>
+	<LabelDontInsertMRUA>Nevkladať tento program do MRU</LabelDontInsertMRUA>
+	<LabelDontInsertMRUB>Nevkládať túto skupinu programov do MRU</LabelDontInsertMRUB>
+	<LabelShortcutDesktop>Po spustení ASuite vytvoriť zástupcu na ploche</LabelShortcutDesktop>
+	<LabelHideSoftwareMenuA>Skryť v menu tento program</LabelHideSoftwareMenuA>
+	<LabelHideSoftwareMenuB>Skrýť v menu túto skupinu programov</LabelHideSoftwareMenuB>
+	<LabelScheduler>Plánovač</LabelScheduler>
+	<ComboBoxSchedulerMode0>Zakázaný</ComboBoxSchedulerMode0>
+	<ComboBoxSchedulerMode1>Jeden krát</ComboBoxSchedulerMode1>
+	<ComboBoxSchedulerMode2>Každú hodinu</ComboBoxSchedulerMode2>
+	<ComboBoxSchedulerMode3>Denne</ComboBoxSchedulerMode3>
+	<ButtonAddPath>Pridať</ButtonAddPath>
+	<ButtonReplacePath>Nahradiť</ButtonReplacePath>
+	<ButtonDeletePath>Zmazať</ButtonDeletePath>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>Zrušiť</ButtonCancel>
+  </Form45>
+  <Form6><!--Import List-->
+	<Form6Caption>Importovať zoznam</Form6Caption>
+	<LabelPathList>Cesta k zoznamu</LabelPathList>
+	<LabelList>Vybrať programy na import</LabelList>
+	<ButtonSelectAll>Vybrať všetko</ButtonSelectAll>
+	<ButtonDeSelectAll>Zrušiť výber</ButtonDeSelectAll>
+	<ButtonBrowse>Prechádzať</ButtonBrowse>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>Zrušiť</ButtonCancel>
+  </Form6>
+  <Form7>
+	<Form7Caption>Hľadať v zložke</Form7Caption>
+	<LabelFolderPath>Cesta zložky</LabelFolderPath>
+	<ButtonBrowse>Prechádzať</ButtonBrowse>
+	<CheckboxSubFolders>Hľadať v podzložkách</CheckboxSubFolders>
+	<LabelTypes>Typy súborov</LabelTypes>
+	<LabelExclude>Vylúčiť súbor</LabelExclude>
+	<ButtonAdd>Pridať</ButtonAdd>
+	<ButtonReplace>Nahradiť</ButtonReplace>
+	<ButtonDelete>Zmazať</ButtonDelete>
+	<CheckboxRetrieveInfo>Získavať údaje zo spustiteľných súborov</CheckboxRetrieveInfo>
+	<ButtonScan>Hľadať</ButtonScan>
+	<ButtonCancel>Zrušiť</ButtonCancel>
+  </Form7>
+  <Form8>
+	<GroupboxCurrentTask>Aktuálna úloha</GroupboxCurrentTask>
+	<MessageDownload>Sťahovanie %s</MessageDownload>
+	<GroupboxDownloadInfo>Sťahovanie info</GroupboxDownloadInfo>
+	<LabelFileName>Názov súboru</LabelFileName>
+	<LabelSpeed>Rýchlosť</LabelSpeed>
+	<LabelTotalSize>Celková veľkosť</LabelTotalSize>
+	<LabelBytesReceived>Prijatých bajtov</LabelBytesReceived>
+	<ButtonCancel>Zrušiť</ButtonCancel>
+  </Form8>
+  <Form9>
+	<Form9Caption>Vymazať položky</Form9Caption>
+	<LabelClearElements>Vymaž nasledujúce položky teraz:</LabelClearElements>
+	<CheckBoxMRU>MRU</CheckBoxMRU>
+	<CheckBoxBackup>Zálohy</CheckBoxBackup>
+	<CheckBoxCache>Ikony vo vyrovnávacej pamäti</CheckBoxCache>
+	<ButtonClear>Vymazať</ButtonClear>
+	<ButtonCancel>Zrušiť</ButtonCancel>
+  </Form9>
+  <Form10>
+	<Form10Caption>Poradie programov</Form10Caption>
+	<LabelInfoStartupOrder>Zoraď zoznam programov pri štarte ASuite</LabelInfoStartupOrder>
+	<LabelInfoShutdownOrder>Zoraď zoznam programov pri ukončení ASuite</LabelInfoShutdownOrder>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>Zrušiť</ButtonCancel>
+  </Form10>
+  <Form11>
+	<Form11Caption>Run as</Form11Caption>
+	<LabelUsername>Username</LabelUsername>
+	<LabelPassword>Password</LabelPassword>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>Cancel</ButtonCancel>
+  </Form11>
+  <Form12>	
+	<Form12Caption>Change menu buttons</Form12Caption>
+	<LabelName>Name</LabelName>
+	<LabelPathExe>Executable/folder/web page path</LabelPathExe>
+	<LabelPathIcon>Custom icon path (optional)</LabelPathIcon>
+	<CheckBoxActiveButton>Active this button</CheckBoxActiveButton>
+	<ButtonBrowse>Browse</ButtonBrowse>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>Cancel</ButtonCancel>
+  </Form12>
+  <Form13>
+	<Form13Caption>Stats</Form13Caption>
+	<!--System-->
+	<GroupBoxSystem>Systém</GroupBoxSystem>
+	<LabelOperatingSystem>Operating system</LabelOperatingSystem>
+	<LabelPcName>Názov počítača</LabelPcName>
+	<LabelCurrentUser>Aktuálny užívateľ</LabelCurrentUser>
+	<!--Drive-->
+	<GroupBoxDrive>Jednotka %s:</GroupBoxDrive>
+	<LabelSize>Veľkosť</LabelSize>
+	<LabelFreeSpace>Voľný priestor</LabelFreeSpace>
+	<LabelUsedSpace>Použitý priestor</LabelUsedSpace>
+	<!--Launcher-->
+	<GroupBoxASuite>ASuite</GroupBoxASuite>
+	<LabelSwInserted>Pridaných programov</LabelSwInserted>
+	<LabelSwGroupInserted>Software group added</LabelSwGroupInserted>
+	<LabelCatInserted>Pridaných kategórií</LabelCatInserted>
+	<LabelTotal>Celkom</LabelTotal>
+  </Form13>
+  <String>
+	<string01>Súbor nebol nájdený</string01>
+	<string02>Chyba v názve kategórie: %s</string02>
+	<string03>Chyba v názve programu: %s</string03>
+	<string04>Bez názvu</string04>
+	<string05>Bez popisu</string05>  
+	<string06>Bez hodnotenia</string06>   
+	<string07>Bez poznámok</string07>
+	<string08>Ste si istý?</string08>
+	<string09>Nedá sa spustiť %s</string09>
+	<string10>Načítanie z xml súboru nebolo dokončené pretože nastala chyba</string10>
+	<string11>%s vznikla chyba, so správou: %s</string11>
+	<string12>Pole názvu aplikácie je prázdne</string12>
+	<string13>Neplatná cesta</string13>
+	<string14>Max. 10 aplikácií v skupine programov</string14>
+	<string15>Nedá sa použiť ikona %s</string15>
+	<string16>Nedá sa nájsť táto ikona %s</string16>
+	<string17>Ukladanie dokončené</string17>
+	<string18>Ukladanie zlyhalo pretože nastala chyba</string18>
+	<string19>Probieha import...</string19>
+	<string20>Import zlyhal pretože nastala chyba</string20>
+	<string21>ASuite nebol korektne ukončený. Obnoviť poslenú konfiguráciu?</string21>
+	<string22>Táto skratka sa nedá zaregistrovať</string22>
+	<string23>Prebieha hľadanie...</string23>
+	<string24>Je dostupná nová verzia ASuite. Chcete ju stiahnúť a nainštalovať?</string24>
+	<string25>Žiadna dostupná nová verzia</string25>
+  </String>
+</ASuite>

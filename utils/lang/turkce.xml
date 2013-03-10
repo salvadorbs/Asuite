@@ -1,0 +1,334 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ASuite>
+  <Info>
+	<PathReadme>docs\readme.rtf</PathReadme>
+  </Info>
+  <Form1><!--List-->
+	<!--Software's Menu-->
+	<TabListCaption>Liste</TabListCaption>
+	<TabSearchCaption>Ara</TabSearchCaption>
+	<ButtonSearch>Ara</ButtonSearch>
+	<ColumnName>İsim</ColumnName>
+	<ColumnCategory>Kategori</ColumnCategory>
+	<!--ASuite's Menu-->
+	<!--File Menu-->
+	<MenuFile>Dosya</MenuFile>
+	<MenuOption>Seçenekler</MenuOption>
+	<MenuSave>Listeyi Kaydet</MenuSave>
+	<MenuImportList>Listeyi Al...</MenuImportList>
+	<MenuExportList>Listeyi dışa aktar...</MenuExportList>
+	<MenuScanExecutables>Dosyaları için Tara...</MenuScanExecutables>
+	<MenuExit>Çıkış</MenuExit>
+	<!--Edit List Menu/PopUp Menu-->
+	<MenuSortList>Listeyi Sırala</MenuSortList>
+	<MenuEdit>Düzenle</MenuEdit>
+	<MenuSortCategoryItems>Kategori parçalarını sırala</MenuSortCategoryItems>
+	<MenuRun>Çalıştır</MenuRun>
+	<MenuRunAs>Run as...</MenuRunAs>
+	<MenuOpenFolder>Program Dizinlerini Göster</MenuOpenFolder>
+	<MenuVisitWebSite>Websitesine Bak</MenuVisitWebSite>
+	<MenuAddCat>Kategori Ekle</MenuAddCat>
+	<MenuAddSw>Yazılım Ekle</MenuAddSw>
+	<MenuAddGroupSw>Yazılım Grubu Ekle</MenuAddGroupSw>
+	<MenuAddFolder>Dizin Ekle</MenuAddFolder>
+	<MenuAddSeparator>Ayıraç Ekle</MenuAddSeparator>
+	<MenuCut>Cut</MenuCut>
+	<MenuCopy>Copy</MenuCopy>
+	<MenuPaste>Paste</MenuPaste>
+	<MenuDelete>Sil</MenuDelete>
+	<MenuProperty>Özellikler</MenuProperty>
+	<!--Help Menu-->
+	<MenuCheckUpdates>Yenilikleri Kontrol et</MenuCheckUpdates>
+	<MenuHelp>Yardım</MenuHelp>
+	<MenuStats>Bilgi</MenuStats>
+	<MenuASuiteInfo>ASuite Hakkında</MenuASuiteInfo>
+	<!--Trayicon Menu-->
+	<TrayiconShowASuite>ASuite Göster</TrayiconShowASuite>
+	<TrayiconMRU>En Son İşlem</TrayiconMRU>
+	<TrayiconEject>Safely remove hardware</TrayiconEject>
+	<TrayiconExit>Çıkış</TrayiconExit>
+	<!--Trayicon Default Menu-->
+	<DefaultMenuButtonOptions>Options...</DefaultMenuButtonOptions>
+	<DefaultMenuButtonSearch>Search...</DefaultMenuButtonSearch>
+	<DefaultMenuButtonAbout>About ASuite</DefaultMenuButtonAbout>
+  </Form1>
+  <Form2><!--Card-->
+	<!--ASuite's Page-->
+	<FormCaptionAbout>Hakkında</FormCaptionAbout>
+	<LabelASVersion>Versiyon </LabelASVersion>
+	<LabelIntro>ASuite is an application launcher. It is designed to word with removable storage media like USB sticks, hard drives, iPods, etc.[br][br]Since ASuite uses relatives paths, it is perfectly suited for use with portable applications.</LabelIntro>
+	<LabelInfo>Daha Fazla Bilgi İçin</LabelInfo>
+	<!--Software's Page-->
+	<FormCaptionCard>Bilgi</FormCaptionCard>
+	<GroupBoxSoftware>Yazılım</GroupBoxSoftware>
+	<LabelNameSw>İsim</LabelNameSw>
+	<LabelDeveloper>Geliştiren</LabelDeveloper>
+	<LabelVersion>Versiyon</LabelVersion>
+	<LabelWebSite>Web Sayfası</LabelWebSite>
+	<LabelDescription>Tanımı</LabelDescription>
+	<LabelNote>Not</LabelNote>
+	<LabelOpinion>Sınıfı(Grubu)</LabelOpinion>
+  </Form2>
+  <Form3><!--Option-->
+	<Form3Caption>Seçenekler</Form3Caption>
+	<!--General-->
+	<TabGeneralCaption>Genel</TabGeneralCaption>
+	<!--Startup-->
+	<GroupBoxStartup>Başlama Ayarları</GroupBoxStartup>
+	<CheckBoxWindowsStartup>ASuite Windows Açıldığında çalıştır</CheckBoxWindowsStartup>
+	<CheckBoxMenuStartUp>Show trayicon menu on startup</CheckBoxMenuStartUp>
+	<CheckBoxStartUp>İlk Açılışta Ana Pencereyi Göster</CheckBoxStartUp>
+	<CheckBoxAutorun>Otomatik Çalıştırı Etkin Kıl</CheckBoxAutorun>
+	<!--Window-->
+	<GroupBoxWindow>Pencere Ayarları</GroupBoxWindow>
+	<CheckBoxHoldSize>Pencere Boyutunu Değiştirmeye İzin verme</CheckBoxHoldSize>
+	<CheckBoxFormCard>Uygulamanın Özellikleri Penceresini Göster</CheckBoxFormCard>
+	<CheckBoxWindowOnTop>Her Üste Tut</CheckBoxWindowOnTop>
+	<CheckBoxWindowHotkey>Klavye Kısayolları Kullanıldığında Ana Ekranı Göster</CheckBoxWindowHotkey>
+	<CheckBoxMenuHotkey>Show trayicon menu when hotkey is pressed</CheckBoxMenuHotkey>
+	<CheckBoxCustomTitle>Custom window title</CheckBoxCustomTitle>
+	<LabelLanguage>Dil</LabelLanguage>
+	<!--Treeview-->
+	<GroupBoxTreeView>Liste Ekranı</GroupBoxTreeView>
+	<ButtonFontSettings>Yazıtipi Ayarları...</ButtonFontSettings>
+	<CheckBoxAutoOpClCat>Automatic Opening/Closing Categories</CheckBoxAutoOpClCat>
+	<CheckBoxBackground>Aktif Artalan</CheckBoxBackground>
+	<ButtonBrowseBackground>Gözat</ButtonBrowseBackground>
+	<!--Tabs-->
+	<GroupBoxTabs>Sekmeler</GroupBoxTabs> 
+	<CheckBoxHideSearch>Ara sekmesini sakla</CheckBoxHideSearch>
+	<CheckBoxHideStats>Durum sekmesini sakla</CheckBoxHideStats>
+	<!--Advanced-->
+	<TabAdvancedCaption>Gelişmiş</TabAdvancedCaption>
+	<!--MRU-->
+	<GroupBoxMRU>Son İşlemler</GroupBoxMRU>
+	<CheckBoxMRU>MRU Aktive Et</CheckBoxMRU>
+	<CheckBoxSubMenuMRU>MRU'yu trayicon altmenüsünde göster</CheckBoxSubMenuMRU>
+	<LabelMRUMax>En Çok MRU Adeti</LabelMRUMax>
+	<ButtonClearMRU>Tüm MRU Sil</ButtonClearMRU>
+	<!--Backup-->
+	<GroupBoxBackup>Yedek Al</GroupBoxBackup>
+	<CheckBoxBackup>Yedekalmayı Aktive Et</CheckBoxBackup>
+	<LabelBackupMax>En Fazla Yedekleme Adeti</LabelBackupMax>
+	<ButtonClearBackup>Tüm alınan Yedekleri Sil</ButtonClearBackup>
+	<!--Check list-->
+	<GroupBoxCheckList>Kontrol Listesi</GroupBoxCheckList>
+	<CheckBoxCheckList>Kontrol listesi etkin</CheckBoxCheckList>
+	<LabelCheckListTime>Zaman Gecikmesi</LabelCheckListTime>
+	<!--Other functions-->
+	<GroupBoxOtherFunctions>Diğer Fonksiyonlar</GroupBoxOtherFunctions>
+	<CheckBoxHotKey>Klavye Tuşları Etkin</CheckBoxHotKey>
+	<CheckBoxCache>Önbellek Etkin</CheckBoxCache>
+	<CheckBoxSaveSecurity>Güvenli Kayıt Etkin</CheckBoxSaveSecurity>
+	<CheckBoxScheduler>Zamanlayıcı Etkinkıl</CheckBoxScheduler>
+	<!--Clear elements-->
+	<GroupBoxClearElements>Clear elements</GroupBoxClearElements>
+	<LabelClearElements>Clear all MRU, backups and/or cache icons</LabelClearElements>
+	<ButtonClearElements>Clear elements...</ButtonClearElements>
+	<!--Various-->
+	<TabVariousCaption>Çeşitli</TabVariousCaption>
+	<!--Execution-->
+	<GroupBoxExecution>Çalıştırma(Yürütme)</GroupBoxExecution>
+	<CheckBoxSingleClick>Bir Kez Tıklanıldığında Çalıştır</CheckBoxSingleClick>
+	<LabelActionOnExe>Çalıştırılacak Dosya</LabelActionOnExe>
+	<ListActionOnExe1>Sadece Dosyayı Çalıştır</ListActionOnExe1>
+	<ListActionOnExe2>Çalıştır ve ASuite sakla</ListActionOnExe2>
+	<ListActionOnExe3>Çalıştır ve ASuite kapat</ListActionOnExe3>
+	<!--System Tray-->
+	<GroupBoxTrayicon>Sistem Tepsisi (Saat yanı)</GroupBoxTrayicon>
+	<ButtonCustomTrayicon>Simge Seç</ButtonCustomTrayicon>
+	<CheckBoxTrayicon>Sistem Tepsisi İkonu Etkin</CheckBoxTrayicon>
+	<ListActionTrayicon1>İşlem Yok</ListActionTrayicon1>
+	<ListActionTrayicon2>Pencereyi Göster</ListActionTrayicon2>
+	<ListActionTrayicon3>Menüyü Göster</ListActionTrayicon3>
+	<CheckBoxClassicMenu>Use classic menu</CheckBoxClassicMenu>
+	<!--Trayicon Default Menu-->
+	<LabelMenuTheme>Theme</LabelMenuTheme>
+	<ButtonMenuButtons>Menu folders</ButtonMenuButtons>
+	<CheckBoxMenuFade>Enable fade menu</CheckBoxMenuFade>
+	<!--Mouse-->
+	<GroupBoxMouse>Mouse(Fare) Algılayıcı</GroupBoxMouse>
+	<LabelSide>Yan</LabelSide>
+	<LabelTop>Üst</LabelTop>
+	<LabelLeft>Sol</LabelLeft>
+	<LabelRight>Sağ</LabelRight>
+	<LabelBottom>Alt</LabelBottom>
+	<LabelLeftClick>Sol Tıklama</LabelLeftClick>
+	<LabelRightClick>Sağ Tıklama</LabelRightClick>
+	<ListActionMouse1>Etkisiz</ListActionMouse1>
+	<ListActionMouse2>Pencereyi Göster</ListActionMouse2>
+	<ListActionMouse3>Show default menu</ListActionMouse3>
+	<ListActionMouse4>Show classic menu</ListActionMouse4>
+	<ButtonOk>Peki</ButtonOk>
+	<ButtonCancel>Boşver</ButtonCancel>
+  </Form3>
+  <Form45><!--Property Sw/Cat-->
+	<Form45Caption>Özellikler</Form45Caption>
+	<TabGeneralCaption>Genel</TabGeneralCaption>
+	<TabAdvancedCaption>Gelişmiş</TabAdvancedCaption>
+	<TabInfoCaption>Bilgi</TabInfoCaption>
+	<LabelName>İsim</LabelName>
+	<LabelVersion>Versiyon</LabelVersion>
+	<LabelDeveloper>Geliştiren</LabelDeveloper>
+	<LabelWebSite>Web sayfası</LabelWebSite>
+	<LabelPathExeA>Uygulama/Dizin/Web Sayfası yolu</LabelPathExeA>
+	<LabelPathExeB>Uygulamalar/Dizinler/Web Sayfaları yolu</LabelPathExeB>
+	<LabelParameters>Parametreler (opsiyonel)</LabelParameters>
+	<LabelWorkingDir>Özel Çalıştığı Dizin(opsiyonel)</LabelWorkingDir>
+	<LabelPathIcon>Özel Çalıştığı İkon Yolu (opsiyonel)</LabelPathIcon>
+	<HideWindow>Gizli Pencerede çalıştır</HideWindow>
+	<LabelDescription>Tanımlama</LabelDescription>
+	<LabelOpinion>Sınıf(Grub, Kategori)</LabelOpinion>
+	<LabelNote>Not</LabelNote>
+	<LabelInformation1>ASuitede ki Tüm Sayfalar Uygulama hakkında bazı bilgileri içermektedir. Tüm Alanlar isteğe bağlı harici Uygulama ismi alabilirler.</LabelInformation1>
+	<LabelInformation3>Note: Eğer Uygulama ASuite ile aynı dizinde ise $ASuite Kullanabilirsiniz.</LabelInformation3>
+	<ButtonBrowse>Gözat</ButtonBrowse>
+	<ButtonRetrieve>Bilgileri Al</ButtonRetrieve>
+	<LabelAutoExecute>Otomatik Çalıştır</LabelAutoExecute>
+	<ButtonChangeOrder>Change order</ButtonChangeOrder>
+	<ComboBoxAutoExecute0>Asla</ComboBoxAutoExecute0>
+	<ComboBoxAutoExecute1>İlk Açılışta</ComboBoxAutoExecute1>
+	<ComboBoxAutoExecute2A>Eğer Önceki örnekleri çalışmıyorsa</ComboBoxAutoExecute2A>
+	<ComboBoxAutoExecute2B>Eğer Önceki örnekleri çalışmıyorsa</ComboBoxAutoExecute2B>
+	<ComboBoxAutoExecute3>Kapanışta</ComboBoxAutoExecute3>
+	<LabelOnExecution>Çalıştırıldığında</LabelOnExecution>
+	<ComboBoxActionOnExe0>Varsayılan (opsiyon)</ComboBoxActionOnExe0>
+	<ComboBoxActionOnExe1A>Sadece Dosyayı Çalıştır</ComboBoxActionOnExe1A>
+	<ComboBoxActionOnExe1B>Sadece Dosyaları Çalıştır</ComboBoxActionOnExe1B>
+	<ComboBoxActionOnExe2>Çalıştır ve ASuite Çalıştır</ComboBoxActionOnExe2>
+	<ComboBoxActionOnExe3>Çalıştır ve ASuiteyi Kapat</ComboBoxActionOnExe3>
+	<CheckBoxHotKey>Klavye Tuşları Aktiv</CheckBoxHotKey>
+	<LabelWindowState>Pencere Durumu</LabelWindowState>
+	<ComboBoxWSNormal>Normal</ComboBoxWSNormal>
+	<ComboBoxWSMinimized>Simge Durumunda</ComboBoxWSMinimized>
+	<ComboBoxWSMaximized>Tam Ekran</ComboBoxWSMaximized>
+	<LabelDontInsertMRUA>Bu Yazılımı MRU listesinde gösterme</LabelDontInsertMRUA>
+	<LabelDontInsertMRUB>Bu Yazılımı MRU Grup listesinde Gösterme</LabelDontInsertMRUB>
+	<LabelShortcutDesktop>ASuite çalıştığında Masaüstüne kısayol yarat</LabelShortcutDesktop>
+	<LabelHideSoftwareMenuA>Bu yazılımı menüden sakla</LabelHideSoftwareMenuA>
+	<LabelHideSoftwareMenuB>Bu yazılım grubunu menüden sakla</LabelHideSoftwareMenuB>
+	<LabelScheduler>Zamanlanmış Görev</LabelScheduler>
+	<ComboBoxSchedulerMode0>Etkin değil</ComboBoxSchedulerMode0>
+	<ComboBoxSchedulerMode1>Bir Sefer</ComboBoxSchedulerMode1>
+	<ComboBoxSchedulerMode2>Saatbaşı</ComboBoxSchedulerMode2>
+	<ComboBoxSchedulerMode3>Günlük</ComboBoxSchedulerMode3>
+	<ButtonAddPath>Ekle</ButtonAddPath>
+	<ButtonReplacePath>Değiştir</ButtonReplacePath>
+	<ButtonDeletePath>Sil</ButtonDeletePath>
+	<ButtonOk>Peki...</ButtonOk>
+	<ButtonCancel>Vazgeç</ButtonCancel>
+  </Form45>
+  <Form6><!--Import List-->
+	<Form6Caption>Liste Al</Form6Caption>
+	<LabelPathList>Yolları Listele(path)</LabelPathList>
+	<LabelList>Seçili Uygulamayı Aktar</LabelList>
+	<ButtonSelectAll>Tümünü Seç</ButtonSelectAll>
+	<ButtonDeSelectAll>Tümünü Bırak</ButtonDeSelectAll>
+	<ButtonBrowse>Gözat</ButtonBrowse>
+	<ButtonOk>Peki...</ButtonOk>
+	<ButtonCancel>Vazgeç</ButtonCancel>
+  </Form6>
+  <Form7>
+	<Form7Caption>Dizin Tara</Form7Caption>
+	<LabelFolderPath>Dizin Yolu</LabelFolderPath>
+	<ButtonBrowse>Gözat</ButtonBrowse>
+	<CheckboxSubFolders>Altdizin Tara</CheckboxSubFolders>
+	<LabelTypes>Dosya Tipi</LabelTypes>
+	<LabelExclude>Dosyayı hariç tut</LabelExclude>
+	<ButtonAdd>Ekle</ButtonAdd>
+	<ButtonReplace>Değiştirmek</ButtonReplace>
+	<ButtonDelete>Sil</ButtonDelete>
+	<CheckboxRetrieveInfo>Exeden bilgiyi tekrar al</CheckboxRetrieveInfo>
+	<ButtonScan>Tara</ButtonScan>
+	<ButtonCancel>Vazgeç</ButtonCancel>
+  </Form7>
+  <Form8>
+	<GroupboxCurrentTask>Geçerli Görev</GroupboxCurrentTask>
+	<MessageDownload>İndiriliyor %s</MessageDownload>
+	<GroupboxDownloadInfo>İndirme Bilgisi</GroupboxDownloadInfo>
+	<LabelFileName>Dosya Adı</LabelFileName>
+	<LabelSpeed>Hız</LabelSpeed>
+	<LabelTotalSize>Toplam Boyut</LabelTotalSize>
+	<LabelBytesReceived>İndirilen Boyut</LabelBytesReceived>
+	<ButtonCancel>Vzgeç</ButtonCancel>
+  </Form8>
+  <Form9>
+	<Form9Caption>Clear elements</Form9Caption>
+	<LabelClearElements>Clear the following elements now:</LabelClearElements>
+	<CheckBoxMRU>MRU</CheckBoxMRU>
+	<CheckBoxBackup>Backups</CheckBoxBackup>
+	<CheckBoxCache>Cache icons</CheckBoxCache>
+	<ButtonClear>Clear</ButtonClear>
+	<ButtonCancel>Cancel</ButtonCancel>
+  </Form9>
+  <Form10>
+	<Form10Caption>Software order</Form10Caption>
+	<LabelInfoStartupOrder>Order list of software in ASuite startup</LabelInfoStartupOrder>
+	<LabelInfoShutdownOrder>Order list of software in ASuite shutdown</LabelInfoShutdownOrder>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>Cancel</ButtonCancel>
+  </Form10>
+  <Form11>
+	<Form11Caption>Run as</Form11Caption>
+	<LabelUsername>Username</LabelUsername>
+	<LabelPassword>Password</LabelPassword>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>Cancel</ButtonCancel>
+  </Form11>
+  <Form12>	
+	<Form12Caption>Change menu buttons</Form12Caption>
+	<LabelName>Name</LabelName>
+	<LabelPathExe>Executable/folder/web page path</LabelPathExe>
+	<LabelPathIcon>Custom icon path (optional)</LabelPathIcon>
+	<CheckBoxActiveButton>Active this button</CheckBoxActiveButton>
+	<ButtonBrowse>Browse</ButtonBrowse>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>Cancel</ButtonCancel>
+  </Form12>
+  <Form13>
+	<Form13Caption>Stats</Form13Caption>
+	<!--System-->
+	<GroupBoxSystem>Sistem</GroupBoxSystem>
+	<LabelOperatingSystem>Operating system</LabelOperatingSystem>
+	<LabelPcName>Bilgisayar Adı</LabelPcName>
+	<LabelCurrentUser>Kullanıcı</LabelCurrentUser>
+	<!--Drive-->
+	<GroupBoxDrive>%s Sürücüsü</GroupBoxDrive>
+	<LabelSize>Boyut</LabelSize>
+	<LabelFreeSpace>Boş Alan</LabelFreeSpace>
+	<LabelUsedSpace>Kullanılan</LabelUsedSpace>
+	<!--Launcher-->
+	<GroupBoxASuite>ASuite</GroupBoxASuite>
+	<LabelSwInserted>Eklenmiş Yazılım</LabelSwInserted>
+	<LabelSwGroupInserted>Software group added</LabelSwGroupInserted>
+	<LabelCatInserted>Eklenmiş Kategori</LabelCatInserted>
+	<LabelTotal>Toplam</LabelTotal>
+  </Form13>
+  <String>
+	<string01>Dosya Bulunamadı</string01>
+	<string02>Kategori isminde Hata var: %s</string02>
+	<string03>Uygulama İsminde Hata var: %s</string03>
+	<string04>Adsız</string04>
+	<string05>Tanımsız</string05>
+	<string06>Grupsuz</string06>
+	<string07>Notsuz</string07>
+	<string08>Eminsin, Değil Ama...?</string08>
+	<string09>%s Çalıştırılamıyor</string09>
+	<string10>XmL dosyasının alımı tamamlanamadan Hata verdi(Su koyu verdi)</string10>
+	<string11>%s error raised, with message: %s</string11>
+	<string12>Uygulama İsim alanı boş</string12>
+	<string13>Geçersiz Uygulama çalıştırma yolu</string13>
+	<string14>Yazılım grubunda En Fazla 10 tane program</string14>
+	<string15>Simge kullanılamıyor : %s</string15>
+	<string16>Simge Bulunamadı : %s</string16>
+	<string17>Kayıt Tamamlandı</string17>
+	<string18>Kayıt Tamamlanamadı. Bilinmeyen Hata</string18>
+	<string19>İçe Aktarım Yapılıyor...</string19>
+	<string20>İçe Aktarım yapılamadı Hata var</string20>
+	<string21>ASuite Doğru kapatılamadı. Son Kayıt edilmiş bilgiler kullanılsınmı?</string21>
+	<string22>Bu kısayol kayıt edilemedi</string22>
+	<string23>Tarama yapılıyor...</string23>
+	<string24>ASuite için yeni bir versiyon bulundu.Bunu indirip yüklemek istermisiniz?</string24>
+	<string25>Güncelleme yok</string25>
+  </String>
+</ASuite>

@@ -1,0 +1,333 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ASuite>
+  <Info>
+	<PathReadme>docs\readme.rtf</PathReadme>
+  </Info>
+  <Form1><!--List-->
+	<!--Software's Menu-->
+	<TabListCaption>一覧</TabListCaption>
+	<TabSearchCaption>検索</TabSearchCaption>
+	<ButtonSearch>検索</ButtonSearch>
+	<ColumnName>名前</ColumnName>
+	<ColumnCategory>カテゴリ</ColumnCategory>
+	<!--ASuite's Menu-->
+	<!--File Menu-->
+	<MenuFile>ファイル</MenuFile>
+	<MenuOption>オプション</MenuOption>
+	<MenuSave>一覧の保存</MenuSave>
+	<MenuImportList>一覧のインポート...</MenuImportList>
+	<MenuExportList>一覧のエクスポート...</MenuExportList>
+	<MenuScanExecutables>ファイルのスキャン...</MenuScanExecutables>
+	<MenuExit>終了</MenuExit>
+	<!--Edit List Menu/PopUp Menu-->
+	<MenuSortList>一覧の整列</MenuSortList>
+	<MenuEdit>編集</MenuEdit>
+	<MenuSortCategoryItems>カテゴリのアイテムの整列</MenuSortCategoryItems>
+	<MenuRun>起動</MenuRun>
+	<MenuRunAs>ユーザー名を指定して実行...</MenuRunAs>
+	<MenuOpenFolder>アプリケーションのフォルダの表示</MenuOpenFolder>
+	<MenuVisitWebSite>ウェブサイトの訪問</MenuVisitWebSite>
+	<MenuAddCat>カテゴリの追加</MenuAddCat>
+	<MenuAddSw>ソフトウェアの追加</MenuAddSw>
+	<MenuAddGroupSw>ソフトウェア グループの追加</MenuAddGroupSw>
+	<MenuAddFolder>フォルダの追加</MenuAddFolder>
+	<MenuAddSeparator>区切りの追加</MenuAddSeparator>
+	<MenuCut>Cut</MenuCut>
+	<MenuCopy>Copy</MenuCopy>
+	<MenuPaste>Paste</MenuPaste>
+	<MenuDelete>削除</MenuDelete>
+	<MenuProperty>プロパティ</MenuProperty>
+	<!--Help Menu-->
+	<MenuCheckUpdates>更新のチェック</MenuCheckUpdates>
+	<MenuHelp>ヘルプ</MenuHelp>
+	<MenuStats>統計</MenuStats>
+	<MenuASuiteInfo>ASuite のバージョン情報</MenuASuiteInfo>
+	<!--Trayicon Menu-->
+	<TrayiconShowASuite>ASuite の表示</TrayiconShowASuite>
+	<TrayiconMRU>最近</TrayiconMRU>
+	<TrayiconEject>Safely remove hardware</TrayiconEject>
+	<TrayiconExit>終了</TrayiconExit>
+	<!--Trayicon Default Menu-->
+	<DefaultMenuButtonOptions>オプション...</DefaultMenuButtonOptions>
+	<DefaultMenuButtonSearch>検索...</DefaultMenuButtonSearch>
+	<DefaultMenuButtonAbout>バージョン情報</DefaultMenuButtonAbout>
+  </Form1>
+  <Form2><!--Card-->
+	<!--ASuite's Page-->
+	<FormCaptionAbout>バージョン情報</FormCaptionAbout>
+	<LabelASVersion>Version </LabelASVersion>
+	<LabelIntro>ASuite はすばやいいアクセスに無制限の数のファイル、フォルダおよびウェブページを管理するアプリケーション ランチャです。USB ドライブ、ハード ドライブ、iPod、などのようなリムーバブル ストレージ メディアでの動作に設計されています。[br][br]ASuite は相対パスを使用するので、ポータブル アプリケーションでの使用に完璧に適しています。</LabelIntro>
+	<LabelInfo>さらなる情報は訪問してください:</LabelInfo>
+	<!--Software's Page-->
+	<FormCaptionCard>情報</FormCaptionCard>
+	<GroupBoxSoftware>ソフトウェア</GroupBoxSoftware>
+	<LabelNameSw>名前</LabelNameSw>
+	<LabelDeveloper>開発者</LabelDeveloper>
+	<LabelVersion>バージョン</LabelVersion>
+	<LabelWebSite>ホーム ページ</LabelWebSite>
+	<LabelDescription>説明</LabelDescription>
+	<LabelNote>備考</LabelNote>
+	<LabelOpinion>評価</LabelOpinion> 
+  </Form2>
+  <Form3><!--Option-->
+	<Form3Caption>オプション</Form3Caption>
+	<!--General-->
+	<TabGeneralCaption>全般</TabGeneralCaption>
+	<!--Startup-->
+	<GroupBoxStartup>起動</GroupBoxStartup>
+	<CheckBoxWindowsStartup>システム起動時に ASuite を起動する</CheckBoxWindowsStartup>
+	<CheckBoxStartUp>起動時にウィンドウを表示する</CheckBoxStartUp>
+	<CheckBoxAutorun>自動起動を有効にする</CheckBoxAutorun>
+	<!--Window-->
+	<GroupBoxWindow>ウィンドウ</GroupBoxWindow>
+	<CheckBoxHoldSize>ウィンドウ サイズを固定する</CheckBoxHoldSize>
+	<CheckBoxFormCard>アプリケーション情報を表示する</CheckBoxFormCard>
+	<CheckBoxWindowOnTop>ウィンドウを手前に表示する</CheckBoxWindowOnTop>
+	<CheckBoxWindowHotkey>ホットキーが押されたときにウィンドウを表示する</CheckBoxWindowHotkey>
+	<CheckBoxCustomTitle>カスタム ウィンドウ タイトル</CheckBoxCustomTitle>
+	<LabelLanguage>言語</LabelLanguage>
+	<!--Treeview-->
+	<GroupBoxTreeView>ツリービュー</GroupBoxTreeView>
+	<ButtonFontSettings>フォントの設定...</ButtonFontSettings>
+	<CheckBoxAutoOpClCat>Automatic Opening/Closing Categories</CheckBoxAutoOpClCat>
+	<CheckBoxBackground>背景をアクティブにする</CheckBoxBackground>
+	<ButtonBrowseBackground>参照</ButtonBrowseBackground>
+	<!--Tabs-->
+	<GroupBoxTabs>タブ</GroupBoxTabs> 
+	<CheckBoxHideSearch>タブ検索を非表示にする</CheckBoxHideSearch>
+	<CheckBoxHideStats>タブ統計を非表示にする</CheckBoxHideStats>
+	<!--Advanced-->
+	<TabAdvancedCaption>詳細設定</TabAdvancedCaption>
+	<!--MRU-->
+	<GroupBoxMRU>最近</GroupBoxMRU>
+	<CheckBoxMRU>MRU をアクティブにする</CheckBoxMRU>
+	<CheckBoxSubMenuMRU>トレイアイコン サブメニュー上の MRU</CheckBoxSubMenuMRU>
+	<LabelMRUMax>MRU の最大数</LabelMRUMax>
+	<ButtonClearMRU>すべての MRU の削除</ButtonClearMRU>
+	<!--Backup-->
+	<GroupBoxBackup>バックアップ</GroupBoxBackup>
+	<CheckBoxBackup>バックアップをアクティブにする</CheckBoxBackup>
+	<LabelBackupMax>バックアップの最大数</LabelBackupMax>
+	<ButtonClearBackup>すべてのバックアップのクリア</ButtonClearBackup>
+	<!--Check list-->
+	<GroupBoxCheckList>チェック リスト</GroupBoxCheckList>
+	<CheckBoxCheckList>チェック リストを有効にする</CheckBoxCheckList>
+	<LabelCheckListTime>時間間隔</LabelCheckListTime>
+	<!--Other functions-->
+	<GroupBoxOtherFunctions>その他の機能</GroupBoxOtherFunctions>
+	<CheckBoxHotKey>ホットキーを有効にする</CheckBoxHotKey>
+	<CheckBoxCache>キャッシュを有効にする</CheckBoxCache>
+	<CheckBoxSaveSecurity>保存セキュリティを有効にする</CheckBoxSaveSecurity>
+	<CheckBoxScheduler>スケジューラを有効にする</CheckBoxScheduler>
+	<!--Clear elements-->
+	<GroupBoxClearElements>Clear elements</GroupBoxClearElements>
+	<LabelClearElements>MRU、バックアップおよびキャッシュ アイコンのクリア</LabelClearElements>
+	<ButtonClearElements>要素のクリア...</ButtonClearElements>
+	<!--Various-->
+	<TabVariousCaption>さまざま</TabVariousCaption>
+	<!--Execution-->
+	<GroupBoxExecution>実行</GroupBoxExecution>
+	<CheckBoxSingleClick>シングル クリックで実行する</CheckBoxSingleClick>
+	<LabelActionOnExe>実行時</LabelActionOnExe>
+	<ListActionOnExe1>ファイルを起動するのみ</ListActionOnExe1>
+	<ListActionOnExe2>起動して ASuite を非表示にする</ListActionOnExe2>
+	<ListActionOnExe3>起動して ASuite を閉じる</ListActionOnExe3>
+	<!--System Tray-->
+	<GroupBoxTrayicon>システム トレイ</GroupBoxTrayicon>
+	<ButtonCustomTrayicon>アイコンの選択</ButtonCustomTrayicon>
+	<CheckBoxTrayicon>システム トレイ アイコンを有効にする</CheckBoxTrayicon>
+	<LabelLeftClick>左クリック</LabelLeftClick>
+	<ListActionTrayicon1>動作なし</ListActionTrayicon1>
+	<ListActionTrayicon2>ウィンドウの表示</ListActionTrayicon2>
+	<ListActionTrayicon3>メニューの表示</ListActionTrayicon3>
+	<CheckBoxClassicMenu>クラシック メニューを使用する</CheckBoxClassicMenu>
+	<!--Trayicon Default Menu-->
+	<LabelMenuTheme>テーマ</LabelMenuTheme>
+	<ButtonMenuButtons>メニュー フォルダ</ButtonMenuButtons>
+	<CheckBoxMenuFade>フェード メニューを使用する</CheckBoxMenuFade>
+	<!--Mouse-->
+	<GroupBoxMouse>マウス センサー</GroupBoxMouse>
+	<LabelSide>辺</LabelSide>
+	<LabelTop>上</LabelTop>
+	<LabelLeft>左</LabelLeft>
+	<LabelRight>右</LabelRight>
+	<LabelBottom>下</LabelBottom>
+	<LabelLeftClick>左クリック</LabelLeftClick>
+	<LabelRightClick>右クリック</LabelRightClick>
+	<ListActionMouse1>無効</ListActionMouse1>
+	<ListActionMouse2>ウィンドウの表示</ListActionMouse2>
+	<ListActionMouse3>Show default menu</ListActionMouse3>
+	<ListActionMouse4>Show classic menu</ListActionMouse4>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>キャンセル</ButtonCancel>
+  </Form3>
+  <Form45><!--Property Sw/Cat-->
+	<Form45Caption>プロパティ</Form45Caption>
+	<TabGeneralCaption>全般</TabGeneralCaption>
+	<TabAdvancedCaption>詳細設定</TabAdvancedCaption>
+	<TabInfoCaption>情報</TabInfoCaption>
+	<LabelName>名前</LabelName>
+	<LabelVersion>バージョン</LabelVersion>
+	<LabelDeveloper>開発者</LabelDeveloper>
+	<LabelWebSite>ホーム ページ</LabelWebSite>
+	<LabelPathExeA>実行ファイル/フォルダ/ウェブ ページのパス</LabelPathExeA>
+	<LabelPathExeB>実行ファイル/フォルダ/ウェブ ページのパス</LabelPathExeB>
+	<LabelParameters>パラメータ (オプション)</LabelParameters>
+	<LabelWorkingDir>カスタム作業ディレクトリ (オプション)</LabelWorkingDir>
+	<LabelPathIcon>カスタム アイコンのパス (オプション)</LabelPathIcon>
+	<HideWindow>実行時にウィンドウを非表示にする</HideWindow>
+	<LabelDescription>説明</LabelDescription>
+	<LabelOpinion>評価</LabelOpinion>
+	<LabelNote>備考</LabelNote>
+	<LabelInformation1>それぞれの ASuite のページは各アプリケーションについてのいくつかの情報を必要とします。すべての欄はアプリケーションの名前を除いてオプションです。</LabelInformation1>
+	<LabelInformation3>注意: アプリケーションが ASuite と同じフォルダにあるときでも $ASuite を使用できます。</LabelInformation3>
+	<ButtonBrowse>参照</ButtonBrowse>
+	<ButtonRetrieve>回収</ButtonRetrieve>
+	<LabelAutoExecute>自動実行</LabelAutoExecute>
+	<ButtonChangeOrder>順序の変更</ButtonChangeOrder>
+	<ComboBoxAutoExecute0>しない</ComboBoxAutoExecute0>
+	<ComboBoxAutoExecute1>起動時に常に</ComboBoxAutoExecute1>
+	<ComboBoxAutoExecute2A>以前の起動がない場合のみ</ComboBoxAutoExecute2A>
+	<ComboBoxAutoExecute2B>以前の起動がない場合のみ</ComboBoxAutoExecute2B>
+	<ComboBoxAutoExecute3>シャットダウン時に常に</ComboBoxAutoExecute3>
+	<LabelOnExecution>実行時</LabelOnExecution>
+	<ComboBoxActionOnExe0>既定 (オプション)</ComboBoxActionOnExe0>
+	<ComboBoxActionOnExe1A>ファイルを起動するのみ</ComboBoxActionOnExe1A>
+	<ComboBoxActionOnExe1B>ファイルを起動するのみ</ComboBoxActionOnExe1B>
+	<ComboBoxActionOnExe2>起動して ASuite を非表示にする</ComboBoxActionOnExe2>
+	<ComboBoxActionOnExe3>起動して ASuite を閉じる</ComboBoxActionOnExe3>
+	<CheckBoxHotKey>ホットキーを有効にする</CheckBoxHotKey>
+	<LabelWindowState>ウィンドウの状態</LabelWindowState>
+	<ComboBoxWSNormal>通常</ComboBoxWSNormal>
+	<ComboBoxWSMinimized>最小化</ComboBoxWSMinimized>
+	<ComboBoxWSMaximized>最大化</ComboBoxWSMaximized>
+	<LabelDontInsertMRUA>MRU にこのソフトウェアを挿入しない</LabelDontInsertMRUA>
+	<LabelDontInsertMRUB>MRU にこのソフトウェア グループを挿入しない</LabelDontInsertMRUB>
+	<LabelShortcutDesktop>ASuite が起動しているときにデスクトップにショートカットを作成する</LabelShortcutDesktop>
+	<LabelHideSoftwareMenuA>メニューからこのソフトウェアを非表示にする</LabelHideSoftwareMenuA>
+	<LabelHideSoftwareMenuB>メニューからこのソフトウェア グループを非表示にする</LabelHideSoftwareMenuB>
+	<LabelScheduler>スケジューラ</LabelScheduler>
+	<ComboBoxSchedulerMode0>無効</ComboBoxSchedulerMode0>
+	<ComboBoxSchedulerMode1>1 回</ComboBoxSchedulerMode1>
+	<ComboBoxSchedulerMode2>時間ごと</ComboBoxSchedulerMode2>
+	<ComboBoxSchedulerMode3>毎日</ComboBoxSchedulerMode3>
+	<ButtonAddPath>追加</ButtonAddPath>
+	<ButtonReplacePath>置換</ButtonReplacePath>
+	<ButtonDeletePath>削除</ButtonDeletePath>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>キャンセル</ButtonCancel>
+  </Form45>
+  <Form6><!--Import List-->
+	<Form6Caption>一覧のインポート</Form6Caption>
+	<LabelPathList>一覧のパス</LabelPathList>
+	<LabelList>インポートするアプリケーションの選択</LabelList>
+	<ButtonSelectAll>すべて選択</ButtonSelectAll>
+	<ButtonDeSelectAll>すべて選択解除</ButtonDeSelectAll>
+	<ButtonBrowse>参照</ButtonBrowse>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>キャンセル</ButtonCancel>
+  </Form6>
+  <Form7>
+	<Form7Caption>フォルダのスキャン</Form7Caption>
+	<LabelFolderPath>フォルダのパス</LabelFolderPath>
+	<ButtonBrowse>参照</ButtonBrowse>
+	<CheckboxSubFolders>サブフォルダをスキャンする</CheckboxSubFolders>
+	<LabelTypes>ファイルの種類</LabelTypes>
+	<LabelExclude>除外ファイル</LabelExclude>
+	<ButtonAdd>追加</ButtonAdd>
+	<ButtonReplace>置換</ButtonReplace>
+	<ButtonDelete>削除</ButtonDelete>
+	<CheckboxRetrieveInfo>実行ファイルから情報を回収する</CheckboxRetrieveInfo>
+	<ButtonScan>スキャン</ButtonScan>
+	<ButtonCancel>キャンセル</ButtonCancel>
+  </Form7>
+  <Form8>
+	<GroupboxCurrentTask>現在のタスク</GroupboxCurrentTask>
+	<MessageDownload>%s をダウンロードしています</MessageDownload>
+	<GroupboxDownloadInfo>ダウンロード情報</GroupboxDownloadInfo>
+	<LabelFileName>ファイル名</LabelFileName>
+	<LabelSpeed>速度</LabelSpeed>
+	<LabelTotalSize>全体のサイズ</LabelTotalSize>
+	<LabelBytesReceived>受信済みバイト</LabelBytesReceived>
+	<ButtonCancel>キャンセル</ButtonCancel>
+  </Form8>
+  <Form9>
+	<Form9Caption>要素の削除</Form9Caption>
+	<LabelClearElements>今すぐ以下の要素を削除します:</LabelClearElements>
+	<CheckBoxMRU>MRU</CheckBoxMRU>
+	<CheckBoxBackup>バックアップ</CheckBoxBackup>
+	<CheckBoxCache>キャッシュ アイコン</CheckBoxCache>
+	<ButtonClear>クリア</ButtonClear>
+	<ButtonCancel>キャンセル</ButtonCancel>
+  </Form9>
+  <Form10>
+	<Form10Caption>ソフトウェアの順序</Form10Caption>
+	<LabelInfoStartupOrder>ASuite の起動時のソフトウェアの順序の一覧</LabelInfoStartupOrder>
+	<LabelInfoShutdownOrder>ASuite のシャットダウン時のソフトウェアの順序の一覧</LabelInfoShutdownOrder>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>キャンセル</ButtonCancel>
+  </Form10>
+  <Form11>
+	<Form11Caption>ユーザー名を指定して実行</Form11Caption>
+	<LabelUsername>ユーザー名</LabelUsername>
+	<LabelPassword>パスワード</LabelPassword>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>キャンセル</ButtonCancel>
+  </Form11>
+  <Form12>	
+	<Form12Caption>Change menu buttons</Form12Caption>
+	<LabelName>Name</LabelName>
+	<LabelPathExe>Executable/folder/web page path</LabelPathExe>
+	<LabelPathIcon>Custom icon path (optional)</LabelPathIcon>
+	<CheckBoxActiveButton>Active this button</CheckBoxActiveButton>
+	<ButtonBrowse>Browse</ButtonBrowse>
+	<ButtonOk>Ok</ButtonOk>
+	<ButtonCancel>Cancel</ButtonCancel>
+  </Form12>
+  <Form13>
+	<Form13Caption>Stats</Form13Caption>
+	<!--System-->
+	<GroupBoxSystem>システム</GroupBoxSystem>
+	<LabelOperatingSystem>Operating system</LabelOperatingSystem>
+	<LabelPcName>コンピュータ名</LabelPcName>
+	<LabelCurrentUser>現在のユーザー</LabelCurrentUser>
+	<!--Drive-->
+	<GroupBoxDrive>ドライブ %s:</GroupBoxDrive>
+	<LabelSize>サイズ</LabelSize>
+	<LabelFreeSpace>空き領域</LabelFreeSpace>
+	<LabelUsedSpace>使用済み領域</LabelUsedSpace>
+	<!--Launcher-->
+	<GroupBoxASuite>ASuite</GroupBoxASuite>
+	<LabelSwInserted>追加済みソフトウェア</LabelSwInserted>
+	<LabelSwGroupInserted>Software group added</LabelSwGroupInserted>
+	<LabelCatInserted>追加済みカテゴリ</LabelCatInserted>
+	<LabelTotal>全体</LabelTotal>
+  </Form13>
+  <String>
+	<string01>ファイルが見つかりません</string01>
+	<string02>カテゴリの名前でのエラーです: %s</string02>
+	<string03>アプリケーションの名前でのエラーです: %s</string03>
+	<string04>名前なし</string04>
+	<string05>説明なし</string05>  
+	<string06>評価なし</string06>   
+	<string07>備考なし</string07>
+	<string08>よろしいですか?</string08>
+	<string09>%s を起動できません</string09>
+	<string10>Xml ファイルの読み込みがエラーのため完了しません</string10>
+	<string11>%s エラーが生じました、メッセージ: %s</string11>
+	<string12>アプリケーションの名前欄は空です</string12>
+	<string13>不正な実行ファイルへのパスです</string13>
+	<string14>ソフトウェア グループには最大で 10 個のプログラムです</string14>
+	<string15>アイコン %s を使用できません</string15>
+	<string16>%s を見つけることができませんでした</string16>
+	<string17>保存が完了しました</string17>
+	<string18>保存がエラーのため失敗しました</string18>
+	<string19>インポートしています...</string19>
+	<string20>インポートがエラーのため失敗しました</string20>
+	<string21>ASuite は正しくシャット ダウンされませんでした。最後のセッションを復元しますか?</string21>
+	<string22>このホットキーを登録できません</string22>
+	<string23>スキャンしています...</string23>
+	<string24>ASuite の新しいバージョンは利用可能です。ダウンロードおよびインストールしますか?</string24>
+	<string25>利用可能なバージョンがありません</string25>
+  </String>
+</ASuite>
