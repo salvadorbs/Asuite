@@ -13,7 +13,6 @@ uses
   Main in 'Main.pas' {frmMain},
   PropertyFile in 'PropertyFile.pas' {frmPropertyFile},
   PropertyCat in 'PropertyCat.pas' {frmPropertyCat},
-  VirtualTreeHDrop in '3p\VirtualTreeHDrop.pas',
   About in 'About.pas' {frmAbout},
   ClearElements in 'ClearElements.pas' {frmClearElements},
   Option in 'Option.pas' {frmOption},

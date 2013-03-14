@@ -58,6 +58,7 @@ msgid "Import finished. %d items imported"
 msgstr ""
 
 #: appconfig.msglist
+msgctxt "appconfig.msglist"
 msgid "List"
 msgstr ""
 
@@ -107,5 +108,230 @@ msgstr ""
 
 #: appconfig.msgtitle4
 msgid "Complete"
+msgstr ""
+
+#: tfrmmain.caption
+msgid "ASuite"
+msgstr ""
+
+#: tfrmmain.miaddcat1.caption
+msgctxt "tfrmmain.miaddcat1.caption"
+msgid "Add category"
+msgstr ""
+
+#: tfrmmain.miaddcat2.caption
+msgctxt "TFRMMAIN.MIADDCAT2.CAPTION"
+msgid "Add category"
+msgstr ""
+
+#: tfrmmain.miaddfolder1.caption
+msgctxt "tfrmmain.miaddfolder1.caption"
+msgid "Add folder"
+msgstr ""
+
+#: tfrmmain.miaddfolder2.caption
+msgctxt "TFRMMAIN.MIADDFOLDER2.CAPTION"
+msgid "Add folder"
+msgstr ""
+
+#: tfrmmain.miaddseparator1.caption
+msgctxt "tfrmmain.miaddseparator1.caption"
+msgid "Add separator"
+msgstr ""
+
+#: tfrmmain.miaddseparator2.caption
+msgctxt "TFRMMAIN.MIADDSEPARATOR2.CAPTION"
+msgid "Add separator"
+msgstr ""
+
+#: tfrmmain.miaddsw1.caption
+msgctxt "tfrmmain.miaddsw1.caption"
+msgid "Add software"
+msgstr ""
+
+#: tfrmmain.miaddsw2.caption
+msgctxt "TFRMMAIN.MIADDSW2.CAPTION"
+msgid "Add software"
+msgstr ""
+
+#: tfrmmain.micopy1.caption
+msgctxt "tfrmmain.micopy1.caption"
+msgid "Copy"
+msgstr ""
+
+#: tfrmmain.micopy2.caption
+msgctxt "TFRMMAIN.MICOPY2.CAPTION"
+msgid "Copy"
+msgstr ""
+
+#: tfrmmain.micut1.caption
+msgctxt "tfrmmain.micut1.caption"
+msgid "Cut"
+msgstr ""
+
+#: tfrmmain.micut2.caption
+msgctxt "TFRMMAIN.MICUT2.CAPTION"
+msgid "Cut"
+msgstr ""
+
+#: tfrmmain.midelete1.caption
+msgctxt "tfrmmain.midelete1.caption"
+msgid "Delete"
+msgstr ""
+
+#: tfrmmain.midelete2.caption
+msgctxt "TFRMMAIN.MIDELETE2.CAPTION"
+msgid "Delete"
+msgstr ""
+
+#: tfrmmain.miedit.caption
+msgid "Edit"
+msgstr ""
+
+#: tfrmmain.miexit1.caption
+msgid "Exit"
+msgstr ""
+
+#: tfrmmain.miexportlist.caption
+msgid "Export list..."
+msgstr ""
+
+#: tfrmmain.mifile.caption
+msgid "File"
+msgstr ""
+
+#: tfrmmain.mihelp.caption
+msgid "Help"
+msgstr ""
+
+#: tfrmmain.miimportlist.caption
+msgid "Import list..."
+msgstr ""
+
+#: tfrmmain.miinfoasuite.caption
+msgid "About ASuite"
+msgstr ""
+
+#: tfrmmain.min11.caption
+msgctxt "TFRMMAIN.MIN11.CAPTION"
+msgid "-"
+msgstr ""
+
+#: tfrmmain.miopenfoldersw.caption
+msgid "Show application's folder"
+msgstr ""
+
+#: tfrmmain.mioptions1.caption
+msgid "Options"
+msgstr ""
+
+#: tfrmmain.mipaste1.caption
+msgctxt "tfrmmain.mipaste1.caption"
+msgid "Paste"
+msgstr ""
+
+#: tfrmmain.mipaste2.caption
+msgctxt "TFRMMAIN.MIPASTE2.CAPTION"
+msgid "Paste"
+msgstr ""
+
+#: tfrmmain.miproperty1.caption
+msgctxt "tfrmmain.miproperty1.caption"
+msgid "Properties"
+msgstr ""
+
+#: tfrmmain.miproperty2.caption
+msgctxt "TFRMMAIN.MIPROPERTY2.CAPTION"
+msgid "Properties"
+msgstr ""
+
+#: tfrmmain.mirunselectedsw.caption
+msgid "Run"
+msgstr ""
+
+#: tfrmmain.misavelist1.caption
+msgid "Save list"
+msgstr ""
+
+#: tfrmmain.misearchexepath.caption
+msgid "Executable path"
+msgstr ""
+
+#: tfrmmain.misearchiconpath.caption
+msgid "Icon path"
+msgstr ""
+
+#: tfrmmain.misearchname.caption
+msgid "Name"
+msgstr ""
+
+#: tfrmmain.misearchparameters.caption
+msgid "Parameters"
+msgstr ""
+
+#: tfrmmain.misearchworkingdirpath.caption
+msgid "Working directory path"
+msgstr ""
+
+#: tfrmmain.misortitems.caption
+msgid "Sort category's items"
+msgstr ""
+
+#: tfrmmain.misortlist.caption
+msgid "Sort list"
+msgstr ""
+
+#: tfrmmain.n1.caption
+msgctxt "TFRMMAIN.N1.CAPTION"
+msgid "-"
+msgstr ""
+
+#: tfrmmain.n10.caption
+msgctxt "TFRMMAIN.N10.CAPTION"
+msgid "-"
+msgstr ""
+
+#: tfrmmain.n2.caption
+msgctxt "TFRMMAIN.N2.CAPTION"
+msgid "-"
+msgstr ""
+
+#: tfrmmain.n3.caption
+msgctxt "TFRMMAIN.N3.CAPTION"
+msgid "-"
+msgstr ""
+
+#: tfrmmain.n4.caption
+msgctxt "tfrmmain.n4.caption"
+msgid "-"
+msgstr ""
+
+#: tfrmmain.n5.caption
+msgctxt "TFRMMAIN.N5.CAPTION"
+msgid "-"
+msgstr ""
+
+#: tfrmmain.n6.caption
+msgctxt "TFRMMAIN.N6.CAPTION"
+msgid "-"
+msgstr ""
+
+#: tfrmmain.n8.caption
+msgctxt "TFRMMAIN.N8.CAPTION"
+msgid "-"
+msgstr ""
+
+#: tfrmmain.n9.caption
+msgctxt "TFRMMAIN.N9.CAPTION"
+msgid "-"
+msgstr ""
+
+#: tfrmmain.tblist.caption
+msgctxt "TFRMMAIN.TBLIST.CAPTION"
+msgid "List"
+msgstr ""
+
+#: tfrmmain.tbsearch.caption
+msgid "Search"
 msgstr ""
 

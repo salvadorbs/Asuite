@@ -48,7 +48,7 @@ procedure DeleteOldBackups(MaxNumber: Integer);
 { Desktop shortcut }
 procedure CreateShortcutOnDesktop(FileName: String;TargetFilePath, Params, WorkingDir: String);
 procedure DeleteShortcutOnDesktop(FileName: String);
-function  GetShortcutTarget(const LinkFileName:String;ShortcutType: TShortcutField):String;
+function  GetShortcutTarget(LinkFileName:String;ShortcutType: TShortcutField):String;
 
 { Relative & Absolute path }
 function AbsoluteToRelative(APath: String): string;
@@ -158,9 +158,9 @@ end;
 
 function IsUrl(Path: String): Boolean;
 begin
-  if (pos('http://',Path) = 1){ or (pos('https://',Path) = 1) or
+  if (pos('http://',Path) = 1) or (pos('https://',Path) = 1) or
      (pos('ftp://',Path) = 1) or (pos('www.',Path) = 1) or
-     (pos('%',Path) = 1)} then
+     (pos('%',Path) = 1) then
     Result := True
   else
     Result := False;
@@ -255,47 +255,66 @@ begin
     DeleteFileUTF8(LinkName);
 end;
 
-function GetShortcutTarget(const LinkFileName:String;ShortcutType: TShortcutField):String;
+function GetShortcutTarget(LinkFileName:String;ShortcutType: TShortcutField):String;
 var
-  psl  : IShellLink;
-  ppf  : IPersistFile;
+  ISLink    : IShellLink;
+  IPFile    : IPersistFile;
   WidePath  : PWideChar;
   Info      : Array[0..MAX_PATH] of Char;
   wfs       : TWin32FindData;
-begin
-  if UpperCase(ExtractFileExt(LinkFileName)) <> '.LNK' Then
+
+{ TODO : Workaround: function StringToWideChar (FPC 2.6.x) is bugged.
+         In FPC 2.7.1 (actually work in progress), this function is fixed,
+         so I copied it here }
+function StringToWideChar(Src : AnsiString;Dest : PWideChar;DestSize : SizeInt) : PWideChar;
+  var
+    temp:widestring;
+    Len: SizeInt;
   begin
-    Result := LinkFileName;
-    Exit;
+      widestringmanager.Ansi2WideMoveProc(PChar(Src),temp,Length(Src));
+      Len := Length(temp);
+      if DestSize<=Len then
+        Len := Destsize-1;
+      move(temp[1],Dest^,Len*SizeOf(WideChar));
+      Dest[Len] := #0;
+      result := Dest;
   end;
-  CoCreateInstance(CLSID_ShellLink,nil,CLSCTX_INPROC_SERVER,IShellLink,psl);
-  if psl.QueryInterface(IPersistFile, ppf) = 0 then
-  begin
-    {$IFDEF UNICODE}
-    WidePath := PWideChar(LinkFileName);
-   {$ELSE}
-    MultiByteToWideChar(CP_ACP,MB_PRECOMPOSED,PChar(LinkFileName),-1,@WidePath,MAX_PATH);
-   {$ENDIF}
-    ppf.Load(WidePath, STGM_READ);
-    case ShortcutType of
-      sfPathExe    : psl.GetPath(@info,MAX_PATH,wfs,SLGP_UNCPRIORITY);
-      sfParameter  : psl.GetArguments(@info,MAX_PATH);
-      sfWorkingDir : psl.GetWorkingDirectory(@info,MAX_PATH);
-    end;
-    Result := info;
-  end
-  else
-    Result := LinkFileName;
+
+begin
+
+   if UpperCase(ExtractFileExt(LinkFileName)) <> '.LNK' Then
+   begin
+     Result := LinkFileName;
+     Exit;
+   end;
+   CoCreateInstance(CLSID_ShellLink,nil,CLSCTX_INPROC_SERVER,IShellLink,ISLink);
+   if ISLink.QueryInterface(IPersistFile, IPFile) = 0 then
+   begin
+     //Initialize WidePath, if not conversion doesn't work
+     WidePath := 'emptypath';
+     //AnsiString -> WideChar
+     StringToWideChar(LinkFileName,WidePath,MAX_PATH);
+     //Get pathexe, parameters or working directory from shortcut
+     IPFile.Load(WidePath, STGM_READ);
+     case ShortcutType of
+       sfPathExe    : ISLink.GetPath(@info,MAX_PATH,wfs,SLGP_UNCPRIORITY);
+       sfParameter  : ISLink.GetArguments(@info,MAX_PATH);
+       sfWorkingDir : ISLink.GetWorkingDirectory(@info,MAX_PATH);
+     end;
+     Result := info
+   end
+   else
+     Result := LinkFileName;
 end;
 
 function AbsoluteToRelative(APath: String): string;
 begin
   APath := LowerCase(APath);
   if (pos(ExcludeTrailingBackslash(SUITE_WORKING_PATH),APath) <> 0) then
-    APath := StringReplace(APath, ExcludeTrailingBackslash(SUITE_WORKING_PATH), CONST_PATH_ASUITE, [rfIgnoreCase])
+    APath := StringReplace(APath, ExcludeTrailingBackslash(SUITE_WORKING_PATH), CONST_PATH_ASUITE, [rfReplaceAll])
   else
     if pos(SUITE_DRIVE,APath) <> 0 then
-      APath := StringReplace(APath, SUITE_DRIVE, CONST_PATH_DRIVE, [rfIgnoreCase]);
+      APath := StringReplace(APath, SUITE_DRIVE, CONST_PATH_DRIVE, [rfReplaceAll]);
   Result := APath;
 end;
 
@@ -305,18 +324,18 @@ var
 begin
   APath := LowerCase(APath);
   //CONST_PATH_ASuite = Launcher's path
-  APath := StringReplace(APath, CONST_PATH_ASUITE, SUITE_WORKING_PATH, [rfIgnoreCase,rfReplaceAll]);
+  APath := StringReplace(APath, CONST_PATH_ASUITE, SUITE_WORKING_PATH, [rfReplaceAll]);
   //CONST_PATH_DRIVE = Launcher's Drive (ex. ASuite in H:\Software\asuite.exe, CONST_PATH_DRIVE is H: )
-  APath := StringReplace(APath, CONST_PATH_DRIVE, SUITE_DRIVE, [rfIgnoreCase,rfReplaceAll]);
+  APath := StringReplace(APath, CONST_PATH_DRIVE, SUITE_DRIVE, [rfReplaceAll]);
   //Remove double slash (\)
-  APath := StringReplace(APath, '\\', PathDelim, [rfIgnoreCase,rfReplaceAll]);
+  APath := StringReplace(APath, '\\', PathDelim, [rfReplaceAll]);
   //Replace environment variable
   if (pos('%',APath) <> 0) then
   begin
     EnvVar := APath;
     Delete(EnvVar,1,pos('%',EnvVar));
     EnvVar := Copy(EnvVar,1,pos('%',EnvVar) - 1);
-    APath := StringReplace(APath, '%' + EnvVar + '%', GetEnvironmentVariable(EnvVar), [rfIgnoreCase]);
+    APath := StringReplace(APath, '%' + EnvVar + '%', GetEnvironmentVariable(EnvVar), [rfReplaceAll]);
   end;
   //If APath exists, expand it in absolute path (to avoid the "..")
   if (FileExistsUTF8(APath) or DirectoryExistsUTF8(APath)) and (Length(APath) <> 2) then

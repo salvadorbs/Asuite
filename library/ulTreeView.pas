@@ -26,16 +26,19 @@ interface
 
 uses
   Windows, SysUtils, ActiveX, VirtualTrees, Controls, ulCommonClasses, AppConfig,
-  ulNodeDataTypes, ulEnumerations, ulSQLite, FileUtil;
+  ulNodeDataTypes, ulEnumerations, ulSQLite, FileUtil, Classes, ShellApi, comobj;
 
 { List, Menu, MRU }
 function  AddNode(Sender: TBaseVirtualTree;AType: TvTreeDataType): PBaseData;
 function  ClickOnButtonTree(Sender: TBaseVirtualTree): Boolean;
-procedure DragDropFile(Sender: TBaseVirtualTree; Node: pVirtualNode;
+procedure DragDropFiles(Sender: TBaseVirtualTree; DataObject: IDataObject;
+                        AttachMode: TVTNodeAttachMode; Mode: TDropMode);
+procedure GetDropFileProperty(Sender: TBaseVirtualTree; Node: pVirtualNode;
                        PathTemp: string);
 procedure DragDropText(Sender: TBaseVirtualTree;DataObject: IDataObject;
-                       AttachMode: TVTNodeAttachMode);
+                       AttachMode: TVTNodeAttachMode; Mode: TDropMode);
 procedure GetChildNodesIcons(Sender: TBaseVirtualTree; Node: PVirtualNode);
+procedure GetFileListFromObj(const DataObj: IDataObject; FileList: TStringList);
 function  NodeDataXToNodeDataList(NodeX: PVirtualNode; SearchTree, ListTree: TBaseVirtualTree): PBaseData;
 procedure RefreshList(Tree: TBaseVirtualTree);
 
@@ -152,19 +155,51 @@ begin
     Result := True;
 end;
 
-procedure DragDropFile(Sender: TBaseVirtualTree;Node: pVirtualNode;PathTemp: string);
+procedure DragDropFiles(Sender: TBaseVirtualTree; DataObject: IDataObject;
+                        AttachMode: TVTNodeAttachMode; Mode: TDropMode);
+var
+  FileNames : TStringList;
+  I         : Integer;
+  Node      : PVirtualNode;
+  NodeData  : PBaseData;
+begin
+  //If dropMode is on node and this node isn't a category type item, then exit
+  if (Mode = dmOnNode) and (AttachMode = amNoWhere) then
+    exit;
+  FileNames := TStringList.Create;
+  try
+    GetFileListFromObj(DataObject,FileNames);
+    //Iterate drag&drop file list
+    for I := 0 to FileNames.Count - 1 do
+    begin
+      //Add new node
+      if Assigned(Sender.DropTargetNode) then
+        Node := Sender.InsertNode(Sender.DropTargetNode, AttachMode,TvFileNodeData.Create)
+      else
+        Node := Sender.AddChild(nil,TvFileNodeData.Create);
+      //Set node properties
+      GetDropFileProperty(Sender,Node,FileNames[I]);
+    end;
+  finally
+    FileNames.Free;
+  end;
+end;
+
+procedure GetDropFileProperty(Sender: TBaseVirtualTree;Node: pVirtualNode;PathTemp: string);
 var
   NodeData : PBaseData;
   Name     : string;
 begin
   NodeData := Sender.GetNodeData(Node);
   Name     := ExtractFileName(PathTemp);
+  //If it is a directory, use folder icon else get its icon
   if DirectoryExistsUTF8(PathTemp) then
     NodeData.Data.PathIcon := AbsoluteToRelative(SUITE_ICONS_PATH + '10.ico')
   else
     Delete(Name,pos(ExtractFileExt(PathTemp),name),Length(name));
   //Set some node record's variables
   NodeData.Data.Name := Name;
+  { TODO : This code in FPC 2.6.2 doesn't work properly. Waiting FPC 2.7.0 or more newer version
   if ExtractFileExt(PathTemp) = '.lnk' then
   begin
     //Shortcut
@@ -175,7 +210,7 @@ begin
       WorkingDir := AbsoluteToRelative(GetShortcutTarget(PathTemp,sfWorkingDir));
     end;
   end
-  else //Normal file
+  else //Normal file}
     TvFileNodeData(NodeData.Data).PathExe := AbsoluteToRelative(PathTemp);
   NodeData.Data.DataType   := vtdtFile;
   NodeData.Data.ImageIndex := ImagesDM.GetIconIndex(NodeData.Data);
@@ -184,7 +219,7 @@ begin
 end;
 
 procedure DragDropText(Sender: TBaseVirtualTree;DataObject: IDataObject;
-                       AttachMode: TVTNodeAttachMode);
+                       AttachMode: TVTNodeAttachMode; Mode: TDropMode);
 var
   Node     : PVirtualNode;
   NodeData : PBaseData;
@@ -201,11 +236,16 @@ var
   end;
 
 begin
+  //If dropMode is on node and this node isn't a category type item, then exit
+  if (Mode = dmOnNode) and (AttachMode = amNoWhere) then
+    exit;
+  //Add node
   if Assigned(Sender.DropTargetNode) then
-    Node := Sender.InsertNode(Sender.DropTargetNode, AttachMode,TvFileNodeData.Create)
+    Node := Sender.InsertNode(Sender.DropTargetNode, AttachMode, TvFileNodeData.Create)
   else
     Node := Sender.AddChild(nil,TvFileNodeData.Create);
   NodeData := Sender.GetNodeData(Node);
+  //Set node properties
   NodeData.pNode := Node;
   with NodeData.Data do
   begin
@@ -230,8 +270,6 @@ begin
     PathIcon   := AbsoluteToRelative(SUITE_ICONS_PATH + '20.ico');
     ImageIndex := ImagesDM.GetIconIndex(NodeData.Data);
     ParentNode := Node.Parent;
-    //Paint node's icon, it doesn't alone (why?)
-    Sender.InvalidateNode(Node);
   end;
 end;
 
@@ -248,6 +286,47 @@ begin
       NodeData.ImageIndex := ImagesDM.GetIconIndex(NodeData);
     ChildNode := Sender.GetNextSibling(ChildNode);
   end;
+end;
+
+procedure GetFileListFromObj(const DataObj: IDataObject; FileList: TStringList);
+var
+  FmtEtc: TFormatEtc;                   // specifies required data format
+  Medium: TStgMedium;                   // storage medium containing file list
+  DroppedFileCount: Integer;            // number of dropped files
+  I: Integer;                           // loops thru dropped files
+  FileNameLength: Integer;              // length of a dropped file name
+  FileName: string;                 // name of a dropped file
+begin
+  // Get required storage medium from data object
+  FmtEtc.cfFormat := CF_HDROP;
+  FmtEtc.ptd := nil;
+  FmtEtc.dwAspect := DVASPECT_CONTENT;
+  FmtEtc.lindex := -1;
+  FmtEtc.tymed := TYMED_HGLOBAL;
+  OleCheck(DataObj.GetData(FmtEtc, Medium));
+  try
+    try
+      // Get count of files dropped
+      DroppedFileCount := DragQueryFile(Medium.hGlobal, $FFFFFFFF, nil, 0);
+      // Get name of each file dropped and process it
+      for I := 0 to Pred(DroppedFileCount) do
+        begin
+          // get length of file name, then name itself
+          FileNameLength := DragQueryFile(Medium.hGlobal, I, nil, 0);
+          SetLength(FileName, FileNameLength);
+          DragQueryFile(Medium.hGlobal, I, PChar(FileName), FileNameLength + 1);
+          // add file name to list
+          FileList.Append(FileName);
+        end;
+    finally
+      // Tidy up - release the drop handle
+      // don't use DropH again after this
+      DragFinish(Medium.hGlobal);
+    end;
+  finally
+    ReleaseStgMedium(Medium);
+  end;
+
 end;
 
 function NodeDataXToNodeDataList(NodeX: PVirtualNode; SearchTree, ListTree: TBaseVirtualTree): PBaseData;

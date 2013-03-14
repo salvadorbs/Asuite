@@ -174,7 +174,7 @@ var
 implementation
 
 uses
-  Option, PropertyFile, PropertyCat, VirtualTreeHDrop, About, ulCommonUtils,
+  Option, PropertyFile, PropertyCat, About, ulCommonUtils,
   ulEnumerations, udClassicMenu, PropertySeparator,ulExeUtils, ImportList,
   ulAppConfig, ulTreeView, ulSQLite, ulDatabase;
 
@@ -697,9 +697,6 @@ procedure TfrmMain.vstListDragDrop(Sender: TBaseVirtualTree;
   Shift: TShiftState; const Pt: TPoint; var Effect: LongWord; Mode: TDropMode);
 var
   I          : integer;
-  PathTemp   : string;
-  HDrop      : THDrop;
-  Node       : pVirtualNode;
   NodeData   : PBaseData;
   AttachMode : TVTNodeAttachMode;
 begin
@@ -713,50 +710,31 @@ begin
   if Assigned(DataObject) then
   begin
     NodeData := Sender.GetNodeData(Sender.DropTargetNode);
-    HDrop    := THDrop.Create;
-    try
-      if HDrop.LoadFromDataObject(DataObject) then
-        for I := 0 to HDrop.FileCount - 1 do
-        begin
-          PathTemp := HDrop.FileName(I);
-          if (PathTemp <> '') then
-            if (Mode = dmOnNode) then
-            begin
-              if (NodeData.Data.DataType = vtdtCategory) then
-              begin
-                Node := Sender.InsertNode(Sender.DropTargetNode, AttachMode, TvFileNodeData.Create);
-                DragDropFile(Sender,Node,PathTemp);
-                vstList.Expanded[Sender.DropTargetNode] := True;
-              end;
-            end
-            else begin
-              if Sender.DropTargetNode = nil then
-                Node := Sender.AddChild(nil, TvFileNodeData.Create)
-              else
-                Node := Sender.InsertNode(Sender.DropTargetNode, AttachMode, TvFileNodeData.Create);
-              DragDropFile(Sender,Node,PathTemp);
-            end;
-        end;
-    finally
-      HDrop.Free;
-    end;
     if Mode = dmOnNode then
     begin
-      if NodeData.Data.DataType = vtdtCategory then
-        for I := 0 to High(Formats) do
+      //Check if DropMode is in a vtdtCategory (so expand it, before drop item)
+      //or another item type (set amNowhere as AttachMode)
+      if NodeData.Data.DataType <> vtdtCategory then
+        AttachMode := amNowhere
+      else
+        vstList.Expanded[Sender.DropTargetNode] := True;
+    end;
+    try
+      for I := 0 to High(Formats) - 1 do
+      begin
+        //Files
+        if Formats[I] = CF_HDROP then
+          DragDropFiles(Sender,DataObject, AttachMode, Mode)
+        else //VirtualTree Nodes
           if Formats[I] = CF_VIRTUALTREE then
             Sender.ProcessDrop(DataObject, Sender.DropTargetNode, Effect, AttachMode)
-          else
+          else //Text
             if Formats[I] = CF_TEXT then
-              DragDropText(Sender,DataObject, AttachMode);
-    end
-    else begin
-      for I := 0 to High(Formats) do
-        if Formats[I] = CF_VIRTUALTREE then
-          Sender.ProcessDrop(DataObject, Sender.DropTargetNode, Effect, AttachMode)
-        else
-          if Formats[I] = CF_TEXT then
-            DragDropText(Sender,DataObject, AttachMode);
+              DragDropText(Sender,DataObject, AttachMode, Mode);
+      end;
+    except
+      on E : Exception do
+        ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message]);
     end;
     RefreshList(vstList);
   end;

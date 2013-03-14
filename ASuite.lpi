@@ -20,7 +20,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
-      <BuildNr Value="1137"/>
+      <BuildNr Value="1142"/>
       <StringTable ProductVersion=""/>
     </VersionInfo>
     <BuildModes Count="1">
@@ -50,7 +50,7 @@
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="27">
+    <Units Count="26">
       <Unit0>
         <Filename Value="ASuite.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -100,119 +100,114 @@
         <UnitName Value="PropertyCat"/>
       </Unit7>
       <Unit8>
-        <Filename Value="3p\VirtualTreeHDrop.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="VirtualTreeHDrop"/>
-      </Unit8>
-      <Unit9>
         <Filename Value="About.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="frmAbout"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="About"/>
-      </Unit9>
-      <Unit10>
+      </Unit8>
+      <Unit9>
         <Filename Value="ClearElements.pas"/>
         <IsPartOfProject Value="True"/>
         <HasResources Value="True"/>
         <UnitName Value="ClearElements"/>
-      </Unit10>
-      <Unit11>
+      </Unit9>
+      <Unit10>
         <Filename Value="Option.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="frmOption"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Option"/>
-      </Unit11>
-      <Unit12>
+      </Unit10>
+      <Unit11>
         <Filename Value="3p\CheckPrevious.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="CheckPrevious"/>
-      </Unit12>
-      <Unit13>
+      </Unit11>
+      <Unit12>
         <Filename Value="library\ulNodeDataTypes.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ulNodeDataTypes"/>
-      </Unit13>
-      <Unit14>
+      </Unit12>
+      <Unit13>
         <Filename Value="OrderSoftware.pas"/>
         <IsPartOfProject Value="True"/>
         <HasResources Value="True"/>
         <UnitName Value="OrderSoftware"/>
-      </Unit14>
-      <Unit15>
+      </Unit13>
+      <Unit14>
         <Filename Value="library\ulEnumerations.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ulEnumerations"/>
-      </Unit15>
-      <Unit16>
+      </Unit14>
+      <Unit15>
         <Filename Value="library\ulSysUtils.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ulSysUtils"/>
-      </Unit16>
-      <Unit17>
+      </Unit15>
+      <Unit16>
         <Filename Value="library\ulStringUtils.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ulStringUtils"/>
-      </Unit17>
-      <Unit18>
+      </Unit16>
+      <Unit17>
         <Filename Value="udImages.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ImagesDM"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
         <UnitName Value="udImages"/>
-      </Unit18>
-      <Unit19>
+      </Unit17>
+      <Unit18>
         <Filename Value="library\ulDatabase.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ulDatabase"/>
-      </Unit19>
-      <Unit20>
+      </Unit18>
+      <Unit19>
         <Filename Value="udClassicMenu.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ClassicMenu"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
         <UnitName Value="udClassicMenu"/>
-      </Unit20>
-      <Unit21>
+      </Unit19>
+      <Unit20>
         <Filename Value="PropertySeparator.pas"/>
         <IsPartOfProject Value="True"/>
         <HasResources Value="True"/>
         <UnitName Value="PropertySeparator"/>
-      </Unit21>
-      <Unit22>
+      </Unit20>
+      <Unit21>
         <Filename Value="library\ulExeUtils.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ulExeUtils"/>
-      </Unit22>
-      <Unit23>
+      </Unit21>
+      <Unit22>
         <Filename Value="ImportList.pas"/>
         <IsPartOfProject Value="True"/>
         <HasResources Value="True"/>
         <UnitName Value="ImportList"/>
-      </Unit23>
-      <Unit24>
+      </Unit22>
+      <Unit23>
         <Filename Value="library\ASuiteForm.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ASuiteForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ASuiteForm"/>
-      </Unit24>
-      <Unit25>
+      </Unit23>
+      <Unit24>
         <Filename Value="library\ulTreeView.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ulTreeView"/>
-      </Unit25>
-      <Unit26>
+      </Unit24>
+      <Unit25>
         <Filename Value="library\ulSQLite.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ulSQLite"/>
-      </Unit26>
+      </Unit25>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -236,6 +231,9 @@
       <TargetOS Value="win32"/>
     </CodeGeneration>
     <Linking>
+      <Debugging>
+        <DebugInfoType Value="dsDwarf2Set"/>
+      </Debugging>
       <Options>
         <Win32>
           <GraphicApplication Value="True"/>

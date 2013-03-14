@@ -70,8 +70,8 @@ const
   PG_SEARCH     = 1;
 
   //ASuite placeholders for path
-  CONST_PATH_ASUITE  = '$ASuite';
-  CONST_PATH_DRIVE   = '$Drive';
+  CONST_PATH_ASUITE  = '$asuite';
+  CONST_PATH_DRIVE   = '$drive';
 
   //Parameters' variables: constant placeholders
   CONST_PARAM_PENDRV = '%pendrive%';

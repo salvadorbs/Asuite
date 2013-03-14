@@ -1,7 +1,7 @@
 inherited frmMain: TfrmMain
-  Left = 365
+  Left = 513
   Height = 370
-  Top = 224
+  Top = 454
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'ASuite'
