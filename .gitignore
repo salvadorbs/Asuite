@@ -4,4 +4,12 @@ tmp/
 backup/
 cache/
 
+*.lps
+*.compiled
+*.[oa]
+*.ppu
+*.rst
+*.cgi
 *.exe
+*.log
+*.bak*
