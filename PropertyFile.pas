@@ -98,7 +98,6 @@ begin
     ShowMessage(msgErrGeneric)
   else with TfrmPropertyFile.Create(AOwner) do
   try
-    { TODO : FNodeData necessary or useless? }
     FNodeData := NodeData;
     LoadNodeData(TvFileNodeData(NodeData.Data));
     FormStyle := frmMain.FormStyle;

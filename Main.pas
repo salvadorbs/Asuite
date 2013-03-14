@@ -297,7 +297,7 @@ begin
       NodeData := NodeDataXToNodeDataList(Node, vstSearch, vstList);
     if NodeData.Data.DataType = vtdtFile then
        OpenDocument(PChar(ExtractFileDir(TvFileNodeData(NodeData.Data).PathAbsoluteExe)));
-{ TODO : Check this code  *Lazarus Porting* }
+{ TODO : Check this code - Add a function in TvFileNodeData class  *Lazarus Porting* }
 //      ShellExecute(GetDesktopWindow, 'open',
 //                   PChar(ExtractFileDir(TvFileNodeData(NodeData.Data).PathAbsoluteExe)),
 //                   nil, nil, SW_NORMAL);

@@ -62,7 +62,6 @@ procedure DeleteASuiteAtWindowsStartup;
 function ExtractDirectoryName(const Filename: string): string;
 function GetExeVersion(FileName: String): String;
 function GetCorrectWorkingDir(Default: string): string;
-procedure ShowSysFilePropertiesDlg(const FileName: WideString);
 
 implementation
 
@@ -426,23 +425,6 @@ begin
   sPath := IncludeTrailingBackslash(SUITE_PATH + sPath);
   if DirectoryExistsUTF8(sPath) then
     Result := sPath;
-end;
-procedure ShowSysFilePropertiesDlg(const FileName: WideString);
-var
-  sei: TShellExecuteinfoW;
-begin
-  { TODO : Check Code *Lazarus Porting* }
-  FillChar(sei,sizeof(sei),0);
-  sei.cbSize := sizeof(sei);
-  sei.lpFile := PWideChar(FileName);
-  sei.lpVerb := 'properties';
-  sei.fMask  := SEE_MASK_INVOKEIDLIST;
-  ShellExecuteExW(@sei);
-// Send "Tab" to switch from dialog's pages
-//  keybd_event( VK_CONTROL, Mapvirtualkey( VK_CONTROL, 0 ), 0, 0);
-//  keybd_event( VK_TAB, Mapvirtualkey( VK_TAB, 0 ), 0, 0);
-//  keybd_event( VK_TAB, Mapvirtualkey( VK_TAB, 0 ), KEYEVENTF_KEYUP, 0);
-//  keybd_event( VK_CONTROL, Mapvirtualkey( VK_CONTROL, 0 ), KEYEVENTF_KEYUP, 0);
 end;
 
 

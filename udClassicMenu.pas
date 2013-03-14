@@ -26,7 +26,7 @@ interface
 
 uses
   Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
-  ExtCtrls, VirtualTrees, ulCommonClasses, FileUtil, LCLIntf;
+  ExtCtrls, VirtualTrees, ulCommonClasses, FileUtil, LCLIntf, ShellApi;
 
 type
   TClassicMenu = class(TDataModule)
@@ -60,7 +60,6 @@ type
     { Public declarations }
     procedure ShowTrayiconMenu(Menu: TPopUpMenu);
     procedure PopulateDirectory(Sender: TObject);
-    procedure AddItem(TargetItem, AMenuItem: TASMenuItem);
   end;
 
 type
@@ -208,16 +207,14 @@ procedure TClassicMenu.EjectDialog(Sender: TObject);
 var
   WindowsPath : string;
 begin
-  { TODO : Check this code *Lazarus Porting* }
   //Call "Safe Remove hardware" Dialog
   WindowsPath := GetEnvironmentVariable('WinDir');
   if FileExistsUTF8(PChar(WindowsPath + '\System32\Rundll32.exe')) then
   begin
-	  OpenDocument(PChar(WindowsPath + '\System32\Rundll32.exe'));
-//	   ShellExecute(0,'open',
-//                 PChar(WindowsPath + '\System32\Rundll32.exe'),
-//                 PChar('Shell32,Control_RunDLL hotplug.dll'),
-//                 PChar(WindowsPath + '\System32'),SW_SHOWNORMAL);
+    ShellExecute(0,'open',
+                 PChar(WindowsPath + '\System32\Rundll32.exe'),
+                 PChar('Shell32,Control_RunDLL hotplug.dll'),
+                 PChar(WindowsPath + '\System32'),SW_SHOWNORMAL);
   end;
   //Close ASuite
   frmMain.miExitClick(Sender);
@@ -300,12 +297,6 @@ begin
         end;
     end;
   end;
-end;
-
-procedure TClassicMenu.AddItem(TargetItem, AMenuItem: TASMenuItem);
-begin
-  { TODO : This procedure is necessary? }
-  TargetItem.Add(AMenuItem);
 end;
 
 procedure TClassicMenu.CreateFooterItems(Menu: TPopupMenu);
