@@ -67,7 +67,7 @@ implementation
 
 uses
   PropertyFile, PropertyCat, ulAppConfig, ulSysUtils, udImages, PropertySeparator,
-  Main;
+  Main, ulDatabase;
 
 function AddNode(Sender: TBaseVirtualTree;AType: TvTreeDataType): PBaseData;
 var
@@ -391,7 +391,7 @@ begin
     DeleteShortcutOnDesktop(TvFileNodeData(NodeData.Data).Name + '.lnk');
   MRUList.Remove(NodeData.Data);
   MFUList.Remove(NodeData.Data);
-  //DB.DeleteItem(Sender, Node);
+  DBManager.DeleteItem(Sender, NodeData.Data.ID);
 end;
 
 procedure TIterateSubtreeProcs.ActionsOnShutdown(Sender: TBaseVirtualTree; Node: PVirtualNode;

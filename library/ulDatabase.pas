@@ -55,6 +55,7 @@ type
     procedure SaveData(Tree:TBaseVirtualTree; ANode: PVirtualNode;
                              AParentID: Int64);
     procedure LoadData(Tree: TBaseVirtualTree; IsImport: Boolean);
+    procedure DeleteItem(Tree: TBaseVirtualTree; aID: Integer);
   end;
 
 var
@@ -682,6 +683,23 @@ begin
   except
     on E : Exception do
       ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message]);
+  end;
+end;
+
+procedure TDBManager.DeleteItem(Tree: TBaseVirtualTree; aID: Integer);
+var
+  dsTable : TSqlite3Dataset;
+begin
+  dsTable := CreateSQLiteDataset(DBTable_files);
+  try
+    //Get node from db by its ID and delete it
+    dsTable.SQL := Format('SELECT * FROM %s WHERE id = %d',[DBTable_files,aID]);
+    dsTable.Open;
+    dsTable.Delete;
+  finally
+    //Write in sqlite database
+    dsTable.ApplyUpdates;
+    dsTable.Destroy;
   end;
 end;
 
