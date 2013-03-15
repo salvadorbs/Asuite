@@ -199,8 +199,7 @@ begin
     Delete(Name,pos(ExtractFileExt(PathTemp),name),Length(name));
   //Set some node record's variables
   NodeData.Data.Name := Name;
-  { TODO : This code in FPC 2.6.2 doesn't work properly. Waiting FPC 2.7.0 or more newer version
-  if ExtractFileExt(PathTemp) = '.lnk' then
+  if LowerCase(ExtractFileExt(PathTemp)) <> '.lnk' then
   begin
     //Shortcut
     with TvFileNodeData(NodeData.Data) do
@@ -210,7 +209,7 @@ begin
       WorkingDir := AbsoluteToRelative(GetShortcutTarget(PathTemp,sfWorkingDir));
     end;
   end
-  else //Normal file}
+  else //Normal file
     TvFileNodeData(NodeData.Data).PathExe := AbsoluteToRelative(PathTemp);
   NodeData.Data.DataType   := vtdtFile;
   NodeData.Data.ImageIndex := ImagesDM.GetIconIndex(NodeData.Data);

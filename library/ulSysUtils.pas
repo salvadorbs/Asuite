@@ -167,11 +167,8 @@ end;
 
 function FileFolderPageWebExists(Path: String): Boolean;
 begin
-  if ((FileExistsUTF8(Path)) or (DirectoryExistsUTF8(Path)) or
-      IsUrl(Path)) then
-    Result := true
-  else
-    Result := false;
+  Result := ((FileExistsUTF8(Path)) or (DirectoryExistsUTF8(Path)) or
+             (IsUrl(Path)));
 end;
 
 procedure DeleteFiles(PathDir, FileName: String);
@@ -261,38 +258,12 @@ var
   WidePath  : PWideChar;
   Info      : Array[0..MAX_PATH] of Char;
   wfs       : TWin32FindData;
-
-{ TODO : Workaround: function StringToWideChar (FPC 2.6.x) is bugged.
-         In FPC 2.7.1 (actually work in progress), this function is fixed,
-         so I copied it here }
-function StringToWideChar(Src : AnsiString;Dest : PWideChar;DestSize : SizeInt) : PWideChar;
-  var
-    temp:widestring;
-    Len: SizeInt;
-  begin
-      widestringmanager.Ansi2WideMoveProc(PChar(Src),temp,Length(Src));
-      Len := Length(temp);
-      if DestSize<=Len then
-        Len := Destsize-1;
-      move(temp[1],Dest^,Len*SizeOf(WideChar));
-      Dest[Len] := #0;
-      result := Dest;
-  end;
-
 begin
-
-   if UpperCase(ExtractFileExt(LinkFileName)) <> '.LNK' Then
-   begin
-     Result := LinkFileName;
-     Exit;
-   end;
    CoCreateInstance(CLSID_ShellLink,nil,CLSCTX_INPROC_SERVER,IShellLink,ISLink);
    if ISLink.QueryInterface(IPersistFile, IPFile) = 0 then
    begin
-     //Initialize WidePath, if not conversion doesn't work
-     WidePath := 'emptypath';
      //AnsiString -> WideChar
-     StringToWideChar(LinkFileName,WidePath,MAX_PATH);
+     WidePath := PWideChar(UTF8Decode(LinkFileName));
      //Get pathexe, parameters or working directory from shortcut
      IPFile.Load(WidePath, STGM_READ);
      case ShortcutType of
