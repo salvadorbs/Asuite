@@ -140,6 +140,7 @@ begin
           NodeData.Changed := True;
         finally
           Icon.Free;
+          Bmp.Free;
         end;
       end
       else
