@@ -59,6 +59,8 @@ const
   EXT_SQL       = '.sqlite';
   EXT_SQLBCK    = '.sqbck';
   EXT_XMLBCK    = '.bck';
+  EXT_ICO       = '.ico';
+  EXT_LNK       = '.lnk';
 
   //Form
   frmMainWidth  = 190;
@@ -102,8 +104,8 @@ var
   IMG_Property,     //ID = 8;
   IMG_Save,         //ID = 9;
   IMG_Folder,       //ID = 10;
-//  IMG_AddGroupFile, //ID = 11;
-//  IMG_GroupFile,    //ID = 12;
+  IMG_AddGroupFile, //ID = 11;
+  IMG_GroupFile,    //ID = 12;
   IMG_NOTFOUND,     //ID = 13;
   IMG_Run,          //ID = 14;
   IMG_Cut,          //ID = 15;

@@ -13,3 +13,4 @@ cache/
 *.exe
 *.log
 *.bak*
+*.sqlite

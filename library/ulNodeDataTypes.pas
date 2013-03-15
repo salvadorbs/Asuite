@@ -292,7 +292,7 @@ procedure TvBaseNodeData.SetPathCacheIcon(value:integer);
 begin
   FCacheID := value;
   if (value <> -1) then
-    FPathCacheIcon := SUITE_CACHE_PATH + IntToStr(value) + '.ico'
+    FPathCacheIcon := SUITE_CACHE_PATH + IntToStr(value) + EXT_ICO
   else
     FPathCacheIcon := '';
 end;
@@ -499,10 +499,10 @@ procedure TvFileNodeData.SetShortcutDesktop(value:Boolean);
 begin
   //If value is true, create shortcut in desktop
   if (value and (FShortcutDesktop <> value)) then
-    CreateShortcutOnDesktop(Name + '.lnk', FPathAbsoluteExe,FParameters,FWorkingDir)
+    CreateShortcutOnDesktop(Name + EXT_LNK, FPathAbsoluteExe,FParameters,FWorkingDir)
   else //else delete it from desktop
     if (not value and (FShortcutDesktop <> value)) then
-      DeleteShortcutOnDesktop(FName + '.lnk');
+      DeleteShortcutOnDesktop(FName + EXT_LNK);
   FShortcutDesktop := value;
 end;
 

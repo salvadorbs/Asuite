@@ -119,7 +119,7 @@ begin
     vtdtFolder:
     begin
       //Folder
-      NodeData.Data.PathIcon := AbsoluteToRelative(SUITE_ICONS_PATH + '10.ico');
+      NodeData.Data.PathIcon := AbsoluteToRelative(SUITE_ICONS_PATH + IntToStr(IMG_Folder) + EXT_ICO);
       FolderPath             := BrowseForFolder('',SUITE_WORKING_PATH);
       if FolderPath <> '' then
       begin
@@ -194,12 +194,12 @@ begin
   Name     := ExtractFileName(PathTemp);
   //If it is a directory, use folder icon else get its icon
   if DirectoryExistsUTF8(PathTemp) then
-    NodeData.Data.PathIcon := AbsoluteToRelative(SUITE_ICONS_PATH + '10.ico')
+    NodeData.Data.PathIcon := AbsoluteToRelative(SUITE_ICONS_PATH + IntToStr(IMG_Folder) + EXT_ICO)
   else
     Delete(Name,pos(ExtractFileExt(PathTemp),name),Length(name));
   //Set some node record's variables
   NodeData.Data.Name := Name;
-  if LowerCase(ExtractFileExt(PathTemp)) <> '.lnk' then
+  if LowerCase(ExtractFileExt(PathTemp)) = EXT_LNK then
   begin
     //Shortcut
     with TvFileNodeData(NodeData.Data) do
@@ -266,7 +266,7 @@ begin
       end;
     end;
     //Icon
-    PathIcon   := AbsoluteToRelative(SUITE_ICONS_PATH + '20.ico');
+    PathIcon   := AbsoluteToRelative(SUITE_ICONS_PATH + IntToStr(IMG_Url) + EXT_ICO);
     ImageIndex := ImagesDM.GetIconIndex(NodeData.Data);
     ParentNode := Node.Parent;
   end;
@@ -387,7 +387,7 @@ begin
   if (NodeData.Data.DataType = vtdtFile) and FileExistsUTF8(NodeData.Data.PathCacheIcon) then
     DeleteFileUTF8(NodeData.Data.PathCacheIcon); 
   if (TvFileNodeData(NodeData.Data).ShortcutDesktop) then
-    DeleteShortcutOnDesktop(TvFileNodeData(NodeData.Data).Name + '.lnk');
+    DeleteShortcutOnDesktop(TvFileNodeData(NodeData.Data).Name + EXT_LNK);
   MRUList.Remove(NodeData.Data);
   MFUList.Remove(NodeData.Data);
   DBManager.DeleteItem(Sender, NodeData.Data.ID);
@@ -403,7 +403,7 @@ begin
   begin
     //Delete shortcut on shutdown
     if TvFileNodeData(NodeData.Data).ShortcutDesktop then
-      DeleteShortcutOnDesktop(NodeData.Data.Name + '.lnk');
+      DeleteShortcutOnDesktop(NodeData.Data.Name + EXT_LNK);
   end;
 end;
 

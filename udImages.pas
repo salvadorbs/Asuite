@@ -119,11 +119,11 @@ begin
   begin
     //Save file cache-icon
     if (FileExistsUTF8(Path)) then
-      if (LowerCase(ExtractFileExt(Path)) <> '.ico') then
+      if (LowerCase(ExtractFileExt(Path)) <>  EXT_ICO) then
       begin
         I := 0;
         //Get first ID slot free
-        while (FileExistsUTF8(SUITE_CACHE_PATH + IntToStr(I) + '.ico')) do
+        while (FileExistsUTF8(SUITE_CACHE_PATH + IntToStr(I) + EXT_ICO)) do
           Inc(I);
         //Save cache icon in disk
         Icon := Graphics.TIcon.Create;
@@ -134,7 +134,7 @@ begin
           IcoImages.GetBitmap(ImageIndex, Bmp);
           Icon.Assign(Bmp);
           //Save cache in disk
-          Icon.SaveToFile(SUITE_CACHE_PATH + IntToStr(I) + '.ico');
+          Icon.SaveToFile(SUITE_CACHE_PATH + IntToStr(I) + EXT_ICO);
           //Set changed to true and new cacheID
           NodeData.CacheID := I;
           NodeData.Changed := True;
@@ -153,11 +153,11 @@ var
   FileName : String;
 begin
   Result   := -1;
-  FileName := SUITE_ICONS_PATH + IntToStr(ID) + '.ico';
+  FileName := SUITE_ICONS_PATH + IntToStr(ID) + EXT_ICO;
   if FileExistsUTF8(FileName) then
     Result := GetSimpleIconIndex(FileName)
   else
-    ShowMessageFmt(msgErrNoIcon, [IntToStr(ID) + '.ico']);
+    ShowMessageFmt(msgErrNoIcon, [IntToStr(ID) + EXT_ICO]);
 end;
 
 function TImagesDM.GetSimpleIconIndex(xpath: string): integer;
@@ -200,19 +200,19 @@ begin
   Flags := SHGFI_SYSICONINDEX or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES;
   FHandleSysImageList := SHGetFileInfoW('', 0, SFI, SizeOf(SFI), Flags);
   //Menu icons
+  IMG_ASuite     := LoadIconFromFile(0);
+  IMG_Cat        := LoadIconFromFile(1);
   IMG_Help       := LoadIconFromFile(2);
   IMG_Options    := LoadIconFromFile(3);
   IMG_AddCat     := LoadIconFromFile(4);
   IMG_AddFile    := LoadIconFromFile(5);
   IMG_AddFolder  := LoadIconFromFile(6);
   IMG_Delete     := LoadIconFromFile(7);
-  IMG_ASuite     := LoadIconFromFile(0);
-  IMG_Cat        := LoadIconFromFile(1);
   IMG_Property   := LoadIconFromFile(8);
   IMG_Save       := LoadIconFromFile(9);
   IMG_Folder     := LoadIconFromFile(10);
-//  IMG_AddGroupFile := LoadIconFromFile('IMG_ADDSWGROUP',rtBMP,11);
-//  IMG_GroupFile := LoadIconFromFile('IMG_SWGROUP',rtBMP,12);
+  IMG_AddGroupFile := LoadIconFromFile(11);
+  IMG_GroupFile  := LoadIconFromFile(12);
   IMG_NOTFOUND   := LoadIconFromFile(13);
   IMG_Run        := LoadIconFromFile(14);
   IMG_Cut        := LoadIconFromFile(15);

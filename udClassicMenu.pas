@@ -548,7 +548,7 @@ procedure TClassicMenu.PopulateDirectory(Sender: TObject);
           NMI             := TASMenuItem.Create(AMI);
           NMI.Caption     := SR.Name;
           NMI.Hint        := AMI.Hint + SR.Name + PathDelim;
-          NMI.ImageIndex  := ImagesDM.GetSimpleIconIndex(SUITE_ICONS_PATH + '10.ico'); // folder image
+          NMI.ImageIndex  := ImagesDM.GetSimpleIconIndex(SUITE_ICONS_PATH + IntToStr(IMG_Folder) + EXT_ICO); // folder image
           //Add item in traymenu
           AMI.Add(NMI);
           //If it is not '.', expand folder else add OnClick event to open folder
