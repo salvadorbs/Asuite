@@ -78,27 +78,20 @@ end;
 
 function BrowseForFolder(const Caption, InitialDir: String): String;
 var
-  BrowseInfo: TBrowseInfo;
-  Buffer: PChar;
-  ItemIDList: PItemIDList;
-  ShellMalloc: IMalloc;
-  Windows: Pointer;
   Path: string;
   SelectDirectoryDialog: TSelectDirectoryDialog;
 begin
   Result := '';
-  Path  := InitialDir;
-  //Delete \ in last char. Example c:\xyz\ to c:\xyz
-  if (Length(Path) > 0) and (Path[Length(Path)] = PathDelim) then
-    Delete(Path, Length(Path), 1);
-
-{ TODO : Check this code  *Lazarus Porting* }
+  //Get Path and delete \ in last char. Example c:\xyz\ to c:\xyz
+  Path   := ExcludeTrailingPathDelimiter(InitialDir);
+  //Create TSelectDirectoryDialog and execute it
   SelectDirectoryDialog := TSelectDirectoryDialog.Create(nil);
   try
     SelectDirectoryDialog.InitialDir := Path;
     SelectDirectoryDialog.Execute;
-  finally
     Result := SelectDirectoryDialog.FileName;
+  finally
+    SelectDirectoryDialog.Free;
   end;
 end;
 
@@ -338,6 +331,7 @@ var
   VerValue: PVSFixedFileInfo;
   Dummy: DWORD;
 begin
+  { TODO : Check this code *Lazarus Porting* }
   VerInfoSize := GetFileVersionInfoSize(PChar(ParamStr(0)), Dummy);
   if VerInfoSize = 0 then Exit('');
   GetMem(VerInfo, VerInfoSize);
