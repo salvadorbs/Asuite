@@ -23,7 +23,8 @@ unit ulCommonUtils;
 interface
 
 uses
-  Windows, SysUtils, Classes, Graphics, Forms, Dialogs, ComCtrls, Clipbrd, AppConfig, DOM;
+  Windows, SysUtils, Classes, Graphics, Forms, Dialogs, ComCtrls, Clipbrd,
+  AppConfig, DOM, StdCtrls;
 
 { Converters }
 function RGBToHtml(iRGB: Cardinal): string;
@@ -43,6 +44,7 @@ function GetIntPropertyXML(Node : TDOMNode;Name: String;Default: Integer): Integ
 function GetBoolPropertyXML(Node : TDOMNode;Name: String;Default: Boolean): Boolean;
 
 { Misc }
+procedure CheckPropertyName(Edit: TEdit);
 function  GetDateTime: String;
 function  GetFirstFreeIndex(ArrayString: Array of WideString): Integer;
 function  IfThen(AValue: Boolean; ATrue, AFalse: String): String;
@@ -196,6 +198,16 @@ begin
   Result := Default;
   if Node.FindNode(Name).NodeValue <> '' then
     Result := ulStringUtils.StrToBool(Node.FindNode(Name).NodeValue);
+end;
+
+procedure CheckPropertyName(Edit: TEdit);
+begin
+  // Check if inserted name is empty, then
+  if (Trim(Edit.Text) = '') then
+  begin
+    ShowMessage(msgErrEmptyName);
+    Edit.Color := clYellow;
+  end;
 end;
 
 function GetDateTime: String;

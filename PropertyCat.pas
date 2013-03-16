@@ -26,9 +26,12 @@ interface
 
 uses
   SysUtils, Classes, Controls, Forms, Dialogs, StdCtrls, ExtCtrls,
-  ulNodeDataTypes, FileUtil;
+  ulNodeDataTypes, FileUtil, Graphics;
 
 type
+
+  { TfrmPropertyCat }
+
   TfrmPropertyCat = class(TForm)
     edtName: TEdit;
     lbName: TLabel;
@@ -41,7 +44,7 @@ type
     OpenDialog1: TOpenDialog;
     cbHideSoftware: TCheckBox;
     procedure btnBrowseIconClick(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
+    procedure edtNameEnter(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -60,7 +63,7 @@ var
 implementation
 
 uses
-  appConfig, udImages, ulSysUtils, Main;
+  appConfig, udImages, ulSysUtils, Main, ulCommonUtils;
 
 {$R *.lfm}
 
@@ -92,16 +95,19 @@ begin
   SetCurrentDirUTF8(SUITE_WORKING_PATH); 
 end;
 
+procedure TfrmPropertyCat.edtNameEnter(Sender: TObject);
+begin
+  TEdit(Sender).Color := clDefault;
+end;
+
 procedure TfrmPropertyCat.btnCancelClick(Sender: TObject);
 begin
-  close;
+  Close;
 end;
 
 procedure TfrmPropertyCat.btnOkClick(Sender: TObject);
 begin
-  // Check inserted name
-  if (Trim(edtName.Text) = '') then
-    ShowMessage(msgErrEmptyName);
+  CheckPropertyName(edtName);
 end;
 
 procedure TfrmPropertyCat.FormCloseQuery(Sender: TObject;
@@ -109,11 +115,6 @@ procedure TfrmPropertyCat.FormCloseQuery(Sender: TObject;
 begin
   CanClose := ((ModalResult = mrOK) and (Trim(edtName.Text) <> ''))
            or (ModalResult = mrCancel);
-end;
-
-procedure TfrmPropertyCat.FormCreate(Sender: TObject);
-begin
-
 end;
 
 procedure TfrmPropertyCat.LoadNodeData(AData: TvCategoryNodeData);

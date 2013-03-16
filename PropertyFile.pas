@@ -29,6 +29,9 @@ uses
   ulNodeDataTypes, FileUtil;
 
 type
+
+  { TfrmPropertyFile }
+
   TfrmPropertyFile = class(TForm)
     btnOk: TButton;
     btnCancel: TButton;
@@ -65,6 +68,7 @@ type
     procedure Browse(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
+    procedure edtNameEnter(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure edtPathExeExit(Sender: TObject);
     procedure btnChangeOrderClick(Sender: TObject);
@@ -89,7 +93,7 @@ implementation
 
 uses
   AppConfig, ulEnumerations, udImages, ulSysUtils, ulExeUtils, OrderSoftware,
-  Main;
+  Main, ulCommonUtils;
 
 class function TfrmPropertyFile.Edit(AOwner: TComponent; NodeData: PBaseData): TModalResult;
 begin
@@ -116,8 +120,8 @@ begin
   edtPathExe.Text           := AData.PathExe;
   if not(FileFolderPageWebExists(AData.PathAbsoluteExe)) then
   begin
-     edtPathExe.Font.Color  := clRed;
-     edtPathExe.Hint        := msgFileNotFound;
+    edtPathExe.Font.Color  := clRed;
+    edtPathExe.Hint        := msgFileNotFound;
   end;
   edtParameters.Text        := AData.Parameters;
   edtWorkingDir.Text        := AData.WorkingDir;
@@ -224,9 +228,12 @@ end;
 
 procedure TfrmPropertyFile.btnOkClick(Sender: TObject);
 begin
-  // Check inserted name
-  if (Trim(edtName.Text) = '') then
-    ShowMessage(msgErrEmptyName);
+  CheckPropertyName(edtName);
+end;
+
+procedure TfrmPropertyFile.edtNameEnter(Sender: TObject);
+begin
+  TEdit(Sender).Color := clDefault;
 end;
 
 procedure TfrmPropertyFile.cxAutoExecuteChange(Sender: TObject);
@@ -241,10 +248,12 @@ begin
   PathTemp := RelativeToAbsolute(edtPathExe.Text);
   if Not(FileFolderPageWebExists(PathTemp)) then
   begin
+    //File not found - Change font color with red
     edtPathExe.Font.Color  := clRed;
     edtPathExe.Hint        := msgFileNotFound;
   end
   else begin
+    //File found - Change font color with black
     edtPathExe.Font.Color  := clBlack;
     edtPathExe.Hint        := '';
   end;
