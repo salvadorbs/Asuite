@@ -54,24 +54,27 @@ end;
 
 function IsProcessExists(exeFileName: string): Boolean;
 var
-  hSnapShot: THandle;
-  ProcInfo: TProcessEntry32;
+  hSnapShot : THandle;
+  ProcInfo  : TProcessEntry32;
 begin
-  { TODO : Check this code *Lazarus Porting* }
-  hSnapShot   := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+  Result      := False;
   exeFileName := UpperCase(ExeFileName);
-  Result := False;
+  hSnapShot   := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+  //Check processes
   if (hSnapShot <> THandle(-1)) then
   begin
     ProcInfo.dwSize := SizeOf(ProcInfo);
-    //Check processes
+    //First process
     if (Process32First(hSnapshot, ProcInfo)) then
     begin
-      if (UpperCase(ExtractFileName(ProcInfo.szExeFile)) = ExeFileName) then
-        Result := True;
-    while (Process32Next(hSnapShot, ProcInfo)) do
-      if (UpperCase(ExtractFileName(ProcInfo.szExeFile)) = ExeFileName) then
-        Result := True;
+      //Compare first process with ExeFileName
+      Result := (UpperCase(ProcInfo.szExeFile) = ExeFileName);
+      while Not(Result) do
+      begin
+        //Next process and compare it with ExeFileName
+        Process32Next(hSnapShot, ProcInfo);
+        Result := (UpperCase(ProcInfo.szExeFile) = ExeFileName);
+      end;
     end;
   end;
   FileClose(hSnapShot);

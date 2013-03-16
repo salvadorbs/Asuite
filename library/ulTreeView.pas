@@ -71,9 +71,9 @@ uses
 
 function AddNode(Sender: TBaseVirtualTree;AType: TvTreeDataType): PBaseData;
 var
-  CurrNode, ChildNode : PVirtualNode;
-  NodeData : PBaseData;
-  FolderPath  : String;
+  CurrNode, ChildNode  : PVirtualNode;
+  NodeData             : PBaseData;
+  FolderPath, tempName : String;
 begin
   FolderPath := '';
   CurrNode := Sender.FocusedNode;
@@ -123,7 +123,9 @@ begin
       FolderPath             := BrowseForFolder('',SUITE_WORKING_PATH);
       if FolderPath <> '' then
       begin
-        NodeData.Data.Name   := ExtractDirectoryName(FolderPath + PathDelim);
+        tempName := ExtractDirectoryName(FolderPath + PathDelim);
+        if tempName <> '' then
+          NodeData.Data.Name   := tempName;
         TvFileNodeData(NodeData.Data).PathExe := AbsoluteToRelative(FolderPath + PathDelim);
         if (TfrmPropertyFile.Edit(Sender, NodeData) <> mrOK) then
           Sender.DeleteNode(ChildNode);
@@ -304,28 +306,24 @@ begin
   FmtEtc.tymed := TYMED_HGLOBAL;
   OleCheck(DataObj.GetData(FmtEtc, Medium));
   try
-    try
-      // Get count of files dropped
-      DroppedFileCount := DragQueryFile(Medium.hGlobal, $FFFFFFFF, nil, 0);
-      // Get name of each file dropped and process it
-      for I := 0 to Pred(DroppedFileCount) do
-        begin
-          // get length of file name, then name itself
-          FileNameLength := DragQueryFile(Medium.hGlobal, I, nil, 0);
-          SetLength(FileName, FileNameLength);
-          DragQueryFile(Medium.hGlobal, I, PChar(FileName), FileNameLength + 1);
-          // add file name to list
-          FileList.Append(FileName);
-        end;
-    finally
-      // Tidy up - release the drop handle
-      // don't use DropH again after this
-      DragFinish(Medium.hGlobal);
+    // Get count of files dropped
+    DroppedFileCount := DragQueryFile(Medium.hGlobal, $FFFFFFFF, nil, 0);
+    // Get name of each file dropped and process it
+    for I := 0 to Pred(DroppedFileCount) do
+    begin
+      // get length of file name, then name itself
+      FileNameLength := DragQueryFile(Medium.hGlobal, I, nil, 0);
+      SetLength(FileName, FileNameLength);
+      DragQueryFile(Medium.hGlobal, I, PChar(FileName), FileNameLength + 1);
+      // add file name to list
+      FileList.Append(FileName);
     end;
   finally
+    // Tidy up - release the drop handle
+    // don't use DropH again after this
+    DragFinish(Medium.hGlobal);
     ReleaseStgMedium(Medium);
   end;
-
 end;
 
 function NodeDataXToNodeDataList(NodeX: PVirtualNode; SearchTree, ListTree: TBaseVirtualTree): PBaseData;
