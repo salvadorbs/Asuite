@@ -136,6 +136,7 @@ type
     //Advanced
     FParameters      : string;
     FWorkingDir      : string;
+    FWorkingDirAbsolute : string;
     FWindowState     : Integer;
     FActionOnExe     : TActionOnExecution;
     FShortcutDesktop : Boolean;
@@ -145,6 +146,7 @@ type
     FAutorun         : TAutorunType;
     FAutorunPos      : Integer; //Position for ASuiteStartUpApp and ASuiteShutdownApp
     procedure SetPathExe(value:string);
+    procedure SetWorkingDir(value:string);
     procedure SetAutorun(value:TAutorunType);
     procedure SetNoMRU(value:Boolean);
     procedure SetNoMFU(value:Boolean);
@@ -170,7 +172,8 @@ type
     property PathExe: String read FPathExe write SetPathExe;
     property PathAbsoluteExe: String read FPathAbsoluteExe write FPathAbsoluteExe;
     property Parameters: string read FParameters write FParameters;
-    property WorkingDir: string read FWorkingDir write FWorkingDir;
+    property WorkingDir: string read FWorkingDir write SetWorkingDir;
+    property WorkingDirAbsolute: string read FWorkingDirAbsolute write FWorkingDirAbsolute;
     property WindowState: Integer read FWindowState write FWindowState;
     property ActionOnExe: TActionOnExecution read FActionOnExe write FActionOnExe;
     property ShortcutDesktop:Boolean read FShortcutDesktop write SetShortcutDesktop;
@@ -444,6 +447,12 @@ begin
   FPathAbsoluteExe := RelativeToAbsolute(value);
 end;
 
+procedure TvFileNodeData.SetWorkingDir(value:string);
+begin
+  FWorkingDir := value;
+  FWorkingDirAbsolute := RelativeToAbsolute(value);
+end;
+
 procedure TvFileNodeData.SetAutorun(value:TAutorunType);
 begin
   //If it is changed, remove from old list and insert in new list
@@ -513,71 +522,51 @@ end;
 
 function TvFileNodeData.RunProcess: boolean;
 var
-  vWorkingDir, vParameters: String;
-  vWindowState: Integer;
-
+  vParameters: String;
   TestProcess: TProcess;
 begin
-  //Working directory
-  if FWorkingDir = '' then
-    vWorkingDir := ExtractFileDir(FPathAbsoluteExe)
-  else
-    vWorkingDir := RelativeToAbsolute(FWorkingDir);
-  //Window state
-  case FWindowState of
-    1: vWindowState := 7;
-    2: vWindowState := 3;
-  else
-    vWindowState := 10;
-  end;
-  //vParameters
-  //Check variables in vParameters to use RelativeToAbsolute
-  if (pos('$',FParameters) <> 0) then
-    vParameters := RelativeToAbsolute(FParameters);
-{ TODO : Check this code  *Lazarus Porting* }
   //Execution
   if FileFolderPageWebExists(FPathAbsoluteExe) then
-  if FileExistsUTF8(FPathAbsoluteExe) then
   begin
-    if(ExtractFileExt(FPathAbsoluteExe) = '.exe') then
+    if FileExistsUTF8(FPathAbsoluteExe) then
     begin
-      TestProcess := TProcess.Create(nil);
-      TestProcess.Executable := FPathAbsoluteExe;
-      TestProcess.CurrentDirectory := vWorkingDir;
-      TestProcess.Parameters.Add(vParameters);
-      case FWindowState of
-        1: TestProcess.ShowWindow := swoshowMinNOActive;
-        2: TestProcess.ShowWindow := swoShowMaximized;
-      else
-        TestProcess.ShowWindow := swoShowDefault;
-      end;
-      TestProcess.StartupOptions := [suoUseShowWindow];
-      TestProcess.Execute;
-      TestProcess.Free;
+      //Is it exe? If yes, use a TProcess
+      if(ExtractFileExt(FPathAbsoluteExe) = '.exe') then
+      begin
+        TestProcess := TProcess.Create(nil);
+        try
+          TestProcess.Executable := FPathAbsoluteExe;
+          //Working directory
+          if FWorkingDirAbsolute = '' then
+            TestProcess.CurrentDirectory := ExtractFileDir(FPathAbsoluteExe)
+          else
+            TestProcess.CurrentDirectory := FWorkingDirAbsolute;
+          //Parameters
+          if FParameters <> '' then
+            TestProcess.Parameters.Add(RelativeToAbsolute(FParameters));
+          //Window state
+          case FWindowState of
+            1: TestProcess.ShowWindow := swoshowMinNOActive;
+            2: TestProcess.ShowWindow := swoShowMaximized;
+          else
+            TestProcess.ShowWindow := swoShowDefault;
+          end;
+          TestProcess.StartupOptions := [suoUseShowWindow];
+          TestProcess.Execute;
+        finally
+          TestProcess.Free;
+        end;
+      end
+      else //Else use OpenDocument
+        Result := OpenDocument(FPathAbsoluteExe);
     end
-    else
-      Result :=  OpenDocument(FPathAbsoluteExe);
-  end
-  else begin
-    if DirectoryExistsUTF8(FPathAbsoluteExe) then
-    begin
-      showmessage('"'+FPathAbsoluteExe+'"');
-      Result :=  OpenURL('"'+FPathAbsoluteExe+'"');
-      //TestProcess := TProcess.Create(nil);
-      //TestProcess.Executable := 'explorer.exe';
-      //TestProcess.Parameters.Add('"' + FPathAbsoluteExe + '"');
-      //TestProcess.Execute;
-      //TestProcess.Free;
-    end
-    else begin
-      if IsUrl(FPathAbsoluteExe) then
-       Result :=  OpenURL(FPathAbsoluteExe);
-    end;
+    else //Folders
+      if DirectoryExistsUTF8(FPathAbsoluteExe) then
+        Result :=  OpenDocument(FPathAbsoluteExe)
+      else //Url
+        if IsUrl(FPathAbsoluteExe) then
+          Result :=  OpenURL(FPathAbsoluteExe);
   end;
-
-//  Result := ShellExecute(GetDesktopWindow, 'open', PChar(FPathAbsoluteExe),
-//                            PChar(vParameters),
-//                            PChar(vWorkingDir), vWindowState) > 32;
 end;
 
 //------------------------------------------------------------------------------
