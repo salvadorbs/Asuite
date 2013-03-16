@@ -39,8 +39,6 @@ type
     lbASuiteVersion: TLabel;
     memIntro: TMemo;
     lnklblWebSite: TLabel;
-    procedure FormCreate(Sender: TObject);
-    procedure FormShow(Sender: TObject);
     procedure lnklblWebSiteClick(Sender: TObject);
   private
     { Private declarations }
@@ -57,16 +55,6 @@ implementation
 uses Main;
 
 {$R *.lfm}
-
-procedure TfrmAbout.FormCreate(Sender: TObject);
-begin
-
-end;
-
-procedure TfrmAbout.FormShow(Sender: TObject);
-begin
-
-end;
 
 procedure TfrmAbout.lnklblWebSiteClick(Sender: TObject);
 begin

@@ -4,14 +4,14 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="Debug"/>
-    <Units Count="52">
+    <Units Count="54">
       <Unit0>
         <Filename Value="ASuite.lpr"/>
         <IsPartOfProject Value="True"/>
         <WindowIndex Value="0"/>
         <TopLine Value="27"/>
         <CursorPos X="40" Y="36"/>
-        <UsageCount Value="63"/>
+        <UsageCount Value="66"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
@@ -19,16 +19,16 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="ulCommonUtils"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="105"/>
-        <CursorPos X="5" Y="120"/>
-        <UsageCount Value="63"/>
+        <TopLine Value="33"/>
+        <CursorPos X="28" Y="47"/>
+        <UsageCount Value="66"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
         <Filename Value="library\ulCommonClasses.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ulCommonClasses"/>
-        <UsageCount Value="63"/>
+        <UsageCount Value="66"/>
       </Unit2>
       <Unit3>
         <Filename Value="AppConfig.pas"/>
@@ -37,7 +37,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="103"/>
         <CursorPos X="3" Y="109"/>
-        <UsageCount Value="63"/>
+        <UsageCount Value="66"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit3>
       <Unit4>
@@ -47,7 +47,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="279"/>
         <CursorPos X="104" Y="243"/>
-        <UsageCount Value="63"/>
+        <UsageCount Value="66"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit4>
       <Unit5>
@@ -61,7 +61,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="652"/>
         <CursorPos X="10" Y="667"/>
-        <UsageCount Value="63"/>
+        <UsageCount Value="66"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -73,11 +73,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="PropertyFile"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="179"/>
-        <CursorPos X="17" Y="198"/>
-        <UsageCount Value="63"/>
+        <TopLine Value="218"/>
+        <CursorPos X="35" Y="236"/>
+        <UsageCount Value="66"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit6>
@@ -88,7 +88,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="PropertyCat"/>
-        <UsageCount Value="63"/>
+        <EditorIndex Value="3"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="79"/>
+        <CursorPos X="25" Y="94"/>
+        <UsageCount Value="66"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit7>
       <Unit8>
         <Filename Value="About.pas"/>
@@ -97,14 +103,26 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="About"/>
-        <UsageCount Value="63"/>
+        <EditorIndex Value="8"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="66"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit8>
       <Unit9>
         <Filename Value="ClearElements.pas"/>
         <IsPartOfProject Value="True"/>
         <HasResources Value="True"/>
         <UnitName Value="ClearElements"/>
-        <UsageCount Value="63"/>
+        <EditorIndex Value="10"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="66"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit9>
       <Unit10>
         <Filename Value="Option.pas"/>
@@ -113,10 +131,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Option"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="121"/>
         <CursorPos X="57" Y="136"/>
-        <UsageCount Value="63"/>
+        <UsageCount Value="66"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit10>
       <Unit11>
@@ -126,19 +146,17 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="67" Y="30"/>
-        <UsageCount Value="63"/>
+        <UsageCount Value="66"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit11>
       <Unit12>
         <Filename Value="library\ulNodeDataTypes.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ulNodeDataTypes"/>
-        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="209"/>
-        <CursorPos X="24" Y="215"/>
-        <UsageCount Value="63"/>
-        <Loaded Value="True"/>
+        <TopLine Value="535"/>
+        <CursorPos X="101" Y="542"/>
+        <UsageCount Value="66"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit12>
       <Unit13>
@@ -146,7 +164,13 @@
         <IsPartOfProject Value="True"/>
         <HasResources Value="True"/>
         <UnitName Value="OrderSoftware"/>
-        <UsageCount Value="63"/>
+        <EditorIndex Value="2"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="66"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit13>
       <Unit14>
         <Filename Value="library\ulEnumerations.pas"/>
@@ -155,20 +179,17 @@
         <WindowIndex Value="0"/>
         <TopLine Value="31"/>
         <CursorPos X="7" Y="46"/>
-        <UsageCount Value="63"/>
+        <UsageCount Value="66"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit14>
       <Unit15>
         <Filename Value="library\ulSysUtils.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ulSysUtils"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="116"/>
         <CursorPos X="56" Y="125"/>
-        <UsageCount Value="63"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="66"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit15>
       <Unit16>
@@ -178,7 +199,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="110"/>
         <CursorPos X="5" Y="125"/>
-        <UsageCount Value="63"/>
+        <UsageCount Value="66"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit16>
       <Unit17>
@@ -188,22 +209,23 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
         <UnitName Value="udImages"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="199"/>
         <CursorPos X="1" Y="218"/>
-        <UsageCount Value="63"/>
+        <UsageCount Value="66"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit17>
       <Unit18>
         <Filename Value="library\ulDatabase.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ulDatabase"/>
-        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="320"/>
         <CursorPos X="19" Y="334"/>
-        <UsageCount Value="63"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="66"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit18>
       <Unit19>
@@ -213,10 +235,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
         <UnitName Value="udClassicMenu"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="591"/>
         <CursorPos X="44" Y="614"/>
-        <UsageCount Value="63"/>
+        <UsageCount Value="66"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit19>
       <Unit20>
@@ -224,7 +248,13 @@
         <IsPartOfProject Value="True"/>
         <HasResources Value="True"/>
         <UnitName Value="PropertySeparator"/>
-        <UsageCount Value="63"/>
+        <EditorIndex Value="5"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="66"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit20>
       <Unit21>
         <Filename Value="library\ulExeUtils.pas"/>
@@ -233,7 +263,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="54"/>
         <CursorPos X="60" Y="75"/>
-        <UsageCount Value="63"/>
+        <UsageCount Value="66"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit21>
       <Unit22>
@@ -241,10 +271,12 @@
         <IsPartOfProject Value="True"/>
         <HasResources Value="True"/>
         <UnitName Value="ImportList"/>
+        <EditorIndex Value="11"/>
         <WindowIndex Value="0"/>
         <TopLine Value="114"/>
         <CursorPos X="31" Y="129"/>
-        <UsageCount Value="63"/>
+        <UsageCount Value="66"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit22>
       <Unit23>
@@ -254,18 +286,22 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ASuiteForm"/>
-        <UsageCount Value="63"/>
+        <EditorIndex Value="9"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="66"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit23>
       <Unit24>
         <Filename Value="library\ulTreeView.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ulTreeView"/>
-        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="120"/>
-        <CursorPos X="26" Y="131"/>
-        <UsageCount Value="63"/>
-        <Loaded Value="True"/>
+        <TopLine Value="108"/>
+        <CursorPos X="33" Y="122"/>
+        <UsageCount Value="66"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit24>
       <Unit25>
@@ -275,7 +311,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="63"/>
+        <UsageCount Value="66"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit25>
       <Unit26>
@@ -471,95 +507,79 @@
         <CursorPos X="1" Y="363"/>
         <UsageCount Value="10"/>
       </Unit51>
+      <Unit52>
+        <Filename Value="C:\lazarus\lcl\controls.pp"/>
+        <UnitName Value="Controls"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1447"/>
+        <CursorPos X="14" Y="1460"/>
+        <UsageCount Value="10"/>
+      </Unit52>
+      <Unit53>
+        <Filename Value="C:\lazarus\lcl\stdctrls.pp"/>
+        <UnitName Value="StdCtrls"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="831"/>
+        <CursorPos X="3" Y="846"/>
+        <UsageCount Value="10"/>
+      </Unit53>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
-    <JumpHistory Count="21" HistoryIndex="20">
+    <JumpHistory Count="13" HistoryIndex="12">
       <Position1>
-        <Filename Value="Main.pas"/>
-        <Caret Line="727" Column="17" TopLine="725"/>
+        <Filename Value="PropertyFile.pas"/>
+        <Caret Line="198" Column="17" TopLine="179"/>
       </Position1>
       <Position2>
-        <Filename Value="library\ulDatabase.pas"/>
-        <Caret Line="697" Column="13" TopLine="670"/>
+        <Filename Value="PropertyFile.pas"/>
+        <Caret Line="117" Column="10" TopLine="102"/>
       </Position2>
       <Position3>
-        <Filename Value="library\ulSysUtils.pas"/>
-        <Caret Line="262" Column="49" TopLine="251"/>
+        <Filename Value="PropertyFile.pas"/>
+        <Caret Line="119" Column="4" TopLine="102"/>
       </Position3>
       <Position4>
-        <Filename Value="library\ulSysUtils.pas"/>
-        <Caret Line="266" Column="6" TopLine="251"/>
+        <Filename Value="PropertyFile.pas"/>
+        <Caret Line="235" Column="30" TopLine="225"/>
       </Position4>
       <Position5>
-        <Filename Value="library\ulSysUtils.pas"/>
-        <Caret Line="181" Column="5" TopLine="166"/>
+        <Filename Value="PropertyCat.pas"/>
+        <Caret Line="1" Column="1" TopLine="83"/>
       </Position5>
       <Position6>
-        <Filename Value="library\ulSysUtils.pas"/>
-        <Caret Line="198" Column="5" TopLine="183"/>
+        <Filename Value="PropertyCat.pas"/>
+        <Caret Line="114" Column="30" TopLine="98"/>
       </Position6>
       <Position7>
-        <Filename Value="library\ulTreeView.pas"/>
-        <Caret Line="275" Column="54" TopLine="253"/>
+        <Filename Value="PropertyCat.pas"/>
+        <Caret Line="100" Column="33" TopLine="85"/>
       </Position7>
       <Position8>
-        <Filename Value="library\ulSysUtils.pas"/>
-        <Caret Line="342" Column="18" TopLine="327"/>
+        <Filename Value="PropertyCat.pas"/>
+        <Caret Line="29" Column="38" TopLine="9"/>
       </Position8>
       <Position9>
-        <Filename Value="library\ulSysUtils.pas"/>
-        <Caret Line="91" Column="22" TopLine="77"/>
+        <Filename Value="PropertyCat.pas"/>
+        <Caret Line="100" Column="26" TopLine="85"/>
       </Position9>
       <Position10>
-        <Filename Value="PropertyFile.pas"/>
-        <Caret Line="183" Column="9" TopLine="169"/>
+        <Filename Value="PropertyCat.pas"/>
+        <Caret Line="114" Column="30" TopLine="99"/>
       </Position10>
       <Position11>
-        <Filename Value="library\ulTreeView.pas"/>
-        <Caret Line="301" Column="43" TopLine="300"/>
+        <Filename Value="PropertyCat.pas"/>
+        <Caret Line="100" Column="1" TopLine="92"/>
       </Position11>
       <Position12>
-        <Filename Value="library\ulTreeView.pas"/>
-        <Caret Line="127" Column="1" TopLine="106"/>
+        <Filename Value="PropertyCat.pas"/>
+        <Caret Line="36" Column="5" TopLine="21"/>
       </Position12>
       <Position13>
-        <Filename Value="library\ulTreeView.pas"/>
-        <Caret Line="128" Column="11" TopLine="108"/>
+        <Filename Value="PropertyCat.pas"/>
+        <Caret Line="109" Column="39" TopLine="99"/>
       </Position13>
-      <Position14>
-        <Filename Value="library\ulTreeView.pas"/>
-        <Caret Line="129" Column="9" TopLine="108"/>
-      </Position14>
-      <Position15>
-        <Filename Value="PropertyFile.pas"/>
-        <Caret Line="80" Column="20" TopLine="86"/>
-      </Position15>
-      <Position16>
-        <Filename Value="library\ulTreeView.pas"/>
-        <Caret Line="129" Column="9" TopLine="108"/>
-      </Position16>
-      <Position17>
-        <Filename Value="library\ulTreeView.pas"/>
-        <Caret Line="106" Column="15" TopLine="95"/>
-      </Position17>
-      <Position18>
-        <Filename Value="library\ulTreeView.pas"/>
-        <Caret Line="75" Column="3" TopLine="60"/>
-      </Position18>
-      <Position19>
-        <Filename Value="Main.pas"/>
-        <Caret Line="804" Column="37" TopLine="785"/>
-      </Position19>
-      <Position20>
-        <Filename Value="Main.pas"/>
-        <Caret Line="314" Column="6" TopLine="299"/>
-      </Position20>
-      <Position21>
-        <Filename Value="library\ulTreeView.pas"/>
-        <Caret Line="146" Column="27" TopLine="74"/>
-      </Position21>
     </JumpHistory>
   </ProjectSession>
 </CONFIG>

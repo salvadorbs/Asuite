@@ -12,9 +12,7 @@ object frmAbout: TfrmAbout
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'MS Shell Dlg 2'
-  OnCreate = FormCreate
-  OnShow = FormShow
-  LCLVersion = '1.0.1.3'
+  LCLVersion = '1.0.6.0'
   object GroupBox3: TGroupBox
     Left = 6
     Height = 377

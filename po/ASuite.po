@@ -63,10 +63,12 @@ msgid "List"
 msgstr ""
 
 #: appconfig.msglongmfu
+msgctxt "appconfig.msglongmfu"
 msgid "Most Frequently Used"
 msgstr ""
 
 #: appconfig.msglongmru
+msgctxt "appconfig.msglongmru"
 msgid "Recents"
 msgstr ""
 
@@ -110,7 +112,25 @@ msgstr ""
 msgid "Complete"
 msgstr ""
 
+#: tfrmabout.caption
+msgid "Card"
+msgstr ""
+
+#: tfrmabout.lbasuitetitle.caption
+msgctxt "TFRMABOUT.LBASUITETITLE.CAPTION"
+msgid "ASuite"
+msgstr ""
+
+#: tfrmabout.lbasuiteversion.caption
+msgid "Version x.y"
+msgstr ""
+
+#: tfrmabout.lnklblwebsite.caption
+msgid "http://www.salvadorsoftware.com"
+msgstr ""
+
 #: tfrmmain.caption
+msgctxt "tfrmmain.caption"
 msgid "ASuite"
 msgstr ""
 
@@ -222,6 +242,7 @@ msgid "Show application's folder"
 msgstr ""
 
 #: tfrmmain.mioptions1.caption
+msgctxt "tfrmmain.mioptions1.caption"
 msgid "Options"
 msgstr ""
 
@@ -262,6 +283,7 @@ msgid "Icon path"
 msgstr ""
 
 #: tfrmmain.misearchname.caption
+msgctxt "tfrmmain.misearchname.caption"
 msgid "Name"
 msgstr ""
 
@@ -333,5 +355,396 @@ msgstr ""
 
 #: tfrmmain.tbsearch.caption
 msgid "Search"
+msgstr ""
+
+#: tfrmoption.btnbrowsebackground.caption
+msgctxt "TFRMOPTION.BTNBROWSEBACKGROUND.CAPTION"
+msgid "Browse"
+msgstr ""
+
+#: tfrmoption.btncancel.caption
+msgctxt "TFRMOPTION.BTNCANCEL.CAPTION"
+msgid "Cancel"
+msgstr ""
+
+#: tfrmoption.btnchangeorder.caption
+msgctxt "TFRMOPTION.BTNCHANGEORDER.CAPTION"
+msgid "Change order"
+msgstr ""
+
+#: tfrmoption.btnclearelements.caption
+msgid "Clear elements..."
+msgstr ""
+
+#: tfrmoption.btnfontsettings.caption
+msgid "Font settings..."
+msgstr ""
+
+#: tfrmoption.btnok.caption
+msgctxt "TFRMOPTION.BTNOK.CAPTION"
+msgid "Ok"
+msgstr ""
+
+#: tfrmoption.btntraycustomicon.caption
+msgid "Choose icon"
+msgstr ""
+
+#: tfrmoption.caption
+msgctxt "TFRMOPTION.CAPTION"
+msgid "Options"
+msgstr ""
+
+#: tfrmoption.cbautoopclcat.caption
+msgid "Automatic Opening/Closing Categories"
+msgstr ""
+
+#: tfrmoption.cbautorun.caption
+msgid "Enable autorun"
+msgstr ""
+
+#: tfrmoption.cbbackground.caption
+msgid "Active background"
+msgstr ""
+
+#: tfrmoption.cbbackup.caption
+msgid "Active backup"
+msgstr ""
+
+#: tfrmoption.cbcache.caption
+msgid "Enable cache"
+msgstr ""
+
+#: tfrmoption.cbcustomtitle.caption
+msgid "Custom window title"
+msgstr ""
+
+#: tfrmoption.cbhidesearch.caption
+msgid "Hide tab Search"
+msgstr ""
+
+#: tfrmoption.cbholdsize.caption
+msgid "Hold window size"
+msgstr ""
+
+#: tfrmoption.cbmfu.caption
+msgid "Active MFU"
+msgstr ""
+
+#: tfrmoption.cbmru.caption
+msgid "Active MRU"
+msgstr ""
+
+#: tfrmoption.cbrunsingleclick.caption
+msgid "Execute with single click"
+msgstr ""
+
+#: tfrmoption.cbshowmenustartup.caption
+msgid "Show Menu on startup"
+msgstr ""
+
+#: tfrmoption.cbshowpanelstartup.caption
+msgid "Show window on startup"
+msgstr ""
+
+#: tfrmoption.cbsubmenumfu.caption
+msgid "MFU on trayicon submenu"
+msgstr ""
+
+#: tfrmoption.cbsubmenumru.caption
+msgid "MRU on trayicon submenu"
+msgstr ""
+
+#: tfrmoption.cbtraycustomicon.caption
+msgid "Custom tray icon"
+msgstr ""
+
+#: tfrmoption.cbtrayicon.caption
+msgid "Enable the System Tray icon"
+msgstr ""
+
+#: tfrmoption.cbwindowontop.caption
+msgid "Window on top"
+msgstr ""
+
+#: tfrmoption.cbwindowsstartup.caption
+msgid "Start ASuite on system startup"
+msgstr ""
+
+#: tfrmoption.edtbackground.text
+msgctxt "TFRMOPTION.EDTBACKGROUND.TEXT"
+msgid "$ASuite\\"
+msgstr ""
+
+#: tfrmoption.edtcustomtitle.text
+msgctxt "TFRMOPTION.EDTCUSTOMTITLE.TEXT"
+msgid "ASuite"
+msgstr ""
+
+#: tfrmoption.gbbackup.caption
+msgid "Backup"
+msgstr ""
+
+#: tfrmoption.gbclearelements.caption
+msgid "Clear Elements"
+msgstr ""
+
+#: tfrmoption.gbexecution.caption
+msgid "Execution"
+msgstr ""
+
+#: tfrmoption.gbmfu.caption
+msgctxt "TFRMOPTION.GBMFU.CAPTION"
+msgid "Most Frequently Used"
+msgstr ""
+
+#: tfrmoption.gbotherfunctions.caption
+msgid "Other functions"
+msgstr ""
+
+#: tfrmoption.gbrecents.caption
+msgctxt "TFRMOPTION.GBRECENTS.CAPTION"
+msgid "Recents"
+msgstr ""
+
+#: tfrmoption.gbstartup.caption
+msgid "Startup"
+msgstr ""
+
+#: tfrmoption.gbtrayicon.caption
+msgid "System Tray"
+msgstr ""
+
+#: tfrmoption.gbtreeview.caption
+msgid "Treeview"
+msgstr ""
+
+#: tfrmoption.gbwindow.caption
+msgid "Window"
+msgstr ""
+
+#: tfrmoption.lbactiononexe.caption
+msgctxt "TFRMOPTION.LBACTIONONEXE.CAPTION"
+msgid "On execution"
+msgstr ""
+
+#: tfrmoption.lbclearelements.caption
+msgid "Clear all MRU, backups and/or cache icons"
+msgstr ""
+
+#: tfrmoption.lblanguage.caption
+msgid "Language"
+msgstr ""
+
+#: tfrmoption.lblautorunorder.caption
+msgid "Autoexecute items list"
+msgstr ""
+
+#: tfrmoption.lbmaxbackup.caption
+msgid "Max number Backup"
+msgstr ""
+
+#: tfrmoption.lbmaxmfu.caption
+msgid "Max number MFU"
+msgstr ""
+
+#: tfrmoption.lbmaxmru.caption
+msgid "Max number MRU"
+msgstr ""
+
+#: tfrmoption.lbnumbbackup.caption
+msgctxt "TFRMOPTION.LBNUMBBACKUP.CAPTION"
+msgid "10"
+msgstr ""
+
+#: tfrmoption.lbnumbmfu.caption
+msgctxt "TFRMOPTION.LBNUMBMFU.CAPTION"
+msgid "10"
+msgstr ""
+
+#: tfrmoption.lbnumbmru.caption
+msgctxt "tfrmoption.lbnumbmru.caption"
+msgid "10"
+msgstr ""
+
+#: tfrmoption.lbtrayleftclick.caption
+msgid "Left click"
+msgstr ""
+
+#: tfrmoption.lbtrayrightclick.caption
+msgid "Right click"
+msgstr ""
+
+#: tfrmoption.tabsheet1.caption
+msgctxt "TFRMOPTION.TABSHEET1.CAPTION"
+msgid "General"
+msgstr ""
+
+#: tfrmoption.tabsheet2.caption
+msgctxt "TFRMOPTION.TABSHEET2.CAPTION"
+msgid "Advanced"
+msgstr ""
+
+#: tfrmoption.tabsheet3.caption
+msgid "Various"
+msgstr ""
+
+#: tfrmpropertycat.btnbrowseicon.caption
+msgctxt "tfrmpropertycat.btnbrowseicon.caption"
+msgid "Browse"
+msgstr ""
+
+#: tfrmpropertycat.btncancel.caption
+msgctxt "tfrmpropertycat.btncancel.caption"
+msgid "Cancel"
+msgstr ""
+
+#: tfrmpropertycat.btnok.caption
+msgctxt "tfrmpropertycat.btnok.caption"
+msgid "Ok"
+msgstr ""
+
+#: tfrmpropertycat.caption
+msgctxt "TFRMPROPERTYCAT.CAPTION"
+msgid "Properties"
+msgstr ""
+
+#: tfrmpropertycat.cbhidesoftware.caption
+msgctxt "tfrmpropertycat.cbhidesoftware.caption"
+msgid "Hide this software from menu"
+msgstr ""
+
+#: tfrmpropertycat.edtpathicon.text
+msgctxt "tfrmpropertycat.edtpathicon.text"
+msgid "$ASuite\\"
+msgstr ""
+
+#: tfrmpropertycat.lbname.caption
+msgctxt "TFRMPROPERTYCAT.LBNAME.CAPTION"
+msgid "Name"
+msgstr ""
+
+#: tfrmpropertycat.lbpathicon.caption
+msgctxt "tfrmpropertycat.lbpathicon.caption"
+msgid "Custom icon path (optional)"
+msgstr ""
+
+#: tfrmpropertyfile.btnbrowseexe.caption
+msgctxt "TFRMPROPERTYFILE.BTNBROWSEEXE.CAPTION"
+msgid "Browse"
+msgstr ""
+
+#: tfrmpropertyfile.btnbrowseicon.caption
+msgctxt "TFRMPROPERTYFILE.BTNBROWSEICON.CAPTION"
+msgid "Browse"
+msgstr ""
+
+#: tfrmpropertyfile.btnbrowseworkingdir.caption
+msgctxt "TFRMPROPERTYFILE.BTNBROWSEWORKINGDIR.CAPTION"
+msgid "Browse"
+msgstr ""
+
+#: tfrmpropertyfile.btncancel.caption
+msgctxt "TFRMPROPERTYFILE.BTNCANCEL.CAPTION"
+msgid "Cancel"
+msgstr ""
+
+#: tfrmpropertyfile.btnchangeorder.caption
+msgctxt "tfrmpropertyfile.btnchangeorder.caption"
+msgid "Change order"
+msgstr ""
+
+#: tfrmpropertyfile.btnok.caption
+msgctxt "TFRMPROPERTYFILE.BTNOK.CAPTION"
+msgid "Ok"
+msgstr ""
+
+#: tfrmpropertyfile.caption
+msgctxt "TFRMPROPERTYFILE.CAPTION"
+msgid "Properties"
+msgstr ""
+
+#: tfrmpropertyfile.cbdontinsertmfu.caption
+msgid "Don't insert this software in MFU"
+msgstr ""
+
+#: tfrmpropertyfile.cbdontinsertmru.caption
+msgid "Don't insert this software in recents (MRU)"
+msgstr ""
+
+#: tfrmpropertyfile.cbhidesoftware.caption
+msgctxt "TFRMPROPERTYFILE.CBHIDESOFTWARE.CAPTION"
+msgid "Hide this software from menu"
+msgstr ""
+
+#: tfrmpropertyfile.cbshortcutdesktop.caption
+msgid "Create shortcut on desktop when ASuite is running"
+msgstr ""
+
+#: tfrmpropertyfile.edtpathexe.text
+msgctxt "TFRMPROPERTYFILE.EDTPATHEXE.TEXT"
+msgid "$ASuite\\"
+msgstr ""
+
+#: tfrmpropertyfile.edtpathicon.text
+msgctxt "TFRMPROPERTYFILE.EDTPATHICON.TEXT"
+msgid "$ASuite\\"
+msgstr ""
+
+#: tfrmpropertyfile.edtworkingdir.text
+msgctxt "TFRMPROPERTYFILE.EDTWORKINGDIR.TEXT"
+msgid "$ASuite\\"
+msgstr ""
+
+#: tfrmpropertyfile.lbactiononexe.caption
+msgctxt "tfrmpropertyfile.lbactiononexe.caption"
+msgid "On execution"
+msgstr ""
+
+#: tfrmpropertyfile.lbautoexecute.caption
+msgid "Autoexecute"
+msgstr ""
+
+#: tfrmpropertyfile.lbinfo1.caption
+msgid "Every page in ASuite requires some information about the respective application. All fields are optional except the application's name."
+msgstr ""
+
+#: tfrmpropertyfile.lbinfo2.caption
+msgid "Note: You can use $ASuite even when applications are in the same folder as ASuite."
+msgstr ""
+
+#: tfrmpropertyfile.lbname.caption
+msgctxt "TFRMPROPERTYFILE.LBNAME.CAPTION"
+msgid "Name"
+msgstr ""
+
+#: tfrmpropertyfile.lbparameters.caption
+msgid "Parameters (optional)"
+msgstr ""
+
+#: tfrmpropertyfile.lbpathexe.caption
+msgid "Executable/folder/web page path"
+msgstr ""
+
+#: tfrmpropertyfile.lbpathicon.caption
+msgctxt "TFRMPROPERTYFILE.LBPATHICON.CAPTION"
+msgid "Custom icon path (optional)"
+msgstr ""
+
+#: tfrmpropertyfile.lbwindowstate.caption
+msgid "Window state"
+msgstr ""
+
+#: tfrmpropertyfile.lbworkingdir.caption
+msgid "Custom working directory (optional)"
+msgstr ""
+
+#: tfrmpropertyfile.tsinfo1.caption
+msgctxt "tfrmpropertyfile.tsinfo1.caption"
+msgid "General"
+msgstr ""
+
+#: tfrmpropertyfile.tsinfo2.caption
+msgctxt "tfrmpropertyfile.tsinfo2.caption"
+msgid "Advanced"
 msgstr ""
 
