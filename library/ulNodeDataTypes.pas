@@ -157,6 +157,7 @@ type
     //Specific properties
     constructor Create; overload;
     procedure Copy(source:TvBaseNodeData); override;
+    function OpenExtractedFolder: Boolean;
     property Name;
     property ID;
     property ParentID;
@@ -439,6 +440,11 @@ begin
     //Misc
     SetAutorun(FileNodeData.Autorun);
   end;
+end;
+
+function TvFileNodeData.OpenExtractedFolder: Boolean;
+begin
+  Result := OpenDocument(ExtractFileDir(FPathAbsoluteExe));
 end;
 
 procedure TvFileNodeData.SetPathExe(value:string);

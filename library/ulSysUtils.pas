@@ -273,8 +273,8 @@ end;
 function AbsoluteToRelative(APath: String): string;
 begin
   APath := LowerCase(APath);
-  if (pos(ExcludeTrailingBackslash(SUITE_WORKING_PATH),APath) <> 0) then
-    APath := StringReplace(APath, ExcludeTrailingBackslash(SUITE_WORKING_PATH), CONST_PATH_ASUITE, [rfReplaceAll])
+  if (pos(ExcludeTrailingPathDelimiter(SUITE_WORKING_PATH),APath) <> 0) then
+    APath := StringReplace(APath, ExcludeTrailingPathDelimiter(SUITE_WORKING_PATH), CONST_PATH_ASUITE, [rfReplaceAll])
   else
     if pos(SUITE_DRIVE,APath) <> 0 then
       APath := StringReplace(APath, SUITE_DRIVE, CONST_PATH_DRIVE, [rfReplaceAll]);
@@ -311,6 +311,7 @@ function ExtractDirectoryName(const Filename: string): string;
 var
   AList : TStringList;
 begin
+  { TODO : Check this code *Lazarus Porting* }
 	AList := TStringList.create;
 	try
     StrToStrings(Filename,PathDelim,AList);

@@ -161,6 +161,7 @@ type
       Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
+    procedure ExecuteFileOrOpenFolder(TreeView: TBaseVirtualTree;ExecuteFile: Boolean);
     function  GetActiveTree: TBaseVirtualTree;
     procedure LoadGlyphs;
     procedure RunAutorun;
@@ -182,6 +183,7 @@ uses
 
 procedure TfrmMain.btnedtSearchKeyPress(Sender: TObject; var Key: Char);
 begin
+  { TODO : Add OnKeyPress event in btnedtSearch *Lazarus Porting* }
   if Ord(Key) = VK_RETURN then
     btnedtSearchRightButtonClick(Sender);
 end;
@@ -283,27 +285,11 @@ end;
 
 procedure TfrmMain.OpenFolderSw(Sender: TObject);
 var
-  NodeData : PBaseData;
-  Node     : PVirtualNode;
   TreeView : TBaseVirtualTree;
 begin
   TreeView := GetActiveTree;
-  Node := TreeView.GetFirstSelected;
-  while Assigned(Node) do
-  begin
-    if (TreeView = vstList) then
-      NodeData := vstList.GetNodeData(Node)
-    else
-      NodeData := NodeDataXToNodeDataList(Node, vstSearch, vstList);
-    if NodeData.Data.DataType = vtdtFile then
-       OpenDocument(PChar(ExtractFileDir(TvFileNodeData(NodeData.Data).PathAbsoluteExe)));
-{ TODO : Check this code - Add a function in TvFileNodeData class  *Lazarus Porting* }
-//      ShellExecute(GetDesktopWindow, 'open',
-//                   PChar(ExtractFileDir(TvFileNodeData(NodeData.Data).PathAbsoluteExe)),
-//                   nil, nil, SW_NORMAL);
-
-    Node := TreeView.GetNextSelected(node);
-  end;
+  //Show file's folder
+  ExecuteFileOrOpenFolder(TreeView, false);
 end;
 
 procedure TfrmMain.RunExe(Sender: TObject);
@@ -311,26 +297,11 @@ var
   NodeData : TvBaseNodeData;
   Node     : PVirtualNode;
 begin
-  if ClickOnButtonTree(vstList) then
-    Exit;
-  //From list/search
   if (Sender is TBaseVirtualTree) then
   begin
-    Node := (Sender as TBaseVirtualTree).GetFirstSelected;
-    while Assigned(Node) do
-    begin
-      if (Sender = vstList) then
-        NodeData := PBaseData(vstList.GetNodeData(Node)).Data
-      else
-        NodeData := PBaseData(NodeDataXToNodeDataList(Node,vstSearch,vstList)).Data;
-      //Run file
-      if (NodeData is TvFileNodeData) then
-        TvFileNodeData(NodeData).Execute(vstList, false);
-      if Node <> (Sender as TBaseVirtualTree).GetNextSelected(node) then
-        Node := (Sender as TBaseVirtualTree).GetNextSelected(node)
-      else
-        Node := nil;
-    end;
+    //Check if user click on node or expand button (+/-)
+    if Not(ClickOnButtonTree((Sender as TBaseVirtualTree))) then
+      ExecuteFileOrOpenFolder((Sender as TBaseVirtualTree), true);
   end;
 end;
 
@@ -441,13 +412,18 @@ begin
   miCut2.Visible          := ActiveTab;
   miCopy2.Visible         := ActiveTab;
   miPaste2.Visible        := ActiveTab;
+  //Separator
+  N9.Visible              := ActiveTab;
+  N5.Visible              := ActiveTab;
+  N10.Visible             := ActiveTab;
 end;
 
 procedure TfrmMain.pmWindowPopup(Sender: TObject);
 var
-  NodeData: PBaseData;
-  Point   : TPoint;
-  HitInfo : ThitInfo;
+  NodeData : PBaseData;
+  Point    : TPoint;
+  HitInfo  : ThitInfo;
+  TreeView : TBaseVirtualTree;
 begin
   GetCursorPos(Point);
   Point    := vstList.ScreenToClient(Point);
@@ -463,10 +439,8 @@ begin
   if (Assigned(vstList.FocusedNode) and (pcList.ActivePageIndex = PG_LIST)) or
      (Assigned(vstSearch.FocusedNode) and (pcList.ActivePageIndex = PG_Search)) then
   begin
-    if pcList.ActivePageIndex = PG_LIST then
-      NodeData := vstList.GetNodeData(vstList.FocusedNode)
-    else
-      NodeData := NodeDataXToNodeDataList(vstSearch.FocusedNode,vstSearch,vstList);
+    TreeView := GetActiveTree;
+    NodeData := GetNodeDataEx(TreeView.FocusedNode, TreeView, vstSearch, vstList);
     miProperty2.Enabled     := true;
     if (NodeData.Data.DataType <> vtdtCategory) then
       miRunSelectedSw.Enabled := true;
@@ -476,9 +450,8 @@ begin
       miRunSelectedSw.Enabled := true;
     case NodeData.Data.DataType of
       vtdtCategory  : miRunSelectedSw.Enabled := false;
-      vtdtFile      : miOpenFolderSw.Enabled := true;
-      vtdtSeparator :
-        miRunSelectedSw.Enabled := false;
+      vtdtFile      : miOpenFolderSw.Enabled  := true;
+      vtdtSeparator : miRunSelectedSw.Enabled := false;
     end;
   end
   else begin
@@ -494,8 +467,8 @@ var
   Data1, Data2, CatData1, CatData2: PBaseData;
   CatName1, CatName2 : String;
 begin
-  Data1 := NodeDataXToNodeDataList(Node1,vstSearch,vstList);
-  Data2 := NodeDataXToNodeDataList(Node2,vstSearch,vstList);
+  Data1 := GetNodeDataSearch(Node1,vstSearch,vstList);
+  Data2 := GetNodeDataSearch(Node2,vstSearch,vstList);
   if (Not Assigned(Data1)) or (Not Assigned(Data2)) then
     Result := 0
   else
@@ -520,10 +493,10 @@ procedure TfrmMain.vstSearchGetImageIndex(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
   var Ghosted: Boolean; var ImageIndex: Integer);
 var
-  NodeDataList : PBaseData;
+  NodeData : TvBaseNodeData;
 begin
-  NodeDataList := NodeDataXToNodeDataList(Node,vstSearch,vstList);
-  ImageIndex   := NodeDataList.Data.ImageIndex;
+  NodeData   := GetNodeDataSearch(Node,vstSearch,vstList).Data;
+  ImageIndex := NodeData.ImageIndex;
   if Column = 1 then
     ImageIndex := -1;
 end;
@@ -531,15 +504,15 @@ end;
 procedure TfrmMain.vstSearchGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
   Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
 var
-  NodeDataList, CatData : PBaseData;
+  NodeData, CatData : PBaseData;
 begin
-  NodeDataList := NodeDataXToNodeDataList(Node,vstSearch,vstList);
+  NodeData := GetNodeDataSearch(Node,vstSearch,vstList);
   if Column = 0 then
-    CellText   := NodeDataList.Data.Name;
+    CellText   := NodeData.Data.Name;
   if Column = 1 then
-    if (NodeDataList.pNode.Parent <> vstList.RootNode) then
+    if (NodeData.pNode.Parent <> vstList.RootNode) then
     begin
-      CatData  := vstList.GetNodeData(NodeDataList.pNode.Parent);
+      CatData  := vstList.GetNodeData(NodeData.pNode.Parent);
       CellText := CatData.Data.Name;
     end
     else
@@ -555,6 +528,31 @@ begin
     Sender.SortDirection := sdDescending
   else
     Sender.SortDirection := sdAscending
+end;
+
+procedure TfrmMain.ExecuteFileOrOpenFolder(TreeView: TBaseVirtualTree;ExecuteFile: Boolean);
+var
+  Node     : PVirtualNode;
+  NodeData : TvBaseNodeData;
+begin
+  //First selected node
+  Node := TreeView.GetFirstSelected;
+  while Assigned(Node) do
+  begin
+    //Get Node data
+    NodeData := PBaseData(GetNodeDataEx(Node, TreeView, vstSearch, vstList)).Data;
+    //Check if node type is a file
+    if (NodeData is TvFileNodeData) then
+    begin
+      //If ExecuteFile = true, execute it
+      if ExecuteFile then
+        TvFileNodeData(NodeData).Execute(vstList, false)
+      else //Else open file's folder
+        TvFileNodeData(NodeData).OpenExtractedFolder;
+    end;
+    //Next selected node
+    Node := TreeView.GetNextSelected(node);
+  end;
 end;
 
 procedure TfrmMain.vstListGetImageIndex(Sender: TBaseVirtualTree;
@@ -663,12 +661,11 @@ begin
 end;
 
 procedure TfrmMain.RunSingleClick(Sender: TObject);
-begin 
-  if Not(ClickOnButtonTree(vstList)) then
-  begin
-    if (Config.RunSingleClick) then
-      RunExe(Sender);
-  end;
+begin
+  if (Sender is TBaseVirtualTree) then
+    if Not(ClickOnButtonTree((Sender as TBaseVirtualTree))) then
+      if (Config.RunSingleClick) then
+        RunExe(Sender);
 end;
 
 procedure TfrmMain.vstListCompareNodes(Sender: TBaseVirtualTree; Node1,
@@ -837,13 +834,11 @@ procedure TfrmMain.ShowProperty(Sender: TObject);
 var
   Node     : PVirtualNode;
   NodeData : PBaseData;
-  OK: Boolean;
+  OK       : Boolean;
+  TreeView : TBaseVirtualTree;
 begin
-  Node         := GetActiveTree.FocusedNode;
-  if (GetActiveTree = vstList) then
-    NodeData := vstList.GetNodeData(Node)
-  else
-    NodeData := NodeDataXToNodeDataList(Node, vstSearch, vstList);
+  TreeView := GetActiveTree;
+  NodeData := GetNodeDataEx(TreeView.FocusedNode, TreeView, vstSearch, vstList);
   if Assigned(NodeData) then
   begin
     case NodeData.Data.DataType of

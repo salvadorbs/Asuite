@@ -611,10 +611,7 @@ end;
 
 procedure TClassicMenu.OpenFile(Sender: TObject);
 begin
-{ TODO : Rewrite this code using NodeData *Lazarus Porting* }
-   OpenDocument(PChar(TMenuItem(Sender).Hint)); { *Converted from ShellExecute*  }
-//  ShellExecute(GetDesktopWindow, 'open', PChar(TMenuItem(Sender).Hint), nil,
-//               PChar(ExtractFileDir(TMenuItem(Sender).Hint)), SW_SHOW);
+   OpenDocument(PChar(TMenuItem(Sender).Hint));
 end;
 
 end.

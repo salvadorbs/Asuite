@@ -39,7 +39,8 @@ procedure DragDropText(Sender: TBaseVirtualTree;DataObject: IDataObject;
                        AttachMode: TVTNodeAttachMode; Mode: TDropMode);
 procedure GetChildNodesIcons(Sender: TBaseVirtualTree; Node: PVirtualNode);
 procedure GetFileListFromObj(const DataObj: IDataObject; FileList: TStringList);
-function  NodeDataXToNodeDataList(NodeX: PVirtualNode; SearchTree, ListTree: TBaseVirtualTree): PBaseData;
+function  GetNodeDataEx(Node: PVirtualNode; TreeView, SearchTree, ListTree: TBaseVirtualTree): PBaseData;
+function  GetNodeDataSearch(NodeX: PVirtualNode; SearchTree, ListTree: TBaseVirtualTree): PBaseData;
 procedure RefreshList(Tree: TBaseVirtualTree);
 
 type
@@ -326,7 +327,15 @@ begin
   end;
 end;
 
-function NodeDataXToNodeDataList(NodeX: PVirtualNode; SearchTree, ListTree: TBaseVirtualTree): PBaseData;
+function GetNodeDataEx(Node: PVirtualNode; TreeView, SearchTree, ListTree: TBaseVirtualTree): PBaseData;
+begin
+  if (TreeView = ListTree) then //List Treeview
+    Result := TreeView.GetNodeData(Node)
+  else //Search Treeview
+    Result := GetNodeDataSearch(Node, SearchTree, ListTree);
+end;
+
+function GetNodeDataSearch(NodeX: PVirtualNode; SearchTree, ListTree: TBaseVirtualTree): PBaseData;
 var
   NodeDataX : PTreeDataX;
 begin

@@ -1,7 +1,7 @@
 inherited frmMain: TfrmMain
-  Left = 513
+  Left = 498
   Height = 370
-  Top = 454
+  Top = 256
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'ASuite'
@@ -161,14 +161,14 @@ inherited frmMain: TfrmMain
     Height = 350
     Top = 0
     Width = 320
-    ActivePage = tbList
+    ActivePage = tbSearch
     Align = alClient
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Shell Dlg 2'
     MultiLine = True
     ParentFont = False
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 0
     OnChange = pcListChange
     Options = [nboMultiLine]
@@ -240,12 +240,21 @@ inherited frmMain: TfrmMain
         Anchors = [akTop, akLeft, akRight, akBottom]
         AnimationDuration = 0
         Header.AutoSizeIndex = 0
-        Header.Columns = <>
+        Header.Columns = <        
+          item
+            Position = 0
+            Text = 'Name'
+            Width = 90
+          end        
+          item
+            Position = 1
+            Text = 'Category'
+            Width = 90
+          end>
         Header.DefaultHeight = 17
         Header.Font.Color = clWindowText
         Header.Font.Height = -11
         Header.Font.Name = 'Tahoma'
-        Header.MainColumn = -1
         Header.Options = [hoColumnResize, hoDblClickResize, hoDrag, hoVisible]
         HintMode = hmHint
         ParentShowHint = False
