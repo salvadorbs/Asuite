@@ -20,7 +20,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
-      <BuildNr Value="1148"/>
+      <BuildNr Value="1153"/>
       <StringTable ProductVersion=""/>
     </VersionInfo>
     <BuildModes Count="2">
@@ -82,10 +82,10 @@
     </RunParams>
     <RequiredPackages Count="4">
       <Item1>
-        <PackageName Value="sqlite3laz"/>
+        <PackageName Value="asuitecomponents_package"/>
       </Item1>
       <Item2>
-        <PackageName Value="TButtonedEditpkg"/>
+        <PackageName Value="sqlite3laz"/>
       </Item2>
       <Item3>
         <PackageName Value="virtualtreeview_package"/>

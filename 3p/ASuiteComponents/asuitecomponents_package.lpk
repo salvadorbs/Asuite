@@ -1,38 +1,39 @@
 <?xml version="1.0"?>
 <CONFIG>
-  <Package Version="3">
+  <Package Version="4">
     <PathDelim Value="\"/>
-    <Name Value="TButtonedEditpkg"/>
-    <Author Value="Andrea Mauri"/>
+    <Name Value="asuitecomponents_package"/>
+    <Author Value="Matteo &quot;El Salvador&quot; Salvi"/>
     <CompilerOptions>
-      <Version Value="10"/>
+      <Version Value="11"/>
       <PathDelim Value="\"/>
       <SearchPaths>
-        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)\"/>
       </SearchPaths>
       <Other>
         <CompilerMessages>
-          <UseMsgFile Value="True"/>
+          <MsgFileName Value=""/>
         </CompilerMessages>
         <CompilerPath Value="$(CompPath)"/>
       </Other>
     </CompilerOptions>
+    <Description Value="Visual Components for ASuite project"/>
+    <License Value="GNU LESSER GENERAL PUBLIC LICENSE Version 3"/>
+    <Version Major="1"/>
     <Files Count="1">
       <Item1>
-        <Filename Value="buttonededit.pas"/>
+        <Filename Value="ASuiteControls.pas"/>
         <HasRegisterProc Value="True"/>
-        <UnitName Value="ButtonedEdit"/>
+        <UnitName Value="ASuiteControls"/>
       </Item1>
     </Files>
     <Type Value="RunAndDesignTime"/>
     <RequiredPkgs Count="2">
       <Item1>
-        <PackageName Value="LCLBase"/>
-        <MinVersion Major="1" Release="1" Valid="True"/>
+        <PackageName Value="LCL"/>
       </Item1>
       <Item2>
         <PackageName Value="FCL"/>
-        <MinVersion Major="1" Release="1" Valid="True"/>
       </Item2>
     </RequiredPkgs>
     <UsageOptions>

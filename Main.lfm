@@ -1,11 +1,13 @@
 inherited frmMain: TfrmMain
-  Left = 498
+  Left = 508
   Height = 370
-  Top = 256
+  Top = 119
+  Width = 200
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'ASuite'
   ClientHeight = 350
+  ClientWidth = 200
   Color = clBtnFace
   Constraints.MinHeight = 370
   Constraints.MinWidth = 200
@@ -160,7 +162,7 @@ inherited frmMain: TfrmMain
     Left = 0
     Height = 350
     Top = 0
-    Width = 320
+    Width = 200
     ActivePage = tbSearch
     Align = alClient
     Font.Color = clWindowText
@@ -175,12 +177,12 @@ inherited frmMain: TfrmMain
     object tbList: TTabSheet
       Caption = 'List'
       ClientHeight = 324
-      ClientWidth = 312
+      ClientWidth = 192
       object vstList: TVirtualStringTree
         Left = 0
         Height = 324
         Top = 0
-        Width = 312
+        Width = 192
         Align = alClient
         ClipboardFormats.Strings = (
           'Virtual Tree Data'
@@ -230,12 +232,12 @@ inherited frmMain: TfrmMain
     object tbSearch: TTabSheet
       Caption = 'Search'
       ClientHeight = 324
-      ClientWidth = 312
+      ClientWidth = 192
       object vstSearch: TVirtualStringTree
         Left = 0
         Height = 299
         Top = 25
-        Width = 312
+        Width = 192
         Align = alBottom
         Anchors = [akTop, akLeft, akRight, akBottom]
         AnimationDuration = 0
@@ -270,33 +272,28 @@ inherited frmMain: TfrmMain
         OnGetImageIndex = vstSearchGetImageIndex
         OnHeaderClick = vstSearchHeaderClick
       end
-      object btnedtSearch: TButtonedEdit
+      object edtSearch: TASuiteEdit
         Left = 0
         Height = 21
-        Top = 0
-        Width = 312
-        Align = alTop
-        Alignment = taLeftJustify
-        BorderStyle = bsSingle
-        CharCase = ecNormal
-        Color = clWhite
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Shell Dlg 2'
-        LeftButton.Left = 0
-        LeftButton.Height = 17
-        LeftButton.Top = 0
-        LeftButton.Width = 4
-        LeftButton.DropDownMenu = pmSearch
-        PasswordChar = #0
-        ReadOnly = False
-        RightButton.Left = 304
-        RightButton.Height = 17
-        RightButton.Top = 0
-        RightButton.Width = 4
-        ShowHint = True
+        Top = 2
+        Width = 165
+        Align = alLeft
+        Anchors = [akTop, akLeft, akRight]
+        BorderSpacing.Top = 2
+        BorderSpacing.Bottom = 2
+        OnKeyPress = btnedtSearchKeyPress
+        PopupMenu = pmSearch
         TabOrder = 0
-        OnRightButtonClick = btnedtSearchRightButtonClick
+      end
+      object sbtnSearch: TSpeedButton
+        Left = 168
+        Height = 25
+        Top = 0
+        Width = 24
+        Align = alRight
+        Anchors = []
+        NumGlyphs = 0
+        OnClick = btnedtSearchRightButtonClick
       end
     end
   end
@@ -481,26 +478,33 @@ inherited frmMain: TfrmMain
     top = 168
     object miSearchName: TMenuItem
       Caption = 'Name'
+      Checked = True
+      RadioItem = True
+      ShowAlwaysCheckable = True
       OnClick = ChangeSearchTextHint
     end
     object miSearchExePath: TMenuItem
       Tag = 1
       Caption = 'Executable path'
+      RadioItem = True
       OnClick = ChangeSearchTextHint
     end
     object miSearchIconPath: TMenuItem
       Tag = 2
       Caption = 'Icon path'
+      RadioItem = True
       OnClick = ChangeSearchTextHint
     end
     object miSearchWorkingDirPath: TMenuItem
       Tag = 3
       Caption = 'Working directory path'
+      RadioItem = True
       OnClick = ChangeSearchTextHint
     end
     object miSearchParameters: TMenuItem
       Tag = 4
       Caption = 'Parameters'
+      RadioItem = True
       OnClick = ChangeSearchTextHint
     end
   end

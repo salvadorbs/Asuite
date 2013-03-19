@@ -25,15 +25,18 @@ unit Main;
 interface
 
 uses
-  Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus, ComCtrls,
-  VirtualTrees, ActiveX, AppConfig, ulNodeDataTypes, ulCommonClasses, UDImages,
-  ASuiteForm, ButtonedEdit, LCLIntf, FileUtil, win32int, InterfaceBase;
+  Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
+  ComCtrls, VirtualTrees, ActiveX, AppConfig, ulNodeDataTypes, ulCommonClasses,
+  UDImages, ASuiteForm, ButtonedEdit, LCLIntf, FileUtil, win32int, InterfaceBase,
+  StdCtrls, EditBtn, Buttons, ASuiteControls;
 
 type
 
   { TfrmMain }
 
   TfrmMain = class(TASuiteForm)
+    edtSearch: TASuiteEdit;
+    sbtnSearch: TSpeedButton;
     vstList: TVirtualStringTree;
     pcList: TPageControl;
     tbList: TTabSheet;
@@ -83,7 +86,6 @@ type
     miCut1: TMenuItem;
     miCopy1: TMenuItem;
     miPaste1: TMenuItem;
-    btnedtSearch: TButtonedEdit;
     pmSearch: TPopupMenu;
     miSearchName: TMenuItem;
     miSearchExePath: TMenuItem;
@@ -183,7 +185,6 @@ uses
 
 procedure TfrmMain.btnedtSearchKeyPress(Sender: TObject; var Key: Char);
 begin
-  { TODO : Add OnKeyPress event in btnedtSearch *Lazarus Porting* }
   if Ord(Key) = VK_RETURN then
     btnedtSearchRightButtonClick(Sender);
 end;
@@ -193,18 +194,18 @@ var
   NodeData: PBaseData;
 begin
   vstSearch.Clear;
-  if Length(btnedtSearch.Text) > 0 then
+  if Length(edtSearch.Text) > 0 then
   begin
     New(NodeData);
     NodeData.Data := CreateNodeData(vtdtFile);
     with TvFileNodeData(NodeData.Data) do
     begin
       case SearchType of
-        stName       : Name       := btnedtSearch.Text;
-        stPathExe    : PathExe    := btnedtSearch.Text;
-        stPathIcon   : PathIcon   := btnedtSearch.Text;
-        stWorkingDir : WorkingDir := btnedtSearch.Text;
-        stParameters : Parameters := btnedtSearch.Text;
+        stName       : Name       := edtSearch.Text;
+        stPathExe    : PathExe    := edtSearch.Text;
+        stPathIcon   : PathIcon   := edtSearch.Text;
+        stWorkingDir : WorkingDir := edtSearch.Text;
+        stParameters : Parameters := edtSearch.Text;
       end;
     end;
     vstList.IterateSubtree(nil, IterateSubtreeProcs.FindNode, NodeData.Data, [], True);
@@ -243,14 +244,13 @@ end;
 
 procedure TfrmMain.ChangeSearchTextHint(Sender: TObject);
 begin
-  with btnedtSearch do
+  if (Sender is TMenuItem) then
   begin
-    LeftButton.Visible := False;
-    { TODO : Add TextHint *Lazarus Porting* }
-    //TextHint := StringReplace((Sender as TMenuItem).Caption, '&', '', []);
-    LeftButton.Visible := True;
+    //Set new placeholder and SearchType
+    edtSearch.PlaceHolder := StringReplace((Sender as TMenuItem).Caption, '&', '', []);
+    (Sender as TMenuItem).Checked := True;
+    SearchType := TSearchType((Sender as TMenuItem).Tag);
   end;
-  SearchType := TSearchType((Sender as TMenuItem).Tag);
 end;
 
 procedure TfrmMain.AddCategory(Sender: TObject);
@@ -779,7 +779,6 @@ begin
   vstSearch.Images    := ImagesDM.IcoImages;
   pmSearch.Images     := ImagesDM.IcoImages;
   pmWindow.Images     := ImagesDM.IcoImages;
-  btnedtSearch.Images := ImagesDM.IcoImages;
   //Set MainMenu's ImageIndexes
   miSaveList1.ImageIndex   := IMG_Save;
   miOptions1.ImageIndex    := IMG_Options;
@@ -803,9 +802,7 @@ begin
   miDelete2.ImageIndex     := IMG_Delete;
   miProperty2.ImageIndex   := IMG_Property;
   //Set Search's ImageIndexes
-  { TODO : Add icons in btnedtSearch *Lazarus Porting* }
-  //btnedtSearch.LeftButton.ImageIndex  := IMG_SearchType;
-  //btnedtSearch.RightButton.ImageIndex := IMG_Search;
+  ImagesDM.IcoImages.GetBitmap(IMG_Search,sbtnSearch.Glyph);
 end;
 
 procedure TfrmMain.RunAutorun;
@@ -933,6 +930,8 @@ begin
   LoadASuiteSQLite(vstList, false);
   RunAutorun;
   StartUpTime := false;
+  //Get placeholder for edtSearch
+  edtSearch.PlaceHolder := StringReplace(miSearchName.Caption, '&', '', []);
 end;
 
 procedure TfrmMain.FormDestroy(Sender: TObject);
