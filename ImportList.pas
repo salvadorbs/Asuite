@@ -21,22 +21,27 @@ unit ImportList;
 interface
 
 uses
-  Windows, SysUtils, Graphics, Forms,
-  Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, AppConfig, DOM, XMLRead,
-  ulEnumerations, ulDatabase, DateUtils;
+  Windows, SysUtils, Graphics, Forms, Dialogs, ExtCtrls, StdCtrls, ComCtrls,
+  VirtualTrees, AppConfig, DOM, XMLRead, ulEnumerations, ulDatabase, DateUtils, Classes;
 
 type
   TImportListToTree = function(Tree: TVirtualStringTree;Node: TDOMNode;Parent: PVirtualNode): PVirtualNode of object;
 
+  { TfrmImportList }
+
   TfrmImportList = class(TForm)
     bvl1: TBevel;
     bvl2: TBevel;
-    pgcImport: TPageControl;
-    ts1: TTabSheet;
-    rbASuite: TRadioButton;
+    nbImport: TNotebook;
+    pgLaunchers: TPage;
+    pgSettings: TPage;
+    pgItems: TPage;
+    pgProgress: TPage;
+    rbASuite2: TRadioButton;
+    rgrpLauncher: TRadioGroup;
+    rbASuite1: TRadioButton;
     rbwppLauncher: TRadioButton;
     rbPStart: TRadioButton;
-    tsSettings: TTabSheet;
     gbElements: TGroupBox;
     cbImportList: TCheckBox;
     cbImportSettings: TCheckBox;
@@ -44,7 +49,6 @@ type
     lblFile: TLabel;
     btnBrowse: TButton;
     edtPathList: TEdit;
-    tsList: TTabSheet;
     vstListImp: TVirtualStringTree;
     btnSelectAll: TButton;
     btnDeselectAll: TButton;
@@ -53,9 +57,7 @@ type
     btnCancel: TButton;
     pnlHeader: TPanel;
     lblTitle: TLabel;
-    XMLDocument1: TXMLDocument;
     OpenDialog1: TOpenDialog;
-    tsProgress: TTabSheet;
     pbImport: TProgressBar;
     lblItems: TLabel;
     imgList: TImage;
@@ -66,6 +68,14 @@ type
     procedure btnDeselectAllClick(Sender: TObject);
     procedure btnSelectAllClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
+    procedure pgItemsBeforeShow(ASender: TObject; ANewPage: TPage;
+      ANewIndex: Integer);
+    procedure pgLaunchersBeforeShow(ASender: TObject; ANewPage: TPage;
+      ANewIndex: Integer);
+    procedure pgProgressBeforeShow(ASender: TObject; ANewPage: TPage;
+      ANewIndex: Integer);
+    procedure pgSettingsBeforeShow(ASender: TObject; ANewPage: TPage;
+      ANewIndex: Integer);
     procedure vstListImpGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
   Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
     procedure FormCreate(Sender: TObject);
@@ -77,13 +87,14 @@ type
       var Allowed: Boolean);
     procedure btnBackClick(Sender: TObject);
     procedure btnNextClick(Sender: TObject);
-    procedure pgcImportChange(Sender: TObject);
-    procedure rbASuiteClick(Sender: TObject);
+    procedure rbASuite1Click(Sender: TObject);
     procedure rbPStartClick(Sender: TObject);
     procedure edtPathListEnter(Sender: TObject);
     procedure cbImportListClick(Sender: TObject);
   private
     { Private declarations }
+    procedure SelectNextPage(Notebook: TNotebook; PageIndex: Integer);
+    procedure SelectPrevPage(Notebook: TNotebook;PageIndex: Integer);
     function  TreeImp2Tree(TreeImp, Tree: TVirtualStringTree): Boolean;
     function  GetNumberNodeImp(Sender: TBaseVirtualTree): Integer;
     procedure PopulateTree(Tree: TVirtualStringTree;FilePath: String);
@@ -104,6 +115,7 @@ type
 
 var
   frmImportList : TfrmImportList;
+  XMLDocument1: TXMLDocument;
 
 implementation
 
@@ -115,6 +127,67 @@ uses
 procedure TfrmImportList.btnCancelClick(Sender: TObject);
 begin
   Close;
+end;
+
+procedure TfrmImportList.pgItemsBeforeShow(ASender: TObject; ANewPage: TPage;
+  ANewIndex: Integer);
+begin
+  //If cbImportList is checked, import selected list in VirtualTree
+  if (cbImportList.Checked) then
+  begin
+    lblTitle.Caption := msgImportTitle3;
+    btnNext.Caption  := msgImport;
+    //Import list in temporary vst
+    //PopulateTree(vstListImp, edtPathList.Text);
+  end
+  else //Else next page
+    nbImport.PageIndex := 2;
+end;
+
+procedure TfrmImportList.pgLaunchersBeforeShow(ASender: TObject;
+  ANewPage: TPage; ANewIndex: Integer);
+begin
+  lblTitle.Caption := msgImportTitle1;
+  btnNext.Caption  := msgNext;
+  btnNext.Enabled  := True;
+end;
+
+procedure TfrmImportList.pgProgressBeforeShow(ASender: TObject;
+  ANewPage: TPage; ANewIndex: Integer);
+begin
+  btnNext.Caption := msgClose;
+  lblTitle.Caption := msgImportProgress;
+  //Which launcher?
+  if rbASuite1.Checked then
+    lblLauncher.Caption := Format(lblLauncher.Caption,['ASuite'])
+  else
+    if rbwppLauncher.Checked then
+      lblLauncher.Caption := Format(lblLauncher.Caption,['wppLauncher'])
+    else
+      if rbPStart.Checked then
+        lblLauncher.Caption := Format(lblLauncher.Caption,['PStart']);
+  //Set progressbar's max
+  pbImport.Max := GetNumberNodeImp(vstListImp);
+  //Set some label and progress bar visibile
+  lblList.Enabled  := cbImportList.Checked;
+  lblItems.Visible := cbImportList.Checked;
+  pbImport.Visible := cbImportList.Checked;
+  lblSettings.Enabled := cbImportSettings.Checked;
+  //Import in main
+  //if DoImport then
+  //  lblTitle.Caption := msgImportTitle4
+  //else
+  //  lblTitle.Caption := msgImportFailed;
+  btnBack.Enabled  := False;
+  Self.Show;
+end;
+
+procedure TfrmImportList.pgSettingsBeforeShow(ASender: TObject;
+  ANewPage: TPage; ANewIndex: Integer);
+begin
+  lblTitle.Caption := msgImportTitle2;
+  btnNext.Enabled  := (edtPathList.Text <> '') and FileExists(edtPathList.Text);
+  btnNext.Caption  := msgNext;
 end;
 
 function TfrmImportList.ASuite1NodeToTree(Tree: TVirtualStringTree;Node: TDOMNode;
@@ -168,13 +241,14 @@ end;
 
 procedure TfrmImportList.btnBackClick(Sender: TObject);
 begin
-  pgcImport.SelectNextPage(false,false);
+  SelectPrevPage(nbImport, nbImport.PageIndex);
+  btnBack.Enabled := nbImport.PageIndex <> 0;
 end;
 
 procedure TfrmImportList.btnBrowseClick(Sender: TObject);
 begin
   vstListImp.Clear;
-  if rbASuite.Checked then
+  if rbASuite1.Checked then
     OpenDialog1.Filter:= 'All list|*.xml;*.sqlite;*.bck;*.sqbck|ASuite 2.x List (*.sqlite, *.sqbck)|*.sqlite;*.sqbck|ASuite 1.x List (*.xml, *.bck)|*.xml;*.bck'
   else
     if rbwppLauncher.Checked then
@@ -200,6 +274,16 @@ procedure TfrmImportList.cbImportListClick(Sender: TObject);
 begin
   btnNext.Enabled := ((cbImportList.Checked) or (cbImportSettings.Checked)) and
                      ((edtPathList.Text <> '') and FileExists(edtPathList.Text));
+end;
+
+procedure TfrmImportList.SelectNextPage(Notebook: TNotebook; PageIndex: Integer);
+begin
+  Notebook.PageIndex := PageIndex + 1;
+end;
+
+procedure TfrmImportList.SelectPrevPage(Notebook: TNotebook;PageIndex: Integer);
+begin
+  Notebook.PageIndex := PageIndex - 1;
 end;
 
 procedure TfrmImportList.PopulateTree(Tree: TVirtualStringTree;FilePath: String);
@@ -282,7 +366,7 @@ begin
   end;
 end;
 
-procedure TfrmImportList.rbASuiteClick(Sender: TObject);
+procedure TfrmImportList.rbASuite1Click(Sender: TObject);
 begin
   cbImportSettings.Enabled := (Sender as TRadioButton).Checked;
   cbImportSettings.Checked := (Sender as TRadioButton).Checked;
@@ -347,20 +431,20 @@ end;
 
 procedure TfrmImportList.btnNextClick(Sender: TObject);
 begin
-  if (pgcImport.ActivePageIndex = 1) and Not(cbImportList.Checked) then
-    pgcImport.ActivePageIndex := 2;
-  if pgcImport.ActivePageIndex <> (pgcImport.PageCount - 1) then
-    pgcImport.SelectNextPage(true,false)
-  else
+  //If PageIndex is not last page, show next page
+  if nbImport.PageIndex <> (nbImport.PageCount - 1) then
+    SelectNextPage(nbImport, nbImport.PageIndex)
+  else //Else close import form
     Close;
+  btnBack.Enabled := nbImport.PageIndex <> 0;
 end;
 
 procedure TfrmImportList.FormCreate(Sender: TObject);
 var
   Icon : TIcon;
 begin
-  vstListImp.NodeDataSize   := SizeOf(rBaseData);
-  pgcImport.activePageIndex := 0;
+  vstListImp.NodeDataSize := SizeOf(rBaseData);
+  nbImport.PageIndex      := 0;
   //Set imgList and imgSettings's icon
   Icon := TIcon.Create;
   try
@@ -650,61 +734,6 @@ begin
   //Config changed and focus vstList (so it repaint)
   Config.Changed := True;
   frmMain.FocusControl(frmMain.vstList);
-end;
-
-procedure TfrmImportList.pgcImportChange(Sender: TObject);
-begin
-  //Enable or disable btnBack
-  btnBack.Enabled := pgcImport.ActivePageIndex <> 0;
-  case pgcImport.ActivePageIndex of
-    0:
-      begin
-        lblTitle.Caption := msgTitle1;
-        btnNext.Caption  := msgNext;
-        btnNext.Enabled  := True;
-      end;
-    1:
-      begin
-        lblTitle.Caption := msgTitle2;
-        btnNext.Enabled  := False;
-        btnNext.Caption  := msgNext;
-      end;
-    2:
-      begin
-        lblTitle.Caption := msgTitle3;
-        btnNext.Caption  := msgImport;
-        //Import list in temporary vst
-        PopulateTree(vstListImp, edtPathList.Text);
-      end;
-    3:
-      begin
-        btnNext.Caption := msgClose;
-        lblTitle.Caption := msgImportProgress;
-        //Which launcher?
-        if rbASuite.Checked then
-          lblLauncher.Caption := Format(lblLauncher.Caption,['ASuite'])
-        else
-          if rbwppLauncher.Checked then
-            lblLauncher.Caption := Format(lblLauncher.Caption,['wppLauncher'])
-          else
-            if rbPStart.Checked then
-              lblLauncher.Caption := Format(lblLauncher.Caption,['PStart']);
-        //Set progressbar's max
-        pbImport.Max := GetNumberNodeImp(vstListImp);
-        //Set some label and progress bar visibile
-        lblList.Enabled  := cbImportList.Checked;
-        lblItems.Visible := cbImportList.Checked;
-        pbImport.Visible := cbImportList.Checked;
-        lblSettings.Enabled := cbImportSettings.Checked;
-        //Import in main
-        if DoImport then
-          lblTitle.Caption := msgTitle4
-        else
-          lblTitle.Caption := msgImportFailed;
-        btnBack.Enabled  := False;
-        Self.Show;
-      end;
-  end;
 end;
 
 end.

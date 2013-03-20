@@ -20,7 +20,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
-      <BuildNr Value="1153"/>
+      <BuildNr Value="1156"/>
       <StringTable ProductVersion=""/>
     </VersionInfo>
     <BuildModes Count="2">
@@ -178,7 +178,9 @@
       <Unit13>
         <Filename Value="OrderSoftware.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmOrderSoftware"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
         <UnitName Value="OrderSoftware"/>
       </Unit13>
       <Unit14>
@@ -231,7 +233,9 @@
       <Unit22>
         <Filename Value="ImportList.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmImportList"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
         <UnitName Value="ImportList"/>
       </Unit22>
       <Unit23>
