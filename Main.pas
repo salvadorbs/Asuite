@@ -27,7 +27,7 @@ interface
 uses
   Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
   ComCtrls, VirtualTrees, ActiveX, AppConfig, ulNodeDataTypes, ulCommonClasses,
-  UDImages, ASuiteForm, ButtonedEdit, LCLIntf, FileUtil, win32int, InterfaceBase,
+  UDImages, ASuiteForm, LCLIntf, FileUtil, win32int, InterfaceBase,
   StdCtrls, EditBtn, Buttons, ASuiteControls;
 
 type
