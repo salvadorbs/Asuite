@@ -5,13 +5,14 @@ object frmAbout: TfrmAbout
   Width = 390
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
-  Caption = 'Card'
+  Caption = 'About'
   ClientHeight = 390
   ClientWidth = 390
   Color = clBtnFace
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'MS Shell Dlg 2'
+  OnCreate = FormCreate
   LCLVersion = '1.0.6.0'
   object GroupBox3: TGroupBox
     Left = 6
@@ -28,7 +29,6 @@ object frmAbout: TfrmAbout
       Height = 128
       Top = 77
       Width = 128
-      Anchors = []
       Picture.Data = {
         055449636F6E3E08010000000100010080800000010020002808010016000000
         2800000080000000000100000100200000000000000001000000000000000000
@@ -2153,7 +2153,6 @@ object frmAbout: TfrmAbout
       Height = 29
       Top = 14
       Width = 84
-      Anchors = []
       Caption = 'ASuite'
       Font.Color = 210
       Font.Height = -23
@@ -2163,11 +2162,10 @@ object frmAbout: TfrmAbout
       ParentFont = False
     end
     object lbASuiteVersion: TLabel
-      Left = 13
+      Left = 12
       Height = 14
-      Top = 43
+      Top = 42
       Width = 64
-      Anchors = []
       Caption = 'Version x.y'
       Font.Color = clNavy
       Font.Height = -12
@@ -2181,7 +2179,6 @@ object frmAbout: TfrmAbout
       Height = 105
       Top = 218
       Width = 357
-      Anchors = []
       BorderStyle = bsNone
       Color = clBtnFace
       Font.Color = clWindowText
@@ -2199,6 +2196,7 @@ object frmAbout: TfrmAbout
       TabOrder = 0
     end
     object lnklblWebSite: TLabel
+      Cursor = crHandPoint
       Left = 104
       Height = 14
       Top = 338

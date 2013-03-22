@@ -25,7 +25,7 @@ unit About;
 interface
 
 uses
-  Forms, StdCtrls, ExtCtrls, LCLIntf;
+  Forms, StdCtrls, ExtCtrls, LCLIntf, Classes, sysutils;
 
 type
 
@@ -38,25 +38,32 @@ type
     lbASuiteVersion: TLabel;
     memIntro: TMemo;
     lnklblWebSite: TLabel;
+    procedure FormCreate(Sender: TObject);
     procedure lnklblWebSiteClick(Sender: TObject);
   private
     { Private declarations }
-    FArea: Cardinal;
   public
     { Public declarations }
   end;
 
 var
-  frmAbout    : TfrmAbout;
+  frmAbout : TfrmAbout;
 
 implementation
 
+uses
+  AppConfig;
 
 {$R *.lfm}
 
 procedure TfrmAbout.lnklblWebSiteClick(Sender: TObject);
 begin
    OpenURL(lnklblWebSite.Caption);
+end;
+
+procedure TfrmAbout.FormCreate(Sender: TObject);
+begin
+  lbASuiteVersion.Caption := VERSION_COMPLETE;
 end;
 
 end.

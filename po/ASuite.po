@@ -118,7 +118,7 @@ msgid "MRU"
 msgstr ""
 
 #: tfrmabout.caption
-msgid "Card"
+msgid "About"
 msgstr ""
 
 #: tfrmabout.lbasuitetitle.caption

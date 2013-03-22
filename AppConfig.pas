@@ -33,9 +33,10 @@ const
   APP_NAME = 'ASuite';
 
   APP_TITLE         = APP_NAME;
-  ReleaseVersion    = '2.0';
-  PreReleaseVersion = ' Alpha 2'; //For Alpha and Beta version
-                               //(ReleaseVersion + PreReleaseVersion = Version)
+  VERSION_RELEASE    = '2.0';
+  VERSION_PRERELEASE = 'Alpha 2'; //For Alpha and Beta version
+                                 //(VERSION_RELEASE + VERSION_PRERELEASE = Version)
+  VERSION_COMPLETE   = 'Version ' + VERSION_RELEASE + ' ' + VERSION_PRERELEASE;
 
   BACKUP_DIR    = 'backup\';
   CACHE_DIR     = 'cache\';

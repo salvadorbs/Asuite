@@ -155,7 +155,9 @@
       <Unit9>
         <Filename Value="ClearElements.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmClearElements"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
         <UnitName Value="ClearElements"/>
       </Unit9>
       <Unit10>

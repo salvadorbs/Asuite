@@ -84,7 +84,7 @@ uses
 
 procedure TClassicMenu.DataModuleCreate(Sender: TObject);
 begin
-  tiTrayMenu.Hint   := APP_NAME + ' ' + ReleaseVersion + PreReleaseVersion + ' (' +
+  tiTrayMenu.Hint   := APP_NAME + ' ' + VERSION_RELEASE + ' ' + VERSION_PRERELEASE + ' (' +
                        SUITE_DRIVE + ')';
   pmTrayicon.Images := ImagesDM.IcoImages;
 end;
