@@ -27,8 +27,8 @@ interface
 uses
   Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
   ComCtrls, VirtualTrees, ActiveX, AppConfig, ulNodeDataTypes, ulCommonClasses,
-  UDImages, ASuiteForm, LCLIntf, FileUtil, win32int, InterfaceBase, ASuiteControls,
-  Buttons;
+  UDImages, ASuiteForm, LCLIntf, FileUtil, win32int, InterfaceBase,
+  StdCtrls, EditBtn, Buttons, ASuiteControls;
 
 type
 
@@ -36,6 +36,10 @@ type
 
   TfrmMain = class(TASuiteForm)
     edtSearch: TASuiteEdit;
+    miCheckUpdates: TMenuItem;
+    miStatistics: TMenuItem;
+    MenuItem2: TMenuItem;
+    MenuItem3: TMenuItem;
     sbtnSearch: TSpeedButton;
     vstList: TVirtualStringTree;
     pcList: TPageControl;
@@ -95,6 +99,7 @@ type
     procedure FormChangeBounds(Sender: TObject);
     procedure FormWindowStateChange(Sender: TObject);
     procedure miOptionsClick(Sender: TObject);
+    procedure miStatisticsClick(Sender: TObject);
     procedure OpenFolderSw(Sender: TObject);
     procedure pcListChange(Sender: TObject);
     procedure miImportListClick(Sender: TObject);
@@ -178,8 +183,8 @@ implementation
 
 uses
   Option, PropertyFile, PropertyCat, About, ulCommonUtils, ulEnumerations,
-  PropertySeparator,ulExeUtils, ImportList, ulAppConfig, ulTreeView, ulSQLite,
-  ulDatabase;
+  udClassicMenu, PropertySeparator, ulExeUtils, ImportList, Stats, ulAppConfig,
+  ulTreeView, ulSQLite, ulDatabase;
 
 {$R *.lfm}
 
@@ -345,6 +350,18 @@ begin
   else
     frmOption.show;
   RefreshList(vstList);
+end;
+
+procedure TfrmMain.miStatisticsClick(Sender: TObject);
+var
+   frmStats:TfrmStats;
+begin
+   try
+     frmStats:=TfrmStats.Create(self);
+     frmStats.ShowModal();
+   finally
+     frmStats.Free;
+   end;
 end;
 
 procedure TfrmMain.FormChangeBounds(Sender: TObject);

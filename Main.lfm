@@ -386,6 +386,19 @@ inherited frmMain: TfrmMain
     end
     object miHelp: TMenuItem
       Caption = 'Help'
+      object miCheckUpdates: TMenuItem
+        Caption = 'Check updates'
+      end
+      object MenuItem3: TMenuItem
+        Caption = '-'
+      end
+      object miStatistics: TMenuItem
+        Caption = 'Statistics'
+        OnClick = miStatisticsClick
+      end
+      object MenuItem2: TMenuItem
+        Caption = '-'
+      end
       object miInfoASuite: TMenuItem
         Caption = 'About ASuite'
         ShortCut = 112
