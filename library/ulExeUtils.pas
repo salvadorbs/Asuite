@@ -68,13 +68,11 @@ begin
     if (Process32First(hSnapshot, ProcInfo)) then
     begin
       //Compare first process with ExeFileName
-      Result := (UpperCase(ProcInfo.szExeFile) = ExeFileName);
-      while Not(Result) do
-      begin
-        //Next process and compare it with ExeFileName
-        Process32Next(hSnapShot, ProcInfo);
-        Result := (UpperCase(ProcInfo.szExeFile) = ExeFileName);
-      end;
+      if (UpperCase(ExtractFileName(ProcInfo.szExeFile)) = ExeFileName) then
+        Result := True;
+      while (Process32Next(hSnapShot, ProcInfo)) do
+        if (UpperCase(ExtractFileName(ProcInfo.szExeFile)) = ExeFileName) then
+          Result := True;
     end;
   end;
   FileClose(hSnapShot);
