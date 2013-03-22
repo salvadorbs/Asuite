@@ -6,8 +6,8 @@ object frmImportList: TfrmImportList
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Import list'
-  ClientHeight = 332
-  ClientWidth = 287
+  ClientHeight = 0
+  ClientWidth = 0
   Color = clBtnFace
   Font.Color = clWindowText
   Font.Height = -11

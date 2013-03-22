@@ -652,12 +652,6 @@ procedure TfrmMain.vstListPaintText(Sender: TBaseVirtualTree;
   const TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
   TextType: TVSTTextType);
 begin
-  if (Config.TVFontChanged) then
-  begin
-    Sender.InvalidateNode(Node);
-    if Sender.GetLastVisible(Sender.RootNode) = Node then
-      Config.TVFontChanged := False;
-  end;
   with TargetCanvas do
   begin
     Font.Name  := Config.TVFont.Name;

@@ -48,7 +48,6 @@ type
     FTVBackgroundPath   : string;
     FTVAutoOpClCats     : Boolean; //  Automatic Opening/closing categories
     FTVFont             : TFont;
-    FTVFontChanged      : Boolean;
     //MRU
     FMRU                : Boolean;
     FSubMenuMRU         : Boolean;
@@ -109,7 +108,6 @@ type
     property TVBackgroundPath: String read FTVBackgroundPath write FTVBackgroundPath;
     property TVAutoOpClCats: Boolean read FTVAutoOpClCats write SetTVAutoOpClCats;
     property TVFont: TFont read FTVFont write SetTVFont;
-    property TVFontChanged: Boolean read FTVFontChanged write FTVFontChanged;
     // MRU
     property MRU: Boolean read FMRU write FMRU;
     property SubMenuMRU: Boolean read FSubMenuMRU write FSubMenuMRU;
@@ -170,7 +168,6 @@ begin
   FTVFont.Name        := 'MS Sans Serif';
   FTVFont.Size        := 8;
   FTVFont.Color       := clWindowText;
-  FTVFontChanged      := False;
   //MRU
   FMRU                := True;
   FSubMenuMRU         := False;
@@ -325,7 +322,6 @@ begin
       Size  := value.Size;
       Color := value.Color;
     end;
-    FTVFontChanged := True;
   end;
 end;
 

@@ -223,7 +223,7 @@ begin
   //Check if PropertyNode exists
   if Assigned(PropertyNode) then
     if PropertyNode.TextContent <> '' then
-      Result := ulStringUtils.StrToBool(Node.TextContent);
+      Result := ulStringUtils.StrToBool(PropertyNode.TextContent);
 end;
 
 procedure CheckPropertyName(Edit: TEdit);

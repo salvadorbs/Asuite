@@ -426,10 +426,12 @@ procedure TfrmImportList.btnNextClick(Sender: TObject);
 begin
   //If PageIndex is not last page, show next page
   if nbImport.PageIndex <> (nbImport.PageCount - 1) then
-    SelectNextPage(nbImport)
+  begin
+    SelectNextPage(nbImport);
+    btnBack.Enabled := nbImport.PageIndex <> 0;
+  end
   else //Else close import form
     Close;
-  btnBack.Enabled := nbImport.PageIndex <> 0;
 end;
 
 procedure TfrmImportList.FormCreate(Sender: TObject);
@@ -611,76 +613,72 @@ begin
       ReadXMLFile(XMLDoc, edtPathList.Text);
       //ASuite 1.x - wppLauncher
       Node := XMLDoc.DocumentElement.FindNode('Option');
-      with Config do
+      //General
+      Config.StartWithWindows   := GetBoolPropertyXML(Node, 'StartOnWindowsStartup', false);
+      Config.ShowPanelAtStartUp := GetBoolPropertyXML(Node, 'StartUpShowPanel', true);
+      Config.ShowMenuAtStartUp  := GetBoolPropertyXML(Node, 'StartUpShowMenu', false);
+      //Main Form
+      Config.CustomTitleString := GetStrPropertyXML(Node, 'CustomTitleString', APP_NAME);
+      Config.UseCustomTitle    := GetBoolPropertyXML(Node, 'CustomTitle', false);
+      Config.HideTabSearch     := GetBoolPropertyXML(Node, 'HideSearch', false);
+      //Main Form - Position and size
+      Config.HoldSize    := GetBoolPropertyXML(Node, 'HoldSize', false);
+      Config.AlwaysOnTop := GetBoolPropertyXML(Node, 'MainOnTop', false);
+      //frmMain's size
+      frmMain.Width      := GetIntPropertyXML(Node,'ListFormWidth',frmMainWidth);
+      frmMain.Height     := GetIntPropertyXML(Node,'ListFormHeight',frmMainHeight);
+      //frmMain position
+      if ((GetIntPropertyXML(Node,'ListFormTop',frmMain.Top) <> -1) and
+         (GetIntPropertyXML(Node,'ListFormLeft',frmMain.Left) <> -1)) then
       begin
-        //General
-        StartWithWindows   := GetBoolPropertyXML(Node, 'StartOnWindowsStartup', false);
-        Config.ShowPanelAtStartUp := GetBoolPropertyXML(Node, 'StartUpShowPanel', true);
-        Config.ShowMenuAtStartUp  := GetBoolPropertyXML(Node, 'StartUpShowMenu', false);
-        //Main Form
-        Config.CustomTitleString := GetStrPropertyXML(Node, 'CustomTitleString', APP_NAME);
-        Config.UseCustomTitle    := GetBoolPropertyXML(Node, 'CustomTitle', false);
-        Config.HideTabSearch     := GetBoolPropertyXML(Node, 'HideSearch', false);
-        //Main Form - Position and size
-        Config.HoldSize    := GetBoolPropertyXML(Node, 'HoldSize', false);
-        Config.AlwaysOnTop := GetBoolPropertyXML(Node, 'MainOnTop', false);
-        //frmMain's size
-        frmMain.Width      := GetIntPropertyXML(Node,'ListFormWidth',frmMainWidth);
-        frmMain.Height     := GetIntPropertyXML(Node,'ListFormHeight',frmMainHeight);
-        //frmMain position
-        if ((GetIntPropertyXML(Node,'ListFormTop',frmMain.Top) <> -1) and
-           (GetIntPropertyXML(Node,'ListFormLeft',frmMain.Left) <> -1)) then
-        begin
-          if ((GetIntPropertyXML(Node,'ListFormTop',frmMain.Top) + frmMainHeight) <= GetDeviceCaps(GetDC(frmMain.Handle), VERTRES)) then
-            frmMain.Top  := GetIntPropertyXML(Node,'ListFormTop',frmMain.Top)
-          else
-            frmMain.Top  := GetDeviceCaps(GetDC(frmMain.Handle), VERTRES) - frmMain.Height - 30;
-          if ((GetIntPropertyXML(Node,'ListFormLeft',frmMain.Left) + frmMainWidth) <= GetDeviceCaps(GetDC(frmMain.Handle), HORZRES)) then
-            frmMain.Left := GetIntPropertyXML(Node,'ListFormLeft',frmMain.Left)
-          else
-            frmMain.Left := GetDeviceCaps(GetDC(frmMain.Handle), HORZRES) - frmMain.Width;
-          frmMain.Position := poDesigned;
-        end;
-        //Main Form - Treevew
-        Config.TVBackgroundPath := GetStrPropertyXML(Node, 'BackgroundPath','');
-        Config.TVBackground     := GetBoolPropertyXML(Node, 'Background',False);
-        Config.TVAutoOpClCats   := GetBoolPropertyXML(Node, 'AutoOpClCategories',False);
-        //Treeview Font
-        Config.TVFont.Name      := GetStrPropertyXML(Node, 'TreeViewFontName','MS Sans Serif');
-        tvFontStyle             := Node.FindNode('TreeViewFontStyle');
-        if Assigned(tvFontStyle) then
-        begin
-          if GetBoolPropertyXML(tvFontStyle,'fsBold',false) then
-            Config.TVFont.Style := Config.TVFont.Style + [fsBold];
-          if GetBoolPropertyXML(tvFontStyle,'fsItalic',false) then
-            Config.TVFont.Style := Config.TVFont.Style + [fsItalic];
-          if GetBoolPropertyXML(tvFontStyle,'fsUnderline',false) then
-            Config.TVFont.Style := Config.TVFont.Style + [fsUnderline];
-          if GetBoolPropertyXML(tvFontStyle,'fsStrikeOut',false) then
-            Config.TVFont.Style := Config.TVFont.Style + [fsStrikeOut];
-        end;
-        Config.TVFont.Size    := GetIntPropertyXML(Node,'TreeViewFontSize',8);
-        Config.TVFont.Color   := GetIntPropertyXML(Node,'TreeViewFontColor',clWindowText);
-        Config.TVFontChanged  := True;
-        //MRU
-        Config.MRU            := GetBoolPropertyXML(Node, 'ActiveMRU',true);
-        Config.SubMenuMRU     := GetBoolPropertyXML(Node, 'ActiveSubMenuMRU',false);
-        Config.MRUNumber      := GetIntPropertyXML(Node, 'MRUNumber',5);
-        //Backup
-        Config.Backup         := GetBoolPropertyXML(Node, 'ActiveBackup',true);
-        Config.BackupNumber   := GetIntPropertyXML(Node, 'BackupNumber',5);
-        //Other functions
-        Config.Autorun        := GetBoolPropertyXML(Node, 'ActiveAutorun',true);
-        Config.Cache          := GetBoolPropertyXML(Node, 'ActiveCache',true);
-        //Execution
-        Config.ActionOnExe    := TActionOnExecution(GetIntPropertyXML(Node, 'ActionOnExe',0));
-        Config.RunSingleClick := GetBoolPropertyXML(Node, 'RunSingleClick',false);
-        //Trayicon
-        Config.TrayIcon           := GetBoolPropertyXML(Node, 'ActiveTrayIcon',true);
-        Config.TrayCustomIconPath := GetStrPropertyXML(Node, 'TrayIconPath','');
-        Config.ActionClickLeft    := GetIntPropertyXML(Node, 'ActionClickLeft',0);
-        Config.ActionClickRight   := GetIntPropertyXML(Node, 'ActionClickRight',2);
+        if ((GetIntPropertyXML(Node,'ListFormTop',frmMain.Top) + frmMainHeight) <= GetDeviceCaps(GetDC(frmMain.Handle), VERTRES)) then
+          frmMain.Top  := GetIntPropertyXML(Node,'ListFormTop',frmMain.Top)
+        else
+          frmMain.Top  := GetDeviceCaps(GetDC(frmMain.Handle), VERTRES) - frmMain.Height - 30;
+        if ((GetIntPropertyXML(Node,'ListFormLeft',frmMain.Left) + frmMainWidth) <= GetDeviceCaps(GetDC(frmMain.Handle), HORZRES)) then
+          frmMain.Left := GetIntPropertyXML(Node,'ListFormLeft',frmMain.Left)
+        else
+          frmMain.Left := GetDeviceCaps(GetDC(frmMain.Handle), HORZRES) - frmMain.Width;
+        frmMain.Position := poDesigned;
       end;
+      //Main Form - Treevew
+      Config.TVBackgroundPath := GetStrPropertyXML(Node, 'BackgroundPath','');
+      Config.TVBackground     := GetBoolPropertyXML(Node, 'Background',False);
+      Config.TVAutoOpClCats   := GetBoolPropertyXML(Node, 'AutoOpClCategories',False);
+      //Treeview Font
+      Config.TVFont.Name      := GetStrPropertyXML(Node, 'TreeViewFontName','MS Sans Serif');
+      tvFontStyle             := Node.FindNode('TreeViewFontStyle');
+      if Assigned(tvFontStyle) then
+      begin
+        if GetBoolPropertyXML(tvFontStyle,'fsBold',false) then
+          Config.TVFont.Style := Config.TVFont.Style + [fsBold];
+        if GetBoolPropertyXML(tvFontStyle,'fsItalic',false) then
+          Config.TVFont.Style := Config.TVFont.Style + [fsItalic];
+        if GetBoolPropertyXML(tvFontStyle,'fsUnderline',false) then
+          Config.TVFont.Style := Config.TVFont.Style + [fsUnderline];
+        if GetBoolPropertyXML(tvFontStyle,'fsStrikeOut',false) then
+          Config.TVFont.Style := Config.TVFont.Style + [fsStrikeOut];
+      end;
+      Config.TVFont.Size    := GetIntPropertyXML(Node,'TreeViewFontSize',8);
+      Config.TVFont.Color   := GetIntPropertyXML(Node,'TreeViewFontColor',clWindowText);
+      //MRU
+      Config.MRU            := GetBoolPropertyXML(Node, 'ActiveMRU',true);
+      Config.SubMenuMRU     := GetBoolPropertyXML(Node, 'ActiveSubMenuMRU',false);
+      Config.MRUNumber      := GetIntPropertyXML(Node, 'MRUNumber',5);
+      //Backup
+      Config.Backup         := GetBoolPropertyXML(Node, 'ActiveBackup',true);
+      Config.BackupNumber   := GetIntPropertyXML(Node, 'BackupNumber',5);
+      //Other functions
+      Config.Autorun        := GetBoolPropertyXML(Node, 'ActiveAutorun',true);
+      ConfigCache           := GetBoolPropertyXML(Node, 'ActiveCache',true);
+      //Execution
+      Config.ActionOnExe    := TActionOnExecution(GetIntPropertyXML(Node, 'ActionOnExe',0));
+      Config.RunSingleClick := GetBoolPropertyXML(Node, 'RunSingleClick',false);
+      //Trayicon
+      Config.TrayIcon           := GetBoolPropertyXML(Node, 'ActiveTrayIcon',true);
+      Config.TrayCustomIconPath := GetStrPropertyXML(Node, 'TrayIconPath','');
+      Config.ActionClickLeft    := GetIntPropertyXML(Node, 'ActionClickLeft',0);
+      Config.ActionClickRight   := GetIntPropertyXML(Node, 'ActionClickRight',2);
       XMLDoc.Free;
     end
     else

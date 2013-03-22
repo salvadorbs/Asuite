@@ -6,8 +6,8 @@ inherited frmMain: TfrmMain
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'ASuite'
-  ClientHeight = 350
-  ClientWidth = 200
+  ClientHeight = 0
+  ClientWidth = 0
   Color = clBtnFace
   Constraints.MinHeight = 370
   Constraints.MinWidth = 200
