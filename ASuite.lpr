@@ -32,19 +32,23 @@ uses
   ulTreeView in 'library\ulTreeView.pas',
   ulSQLite in 'library\ulSQLite.pas';
 
+{$IFDEF DEBUG}
 var
   cTempo1,cTempo2 : Cardinal;
   myTextFile   : TextFile;
+{$ENDIF}
 
 {$R *.res}
 
 begin
   if not CheckPrevious.RestoreIfRunning(TWin32WidgetSet(WidgetSet).AppHandle, 1) then
   begin
+    {$IFDEF DEBUG}
     cTempo1 := GetTickCount;
+    {$ENDIF}
     Application.Initialize;
     Application.Title := APP_TITLE;
-    SetCurrentDirUTF8(SUITE_WORKING_PATH); { *Converted from SetCurrentDir*  }
+    SetCurrentDirUTF8(SUITE_WORKING_PATH);
     Application.CreateForm(TImagesDM, ImagesDM);
     Application.CreateForm(TClassicMenu, ClassicMenu);
 
@@ -57,29 +61,28 @@ begin
       frmMain.close
     else begin
       frmMain.Visible := true;
-      if Not(FileExistsUTF8(SUITE_LIST_PATH) { *Converted from FileExists*  }) then
+      if Not(FileExistsUTF8(SUITE_LIST_PATH)) then
       begin
         //Create folder cache, if it doesn't exist
-        if (not DirectoryExistsUTF8(SUITE_CACHE_PATH) { *Converted from DirectoryExists*  }) then
-          CreateDirUTF8(SUITE_CACHE_PATH); { *Converted from CreateDir*  }
+        if (not DirectoryExistsUTF8(SUITE_CACHE_PATH)) then
+          CreateDirUTF8(SUITE_CACHE_PATH);
         Application.CreateForm(TfrmAbout, frmAbout);
         frmAbout.show;
       end;
     end;
     if (Config.ShowMenuAtStartUp) then
       ClassicMenu.ShowTrayiconMenu(ClassicMenu.pmTrayicon);
+    {$IFDEF DEBUG}
     //Timing startup
-    if ParamStr(1) = 'debug' then
-    begin
-      cTempo2 := GetTickCount;
-      AssignFile(myTextFile, 'Debug.txt');
-      if Not(FileExistsUTF8('Debug.txt') { *Converted from FileExists*  }) then
-        ReWrite(myTextFile)
-      else
-        Append(myTextFile);
-      WriteLn(myTextFile, DateTimeToStr(now) + ' = ' + IntToStr(cTempo2 - cTempo1));
-      CloseFile(myTextFile);
-    end;
+    cTempo2 := GetTickCount;
+    AssignFile(myTextFile, DEBUG_FILE);
+    if Not(FileExistsUTF8(DEBUG_FILE)) then
+      ReWrite(myTextFile)
+    else
+      Append(myTextFile);
+    WriteLn(myTextFile, DateTimeToStr(now) + ' = ' + IntToStr(cTempo2 - cTempo1));
+    CloseFile(myTextFile);
+    {$ENDIF}
     Application.Run;
   end;
 end.

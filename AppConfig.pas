@@ -50,12 +50,12 @@ const
   BACKSLASH         = '\';              { back slash }
   CRLF              = CR + LF;          { new line }
 
-  //{ FileSystem
+  //FileSystem
   PATH_SEPARATOR    = BACKSLASH;  // Windows only, for now
   SLASHES           = [SLASH, BACKSLASH];
   DriveLetters      = ['a'..'z', 'A'..'Z'];
 
-  // Extensions
+  //Extensions
   EXT_XML       = '.xml';
   EXT_SQL       = '.sqlite';
   EXT_SQLBCK    = '.sqbck';
@@ -63,6 +63,8 @@ const
   EXT_ICO       = '.ico';
   EXT_LNK       = '.lnk';
 
+  //File
+  DEBUG_FILE    = 'Debug.txt';
   //Form
   frmMainWidth  = 190;
   frmMainHeight = 440;

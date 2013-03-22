@@ -14,3 +14,5 @@ cache/
 *.log
 *.bak*
 *.sqlite
+
+debug.txt
