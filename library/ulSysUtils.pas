@@ -60,7 +60,6 @@ procedure DeleteASuiteAtWindowsStartup;
 
 { Misc }
 function ExtractDirectoryName(const Filename: string): string;
-function GetExeVersion(FileName: String): String;
 function GetCorrectWorkingDir(Default: string): string;
 
 implementation
@@ -186,7 +185,7 @@ var
   I            : Integer;
 begin
   BackupList := TStringList.Create;
-  if FindFirstUTF8(SUITE_BACKUP_PATH + 'ASuite_*' + EXT_SQLBCK,faAnyFile,BackupSearch) = 0 then
+  if FindFirstUTF8(SUITE_BACKUP_PATH + APP_NAME + '_*' + EXT_SQLBCK,faAnyFile,BackupSearch) = 0 then
   begin
     repeat
       BackupList.Add(BackupSearch.Name);
@@ -311,41 +310,16 @@ function ExtractDirectoryName(const Filename: string): string;
 var
   AList : TStringList;
 begin
-  { TODO : Check this code *Lazarus Porting* }
-	AList := TStringList.create;
-	try
+  AList := TStringList.create;
+  try
     StrToStrings(Filename,PathDelim,AList);
-		if AList.Count > 1 then
-			result := AList[AList.Count - 1]
-		else
-			result := '';
-	finally
-		AList.Free;
-	end;
-end;
-
-function GetExeVersion(FileName: String): String;
-var
-  VerInfoSize: DWORD;
-  VerInfo: Pointer;
-  VerValueSize: DWORD;
-  VerValue: PVSFixedFileInfo;
-  Dummy: DWORD;
-begin
-  { TODO : Check this code *Lazarus Porting* }
-  VerInfoSize := GetFileVersionInfoSize(PChar(ParamStr(0)), Dummy);
-  if VerInfoSize = 0 then Exit('');
-  GetMem(VerInfo, VerInfoSize);
-  GetFileVersionInfo(PChar(FileName), 0, VerInfoSize, VerInfo);
-  VerQueryValue(VerInfo, PathDelim, Pointer(VerValue), VerValueSize);
-  with VerValue^ do
-  begin
-    Result := IntToStr(dwFileVersionMS shr 16);
-    Result := Result + '.' + IntToStr(dwFileVersionMS and $FFFF);
-    Result := Result + '.' + IntToStr(dwFileVersionLS shr 16);
-    Result := Result + '.' + IntToStr(dwFileVersionLS and $FFFF);
+    if AList.Count > 1 then
+      Result := AList[AList.Count - 1]
+    else
+      Result := '';
+  finally
+    AList.Free;
   end;
-  FreeMem(VerInfo, VerInfoSize);
 end;
 
 procedure SetASuiteAtWindowsStartup;

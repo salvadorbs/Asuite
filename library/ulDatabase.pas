@@ -284,7 +284,9 @@ begin
       vData := PBaseData(Tree.GetNodeData(Node)).Data;
       PBaseData(Tree.GetNodeData(Node)).pNode := Node;
       if IsImport then
-        Tree.CheckType[Node] := ctTriStateCheckBox;
+        Tree.CheckType[Node] := ctTriStateCheckBox
+      else
+        vData.CacheID       := ReadIntegerSQLite(dsTable,DBField_files_cacheiconid);
       // generic fields
       vData.Name          := ReadStringSQLite(dsTable,DBField_files_title);
       vData.id            := ReadIntegerSQLite(dsTable,DBField_files_id);
@@ -294,7 +296,6 @@ begin
       vData.UnixEditDate  := ReadIntegerSQLite(dsTable,DBField_files_lastModified);
       vData.ParentNode    := ParentNode;
       vData.PathIcon      := ReadStringSQLite(dsTable,DBField_files_icon);
-      vData.CacheID       := ReadIntegerSQLite(dsTable,DBField_files_cacheiconid);
       vData.HideFromMenu  := ReadBooleanSQLite(dsTable,DBField_files_hidefrommenu);
       if (nType = vtdtFile) then
       begin

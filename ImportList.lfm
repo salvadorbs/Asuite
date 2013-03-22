@@ -12,6 +12,7 @@ object frmImportList: TfrmImportList
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
+  OnClose = FormClose
   OnCreate = FormCreate
   Position = poMainFormCenter
   LCLVersion = '1.0.6.0'
@@ -107,44 +108,13 @@ object frmImportList: TfrmImportList
         ChildSizing.ControlsPerLine = 1
         ClientHeight = 118
         ClientWidth = 259
+        ItemIndex = 0
+        Items.Strings = (
+          'ASuite 2.x'
+          'ASuite 1.x'
+          'winPenPack Launcher 1.x'
+        )
         TabOrder = 0
-        object rbASuite2: TRadioButton
-          Left = 6
-          Height = 27
-          Top = 6
-          Width = 247
-          Caption = 'ASuite 2.x'
-          TabOrder = 0
-        end
-        object rbASuite1: TRadioButton
-          Left = 6
-          Height = 27
-          Top = 33
-          Width = 247
-          Caption = 'ASuite 1.x'
-          Checked = True
-          OnClick = rbASuite1Click
-          TabOrder = 1
-          TabStop = True
-        end
-        object rbwppLauncher: TRadioButton
-          Left = 6
-          Height = 27
-          Top = 60
-          Width = 247
-          Caption = 'wppLauncher'
-          OnClick = rbASuite1Click
-          TabOrder = 2
-        end
-        object rbPStart: TRadioButton
-          Left = 6
-          Height = 25
-          Top = 87
-          Width = 247
-          Caption = 'PStart'
-          OnClick = rbPStartClick
-          TabOrder = 3
-        end
       end
     end
     object pgSettings: TPage
@@ -246,6 +216,7 @@ object frmImportList: TfrmImportList
         TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning]
         TreeOptions.SelectionOptions = [toFullRowSelect, toRightClickSelect]
         OnExpanding = vstListImpExpanding
+        OnFreeNode = vstListImpFreeNode
         OnGetText = vstListImpGetText
         OnGetImageIndex = vstListImpGetImageIndex
       end
@@ -273,7 +244,7 @@ object frmImportList: TfrmImportList
       object lblSettings: TLabel
         Left = 35
         Height = 14
-        Top = 39
+        Top = 68
         Width = 40
         Caption = 'Settings'
         Layout = tlCenter
@@ -290,7 +261,7 @@ object frmImportList: TfrmImportList
       object imgSettings: TImage
         Left = 12
         Height = 18
-        Top = 39
+        Top = 68
         Width = 17
       end
       object lblLauncher: TLabel
@@ -304,7 +275,7 @@ object frmImportList: TfrmImportList
       object lblList: TLabel
         Left = 35
         Height = 14
-        Top = 68
+        Top = 39
         Width = 17
         Caption = 'List'
         Layout = tlCenter
@@ -313,7 +284,7 @@ object frmImportList: TfrmImportList
       object imgList: TImage
         Left = 12
         Height = 18
-        Top = 68
+        Top = 39
         Width = 17
       end
       object lblItems: TLabel
@@ -335,7 +306,7 @@ object frmImportList: TfrmImportList
     Shape = bsBottomLine
   end
   object OpenDialog1: TOpenDialog
-    Filter = 'All list|*.xml;*.sqlite|ASuite 2.x List (*.sqlite)|*.sqlite|ASuite 1.x List (*.xml)|*.xml|winPenPack 1.x List (*.xml)|*.xml|PStart 2.x List (*.xml)|*.xml'
+    Filter = 'All list|*.xml;*.sqlite;*.bck;*.sqbck|ASuite 2.x List (*.sqlite, *.sqbck)|*.sqlite;*.sqbck|ASuite 1.x List (*.xml, *.bck)|*.xml;*.bck|winPenPack 1.x List (*.xml)|*.xml|PStart 2.x List (*.xml)|*.xml'
     left = 232
     top = 4
   end
