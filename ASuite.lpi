@@ -4,7 +4,7 @@
     <Version Value="9"/>
     <PathDelim Value="\"/>
     <General>
-      <SessionStorage Value="InProjectDir"/>
+      <SessionStorage Value="InIDEConfig"/>
       <MainUnit Value="0"/>
       <Title Value="ASuite"/>
       <UseAppBundle Value="False"/>
@@ -20,7 +20,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
-      <BuildNr Value="1156"/>
+      <BuildNr Value="1159"/>
       <StringTable ProductVersion=""/>
     </VersionInfo>
     <BuildModes Count="2">
@@ -55,6 +55,7 @@
               <DebugInfoType Value="dsDwarf2Set"/>
               <StripSymbols Value="True"/>
             </Debugging>
+            <LinkSmart Value="True"/>
             <Options>
               <Win32>
                 <GraphicApplication Value="True"/>
