@@ -65,6 +65,7 @@ type
     procedure Sort;
   end;
 
+  //ASuite TrayIcon Menu
   TASMenuItem = class(TMenuItem)
   private
     FData: TvBaseNodeData;
@@ -94,7 +95,6 @@ var
   ASuiteStartUpApp: TAutorunItemList;
 
 implementation
-
 
 constructor TNodeDataList.Create(MaxItems: Integer);
 begin
@@ -322,8 +322,6 @@ begin
     end;
   end;
 end;
-
-
 
 //------------------------------------------------------------------------------
 

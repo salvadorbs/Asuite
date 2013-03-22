@@ -163,14 +163,14 @@ inherited frmMain: TfrmMain
     Height = 350
     Top = 0
     Width = 200
-    ActivePage = tbSearch
+    ActivePage = tbList
     Align = alClient
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Shell Dlg 2'
     MultiLine = True
     ParentFont = False
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 0
     OnChange = pcListChange
     Options = [nboMultiLine]

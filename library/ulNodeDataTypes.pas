@@ -528,7 +528,6 @@ end;
 
 function TvFileNodeData.RunProcess: boolean;
 var
-  vParameters: String;
   TestProcess: TProcess;
 begin
   //Execution

@@ -128,7 +128,7 @@ resourcestring
   //Import
   msgImportProgress = 'Import in progress...';
   msgImportTitle1   = 'Select a launcher from which to import list and settings';
-  msgImportTitle2   = 'Select the location of list to import in ASuite. Select if you want list and/or settings';
+  msgImportTitle2   = 'Select the location of list to import in ASuite. Select if you want import list and/or settings';
   msgImportTitle3   = 'Select which items to import';
   msgImportTitle4   = 'Complete';
   msgItemsImported  = 'Import finished. %d items imported';

@@ -310,7 +310,7 @@ begin
   try
     Application.CreateForm(TfrmImportList, frmImportList);
     frmImportList.FormStyle := Self.FormStyle;
-    frmImportList.showmodal;
+    frmImportList.ShowModal;
   finally
     frmImportList.Free;
     RefreshList(vstList);
@@ -775,10 +775,10 @@ begin
   miFile.SubMenuImages := ImagesDM.IcoImages;
   miEdit.SubMenuImages := ImagesDM.IcoImages;
   miHelp.SubMenuImages := ImagesDM.IcoImages;
-  vstList.Images      := ImagesDM.IcoImages;
-  vstSearch.Images    := ImagesDM.IcoImages;
-  pmSearch.Images     := ImagesDM.IcoImages;
-  pmWindow.Images     := ImagesDM.IcoImages;
+  vstList.Images       := ImagesDM.IcoImages;
+  vstSearch.Images     := ImagesDM.IcoImages;
+  pmSearch.Images      := ImagesDM.IcoImages;
+  pmWindow.Images      := ImagesDM.IcoImages;
   //Set MainMenu's ImageIndexes
   miSaveList1.ImageIndex   := IMG_Save;
   miOptions1.ImageIndex    := IMG_Options;

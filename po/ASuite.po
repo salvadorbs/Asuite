@@ -60,7 +60,7 @@ msgstr ""
 
 #: appconfig.msgimporttitle2
 msgctxt "appconfig.msgimporttitle2"
-msgid "Select the location of list to import in ASuite. Select if you want list and/or settings"
+msgid "Select the location of list to import in ASuite. Select if you want import list and/or settings"
 msgstr ""
 
 #: appconfig.msgimporttitle3
@@ -184,7 +184,7 @@ msgid "Launcher File"
 msgstr ""
 
 #: tfrmimportlist.lblfile.caption
-msgid "Launcher file:"
+msgid "Launcher File location:"
 msgstr ""
 
 #: tfrmimportlist.lblitems.caption
@@ -208,22 +208,6 @@ msgstr ""
 #: tfrmimportlist.lbltitle.caption
 msgctxt "TFRMIMPORTLIST.LBLTITLE.CAPTION"
 msgid "Select a launcher from which to import list and settings"
-msgstr ""
-
-#: tfrmimportlist.rbasuite1.caption
-msgid "ASuite 1.x"
-msgstr ""
-
-#: tfrmimportlist.rbasuite2.caption
-msgid "ASuite 2.x"
-msgstr ""
-
-#: tfrmimportlist.rbpstart.caption
-msgid "PStart"
-msgstr ""
-
-#: tfrmimportlist.rbwpplauncher.caption
-msgid "wppLauncher"
 msgstr ""
 
 #: tfrmimportlist.rgrplauncher.caption

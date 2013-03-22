@@ -1,0 +1,7 @@
+object ASuiteForm: TASuiteForm
+  Left = 288
+  Height = 240
+  Top = 281
+  Width = 320
+  LCLVersion = '1.0.6.0'
+end
