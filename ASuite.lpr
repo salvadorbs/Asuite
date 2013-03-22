@@ -23,7 +23,7 @@ uses
   ulSysUtils in 'library\ulSysUtils.pas',
   ulStringUtils in 'library\ulStringUtils.pas',
   udImages in 'udImages.pas' {ImagesDM: TDataModule},
-  ulDatabase in 'data\ulDatabase.pas',
+  ulDatabase in 'library\ulDatabase.pas',
   udClassicMenu in 'udClassicMenu.pas' {ClassicMenu: TDataModule},
   PropertySeparator in 'PropertySeparator.pas' {frmPropertySeparator},
   ulExeUtils in 'library\ulExeUtils.pas',

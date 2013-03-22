@@ -25,8 +25,7 @@ unit ClearElements;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, VirtualTrees, AppConfig, FileUtil;
+  Forms, StdCtrls, ExtCtrls, VirtualTrees, AppConfig, FileUtil;
 
 type
   TfrmClearElements = class(TForm)

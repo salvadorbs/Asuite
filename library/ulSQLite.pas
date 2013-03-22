@@ -25,7 +25,7 @@ unit ulSQLite;
 interface
 
 uses
-  ulAppConfig, VirtualTrees, SysUtils, Classes, Sqlite3DS, db;
+  ulAppConfig, VirtualTrees, Sqlite3DS;
 
 function  SaveASuiteSQLite(Tree: TBaseVirtualTree; DeleteAll: boolean = false): Boolean;
 procedure LoadASuiteSQLite(Tree: TBaseVirtualTree; Import: Boolean);

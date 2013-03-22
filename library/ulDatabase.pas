@@ -23,7 +23,7 @@ unit ulDatabase;
 interface
 
 uses
-  Windows, SysUtils, Controls, Forms, Dialogs, VirtualTrees, ulNodeDataTypes, ulEnumerations, Sqlite3DS, db;
+  Windows, SysUtils, Forms, Dialogs, VirtualTrees, ulNodeDataTypes, ulEnumerations, Sqlite3DS, db;
 
 type
 

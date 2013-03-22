@@ -144,7 +144,7 @@ var
 implementation
 
 uses
-  Main, udClassicMenu, ulSysUtils, AppConfig, ulDatabase;
+  Main, udClassicMenu, ulSysUtils, AppConfig;
 
 constructor TConfiguration.Create;
 begin

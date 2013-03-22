@@ -25,8 +25,7 @@ unit ulExeUtils;
 interface
 
 uses
-  Windows, SysUtils, ulEnumerations, ulNodeDataTypes, Main, ulAppConfig,
-  win32int, InterfaceBase, jwatlhelp32;
+  Windows, SysUtils, ulEnumerations, ulNodeDataTypes, Main, ulAppConfig, jwatlhelp32;
 
 { Processes, execution }
 procedure ActionOnExe(Action: TActionOnExecution);

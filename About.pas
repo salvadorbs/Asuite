@@ -25,8 +25,7 @@ unit About;
 interface
 
 uses
-  Windows, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, VirtualTrees, LCLIntf;
+  Forms, StdCtrls, ExtCtrls, LCLIntf;
 
 type
 
@@ -52,7 +51,6 @@ var
 
 implementation
 
-uses Main;
 
 {$R *.lfm}
 

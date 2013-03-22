@@ -27,8 +27,8 @@ interface
 uses
   Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
   ComCtrls, VirtualTrees, ActiveX, AppConfig, ulNodeDataTypes, ulCommonClasses,
-  UDImages, ASuiteForm, LCLIntf, FileUtil, win32int, InterfaceBase,
-  StdCtrls, EditBtn, Buttons, ASuiteControls;
+  UDImages, ASuiteForm, LCLIntf, FileUtil, win32int, InterfaceBase, ASuiteControls,
+  Buttons;
 
 type
 
@@ -177,9 +177,9 @@ var
 implementation
 
 uses
-  Option, PropertyFile, PropertyCat, About, ulCommonUtils,
-  ulEnumerations, udClassicMenu, PropertySeparator,ulExeUtils, ImportList,
-  ulAppConfig, ulTreeView, ulSQLite, ulDatabase;
+  Option, PropertyFile, PropertyCat, About, ulCommonUtils, ulEnumerations,
+  PropertySeparator,ulExeUtils, ImportList, ulAppConfig, ulTreeView, ulSQLite,
+  ulDatabase;
 
 {$R *.lfm}
 
