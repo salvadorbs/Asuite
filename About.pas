@@ -25,7 +25,8 @@ unit About;
 interface
 
 uses
-  Forms, StdCtrls, ExtCtrls, LCLIntf, Classes, sysutils;
+  Windows, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, ExtCtrls, VirtualTrees, LCLIntf;
 
 type
 
@@ -51,10 +52,17 @@ var
 
 implementation
 
-uses
-  AppConfig;
+uses AppConfig,Main;
 
 {$R *.lfm}
+const
+  COMPILE_TIME = {$I %TIME%};
+  COMPILE_DATE = {$I %DATE%};
+  COMPILE_USER = {$I %USER%};
+  COMPILE_COMPILER_VER = {$I %FPCVERSION%};
+  COMPILE_TARGET_CPU   = {$I %FPCTARGET%};
+
+{$DEFINE DEBUG}
 
 procedure TfrmAbout.lnklblWebSiteClick(Sender: TObject);
 begin
@@ -63,7 +71,11 @@ end;
 
 procedure TfrmAbout.FormCreate(Sender: TObject);
 begin
+  {$IFNDEF DEBUG}
   lbASuiteVersion.Caption := VERSION_COMPLETE;
+  {$ELSE}
+  lbASuiteVersion.Caption := 'Ver. DEBUG.' + COMPILE_TARGET_CPU + '.'+ COMPILE_DATE + '.' + COMPILE_TIME + '.fpc' + COMPILE_COMPILER_VER;
+  {$ENDIF}
 end;
 
 end.
