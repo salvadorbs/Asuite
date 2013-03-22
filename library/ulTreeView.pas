@@ -45,6 +45,8 @@ procedure RefreshList(Tree: TBaseVirtualTree);
 
 type
 
+  { TIterateSubtreeProcs }
+
   TIterateSubtreeProcs = class //Class for IterateSubtree
     procedure FindNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
                        Data: Pointer; var Abort: Boolean);
@@ -54,7 +56,16 @@ type
                                 Data: Pointer; var Abort: Boolean);
     procedure IncNumberNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
                             Data: Pointer; var Abort: Boolean);
+    procedure UpdateListItemCount(Sender: TBaseVirtualTree; Node: PVirtualNode;
+                                  Data: Pointer; var Abort: Boolean);
   end;
+
+
+  TListStats = record
+      SwCount      : Integer;
+      SwGroupCount : Integer;
+      CatCount     : Integer;
+    end;
 
 var
   MRUList : TMRUList;
@@ -63,11 +74,12 @@ var
   IterateSubTreeProcs : TIterateSubtreeProcs;
   ASuiteStartUpApp,                     //Software in StartUp list
   ASuiteShutdownApp : TAutorunItemList; //Software in Shutdown list
+  ListStats: TListStats;     //Stats
 
 implementation
 
 uses
-  PropertyFile, PropertyCat, ulSysUtils, udImages, PropertySeparator,
+  Menus, PropertyFile, PropertyCat, ulAppConfig, ulSysUtils, udImages, PropertySeparator,
   Main, ulDatabase;
 
 function AddNode(Sender: TBaseVirtualTree;AType: TvTreeDataType): PBaseData;
@@ -419,6 +431,24 @@ procedure TIterateSubtreeProcs.IncNumberNode(Sender: TBaseVirtualTree; Node: PVi
 begin
   if (Node.CheckState = csCheckedNormal) or (Node.CheckState = csMixedNormal) then
     Inc(Integer(Data^));
+end;
+
+procedure TIterateSubtreeProcs.UpdateListItemCount(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
+var
+  NodeData :PBaseData;
+begin
+  if Assigned(Node) then
+  begin
+    NodeData := frmMain.vstList.GetNodeData(Node);
+    //Count Softwares and Categories
+    case NodeData^.Data.DataType of
+      vtdtCategory : Inc(ListStats.CatCount);
+      vtdtFile : Inc(ListStats.SwCount);
+      vtdtFolder : Inc(ListStats.SwGroupCount);
+      //vtdtSeparator
+    end;
+  end;
 end;
 
 end.

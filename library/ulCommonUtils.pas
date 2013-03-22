@@ -26,7 +26,7 @@ interface
 
 uses
   Windows, SysUtils, Classes, Graphics, Forms, Dialogs, ComCtrls, Clipbrd,
-  AppConfig, DOM, StdCtrls;
+  AppConfig, DOM, StdCtrls, VirtualTrees;
 
 { Converters }
 function RGBToHtml(iRGB: Cardinal): string;
@@ -52,6 +52,17 @@ function  GetFirstFreeIndex(ArrayString: Array of WideString): Integer;
 function  IfThen(AValue: Boolean; ATrue, AFalse: String): String;
 function  IsFormatInClipBoard(format: Word): Boolean;
 
+{ Stats }
+function  GetCurrentUserName: string;
+function  GetComputerName: string;
+function  DiskFloatToString(Number: double;Units: Boolean): string;
+//function  GetWindowsLanguage(TypeLocalInfo: LCTYPE): string;
+function  GetWindowsVersion: string;
+function  DiskFreeString(Drive: Char;Units: Boolean): string;
+function  DiskSizeString(Drive: Char;Units: Boolean): string;
+function  DiskUsedString(Drive: Char;Units: Boolean): string;
+function  DiskFreePercentual(Drive: Char): double;
+
 //type
 //  TScanFolderSettings = record
 //    LastFolderPath   : String;
@@ -64,10 +75,11 @@ function  IsFormatInClipBoard(format: Word): Boolean;
 const
   MAX_PROFILE_PATH = 255;
 
+
 implementation
 
 uses
-  ulStringUtils;
+  ulStringUtils,ulNodeDataTypes,registry;
 
 function RGBToHtml(iRGB: Cardinal): string;
 begin
@@ -262,6 +274,127 @@ begin
       Break;
     end;
   end;
+end;
+
+{ Stats }
+function GetCurrentUserName: string;
+const
+  cnMaxUserNameLen = 254;
+var
+  sUserName: string;
+  dwUserNameLen: DWORD;
+begin
+  dwUserNameLen := cnMaxUserNameLen - 1;
+  SetLength(sUserName, cnMaxUserNameLen);
+  GetUserName(PChar(sUserName), dwUserNameLen);
+  SetLength(sUserName, dwUserNameLen);
+  Result := sUserName;
+end;
+
+function GetComputerName: string;
+var
+  Buf: array[0..Windows.MAX_COMPUTERNAME_LENGTH] of Char; // for computer name
+  BufSize: Windows.DWORD;                                 // size of name buffer
+begin
+  BufSize := SizeOf(Buf);
+  if Windows.GetComputerName(Buf, BufSize) then
+    Result := Buf
+  else
+    Result := '';
+end;
+
+function GetWindowsVersion: string;
+var
+  VerInfo : TOsversionInfo;
+  PlatformId, ServicePack : string;
+  Reg     : TRegistry;
+begin
+  VerInfo.dwOSVersionInfoSize := SizeOf(VerInfo);
+  GetVersionEx(VerInfo);
+  Reg         := TRegistry.Create;
+  Reg.RootKey := HKEY_LOCAL_MACHINE;
+  case VerInfo.dwPlatformId of
+    VER_PLATFORM_WIN32_WINDOWS:
+      begin
+        //Windows 9x
+        Reg.OpenKey('\SOFTWARE\Microsoft\Windows\CurrentVersion', False);
+        PlatformId  := Reg.ReadString('ProductName');
+        ServicePack := Reg.ReadString('CSDVersion');
+      end;
+    VER_PLATFORM_WIN32_NT:
+      begin
+        //Windows NT (2000/XP/2003/Vista)
+        Reg.OpenKey('\SOFTWARE\Microsoft\Windows NT\CurrentVersion', False);
+//        PlatformId  := Reg.ReadString('ProductName');
+        PlatformId := StringReplace(Reg.ReadString('ProductName'),'Microsoft ','',[]);
+        ServicePack := StringReplace(Reg.ReadString('CSDVersion'),'Service Pack','SP',[]);
+      end;
+  end;
+  Reg.Free;
+  Result := PlatformId + IfThen(ServicePack <> '', ' (' + ServicePack + ')' , '');
+end;
+
+function DiskFloatToString(Number: Double;Units: Boolean): string;
+var
+  TypeSpace : String;
+begin
+  if Number >= 1024 then
+  begin
+    //KiloBytes
+    Number    := Number / (1024);
+    TypeSpace := ' KB';
+    if Number >= 1024 then
+    begin
+      //MegaBytes
+      Number    := Number / (1024);
+      TypeSpace := ' MB';
+      if Number >= 1024 then
+      begin
+        //GigaBytes
+        Number    := Number / (1024);
+        TypeSpace := ' GB';
+      end;
+    end;
+  end;
+  Result := FormatFloat('0.00',Number);
+  if Units then
+    Result := Result + TypeSpace;
+end;
+
+function DiskFreeString(Drive: Char;Units: Boolean): string;
+var
+  Free : Double;
+begin
+  Free   := DiskFree(Ord(Drive) - 64);
+  Result := DiskFloatToString(Free,Units);
+end;
+
+function DiskSizeString(Drive: Char;Units: Boolean): string;
+var
+  Size : Double;
+begin
+  Size   := DiskSize(Ord(Drive) - 64);
+  Result := DiskFloatToString(Size,Units);
+end;
+
+function DiskUsedString(Drive: Char;Units: Boolean): string;
+var
+  Free : Double;
+  Size : Double;
+begin
+  Free   := (DiskFree(Ord(Drive) - 64));
+  Size   := (DiskSize(Ord(Drive) - 64));
+  Result := DiskFloatToString(Size - Free,Units);
+end;
+
+function DiskFreePercentual(Drive: Char): double;
+var
+  Free : Double;
+  Size : Double;
+begin
+  Free   := (DiskFree(Ord(Drive) - 64));
+  Size   := (DiskSize(Ord(Drive) - 64));
+  Result := (Free) / (Size);
 end;
 
 //------------------------------------------------------------------------------
