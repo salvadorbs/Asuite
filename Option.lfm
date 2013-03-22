@@ -19,8 +19,8 @@ object frmOption: TfrmOption
     Height = 497
     Top = 8
     Width = 281
-    ActivePage = TabSheet2
-    TabIndex = 1
+    ActivePage = TabSheet1
+    TabIndex = 0
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'General'

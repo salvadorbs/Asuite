@@ -184,9 +184,9 @@ begin
   Config.UseCustomTitle     := cbCustomTitle.Checked;
   { TODO -oMatteo -c : Language code 29/11/2009 21:39:41 }
 //  Config.LangName         := cxLanguage.Items[cxLanguage.ItemIndex];
-  Config.HideTabSearch := cbHideSearch.Checked;
+  Config.HideTabSearch    := cbHideSearch.Checked;
   //Treeview
-  Config.TVFont := FontDialog1.Font;
+  Config.TVFont           := FontDialog1.Font;
   Config.TVBackgroundPath := edtBackground.Text;
   Config.TVBackground     := cbBackground.Checked;
   //MRU

@@ -20,6 +20,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 unit ulCommonUtils;
 
+{$MODE Delphi}
+
 interface
 
 uses
@@ -102,8 +104,7 @@ begin
         afont.Name  := Strs[0];
         afont.Size  := StrToInt(Strs[1]);
         afont.Color := HtmlToColor(Strs[2]);
-        { TODO : Check  this code }
-        afont.Style := TFontStyles({byte}(StrToInt(Strs[3])));
+        afont.Style := TFontStyles(Integer(StrToInt(Strs[3])));
       end;
       Font.Assign(afont);
     finally
@@ -119,9 +120,7 @@ var
   sColor, sStyle : string;
 begin
   sColor := ColorToHtml(Font.Color);
-  { TODO : Check  this code
-  sStyle := IntToStr(byte(Font.Style)); }
-  sStyle := String(Font.Style);
+  sStyle := IntToStr(Integer(Font.Style));
   result := Font.Name +'|'+ IntToStr(Font.Size) + '|' + sColor + '|' + sStyle;
 end;
 
@@ -180,24 +179,39 @@ begin
 end;
 
 function GetStrPropertyXML(Node : TDOMNode;Name: String;Default: String): String;
+var
+  PropertyNode: TDOMNode;
 begin
   Result := Default;
-  if Node.FindNode(Name).NodeValue <> '' then
-    Result := Node.FindNode(Name).NodeValue;
+  PropertyNode := Node.FindNode(Name);
+  //Check if PropertyNode exists
+  if Assigned(PropertyNode) then
+    if PropertyNode.TextContent <> '' then
+      Result := PropertyNode.TextContent;
 end;
 
 function GetIntPropertyXML(Node : TDOMNode;Name: String;Default: Integer): Integer;
+var
+  PropertyNode: TDOMNode;
 begin
   Result := Default;
-  if Node.FindNode(Name).NodeValue <> '' then
-    Result := StrToInt(Node.FindNode(Name).NodeValue);
+  PropertyNode := Node.FindNode(Name);
+  //Check if PropertyNode exists
+  if Assigned(PropertyNode) then
+    if PropertyNode.TextContent <> '' then
+      Result := StrToInt(PropertyNode.TextContent);
 end;
 
 function GetBoolPropertyXML(Node : TDOMNode;Name: String;Default: Boolean): Boolean;
+var
+  PropertyNode: TDOMNode;
 begin
   Result := Default;
-  if Node.FindNode(Name).NodeValue <> '' then
-    Result := ulStringUtils.StrToBool(Node.FindNode(Name).NodeValue);
+  PropertyNode := Node.FindNode(Name);
+  //Check if PropertyNode exists
+  if Assigned(PropertyNode) then
+    if PropertyNode.TextContent <> '' then
+      Result := ulStringUtils.StrToBool(Node.TextContent);
 end;
 
 procedure CheckPropertyName(Edit: TEdit);
