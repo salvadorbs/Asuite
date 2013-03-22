@@ -168,7 +168,7 @@ var
   Search : TSearchRec;
 begin
   //Delete file with FileName in folder PathDir (path relative)
-  if FindFirstUTF8(SUITE_WORKING_PATH + PathDir + FileName,faAnyFile,Search) = 0 then
+  if FindFirstUTF8(PathDir + FileName,faAnyFile,Search) = 0 then
   begin
     repeat
       DeleteFileUTF8(PathDir + Search.Name); 

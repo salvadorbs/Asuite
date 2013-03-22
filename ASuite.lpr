@@ -49,7 +49,7 @@ begin
     Application.CreateForm(TClassicMenu, ClassicMenu);
 
     Config    := TConfiguration.Create;
-    DBManager := TDBManager.Create(false,'');
+    DBManager := TDBManager.Create(SUITE_LIST_PATH);
 
     Application.CreateForm(TfrmMain, frmMain);
     Application.ShowMainForm := false;

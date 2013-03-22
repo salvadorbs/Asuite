@@ -357,7 +357,7 @@ begin
   else //ASuite 2.x
     if (FileExt = EXT_SQL) or (FileExt = EXT_SQLBCK) then
     begin
-      DBImp := TDBManager.Create(True, FilePath);
+      DBImp := TDBManager.Create(FilePath);
       DBImp.LoadData(Tree, True);
       DBImp.Destroy;
     end;
@@ -687,7 +687,7 @@ begin
       if (ImportFileExt = EXT_SQL) or (ImportFileExt = EXT_SQLBCK)then
       begin
         //ASuite 2.x
-        DBImp := TDBManager.Create(True, edtPathList.Text);
+        DBImp := TDBManager.Create(edtPathList.Text);
         DBImp.LoadOptions;
         DBImp.Destroy;
       end;

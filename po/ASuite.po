@@ -219,6 +219,16 @@ msgctxt "tfrmmain.caption"
 msgid "ASuite"
 msgstr ""
 
+#: tfrmmain.menuitem2.caption
+msgctxt "TFRMMAIN.MENUITEM2.CAPTION"
+msgid "-"
+msgstr ""
+
+#: tfrmmain.menuitem3.caption
+msgctxt "TFRMMAIN.MENUITEM3.CAPTION"
+msgid "-"
+msgstr ""
+
 #: tfrmmain.miaddcat1.caption
 msgctxt "tfrmmain.miaddcat1.caption"
 msgid "Add category"
@@ -257,6 +267,10 @@ msgstr ""
 #: tfrmmain.miaddsw2.caption
 msgctxt "TFRMMAIN.MIADDSW2.CAPTION"
 msgid "Add software"
+msgstr ""
+
+#: tfrmmain.micheckupdates.caption
+msgid "Check updates"
 msgstr ""
 
 #: tfrmmain.micopy1.caption
@@ -387,6 +401,10 @@ msgstr ""
 
 #: tfrmmain.misortlist.caption
 msgid "Sort list"
+msgstr ""
+
+#: tfrmmain.mistatistics.caption
+msgid "Statistics"
 msgstr ""
 
 #: tfrmmain.n1.caption

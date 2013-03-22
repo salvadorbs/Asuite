@@ -335,8 +335,11 @@ begin
   if Not(FCache) then
   begin
     //Delete all file icon-cache and folder cache
-    DeleteFiles(SUITE_CACHE_PATH,'*.*');
-    RemoveDirUTF8(SUITE_CACHE_PATH);
+    if (DirectoryExistsUTF8(SUITE_CACHE_PATH)) then
+    begin
+      DeleteFiles(SUITE_CACHE_PATH,'*.*');
+      RemoveDirUTF8(SUITE_CACHE_PATH);
+    end;
   end
   else begin
     //Create folder cache, if it doesn't exist

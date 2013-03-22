@@ -45,7 +45,7 @@ procedure UpdateStringSQLite(dsTable: TSqlite3Dataset;field: string;value: Strin
 implementation
 
 uses
-  ulTreeView, ulDatabase;
+  ulTreeView, ulDatabase, AppConfig;
 
 function SaveASuiteSQLite(Tree: TBaseVirtualTree; DeleteAll: boolean = false): Boolean;
 begin
@@ -65,6 +65,8 @@ procedure LoadASuiteSQLite(Tree: TBaseVirtualTree; Import: Boolean);
 begin
   //List & Options
   DBManager.LoadData(Tree, Import);
+  //Backup sqlite database
+  DBManager.DoBackupList(SUITE_LIST_PATH);
   //Get rootnode's Icons
   GetChildNodesIcons(Tree, Tree.RootNode);
 end;

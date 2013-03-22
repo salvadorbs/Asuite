@@ -23,7 +23,8 @@ unit ulDatabase;
 interface
 
 uses
-  Windows, SysUtils, Forms, Dialogs, VirtualTrees, ulNodeDataTypes, ulEnumerations, Sqlite3DS, db;
+  Windows, SysUtils, Forms, Dialogs, VirtualTrees, ulNodeDataTypes, ulEnumerations,
+  Sqlite3DS, db, FileUtil;
 
 type
 
@@ -36,7 +37,6 @@ type
     procedure CreateDBTableOptions(Dataset: TSqlite3Dataset);
     procedure CreateDBTableVersion(Dataset: TSqlite3Dataset);
     function CreateSQLiteDataset(TableName: String): TSqlite3Dataset;
-    procedure DoBackupList(DBFile: String);
     procedure InternalLoadFiles(Tree: TBaseVirtualTree; id: int64; ParentNode:
                                 PVirtualNode; IsImport: Boolean);
     procedure InternalSaveFiles(Tree: TBaseVirtualTree; ANode: PVirtualNode;
@@ -46,9 +46,8 @@ type
     procedure InsertFileRecord(AData: TvBaseNodeData; AIndex, AParentID: Integer);
     procedure InsertOptions(Dataset: TSqlite3Dataset);
     procedure CheckDatabase(TableName: String);
-    function SetDBFileName: String;
   public
-    constructor Create(IsImport : Boolean; FileImport: String);
+    constructor Create(DBFilePath: String);
     destructor Destroy; override;
     property DBFileName: String read FDBFileName write FDBFileName;
     procedure LoadOptions;
@@ -56,6 +55,7 @@ type
                              AParentID: Int64);
     procedure LoadData(Tree: TBaseVirtualTree; IsImport: Boolean);
     procedure DeleteItem(Tree: TBaseVirtualTree; aID: Integer);
+    procedure DoBackupList(DBFile: String);
   end;
 
 var
@@ -143,16 +143,10 @@ uses
 
 { TDBManager }
 
-constructor TDBManager.Create(IsImport : Boolean; FileImport: String);
+constructor TDBManager.Create(DBFilePath: String);
 begin
   //Set FDBFileName - Database file
-  if Not(IsImport) then
-  begin
-    FDBFileName := SetDBFileName;
-    DoBackupList(FDBFileName);
-  end
-  else
-    FDBFileName := FileImport;
+  FDBFileName := DBFilePath;
   //Check tables, if they doesn't exists, create them
   CheckDatabase(DBTable_version);
   CheckDatabase(DBTable_files);
@@ -645,16 +639,15 @@ begin
       Config.ActionClickLeft    := ReadIntegerSQLite(dsTable, DBField_options_actionclickleft);
       Config.ActionClickRight   := ReadIntegerSQLite(dsTable, DBField_options_actionclickright);
     end
-    else
+    else begin
       Config.Changed := True;
+      //Create folder cache, if it doesn't exist
+      if (not DirectoryExistsUTF8(SUITE_CACHE_PATH)) then
+        CreateDirUTF8(SUITE_CACHE_PATH);
+    end;
   finally
     dsTable.Destroy;
   end;
-end;
-
-function TDBManager.SetDBFileName: String;
-begin
-  Result := SUITE_LIST_PATH;
 end;
 
 procedure TDBManager.SaveData(Tree: TBaseVirtualTree;ANode: PVirtualNode;
