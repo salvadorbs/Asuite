@@ -34,7 +34,7 @@ const
 
   APP_TITLE         = APP_NAME;
   VERSION_RELEASE    = '2.0';
-  VERSION_PRERELEASE = 'Alpha 2'; //For Alpha and Beta version
+  VERSION_PRERELEASE = 'Alpha 3'; //For Alpha and Beta version
                                  //(VERSION_RELEASE + VERSION_PRERELEASE = Version)
   VERSION_COMPLETE   = 'Version ' + VERSION_RELEASE + ' ' + VERSION_PRERELEASE;
 

@@ -55,14 +55,13 @@ implementation
 uses AppConfig,Main;
 
 {$R *.lfm}
+
 const
   COMPILE_TIME = {$I %TIME%};
   COMPILE_DATE = {$I %DATE%};
   COMPILE_USER = {$I %USER%};
   COMPILE_COMPILER_VER = {$I %FPCVERSION%};
   COMPILE_TARGET_CPU   = {$I %FPCTARGET%};
-
-{$DEFINE DEBUG}
 
 procedure TfrmAbout.lnklblWebSiteClick(Sender: TObject);
 begin
