@@ -79,7 +79,7 @@ const
 implementation
 
 uses
-  ulStringUtils,ulNodeDataTypes,registry;
+  ulStringUtils,ulNodeDataTypes,registry,Sensor,ulAppConfig,Main;
 
 function RGBToHtml(iRGB: Cardinal): string;
 begin

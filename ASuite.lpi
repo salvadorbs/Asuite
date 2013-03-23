@@ -20,7 +20,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
-      <BuildNr Value="1160"/>
+      <BuildNr Value="1162"/>
       <StringTable ProductVersion=""/>
     </VersionInfo>
     <BuildModes Count="2">
@@ -95,7 +95,7 @@
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="26">
+    <Units Count="27">
       <Unit0>
         <Filename Value="ASuite.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -259,6 +259,14 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="ulSQLite"/>
       </Unit25>
+      <Unit26>
+        <Filename Value="Sensor.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmSensor"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Sensor"/>
+      </Unit26>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

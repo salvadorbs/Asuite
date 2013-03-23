@@ -29,6 +29,10 @@ uses
   ulEnumerations, FileUtil;
 
 type
+  TSensorArray = Array[0..3] of Integer;
+
+  { TConfiguration }
+
   TConfiguration = class
   private
     //General
@@ -71,11 +75,16 @@ type
     FTrayCustomIconPath : string;
     FActionClickLeft    : Integer;
     FActionClickRight   : Integer;
+    //Mouse Sensors
+    FSensorLeftClick  : TSensorArray; //0 Top, 1 Left, 2 Right, 3 Bottom
+    FSensorRightClick : TSensorArray;
     //Misc
     FReadOnlyMode       : Boolean;
     FChanged            : Boolean;
     procedure SetHoldSize(value: Boolean);
     procedure SetAlwaysOnTop(value: Boolean);
+    procedure setSensorLeftClick(AValue: TSensorArray);
+    procedure setSensorRightClick(AValue: TSensorArray);
     procedure SetTrayIcon(value: Boolean);
     procedure SetTrayUseCustomIcon(value: Boolean);
     procedure SetUseCustomTitle(value: Boolean);
@@ -91,6 +100,8 @@ type
     { public declarations }
     constructor Create; overload;
     destructor Destroy; override;
+    //Mouse Sensor
+    procedure UpdateSensors;
     //General
     property StartWithWindows: Boolean read FStartWithWindows write SetStartWithWindows;
     property ShowPanelAtStartUp: Boolean read FShowPanelAtStartUp write SetShowPanelAtStartUp;
@@ -134,6 +145,9 @@ type
     // Misc
     property ReadOnlyMode: Boolean read FReadOnlyMode write FReadOnlyMode;
     property Changed: Boolean read FChanged write FChanged;
+    //Mouse Sensor
+    property SensorLeftClick:TSensorArray read FSensorLeftClick write FSensorLeftClick;
+    property SensorRightClick:TSensorArray read FSensorRightClick write FSensorRightClick;
   end;
 
 var
@@ -142,7 +156,7 @@ var
 implementation
 
 uses
-  Main, udClassicMenu, ulSysUtils, AppConfig;
+  Main, udClassicMenu, ulSysUtils, AppConfig, Sensor;
 
 constructor TConfiguration.Create;
 begin
@@ -223,6 +237,16 @@ begin
     frmMain.FormStyle := fsSystemStayOnTop
   else
     frmMain.FormStyle := fsNormal;
+end;
+
+procedure TConfiguration.setSensorLeftClick(AValue: TSensorArray);
+begin
+  FSensorLeftClick := AValue;
+end;
+
+procedure TConfiguration.setSensorRightClick(AValue: TSensorArray);
+begin
+  FSensorRightClick := AValue;
 end;
 
 procedure TConfiguration.SetTrayIcon(value: Boolean);
@@ -323,6 +347,12 @@ begin
       Color := value.Color;
     end;
   end;
+end;
+
+procedure TConfiguration.UpdateSensors;
+begin
+  CloseFormSensors;
+  CreateFormSensors;
 end;
 
 procedure TConfiguration.SetCache(value: Boolean);

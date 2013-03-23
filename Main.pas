@@ -28,7 +28,7 @@ uses
   Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
   ComCtrls, VirtualTrees, ActiveX, AppConfig, ulNodeDataTypes, ulCommonClasses,
   UDImages, ASuiteForm, LCLIntf, FileUtil, win32int, InterfaceBase,
-  StdCtrls, EditBtn, Buttons, ASuiteControls;
+  StdCtrls, EditBtn, Buttons, ASuiteControls, Sensor;
 
 type
 
@@ -174,10 +174,12 @@ type
     procedure RunAutorun;
   public
     { Public declarations }
+    procedure ShowMainForm(Sender: TObject);
   end;
 
 var
   frmMain : TfrmMain;
+  FormSensors         : Array[0..3] of TfrmSensor;
 
 implementation
 
@@ -545,6 +547,11 @@ begin
     Sender.SortDirection := sdDescending
   else
     Sender.SortDirection := sdAscending
+end;
+
+procedure TfrmMain.ShowMainForm(Sender: TObject);
+begin
+  ShowWindow(Application.MainFormHandle, SW_RESTORE);
 end;
 
 procedure TfrmMain.ExecuteFileOrOpenFolder(TreeView: TBaseVirtualTree;ExecuteFile: Boolean);

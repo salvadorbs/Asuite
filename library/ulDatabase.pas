@@ -135,6 +135,10 @@ const
   DBField_options_actionclickleft    = 'actionclickleft';
   DBField_options_actionclickright   = 'actionclickright';
 
+  //Mouse Sensors
+  DBField_options_mousesensorleft    = 'mousesensorleft';
+  DBField_options_mousesensorright    = 'mousesensorright';
+
 implementation
 
 uses
@@ -422,6 +426,8 @@ begin
 end;
 
 procedure TDBManager.InsertOptions(Dataset: TSqlite3Dataset);
+var
+   i:Integer;
 begin
   //general
   WriteBooleanSQLite(Dataset,DBField_options_startwithwindows,Config.StartWithWindows);
@@ -467,6 +473,11 @@ begin
   WriteStringSQLite (Dataset,DBField_options_traycustomiconpath,Config.TrayCustomIconPath);
   WriteIntegerSQLite(Dataset,DBField_options_actionclickleft,Config.ActionClickLeft);
   WriteIntegerSQLite(Dataset,DBField_options_actionclickright,Config.ActionClickRight);
+  //Mouse Sensor
+  for i:=Low(Config.SensorLeftClick) to High(Config.SensorLeftClick) do begin
+    WriteIntegerSQLite(Dataset,format('DBField_options_mousesensorleft%d',[i]),Config.SensorLeftClick[i]);
+    WriteIntegerSQLite(Dataset,format('DBField_options_mousesensorright%d',[i]),Config.SensorRightClick[i]);
+  end;
 end;
 
 procedure TDBManager.UpdateFileRecord(AData: TvBaseNodeData; AIndex, AParentID: Integer);
@@ -523,6 +534,8 @@ begin
 end;
 
 procedure TDBManager.CreateDBTableOptions(Dataset: TSqlite3Dataset);
+var
+   i:Integer;
 begin
   with Dataset do
   begin
@@ -571,6 +584,11 @@ begin
     FieldDefs.Add(DBField_options_traycustomiconpath, ftString);
     FieldDefs.Add(DBField_options_actionclickleft, ftInteger);
     FieldDefs.Add(DBField_options_actionclickright, ftInteger);
+    //mouse sensors
+    for i:=Low(Config.SensorLeftClick) to High(Config.SensorLeftClick) do begin
+      FieldDefs.Add(format('DBField_options_mousesensorleft%d',[i]), ftInteger);
+      FieldDefs.Add(format('DBField_options_mousesensorright%d',[i]), ftInteger);
+    end;
     //Create table in database
     CreateTable;
   end;
@@ -579,6 +597,7 @@ end;
 procedure TDBManager.LoadOptions;
 var
   dsTable : TSqlite3Dataset;
+  i:Integer;
 begin
   dsTable := CreateSQLiteDataset(DBTable_options);
   try
@@ -638,6 +657,11 @@ begin
       Config.TrayUseCustomIcon  := ReadBooleanSQLite(dsTable, DBField_options_trayusecustomicon);
       Config.ActionClickLeft    := ReadIntegerSQLite(dsTable, DBField_options_actionclickleft);
       Config.ActionClickRight   := ReadIntegerSQLite(dsTable, DBField_options_actionclickright);
+      //Mouse Sensor
+      for i:=Low(Config.SensorLeftClick) to High(Config.SensorLeftClick) do begin
+        Config.SensorLeftClick[i] := ReadIntegerSQLite(dsTable,format('DBField_options_mousesensorleft%d',[i]));
+        Config.SensorRightClick[i] := ReadIntegerSQLite(dsTable,format('DBField_options_mousesensorright%d',[i]));
+      end;
     end
     else begin
       Config.Changed := True;
@@ -647,6 +671,7 @@ begin
     end;
   finally
     dsTable.Destroy;
+    Config.UpdateSensors;
   end;
 end;
 

@@ -27,7 +27,7 @@ uses
   udClassicMenu in 'udClassicMenu.pas' {ClassicMenu: TDataModule},
   PropertySeparator in 'PropertySeparator.pas' {frmPropertySeparator},
   ulExeUtils in 'library\ulExeUtils.pas',
-  ImportList in 'ImportList.pas' {frmImportList},
+  ImportList in 'ImportList.pas', Sensor {frmImportList},
   ASuiteForm in 'library\ASuiteForm.pas',
   ulTreeView in 'library\ulTreeView.pas',
   ulSQLite in 'library\ulSQLite.pas';

@@ -601,6 +601,10 @@ msgctxt "TFRMOPTION.GBMFU.CAPTION"
 msgid "Most Frequently Used"
 msgstr ""
 
+#: tfrmoption.gbmouse.caption
+msgid "Mouse sensors"
+msgstr ""
+
 #: tfrmoption.gbotherfunctions.caption
 msgid "Other functions"
 msgstr ""
@@ -631,6 +635,10 @@ msgctxt "TFRMOPTION.LBACTIONONEXE.CAPTION"
 msgid "On execution"
 msgstr ""
 
+#: tfrmoption.lbbottom.caption
+msgid "Bottom"
+msgstr ""
+
 #: tfrmoption.lbclearelements.caption
 msgid "Clear all MRU, backups and/or cache icons"
 msgstr ""
@@ -641,6 +649,15 @@ msgstr ""
 
 #: tfrmoption.lblautorunorder.caption
 msgid "Autoexecute items list"
+msgstr ""
+
+#: tfrmoption.lbleft.caption
+msgid "Left"
+msgstr ""
+
+#: tfrmoption.lbleftclick.caption
+msgctxt "TFRMOPTION.LBLEFTCLICK.CAPTION"
+msgid "Left click"
 msgstr ""
 
 #: tfrmoption.lbmaxbackup.caption
@@ -670,11 +687,30 @@ msgctxt "tfrmoption.lbnumbmru.caption"
 msgid "10"
 msgstr ""
 
+#: tfrmoption.lbright.caption
+msgid "Right"
+msgstr ""
+
+#: tfrmoption.lbrightclick.caption
+msgctxt "TFRMOPTION.LBRIGHTCLICK.CAPTION"
+msgid "Right click"
+msgstr ""
+
+#: tfrmoption.lbside.caption
+msgid "Side"
+msgstr ""
+
+#: tfrmoption.lbtop.caption
+msgid "Top"
+msgstr ""
+
 #: tfrmoption.lbtrayleftclick.caption
+msgctxt "tfrmoption.lbtrayleftclick.caption"
 msgid "Left click"
 msgstr ""
 
 #: tfrmoption.lbtrayrightclick.caption
+msgctxt "tfrmoption.lbtrayrightclick.caption"
 msgid "Right click"
 msgstr ""
 
@@ -850,5 +886,9 @@ msgstr ""
 #: tfrmpropertyfile.tsinfo2.caption
 msgctxt "tfrmpropertyfile.tsinfo2.caption"
 msgid "Advanced"
+msgstr ""
+
+#: tfrmsensor.caption
+msgid "frmSensor"
 msgstr ""
 

@@ -29,7 +29,26 @@ uses
   FileUtil;
 
 type
+
+  { TfrmOption }
+
   TfrmOption = class(TForm)
+    cxLCBottom: TComboBox;
+    cxLCLeft: TComboBox;
+    cxLCRight: TComboBox;
+    cxLCTop: TComboBox;
+    cxRCBottom: TComboBox;
+    cxRCLeft: TComboBox;
+    cxRCRight: TComboBox;
+    cxRCTop: TComboBox;
+    gbMouse: TGroupBox;
+    lbBottom: TLabel;
+    lbLeft: TLabel;
+    lbLeftClick: TLabel;
+    lbRight: TLabel;
+    lbRightClick: TLabel;
+    lbSide: TLabel;
+    lbTop: TLabel;
     PageControl1: TPageControl;
     TabSheet1: TTabSheet;
     gbWindow: TGroupBox;
@@ -113,6 +132,10 @@ type
 
 var
   frmOption: TfrmOption;
+
+  arrayOfMouseSensorsString:array[1..4] of string = (
+     'Disabled','Show window','Show default menu','Show classic menu'
+  );
 
 implementation
 
@@ -216,6 +239,17 @@ begin
   Config.TrayIcon          := cbTrayicon.Checked;
   Config.ActionClickLeft   := cxLeftClick.ItemIndex;
   Config.ActionClickRight  := cxRightClick.ItemIndex;
+  //Mouse Sensors
+  //Left
+  Config.SensorLeftClick[0]  := cxLCTop.ItemIndex;
+  Config.SensorLeftClick[1]  := cxLCLeft.ItemIndex;
+  Config.SensorLeftClick[2]  := cxLCRight.ItemIndex;
+  Config.SensorLeftClick[3]  := cxLCBottom.ItemIndex;
+  //Right
+  Config.SensorRightClick[0] := cxRCTop.ItemIndex;
+  Config.SensorRightClick[1] := cxRCLeft.ItemIndex;
+  Config.SensorRightClick[2] := cxRCRight.ItemIndex;
+  Config.SensorRightClick[3] := cxRCBottom.ItemIndex;
   //Config changed and if frmMain is visible, focus vstList (repaint)
   Config.Changed := True;
   if frmMain.Visible then
@@ -253,8 +287,9 @@ begin
 end;
 
 procedure TfrmOption.FormCreate(Sender: TObject);
-//var
-//  searchResult : TSearchRec;
+var
+  i:integer;
+  //  searchResult : TSearchRec;
 begin
   PageControl1.TabIndex      := 0;
   //General
@@ -325,6 +360,30 @@ begin
   cxRightClick.Enabled      := cbTrayicon.Checked;
   cbTrayCustomIcon.Enabled  := cbTrayicon.Checked;
   btnTrayCustomIcon.Enabled := cbTrayicon.Checked;
+  //Mouse Sensors
+  for I := 1 to 4 do
+    begin
+      //Left Click
+      cxLCTop.Items.Add(arrayOfMouseSensorsString[i]);
+      cxLCLeft.Items.Add(arrayOfMouseSensorsString[i]);
+      cxLCRight.Items.Add(arrayOfMouseSensorsString[i]);
+      cxLCBottom.Items.Add(arrayOfMouseSensorsString[i]);
+      //Right Click
+      cxRCTop.Items.Add(arrayOfMouseSensorsString[i]);
+      cxRCLeft.Items.Add(arrayOfMouseSensorsString[i]);
+      cxRCRight.Items.Add(arrayOfMouseSensorsString[i]);
+      cxRCBottom.Items.Add(arrayOfMouseSensorsString[i]);
+    end;
+   //Left Click
+   cxLCTop.ItemIndex    := Config.SensorLeftClick[0];
+   cxLCLeft.ItemIndex   := Config.SensorLeftClick[1];
+   cxLCRight.ItemIndex  := Config.SensorLeftClick[2];
+   cxLCBottom.ItemIndex := Config.SensorLeftClick[3];
+   //Right Click
+   cxRCTop.ItemIndex    := Config.SensorRightClick[0];
+   cxRCLeft.ItemIndex   := Config.SensorRightClick[1];
+   cxRCRight.ItemIndex  := Config.SensorRightClick[2];
+   cxRCBottom.ItemIndex := Config.SensorRightClick[3];
 end;
 
 procedure TfrmOption.tbBackupChange(Sender: TObject);
