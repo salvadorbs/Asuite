@@ -30,22 +30,22 @@ uses
 function  SaveASuiteSQLite(Tree: TBaseVirtualTree; DeleteAll: boolean = false): Boolean;
 procedure LoadASuiteSQLite(Tree: TBaseVirtualTree; Import: Boolean);
 
-function ReadIntegerSQLite(dsTable: TSqlite3Dataset;field: string): Integer;
-function ReadBooleanSQLite(dsTable: TSqlite3Dataset;field: string): Boolean;
-function ReadStringSQLite(dsTable: TSqlite3Dataset;field: string): String;
+function ReadIntegerSQLite(dsTable: TSqlite3Dataset;FieldName: string;Default: Integer = -1): Integer;
+function ReadBooleanSQLite(dsTable: TSqlite3Dataset;FieldName: string;Default: Boolean = false): Boolean;
+function ReadStringSQLite (dsTable: TSqlite3Dataset;FieldName: string;Default: String = ''): String;
 
-procedure WriteIntegerSQLite(dsTable: TSqlite3Dataset;field: string;value: Integer);
-procedure WriteBooleanSQLite(dsTable: TSqlite3Dataset;field: string;value: Boolean);
-procedure WriteStringSQLite(dsTable: TSqlite3Dataset;field: string;value: String);
+procedure WriteIntegerSQLite(dsTable: TSqlite3Dataset;FieldName: string;value: Integer);
+procedure WriteBooleanSQLite(dsTable: TSqlite3Dataset;FieldName: string;value: Boolean);
+procedure WriteStringSQLite (dsTable: TSqlite3Dataset;FieldName: string;value: String);
 
-procedure UpdateIntegerSQLite(dsTable: TSqlite3Dataset;field: string;value: Integer);
-procedure UpdateBooleanSQLite(dsTable: TSqlite3Dataset;field: string;value: Boolean);
-procedure UpdateStringSQLite(dsTable: TSqlite3Dataset;field: string;value: String);
+procedure UpdateIntegerSQLite(dsTable: TSqlite3Dataset;FieldName: string;value: Integer);
+procedure UpdateBooleanSQLite(dsTable: TSqlite3Dataset;FieldName: string;value: Boolean);
+procedure UpdateStringSQLite (dsTable: TSqlite3Dataset;FieldName: string;value: String);
 
 implementation
 
 uses
-  ulTreeView, ulDatabase, AppConfig;
+  ulTreeView, ulDatabase, AppConfig, db;
 
 function SaveASuiteSQLite(Tree: TBaseVirtualTree; DeleteAll: boolean = false): Boolean;
 begin
@@ -71,49 +71,64 @@ begin
   GetChildNodesIcons(Tree, Tree.RootNode);
 end;
 
-function ReadIntegerSQLite(dsTable: TSqlite3Dataset;field: string): Integer;
+function ReadIntegerSQLite(dsTable: TSqlite3Dataset;FieldName: string;Default: Integer): Integer;
+var
+  Field : TField;
 begin
-  Result := dsTable.FieldByName(field).AsInteger;
+  Result := Default;
+  Field  := dsTable.FieldByName(FieldName);
+  if Assigned(Field) then
+    Result := Field.AsInteger;
 end;
 
-function ReadBooleanSQLite(dsTable: TSqlite3Dataset;field: string): Boolean;
+function ReadBooleanSQLite(dsTable: TSqlite3Dataset;FieldName: string;Default: Boolean): Boolean;
+var
+  Field : TField;
 begin
-  Result := dsTable.FieldByName(field).AsBoolean;
+  Result := Default;
+  Field  := dsTable.FieldByName(FieldName);
+  if Assigned(Field) then
+    Result := Field.AsBoolean;
 end;
 
-function ReadStringSQLite(dsTable: TSqlite3Dataset;field: string): string;
+function ReadStringSQLite(dsTable: TSqlite3Dataset;FieldName: string;Default: string): string;
+var
+  Field : TField;
 begin
-  Result := dsTable.FieldByName(field).AsString;
+  Result := Default;
+  Field  := dsTable.FieldByName(FieldName);
+  if Assigned(Field) then
+    Result := Field.AsString;
 end;
 
-procedure WriteIntegerSQLite(dsTable: TSqlite3Dataset;field: string;value: Integer);
+procedure WriteIntegerSQLite(dsTable: TSqlite3Dataset;FieldName: string;value: Integer);
 begin
-  dsTable.FieldByName(field).AsInteger := value;
+  dsTable.FieldByName(FieldName).AsInteger := value;
 end;
 
-procedure WriteBooleanSQLite(dsTable: TSqlite3Dataset;field: string;value: Boolean);
+procedure WriteBooleanSQLite(dsTable: TSqlite3Dataset;FieldName: string;value: Boolean);
 begin
-  dsTable.FieldByName(field).AsBoolean := value;
+  dsTable.FieldByName(FieldName).AsBoolean := value;
 end;
 
-procedure WriteStringSQLite(dsTable: TSqlite3Dataset;field: string;value: String);
+procedure WriteStringSQLite(dsTable: TSqlite3Dataset;FieldName: string;value: String);
 begin
-  dsTable.FieldByName(field).AsString := value;
+  dsTable.FieldByName(FieldName).AsString := value;
 end;
 
-procedure UpdateIntegerSQLite(dsTable: TSqlite3Dataset;field: string;value: Integer);
+procedure UpdateIntegerSQLite(dsTable: TSqlite3Dataset;FieldName: string;value: Integer);
 begin
-  dsTable.FieldByName(field).AsInteger := value;
+  dsTable.FieldByName(FieldName).AsInteger := value;
 end;
 
-procedure UpdateBooleanSQLite(dsTable: TSqlite3Dataset;field: string;value: Boolean);
+procedure UpdateBooleanSQLite(dsTable: TSqlite3Dataset;FieldName: string;value: Boolean);
 begin
-  dsTable.FieldByName(field).AsBoolean := value;
+  dsTable.FieldByName(FieldName).AsBoolean := value;
 end;
 
-procedure UpdateStringSQLite(dsTable: TSqlite3Dataset;field: string;value: String);
+procedure UpdateStringSQLite(dsTable: TSqlite3Dataset;FieldName: string;value: String);
 begin
-  dsTable.FieldByName(field).AsString := value;
+  dsTable.FieldByName(FieldName).AsString := value;
 end;
 
 

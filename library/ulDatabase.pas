@@ -315,9 +315,9 @@ begin
           ClickCount       := ReadIntegerSQLite(dsTable,DBField_files_clicks);
           ShortcutDesktop  := ReadBooleanSQLite(dsTable,DBField_files_dskshortcut);
           AutorunPos       := ReadIntegerSQLite(dsTable,DBField_files_autorunpos);
-          Autorun          := TAutorunType(ReadIntegerSQLite(dsTable,DBField_files_filesautorun));
-          WindowState      := ReadIntegerSQLite(dsTable,DBField_files_windowstate);
-          ActionOnExe      := TActionOnExecution(ReadIntegerSQLite(dsTable,DBField_files_onlaunch));
+          Autorun          := TAutorunType(ReadIntegerSQLite(dsTable,DBField_files_filesautorun,0));
+          WindowState      := ReadIntegerSQLite(dsTable,DBField_files_windowstate,0);
+          ActionOnExe      := TActionOnExecution(ReadIntegerSQLite(dsTable,DBField_files_onlaunch,0));
           NoMRU            := ReadBooleanSQLite(dsTable,DBField_files_nomru);
           NoMFU            := ReadBooleanSQLite(dsTable,DBField_files_nomfu);
           MRUPosition      := ReadIntegerSQLite(dsTable,DBField_files_lastAccess);
@@ -482,7 +482,7 @@ begin
   for i:=Low(Config.SensorLeftClick) to High(Config.SensorLeftClick) do begin
     WriteIntegerSQLite(Dataset,format(DBField_options_mousesensorleft,[i]),Config.SensorLeftClick[i]);
     WriteIntegerSQLite(Dataset,format(DBField_options_mousesensorright,[i]),Config.SensorRightClick[i]);
-  end; { TODO : Meglio usare le const }
+  end;
 end;
 
 procedure TDBManager.UpdateFileRecord(dsTable: TSqlite3Dataset;AData: TvBaseNodeData; AIndex, AParentID: Integer);
@@ -606,27 +606,27 @@ begin
     begin
       //General
       Config.StartWithWindows   := ReadBooleanSQLite(dsTable, DBField_options_startwithwindows);
-      Config.ShowPanelAtStartUp := ReadBooleanSQLite(dsTable, DBField_options_showpanelatstartup);
+      Config.ShowPanelAtStartUp := ReadBooleanSQLite(dsTable, DBField_options_showpanelatstartup,true);
       Config.ShowMenuAtStartUp  := ReadBooleanSQLite(dsTable, DBField_options_showmenuatstartup);
       //Main Form
       { TODO -oMatteo -c : Insert code for language 26/11/2009 22:21:05 }
 //      FLanguage           := '';
-      Config.CustomTitleString := ReadStringSQLite(dsTable, DBField_options_customtitlestring);
+      Config.CustomTitleString := ReadStringSQLite(dsTable, DBField_options_customtitlestring,APP_TITLE);
       Config.UseCustomTitle    := ReadBooleanSQLite(dsTable, DBField_options_usecustomtitle);
       Config.HideTabSearch     := ReadBooleanSQLite(dsTable, DBField_options_hidetabsearch);
       //Main Form - Position and size
       Config.HoldSize    := ReadBooleanSQLite(dsTable, DBField_options_holdsize);
       Config.AlwaysOnTop := ReadBooleanSQLite(dsTable, DBField_options_alwaysontop);
       //frmMain's size
-      frmMain.Width      := ReadIntegerSQLite(dsTable,DBField_options_ListFormWidth);
-      frmMain.Height     := ReadIntegerSQLite(dsTable,DBField_options_ListFormHeight);
+      frmMain.Width      := ReadIntegerSQLite(dsTable,DBField_options_ListFormWidth,frmMainWidth);
+      frmMain.Height     := ReadIntegerSQLite(dsTable,DBField_options_ListFormHeight,frmMainHeight);
       //FrmMain's position
       if Not(FileExists(SUITE_LIST_PATH)) then
         frmMain.Position := poDesigned
       else
         frmMain.Position := poDesktopCenter;
-      SetFormPosition(frmMain, ReadIntegerSQLite(dsTable,DBField_options_ListFormLeft),
-                               ReadIntegerSQLite(dsTable,DBField_options_ListFormTop));
+      SetFormPosition(frmMain, ReadIntegerSQLite(dsTable,DBField_options_ListFormLeft,frmMain.Left),
+                               ReadIntegerSQLite(dsTable,DBField_options_ListFormTop,frmMain.Top));
       //Main Form - Treevew
       Config.TVBackgroundPath   := ReadStringSQLite(dsTable, DBField_options_tvbackgroundpath);
       Config.TVBackground       := ReadBooleanSQLite(dsTable, DBField_options_tvbackground);
@@ -634,28 +634,28 @@ begin
       //Treeview Font
       StrToFont(ReadStringSQLite(dsTable,DBField_options_tvfont),Config.TVFont);
       //MRU
-      Config.MRU            := ReadBooleanSQLite(dsTable, DBField_options_mru);
+      Config.MRU            := ReadBooleanSQLite(dsTable, DBField_options_mru,true);
       Config.SubMenuMRU     := ReadBooleanSQLite(dsTable, DBField_options_submenumru);
-      Config.MRUNumber      := ReadIntegerSQLite(dsTable, DBField_options_mrunumber);
+      Config.MRUNumber      := ReadIntegerSQLite(dsTable, DBField_options_mrunumber,5);
       //MFU
       Config.MFU            := ReadBooleanSQLite(dsTable, DBField_options_mfu);
       Config.SubMenuMFU     := ReadBooleanSQLite(dsTable, DBField_options_submenumfu);
       Config.MFUNumber      := ReadIntegerSQLite(dsTable, DBField_options_mfunumber);
       //Backup
-      Config.Backup         := ReadBooleanSQLite(dsTable, DBField_options_backup);
-      Config.BackupNumber   := ReadIntegerSQLite(dsTable, DBField_options_backupnumber);
+      Config.Backup         := ReadBooleanSQLite(dsTable, DBField_options_backup,true);
+      Config.BackupNumber   := ReadIntegerSQLite(dsTable, DBField_options_backupnumber,5);
       //Other functions
-      Config.Autorun        := ReadBooleanSQLite(dsTable, DBField_options_autorun);
-      Config.Cache          := ReadBooleanSQLite(dsTable, DBField_options_cache);
+      Config.Autorun        := ReadBooleanSQLite(dsTable, DBField_options_autorun,true);
+      Config.Cache          := ReadBooleanSQLite(dsTable, DBField_options_cache,true);
       //Execution
-      Config.ActionOnExe    := TActionOnExecution(ReadIntegerSQLite(dsTable, DBField_options_actiononexe));
+      Config.ActionOnExe    := TActionOnExecution(ReadIntegerSQLite(dsTable, DBField_options_actiononexe,0));
       Config.RunSingleClick := ReadBooleanSQLite(dsTable, DBField_options_runsingleclick);
       //Trayicon
-      Config.TrayIcon           := ReadBooleanSQLite(dsTable, DBField_options_trayicon);
+      Config.TrayIcon           := ReadBooleanSQLite(dsTable, DBField_options_trayicon,true);
       Config.TrayCustomIconPath := ReadStringSQLite(dsTable, DBField_options_traycustomiconpath);
       Config.TrayUseCustomIcon  := ReadBooleanSQLite(dsTable, DBField_options_trayusecustomicon);
-      Config.ActionClickLeft    := ReadIntegerSQLite(dsTable, DBField_options_actionclickleft);
-      Config.ActionClickRight   := ReadIntegerSQLite(dsTable, DBField_options_actionclickright);
+      Config.ActionClickLeft    := ReadIntegerSQLite(dsTable, DBField_options_actionclickleft,0);
+      Config.ActionClickRight   := ReadIntegerSQLite(dsTable, DBField_options_actionclickright,2);
       //Mouse Sensor
       for i:=Low(Config.SensorLeftClick) to High(Config.SensorLeftClick) do begin
         Config.SensorLeftClick[i]  := ReadIntegerSQLite(dsTable,format(DBField_options_mousesensorleft,[i]));
