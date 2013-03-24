@@ -403,13 +403,17 @@ var
   NodeData : PBaseData;
 begin
   NodeData := Sender.GetNodeData(Node);
+  //Delete cache icon
   if (NodeData.Data.DataType = vtdtFile) and FileExistsUTF8(NodeData.Data.PathCacheIcon) then
-    DeleteFileUTF8(NodeData.Data.PathCacheIcon); 
+    DeleteFileUTF8(NodeData.Data.PathCacheIcon);
+  //Delete desktop's shortcut, if exists
   if (TvFileNodeData(NodeData.Data).ShortcutDesktop) then
     DeleteShortcutOnDesktop(TvFileNodeData(NodeData.Data).Name + EXT_LNK);
+  //Remove item from special menu
   MRUList.Remove(NodeData.Data);
   MFUList.Remove(NodeData.Data);
-  DBManager.DeleteItem(Sender, NodeData.Data.ID);
+  //Remove item from sqlite database
+  DBManager.DeleteItem(NodeData.Data.ID);
 end;
 
 procedure TIterateSubtreeProcs.ActionsOnShutdown(Sender: TBaseVirtualTree; Node: PVirtualNode;
@@ -417,7 +421,7 @@ procedure TIterateSubtreeProcs.ActionsOnShutdown(Sender: TBaseVirtualTree; Node:
 var
   NodeData : PBaseData;
 begin
-  NodeData     := Sender.GetNodeData(Node);
+  NodeData := Sender.GetNodeData(Node);
   if NodeData.Data.DataType = vtdtFile then
   begin
     //Delete shortcut on shutdown

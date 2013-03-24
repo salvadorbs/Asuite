@@ -230,8 +230,12 @@ begin
   begin
     //Run actions (ex. remove node from MRU list) before delete nodes
     Nodes := vstList.GetSortedSelection(true);
+    //Initialize dataset for remove data from sqlite database
+    DBManager.CreateDataSetRemoveItems;
     for I := High(Nodes) downto 0 do
       vstList.IterateSubtree(Nodes[I],IterateSubtreeProcs.BeforeDeleteNode,nil,[],False);
+    //Apply database's updates
+    DBManager.ApplyUpdatesRemoveItems;
     //Delete nodes and refresh list
     vstList.DeleteSelectedNodes;
     RefreshList(vstList);

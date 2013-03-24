@@ -32,18 +32,21 @@ type
 
   TDBManager = class
   private
-    FDBFileName:  String;
+    FDBFileName : String;
+    FdsRemoveItems : TSqlite3Dataset; //Used for remove items
     procedure CreateDBTableFiles(Dataset: TSqlite3Dataset);
     procedure CreateDBTableOptions(Dataset: TSqlite3Dataset);
     procedure CreateDBTableVersion(Dataset: TSqlite3Dataset);
     function CreateSQLiteDataset(TableName: String): TSqlite3Dataset;
     procedure InternalLoadFiles(Tree: TBaseVirtualTree; id: int64; ParentNode:
                                 PVirtualNode; IsImport: Boolean);
-    procedure InternalSaveFiles(Tree: TBaseVirtualTree; ANode: PVirtualNode;
-                                      AParentID: Int64);
+    procedure InternalSaveFiles(dsTable: TSqlite3Dataset;Tree: TBaseVirtualTree;
+                                ANode: PVirtualNode;AParentID: Int64);
     procedure InternalSaveOptions;
-    procedure UpdateFileRecord(AData: TvBaseNodeData; AIndex, AParentID: Integer);
-    procedure InsertFileRecord(AData: TvBaseNodeData; AIndex, AParentID: Integer);
+    procedure UpdateFileRecord(dsTable: TSqlite3Dataset;AData: TvBaseNodeData;
+                               AIndex, AParentID: Integer);
+    procedure InsertFileRecord(dsTable: TSqlite3Dataset;AData: TvBaseNodeData;
+                               AIndex, AParentID: Integer);
     procedure InsertOptions(Dataset: TSqlite3Dataset);
     procedure CheckDatabase(TableName: String);
   public
@@ -51,12 +54,14 @@ type
     destructor Destroy; override;
     property DBFileName: String read FDBFileName write FDBFileName;
     procedure LoadOptions;
-    procedure SaveData(Tree:TBaseVirtualTree; ANode: PVirtualNode;
-                             AParentID: Int64);
+    procedure SaveData(Tree:TBaseVirtualTree; ANode: PVirtualNode;AParentID: Int64);
     procedure LoadData(Tree: TBaseVirtualTree; IsImport: Boolean);
-    procedure DeleteItem(Tree: TBaseVirtualTree; aID: Integer);
     procedure DoBackupList(DBFile: String);
+    procedure CreateDataSetRemoveItems;
+    procedure DeleteItem(aID: Integer);
+    procedure ApplyUpdatesRemoveItems;
   end;
+
 
 var
   DBManager: TDBManager;
@@ -134,10 +139,9 @@ const
   DBField_options_traycustomiconpath = 'traycustomiconpath';
   DBField_options_actionclickleft    = 'actionclickleft';
   DBField_options_actionclickright   = 'actionclickright';
-
   //Mouse Sensors
-  DBField_options_mousesensorleft    = 'mousesensorleft';
-  DBField_options_mousesensorright    = 'mousesensorright';
+  DBField_options_mousesensorleft    = 'mousesensorleft%d';
+  DBField_options_mousesensorright    = 'mousesensorright%d';
 
 implementation
 
@@ -151,6 +155,7 @@ constructor TDBManager.Create(DBFilePath: String);
 begin
   //Set FDBFileName - Database file
   FDBFileName := DBFilePath;
+  FdsRemoveItems := nil;
   //Check tables, if they doesn't exists, create them
   CheckDatabase(DBTable_version);
   CheckDatabase(DBTable_files);
@@ -191,6 +196,11 @@ begin
   finally
     dsTable.Destroy;
   end;
+end;
+
+procedure TDBManager.CreateDataSetRemoveItems;
+begin
+  FdsRemoveItems := CreateSQLiteDataset(DBTable_files);
 end;
 
 procedure TDBManager.CreateDBTableVersion(Dataset: TSqlite3Dataset);
@@ -322,7 +332,7 @@ begin
   end;
 end;
 
-procedure TDBManager.InternalSaveFiles(Tree:TBaseVirtualTree; ANode: PVirtualNode; AParentID: Int64);
+procedure TDBManager.InternalSaveFiles(dsTable: TSqlite3Dataset;Tree:TBaseVirtualTree; ANode: PVirtualNode; AParentID: Int64);
 var
   Node    : PVirtualNode;
   vData   : TvBaseNodeData;
@@ -334,13 +344,13 @@ begin
     try
       //Insert or update record
       if (vData.ID < 0) then
-        InsertFileRecord(vData, Node.Index, AParentID)
+        InsertFileRecord(dsTable, vData, Node.Index, AParentID)
       else
         if ((vData.Changed) or (vData.Position <> Node.Index) or (vData.ParentID <> AParentID)) then
-          UpdateFileRecord(vData, Node.Index, AParentID);
+          UpdateFileRecord(dsTable, vData, Node.Index, AParentID);
       //If type is category then process sub-nodes
       if (vData.DataType = vtdtCategory) then
-        InternalSaveFiles(Tree, Node.FirstChild, vData.ID);
+        InternalSaveFiles(dsTable, Tree, Node.FirstChild, vData.ID);
     except
       on E : Exception do
         ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message]);
@@ -372,13 +382,9 @@ begin
   end;
 end;
 
-procedure TDBManager.InsertFileRecord(AData: TvBaseNodeData; AIndex, AParentID: Integer);
-var
-  dsTable : TSqlite3Dataset;
+procedure TDBManager.InsertFileRecord(dsTable: TSqlite3Dataset;AData: TvBaseNodeData; AIndex, AParentID: Integer);
 begin
-  dsTable := CreateSQLiteDataset(DBTable_files);
   try
-    dsTable.Open;
     dsTable.Append;
     //Add base fields
     WriteIntegerSQLite(dsTable,DBField_files_type,Ord(AData.DataType));
@@ -417,9 +423,8 @@ begin
   finally
     //Update node
     dsTable.Post;
-    dsTable.ApplyUpdates;
-    AData.ID       := dsTable.LastInsertRowId;
-    dsTable.Destroy;
+    //Set ID, ParentID and position
+    AData.ID       := ReadIntegerSQLite(dsTable,DBField_files_id);
     AData.ParentID := AParentID;
     AData.Position := AIndex;
   end;
@@ -475,18 +480,14 @@ begin
   WriteIntegerSQLite(Dataset,DBField_options_actionclickright,Config.ActionClickRight);
   //Mouse Sensor
   for i:=Low(Config.SensorLeftClick) to High(Config.SensorLeftClick) do begin
-    WriteIntegerSQLite(Dataset,format('DBField_options_mousesensorleft%d',[i]),Config.SensorLeftClick[i]);
-    WriteIntegerSQLite(Dataset,format('DBField_options_mousesensorright%d',[i]),Config.SensorRightClick[i]);
-  end;
+    WriteIntegerSQLite(Dataset,format(DBField_options_mousesensorleft,[i]),Config.SensorLeftClick[i]);
+    WriteIntegerSQLite(Dataset,format(DBField_options_mousesensorright,[i]),Config.SensorRightClick[i]);
+  end; { TODO : Meglio usare le const }
 end;
 
-procedure TDBManager.UpdateFileRecord(AData: TvBaseNodeData; AIndex, AParentID: Integer);
-var
-  dsTable : TSqlite3Dataset;
+procedure TDBManager.UpdateFileRecord(dsTable: TSqlite3Dataset;AData: TvBaseNodeData; AIndex, AParentID: Integer);
 begin
-  dsTable := CreateSQLiteDataset(DBTable_files);
   try
-    dsTable.Open;
     //Select only file record by ID
     dsTable.Locate(DBField_files_id,AData.ID,[]);
     dsTable.Edit;
@@ -525,8 +526,6 @@ begin
   finally
     //Insert data
     dsTable.Post;
-    dsTable.ApplyUpdates;
-    dsTable.Destroy;
     // update node
     AData.ParentID := AParentID;
     AData.Position := AIndex;
@@ -586,8 +585,8 @@ begin
     FieldDefs.Add(DBField_options_actionclickright, ftInteger);
     //mouse sensors
     for i:=Low(Config.SensorLeftClick) to High(Config.SensorLeftClick) do begin
-      FieldDefs.Add(format('DBField_options_mousesensorleft%d',[i]), ftInteger);
-      FieldDefs.Add(format('DBField_options_mousesensorright%d',[i]), ftInteger);
+      FieldDefs.Add(format(DBField_options_mousesensorleft,[i]), ftInteger);
+      FieldDefs.Add(format(DBField_options_mousesensorright,[i]), ftInteger);
     end;
     //Create table in database
     CreateTable;
@@ -659,8 +658,8 @@ begin
       Config.ActionClickRight   := ReadIntegerSQLite(dsTable, DBField_options_actionclickright);
       //Mouse Sensor
       for i:=Low(Config.SensorLeftClick) to High(Config.SensorLeftClick) do begin
-        Config.SensorLeftClick[i] := ReadIntegerSQLite(dsTable,format('DBField_options_mousesensorleft%d',[i]));
-        Config.SensorRightClick[i] := ReadIntegerSQLite(dsTable,format('DBField_options_mousesensorright%d',[i]));
+        Config.SensorLeftClick[i]  := ReadIntegerSQLite(dsTable,format(DBField_options_mousesensorleft,[i]));
+        Config.SensorRightClick[i] := ReadIntegerSQLite(dsTable,format(DBField_options_mousesensorright,[i]));
       end;
     end
     else begin
@@ -677,12 +676,22 @@ end;
 
 procedure TDBManager.SaveData(Tree: TBaseVirtualTree;ANode: PVirtualNode;
   AParentID: Int64);
+var
+  dsTable : TSqlite3Dataset;
 begin
   try
-    InternalSaveFiles(Tree, Anode, AParentID);
+    //Create and open Sqlite3Dataset
+    dsTable := CreateSQLiteDataset(DBTable_files);
+    dsTable.Open;
+    //Save list in Sqlite3Dataset
+    InternalSaveFiles(dsTable, Tree, Anode, AParentID);
+    //Apply updates (write updates in sqlite database)
+    dsTable.ApplyUpdates;
+    dsTable.Destroy;
     //If settings is changed, insert it else (if it exists) update it
     if Config.Changed then
       InternalSaveOptions;
+    { TODO : Add version in sqlite database }
   except
     on E : Exception do
       ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message]);
@@ -705,21 +714,23 @@ begin
   end;
 end;
 
-procedure TDBManager.DeleteItem(Tree: TBaseVirtualTree; aID: Integer);
-var
-  dsTable : TSqlite3Dataset;
+procedure TDBManager.DeleteItem(aID: Integer);
 begin
-  dsTable := CreateSQLiteDataset(DBTable_files);
   try
+    FdsRemoveItems.Open;
     //Get node from db by its ID and delete it
-    dsTable.SQL := Format('SELECT * FROM %s WHERE id = %d',[DBTable_files,aID]);
-    dsTable.Open;
-    dsTable.Delete;
-  finally
-    //Write in sqlite database
-    dsTable.ApplyUpdates;
-    dsTable.Destroy;
+    FdsRemoveItems.Locate(DBField_files_id,aID,[]);
+    FdsRemoveItems.Delete;
+  except
+    on E : Exception do
+      ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message]);
   end;
+end;
+
+procedure TDBManager.ApplyUpdatesRemoveItems;
+begin
+  FdsRemoveItems.ApplyUpdates;
+  FdsRemoveItems.Destroy;
 end;
 
 initialization
