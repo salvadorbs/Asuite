@@ -71,7 +71,7 @@ begin
       end;
     end;
     if (Config.ShowMenuAtStartUp) then
-      ClassicMenu.ShowTrayiconMenu(ClassicMenu.pmTrayicon);
+      ClassicMenu.ShowTrayiconMenu;
     {$IFDEF DEBUG}
     //Timing startup
     cTempo2 := GetTickCount;

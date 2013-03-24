@@ -58,7 +58,7 @@ type
                                SubMenuCaption: String): Integer;
   public
     { Public declarations }
-    procedure ShowTrayiconMenu(Menu: TPopUpMenu);
+    procedure ShowTrayiconMenu;
     procedure PopulateDirectory(Sender: TObject);
   end;
 
@@ -104,7 +104,7 @@ begin
   begin
     case Config.ActionClickLeft of
       1: ShowMainForm(Sender);
-      2: ShowTrayiconMenu(pmTrayicon);
+      2: ShowTrayiconMenu;
     end;
   end
   else
@@ -112,7 +112,7 @@ begin
     begin
       case Config.ActionClickRight of
         1: ShowMainForm(Sender);
-        2: ShowTrayiconMenu(pmTrayicon);
+        2: ShowTrayiconMenu;
       end;
     end;
 end;
@@ -123,7 +123,7 @@ begin
   frmMain.Show;
 end;
 
-procedure TClassicMenu.ShowTrayiconMenu(Menu: TPopUpMenu);
+procedure TClassicMenu.ShowTrayiconMenu;
 var
   Point: TPoint;
 begin
@@ -132,9 +132,9 @@ begin
   //Classic Menu
   SetForegroundWindow(frmMain.Handle);
   //Populate classic menu at runtime
-  UpdateClassicMenu(Menu);
+  UpdateClassicMenu(pmTrayicon);
   //Show classic menu
-  Menu.Popup(Point.X, Point.Y);
+  pmTrayicon.Popup(Point.X, Point.Y);
 end;
 
 procedure TClassicMenu.CreateListItems(Sender: TBaseVirtualTree; Node: PVirtualNode;

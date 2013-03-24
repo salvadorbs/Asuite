@@ -158,9 +158,9 @@ end;
 procedure TfrmImportList.pgProgressBeforeShow(ASender: TObject;
   ANewPage: TPage; ANewIndex: Integer);
 begin
+  btnBack.Enabled  := False;
+  btnNext.Enabled  := False;
   try
-    btnBack.Enabled  := False;
-    btnNext.Enabled  := False;
     lblTitle.Caption := msgImportProgress;
     //Which launcher?
     case rgrpLauncher.ItemIndex of
@@ -618,7 +618,7 @@ begin
       Config.ShowPanelAtStartUp := GetBoolPropertyXML(Node, 'StartUpShowPanel', true);
       Config.ShowMenuAtStartUp  := GetBoolPropertyXML(Node, 'StartUpShowMenu', false);
       //Main Form
-      Config.CustomTitleString := GetStrPropertyXML(Node, 'CustomTitleString', APP_NAME);
+      Config.CustomTitleString := GetStrPropertyXML(Node, 'CustomTitleString', APP_TITLE);
       Config.UseCustomTitle    := GetBoolPropertyXML(Node, 'CustomTitle', false);
       Config.HideTabSearch     := GetBoolPropertyXML(Node, 'HideSearch', false);
       //Main Form - Position and size
@@ -628,19 +628,9 @@ begin
       frmMain.Width      := GetIntPropertyXML(Node,'ListFormWidth',frmMainWidth);
       frmMain.Height     := GetIntPropertyXML(Node,'ListFormHeight',frmMainHeight);
       //frmMain position
-      if ((GetIntPropertyXML(Node,'ListFormTop',frmMain.Top) <> -1) and
-         (GetIntPropertyXML(Node,'ListFormLeft',frmMain.Left) <> -1)) then
-      begin
-        if ((GetIntPropertyXML(Node,'ListFormTop',frmMain.Top) + frmMainHeight) <= GetDeviceCaps(GetDC(frmMain.Handle), VERTRES)) then
-          frmMain.Top  := GetIntPropertyXML(Node,'ListFormTop',frmMain.Top)
-        else
-          frmMain.Top  := GetDeviceCaps(GetDC(frmMain.Handle), VERTRES) - frmMain.Height - 30;
-        if ((GetIntPropertyXML(Node,'ListFormLeft',frmMain.Left) + frmMainWidth) <= GetDeviceCaps(GetDC(frmMain.Handle), HORZRES)) then
-          frmMain.Left := GetIntPropertyXML(Node,'ListFormLeft',frmMain.Left)
-        else
-          frmMain.Left := GetDeviceCaps(GetDC(frmMain.Handle), HORZRES) - frmMain.Width;
-        frmMain.Position := poDesigned;
-      end;
+      SetFormPosition(frmMain, GetIntPropertyXML(Node,'ListFormLeft',frmMain.Left),
+                               GetIntPropertyXML(Node,'ListFormTop',frmMain.Top));
+      frmMain.Position := poDesigned;
       //Main Form - Treevew
       Config.TVBackgroundPath := GetStrPropertyXML(Node, 'BackgroundPath','');
       Config.TVBackground     := GetBoolPropertyXML(Node, 'Background',False);

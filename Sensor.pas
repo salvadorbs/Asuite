@@ -118,6 +118,7 @@ begin
     end;
   end;
 end;
+
 procedure CloseFormSensors;
 var
   I : Integer;
@@ -129,9 +130,6 @@ begin
       FreeAndNil(FormSensors[i]);
     end;
 end;
-
-
-
 
 procedure TfrmSensor.FormCreate(Sender: TObject);
 begin
@@ -163,7 +161,7 @@ begin
       end;
       3: //Classic Menu
       begin
-        ClassicMenu.ShowTrayiconMenu(ClassicMenu.pmTrayicon);
+        ClassicMenu.ShowTrayiconMenu;
       end;
     end;
 end;
