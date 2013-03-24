@@ -604,6 +604,7 @@ var
   DBImp  : TDBManager;
   Node, tvFontStyle : TDOMNode;
   ImportFileExt : String;
+  I      : Integer;
 begin
   Result := False;
   try
@@ -669,6 +670,12 @@ begin
       Config.TrayCustomIconPath := GetStrPropertyXML(Node, 'TrayIconPath','');
       Config.ActionClickLeft    := GetIntPropertyXML(Node, 'ActionClickLeft',0);
       Config.ActionClickRight   := GetIntPropertyXML(Node, 'ActionClickRight',2);
+      //Mouse sensors
+      for I := Low(Config.SensorLeftClick) to High(Config.SensorLeftClick) do
+      begin
+        Config.SensorLeftClick[I]  := GetIntPropertyXML(Node.FindNode('Mouse'),'SensorLeftClick' + IntToStr(I), 0);
+        Config.SensorRightClick[I] := GetIntPropertyXML(Node.FindNode('Mouse'),'SensorRightClick' + IntToStr(I), 0);
+      end;
       XMLDoc.Free;
     end
     else
