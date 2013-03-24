@@ -3,16 +3,19 @@ object frmSensor: TfrmSensor
   Height = 6
   Top = 383
   Width = 124
+  AlphaBlend = True
   AlphaBlendValue = 1
   BorderStyle = bsNone
   Caption = 'frmSensor'
   Color = clBtnFace
+  DefaultMonitor = dmDesktop
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
+  FormStyle = fsSystemStayOnTop
   OnCreate = FormCreate
   OnMouseDown = FormMouseDown
   OnMouseMove = FormMouseMove
   ShowInTaskBar = stNever
-  LCLVersion = '1.0.8.0'
+  LCLVersion = '1.0.6.0'
 end

@@ -39,10 +39,6 @@ type
     { Public declarations }
   end;
 
-function SetLayeredWindowAttributes(hwnd: LongInt;crKey: byte; bAlpha: byte;
-                                    dwFlags: LongInt): LongInt; stdcall;
-external 'user32.dll' name 'SetLayeredWindowAttributes';
-
 var
   frmSensor     : TfrmSensor;
 
@@ -55,9 +51,10 @@ procedure CloseFormSensors;
 
 implementation
 
-uses Main, ulCommonUtils, ulAppConfig, AppConfig, udClassicMenu;
+uses Main, ulAppConfig, AppConfig, udClassicMenu;
 
 {$R *.dfm}
+
 procedure CreateFormSensors;
 var
   I : Integer;
@@ -134,6 +131,8 @@ end;
 procedure TfrmSensor.FormCreate(Sender: TObject);
 begin
   Screen.Cursors[crNewCur] := LoadCursorFromFile(PChar(SUITE_ICONS_PATH + 'asuite.cur'));
+  Self.Top  := 0;
+  Self.Left := 0;
 end;
 
 procedure TfrmSensor.FormMouseDown(Sender: TObject; Button: TMouseButton;
@@ -176,7 +175,7 @@ procedure TfrmSensor.CreateParams(var Params: TCreateParams);
 begin
   inherited;
   //Transparent and sensor (form) topmost
-  Params.ExStyle   := WS_EX_TRANSPARENT or WS_EX_TOOLWINDOW or WS_EX_TOPMOST;
+  Params.Style   := WS_POPUP or WS_VISIBLE;
   Params.WndParent := GetDesktopWindow;
 end;
 

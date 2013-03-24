@@ -252,6 +252,8 @@ begin
   Config.SensorRightClick[3] := cxRCBottom.ItemIndex;
   //Config changed and if frmMain is visible, focus vstList (repaint)
   Config.Changed := True;
+  //Update sensors
+  Config.UpdateSensors;
   if frmMain.Visible then
     frmMain.FocusControl(frmMain.vstList);
   Close;
