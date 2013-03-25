@@ -71,7 +71,7 @@ end;
 procedure TfrmAbout.FormCreate(Sender: TObject);
 begin
   {$IFNDEF DEBUG}
-  lbASuiteVersion.Caption := VERSION_COMPLETE;
+  lbASuiteVersion.Caption := Format(msgVersion,[VERSION_COMPLETE,VERSION_PRERELEASE]);
   {$ELSE}
   lbASuiteVersion.Caption := 'Ver. DEBUG.' + COMPILE_TARGET_CPU + '.'+ COMPILE_DATE + '.' + COMPILE_TIME + '.fpc' + COMPILE_COMPILER_VER;
   {$ENDIF}

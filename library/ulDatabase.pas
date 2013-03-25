@@ -38,11 +38,13 @@ type
     procedure CreateDBTableOptions(Dataset: TSqlite3Dataset);
     procedure CreateDBTableVersion(Dataset: TSqlite3Dataset);
     function CreateSQLiteDataset(TableName: String): TSqlite3Dataset;
+    procedure InsertVersion(Dataset: TSqlite3Dataset);
     procedure InternalLoadFiles(Tree: TBaseVirtualTree; id: int64; ParentNode:
                                 PVirtualNode; IsImport: Boolean);
     procedure InternalSaveFiles(dsTable: TSqlite3Dataset;Tree: TBaseVirtualTree;
                                 ANode: PVirtualNode;AParentID: Int64);
     procedure InternalSaveOptions;
+    procedure InternalSaveVersion;
     procedure UpdateFileRecord(dsTable: TSqlite3Dataset;AData: TvBaseNodeData;
                                AIndex, AParentID: Integer);
     procedure InsertFileRecord(dsTable: TSqlite3Dataset;AData: TvBaseNodeData;
@@ -61,7 +63,6 @@ type
     procedure DeleteItem(aID: Integer);
     procedure ApplyUpdatesRemoveItems;
   end;
-
 
 var
   DBManager: TDBManager;
@@ -141,7 +142,7 @@ const
   DBField_options_actionclickright   = 'actionclickright';
   //Mouse Sensors
   DBField_options_mousesensorleft    = 'mousesensorleft%d';
-  DBField_options_mousesensorright    = 'mousesensorright%d';
+  DBField_options_mousesensorright   = 'mousesensorright%d';
 
 implementation
 
@@ -380,6 +381,37 @@ begin
     dsTable.ApplyUpdates;
     dsTable.Destroy;
   end;
+end;
+
+procedure TDBManager.InternalSaveVersion;
+var
+  dsTable : TSqlite3Dataset;
+begin
+  dsTable := CreateSQLiteDataset(DBTable_version);
+  try
+    //Set primarykey, if doesn't set it, ApplyUpdates doesn't work
+    dsTable.PrimaryKey := DBField_version_major;
+    dsTable.Open;
+    //Remove old version info from dbTable_Version
+    while not dsTable.IsEmpty do
+      dsTable.Delete;
+    //Reinsert version info in dbTable_Version
+    dsTable.Append;
+    InsertVersion(dsTable);
+  finally
+    //Write in sqlite database
+    dsTable.Post;
+    dsTable.ApplyUpdates;
+    dsTable.Destroy;
+  end;
+end;
+
+procedure TDBManager.InsertVersion(Dataset: TSqlite3Dataset);
+begin
+  WriteIntegerSQLite(Dataset,DBField_version_major,  StrToInt(VERSION_MAJOR));
+  WriteIntegerSQLite(Dataset,DBField_version_minor,  StrToInt(VERSION_MINOR));
+  WriteIntegerSQLite(Dataset,DBField_version_release,StrToInt(VERSION_RELEASE));
+  WriteIntegerSQLite(Dataset,DBField_version_build,  StrToInt(VERSION_BUILD));
 end;
 
 procedure TDBManager.InsertFileRecord(dsTable: TSqlite3Dataset;AData: TvBaseNodeData; AIndex, AParentID: Integer);
@@ -691,7 +723,8 @@ begin
     //If settings is changed, insert it else (if it exists) update it
     if Config.Changed then
       InternalSaveOptions;
-    { TODO : Add version in sqlite database }
+    //Save version info
+    InternalSaveVersion;
   except
     on E : Exception do
       ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message]);

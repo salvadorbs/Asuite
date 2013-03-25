@@ -30,13 +30,18 @@ uses
 const
 
   // Application's informations
-  APP_NAME = 'ASuite';
+  APP_NAME  = 'ASuite';
+  APP_TITLE = APP_NAME;
 
-  APP_TITLE         = APP_NAME;
-  VERSION_RELEASE    = '2.0';
+  VERSION_MAJOR    = '2'; { TODO : Update version info with IDE macro }
+  VERSION_MINOR    = '0';
+  VERSION_RELEASE  = '0';
+  VERSION_BUILD    = '1163';
+  VERSION_COMPLETE = VERSION_MAJOR   + '.' +
+                     VERSION_MINOR   + '.' +
+                     VERSION_RELEASE;
   VERSION_PRERELEASE = 'Alpha 3'; //For Alpha and Beta version
                                  //(VERSION_RELEASE + VERSION_PRERELEASE = Version)
-  VERSION_COMPLETE   = 'Version ' + VERSION_RELEASE + ' ' + VERSION_PRERELEASE;
 
   BACKUP_DIR    = 'backup\';
   CACHE_DIR     = 'cache\';
@@ -153,6 +158,8 @@ resourcestring
   msgErrSave        = 'Save failed because of an error';
   msgFileNotFound   = 'File not found';
   msgImportFailed   = 'Import failed because of an error';
+  //Misc
+  msgVersion        = 'Version %s %s';
 
 implementation
 

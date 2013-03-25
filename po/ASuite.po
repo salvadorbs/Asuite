@@ -117,6 +117,10 @@ msgstr ""
 msgid "MRU"
 msgstr ""
 
+#: appconfig.msgversion
+msgid "Version %s %s"
+msgstr ""
+
 #: tfrmabout.caption
 msgid "About"
 msgstr ""
