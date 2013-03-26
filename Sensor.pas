@@ -71,8 +71,6 @@ begin
           Application.CreateForm(TfrmSensor,frmSensor);
           frmSensor.Height := 1;
           frmSensor.Width  := GetDeviceCaps(GetDC(frmMain.Handle), HORZRES);
-          //TODO QUESTO NON CAMBIA NULLA!
-          frmSensor.ShowInTaskBar:= stNever;
         end
       end;
       1: //Left
@@ -176,7 +174,8 @@ begin
   inherited;
   //Transparent and sensor (form) topmost
   Params.Style   := WS_POPUP or WS_VISIBLE;
-  Params.WndParent := GetDesktopWindow;
+  //this show the form in taskbar
+  //Params.WndParent := GetDesktopWindow;
 end;
 
 
