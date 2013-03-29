@@ -558,6 +558,7 @@ begin
           end;
           TestProcess.StartupOptions := [suoUseShowWindow];
           TestProcess.Execute;
+          Result := TestProcess.ProcessID <> 0;
         finally
           TestProcess.Free;
         end;
