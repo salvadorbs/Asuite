@@ -24,9 +24,22 @@ interface
 
 uses
   Windows, SysUtils, Forms, Dialogs, VirtualTrees, ulNodeDataTypes, ulEnumerations,
-  Sqlite3DS, db, FileUtil;
+  Sqlite3DS, db, FileUtil, ulCommonClasses, Classes;
 
 type
+
+  { TDBUpdateTable }
+
+  TDBUpdateTable = class
+  private
+    FActualVersion: TVersionInfo;
+    FUpdatesVersion: array of TVersionInfo;
+    procedure GetNewFields20Alpha3(TableName: String;FieldsList: TStringList);
+  public
+    constructor Create;
+    destructor Destroy; override;
+    property ActualVersion: TVersionInfo read FActualVersion write FActualVersion;
+  end;
 
   { TDBManager }
 
@@ -34,6 +47,10 @@ type
   private
     FDBFileName : String;
     FdsRemoveItems : TSqlite3Dataset; //Used for remove items
+    FDBUpdate  : TDBUpdateTable;
+    procedure CheckDatabaseFiles;
+    procedure CheckDatabaseOptions;
+    procedure CheckDatabaseVersion;
     procedure CreateDBTableFiles(Dataset: TSqlite3Dataset);
     procedure CreateDBTableOptions(Dataset: TSqlite3Dataset);
     procedure CreateDBTableVersion(Dataset: TSqlite3Dataset);
@@ -50,7 +67,8 @@ type
     procedure InsertFileRecord(dsTable: TSqlite3Dataset;AData: TvBaseNodeData;
                                AIndex, AParentID: Integer);
     procedure InsertOptions(Dataset: TSqlite3Dataset);
-    procedure CheckDatabase(TableName: String);
+    function  LoadVersion(Dataset: TSqlite3Dataset): TDBUpdateTable;
+    procedure UpdateTableField(Dataset: TSqlite3Dataset);
   public
     constructor Create(DBFilePath: String);
     destructor Destroy; override;
@@ -148,54 +166,166 @@ implementation
 
 uses
   AppConfig, ulCommonUtils, ulSysUtils, ulExeUtils, ulAppConfig, ulSQLite,
-  ulTreeView, Main, ulCommonClasses;
+  ulTreeView, Main;
+
+{ TDBUpdateTable }
+
+procedure TDBUpdateTable.GetNewFields20Alpha3(TableName: String;
+  FieldsList: TStringList);
+var
+  I : Integer;
+  Query: String;
+begin
+  //SQlite can add ONE column at a time
+  Query := Format('ALTER TABLE %s add ',[TableName]);
+  //Files
+  if TableName = DBTable_files then
+  begin
+
+  end
+  else //Options
+    if TableName = DBTable_options then
+    begin
+      //Mouse sensors
+      for I := Low(Config.SensorLeftClick) to High(Config.SensorLeftClick) do
+      begin
+        FieldsList.Append(Query + Format(DBField_options_mousesensorleft, [I]) + ' INTEGER');
+        FieldsList.Append(Query + Format(DBField_options_mousesensorright,[I]) + ' INTEGER');
+      end;
+    end;
+end;
+
+constructor TDBUpdateTable.Create;
+begin
+  //Why these numbers? Simple, they are ASuite 2.0 Alpha 2 and old ASuite version
+  //haven't database version
+  FActualVersion := TVersionInfo.Create(2,0,0,1159);
+  //Add updates versions
+  SetLength(FUpdatesVersion,1);
+  //ASuite 2.0 Alpha 3
+  { TODO : Insert right version info of Alpha 3, before release }
+  FUpdatesVersion[0] := TVersionInfo.Create(2,0,0,1163);
+  FUpdatesVersion[0].GetNewFields := GetNewFields20Alpha3;
+end;
+
+destructor TDBUpdateTable.Destroy;
+var
+  I: Integer;
+begin
+  FreeAndNil(FActualVersion);
+  for I := 0 to Length(FUpdatesVersion) - 1 do
+    FreeAndNil(FUpdatesVersion[I]);
+end;
 
 { TDBManager }
 
 constructor TDBManager.Create(DBFilePath: String);
 begin
   //Set FDBFileName - Database file
-  FDBFileName := DBFilePath;
+  FDBFileName    := DBFilePath;
   FdsRemoveItems := nil;
-  //Check tables, if they doesn't exists, create them
-  CheckDatabase(DBTable_version);
-  CheckDatabase(DBTable_files);
-  CheckDatabase(DBTable_options);
+  //Check tables
+  //If they doesn't exists, create them else update them (if necessary)
+  CheckDatabaseVersion;
+  CheckDatabaseFiles;
+  CheckDatabaseOptions;
 end;
 
 destructor TDBManager.Destroy;
 begin
   inherited;
+  FreeAndNil(FDBUpdate);
 end;
 
-procedure TDBManager.CheckDatabase(TableName: String);
+procedure TDBManager.CheckDatabaseVersion;
 var
   dsTable: TSqlite3Dataset;
 begin
-  //Create SQLite Datasets and set Filename/Tablename
-  dsTable := CreateSQLiteDataset(TableName);
+  //Create SQLite Version Dataset and set Filename/Tablename
+  dsTable := CreateSQLiteDataset(DBTable_version);
+  dsTable.Open;
   try
-    //Check tables, if they doesn't exists, create them
-    //Version
-    if TableName = DBTable_version then
+    if (dsTable.TableExists(DBTable_version)) then
     begin
-      if not(dsTable.TableExists(TableName)) then
-        CreateDBTableVersion(dsTable);
+      if (dsTable.IsEmpty) then
+        FDBUpdate := TDBUpdateTable.Create
+      else //Load Database version
+        FDBUpdate := LoadVersion(dsTable);
     end
     else
-      //Files
-      if TableName = DBTable_files then
-      begin
-        if not(dsTable.TableExists(TableName)) then
-          CreateDBTableFiles(dsTable);
-      end
-      else
-        //Options
-        if TableName = DBTable_options then
-          if not(dsTable.TableExists(TableName)) then
-            CreateDBTableOptions(dsTable);
+      CreateDBTableVersion(dsTable);
   finally
     dsTable.Destroy;
+  end;
+end;
+
+procedure TDBManager.CheckDatabaseFiles;
+var
+  dsTable: TSqlite3Dataset;
+begin
+  //Create SQLite Files Dataset and set Filename/Tablename
+  dsTable := CreateSQLiteDataset(DBTable_files);
+  try
+    if (dsTable.TableExists(DBTable_files)) then
+      UpdateTableField(dsTable)
+    else
+      CreateDBTableFiles(dsTable);
+  finally
+    dsTable.Destroy;
+  end;
+end;
+
+procedure TDBManager.CheckDatabaseOptions;
+var
+  dsTable: TSqlite3Dataset;
+begin
+  //Create SQLite Options Dataset and set Filename/Tablename
+  dsTable := CreateSQLiteDataset(DBTable_options);
+  try
+    if (dsTable.TableExists(DBTable_options)) then
+      UpdateTableField(dsTable)
+    else
+      CreateDBTableOptions(dsTable);
+  finally
+    dsTable.Destroy;
+  end;
+end;
+
+function TDBManager.LoadVersion(Dataset: TSqlite3Dataset): TDBUpdateTable;
+begin
+  Result := TDBUpdateTable.Create;
+  Result.ActualVersion.Major   := ReadIntegerSQLite(Dataset,DBField_version_major);
+  Result.ActualVersion.Minor   := ReadIntegerSQLite(Dataset,DBField_version_minor);
+  Result.ActualVersion.Release := ReadIntegerSQLite(Dataset,DBField_version_release);
+  Result.ActualVersion.Build   := ReadIntegerSQLite(Dataset,DBField_version_build);
+end;
+
+procedure TDBManager.UpdateTableField(Dataset: TSqlite3Dataset);
+var
+  I : Integer;
+  ActualVersion : TVersionInfo;
+  SQLQueryList: TStringList;
+  TableName: String;
+begin
+  SQLQueryList:=tstringlist.create;
+  try
+    TableName     := Dataset.TableName;
+    ActualVersion := FDBUpdate.ActualVersion;
+    //Get query to add new fields
+    for I := 0 to Length(FDBUpdate.FUpdatesVersion) - 1 do
+    begin
+      if CompareVersionInfo(ActualVersion,FDBUpdate.FUpdatesVersion[I]) = -1 then
+      begin
+        ActualVersion := FDBUpdate.FUpdatesVersion[I];
+        if Assigned(ActualVersion.GetNewFields) then
+          ActualVersion.GetNewFields(TableName,SQLQueryList);
+      end;
+    end;
+  finally
+    //Execute every query to add new fields
+    for I := 0 to SQLQueryList.Count - 1 do
+      Dataset.ExecSQL(SQLQueryList[I]);
+    SQLQueryList.Free;
   end;
 end;
 

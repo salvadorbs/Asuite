@@ -25,7 +25,7 @@ unit ulCommonClasses;
 interface
 
 uses
-  Classes, VirtualTrees, ulNodeDataTypes, Menus;
+  Classes, VirtualTrees, ulNodeDataTypes, Menus, AppConfig, sysutils;
 
 type
   TNodeDataList = class (TList)
@@ -89,6 +89,27 @@ type
     constructor Create;
     procedure Insert(Index: integer; Item: TvFileNodeData);
     property  Items[Index: Integer]: TvFileNodeData read GetItems write SetItems;
+  end;
+
+  { TVersionInfo }
+
+  TGetNewFields = procedure(TableName: String;FieldsList: TStringList) of object;
+
+  TVersionInfo = class
+    private
+      FMajor   : Integer;
+      FMinor   : Integer;
+      FRelease : Integer;
+      FBuild   : Integer;
+      FGetNewFields: TGetNewFields;
+    public
+      constructor Create; overload; //Get actual ASuite version info
+      constructor Create(aMajor, aMinor, aRelease, aBuild: Integer); overload;
+      property Major: Integer   read FMajor   write FMajor;
+      property Minor: Integer   read FMinor   write FMinor;
+      property Release: Integer read FRelease write FRelease;
+      property Build: Integer   read FBuild   write FBuild;
+      property GetNewFields: TGetNewFields read FGetNewFields write FGetNewFields;
   end;
 
 var
@@ -348,5 +369,22 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+
+constructor TVersionInfo.Create;
+begin
+  //Get actual ASuite version info
+  FMajor   := StrToInt(VERSION_MAJOR);
+  FMinor   := StrToInt(VERSION_MINOR);
+  FRelease := StrToInt(VERSION_RELEASE);
+  FBuild   := StrToInt(VERSION_BUILD);
+end;
+
+constructor TVersionInfo.Create(aMajor, aMinor, aRelease, aBuild: Integer);
+begin
+  FMajor   := aMajor;
+  FMinor   := aMinor;
+  FRelease := aRelease;
+  FBuild   := aBuild;
+end;
 
 end.

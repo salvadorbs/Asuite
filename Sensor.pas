@@ -174,8 +174,6 @@ begin
   inherited;
   //Transparent and sensor (form) topmost
   Params.Style   := WS_POPUP or WS_VISIBLE;
-  //this show the form in taskbar
-  //Params.WndParent := GetDesktopWindow;
 end;
 
 

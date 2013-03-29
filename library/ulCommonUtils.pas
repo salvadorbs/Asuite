@@ -26,7 +26,7 @@ interface
 
 uses
   Windows, SysUtils, Classes, Graphics, Forms, Dialogs, ComCtrls, Clipbrd,
-  AppConfig, DOM, StdCtrls, VirtualTrees;
+  AppConfig, DOM, StdCtrls, VirtualTrees, ulCommonClasses;
 
 { Converters }
 function RGBToHtml(iRGB: Cardinal): string;
@@ -62,6 +62,10 @@ function  DiskFreeString(Drive: Char;Units: Boolean): string;
 function  DiskSizeString(Drive: Char;Units: Boolean): string;
 function  DiskUsedString(Drive: Char;Units: Boolean): string;
 function  DiskFreePercentual(Drive: Char): double;
+
+{ Version }
+function  CompareVersionInfo(Version1, Version2: TVersionInfo): Integer;
+function  CompareInteger(int1, int2: Integer): Integer;
 
 //type
 //  TScanFolderSettings = record
@@ -277,6 +281,7 @@ begin
 end;
 
 { Stats }
+
 function GetCurrentUserName: string;
 const
   cnMaxUserNameLen = 254;
@@ -395,6 +400,52 @@ begin
   Free   := (DiskFree(Ord(Drive) - 64));
   Size   := (DiskSize(Ord(Drive) - 64));
   Result := (Free) / (Size);
+end;
+
+function CompareVersionInfo(Version1, Version2: TVersionInfo): Integer;
+var
+  Major, Minor, Release, Build: Integer;
+begin
+  //Result
+  //1 = Version1 is latest
+  //0  = Same
+  //-1  = Version2 is latest
+  Result := 0;
+  if Assigned(Version1) and Assigned(Version2) then
+  begin
+    //Compare integer
+    Major   := CompareInteger(Version1.Major, Version2.Major);
+    Minor   := CompareInteger(Version1.Minor, Version2.Minor);
+    Release := CompareInteger(Version1.Release, Version2.Release);
+    Build   := CompareInteger(Version1.Build, Version2.Build);
+    //Get result
+    if Major <> 0 then
+      Result := Major
+    else
+      if Minor <> 0 then
+        Result := Minor
+      else
+        if Release <> 0 then
+          Result := Release
+        else
+          if Build <> 0 then
+            Result := Build;
+  end;
+end;
+
+function CompareInteger(int1, int2: Integer): Integer;
+begin
+  //Result
+  //1 = int1 is bigger
+  //0  = Same
+  //-1  = int2 is bigger
+  if int1 < int2 then
+    Result := -1
+  else
+    if int1 > int2 then
+      Result := 1
+    else
+      Result := 0;
 end;
 
 //------------------------------------------------------------------------------

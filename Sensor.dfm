@@ -17,5 +17,5 @@ object frmSensor: TfrmSensor
   OnMouseDown = FormMouseDown
   OnMouseMove = FormMouseMove
   ShowInTaskBar = stNever
-  LCLVersion = '1.0.6.0'
+  LCLVersion = '1.0.8.0'
 end
