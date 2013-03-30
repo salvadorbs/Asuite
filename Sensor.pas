@@ -161,6 +161,7 @@ begin
         ClassicMenu.ShowTrayiconMenu;
       end;
     end;
+  frmMain.BringToFront;
 end;
 
 procedure TfrmSensor.FormMouseMove(Sender: TObject; Shift: TShiftState; X,
