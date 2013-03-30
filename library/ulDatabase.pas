@@ -243,10 +243,10 @@ var
 begin
   //Create SQLite Version Dataset and set Filename/Tablename
   dsTable := CreateSQLiteDataset(DBTable_version);
-  dsTable.Open;
   try
     if (dsTable.TableExists(DBTable_version)) then
     begin
+      dsTable.Open;
       if (dsTable.IsEmpty) then
         FDBUpdate := TDBUpdateTable.Create
       else //Load Database version
