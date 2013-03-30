@@ -110,6 +110,8 @@ begin
       frmSensor.Show;
       frmSensor.Side := I;
       FormSensors[I] := frmSensor;
+      //frmSensor.FormStyle := fsSystemStayOnTop;
+      //frmSensor.BringToFront;
     end;
   end;
 end;
@@ -161,7 +163,7 @@ begin
         ClassicMenu.ShowTrayiconMenu;
       end;
     end;
-  frmMain.BringToFront;
+  //frmMain.BringToFront;
 end;
 
 procedure TfrmSensor.FormMouseMove(Sender: TObject; Shift: TShiftState; X,
@@ -175,6 +177,11 @@ begin
   inherited;
   //Transparent and sensor (form) topmost
   Params.Style   := WS_POPUP or WS_VISIBLE;
+  //ontop over taskbar
+  Params.ExStyle := Params.ExStyle or WS_EX_TOPMOST;
+  Params.WndParent := GetDesktopwindow;
+  //this hide the form from taskbar
+  Params.ExStyle := Params.ExStyle + WS_EX_NOACTIVATE;
 end;
 
 
