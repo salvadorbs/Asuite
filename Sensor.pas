@@ -110,8 +110,8 @@ begin
       frmSensor.Show;
       frmSensor.Side := I;
       FormSensors[I] := frmSensor;
-      //frmSensor.FormStyle := fsSystemStayOnTop;
-      //frmSensor.BringToFront;
+      frmSensor.FormStyle := fsSystemStayOnTop;
+      frmSensor.BringToFront;
     end;
   end;
 end;
@@ -163,7 +163,7 @@ begin
         ClassicMenu.ShowTrayiconMenu;
       end;
     end;
-  //frmMain.BringToFront;
+  frmMain.BringToFront;
 end;
 
 procedure TfrmSensor.FormMouseMove(Sender: TObject; Shift: TShiftState; X,
