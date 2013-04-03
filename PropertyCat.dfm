@@ -1,102 +1,104 @@
 object frmPropertyCat: TfrmPropertyCat
   Left = 0
-  Height = 160
   Top = 0
-  Width = 281
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Properties'
   ClientHeight = 160
   ClientWidth = 281
   Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
-  OnCloseQuery = FormCloseQuery
+  Font.Style = []
+  OldCreateOrder = True
   Position = poMainFormCenter
-  LCLVersion = '1.0.6.0'
+  OnCloseQuery = FormCloseQuery
+  PixelsPerInch = 96
+  TextHeight = 13
   object btnCancel: TButton
     Left = 198
-    Height = 25
     Top = 127
     Width = 75
+    Height = 25
     Caption = 'Cancel'
     ModalResult = 2
-    OnClick = btnCancelClick
     TabOrder = 2
+    OnClick = btnCancelClick
   end
   object btnOk: TButton
     Left = 119
-    Height = 25
     Top = 127
     Width = 75
+    Height = 25
     Caption = 'Ok'
     Default = True
     ModalResult = 1
-    OnClick = btnOkClick
     TabOrder = 1
+    OnClick = btnOkClick
   end
   object Panel1: TPanel
     Left = 8
-    Height = 113
     Top = 8
     Width = 265
-    ClientHeight = 113
-    ClientWidth = 265
+    Height = 113
     TabOrder = 0
     object lbName: TLabel
       Left = 8
-      Height = 13
       Top = 8
       Width = 41
+      Height = 13
       AutoSize = False
       Caption = 'Name'
+      Color = clBtnFace
       ParentColor = False
     end
     object lbPathIcon: TLabel
       Left = 8
-      Height = 14
       Top = 53
-      Width = 133
+      Width = 132
+      Height = 13
       Caption = 'Custom icon path (optional)'
+      Color = clBtnFace
       ParentColor = False
     end
     object edtName: TEdit
       Left = 8
-      Height = 21
       Top = 24
       Width = 249
-      OnEnter = edtNameEnter
+      Height = 21
       TabOrder = 0
+      OnEnter = edtNameEnter
     end
     object edtPathIcon: TEdit
       Left = 8
-      Height = 21
       Top = 69
       Width = 185
+      Height = 21
       TabOrder = 1
       Text = '$ASuite\'
     end
     object btnBrowseIcon: TButton
       Left = 200
-      Height = 21
       Top = 69
       Width = 57
+      Height = 21
       Caption = 'Browse'
-      OnClick = btnBrowseIconClick
       TabOrder = 2
+      OnClick = btnBrowseIconClick
     end
     object cbHideSoftware: TCheckBox
       Left = 8
-      Height = 19
       Top = 96
       Width = 161
+      Height = 19
       Caption = 'Hide this software from menu'
       TabOrder = 3
     end
   end
   object OpenDialog1: TOpenDialog
-    left = 8
-    top = 128
+    Left = 8
+    Top = 128
   end
 end

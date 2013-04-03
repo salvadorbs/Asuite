@@ -1,8 +1,6 @@
-inherited frmMain: TfrmMain
+object frmMain: TfrmMain
   Left = 611
-  Height = 370
   Top = 208
-  Width = 200
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'ASuite'
@@ -11,9 +9,11 @@ inherited frmMain: TfrmMain
   Color = clBtnFace
   Constraints.MinHeight = 370
   Constraints.MinWidth = 200
+  Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
+  Font.Style = []
   Icon.Data = {
     BE1000000000010001002020000001002000A810000016000000280000002000
     0000400000000100200000000000800C00000000000000000000000000000000
@@ -149,55 +149,54 @@ inherited frmMain: TfrmMain
     00030000000300000003C00FC003C00FC003C0000003C0000003C0000003C000
     0003C0000003C0000003C0000003C0000003C003FFFFC003FFFFC0000003C000
     0003C0000003C0000003C0000003C0000003C0000003C0000003FFFFFFFFFFFF
-    FFFF
-  }
+    FFFF}
   Menu = MainMenu
-  OnChangeBounds = FormChangeBounds
+  OldCreateOrder = True
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  OnWindowStateChange = FormWindowStateChange
-  object pcList: TPageControl[0]
+  PixelsPerInch = 96
+  TextHeight = 13
+  object pcList: TPageControl
     Left = 0
-    Height = 350
     Top = 0
     Width = 200
+    Height = 350
     ActivePage = tbList
     Align = alClient
+    Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Shell Dlg 2'
+    Font.Style = []
     MultiLine = True
     ParentFont = False
-    TabIndex = 0
     TabOrder = 0
     OnChange = pcListChange
-    Options = [nboMultiLine]
     object tbList: TTabSheet
       Caption = 'List'
-      ClientHeight = 324
-      ClientWidth = 192
       object vstList: TVirtualStringTree
         Left = 0
-        Height = 324
         Top = 0
         Width = 192
+        Height = 322
         Align = alClient
         ClipboardFormats.Strings = (
-          'Virtual Tree Data'
-        )
+          'Virtual Tree Data')
         DragMode = dmAutomatic
         EditDelay = 750
+        Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
+        Font.Style = []
         Header.AutoSizeIndex = 0
-        Header.Columns = <>
-        Header.DefaultHeight = 17
+        Header.Font.Charset = DEFAULT_CHARSET
         Header.Font.Color = clWindowText
         Header.Font.Height = -11
         Header.Font.Name = 'MS Shell Dlg 2'
+        Header.Font.Style = []
         Header.MainColumn = -1
         Header.Options = [hoColumnResize, hoDrag]
         HintMode = hmHint
@@ -227,42 +226,41 @@ inherited frmMain: TfrmMain
         OnLoadNode = vstListLoadNode
         OnNewText = vstListNewText
         OnSaveNode = vstListSaveNode
+        Columns = <>
       end
     end
     object tbSearch: TTabSheet
       Caption = 'Search'
-      ClientHeight = 324
-      ClientWidth = 192
+      object sbtnSearch: TSpeedButton
+        Left = 168
+        Top = 0
+        Width = 24
+        Height = 23
+        Align = alRight
+        Anchors = []
+        OnClick = btnedtSearchRightButtonClick
+        ExplicitHeight = 25
+      end
       object vstSearch: TVirtualStringTree
         Left = 0
-        Height = 299
-        Top = 25
+        Top = 23
         Width = 192
+        Height = 299
         Align = alBottom
-        Anchors = [akTop, akLeft, akRight, akBottom]
+        Anchors = [akLeft, akTop, akRight, akBottom]
         AnimationDuration = 0
         Header.AutoSizeIndex = 0
-        Header.Columns = <        
-          item
-            Position = 0
-            Text = 'Name'
-            Width = 90
-          end        
-          item
-            Position = 1
-            Text = 'Category'
-            Width = 90
-          end>
-        Header.DefaultHeight = 17
+        Header.Font.Charset = DEFAULT_CHARSET
         Header.Font.Color = clWindowText
         Header.Font.Height = -11
         Header.Font.Name = 'Tahoma'
+        Header.Font.Style = []
         Header.Options = [hoColumnResize, hoDblClickResize, hoDrag, hoVisible]
         HintMode = hmHint
         ParentShowHint = False
         PopupMenu = pmWindow
         ShowHint = True
-        TabOrder = 1
+        TabOrder = 0
         TreeOptions.PaintOptions = [toShowDropmark, toThemeAware, toUseBlendedImages]
         TreeOptions.SelectionOptions = [toFullRowSelect, toMultiSelect, toRightClickSelect]
         OnClick = RunSingleClick
@@ -271,35 +269,36 @@ inherited frmMain: TfrmMain
         OnGetText = vstSearchGetText
         OnGetImageIndex = vstSearchGetImageIndex
         OnHeaderClick = vstSearchHeaderClick
+        Columns = <
+          item
+            Position = 0
+            Width = 90
+            WideText = 'Name'
+          end
+          item
+            Position = 1
+            Width = 90
+            WideText = 'Category'
+          end>
       end
-      object edtSearch: TASuiteEdit
+      object edt1: TEdit
         Left = 0
-        Height = 21
-        Top = 2
-        Width = 165
-        Align = alLeft
-        Anchors = [akTop, akLeft, akRight]
-        BorderSpacing.Top = 2
-        BorderSpacing.Bottom = 2
-        OnKeyPress = btnedtSearchKeyPress
-        PopupMenu = pmSearch
-        TabOrder = 0
-      end
-      object sbtnSearch: TSpeedButton
-        Left = 168
-        Height = 25
         Top = 0
-        Width = 24
-        Align = alRight
-        Anchors = []
-        NumGlyphs = 0
-        OnClick = btnedtSearchRightButtonClick
+        Width = 165
+        Height = 21
+        Align = alLeft
+        Anchors = [akLeft, akTop, akRight]
+        Constraints.MaxHeight = 21
+        PopupMenu = pmSearch
+        TabOrder = 1
+        Text = 'edt1'
+        OnKeyPress = btnedtSearchKeyPress
       end
     end
   end
-  object MainMenu: TMainMenu[1]
-    left = 88
-    top = 72
+  object MainMenu: TMainMenu
+    Left = 88
+    Top = 72
     object miFile: TMenuItem
       Caption = 'File'
       object miSaveList1: TMenuItem
@@ -406,24 +405,24 @@ inherited frmMain: TfrmMain
       end
     end
   end
-  object pmWindow: TPopupMenu[2]
+  object pmWindow: TPopupMenu
     OnPopup = pmWindowPopup
-    left = 88
-    top = 120
+    Left = 88
+    Top = 120
     object miRunSelectedSw: TMenuItem
       Caption = 'Run'
       Default = True
       OnClick = miRunSelectedSwClick
     end
     object miOpenFolderSw: TMenuItem
-      Caption = 'Show application''s folder'
+      Caption = 'Show application'#39's folder'
       OnClick = OpenFolderSw
     end
     object N9: TMenuItem
       Caption = '-'
     end
     object miSortItems: TMenuItem
-      Caption = 'Sort category''s items'
+      Caption = 'Sort category'#39's items'
       OnClick = miSortItemsClick
     end
     object N5: TMenuItem
@@ -479,21 +478,20 @@ inherited frmMain: TfrmMain
       OnClick = ShowProperty
     end
   end
-  object SaveDialog1: TSaveDialog[3]
+  object SaveDialog1: TSaveDialog
     DefaultExt = '.xml'
     Filter = 'ASuite List File (*.sqlite)|*.sqlite|All files|*.*'
     Options = [ofOverwritePrompt, ofHideReadOnly, ofExtensionDifferent, ofEnableSizing]
-    left = 144
-    top = 168
+    Left = 144
+    Top = 168
   end
-  object pmSearch: TPopupMenu[4]
-    left = 88
-    top = 168
+  object pmSearch: TPopupMenu
+    Left = 88
+    Top = 168
     object miSearchName: TMenuItem
       Caption = 'Name'
       Checked = True
       RadioItem = True
-      ShowAlwaysCheckable = True
       OnClick = ChangeSearchTextHint
     end
     object miSearchExePath: TMenuItem

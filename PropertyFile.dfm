@@ -1,183 +1,203 @@
 object frmPropertyFile: TfrmPropertyFile
   Left = 370
-  Height = 362
   Top = 237
-  Width = 402
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Properties'
   ClientHeight = 362
   ClientWidth = 402
   Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = True
+  Position = poMainFormCenter
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
-  Position = poMainFormCenter
-  LCLVersion = '1.0.6.0'
+  PixelsPerInch = 96
+  TextHeight = 13
   object btnOk: TButton
     Left = 233
-    Height = 25
     Top = 327
     Width = 75
+    Height = 25
     Caption = 'Ok'
     Default = True
     ModalResult = 1
-    OnClick = btnOkClick
     TabOrder = 1
+    OnClick = btnOkClick
   end
   object btnCancel: TButton
     Left = 319
-    Height = 25
     Top = 327
     Width = 75
+    Height = 25
     Caption = 'Cancel'
     ModalResult = 2
-    OnClick = btnCancelClick
     TabOrder = 2
+    OnClick = btnCancelClick
   end
   object PageControl1: TPageControl
     Left = 8
-    Height = 313
     Top = 8
     Width = 385
+    Height = 313
     ActivePage = tsInfo1
-    TabIndex = 0
     TabOrder = 0
     object tsInfo1: TTabSheet
       Caption = 'General'
-      ClientHeight = 287
-      ClientWidth = 377
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lbInfo1: TLabel
         Left = 9
-        Height = 41
         Top = 9
         Width = 361
+        Height = 41
         AutoSize = False
-        Caption = 'Every page in ASuite requires some information about the respective application. All fields are optional except the application''s name.'
+        Caption = 
+          'Every page in ASuite requires some information about the respect' +
+          'ive application. All fields are optional except the application'#39 +
+          's name.'
+        Color = clBtnFace
         ParentColor = False
         WordWrap = True
       end
       object lbName: TLabel
         Left = 9
-        Height = 14
         Top = 56
-        Width = 28
+        Width = 27
+        Height = 13
         Caption = 'Name'
+        Color = clBtnFace
         ParentColor = False
       end
       object lbPathExe: TLabel
         Left = 9
-        Height = 14
         Top = 151
-        Width = 162
+        Width = 161
+        Height = 13
         Caption = 'Executable/folder/web page path'
+        Color = clBtnFace
         ParentColor = False
       end
       object lbParameters: TLabel
         Left = 8
-        Height = 14
         Top = 197
-        Width = 105
+        Width = 104
+        Height = 13
         Caption = 'Parameters (optional)'
+        Color = clBtnFace
         ParentColor = False
       end
       object lbInfo2: TLabel
         Left = 8
-        Height = 25
         Top = 243
         Width = 361
+        Height = 25
         AutoSize = False
-        Caption = 'Note: You can use $ASuite even when applications are in the same folder as ASuite.'
+        Caption = 
+          'Note: You can use $ASuite even when applications are in the same' +
+          ' folder as ASuite.'
+        Color = clBtnFace
         ParentColor = False
         WordWrap = True
       end
       object edtName: TEdit
         Left = 9
-        Height = 21
         Top = 72
         Width = 145
-        OnEnter = edtNameEnter
+        Height = 21
         TabOrder = 0
+        OnEnter = edtNameEnter
       end
       object edtPathExe: TEdit
         Left = 9
-        Height = 21
         Top = 170
         Width = 289
-        OnExit = edtPathExeExit
+        Height = 21
         ParentShowHint = False
         ShowHint = True
         TabOrder = 1
         Text = '$ASuite\'
+        OnExit = edtPathExeExit
       end
       object edtParameters: TEdit
         Left = 8
-        Height = 21
         Top = 216
         Width = 289
+        Height = 21
         TabOrder = 3
       end
       object btnBrowseExe: TButton
         Left = 304
-        Height = 21
         Top = 170
         Width = 65
+        Height = 21
         Caption = 'Browse'
-        OnClick = Browse
         TabOrder = 2
+        OnClick = Browse
       end
     end
     object tsInfo2: TTabSheet
       Caption = 'Advanced'
-      ClientHeight = 287
-      ClientWidth = 377
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lbPathIcon: TLabel
         Left = 8
-        Height = 14
         Top = 48
-        Width = 133
+        Width = 132
+        Height = 13
         Caption = 'Custom icon path (optional)'
+        Color = clBtnFace
         ParentColor = False
       end
       object lbAutoExecute: TLabel
         Left = 8
-        Height = 14
         Top = 88
-        Width = 63
+        Width = 62
+        Height = 13
         Caption = 'Autoexecute'
+        Color = clBtnFace
         ParentColor = False
       end
       object lbWindowState: TLabel
         Left = 272
-        Height = 14
         Top = 176
-        Width = 67
+        Width = 66
+        Height = 13
         Caption = 'Window state'
+        Color = clBtnFace
         ParentColor = False
       end
       object lbWorkingDir: TLabel
         Left = 8
-        Height = 14
         Top = 8
-        Width = 172
+        Width = 171
+        Height = 13
         Caption = 'Custom working directory (optional)'
+        Color = clBtnFace
         ParentColor = False
       end
       object lbActionOnExe: TLabel
         Left = 221
-        Height = 14
         Top = 129
-        Width = 65
+        Width = 64
+        Height = 13
         Caption = 'On execution'
+        Color = clBtnFace
         ParentColor = False
       end
       object edtPathIcon: TEdit
         Left = 8
-        Height = 21
         Top = 64
         Width = 289
+        Height = 21
         ParentShowHint = False
         ShowHint = True
         TabOrder = 2
@@ -185,119 +205,113 @@ object frmPropertyFile: TfrmPropertyFile
       end
       object btnBrowseIcon: TButton
         Left = 309
-        Height = 21
         Top = 64
         Width = 65
+        Height = 21
         Caption = 'Browse'
-        OnClick = Browse
         TabOrder = 3
+        OnClick = Browse
       end
       object cxAutoExecute: TComboBox
         Left = 8
-        Height = 21
         Top = 104
         Width = 249
-        ItemHeight = 13
+        Height = 21
+        Style = csDropDownList
+        TabOrder = 4
+        OnChange = cxAutoExecuteChange
         Items.Strings = (
           'Never'
           'Always on startup'
           'Only if no previous instances are running'
-          'Always on shutdown'
-        )
-        OnChange = cxAutoExecuteChange
-        Style = csDropDownList
-        TabOrder = 4
+          'Always on shutdown')
       end
       object cxWindowState: TComboBox
         Left = 272
-        Height = 21
         Top = 192
         Width = 102
-        ItemHeight = 13
+        Height = 21
+        Style = csDropDownList
+        TabOrder = 7
         Items.Strings = (
           'Normal'
           'Minimized'
-          'Maximized'
-        )
-        Style = csDropDownList
-        TabOrder = 7
+          'Maximized')
       end
       object edtWorkingDir: TEdit
         Left = 8
-        Height = 21
         Top = 24
         Width = 289
+        Height = 21
         TabOrder = 0
         Text = '$ASuite\'
       end
       object btnBrowseWorkingDir: TButton
         Left = 309
-        Height = 21
         Top = 24
         Width = 65
+        Height = 21
         Caption = 'Browse'
-        OnClick = Browse
         TabOrder = 1
+        OnClick = Browse
       end
       object cxActionOnExe: TComboBox
         Left = 221
-        Height = 21
         Top = 148
         Width = 153
-        ItemHeight = 13
+        Height = 21
+        Style = csDropDownList
+        TabOrder = 6
         Items.Strings = (
           'Default (options)'
           'Just run file'
           'Run and hide ASuite'
-          'Run and close ASuite'
-        )
-        Style = csDropDownList
-        TabOrder = 6
+          'Run and close ASuite')
       end
       object cbDontInsertMRU: TCheckBox
         Left = 8
-        Height = 19
         Top = 219
         Width = 224
-        Caption = 'Don''t insert this software in recents (MRU)'
+        Height = 19
+        Caption = 'Don'#39't insert this software in recents (MRU)'
         TabOrder = 10
       end
       object cbShortcutDesktop: TCheckBox
         Left = 8
-        Height = 19
         Top = 250
         Width = 264
+        Height = 19
         Caption = 'Create shortcut on desktop when ASuite is running'
         TabOrder = 11
       end
       object cbHideSoftware: TCheckBox
         Left = 8
-        Height = 19
         Top = 152
         Width = 161
+        Height = 19
         Caption = 'Hide this software from menu'
         TabOrder = 8
       end
       object btnChangeOrder: TButton
         Left = 272
-        Height = 21
         Top = 104
         Width = 102
+        Height = 21
         Caption = 'Change order'
-        OnClick = btnChangeOrderClick
         TabOrder = 5
+        OnClick = btnChangeOrderClick
       end
       object cbDontInsertMFU: TCheckBox
         Left = 8
-        Height = 19
         Top = 188
         Width = 176
-        Caption = 'Don''t insert this software in MFU'
+        Height = 19
+        Caption = 'Don'#39't insert this software in MFU'
         TabOrder = 9
       end
     end
   end
   object OpenDialog1: TOpenDialog
-    left = 296
+    Left = 296
   end
 end
