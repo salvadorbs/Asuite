@@ -1,11 +1,8 @@
 program ASuite;
 
-{$MODE Delphi}
-
 uses
-  Forms, FileUtil, sqlite3laz, InterfaceBase, win32int,
+  Forms,
   SysUtils,
-  LCLIntf, LCLType, LMessages, Interfaces,
   ulCommonUtils in 'library\ulCommonUtils.pas',
   ulCommonClasses in 'library\ulCommonClasses.pas',
   AppConfig in 'AppConfig.pas',
