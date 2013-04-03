@@ -33,8 +33,7 @@ unit ulNodeDataTypes;
 interface
 
 uses
-  VirtualTrees, Menus, SysUtils, Dialogs, appConfig, DateUtils, ulEnumerations,
-  LCLIntf, Process, FileUtil;
+  VirtualTrees, Menus, SysUtils, Dialogs, appConfig, DateUtils, ulEnumerations;
 
 type
 
@@ -531,7 +530,7 @@ begin
   //Execution
   if FileFolderPageWebExists(FPathAbsoluteExe) then
   begin
-    if FileExistsUTF8(FPathAbsoluteExe) then
+    if FileExists(FPathAbsoluteExe) then
     begin
       //Is it exe? If yes, use a TProcess
       if(ExtractFileExt(FPathAbsoluteExe) = '.exe') then
@@ -565,7 +564,7 @@ begin
         Result := OpenDocument(FPathAbsoluteExe);
     end
     else //Folders
-      if DirectoryExistsUTF8(FPathAbsoluteExe) then
+      if DirectoryExists(FPathAbsoluteExe) then
         Result :=  OpenDocument(FPathAbsoluteExe)
       else //Url
         if IsUrl(FPathAbsoluteExe) then

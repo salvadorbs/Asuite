@@ -25,8 +25,7 @@ interface
 uses
   Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
   ComCtrls, VirtualTrees, ActiveX, AppConfig, ulNodeDataTypes, ulCommonClasses,
-  UDImages, ASuiteForm, LCLIntf, FileUtil, win32int, InterfaceBase,
-  StdCtrls, EditBtn, Buttons, ASuiteControls, Sensor;
+  UDImages, ASuiteForm, StdCtrls, Buttons, Sensor;
 
 type
 
@@ -865,7 +864,7 @@ begin
     SaveASuiteSQLite(vstList,true);
     Windows.CopyFile(PChar(DBManager.DBFileName),PChar(SaveDialog1.FileName),false)
   end;
-  SetCurrentDirUTF8(SUITE_WORKING_PATH); 
+  SetCurrentDir(SUITE_WORKING_PATH);
 end;
 
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);

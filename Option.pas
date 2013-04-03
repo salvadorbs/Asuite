@@ -24,7 +24,7 @@ interface
 
 uses
   Windows, SysUtils, Forms, Dialogs, StdCtrls, ComCtrls, ulEnumerations,
-  FileUtil, Vcl.Controls, System.Classes;
+  Vcl.Controls, System.Classes;
 
 type
 
@@ -171,7 +171,7 @@ begin
       cbTrayCustomIcon.Checked  := True;
     end;
   end;
-  SetCurrentDirUTF8(SUITE_WORKING_PATH); 
+  SetCurrentDir(SUITE_WORKING_PATH);
 end;
 
 procedure TfrmOption.btnCancelClick(Sender: TObject);

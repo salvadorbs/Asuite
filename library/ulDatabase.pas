@@ -827,8 +827,8 @@ begin
     else begin
       Config.Changed := True;
       //Create folder cache, if it doesn't exist
-      if (not DirectoryExistsUTF8(SUITE_CACHE_PATH)) then
-        CreateDirUTF8(SUITE_CACHE_PATH);
+      if (not DirectoryExists(SUITE_CACHE_PATH)) then
+        CreateDir(SUITE_CACHE_PATH);
     end;
   finally
     dsTable.Destroy;

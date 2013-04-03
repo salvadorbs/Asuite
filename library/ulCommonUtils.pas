@@ -24,7 +24,7 @@ interface
 
 uses
   Windows, SysUtils, Classes, Graphics, Forms, Dialogs, ComCtrls, Clipbrd,
-  AppConfig, DOM, StdCtrls, VirtualTrees, ulCommonClasses;
+  AppConfig, StdCtrls, VirtualTrees, ulCommonClasses;
 
 { Converters }
 function RGBToHtml(iRGB: Cardinal): string;

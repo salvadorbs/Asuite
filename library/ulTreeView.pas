@@ -206,7 +206,7 @@ begin
   NodeData := Sender.GetNodeData(Node);
   Name     := ExtractFileName(PathTemp);
   //If it is a directory, use folder icon else get its icon
-  if DirectoryExistsUTF8(PathTemp) then
+  if DirectoryExists(PathTemp) then
     NodeData.Data.PathIcon := AbsoluteToRelative(SUITE_ICONS_PATH + IntToStr(IMG_Folder) + EXT_ICO)
   else
     Delete(Name,pos(ExtractFileExt(PathTemp),name),Length(name));
@@ -402,8 +402,8 @@ var
 begin
   NodeData := Sender.GetNodeData(Node);
   //Delete cache icon
-  if (NodeData.Data.DataType = vtdtFile) and FileExistsUTF8(NodeData.Data.PathCacheIcon) then
-    DeleteFileUTF8(NodeData.Data.PathCacheIcon);
+  if (NodeData.Data.DataType = vtdtFile) and FileExists(NodeData.Data.PathCacheIcon) then
+    DeleteFile(NodeData.Data.PathCacheIcon);
   //Delete desktop's shortcut, if exists
   if (TvFileNodeData(NodeData.Data).ShortcutDesktop) then
     DeleteShortcutOnDesktop(TvFileNodeData(NodeData.Data).Name + EXT_LNK);

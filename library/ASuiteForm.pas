@@ -21,8 +21,7 @@ unit ASuiteForm;
 interface
 
 uses
-  Forms, Controls, Classes, ActnList, Graphics, Windows, virtualtrees, win32int,
-  InterfaceBase;
+  Forms, Controls, Classes, ActnList, Graphics, Windows, virtualtrees, Messages;
 
 type
   TASuiteForm = class(TForm)

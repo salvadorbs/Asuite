@@ -26,7 +26,7 @@ interface
 
 uses
   SysUtils, Classes, Controls, Windows, Graphics, Dialogs, ulEnumerations,
-  ulNodeDataTypes, ShellApi, FileUtil, CommCtrl, KIcon;
+  ulNodeDataTypes, ShellApi, CommCtrl, Vcl.ImgList;
 
 
 type
@@ -67,21 +67,21 @@ begin
   Result := -1;
   //Priority cache->icon->exe
   //Check cache icon
-  if Not(FileExistsUTF8(NodeData.PathCacheIcon)) and (NodeData.CacheID <> -1) then
+  if Not(FileExists(NodeData.PathCacheIcon)) and (NodeData.CacheID <> -1) then
     NodeData.CacheID := -1;
-  if (Config.Cache) and FileExistsUTF8(NodeData.PathCacheIcon) then
+  if (Config.Cache) and FileExists(NodeData.PathCacheIcon) then
       TempPath := NodeData.PathCacheIcon;
   //Icon
   if NodeData.CacheID = -1 then
   begin
-    if FileExistsUTF8(NodeData.PathAbsoluteIcon) then
+    if FileExists(NodeData.PathAbsoluteIcon) then
       TempPath := NodeData.PathAbsoluteIcon
     else
       //Exe, if nodedata is a file item
       if NodeData.DataType = vtdtFile then
       begin
-        if (FileExistsUTF8((NodeData as TvFileNodeData).PathAbsoluteExe)) or
-           (DirectoryExistsUTF8((NodeData as TvFileNodeData).PathAbsoluteExe)) then
+        if (FileExists((NodeData as TvFileNodeData).PathAbsoluteExe)) or
+           (DirectoryExists((NodeData as TvFileNodeData).PathAbsoluteExe)) then
           TempPath := (NodeData as TvFileNodeData).PathAbsoluteExe;
       end
       else begin
@@ -100,8 +100,8 @@ begin
   //Check Cache icon
   if (Config.Cache) then
   begin
-    if FileExistsUTF8(NodeData.PathCacheIcon) then
-      DeleteFileUTF8(PWideChar(NodeData.PathCacheIcon));
+    if FileExists(NodeData.PathCacheIcon) then
+      DeleteFile(PWideChar(NodeData.PathCacheIcon));
     NodeData.CacheID := -1;
     NodeData.Changed := True;
   end
@@ -110,35 +110,30 @@ end;
 procedure TImagesDM.SaveCacheIcon(Path: string; NodeData: TvBaseNodeData; ImageIndex: Integer);
 var
   I    : Integer;
-  Icon : Graphics.TIcon;
-  bmp  : Graphics.TBitmap;
+  Icon : TIcon;
 begin
   if (NodeData.CacheID = -1) and (Config.Cache) then
   begin
     //Save file cache-icon
-    if (FileExistsUTF8(Path)) then
+    if (FileExists(Path)) then
       if (LowerCase(ExtractFileExt(Path)) <>  EXT_ICO) then
       begin
         I := 0;
         //Get first ID slot free
-        while (FileExistsUTF8(SUITE_CACHE_PATH + IntToStr(I) + EXT_ICO)) do
+        while (FileExists(SUITE_CACHE_PATH + IntToStr(I) + EXT_ICO)) do
           Inc(I);
         //Save cache icon in disk
-        Icon := Graphics.TIcon.Create;
-        Bmp  := Graphics.TBitmap.Create;
+        Icon := TIcon.Create;
         try
-          //First get bitmap and convert it to icon
-          //Workaround to save Alpha channel
-          IcoImages.GetBitmap(ImageIndex, Bmp);
-          Icon.Assign(Bmp);
-          //Save cache in disk
-          Icon.SaveToFile(SUITE_CACHE_PATH + IntToStr(I) + EXT_ICO);
-          //Set changed to true and new cacheID
-          NodeData.CacheID := I;
-          NodeData.Changed := True;
+          IcoImages.GetIcon(ImageIndex, Icon);
+          if Icon.HandleAllocated then
+          begin
+            Icon.SaveToFile(SUITE_CACHE_PATH + IntToStr(I) + EXT_ICO);
+            NodeData.CacheID := I;
+            NodeData.Changed := True;
+          end;
         finally
           Icon.Free;
-          Bmp.Free;
         end;
       end
       else
@@ -152,7 +147,7 @@ var
 begin
   Result   := -1;
   FileName := SUITE_ICONS_PATH + IntToStr(ID) + EXT_ICO;
-  if FileExistsUTF8(FileName) then
+  if FileExists(FileName) then
     Result := GetSimpleIconIndex(FileName)
   else
     ShowMessageFmt(msgErrNoIcon, [IntToStr(ID) + EXT_ICO]);
@@ -161,30 +156,23 @@ end;
 function TImagesDM.GetSimpleIconIndex(xpath: string): integer;
 var
   FileInfo : TSHFileInfoW;
-  FileIcon : kIcon.TIcon;
+  FileIcon : TIcon;
   hIco     : HICON;
-  bmp      : Graphics.TBitmap;
 begin
   Result := -1;
-  SHGetFileInfoW(PWideChar(UTF8Decode(xpath)), 0, FileInfo, SizeOf(TSHFileInfo), SHGFI_SYSICONINDEX or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES);
+  SHGetFileInfoW(PChar(xpath), 0, FileInfo, SizeOf(TSHFileInfo), SHGFI_SYSICONINDEX or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES);
   //Get icon handle
   hIco := ImageList_GetIcon(FHandleSysImageList, FileInfo.iIcon, ILD_NORMAL);
   //Check icon handle
   if hIco <> 0 then
   begin
-    //Use kIcon's TIcon - It supports alpha 32bpp
-    FileIcon := kIcon.TIcon.Create;
+    FileIcon := TIcon.Create;
     try
-      //Workaround: FileIcon lose Alpha, if it add directly in ImageList
-      //Load icon handle and copy to bitmap bmp
-      FileIcon.LoadFromHandle(hIco);
-      bmp    := Graphics.TBitmap.Create;
-      FileIcon.CopyToBitmap(0,bmp);
       //Add in ASuite ImageList
-      Result := IcoImages.Add(bmp, nil);
+      FileIcon.Handle := hIco;
+      Result := IcoImages.AddIcon(FileIcon);
     finally
       FreeAndNil(FileIcon);
-      FreeAndNil(bmp);
     end;
   end;
 end;

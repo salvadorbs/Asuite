@@ -117,7 +117,6 @@ end;
 
 procedure TClassicMenu.ShowMainForm(Sender: TObject);
 begin
-  frmMain.ShowInTaskBar := stAlways;
   frmMain.Show;
 end;
 
@@ -161,15 +160,13 @@ begin
       if (NodeData.Data.DataType = vtdtFile) then
       begin
         MenuItem.OnClick  := RunFromTrayMenu;
-        { TODO : PopulateDirectory doesn't work in Lazarus 1.0
         //If it is a Directory, add in Trayicon Menu its subfolders and its subfiles
-        if DirectoryExistsUTF8(TvFileNodeData(NodeData.Data).PathAbsoluteExe) then
+        if DirectoryExists(TvFileNodeData(NodeData.Data).PathAbsoluteExe) then
         begin
           MenuItem.Hint    := (TvFileNodeData(NodeData.Data)).PathAbsoluteExe;
           //Populate MenuItem with folder and files from folder path
           PopulateDirectory(MenuItem);
         end;
-        }
       end
       else begin
         if NodeData.Data.DataType = vtdtCategory then
@@ -207,7 +204,7 @@ var
 begin
   //Call "Safe Remove hardware" Dialog
   WindowsPath := GetEnvironmentVariable('WinDir');
-  if FileExistsUTF8(PChar(WindowsPath + '\System32\Rundll32.exe')) then
+  if FileExists(PChar(WindowsPath + '\System32\Rundll32.exe')) then
   begin
     ShellExecute(0,'open',
                  PChar(WindowsPath + '\System32\Rundll32.exe'),
@@ -493,8 +490,7 @@ begin
     MenuItem.Enabled    := False;
     MenuItem.Caption    := '-';
     MenuItem.Hint       := Text;
-    { TODO : Add event OnDrawItem in menuItem *Lazarus Porting* }
-    //MenuItem.OnDrawItem := DrawCaptionedSeparator;
+    MenuItem.OnDrawItem := DrawCaptionedSeparator;
   end;
 end;
 
@@ -534,13 +530,13 @@ procedure TClassicMenu.PopulateDirectory(Sender: TObject);
     NMI   : TASMenuItem;
     Attrs : integer;
   begin
-    Found := FindFirstUTF8(AMI.Hint + '*',faDirectory + faReadOnly + faArchive,SR) = 0;
+    Found := FindFirst(AMI.Hint + '*',faDirectory + faReadOnly + faArchive,SR) = 0;
     try
       while Found do
       begin
         attrs := FileGetAttr(AMI.Hint + SR.Name + PathDelim);
-        if ((Attrs and FILE_ATTRIBUTE_REPARSE_POINT) = 0) and(sr.name<>'.svn') then
-        if ((SR.Attr and faDirectory) <> 0) and (SR.Name <> '..') and (sr.name<>'.svn') then
+        if ((Attrs and FILE_ATTRIBUTE_REPARSE_POINT) = 0) then
+        if ((SR.Attr and faDirectory) <> 0) and (SR.Name <> '..') then
         begin
           //Create new menuitem and add base properties
           NMI             := TASMenuItem.Create(AMI);
@@ -556,10 +552,10 @@ procedure TClassicMenu.PopulateDirectory(Sender: TObject);
           //  NMI.OnClick := OpenFile;
         end;
         //Next folder
-        Found := FindNextUTF8(SR) = 0;
+        Found := FindNext(SR) = 0;
       end;
     finally
-      FindCloseUTF8(SR);
+      FindClose(SR);
     end;
   end;
 
@@ -569,7 +565,7 @@ procedure TClassicMenu.PopulateDirectory(Sender: TObject);
     Found: Boolean;
     NMI: TASMenuItem;
   begin
-    Found := FindFirstUTF8(AMI.Hint + '*',faReadOnly + faArchive,SR) = 0;
+    Found := FindFirst(AMI.Hint + '*',faReadOnly + faArchive,SR) = 0;
     try
       if Found then
         AMI.NewBottomLine;
@@ -584,10 +580,10 @@ procedure TClassicMenu.PopulateDirectory(Sender: TObject);
         //Add item in traymenu
         AMI.Add(NMI);
         //Next file
-        Found := FindNextUTF8(SR) = 0;
+        Found := FindNext(SR) = 0;
       end;
     finally
-      FindCloseUTF8(SR);
+      FindClose(SR);
     end;
   end;
 

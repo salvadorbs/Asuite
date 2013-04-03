@@ -23,7 +23,8 @@ unit ClearElements;
 interface
 
 uses
-  Forms, StdCtrls, ExtCtrls, VirtualTrees, AppConfig, FileUtil;
+  Forms, StdCtrls, ExtCtrls, VirtualTrees, AppConfig, Vcl.Controls,
+  System.Classes;
 
 type
   TfrmClearElements = class(TForm)
@@ -43,7 +44,6 @@ type
                        Data: Pointer; var Abort: Boolean);
     procedure ClearMRU(Sender: TBaseVirtualTree; Node: PVirtualNode;
                        Data: Pointer; var Abort: Boolean);
-    procedure FormCreate(Sender: TObject);
 
   private
     { Private declarations }
@@ -99,8 +99,8 @@ begin
   begin
     if (CacheID <> -1) then
     begin
-      if FileExistsUTF8(PathCacheIcon) then
-        DeleteFileUTF8(PathCacheIcon); 
+      if FileExists(PathCacheIcon) then
+        DeleteFile(PathCacheIcon);
       CacheID := -1;
       Changed := True;
     end;
@@ -125,11 +125,6 @@ begin
   NodeData := PBaseData(Sender.GetNodeData(Node)).Data;
   NodeData.ClickCount := 0;
   NodeData.Changed := True;
-end;
-
-procedure TfrmClearElements.FormCreate(Sender: TObject);
-begin
-
 end;
 
 end.

@@ -90,7 +90,7 @@ begin
   OpenDialog1.InitialDir := ExtractFileDir(RelativeToAbsolute(edtPathIcon.Text));
   if (OpenDialog1.Execute) then
     edtPathIcon.text := AbsoluteToRelative(OpenDialog1.FileName);
-  SetCurrentDirUTF8(SUITE_WORKING_PATH); 
+  SetCurrentDir(SUITE_WORKING_PATH);
 end;
 
 procedure TfrmPropertyCat.edtNameEnter(Sender: TObject);

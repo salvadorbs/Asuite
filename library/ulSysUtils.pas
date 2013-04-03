@@ -20,13 +20,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 unit ulSysUtils;
 
-{$MODE Delphi}
-
 interface
 
 uses
   AppConfig, Windows, ShellApi, SysUtils, Classes, ulEnumerations, Registry,
-  ShlObj, ActiveX, ComObj, Forms, Dialogs, FileUtil;
+  ShlObj, ActiveX, ComObj, Forms, Dialogs, FileCtrl;
 
 { Browse }
 function  BrowseCallbackProc(hwnd: HWND; uMsg: UINT; lParam, lpData: LPARAM): Integer; stdcall;
@@ -78,20 +76,13 @@ end;
 function BrowseForFolder(const Caption, InitialDir: String): String;
 var
   Path: string;
-  SelectDirectoryDialog: TSelectDirectoryDialog;
 begin
   Result := '';
   //Get Path and delete \ in last char. Example c:\xyz\ to c:\xyz
   Path   := ExcludeTrailingPathDelimiter(InitialDir);
-  //Create TSelectDirectoryDialog and execute it
-  SelectDirectoryDialog := TSelectDirectoryDialog.Create(nil);
-  try
-    SelectDirectoryDialog.InitialDir := Path;
-    SelectDirectoryDialog.Execute;
-    Result := SelectDirectoryDialog.FileName;
-  finally
-    SelectDirectoryDialog.Free;
-  end;
+  //Call Browse for folder dialog and get new path
+  if SelectDirectory('','',Path) then
+    Result := Path;
 end;
 
 function CharInSet(C: WideChar; const CharSet: TSysCharSet): Boolean;
@@ -159,7 +150,7 @@ end;
 
 function FileFolderPageWebExists(Path: String): Boolean;
 begin
-  Result := ((FileExistsUTF8(Path)) or (DirectoryExistsUTF8(Path)) or
+  Result := ((FileExists(Path)) or (DirectoryExists(Path)) or
              (IsUrl(Path)));
 end;
 
@@ -168,13 +159,13 @@ var
   Search : TSearchRec;
 begin
   //Delete file with FileName in folder PathDir (path relative)
-  if FindFirstUTF8(PathDir + FileName,faAnyFile,Search) = 0 then
+  if FindFirst(PathDir + FileName,faAnyFile,Search) = 0 then
   begin
     repeat
-      DeleteFileUTF8(PathDir + Search.Name); 
+      DeleteFile(PathDir + Search.Name);
     until
-      FindNextUTF8(Search) <> 0;
-    FindCloseUTF8(Search); 
+      FindNext(Search) <> 0;
+    FindClose(Search);
   end;
 end;
 
@@ -185,17 +176,17 @@ var
   I            : Integer;
 begin
   BackupList := TStringList.Create;
-  if FindFirstUTF8(SUITE_BACKUP_PATH + APP_NAME + '_*' + EXT_SQLBCK,faAnyFile,BackupSearch) = 0 then
+  if FindFirst(SUITE_BACKUP_PATH + APP_NAME + '_*' + EXT_SQLBCK,faAnyFile,BackupSearch) = 0 then
   begin
     repeat
       BackupList.Add(BackupSearch.Name);
     until
-      FindNextUTF8(BackupSearch) <> 0;
-    FindCloseUTF8(BackupSearch); 
+      FindNext(BackupSearch) <> 0;
+    FindClose(BackupSearch);
   end;
   BackupList.Sort;
   for I := 1 to BackupList.Count - MaxNumber do
-    DeleteFileUTF8(SUITE_BACKUP_PATH + BackupList[I - 1]);
+    DeleteFile(SUITE_BACKUP_PATH + BackupList[I - 1]);
   BackupList.Free;
 end;
 
@@ -206,7 +197,7 @@ var
   IPFile   : IPersistFile;
   PIDL     : PItemIDList;
   InFolder : array[0..MAX_PATH] of Char;
-  LinkName : WideString;
+  LinkName : String;
 begin
   //Relative path to Absolute path
   if pos(':',TargetFilePath) = 0 then
@@ -226,7 +217,8 @@ begin
   SHGetSpecialFolderLocation(0, CSIDL_DESKTOPDIRECTORY, PIDL);
   SHGetPathFromIDList(PIDL, InFolder);
   //Save link
-  LinkName := InFolder + PathDelim + FileName;
+  FileName := PathDelim + FileName;
+  LinkName := PWChar(InFolder + FileName);
   IPFile.Save(PWChar(LinkName), false);
 end;
 
@@ -238,9 +230,10 @@ var
 begin
   SHGetSpecialFolderLocation(0, CSIDL_DESKTOPDIRECTORY, PIDL);
   SHGetPathFromIDList(PIDL, DesktopPath);
-  LinkName := DesktopPath + PathDelim + FileName;
-  if (FileExistsUTF8(LinkName)) then
-    DeleteFileUTF8(LinkName);
+  FileName := PathDelim + FileName;
+  LinkName := PWChar(DesktopPath + FileName);
+  if (FileExists(LinkName)) then
+    DeleteFile(LinkName);
 end;
 
 function GetShortcutTarget(LinkFileName:String;ShortcutType: TShortcutField):String;
@@ -254,8 +247,11 @@ begin
    CoCreateInstance(CLSID_ShellLink,nil,CLSCTX_INPROC_SERVER,IShellLink,ISLink);
    if ISLink.QueryInterface(IPersistFile, IPFile) = 0 then
    begin
-     //AnsiString -> WideChar
-     WidePath := PWideChar(UTF8Decode(LinkFileName));
+     {$IFDEF UNICODE}
+     WidePath := PWideChar(LinkFileName);
+     {$ELSE}
+     MultiByteToWideChar(CP_ACP,MB_PRECOMPOSED,PChar(LinkFileName),-1,@WidePath,MAX_PATH);
+     {$ENDIF}
      //Get pathexe, parameters or working directory from shortcut
      IPFile.Load(WidePath, STGM_READ);
      case ShortcutType of
@@ -300,8 +296,8 @@ begin
     APath := StringReplace(APath, '%' + EnvVar + '%', GetEnvironmentVariable(EnvVar), [rfReplaceAll]);
   end;
   //If APath exists, expand it in absolute path (to avoid the "..")
-  if (FileExistsUTF8(APath) or DirectoryExistsUTF8(APath)) and (Length(APath) <> 2) then
-    Result := ExpandFileNameUTF8(APath)
+  if (FileExists(APath) or SysUtils.DirectoryExists(APath)) and (Length(APath) <> 2) then
+    Result := ExpandFileName(APath)
   else
     Result := APath;
 end;
@@ -363,7 +359,7 @@ var
 begin
   Result := Default;
   sPath := IncludeTrailingBackslash(SUITE_PATH + sPath);
-  if DirectoryExistsUTF8(sPath) then
+  if SysUtils.DirectoryExists(sPath) then
     Result := sPath;
 end;
 

@@ -199,7 +199,7 @@ begin
     if (PathTemp <> '') then
       edtWorkingDir.Text := AbsoluteToRelative(PathTemp);
   end;
-  SetCurrentDirUTF8(SUITE_WORKING_PATH); 
+  SetCurrentDir(SUITE_WORKING_PATH);
 end;
 
 procedure TfrmPropertyFile.btnCancelClick(Sender: TObject);

@@ -3,6 +3,7 @@ program ASuite;
 uses
   Forms,
   SysUtils,
+  Windows,
   ulCommonUtils in 'library\ulCommonUtils.pas',
   ulCommonClasses in 'library\ulCommonClasses.pas',
   AppConfig in 'AppConfig.pas',
@@ -38,14 +39,14 @@ var
 {$R *.res}
 
 begin
-  if not CheckPrevious.RestoreIfRunning(TWin32WidgetSet(WidgetSet).AppHandle, 1) then
+  if not CheckPrevious.RestoreIfRunning(Application.Handle, 1) then
   begin
     {$IFDEF DEBUG}
     cTempo1 := GetTickCount;
     {$ENDIF}
     Application.Initialize;
     Application.Title := APP_TITLE;
-    SetCurrentDirUTF8(SUITE_WORKING_PATH);
+    SetCurrentDir(SUITE_WORKING_PATH);
     Application.CreateForm(TImagesDM, ImagesDM);
     Application.CreateForm(TClassicMenu, ClassicMenu);
 
@@ -58,11 +59,11 @@ begin
       frmMain.close
     else begin
       frmMain.Visible := true;
-      if Not(FileExistsUTF8(SUITE_LIST_PATH)) then
+      if Not(FileExists(SUITE_LIST_PATH)) then
       begin
         //Create folder cache, if it doesn't exist
-        if (not DirectoryExistsUTF8(SUITE_CACHE_PATH)) then
-          CreateDirUTF8(SUITE_CACHE_PATH);
+        if (not DirectoryExists(SUITE_CACHE_PATH)) then
+          CreateDir(SUITE_CACHE_PATH);
         Application.CreateForm(TfrmAbout, frmAbout);
         frmAbout.show;
       end;
@@ -73,7 +74,7 @@ begin
     //Timing startup
     cTempo2 := GetTickCount;
     AssignFile(myTextFile, DEBUG_FILE);
-    if Not(FileExistsUTF8(DEBUG_FILE)) then
+    if Not(FileExists(DEBUG_FILE)) then
       ReWrite(myTextFile)
     else
       Append(myTextFile);

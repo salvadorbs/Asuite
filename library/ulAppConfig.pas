@@ -23,8 +23,7 @@ unit ulAppConfig;
 interface
 
 uses
-  Windows, SysUtils, Graphics, Forms, Controls, VirtualTrees,
-  ulEnumerations, FileUtil;
+  Windows, SysUtils, Graphics, Forms, Controls, VirtualTrees, ulEnumerations;
 
 type
   TSensorArray = Array[0..3] of Integer;
@@ -256,7 +255,7 @@ end;
 procedure TConfiguration.SetTrayUseCustomIcon(value: Boolean);
 begin
   FTrayUseCustomIcon := value;
-  if (FTrayUseCustomIcon) and (FileExistsUTF8(RelativeToAbsolute(FTrayCustomIconPath))) then
+  if (FTrayUseCustomIcon) and (FileExists(RelativeToAbsolute(FTrayCustomIconPath))) then
     ClassicMenu.tiTrayMenu.Icon.LoadFromFile(RelativeToAbsolute(FTrayCustomIconPath))
   else
     ClassicMenu.tiTrayMenu.Icon.LoadFromFile(RelativeToAbsolute(SUITE_ICONS_PATH + IntToStr(IMG_ASuite) + EXT_ICO));
@@ -308,7 +307,7 @@ begin
   begin
     vstList.TreeOptions.PaintOptions := vstList.TreeOptions.PaintOptions - [toShowBackground];
     if (FTVBackground) and (FTVBackgroundPath <> '') and
-       (FileExistsUTF8(RelativeToAbsolute(FTVBackgroundPath))) then
+       (FileExists(RelativeToAbsolute(FTVBackgroundPath))) then
     begin
       if LowerCase(ExtractFileExt(RelativeToAbsolute(FTVBackgroundPath))) <> '.bmp' then
       begin
@@ -359,16 +358,16 @@ begin
   if Not(FCache) then
   begin
     //Delete all file icon-cache and folder cache
-    if (DirectoryExistsUTF8(SUITE_CACHE_PATH)) then
+    if (DirectoryExists(SUITE_CACHE_PATH)) then
     begin
       DeleteFiles(SUITE_CACHE_PATH,'*.*');
-      RemoveDirUTF8(SUITE_CACHE_PATH);
+      RemoveDir(SUITE_CACHE_PATH);
     end;
   end
   else begin
     //Create folder cache, if it doesn't exist
-    if (not DirectoryExistsUTF8(SUITE_CACHE_PATH)) then
-      CreateDirUTF8(SUITE_CACHE_PATH);
+    if (not DirectoryExists(SUITE_CACHE_PATH)) then
+      CreateDir(SUITE_CACHE_PATH);
   end;
 end;
 

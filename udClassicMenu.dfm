@@ -1,9 +1,7 @@
 object ClassicMenu: TClassicMenu
-  OnCreate = DataModuleCreate
   OldCreateOrder = False
+  OnCreate = DataModuleCreate
   Height = 150
-  HorizontalOffset = 314
-  VerticalOffset = 422
   Width = 215
   object tiTrayMenu: TTrayIcon
     Icon.Data = {
@@ -43,16 +41,15 @@ object ClassicMenu: TClassicMenu
       0000000000000000000000000000000000000000000000000000000000000000
       0000BBFF00000001000000010000000100000001000083810000800100008001
       0000800100008001000081FF000080010000800100008001000080010000FFFF
-      0000
-    }
+      0000}
     Visible = True
     OnDblClick = tiTrayMenuDblClick
     OnMouseDown = tiTrayMenuMouseDown
-    left = 16
-    top = 16
+    Left = 16
+    Top = 16
   end
   object pmTrayicon: TPopupMenu
-    left = 88
-    top = 16
+    Left = 88
+    Top = 16
   end
 end
