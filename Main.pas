@@ -20,8 +20,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 unit Main;
 
-{$MODE Delphi}
-
 interface
 
 uses
@@ -35,7 +33,6 @@ type
   { TfrmMain }
 
   TfrmMain = class(TASuiteForm)
-    edtSearch: TASuiteEdit;
     miCheckUpdates: TMenuItem;
     miStatistics: TMenuItem;
     MenuItem2: TMenuItem;
@@ -96,7 +93,7 @@ type
     miSearchIconPath: TMenuItem;
     miSearchWorkingDirPath: TMenuItem;
     miSearchParameters: TMenuItem;
-    procedure FormChangeBounds(Sender: TObject);
+    edt1: TEdit;
     procedure FormWindowStateChange(Sender: TObject);
     procedure miOptionsClick(Sender: TObject);
     procedure miStatisticsClick(Sender: TObject);
@@ -104,10 +101,6 @@ type
     procedure pcListChange(Sender: TObject);
     procedure miImportListClick(Sender: TObject);
     procedure miSaveListClick(Sender: TObject);
-    procedure vstListDragDrop(Sender: TBaseVirtualTree;
-      Source: TObject; DataObject: IDataObject; Formats: TFormatArray;
-      Shift: TShiftState; const Pt: TPoint; var Effect: LongWord;
-      Mode: TDropMode);
     procedure vstListDragOver(Sender: TBaseVirtualTree; Source: TObject;
       Shift: TShiftState; State: TDragState; Pt: TPoint; Mode: TDropMode;
       var Effect: Integer; var Accept: Boolean);
@@ -164,8 +157,10 @@ type
     procedure btnedtSearchKeyPress(Sender: TObject; var Key: Char);
     procedure vstListExpanding(Sender: TBaseVirtualTree; Node: PVirtualNode;
       var Allowed: Boolean);
-    procedure vstSearchHeaderClick(Sender: TVTHeader; Column: TColumnIndex;
-      Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure vstSearchHeaderClick(Sender: TVTHeader; HitInfo: TVTHeaderHitInfo);
+    procedure vstListDragDrop(Sender: TBaseVirtualTree; Source: TObject;
+      DataObject: IDataObject; Formats: TFormatArray; Shift: TShiftState;
+      Pt: TPoint; var Effect: Integer; Mode: TDropMode);
   private
     { Private declarations }
     procedure ExecuteFileOrOpenFolder(TreeView: TBaseVirtualTree;ExecuteFile: Boolean);
@@ -188,7 +183,7 @@ uses
   udClassicMenu, PropertySeparator, ulExeUtils, ImportList, Stats, ulAppConfig,
   ulTreeView, ulSQLite, ulDatabase;
 
-{$R *.lfm}
+{$R *.dfm}
 
 procedure TfrmMain.btnedtSearchKeyPress(Sender: TObject; var Key: Char);
 begin
@@ -370,24 +365,6 @@ begin
    end;
 end;
 
-procedure TfrmMain.FormChangeBounds(Sender: TObject);
-begin
-  if not(StartUpTime) then
-    Config.Changed := true;
-end;
-
-procedure TfrmMain.FormWindowStateChange(Sender: TObject);
-begin
-  if WindowState = wsMinimized then
-  begin
-    //Cancel minimize frmMain
-    WindowState := wsNormal;
-    //Hide frmMain and taskbar icon
-    Hide;
-    ShowInTaskBar := stNever;
-  end;
-end;
-
 procedure TfrmMain.miPaste2Click(Sender: TObject);
 var
   NodeData : PBaseData;
@@ -543,8 +520,7 @@ begin
 end;
 
 procedure TfrmMain.vstSearchHeaderClick(Sender: TVTHeader;
-  Column: TColumnIndex; Button: TMouseButton; Shift: TShiftState; X, Y: Integer
-  );
+  HitInfo: TVTHeaderHitInfo);
 begin
   vstSearch.SortTree(Column,Sender.SortDirection,True);
   if Sender.SortDirection = sdAscending then
@@ -711,9 +687,9 @@ begin
       Result := CompareText(Data1.Data.Name, Data2.Data.Name);
 end;
 
-procedure TfrmMain.vstListDragDrop(Sender: TBaseVirtualTree;
-  Source: TObject; DataObject: IDataObject; Formats: TFormatArray;
-  Shift: TShiftState; const Pt: TPoint; var Effect: LongWord; Mode: TDropMode);
+procedure TfrmMain.vstListDragDrop(Sender: TBaseVirtualTree; Source: TObject;
+  DataObject: IDataObject; Formats: TFormatArray; Shift: TShiftState;
+  Pt: TPoint; var Effect: Integer; Mode: TDropMode);
 var
   I          : integer;
   NodeData   : PBaseData;

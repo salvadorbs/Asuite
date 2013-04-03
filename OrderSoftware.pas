@@ -20,8 +20,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 unit OrderSoftware;
 
-{$MODE Delphi}
-
 interface
 
 uses
@@ -64,7 +62,7 @@ implementation
 uses
   ulNodeDataTypes, ulTreeView;
 
-{$R *.lfm}
+{$R *.dfm}
 
 procedure TfrmOrderSoftware.bbtnDownClick(Sender: TObject);
 begin

@@ -23,7 +23,7 @@ interface
 uses
   Windows, SysUtils, Graphics, Forms, Dialogs, ExtCtrls, StdCtrls, ComCtrls,
   VirtualTrees, AppConfig, DOM, XMLRead, ulEnumerations, ulDatabase, DateUtils,
-  Classes;
+  Classes, Vcl.Controls;
 
 type
   TImportListToTree = function(Tree: TVirtualStringTree;Node: TDOMNode;Parent: PVirtualNode): PVirtualNode of object;
@@ -115,7 +115,7 @@ var
 
 implementation
 
-{$R *.lfm}
+{$R *.dfm}
 
 uses
   Main, ulNodeDataTypes, ulCommonUtils, ulTreeView, udImages, ulAppConfig;

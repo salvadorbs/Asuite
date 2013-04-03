@@ -20,8 +20,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 unit udClassicMenu;
 
-{$MODE Delphi}
-
 interface
 
 uses
@@ -80,7 +78,7 @@ uses
   AppConfig, udImages, Main, ulNodeDataTypes, ulEnumerations, ulAppConfig,
   ulTreeView;
 
-{$R *.lfm}
+{$R *.dfm}
 
 procedure TClassicMenu.DataModuleCreate(Sender: TObject);
 begin

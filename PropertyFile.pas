@@ -20,8 +20,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 unit PropertyFile;
 
-{$MODE Delphi}
-
 interface
 
 uses
@@ -89,7 +87,7 @@ var
 
 implementation
 
-{$R *.lfm}
+{$R *.dfm}
 
 uses
   AppConfig, ulEnumerations, udImages, ulSysUtils, ulExeUtils, OrderSoftware,

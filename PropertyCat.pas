@@ -20,8 +20,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 unit PropertyCat;
 
-{$MODE Delphi}
-
 interface
 
 uses
@@ -65,7 +63,7 @@ implementation
 uses
   appConfig, udImages, ulSysUtils, Main, ulCommonUtils;
 
-{$R *.lfm}
+{$R *.dfm}
 
 class function TfrmPropertyCat.Edit(AOwner: TComponent; NodeData: PBaseData): TModalResult;
 begin

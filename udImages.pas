@@ -20,8 +20,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 unit udImages;
 
-{$MODE Delphi}
-
 {$I ASuite.inc}
 
 interface
@@ -60,7 +58,7 @@ implementation
 uses
   AppConfig, ulAppConfig;
 
-{$R *.lfm}
+{$R *.dfm}
 
 function TImagesDM.GetIconIndex(NodeData:TvBaseNodeData): Integer;
 var

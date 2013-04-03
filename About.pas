@@ -20,8 +20,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 unit About;
 
-{$MODE Delphi}
-
 interface
 
 uses
@@ -54,7 +52,7 @@ implementation
 
 uses AppConfig,Main;
 
-{$R *.lfm}
+{$R *.dfm}
 
 const
   COMPILE_TIME = {$I %TIME%};

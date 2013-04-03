@@ -1,7 +1,5 @@
 unit CheckPrevious;
 
-{$MODE Delphi}
-
 interface
 uses Windows, SysUtils;
 

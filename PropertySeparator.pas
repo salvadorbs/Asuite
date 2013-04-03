@@ -20,8 +20,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 unit PropertySeparator;
 
-{$MODE Delphi}
-
 interface
 
 uses
@@ -53,7 +51,7 @@ implementation
 uses
   appConfig, Main;
 
-{$R *.lfm}
+{$R *.dfm}
 
 class function TfrmPropertySeparator.Edit(AOwner: TComponent; NodeData: PBaseData): TModalResult;
 begin

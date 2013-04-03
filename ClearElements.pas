@@ -20,8 +20,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 unit ClearElements;
 
-{$MODE Delphi}
-
 interface
 
 uses
@@ -60,7 +58,7 @@ implementation
 
 uses Main, ulTreeView, ulNodeDataTypes, ulSysUtils;
 
-{$R *.lfm}
+{$R *.dfm}
 
 procedure TfrmClearElements.btnCancelClick(Sender: TObject);
 begin

@@ -20,13 +20,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 unit Option;
 
-{$MODE Delphi}
-
 interface
 
 uses
   Windows, SysUtils, Forms, Dialogs, StdCtrls, ComCtrls, ulEnumerations,
-  FileUtil;
+  FileUtil, Vcl.Controls, System.Classes;
 
 type
 
@@ -143,7 +141,7 @@ uses
   ClearElements, AppConfig, ulSysUtils, ulAppConfig, udClassicMenu, ulTreeView,
   Main, OrderSoftware;
 
-{$R *.lfm}
+{$R *.dfm}
 
 procedure TfrmOption.Browse(Sender: TObject);  
 var
