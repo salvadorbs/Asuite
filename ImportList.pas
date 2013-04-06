@@ -21,31 +21,28 @@ unit ImportList;
 interface
 
 uses
-  Windows, SysUtils, Graphics, Forms, Dialogs, ExtCtrls, StdCtrls, ComCtrls,
-  VirtualTrees, AppConfig, DOM, XMLRead, ulEnumerations, ulDatabase, DateUtils,
-  Classes, Vcl.Controls;
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, AppConfig,
+  XMLIntf, msxmldom, XMLDoc, ulEnumerations, ulDatabase, DateUtils, xmldom;
 
 type
-  TImportListToTree = function(Tree: TVirtualStringTree;Node: TDOMNode;Parent: PVirtualNode): PVirtualNode of object;
-
-  { TfrmImportList }
+  TImportListToTree = function(Tree: TVirtualStringTree;Node: IXMLNode;Parent: PVirtualNode): PVirtualNode of object;
 
   TfrmImportList = class(TForm)
     bvl1: TBevel;
     bvl2: TBevel;
-    nbImport: TNotebook;
-    pgLaunchers: TPage;
-    pgSettings: TPage;
-    pgItems: TPage;
-    pgProgress: TPage;
-    rgrpLauncher: TRadioGroup;
+    pgcImport: TPageControl;
+    tsLaunchers: TTabSheet;
+    tsSettings: TTabSheet;
     gbElements: TGroupBox;
     cbImportList: TCheckBox;
     cbImportSettings: TCheckBox;
     gbFile: TGroupBox;
+    rgrpLauncher: TRadioGroup;
     lblFile: TLabel;
     btnBrowse: TButton;
     edtPathList: TEdit;
+    tsList: TTabSheet;
     vstListImp: TVirtualStringTree;
     btnSelectAll: TButton;
     btnDeselectAll: TButton;
@@ -54,7 +51,9 @@ type
     btnCancel: TButton;
     pnlHeader: TPanel;
     lblTitle: TLabel;
+    XMLDocument1: TXMLDocument;
     OpenDialog1: TOpenDialog;
+    tsProgress: TTabSheet;
     pbImport: TProgressBar;
     lblItems: TLabel;
     imgList: TImage;
@@ -65,16 +64,6 @@ type
     procedure btnDeselectAllClick(Sender: TObject);
     procedure btnSelectAllClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
-    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
-    procedure pgItemsBeforeShow(ASender: TObject; ANewPage: TPage;
-      ANewIndex: Integer);
-    procedure pgLaunchersBeforeShow(ASender: TObject; ANewPage: TPage;
-      ANewIndex: Integer);
-    procedure pgProgressBeforeShow(ASender: TObject; ANewPage: TPage;
-      ANewIndex: Integer);
-    procedure pgSettingsBeforeShow(ASender: TObject; ANewPage: TPage;
-      ANewIndex: Integer);
-    procedure vstListImpFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure vstListImpGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
   Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
     procedure FormCreate(Sender: TObject);
@@ -88,18 +77,22 @@ type
     procedure btnNextClick(Sender: TObject);
     procedure edtPathListEnter(Sender: TObject);
     procedure cbImportListClick(Sender: TObject);
+    procedure tsLaunchersShow(Sender: TObject);
+    procedure tsSettingsShow(Sender: TObject);
+
+    procedure tsListShow(Sender: TObject);
+    procedure tsProgressShow(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
     procedure ImportSettingsInASuite;
     procedure ImportListInASuite;
-    procedure SelectNextPage(Notebook: TNotebook);
-    procedure SelectPrevPage(Notebook: TNotebook);
     function  TreeImp2Tree(TreeImp, Tree: TVirtualStringTree): Boolean;
     function  GetNumberNodeImp(Sender: TBaseVirtualTree): Integer;
     procedure PopulateTree(Tree: TVirtualStringTree;FilePath: String);
-    function ASuite1NodeToTree(Tree: TVirtualStringTree;XMLNode: TDOMNode;
+    function ASuite1NodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
                                Parent: PVirtualNode): PVirtualNode;
-    function wppLauncherNodeToTree(Tree: TVirtualStringTree;XMLNode: TDOMNode;
+    function wppLauncherNodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
                                     Parent: PVirtualNode): PVirtualNode;
     procedure XMLToTree(Tree: TVirtualStringTree;CallBack: TImportListToTree;
   XMLDoc: TXMLDocument);
@@ -118,103 +111,22 @@ implementation
 {$R *.dfm}
 
 uses
-  Main, ulNodeDataTypes, ulCommonUtils, ulTreeView, udImages, ulAppConfig;
+  Main, ulNodeDataTypes, ulCommonUtils, ulTreeView, ulCommonClasses, udImages,
+  ulAppConfig;
 
 procedure TfrmImportList.btnCancelClick(Sender: TObject);
 begin
   Close;
 end;
 
-procedure TfrmImportList.FormClose(Sender: TObject;
-  var CloseAction: TCloseAction);
-begin
-  //Restore cache option
-  Config.Cache := ConfigCache;
-end;
-
-procedure TfrmImportList.pgItemsBeforeShow(ASender: TObject; ANewPage: TPage;
-  ANewIndex: Integer);
-begin
-  //If cbImportList is checked, import selected list in VirtualTree
-  if (cbImportList.Checked) then
-  begin
-    lblTitle.Caption := msgImportTitle3;
-    btnNext.Caption  := msgImport;
-    //Import list in temporary vst
-    PopulateTree(vstListImp, edtPathList.Text);
-  end
-  else //Else next page
-    SelectNextPage(nbImport);
-end;
-
-procedure TfrmImportList.pgLaunchersBeforeShow(ASender: TObject;
-  ANewPage: TPage; ANewIndex: Integer);
-begin
-  lblTitle.Caption := msgImportTitle1;
-  btnNext.Caption  := msgNext;
-  btnNext.Enabled  := True;
-end;
-
-procedure TfrmImportList.pgProgressBeforeShow(ASender: TObject;
-  ANewPage: TPage; ANewIndex: Integer);
-begin
-  btnBack.Enabled  := False;
-  btnNext.Enabled  := False;
-  try
-    lblTitle.Caption := msgImportProgress;
-    //Which launcher?
-    case rgrpLauncher.ItemIndex of
-      0,1: lblLauncher.Caption := Format(lblLauncher.Caption,['ASuite']);
-      2:   lblLauncher.Caption := Format(lblLauncher.Caption,['winPenPack Launcher']);
-    end;
-    //Set some label and progress bar visibile
-    lblList.Enabled  := cbImportList.Checked;
-    lblItems.Visible := cbImportList.Checked;
-    pbImport.Visible := cbImportList.Checked;
-    lblSettings.Enabled := cbImportSettings.Checked;
-    //Import list
-    ImportListInASuite;
-    ImportSettingsInASuite;
-  finally
-    btnNext.Enabled  := True;
-    btnNext.Caption  := msgClose;
-    Self.Show;
-  end;
-end;
-
-procedure TfrmImportList.pgSettingsBeforeShow(ASender: TObject;
-  ANewPage: TPage; ANewIndex: Integer);
-begin
-  lblTitle.Caption := msgImportTitle2;
-  btnNext.Enabled  := (edtPathList.Text <> '') and FileExists(edtPathList.Text);
-  btnNext.Caption  := msgNext;
-  //Change opendialog's filter depending on chosen launcher
-  case rgrpLauncher.ItemIndex of
-    0: OpenDialog1.Filter:= Format('ASuite 2.x List (*%s, *%s)|*%s;*%s',    [EXT_SQL,EXT_SQLBCK,EXT_SQL,EXT_SQLBCK]);
-    1: OpenDialog1.Filter:= Format('ASuite 1.x List (*%s, *%s)|*%s;*%s',    [EXT_XML,EXT_XMLBCK,EXT_XML,EXT_XMLBCK]);
-    2: OpenDialog1.Filter:= Format('winPenPack 1.x List (*%s, *%s)|*%s;*%s',[EXT_XML,EXT_XMLBCK,EXT_XML,EXT_XMLBCK]);
-  end;
-end;
-
-procedure TfrmImportList.vstListImpFreeNode(Sender: TBaseVirtualTree;
-  Node: PVirtualNode);
-var
-  NodeData : PBaseData;
-begin
-  //FreeAndNil not imported NodeData
-  NodeData := Sender.GetNodeData(Node);
-  if Not((Node.CheckState = csCheckedNormal) or (Node.CheckState = csMixedNormal)) then
-    FreeAndNil(NodeData.Data);
-end;
-
-function TfrmImportList.ASuite1NodeToTree(Tree: TVirtualStringTree;XMLNode: TDOMNode;
+function TfrmImportList.ASuite1NodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
                                           Parent: PVirtualNode): PVirtualNode;
 var
   NodeData     : PBaseData;
   BaseNodeData : TvBaseNodeData;
 begin
   Result := nil;
-  if ((XMLNode.HasAttributes) or (XMLNode.NodeName = 'Separator')) and
+  if ((XMLNode.HasAttribute(Name)) or (XMLNode.NodeName = 'Separator')) and
      ((XMLNode.NodeName = 'Software') or (XMLNode.NodeName = 'Category') or
       (XMLNode.NodeName = 'Separator')) then
   begin
@@ -236,7 +148,7 @@ begin
     //Get base properties
     if (BaseNodeData.DataType <> vtdtSeparator) then
     begin
-      BaseNodeData.Name     := XMLNode.Attributes.Item[0].NodeValue;
+      BaseNodeData.Name     := String(XMLNode.Attributes['name']);
       BaseNodeData.PathIcon := GetStrPropertyXML(XMLNode, 'PathIcon', '');
       BaseNodeData.HideFromMenu := GetBoolPropertyXML(XMLNode, 'HideSoftwareMenu', false);
       //Check if it is a software, so get software properties
@@ -261,8 +173,8 @@ end;
 
 procedure TfrmImportList.btnBackClick(Sender: TObject);
 begin
-  SelectPrevPage(nbImport);
-  btnBack.Enabled := nbImport.PageIndex <> 0;
+  pgcImport.SelectNextPage(false,false);
+  btnBack.Enabled := pgcImport.ActivePageIndex <> 0;
 end;
 
 procedure TfrmImportList.btnBrowseClick(Sender: TObject);
@@ -318,20 +230,9 @@ begin
   end;
 end;
 
-procedure TfrmImportList.SelectNextPage(Notebook: TNotebook);
-begin
-  Notebook.PageIndex := Notebook.PageIndex + 1;
-end;
-
-procedure TfrmImportList.SelectPrevPage(Notebook: TNotebook);
-begin
-  Notebook.PageIndex := Notebook.PageIndex - 1;
-end;
-
 procedure TfrmImportList.PopulateTree(Tree: TVirtualStringTree;FilePath: String);
 var
-  DBImp    : TDBManager;
-  XMLDoc   : TXMLDocument;
+  DBImp : TDBManager;
   FileName : String;
   FileExt  : String;
 begin
@@ -341,38 +242,36 @@ begin
   //ASuite or wppLauncher
   if (FileExt = EXT_XML) or (FileExt = EXT_XMLBCK) then
   begin
-    ReadXMLFile(XMLDoc,FilePath);
-    try
+    XMLDocument1.FileName := FilePath;
+    XMLDocument1.Active   := True;
       //Identify launcher xml from first node
       //ASuite 1.x
-      if (XMLDoc.FirstChild.NodeName = 'ASuite') then
-        XMLToTree(vstListImp,ASuite1NodeToTree,XMLDoc)
+      if (XMLDocument1.DocumentElement.ChildNodes.First.NodeName = 'ASuite') then
+        XMLToTree(vstListImp,ASuite1NodeToTree,XMLDocument1)
       else //winPenPack Launcher 1.x
         if ChangeFileExt(FileName,'') = 'winpenpack' then
-          XMLToTree(vstListImp,wppLauncherNodeToTree,XMLDoc);
-    finally
-      XMLDoc.Free;
-    end;
+          XMLToTree(vstListImp,wppLauncherNodeToTree,XMLDocument1);
   end
   else //ASuite 2.x
     if (FileExt = EXT_SQL) or (FileExt = EXT_SQLBCK) then
     begin
-      DBImp := TDBManager.Create(FilePath);
-      DBImp.LoadData(Tree, True);
-      DBImp.Destroy;
+    { TODO -csqlite database : DBManager import }
+      //DBImp := TDBManager.Create(FilePath);
+      //DBImp.LoadData(Tree, True);
+      //DBImp.Destroy;
     end;
   vstListImp.EndUpdate;
   GetChildNodesIcons(Tree, Tree.RootNode);
 end;
 
-function TfrmImportList.wppLauncherNodeToTree(Tree: TVirtualStringTree;XMLNode: TDomNode;
+function TfrmImportList.wppLauncherNodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
                                                Parent: PVirtualNode): PVirtualNode;
 var
   NodeData     : PBaseData;
   BaseNodeData : TvBaseNodeData;
 begin
   Result := nil;
-  if ((XMLNode.HasAttributes) or (XMLNode.NodeName = 'separator')) and
+  if ((XMLNode.HasAttribute(Name)) or (XMLNode.NodeName = 'separator')) and
      ((XMLNode.NodeName = 'file') or (XMLNode.NodeName = 'files') or
       (XMLNode.NodeName = 'separator')) then
   begin
@@ -394,7 +293,7 @@ begin
     //Get base properties
     if BaseNodeData.DataType <> vtdtSeparator then
     begin
-      BaseNodeData.Name     := XMLNode.Attributes.Item[0].NodeValue;
+      BaseNodeData.Name     := String(XMLNode.Attributes['name']);
       BaseNodeData.PathIcon := GetStrPropertyXML(XMLNode,'icon','');
       BaseNodeData.HideFromMenu := GetBoolPropertyXML(XMLNode, 'HideSoftwareMenu', false);
       //Check if it is a software, so get software properties
@@ -425,20 +324,28 @@ end;
 procedure TfrmImportList.btnNextClick(Sender: TObject);
 begin
   //If PageIndex is not last page, show next page
-  if nbImport.PageIndex <> (nbImport.PageCount - 1) then
+  if pgcImport.ActivePageIndex <> (pgcImport.PageCount - 1) then
   begin
-    SelectNextPage(nbImport);
-    btnBack.Enabled := nbImport.PageIndex <> 0;
+    pgcImport.SelectNextPage(true,false);
+    btnBack.Enabled := pgcImport.ActivePageIndex <> 0;
   end
   else //Else close import form
     Close;
 end;
 
+procedure TfrmImportList.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  //Restore cache option
+  Config.Cache := ConfigCache;
+end;
+
 procedure TfrmImportList.FormCreate(Sender: TObject);
+var
+  Icon : TIcon;
 begin
   vstListImp.NodeDataSize := SizeOf(rBaseData);
   vstListImp.Images       := ImagesDM.IcoImages;
-  nbImport.PageIndex      := 0;
+  pgcImport.ActivePageIndex := 0;
   //Disable cache, so ASuite can't create useless cache icon
   ConfigCache  := Config.Cache;
   Config.Cache := False;
@@ -490,17 +397,17 @@ end;
 procedure TfrmImportList.XMLToTree(Tree: TVirtualStringTree;CallBack: TImportListToTree;
   XMLDoc: TXMLDocument);
 var
-  cXMLNode : TDOMNode;
+  cXMLNode : IXMLNode;
 
-  procedure ProcessNode(XMLNode : TDOMNode;TreeNode : PVirtualNode);
+  procedure ProcessNode(XMLNode : IXMLNode;TreeNode : PVirtualNode);
   var
-    cNode : TDOMNode;
+    cNode : IXMLNode;
   begin
     if XMLNode = nil then Exit;
     //Import xml node in vstListImp
     TreeNode := CallBack(vstListImp, XMLNode, TreeNode);
     //Next nodes
-    cNode := XMLNode.FirstChild;
+    cNode := XMLNode.ChildNodes.First;
     while Assigned(cNode) do
     begin
       ProcessNode(cNode,TreeNode);
@@ -511,7 +418,7 @@ var
 begin
   Tree.Clear;
   Tree.BeginUpdate;
-  cXMLNode := XMLDoc.DocumentElement.FirstChild;
+  cXMLNode := XMLDoc.DocumentElement.ChildNodes.First;
   while Assigned(cXMLNode) do
   begin
     ProcessNode(cXMLNode,nil);
@@ -540,7 +447,6 @@ end;
 function TfrmImportList.TreeImp2Tree(TreeImp, Tree: TVirtualStringTree): Boolean;
 var
   tnImp : PVirtualNode;
-
   procedure ProcessTreeItem(tn, tnImp: PVirtualNode);
   var
     NodeData, NodeDataImp : PBaseData;
@@ -572,7 +478,6 @@ var
       tnImp := tnImp.NextSibling;
     end;
   end;
-
 begin
   Tree.BeginUpdate;
   Result := True;
@@ -589,6 +494,40 @@ begin
   Tree.EndUpdate;
 end;
 
+procedure TfrmImportList.tsLaunchersShow(Sender: TObject);
+begin
+  lblTitle.Caption := msgImportTitle1;
+  btnNext.Caption  := msgNext;
+  btnNext.Enabled  := True;
+end;
+
+procedure TfrmImportList.tsListShow(Sender: TObject);
+begin
+  //If cbImportList is checked, import selected list in VirtualTree
+  if (cbImportList.Checked) then
+  begin
+    lblTitle.Caption := msgImportTitle3;
+    btnNext.Caption  := msgImport;
+    //Import list in temporary vst
+    PopulateTree(vstListImp, edtPathList.Text);
+  end
+  else //Else next page
+    pgcImport.SelectNextPage(true,false)
+end;
+
+procedure TfrmImportList.tsSettingsShow(Sender: TObject);
+begin
+  lblTitle.Caption := msgImportTitle2;
+  btnNext.Enabled  := (edtPathList.Text <> '') and FileExists(edtPathList.Text);
+  btnNext.Caption  := msgNext;
+  //Change opendialog's filter depending on chosen launcher
+  case rgrpLauncher.ItemIndex of
+    0: OpenDialog1.Filter:= Format('ASuite 2.x List (*%s, *%s)|*%s;*%s',    [EXT_SQL,EXT_SQLBCK,EXT_SQL,EXT_SQLBCK]);
+    1: OpenDialog1.Filter:= Format('ASuite 1.x List (*%s, *%s)|*%s;*%s',    [EXT_XML,EXT_XMLBCK,EXT_XML,EXT_XMLBCK]);
+    2: OpenDialog1.Filter:= Format('winPenPack 1.x List (*%s, *%s)|*%s;*%s',[EXT_XML,EXT_XMLBCK,EXT_XML,EXT_XMLBCK]);
+  end;
+end;
+
 function TfrmImportList.GetNumberNodeImp(Sender: TBaseVirtualTree): Integer;
 var
   NumberNode : Integer;
@@ -602,7 +541,7 @@ function TfrmImportList.InternalImportOptions: Boolean;
 var
   XMLDoc : TXMLDocument;
   DBImp  : TDBManager;
-  Node, tvFontStyle : TDOMNode;
+  Node, tvFontStyle : IXMLNode;
   ImportFileExt : String;
   I      : Integer;
 begin
@@ -611,9 +550,10 @@ begin
     ImportFileExt := LowerCase(ExtractFileExt(edtPathList.Text));
     if (ImportFileExt = EXT_XML) or (ImportFileExt = EXT_XMLBCK) then
     begin
-      ReadXMLFile(XMLDoc, edtPathList.Text);
+      XMLDocument1.FileName := edtPathList.Text;
+      XMLDocument1.Active   := True;
       //ASuite 1.x - wppLauncher
-      Node := XMLDoc.DocumentElement.FindNode('Option');
+      Node := XMLDocument1.DocumentElement.ChildNodes['Option'];
       //General
       Config.StartWithWindows   := GetBoolPropertyXML(Node, 'StartOnWindowsStartup', false);
       Config.ShowPanelAtStartUp := GetBoolPropertyXML(Node, 'StartUpShowPanel', true);
@@ -638,7 +578,7 @@ begin
       Config.TVAutoOpClCats   := GetBoolPropertyXML(Node, 'AutoOpClCategories',False);
       //Treeview Font
       Config.TVFont.Name      := GetStrPropertyXML(Node, 'TreeViewFontName','MS Sans Serif');
-      tvFontStyle             := Node.FindNode('TreeViewFontStyle');
+      tvFontStyle             := Node.ChildNodes['TreeViewFontStyle'];
       if Assigned(tvFontStyle) then
       begin
         if GetBoolPropertyXML(tvFontStyle,'fsBold',false) then
@@ -671,10 +611,10 @@ begin
       Config.ActionClickLeft    := GetIntPropertyXML(Node, 'ActionClickLeft',0);
       Config.ActionClickRight   := GetIntPropertyXML(Node, 'ActionClickRight',2);
       //Mouse sensors
-      for I := Low(Config.SensorLeftClick) to High(Config.SensorLeftClick) do
+      for I := 0 to 3 do
       begin
-        Config.SensorLeftClick[I]  := GetIntPropertyXML(Node.FindNode('Mouse'),'SensorLeftClick' + IntToStr(I), 0);
-        Config.SensorRightClick[I] := GetIntPropertyXML(Node.FindNode('Mouse'),'SensorRightClick' + IntToStr(I), 0);
+        Config.SensorLeftClick[I]  := GetIntPropertyXML(Node.ChildNodes['Mouse'],'SensorLeftClick' + IntToStr(I), 0);
+        Config.SensorRightClick[I] := GetIntPropertyXML(Node.ChildNodes['Mouse'],'SensorRightClick' + IntToStr(I), 0);
       end;
       XMLDoc.Free;
     end
@@ -682,15 +622,42 @@ begin
       if (ImportFileExt = EXT_SQL) or (ImportFileExt = EXT_SQLBCK)then
       begin
         //ASuite 2.x
-        DBImp := TDBManager.Create(edtPathList.Text);
-        DBImp.LoadOptions;
-        DBImp.Destroy;
+        { TODO -csqlite database : DBManager import }
+//        DBImp := TDBManager.Create(edtPathList.Text);
+//        DBImp.LoadOptions;
+//        DBImp.Destroy;
       end;
   finally
     Result := True;
     //Config changed and focus vstList (so it repaint)
     Config.Changed := True;
     frmMain.FocusControl(frmMain.vstList);
+  end;
+end;
+
+procedure TfrmImportList.tsProgressShow(Sender: TObject);
+begin
+  btnBack.Enabled  := False;
+  btnNext.Enabled  := False;
+  try
+    lblTitle.Caption := msgImportProgress;
+    //Which launcher?
+    case rgrpLauncher.ItemIndex of
+      0,1: lblLauncher.Caption := Format(lblLauncher.Caption,['ASuite']);
+      2:   lblLauncher.Caption := Format(lblLauncher.Caption,['winPenPack Launcher']);
+    end;
+    //Set some label and progress bar visibile
+    lblList.Enabled  := cbImportList.Checked;
+    lblItems.Visible := cbImportList.Checked;
+    pbImport.Visible := cbImportList.Checked;
+    lblSettings.Enabled := cbImportSettings.Checked;
+    //Import list
+    ImportListInASuite;
+    ImportSettingsInASuite;
+  finally
+    btnNext.Enabled  := True;
+    btnNext.Caption  := msgClose;
+    Self.Show;
   end;
 end;
 

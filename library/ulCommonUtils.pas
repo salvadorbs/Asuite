@@ -24,7 +24,7 @@ interface
 
 uses
   Windows, SysUtils, Classes, Graphics, Forms, Dialogs, ComCtrls, Clipbrd,
-  AppConfig, StdCtrls, VirtualTrees, ulCommonClasses;
+  AppConfig, StdCtrls, VirtualTrees, ulCommonClasses, XMLIntf;
 
 { Converters }
 function RGBToHtml(iRGB: Cardinal): string;
@@ -39,9 +39,9 @@ function  IsFormOpen(const FormName : string): Boolean;
 procedure SetFormPosition(Form: TForm;ListFormLeft, ListFormTop: Integer);
 
 { XML }
-function GetStrPropertyXML(Node : TDOMNode;Name: String;Default: String): String;
-function GetIntPropertyXML(Node : TDOMNode;Name: String;Default: Integer): Integer;
-function GetBoolPropertyXML(Node : TDOMNode;Name: String;Default: Boolean): Boolean;
+function GetStrPropertyXML(Node : IXMLNode;Name: String;Default: String): String;
+function GetIntPropertyXML(Node : IXMLNode;Name: String;Default: Integer): Integer;
+function GetBoolPropertyXML(Node : IXMLNode;Name: String;Default: Boolean): Boolean;
 
 { Misc }
 procedure CheckPropertyName(Edit: TEdit);
@@ -118,7 +118,7 @@ begin
         afont.Name  := Strs[0];
         afont.Size  := StrToInt(Strs[1]);
         afont.Color := HtmlToColor(Strs[2]);
-        afont.Style := TFontStyles(Integer(StrToInt(Strs[3])));
+        afont.Style := TFontStyles(byte(StrToInt(Strs[3])));
       end;
       Font.Assign(afont);
     finally
@@ -134,7 +134,7 @@ var
   sColor, sStyle : string;
 begin
   sColor := ColorToHtml(Font.Color);
-  sStyle := IntToStr(Integer(Font.Style));
+  sStyle := IntToStr(byte(Font.Style));
   result := Font.Name +'|'+ IntToStr(Font.Size) + '|' + sColor + '|' + sStyle;
 end;
 
@@ -192,40 +192,40 @@ begin
     Form.Position := poDesktopCenter;
 end;
 
-function GetStrPropertyXML(Node : TDOMNode;Name: String;Default: String): String;
+function GetStrPropertyXML(Node : IXMLNode;Name: String;Default: String): String;
 var
-  PropertyNode: TDOMNode;
+  PropertyNode: IXMLNode;
 begin
   Result := Default;
-  PropertyNode := Node.FindNode(Name);
+  PropertyNode := Node.ChildNodes[Name];
   //Check if PropertyNode exists
   if Assigned(PropertyNode) then
-    if PropertyNode.TextContent <> '' then
-      Result := PropertyNode.TextContent;
+    if PropertyNode.Text <> '' then
+      Result := PropertyNode.Text;
 end;
 
-function GetIntPropertyXML(Node : TDOMNode;Name: String;Default: Integer): Integer;
+function GetIntPropertyXML(Node : IXMLNode;Name: String;Default: Integer): Integer;
 var
-  PropertyNode: TDOMNode;
+  PropertyNode: IXMLNode;
 begin
   Result := Default;
-  PropertyNode := Node.FindNode(Name);
+  PropertyNode := Node.ChildNodes[Name];
   //Check if PropertyNode exists
   if Assigned(PropertyNode) then
-    if PropertyNode.TextContent <> '' then
-      Result := StrToInt(PropertyNode.TextContent);
+    if PropertyNode.Text <> '' then
+      Result := StrToInt(PropertyNode.Text);
 end;
 
-function GetBoolPropertyXML(Node : TDOMNode;Name: String;Default: Boolean): Boolean;
+function GetBoolPropertyXML(Node : IXMLNode;Name: String;Default: Boolean): Boolean;
 var
-  PropertyNode: TDOMNode;
+  PropertyNode: IXMLNode;
 begin
   Result := Default;
-  PropertyNode := Node.FindNode(Name);
+  PropertyNode := Node.ChildNodes[Name];
   //Check if PropertyNode exists
   if Assigned(PropertyNode) then
-    if PropertyNode.TextContent <> '' then
-      Result := ulStringUtils.StrToBool(PropertyNode.TextContent);
+    if PropertyNode.Text <> '' then
+      Result := ulStringUtils.StrToBool(PropertyNode.Text);
 end;
 
 procedure CheckPropertyName(Edit: TEdit);

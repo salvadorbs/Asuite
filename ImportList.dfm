@@ -4,37 +4,39 @@ object frmImportList: TfrmImportList
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Import list'
-  ClientHeight = 304
-  ClientWidth = 281
+  ClientHeight = 332
+  ClientWidth = 287
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = True
+  OldCreateOrder = False
   Position = poMainFormCenter
   OnClose = FormClose
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
-  object bvl2: TBevel
-    Left = 0
-    Top = 295
-    Width = 281
-    Height = 2
-    Align = alTop
-    Shape = bsBottomLine
-    ExplicitWidth = 287
-  end
   object bvl1: TBevel
     Left = 0
-    Top = 49
-    Width = 281
+    Top = 293
+    Width = 287
     Height = 2
     Align = alTop
     Shape = bsBottomLine
-    ExplicitWidth = 287
+    ExplicitTop = 233
+    ExplicitWidth = 418
+  end
+  object bvl2: TBevel
+    Left = 0
+    Top = 49
+    Width = 287
+    Height = 2
+    Align = alTop
+    Shape = bsBottomLine
+    ExplicitLeft = 8
+    ExplicitWidth = 491
   end
   object btnBack: TButton
     Left = 45
@@ -69,7 +71,7 @@ object frmImportList: TfrmImportList
   object pnlHeader: TPanel
     Left = 0
     Top = 0
-    Width = 281
+    Width = 287
     Height = 49
     Align = alTop
     BevelOuter = bvNone
@@ -92,21 +94,23 @@ object frmImportList: TfrmImportList
       WordWrap = True
     end
   end
-  object nbImport: TNotebook
+  object pgcImport: TPageControl
     Left = 0
     Top = 51
-    Width = 281
-    Height = 244
+    Width = 287
+    Height = 242
+    ActivePage = tsProgress
     Align = alTop
+    Style = tsButtons
     TabOrder = 0
-    TabStop = True
-    object pgLaunchers: TPage
-      Left = 0
-      Top = 0
+    object tsLaunchers: TTabSheet
+      Caption = 'tsLaunchers'
+      TabVisible = False
+      OnShow = tsLaunchersShow
       object rgrpLauncher: TRadioGroup
         Left = 12
         Top = 38
-        Width = 263
+        Width = 253
         Height = 136
         Caption = 'Launcher'
         ItemIndex = 0
@@ -117,23 +121,23 @@ object frmImportList: TfrmImportList
         TabOrder = 0
       end
     end
-    object pgSettings: TPage
-      Left = 0
-      Top = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+    object tsSettings: TTabSheet
+      Caption = 'tsSettings'
+      ImageIndex = 1
+      TabVisible = False
+      OnShow = tsSettingsShow
       object gbElements: TGroupBox
         Left = 12
         Top = 119
-        Width = 263
+        Width = 253
         Height = 105
         Caption = 'Elements'
         TabOrder = 0
         object cbImportList: TCheckBox
-          Left = 14
-          Top = 16
-          Width = 36
-          Height = 19
+          Left = 16
+          Top = 24
+          Width = 97
+          Height = 17
           Caption = 'List'
           Checked = True
           State = cbChecked
@@ -141,10 +145,10 @@ object frmImportList: TfrmImportList
           OnClick = cbImportListClick
         end
         object cbImportSettings: TCheckBox
-          Left = 14
-          Top = 47
-          Width = 59
-          Height = 19
+          Left = 16
+          Top = 55
+          Width = 97
+          Height = 17
           Caption = 'Settings'
           Checked = True
           State = cbChecked
@@ -155,13 +159,13 @@ object frmImportList: TfrmImportList
       object gbFile: TGroupBox
         Left = 12
         Top = 0
-        Width = 263
+        Width = 253
         Height = 105
         Caption = 'Launcher File'
         TabOrder = 1
         object lblFile: TLabel
-          Left = 14
-          Top = 7
+          Left = 7
+          Top = 24
           Width = 107
           Height = 13
           Caption = 'Launcher File location:'
@@ -169,8 +173,8 @@ object frmImportList: TfrmImportList
           ParentColor = False
         end
         object btnBrowse: TButton
-          Left = 171
-          Top = 50
+          Left = 164
+          Top = 67
           Width = 73
           Height = 22
           Caption = 'Browse...'
@@ -178,8 +182,8 @@ object frmImportList: TfrmImportList
           OnClick = btnBrowseClick
         end
         object edtPathList: TEdit
-          Left = 14
-          Top = 23
+          Left = 7
+          Top = 40
           Width = 230
           Height = 21
           TabOrder = 1
@@ -188,17 +192,25 @@ object frmImportList: TfrmImportList
         end
       end
     end
-    object pgItems: TPage
-      Left = 0
-      Top = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+    object tsList: TTabSheet
+      Caption = 'tsItems'
+      ImageIndex = 2
+      TabVisible = False
+      OnShow = tsListShow
       object vstListImp: TVirtualStringTree
         Left = 12
         Top = 3
-        Width = 263
-        Height = 210
+        Width = 253
+        Height = 204
         AnimationDuration = 0
+        ClipboardFormats.Strings = (
+          'CSV'
+          'HTML Format'
+          'Plain text'
+          'Rich Text Format'
+          'Rich Text Format Without Objects'
+          'Unicode text'
+          'Virtual Tree Data')
         DragMode = dmAutomatic
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -221,50 +233,54 @@ object frmImportList: TfrmImportList
         TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning]
         TreeOptions.SelectionOptions = [toFullRowSelect, toRightClickSelect]
         OnExpanding = vstListImpExpanding
-        OnFreeNode = vstListImpFreeNode
         OnGetText = vstListImpGetText
         OnGetImageIndex = vstListImpGetImageIndex
         Columns = <>
       end
-      object btnDeselectAll: TButton
-        Left = 146
-        Top = 221
-        Width = 105
-        Height = 17
-        Caption = 'Deselect all'
-        TabOrder = 1
-        OnClick = btnDeselectAllClick
-      end
       object btnSelectAll: TButton
-        Left = 36
-        Top = 221
+        Left = 32
+        Top = 213
         Width = 105
         Height = 17
         Caption = 'Select all'
-        TabOrder = 2
+        TabOrder = 1
         OnClick = btnSelectAllClick
       end
-    end
-    object pgProgress: TPage
-      Left = 0
-      Top = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
-      object lblSettings: TLabel
-        Left = 35
-        Top = 68
-        Width = 39
-        Height = 13
-        Caption = 'Settings'
-        Color = clBtnFace
-        ParentColor = False
-        Layout = tlCenter
+      object btnDeselectAll: TButton
+        Left = 143
+        Top = 213
+        Width = 105
+        Height = 17
+        Caption = 'Deselect all'
+        TabOrder = 2
+        OnClick = btnDeselectAllClick
       end
-      object imgSettings: TImage
+    end
+    object tsProgress: TTabSheet
+      Caption = 'tsProgress'
+      ImageIndex = 3
+      TabVisible = False
+      OnShow = tsProgressShow
+      object lblItems: TLabel
         Left = 12
-        Top = 68
+        Top = 120
+        Width = 153
+        Height = 13
+        Caption = 'Processing items (%d%%): %d'
+      end
+      object imgList: TImage
+        Left = 12
+        Top = 88
         Width = 17
         Height = 18
+      end
+      object lblList: TLabel
+        Left = 35
+        Top = 88
+        Width = 16
+        Height = 13
+        Caption = 'List'
+        Layout = tlCenter
       end
       object lblLauncher: TLabel
         Left = 12
@@ -272,43 +288,35 @@ object frmImportList: TfrmImportList
         Width = 87
         Height = 13
         Caption = 'From %s launcher'
-        Color = clBtnFace
-        ParentColor = False
       end
-      object lblList: TLabel
-        Left = 35
-        Top = 39
-        Width = 16
-        Height = 13
-        Caption = 'List'
-        Color = clBtnFace
-        ParentColor = False
-        Layout = tlCenter
-      end
-      object imgList: TImage
+      object imgSettings: TImage
         Left = 12
-        Top = 39
+        Top = 59
         Width = 17
         Height = 18
       end
-      object lblItems: TLabel
-        Left = 12
-        Top = 108
-        Width = 153
+      object lblSettings: TLabel
+        Left = 35
+        Top = 59
+        Width = 39
         Height = 13
-        Caption = 'Processing items (%d%%): %d'
-        Color = clBtnFace
-        ParentColor = False
+        Caption = 'Settings'
+        Layout = tlCenter
       end
       object pbImport: TProgressBar
         Left = 12
-        Top = 124
-        Width = 255
+        Top = 136
+        Width = 245
         Height = 17
         Step = 1
         TabOrder = 0
       end
     end
+  end
+  object XMLDocument1: TXMLDocument
+    Left = 184
+    Top = 4
+    DOMVendorDesc = 'MSXML'
   end
   object OpenDialog1: TOpenDialog
     Filter = 
