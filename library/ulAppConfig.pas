@@ -26,7 +26,6 @@ uses
   Windows, SysUtils, Graphics, Forms, Controls, VirtualTrees, ulEnumerations;
 
 type
-  TSensorArray = Array[0..3] of Integer;
 
   { TConfiguration }
 
@@ -47,7 +46,7 @@ type
     //Main Form - Treevew
     FTVBackground       : Boolean;
     FTVBackgroundPath   : string;
-    FTVAutoOpClCats     : Boolean; //  Automatic Opening/closing categories
+    FTVAutoOpClCats     : Boolean; //Automatic Opening/closing categories
     FTVFont             : TFont;
     //MRU
     FMRU                : Boolean;
@@ -73,15 +72,17 @@ type
     FActionClickLeft    : Integer;
     FActionClickRight   : Integer;
     //Mouse Sensors
-    FSensorLeftClick  : TSensorArray; //0 Top, 1 Left, 2 Right, 3 Bottom
-    FSensorRightClick : TSensorArray;
+    FSensorLeftClick    : Array[0..3] of Integer; //0 Top, 1 Left, 2 Right, 3 Bottom
+    FSensorRightClick   : Array[0..3] of Integer;
     //Misc
     FReadOnlyMode       : Boolean;
     FChanged            : Boolean;
     procedure SetHoldSize(value: Boolean);
     procedure SetAlwaysOnTop(value: Boolean);
-    procedure setSensorLeftClick(AValue: TSensorArray);
-    procedure setSensorRightClick(AValue: TSensorArray);
+    procedure SetSensorLeftClick(aIndex: Integer; value: Integer);
+    procedure SetSensorRightClick(aIndex: Integer; value: Integer);
+    function GetSensorLeftClick(aIndex: Integer): Integer;
+    function GetSensorRightClick(aIndex: Integer): Integer;
     procedure SetTrayIcon(value: Boolean);
     procedure SetTrayUseCustomIcon(value: Boolean);
     procedure SetUseCustomTitle(value: Boolean);
@@ -143,8 +144,8 @@ type
     property ReadOnlyMode: Boolean read FReadOnlyMode write FReadOnlyMode;
     property Changed: Boolean read FChanged write FChanged;
     //Mouse Sensor
-    property SensorLeftClick:TSensorArray read FSensorLeftClick write FSensorLeftClick;
-    property SensorRightClick:TSensorArray read FSensorRightClick write FSensorRightClick;
+    property SensorLeftClick[aIndex: Integer]:Integer read GetSensorLeftClick write setSensorLeftClick;
+    property SensorRightClick[aIndex: Integer]:Integer read GetSensorRightClick write setSensorLeftClick;
   end;
 
 var
@@ -236,14 +237,24 @@ begin
     frmMain.FormStyle := fsNormal;
 end;
 
-procedure TConfiguration.setSensorLeftClick(AValue: TSensorArray);
+procedure TConfiguration.SetSensorLeftClick(aIndex: Integer; value: Integer);
 begin
-  FSensorLeftClick := AValue;
+  FSensorLeftClick[aIndex] := value;
 end;
 
-procedure TConfiguration.setSensorRightClick(AValue: TSensorArray);
+procedure TConfiguration.SetSensorRightClick(aIndex: Integer; value: Integer);
 begin
-  FSensorRightClick := AValue;
+  FSensorRightClick[aIndex] := value;
+end;
+
+function TConfiguration.GetSensorLeftClick(aIndex: Integer): Integer;
+begin
+  Result := FSensorLeftClick[aIndex];
+end;
+
+function TConfiguration.GetSensorRightClick(aIndex: Integer): Integer;
+begin
+  Result := FSensorRightClick[aIndex];
 end;
 
 procedure TConfiguration.SetTrayIcon(value: Boolean);
