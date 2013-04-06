@@ -33,7 +33,8 @@ unit ulNodeDataTypes;
 interface
 
 uses
-  VirtualTrees, Menus, SysUtils, Dialogs, appConfig, DateUtils, ulEnumerations;
+  VirtualTrees, Menus, SysUtils, Dialogs, appConfig, DateUtils, ulEnumerations,
+  Winapi.ShellAPI, Winapi.Windows;
 
 type
 
@@ -441,7 +442,9 @@ end;
 
 function TvFileNodeData.OpenExtractedFolder: Boolean;
 begin
-  Result := OpenDocument(ExtractFileDir(FPathAbsoluteExe));
+  Result := ShellExecute(GetDesktopWindow, 'open',
+                         PChar(ExtractFileDir(FPathAbsoluteExe)),
+                         nil, nil, SW_NORMAL) > 32;
 end;
 
 procedure TvFileNodeData.SetPathExe(value:string);
@@ -525,51 +528,30 @@ end;
 
 function TvFileNodeData.RunProcess: boolean;
 var
-  TestProcess: TProcess;
+  vWorkingDir, vParameters: String;
+  vWindowState: Integer;
 begin
-  //Execution
-  if FileFolderPageWebExists(FPathAbsoluteExe) then
-  begin
-    if FileExists(FPathAbsoluteExe) then
-    begin
-      //Is it exe? If yes, use a TProcess
-      if(ExtractFileExt(FPathAbsoluteExe) = '.exe') then
-      begin
-        TestProcess := TProcess.Create(nil);
-        try
-          TestProcess.Executable := FPathAbsoluteExe;
-          //Working directory
-          if FWorkingDirAbsolute = '' then
-            TestProcess.CurrentDirectory := ExtractFileDir(FPathAbsoluteExe)
-          else
-            TestProcess.CurrentDirectory := FWorkingDirAbsolute;
-          //Parameters
-          if FParameters <> '' then
-            TestProcess.Parameters.Add(RelativeToAbsolute(FParameters));
-          //Window state
-          case FWindowState of
-            1: TestProcess.ShowWindow := swoshowMinNOActive;
-            2: TestProcess.ShowWindow := swoShowMaximized;
-          else
-            TestProcess.ShowWindow := swoShowDefault;
-          end;
-          TestProcess.StartupOptions := [suoUseShowWindow];
-          TestProcess.Execute;
-          Result := TestProcess.ProcessID <> 0;
-        finally
-          TestProcess.Free;
-        end;
-      end
-      else //Else use OpenDocument
-        Result := OpenDocument(FPathAbsoluteExe);
-    end
-    else //Folders
-      if DirectoryExists(FPathAbsoluteExe) then
-        Result :=  OpenDocument(FPathAbsoluteExe)
-      else //Url
-        if IsUrl(FPathAbsoluteExe) then
-          Result :=  OpenURL(FPathAbsoluteExe);
+  //Working directory
+  if FWorkingDir = '' then
+    vWorkingDir := ExtractFileDir(FPathAbsoluteExe)
+  else
+    vWorkingDir := RelativeToAbsolute(FWorkingDir);
+  //Window state
+  case FWindowState of
+    1: vWindowState := 7;
+    2: vWindowState := 3;
+  else
+    vWindowState := 10;
   end;
+  //vParameters
+  vParameters := FParameters;
+  //Check variables in vParameters to use RelativeToAbsolute
+  if (pos('$',vParameters) <> 0) then
+    vParameters := RelativeToAbsolute(vParameters);
+  //Execution
+  Result := ShellExecute(GetDesktopWindow, 'open', PChar(FPathAbsoluteExe),
+                            PChar(vParameters),
+                            PChar(vWorkingDir), vWindowState) > 32;
 end;
 
 //------------------------------------------------------------------------------
