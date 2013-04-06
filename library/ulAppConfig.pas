@@ -23,7 +23,8 @@ unit ulAppConfig;
 interface
 
 uses
-  Windows, SysUtils, Graphics, Forms, Controls, VirtualTrees, ulEnumerations;
+  Windows, SysUtils, Graphics, Forms, Controls, VirtualTrees, ulEnumerations,
+  Vcl.Imaging.pngimage;
 
 type
 
@@ -232,7 +233,7 @@ procedure TConfiguration.SetAlwaysOnTop(value: Boolean);
 begin
   FAlwaysOnTop := value;
   if FAlwaysOnTop then
-    frmMain.FormStyle := fsSystemStayOnTop
+    frmMain.FormStyle := fsStayOnTop
   else
     frmMain.FormStyle := fsNormal;
 end;
@@ -311,7 +312,7 @@ end;
 procedure TConfiguration.SetTVBackground(value: Boolean);
 var
   BackgroundBMP : TBitmap;
-  BackgroundPNG : TPortableNetworkGraphic;
+  BackgroundPNG : TPngImage;
 begin
   FTVBackground := value;
   with frmMain do
@@ -323,7 +324,7 @@ begin
       if LowerCase(ExtractFileExt(RelativeToAbsolute(FTVBackgroundPath))) <> '.bmp' then
       begin
         BackgroundBMP := TBitmap.Create;
-        BackgroundPNG := TPortableNetworkGraphic.Create;
+        BackgroundPNG := TPngImage.Create;
         try
           BackgroundPNG.LoadFromFile(RelativeToAbsolute(FTVBackgroundPath));
           BackgroundBMP.Assign(BackgroundPNG);

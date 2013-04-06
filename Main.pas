@@ -93,7 +93,6 @@ type
     miSearchWorkingDirPath: TMenuItem;
     miSearchParameters: TMenuItem;
     edtSearch: TEdit;
-    procedure FormWindowStateChange(Sender: TObject);
     procedure miOptionsClick(Sender: TObject);
     procedure miStatisticsClick(Sender: TObject);
     procedure OpenFolderSw(Sender: TObject);
@@ -225,11 +224,11 @@ begin
     //Run actions (ex. remove node from MRU list) before delete nodes
     Nodes := vstList.GetSortedSelection(true);
     //Initialize dataset for remove data from sqlite database
-    DBManager.CreateDataSetRemoveItems;
+    //DBManager.CreateDataSetRemoveItems;
     for I := High(Nodes) downto 0 do
       vstList.IterateSubtree(Nodes[I],IterateSubtreeProcs.BeforeDeleteNode,nil,[],False);
     //Apply database's updates
-    DBManager.ApplyUpdatesRemoveItems;
+    //DBManager.ApplyUpdatesRemoveItems;
     //Delete nodes and refresh list
     vstList.DeleteSelectedNodes;
     RefreshList(vstList);
@@ -252,7 +251,7 @@ begin
   if (Sender is TMenuItem) then
   begin
     //Set new placeholder and SearchType
-    edtSearch.PlaceHolder := StringReplace((Sender as TMenuItem).Caption, '&', '', []);
+    edtSearch.TextHint := StringReplace((Sender as TMenuItem).Caption, '&', '', []);
     (Sender as TMenuItem).Checked := True;
     SearchType := TSearchType((Sender as TMenuItem).Tag);
   end;
@@ -521,7 +520,7 @@ end;
 procedure TfrmMain.vstSearchHeaderClick(Sender: TVTHeader;
   HitInfo: TVTHeaderHitInfo);
 begin
-  vstSearch.SortTree(Column,Sender.SortDirection,True);
+  vstSearch.SortTree(HitInfo.Column,Sender.SortDirection,True);
   if Sender.SortDirection = sdAscending then
     Sender.SortDirection := sdDescending
   else
@@ -862,7 +861,7 @@ begin
   if (SaveDialog1.Execute) then
   begin
     SaveASuiteSQLite(vstList,true);
-    Windows.CopyFile(PChar(DBManager.DBFileName),PChar(SaveDialog1.FileName),false)
+    //CopyFile(PChar(DBManager.DBFileName),PChar(SaveDialog1.FileName),false)
   end;
   SetCurrentDir(SUITE_WORKING_PATH);
 end;
@@ -893,9 +892,17 @@ begin
   //If user close window (not ASuite), hide form and taskbar icon
   if not (CanClose) then
   begin
-    //Hide frmMain and taskbar icon
-    Hide;
-    ShowInTaskBar := stNever;
+    if Application.MainForm <> nil then
+    begin
+      // Hide the form itself (and thus any child windows)
+      Application.MainForm.Visible := False;
+      { Hide application's TASKBAR icon (not the tray icon). Do this AFTER
+        the main form is hidden, or any child windows will redisplay the
+        taskbar icon if they are visible. }
+      if IsWindowVisible(Application.Handle) then
+        ShowWindow(Application.Handle, SW_HIDE);
+    end;
+    ClassicMenu.tiTrayMenu.Visible := True;
   end;
 end;
 
@@ -928,7 +935,7 @@ begin
   RunAutorun;
   StartUpTime := false;
   //Get placeholder for edtSearch
-  edtSearch.PlaceHolder := StringReplace(miSearchName.Caption, '&', '', []);
+  edtSearch.TextHint := StringReplace(miSearchName.Caption, '&', '', []);
 end;
 
 procedure TfrmMain.FormDestroy(Sender: TObject);

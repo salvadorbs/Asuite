@@ -31,7 +31,7 @@ type
     procedure FormMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure FormMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
-    procedure ExecuteActionSensor(ArraySensor: Array of Integer);
+    procedure ExecuteActionSensor(SensorSide: Integer);
   private
     { Private declarations }
   public
@@ -110,7 +110,7 @@ begin
       frmSensor.Show;
       frmSensor.Side := I;
       FormSensors[I] := frmSensor;
-      frmSensor.FormStyle := fsSystemStayOnTop;
+      frmSensor.FormStyle := fsStayOnTop;
       frmSensor.BringToFront;
     end;
   end;
@@ -139,16 +139,16 @@ procedure TfrmSensor.FormMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
   if Button = mbLeft then
-    ExecuteActionSensor(Config.SensorLeftClick)
+    ExecuteActionSensor(Config.SensorLeftClick[Side])
   else
-    ExecuteActionSensor(Config.SensorRightClick);
+    ExecuteActionSensor(Config.SensorRightClick[Side]);
 end;
 
-procedure TfrmSensor.ExecuteActionSensor(ArraySensor: Array of Integer);
+procedure TfrmSensor.ExecuteActionSensor(SensorSide: Integer);
 Var Point: TPoint;
 begin
   with frmMain do
-    case ArraySensor[Side] of
+    case SensorSide of
       1: ShowMainForm(self);
       2: //Default Menu
       begin
