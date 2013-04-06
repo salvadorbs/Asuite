@@ -24,7 +24,7 @@ interface
 
 uses
   Windows, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, VirtualTrees, LCLIntf;
+  Dialogs, StdCtrls, ExtCtrls, VirtualTrees;
 
 type
 
@@ -36,9 +36,8 @@ type
     lbASuiteTitle: TLabel;
     lbASuiteVersion: TLabel;
     memIntro: TMemo;
-    lnklblWebSite: TLabel;
+    lnklblWebSite: TLinkLabel;
     procedure FormCreate(Sender: TObject);
-    procedure lnklblWebSiteClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -54,25 +53,9 @@ uses AppConfig,Main;
 
 {$R *.dfm}
 
-const
-  COMPILE_TIME = {$I %TIME%};
-  COMPILE_DATE = {$I %DATE%};
-  COMPILE_USER = {$I %USER%};
-  COMPILE_COMPILER_VER = {$I %FPCVERSION%};
-  COMPILE_TARGET_CPU   = {$I %FPCTARGET%};
-
-procedure TfrmAbout.lnklblWebSiteClick(Sender: TObject);
-begin
-   OpenURL(lnklblWebSite.Caption);
-end;
-
 procedure TfrmAbout.FormCreate(Sender: TObject);
 begin
-  {$IFNDEF DEBUG}
   lbASuiteVersion.Caption := Format(msgVersion,[VERSION_COMPLETE,VERSION_PRERELEASE]);
-  {$ELSE}
-  lbASuiteVersion.Caption := 'Ver. DEBUG.' + COMPILE_TARGET_CPU + '.'+ COMPILE_DATE + '.' + COMPILE_TIME + '.fpc' + COMPILE_COMPILER_VER;
-  {$ENDIF}
 end;
 
 end.

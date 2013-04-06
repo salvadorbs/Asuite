@@ -16,7 +16,6 @@ object frmAbout: TfrmAbout
   Position = poDesigned
   ScreenSnap = True
   OnCreate = FormCreate
-  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object GroupBox3: TGroupBox
@@ -2225,7 +2224,6 @@ object frmAbout: TfrmAbout
         '<a href="http://www.salvadorsoftware.com">http://www.salvadorsof' +
         'tware.com</a>'
       TabOrder = 1
-      OnLinkClick = lnklblWebSiteLinkClick
     end
   end
 end

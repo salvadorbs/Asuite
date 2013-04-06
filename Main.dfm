@@ -163,7 +163,7 @@ object frmMain: TfrmMain
     Top = 0
     Width = 200
     Height = 350
-    ActivePage = tbList
+    ActivePage = tbSearch
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -176,10 +176,6 @@ object frmMain: TfrmMain
     OnChange = pcListChange
     object tbList: TTabSheet
       Caption = 'List'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object vstList: TVirtualStringTree
         Left = 0
         Top = 0
@@ -235,10 +231,6 @@ object frmMain: TfrmMain
     end
     object tbSearch: TTabSheet
       Caption = 'Search'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object sbtnSearch: TSpeedButton
         Left = 168
         Top = 0
@@ -289,7 +281,7 @@ object frmMain: TfrmMain
             WideText = 'Category'
           end>
       end
-      object edt1: TEdit
+      object edtSearch: TEdit
         Left = 0
         Top = 0
         Width = 165
@@ -299,7 +291,7 @@ object frmMain: TfrmMain
         Constraints.MaxHeight = 21
         PopupMenu = pmSearch
         TabOrder = 1
-        Text = 'edt1'
+        Text = 'edtSearch'
         OnKeyPress = btnedtSearchKeyPress
       end
     end

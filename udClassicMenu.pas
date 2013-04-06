@@ -24,7 +24,7 @@ interface
 
 uses
   Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
-  ExtCtrls, VirtualTrees, ulCommonClasses, FileUtil, LCLIntf, ShellApi;
+  ExtCtrls, VirtualTrees, ulCommonClasses, ShellApi;
 
 type
   TClassicMenu = class(TDataModule)
@@ -605,7 +605,8 @@ end;
 
 procedure TClassicMenu.OpenFile(Sender: TObject);
 begin
-   OpenDocument(PChar(TMenuItem(Sender).Hint));
+  ShellExecute(GetDesktopWindow, 'open', PChar(TMenuItem(Sender).Hint), nil,
+               PChar(ExtractFileDir(TMenuItem(Sender).Hint)), SW_SHOW);
 end;
 
 end.

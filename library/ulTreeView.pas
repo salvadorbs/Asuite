@@ -24,7 +24,7 @@ interface
 
 uses
   Windows, SysUtils, ActiveX, VirtualTrees, Controls, ulCommonClasses, AppConfig,
-  ulNodeDataTypes, ulEnumerations, ulSQLite, FileUtil, Classes, ShellApi, comobj;
+  ulNodeDataTypes, ulEnumerations, ulSQLite, Classes, ShellApi, comobj;
 
 { List, Menu, MRU }
 function  AddNode(Sender: TBaseVirtualTree;AType: TvTreeDataType): PBaseData;
@@ -411,7 +411,8 @@ begin
   MRUList.Remove(NodeData.Data);
   MFUList.Remove(NodeData.Data);
   //Remove item from sqlite database
-  DBManager.DeleteItem(NodeData.Data.ID);
+  { TODO -c Sqlite database : DeleteItem }
+//  DBManager.DeleteItem(NodeData.Data.ID);
 end;
 
 procedure TIterateSubtreeProcs.ActionsOnShutdown(Sender: TBaseVirtualTree; Node: PVirtualNode;

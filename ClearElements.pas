@@ -23,7 +23,7 @@ unit ClearElements;
 interface
 
 uses
-  Forms, StdCtrls, ExtCtrls, VirtualTrees, AppConfig, Vcl.Controls,
+  Forms, StdCtrls, ExtCtrls, VirtualTrees, AppConfig, Vcl.Controls, SysUtils,
   System.Classes;
 
 type

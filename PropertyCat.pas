@@ -24,7 +24,7 @@ interface
 
 uses
   SysUtils, Classes, Controls, Forms, Dialogs, StdCtrls, ExtCtrls,
-  ulNodeDataTypes, FileUtil, Graphics;
+  ulNodeDataTypes, Graphics;
 
 type
 
