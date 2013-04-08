@@ -1,0 +1,613 @@
+/// DB.pas TDataset-based direct access classes (abstract TQuery-like)
+// - this unit is a part of the freeware Synopse framework,
+// licensed under a MPL/GPL/LGPL tri-license; version 1.18
+unit SynDBDataset;
+
+{
+  This file is part of Synopse framework.
+
+  Synopse framework. Copyright (C) 2013 Arnaud Bouchez
+  Synopse Informatique - http://synopse.info
+
+  *** BEGIN LICENSE BLOCK *****
+  Version: MPL 1.1/GPL 2.0/LGPL 2.1
+
+  The contents of this file are subject to the Mozilla Public License Version
+  1.1 (the "License"); you may not use this file except in compliance with
+  the License. You may obtain a copy of the License at
+  http://www.mozilla.org/MPL
+
+  Software distributed under the License is distributed on an "AS IS" basis,
+  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+  for the specific language governing rights and limitations under the License.
+
+  The Original Code is Synopse mORMot framework.
+
+  The Initial Developer of the Original Code is Arnaud Bouchez.
+
+  Portions created by the Initial Developer are Copyright (C) 2013
+  the Initial Developer. All Rights Reserved.
+
+  Contributor(s):
+
+
+  Alternatively, the contents of this file may be used under the terms of
+  either the GNU General Public License Version 2 or later (the "GPL"), or
+  the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+  in which case the provisions of the GPL or the LGPL are applicable instead
+  of those above. If you wish to allow use of your version of this file only
+  under the terms of either the GPL or the LGPL, and not to allow others to
+  use your version of this file under the terms of the MPL, indicate your
+  decision by deleting the provisions above and replace them with the notice
+  and other provisions required by the GPL or the LGPL. If you do not delete
+  the provisions above, a recipient may use your version of this file under
+  the terms of any one of the MPL, the GPL or the LGPL.
+
+  ***** END LICENSE BLOCK *****
+
+  Version 1.18
+  - first public release, corresponding to mORMot framework 1.18
+
+}
+
+{$I Synopse.inc} // define HASINLINE USETYPEINFO CPU32 CPU64 OWNNORMTOUPPER
+
+interface
+
+uses
+  Windows, SysUtils,
+  {$IFNDEF DELPHI5OROLDER}
+  Variants,
+  {$ENDIF}
+  Classes, Contnrs,
+  SynCommons,
+  SynDB,
+  {$ifdef ISDELPHIXE2}Data.DB;{$else}DB;{$endif}
+
+
+{ -------------- DB.pas TDataSet (TQuery like) abstract connection }
+
+type
+
+  /// Exception type associated to generic TDataSet / DB.pas unit Dataset connection
+  ESQLDBDataset = class(Exception);
+
+  ///	implement properties shared by via the DB.pas TQuery-like connections
+  TSQLDBDatasetConnectionProperties = class(TSQLDBConnectionPropertiesThreadSafe)
+  protected
+    {$ifndef UNICODE}
+    fForceInt64AsFloat: boolean;
+    fForceUseWideString: boolean;
+    {$endif}
+  public
+    /// initialize the properties to connect to the DB.pas corresponding engine
+    // - this overriden method will set the BATCH mode properties, as implemented
+    // in TSQLDBDatasetStatement.ExecutePrepared()
+    constructor Create(const aServerName, aDatabaseName, aUserID, aPassWord: RawUTF8); override;
+    {$ifndef UNICODE}
+    /// set to true to force all Int64 content to be processed as a truncated float
+    // - by default, Int64 values will be bound either as an integer (if the
+    // value is within expected range), either as Int64 variant
+    // - on some versions of Delphi, and some version of TDataSet (e.g. BDE),
+    // you may have to use a conversion to double to avoid a runtime error
+    property ForceInt64AsFloat: boolean read fForceInt64AsFloat write fForceInt64AsFloat;
+    /// set to true to force all text content to be processed as WideString
+    // instead of the default faster AnsiString, for pre-Unicode version of Delphi
+    // - by default, UTF-8 text parameter or column will use an AnsiString value:
+    // for pre-Unicode Delphi, avoiding WideString/OleStr content
+    // will speed up the process a lot, if you are sure that the current
+    // charset matches the expected one (which is very likely)
+    // - set this property to TRUE so that WideString will be used when working
+    // with the internal TDataSet, to avoid any character data loss:
+    // the access to the property will be slower, but you won't have any
+    // potential data loss
+    // - if the text value contains only ASCII 7 bit characters, it won't be
+    // converted to WideString (since it is not necessary) 
+    // - starting with Delphi 2009, the TEXT content will be processed as an
+    // UnicodeString, so this property is not necessary
+    property ForceUseWideString: boolean read fForceUseWideString write fForceUseWideString;
+    {$endif}
+  end;
+
+  ///	implements a statement via the DB.pas TDataSet/TQuery-like connection
+  // - you should not use this abstract class directly, but one inherited
+  // implementation with overriden Dataset*() protected methods to handle the
+  // internal fQuery: TDataSet property
+  TSQLDBDatasetStatement = class(TSQLDBStatementWithParamsAndColumns)
+  protected
+    fQuery: TDataSet;
+    fQueryParams: TParams;
+    fPreparedParamsCount: integer;
+    {$ifndef UNICODE}
+    fForceUseWideString: boolean;
+    {$endif}
+  protected
+    /// convert SQLDBParamType to a standard DB.TParamType to be used in TQuery.Param
+    function SQLParamTypeToDBParamType(IO: TSQLDBParamInOutType): TParamType; virtual;
+    /// convert DB.TFieldType into mORMot fieldtype
+    function ColumnTypeNativeToDB(aNativeType: TFieldType): TSQLDBFieldType; virtual;
+    /// retrieve a given column
+    function DatasetField(col: Integer): TField; virtual;
+  protected // inherited classes shall override those abstract virtual methods
+    /// should initialize and set fQuery internal field as expected
+    procedure DatasetCreate; virtual; abstract;
+    /// should set the internal fQueryParams protected field
+    procedure DatasetPrepare(const aSQL: string); virtual; abstract;
+    /// execute underlying TQuery.ExecSQL
+    procedure DatasetExecSQL; virtual; abstract;
+  public
+    /// create a statement instance
+    constructor Create(aConnection: TSQLDBConnection); override;
+    /// release the prepared statement
+    destructor Destroy; override;
+
+    {{ Prepare an UTF-8 encoded SQL statement
+      - parameters marked as ? will be bound later, before ExecutePrepared call
+      - if ExpectResults is TRUE, then Step() and Column*() methods are available
+      to retrieve the data rows
+      - raise an ESQLDBDataset on any error }
+    procedure Prepare(const aSQL: RawUTF8; ExpectResults: boolean = false); overload; override;
+    {{ Execute a prepared SQL statement
+      - parameters marked as ? should have been already bound with Bind*() functions
+      - this implementation will also loop through all internal bound array
+      of values (if any), to implement BATCH mode
+      - raise an ESQLDBDataset on any error }
+    procedure ExecutePrepared; override;
+    {/ Reset the previous prepared statement
+     - this overriden implementation will reset all bindings and the cursor state
+     - raise an ESQLDBDataset on any error }
+    procedure Reset; override;
+
+    {{ Access the next or first row of data from the SQL Statement result
+      - return true on success, with data ready to be retrieved by Column*() methods
+      - return false if no more row is available (e.g. if the SQL statement
+      is not a SELECT but an UPDATE or INSERT command)
+      - if SeekFirst is TRUE, will put the cursor on the first row of results
+      - raise an ESQLDBDataset on any error }
+    function Step(SeekFirst: boolean = false): boolean; override;
+    {{ return a Column integer value of the current Row, first Col is 0 }
+    function ColumnInt(Col: Integer): Int64; override;
+    {{ returns TRUE if the column contains NULL }
+    function ColumnNull(Col: Integer): boolean; override;
+    {{ return a Column floating point value of the current Row, first Col is 0 }
+    function ColumnDouble(Col: Integer): double; override;
+    {{ return a Column date and time value of the current Row, first Col is 0 }
+    function ColumnDateTime(Col: Integer): TDateTime; override;
+    {{ return a Column currency value of the current Row, first Col is 0 }
+    function ColumnCurrency(Col: Integer): currency; override;
+    {{ return a Column UTF-8 encoded text value of the current Row, first Col is 0 }
+    function ColumnUTF8(Col: Integer): RawUTF8; override;
+    {{ return a Column as a blob value of the current Row, first Col is 0 }
+    function ColumnBlob(Col: Integer): RawByteString; override;
+    {/ append all columns values of the current Row to a JSON stream
+     - will use WR.Expand to guess the expected output format
+     - BLOB field value is saved as Base64, in the '"\uFFF0base64encodedbinary"
+       format and contains true BLOB data }
+    procedure ColumnsToJSON(WR: TJSONWriter; DoNotFletchBlobs: boolean); override;
+  end;
+
+
+
+implementation
+
+
+const
+  IsTLargeIntField = 1;
+  IsTWideStringField = 2;
+
+{ TSQLDBDatasetConnectionProperties }
+
+constructor TSQLDBDatasetConnectionProperties.Create(const aServerName,
+  aDatabaseName, aUserID, aPassWord: RawUTF8);
+begin
+  inherited Create(aServerName,aDatabaseName,aUserID,aPassWord);
+  fBatchSendingAbilities := [cCreate,cUpdate,cDelete];
+  fBatchMaxSentAtOnce := 1000;
+end;
+
+
+{ TSQLDBDatasetStatement }
+
+function TSQLDBDatasetStatement.ColumnBlob(Col: Integer): RawByteString;
+var Str: TStream;
+begin
+  result := '';
+  CheckCol(Col);
+  with fColumns[Col] do
+    if TField(ColumnAttr).IsNull then
+      exit else
+    if TField(ColumnAttr).IsBlob then begin
+      Str := TField(ColumnAttr).DataSet.CreateBlobStream(TField(ColumnAttr),bmRead);
+      try
+        if Str.Size>0 then begin
+          SetLength(result,Str.Size);
+          Str.Read(pointer(result)^,Str.Size);
+        end;
+      finally
+        Str.Free;
+      end;
+    end else begin
+      SetLength(result,TField(ColumnAttr).DataSize);
+      TField(ColumnAttr).GetData(pointer(result));
+    end;
+end;
+
+function TSQLDBDatasetStatement.ColumnCurrency(Col: Integer): currency;
+begin
+  CheckCol(Col);
+  with fColumns[Col] do
+    if TField(ColumnAttr).IsNull then
+      result := 0 else
+      result := TField(ColumnAttr).AsCurrency;
+end;
+
+function TSQLDBDatasetStatement.ColumnDateTime(Col: Integer): TDateTime;
+begin
+  CheckCol(Col);
+  with fColumns[Col] do
+    if TField(ColumnAttr).IsNull then
+      result := 0 else
+      result := TField(ColumnAttr).AsDateTime;
+end;
+
+function TSQLDBDatasetStatement.ColumnDouble(Col: Integer): double;
+begin
+  CheckCol(Col);
+  with fColumns[Col] do
+    if TField(ColumnAttr).IsNull then
+      result := 0 else
+      result := TField(ColumnAttr).AsFloat;
+end;
+
+function TSQLDBDatasetStatement.ColumnInt(Col: Integer): Int64;
+begin
+  CheckCol(Col);
+  with fColumns[Col] do
+    if TField(ColumnAttr).IsNull then
+      result := 0 else
+      {$ifdef UNICODE}
+      result := TField(ColumnAttr).AsLargeInt;
+      {$else}
+      if ColumnValueDBType=IsTLargeIntField then
+        result := TLargeintField(ColumnAttr).AsLargeInt else
+        result := TField(ColumnAttr).AsInteger;
+      {$endif}
+end;
+
+function TSQLDBDatasetStatement.ColumnNull(Col: Integer): boolean;
+begin
+  CheckCol(Col);
+  result := TField(fColumns[Col].ColumnAttr).IsNull;
+end;
+
+function TSQLDBDatasetStatement.ColumnUTF8(Col: Integer): RawUTF8;
+begin
+  CheckCol(Col);
+  with fColumns[Col] do
+    if TField(ColumnAttr).IsNull then
+      result := '' else
+    {$ifndef UNICODE}
+    if ColumnValueDBType=IsTWideStringField then
+      result := WideStringToUTF8(TWideStringField(ColumnAttr).Value) else
+    {$endif}
+      result := StringToUTF8(TField(ColumnAttr).AsString);
+end;
+
+constructor TSQLDBDatasetStatement.Create(aConnection: TSQLDBConnection);
+begin
+  {$ifndef UNICODE}
+  fForceUseWideString := (aConnection.Properties as TSQLDBDatasetConnectionProperties).
+    ForceUseWideString;
+  {$endif}
+  inherited Create(aConnection);
+  try
+    DatasetCreate;
+  except
+    FreeAndNil(fQuery);
+    raise;
+  end;
+end;
+
+destructor TSQLDBDatasetStatement.Destroy;
+begin
+  FreeAndNil(fQuery);
+  inherited;
+end;
+
+procedure TSQLDBDatasetStatement.Prepare(const aSQL: RawUTF8; ExpectResults: boolean);
+var Log: ISynLog;
+    oSQL: RawUTF8;
+begin
+  Log := SynDBLog.Enter(Self);
+  if fQueryParams<>nil then
+    raise ESQLDBDataset.CreateFmt('%s.Prepare() shall be called once',[ClassName]);
+  inherited Prepare(aSQL,ExpectResults); // connect if necessary
+  fPreparedParamsCount := ReplaceParamsByNames(aSQL,oSQL);
+  DatasetPrepare(UTF8ToString(oSQL));
+  if fQueryParams=nil then
+    raise ESQLDBDataset.CreateFmt('%s.DatasetPrepare set nil',[ClassName]);
+  if fPreparedParamsCount<>fQueryParams.Count then
+    raise ESQLDBDataset.CreateFmt('Expect %d parameters in request, found %d - [%s]',
+      [fPreparedParamsCount,fQueryParams.Count,aSQL]);
+end;
+
+procedure TSQLDBDatasetStatement.ExecutePrepared;
+
+  // Bind SQLDBParam to TQuery-like param
+  // - aArrayIndex is >= 0 if array index should be used
+  // - SQL Parameter to bind is aParam
+  procedure lclBindSQLParam(const aArrayIndex, aParamIndex: integer;
+    const aParam: TSQLDBParam);
+  var P: TParam;
+      I64: Int64;
+      tmp: RawUTF8;
+  begin
+    with aParam do begin
+      P := fQueryParams[aParamIndex];
+      P.ParamType := SQLParamTypeToDBParamType(VInOut);
+      if VinOut <> paramInOut then
+        case VType of
+          SynDB.ftNull: begin
+            P.Clear;
+            {$ifdef UNICODE}
+            P.AsBlob := nil; // avoid type errors when a blob field is adressed
+            {$else}
+            P.AsString := '';
+            {$endif}
+          end;
+          SynDB.ftInt64: begin
+            if aArrayIndex>=0 then
+              I64 := GetInt64(pointer(VArray[aArrayIndex])) else
+              I64 := VInt64;
+            {$ifdef UNICODE}
+            P.AsLargeInt := I64;
+            {$else}
+            if (Int64Rec(I64).Hi=0) or (Int64Rec(I64).Hi=Cardinal(-1)) then
+              P.AsInteger := I64 else
+              if TSQLDBDatasetConnectionProperties(Connection.Properties).
+                 fForceInt64AsFloat then
+                P.AsFloat := I64 else
+                P.Value := I64;
+            {$endif}
+          end;
+          SynDB.ftDouble:
+            if aArrayIndex>=0 then
+              P.AsFloat := GetExtended(pointer(VArray[aArrayIndex])) else
+              P.AsFloat := PDouble(@VInt64)^;
+          SynDB.ftCurrency:
+            if aArrayIndex>=0 then
+              P.AsCurrency := StrToCurrency(pointer(VArray[aArrayIndex])) else
+              P.AsCurrency := PCurrency(@VInt64)^;
+          SynDB.ftDate:
+            if aArrayIndex>=0 then begin
+              UnQuoteSQLString(pointer(VArray[aArrayIndex]),tmp);
+              P.AsDateTime := Iso8601ToDateTime(tmp);
+            end else
+              P.AsDateTime := PDateTime(@VInt64)^;
+          SynDB.ftUTF8:
+            if aArrayIndex>=0 then begin
+              UnQuoteSQLString(pointer(VArray[aArrayIndex]),tmp);
+              {$ifdef UNICODE}
+              P.AsString := UTF8ToString(tmp);
+              {$else}
+              if (not fForceUseWideString) or IsAnsiCompatible(tmp) then
+                P.AsString := UTF8ToString(tmp) else
+                P.Value := UTF8ToWideString(tmp);
+              {$endif}
+            end else
+              {$ifdef UNICODE}
+              P.AsString := UTF8ToString(VData);
+              {$else}
+              if (not fForceUseWideString) or IsAnsiCompatible(VData) then
+                P.AsString := UTF8ToString(VData) else
+                P.Value := UTF8ToWideString(VData);
+              {$endif}
+          SynDB.ftBlob:
+            {$ifdef UNICODE}
+            if aArrayIndex>=0 then
+              P.SetBlobData(pointer(VArray[aArrayIndex]),Length(VArray[aArrayIndex])) else
+              P.SetBlobData(pointer(VData),Length(VData));
+            {$else}
+            if aArrayIndex>=0 then
+              P.AsString := VArray[aArrayIndex] else
+              P.AsString := VData;
+            {$endif}
+          else
+            raise ESQLDBDataset.CreateFmt('Invalid type on bound parameter #%d',[aParamIndex+1]);
+          end;
+    end;
+  end;
+
+var
+  Log: ISynLog;
+  i,p: Integer;
+  lArrayIndex: integer;
+  Par: TParam;
+  Field: TField;
+{$ifdef UNICODE}
+  tmpBytes: TBytes;
+{$endif}
+begin
+  Log := SynDBLog.Enter(Self);
+  // 1. bind parameters in fParams[] to fQuery.Params
+  if fPreparedParamsCount<>fParamCount then
+    raise ESQLDBDataset.CreateFmt('ExecutePrepared expected %d bound parameters, got %d',[fPreparedParamsCount,fParamCount]);
+  lArrayIndex := -1;
+  repeat
+    if fParamsArrayCount>0 then
+      inc(lArrayIndex);
+    for p := 0 to fParamCount-1 do
+      lclBindSQLParam(lArrayIndex,p,fParams[p]);
+    // 2. Execute query (within a loop for BATCH mode)
+    if fExpectResults then begin
+      fQuery.Open;
+      fCurrentRow := -1;
+      fColumnCount := 0;
+      fColumn.ReHash;
+      for i := 0 to fQuery.FieldCount-1 do begin
+        Field := DatasetField(i);
+        with PSQLDBColumnProperty(fColumn.AddAndMakeUniqueName(
+           StringToUTF8(Field.FieldName)))^ do begin
+          ColumnAttr := PtrUInt(Field);
+          ColumnType := ColumnTypeNativeToDB(Field.DataType);
+          if Field.InheritsFrom(TLargeintField) then
+            ColumnValueDBType := IsTLargeIntField else
+          if Field.InheritsFrom(TWideStringField) then
+            ColumnValueDBType := IsTWideStringField else
+            ColumnValueDBType := 0;
+        end;
+      end;
+    end else
+      DatasetExecSQL;
+  until lArrayIndex=fParamsArrayCount-1;
+
+  // 3. handle out parameters
+  if fParamCount>0 then
+    if fParamsArrayCount>0 then
+      for p := 0 to fParamCount-1 do
+        fParams[p].VData := '' else
+      // single statement mode -> return any stored procedure parameter
+      for p := 0 to fParamCount-1 do
+        with fParams[p] do
+          if VInOut<>paramIn then begin
+            Par := fQueryParams[p];
+            case VType of
+              SynDB.ftInt64:
+                {$ifdef UNICODE}
+                VInt64 := Par.AsLargeInt;
+                {$else}
+                VInt64 := trunc(Par.AsFloat);
+                {$endif}
+              SynDB.ftDouble:  PDouble(@VInt64)^ := Par.AsFloat;
+              SynDB.ftCurrency:PCurrency(@VInt64)^ := Par.AsCurrency;
+              SynDB.ftDate:    PDateTime(@VInt64)^ := Par.AsDateTime;
+              SynDB.ftUTF8:    VData := StringToUTF8(Par.AsString);
+              SynDB.ftBlob: begin
+                {$ifdef UNICODE}
+                tmpBytes := Par.AsBlob;
+                SetString(VData,PAnsiChar(pointer(tmpBytes)),Length(tmpBytes));
+                {$else}
+                VData := Par.AsString;
+                {$endif}
+              end;
+            end;
+          end;
+end;
+
+function TSQLDBDatasetStatement.Step(SeekFirst: boolean): boolean;
+begin
+  if SeekFirst then begin
+    fQuery.First;
+    fCurrentRow := 1;
+  end else
+  if fCurrentRow>0 then begin
+    fQuery.Next;
+    inc(fCurrentRow);
+  end else
+    fCurrentRow := 1;
+  result := not fQuery.Eof;
+end;
+
+procedure TSQLDBDatasetStatement.Reset;
+begin
+  fQuery.Close;
+  inherited Reset;
+end;
+
+function TSQLDBDatasetStatement.SQLParamTypeToDBParamType(IO: TSQLDBParamInOutType): TParamType;
+begin
+  case IO of
+    paramIn:    result := ptInput;
+    paramOut:   result := ptOutput;
+    paramInOut: result := ptInputOutput;
+      else      result := ptUnknown;
+  end;
+end;
+
+function TSQLDBDatasetStatement.ColumnTypeNativeToDB(aNativeType: TFieldType): TSQLDBFieldType;
+begin
+  case aNativeType of
+    {$ifdef UNICODE}
+    ftLongWord,ftShortint,ftByte,
+    {$endif}
+    ftAutoInc,ftBoolean, ftSmallint,ftInteger,ftLargeint,ftWord:
+      result := SynDB.ftInt64;
+    ftFloat:
+      result := SynDB.ftDouble;
+    ftCurrency:
+      result := SynDB.ftCurrency;
+    ftDate,ftTime,ftDateTime:
+      result := SynDB.ftDate;
+    ftBlob:
+      result := SynDB.ftBlob;
+    {$ifdef UNICODE}
+    ftFixedWideChar,ftWideMemo,
+    {$endif}
+    ftString,ftFixedChar,ftWideString,ftMemo,ftFmtMemo:
+      result := SynDB.ftUTF8;
+  else
+      result := SynDB.ftUTF8;
+  end;
+end;
+
+function TSQLDBDatasetStatement.DatasetField(col: Integer): TField;
+begin
+  result := fQuery.Fields[col];
+end;
+
+procedure TSQLDBDatasetStatement.ColumnsToJSON(WR: TJSONWriter; DoNotFletchBlobs: boolean);
+var col: integer;
+    blob: RawByteString;
+begin
+  if WR.Expand then
+    WR.Add('{');
+  for col := 0 to fColumnCount-1 do
+  with fColumns[col] do begin
+    if WR.Expand then
+      WR.AddFieldName(ColumnName); // add '"ColumnName":'
+    if TField(ColumnAttr).IsNull then
+      WR.AddShort('null') else
+    case ColumnType of
+      SynDB.ftNull: WR.AddShort('null');
+      SynDB.ftInt64:
+        {$ifdef UNICODE}
+        WR.Add(TField(ColumnAttr).AsLargeInt);
+        {$else}
+        if ColumnValueDBType=IsTLargeIntField then
+          WR.Add(TLargeintField(ColumnAttr).AsLargeInt) else
+          WR.Add(TField(ColumnAttr).AsInteger);
+        {$endif}
+      SynDB.ftDouble:   WR.Add(TField(ColumnAttr).AsFloat);
+      SynDB.ftCurrency: WR.AddCurr64(TField(ColumnAttr).AsCurrency);
+      SynDB.ftDate: begin
+        WR.Add('"');
+        WR.AddDateTime(TField(ColumnAttr).AsDateTime);
+        WR.Add('"');
+      end;
+      SynDB.ftUTF8: begin
+        WR.Add('"');
+        {$ifndef UNICODE}
+        if ColumnValueDBType=IsTWideStringField then
+          WR.AddJSONEscapeW(Pointer(TWideStringField(ColumnAttr).Value)) else
+        {$endif}
+          WR.AddJSONEscapeString(TField(ColumnAttr).AsString);
+        WR.Add('"');
+      end;
+      SynDB.ftBlob:
+        if DoNotFletchBlobs then
+          WR.AddShort('null') else begin
+          blob := ColumnBlob(col);
+          WR.WrBase64(pointer(blob),length(blob),true); // withMagic=true
+        end;
+      else raise ESQLDBException.CreateFmt(
+        'TSQLDBDatasetStatement: Invalid ColumnType()=%d',[ord(ColumnType)]);
+    end;
+    WR.Add(',');
+  end;
+  WR.CancelLastComma; // cancel last ','
+  if WR.Expand then
+    WR.Add('}');
+end;
+
+
+end.
