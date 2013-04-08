@@ -25,10 +25,6 @@ object frmOption: TfrmOption
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'General'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object gbWindow: TGroupBox
         Left = 8
         Top = 88
@@ -56,7 +52,7 @@ object frmOption: TfrmOption
         end
         object cbWindowOnTop: TCheckBox
           Left = 8
-          Top = 34
+          Top = 43
           Width = 92
           Height = 19
           Caption = 'Window on top'
@@ -70,7 +66,7 @@ object frmOption: TfrmOption
         end
         object cbHoldSize: TCheckBox
           Left = 8
-          Top = 2
+          Top = 18
           Width = 101
           Height = 19
           Caption = 'Hold window size'
@@ -111,7 +107,7 @@ object frmOption: TfrmOption
         TabOrder = 2
         object cbBackground: TCheckBox
           Left = 8
-          Top = 16
+          Top = 32
           Width = 109
           Height = 19
           Caption = 'Active background'
@@ -119,7 +115,7 @@ object frmOption: TfrmOption
         end
         object btnFontSettings: TButton
           Left = 72
-          Top = 64
+          Top = 79
           Width = 121
           Height = 17
           Caption = 'Font settings...'
@@ -128,15 +124,15 @@ object frmOption: TfrmOption
         end
         object edtBackground: TEdit
           Left = 8
-          Top = 36
+          Top = 52
           Width = 177
           Height = 21
           TabOrder = 2
           Text = '$ASuite\'
         end
         object btnBrowseBackground: TButton
-          Left = 192
-          Top = 36
+          Left = 191
+          Top = 52
           Width = 57
           Height = 21
           Caption = 'Browse'
@@ -145,7 +141,7 @@ object frmOption: TfrmOption
         end
         object cbAutoOpClCat: TCheckBox
           Left = 8
-          Top = 0
+          Top = 16
           Width = 204
           Height = 19
           Caption = 'Automatic Opening/Closing Categories'
@@ -161,7 +157,7 @@ object frmOption: TfrmOption
         TabOrder = 0
         object cbWindowsStartup: TCheckBox
           Left = 8
-          Top = 2
+          Top = 18
           Width = 168
           Height = 19
           Caption = 'Start ASuite on system startup'
@@ -169,7 +165,7 @@ object frmOption: TfrmOption
         end
         object cbShowPanelStartup: TCheckBox
           Left = 8
-          Top = 18
+          Top = 34
           Width = 138
           Height = 19
           Caption = 'Show window on startup'
@@ -177,7 +173,7 @@ object frmOption: TfrmOption
         end
         object cbShowMenuStartup: TCheckBox
           Left = 8
-          Top = 34
+          Top = 50
           Width = 128
           Height = 19
           Caption = 'Show Menu on startup'
@@ -188,10 +184,6 @@ object frmOption: TfrmOption
     object TabSheet2: TTabSheet
       Caption = 'Advanced'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object gbRecents: TGroupBox
         Left = 8
         Top = 16
@@ -201,7 +193,7 @@ object frmOption: TfrmOption
         TabOrder = 0
         object lbMaxMRU: TLabel
           Left = 8
-          Top = 37
+          Top = 53
           Width = 84
           Height = 13
           Caption = 'Max number MRU'
@@ -210,7 +202,7 @@ object frmOption: TfrmOption
         end
         object lbNumbMRU: TLabel
           Left = 234
-          Top = 37
+          Top = 56
           Width = 12
           Height = 13
           Caption = '10'
@@ -219,7 +211,7 @@ object frmOption: TfrmOption
         end
         object cbMRU: TCheckBox
           Left = 8
-          Top = 2
+          Top = 18
           Width = 75
           Height = 19
           Caption = 'Active MRU'
@@ -227,15 +219,15 @@ object frmOption: TfrmOption
         end
         object cbSubMenuMRU: TCheckBox
           Left = 8
-          Top = 18
+          Top = 34
           Width = 145
           Height = 19
           Caption = 'MRU on trayicon submenu'
           TabOrder = 1
         end
         object tbMRU: TTrackBar
-          Left = 136
-          Top = 34
+          Left = 131
+          Top = 53
           Width = 97
           Height = 25
           ShowSelRange = False
@@ -252,7 +244,7 @@ object frmOption: TfrmOption
         TabOrder = 1
         object lbMaxBackup: TLabel
           Left = 8
-          Top = 23
+          Top = 39
           Width = 96
           Height = 13
           Caption = 'Max number Backup'
@@ -261,7 +253,7 @@ object frmOption: TfrmOption
         end
         object lbNumbBackup: TLabel
           Left = 234
-          Top = 23
+          Top = 39
           Width = 12
           Height = 13
           Caption = '10'
@@ -270,7 +262,7 @@ object frmOption: TfrmOption
         end
         object cbBackup: TCheckBox
           Left = 8
-          Top = 4
+          Top = 20
           Width = 87
           Height = 19
           Caption = 'Active backup'
@@ -278,7 +270,7 @@ object frmOption: TfrmOption
         end
         object tbBackup: TTrackBar
           Left = 136
-          Top = 20
+          Top = 36
           Width = 97
           Height = 25
           ShowSelRange = False
@@ -295,7 +287,7 @@ object frmOption: TfrmOption
         TabOrder = 3
         object cbCache: TCheckBox
           Left = 8
-          Top = 6
+          Top = 22
           Width = 83
           Height = 19
           Caption = 'Enable cache'
@@ -303,7 +295,7 @@ object frmOption: TfrmOption
         end
         object cbAutorun: TCheckBox
           Left = 8
-          Top = 30
+          Top = 46
           Width = 93
           Height = 19
           Caption = 'Enable autorun'
@@ -319,7 +311,7 @@ object frmOption: TfrmOption
         TabOrder = 2
         object lbClearElements: TLabel
           Left = 8
-          Top = 5
+          Top = 21
           Width = 202
           Height = 13
           Caption = 'Clear all MRU, backups and/or cache icons'
@@ -328,7 +320,7 @@ object frmOption: TfrmOption
         end
         object btnClearElements: TButton
           Left = 72
-          Top = 29
+          Top = 45
           Width = 113
           Height = 17
           Caption = 'Clear elements...'
@@ -345,7 +337,7 @@ object frmOption: TfrmOption
         TabOrder = 4
         object lbMaxMFU: TLabel
           Left = 8
-          Top = 38
+          Top = 54
           Width = 83
           Height = 13
           Caption = 'Max number MFU'
@@ -354,7 +346,7 @@ object frmOption: TfrmOption
         end
         object lbNumbMFU: TLabel
           Left = 234
-          Top = 38
+          Top = 54
           Width = 12
           Height = 13
           Caption = '10'
@@ -363,7 +355,7 @@ object frmOption: TfrmOption
         end
         object cbMFU: TCheckBox
           Left = 8
-          Top = 3
+          Top = 19
           Width = 74
           Height = 19
           Caption = 'Active MFU'
@@ -371,15 +363,15 @@ object frmOption: TfrmOption
         end
         object cbSubMenuMFU: TCheckBox
           Left = 8
-          Top = 19
+          Top = 35
           Width = 144
           Height = 19
           Caption = 'MFU on trayicon submenu'
           TabOrder = 1
         end
         object tbMFU: TTrackBar
-          Left = 136
-          Top = 35
+          Left = 131
+          Top = 51
           Width = 97
           Height = 25
           ShowSelRange = False
@@ -391,10 +383,6 @@ object frmOption: TfrmOption
     object TabSheet3: TTabSheet
       Caption = 'Various'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object gbExecution: TGroupBox
         Left = 8
         Top = 8
@@ -404,7 +392,7 @@ object frmOption: TfrmOption
         TabOrder = 0
         object lbActionOnExe: TLabel
           Left = 8
-          Top = 22
+          Top = 38
           Width = 64
           Height = 13
           Caption = 'On execution'
@@ -412,8 +400,8 @@ object frmOption: TfrmOption
           ParentColor = False
         end
         object lblAutorunOrder: TLabel
-          Left = 10
-          Top = 65
+          Left = 8
+          Top = 81
           Width = 106
           Height = 13
           Caption = 'Autoexecute items list'
@@ -422,7 +410,7 @@ object frmOption: TfrmOption
         end
         object cbRunSingleClick: TCheckBox
           Left = 8
-          Top = 2
+          Top = 18
           Width = 134
           Height = 19
           Caption = 'Execute with single click'
@@ -430,7 +418,7 @@ object frmOption: TfrmOption
         end
         object cxActionOnExe: TComboBox
           Left = 8
-          Top = 38
+          Top = 54
           Width = 169
           Height = 21
           Style = csDropDownList
@@ -441,8 +429,8 @@ object frmOption: TfrmOption
             'Run and close ASuite')
         end
         object btnChangeOrder: TButton
-          Left = 75
-          Top = 83
+          Left = 81
+          Top = 97
           Width = 102
           Height = 21
           Caption = 'Change order'
@@ -459,7 +447,7 @@ object frmOption: TfrmOption
         TabOrder = 1
         object lbTrayLeftClick: TLabel
           Left = 8
-          Top = 48
+          Top = 64
           Width = 41
           Height = 13
           Caption = 'Left click'
@@ -468,7 +456,7 @@ object frmOption: TfrmOption
         end
         object lbTrayRightClick: TLabel
           Left = 8
-          Top = 88
+          Top = 104
           Width = 47
           Height = 13
           Caption = 'Right click'
@@ -477,7 +465,7 @@ object frmOption: TfrmOption
         end
         object cxLeftClick: TComboBox
           Left = 8
-          Top = 63
+          Top = 79
           Width = 145
           Height = 21
           Style = csDropDownList
@@ -489,8 +477,8 @@ object frmOption: TfrmOption
         end
         object btnTrayCustomIcon: TButton
           Left = 165
-          Top = 29
-          Width = 89
+          Top = 45
+          Width = 84
           Height = 21
           Caption = 'Choose icon'
           TabOrder = 2
@@ -498,7 +486,7 @@ object frmOption: TfrmOption
         end
         object cbTrayicon: TCheckBox
           Left = 8
-          Top = 8
+          Top = 24
           Width = 156
           Height = 19
           Caption = 'Enable the System Tray icon'
@@ -507,7 +495,7 @@ object frmOption: TfrmOption
         end
         object cxRightClick: TComboBox
           Left = 8
-          Top = 103
+          Top = 119
           Width = 145
           Height = 21
           Style = csDropDownList
@@ -519,7 +507,7 @@ object frmOption: TfrmOption
         end
         object cbTrayCustomIcon: TCheckBox
           Left = 8
-          Top = 31
+          Top = 47
           Width = 101
           Height = 19
           Caption = 'Custom tray icon'
@@ -535,7 +523,7 @@ object frmOption: TfrmOption
         TabOrder = 2
         object lbSide: TLabel
           Left = 8
-          Top = 0
+          Top = 16
           Width = 24
           Height = 13
           Caption = 'Side'
@@ -550,7 +538,7 @@ object frmOption: TfrmOption
         end
         object lbLeftClick: TLabel
           Left = 56
-          Top = 0
+          Top = 16
           Width = 50
           Height = 13
           Caption = 'Left click'
@@ -565,7 +553,7 @@ object frmOption: TfrmOption
         end
         object lbRightClick: TLabel
           Left = 155
-          Top = 0
+          Top = 16
           Width = 58
           Height = 13
           Caption = 'Right click'
@@ -580,7 +568,7 @@ object frmOption: TfrmOption
         end
         object lbTop: TLabel
           Left = 8
-          Top = 20
+          Top = 36
           Width = 18
           Height = 13
           Caption = 'Top'
@@ -589,7 +577,7 @@ object frmOption: TfrmOption
         end
         object lbLeft: TLabel
           Left = 8
-          Top = 44
+          Top = 60
           Width = 19
           Height = 13
           Caption = 'Left'
@@ -598,7 +586,7 @@ object frmOption: TfrmOption
         end
         object lbRight: TLabel
           Left = 8
-          Top = 68
+          Top = 84
           Width = 25
           Height = 13
           Caption = 'Right'
@@ -607,7 +595,7 @@ object frmOption: TfrmOption
         end
         object lbBottom: TLabel
           Left = 8
-          Top = 92
+          Top = 108
           Width = 34
           Height = 13
           Caption = 'Bottom'
@@ -616,7 +604,7 @@ object frmOption: TfrmOption
         end
         object cxLCTop: TComboBox
           Left = 56
-          Top = 16
+          Top = 32
           Width = 97
           Height = 21
           Style = csDropDownList
@@ -624,7 +612,7 @@ object frmOption: TfrmOption
         end
         object cxLCLeft: TComboBox
           Left = 56
-          Top = 40
+          Top = 56
           Width = 97
           Height = 21
           Style = csDropDownList
@@ -632,7 +620,7 @@ object frmOption: TfrmOption
         end
         object cxLCRight: TComboBox
           Left = 56
-          Top = 64
+          Top = 80
           Width = 97
           Height = 21
           Style = csDropDownList
@@ -640,7 +628,7 @@ object frmOption: TfrmOption
         end
         object cxLCBottom: TComboBox
           Left = 56
-          Top = 88
+          Top = 104
           Width = 97
           Height = 21
           Style = csDropDownList
@@ -648,7 +636,7 @@ object frmOption: TfrmOption
         end
         object cxRCTop: TComboBox
           Left = 155
-          Top = 16
+          Top = 32
           Width = 97
           Height = 21
           Style = csDropDownList
@@ -656,7 +644,7 @@ object frmOption: TfrmOption
         end
         object cxRCBottom: TComboBox
           Left = 155
-          Top = 88
+          Top = 104
           Width = 97
           Height = 21
           Style = csDropDownList
@@ -664,7 +652,7 @@ object frmOption: TfrmOption
         end
         object cxRCRight: TComboBox
           Left = 155
-          Top = 64
+          Top = 80
           Width = 97
           Height = 21
           Style = csDropDownList
@@ -672,7 +660,7 @@ object frmOption: TfrmOption
         end
         object cxRCLeft: TComboBox
           Left = 155
-          Top = 40
+          Top = 56
           Width = 97
           Height = 21
           Style = csDropDownList
