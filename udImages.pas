@@ -40,7 +40,6 @@ type
     procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }
-    FHandleSysImageList: HIMAGELIST;
     function LoadIconFromFile(ID: Integer): Integer;
     procedure SaveCacheIcon(Path: string; NodeData: TvBaseNodeData; ImageIndex: Integer);
   public
@@ -156,25 +155,11 @@ end;
 function TImagesDM.GetSimpleIconIndex(xpath: string): integer;
 var
   FileInfo : TSHFileInfoW;
-  FileIcon : TIcon;
-  hIco     : HICON;
 begin
-  Result := -1;
+  //Get icon
   SHGetFileInfoW(PChar(xpath), 0, FileInfo, SizeOf(TSHFileInfo), SHGFI_SYSICONINDEX or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES);
-  //Get icon handle
-  hIco := ImageList_GetIcon(FHandleSysImageList, FileInfo.iIcon, ILD_NORMAL);
-  //Check icon handle
-  if hIco <> 0 then
-  begin
-    FileIcon := TIcon.Create;
-    try
-      //Add in ASuite ImageList
-      FileIcon.Handle := hIco;
-      Result := IcoImages.AddIcon(FileIcon);
-    finally
-      FreeAndNil(FileIcon);
-    end;
-  end;
+  //Get icon index
+  Result := FileInfo.iIcon;
 end;
 
 procedure TImagesDM.DataModuleCreate(Sender: TObject);
@@ -184,7 +169,8 @@ var
 begin
   //Use System ImageList
   Flags := SHGFI_SYSICONINDEX or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES;
-  FHandleSysImageList := SHGetFileInfoW('', 0, SFI, SizeOf(SFI), Flags);
+  IcoImages.Handle      := SHGetFileInfo('', 0, SFI, SizeOf(SFI), Flags);
+  IcoImages.ShareImages := True;
   //Menu icons
   IMG_ASuite     := LoadIconFromFile(0);
   IMG_Cat        := LoadIconFromFile(1);
