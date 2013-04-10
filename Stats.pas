@@ -9,7 +9,7 @@ uses
 type
 
   { TfrmStats }
-  TfrmStats = class(TASuiteForm)
+  TfrmStats = class(TForm)
     gbASuite: TGroupBox;
     gbSupport: TGroupBox;
     gbSystem: TGroupBox;

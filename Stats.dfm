@@ -1,24 +1,28 @@
-inherited frmStats: TfrmStats
-  Left = -283
-  Top = 127
-  Width = 225
+object frmStats: TfrmStats
+  Left = 0
+  Top = 0
   BorderStyle = bsDialog
   Caption = 'Stats'
+  ClientHeight = 241
   ClientWidth = 225
   Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
-  OnCreate = FormCreate
+  Font.Style = []
+  OldCreateOrder = False
   Position = poMainFormCenter
-  object gbSystem: TGroupBox[0]
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  object gbSystem: TGroupBox
     Left = 8
-    Height = 65
     Top = 8
     Width = 209
+    Height = 65
     Caption = 'System'
-    ClientHeight = 47
-    ClientWidth = 205
+    Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
@@ -27,92 +31,97 @@ inherited frmStats: TfrmStats
     TabOrder = 0
     object lbOs: TLabel
       Left = 8
-      Height = 13
-      Top = 0
+      Top = 16
       Width = 89
+      Height = 13
       AutoSize = False
       Caption = 'Operating System'
+      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
-      ParentColor = False
+      Font.Style = []
       ParentFont = False
     end
     object lbNamePc: TLabel
       Left = 8
-      Height = 14
-      Top = 16
-      Width = 75
+      Top = 32
+      Width = 74
+      Height = 13
       Caption = 'Computer name'
+      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
-      ParentColor = False
+      Font.Style = []
       ParentFont = False
     end
     object lbUser: TLabel
       Left = 8
-      Height = 14
-      Top = 32
-      Width = 58
+      Top = 48
+      Width = 57
+      Height = 13
       Caption = 'Current user'
+      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
-      ParentColor = False
+      Font.Style = []
       ParentFont = False
     end
     object lbOs2: TLabel
       Left = 104
+      Top = 16
+      Width = 92
       Height = 13
-      Top = 0
-      Width = 90
       Alignment = taRightJustify
       AutoSize = False
       Caption = 'Windows XP (SP2)'
+      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
-      ParentColor = False
-      ParentFont = False
-    end
-    object lbUser2: TLabel
-      Left = 105
-      Height = 13
-      Top = 32
-      Width = 90
-      Alignment = taRightJustify
-      AutoSize = False
-      Caption = 'UserXXXXX'
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      ParentColor = False
+      Font.Style = []
       ParentFont = False
     end
     object lbNamePc2: TLabel
-      Left = 105
+      Left = 104
+      Top = 48
+      Width = 91
       Height = 13
-      Top = 16
-      Width = 90
       Alignment = taRightJustify
       AutoSize = False
-      Caption = 'computerName'
+      Caption = 'User Xyz'
+      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
-      ParentColor = False
+      Font.Style = []
+      ParentFont = False
+    end
+    object lbUser2: TLabel
+      Left = 104
+      Top = 32
+      Width = 91
+      Height = 13
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = 'Computer Xyz'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
       ParentFont = False
     end
   end
-  object gbSupport: TGroupBox[1]
+  object gbSupport: TGroupBox
     Left = 8
-    Height = 65
     Top = 80
     Width = 209
-    Caption = 'Drive %s:'
-    ClientHeight = 47
-    ClientWidth = 205
+    Height = 65
+    Caption = 'Drive X:'
+    Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
@@ -121,91 +130,96 @@ inherited frmStats: TfrmStats
     TabOrder = 1
     object lbSize: TLabel
       Left = 8
-      Height = 14
-      Top = 0
-      Width = 21
+      Top = 16
+      Width = 20
+      Height = 13
       Caption = 'Size'
+      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
-      ParentColor = False
+      Font.Style = []
       ParentFont = False
     end
     object lbSpaceUsed: TLabel
       Left = 8
-      Height = 14
-      Top = 16
-      Width = 54
+      Top = 32
+      Width = 53
+      Height = 13
       Caption = 'Free space'
+      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
-      ParentColor = False
+      Font.Style = []
       ParentFont = False
     end
     object lbSpaceFree: TLabel
       Left = 8
-      Height = 14
-      Top = 32
-      Width = 58
+      Top = 48
+      Width = 57
+      Height = 13
       Caption = 'Used space'
+      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
-      ParentColor = False
+      Font.Style = []
       ParentFont = False
     end
     object lbSpaceFree2: TLabel
       Left = 104
-      Height = 13
-      Top = 16
+      Top = 32
       Width = 91
+      Height = 13
       Alignment = taRightJustify
       AutoSize = False
       Caption = '00 GB'
+      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
-      ParentColor = False
+      Font.Style = []
       ParentFont = False
     end
     object lbSize2: TLabel
       Left = 104
-      Height = 13
-      Top = 0
+      Top = 16
       Width = 91
+      Height = 13
       Alignment = taRightJustify
       AutoSize = False
       Caption = '000 GB'
+      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
-      ParentColor = False
+      Font.Style = []
       ParentFont = False
     end
     object lbSpaceUsed2: TLabel
       Left = 104
-      Height = 13
-      Top = 32
+      Top = 48
       Width = 91
+      Height = 13
       Alignment = taRightJustify
       AutoSize = False
       Caption = '00 GB'
+      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
-      ParentColor = False
+      Font.Style = []
       ParentFont = False
     end
   end
-  object gbASuite: TGroupBox[2]
+  object gbASuite: TGroupBox
     Left = 8
-    Height = 81
     Top = 152
     Width = 209
+    Height = 81
     Caption = 'ASuite'
-    ClientHeight = 63
-    ClientWidth = 205
+    Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
@@ -214,106 +228,114 @@ inherited frmStats: TfrmStats
     TabOrder = 2
     object lbSoftware: TLabel
       Left = 8
-      Height = 14
-      Top = 0
-      Width = 76
+      Top = 16
+      Width = 75
+      Height = 13
       Caption = 'Software added'
+      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
-      ParentColor = False
+      Font.Style = []
       ParentFont = False
     end
     object lbCat: TLabel
       Left = 8
-      Height = 14
-      Top = 32
-      Width = 84
+      Top = 48
+      Width = 83
+      Height = 13
       Caption = 'Categories added'
+      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
-      ParentColor = False
+      Font.Style = []
       ParentFont = False
     end
     object lbTotal: TLabel
       Left = 8
-      Height = 14
-      Top = 48
-      Width = 25
+      Top = 64
+      Width = 24
+      Height = 13
       Caption = 'Total'
+      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
-      ParentColor = False
+      Font.Style = []
       ParentFont = False
     end
     object lbSoftwareGroup: TLabel
       Left = 8
-      Height = 14
-      Top = 16
-      Width = 106
+      Top = 32
+      Width = 105
+      Height = 13
       Caption = 'Software group added'
+      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
-      ParentColor = False
+      Font.Style = []
       ParentFont = False
     end
     object lbSoftware2: TLabel
       Left = 104
-      Height = 13
-      Top = 0
+      Top = 16
       Width = 91
+      Height = 13
       Alignment = taRightJustify
       AutoSize = False
       Caption = '00'
+      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
-      ParentColor = False
+      Font.Style = []
       ParentFont = False
     end
     object lbSoftwareGroup2: TLabel
       Left = 120
-      Height = 13
-      Top = 16
+      Top = 32
       Width = 75
+      Height = 13
       Alignment = taRightJustify
       AutoSize = False
       Caption = '00'
+      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
-      ParentColor = False
+      Font.Style = []
       ParentFont = False
     end
     object lbCat2: TLabel
       Left = 104
-      Height = 13
-      Top = 32
+      Top = 48
       Width = 91
+      Height = 13
       Alignment = taRightJustify
       AutoSize = False
       Caption = '00'
+      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
-      ParentColor = False
+      Font.Style = []
       ParentFont = False
     end
     object lbTotal2: TLabel
       Left = 104
-      Height = 13
-      Top = 48
+      Top = 64
       Width = 91
+      Height = 13
       Alignment = taRightJustify
       AutoSize = False
       Caption = '00'
+      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
-      ParentColor = False
+      Font.Style = []
       ParentFont = False
     end
   end
