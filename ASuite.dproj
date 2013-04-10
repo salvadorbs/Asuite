@@ -218,6 +218,9 @@
         </DCCReference>
         <DCCReference Include="library\ASuiteForm.pas"/>
         <DCCReference Include="library\ulTreeView.pas"/>
+        <DCCReference Include="Stats.pas">
+            <Form>frmStats</Form>
+        </DCCReference>
         <None Include="ASuite.inc"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>

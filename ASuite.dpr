@@ -29,6 +29,7 @@ uses
   Sensor in 'Sensor.pas' {frmSensor},
   ASuiteForm in 'library\ASuiteForm.pas',
   ulTreeView in 'library\ulTreeView.pas',
+  Stats in 'Stats.pas' {frmStats},
   SynSQLite3Static; //SQLite3 static library
 
 {$IFDEF DEBUG}
