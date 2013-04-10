@@ -104,6 +104,8 @@
         <DCC_HppOutput>dcu</DCC_HppOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1169;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
+        <VerInfo_Build>1169</VerInfo_Build>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
         <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
         <VerInfo_AutoGenVersion>false</VerInfo_AutoGenVersion>
@@ -124,7 +126,7 @@
                     <VersionInfo Name="MajorVer">2</VersionInfo>
                     <VersionInfo Name="MinorVer">0</VersionInfo>
                     <VersionInfo Name="Release">0</VersionInfo>
-                    <VersionInfo Name="Build">1097</VersionInfo>
+                    <VersionInfo Name="Build">1100</VersionInfo>
                     <VersionInfo Name="Debug">False</VersionInfo>
                     <VersionInfo Name="PreRelease">False</VersionInfo>
                     <VersionInfo Name="Special">False</VersionInfo>
@@ -136,7 +138,7 @@
                 <VersionInfoKeys>
                     <VersionInfoKeys Name="CompanyName">SalvadorSoftware</VersionInfoKeys>
                     <VersionInfoKeys Name="FileDescription"/>
-                    <VersionInfoKeys Name="FileVersion">2.0.0.1097</VersionInfoKeys>
+                    <VersionInfoKeys Name="FileVersion">2.0.0.1100</VersionInfoKeys>
                     <VersionInfoKeys Name="InternalName"/>
                     <VersionInfoKeys Name="LegalCopyright"/>
                     <VersionInfoKeys Name="LegalTrademarks"/>

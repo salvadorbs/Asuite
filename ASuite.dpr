@@ -62,9 +62,6 @@ begin
       frmMain.Visible := true;
       if Not(FileExists(SUITE_LIST_PATH)) then
       begin
-        //Create folder cache, if it doesn't exist
-        if (not DirectoryExists(SUITE_CACHE_PATH)) then
-          CreateDir(SUITE_CACHE_PATH);
         Application.CreateForm(TfrmAbout, frmAbout);
         frmAbout.show;
       end;

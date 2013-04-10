@@ -292,14 +292,14 @@ begin
       0:
         begin
           MenuItem.Caption := 'Show ASuite';
-          MenuItem.ImageIndex := IMG_ASuite;
+          MenuItem.ImageIndex := IMAGE_INDEX_ASuite;
           MenuItem.OnClick := ShowMainForm;
           MenuItem.Default := true;
         end;
       1:
         begin
           MenuItem.Caption := 'Options...';
-          MenuItem.ImageIndex := IMG_Options;
+          MenuItem.ImageIndex := IMAGE_INDEX_Options;
           MenuItem.OnClick := frmMain.miOptionsClick;
           MenuItem.Enabled := Not(Config.ReadOnlyMode);
         end;
@@ -554,7 +554,7 @@ procedure TClassicMenu.PopulateDirectory(Sender: TObject);
           NMI             := TASMenuItem.Create(AMI);
           NMI.Caption     := SR.Name;
           NMI.Hint        := AMI.Hint + SR.Name + PathDelim;
-          NMI.ImageIndex  := ImagesDM.GetSimpleIconIndex(SUITE_ICONS_PATH + FILEICON_Folder + EXT_ICO); // folder image
+          NMI.ImageIndex  := ImagesDM.GetSimpleIconIndex(SUITE_ICONS_PATH + FILEICON_Folder); // folder image
           //Add item in traymenu
           AMI.Add(NMI);
           //If it is not '.', expand folder else add OnClick event to open folder

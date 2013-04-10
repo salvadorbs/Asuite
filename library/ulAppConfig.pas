@@ -146,7 +146,7 @@ type
     property Changed: Boolean read FChanged write FChanged;
     //Mouse Sensor
     property SensorLeftClick[aIndex: Integer]:Integer read GetSensorLeftClick write setSensorLeftClick;
-    property SensorRightClick[aIndex: Integer]:Integer read GetSensorRightClick write setSensorLeftClick;
+    property SensorRightClick[aIndex: Integer]:Integer read GetSensorRightClick write setSensorRightClick;
   end;
 
 var
@@ -270,7 +270,7 @@ begin
   if (FTrayUseCustomIcon) and (FileExists(RelativeToAbsolute(FTrayCustomIconPath))) then
     ClassicMenu.tiTrayMenu.Icon.LoadFromFile(RelativeToAbsolute(FTrayCustomIconPath))
   else
-    ClassicMenu.tiTrayMenu.Icon.LoadFromFile(RelativeToAbsolute(SUITE_ICONS_PATH + IntToStr(IMG_ASuite) + EXT_ICO));
+    ClassicMenu.tiTrayMenu.Icon.LoadFromFile(RelativeToAbsolute(SUITE_ICONS_PATH + FILEICON_ASuite));
 end;
 
 procedure TConfiguration.SetUseCustomTitle(value: Boolean);

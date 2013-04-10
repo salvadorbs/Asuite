@@ -145,7 +145,6 @@ begin
 end;
 
 procedure TfrmSensor.ExecuteActionSensor(SensorSide: Integer);
-Var Point: TPoint;
 begin
   with frmMain do
     case SensorSide of

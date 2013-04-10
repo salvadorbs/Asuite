@@ -22,7 +22,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, AppConfig,
+  Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, AppConfig, System.UITypes,
   XMLIntf, msxmldom, XMLDoc, ulEnumerations, ulDatabase, DateUtils, xmldom;
 
 type
@@ -206,7 +206,7 @@ begin
   if (cbImportSettings.Checked) then
   begin
     if InternalImportOptions then
-      ImagesDM.IcoImages.GetBitmap(IMG_Accept, imgSettings.Picture.Bitmap);
+      ImagesDM.IcoImages.GetBitmap(IMAGE_INDEX_Accept, imgSettings.Picture.Bitmap);
   end;
 end;
 
@@ -218,7 +218,7 @@ begin
     pbImport.Max := GetNumberNodeImp(vstListImp);
     try
       TreeImp2Tree(vstListImp,frmMain.vstList);
-      ImagesDM.IcoImages.GetBitmap(IMG_Accept,imgList.Picture.Bitmap);
+      ImagesDM.IcoImages.GetBitmap(IMAGE_INDEX_Accept,imgList.Picture.Bitmap);
       lblItems.Caption := Format(msgItemsImported,[pbImport.Max]);
     except
       on E : Exception do
@@ -340,8 +340,6 @@ begin
 end;
 
 procedure TfrmImportList.FormCreate(Sender: TObject);
-var
-  Icon : TIcon;
 begin
   vstListImp.NodeDataSize := SizeOf(rBaseData);
   vstListImp.Images       := ImagesDM.IcoImages;
@@ -350,8 +348,8 @@ begin
   ConfigCache  := Config.Cache;
   Config.Cache := False;
   //Set imgList and imgSettings's icon
-  ImagesDM.IcoImages.GetBitmap(IMG_Cancel,imgList.Picture.Bitmap);
-  ImagesDM.IcoImages.GetBitmap(IMG_Cancel,imgSettings.Picture.Bitmap);
+  ImagesDM.IcoImages.GetBitmap(IMAGE_INDEX_Cancel,imgList.Picture.Bitmap);
+  ImagesDM.IcoImages.GetBitmap(IMAGE_INDEX_Cancel,imgSettings.Picture.Bitmap);
 end;
 
 procedure TfrmImportList.vstListImpExpanding(Sender: TBaseVirtualTree;
@@ -539,7 +537,6 @@ end;
 
 function TfrmImportList.InternalImportOptions: Boolean;
 var
-  XMLDoc : TXMLDocument;
   DBImp  : TDBManager;
   Node, tvFontStyle : IXMLNode;
   ImportFileExt : String;
@@ -616,7 +613,6 @@ begin
         Config.SensorLeftClick[I]  := GetIntPropertyXML(Node.ChildNodes['Mouse'],'SensorLeftClick' + IntToStr(I), 0);
         Config.SensorRightClick[I] := GetIntPropertyXML(Node.ChildNodes['Mouse'],'SensorRightClick' + IntToStr(I), 0);
       end;
-      XMLDoc.Free;
     end
     else
       if (ImportFileExt = EXT_SQL) or (ImportFileExt = EXT_SQLBCK)then

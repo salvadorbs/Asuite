@@ -86,7 +86,29 @@ const
   CONST_PARAM_PENDRV = '%pendrive%';
 
   //Icons id
-  FILEICON_Folder = '10';
+  FILEICON_ASuite     = '0.ico';
+  FILEICON_Cat        = '1.ico';
+  FILEICON_Help       = '2.ico';
+  FILEICON_Options    = '3.ico';
+  FILEICON_AddCat     = '4.ico';
+  FILEICON_AddFile    = '5.ico';
+  FILEICON_AddFolder  = '6.ico';
+  FILEICON_Delete     = '7.ico';
+  FILEICON_Property   = '8.ico';
+  FILEICON_Save       = '9.ico';
+  FILEICON_Folder     = '10.ico';
+  FILEICON_AddGroupFile = '11.ico';
+  FILEICON_GroupFile  = '12.ico';
+  FILEICON_NOTFOUND   = '13.ico';
+  FILEICON_Run        = '14.ico';
+  FILEICON_Cut        = '15.ico';
+  FILEICON_Copy       = '16.ico';
+  FILEICON_Paste      = '17.ico';
+  FILEICON_Search     = '18.ico';
+  FILEICON_SearchType = '19.ico';
+  FILEICON_Url        = '20.ico';
+  FILEICON_Accept     = '21.ico';
+  FILEICON_Cancel     = '22.ico';
 
 var
   //Paths
@@ -103,30 +125,30 @@ var
   SUITE_LIST_PATH     : String;
 
   //Menu icons
-  IMG_ASuite,       //ID = 0;
-  IMG_Cat,          //ID = 1;
-  IMG_Help,         //ID = 2;
-  IMG_Options,      //ID = 3;
-  IMG_AddCat,       //ID = 4;
-  IMG_AddFile ,     //ID = 5;
-  IMG_AddFolder,    //ID = 6;
-  IMG_Delete,       //ID = 7;
-  IMG_Property,     //ID = 8;
-  IMG_Save,         //ID = 9;
-  IMG_Folder,       //ID = 10;
-  IMG_AddGroupFile, //ID = 11;
-  IMG_GroupFile,    //ID = 12;
-  IMG_NOTFOUND,     //ID = 13;
-  IMG_Run,          //ID = 14;
-  IMG_Cut,          //ID = 15;
-  IMG_Copy,         //ID = 16;
-  IMG_Paste ,       //ID = 17;
-  IMG_Search,       //ID = 18;
-  IMG_SearchType,   //ID = 19;
-  IMG_Url,          //ID = 20;
-  IMG_Accept,       //ID = 21;
-  IMG_Cancel        //ID = 22;
-                    : Integer;
+  IMAGE_INDEX_ASuite,       //ID = 0;
+  IMAGE_INDEX_Cat,          //ID = 1;
+  IMAGE_INDEX_Help,         //ID = 2;
+  IMAGE_INDEX_Options,      //ID = 3;
+  IMAGE_INDEX_AddCat,       //ID = 4;
+  IMAGE_INDEX_AddFile ,     //ID = 5;
+  IMAGE_INDEX_AddFolder,    //ID = 6;
+  IMAGE_INDEX_Delete,       //ID = 7;
+  IMAGE_INDEX_Property,     //ID = 8;
+  IMAGE_INDEX_Save,         //ID = 9;
+  IMAGE_INDEX_Folder,       //ID = 10;
+  IMAGE_INDEX_AddGroupFile, //ID = 11;
+  IMAGE_INDEX_GroupFile,    //ID = 12;
+  IMAGE_INDEX_NOTFOUND,     //ID = 13;
+  IMAGE_INDEX_Run,          //ID = 14;
+  IMAGE_INDEX_Cut,          //ID = 15;
+  IMAGE_INDEX_Copy,         //ID = 16;
+  IMAGE_INDEX_Paste ,       //ID = 17;
+  IMAGE_INDEX_Search,       //ID = 18;
+  IMAGE_INDEX_SearchType,   //ID = 19;
+  IMAGE_INDEX_Url,          //ID = 20;
+  IMAGE_INDEX_Accept,       //ID = 21;
+  IMAGE_INDEX_Cancel        //ID = 22;
+                            : Integer;
 
 resourcestring
 

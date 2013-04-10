@@ -81,7 +81,7 @@ begin
   end;
   //Clear Backup
   if cbBackup.Checked then
-    DeleteFiles(SUITE_BACKUP_PATH,'ASuite_*' + EXT_SQLBCK);
+    DeleteFiles(SUITE_BACKUP_PATH, APP_NAME + '_*' + EXT_SQLBCK);
   //Clear Cache
   if cbCache.Checked then
     frmMain.vstList.IterateSubtree(nil, ClearCache, nil, [], True);

@@ -40,7 +40,7 @@ type
     procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }
-    function LoadIconFromFile(ID: Integer): Integer;
+    function LoadASuiteIconFromFile(const IconName: String): Integer;
     procedure SaveCacheIcon(Path: string; NodeData: TvBaseNodeData; ImageIndex: Integer);
   public
     { Public declarations }
@@ -85,11 +85,11 @@ begin
       end
       else begin
         if NodeData.DataType = vtdtCategory then
-          Result := IMG_Cat;
+          Result := IMAGE_INDEX_Cat;
       end;
   end;
   //Get image index
-  if (TempPath <> '') and (Result <> IMG_Cat) then
+  if (TempPath <> '') and (Result <> IMAGE_INDEX_Cat) then
     Result := GetSimpleIconIndex(TempPath);
   SaveCacheIcon(TempPath, NodeData, Result);
 end;
@@ -140,21 +140,21 @@ begin
   end;
 end;
 
-function TImagesDM.LoadIconFromFile(ID: Integer): Integer;
+function TImagesDM.LoadASuiteIconFromFile(const IconName: String): Integer;
 var
   FileName : String;
 begin
   Result   := -1;
-  FileName := SUITE_ICONS_PATH + IntToStr(ID) + EXT_ICO;
+  FileName := SUITE_ICONS_PATH + IconName;
   if FileExists(FileName) then
     Result := GetSimpleIconIndex(FileName)
   else
-    ShowMessageFmt(msgErrNoIcon, [IntToStr(ID) + EXT_ICO]);
+    ShowMessageFmt(msgErrNoIcon, [FileName]);
 end;
 
 function TImagesDM.GetSimpleIconIndex(xpath: string): integer;
 var
-  FileInfo : TSHFileInfoW;
+  FileInfo : TSHFileInfo;
 begin
   //Get icon
   SHGetFileInfo(PChar(xpath), 0, FileInfo, SizeOf(TSHFileInfo), SHGFI_SYSICONINDEX or
@@ -166,36 +166,36 @@ end;
 procedure TImagesDM.DataModuleCreate(Sender: TObject);
 var
   Flags: integer;
-  SFI: TSHFileInfoW;
+  SFI: TSHFileInfo;
 begin
   //Use System ImageList
   Flags := SHGFI_SYSICONINDEX or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES;
   IcoImages.Handle      := SHGetFileInfo('', 0, SFI, SizeOf(SFI), Flags);
   IcoImages.ShareImages := True;
   //Menu icons
-  IMG_ASuite     := LoadIconFromFile(0);
-  IMG_Cat        := LoadIconFromFile(1);
-  IMG_Help       := LoadIconFromFile(2);
-  IMG_Options    := LoadIconFromFile(3);
-  IMG_AddCat     := LoadIconFromFile(4);
-  IMG_AddFile    := LoadIconFromFile(5);
-  IMG_AddFolder  := LoadIconFromFile(6);
-  IMG_Delete     := LoadIconFromFile(7);
-  IMG_Property   := LoadIconFromFile(8);
-  IMG_Save       := LoadIconFromFile(9);
-  IMG_Folder     := LoadIconFromFile(10);
-  IMG_AddGroupFile := LoadIconFromFile(11);
-  IMG_GroupFile  := LoadIconFromFile(12);
-  IMG_NOTFOUND   := LoadIconFromFile(13);
-  IMG_Run        := LoadIconFromFile(14);
-  IMG_Cut        := LoadIconFromFile(15);
-  IMG_Copy       := LoadIconFromFile(16);
-  IMG_Paste      := LoadIconFromFile(17);
-  IMG_Search     := LoadIconFromFile(18);
-  IMG_SearchType := LoadIconFromFile(19);
-  IMG_Url        := LoadIconFromFile(20);
-  IMG_Accept     := LoadIconFromFile(21);
-  IMG_Cancel     := LoadIconFromFile(22);
+  IMAGE_INDEX_ASuite     := LoadASuiteIconFromFile(FILEICON_ASuite);
+  IMAGE_INDEX_Cat        := LoadASuiteIconFromFile(FILEICON_Cat);
+  IMAGE_INDEX_Help       := LoadASuiteIconFromFile(FILEICON_Help);
+  IMAGE_INDEX_Options    := LoadASuiteIconFromFile(FILEICON_Options);
+  IMAGE_INDEX_AddCat     := LoadASuiteIconFromFile(FILEICON_AddCat);
+  IMAGE_INDEX_AddFile    := LoadASuiteIconFromFile(FILEICON_AddFile);
+  IMAGE_INDEX_AddFolder  := LoadASuiteIconFromFile(FILEICON_AddFolder);
+  IMAGE_INDEX_Delete     := LoadASuiteIconFromFile(FILEICON_Delete);
+  IMAGE_INDEX_Property   := LoadASuiteIconFromFile(FILEICON_Property);
+  IMAGE_INDEX_Save       := LoadASuiteIconFromFile(FILEICON_Save);
+  IMAGE_INDEX_Folder     := LoadASuiteIconFromFile(FILEICON_Folder);
+  IMAGE_INDEX_AddGroupFile := LoadASuiteIconFromFile(FILEICON_AddGroupFile);
+  IMAGE_INDEX_GroupFile  := LoadASuiteIconFromFile(FILEICON_GroupFile);
+  IMAGE_INDEX_NOTFOUND   := LoadASuiteIconFromFile(FILEICON_NOTFOUND);
+  IMAGE_INDEX_Run        := LoadASuiteIconFromFile(FILEICON_Run);
+  IMAGE_INDEX_Cut        := LoadASuiteIconFromFile(FILEICON_Cut);
+  IMAGE_INDEX_Copy       := LoadASuiteIconFromFile(FILEICON_Copy);
+  IMAGE_INDEX_Paste      := LoadASuiteIconFromFile(FILEICON_Paste);
+  IMAGE_INDEX_Search     := LoadASuiteIconFromFile(FILEICON_Search);
+  IMAGE_INDEX_SearchType := LoadASuiteIconFromFile(FILEICON_SearchType);
+  IMAGE_INDEX_Url        := LoadASuiteIconFromFile(FILEICON_Url);
+  IMAGE_INDEX_Accept     := LoadASuiteIconFromFile(FILEICON_Accept);
+  IMAGE_INDEX_Cancel     := LoadASuiteIconFromFile(FILEICON_Cancel);
 end;
 
 end.

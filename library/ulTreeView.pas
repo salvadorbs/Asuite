@@ -117,7 +117,7 @@ begin
     vtdtCategory:
     begin
       //Category
-      NodeData.Data.ImageIndex := IMG_Cat;
+      NodeData.Data.ImageIndex := IMAGE_INDEX_Cat;
       if (TfrmPropertyCat.Edit(Sender, NodeData) <> mrOK) then
         Sender.DeleteNode(ChildNode);
     end;
@@ -130,7 +130,7 @@ begin
     vtdtFolder:
     begin
       //Folder
-      NodeData.Data.PathIcon := AbsoluteToRelative(SUITE_ICONS_PATH + FILEICON_Folder + EXT_ICO);
+      NodeData.Data.PathIcon := AbsoluteToRelative(SUITE_ICONS_PATH + FILEICON_Folder);
       FolderPath             := BrowseForFolder('',SUITE_WORKING_PATH);
       if FolderPath <> '' then
       begin
@@ -174,7 +174,6 @@ var
   FileNames : TStringList;
   I         : Integer;
   Node      : PVirtualNode;
-  NodeData  : PBaseData;
 begin
   //If dropMode is on node and this node isn't a category type item, then exit
   if (Mode = dmOnNode) and (AttachMode = amNoWhere) then
@@ -207,7 +206,7 @@ begin
   Name     := ExtractFileName(PathTemp);
   //If it is a directory, use folder icon else get its icon
   if DirectoryExists(PathTemp) then
-    NodeData.Data.PathIcon := AbsoluteToRelative(SUITE_ICONS_PATH + FILEICON_Folder + EXT_ICO)
+    NodeData.Data.PathIcon := AbsoluteToRelative(SUITE_ICONS_PATH + FILEICON_Folder)
   else
     Delete(Name,pos(ExtractFileExt(PathTemp),name),Length(name));
   //Set some node record's variables
@@ -279,7 +278,7 @@ begin
       end;
     end;
     //Icon
-    PathIcon   := AbsoluteToRelative(SUITE_ICONS_PATH + IntToStr(IMG_Url) + EXT_ICO);
+    PathIcon   := AbsoluteToRelative(SUITE_ICONS_PATH + FILEICON_Url);
     ImageIndex := ImagesDM.GetIconIndex(NodeData.Data);
     ParentNode := Node.Parent;
   end;

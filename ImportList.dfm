@@ -25,8 +25,6 @@ object frmImportList: TfrmImportList
     Height = 2
     Align = alTop
     Shape = bsBottomLine
-    ExplicitTop = 233
-    ExplicitWidth = 418
   end
   object bvl2: TBevel
     Left = 0
@@ -35,8 +33,6 @@ object frmImportList: TfrmImportList
     Height = 2
     Align = alTop
     Shape = bsBottomLine
-    ExplicitLeft = 8
-    ExplicitWidth = 491
   end
   object btnBack: TButton
     Left = 45

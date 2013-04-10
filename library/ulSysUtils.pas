@@ -31,7 +31,6 @@ function  BrowseCallbackProc(hwnd: HWND; uMsg: UINT; lParam, lpData: LPARAM): In
 function  BrowseForFolder(const Caption, InitialDir: String): String;
 
 { Check functions }
-function CharInSet(C: WideChar; const CharSet: TSysCharSet): Boolean;
 function HasDriveLetter(const Path: String): Boolean;
 function IsAbsolutePath(const Path: String): Boolean;
 function IsDirectory(const Path: String): Boolean;
@@ -83,11 +82,6 @@ begin
   //Call Browse for folder dialog and get new path
   if SelectDirectory('','',Path) then
     Result := Path;
-end;
-
-function CharInSet(C: WideChar; const CharSet: TSysCharSet): Boolean;
-begin
-  Result := C in CharSet;
 end;
 
 function HasDriveLetter(const Path: String): Boolean;
@@ -150,7 +144,7 @@ end;
 
 function FileFolderPageWebExists(Path: String): Boolean;
 begin
-  Result := ((FileExists(Path)) or (DirectoryExists(Path)) or
+  Result := ((FileExists(Path)) or (SysUtils.DirectoryExists(Path)) or
              (IsUrl(Path)));
 end;
 

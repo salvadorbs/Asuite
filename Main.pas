@@ -25,7 +25,7 @@ interface
 uses
   Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
   ComCtrls, VirtualTrees, ActiveX, AppConfig, ulNodeDataTypes, ulCommonClasses,
-  UDImages, ASuiteForm, StdCtrls, Buttons, Sensor;
+  UDImages, ASuiteForm, StdCtrls, Buttons, Sensor, System.UITypes;
 
 type
 
@@ -297,9 +297,6 @@ begin
 end;
 
 procedure TfrmMain.RunExe(Sender: TObject);
-var
-  NodeData : TvBaseNodeData;
-  Node     : PVirtualNode;
 begin
   if (Sender is TBaseVirtualTree) then
   begin
@@ -355,12 +352,12 @@ procedure TfrmMain.miStatisticsClick(Sender: TObject);
 var
    frmStats:TfrmStats;
 begin
-   try
-     frmStats:=TfrmStats.Create(self);
-     frmStats.ShowModal();
-   finally
-     frmStats.Free;
-   end;
+  frmStats := TfrmStats.Create(self);
+  try
+    frmStats.ShowModal();
+  finally
+    frmStats.Free;
+  end;
 end;
 
 procedure TfrmMain.miPaste2Click(Sender: TObject);
@@ -776,29 +773,29 @@ begin
   pmSearch.Images      := ImagesDM.IcoImages;
   pmWindow.Images      := ImagesDM.IcoImages;
   //Set MainMenu's ImageIndexes
-  miSaveList1.ImageIndex   := IMG_Save;
-  miOptions1.ImageIndex    := IMG_Options;
-  miAddCat1.ImageIndex     := IMG_AddCat;
-  miAddSw1.ImageIndex      := IMG_AddFile;
-  miAddFolder1.ImageIndex  := IMG_AddFolder;
-  miCut1.ImageIndex        := IMG_Cut;
-  miCopy1.ImageIndex       := IMG_Copy;
-  miPaste1.ImageIndex      := IMG_Paste;
-  miDelete1.ImageIndex     := IMG_Delete;
-  miProperty1.ImageIndex   := IMG_Property;
-  miInfoASuite.ImageIndex  := IMG_Help;
+  miSaveList1.ImageIndex   := IMAGE_INDEX_Save;
+  miOptions1.ImageIndex    := IMAGE_INDEX_Options;
+  miAddCat1.ImageIndex     := IMAGE_INDEX_AddCat;
+  miAddSw1.ImageIndex      := IMAGE_INDEX_AddFile;
+  miAddFolder1.ImageIndex  := IMAGE_INDEX_AddFolder;
+  miCut1.ImageIndex        := IMAGE_INDEX_Cut;
+  miCopy1.ImageIndex       := IMAGE_INDEX_Copy;
+  miPaste1.ImageIndex      := IMAGE_INDEX_Paste;
+  miDelete1.ImageIndex     := IMAGE_INDEX_Delete;
+  miProperty1.ImageIndex   := IMAGE_INDEX_Property;
+  miInfoASuite.ImageIndex  := IMAGE_INDEX_Help;
   //Set PopUpMenu's ImageIndexes
-  miRunSelectedSw.ImageIndex := IMG_Run;
-  miAddCat2.ImageIndex     := IMG_AddCat;
-  miAddSw2.ImageIndex      := IMG_AddFile;
-  miAddFolder2.ImageIndex  := IMG_AddFolder;
-  miCut2.ImageIndex        := IMG_Cut;
-  miCopy2.ImageIndex       := IMG_Copy;
-  miPaste2.ImageIndex      := IMG_Paste;
-  miDelete2.ImageIndex     := IMG_Delete;
-  miProperty2.ImageIndex   := IMG_Property;
+  miRunSelectedSw.ImageIndex := IMAGE_INDEX_Run;
+  miAddCat2.ImageIndex     := IMAGE_INDEX_AddCat;
+  miAddSw2.ImageIndex      := IMAGE_INDEX_AddFile;
+  miAddFolder2.ImageIndex  := IMAGE_INDEX_AddFolder;
+  miCut2.ImageIndex        := IMAGE_INDEX_Cut;
+  miCopy2.ImageIndex       := IMAGE_INDEX_Copy;
+  miPaste2.ImageIndex      := IMAGE_INDEX_Paste;
+  miDelete2.ImageIndex     := IMAGE_INDEX_Delete;
+  miProperty2.ImageIndex   := IMAGE_INDEX_Property;
   //Set Search's ImageIndexes
-  ImagesDM.IcoImages.GetBitmap(IMG_Search,sbtnSearch.Glyph);
+  ImagesDM.IcoImages.GetBitmap(IMAGE_INDEX_Search,sbtnSearch.Glyph);
 end;
 
 procedure TfrmMain.RunAutorun;
@@ -825,7 +822,6 @@ end;
 
 procedure TfrmMain.ShowProperty(Sender: TObject);
 var
-  Node     : PVirtualNode;
   NodeData : PBaseData;
   OK       : Boolean;
   TreeView : TBaseVirtualTree;
