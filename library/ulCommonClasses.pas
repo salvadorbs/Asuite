@@ -91,23 +91,20 @@ type
 
   { TVersionInfo }
 
-  TGetNewFields = procedure(TableName: String;FieldsList: TStringList) of object;
-
   TVersionInfo = class
     private
       FMajor   : Integer;
       FMinor   : Integer;
       FRelease : Integer;
       FBuild   : Integer;
-      FGetNewFields: TGetNewFields;
     public
       constructor Create; overload; //Get actual ASuite version info
       constructor Create(aMajor, aMinor, aRelease, aBuild: Integer); overload;
+      function ToString: string;
       property Major: Integer   read FMajor   write FMajor;
       property Minor: Integer   read FMinor   write FMinor;
       property Release: Integer read FRelease write FRelease;
       property Build: Integer   read FBuild   write FBuild;
-      property GetNewFields: TGetNewFields read FGetNewFields write FGetNewFields;
   end;
 
 var
@@ -383,6 +380,14 @@ begin
   FMinor   := aMinor;
   FRelease := aRelease;
   FBuild   := aBuild;
+end;
+
+function TVersionInfo.ToString: string;
+begin
+  Result := Format('%s.%s.%s.%s',[IntToStr(FMajor),
+                                  IntToStr(FMinor),
+                                  IntToStr(FRelease),
+                                  IntToStr(FBuild)]);
 end;
 
 end.

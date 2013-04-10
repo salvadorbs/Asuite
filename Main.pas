@@ -179,7 +179,7 @@ implementation
 uses
   Option, PropertyFile, PropertyCat, About, ulCommonUtils, ulEnumerations,
   udClassicMenu, PropertySeparator, ulExeUtils, ImportList, Stats, ulAppConfig,
-  ulTreeView, ulSQLite, ulDatabase;
+  ulTreeView, ulDatabase;
 
 {$R *.dfm}
 
@@ -239,7 +239,7 @@ procedure TfrmMain.miSaveListClick(Sender: TObject);
 var
   Result : Boolean;
 begin
-  Result := SaveASuiteSQLite(vstList, true);
+  //Result := SaveASuiteSQLite(vstList, true);
   if Result then
     showmessage(msgSaveCompleted)
   else
@@ -860,7 +860,7 @@ procedure TfrmMain.miExportListClick(Sender: TObject);
 begin
   if (SaveDialog1.Execute) then
   begin
-    SaveASuiteSQLite(vstList,true);
+    //SaveASuiteSQLite(vstList,true);
     //CopyFile(PChar(DBManager.DBFileName),PChar(SaveDialog1.FileName),false)
   end;
   SetCurrentDir(SUITE_WORKING_PATH);
@@ -880,7 +880,7 @@ begin
   end;
   //Execute actions on asuite's shutdown (inside vstList)
   vstList.IterateSubtree(nil, IterateSubtreeProcs.ActionsOnShutdown, nil, [], True);
-  SaveASuiteSQLite(vstList,true);
+  //SaveASuiteSQLite(vstList,true);
 end;
 
 procedure TfrmMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -931,7 +931,7 @@ begin
   //Loading icons
   LoadGlyphs;
   //List & Options
-  LoadASuiteSQLite(vstList, false);
+  DBManager.LoadData(vstList);
   RunAutorun;
   StartUpTime := false;
   //Get placeholder for edtSearch

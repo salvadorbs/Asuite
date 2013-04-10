@@ -64,7 +64,7 @@ object frmMain: TfrmMain
     Top = 0
     Width = 200
     Height = 350
-    ActivePage = tbSearch
+    ActivePage = tbList
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -77,10 +77,6 @@ object frmMain: TfrmMain
     OnChange = pcListChange
     object tbList: TTabSheet
       Caption = 'List'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object vstList: TVirtualStringTree
         Left = 0
         Top = 0
@@ -144,7 +140,6 @@ object frmMain: TfrmMain
         Align = alRight
         Anchors = []
         OnClick = btnedtSearchRightButtonClick
-        ExplicitHeight = 25
       end
       object vstSearch: TVirtualStringTree
         Left = 0

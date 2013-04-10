@@ -24,7 +24,7 @@ interface
 
 uses
   Windows, SysUtils, ActiveX, VirtualTrees, Controls, ulCommonClasses, AppConfig,
-  ulNodeDataTypes, ulEnumerations, ulSQLite, Classes, ShellApi, comobj;
+  ulNodeDataTypes, ulEnumerations, Classes, ShellApi, comobj;
 
 { List, Menu, MRU }
 function  AddNode(Sender: TBaseVirtualTree;AType: TvTreeDataType): PBaseData;
@@ -357,7 +357,7 @@ end;
 
 procedure RefreshList(Tree: TBaseVirtualTree);
 begin
-  SaveASuiteSQLite(Tree, true);
+  //SaveASuiteSQLite(Tree, true);
 end;
 
 //------------------------------------------------------------------------------

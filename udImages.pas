@@ -157,8 +157,9 @@ var
   FileInfo : TSHFileInfoW;
 begin
   //Get icon
-  SHGetFileInfoW(PChar(xpath), 0, FileInfo, SizeOf(TSHFileInfo), SHGFI_SYSICONINDEX or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES);
-  //Get icon index
+  SHGetFileInfo(PChar(xpath), 0, FileInfo, SizeOf(TSHFileInfo), SHGFI_SYSICONINDEX or
+                                                                SHGFI_SMALLICON or
+                                                                SHGFI_USEFILEATTRIBUTES);
   Result := FileInfo.iIcon;
 end;
 
