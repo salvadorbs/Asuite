@@ -95,7 +95,7 @@ end;
 
 procedure TfrmPropertyCat.edtNameEnter(Sender: TObject);
 begin
-  TEdit(Sender).Color := clDefault;
+  TEdit(Sender).Color := clWindow;
 end;
 
 procedure TfrmPropertyCat.btnCancelClick(Sender: TObject);

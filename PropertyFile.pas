@@ -231,7 +231,7 @@ end;
 
 procedure TfrmPropertyFile.edtNameEnter(Sender: TObject);
 begin
-  TEdit(Sender).Color := clDefault;
+  TEdit(Sender).Color := clWindow;
 end;
 
 procedure TfrmPropertyFile.cxAutoExecuteChange(Sender: TObject);
