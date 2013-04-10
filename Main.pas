@@ -223,12 +223,20 @@ begin
   begin
     //Run actions (ex. remove node from MRU list) before delete nodes
     Nodes := vstList.GetSortedSelection(true);
-    //Initialize dataset for remove data from sqlite database
-    //DBManager.CreateDataSetRemoveItems;
-    for I := High(Nodes) downto 0 do
-      vstList.IterateSubtree(Nodes[I],IterateSubtreeProcs.BeforeDeleteNode,nil,[],False);
-    //Apply database's updates
-    //DBManager.ApplyUpdatesRemoveItems;
+    //Begin transaction for remove data from sqlite database
+    if DBManager.Database.TransactionBegin(TSQLtbl_files,1) then
+    begin
+      try
+        //Remove each selected items from sqlite database
+        for I := High(Nodes) downto 0 do
+          vstList.IterateSubtree(Nodes[I],IterateSubtreeProcs.BeforeDeleteNode,nil,[],False);
+        //Commit database's updates
+        DBManager.Database.Commit(1);
+      except
+        //Or in case of error, rollback
+        DBManager.Database.RollBack(1);
+      end;
+    end;
     //Delete nodes and refresh list
     vstList.DeleteSelectedNodes;
     RefreshList(vstList);
@@ -236,11 +244,8 @@ begin
 end;
 
 procedure TfrmMain.miSaveListClick(Sender: TObject);
-var
-  Result : Boolean;
-begin
-  //Result := SaveASuiteSQLite(vstList, true);
-  if Result then
+begin;
+  if DBManager.SaveData(vstList) then
     showmessage(msgSaveCompleted)
   else
     showmessage(msgErrSave);
@@ -407,10 +412,6 @@ begin
   miCut2.Visible          := ActiveTab;
   miCopy2.Visible         := ActiveTab;
   miPaste2.Visible        := ActiveTab;
-  //Separator
-  N9.Visible              := ActiveTab;
-  N5.Visible              := ActiveTab;
-  N10.Visible             := ActiveTab;
 end;
 
 procedure TfrmMain.pmWindowPopup(Sender: TObject);
@@ -856,9 +857,8 @@ procedure TfrmMain.miExportListClick(Sender: TObject);
 begin
   if (SaveDialog1.Execute) then
   begin
-    //TODO - Replace SaveAsuite with RefreshList
-    //SaveASuiteSQLite(vstList,true);
-    //CopyFile(PChar(DBManager.DBFileName),PChar(SaveDialog1.FileName),false)
+    RefreshList(vstList);
+    CopyFile(PChar(DBManager.DBFileName),PChar(SaveDialog1.FileName),false)
   end;
   SetCurrentDir(SUITE_WORKING_PATH);
 end;
@@ -877,8 +877,7 @@ begin
   end;
   //Execute actions on asuite's shutdown (inside vstList)
   vstList.IterateSubtree(nil, IterateSubtreeProcs.ActionsOnShutdown, nil, [], True);
-  //TODO - Replace SaveAsuite with RefreshList
-  //SaveASuiteSQLite(vstList,true);
+  RefreshList(vstList);
 end;
 
 procedure TfrmMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);

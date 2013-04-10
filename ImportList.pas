@@ -126,7 +126,7 @@ var
   BaseNodeData : TvBaseNodeData;
 begin
   Result := nil;
-  if ((XMLNode.HasAttribute(Name)) or (XMLNode.NodeName = 'Separator')) and
+  if ((XMLNode.HasAttribute('name')) or (XMLNode.NodeName = 'Separator')) and
      ((XMLNode.NodeName = 'Software') or (XMLNode.NodeName = 'Category') or
       (XMLNode.NodeName = 'Separator')) then
   begin
@@ -246,7 +246,7 @@ begin
     XMLDocument1.Active   := True;
       //Identify launcher xml from first node
       //ASuite 1.x
-      if (XMLDocument1.DocumentElement.ChildNodes.First.NodeName = 'ASuite') then
+      if (XMLDocument1.DocumentElement.NodeName = 'ASuite') then
         XMLToTree(vstListImp,ASuite1NodeToTree,XMLDocument1)
       else //winPenPack Launcher 1.x
         if ChangeFileExt(FileName,'') = 'winpenpack' then
@@ -255,10 +255,9 @@ begin
   else //ASuite 2.x
     if (FileExt = EXT_SQL) or (FileExt = EXT_SQLBCK) then
     begin
-    { TODO -csqlite database : DBManager import }
-      //DBImp := TDBManager.Create(FilePath);
-      //DBImp.LoadData(Tree, True);
-      //DBImp.Destroy;
+      DBImp := TDBManager.Create(FilePath);
+      DBImp.ImportData(Tree);
+      DBImp.Destroy;
     end;
   vstListImp.EndUpdate;
   GetChildNodesIcons(Tree, Tree.RootNode);
@@ -618,10 +617,9 @@ begin
       if (ImportFileExt = EXT_SQL) or (ImportFileExt = EXT_SQLBCK)then
       begin
         //ASuite 2.x
-        { TODO -csqlite database : DBManager import }
-//        DBImp := TDBManager.Create(edtPathList.Text);
-//        DBImp.LoadOptions;
-//        DBImp.Destroy;
+        DBImp := TDBManager.Create(edtPathList.Text);
+        //DBImp.LoadOptions;
+        DBImp.Destroy;
       end;
   finally
     Result := True;

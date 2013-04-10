@@ -95,7 +95,7 @@ object frmImportList: TfrmImportList
     Top = 51
     Width = 287
     Height = 242
-    ActivePage = tsProgress
+    ActivePage = tsList
     Align = alTop
     Style = tsButtons
     TabOrder = 0

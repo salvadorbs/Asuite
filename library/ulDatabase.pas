@@ -49,7 +49,7 @@ type
   TSQLtbl_files = class(TSQLRecord) //Table tbl_files
   private
     Ftype             : Integer;
-    Fparent           : TSQLRecord;
+    Fparent           : Integer;
     Fposition         : Integer;
     Ftitle            : RawUTF8;
     Fpath             : RawUTF8;
@@ -72,7 +72,7 @@ type
   published
     //property FIELDNAME: TYPE read FFIELDNAME write FFIELDNAME;
     property itemtype: Integer read Ftype write Ftype;
-    property parent: TSQLRecord read Fparent write Fparent;
+    property parent: Integer read Fparent write Fparent;
     property position: Integer read Fposition write Fposition;
     property title: RawUTF8 read Ftitle write Ftitle;
     property path: RawUTF8 read Fpath write Fpath;
@@ -106,12 +106,21 @@ type
     procedure InternalLoadData(Tree: TBaseVirtualTree; IsImport: Boolean = false);
     procedure InternalLoadListItems(Tree: TBaseVirtualTree; ID: Integer;
                             ParentNode: PVirtualNode; IsImport: Boolean = false);
+    procedure InternalSaveListItems(Tree:TBaseVirtualTree; ANode: PVirtualNode;AParentID: Int64);
+    procedure InternalSaveData(Tree: TBaseVirtualTree; ANode: PVirtualNode;
+      AParentID: Int64);
+    procedure UpdateFileRecord(AData: TvBaseNodeData;AIndex, AParentID: Integer);
+    procedure InsertFileRecord(AData: TvBaseNodeData;AIndex, AParentID: Integer);
   public
     constructor Create(const DBFilePath: string);
     destructor Destroy; override;
+    property DBFileName: string read FDBFileName write FDBFileName;
+    property Database: TSQLRest read FDatabase write FDatabase;
     procedure DoBackupList;
     procedure LoadData(Tree: TBaseVirtualTree);
     function  SaveData(Tree: TBaseVirtualTree): Boolean;
+    procedure DeleteItem(aID: Integer);
+    procedure ImportData(Tree: TBaseVirtualTree); //For frmImportList
   end;
 
 var
@@ -178,6 +187,13 @@ begin
   TSQLRestServerDB(fDatabase).CreateMissingTables(0);
 end;
 
+procedure TDBManager.DeleteItem(aID: Integer);
+var
+  SQLFilesData : TSQLtbl_files;
+begin
+  FDatabase.Delete(TSQLtbl_files,aID);
+end;
+
 destructor TDBManager.Destroy;
 begin
   inherited;
@@ -196,6 +212,66 @@ begin
     CopyFile(PChar(FDBFileName),
              PChar(SUITE_BACKUP_PATH + APP_NAME + '_' + GetDateTime + EXT_SQLBCK), false);
     DeleteOldBackups(Config.BackupNumber);
+  end;
+end;
+
+procedure TDBManager.ImportData(Tree: TBaseVirtualTree);
+begin
+  try
+    InternalLoadListItems(Tree, 0, nil, true);
+  except
+    on E : Exception do
+      ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message]);
+  end;
+end;
+
+procedure TDBManager.InsertFileRecord(AData: TvBaseNodeData; AIndex,
+  AParentID: Integer);
+var
+  SQLFilesData : TSQLtbl_files;
+begin
+  SQLFilesData := TSQLtbl_files.Create;
+  try
+    //Add base fields
+    SQLFilesData.itemtype := Ord(AData.DataType);
+    SQLFilesData.parent   := AParentID;
+    SQLFilesData.position := AIndex;
+    SQLFilesData.title    := StringToUTF8(AData.Name);
+    SQLFilesData.cacheicon_id := AData.CacheID;
+    //Add specific category and file fields
+    if AData.DataType <> vtdtSeparator then
+    begin
+      SQLFilesData.icon_path      := StringToUTF8(AData.PathIcon);
+      SQLFilesData.hide_from_menu := AData.HideFromMenu;
+      //Add time fields
+      SQLFilesData.dateAdded    := AData.UnixAddDate;
+      SQLFilesData.lastModified := AData.UnixEditDate;
+      //Add file fields
+      if (AData.DataType = vtdtFile) then
+      begin
+        with TvFileNodeData(AData) do
+        begin
+          SQLFilesData.path       := StringToUTF8(PathExe);
+          SQLFilesData.work_path  := StringToUTF8(WorkingDir);
+          SQLFilesData.parameters := StringToUTF8(Parameters);
+          SQLFilesData.clicks     := ClickCount;
+          SQLFilesData.window_state := WindowState;
+          SQLFilesData.dsk_shortcut := ShortcutDesktop;
+          SQLFilesData.autorun    := Ord(Autorun);
+          SQLFilesData.autorun_position := AutorunPos;
+          SQLFilesData.onlaunch   := Ord(ActionOnExe);
+          SQLFilesData.no_mru     := NoMRU;
+          SQLFilesData.no_mfu     := NoMFU;
+          SQLFilesData.lastAccess := MRUPosition;
+        end;
+      end;
+    end;
+  finally
+    //Set ID, ParentID and position
+    AData.ID       := FDatabase.Add(SQLFilesData,true);
+    AData.ParentID := AParentID;
+    AData.Position := AIndex;
+    SQLFilesData.Free;
   end;
 end;
 
@@ -269,7 +345,7 @@ begin
         end;
       end;
       if (nType = vtdtCategory) then
-        InternalLoadListItems(Tree, vData.ID, Node);
+        InternalLoadListItems(Tree, vData.ID, Node, IsImport);
     end;
   finally
     SQLFilesData.Free;
@@ -311,6 +387,57 @@ begin
   end;
 end;
 
+procedure TDBManager.InternalSaveData(Tree: TBaseVirtualTree;
+  ANode: PVirtualNode; AParentID: Int64);
+begin
+  try
+    //Create and open Sqlite3Dataset
+    if FDatabase.TransactionBegin(TSQLtbl_files,1) then
+    begin
+      InternalSaveListItems(Tree, Anode, AParentID);
+      FDatabase.Commit(1);
+    end;
+    //If settings is changed, insert it else (if it exists) update it
+    //if Config.Changed then
+    //  InternalSaveOptions;
+    //Save version info
+    //InternalSaveVersion;
+  except
+    on E : Exception do begin
+      ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message]);
+      FDatabase.Rollback(1);
+    end;
+  end;
+end;
+
+procedure TDBManager.InternalSaveListItems(Tree: TBaseVirtualTree;
+  ANode: PVirtualNode; AParentID: Int64);
+var
+  Node    : PVirtualNode;
+  vData   : TvBaseNodeData;
+begin
+  Node    := ANode;
+  while (Node <> nil) do
+  begin
+    vData := PBaseData(Tree.GetNodeData(Node)).Data;
+    try
+      //Insert or update record
+      if (vData.ID < 0) then
+        InsertFileRecord(vData, Node.Index, AParentID)
+      else
+        if ((vData.Changed) or (vData.Position <> Node.Index) or (vData.ParentID <> AParentID)) then
+          UpdateFileRecord(vData, Node.Index, AParentID);
+      //If type is category then process sub-nodes
+      if (vData.DataType = vtdtCategory) then
+        InternalSaveListItems(Tree, Node.FirstChild, vData.ID);
+    except
+      on E : Exception do
+        ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message]);
+    end;
+    Node := Node.NextSibling;
+  end;
+end;
+
 function TDBManager.SaveData(Tree: TBaseVirtualTree): Boolean;
 begin
   Result := True;
@@ -319,9 +446,63 @@ begin
     Exit;
   //List & Options
   try
-    //DBManager.SaveData(Tree,Tree.GetFirst,0);
+    DBManager.InternalSaveData(Tree,Tree.GetFirst,0);
   except
     Result := False;
+  end;
+end;
+
+procedure TDBManager.UpdateFileRecord(AData: TvBaseNodeData; AIndex,
+  AParentID: Integer);
+var
+  SQLFilesData : TSQLtbl_files;
+begin
+  //Select only file record by ID
+  SQLFilesData := TSQLtbl_files.CreateAndFillPrepare(FDatabase,'id=?',[AData.ID]);
+  try
+    if SQLFilesData.FillOne then
+    begin
+      //Update base fields
+      SQLFilesData.parent   := AParentID;
+      SQLFilesData.position := AIndex;
+      SQLFilesData.title    := StringToUTF8(AData.Name);
+      SQLFilesData.cacheicon_id := AData.CacheID;
+      //Update specific fields
+      if AData.DataType <> vtdtSeparator then
+      begin
+        SQLFilesData.icon_path      := StringToUTF8(AData.PathIcon);
+        SQLFilesData.hide_from_menu := AData.HideFromMenu;
+        //Update time fields
+        SQLFilesData.dateAdded    := AData.UnixAddDate;
+        SQLFilesData.lastModified := AData.UnixEditDate;
+        //Update specific fields
+        if (AData.DataType = vtdtFile) then
+        begin
+          with TvFileNodeData(AData) do
+          begin
+            SQLFilesData.path       := StringToUTF8(PathExe);
+            SQLFilesData.work_path  := StringToUTF8(WorkingDir);
+            SQLFilesData.parameters := StringToUTF8(Parameters);
+            SQLFilesData.clicks     := ClickCount;
+            SQLFilesData.window_state := WindowState;
+            SQLFilesData.dsk_shortcut := ShortcutDesktop;
+            SQLFilesData.autorun    := Ord(Autorun);
+            SQLFilesData.autorun_position := AutorunPos;
+            SQLFilesData.onlaunch   := Ord(ActionOnExe);
+            SQLFilesData.no_mru     := NoMRU;
+            SQLFilesData.no_mfu     := NoMFU;
+            SQLFilesData.lastAccess := MRUPosition;
+          end;
+        end;
+      end;
+    end;
+  finally
+    //Update data
+    FDatabase.Update(SQLFilesData);
+    //Update node
+    AData.ParentID := AParentID;
+    AData.Position := AIndex;
+    SQLFilesData.Free;
   end;
 end;
 

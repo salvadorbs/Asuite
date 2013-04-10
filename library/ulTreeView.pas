@@ -356,7 +356,7 @@ end;
 
 procedure RefreshList(Tree: TBaseVirtualTree);
 begin
-  //SaveASuiteSQLite(Tree, true);
+  DBManager.SaveData(Tree);
 end;
 
 //------------------------------------------------------------------------------
@@ -410,8 +410,7 @@ begin
   MRUList.Remove(NodeData.Data);
   MFUList.Remove(NodeData.Data);
   //Remove item from sqlite database
-  { TODO -c Sqlite database : DeleteItem }
-//  DBManager.DeleteItem(NodeData.Data.ID);
+  DBManager.DeleteItem(NodeData.Data.ID);
 end;
 
 procedure TIterateSubtreeProcs.ActionsOnShutdown(Sender: TBaseVirtualTree; Node: PVirtualNode;
