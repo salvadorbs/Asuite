@@ -860,6 +860,7 @@ procedure TfrmMain.miExportListClick(Sender: TObject);
 begin
   if (SaveDialog1.Execute) then
   begin
+    //TODO - Replace SaveAsuite with RefreshList
     //SaveASuiteSQLite(vstList,true);
     //CopyFile(PChar(DBManager.DBFileName),PChar(SaveDialog1.FileName),false)
   end;
@@ -880,6 +881,7 @@ begin
   end;
   //Execute actions on asuite's shutdown (inside vstList)
   vstList.IterateSubtree(nil, IterateSubtreeProcs.ActionsOnShutdown, nil, [], True);
+  //TODO - Replace SaveAsuite with RefreshList
   //SaveASuiteSQLite(vstList,true);
 end;
 
@@ -933,7 +935,6 @@ begin
   //List & Options
   DBManager.LoadData(vstList);
   RunAutorun;
-  StartUpTime := false;
   //Get placeholder for edtSearch
   edtSearch.TextHint := StringReplace(miSearchName.Caption, '&', '', []);
 end;

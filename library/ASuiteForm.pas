@@ -48,10 +48,10 @@ implementation
 
 constructor TASuiteForm.Create(AOwner: TComponent);
 begin
-  inherited;
-
-  FStartUpTime  := True;
   FShutdownTime := False;
+  FStartUpTime  := True;
+  inherited;
+  FStartUpTime  := False;
 end;
 
 destructor TASuiteForm.Destroy;

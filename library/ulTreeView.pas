@@ -130,7 +130,7 @@ begin
     vtdtFolder:
     begin
       //Folder
-      NodeData.Data.PathIcon := AbsoluteToRelative(SUITE_ICONS_PATH + IntToStr(IMG_Folder) + EXT_ICO);
+      NodeData.Data.PathIcon := AbsoluteToRelative(SUITE_ICONS_PATH + FILEICON_Folder + EXT_ICO);
       FolderPath             := BrowseForFolder('',SUITE_WORKING_PATH);
       if FolderPath <> '' then
       begin
@@ -207,7 +207,7 @@ begin
   Name     := ExtractFileName(PathTemp);
   //If it is a directory, use folder icon else get its icon
   if DirectoryExists(PathTemp) then
-    NodeData.Data.PathIcon := AbsoluteToRelative(SUITE_ICONS_PATH + IntToStr(IMG_Folder) + EXT_ICO)
+    NodeData.Data.PathIcon := AbsoluteToRelative(SUITE_ICONS_PATH + FILEICON_Folder + EXT_ICO)
   else
     Delete(Name,pos(ExtractFileExt(PathTemp),name),Length(name));
   //Set some node record's variables

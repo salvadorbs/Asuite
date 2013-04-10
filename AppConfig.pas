@@ -68,6 +68,7 @@ const
 
   //File
   DEBUG_FILE    = 'Debug.txt';
+
   //Form
   frmMainWidth  = 190;
   frmMainHeight = 440;
@@ -83,6 +84,9 @@ const
 
   //Parameters' variables: constant placeholders
   CONST_PARAM_PENDRV = '%pendrive%';
+
+  //Icons id
+  FILEICON_Folder = '10';
 
 var
   //Paths
@@ -121,7 +125,7 @@ var
   IMG_SearchType,   //ID = 19;
   IMG_Url,          //ID = 20;
   IMG_Accept,       //ID = 21;
-  IMG_Cancel       //ID = 22;
+  IMG_Cancel        //ID = 22;
                     : Integer;
 
 resourcestring

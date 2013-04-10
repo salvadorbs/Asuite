@@ -117,7 +117,20 @@ end;
 
 procedure TClassicMenu.ShowMainForm(Sender: TObject);
 begin
-  frmMain.Show;
+  //From CoolTrayicon source
+  if Application.MainForm <> nil then
+  begin
+    // Restore the app, but don't automatically show its taskbar icon
+    // Show application's TASKBAR icon (not the tray icon)
+    ShowWindow(Application.Handle, SW_RESTORE);
+    Application.Restore;
+    // Show the form itself
+    if Application.MainForm.WindowState = wsMinimized then
+      Application.MainForm.WindowState := wsNormal;    // Override minimized state
+    Application.MainForm.Visible := True;
+    // Bring the main form (or its modal dialog) to the foreground
+    SetForegroundWindow(Application.Handle);
+  end;
 end;
 
 procedure TClassicMenu.ShowTrayiconMenu;
@@ -488,7 +501,6 @@ begin
       Menu.Items.Add(MenuItem);
     end;
     MenuItem.Enabled    := False;
-    MenuItem.Caption    := '-';
     MenuItem.Hint       := Text;
     MenuItem.OnDrawItem := DrawCaptionedSeparator;
   end;
@@ -542,14 +554,14 @@ procedure TClassicMenu.PopulateDirectory(Sender: TObject);
           NMI             := TASMenuItem.Create(AMI);
           NMI.Caption     := SR.Name;
           NMI.Hint        := AMI.Hint + SR.Name + PathDelim;
-          NMI.ImageIndex  := ImagesDM.GetSimpleIconIndex(SUITE_ICONS_PATH + IntToStr(IMG_Folder) + EXT_ICO); // folder image
+          NMI.ImageIndex  := ImagesDM.GetSimpleIconIndex(SUITE_ICONS_PATH + FILEICON_Folder + EXT_ICO); // folder image
           //Add item in traymenu
           AMI.Add(NMI);
           //If it is not '.', expand folder else add OnClick event to open folder
           if NMI.Caption <> '.' then
             PopulateDirectory(NMI)
-          //else
-          //  NMI.OnClick := OpenFile;
+          else
+            NMI.OnClick := OpenFile;
         end;
         //Next folder
         Found := FindNext(SR) = 0;
