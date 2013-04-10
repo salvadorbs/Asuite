@@ -49,6 +49,8 @@
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
+        <Manifest_File>None</Manifest_File>
+        <Icon_MainIcon>ASuite.ico</Icon_MainIcon>
         <VerInfo_Locale>1040</VerInfo_Locale>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_AutoGenVersion>true</VerInfo_AutoGenVersion>
@@ -62,12 +64,11 @@
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
         <VerInfo_AutoGenVersion>false</VerInfo_AutoGenVersion>
-        <DCC_UnitSearchPath>3p\Virtual Treeview\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>3p\Virtual Treeview\Source;3p\mormot\SynDBDataset;3p\mormot;3p\mormot\sqlite3;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
         <Debugger_RunParams>debug</Debugger_RunParams>
         <DCC_Namespace>Data.Win;Datasnap.Win;Web.Win;Soap.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
-        <Icon_MainIcon>ASuite.ico</Icon_MainIcon>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
@@ -84,16 +85,16 @@
         <DCC_DcuOutput>dcu</DCC_DcuOutput>
         <DCC_ObjOutput>dcu</DCC_ObjOutput>
         <DCC_HppOutput>dcu</DCC_HppOutput>
-        <DCC_Define>ASuite;RELEASE;$(DCC_Define)</DCC_Define>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
         <VerInfo_AutoGenVersion>false</VerInfo_AutoGenVersion>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_Optimize>true</DCC_Optimize>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
-        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1165;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
         <DCC_DependencyCheckOutputName>bin\ASuite.exe</DCC_DependencyCheckOutputName>
         <Version>7.0</Version>
         <DCC_Optimize>False</DCC_Optimize>
@@ -101,9 +102,10 @@
         <DCC_DcuOutput>dcu</DCC_DcuOutput>
         <DCC_ObjOutput>dcu</DCC_ObjOutput>
         <DCC_HppOutput>dcu</DCC_HppOutput>
-        <DCC_Define>ASuite;DEBUG;$(DCC_Define)</DCC_Define>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
         <VerInfo_AutoGenVersion>false</VerInfo_AutoGenVersion>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
         <VerInfo_Locale>1033</VerInfo_Locale>
@@ -206,10 +208,14 @@
             <Form>frmPropertySeparator</Form>
         </DCCReference>
         <DCCReference Include="library\ulExeUtils.pas"/>
-        <DCCReference Include="ImportList.pas"/>
+        <DCCReference Include="ImportList.pas">
+            <Form>frmImportList</Form>
+        </DCCReference>
+        <DCCReference Include="Sensor.pas">
+            <Form>frmSensor</Form>
+        </DCCReference>
         <DCCReference Include="library\ASuiteForm.pas"/>
         <DCCReference Include="library\ulTreeView.pas"/>
-        <DCCReference Include="library\ulSQLite.pas"/>
         <None Include="ASuite.inc"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>

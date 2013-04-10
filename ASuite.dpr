@@ -25,10 +25,11 @@ uses
   udClassicMenu in 'udClassicMenu.pas' {ClassicMenu: TDataModule},
   PropertySeparator in 'PropertySeparator.pas' {frmPropertySeparator},
   ulExeUtils in 'library\ulExeUtils.pas',
-  ImportList in 'ImportList.pas', Sensor {frmImportList},
+  ImportList in 'ImportList.pas' {frmImportList},
+  Sensor in 'Sensor.pas' {frmSensor},
   ASuiteForm in 'library\ASuiteForm.pas',
   ulTreeView in 'library\ulTreeView.pas',
-  ulSQLite in 'library\ulSQLite.pas';
+  SynSQLite3Static; //SQLite3 static library
 
 {$IFDEF DEBUG}
 var
@@ -49,12 +50,12 @@ begin
     SetCurrentDir(SUITE_WORKING_PATH);
     Application.CreateForm(TImagesDM, ImagesDM);
     Application.CreateForm(TClassicMenu, ClassicMenu);
-
     Config    := TConfiguration.Create;
     DBManager := TDBManager.Create(SUITE_LIST_PATH);
 
     Application.CreateForm(TfrmMain, frmMain);
     Application.ShowMainForm := false;
+    { TODO : Review this IF/Else }
     if (not(Config.ShowPanelAtStartUp)) then
       frmMain.close
     else begin
