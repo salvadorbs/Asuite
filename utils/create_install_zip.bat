@@ -1,5 +1,5 @@
-@SET BDS=%programfiles%\Embarcadero\RAD Studio\8.0
-@SET BDSCOMMONDIR=%ALLUSERSPROFILE%\Documenti\RAD Studio\8.0
+@SET BDS=%programfiles%\Embarcadero\RAD Studio\10.0
+@SET BDSCOMMONDIR=%ALLUSERSPROFILE%\Documenti\RAD Studio\10.0
 @SET FrameworkDir=%SYSTEMROOT%\Microsoft.NET\Framework\
 @SET FrameworkVersion=v2.0.50727
 @SET FrameworkSDKDir=
