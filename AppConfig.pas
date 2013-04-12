@@ -85,7 +85,7 @@ const
   //Parameters' variables: constant placeholders
   CONST_PARAM_PENDRV = '%pendrive%';
 
-  //Icons id
+  //ASuite filename icons
   FILEICON_ASuite     = '0.ico';
   FILEICON_Cat        = '1.ico';
   FILEICON_Help       = '2.ico';
@@ -122,7 +122,7 @@ var
   SUITE_ICONS_PATH   : String;
 
   // Application's files
-  SUITE_LIST_PATH     : String;
+  SUITE_LIST_PATH    : String;
 
   //Menu icons
   IMAGE_INDEX_ASuite,       //ID = 0;
@@ -149,6 +149,8 @@ var
   IMAGE_INDEX_Accept,       //ID = 21;
   IMAGE_INDEX_Cancel        //ID = 22;
                             : Integer;
+
+  //Misc
 
 resourcestring
 

@@ -77,7 +77,7 @@ var
 implementation
 
 uses
-  Menus, PropertyFile, PropertyCat, ulAppConfig, ulSysUtils, udImages, PropertySeparator,
+  Menus, PropertyFile, PropertyCat, ulSysUtils, udImages, PropertySeparator,
   Main, ulDatabase;
 
 function AddNode(Sender: TBaseVirtualTree;AType: TvTreeDataType): PBaseData;

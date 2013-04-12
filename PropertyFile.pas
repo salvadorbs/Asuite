@@ -90,7 +90,7 @@ implementation
 {$R *.dfm}
 
 uses
-  AppConfig, ulEnumerations, udImages, ulSysUtils, ulExeUtils, OrderSoftware,
+  AppConfig, ulEnumerations, udImages, ulSysUtils, OrderSoftware,
   Main, ulCommonUtils;
 
 class function TfrmPropertyFile.Edit(AOwner: TComponent; NodeData: PBaseData): TModalResult;

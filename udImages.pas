@@ -156,11 +156,12 @@ function TImagesDM.GetSimpleIconIndex(xpath: string): integer;
 var
   FileInfo : TSHFileInfo;
 begin
-  //Get icon
-  SHGetFileInfo(PChar(xpath), 0, FileInfo, SizeOf(TSHFileInfo), SHGFI_SYSICONINDEX or
-                                                                SHGFI_SMALLICON or
-                                                                SHGFI_USEFILEATTRIBUTES);
-  Result := FileInfo.iIcon;
+ //Get icon
+  Result := -1;
+  if SHGetFileInfo(PChar(xpath), 0, FileInfo, SizeOf(TSHFileInfo),
+        SHGFI_SYSICONINDEX or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES) <> 0
+  then
+    Result := FileInfo.iIcon;
 end;
 
 procedure TImagesDM.DataModuleCreate(Sender: TObject);

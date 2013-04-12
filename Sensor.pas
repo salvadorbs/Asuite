@@ -25,6 +25,7 @@ uses
   Dialogs;
 
 type
+
   TfrmSensor = class(TForm)
     procedure FormCreate(Sender: TObject);
     procedure CreateParams(var Params: TCreateParams); override;

@@ -14,7 +14,7 @@ object frmSensor: TfrmSensor
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = True
+  OldCreateOrder = False
   OnCreate = FormCreate
   OnMouseDown = FormMouseDown
   OnMouseMove = FormMouseMove

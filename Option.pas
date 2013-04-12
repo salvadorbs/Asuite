@@ -24,7 +24,7 @@ interface
 
 uses
   Windows, SysUtils, Forms, Dialogs, StdCtrls, ComCtrls, ulEnumerations,
-  Vcl.Controls, System.Classes;
+  Vcl.Controls, System.Classes, Vcl.Graphics, System.UITypes;
 
 type
 

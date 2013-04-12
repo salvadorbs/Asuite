@@ -24,13 +24,14 @@ interface
 
 uses
   Windows, SysUtils, Classes, Graphics, Forms, Dialogs, ComCtrls, Clipbrd,
-  AppConfig, StdCtrls, VirtualTrees, ulCommonClasses, XMLIntf;
+  AppConfig, StdCtrls, VirtualTrees, ulCommonClasses, XMLIntf, System.UITypes,
+  ulAppConfig;
 
 { Converters }
 function RGBToHtml(iRGB: Cardinal): string;
 function ColorToHtml(Color:TColor): string;
 function HtmlToColor(Color: string): TColor;
-function StrToFont(const s: string; Font: TFont): boolean;
+function StrToFont(const s: string): TFont;
 function FontToStr(Font: TFont): string;
 
 { Forms }
@@ -81,7 +82,7 @@ const
 implementation
 
 uses
-  ulStringUtils,ulNodeDataTypes,registry,Sensor,ulAppConfig,Main;
+  ulStringUtils,registry,Main;
 
 function RGBToHtml(iRGB: Cardinal): string;
 begin
@@ -101,31 +102,23 @@ begin
   Result := StringToColor('$' + Copy(Color, 6, 2) + Copy(Color, 4, 2) + Copy(Color, 2, 2));
 end;
 
-function StrToFont(const s: string; Font: TFont): boolean;
+function StrToFont(const s: string): TFont;
 var
-  afont : TFont;
   Strs : TStringList;
 begin
-  afont := TFont.Create;
+  Result := TFont.Create;
+  Strs := TStringList.Create;
   try
-    afont.Assign(Font);
-    Strs := TStringList.Create;
-    try
-      Strs.Text := StringReplace(s, '|', #10, [rfReplaceAll]);
-      result    := Strs.Count = 4;
-      if result then
-      begin
-        afont.Name  := Strs[0];
-        afont.Size  := StrToInt(Strs[1]);
-        afont.Color := HtmlToColor(Strs[2]);
-        afont.Style := TFontStyles(byte(StrToInt(Strs[3])));
-      end;
-      Font.Assign(afont);
-    finally
-      Strs.Free;
+    Strs.Text := StringReplace(s, '|', #10, [rfReplaceAll]);
+    if Strs.Count = 4 then
+    begin
+      Result.Name  := Strs[0];
+      Result.Size  := StrToInt(Strs[1]);
+      Result.Color := HtmlToColor(Strs[2]);
+      Result.Style := TFontStyles(byte(StrToInt(Strs[3])));
     end;
   finally
-    afont.Free;
+    Strs.Free;
   end;
 end;
 
@@ -135,7 +128,7 @@ var
 begin
   sColor := ColorToHtml(Font.Color);
   sStyle := IntToStr(byte(Font.Style));
-  result := Font.Name +'|'+ IntToStr(Font.Size) + '|' + sColor + '|' + sStyle;
+  result := Font.Name + '|' + IntToStr(Font.Size) + '|' + sColor + '|' + sStyle;
 end;
 
 function CreateDialogProgressBar(DialogMsg: String;NumberFolders: Integer): TForm;

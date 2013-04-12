@@ -563,8 +563,6 @@ var
 begin
   NodeData   := Sender.GetNodeData(Node);
   ImageIndex := NodeData.ImageIndex;
-  if Column = 1 then
-    ImageIndex := -1;
 end;
 
 procedure TfrmMain.vstListGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
