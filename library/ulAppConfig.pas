@@ -24,7 +24,7 @@ interface
 
 uses
   Windows, SysUtils, Graphics, Forms, Controls, VirtualTrees, ulEnumerations,
-  Vcl.Imaging.pngimage;
+  Vcl.Imaging.pngimage, System.UITypes;
 
 type
 

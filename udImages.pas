@@ -171,17 +171,17 @@ var
 begin
   //Use System ImageList
   Flags := SHGFI_SYSICONINDEX or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES;
-  IcoImages.Handle      := SHGetFileInfo('', 0, SFI, SizeOf(SFI), Flags);
+  IcoImages.Handle      := SHGetFileInfo('', 0, SFI, SizeOf(TSHFileInfo), Flags);
   IcoImages.ShareImages := True;
   //Menu icons
-  IMAGE_INDEX_ASuite     := LoadASuiteIconFromFile(FILEICON_ASuite);
-  IMAGE_INDEX_Cat        := LoadASuiteIconFromFile(FILEICON_Cat);
   IMAGE_INDEX_Help       := LoadASuiteIconFromFile(FILEICON_Help);
   IMAGE_INDEX_Options    := LoadASuiteIconFromFile(FILEICON_Options);
   IMAGE_INDEX_AddCat     := LoadASuiteIconFromFile(FILEICON_AddCat);
   IMAGE_INDEX_AddFile    := LoadASuiteIconFromFile(FILEICON_AddFile);
   IMAGE_INDEX_AddFolder  := LoadASuiteIconFromFile(FILEICON_AddFolder);
   IMAGE_INDEX_Delete     := LoadASuiteIconFromFile(FILEICON_Delete);
+  IMAGE_INDEX_ASuite     := LoadASuiteIconFromFile(FILEICON_ASuite);
+  IMAGE_INDEX_Cat        := LoadASuiteIconFromFile(FILEICON_Cat);
   IMAGE_INDEX_Property   := LoadASuiteIconFromFile(FILEICON_Property);
   IMAGE_INDEX_Save       := LoadASuiteIconFromFile(FILEICON_Save);
   IMAGE_INDEX_Folder     := LoadASuiteIconFromFile(FILEICON_Folder);

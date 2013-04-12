@@ -191,7 +191,6 @@ object frmMain: TfrmMain
         Constraints.MaxHeight = 21
         PopupMenu = pmSearch
         TabOrder = 1
-        Text = 'edtSearch'
         OnKeyPress = btnedtSearchKeyPress
       end
     end

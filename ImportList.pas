@@ -206,7 +206,9 @@ begin
   if (cbImportSettings.Checked) then
   begin
     if InternalImportOptions then
-      ImagesDM.IcoImages.GetBitmap(IMAGE_INDEX_Accept, imgSettings.Picture.Bitmap);
+      ImagesDM.IcoImages.GetIcon(IMAGE_INDEX_Accept, imgSettings.Picture.Icon)
+    else
+      ImagesDM.IcoImages.GetIcon(IMAGE_INDEX_Cancel,imgList.Picture.Icon);
   end;
 end;
 
@@ -217,8 +219,10 @@ begin
     //Set progressbar's max
     pbImport.Max := GetNumberNodeImp(vstListImp);
     try
-      TreeImp2Tree(vstListImp,frmMain.vstList);
-      ImagesDM.IcoImages.GetBitmap(IMAGE_INDEX_Accept,imgList.Picture.Bitmap);
+      if TreeImp2Tree(vstListImp,frmMain.vstList) then
+        ImagesDM.IcoImages.GetIcon(IMAGE_INDEX_Accept,imgList.Picture.Icon)
+      else
+        ImagesDM.IcoImages.GetIcon(IMAGE_INDEX_Cancel,imgList.Picture.Icon);
       lblItems.Caption := Format(msgItemsImported,[pbImport.Max]);
     except
       on E : Exception do
