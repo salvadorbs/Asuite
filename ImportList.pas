@@ -111,7 +111,7 @@ implementation
 {$R *.dfm}
 
 uses
-  Main, ulNodeDataTypes, ulCommonUtils, ulTreeView, ulCommonClasses, udImages,
+  Main, ulNodeDataTypes, ulCommonUtils, ulTreeView, udImages,
   ulAppConfig;
 
 procedure TfrmImportList.btnCancelClick(Sender: TObject);
@@ -618,7 +618,7 @@ begin
       begin
         //ASuite 2.x
         DBImp := TDBManager.Create(edtPathList.Text);
-        //DBImp.LoadOptions;
+        DBImp.ImportOptions;
         DBImp.Destroy;
       end;
   finally

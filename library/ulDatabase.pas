@@ -24,7 +24,8 @@ interface
 
 uses
   Windows, SysUtils, Forms, Dialogs, VirtualTrees, ulNodeDataTypes, ulEnumerations,
-  ulCommonClasses, Classes, mORMot, SynCommons, mORMotSQLite3;
+  ulCommonClasses, Classes, mORMot, SynCommons, mORMotSQLite3, Vcl.Graphics,
+  System.UITypes, Vcl.Controls;
 
 type
 
@@ -94,6 +95,106 @@ type
     property autorun_position: Integer read Fautorun_position write Fautorun_position;
   end;
 
+  TSQLtbl_options = class(TSQLRecord)
+  private
+    //General
+    FStartWithWindows   : Boolean;
+    FShowPanelAtStartUp : Boolean;
+    FShowMenuAtStartUp  : Boolean;
+    //Main Form
+    FLanguage           : RawUTF8; { TODO -oMatteo -c : Language code (type RawUTF8?) 01/12/2009 23:02:23 }
+    FUseCustomTitle     : Boolean;
+    FCustomTitleString  : RawUTF8;
+    FHideTabSearch      : Boolean;
+    //Main Form - Position and size
+    FHoldSize           : Boolean;
+    FAlwaysOnTop        : Boolean;
+    FListFormTop        : Integer;
+    FListFormLeft       : Integer;
+    FListFormWidth      : Integer;
+    FListFormHeight     : Integer;
+    //Main Form - Treevew
+    FTVBackground       : Boolean;
+    FTVBackgroundPath   : RawUTF8;
+    FTVAutoOpClCats     : Boolean; //Automatic Opening/closing categories
+    FTVFont             : RawUTF8;
+    //MRU
+    FMRU                : Boolean;
+    FSubMenuMRU         : Boolean;
+    FMRUNumber          : Integer;
+    //MFU
+    FMFU                : Boolean;
+    FSubMenuMFU         : Boolean;
+    FMFUNumber          : Integer;
+    //Backup
+    FBackup             : Boolean;
+    FBackupNumber       : Integer;
+    //Other functions
+    FAutorun            : Boolean;
+    FCache              : Boolean;
+    //Execution
+    FActionOnExe        : TActionOnExecution;
+    FRunSingleClick     : Boolean;
+    //Trayicon
+    FTrayIcon           : Boolean;
+    FTrayUseCustomIcon  : Boolean;
+    FTrayCustomIconPath : RawUTF8;
+    FActionClickLeft    : Integer;
+    FActionClickRight   : Integer;
+    //Mouse Sensors
+    FSensorLeftClick    : RawUTF8; //0 Top, 1 Left, 2 Right, 3 Bottom
+    FSensorRightClick   : RawUTF8;
+  published
+    //property FIELDNAME: TYPE read FFIELDNAME write FFIELDNAME;
+    //General
+    property startwithwindows: Boolean read FStartWithWindows write FStartWithWindows;
+    property showpanelatstartup: Boolean read FShowPanelAtStartUp write FShowPanelAtStartUp;
+    property showmenuatstartup: Boolean read FShowMenuAtStartUp write FShowMenuAtStartUp;
+    // Main Form
+    property language: RawUTF8 read FLanguage write FLanguage;
+    property usecustomtitle: Boolean read FUseCustomTitle write FUseCustomTitle;
+    property customtitlestring : RawUTF8 read FCustomTitleString write FCustomTitleString;
+    property hidetabsearch: Boolean read FHideTabSearch write FHideTabSearch;
+    // Main Form - Position and size
+    property holdsize: Boolean read FHoldSize write FHoldSize;
+    property alwaysontop: Boolean read FAlwaysOnTop write FAlwaysOnTop;
+    property listformtop: Integer read FListFormTop write FListFormTop;
+    property listformleft: Integer read FListFormLeft write FListFormLeft;
+    property listformwidth: Integer read FListFormWidth write FListFormWidth;
+    property listformheight: Integer read FListFormHeight write FListFormHeight;
+    // Main Form - Treevew
+    property tvbackground: Boolean read FTVBackground write FTVBackground;
+    property tvbackgroundpath: RawUTF8 read FTVBackgroundPath write FTVBackgroundPath;
+    property tvautoopclcats: Boolean read FTVAutoOpClCats write FTVAutoOpClCats;
+    property tvfont: RawUTF8 read FTVFont write FTVFont;
+    // MRU
+    property mru: Boolean read FMRU write FMRU;
+    property submenumru: Boolean read FSubMenuMRU write FSubMenuMRU;
+    property mrunumber: Integer read FMRUNumber write FMRUNumber;
+    // MFU
+    property mfu: Boolean read FMFU write FMFU;
+    property submenumfu: Boolean read FSubMenuMFU write FSubMenuMFU;
+    property mfunumber: Integer read FMFUNumber write FMFUNumber;
+    // Backup
+    property backup: Boolean read FBackup write FBackup;
+    property backupnumber: Integer read FBackupNumber write FBackupNumber;
+    // Other functions
+    property autorun: Boolean read FAutorun write FAutorun;
+    property cache: Boolean read FCache write FCache;
+    // Execution
+    property actiononexe: TActionOnExecution read FActionOnExe write FActionOnExe;
+    property runsingleclick: Boolean read FRunSingleClick write FRunSingleClick;
+    // Trayicon
+    property trayicon: Boolean read FTrayIcon write FTrayIcon;
+    property trayusecustomicon: Boolean read FTrayUseCustomIcon write FTrayUseCustomIcon;
+    property traycustomiconpath: RawUTF8 read FTrayCustomIconPath write FTrayCustomIconPath;
+    property actionclickleft: Integer read FActionClickLeft write FActionClickLeft;
+    property actionclickright: Integer read FActionClickRight write FActionClickRight;
+    //Mouse Sensor
+    property mousesensorleft:RawUTF8 read FSensorLeftClick write FSensorLeftClick;
+    property mousesensorright:RawUTF8 read FSensorRightClick write FSensorRightClick;
+  end;
+
   { TDBManager }
 
   TDBManager = class
@@ -102,15 +203,22 @@ type
     FDatabase   : TSQLRest;
     FSQLModel   : TSQLModel;
     FDBVersion  : TVersionInfo;
+    FASuiteVersion : TVersionInfo;
     procedure InternalLoadVersion;
-    procedure InternalLoadData(Tree: TBaseVirtualTree; IsImport: Boolean = false);
+    procedure InternalLoadData(Tree: TBaseVirtualTree);
     procedure InternalLoadListItems(Tree: TBaseVirtualTree; ID: Integer;
                             ParentNode: PVirtualNode; IsImport: Boolean = false);
+    procedure InternalLoadOptions;
     procedure InternalSaveListItems(Tree:TBaseVirtualTree; ANode: PVirtualNode;AParentID: Int64);
     procedure InternalSaveData(Tree: TBaseVirtualTree; ANode: PVirtualNode;
       AParentID: Int64);
     procedure UpdateFileRecord(AData: TvBaseNodeData;AIndex, AParentID: Integer);
     procedure InsertFileRecord(AData: TvBaseNodeData;AIndex, AParentID: Integer);
+    procedure InternalSaveVersion;
+    procedure InternalSaveOptions;
+    procedure ClearTable(SQLRecordClass:TSQLRecordClass);
+    procedure UTF8ToMouseSensors(StringSensors: RawUTF8; MouseButton: TMouseButton);
+    function  MouseSensorsToUTF8(MouseButton: TMouseButton): RawUTF8;
   public
     constructor Create(const DBFilePath: string);
     destructor Destroy; override;
@@ -121,60 +229,16 @@ type
     function  SaveData(Tree: TBaseVirtualTree): Boolean;
     procedure DeleteItem(aID: Integer);
     procedure ImportData(Tree: TBaseVirtualTree); //For frmImportList
+    procedure ImportOptions; //For frmImportList
   end;
 
 var
   DBManager: TDBManager;
 
-const
-  //Tables
-  DBTable_files   = 'tbl_files';
-  DBTable_version = 'tbl_version';
-  DBTable_options = 'tbl_options';
-
-  //tblOptions's fields
-  DBField_options_startwithwindows   = 'startwithwindows';
-  DBField_options_showpanelatstartup = 'showpanelatstartup';
-  DBField_options_showmenuatstartup  = 'showmenuatstartup';
-  DBField_options_language           = 'language';
-  DBField_options_usecustomtitle     = 'usecustomtitle';
-  DBField_options_customtitlestring  = 'customtitlestring';
-  DBField_options_hidetabsearch      = 'hidetabsearch';
-  DBField_options_holdsize           = 'holdsize';
-  DBField_options_alwaysontop        = 'alwaysontop';
-  DBField_options_listformtop        = 'listformtop';
-  DBField_options_listformleft       = 'listformleft';
-  DBField_options_listformwidth      = 'listformwidth';
-  DBField_options_listformheight     = 'listformheight';
-  DBField_options_tvbackground       = 'tvbackground';
-  DBField_options_tvbackgroundpath   = 'tvbackgroundpath';
-  DBField_options_tvautoopclcats     = 'tvautoopclcats';
-  DBField_options_tvfont             = 'tvfont';
-  DBField_options_mru                = 'mru';
-  DBField_options_submenumru         = 'submenumru';
-  DBField_options_mrunumber          = 'mrunumber';
-  DBField_options_mfu                = 'mfu';
-  DBField_options_submenumfu         = 'submenumfu';
-  DBField_options_mfunumber          = 'mfunumber';
-  DBField_options_backup             = 'backup';
-  DBField_options_backupnumber       = 'backupnumber';
-  DBField_options_autorun            = 'autorun';
-  DBField_options_cache              = 'cache';
-  DBField_options_actiononexe        = 'actiononexe';
-  DBField_options_runsingleclick     = 'runsingleclick';
-  DBField_options_trayicon           = 'trayicon';
-  DBField_options_trayusecustomicon  = 'trayusecustomicon';
-  DBField_options_traycustomiconpath = 'traycustomiconpath';
-  DBField_options_actionclickleft    = 'actionclickleft';
-  DBField_options_actionclickright   = 'actionclickright';
-  //Mouse Sensors
-  DBField_options_mousesensorleft    = 'mousesensorleft%d';
-  DBField_options_mousesensorright   = 'mousesensorright%d';
-
 implementation
 
 uses
-  AppConfig, ulAppConfig, ulSysUtils, ulCommonUtils, ulTreeView;
+  AppConfig, ulAppConfig, ulSysUtils, ulCommonUtils, ulTreeView, Main;
 
 { TDBManager }
 
@@ -182,14 +246,13 @@ constructor TDBManager.Create(const DBFilePath: String);
 begin
   FDBFileName := DBFilePath;
   //Load sqlite3 database and create missing tables
-  FSQLModel := TSQLModel.Create([TSQLtbl_version, TSQLtbl_files]);
+  FSQLModel := TSQLModel.Create([TSQLtbl_version, TSQLtbl_files, TSQLtbl_options]);
   FDatabase := TSQLRestServerDB.Create(FSQLModel,FDBFileName);
   TSQLRestServerDB(fDatabase).CreateMissingTables(0);
+  FASuiteVersion := TVersionInfo.Create;
 end;
 
 procedure TDBManager.DeleteItem(aID: Integer);
-var
-  SQLFilesData : TSQLtbl_files;
 begin
   FDatabase.Delete(TSQLtbl_files,aID);
 end;
@@ -200,6 +263,7 @@ begin
   FDatabase.Free;
   FSQLModel.Free;
   FDBVersion.Free;
+  FASuiteVersion.Free;
 end;
 
 procedure TDBManager.DoBackupList;
@@ -207,8 +271,6 @@ begin
   //Backup list and old delete backup
   if (Config.Backup) then
   begin
-    if not (DirectoryExists(SUITE_BACKUP_PATH)) then
-      CreateDir(SUITE_BACKUP_PATH);
     CopyFile(PChar(FDBFileName),
              PChar(SUITE_BACKUP_PATH + APP_NAME + '_' + GetDateTime + EXT_SQLBCK), false);
     DeleteOldBackups(Config.BackupNumber);
@@ -222,6 +284,52 @@ begin
   except
     on E : Exception do
       ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message]);
+  end;
+end;
+
+procedure TDBManager.ImportOptions;
+begin
+  try
+    InternalLoadOptions;
+  except
+    on E : Exception do
+      ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message]);
+  end;
+end;
+
+procedure TDBManager.UTF8ToMouseSensors(StringSensors: RawUTF8; MouseButton: TMouseButton);
+var
+  Strs: TStringList;
+  I: Integer;
+begin
+  //Mouse Sensor
+  Strs := TStringList.Create;
+  try
+    Strs.Text := StringReplace(UTF8ToString(StringSensors), '.', ''#10'', [rfReplaceAll]);
+    if MouseButton = mbLeft then
+    begin
+      for I := 0 to 3 do
+        Config.SensorLeftClick[i] := StrToInt(Strs[I]);
+    end
+    else begin
+      for I := 0 to 3 do
+        Config.SensorRightClick[i] := StrToInt(Strs[I]);
+    end;
+  finally
+    Strs.Free;
+  end;
+end;
+
+procedure TDBManager.ClearTable(SQLRecordClass:TSQLRecordClass);
+var
+  SQLData: TSQLRecord;
+begin
+  SQLData := SQLRecordClass.CreateAndFillPrepare(FDatabase, '');
+  try
+    while SQLData.FillOne do
+      FDatabase.Delete(SQLRecordClass, SQLData.ID);
+  finally
+    SQLData.Free;
   end;
 end;
 
@@ -275,19 +383,24 @@ begin
   end;
 end;
 
-procedure TDBManager.InternalLoadData(Tree: TBaseVirtualTree;
-  IsImport: Boolean = false);
+procedure TDBManager.InternalLoadData(Tree: TBaseVirtualTree);
 begin
   try
     //Load Database version
     InternalLoadVersion;
-    if Not(IsImport) then
-    begin
-      //InternalLoadOptions;
-      MRUList := TMRUList.Create(Config.MRUNumber);
-      MFUList := TMFUList.Create(Config.MFUNumber);
-    end;
-    InternalLoadListItems(Tree, 0, nil, IsImport);
+    //Load Options
+    InternalLoadOptions;
+    //Create special list
+    MRUList := TMRUList.Create(Config.MRUNumber);
+    MFUList := TMFUList.Create(Config.MFUNumber);
+    //Create folder cache, if it doesn't exist
+    if (not DirectoryExists(SUITE_CACHE_PATH)) then
+      CreateDir(SUITE_CACHE_PATH);
+    //Create folder backup, if it doesn't exist
+    if not (DirectoryExists(SUITE_BACKUP_PATH)) then
+      CreateDir(SUITE_BACKUP_PATH);
+    //Load list
+    InternalLoadListItems(Tree, 0, nil, false);
   except
     on E : Exception do
       ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message]);
@@ -352,6 +465,81 @@ begin
   end;
 end;
 
+procedure TDBManager.InternalLoadOptions;
+var
+  SQLOptionsData : TSQLtbl_options;
+begin
+  if FDatabase.TableHasRows(TSQLtbl_version) then
+  begin
+    SQLOptionsData := TSQLtbl_options.CreateAndFillPrepare(FDatabase,'');
+    try
+      //Get options from DBTable
+      while SQLOptionsData.FillOne do
+      begin
+        //General
+        Config.StartWithWindows   := SQLOptionsData.startwithwindows;
+        Config.ShowPanelAtStartUp := SQLOptionsData.showpanelatstartup;
+        Config.ShowMenuAtStartUp  := SQLOptionsData.showmenuatstartup;
+        //Main Form
+        { TODO -oMatteo -c : Insert code for language 26/11/2009 22:21:05 }
+    //      FLanguage           := '';
+        Config.CustomTitleString := UTF8ToString(SQLOptionsData.customtitlestring);
+        Config.UseCustomTitle    := SQLOptionsData.usecustomtitle;
+        Config.HideTabSearch     := SQLOptionsData.hidetabsearch;
+        //Main Form - Position and size
+        Config.HoldSize    := SQLOptionsData.holdsize;
+        Config.AlwaysOnTop := SQLOptionsData.alwaysontop;
+        //frmMain's size
+        frmMain.Width      := SQLOptionsData.listformwidth;
+        frmMain.Height     := SQLOptionsData.listformheight;
+        //FrmMain's position
+        if Not(FileExists(SUITE_LIST_PATH)) then
+          frmMain.Position := poDesigned
+        else
+          frmMain.Position := poDesktopCenter;
+        SetFormPosition(frmMain, SQLOptionsData.listformleft, SQLOptionsData.listformtop);
+        //Main Form - Treevew
+        Config.TVBackgroundPath   := UTF8ToString(SQLOptionsData.tvbackgroundpath);
+        Config.TVBackground       := SQLOptionsData.tvbackground;
+        Config.TVAutoOpClCats     := SQLOptionsData.tvautoopclcats;
+        //Treeview Font
+        Config.TVFont         := StrToFont(UTF8ToString(SQLOptionsData.tvfont));
+        //MRU
+        Config.MRU            := SQLOptionsData.mru;
+        Config.SubMenuMRU     := SQLOptionsData.submenumru;
+        Config.MRUNumber      := SQLOptionsData.mrunumber;
+        //MFU
+        Config.MFU            := SQLOptionsData.mfu;
+        Config.SubMenuMFU     := SQLOptionsData.submenumfu;
+        Config.MFUNumber      := SQLOptionsData.mfunumber;
+        //Backup
+        Config.Backup         := SQLOptionsData.backup;
+        Config.BackupNumber   := SQLOptionsData.backupnumber;
+        //Other functions
+        Config.Autorun        := SQLOptionsData.autorun;
+        Config.Cache          := SQLOptionsData.cache;
+        //Execution
+        Config.ActionOnExe    := TActionOnExecution(SQLOptionsData.actiononexe);
+        Config.RunSingleClick := SQLOptionsData.runsingleclick;
+        //Trayicon
+        Config.TrayIcon           := SQLOptionsData.trayicon;
+        Config.TrayCustomIconPath := UTF8ToString(SQLOptionsData.traycustomiconpath);
+        Config.TrayUseCustomIcon  := SQLOptionsData.trayusecustomicon;
+        Config.ActionClickLeft    := SQLOptionsData.actionclickleft;
+        Config.ActionClickRight   := SQLOptionsData.actionclickright;
+        //Mouse sensors
+        UTF8ToMouseSensors(SQLOptionsData.mousesensorleft,mbLeft);
+        UTF8ToMouseSensors(SQLOptionsData.mousesensorright,mbRight);
+      end
+    finally
+      SQLOptionsData.Free;
+      Config.UpdateSensors;
+    end;
+  end
+  else
+    Config.Changed := True;
+end;
+
 procedure TDBManager.LoadData(Tree: TBaseVirtualTree);
 begin
   //List & Options
@@ -362,23 +550,42 @@ begin
   GetChildNodesIcons(Tree, Tree.RootNode);
 end;
 
+function TDBManager.MouseSensorsToUTF8(MouseButton: TMouseButton): RawUTF8;
+var
+  I: Integer;
+  SensorString: String;
+begin
+  SensorString := '';
+  for I := 0 to 3 do
+  begin
+    if MouseButton = mbLeft then
+      SensorString := SensorString + IntToStr(Config.SensorLeftClick[I])
+    else
+      if MouseButton = mbRight then
+        SensorString := SensorString + IntToStr(Config.SensorRightClick[I]);
+    if I <> 3 then
+      SensorString := SensorString + '.'
+  end;
+  Result := StringToUTF8(SensorString);
+end;
+
 procedure TDBManager.InternalLoadVersion;
 var
-  VersionData: TSQLtbl_version;
+  SQLVersionData: TSQLtbl_version;
 begin
   if FDatabase.TableHasRows(TSQLtbl_version) then
   begin
     //Get sql data and get version info
-    VersionData := TSQLtbl_version.Create;
+    SQLVersionData := TSQLtbl_version.CreateAndFillPrepare(FDatabase,'');
     try
-      FDatabase.Retrieve(1, VersionData);
+      SQLVersionData.FillOne;
       //Create FDBVersion with db version info
-      FDBVersion := TVersionInfo.Create(VersionData.Major,
-                                        VersionData.Minor,
-                                        VersionData.Release,
-                                        VersionData.Build);
+      FDBVersion := TVersionInfo.Create(SQLVersionData.Major,
+                                        SQLVersionData.Minor,
+                                        SQLVersionData.Release,
+                                        SQLVersionData.Build);
     finally
-      VersionData.Free;
+      SQLVersionData.Free;
     end;
   end
   else begin
@@ -395,13 +602,14 @@ begin
     if FDatabase.TransactionBegin(TSQLtbl_files,1) then
     begin
       InternalSaveListItems(Tree, Anode, AParentID);
+      //If settings is changed, insert it else (if it exists) update it
+      if Config.Changed then
+        InternalSaveOptions;
+      //Save new version info
+      InternalSaveVersion;
+      //Commit data in sqlite database
       FDatabase.Commit(1);
     end;
-    //If settings is changed, insert it else (if it exists) update it
-    //if Config.Changed then
-    //  InternalSaveOptions;
-    //Save version info
-    //InternalSaveVersion;
   except
     on E : Exception do begin
       ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message]);
@@ -435,6 +643,94 @@ begin
         ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message]);
     end;
     Node := Node.NextSibling;
+  end;
+end;
+
+procedure TDBManager.InternalSaveOptions;
+var
+  SQLOptionsData : TSQLtbl_options;
+begin
+  //Clear options table
+  if FDatabase.TableHasRows(TSQLtbl_options) then
+    ClearTable(TSQLtbl_options);
+  //Save ASuite options
+  SQLOptionsData := TSQLtbl_options.Create;
+  try
+    //general
+    SQLOptionsData.startwithwindows   := Config.StartWithWindows;
+    SQLOptionsData.showpanelatstartup := Config.ShowPanelAtStartUp;
+    SQLOptionsData.showmenuatstartup  := Config.ShowMenuAtStartUp;
+    //main form
+    //SQLOptionsData.language           := Config.Language;
+    SQLOptionsData.usecustomtitle    := Config.UseCustomTitle;
+    SQLOptionsData.customtitlestring := StringToUTF8(Config.CustomTitleString);
+    SQLOptionsData.hidetabsearch     := Config.HideTabSearch;
+    //main form - position and size
+    SQLOptionsData.holdsize          := Config.HoldSize;
+    SQLOptionsData.alwaysontop       := Config.AlwaysOnTop;
+    SQLOptionsData.listformtop       := frmMain.Top;
+    SQLOptionsData.listformleft      := frmMain.Left;
+    SQLOptionsData.listformwidth     := frmMain.Width;
+    SQLOptionsData.listformheight    := frmMain.Height;
+    //main form - treevew
+    SQLOptionsData.tvbackground      := Config.TVBackground;
+    SQLOptionsData.tvbackgroundpath  := StringToUTF8(Config.TVBackgroundPath);
+    SQLOptionsData.tvautoopclcats    := Config.TVAutoOpClCats;
+    SQLOptionsData.tvfont            := StringToUTF8(FontToStr(Config.TVFont));
+    //mru
+    SQLOptionsData.mru          := Config.MRU;
+    SQLOptionsData.submenumru   := Config.SubMenuMRU;
+    SQLOptionsData.mrunumber    := Config.MRUNumber;
+    //mfu
+    SQLOptionsData.mfu          := Config.MFU;
+    SQLOptionsData.submenumfu   := Config.SubMenuMFU;
+    SQLOptionsData.mfunumber    := Config.MFUNumber;
+    //backup
+    SQLOptionsData.backup       := Config.Backup;
+    SQLOptionsData.backupnumber := Config.BackupNumber;
+    //other functions
+    SQLOptionsData.autorun      := Config.Autorun;
+    SQLOptionsData.cache        := Config.Cache;
+    //execution
+    SQLOptionsData.actiononexe    := TActionOnExecution(Config.ActionOnExe);
+    SQLOptionsData.runsingleclick := Config.RunSingleClick;
+    //trayicon
+    SQLOptionsData.trayicon := Config.TrayIcon;
+    SQLOptionsData.trayusecustomicon  := Config.TrayUseCustomIcon;
+    SQLOptionsData.traycustomiconpath := StringToUTF8(Config.TrayCustomIconPath);
+    SQLOptionsData.actionclickleft    := Config.ActionClickLeft;
+    SQLOptionsData.actionclickright   := Config.ActionClickRight;
+    //Mouse Sensor
+    SQLOptionsData.mousesensorleft  := MouseSensorsToUTF8(mbLeft);
+    SQLOptionsData.mousesensorright := MouseSensorsToUTF8(mbRight);
+    FDatabase.Add(SQLOptionsData,true);
+  finally
+    SQLOptionsData.Free;
+  end;
+end;
+
+procedure TDBManager.InternalSaveVersion;
+var
+  SQLVersionData: TSQLtbl_version;
+begin
+  //If necessary, clear version table
+  if FDatabase.TableHasRows(TSQLtbl_version) then
+  begin
+    if CompareVersionInfo(FDBVersion,FASuiteVersion) <> 0 then
+      ClearTable(TSQLtbl_version)
+    else
+      Exit;
+  end;
+  //Insert ASuite version info
+  SQLVersionData := TSQLtbl_version.Create;
+  try
+    SQLVersionData.Major   := FASuiteVersion.Major;
+    SQLVersionData.Minor   := FASuiteVersion.Minor;
+    SQLVersionData.Release := FASuiteVersion.Release;
+    SQLVersionData.Build   := FASuiteVersion.Build;
+    FDatabase.Add(SQLVersionData,true);
+  finally
+    SQLVersionData.Free;
   end;
 end;
 
