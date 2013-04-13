@@ -59,7 +59,7 @@ copy "..\..\bin\Docs\Project ASuite.url" Docs
 
 cd ..
 
-"%programfiles%\NSIS\makensis.exe" /V2 /X"SetCompressor /FINAL /SOLID lzma" "install_script.nsi"
+"%ProgramFiles(x86)%\NSIS\makensis.exe" /V2 /X"SetCompressor /FINAL /SOLID lzma" "install_script.nsi"
 
 rd /s /q release\
 

@@ -48,7 +48,7 @@ Section "SezionePrincipale" SEC01
   SetOutPath "$INSTDIR"
   SetOverwrite try
   File "release\ASuite.exe"
-  File "release\sqlite3.dll"
+;  File "release\sqlite3.dll"
   IfSilent +6
     CreateDirectory "$SMPROGRAMS\ASuite"
     CreateShortCut "$SMPROGRAMS\ASuite\SalvadorSoftware Site.lnk" "$INSTDIR\SalvadorSoftware Site.url"

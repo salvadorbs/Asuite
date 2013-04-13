@@ -3,7 +3,7 @@ object frmAbout: TfrmAbout
   Top = 154
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
-  Caption = 'Card'
+  Caption = 'About Asuite'
   ClientHeight = 390
   ClientWidth = 390
   Color = clBtnFace
