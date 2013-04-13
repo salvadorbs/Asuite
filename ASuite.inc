@@ -22,8 +22,5 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 // Build options for ASuite
 //------------------------------------------------------------------------------
 
-// Enable this define to load theme images from resources
-{.$DEFINE ThemeFromRes}
-
-// Enable this define to load popupmenu icons from resources
-{.$DEFINE IconsFromRes}
+//Enable hack for a faster popupmenu
+{$DEFINE FASTHACK}

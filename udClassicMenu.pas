@@ -20,11 +20,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 unit udClassicMenu;
 
+{$I ASuite.inc}
+
 interface
 
 uses
   Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
-  ExtCtrls, VirtualTrees, ulCommonClasses, ShellApi;
+  ExtCtrls, VirtualTrees, ulCommonClasses, ShellApi, Vcl.ImgList;
 
 type
   TClassicMenu = class(TDataModule)
@@ -54,6 +56,8 @@ type
     function  IsCaptionedSeparator(MenuItem: TMenuItem): Boolean;
     function CreateSpecialList(Menu: TPopupMenu; SList: TNodeDataList;
                                SubMenuCaption: String): Integer;
+    procedure AddSub(MI: TMenuItem);
+    procedure AddItem(TargetItem, AMenuItem: TMenuItem);
   public
     { Public declarations }
     procedure ShowTrayiconMenu;
@@ -64,6 +68,48 @@ type
   TColorQuad = record
     Red, Green, Blue, Alpha: Byte;
   end;
+
+{$IFDEF FASTHACK}
+  { TESTED ONLY WITH DELPHI 5 ENTERPRISE. THE FIELD ORDER/SIZE MUST MATCH SO THAT
+    FItems: TList AND FParent: TMenuItem ARE ACCESSIBLE. }
+  TMenuItemPrivateHack = class(TComponent)
+  private
+{$HINTS OFF}
+    FCaption: string;
+    FChecked: Boolean;
+    FEnabled: Boolean;
+    FDefault: Boolean;
+    FAutoHotkeys: TMenuItemAutoFlag;
+    FAutoLineReduction: TMenuItemAutoFlag;
+    FRadioItem: Boolean;
+    FVisible: Boolean;
+    FGroupIndex: Byte;
+    FImageIndex: TImageIndex;
+    FActionLink: TMenuActionLink;
+    FBreak: TMenuBreak;
+    FBitmap: TBitmap;
+    FCommand: Word;
+    FHelpContext: THelpContext;
+    FHint: string;
+    FItems: TList;
+    FShortCut: TShortCut;
+    FParent: TMenuItem;
+    FMerged: TMenuItem;
+    FMergedWith: TMenuItem;
+    FMenu: TMenu;
+    FStreamedRebuild: Boolean;
+    FImageChangeLink: TChangeLink;
+    FSubMenuImages: TCustomImageList;
+    FOnChange: TMenuChangeEvent;
+    FOnClick: TNotifyEvent;
+    FOnDrawItem: TMenuDrawItemEvent;
+    FOnAdvancedDrawItem: TAdvancedMenuDrawItemEvent;
+    FOnMeasureItem: TMenuMeasureItemEvent;
+    FAutoCheck: Boolean;
+    FHandle: TMenuHandle;
+{$HINTS ON}
+  end;
+{$ENDIF}
 
 const
   CaptionLineItemHeight = 14;
@@ -82,7 +128,7 @@ uses
 
 procedure TClassicMenu.DataModuleCreate(Sender: TObject);
 begin
-  tiTrayMenu.Hint   := APP_NAME + ' ' + VERSION_RELEASE + ' ' + VERSION_PRERELEASE + ' (' +
+  tiTrayMenu.Hint   := APP_NAME + ' ' + VERSION_COMPLETE + ' ' + VERSION_PRERELEASE + ' (' +
                        SUITE_DRIVE + ')';
   pmTrayicon.Images := ImagesDM.IcoImages;
 end;
@@ -176,9 +222,9 @@ begin
         //If it is a Directory, add in Trayicon Menu its subfolders and its subfiles
         if DirectoryExists(TvFileNodeData(NodeData.Data).PathAbsoluteExe) then
         begin
+          MenuItem.OnClick := populateDirectory;
           MenuItem.Hint    := (TvFileNodeData(NodeData.Data)).PathAbsoluteExe;
-          //Populate MenuItem with folder and files from folder path
-          PopulateDirectory(MenuItem);
+          AddSub(MenuItem);
         end;
       end
       else begin
@@ -305,6 +351,34 @@ begin
         end;
     end;
   end;
+end;
+
+procedure TClassicMenu.AddSub(MI: TMenuItem);
+var
+  MISub: TMenuItem;
+begin
+  MISub := TMenuItem.Create(MI);
+  with MISub do
+  begin
+    Caption := '(Folder empty)';
+    Enabled := False;
+    Hint := '';
+    MI.Add(MISub);
+  end;
+end;
+
+procedure TClassicMenu.AddItem(TargetItem, AMenuItem: TMenuItem);
+begin
+{$IFDEF FASTHACK}
+  with TMenuItemPrivateHack(TargetItem) do
+  begin
+    if FItems = nil then FItems := TList.Create;
+    FItems.Insert(FItems.Count, AMenuItem);
+    TMenuItemPrivateHack(AMenuItem).FParent := TargetItem;
+  end;
+{$ELSE}
+  TargetItem.Add(AMenuItem);
+{$ENDIF}
 end;
 
 procedure TClassicMenu.CreateFooterItems(Menu: TPopupMenu);
@@ -535,33 +609,36 @@ end;
 
 procedure TClassicMenu.PopulateDirectory(Sender: TObject);
 
-  procedure SearchAddDirectory(AMI: TASMenuItem);
+  procedure SearchAddDirectory(AMI: TMenuItem);
   var
     SR    : TSearchRec;
     Found : Boolean;
-    NMI   : TASMenuItem;
-    Attrs : integer;
+    NMI   : TMenuItem;
   begin
     Found := FindFirst(AMI.Hint + '*',faDirectory + faReadOnly + faArchive,SR) = 0;
     try
       while Found do
       begin
-        attrs := FileGetAttr(AMI.Hint + SR.Name + PathDelim);
-        if ((Attrs and FILE_ATTRIBUTE_REPARSE_POINT) = 0) then
         if ((SR.Attr and faDirectory) <> 0) and (SR.Name <> '..') then
         begin
+          if AMI.Count > 0 then
+            AMI.Items[0].Visible := False;
           //Create new menuitem and add base properties
-          NMI             := TASMenuItem.Create(AMI);
+          NMI             := TMenuItem.Create(AMI);
           NMI.Caption     := SR.Name;
           NMI.Hint        := AMI.Hint + SR.Name + PathDelim;
           NMI.ImageIndex  := ImagesDM.GetSimpleIconIndex(SUITE_ICONS_PATH + FILEICON_Folder); // folder image
-          //Add item in traymenu
-          AMI.Add(NMI);
+          //Set AutoHotkeys to maManual, speed up popup menu
+          NMI.AutoHotkeys := maManual;
           //If it is not '.', expand folder else add OnClick event to open folder
           if NMI.Caption <> '.' then
-            PopulateDirectory(NMI)
+            NMI.OnClick := PopulateDirectory
           else
             NMI.OnClick := OpenFile;
+          //Add item in traymenu
+          if NMI.Caption <> '.' then
+            AddSub(NMI);
+          AddItem(AMI, NMI);
         end;
         //Next folder
         Found := FindNext(SR) = 0;
@@ -571,11 +648,11 @@ procedure TClassicMenu.PopulateDirectory(Sender: TObject);
     end;
   end;
 
-  procedure SearchAddFiles(AMI: TASMenuItem);
+  procedure SearchAddFiles(AMI: TMenuItem);
   var
     SR: TSearchRec;
     Found: Boolean;
-    NMI: TASMenuItem;
+    NMI: TMenuItem;
   begin
     Found := FindFirst(AMI.Hint + '*',faReadOnly + faArchive,SR) = 0;
     try
@@ -584,13 +661,15 @@ procedure TClassicMenu.PopulateDirectory(Sender: TObject);
       while Found do
       begin
         //Create new menuitem and add base properties
-        NMI             := TASMenuItem.Create(AMI);
+        NMI             := TMenuItem.Create(AMI);
         NMI.Caption     := SR.Name;
         NMI.Hint        := AMI.Hint + SR.Name;
         NMI.ImageIndex  := ImagesDM.GetSimpleIconIndex(AMI.Hint + SR.Name);
+          //Set AutoHotkeys to maManual, speed up popup menu
+        NMI.AutoHotkeys := maManual;
         NMI.OnClick     := OpenFile;
         //Add item in traymenu
-        AMI.Add(NMI);
+        AddItem(AMI, NMI);
         //Next file
         Found := FindNext(SR) = 0;
       end;
@@ -600,11 +679,16 @@ procedure TClassicMenu.PopulateDirectory(Sender: TObject);
   end;
 
 var
-  MI: TASMenuItem;
+  MI: TMenuItem;
 
 begin
-  MI := TASMenuItem(Sender);
+  MI := TMenuItem(Sender);
   try
+    {$IFDEF FASTHACK}
+    { allocate some space for the items TList. E.g. space for 4096 items should
+      be enough. }
+    TMenuItemPrivateHack(MI).FItems.Capacity := 4096;
+    {$ENDIF}
     MI.Hint := IncludeTrailingBackslash(MI.Hint);
     { first directories }
     SearchAddDirectory(MI);
@@ -613,6 +697,12 @@ begin
   finally
     MI.OnClick := nil;
   end;
+  {$IFDEF FASTHACK}
+    { because fast hack does not rebuild the handle, we use the autolinereduction
+      to do that. Add extract line here so it will rebuild the handle. Otherwise
+      we don't see any items in the menu.. :) }
+  MI.NewBottomLine;
+  {$ENDIF}
 end;
 
 procedure TClassicMenu.OpenFile(Sender: TObject);
