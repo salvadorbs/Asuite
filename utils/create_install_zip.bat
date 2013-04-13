@@ -8,6 +8,8 @@
 
 @SET PATH=%FrameworkDir%%FrameworkVersion%;%FrameworkSDKDir%;%PATH%
 
+call "%ProgramFiles(x86)%\Embarcadero\RAD Studio\10.0\bin\rsvars.bat"
+
 msbuild.exe ..\ASuite.dproj /t:clean /p:configuration=release
 msbuild.exe ..\ASuite.dproj /t:build /p:configuration=release
 
@@ -22,7 +24,7 @@ copy ..\bin\asuite.exe ..\..\bin\asuite.exe.old
 E:\Programmi\UPX\upx.exe --best ..\..\bin\asuite.exe
 
 copy ..\..\bin\asuite.exe
-copy ..\..\bin\sqlite3.dll
+REM copy ..\..\bin\sqlite3.dll
 
 copy ..\..\bin\Icons\asuite.cur Icons\
 copy ..\..\bin\Icons\0.ico Icons\
@@ -59,7 +61,12 @@ copy "..\..\bin\Docs\Project ASuite.url" Docs
 
 cd ..
 
-"%ProgramFiles(x86)%\NSIS\makensis.exe" /V2 /X"SetCompressor /FINAL /SOLID lzma" "install_script.nsi"
+if %PROCESSOR_ARCHITECTURE%==x86 (
+  "%programfiles%\NSIS\makensis.exe" /V2 /X"SetCompressor /FINAL /SOLID lzma" "install_script.nsi"
+) else (
+  "%ProgramFiles(x86)%\NSIS\makensis.exe" /V2 /X"SetCompressor /FINAL /SOLID lzma" "install_script.nsi"
+)
+
 
 rd /s /q release\
 
