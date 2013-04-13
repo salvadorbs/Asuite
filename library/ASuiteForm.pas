@@ -21,10 +21,10 @@ unit ASuiteForm;
 interface
 
 uses
-  Forms, Controls, Classes, ActnList, Graphics, Windows, virtualtrees, Messages;
+  Forms, Controls, Classes, ActnList, Graphics, Windows, Messages, GTForm;
 
 type
-  TASuiteForm = class(TForm)
+  TASuiteForm = class(TGTForm)
   private
     FSessionEnding : Boolean;
     FStartUpTime   : Boolean;

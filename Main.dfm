@@ -2,10 +2,9 @@ object frmMain: TfrmMain
   Left = 611
   Top = 208
   BorderIcons = [biSystemMenu, biMinimize]
-  BorderStyle = bsSingle
   Caption = 'ASuite'
-  ClientHeight = 350
-  ClientWidth = 200
+  ClientHeight = 340
+  ClientWidth = 184
   Color = clBtnFace
   Constraints.MinHeight = 370
   Constraints.MinWidth = 200
@@ -62,8 +61,8 @@ object frmMain: TfrmMain
   object pcList: TPageControl
     Left = 0
     Top = 0
-    Width = 200
-    Height = 350
+    Width = 184
+    Height = 340
     ActivePage = tbList
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
@@ -75,13 +74,17 @@ object frmMain: TfrmMain
     ParentFont = False
     TabOrder = 0
     OnChange = pcListChange
+    ExplicitWidth = 200
+    ExplicitHeight = 350
     object tbList: TTabSheet
       Caption = 'List'
+      ExplicitWidth = 192
+      ExplicitHeight = 322
       object vstList: TVirtualStringTree
         Left = 0
         Top = 0
-        Width = 192
-        Height = 322
+        Width = 176
+        Height = 312
         Align = alClient
         ClipboardFormats.Strings = (
           'Virtual Tree Data')
@@ -127,25 +130,29 @@ object frmMain: TfrmMain
         OnLoadNode = vstListLoadNode
         OnNewText = vstListNewText
         OnSaveNode = vstListSaveNode
+        ExplicitWidth = 192
+        ExplicitHeight = 322
         Columns = <>
       end
     end
     object tbSearch: TTabSheet
       Caption = 'Search'
+      ExplicitWidth = 182
       object sbtnSearch: TSpeedButton
-        Left = 168
+        Left = 152
         Top = 0
         Width = 24
         Height = 23
         Align = alRight
         Anchors = []
         OnClick = btnedtSearchRightButtonClick
+        ExplicitLeft = 168
       end
       object vstSearch: TVirtualStringTree
         Left = 0
         Top = 23
-        Width = 192
-        Height = 299
+        Width = 176
+        Height = 289
         Align = alBottom
         Anchors = [akLeft, akTop, akRight, akBottom]
         AnimationDuration = 0
@@ -169,6 +176,7 @@ object frmMain: TfrmMain
         OnGetText = vstSearchGetText
         OnGetImageIndex = vstSearchGetImageIndex
         OnHeaderClick = vstSearchHeaderClick
+        ExplicitWidth = 182
         Columns = <
           item
             Position = 0
@@ -184,7 +192,7 @@ object frmMain: TfrmMain
       object edtSearch: TEdit
         Left = 0
         Top = 0
-        Width = 165
+        Width = 149
         Height = 21
         Align = alLeft
         Anchors = [akLeft, akTop, akRight]
@@ -192,12 +200,13 @@ object frmMain: TfrmMain
         PopupMenu = pmSearch
         TabOrder = 1
         OnKeyPress = btnedtSearchKeyPress
+        ExplicitWidth = 155
       end
     end
   end
   object MainMenu: TMainMenu
-    Left = 88
-    Top = 72
+    Left = 16
+    Top = 32
     object miFile: TMenuItem
       Caption = 'File'
       object miSaveList1: TMenuItem
@@ -306,8 +315,8 @@ object frmMain: TfrmMain
   end
   object pmWindow: TPopupMenu
     OnPopup = pmWindowPopup
-    Left = 88
-    Top = 120
+    Left = 80
+    Top = 32
     object miRunSelectedSw: TMenuItem
       Caption = 'Run'
       Default = True
@@ -381,12 +390,12 @@ object frmMain: TfrmMain
     DefaultExt = '.xml'
     Filter = 'ASuite List File (*.sqlite)|*.sqlite|All files|*.*'
     Options = [ofOverwritePrompt, ofHideReadOnly, ofExtensionDifferent, ofEnableSizing]
-    Left = 144
-    Top = 168
+    Left = 112
+    Top = 32
   end
   object pmSearch: TPopupMenu
-    Left = 88
-    Top = 168
+    Left = 48
+    Top = 32
     object miSearchName: TMenuItem
       Caption = 'Name'
       Checked = True

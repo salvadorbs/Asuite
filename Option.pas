@@ -23,14 +23,14 @@ unit Option;
 interface
 
 uses
-  Windows, SysUtils, Forms, Dialogs, StdCtrls, ComCtrls, ulEnumerations,
+  Windows, SysUtils, Forms, Dialogs, StdCtrls, ComCtrls, ulEnumerations, GTForm,
   Vcl.Controls, System.Classes, Vcl.Graphics, System.UITypes;
 
 type
 
   { TfrmOption }
 
-  TfrmOption = class(TForm)
+  TfrmOption = class(TGTForm)
     cxLCBottom: TComboBox;
     cxLCLeft: TComboBox;
     cxLCRight: TComboBox;

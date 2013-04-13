@@ -24,7 +24,7 @@ interface
 
 uses
   Windows, SysUtils, Classes, Graphics, Forms, Dialogs, ComCtrls, Clipbrd,
-  AppConfig, StdCtrls, VirtualTrees, ulCommonClasses, XMLIntf, System.UITypes,
+  AppConfig, StdCtrls, ulCommonClasses, XMLIntf, System.UITypes,
   ulAppConfig;
 
 { Converters }

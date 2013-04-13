@@ -23,11 +23,11 @@ unit ClearElements;
 interface
 
 uses
-  Forms, StdCtrls, ExtCtrls, VirtualTrees, AppConfig, Vcl.Controls, SysUtils,
+  Forms, StdCtrls, ExtCtrls, VirtualTrees, GTForm, AppConfig, Vcl.Controls, SysUtils,
   System.Classes;
 
 type
-  TfrmClearElements = class(TForm)
+  TfrmClearElements = class(TGTForm)
     lbClearElements: TLabel;
     cbBackup: TCheckBox;
     cbCache: TCheckBox;

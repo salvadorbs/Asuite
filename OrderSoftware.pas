@@ -23,10 +23,11 @@ unit OrderSoftware;
 interface
 
 uses
-  Forms, StdCtrls, Buttons, ulCommonClasses, ComCtrls, ulEnumerations;
+  Forms, StdCtrls, Buttons, ulCommonClasses, ComCtrls, ulEnumerations, GTForm,
+  Vcl.Controls, System.Classes;
 
 type
-  TfrmOrderSoftware = class(TForm)
+  TfrmOrderSoftware = class(TGTForm)
     lstStartUp: TListBox;
     btnOk: TButton;
     btnCancel: TButton;
@@ -41,7 +42,6 @@ type
     procedure FormShow(Sender: TObject);
     procedure bbtnUpClick(Sender: TObject);
     procedure bbtnDownClick(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
   private
     FAutorunType: TAutorunType;
     procedure PopulateLstAutoExe(ListBox: TListBox;AutorunItemList: TAutorunItemList);
@@ -95,11 +95,6 @@ begin
   SaveInAutorunItemList(lstStartUp,ASuiteStartUpApp);
   SaveInAutorunItemList(lstShutdown,ASuiteShutdownApp);
   Close;
-end;
-
-procedure TfrmOrderSoftware.FormCreate(Sender: TObject);
-begin
-
 end;
 
 procedure TfrmOrderSoftware.PopulateLstAutoExe(ListBox: TListBox;AutorunItemList: TAutorunItemList);

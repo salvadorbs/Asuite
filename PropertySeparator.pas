@@ -23,17 +23,16 @@ unit PropertySeparator;
 interface
 
 uses
-  SysUtils, Classes, Controls, Forms, Dialogs, ulNodeDataTypes, StdCtrls,
+  SysUtils, Classes, Controls, Forms, Dialogs, ulNodeDataTypes, StdCtrls, GTForm,
   ExtCtrls;
 
 type
-  TfrmPropertySeparator = class(TForm)
+  TfrmPropertySeparator = class(TGTForm)
     btnCancel: TButton;
     btnOk: TButton;
     Panel1: TPanel;
     lbName: TLabel;
     edtName: TEdit;
-    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
     procedure LoadNodeData(AData: TvBaseNodeData);
@@ -70,11 +69,6 @@ begin
       finally
         Free;
       end;
-end;
-
-procedure TfrmPropertySeparator.FormCreate(Sender: TObject);
-begin
-
 end;
 
 procedure TfrmPropertySeparator.LoadNodeData(AData: TvBaseNodeData);

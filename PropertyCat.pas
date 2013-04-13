@@ -23,14 +23,14 @@ unit PropertyCat;
 interface
 
 uses
-  SysUtils, Classes, Controls, Forms, Dialogs, StdCtrls, ExtCtrls,
+  SysUtils, Classes, Controls, Forms, Dialogs, StdCtrls, ExtCtrls, GTForm,
   ulNodeDataTypes, Graphics;
 
 type
 
   { TfrmPropertyCat }
 
-  TfrmPropertyCat = class(TForm)
+  TfrmPropertyCat = class(TGTForm)
     edtName: TEdit;
     lbName: TLabel;
     btnCancel: TButton;

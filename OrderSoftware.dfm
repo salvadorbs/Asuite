@@ -12,7 +12,6 @@ object frmOrderSoftware: TfrmOrderSoftware
   Font.Style = []
   OldCreateOrder = False
   Position = poOwnerFormCenter
-  OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
@@ -44,10 +43,6 @@ object frmOrderSoftware: TfrmOrderSoftware
     TabOrder = 2
     object tsStartUp: TTabSheet
       Caption = 'StartUp'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 250
-      ExplicitHeight = 126
       object lstStartUp: TListBox
         Left = 3
         Top = 5
@@ -60,10 +55,6 @@ object frmOrderSoftware: TfrmOrderSoftware
     object tsShutdown: TTabSheet
       Caption = 'Shutdown'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 229
-      ExplicitHeight = 0
       object lstShutdown: TListBox
         Left = 3
         Top = 5
@@ -79,7 +70,6 @@ object frmOrderSoftware: TfrmOrderSoftware
     Top = 65
     Width = 27
     Height = 25
-    DoubleBuffered = True
     Glyph.Data = {
       36030000424D3603000000000000360000002800000010000000100000000100
       18000000000000030000C40E0000C40E00000000000000000000FFFFFFFFFFFF
@@ -107,7 +97,6 @@ object frmOrderSoftware: TfrmOrderSoftware
       FFFFFFFFFFFFFFFFFFFFFFFF9AACA32D885A2D88599AACA3FFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF63
       8D78638D78FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-    ParentDoubleBuffered = False
     TabOrder = 3
     OnClick = bbtnUpClick
   end
@@ -116,7 +105,6 @@ object frmOrderSoftware: TfrmOrderSoftware
     Top = 104
     Width = 27
     Height = 25
-    DoubleBuffered = True
     Glyph.Data = {
       36030000424D3603000000000000360000002800000010000000100000000100
       18000000000000030000C40E0000C40E00000000000000000000FFFFFFFFFFFF
@@ -144,7 +132,6 @@ object frmOrderSoftware: TfrmOrderSoftware
       FFFFFFFFFFFF04733AB0DEC7ABDCC3A6DABF91D2B17ECAA37ECAA304733AFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF1A774704733A04733A04
       733A04733A04733A04733A1A7747FFFFFFFFFFFFFFFFFFFFFFFF}
-    ParentDoubleBuffered = False
     TabOrder = 4
     OnClick = bbtnDownClick
   end

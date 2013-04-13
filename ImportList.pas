@@ -22,13 +22,13 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, AppConfig, System.UITypes,
+  Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, AppConfig, GTForm, System.UITypes,
   XMLIntf, msxmldom, XMLDoc, ulEnumerations, ulDatabase, DateUtils, xmldom;
 
 type
   TImportListToTree = function(Tree: TVirtualStringTree;Node: IXMLNode;Parent: PVirtualNode): PVirtualNode of object;
 
-  TfrmImportList = class(TForm)
+  TfrmImportList = class(TGTForm)
     bvl1: TBevel;
     bvl2: TBevel;
     pgcImport: TPageControl;

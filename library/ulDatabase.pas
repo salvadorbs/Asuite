@@ -24,7 +24,7 @@ interface
 
 uses
   Windows, SysUtils, Forms, Dialogs, VirtualTrees, ulNodeDataTypes, ulEnumerations,
-  ulCommonClasses, Classes, mORMot, SynCommons, mORMotSQLite3, Vcl.Graphics,
+  ulCommonClasses, Classes, mORMot, SynCommons, mORMotSQLite3,
   System.UITypes, Vcl.Controls;
 
 type
@@ -503,6 +503,7 @@ begin
         Config.TVBackground       := SQLOptionsData.tvbackground;
         Config.TVAutoOpClCats     := SQLOptionsData.tvautoopclcats;
         //Treeview Font
+        Config.TVFont.Free;
         Config.TVFont         := StrToFont(UTF8ToString(SQLOptionsData.tvfont));
         //MRU
         Config.MRU            := SQLOptionsData.mru;

@@ -23,14 +23,14 @@ unit PropertyFile;
 interface
 
 uses
-  SysUtils, Classes, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls,
+  SysUtils, Classes, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls, GTForm,
   ulNodeDataTypes;
 
 type
 
   { TfrmPropertyFile }
 
-  TfrmPropertyFile = class(TForm)
+  TfrmPropertyFile = class(TGTForm)
     btnOk: TButton;
     btnCancel: TButton;
     OpenDialog1: TOpenDialog;

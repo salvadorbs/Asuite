@@ -30,7 +30,15 @@ uses
   ASuiteForm in 'library\ASuiteForm.pas',
   ulTreeView in 'library\ulTreeView.pas',
   Stats in 'Stats.pas' {frmStats},
-  SynSQLite3Static; //SQLite3 static library
+  SynSQLite3Static,
+  DCPbase64 in '3p\gnugettext\DCPbase64.pas',
+  gnugettext in '3p\gnugettext\gnugettext.pas',
+  GTForm in '3p\gnugettext\GTForm.pas',
+  GTLanguageFrame in '3p\gnugettext\GTLanguageFrame.pas' {GTfraLanguage: TFrame},
+  GTLanguageList in '3p\gnugettext\GTLanguageList.pas',
+  GTLanguagesEx in '3p\gnugettext\GTLanguagesEx.pas';
+
+//SQLite3 static library
 
 {$IFDEF DEBUG}
 var
@@ -41,6 +49,9 @@ var
 {$R *.res}
 
 begin
+  {$IFDEF DEBUG}
+  ReportMemoryLeaksOnShutdown := True;
+  {$ENDIF}
   if not CheckPrevious.RestoreIfRunning(Application.Handle, 1) then
   begin
     {$IFDEF DEBUG}

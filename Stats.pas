@@ -3,13 +3,13 @@ unit Stats;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, GTForm,
   Dialogs, StdCtrls, ASuiteForm;
 
 type
 
   { TfrmStats }
-  TfrmStats = class(TForm)
+  TfrmStats = class(TGTForm)
     gbASuite: TGroupBox;
     gbSupport: TGroupBox;
     gbSystem: TGroupBox;
