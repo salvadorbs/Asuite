@@ -74,12 +74,8 @@ object frmMain: TfrmMain
     ParentFont = False
     TabOrder = 0
     OnChange = pcListChange
-    ExplicitWidth = 200
-    ExplicitHeight = 350
     object tbList: TTabSheet
       Caption = 'List'
-      ExplicitWidth = 192
-      ExplicitHeight = 322
       object vstList: TVirtualStringTree
         Left = 0
         Top = 0
@@ -130,14 +126,11 @@ object frmMain: TfrmMain
         OnLoadNode = vstListLoadNode
         OnNewText = vstListNewText
         OnSaveNode = vstListSaveNode
-        ExplicitWidth = 192
-        ExplicitHeight = 322
         Columns = <>
       end
     end
     object tbSearch: TTabSheet
       Caption = 'Search'
-      ExplicitWidth = 182
       object sbtnSearch: TSpeedButton
         Left = 152
         Top = 0
@@ -176,7 +169,6 @@ object frmMain: TfrmMain
         OnGetText = vstSearchGetText
         OnGetImageIndex = vstSearchGetImageIndex
         OnHeaderClick = vstSearchHeaderClick
-        ExplicitWidth = 182
         Columns = <
           item
             Position = 0
@@ -200,7 +192,6 @@ object frmMain: TfrmMain
         PopupMenu = pmSearch
         TabOrder = 1
         OnKeyPress = btnedtSearchKeyPress
-        ExplicitWidth = 155
       end
     end
   end

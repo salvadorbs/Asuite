@@ -32,8 +32,6 @@ uses
   Stats in 'Stats.pas' {frmStats},
   SynSQLite3Static; //SQLite3 static library
 
-
-
 {$IFDEF DEBUG}
 var
   cTempo1,cTempo2 : Cardinal;
@@ -51,18 +49,21 @@ begin
     {$IFDEF DEBUG}
     cTempo1 := GetTickCount;
     {$ENDIF}
+
     Application.Initialize;
-    Application.Title := APP_TITLE;
     SetCurrentDir(SUITE_WORKING_PATH);
-    Application.CreateForm(TImagesDM, ImagesDM);
-    Application.CreateForm(TClassicMenu, ClassicMenu);
     Config    := TConfiguration.Create;
     DBManager := TDBManager.Create(SUITE_LIST_PATH);
+    Application.Title := APP_TITLE;
 
     Application.CreateForm(TfrmMain, frmMain);
+
+    //Show MainForm and/or TrayMenu
     Application.ShowMainForm := Config.ShowPanelAtStartUp;
     if (Config.ShowMenuAtStartUp) then
       ClassicMenu.ShowTrayiconMenu;
+    Application.Run;
+
     {$IFDEF DEBUG}
     //Timing startup
     cTempo2 := GetTickCount;
@@ -74,6 +75,5 @@ begin
     WriteLn(myTextFile, DateTimeToStr(now) + ' = ' + IntToStr(cTempo2 - cTempo1));
     CloseFile(myTextFile);
     {$ENDIF}
-    Application.Run;
   end;
 end.

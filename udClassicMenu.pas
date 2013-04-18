@@ -167,20 +167,7 @@ end;
 
 procedure TClassicMenu.ShowMainForm(Sender: TObject);
 begin
-  //From CoolTrayicon source
-  if Application.MainForm <> nil then
-  begin
-    // Restore the app, but don't automatically show its taskbar icon
-    // Show application's TASKBAR icon (not the tray icon)
-    ShowWindow(Application.Handle, SW_RESTORE);
-    Application.Restore;
-    // Show the form itself
-    if Application.MainForm.WindowState = wsMinimized then
-      Application.MainForm.WindowState := wsNormal;    // Override minimized state
-    Application.MainForm.Visible := True;
-    // Bring the main form (or its modal dialog) to the foreground
-    SetForegroundWindow(Application.Handle);
-  end;
+  frmMain.ShowMainForm(Sender);
 end;
 
 procedure TClassicMenu.ShowTrayiconMenu;

@@ -165,6 +165,7 @@ type
     function  GetActiveTree: TBaseVirtualTree;
     procedure LoadGlyphs;
     procedure RunAutorun;
+    procedure HideMainForm;
   public
     { Public declarations }
     procedure ShowMainForm(Sender: TObject);
@@ -527,7 +528,34 @@ end;
 
 procedure TfrmMain.ShowMainForm(Sender: TObject);
 begin
-  ShowWindow(Application.MainFormHandle, SW_RESTORE);
+  //From CoolTrayicon source
+  if Application.MainForm <> nil then
+  begin
+    // Restore the app, but don't automatically show its taskbar icon
+    // Show application's TASKBAR icon (not the tray icon)
+    ShowWindow(Application.Handle, SW_RESTORE);
+    Application.Restore;
+    // Show the form itself
+    if Application.MainForm.WindowState = wsMinimized then
+      Application.MainForm.WindowState := wsNormal;    // Override minimized state
+    Application.MainForm.Visible := True;
+    // Bring the main form (or its modal dialog) to the foreground
+    SetForegroundWindow(Application.Handle);
+  end;
+end;
+
+procedure TfrmMain.HideMainForm;
+begin
+  if Application.MainForm <> nil then
+  begin
+    // Hide the form itself (and thus any child windows)
+    Application.MainForm.Visible := False;
+    { Hide application's TASKBAR icon (not the tray icon). Do this AFTER
+        the main form is hidden, or any child windows will redisplay the
+        taskbar icon if they are visible. }
+    if IsWindowVisible(Application.Handle) then
+      ShowWindow(Application.Handle, SW_HIDE);
+  end;
 end;
 
 procedure TfrmMain.ExecuteFileOrOpenFolder(TreeView: TBaseVirtualTree;ExecuteFile: Boolean);
@@ -886,23 +914,13 @@ begin
     CanClose := (ShutdownTime or SessionEnding);
   //If user close window (not ASuite), hide form and taskbar icon
   if not (CanClose) then
-  begin
-    if Application.MainForm <> nil then
-    begin
-      // Hide the form itself (and thus any child windows)
-      Application.MainForm.Visible := False;
-      { Hide application's TASKBAR icon (not the tray icon). Do this AFTER
-        the main form is hidden, or any child windows will redisplay the
-        taskbar icon if they are visible. }
-      if IsWindowVisible(Application.Handle) then
-        ShowWindow(Application.Handle, SW_HIDE);
-    end;
-    ClassicMenu.tiTrayMenu.Visible := True;
-  end;
+    HideMainForm;
 end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
+  Application.CreateForm(TImagesDM, ImagesDM);
+  Application.CreateForm(TClassicMenu, ClassicMenu);
   pcList.ActivePageIndex := PG_LIST;
   //Create TNodeLists for autorun
   ASuiteStartUpApp  := TAutorunItemList.Create;
