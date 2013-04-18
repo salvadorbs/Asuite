@@ -30,15 +30,9 @@ uses
   ASuiteForm in 'library\ASuiteForm.pas',
   ulTreeView in 'library\ulTreeView.pas',
   Stats in 'Stats.pas' {frmStats},
-  SynSQLite3Static,
-  DCPbase64 in '3p\gnugettext\DCPbase64.pas',
-  gnugettext in '3p\gnugettext\gnugettext.pas',
-  GTForm in '3p\gnugettext\GTForm.pas',
-  GTLanguageFrame in '3p\gnugettext\GTLanguageFrame.pas' {GTfraLanguage: TFrame},
-  GTLanguageList in '3p\gnugettext\GTLanguageList.pas',
-  GTLanguagesEx in '3p\gnugettext\GTLanguagesEx.pas';
+  SynSQLite3Static; //SQLite3 static library
 
-//SQLite3 static library
+
 
 {$IFDEF DEBUG}
 var
@@ -66,18 +60,7 @@ begin
     DBManager := TDBManager.Create(SUITE_LIST_PATH);
 
     Application.CreateForm(TfrmMain, frmMain);
-    Application.ShowMainForm := false;
-    { TODO : Review this IF/Else }
-    if (not(Config.ShowPanelAtStartUp)) then
-      frmMain.close
-    else begin
-      frmMain.Visible := true;
-      if Not(FileExists(SUITE_LIST_PATH)) then
-      begin
-        Application.CreateForm(TfrmAbout, frmAbout);
-        frmAbout.show;
-      end;
-    end;
+    Application.ShowMainForm := Config.ShowPanelAtStartUp;
     if (Config.ShowMenuAtStartUp) then
       ClassicMenu.ShowTrayiconMenu;
     {$IFDEF DEBUG}
