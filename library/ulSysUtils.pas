@@ -280,7 +280,8 @@ begin
   //CONST_PATH_DRIVE = Launcher's Drive (ex. ASuite in H:\Software\asuite.exe, CONST_PATH_DRIVE is H: )
   APath := StringReplace(APath, CONST_PATH_DRIVE, SUITE_DRIVE, [rfReplaceAll]);
   //Remove double slash (\)
-  APath := StringReplace(APath, '\\', PathDelim, [rfReplaceAll]);
+  if Pos('\\', APath) <> 1 then
+    APath := StringReplace(APath, '\\', PathDelim, [rfReplaceAll]);
   //Replace environment variable
   if (pos('%',APath) <> 0) then
   begin
