@@ -49,10 +49,12 @@ type
     procedure CreateHeaderItems(Menu: TPopupMenu);
     procedure CreateFooterItems(Menu: TPopupMenu);
     function  UpdateSpecialList(PopupMenu: TMenuItem;SList: TNodeDataList): Integer;
+    procedure MeasureCaptionedSeparator(Sender: TObject; ACanvas: TCanvas; var Width,
+      Height: Integer);
     procedure DrawCaptionedSeparator(Sender: TObject; ACanvas: TCanvas; ARect: TRect;
       Selected: Boolean);
     procedure DrawFadeLine(ACanvas: TCanvas; AClipRect, ALineRect: TRect; AColor: TColor; AFadeWidth: Integer; AClip: Boolean);
-    procedure CreateSeparator(Menu: TPopupMenu;Text: String;ListMenuItem: TMenuItem);
+    procedure CreateSeparator(Menu: TPopupMenu;Text: String;ListMenuItem: TMenuItem = nil);
     function  IsCaptionedSeparator(MenuItem: TMenuItem): Boolean;
     function CreateSpecialList(Menu: TPopupMenu; SList: TNodeDataList;
                                SubMenuCaption: String): Integer;
@@ -297,28 +299,36 @@ begin
   //Create MenuItems's TrayMenu
   //Header
   CreateHeaderItems(Menu);
-  CreateSeparator(Menu,msgShortMFU,nil);
   //MFU
   if (Config.MFU) and (MFUList.Count > 0) then
   begin
     if Config.SubMenuMFU then
-      CreateSpecialList(Menu,MFUList,msgLongMFU)
-    else
-      CreateSpecialList(Menu,MFUList,'')
+    begin
+      CreateSeparator(Menu,'');
+      CreateSpecialList(Menu,MFUList,msgLongMFU);
+    end
+    else begin
+      CreateSeparator(Menu,msgLongMFU);
+      CreateSpecialList(Menu,MFUList,'');
+    end;
   end;
-  CreateSeparator(Menu,msgList,nil);
+  CreateSeparator(Menu,msgList);
   //List
   frmMain.vstList.IterateSubtree(nil, CreateListItems, nil, [], False);
-  CreateSeparator(Menu,msgShortMRU,nil);
   //MRU
   if (Config.MRU) and (MRUList.Count > 0) then
   begin
     if Config.SubMenuMRU then
-      CreateSpecialList(Menu,MRUList,msgLongMRU)
-    else
-      CreateSpecialList(Menu,MRUList,'')
+    begin
+      CreateSeparator(Menu,'');
+      CreateSpecialList(Menu,MRUList,msgLongMRU);
+    end
+    else begin
+      CreateSeparator(Menu,msgLongMRU);
+      CreateSpecialList(Menu,MRUList,'');
+    end;
   end;
-  CreateSeparator(Menu,'',nil);
+  CreateSeparator(Menu,'');
   //Footer
   CreateFooterItems(Menu);
 end;
@@ -450,19 +460,25 @@ end;
 var
   TextArea, LineArea: TRect;
   Flags: Longint;
-  LineCaption : string;
+  LineCaption : string;  
+  TextSpace   : Cardinal;
 begin
   //Don't highlight menu item
   ACanvas.Brush.Color := clMenu;
-  ACanvas.Font.Color := clWindowText;
+  ACanvas.Font.Color  := clWindowText;
   LineArea := ARect;
   TextArea := LineArea;
   Dec(TextArea.Bottom, 1);
   Flags := DT_SINGLELINE or DT_NOPREFIX or DT_VCENTER or DT_CENTER;
   if (Sender as TMenuItem).Hint <> '' then
+  begin
     LineCaption := Format(' %s ', [(Sender as TMenuItem).Hint]);
+    TextSpace   := 1;
+  end
+  else
+    TextSpace := 0;
   DrawText(ACanvas.Handle, PChar(LineCaption), Length(LineCaption), TextArea, Flags or DT_CALCRECT);
-  OffsetRect(TextArea, Round((RectWidth(LineArea) - RectWidth(TextArea)) / 2 - 0.5), 0);
+  OffsetRect(TextArea, Round((RectWidth(LineArea) - RectWidth(TextArea)) / 2 - TextSpace), 0);
   Inc(ARect.Top, (CaptionLineItemHeight div 2) - 1);
   //Create first line
   Inc(ARect.Top);
@@ -556,7 +572,7 @@ begin
   end;
 end;
 
-procedure TClassicMenu.CreateSeparator(Menu: TPopupMenu;Text: String;ListMenuItem: TMenuItem);
+procedure TClassicMenu.CreateSeparator(Menu: TPopupMenu;Text: String;ListMenuItem: TMenuItem = nil);
 var
   MenuItem: TMenuItem;
 begin
@@ -576,6 +592,7 @@ begin
     end;
     MenuItem.Enabled    := False;
     MenuItem.Hint       := Text;
+    MenuItem.OnMeasureItem := MeasureCaptionedSeparator;
     MenuItem.OnDrawItem := DrawCaptionedSeparator;
   end;
 end;
@@ -605,6 +622,13 @@ begin
   Result := (MenuItem.Name = '') and
             (MenuItem.Hint <> '') and
             (MenuItem.Enabled = false);
+end;
+
+procedure TClassicMenu.MeasureCaptionedSeparator(Sender: TObject;
+  ACanvas: TCanvas; var Width, Height: Integer);
+begin
+  //Change separator's height
+  Height := CaptionLineItemHeight + 1;
 end;
 
 procedure TClassicMenu.PopulateDirectory(Sender: TObject);
