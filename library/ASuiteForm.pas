@@ -32,6 +32,7 @@ type
     FOldPoint      : TPoint;
     procedure WMQueryEndSession(var Message: TMessage); message WM_QUERYENDSESSION;
     procedure WMEndSession(var Msg : TWMEndSession); message WM_ENDSESSION;
+    procedure WMExitSizeMove(var Message: TMessage) ; message WM_EXITSIZEMOVE;
   public
     constructor Create(AOwner : TComponent); override;
     destructor Destroy; override;
@@ -45,6 +46,9 @@ type
   end;
 
 implementation
+
+uses
+  ulTreeView, Main, ulAppConfig;
 
 constructor TASuiteForm.Create(AOwner: TComponent);
 begin
@@ -78,6 +82,12 @@ begin
     FShutdownTime := True;
     Close;
   end;
+end;
+
+procedure TASuiteForm.WMExitSizeMove(var Message: TMessage);
+begin
+  Config.Changed := True;
+  RefreshList(frmMain.vstList);
 end;
 
 end.
