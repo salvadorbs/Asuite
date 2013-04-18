@@ -100,7 +100,7 @@ type
     public
       constructor Create; overload; //Get actual ASuite version info
       constructor Create(aMajor, aMinor, aRelease, aBuild: Integer); overload;
-      function ToString: string;
+      function ConvertToString: string;
       property Major: Integer   read FMajor   write FMajor;
       property Minor: Integer   read FMinor   write FMinor;
       property Release: Integer read FRelease write FRelease;
@@ -382,7 +382,7 @@ begin
   FBuild   := aBuild;
 end;
 
-function TVersionInfo.ToString: string;
+function TVersionInfo.ConvertToString: string;
 begin
   Result := Format('%s.%s.%s.%s',[IntToStr(FMajor),
                                   IntToStr(FMinor),

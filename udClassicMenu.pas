@@ -25,8 +25,9 @@ unit udClassicMenu;
 interface
 
 uses
-  Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
-  ExtCtrls, VirtualTrees, ulCommonClasses, ShellApi, Vcl.ImgList;
+  Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Menus, ExtCtrls, VirtualTrees, ulCommonClasses, ShellApi, Vcl.ImgList,
+  Winapi.Messages;
 
 type
   TClassicMenu = class(TDataModule)
@@ -119,6 +120,7 @@ const
 
 var
   ClassicMenu: TClassicMenu;
+  IsTrayMenuOpen: Boolean; //Used to prevent open more than one TrayMenu
 
 implementation
 
@@ -144,7 +146,7 @@ end;
 procedure TClassicMenu.tiTrayMenuMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
-  if frmMain.StartUpTime then
+  if frmMain.StartUpTime or IsTrayMenuOpen then
     Exit;
   if (Button = mbLeft) then
   begin
@@ -185,6 +187,7 @@ procedure TClassicMenu.ShowTrayiconMenu;
 var
   Point: TPoint;
 begin
+  IsTrayMenuOpen := True;
   //Get Mouse coordinates
   GetCursorPos(Point);
   //Classic Menu
@@ -193,6 +196,7 @@ begin
   UpdateClassicMenu(pmTrayicon);
   //Show classic menu
   pmTrayicon.Popup(Point.X, Point.Y);
+  IsTrayMenuOpen := False;
 end;
 
 procedure TClassicMenu.CreateListItems(Sender: TBaseVirtualTree; Node: PVirtualNode;
@@ -576,7 +580,7 @@ procedure TClassicMenu.CreateSeparator(Menu: TPopupMenu;Text: String;ListMenuIte
 var
   MenuItem: TMenuItem;
 begin
-  //If last MenuItem is a captioned separator
+  //If last MenuItem is a captioned separator (two separators in succession are useless)
   if IsCaptionedSeparator(Menu.Items[Menu.Items.Count - 1]) then
   begin
     //Then change last MenuItem.Hint to Text value
