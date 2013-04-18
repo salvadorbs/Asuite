@@ -262,15 +262,20 @@ procedure TConfiguration.SetTrayIcon(value: Boolean);
 begin
   FTrayIcon := value;
   ClassicMenu.tiTrayMenu.Visible := FTrayIcon;
+  if (not(FShowPanelAtStartUp)) and (not(FTrayicon)) then
+    FShowPanelAtStartUp := True;
 end;
 
 procedure TConfiguration.SetTrayUseCustomIcon(value: Boolean);
 begin
   FTrayUseCustomIcon := value;
+  ClassicMenu.tiTrayMenu.Visible := False;
   if (FTrayUseCustomIcon) and (FileExists(RelativeToAbsolute(FTrayCustomIconPath))) then
     ClassicMenu.tiTrayMenu.Icon.LoadFromFile(RelativeToAbsolute(FTrayCustomIconPath))
   else
     ClassicMenu.tiTrayMenu.Icon.LoadFromFile(RelativeToAbsolute(SUITE_ICONS_PATH + FILEICON_ASuite));
+  //If you can't change trayicon's property visible, it will use old icon
+  ClassicMenu.tiTrayMenu.Visible := FTrayIcon;
 end;
 
 procedure TConfiguration.SetUseCustomTitle(value: Boolean);
@@ -305,8 +310,6 @@ end;
 procedure TConfiguration.SetShowPanelAtStartUp(value: Boolean);
 begin
   FShowPanelAtStartUp := value;
-  if (not(FShowPanelAtStartUp)) and (not(FTrayicon)) then
-    FShowPanelAtStartUp := True;
 end;
 
 procedure TConfiguration.SetTVBackground(value: Boolean);
