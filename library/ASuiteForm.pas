@@ -33,6 +33,7 @@ type
     procedure WMQueryEndSession(var Message: TMessage); message WM_QUERYENDSESSION;
     procedure WMEndSession(var Msg : TWMEndSession); message WM_ENDSESSION;
     procedure WMExitSizeMove(var Message: TMessage) ; message WM_EXITSIZEMOVE;
+    procedure WMSysCommand(var Message: TWMSysCommand); message WM_SYSCOMMAND;
   public
     constructor Create(AOwner : TComponent); override;
     destructor Destroy; override;
@@ -72,6 +73,16 @@ procedure TASuiteForm.WMQueryEndSession(var Message: TMessage);
 begin
   FSessionEnding := True;
   Message.Result := 1;
+end;
+
+procedure TASuiteForm.WMSysCommand(var Message: TWMSysCommand);
+begin
+  inherited;
+  if Message.cmdType = SC_MINIMIZE then
+  begin
+    if IsWindowVisible(Application.Handle) then
+      ShowWindow(Application.Handle, SW_HIDE);
+  end;
 end;
 
 procedure TASuiteForm.WMEndSession(var Msg : TWMEndSession);
