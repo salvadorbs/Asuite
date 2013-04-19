@@ -49,7 +49,7 @@ type
     procedure UpdateClassicMenu(Menu: TPopUpMenu);
     procedure CreateHeaderItems(Menu: TPopupMenu);
     procedure CreateFooterItems(Menu: TPopupMenu);
-    function  UpdateSpecialList(PopupMenu: TMenuItem;SList: TNodeDataList): Integer;
+    procedure UpdateSpecialList(PopupMenu: TMenuItem;SList: TNodeDataList;MaxItems: Integer);
     procedure MeasureCaptionedSeparator(Sender: TObject; ACanvas: TCanvas; var Width,
       Height: Integer);
     procedure DrawCaptionedSeparator(Sender: TObject; ACanvas: TCanvas; ARect: TRect;
@@ -57,14 +57,14 @@ type
     procedure DrawFadeLine(ACanvas: TCanvas; AClipRect, ALineRect: TRect; AColor: TColor; AFadeWidth: Integer; AClip: Boolean);
     procedure CreateSeparator(Menu: TPopupMenu;Text: String;ListMenuItem: TMenuItem = nil);
     function  IsCaptionedSeparator(MenuItem: TMenuItem): Boolean;
-    function CreateSpecialList(Menu: TPopupMenu; SList: TNodeDataList;
-                               SubMenuCaption: String): Integer;
+    procedure CreateSpecialList(Menu: TPopupMenu; SList: TNodeDataList;
+                               MaxItems: Integer; SubMenuCaption: String);
     procedure AddSub(MI: TMenuItem);
     procedure AddItem(TargetItem, AMenuItem: TMenuItem);
+    procedure PopulateDirectory(Sender: TObject);
   public
     { Public declarations }
     procedure ShowTrayiconMenu;
-    procedure PopulateDirectory(Sender: TObject);
   end;
 
 type
@@ -132,8 +132,8 @@ uses
 
 procedure TClassicMenu.DataModuleCreate(Sender: TObject);
 begin
-  tiTrayMenu.Hint   := APP_NAME + ' ' + VERSION_COMPLETE + ' ' + VERSION_PRERELEASE + ' (' +
-                       SUITE_DRIVE + ')';
+  tiTrayMenu.Hint   := Format('%s %s %s (%s)',[APP_NAME,VERSION_COMPLETE,
+                                               VERSION_PRERELEASE,UpperCase(SUITE_DRIVE)]);
   pmTrayicon.Images := ImagesDM.IcoImages;
 end;
 
@@ -296,11 +296,11 @@ begin
     if Config.SubMenuMFU then
     begin
       CreateSeparator(Menu,'');
-      CreateSpecialList(Menu,MFUList,msgLongMFU);
+      CreateSpecialList(Menu,MFUList,Config.MFUNumber,msgLongMFU);
     end
     else begin
       CreateSeparator(Menu,msgLongMFU);
-      CreateSpecialList(Menu,MFUList,'');
+      CreateSpecialList(Menu,MFUList,Config.MFUNumber,'');
     end;
   end;
   CreateSeparator(Menu,msgList);
@@ -312,11 +312,11 @@ begin
     if Config.SubMenuMRU then
     begin
       CreateSeparator(Menu,'');
-      CreateSpecialList(Menu,MRUList,msgLongMRU);
+      CreateSpecialList(Menu,MRUList,Config.MRUNumber,msgLongMRU);
     end
     else begin
       CreateSeparator(Menu,msgLongMRU);
-      CreateSpecialList(Menu,MRUList,'');
+      CreateSpecialList(Menu,MRUList,Config.MRUNumber,'');
     end;
   end;
   CreateSeparator(Menu,'');
@@ -338,14 +338,14 @@ begin
     case I of
       0:
         begin
-          MenuItem.Caption := 'Show ASuite';
+          MenuItem.Caption := msgShowASuite;
           MenuItem.ImageIndex := IMAGE_INDEX_ASuite;
           MenuItem.OnClick := ShowMainForm;
           MenuItem.Default := true;
         end;
       1:
         begin
-          MenuItem.Caption := 'Options...';
+          MenuItem.Caption := msgOpenOptions;
           MenuItem.ImageIndex := IMAGE_INDEX_Options;
           MenuItem.OnClick := frmMain.miOptionsClick;
           MenuItem.Enabled := Not(Config.ReadOnlyMode);
@@ -396,26 +396,30 @@ begin
     case I of
       0:
         begin
-          MenuItem.Caption := 'Safely remove hardware';
+          MenuItem.Caption := msgEjectHardware;
           MenuItem.OnClick := EjectDialog;
         end;
       1:
         begin
-          MenuItem.Caption := 'Exit';
+          MenuItem.Caption := msgExit;
           MenuItem.OnClick := frmMain.miExitClick;
         end;
     end;
   end;
 end;
 
-function TClassicMenu.UpdateSpecialList(PopupMenu: TMenuItem;SList: TNodeDataList): Integer;
+procedure TClassicMenu.UpdateSpecialList(PopupMenu: TMenuItem;SList: TNodeDataList;MaxItems: Integer);
 var
-  NodeData  : TvBaseNodeData;
-  I         : Integer;
-  MenuItem  : TASMenuItem;
+  NodeData : TvBaseNodeData;
+  MenuItem : TASMenuItem;
+  I, ItemCount : Integer;
 begin
-  Result := 0;
-  for I := 0 to SList.Count - 1 do
+  //Set limit based on MaxItems or SList.Count
+  if MaxItems < SList.Count then
+    ItemCount := MaxItems
+  else
+    ItemCount := SList.Count;
+  for I := 0 to ItemCount - 1 do
   begin
     if Assigned(SList[I]) then
     begin
@@ -432,7 +436,6 @@ begin
         MenuItem.Data       := NodeData;
         MenuItem.OnClick    := ClassicMenu.RunFromTrayMenu;
         PopupMenu.Add(MenuItem);
-        Inc(Result);
       end
       else
         SList.Delete(I);
@@ -588,8 +591,8 @@ begin
   end;
 end;
 
-function TClassicMenu.CreateSpecialList(Menu: TPopupMenu;SList: TNodeDataList;
-                                        SubMenuCaption: String): Integer;
+procedure TClassicMenu.CreateSpecialList(Menu: TPopupMenu;SList: TNodeDataList;
+                                        MaxItems: Integer; SubMenuCaption: String);
 var
   MenuItem : TASMenuItem;
 begin
@@ -598,12 +601,12 @@ begin
   if SubMenuCaption <> '' then
   begin
     //Yes submenu
-    Result := UpdateSpecialList(MenuItem,SList);
+    UpdateSpecialList(MenuItem, SList, MaxItems);
     MenuItem.Caption := SubMenuCaption;
   end
   else begin
     //No submenu
-    Result := UpdateSpecialList(Menu.Items[0].parent,SList);
+    UpdateSpecialList(Menu.Items[0].parent, SList, MaxItems);
     MenuItem.free;
   end;
 end;

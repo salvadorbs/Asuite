@@ -391,8 +391,8 @@ begin
     //Load Options
     InternalLoadOptions;
     //Create special list
-    MRUList := TMRUList.Create(Config.MRUNumber);
-    MFUList := TMFUList.Create(Config.MFUNumber);
+    MRUList := TMRUList.Create;
+    MFUList := TMFUList.Create;
     //Create folder cache, if it doesn't exist
     if (not DirectoryExists(SUITE_CACHE_PATH)) then
       CreateDir(SUITE_CACHE_PATH);

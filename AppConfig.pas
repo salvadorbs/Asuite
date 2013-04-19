@@ -169,12 +169,16 @@ resourcestring
   msgNext           = 'Next >';
   msgImport         = 'Import';
   msgClose          = 'Close';
-  //Classic Menu
+  //Classic TrayMenu
+  msgShowASuite     = 'Show ASuite';
+  msgOpenOptions    = 'Options...';
   msgLongMFU        = 'Most Frequently Used';
   msgLongMRU        = 'Recents';
   msgShortMFU       = 'MFU';
   msgShortMRU       = 'MRU';
   msgList           = 'List';
+  msgEjectHardware  = 'Safely remove hardware';
+  msgExit           = 'Exit';
   //Errors
   msgErrEmptyName   = 'Application''s name field is empty';
   msgErrGeneric     = '%s error raised, with message: %s';

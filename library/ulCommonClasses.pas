@@ -28,13 +28,11 @@ uses
 type
   TNodeDataList = class (TList)
   private
-    fMaxItems: Integer;
   protected
-    procedure RemoveMaxItems;
     function  GetItems(Index: Integer): TvBaseNodeData;
     procedure SetItems(Index: Integer; Item: TvBaseNodeData);
   public
-    constructor Create(MaxItems: Integer);
+    constructor Create;
     destructor  Destroy; override;
     function  Add(Item: TvBaseNodeData): Integer;
     procedure Delete(Index: integer);
@@ -44,21 +42,19 @@ type
     function  Last: TvBaseNodeData;
     function  Remove(Item: TvBaseNodeData): Integer;
     property  Items[Index: Integer]: TvBaseNodeData read GetItems write SetItems;
-    procedure SetMaxItems(Number: Integer);
-    function  GetMaxItems: Integer;
   end;
 
   //Most Recently Used
   TMRUList = class(TNodeDataList)
   public
-    constructor Create(MaxItems: Integer);
+    constructor Create;
     procedure Add(Item: TvBaseNodeData);
   end;
 
   //Most Frequently Used
   TMFUList = class(TNodeDataList)
   public
-    constructor Create(MaxItems: Integer);
+    constructor Create;
     procedure Add(Item: TvBaseNodeData);
     procedure Sort;
   end;
@@ -112,10 +108,8 @@ var
 
 implementation
 
-constructor TNodeDataList.Create(MaxItems: Integer);
+constructor TNodeDataList.Create;
 begin
-  fMaxItems := MaxItems;
-
   inherited Create;
 end;
 
@@ -130,9 +124,6 @@ begin
   Self.Remove(Item);
 
   Result := inherited Add(Item);
-
-  if fMaxItems > 0 then
-    Self.RemoveMaxItems;
 end;
 
 procedure TNodeDataList.Delete(Index: integer);
@@ -145,15 +136,6 @@ begin
   Result := inherited First;
 end;
 
-procedure TNodeDataList.RemoveMaxItems;
-var
-  I : Integer;
-begin
-  if (Self.Count - fMaxItems) > 0 then
-    for I := 1 to Self.Count - fMaxItems do
-      Self.Delete(fMaxItems);
-end;
-
 function TNodeDataList.IndexOf(Item: TvBaseNodeData): Integer;
 begin
   Result := inherited IndexOf(Item);
@@ -164,9 +146,6 @@ begin
   Self.Remove(Item);
 
   inherited insert(Index,Item);
-
-  if fMaxItems > 0 then
-    Self.RemoveMaxItems;
 end;
 
 function TNodeDataList.Last: TvBaseNodeData;
@@ -191,23 +170,11 @@ begin
   inherited Put(Index, Item);
 end;
 
-procedure TNodeDataList.SetMaxItems(Number: Integer);
-begin
-  fMaxItems := Number;
-  //Remove unnecessary items
-  RemoveMaxItems;
-end;
-
-function TNodeDataList.GetMaxItems: Integer;
-begin
-  Result := fMaxItems;
-end;
-
 //------------------------------------------------------------------------------
 
-constructor TMRUList.Create(MaxItems: Integer);
+constructor TMRUList.Create;
 begin
-  inherited Create(MaxItems);
+  inherited Create;
 end;
 
 procedure TMRUList.Add(Item: TvBaseNodeData);
@@ -232,9 +199,9 @@ end;
 
 //------------------------------------------------------------------------------
 
-constructor TMFUList.Create(MaxItems: Integer);
+constructor TMFUList.Create;
 begin
-  inherited Create(MaxItems);
+  inherited Create;
 end;
 
 procedure TMFUList.Add(Item: TvBaseNodeData);
@@ -343,7 +310,7 @@ end;
 
 constructor TAutorunItemList.Create;
 begin
-  inherited Create(-1);
+  inherited Create;
 end;
 
 function TAutorunItemList.GetItems(Index: Integer): TvFileNodeData;
