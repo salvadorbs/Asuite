@@ -1,2 +1,3 @@
 VirtualTree (included in ASuite Source, folder 3p) http://wiki.freepascal.org/VirtualTreeview
-SQLite wrapper (included in ASuite Source, folder 3p) https://github.com/plashenkov/SQLite3-Delphi-FPC
+mORMot (included in ASuite Source, folder 3p) http://synopse.info/fossil/wiki?name=SQLite3+Framework
+dxgettext (included in ASuite Source, folder 3p) http://sourceforge.net/projects/dxgettext/
