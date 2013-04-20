@@ -69,7 +69,7 @@ class function TfrmPropertyCat.Edit(AOwner: TComponent; NodeData: PBaseData): TM
 begin
   Result := mrCancel;
   if not Assigned(NodeData) then
-    ShowMessage(msgErrGeneric)
+    ShowMessage(msgErrGeneric,true)
   else
     with TfrmPropertyCat.Create(AOwner) do
       try

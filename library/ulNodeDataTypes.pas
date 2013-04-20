@@ -219,7 +219,7 @@ function CreateNodeData(AType: TvTreeDataType): TvBaseNodeData;
 implementation
 
 uses
-  ulSysUtils, ulTreeView, ulExeUtils;
+  ulSysUtils, ulTreeView, ulExeUtils, ulCommonUtils;
 
 function CreateNodeData(AType: TvTreeDataType): TvBaseNodeData;
 begin
@@ -382,7 +382,7 @@ begin
   end
   else begin
     //Show error message
-    ShowMessageFmt(msgErrRun,[FName]);
+    ShowMessage(Format(msgErrRun,[FName]),true);
   end;
 end;
 

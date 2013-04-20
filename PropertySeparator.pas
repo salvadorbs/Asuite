@@ -48,7 +48,7 @@ var
 implementation
 
 uses
-  appConfig, Main;
+  appConfig, Main, ulCommonUtils;
 
 {$R *.dfm}
 
@@ -56,7 +56,7 @@ class function TfrmPropertySeparator.Edit(AOwner: TComponent; NodeData: PBaseDat
 begin
   Result := mrCancel;
   if not Assigned(NodeData) then
-    ShowMessage(msgErrGeneric)
+    ShowMessage(msgErrGeneric,true)
   else
     with TfrmPropertySeparator.Create(AOwner) do
       try

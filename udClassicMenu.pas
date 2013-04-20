@@ -126,7 +126,7 @@ implementation
 
 uses
   AppConfig, udImages, Main, ulNodeDataTypes, ulEnumerations, ulAppConfig,
-  ulTreeView;
+  ulTreeView, ulCommonUtils;
 
 {$R *.dfm}
 
@@ -246,7 +246,7 @@ begin
     if Assigned(NodeData) then
       TvFileNodeData(NodeData).Execute(frmMain.vstList, false)
     else
-      ShowMessageFmt(msgErrRun, [StringReplace((Sender as TASMenuItem).Caption, '&', '', [])]);
+      ShowMessage(Format(msgErrRun, [StringReplace((Sender as TASMenuItem).Caption, '&', '', [])]),True);
   end;
 end;
 

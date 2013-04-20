@@ -90,14 +90,14 @@ implementation
 {$R *.dfm}
 
 uses
-  AppConfig, ulEnumerations, udImages, ulSysUtils, OrderSoftware,
-  Main, ulCommonUtils;
+  AppConfig, ulEnumerations, udImages, ulSysUtils, OrderSoftware, Main,
+  ulCommonUtils;
 
 class function TfrmPropertyFile.Edit(AOwner: TComponent; NodeData: PBaseData): TModalResult;
 begin
   Result := mrNone;
   if not Assigned(NodeData) then
-    ShowMessage(msgErrGeneric)
+    ShowMessage(msgErrGeneric, true)
   else with TfrmPropertyFile.Create(AOwner) do
   try
     FNodeData := NodeData;
@@ -267,11 +267,6 @@ end;
 procedure TfrmPropertyFile.FormCreate(Sender: TObject);
 begin
   PageControl1.ActivePageIndex := 0;
-  try
-  except
-    on E : Exception do
-      ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message]);
-  end;
 end;
 
 end.

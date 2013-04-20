@@ -111,8 +111,7 @@ implementation
 {$R *.dfm}
 
 uses
-  Main, ulNodeDataTypes, ulCommonUtils, ulTreeView, udImages,
-  ulAppConfig;
+  Main, ulNodeDataTypes, ulCommonUtils, ulTreeView, udImages, ulAppConfig;
 
 procedure TfrmImportList.btnCancelClick(Sender: TObject);
 begin
@@ -227,7 +226,7 @@ begin
     except
       on E : Exception do
       begin
-        ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message]);
+        ShowMessage(Format(msgErrGeneric,[E.ClassName,E.Message]),True);
         lblItems.Caption := msgImportFailed;
       end;
     end;

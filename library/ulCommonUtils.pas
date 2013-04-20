@@ -50,6 +50,7 @@ function  GetDateTime: String;
 function  GetFirstFreeIndex(ArrayString: Array of WideString): Integer;
 function  IfThen(AValue: Boolean; ATrue, AFalse: String): String;
 function  IsFormatInClipBoard(format: Word): Boolean;
+procedure ShowMessage(const Msg: string; Error: boolean=false);
 
 { Stats }
 function  GetCurrentUserName: string;
@@ -82,7 +83,7 @@ const
 implementation
 
 uses
-  ulStringUtils,registry,Main;
+  ulStringUtils, Registry, Main, SynTaskDialog;
 
 function RGBToHtml(iRGB: Cardinal): string;
 begin
@@ -226,7 +227,7 @@ begin
   // Check if inserted name is empty, then
   if (Trim(Edit.Text) = '') then
   begin
-    ShowMessage(msgErrEmptyName);
+    ShowMessage(msgErrEmptyName,true);
     Edit.Color := clYellow;
   end;
 end;
@@ -269,6 +270,16 @@ begin
       Break;
     end;
   end;
+end;
+
+procedure ShowMessage(const Msg: string; Error: boolean=false);
+const
+  IconError: array[boolean] of TTaskDialogIcon = (tiInformation, tiError);
+var
+  Task: TTaskDialog;
+begin
+  Task.Content := Msg;
+  Task.Execute([cbOK],mrOk,[],IconError[Error]);
 end;
 
 { Stats }
