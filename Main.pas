@@ -93,6 +93,7 @@ type
     miSearchWorkingDirPath: TMenuItem;
     miSearchParameters: TMenuItem;
     edtSearch: TEdit;
+    miRunAs: TMenuItem;
     procedure miOptionsClick(Sender: TObject);
     procedure miStatisticsClick(Sender: TObject);
     procedure OpenFolderSw(Sender: TObject);
@@ -118,7 +119,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure miExitClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-    procedure RunExe(Sender: TObject);
+    procedure RunDoubleClick(Sender: TObject);
     procedure RunSingleClick(Sender: TObject);
     procedure pmWindowPopup(Sender: TObject);
     procedure miRunSelectedSwClick(Sender: TObject);
@@ -161,11 +162,12 @@ type
       Pt: TPoint; var Effect: Integer; Mode: TDropMode);
   private
     { Private declarations }
-    procedure ExecuteFileOrOpenFolder(TreeView: TBaseVirtualTree;ExecuteFile: Boolean);
     function  GetActiveTree: TBaseVirtualTree;
     procedure LoadGlyphs;
     procedure RunAutorun;
     procedure HideMainForm;
+    procedure ExecuteFile(TreeView: TBaseVirtualTree);
+    procedure OpenFolder(TreeView: TBaseVirtualTree);
   public
     { Public declarations }
     procedure ShowMainForm(Sender: TObject);
@@ -249,7 +251,7 @@ begin;
   if DBManager.SaveData(vstList) then
     showmessage(msgSaveCompleted)
   else
-    showmessage(msgErrSave);
+    showmessage(msgErrSave,true);
 end;
 
 procedure TfrmMain.ChangeSearchTextHint(Sender: TObject);
@@ -293,23 +295,40 @@ begin
   vstList.CutToClipBoard;
 end;
 
+procedure TfrmMain.OpenFolder(TreeView: TBaseVirtualTree);
+var
+  Node     : PVirtualNode;
+  NodeData : TvBaseNodeData;
+begin
+  //First selected node
+  Node := TreeView.GetFirstSelected;
+  while Assigned(Node) do
+  begin
+    //Get Node data
+    NodeData := PBaseData(GetNodeDataEx(Node, TreeView, vstSearch, vstList)).Data;
+    //Check if node type is a file
+    if (NodeData is TvFileNodeData) then
+      TvFileNodeData(NodeData).OpenExtractedFolder;
+    //Next selected node
+    Node := TreeView.GetNextSelected(node);
+  end;
+end;
+
 procedure TfrmMain.OpenFolderSw(Sender: TObject);
 var
   TreeView : TBaseVirtualTree;
 begin
   TreeView := GetActiveTree;
   //Show file's folder
-  ExecuteFileOrOpenFolder(TreeView, false);
+  OpenFolder(TreeView);
 end;
 
-procedure TfrmMain.RunExe(Sender: TObject);
+procedure TfrmMain.RunDoubleClick(Sender: TObject);
 begin
+  //Check if user click on node or expand button (+/-)
   if (Sender is TBaseVirtualTree) then
-  begin
-    //Check if user click on node or expand button (+/-)
     if Not(ClickOnButtonTree((Sender as TBaseVirtualTree))) then
-      ExecuteFileOrOpenFolder((Sender as TBaseVirtualTree), true);
-  end;
+      ExecuteFile((Sender as TBaseVirtualTree));
 end;
 
 procedure TfrmMain.miImportListClick(Sender: TObject);
@@ -333,10 +352,7 @@ end;
 
 procedure TfrmMain.miRunSelectedSwClick(Sender: TObject);
 begin
-  if pcList.ActivePageIndex = PG_LIST then
-    RunExe(vstList)
-  else
-    RunExe(vstSearch);
+  RunDoubleClick(GetActiveTree);
 end;
 
 procedure TfrmMain.miOptionsClick(Sender: TObject);
@@ -422,6 +438,7 @@ var
   HitInfo  : ThitInfo;
   TreeView : TBaseVirtualTree;
 begin
+  { TODO: Review when GroupSoftware returns}
   GetCursorPos(Point);
   Point    := vstList.ScreenToClient(Point);
   vstList.GetHitTestInfoAt(Point.X,Point.Y,true,HitInfo);
@@ -558,7 +575,7 @@ begin
   end;
 end;
 
-procedure TfrmMain.ExecuteFileOrOpenFolder(TreeView: TBaseVirtualTree;ExecuteFile: Boolean);
+procedure TfrmMain.ExecuteFile(TreeView: TBaseVirtualTree);
 var
   Node     : PVirtualNode;
   NodeData : TvBaseNodeData;
@@ -571,13 +588,7 @@ begin
     NodeData := PBaseData(GetNodeDataEx(Node, TreeView, vstSearch, vstList)).Data;
     //Check if node type is a file
     if (NodeData is TvFileNodeData) then
-    begin
-      //If ExecuteFile = true, execute it
-      if ExecuteFile then
-        TvFileNodeData(NodeData).Execute(vstList, false)
-      else //Else open file's folder
-        TvFileNodeData(NodeData).OpenExtractedFolder;
-    end;
+      TvFileNodeData(NodeData).Execute(vstList, false);
     //Next selected node
     Node := TreeView.GetNextSelected(node);
   end;
@@ -618,7 +629,7 @@ end;
 procedure TfrmMain.vstListKeyPress(Sender: TObject; var Key: Char);
 begin
   if Ord(Key) = VK_RETURN then
-    RunExe(Sender);
+    RunDoubleClick(Sender);
 end;
 
 procedure TfrmMain.vstListLoadNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
@@ -682,10 +693,11 @@ end;
 
 procedure TfrmMain.RunSingleClick(Sender: TObject);
 begin
+  //Check if user click on node or expand button (+/-)
   if (Sender is TBaseVirtualTree) then
     if Not(ClickOnButtonTree((Sender as TBaseVirtualTree))) then
       if (Config.RunSingleClick) then
-        RunExe(Sender);
+        ExecuteFile((Sender as TBaseVirtualTree));
 end;
 
 procedure TfrmMain.vstListCompareNodes(Sender: TBaseVirtualTree; Node1,
@@ -730,9 +742,12 @@ begin
     if Mode = dmOnNode then
     begin
       //Check if DropMode is in a vtdtCategory (so expand it, before drop item)
-      //or another item type (set amNowhere as AttachMode)
+      //or another item type (change Mode and AttachMode for insert after new nodes)
       if NodeData.Data.DataType <> vtdtCategory then
-        AttachMode := amNowhere
+      begin
+        Mode := dmBelow;
+        AttachMode := amInsertAfter;
+      end
       else
         vstList.Expanded[Sender.DropTargetNode] := True;
     end;
@@ -751,8 +766,9 @@ begin
       end;
     except
       on E : Exception do
-        ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message]);
+        ShowMessage(Format(msgErrGeneric,[E.ClassName,E.Message]), true);
     end;
+    vstList.Repaint;
     RefreshList(vstList);
   end;
 end;

@@ -175,9 +175,6 @@ var
   I         : Integer;
   Node      : PVirtualNode;
 begin
-  //If dropMode is on node and this node isn't a category type item, then exit
-  if (Mode = dmOnNode) and (AttachMode = amNoWhere) then
-    exit;
   FileNames := TStringList.Create;
   try
     GetFileListFromObj(DataObject,FileNames);
@@ -247,9 +244,6 @@ var
   end;
 
 begin
-  //If dropMode is on node and this node isn't a category type item, then exit
-  if (Mode = dmOnNode) and (AttachMode = amNoWhere) then
-    exit;
   //Add node
   if Assigned(Sender.DropTargetNode) then
     Node := Sender.InsertNode(Sender.DropTargetNode, AttachMode, TvFileNodeData.Create)

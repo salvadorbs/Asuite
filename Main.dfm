@@ -114,7 +114,7 @@ object frmMain: TfrmMain
         TreeOptions.StringOptions = [toAutoAcceptEditChange]
         OnClick = RunSingleClick
         OnCompareNodes = vstListCompareNodes
-        OnDblClick = RunExe
+        OnDblClick = RunDoubleClick
         OnDragOver = vstListDragOver
         OnDragDrop = vstListDragDrop
         OnExpanding = vstListExpanding
@@ -165,7 +165,7 @@ object frmMain: TfrmMain
         TreeOptions.SelectionOptions = [toFullRowSelect, toMultiSelect, toRightClickSelect]
         OnClick = RunSingleClick
         OnCompareNodes = vstSearchCompareNodes
-        OnDblClick = RunExe
+        OnDblClick = RunDoubleClick
         OnGetText = vstSearchGetText
         OnGetImageIndex = vstSearchGetImageIndex
         OnHeaderClick = vstSearchHeaderClick
@@ -312,6 +312,9 @@ object frmMain: TfrmMain
       Caption = 'Run'
       Default = True
       OnClick = miRunSelectedSwClick
+    end
+    object miRunAs: TMenuItem
+      Caption = 'Run As...'
     end
     object miOpenFolderSw: TMenuItem
       Caption = 'Show application'#39's folder'
