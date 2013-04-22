@@ -30,6 +30,24 @@ procedure ActionOnExe(Action: TActionOnExecution);
 function  IsProcessExists(exeFileName: string): Boolean;
 procedure RunActionOnExe(NodeData: TvFileNodeData);
 
+{ Windows Api }
+function CreateProcessWithLogonW(
+  Username          : PWideChar;
+  Domain            : PWideChar;
+  Password          : PWideChar;
+  LogonFlags        : DWORD;
+  ApplicationName   : PWideChar;
+  CommandLine       : LPWSTR;
+  CreationFlags     : DWORD;
+  Environment       : Pointer;
+  CurrentDirectory  : PWideChar;
+  const StartupInfo : TStartupInfoW;
+  var ProcessInfo   : TProcessInformation): BOOL; stdcall;
+  external 'advapi32.dll' name 'CreateProcessWithLogonW';
+
+const
+  LOGON_WITH_PROFILE = $00000001;
+
 implementation
 
 procedure ActionOnExe(Action: TActionOnExecution);

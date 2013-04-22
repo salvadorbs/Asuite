@@ -159,6 +159,8 @@ resourcestring
   msgSaveCompleted  = 'Save completed';
   msgConfirm        = 'Are you sure?';
   msgProcessingItems = 'Processing items (%.0f%%): %d';
+  msgRunAsTitle     = 'Run As...';
+  msgInsertWinUserInfo = 'Please insert username and password';
   //Import
   msgImportProgress = 'Import in progress...';
   msgImportTitle1   = 'Select a launcher from which to import list and settings';
@@ -188,6 +190,7 @@ resourcestring
   msgErrSave        = 'Save failed because of an error';
   msgFileNotFound   = 'File not found';
   msgImportFailed   = 'Import failed because of an error';
+  msgErrEmptyUserName = 'Username field is empty';
   //Misc
   msgVersion        = 'Version %s %s';
 

@@ -38,6 +38,18 @@ uses
 
 type
 
+  TProcessInfo = record
+    RunMode     : TRunMode;
+    //Misc
+    PathExe     : string;
+    WorkingDir  : string;
+    WindowState : Integer;
+    Parameters  : string;
+    //Windows user
+    UserName    : string;
+    Password    : string;
+  end;
+
   //Base
   TvBaseNodeData = class
   private
@@ -75,11 +87,11 @@ type
     procedure SetUnixEditDateEdit(Value: Int64);
     procedure SetMRUPosition(Value: Int64);
     procedure SetClickCount(Value: Integer);
-    function InternalExecute: boolean; virtual;
+    function InternalExecute(ProcessInfo: TProcessInfo): boolean; virtual;
   public
     //Base properties
     constructor Create(AType: TvTreeDataType); // virtual;
-    function Execute(Tree: TBaseVirtualTree;Autorun:Boolean): boolean;
+    function Execute(Tree: TBaseVirtualTree;ProcessInfo: TProcessInfo): boolean;
     property ID : Int64 read FID write FID;
     property ParentID : Int64 read FParentID write FParentID;
     property Position : Cardinal read FPosition write FPosition;
@@ -149,8 +161,9 @@ type
     procedure SetNoMRU(value:Boolean);
     procedure SetNoMFU(value:Boolean);
     procedure SetShortcutDesktop(value:Boolean);
-    function InternalExecute: boolean; override;
-    function RunProcess: boolean;
+    function InternalExecute(ProcessInfo: TProcessInfo): boolean; override;
+    function RunProcess(ProcessInfo: TProcessInfo): boolean;
+    function RunProcessAsUser(ProcessInfo: TProcessInfo): boolean;
   public
     //Specific properties
     constructor Create; overload;
@@ -353,14 +366,14 @@ begin
     MFUList.Add(Self);
 end;
 
-function TvBaseNodeData.InternalExecute: boolean;
+function TvBaseNodeData.InternalExecute(ProcessInfo: TProcessInfo): boolean;
 begin
   Result := False;
 end;
 
-function TvBaseNodeData.Execute(Tree: TBaseVirtualTree;Autorun:Boolean): boolean;
+function TvBaseNodeData.Execute(Tree: TBaseVirtualTree;ProcessInfo: TProcessInfo): boolean;
 begin
-  Result := InternalExecute;
+  Result := InternalExecute(ProcessInfo);
   if Result then
   begin
     //Add to MFU and increment clickcount
@@ -368,7 +381,7 @@ begin
     if not(TvFileNodeData(Self).NoMFU) then
       MFUList.Add(Self);
     MFUList.Sort;
-    if Not(Autorun) then
+    if ProcessInfo.RunMode = rmAutorun then
     begin
       //Add to mru and update mruposition
       if not(TvFileNodeData(Self).NoMRU) then
@@ -521,38 +534,65 @@ begin
   FShortcutDesktop := value;
 end;
 
-function TvFileNodeData.InternalExecute: boolean;
+function TvFileNodeData.InternalExecute(ProcessInfo: TProcessInfo): boolean;
 begin
-  Result := Self.RunProcess;
-end;
-
-function TvFileNodeData.RunProcess: boolean;
-var
-  vWorkingDir, vParameters: String;
-  vWindowState: Integer;
-begin
+  Result := False;
+  //File
+  ProcessInfo.PathExe := FPathAbsoluteExe;
   //Working directory
   if FWorkingDir = '' then
-    vWorkingDir := ExtractFileDir(FPathAbsoluteExe)
+    ProcessInfo.WorkingDir := ExtractFileDir(FPathAbsoluteExe)
   else
-    vWorkingDir := RelativeToAbsolute(FWorkingDir);
+    ProcessInfo.WorkingDir := RelativeToAbsolute(FWorkingDir);
   //Window state
   case FWindowState of
-    1: vWindowState := 7;
-    2: vWindowState := 3;
+    1: ProcessInfo.WindowState := 7;
+    2: ProcessInfo.WindowState := 3;
   else
-    vWindowState := 10;
+    ProcessInfo.WindowState := 10;
   end;
-  //vParameters
-  vParameters := FParameters;
-  //Check variables in vParameters to use RelativeToAbsolute
-  if (pos('$',vParameters) <> 0) then
-    vParameters := RelativeToAbsolute(vParameters);
+  //Parameters
+  ProcessInfo.Parameters := RelativeToAbsolute(FParameters);
   //Execution
-  Result := ShellExecute(GetDesktopWindow, 'open', PChar(FPathAbsoluteExe),
-                            PChar(vParameters),
-                            PChar(vWorkingDir), vWindowState) > 32;
+  if (ProcessInfo.RunMode = rmNormal) or (ProcessInfo.RunMode = rmAutorun) then
+    Result := Self.RunProcess(ProcessInfo)
+  else
+    if ProcessInfo.RunMode = rmRunAs then
+      Result := Self.RunProcessAsUser(ProcessInfo);
 end;
+
+function TvFileNodeData.RunProcess(ProcessInfo: TProcessInfo): boolean;
+begin
+  Result := ShellExecute(GetDesktopWindow, 'open', PChar(ProcessInfo.PathExe),
+                            PChar(ProcessInfo.Parameters),
+                            PChar(ProcessInfo.WorkingDir), ProcessInfo.WindowState) > 32;
+end;
+
+function TvFileNodeData.RunProcessAsUser(ProcessInfo: TProcessInfo): boolean;
+var
+  StartupInfo          : TStartupInfoW;
+  ProcInfo             : TProcessInformation;
+begin
+  FillMemory(@StartupInfo, sizeof(StartupInfo), 0);
+  FillMemory(@ProcInfo, sizeof(ProcInfo), 0);
+  StartupInfo.cb := sizeof(TStartupInfoW);
+  StartupInfo.wShowWindow := WindowState;
+  //Run process as Windows another user
+  Result := CreateProcessWithLogonW(PWideChar(ProcessInfo.UserName), nil,
+                                    PWideChar(ProcessInfo.Password),
+                                    LOGON_WITH_PROFILE,
+                                    PWideChar(ProcessInfo.PathExe), nil,
+                                    CREATE_UNICODE_ENVIRONMENT, nil,
+                                    PWideChar(ProcessInfo.WorkingDir),
+                                    StartupInfo, ProcInfo);
+  //Close handles
+  if Result then
+  begin
+    CloseHandle(ProcInfo.hProcess);
+    CloseHandle(ProcInfo.hThread);
+  end
+end;
+
 
 //------------------------------------------------------------------------------
 

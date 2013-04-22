@@ -236,15 +236,17 @@ end;
 
 procedure TClassicMenu.RunFromTrayMenu(Sender: TObject);
 var
-  NodeData : TvBaseNodeData;
+  NodeData    : TvBaseNodeData;
+  ProcessInfo : TProcessInfo;
 begin
   //From menu
   if (Sender is TASMenuItem) then
   begin
     NodeData := (Sender as TASMenuItem).Data;
     //Run file
+    ProcessInfo.RunMode := rmNormal;
     if Assigned(NodeData) then
-      TvFileNodeData(NodeData).Execute(frmMain.vstList, false)
+      TvFileNodeData(NodeData).Execute(frmMain.vstList, ProcessInfo)
     else
       ShowMessage(Format(msgErrRun, [StringReplace((Sender as TASMenuItem).Caption, '&', '', [])]),True);
   end;

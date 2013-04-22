@@ -63,6 +63,13 @@ type
       sfWorkingDir
   );
 
+  //Run modes
+  TRunMode = (
+      rmNormal,
+      rmRunAs,
+      rmAutorun
+  );
+
 implementation
 
 end.

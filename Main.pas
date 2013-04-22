@@ -25,7 +25,7 @@ interface
 uses
   Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
   ComCtrls, VirtualTrees, ActiveX, AppConfig, ulNodeDataTypes, ulCommonClasses,
-  UDImages, ASuiteForm, StdCtrls, Buttons, Sensor, System.UITypes;
+  UDImages, ASuiteForm, StdCtrls, Buttons, Sensor, System.UITypes, mORMotUILogin;
 
 type
 
@@ -160,6 +160,7 @@ type
     procedure vstListDragDrop(Sender: TBaseVirtualTree; Source: TObject;
       DataObject: IDataObject; Formats: TFormatArray; Shift: TShiftState;
       Pt: TPoint; var Effect: Integer; Mode: TDropMode);
+    procedure miRunAsClick(Sender: TObject);
   private
     { Private declarations }
     function  GetActiveTree: TBaseVirtualTree;
@@ -348,6 +349,36 @@ begin
   if not IsFormOpen('frmAbout') then
     Application.CreateForm(TfrmAbout, frmAbout);
   frmAbout.show;
+end;
+
+procedure TfrmMain.miRunAsClick(Sender: TObject);
+var
+  TreeView : TBaseVirtualTree;
+  Node     : PVirtualNode;
+  NodeData : TvBaseNodeData;
+  ProcessInfo : TProcessInfo;
+begin
+  //Call login dialog for Windows username and password
+  TLoginForm.Login(msgRunAsTitle,msgInsertWinUserInfo,ProcessInfo.UserName,ProcessInfo.Password,true,'');
+  if ProcessInfo.UserName <> '' then
+  begin
+    TreeView := GetActiveTree;
+    //First selected node
+    Node := GetActiveTree.GetFirstSelected;
+    while Assigned(Node) do
+    begin
+      //Get Node data
+      NodeData := PBaseData(GetNodeDataEx(Node, TreeView, vstSearch, vstList)).Data;
+      ProcessInfo.RunMode := rmRunAs;
+      //Check if node type is a file
+      if (NodeData is TvFileNodeData) then
+        TvFileNodeData(NodeData).Execute(vstList, ProcessInfo);
+      //Next selected node
+      Node := TreeView.GetNextSelected(node);
+    end;
+  end
+  else
+    ShowMessage(msgErrEmptyUserName,true);
 end;
 
 procedure TfrmMain.miRunSelectedSwClick(Sender: TObject);
@@ -579,6 +610,7 @@ procedure TfrmMain.ExecuteFile(TreeView: TBaseVirtualTree);
 var
   Node     : PVirtualNode;
   NodeData : TvBaseNodeData;
+  ProcessInfo : TProcessInfo;
 begin
   //First selected node
   Node := TreeView.GetFirstSelected;
@@ -586,9 +618,10 @@ begin
   begin
     //Get Node data
     NodeData := PBaseData(GetNodeDataEx(Node, TreeView, vstSearch, vstList)).Data;
+    ProcessInfo.RunMode := rmNormal;
     //Check if node type is a file
     if (NodeData is TvFileNodeData) then
-      TvFileNodeData(NodeData).Execute(vstList, false);
+      TvFileNodeData(NodeData).Execute(vstList, ProcessInfo);
     //Next selected node
     Node := TreeView.GetNextSelected(node);
   end;
@@ -845,6 +878,7 @@ procedure TfrmMain.RunAutorun;
 var
   NodeData : TvFileNodeData;
   I        : Integer;
+  ProcessInfo : TProcessInfo;
 begin
   //Autorun - Execute software
   for I := 0 to ASuiteStartUpApp.Count - 1 do
@@ -852,13 +886,14 @@ begin
     NodeData := ASuiteStartUpApp[I];
     if (Config.Autorun) then
     begin
+      ProcessInfo.RunMode := rmAutorun;
       if (NodeData.Autorun = atSingleInstance) then
       begin
         if not IsProcessExists(ExtractFileName(NodeData.PathAbsoluteExe)) then
-          NodeData.Execute(vstList,true);
+          NodeData.Execute(vstList, ProcessInfo);
       end
       else if (NodeData.Autorun = atAlwaysOnStart) then
-        NodeData.Execute(vstList,true);
+        NodeData.Execute(vstList, ProcessInfo);
     end;
   end;
 end;
@@ -909,13 +944,17 @@ procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 var
   I        : Integer;
   NodeData : TvFileNodeData;
+  ProcessInfo : TProcessInfo;
 begin
   //Autorun - Execute software
   for I := 0 to ASuiteShutdownApp.Count - 1 do
   begin
     NodeData := TvFileNodeData(ASuiteShutdownApp[I]);
     if (Config.Autorun) then
-      NodeData.Execute(vstList,true);
+    begin
+      ProcessInfo.RunMode := rmAutorun;
+      NodeData.Execute(vstList, ProcessInfo);
+    end;
   end;
   //Execute actions on asuite's shutdown (inside vstList)
   vstList.IterateSubtree(nil, IterateSubtreeProcs.ActionsOnShutdown, nil, [], True);
