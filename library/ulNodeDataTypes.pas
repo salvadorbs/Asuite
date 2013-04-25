@@ -164,6 +164,7 @@ type
     function InternalExecute(ProcessInfo: TProcessInfo): boolean; override;
     function RunProcess(ProcessInfo: TProcessInfo): boolean;
     function RunProcessAsUser(ProcessInfo: TProcessInfo): boolean;
+    function RunProcessAsAdmin(ProcessInfo: TProcessInfo): boolean;
   public
     //Specific properties
     constructor Create; overload;
@@ -546,10 +547,10 @@ begin
     ProcessInfo.WorkingDir := RelativeToAbsolute(FWorkingDir);
   //Window state
   case FWindowState of
-    1: ProcessInfo.WindowState := 7;
-    2: ProcessInfo.WindowState := 3;
+    1: ProcessInfo.WindowState := SW_SHOWNOACTIVATE;
+    2: ProcessInfo.WindowState := SW_SHOWMAXIMIZED;
   else
-    ProcessInfo.WindowState := 10;
+    ProcessInfo.WindowState := SW_SHOWDEFAULT;
   end;
   //Parameters
   ProcessInfo.Parameters := RelativeToAbsolute(FParameters);
@@ -558,7 +559,10 @@ begin
     Result := Self.RunProcess(ProcessInfo)
   else
     if ProcessInfo.RunMode = rmRunAs then
-      Result := Self.RunProcessAsUser(ProcessInfo);
+      Result := Self.RunProcessAsUser(ProcessInfo)
+    else
+      if ProcessInfo.RunMode = rmRunAsAdmin then
+        Result := Self.RunProcessAsAdmin(ProcessInfo);
 end;
 
 function TvFileNodeData.RunProcess(ProcessInfo: TProcessInfo): boolean;
@@ -570,8 +574,8 @@ end;
 
 function TvFileNodeData.RunProcessAsUser(ProcessInfo: TProcessInfo): boolean;
 var
-  StartupInfo          : TStartupInfoW;
-  ProcInfo             : TProcessInformation;
+  StartupInfo : TStartupInfoW;
+  ProcInfo    : TProcessInformation;
 begin
   FillMemory(@StartupInfo, sizeof(StartupInfo), 0);
   FillMemory(@ProcInfo, sizeof(ProcInfo), 0);
@@ -593,6 +597,24 @@ begin
   end
 end;
 
+function TvFileNodeData.RunProcessAsAdmin(ProcessInfo: TProcessInfo): boolean;
+var
+  ShellExecuteInfo: TShellExecuteInfo;
+begin
+  ZeroMemory(@ShellExecuteInfo, SizeOf(ShellExecuteInfo));
+  ShellExecuteInfo.cbSize := SizeOf(TShellExecuteInfo);
+  ShellExecuteInfo.Wnd    := GetDesktopWindow;
+  ShellExecuteInfo.fMask  := SEE_MASK_FLAG_DDEWAIT or SEE_MASK_FLAG_NO_UI;
+  ShellExecuteInfo.lpVerb := PChar('runas');
+  //Set process's path, working dir, parameters and window state
+  ShellExecuteInfo.lpFile := PChar(ProcessInfo.PathExe);
+  ShellExecuteInfo.lpDirectory := PChar(ProcessInfo.WorkingDir);
+  if ProcessInfo.Parameters <> '' then
+    ShellExecuteInfo.lpParameters := PChar(ProcessInfo.Parameters);
+  ShellExecuteInfo.nShow := ProcessInfo.WindowState;
+  //Run process
+  Result := ShellExecuteEx(@ShellExecuteInfo);
+end;
 
 //------------------------------------------------------------------------------
 

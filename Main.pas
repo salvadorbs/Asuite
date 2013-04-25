@@ -96,6 +96,7 @@ type
     miSearchParameters: TMenuItem;
     edtSearch: TEdit;
     miRunAs: TMenuItem;
+    miRunAsAdmin: TMenuItem;
     procedure miOptionsClick(Sender: TObject);
     procedure miStatisticsClick(Sender: TObject);
     procedure OpenFolderSw(Sender: TObject);
@@ -163,6 +164,7 @@ type
       DataObject: IDataObject; Formats: TFormatArray; Shift: TShiftState;
       Pt: TPoint; var Effect: Integer; Mode: TDropMode);
     procedure miRunAsClick(Sender: TObject);
+    procedure miRunAsAdminClick(Sender: TObject);
   private
     { Private declarations }
     function  GetActiveTree: TBaseVirtualTree;
@@ -172,6 +174,7 @@ type
     procedure ExecuteFile(NodeData: TvFileNodeData;ProcessInfo: TProcessInfo);
     procedure OpenFolder(NodeData: TvFileNodeData;ProcessInfo: TProcessInfo);
     procedure RunAs(NodeData: TvFileNodeData;ProcessInfo: TProcessInfo);
+    procedure RunAsAdmin(NodeData: TvFileNodeData;ProcessInfo: TProcessInfo);
     procedure ExecuteActionSelectedNode(Callback: TActionSelectedNode;ProcessInfo: TProcessInfo);
   public
     { Public declarations }
@@ -339,6 +342,13 @@ begin
   if not IsFormOpen('frmAbout') then
     Application.CreateForm(TfrmAbout, frmAbout);
   frmAbout.show;
+end;
+
+procedure TfrmMain.miRunAsAdminClick(Sender: TObject);
+var
+  ProcessInfo : TProcessInfo;
+begin
+  ExecuteActionSelectedNode(RunAsAdmin, ProcessInfo);
 end;
 
 procedure TfrmMain.miRunAsClick(Sender: TObject);
@@ -567,6 +577,12 @@ end;
 procedure TfrmMain.RunAs(NodeData: TvFileNodeData;ProcessInfo: TProcessInfo);
 begin
   ProcessInfo.RunMode := rmRunAs;
+  NodeData.Execute(vstList, ProcessInfo);
+end;
+
+procedure TfrmMain.RunAsAdmin(NodeData: TvFileNodeData;ProcessInfo: TProcessInfo);
+begin
+  ProcessInfo.RunMode := rmRunAsAdmin;
   NodeData.Execute(vstList, ProcessInfo);
 end;
 

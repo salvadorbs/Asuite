@@ -67,6 +67,7 @@ type
   TRunMode = (
       rmNormal,
       rmRunAs,
+      rmRunAsAdmin,
       rmAutorun
   );
 

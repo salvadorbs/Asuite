@@ -131,6 +131,10 @@ object frmMain: TfrmMain
     end
     object tbSearch: TTabSheet
       Caption = 'Search'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object sbtnSearch: TSpeedButton
         Left = 152
         Top = 0
@@ -314,8 +318,12 @@ object frmMain: TfrmMain
       OnClick = miRunSelectedSwClick
     end
     object miRunAs: TMenuItem
-      Caption = 'Run As...'
+      Caption = 'Run as...'
       OnClick = miRunAsClick
+    end
+    object miRunAsAdmin: TMenuItem
+      Caption = 'Run as admin'
+      OnClick = miRunAsAdminClick
     end
     object miOpenFolderSw: TMenuItem
       Caption = 'Show application'#39's folder'
