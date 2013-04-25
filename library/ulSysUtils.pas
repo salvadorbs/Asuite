@@ -260,13 +260,15 @@ begin
 end;
 
 function AbsoluteToRelative(APath: String): string;
+var
+  TempPath: string;
 begin
-  APath := LowerCase(APath);
-  if (pos(ExcludeTrailingPathDelimiter(SUITE_WORKING_PATH),APath) <> 0) then
-    APath := StringReplace(APath, ExcludeTrailingPathDelimiter(SUITE_WORKING_PATH), CONST_PATH_ASUITE, [rfReplaceAll])
+  TempPath := LowerCase(APath);
+  if (pos(ExcludeTrailingPathDelimiter(SUITE_WORKING_PATH),TempPath) <> 0) then
+    APath := StringReplace(APath, ExcludeTrailingPathDelimiter(SUITE_WORKING_PATH), CONST_PATH_ASUITE, [rfIgnoreCase,rfReplaceAll])
   else
-    if pos(SUITE_DRIVE,APath) <> 0 then
-      APath := StringReplace(APath, SUITE_DRIVE, CONST_PATH_DRIVE, [rfReplaceAll]);
+    if pos(SUITE_DRIVE,TempPath) <> 0 then
+      APath := StringReplace(APath, SUITE_DRIVE, CONST_PATH_DRIVE, [rfIgnoreCase,rfReplaceAll]);
   Result := APath;
 end;
 
@@ -274,11 +276,10 @@ function RelativeToAbsolute(APath: String): string;
 var
   EnvVar: String;
 begin
-  APath := LowerCase(APath);
   //CONST_PATH_ASuite = Launcher's path
-  APath := StringReplace(APath, CONST_PATH_ASUITE, SUITE_WORKING_PATH, [rfReplaceAll]);
+  APath := StringReplace(APath, CONST_PATH_ASUITE, SUITE_WORKING_PATH, [rfIgnoreCase,rfReplaceAll]);
   //CONST_PATH_DRIVE = Launcher's Drive (ex. ASuite in H:\Software\asuite.exe, CONST_PATH_DRIVE is H: )
-  APath := StringReplace(APath, CONST_PATH_DRIVE, SUITE_DRIVE, [rfReplaceAll]);
+  APath := StringReplace(APath, CONST_PATH_DRIVE, SUITE_DRIVE, [rfIgnoreCase,rfReplaceAll]);
   //Remove double slash (\)
   if Pos('\\', APath) <> 1 then
     APath := StringReplace(APath, '\\', PathDelim, [rfReplaceAll]);
@@ -288,7 +289,7 @@ begin
     EnvVar := APath;
     Delete(EnvVar,1,pos('%',EnvVar));
     EnvVar := Copy(EnvVar,1,pos('%',EnvVar) - 1);
-    APath := StringReplace(APath, '%' + EnvVar + '%', GetEnvironmentVariable(EnvVar), [rfReplaceAll]);
+    APath := StringReplace(APath, '%' + EnvVar + '%', GetEnvironmentVariable(EnvVar), [rfIgnoreCase,rfReplaceAll]);
   end;
   //If APath exists, expand it in absolute path (to avoid the "..")
   if (FileExists(APath) or SysUtils.DirectoryExists(APath)) and (Length(APath) <> 2) then
