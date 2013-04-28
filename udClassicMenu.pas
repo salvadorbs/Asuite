@@ -412,7 +412,7 @@ end;
 
 procedure TClassicMenu.UpdateSpecialList(PopupMenu: TMenuItem;SList: TNodeDataList;MaxItems: Integer);
 var
-  NodeData : TvBaseNodeData;
+  NodeData : TvCustomRealNodeData;
   MenuItem : TASMenuItem;
   I, ItemCount : Integer;
 begin

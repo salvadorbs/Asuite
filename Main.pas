@@ -689,7 +689,7 @@ begin
   DataDest.pNode := Node;
   DataDest.Data.ParentNode := Node.Parent;
   //Icon
-  DataDest.Data.ImageIndex := ImagesDM.GetIconIndex(DataDest.Data);
+  DataDest.Data.ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(DataDest.Data));
   FreeMem(DataSource);
 end;
 

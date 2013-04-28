@@ -40,11 +40,11 @@ type
   private
     { Private declarations }
     function LoadASuiteIconFromFile(const IconName: String): Integer;
-    procedure SaveCacheIcon(Path: string; NodeData: TvBaseNodeData; ImageIndex: Integer);
+    procedure SaveCacheIcon(Path: string; NodeData: TvCustomRealNodeData; ImageIndex: Integer);
   public
     { Public declarations }
-    function GetIconIndex(NodeData:TvBaseNodeData): Integer;
-    procedure DeleteCacheIcon(NodeData: TvBaseNodeData);
+    function GetIconIndex(NodeData:TvCustomRealNodeData): Integer;
+    procedure DeleteCacheIcon(NodeData: TvCustomRealNodeData);
     function GetSimpleIconIndex(xpath : string): integer;
   end;
 
@@ -58,7 +58,7 @@ uses
 
 {$R *.dfm}
 
-function TImagesDM.GetIconIndex(NodeData:TvBaseNodeData): Integer;
+function TImagesDM.GetIconIndex(NodeData:TvCustomRealNodeData): Integer;
 var
   TempPath : String;
 begin
@@ -93,7 +93,7 @@ begin
   SaveCacheIcon(TempPath, NodeData, Result);
 end;
 
-procedure TImagesDM.DeleteCacheIcon(NodeData: TvBaseNodeData);
+procedure TImagesDM.DeleteCacheIcon(NodeData: TvCustomRealNodeData);
 begin
   //Check Cache icon
   if (Config.Cache) then
@@ -105,7 +105,7 @@ begin
   end
 end;
 
-procedure TImagesDM.SaveCacheIcon(Path: string; NodeData: TvBaseNodeData; ImageIndex: Integer);
+procedure TImagesDM.SaveCacheIcon(Path: string; NodeData: TvCustomRealNodeData; ImageIndex: Integer);
 var
   I    : Integer;
   Icon : TIcon;

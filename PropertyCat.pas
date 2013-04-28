@@ -128,7 +128,7 @@ begin
   AData.Name       := StringReplace(AData.Name, '&', '&&', [rfIgnoreCase,rfReplaceAll]);
   AData.PathIcon   := edtPathIcon.Text;
   ImagesDM.DeleteCacheIcon(AData);
-  AData.ImageIndex := ImagesDM.GetIconIndex(TvBaseNodeData(AData));
+  AData.ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(AData));
   AData.HideFromMenu := cbHideSoftware.Checked;
   AData.Changed    := true;
 end;

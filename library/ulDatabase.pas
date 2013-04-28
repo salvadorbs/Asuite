@@ -345,11 +345,11 @@ begin
     SQLFilesData.parent   := AParentID;
     SQLFilesData.position := AIndex;
     SQLFilesData.title    := StringToUTF8(AData.Name);
-    SQLFilesData.cacheicon_id := AData.CacheID;
     //Add specific category and file fields
     if AData.DataType <> vtdtSeparator then
     begin
-      SQLFilesData.icon_path      := StringToUTF8(AData.PathIcon);
+      SQLFilesData.cacheicon_id := TvCustomRealNodeData(AData).CacheID;
+      SQLFilesData.icon_path      := StringToUTF8(TvCustomRealNodeData(AData).PathIcon);
       SQLFilesData.hide_from_menu := AData.HideFromMenu;
       //Add time fields
       SQLFilesData.dateAdded    := AData.UnixAddDate;
@@ -428,7 +428,8 @@ begin
       if IsImport then
         Tree.CheckType[Node] := ctTriStateCheckBox
       else
-        vData.CacheID     := SQLFilesData.cacheicon_id;
+        if (nType <> vtdtSeparator) then
+          TvCustomRealNodeData(vData).CacheID := SQLFilesData.cacheicon_id;
       // generic fields
       vData.Name          := UTF8ToString(SQLFilesData.title);
       vData.id            := SQLFilesData.ID;
@@ -437,28 +438,31 @@ begin
       vData.UnixAddDate   := SQLFilesData.dateAdded;
       vData.UnixEditDate  := SQLFilesData.lastModified;
       vData.ParentNode    := ParentNode;
-      vData.PathIcon      := UTF8ToString(SQLFilesData.icon_path);
       vData.HideFromMenu  := SQLFilesData.hide_from_menu;
-      if (nType = vtdtFile) then
+      if (nType <> vtdtSeparator) then
       begin
-        with TvFileNodeData(vData) do
+        TvCustomRealNodeData(vData).PathIcon := UTF8ToString(SQLFilesData.icon_path);
+        if (nType = vtdtFile) then
         begin
-          PathExe          := UTF8ToString(SQLFilesData.path);
-          Parameters       := UTF8ToString(SQLFilesData.parameters);
-          WorkingDir       := UTF8ToString(SQLFilesData.work_path);
-          ClickCount       := SQLFilesData.clicks;
-          ShortcutDesktop  := SQLFilesData.dsk_shortcut;
-          AutorunPos       := SQLFilesData.autorun_position;
-          Autorun          := TAutorunType(SQLFilesData.autorun);
-          WindowState      := SQLFilesData.window_state;
-          ActionOnExe      := TActionOnExecution(SQLFilesData.onlaunch);
-          NoMRU            := SQLFilesData.no_mru;
-          NoMFU            := SQLFilesData.no_mfu;
-          MRUPosition      := SQLFilesData.lastAccess;
+          with TvFileNodeData(vData) do
+          begin
+            PathExe          := UTF8ToString(SQLFilesData.path);
+            Parameters       := UTF8ToString(SQLFilesData.parameters);
+            WorkingDir       := UTF8ToString(SQLFilesData.work_path);
+            ClickCount       := SQLFilesData.clicks;
+            ShortcutDesktop  := SQLFilesData.dsk_shortcut;
+            AutorunPos       := SQLFilesData.autorun_position;
+            Autorun          := TAutorunType(SQLFilesData.autorun);
+            WindowState      := SQLFilesData.window_state;
+            ActionOnExe      := TActionOnExecution(SQLFilesData.onlaunch);
+            NoMRU            := SQLFilesData.no_mru;
+            NoMFU            := SQLFilesData.no_mfu;
+            MRUPosition      := SQLFilesData.lastAccess;
+          end;
         end;
+        if (nType = vtdtCategory) then
+          InternalLoadListItems(Tree, vData.ID, Node, IsImport);
       end;
-      if (nType = vtdtCategory) then
-        InternalLoadListItems(Tree, vData.ID, Node, IsImport);
     end;
   finally
     SQLFilesData.Free;
@@ -763,11 +767,11 @@ begin
       SQLFilesData.parent   := AParentID;
       SQLFilesData.position := AIndex;
       SQLFilesData.title    := StringToUTF8(AData.Name);
-      SQLFilesData.cacheicon_id := AData.CacheID;
       //Update specific fields
       if AData.DataType <> vtdtSeparator then
       begin
-        SQLFilesData.icon_path      := StringToUTF8(AData.PathIcon);
+        SQLFilesData.cacheicon_id   := TvCustomRealNodeData(AData).CacheID;
+        SQLFilesData.icon_path      := StringToUTF8(TvCustomRealNodeData(AData).PathIcon);
         SQLFilesData.hide_from_menu := AData.HideFromMenu;
         //Update time fields
         SQLFilesData.dateAdded    := AData.UnixAddDate;

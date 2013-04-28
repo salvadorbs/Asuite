@@ -122,7 +122,7 @@ function TfrmImportList.ASuite1NodeToTree(Tree: TVirtualStringTree;XMLNode: IXML
                                           Parent: PVirtualNode): PVirtualNode;
 var
   NodeData     : PBaseData;
-  BaseNodeData : TvBaseNodeData;
+  CustomRealNodeData : TvCustomRealNodeData;
 begin
   Result := nil;
   if ((XMLNode.HasAttribute('name')) or (XMLNode.NodeName = 'Separator')) and
@@ -143,17 +143,17 @@ begin
     Tree.CheckType[Result] := ctTriStateCheckBox;
     NodeData       := Tree.GetNodeData(Result);
     NodeData.pNode := Result;
-    BaseNodeData   := TvBaseNodeData(NodeData.Data);
+    CustomRealNodeData   := TvCustomRealNodeData(NodeData.Data);
     //Get base properties
-    if (BaseNodeData.DataType <> vtdtSeparator) then
+    if (CustomRealNodeData.DataType <> vtdtSeparator) then
     begin
-      BaseNodeData.Name     := String(XMLNode.Attributes['name']);
-      BaseNodeData.PathIcon := GetStrPropertyXML(XMLNode, 'PathIcon', '');
-      BaseNodeData.HideFromMenu := GetBoolPropertyXML(XMLNode, 'HideSoftwareMenu', false);
+      CustomRealNodeData.Name     := String(XMLNode.Attributes['name']);
+      CustomRealNodeData.PathIcon := GetStrPropertyXML(XMLNode, 'PathIcon', '');
+      CustomRealNodeData.HideFromMenu := GetBoolPropertyXML(XMLNode, 'HideSoftwareMenu', false);
       //Check if it is a software, so get software properties
-      if (BaseNodeData.DataType = vtdtFile) then
+      if (CustomRealNodeData.DataType = vtdtFile) then
       begin
-        with TvFileNodeData(BaseNodeData) do
+        with TvFileNodeData(CustomRealNodeData) do
         begin
           NoMRU       := GetBoolPropertyXML(XMLNode, 'DontInsertMRU',false);
           PathExe     := GetStrPropertyXML (XMLNode, 'PathExe', '');
@@ -270,7 +270,7 @@ function TfrmImportList.wppLauncherNodeToTree(Tree: TVirtualStringTree;XMLNode: 
                                                Parent: PVirtualNode): PVirtualNode;
 var
   NodeData     : PBaseData;
-  BaseNodeData : TvBaseNodeData;
+  CustomRealNodeData : TvCustomRealNodeData;
 begin
   Result := nil;
   if ((XMLNode.HasAttribute(Name)) or (XMLNode.NodeName = 'separator')) and
@@ -291,17 +291,17 @@ begin
     Tree.CheckType[Result] := ctTriStateCheckBox;
     NodeData       := Tree.GetNodeData(Result);
     NodeData.pNode := Result;
-    BaseNodeData   := TvBaseNodeData(NodeData.Data);
+    CustomRealNodeData   := TvCustomRealNodeData(NodeData.Data);
     //Get base properties
-    if BaseNodeData.DataType <> vtdtSeparator then
+    if CustomRealNodeData.DataType <> vtdtSeparator then
     begin
-      BaseNodeData.Name     := String(XMLNode.Attributes['name']);
-      BaseNodeData.PathIcon := GetStrPropertyXML(XMLNode,'icon','');
-      BaseNodeData.HideFromMenu := GetBoolPropertyXML(XMLNode, 'HideSoftwareMenu', false);
+      CustomRealNodeData.Name     := String(XMLNode.Attributes['name']);
+      CustomRealNodeData.PathIcon := GetStrPropertyXML(XMLNode,'icon','');
+      CustomRealNodeData.HideFromMenu := GetBoolPropertyXML(XMLNode, 'HideSoftwareMenu', false);
       //Check if it is a software, so get software properties
-      if (BaseNodeData.DataType = vtdtFile) then
+      if (CustomRealNodeData.DataType = vtdtFile) then
       begin
-        with TvFileNodeData(BaseNodeData) do
+        with TvFileNodeData(CustomRealNodeData) do
         begin
           NoMRU       := GetBoolPropertyXML(XMLNode, 'DontInsertMRU',false);
           PathExe     := GetStrPropertyXML (XMLNode, 'path','');
@@ -364,7 +364,7 @@ procedure TfrmImportList.vstListImpGetImageIndex(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
   var Ghosted: Boolean; var ImageIndex: Integer);
 var
-  NodeData : PvBaseNodeData;
+  NodeData : TvBaseNodeData;
 begin
   NodeData   := Sender.GetNodeData(Node);
   ImageIndex := NodeData.ImageIndex;

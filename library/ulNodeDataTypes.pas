@@ -62,21 +62,13 @@ type
     FDataType    : TvTreeDataType;
     FImageIndex  : Integer;
     FParentNode  : PVirtualNode;
-    FPathIcon    : String;
-    FPathAbsoluteIcon : String;
-    FCacheID     : Integer;
-    FPathCacheIcon : string;
     FAddDate     : Int64;
     FEditDate    : Int64;
-    FMRUPosition : Int64;
-    FClickCount  : Integer;
     FHideFromMenu : Boolean;
     function GetName:String;
     procedure SetName(Value: String);
     function GetDataType: TvTreeDataType;
     procedure SetDataType(const Value: TvTreeDataType);
-    procedure SetPathIcon(value:string);
-    procedure SetPathCacheIcon(value:integer);
     function GetAddDate:TDateTime;
     procedure SetAddDate(Value: TDateTime);
     function GetUnixAddDate:Int64;
@@ -85,13 +77,9 @@ type
     procedure SetEditDate(Value: TDateTime);
     function GetUnixEditDateEdit:Int64;
     procedure SetUnixEditDateEdit(Value: Int64);
-    procedure SetMRUPosition(Value: Int64);
-    procedure SetClickCount(Value: Integer);
-    function InternalExecute(ProcessInfo: TProcessInfo): boolean; virtual;
   public
     //Base properties
     constructor Create(AType: TvTreeDataType); // virtual;
-    function Execute(Tree: TBaseVirtualTree;ProcessInfo: TProcessInfo): boolean;
     property ID : Int64 read FID write FID;
     property ParentID : Int64 read FParentID write FParentID;
     property Position : Cardinal read FPosition write FPosition;
@@ -101,22 +89,43 @@ type
     property DataType: TvTreeDataType read GetDataType write SetDataType;
     property ImageIndex: Integer read FImageIndex write FImageIndex;
     property ParentNode: PVirtualNode read FParentNode write FParentNode;
-    property PathIcon: string read FPathIcon write SetPathIcon;
-    property PathAbsoluteIcon: String read FPathAbsoluteIcon write FPathAbsoluteIcon;
-    property CacheID: Integer read FCacheID write SetPathCacheIcon;
-    property PathCacheIcon: string read FPathCacheIcon write FPathCacheIcon;
-    property MRUPosition: Int64 read FMRUPosition write SetMRUPosition;
     property AddDate: TDateTime read GetAddDate write SetAddDate;
     property UnixAddDate: Int64 read GetUnixAddDate write SetUnixAddDate;
     property EditDate: TDateTime read GetEditDate write SetEditDate;
     property UnixEditDate: Int64 read GetUnixEditDateEdit write SetUnixEditDateEdit;
-    property ClickCount: Integer read FClickCount write SetClickCount;
     property HideFromMenu:Boolean read FHideFromMenu write FHideFromMenu;
   end;
   PvBaseNodeData = ^TvBaseNodeData;
 
+  //Separator
+  TvCustomRealNodeData = class(TvBaseNodeData)
+  private
+    FPathIcon    : String;
+    FPathAbsoluteIcon : String;
+    FCacheID     : Integer;
+    FPathCacheIcon : string;
+    FMRUPosition : Int64;
+    FClickCount  : Integer;
+    procedure SetPathIcon(value:string);
+    procedure SetPathCacheIcon(value:integer);
+    procedure SetMRUPosition(Value: Int64);
+    procedure SetClickCount(Value: Integer);
+    function InternalExecute(ProcessInfo: TProcessInfo): boolean; virtual;
+  public
+    constructor Create(AType: TvTreeDataType); // virtual;
+    procedure Copy(source:TvBaseNodeData); override;
+    function Execute(Tree: TBaseVirtualTree;ProcessInfo: TProcessInfo): boolean;
+    property MRUPosition: Int64 read FMRUPosition write SetMRUPosition;
+    property ClickCount: Integer read FClickCount write SetClickCount;
+    property PathIcon: string read FPathIcon write SetPathIcon;
+    property PathAbsoluteIcon: String read FPathAbsoluteIcon write FPathAbsoluteIcon;
+    property CacheID: Integer read FCacheID write SetPathCacheIcon;
+    property PathCacheIcon: string read FPathCacheIcon write FPathCacheIcon;
+  end;
+  PvCustomRealNodeData = ^TvCustomRealNodeData;
+
   //Category
-  TvCategoryNodeData = class(TvBaseNodeData)
+  TvCategoryNodeData = class(TvCustomRealNodeData)
   private
     //Specific private variables and functions
   public
@@ -137,7 +146,7 @@ type
   PvCategoryNodeData = ^TvCategoryNodeData;
 
   //Software
-  TvFileNodeData = class(TvBaseNodeData)
+  TvFileNodeData = class(TvCustomRealNodeData)
   private
     //Specific private variables and functions
     //Paths
@@ -254,12 +263,7 @@ begin
   FName        := '';
   FImageIndex  := -1;
   FDataType    := AType;
-  FMRUPosition := -1;
   FParentNode  := nil;
-  FPathIcon    := '';
-  FCacheID     := -1;
-  FPathCacheIcon := '';
-  FClickCount  := 0;
   FHideFromMenu := False;
   FAddDate     := DateTimeToUnix(Now);
   FEditDate    := FAddDate;
@@ -270,12 +274,7 @@ begin
   FName       := msgCopy + source.Name;
   FImageIndex := source.ImageIndex;
   FDataType   := source.DataType;
-  FPathIcon   := source.PathIcon;
   FHideFromMenu := source.HideFromMenu;
-  //Set nil to some specific properties
-  FCacheID    := -1;
-  FPathCacheIcon := '';
-  PathAbsoluteIcon := '';
 end;
 
 function TvBaseNodeData.GetName: String;
@@ -296,21 +295,6 @@ end;
 procedure TvBaseNodeData.SetDataType(const Value: TvTreeDataType);
 begin
   FDataType := Value;
-end;
-
-procedure TvBaseNodeData.SetPathIcon(value:string);
-begin
-  FPathIcon := value;
-  FPathAbsoluteIcon := RelativeToAbsolute(value);
-end;
-
-procedure TvBaseNodeData.SetPathCacheIcon(value:integer);
-begin
-  FCacheID := value;
-  if (value <> -1) then
-    FPathCacheIcon := SUITE_CACHE_PATH + IntToStr(value) + EXT_ICO
-  else
-    FPathCacheIcon := '';
 end;
 
 function TvBaseNodeData.GetAddDate: TDateTime;
@@ -351,53 +335,6 @@ end;
 procedure TvBaseNodeData.SetUnixEditDateEdit(Value: Int64);
 begin
   FEditDate := Value;
-end;
-
-procedure TvBaseNodeData.SetMRUPosition(Value: Int64);
-begin
-  FMRUPosition := Value;
-  if (FMRUPosition > -1) and (not TvFileNodeData(Self).FNoMRU) then
-    MRUList.Add(Self);
-end;
-
-procedure TvBaseNodeData.SetClickCount(Value: Integer);
-begin
-  FClickCount := Value;
-  if (FClickCount > 0) and (not TvFileNodeData(Self).FNoMFU) then
-    MFUList.Add(Self);
-end;
-
-function TvBaseNodeData.InternalExecute(ProcessInfo: TProcessInfo): boolean;
-begin
-  Result := False;
-end;
-
-function TvBaseNodeData.Execute(Tree: TBaseVirtualTree;ProcessInfo: TProcessInfo): boolean;
-begin
-  Result := InternalExecute(ProcessInfo);
-  if Result then
-  begin
-    //Add to MFU and increment clickcount
-    Inc(FClickCount);
-    if not(TvFileNodeData(Self).NoMFU) then
-      MFUList.Add(Self);
-    MFUList.Sort;
-    if ProcessInfo.RunMode = rmAutorun then
-    begin
-      //Add to mru and update mruposition
-      if not(TvFileNodeData(Self).NoMRU) then
-        MRUList.Insert(0, Self);
-      FMRUPosition := DateTimeToUnix(Now);
-      //Run action after execution
-      RunActionOnExe(TvFileNodeData(Self));
-    end;
-    FChanged := True;
-    RefreshList(Tree);
-  end
-  else begin
-    //Show error message
-    ShowMessage(Format(msgErrRun,[FName]),true);
-  end;
 end;
 
 //------------------------------------------------------------------------------
@@ -625,5 +562,95 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+
+{ TvCustomRealNodeData }
+
+procedure TvCustomRealNodeData.Copy(source: TvBaseNodeData);
+var
+  CustomRealNodeData : TvCustomRealNodeData;
+begin
+  inherited;
+  if source is TvCustomRealNodeData then
+  begin
+    CustomRealNodeData := TvFileNodeData(source);
+    //Set nil to some specific properties
+    FPathIcon      := CustomRealNodeData.PathIcon;
+    FCacheID       := -1;
+    FPathCacheIcon := '';
+    PathAbsoluteIcon := '';
+  end;
+end;
+
+constructor TvCustomRealNodeData.Create(AType: TvTreeDataType);
+begin
+  inherited;
+  FMRUPosition := -1;
+  FClickCount  := 0;
+  FPathIcon    := '';
+  FCacheID     := -1;
+  FPathCacheIcon := '';
+end;
+
+procedure TvCustomRealNodeData.SetMRUPosition(Value: Int64);
+begin
+  FMRUPosition := Value;
+  if (FMRUPosition > -1) and (not TvFileNodeData(Self).FNoMRU) then
+    MRUList.Add(Self);
+end;
+
+procedure TvCustomRealNodeData.SetClickCount(Value: Integer);
+begin
+  FClickCount := Value;
+  if (FClickCount > 0) and (not TvFileNodeData(Self).FNoMFU) then
+    MFUList.Add(Self);
+end;
+
+procedure TvCustomRealNodeData.SetPathIcon(value:string);
+begin
+  FPathIcon := value;
+  FPathAbsoluteIcon := RelativeToAbsolute(value);
+end;
+
+procedure TvCustomRealNodeData.SetPathCacheIcon(value:integer);
+begin
+  FCacheID := value;
+  if (value <> -1) then
+    FPathCacheIcon := SUITE_CACHE_PATH + IntToStr(value) + EXT_ICO
+  else
+    FPathCacheIcon := '';
+end;
+
+function TvCustomRealNodeData.InternalExecute(ProcessInfo: TProcessInfo): boolean;
+begin
+  Result := False;
+end;
+
+function TvCustomRealNodeData.Execute(Tree: TBaseVirtualTree;ProcessInfo: TProcessInfo): boolean;
+begin
+  Result := InternalExecute(ProcessInfo);
+  if Result then
+  begin
+    //Add to MFU and increment clickcount
+    Inc(FClickCount);
+    if not(TvFileNodeData(Self).NoMFU) then
+      MFUList.Add(Self);
+    MFUList.Sort;
+    if ProcessInfo.RunMode <> rmAutorun then
+    begin
+      //Add to mru and update mruposition
+      if not(TvFileNodeData(Self).NoMRU) then
+        MRUList.Insert(0, Self);
+      FMRUPosition := DateTimeToUnix(Now);
+      //Run action after execution
+      RunActionOnExe(TvFileNodeData(Self));
+    end;
+    FChanged := True;
+    RefreshList(Tree);
+  end
+  else begin
+    //Show error message
+    ShowMessage(Format(msgErrRun,[FName]),true);
+  end;
+end;
 
 end.

@@ -29,33 +29,33 @@ type
   TNodeDataList = class (TList)
   private
   protected
-    function  GetItems(Index: Integer): TvBaseNodeData;
-    procedure SetItems(Index: Integer; Item: TvBaseNodeData);
+    function  GetItems(Index: Integer): TvCustomRealNodeData;
+    procedure SetItems(Index: Integer; Item: TvCustomRealNodeData);
   public
     constructor Create;
     destructor  Destroy; override;
-    function  Add(Item: TvBaseNodeData): Integer;
+    function  Add(Item: TvCustomRealNodeData): Integer;
     procedure Delete(Index: integer);
-    function  First: TvBaseNodeData;
-    function  IndexOf(Item: TvBaseNodeData): Integer;
-    procedure Insert(Index: integer; Item: TvBaseNodeData);
-    function  Last: TvBaseNodeData;
-    function  Remove(Item: TvBaseNodeData): Integer;
-    property  Items[Index: Integer]: TvBaseNodeData read GetItems write SetItems;
+    function  First: TvCustomRealNodeData;
+    function  IndexOf(Item: TvCustomRealNodeData): Integer;
+    procedure Insert(Index: integer; Item: TvCustomRealNodeData);
+    function  Last: TvCustomRealNodeData;
+    function  Remove(Item: TvCustomRealNodeData): Integer;
+    property  Items[Index: Integer]: TvCustomRealNodeData read GetItems write SetItems;
   end;
 
   //Most Recently Used
   TMRUList = class(TNodeDataList)
   public
     constructor Create;
-    procedure Add(Item: TvBaseNodeData);
+    procedure Add(Item: TvCustomRealNodeData);
   end;
 
   //Most Frequently Used
   TMFUList = class(TNodeDataList)
   public
     constructor Create;
-    procedure Add(Item: TvBaseNodeData);
+    procedure Add(Item: TvCustomRealNodeData);
     procedure Sort;
   end;
 
@@ -119,7 +119,7 @@ begin
   inherited Destroy;
 end;
 
-function TNodeDataList.Add(Item: TvBaseNodeData): Integer;
+function TNodeDataList.Add(Item: TvCustomRealNodeData): Integer;
 begin
   Self.Remove(Item);
 
@@ -131,41 +131,41 @@ begin
   inherited Delete(Index);
 end;
 
-function TNodeDataList.First: TvBaseNodeData;
+function TNodeDataList.First: TvCustomRealNodeData;
 begin
   Result := inherited First;
 end;
 
-function TNodeDataList.IndexOf(Item: TvBaseNodeData): Integer;
+function TNodeDataList.IndexOf(Item: TvCustomRealNodeData): Integer;
 begin
   Result := inherited IndexOf(Item);
 end;
 
-procedure TNodeDataList.Insert(Index: integer; Item: TvBaseNodeData);
+procedure TNodeDataList.Insert(Index: integer; Item: TvCustomRealNodeData);
 begin
   Self.Remove(Item);
 
   inherited insert(Index,Item);
 end;
 
-function TNodeDataList.Last: TvBaseNodeData;
+function TNodeDataList.Last: TvCustomRealNodeData;
 begin
   Result := inherited Last;
 end;
 
-function TNodeDataList.Remove(Item: TvBaseNodeData): Integer;
+function TNodeDataList.Remove(Item: TvCustomRealNodeData): Integer;
 begin
   Result := IndexOf(Item);
   if Result <> -1 then
     Delete(Result);
 end;
 
-function TNodeDataList.GetItems(Index: Integer): TvBaseNodeData;
+function TNodeDataList.GetItems(Index: Integer): TvCustomRealNodeData;
 begin
   Result  := inherited Get(Index);
 end;
 
-procedure TNodeDataList.SetItems(Index: Integer; Item: TvBaseNodeData);
+procedure TNodeDataList.SetItems(Index: Integer; Item: TvCustomRealNodeData);
 begin
   inherited Put(Index, Item);
 end;
@@ -177,7 +177,7 @@ begin
   inherited Create;
 end;
 
-procedure TMRUList.Add(Item: TvBaseNodeData);
+procedure TMRUList.Add(Item: TvCustomRealNodeData);
 var
   i: integer;
   Inserted : Boolean;
@@ -204,7 +204,7 @@ begin
   inherited Create;
 end;
 
-procedure TMFUList.Add(Item: TvBaseNodeData);
+procedure TMFUList.Add(Item: TvCustomRealNodeData);
 var
   i: integer;
   Inserted : Boolean;

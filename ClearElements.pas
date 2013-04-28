@@ -92,10 +92,10 @@ end;
 procedure TfrmClearElements.ClearCache(Sender: TBaseVirtualTree; Node: PVirtualNode;
                             Data: Pointer; var Abort: Boolean);
 var
-  CurrentNodeData : PBaseData;
+  CurrentNodeData : TvCustomRealNodeData;
 begin
-  CurrentNodeData := Sender.GetNodeData(Node);
-  with CurrentNodeData.Data do
+  CurrentNodeData := TvCustomRealNodeData(PBaseData(Sender.GetNodeData(Node)).Data);
+  with CurrentNodeData do
   begin
     if (CacheID <> -1) then
     begin
@@ -110,9 +110,9 @@ end;
 procedure TfrmClearElements.ClearMRU(Sender: TBaseVirtualTree; Node: PVirtualNode;
                             Data: Pointer; var Abort: Boolean);
 var
-  NodeData : TvBaseNodeData;
+  NodeData : TvCustomRealNodeData;
 begin
-  NodeData := PBaseData(Sender.GetNodeData(Node)).Data;
+  NodeData := TvCustomRealNodeData(PBaseData(Sender.GetNodeData(Node)).Data);
   NodeData.MRUPosition := -1;
   NodeData.Changed := True;
 end;
@@ -120,9 +120,9 @@ end;
 procedure TfrmClearElements.ClearMFU(Sender: TBaseVirtualTree; Node: PVirtualNode;
                             Data: Pointer; var Abort: Boolean);
 var
-  NodeData : TvBaseNodeData;
+  NodeData : TvCustomRealNodeData;
 begin
-  NodeData := PBaseData(Sender.GetNodeData(Node)).Data;
+  NodeData := TvCustomRealNodeData(PBaseData(Sender.GetNodeData(Node)).Data);
   NodeData.ClickCount := 0;
   NodeData.Changed := True;
 end;

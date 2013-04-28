@@ -159,7 +159,7 @@ begin
   AData.WindowState  := cxWindowState.ItemIndex;
   AData.ShortcutDesktop := cbShortcutDesktop.Checked;
   ImagesDM.DeleteCacheIcon(AData);
-  AData.ImageIndex := ImagesDM.GetIconIndex(TvBaseNodeData(AData));
+  AData.ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(AData));
   AData.Changed    := true;
 end;
 

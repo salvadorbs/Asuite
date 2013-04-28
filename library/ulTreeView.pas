@@ -130,7 +130,7 @@ begin
     vtdtFolder:
     begin
       //Folder
-      NodeData.Data.PathIcon := AbsoluteToRelative(SUITE_ICONS_PATH + FILEICON_Folder);
+      TvCustomRealNodeData(NodeData.Data).PathIcon := AbsoluteToRelative(SUITE_ICONS_PATH + FILEICON_Folder);
       FolderPath             := BrowseForFolder('',SUITE_WORKING_PATH);
       if FolderPath <> '' then
       begin
@@ -197,21 +197,23 @@ end;
 procedure GetDropFileProperty(Sender: TBaseVirtualTree;Node: pVirtualNode;PathTemp: string);
 var
   NodeData : PBaseData;
+  CustomRealNodeData : TvCustomRealNodeData;
   Name     : string;
 begin
-  NodeData := Sender.GetNodeData(Node);
+  NodeData := PBaseData(Sender.GetNodeData(Node));
+  CustomRealNodeData := TvCustomRealNodeData(NodeData.Data);
   Name     := ExtractFileName(PathTemp);
   //If it is a directory, use folder icon else get its icon
   if DirectoryExists(PathTemp) then
-    NodeData.Data.PathIcon := AbsoluteToRelative(SUITE_ICONS_PATH + FILEICON_Folder)
+    CustomRealNodeData.PathIcon := AbsoluteToRelative(SUITE_ICONS_PATH + FILEICON_Folder)
   else
     Delete(Name,pos(ExtractFileExt(PathTemp),name),Length(name));
   //Set some node record's variables
-  NodeData.Data.Name := Name;
+  CustomRealNodeData.Name := Name;
   if LowerCase(ExtractFileExt(PathTemp)) = EXT_LNK then
   begin
     //Shortcut
-    with TvFileNodeData(NodeData.Data) do
+    with TvFileNodeData(CustomRealNodeData) do
     begin
       PathExe    := AbsoluteToRelative(GetShortcutTarget(PathTemp,sfPathExe));
       Parameters := AbsoluteToRelative(GetShortcutTarget(PathTemp,sfParameter));
@@ -219,10 +221,10 @@ begin
     end;
   end
   else //Normal file
-    TvFileNodeData(NodeData.Data).PathExe := AbsoluteToRelative(PathTemp);
-  NodeData.Data.DataType   := vtdtFile;
-  NodeData.Data.ImageIndex := ImagesDM.GetIconIndex(NodeData.Data);
-  NodeData.Data.ParentNode := Node.Parent;
+    TvFileNodeData(CustomRealNodeData).PathExe := AbsoluteToRelative(PathTemp);
+  CustomRealNodeData.DataType   := vtdtFile;
+  CustomRealNodeData.ImageIndex := ImagesDM.GetIconIndex(CustomRealNodeData);
+  CustomRealNodeData.ParentNode := Node.Parent;
   NodeData.pNode           := Node;
 end;
 
@@ -252,7 +254,7 @@ begin
   NodeData := Sender.GetNodeData(Node);
   //Set node properties
   NodeData.pNode := Node;
-  with NodeData.Data do
+  with TvFileNodeData(NodeData.Data) do
   begin
     DataType   := vtdtFile;
     Name       := 'Link';
@@ -263,7 +265,7 @@ begin
       try
         PText := GlobalLock(Medium.hGlobal);
         try
-          TvFileNodeData(NodeData.Data).PathExe := PText;
+          PathExe := PText;
         finally
           GlobalUnlock(Medium.hGlobal);
         end;
@@ -273,7 +275,7 @@ begin
     end;
     //Icon
     PathIcon   := AbsoluteToRelative(SUITE_ICONS_PATH + FILEICON_Url);
-    ImageIndex := ImagesDM.GetIconIndex(NodeData.Data);
+    ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(NodeData.Data));
     ParentNode := Node.Parent;
   end;
 end;
@@ -287,8 +289,9 @@ begin
   while Assigned(ChildNode) do
   begin
     NodeData := PBaseData(Sender.GetNodeData(ChildNode)).Data;
-    if Assigned(NodeData) and (NodeData.ImageIndex = -1) then
-      NodeData.ImageIndex := ImagesDM.GetIconIndex(NodeData);
+    if Assigned(NodeData) and (NodeData.ImageIndex = -1) and
+       (NodeData.DataType <> vtdtSeparator) then
+      NodeData.ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(NodeData));
     ChildNode := Sender.GetNextSibling(ChildNode);
   end;
 end;
@@ -391,20 +394,23 @@ end;
 procedure TIterateSubtreeProcs.BeforeDeleteNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
                            Data: Pointer; var Abort: Boolean);
 var
-  NodeData : PBaseData;
+  NodeData : TvCustomRealNodeData;
 begin
-  NodeData := Sender.GetNodeData(Node);
-  //Delete cache icon
-  if (NodeData.Data.DataType = vtdtFile) and FileExists(NodeData.Data.PathCacheIcon) then
-    DeleteFile(NodeData.Data.PathCacheIcon);
-  //Delete desktop's shortcut, if exists
-  if (TvFileNodeData(NodeData.Data).ShortcutDesktop) then
-    DeleteShortcutOnDesktop(TvFileNodeData(NodeData.Data).Name + EXT_LNK);
-  //Remove item from special menu
-  MRUList.Remove(NodeData.Data);
-  MFUList.Remove(NodeData.Data);
+  NodeData := TvCustomRealNodeData(PBaseData(Sender.GetNodeData(Node)).Data);
+  if (NodeData.DataType <> vtdtSeparator) then
+  begin
+    //Delete cache icon
+    if FileExists(NodeData.PathCacheIcon) then
+      DeleteFile(NodeData.PathCacheIcon);
+    //Delete desktop's shortcut, if exists
+    if (TvFileNodeData(NodeData).ShortcutDesktop) then
+      DeleteShortcutOnDesktop(TvFileNodeData(NodeData).Name + EXT_LNK);
+    //Remove item from special menu
+    MRUList.Remove(NodeData);
+    MFUList.Remove(NodeData);
+  end;
   //Remove item from sqlite database
-  DBManager.DeleteItem(NodeData.Data.ID);
+  DBManager.DeleteItem(NodeData.ID);
 end;
 
 procedure TIterateSubtreeProcs.ActionsOnShutdown(Sender: TBaseVirtualTree; Node: PVirtualNode;
