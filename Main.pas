@@ -451,7 +451,6 @@ var
   HitInfo  : ThitInfo;
   TreeView : TBaseVirtualTree;
 begin
-  { TODO: Review when GroupSoftware returns}
   GetCursorPos(Point);
   Point    := vstList.ScreenToClient(Point);
   vstList.GetHitTestInfoAt(Point.X,Point.Y,true,HitInfo);
@@ -468,22 +467,19 @@ begin
   begin
     TreeView := GetActiveTree;
     NodeData := GetNodeDataEx(TreeView.FocusedNode, TreeView, vstSearch, vstList);
-    miProperty2.Enabled     := true;
-    if (NodeData.Data.DataType <> vtdtCategory) then
-      miRunSelectedSw.Enabled := true;
-    if (NodeData.Data.DataType <> vtdtFile) then
-      miOpenFolderSw.Enabled := false;
-    if (NodeData.Data.DataType <> vtdtSeparator) then
-      miRunSelectedSw.Enabled := true;
-    case NodeData.Data.DataType of
-      vtdtCategory  : miRunSelectedSw.Enabled := false;
-      vtdtFile      : miOpenFolderSw.Enabled  := true;
-      vtdtSeparator : miRunSelectedSw.Enabled := false;
-    end;
+    miProperty2.Enabled     := True;
+    miRunSelectedSw.Enabled := (NodeData.Data.DataType <> vtdtSeparator);
+    miRunAs.Enabled         := (NodeData.Data.DataType <> vtdtSeparator);
+    miRunAsAdmin.Enabled    := (NodeData.Data.DataType <> vtdtSeparator);
+    miOpenFolderSw.Enabled  := (NodeData.Data.DataType = vtdtFile) or
+                               (NodeData.Data.DataType = vtdtFolder);
   end
   else begin
-    miRunSelectedSw.Enabled := false;
-    miOpenFolderSw.Enabled  := false;
+    miRunSelectedSw.Enabled := False;
+    miRunAs.Enabled         := False;
+    miRunAsAdmin.Enabled    := False;
+    miOpenFolderSw.Enabled  := False;
+    miProperty2.Enabled     := False;
   end;
   miPaste2.Enabled := IsFormatInClipBoard(CF_VIRTUALTREE);
 end;
