@@ -35,7 +35,7 @@ procedure GetDropFileProperty(Sender: TBaseVirtualTree; Node: pVirtualNode;
                        PathTemp: string);
 procedure DragDropText(Sender: TBaseVirtualTree;DataObject: IDataObject;
                        AttachMode: TVTNodeAttachMode; Mode: TDropMode);
-procedure GetChildNodesIcons(Sender: TBaseVirtualTree; Node: PVirtualNode);
+procedure GetChildNodesIcons(Sender: TBaseVirtualTree; Node: PVirtualNode;UseCache: Boolean = True);
 procedure GetFileListFromObj(const DataObj: IDataObject; FileList: TStringList);
 function  GetNodeDataEx(Node: PVirtualNode; TreeView, SearchTree, ListTree: TBaseVirtualTree): PBaseData;
 function  GetNodeDataSearch(NodeX: PVirtualNode; SearchTree, ListTree: TBaseVirtualTree): PBaseData;
@@ -77,7 +77,7 @@ implementation
 
 uses
   Menus, PropertyFile, PropertyCat, ulSysUtils, udImages, PropertySeparator,
-  Main, ulDatabase;
+  Main, ulDatabase, ulAppConfig;
 
 function AddNode(Sender: TBaseVirtualTree;AType: TvTreeDataType): PBaseData;
 var
@@ -279,18 +279,20 @@ begin
   end;
 end;
 
-procedure GetChildNodesIcons(Sender: TBaseVirtualTree; Node: PVirtualNode);
+procedure GetChildNodesIcons(Sender: TBaseVirtualTree; Node: PVirtualNode;UseCache: Boolean = True);
 var
   ChildNode : PVirtualNode;
   NodeData  : TvBaseNodeData;
+  Cache     : Boolean;
 begin
+  //Get items' icons
   ChildNode := Sender.GetFirstChild(Node);
   while Assigned(ChildNode) do
   begin
     NodeData := PBaseData(Sender.GetNodeData(ChildNode)).Data;
     if Assigned(NodeData) and (NodeData.ImageIndex = -1) and
        (NodeData.DataType <> vtdtSeparator) then
-      NodeData.ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(NodeData));
+      NodeData.ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(NodeData),UseCache);
     ChildNode := Sender.GetNextSibling(ChildNode);
   end;
 end;

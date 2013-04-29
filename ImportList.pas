@@ -82,7 +82,6 @@ type
 
     procedure tsListShow(Sender: TObject);
     procedure tsProgressShow(Sender: TObject);
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
     procedure ImportSettingsInASuite;
@@ -104,7 +103,6 @@ type
 
 var
   frmImportList : TfrmImportList;
-  ConfigCache   : Boolean;
 
 implementation
 
@@ -263,7 +261,7 @@ begin
       DBImp.Destroy;
     end;
   vstListImp.EndUpdate;
-  GetChildNodesIcons(Tree, Tree.RootNode);
+  GetChildNodesIcons(Tree, Tree.RootNode, False);
 end;
 
 function TfrmImportList.wppLauncherNodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
@@ -335,20 +333,11 @@ begin
     Close;
 end;
 
-procedure TfrmImportList.FormClose(Sender: TObject; var Action: TCloseAction);
-begin
-  //Restore cache option
-  Config.Cache := ConfigCache;
-end;
-
 procedure TfrmImportList.FormCreate(Sender: TObject);
 begin
   vstListImp.NodeDataSize := SizeOf(rBaseData);
   vstListImp.Images       := ImagesDM.IcoImages;
   pgcImport.ActivePageIndex := 0;
-  //Disable cache, so ASuite can't create useless cache icon
-  ConfigCache  := Config.Cache;
-  Config.Cache := False;
   //Set imgList and imgSettings's icon
   ImagesDM.IcoImages.GetBitmap(IMAGE_INDEX_Cancel,imgList.Picture.Bitmap);
   ImagesDM.IcoImages.GetBitmap(IMAGE_INDEX_Cancel,imgSettings.Picture.Bitmap);
@@ -357,14 +346,14 @@ end;
 procedure TfrmImportList.vstListImpExpanding(Sender: TBaseVirtualTree;
   Node: PVirtualNode; var Allowed: Boolean);
 begin
-  GetChildNodesIcons(Sender, Node);
+  GetChildNodesIcons(Sender, Node, False);
 end;
 
 procedure TfrmImportList.vstListImpGetImageIndex(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
   var Ghosted: Boolean; var ImageIndex: Integer);
 var
-  NodeData : TvBaseNodeData;
+  NodeData : PvBaseNodeData;
 begin
   NodeData   := Sender.GetNodeData(Node);
   ImageIndex := NodeData.ImageIndex;
@@ -600,7 +589,7 @@ begin
       Config.BackupNumber   := GetIntPropertyXML(Node, 'BackupNumber',5);
       //Other functions
       Config.Autorun        := GetBoolPropertyXML(Node, 'ActiveAutorun',true);
-      ConfigCache           := GetBoolPropertyXML(Node, 'ActiveCache',true);
+      Config.Cache          := GetBoolPropertyXML(Node, 'ActiveCache',true);
       //Execution
       Config.ActionOnExe    := TActionOnExecution(GetIntPropertyXML(Node, 'ActionOnExe',0));
       Config.RunSingleClick := GetBoolPropertyXML(Node, 'RunSingleClick',false);

@@ -43,7 +43,7 @@ type
     procedure SaveCacheIcon(Path: string; NodeData: TvCustomRealNodeData; ImageIndex: Integer);
   public
     { Public declarations }
-    function GetIconIndex(NodeData:TvCustomRealNodeData): Integer;
+    function GetIconIndex(NodeData:TvCustomRealNodeData;UseCache: Boolean = True): Integer;
     procedure DeleteCacheIcon(NodeData: TvCustomRealNodeData);
     function GetSimpleIconIndex(xpath : string): integer;
   end;
@@ -58,17 +58,20 @@ uses
 
 {$R *.dfm}
 
-function TImagesDM.GetIconIndex(NodeData:TvCustomRealNodeData): Integer;
+function TImagesDM.GetIconIndex(NodeData:TvCustomRealNodeData;UseCache: Boolean = True): Integer;
 var
   TempPath : String;
 begin
   Result := -1;
   //Priority cache->icon->exe
   //Check cache icon
-  if Not(FileExists(NodeData.PathCacheIcon)) and (NodeData.CacheID <> -1) then
-    NodeData.CacheID := -1;
-  if (Config.Cache) and FileExists(NodeData.PathCacheIcon) then
-      TempPath := NodeData.PathCacheIcon;
+  if UseCache then
+  begin
+    if Not(FileExists(NodeData.PathCacheIcon)) and (NodeData.CacheID <> -1) then
+      NodeData.CacheID := -1;
+    if (Config.Cache) and FileExists(NodeData.PathCacheIcon) then
+        TempPath := NodeData.PathCacheIcon;
+  end;
   //Icon
   if NodeData.CacheID = -1 then
   begin
@@ -90,7 +93,9 @@ begin
   //Get image index
   if (TempPath <> '') and (Result <> IMAGE_INDEX_Cat) then
     Result := GetSimpleIconIndex(TempPath);
-  SaveCacheIcon(TempPath, NodeData, Result);
+  //Save icon cache
+  if UseCache then
+    SaveCacheIcon(TempPath, NodeData, Result);
 end;
 
 procedure TImagesDM.DeleteCacheIcon(NodeData: TvCustomRealNodeData);
