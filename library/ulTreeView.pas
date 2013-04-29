@@ -61,7 +61,6 @@ type
 
   TListStats = record
       SwCount      : Integer;
-      SwGroupCount : Integer;
       CatCount     : Integer;
     end;
 
@@ -445,8 +444,7 @@ begin
     //Count Softwares and Categories
     case NodeData^.Data.DataType of
       vtdtCategory : Inc(ListStats.CatCount);
-      vtdtFile : Inc(ListStats.SwCount);
-      vtdtFolder : Inc(ListStats.SwGroupCount);
+      vtdtFile, vtdtFolder : Inc(ListStats.SwCount);
       //vtdtSeparator
     end;
   end;

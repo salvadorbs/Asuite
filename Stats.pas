@@ -23,8 +23,6 @@ type
     lbSize2: TLabel;
     lbSoftware: TLabel;
     lbSoftware2: TLabel;
-    lbSoftwareGroup: TLabel;
-    lbSoftwareGroup2: TLabel;
     lbSpaceFree: TLabel;
     lbSpaceFree2: TLabel;
     lbSpaceUsed: TLabel;
@@ -66,14 +64,12 @@ begin
   //Launcher
   with ListStats do
   begin
-    SwCount := 0;
-    SwGroupCount := 0;
+    SwCount  := 0;
     CatCount := 0;
     frmMain.vstList.IterateSubtree(nil, IterateSubtreeProcs.UpdateListItemCount, nil, [], False);
     lbSoftware2.Caption := IntToStr(SwCount);
-    lbSoftwareGroup2.Caption := IntToStr(SwGroupCount);
     lbCat2.Caption := IntToStr(CatCount);
-    lbTotal2.Caption := IntToStr(SwCount + SwGroupCount + CatCount);
+    lbTotal2.Caption := IntToStr(SwCount + CatCount);
   end;
 end;
 

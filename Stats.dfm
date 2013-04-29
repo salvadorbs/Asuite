@@ -3,7 +3,7 @@ object frmStats: TfrmStats
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Stats'
-  ClientHeight = 241
+  ClientHeight = 226
   ClientWidth = 225
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -217,7 +217,7 @@ object frmStats: TfrmStats
     Left = 8
     Top = 152
     Width = 209
-    Height = 81
+    Height = 65
     Caption = 'ASuite'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -241,7 +241,7 @@ object frmStats: TfrmStats
     end
     object lbCat: TLabel
       Left = 8
-      Top = 48
+      Top = 32
       Width = 83
       Height = 13
       Caption = 'Categories added'
@@ -254,23 +254,10 @@ object frmStats: TfrmStats
     end
     object lbTotal: TLabel
       Left = 8
-      Top = 64
+      Top = 48
       Width = 24
       Height = 13
       Caption = 'Total'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
-    end
-    object lbSoftwareGroup: TLabel
-      Left = 8
-      Top = 32
-      Width = 105
-      Height = 13
-      Caption = 'Software group added'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -293,24 +280,9 @@ object frmStats: TfrmStats
       Font.Style = []
       ParentFont = False
     end
-    object lbSoftwareGroup2: TLabel
-      Left = 120
-      Top = 32
-      Width = 75
-      Height = 13
-      Alignment = taRightJustify
-      AutoSize = False
-      Caption = '00'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
-    end
     object lbCat2: TLabel
       Left = 104
-      Top = 48
+      Top = 32
       Width = 91
       Height = 13
       Alignment = taRightJustify
@@ -325,7 +297,7 @@ object frmStats: TfrmStats
     end
     object lbTotal2: TLabel
       Left = 104
-      Top = 64
+      Top = 48
       Width = 91
       Height = 13
       Alignment = taRightJustify
