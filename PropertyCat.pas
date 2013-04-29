@@ -24,7 +24,7 @@ interface
 
 uses
   SysUtils, Classes, Controls, Forms, Dialogs, StdCtrls, ExtCtrls, GTForm,
-  ulNodeDataTypes, Graphics, Vcl.CheckLst, Vcl.ComCtrls;
+  ulNodeDataTypes, Graphics, Vcl.CheckLst, Vcl.ComCtrls, VirtualTrees;
 
 type
 
@@ -50,18 +50,31 @@ type
     cxActionOnExe: TComboBox;
     cbHideSoftware: TCheckBox;
     btnChangeOrder: TButton;
-    chklstItems: TCheckListBox;
     lblListItems: TLabel;
     lblNote: TLabel;
+    vstCategoryItems: TVirtualStringTree;
     procedure btnBrowseIconClick(Sender: TObject);
     procedure edtNameEnter(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure FormCreate(Sender: TObject);
+    procedure btnChangeOrderClick(Sender: TObject);
+    procedure vstCategoryItemsGetImageIndex(Sender: TBaseVirtualTree;
+      Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
+      var Ghosted: Boolean; var ImageIndex: Integer);
+    procedure vstCategoryItemsGetText(Sender: TBaseVirtualTree;
+      Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
+      var CellText: string);
   private
     { Private declarations }
+    FNodeData: PBaseData;
     procedure LoadNodeData(AData: TvCategoryNodeData);
     procedure SaveNodeData(AData: TvCategoryNodeData);
+    procedure GetCategoryItems(Sender: TBaseVirtualTree; Node: PVirtualNode;
+      Data: Pointer; var Abort: Boolean);
+    procedure SetCategoryItems(Sender: TBaseVirtualTree; Node: PVirtualNode;
+      Data: Pointer; var Abort: Boolean);
   public
     { Public declarations }
     class function Edit(AOwner: TComponent; NodeData: PBaseData): TModalResult;
@@ -73,7 +86,8 @@ var
 implementation
 
 uses
-  appConfig, udImages, ulSysUtils, Main, ulCommonUtils;
+  appConfig, udImages, ulSysUtils, Main, ulCommonUtils, ulEnumerations,
+  OrderSoftware, ulAppConfig, ulTreeView;
 
 {$R *.dfm}
 
@@ -85,6 +99,7 @@ begin
   else
     with TfrmPropertyCat.Create(AOwner) do
       try
+        FNodeData := NodeData;
         LoadNodeData(TvCategoryNodeData(NodeData.Data));
         FormStyle := frmMain.FormStyle;
         ShowModal;
@@ -115,6 +130,23 @@ begin
   Close;
 end;
 
+procedure TfrmPropertyCat.btnChangeOrderClick(Sender: TObject);
+begin
+  //Autorun
+  with TvCustomRealNodeData(FNodeData.Data) do
+  begin
+    Autorun := TAutorunType(cxAutoExecute.ItemIndex);
+    try
+      Application.CreateForm(TfrmOrderSoftware, frmOrderSoftware);
+      frmOrderSoftware.FormStyle   := Self.FormStyle;
+      frmOrderSoftware.AutorunType := Autorun;
+      frmOrderSoftware.ShowModal;
+    finally
+      frmOrderSoftware.Free;
+    end;
+  end;
+end;
+
 procedure TfrmPropertyCat.btnOkClick(Sender: TObject);
 begin
   CheckPropertyName(edtName);
@@ -127,22 +159,105 @@ begin
            or (ModalResult = mrCancel);
 end;
 
+procedure TfrmPropertyCat.FormCreate(Sender: TObject);
+begin
+  vstCategoryItems.NodeDataSize := SizeOf(TTreeDataX);
+  vstCategoryItems.Images       := ImagesDM.IcoImages;
+  PageControl1.ActivePageIndex  := 0;
+end;
+
+procedure TfrmPropertyCat.GetCategoryItems(Sender: TBaseVirtualTree; Node: PVirtualNode;
+                            Data: Pointer; var Abort: Boolean);
+var
+  CurrentFileData : TvCustomRealNodeData;
+  NewNode         : PVirtualNode;
+  NewNodeData     : PTreeDataX;
+begin
+  CurrentFileData := TvCustomRealNodeData(PBaseData(Sender.GetNodeData(Node)).Data);
+  if (CurrentFileData.DataType in [vtdtFile,vtdtFolder]) and
+     (Node.Parent = FNodeData.pNode) then
+  begin
+    //Add new checked node in vstCategoryItems
+    NewNode     := vstCategoryItems.AddChild(vstCategoryItems.RootNode);
+    vstCategoryItems.CheckType[NewNode]  := ctTriStateCheckBox;
+    //Check or uncheck new node
+    if TvFileNodeData(CurrentFileData).RunFromCategory then
+      vstCategoryItems.CheckState[NewNode] := csCheckedNormal
+    else
+      vstCategoryItems.CheckState[NewNode] := csUncheckedNormal;
+    NewNodeData := vstCategoryItems.GetNodeData(NewNode);
+    //If necessary, get imageindex
+    if CurrentFileData.ImageIndex = -1 then
+      CurrentFileData.ImageIndex := ImagesDM.GetIconIndex(CurrentFileData);
+    //Set pointers
+    NewNodeData.pNodeList := Node;
+    NewNodeData.pNodeX    := NewNode;
+  end;
+end;
+
 procedure TfrmPropertyCat.LoadNodeData(AData: TvCategoryNodeData);
 begin
   edtName.Text     := AData.name;
   edtPathIcon.Text := AData.PathIcon;
-  cbHideSoftware.Checked := AData.HideFromMenu;
+  //Get items list
+  frmMain.vstList.IterateSubtree(FNodeData.pNode,GetCategoryItems,nil,[],False);
+  cxActionOnExe.ItemIndex := Ord(AData.ActionOnExe);
+  cxAutoExecute.ItemIndex := Ord(AData.Autorun);
+  btnChangeOrder.Enabled  := (cxAutoExecute.ItemIndex <> 0);
+  //Window State
+  if (AData.WindowState <> -1) and Not(AData.WindowState >= 4) then
+    cxWindowState.ItemIndex := AData.WindowState
+  else
+    cxWindowState.ItemIndex := 0;
+  cbHideSoftware.Checked  := AData.HideFromMenu;
 end;
 
 procedure TfrmPropertyCat.SaveNodeData(AData: TvCategoryNodeData);
 begin
-  AData.Name       := StringReplace(edtName.Text, '&&', '&', [rfIgnoreCase,rfReplaceAll]);
-  AData.Name       := StringReplace(AData.Name, '&', '&&', [rfIgnoreCase,rfReplaceAll]);
-  AData.PathIcon   := edtPathIcon.Text;
-  ImagesDM.DeleteCacheIcon(AData);
-  AData.ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(AData));
+  AData.Name := StringReplace(edtName.Text, '&&', '&', [rfIgnoreCase,rfReplaceAll]);
+  AData.Name := StringReplace(AData.Name, '&', '&&', [rfIgnoreCase,rfReplaceAll]);
+  vstCategoryItems.IterateSubtree(nil,SetCategoryItems,nil,[],False);
+  //If changed, refresh cache icon
+  if AData.PathIcon <> edtPathIcon.Text then
+  begin
+    AData.PathIcon   := edtPathIcon.Text;
+    ImagesDM.DeleteCacheIcon(AData);
+    AData.ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(AData));
+  end;
+  AData.ActionOnExe  := TActionOnExecution(cxActionOnExe.ItemIndex);
+  AData.Autorun      := TAutorunType(cxAutoExecute.ItemIndex);
+  AData.WindowState  := cxWindowState.ItemIndex;
   AData.HideFromMenu := cbHideSoftware.Checked;
-  AData.Changed    := true;
+  AData.Changed := True;
+end;
+
+procedure TfrmPropertyCat.SetCategoryItems(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
+var
+  ListNodeData : TvFileNodeData;
+begin
+  ListNodeData := TvFileNodeData(GetNodeDataSearch(Node,vstCategoryItems,frmMain.vstList).Data);
+  ListNodeData.RunFromCategory := (Node.CheckState = csCheckedNormal);
+  ListNodeData.Changed := True;
+end;
+
+procedure TfrmPropertyCat.vstCategoryItemsGetImageIndex(
+  Sender: TBaseVirtualTree; Node: PVirtualNode; Kind: TVTImageKind;
+  Column: TColumnIndex; var Ghosted: Boolean; var ImageIndex: Integer);
+var
+  NodeData : TvBaseNodeData;
+begin
+  NodeData   := GetNodeDataSearch(Node,vstCategoryItems,frmMain.vstList).Data;
+  ImageIndex := NodeData.ImageIndex;
+end;
+
+procedure TfrmPropertyCat.vstCategoryItemsGetText(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+var
+  NodeData : TvBaseNodeData;
+begin
+  NodeData := GetNodeDataSearch(Node,vstCategoryItems,frmMain.vstList).Data;
+  CellText := NodeData.Name;
 end;
 
 end.

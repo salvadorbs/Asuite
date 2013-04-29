@@ -4,7 +4,7 @@ object frmPropertyCat: TfrmPropertyCat
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Properties'
-  ClientHeight = 255
+  ClientHeight = 263
   ClientWidth = 402
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -15,11 +15,12 @@ object frmPropertyCat: TfrmPropertyCat
   OldCreateOrder = True
   Position = poMainFormCenter
   OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object btnCancel: TButton
     Left = 319
-    Top = 222
+    Top = 230
     Width = 75
     Height = 25
     Caption = 'Cancel'
@@ -29,7 +30,7 @@ object frmPropertyCat: TfrmPropertyCat
   end
   object btnOk: TButton
     Left = 238
-    Top = 222
+    Top = 230
     Width = 75
     Height = 25
     Caption = 'Ok'
@@ -42,15 +43,14 @@ object frmPropertyCat: TfrmPropertyCat
     Left = 9
     Top = 8
     Width = 385
-    Height = 208
-    ActivePage = tsInfo2
+    Height = 216
+    ActivePage = tsInfo1
     TabOrder = 0
     object tsInfo1: TTabSheet
       Caption = 'General'
-      ExplicitHeight = 285
       object lbName: TLabel
-        Left = 11
-        Top = 8
+        Left = 3
+        Top = 5
         Width = 27
         Height = 13
         Caption = 'Name'
@@ -58,17 +58,17 @@ object frmPropertyCat: TfrmPropertyCat
         ParentColor = False
       end
       object lblListItems: TLabel
-        Left = 11
+        Left = 3
         Top = 51
         Width = 121
         Height = 13
         Caption = 'List items in this category'
       end
       object lblNote: TLabel
-        Left = 13
-        Top = 136
-        Width = 348
-        Height = 46
+        Left = 3
+        Top = 151
+        Width = 371
+        Height = 26
         Caption = 
           'Note: In this list you can find all software items of this categ' +
           'ory (only first level). Uncheck items who you don'#39't want to star' +
@@ -76,28 +76,37 @@ object frmPropertyCat: TfrmPropertyCat
         WordWrap = True
       end
       object edtName: TEdit
-        Left = 11
+        Left = 3
         Top = 24
         Width = 145
         Height = 21
         TabOrder = 0
         OnEnter = edtNameEnter
       end
-      object chklstItems: TCheckListBox
-        Left = 11
-        Top = 64
-        Width = 350
-        Height = 73
-        ItemHeight = 13
+      object vstCategoryItems: TVirtualStringTree
+        Left = 3
+        Top = 70
+        Width = 371
+        Height = 77
+        DragOperations = []
+        Header.AutoSizeIndex = 0
+        Header.Font.Charset = DEFAULT_CHARSET
+        Header.Font.Color = clWindowText
+        Header.Font.Height = -11
+        Header.Font.Name = 'Tahoma'
+        Header.Font.Style = []
+        Header.MainColumn = -1
+        Images = ImagesDM.IcoImages
         TabOrder = 1
+        TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
+        TreeOptions.PaintOptions = [toShowDropmark, toThemeAware, toUseBlendedImages]
+        OnGetText = vstCategoryItemsGetText
+        OnGetImageIndex = vstCategoryItemsGetImageIndex
+        Columns = <>
       end
     end
     object tsInfo2: TTabSheet
       Caption = 'Advanced'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object lbPathIcon: TLabel
         Left = 8
         Top = 8
@@ -205,6 +214,7 @@ object frmPropertyCat: TfrmPropertyCat
         Height = 21
         Caption = 'Change order'
         TabOrder = 3
+        OnClick = btnChangeOrderClick
       end
     end
   end
