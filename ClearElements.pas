@@ -56,7 +56,7 @@ var
 
 implementation   
 
-uses Main, ulTreeView, ulNodeDataTypes, ulSysUtils;
+uses Main, ulTreeView, ulNodeDataTypes, ulSysUtils, ulEnumerations;
 
 {$R *.dfm}
 
@@ -84,7 +84,11 @@ begin
     DeleteFiles(SUITE_BACKUP_PATH, APP_NAME + '_*' + EXT_SQLBCK);
   //Clear Cache
   if cbCache.Checked then
+  begin
     frmMain.vstList.IterateSubtree(nil, ClearCache, nil, [], True);
+    GetChildNodesIcons(frmMain.vstList, frmMain.vstList.RootNode);
+    frmMain.vstList.FullCollapse;
+  end;
   RefreshList(frmMain.vstList);
   Close;
 end;
@@ -92,17 +96,21 @@ end;
 procedure TfrmClearElements.ClearCache(Sender: TBaseVirtualTree; Node: PVirtualNode;
                             Data: Pointer; var Abort: Boolean);
 var
-  CurrentNodeData : TvCustomRealNodeData;
+  CurrentNodeData : PBaseData;
 begin
-  CurrentNodeData := TvCustomRealNodeData(PBaseData(Sender.GetNodeData(Node)).Data);
-  with CurrentNodeData do
+  CurrentNodeData := PBaseData(Sender.GetNodeData(Node));
+  if CurrentNodeData.Data.DataType <> vtdtSeparator then
   begin
-    if (CacheID <> -1) then
+    with TvCustomRealNodeData(CurrentNodeData.Data) do
     begin
-      if FileExists(PathCacheIcon) then
-        DeleteFile(PathCacheIcon);
-      CacheID := -1;
-      Changed := True;
+      if (CacheID <> -1) then
+      begin
+        if FileExists(PathCacheIcon) then
+          DeleteFile(PathCacheIcon);
+        CacheID    := -1;
+        ImageIndex := -1;
+        Changed    := True;
+      end;
     end;
   end;
 end;
