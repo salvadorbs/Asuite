@@ -77,12 +77,12 @@ type
   //StartUp Item List
   TAutorunItemList = class(TNodeDataList)
   protected
-    function  GetItems(Index: Integer): TvFileNodeData;
-    procedure SetItems(Index: Integer; Item: TvFileNodeData);
+    function  GetItems(Index: Integer): TvCustomRealNodeData;
+    procedure SetItems(Index: Integer; Item: TvCustomRealNodeData);
   public
     constructor Create;
-    procedure Insert(Index: integer; Item: TvFileNodeData);
-    property  Items[Index: Integer]: TvFileNodeData read GetItems write SetItems;
+    procedure Insert(Index: integer; Item: TvCustomRealNodeData);
+    property  Items[Index: Integer]: TvCustomRealNodeData read GetItems write SetItems;
   end;
 
   { TVersionInfo }
@@ -313,17 +313,17 @@ begin
   inherited Create;
 end;
 
-function TAutorunItemList.GetItems(Index: Integer): TvFileNodeData;
+function TAutorunItemList.GetItems(Index: Integer): TvCustomRealNodeData;
 begin
   Result  := inherited Get(Index);
 end;
 
-procedure TAutorunItemList.SetItems(Index: Integer; Item: TvFileNodeData);
+procedure TAutorunItemList.SetItems(Index: Integer; Item: TvCustomRealNodeData);
 begin
   inherited Put(Index, Item);
 end;
 
-procedure TAutorunItemList.Insert(Index: integer; Item: TvFileNodeData);
+procedure TAutorunItemList.Insert(Index: integer; Item: TvCustomRealNodeData);
 begin
   if (Item.AutorunPos > Self.Count) then
     Item.AutorunPos := Self.Count;

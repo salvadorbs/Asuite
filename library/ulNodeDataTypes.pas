@@ -106,10 +106,15 @@ type
     FPathCacheIcon : string;
     FMRUPosition : Int64;
     FClickCount  : Integer;
+    FWindowState : Integer;
+    FActionOnExe : TActionOnExecution;
+    FAutorun     : TAutorunType;
+    FAutorunPos  : Integer; //Position for ASuiteStartUpApp and ASuiteShutdownApp
     procedure SetPathIcon(value:string);
     procedure SetPathCacheIcon(value:integer);
     procedure SetMRUPosition(Value: Int64);
     procedure SetClickCount(Value: Integer);
+    procedure SetAutorun(value:TAutorunType);
     function InternalExecute(ProcessInfo: TProcessInfo): boolean; virtual;
   public
     constructor Create(AType: TvTreeDataType); // virtual;
@@ -121,6 +126,10 @@ type
     property PathAbsoluteIcon: String read FPathAbsoluteIcon write FPathAbsoluteIcon;
     property CacheID: Integer read FCacheID write SetPathCacheIcon;
     property PathCacheIcon: string read FPathCacheIcon write FPathCacheIcon;
+    property WindowState: Integer read FWindowState write FWindowState;
+    property ActionOnExe: TActionOnExecution read FActionOnExe write FActionOnExe;
+    property Autorun: TAutorunType read FAutorun write SetAutorun;
+    property AutorunPos: Integer read FAutorunPos write FAutorunPos;
   end;
   PvCustomRealNodeData = ^TvCustomRealNodeData;
 
@@ -156,17 +165,12 @@ type
     FParameters      : string;
     FWorkingDir      : string;
     FWorkingDirAbsolute : string;
-    FWindowState     : Integer;
-    FActionOnExe     : TActionOnExecution;
     FShortcutDesktop : Boolean;
     FNoMRU           : Boolean;
     FNoMFU           : Boolean;
-    //Misc
-    FAutorun         : TAutorunType;
-    FAutorunPos      : Integer; //Position for ASuiteStartUpApp and ASuiteShutdownApp
+    FRunFromCategory : Boolean;
     procedure SetPathExe(value:string);
     procedure SetWorkingDir(value:string);
-    procedure SetAutorun(value:TAutorunType);
     procedure SetNoMRU(value:Boolean);
     procedure SetNoMFU(value:Boolean);
     procedure SetShortcutDesktop(value:Boolean);
@@ -196,11 +200,8 @@ type
     property Parameters: string read FParameters write FParameters;
     property WorkingDir: string read FWorkingDir write SetWorkingDir;
     property WorkingDirAbsolute: string read FWorkingDirAbsolute write FWorkingDirAbsolute;
-    property WindowState: Integer read FWindowState write FWindowState;
-    property ActionOnExe: TActionOnExecution read FActionOnExe write FActionOnExe;
     property ShortcutDesktop:Boolean read FShortcutDesktop write SetShortcutDesktop;
-    property Autorun: TAutorunType read FAutorun write SetAutorun;
-    property AutorunPos: Integer read FAutorunPos write FAutorunPos;
+    property RunFromCategory: Boolean read FRunFromCategory write FRunFromCategory;
   end;
   PvFileNodeData = ^TvFileNodeData;
 
@@ -408,35 +409,6 @@ procedure TvFileNodeData.SetWorkingDir(value:string);
 begin
   FWorkingDir := value;
   FWorkingDirAbsolute := RelativeToAbsolute(value);
-end;
-
-procedure TvFileNodeData.SetAutorun(value:TAutorunType);
-begin
-  //If it is changed, remove from old list and insert in new list
-  if (value > atNever) and ((FAutorun) <> (value)) then
-  begin
-    if (FAutorun in [atAlwaysOnStart, atSingleInstance, atNever]) and (value in [atAlwaysOnClose]) then
-    begin
-      ASuiteStartUpApp.Remove(Self);
-      ASuiteShutdownApp.Insert(Self.FAutorunPos, Self)
-    end
-    else
-      if (FAutorun in [atAlwaysOnClose, atNever]) and (value in [atAlwaysOnStart, atSingleInstance]) then
-      begin
-        ASuiteShutdownApp.Remove(Self);
-        ASuiteStartUpApp.Insert(Self.FAutorunPos, Self);
-      end;
-  end
-  else begin
-    //If it is changed, remove from old list
-    if (FAutorun in [atAlwaysOnStart, atSingleInstance]) and (value in [atNever]) then
-      ASuiteStartUpApp.Remove(Self)
-    else
-      if (FAutorun in [atAlwaysOnClose]) and (value in [atNever]) then
-        ASuiteShutdownApp.Remove(Self);
-  end;
-  //Set new value
-  FAutorun := value;
 end;
 
 procedure TvFileNodeData.SetNoMRU(value:Boolean);
@@ -651,6 +623,35 @@ begin
     //Show error message
     ShowMessage(Format(msgErrRun,[FName]),true);
   end;
+end;
+
+procedure TvCustomRealNodeData.SetAutorun(value:TAutorunType);
+begin
+  //If it is changed, remove from old list and insert in new list
+  if (value > atNever) and ((FAutorun) <> (value)) then
+  begin
+    if (FAutorun in [atAlwaysOnStart, atSingleInstance, atNever]) and (value in [atAlwaysOnClose]) then
+    begin
+      ASuiteStartUpApp.Remove(Self);
+      ASuiteShutdownApp.Insert(Self.FAutorunPos, Self)
+    end
+    else
+      if (FAutorun in [atAlwaysOnClose, atNever]) and (value in [atAlwaysOnStart, atSingleInstance]) then
+      begin
+        ASuiteShutdownApp.Remove(Self);
+        ASuiteStartUpApp.Insert(Self.FAutorunPos, Self);
+      end;
+  end
+  else begin
+    //If it is changed, remove from old list
+    if (FAutorun in [atAlwaysOnStart, atSingleInstance]) and (value in [atNever]) then
+      ASuiteStartUpApp.Remove(Self)
+    else
+      if (FAutorun in [atAlwaysOnClose]) and (value in [atNever]) then
+        ASuiteShutdownApp.Remove(Self);
+  end;
+  //Set new value
+  FAutorun := value;
 end;
 
 end.
