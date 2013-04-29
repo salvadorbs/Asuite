@@ -366,6 +366,7 @@ begin
   //Misc
   FAutorun         := atNever;
   FAutorunPos      := 0;
+  FRunFromCategory := False;
 end;
 
 procedure TvFileNodeData.Copy(source:TvBaseNodeData);

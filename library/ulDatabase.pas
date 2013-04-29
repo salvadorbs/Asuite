@@ -70,6 +70,7 @@ type
     Fwindow_state     : Integer;
     Fautorun          : Integer;
     Fautorun_position : Integer;
+    Frun_from_category : Boolean;
   published
     //property FIELDNAME: TYPE read FFIELDNAME write FFIELDNAME;
     property itemtype: Integer read Ftype write Ftype;
@@ -93,6 +94,7 @@ type
     property window_state: Integer read Fwindow_state write Fwindow_state;
     property autorun: Integer read Fautorun write Fautorun;
     property autorun_position: Integer read Fautorun_position write Fautorun_position;
+    property run_from_category: Boolean read Frun_from_category write Frun_from_category default True;
   end;
 
   TSQLtbl_options = class(TSQLRecord)
@@ -348,12 +350,21 @@ begin
     //Add specific category and file fields
     if AData.DataType <> vtdtSeparator then
     begin
-      SQLFilesData.cacheicon_id := TvCustomRealNodeData(AData).CacheID;
-      SQLFilesData.icon_path      := StringToUTF8(TvCustomRealNodeData(AData).PathIcon);
-      SQLFilesData.hide_from_menu := AData.HideFromMenu;
       //Add time fields
-      SQLFilesData.dateAdded    := AData.UnixAddDate;
-      SQLFilesData.lastModified := AData.UnixEditDate;
+      SQLFilesData.dateAdded      := AData.UnixAddDate;
+      SQLFilesData.lastModified   := AData.UnixEditDate;
+      SQLFilesData.hide_from_menu := AData.HideFromMenu;
+      //Add category and file fields
+      with TvFileNodeData(AData) do
+      begin
+        SQLFilesData.cacheicon_id := CacheID;
+        SQLFilesData.icon_path    := StringToUTF8(PathIcon);
+        SQLFilesData.clicks       := ClickCount;
+        SQLFilesData.window_state := WindowState;
+        SQLFilesData.autorun      := Ord(Autorun);
+        SQLFilesData.autorun_position := AutorunPos;
+        SQLFilesData.onlaunch     := Ord(ActionOnExe);
+      end;
       //Add file fields
       if (AData.DataType = vtdtFile) then
       begin
@@ -362,15 +373,11 @@ begin
           SQLFilesData.path       := StringToUTF8(PathExe);
           SQLFilesData.work_path  := StringToUTF8(WorkingDir);
           SQLFilesData.parameters := StringToUTF8(Parameters);
-          SQLFilesData.clicks     := ClickCount;
-          SQLFilesData.window_state := WindowState;
           SQLFilesData.dsk_shortcut := ShortcutDesktop;
-          SQLFilesData.autorun    := Ord(Autorun);
-          SQLFilesData.autorun_position := AutorunPos;
-          SQLFilesData.onlaunch   := Ord(ActionOnExe);
           SQLFilesData.no_mru     := NoMRU;
           SQLFilesData.no_mfu     := NoMFU;
           SQLFilesData.lastAccess := MRUPosition;
+          SQLFilesData.run_from_category := RunFromCategory;
         end;
       end;
     end;
@@ -441,7 +448,15 @@ begin
       vData.HideFromMenu  := SQLFilesData.hide_from_menu;
       if (nType <> vtdtSeparator) then
       begin
-        TvCustomRealNodeData(vData).PathIcon := UTF8ToString(SQLFilesData.icon_path);
+        with TvCustomRealNodeData(vData) do
+        begin
+          PathIcon    := UTF8ToString(SQLFilesData.icon_path);
+          AutorunPos  := SQLFilesData.autorun_position;
+          Autorun     := TAutorunType(SQLFilesData.autorun);
+          WindowState := SQLFilesData.window_state;
+          ActionOnExe := TActionOnExecution(SQLFilesData.onlaunch);
+          ClickCount  := SQLFilesData.clicks;
+        end;
         if (nType = vtdtFile) then
         begin
           with TvFileNodeData(vData) do
@@ -449,15 +464,11 @@ begin
             PathExe          := UTF8ToString(SQLFilesData.path);
             Parameters       := UTF8ToString(SQLFilesData.parameters);
             WorkingDir       := UTF8ToString(SQLFilesData.work_path);
-            ClickCount       := SQLFilesData.clicks;
             ShortcutDesktop  := SQLFilesData.dsk_shortcut;
-            AutorunPos       := SQLFilesData.autorun_position;
-            Autorun          := TAutorunType(SQLFilesData.autorun);
-            WindowState      := SQLFilesData.window_state;
-            ActionOnExe      := TActionOnExecution(SQLFilesData.onlaunch);
             NoMRU            := SQLFilesData.no_mru;
             NoMFU            := SQLFilesData.no_mfu;
             MRUPosition      := SQLFilesData.lastAccess;
+            RunFromCategory  := SQLFilesData.run_from_category;
           end;
         end;
         if (nType = vtdtCategory) then
@@ -767,16 +778,25 @@ begin
       SQLFilesData.parent   := AParentID;
       SQLFilesData.position := AIndex;
       SQLFilesData.title    := StringToUTF8(AData.Name);
+      SQLFilesData.hide_from_menu := AData.HideFromMenu;
       //Update specific fields
       if AData.DataType <> vtdtSeparator then
       begin
-        SQLFilesData.cacheicon_id   := TvCustomRealNodeData(AData).CacheID;
-        SQLFilesData.icon_path      := StringToUTF8(TvCustomRealNodeData(AData).PathIcon);
-        SQLFilesData.hide_from_menu := AData.HideFromMenu;
         //Update time fields
         SQLFilesData.dateAdded    := AData.UnixAddDate;
         SQLFilesData.lastModified := AData.UnixEditDate;
-        //Update specific fields
+        //Update category and file fields
+        with TvCustomRealNodeData(AData) do
+        begin
+          SQLFilesData.cacheicon_id := CacheID;
+          SQLFilesData.icon_path    := StringToUTF8(PathIcon);
+          SQLFilesData.clicks       := ClickCount;
+          SQLFilesData.window_state := WindowState;
+          SQLFilesData.autorun      := Ord(Autorun);
+          SQLFilesData.autorun_position := AutorunPos;
+          SQLFilesData.onlaunch     := Ord(ActionOnExe);
+        end;
+        //Update file specific fields
         if (AData.DataType = vtdtFile) then
         begin
           with TvFileNodeData(AData) do
@@ -784,15 +804,11 @@ begin
             SQLFilesData.path       := StringToUTF8(PathExe);
             SQLFilesData.work_path  := StringToUTF8(WorkingDir);
             SQLFilesData.parameters := StringToUTF8(Parameters);
-            SQLFilesData.clicks     := ClickCount;
-            SQLFilesData.window_state := WindowState;
             SQLFilesData.dsk_shortcut := ShortcutDesktop;
-            SQLFilesData.autorun    := Ord(Autorun);
-            SQLFilesData.autorun_position := AutorunPos;
-            SQLFilesData.onlaunch   := Ord(ActionOnExe);
             SQLFilesData.no_mru     := NoMRU;
             SQLFilesData.no_mfu     := NoMFU;
             SQLFilesData.lastAccess := MRUPosition;
+            SQLFilesData.run_from_category := RunFromCategory;
           end;
         end;
       end;
