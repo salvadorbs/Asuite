@@ -24,23 +24,35 @@ interface
 
 uses
   SysUtils, Classes, Controls, Forms, Dialogs, StdCtrls, ExtCtrls, GTForm,
-  ulNodeDataTypes, Graphics;
+  ulNodeDataTypes, Graphics, Vcl.CheckLst, Vcl.ComCtrls;
 
 type
 
   { TfrmPropertyCat }
 
   TfrmPropertyCat = class(TGTForm)
-    edtName: TEdit;
-    lbName: TLabel;
+    OpenDialog1: TOpenDialog;
     btnCancel: TButton;
     btnOk: TButton;
-    Panel1: TPanel;
+    PageControl1: TPageControl;
+    tsInfo1: TTabSheet;
+    lbName: TLabel;
+    edtName: TEdit;
+    tsInfo2: TTabSheet;
     lbPathIcon: TLabel;
+    lbAutoExecute: TLabel;
+    lbWindowState: TLabel;
+    lbActionOnExe: TLabel;
     edtPathIcon: TEdit;
     btnBrowseIcon: TButton;
-    OpenDialog1: TOpenDialog;
+    cxAutoExecute: TComboBox;
+    cxWindowState: TComboBox;
+    cxActionOnExe: TComboBox;
     cbHideSoftware: TCheckBox;
+    btnChangeOrder: TButton;
+    chklstItems: TCheckListBox;
+    lblListItems: TLabel;
+    lblNote: TLabel;
     procedure btnBrowseIconClick(Sender: TObject);
     procedure edtNameEnter(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);

@@ -4,8 +4,8 @@ object frmPropertyCat: TfrmPropertyCat
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Properties'
-  ClientHeight = 160
-  ClientWidth = 281
+  ClientHeight = 255
+  ClientWidth = 402
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,8 +18,8 @@ object frmPropertyCat: TfrmPropertyCat
   PixelsPerInch = 96
   TextHeight = 13
   object btnCancel: TButton
-    Left = 198
-    Top = 127
+    Left = 319
+    Top = 222
     Width = 75
     Height = 25
     Caption = 'Cancel'
@@ -28,8 +28,8 @@ object frmPropertyCat: TfrmPropertyCat
     OnClick = btnCancelClick
   end
   object btnOk: TButton
-    Left = 119
-    Top = 127
+    Left = 238
+    Top = 222
     Width = 75
     Height = 25
     Caption = 'Ok'
@@ -38,67 +38,178 @@ object frmPropertyCat: TfrmPropertyCat
     TabOrder = 1
     OnClick = btnOkClick
   end
-  object Panel1: TPanel
-    Left = 8
+  object PageControl1: TPageControl
+    Left = 9
     Top = 8
-    Width = 265
-    Height = 113
+    Width = 385
+    Height = 208
+    ActivePage = tsInfo2
     TabOrder = 0
-    object lbName: TLabel
-      Left = 8
-      Top = 8
-      Width = 41
-      Height = 13
-      AutoSize = False
-      Caption = 'Name'
-      Color = clBtnFace
-      ParentColor = False
+    object tsInfo1: TTabSheet
+      Caption = 'General'
+      ExplicitHeight = 285
+      object lbName: TLabel
+        Left = 11
+        Top = 8
+        Width = 27
+        Height = 13
+        Caption = 'Name'
+        Color = clBtnFace
+        ParentColor = False
+      end
+      object lblListItems: TLabel
+        Left = 11
+        Top = 51
+        Width = 121
+        Height = 13
+        Caption = 'List items in this category'
+      end
+      object lblNote: TLabel
+        Left = 13
+        Top = 136
+        Width = 348
+        Height = 46
+        Caption = 
+          'Note: In this list you can find all software items of this categ' +
+          'ory (only first level). Uncheck items who you don'#39't want to star' +
+          't, when run this category.'
+        WordWrap = True
+      end
+      object edtName: TEdit
+        Left = 11
+        Top = 24
+        Width = 145
+        Height = 21
+        TabOrder = 0
+        OnEnter = edtNameEnter
+      end
+      object chklstItems: TCheckListBox
+        Left = 11
+        Top = 64
+        Width = 350
+        Height = 73
+        ItemHeight = 13
+        TabOrder = 1
+      end
     end
-    object lbPathIcon: TLabel
-      Left = 8
-      Top = 53
-      Width = 132
-      Height = 13
-      Caption = 'Custom icon path (optional)'
-      Color = clBtnFace
-      ParentColor = False
-    end
-    object edtName: TEdit
-      Left = 8
-      Top = 24
-      Width = 249
-      Height = 21
-      TabOrder = 0
-      OnEnter = edtNameEnter
-    end
-    object edtPathIcon: TEdit
-      Left = 8
-      Top = 69
-      Width = 185
-      Height = 21
-      TabOrder = 1
-      Text = '$ASuite\'
-    end
-    object btnBrowseIcon: TButton
-      Left = 200
-      Top = 69
-      Width = 57
-      Height = 21
-      Caption = 'Browse'
-      TabOrder = 2
-      OnClick = btnBrowseIconClick
-    end
-    object cbHideSoftware: TCheckBox
-      Left = 8
-      Top = 96
-      Width = 161
-      Height = 19
-      Caption = 'Hide this software from menu'
-      TabOrder = 3
+    object tsInfo2: TTabSheet
+      Caption = 'Advanced'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
+      object lbPathIcon: TLabel
+        Left = 8
+        Top = 8
+        Width = 132
+        Height = 13
+        Caption = 'Custom icon path (optional)'
+        Color = clBtnFace
+        ParentColor = False
+      end
+      object lbAutoExecute: TLabel
+        Left = 8
+        Top = 48
+        Width = 62
+        Height = 13
+        Caption = 'Autoexecute'
+        Color = clBtnFace
+        ParentColor = False
+      end
+      object lbWindowState: TLabel
+        Left = 8
+        Top = 91
+        Width = 66
+        Height = 13
+        Caption = 'Window state'
+        Color = clBtnFace
+        ParentColor = False
+      end
+      object lbActionOnExe: TLabel
+        Left = 221
+        Top = 88
+        Width = 64
+        Height = 13
+        Caption = 'On execution'
+        Color = clBtnFace
+        ParentColor = False
+      end
+      object edtPathIcon: TEdit
+        Left = 8
+        Top = 24
+        Width = 289
+        Height = 21
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 0
+        Text = '$ASuite\'
+      end
+      object btnBrowseIcon: TButton
+        Left = 309
+        Top = 24
+        Width = 65
+        Height = 21
+        Caption = 'Browse'
+        TabOrder = 1
+      end
+      object cxAutoExecute: TComboBox
+        Left = 8
+        Top = 64
+        Width = 249
+        Height = 21
+        Style = csDropDownList
+        TabOrder = 2
+        Items.Strings = (
+          'Never'
+          'Always on startup'
+          'Only if no previous instances are running'
+          'Always on shutdown')
+      end
+      object cxWindowState: TComboBox
+        Left = 8
+        Top = 107
+        Width = 102
+        Height = 21
+        Style = csDropDownList
+        TabOrder = 5
+        Items.Strings = (
+          'Normal'
+          'Minimized'
+          'Maximized')
+      end
+      object cxActionOnExe: TComboBox
+        Left = 221
+        Top = 107
+        Width = 153
+        Height = 21
+        Style = csDropDownList
+        TabOrder = 4
+        Items.Strings = (
+          'Default (options)'
+          'Just run file'
+          'Run and hide ASuite'
+          'Run and close ASuite')
+      end
+      object cbHideSoftware: TCheckBox
+        Left = 8
+        Top = 134
+        Width = 161
+        Height = 19
+        Caption = 'Hide this software from menu'
+        TabOrder = 6
+      end
+      object btnChangeOrder: TButton
+        Left = 272
+        Top = 64
+        Width = 102
+        Height = 21
+        Caption = 'Change order'
+        TabOrder = 3
+      end
     end
   end
   object OpenDialog1: TOpenDialog
-    Left = 8
-    Top = 128
+    Left = 248
+    Top = 8
   end
 end
