@@ -98,18 +98,19 @@ begin
   Result := mrNone;
   if not Assigned(NodeData) then
     ShowMessage(msgErrGeneric, true)
-  else with TfrmPropertyFile.Create(AOwner) do
-  try
-    FNodeData := NodeData;
-    LoadNodeData(TvFileNodeData(NodeData.Data));
-    FormStyle := frmMain.FormStyle;
-    ShowModal;
-    if ModalResult = mrOK then
-      SaveNodeData(TvFileNodeData(NodeData.Data));
-    Result := ModalResult;
-  finally
-    Free;
-  end;
+  else
+    with TfrmPropertyFile.Create(AOwner) do
+      try
+        FNodeData := NodeData;
+        LoadNodeData(TvFileNodeData(NodeData.Data));
+        FormStyle := frmMain.FormStyle;
+        ShowModal;
+        if ModalResult = mrOK then
+          SaveNodeData(TvFileNodeData(NodeData.Data));
+        Result := ModalResult;
+      finally
+        Free;
+      end;
 end;
 
 procedure TfrmPropertyFile.LoadNodeData(AData: TvFileNodeData);
@@ -149,7 +150,6 @@ begin
   AData.Parameters  := edtParameters.Text;
   //Advanced
   AData.WorkingDir  := edtWorkingDir.Text;
-  AData.PathIcon    := edtPathIcon.Text;
   AData.ActionOnExe := TActionOnExecution(cxActionOnExe.ItemIndex);
   AData.Autorun     := TAutorunType(cxAutoExecute.ItemIndex);
   //Others
@@ -158,8 +158,13 @@ begin
   AData.HideFromMenu := cbHideSoftware.Checked;
   AData.WindowState  := cxWindowState.ItemIndex;
   AData.ShortcutDesktop := cbShortcutDesktop.Checked;
-  ImagesDM.DeleteCacheIcon(AData);
-  AData.ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(AData));
+  //If changed, refresh cache icon
+  if AData.PathIcon <> edtPathIcon.Text then
+  begin
+    AData.PathIcon   := edtPathIcon.Text;
+    ImagesDM.DeleteCacheIcon(AData);
+    AData.ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(AData));
+  end;
   AData.Changed    := true;
 end;
 
@@ -167,16 +172,19 @@ procedure TfrmPropertyFile.Browse(Sender: TObject);
 var
   PathTemp : String;
 begin
+  //Set OpenDialog1's filter based of button pressed
   if (sender = btnBrowseExe) then
   begin
     OpenDialog1.Filter     := 'Executables (*.exe)|*.exe|All files|*.*';
     OpenDialog1.InitialDir := ExtractFileDir(RelativeToAbsolute(edtPathExe.Text));
-  end;
-  if (sender = btnBrowseIcon) then
-  begin
-    OpenDialog1.Filter     := 'Files supported (*.ico;*.exe)|*.ico;*.exe|All files|*.*';
-    OpenDialog1.InitialDir := ExtractFileDir(RelativeToAbsolute(edtPathIcon.Text));
-  end;
+  end
+  else
+    if (sender = btnBrowseIcon) then
+    begin
+      OpenDialog1.Filter     := 'Files supported (*.ico;*.exe)|*.ico;*.exe|All files|*.*';
+      OpenDialog1.InitialDir := ExtractFileDir(RelativeToAbsolute(edtPathIcon.Text));
+    end;
+  //Show OpenDialog and get path
   if (sender = btnBrowseExe) or (sender = btnBrowseIcon) then
   begin
     if (OpenDialog1.Execute) then
@@ -185,20 +193,21 @@ begin
       { TODO -oMatteo -c : Get automatically its name from exe (like PStart) 26/07/2010 22:02:57 }
       if (sender = btnBrowseExe) then
       begin
-        edtPathExe.text    := PathTemp;
-        edtPathExe.Font.Color  := clWindowText;
-        edtPathExe.Hint    := '';
+        edtPathExe.text := PathTemp;
+        edtPathExe.Font.Color := clWindowText;
+        edtPathExe.Hint := '';
       end;
       if (sender = btnBrowseIcon) then
-        edtPathIcon.text   := PathTemp;
+        edtPathIcon.text := PathTemp;
     end;
-  end;
-  if sender = btnBrowseWorkingDir then
-  begin
-    PathTemp := BrowseForFolder('', RelativeToAbsolute(edtWorkingDir.Text));
-    if (PathTemp <> '') then
-      edtWorkingDir.Text := AbsoluteToRelative(PathTemp);
-  end;
+  end
+  else
+    if sender = btnBrowseWorkingDir then
+    begin
+      PathTemp := BrowseForFolder('', RelativeToAbsolute(edtWorkingDir.Text));
+      if (PathTemp <> '') then
+        edtWorkingDir.Text := AbsoluteToRelative(PathTemp);
+    end;
   SetCurrentDir(SUITE_WORKING_PATH);
 end;
 
@@ -217,7 +226,7 @@ begin
       Application.CreateForm(TfrmOrderSoftware, frmOrderSoftware);
       frmOrderSoftware.FormStyle   := Self.FormStyle;
       frmOrderSoftware.AutorunType := Autorun;
-      frmOrderSoftware.showmodal;
+      frmOrderSoftware.ShowModal;
     finally
       frmOrderSoftware.Free;
     end;

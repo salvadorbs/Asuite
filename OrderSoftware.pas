@@ -67,20 +67,16 @@ uses
 procedure TfrmOrderSoftware.bbtnDownClick(Sender: TObject);
 begin
   case pgcSoftwareOrder.ActivePageIndex of
-    0:
-      MoveItemDown(lstStartUp);
-    1:
-      MoveItemDown(lstShutdown);
+    0: MoveItemDown(lstStartUp);
+    1: MoveItemDown(lstShutdown);
   end;
 end;
 
 procedure TfrmOrderSoftware.bbtnUpClick(Sender: TObject);
 begin
   case pgcSoftwareOrder.ActivePageIndex of
-    0:
-      MoveItemUp(lstStartUp);
-    1:
-      MoveItemUp(lstShutdown);
+    0: MoveItemUp(lstStartUp);
+    1: MoveItemUp(lstShutdown);
   end;
 end;
 
