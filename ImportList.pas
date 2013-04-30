@@ -82,6 +82,7 @@ type
 
     procedure tsListShow(Sender: TObject);
     procedure tsProgressShow(Sender: TObject);
+    procedure vstListImpFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
   private
     { Private declarations }
     procedure ImportSettingsInASuite;
@@ -347,6 +348,16 @@ procedure TfrmImportList.vstListImpExpanding(Sender: TBaseVirtualTree;
   Node: PVirtualNode; var Allowed: Boolean);
 begin
   GetChildNodesIcons(Sender, Node, False);
+end;
+
+procedure TfrmImportList.vstListImpFreeNode(Sender: TBaseVirtualTree;
+  Node: PVirtualNode);
+var
+  NodeData : PBaseData;
+begin
+  NodeData := Sender.GetNodeData(Node);
+  if (Node.CheckState = csUncheckedNormal) then
+    FreeAndNil(NodeData.Data);
 end;
 
 procedure TfrmImportList.vstListImpGetImageIndex(Sender: TBaseVirtualTree;

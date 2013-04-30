@@ -228,6 +228,7 @@ object frmImportList: TfrmImportList
         TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning]
         TreeOptions.SelectionOptions = [toFullRowSelect, toRightClickSelect]
         OnExpanding = vstListImpExpanding
+        OnFreeNode = vstListImpFreeNode
         OnGetText = vstListImpGetText
         OnGetImageIndex = vstListImpGetImageIndex
         Columns = <>
