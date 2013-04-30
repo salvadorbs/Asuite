@@ -68,7 +68,8 @@ type
       rmNormal,
       rmRunAs,
       rmRunAsAdmin,
-      rmAutorun
+      rmAutorun,
+      rmOpenFolder
   );
 
 implementation

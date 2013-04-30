@@ -25,11 +25,10 @@ interface
 uses
   Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
   ComCtrls, VirtualTrees, ActiveX, AppConfig, ulNodeDataTypes, ulCommonClasses,
-  UDImages, ASuiteForm, StdCtrls, Buttons, Sensor, System.UITypes, mORMotUILogin;
+  UDImages, ASuiteForm, StdCtrls, Buttons, Sensor, System.UITypes, mORMotUILogin,
+  ulEnumerations;
 
 type
-
-  TActionSelectedNode = procedure(NodeData: TvFileNodeData;ProcessInfo: TProcessInfo) of object;
 
   { TfrmMain }
 
@@ -171,11 +170,8 @@ type
     procedure LoadGlyphs;
     procedure RunAutorun;
     procedure HideMainForm;
-    procedure ExecuteFile(NodeData: TvFileNodeData;ProcessInfo: TProcessInfo);
-    procedure OpenFolder(NodeData: TvFileNodeData;ProcessInfo: TProcessInfo);
-    procedure RunAs(NodeData: TvFileNodeData;ProcessInfo: TProcessInfo);
-    procedure RunAsAdmin(NodeData: TvFileNodeData;ProcessInfo: TProcessInfo);
-    procedure ExecuteActionSelectedNode(Callback: TActionSelectedNode;ProcessInfo: TProcessInfo);
+    procedure ExecuteSelectedNode(ProcessInfo: TProcessInfo);
+    procedure RunNormalSw;
   public
     { Public declarations }
     procedure ShowMainForm(Sender: TObject);
@@ -188,9 +184,9 @@ var
 implementation
 
 uses
-  Option, PropertyFile, PropertyCat, About, ulCommonUtils, ulEnumerations,
-  udClassicMenu, PropertySeparator, ulExeUtils, ImportList, Stats, ulAppConfig,
-  ulTreeView, ulDatabase;
+  Option, PropertyFile, PropertyCat, About, ulCommonUtils, udClassicMenu,
+  PropertySeparator, ulExeUtils, ImportList, Stats, ulAppConfig, ulTreeView,
+  ulDatabase;
 
 {$R *.dfm}
 
@@ -303,26 +299,20 @@ begin
   vstList.CutToClipBoard;
 end;
 
-procedure TfrmMain.OpenFolder(NodeData: TvFileNodeData;ProcessInfo: TProcessInfo);
-begin
-  NodeData.OpenExtractedFolder;
-end;
-
 procedure TfrmMain.OpenFolderSw(Sender: TObject);
 var
   ProcessInfo : TProcessInfo;
 begin
-  ExecuteActionSelectedNode(OpenFolder, ProcessInfo);
+  ProcessInfo.RunMode := rmOpenFolder;
+  ExecuteSelectedNode(ProcessInfo);
 end;
 
 procedure TfrmMain.RunDoubleClick(Sender: TObject);
-var
-  ProcessInfo: TProcessInfo;
 begin
   //Check if user click on node or expand button (+/-)
   if (Sender is TBaseVirtualTree) then
     if Not(ClickOnButtonTree((Sender as TBaseVirtualTree))) then
-      ExecuteActionSelectedNode(ExecuteFile, ProcessInfo);
+      RunNormalSw;
 end;
 
 procedure TfrmMain.miImportListClick(Sender: TObject);
@@ -348,24 +338,26 @@ procedure TfrmMain.miRunAsAdminClick(Sender: TObject);
 var
   ProcessInfo : TProcessInfo;
 begin
-  ExecuteActionSelectedNode(RunAsAdmin, ProcessInfo);
+  ProcessInfo.RunMode := rmRunAsAdmin;
+  ExecuteSelectedNode(ProcessInfo);
 end;
 
 procedure TfrmMain.miRunAsClick(Sender: TObject);
 var
   ProcessInfo : TProcessInfo;
 begin
+  ProcessInfo.RunMode := rmRunAs;
   //Call login dialog for Windows username and password
   TLoginForm.Login(msgRunAsTitle,msgInsertWinUserInfo,ProcessInfo.UserName,ProcessInfo.Password,true,'');
   if ProcessInfo.UserName <> '' then
-    ExecuteActionSelectedNode(RunAs, ProcessInfo)
+    ExecuteSelectedNode(ProcessInfo)
   else
     ShowMessage(msgErrEmptyUserName,true);
 end;
 
 procedure TfrmMain.miRunSelectedSwClick(Sender: TObject);
 begin
-  RunDoubleClick(GetActiveTree);
+  RunNormalSw;
 end;
 
 procedure TfrmMain.miOptionsClick(Sender: TObject);
@@ -471,8 +463,7 @@ begin
     miRunSelectedSw.Enabled := (NodeData.Data.DataType <> vtdtSeparator);
     miRunAs.Enabled         := (NodeData.Data.DataType <> vtdtSeparator);
     miRunAsAdmin.Enabled    := (NodeData.Data.DataType <> vtdtSeparator);
-    miOpenFolderSw.Enabled  := (NodeData.Data.DataType = vtdtFile) or
-                               (NodeData.Data.DataType = vtdtFolder);
+    miOpenFolderSw.Enabled  := (NodeData.Data.DataType in [vtdtFile,vtdtFolder]);
   end
   else begin
     miRunSelectedSw.Enabled := False;
@@ -570,16 +561,12 @@ begin
   end;
 end;
 
-procedure TfrmMain.RunAs(NodeData: TvFileNodeData;ProcessInfo: TProcessInfo);
+procedure TfrmMain.RunNormalSw;
+var
+  ProcessInfo: TProcessInfo;
 begin
-  ProcessInfo.RunMode := rmRunAs;
-  NodeData.Execute(vstList, ProcessInfo);
-end;
-
-procedure TfrmMain.RunAsAdmin(NodeData: TvFileNodeData;ProcessInfo: TProcessInfo);
-begin
-  ProcessInfo.RunMode := rmRunAsAdmin;
-  NodeData.Execute(vstList, ProcessInfo);
+  ProcessInfo.RunMode := rmNormal;
+  ExecuteSelectedNode(ProcessInfo);
 end;
 
 procedure TfrmMain.HideMainForm;
@@ -596,11 +583,12 @@ begin
   end;
 end;
 
-procedure TfrmMain.ExecuteActionSelectedNode(Callback: TActionSelectedNode;ProcessInfo: TProcessInfo);
+procedure TfrmMain.ExecuteSelectedNode(ProcessInfo: TProcessInfo);
 var
-  Node     : PVirtualNode;
-  NodeData : TvBaseNodeData;
-  TreeView : TBaseVirtualTree;
+  Node         : PVirtualNode;
+  BaseNodeData : TvBaseNodeData;
+  BaseNode     : PBaseData;
+  TreeView     : TBaseVirtualTree;
 begin
   TreeView := GetActiveTree;
   //First selected node
@@ -608,19 +596,24 @@ begin
   while Assigned(Node) do
   begin
     //Get Node data
-    NodeData := PBaseData(GetNodeDataEx(Node, TreeView, vstSearch, vstList)).Data;
+    BaseNode     := PBaseData(GetNodeDataEx(Node, TreeView, vstSearch, vstList));
+    BaseNodeData := BaseNode.Data;
     //Execute action
-    if (NodeData is TvFileNodeData) then
-      Callback(TvFileNodeData(NodeData), ProcessInfo);
+    if ProcessInfo.RunMode <> rmOpenFolder then
+    begin
+      if (BaseNodeData.DataType in [vtdtFile,vtdtFolder]) then
+        TvFileNodeData(BaseNodeData).Execute(vstList, ProcessInfo)
+      else
+        if (BaseNodeData.DataType = vtdtCategory) then
+          TvCategoryNodeData(BaseNodeData).Execute(vstList, ProcessInfo, BaseNode.pNode);
+    end
+    else begin
+      if (BaseNodeData.DataType in [vtdtFile,vtdtFolder]) then
+        TvFileNodeData(BaseNodeData).OpenExtractedFolder;
+    end;
     //Next selected node
     Node := TreeView.GetNextSelected(node);
   end;
-end;
-
-procedure TfrmMain.ExecuteFile(NodeData: TvFileNodeData;ProcessInfo: TProcessInfo);
-begin
-  ProcessInfo.RunMode := rmNormal;
-  NodeData.Execute(vstList, ProcessInfo);
 end;
 
 procedure TfrmMain.vstListGetImageIndex(Sender: TBaseVirtualTree;
@@ -656,11 +649,9 @@ begin
 end;
 
 procedure TfrmMain.vstListKeyPress(Sender: TObject; var Key: Char);
-var
-  ProcessInfo: TProcessInfo;
 begin
   if Ord(Key) = VK_RETURN then
-    ExecuteActionSelectedNode(ExecuteFile, ProcessInfo);
+    RunNormalSw;
 end;
 
 procedure TfrmMain.vstListLoadNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
@@ -723,14 +714,12 @@ begin
 end;
 
 procedure TfrmMain.RunSingleClick(Sender: TObject);
-var
-  ProcessInfo: TProcessInfo;
 begin
   //Check if user click on node or expand button (+/-)
   if (Sender is TBaseVirtualTree) then
     if Not(ClickOnButtonTree((Sender as TBaseVirtualTree))) then
       if (Config.RunSingleClick) then
-        ExecuteActionSelectedNode(ExecuteFile, ProcessInfo);
+        RunNormalSw;
 end;
 
 procedure TfrmMain.vstListCompareNodes(Sender: TBaseVirtualTree; Node1,
