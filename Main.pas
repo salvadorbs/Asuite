@@ -168,7 +168,8 @@ type
     { Private declarations }
     function  GetActiveTree: TBaseVirtualTree;
     procedure LoadGlyphs;
-    procedure RunAutorun;
+    procedure RunStartupProcess;
+    procedure RunShutdownProcess;
     procedure HideMainForm;
     procedure ExecuteSelectedNode(ProcessInfo: TProcessInfo);
     procedure RunNormalSw;
@@ -303,6 +304,7 @@ procedure TfrmMain.OpenFolderSw(Sender: TObject);
 var
   ProcessInfo : TProcessInfo;
 begin
+  ProcessInfo.RunFromCat := False;
   ProcessInfo.RunMode := rmOpenFolder;
   ExecuteSelectedNode(ProcessInfo);
 end;
@@ -489,8 +491,8 @@ begin
     if Column = 0 then
       Result := CompareText(Data1.Data.Name, Data2.Data.Name)
     else begin
-      CatData1 := vstList.GetNodeData(Data1.pNode.Parent);
-      CatData2 := vstList.GetNodeData(Data2.pNode.Parent);
+      CatData1 := vstList.GetNodeData(Data1.Data.pNode.Parent);
+      CatData2 := vstList.GetNodeData(Data2.Data.pNode.Parent);
       if Assigned(CatData1) then
         CatName1 := CatData1.Data.Name
       else
@@ -524,9 +526,9 @@ begin
   if Column = 0 then
     CellText   := NodeData.Data.Name;
   if Column = 1 then
-    if (NodeData.pNode.Parent <> vstList.RootNode) then
+    if (NodeData.Data.pNode.Parent <> vstList.RootNode) then
     begin
-      CatData  := vstList.GetNodeData(NodeData.pNode.Parent);
+      CatData  := vstList.GetNodeData(NodeData.Data.pNode.Parent);
       CellText := CatData.Data.Name;
     end
     else
@@ -601,11 +603,12 @@ begin
     //Execute action
     if ProcessInfo.RunMode <> rmOpenFolder then
     begin
+      ProcessInfo.RunFromCat := (BaseNodeData.DataType = vtdtCategory);
       if (BaseNodeData.DataType in [vtdtFile,vtdtFolder]) then
         TvFileNodeData(BaseNodeData).Execute(vstList, ProcessInfo)
       else
         if (BaseNodeData.DataType = vtdtCategory) then
-          TvCategoryNodeData(BaseNodeData).Execute(vstList, ProcessInfo, BaseNode.pNode);
+          TvCategoryNodeData(BaseNodeData).Execute(vstList, ProcessInfo);
     end
     else begin
       if (BaseNodeData.DataType in [vtdtFile,vtdtFolder]) then
@@ -673,7 +676,7 @@ begin
     vtdtSeparator : TvSeparatorNodeData(DataDest.Data).Copy(DataSource.Data);
   end;
   //Set some personal record fields
-  DataDest.pNode := Node;
+  DataDest.Data.pNode := Node;
   DataDest.Data.ParentNode := Node.Parent;
   //Icon
   DataDest.Data.ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(DataDest.Data));
@@ -863,26 +866,55 @@ begin
   ImagesDM.IcoImages.GetBitmap(IMAGE_INDEX_Search,sbtnSearch.Glyph);
 end;
 
-procedure TfrmMain.RunAutorun;
+procedure TfrmMain.RunStartupProcess;
 var
-  NodeData : TvFileNodeData;
-  I        : Integer;
+  NodeData    : TvCustomRealNodeData;
   ProcessInfo : TProcessInfo;
+  I : Integer;
 begin
   //Autorun - Execute software
-  for I := 0 to ASuiteStartUpApp.Count - 1 do
+  if (Config.Autorun) then
   begin
-    NodeData := ASuiteStartUpApp[I];
-    if (Config.Autorun) then
+    for I := 0 to ASuiteStartUpApp.Count - 1 do
     begin
-      ProcessInfo.RunMode := rmAutorun;
+      NodeData := ASuiteStartUpApp[I];
+      ProcessInfo.RunFromCat := (NodeData.DataType = vtdtCategory);
+      //Set RunMode
       if (NodeData.Autorun = atSingleInstance) then
-      begin
-        if not IsProcessExists(ExtractFileName(NodeData.PathAbsoluteExe)) then
-          NodeData.Execute(vstList, ProcessInfo);
-      end
-      else if (NodeData.Autorun = atAlwaysOnStart) then
-        NodeData.Execute(vstList, ProcessInfo);
+        ProcessInfo.RunMode := rmAutorunSingleInstance
+      else
+        if (NodeData.Autorun = atAlwaysOnStart) then
+          ProcessInfo.RunMode := rmAutorun;
+      //Start process
+      if NodeData.DataType in [vtdtFile,vtdtFolder] then
+        TvFileNodeData(NodeData).Execute(vstList, ProcessInfo)
+      else
+        if NodeData.DataType = vtdtCategory then
+          TvCategoryNodeData(NodeData).Execute(vstList, ProcessInfo);
+    end;
+  end;
+end;
+
+procedure TfrmMain.RunShutdownProcess;
+var
+  NodeData    : TvCustomRealNodeData;
+  ProcessInfo : TProcessInfo;
+  I : Integer;
+begin
+  //Autorun - Execute software
+  if (Config.Autorun) then
+  begin
+    for I := 0 to ASuiteShutdownApp.Count - 1 do
+    begin
+      NodeData := ASuiteShutdownApp[I];
+      ProcessInfo.RunFromCat := (NodeData.DataType = vtdtCategory);
+      ProcessInfo.RunMode := rmAutorun;
+      //Start process
+      if NodeData.DataType in [vtdtFile,vtdtFolder] then
+        TvFileNodeData(NodeData).Execute(vstList, ProcessInfo)
+      else
+        if NodeData.DataType = vtdtCategory then
+          TvCategoryNodeData(NodeData).Execute(vstList, ProcessInfo);
     end;
   end;
 end;
@@ -932,19 +964,10 @@ end;
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 var
   I        : Integer;
-  NodeData : TvFileNodeData;
+  NodeData : TvCustomRealNodeData;
   ProcessInfo : TProcessInfo;
 begin
-  //Autorun - Execute software
-  for I := 0 to ASuiteShutdownApp.Count - 1 do
-  begin
-    NodeData := TvFileNodeData(ASuiteShutdownApp[I]);
-    if (Config.Autorun) then
-    begin
-      ProcessInfo.RunMode := rmAutorun;
-      NodeData.Execute(vstList, ProcessInfo);
-    end;
-  end;
+  RunShutdownProcess;
   //Execute actions on asuite's shutdown (inside vstList)
   vstList.IterateSubtree(nil, IterateSubtreeProcs.ActionsOnShutdown, nil, [], True);
   RefreshList(vstList);
@@ -989,7 +1012,7 @@ begin
   LoadGlyphs;
   //List & Options
   DBManager.LoadData(vstList);
-  RunAutorun;
+  RunStartupProcess;
   //Get placeholder for edtSearch
   edtSearch.TextHint := StringReplace(miSearchName.Caption, '&', '', []);
 end;

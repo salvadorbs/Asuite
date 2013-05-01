@@ -106,8 +106,8 @@ begin
   else
     ChildNode := Sender.AddChild(Sender.RootNode, CreateNodeData(AType));
   //Set ChildNode's pNode and name (temporary)
-  NodeData           := Sender.GetNodeData(ChildNode);
-  NodeData.pNode     := ChildNode;
+  NodeData            := Sender.GetNodeData(ChildNode);
+  NodeData.Data.pNode := ChildNode;
   NodeData.Data.ParentNode := ChildNode.Parent;
   NodeData.Data.Name := msgNoName + IntToStr(Sender.TotalCount);
   //Set some its variables depending on its type
@@ -224,7 +224,7 @@ begin
   CustomRealNodeData.DataType   := vtdtFile;
   CustomRealNodeData.ImageIndex := ImagesDM.GetIconIndex(CustomRealNodeData);
   CustomRealNodeData.ParentNode := Node.Parent;
-  NodeData.pNode           := Node;
+  NodeData.Data.pNode           := Node;
 end;
 
 procedure DragDropText(Sender: TBaseVirtualTree;DataObject: IDataObject;
@@ -252,7 +252,7 @@ begin
     Node := Sender.AddChild(nil,TvFileNodeData.Create);
   NodeData := Sender.GetNodeData(Node);
   //Set node properties
-  NodeData.pNode := Node;
+  NodeData.Data.pNode := Node;
   with TvFileNodeData(NodeData.Data) do
   begin
     DataType   := vtdtFile;

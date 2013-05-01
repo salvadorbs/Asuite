@@ -18,11 +18,10 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 }
 
-//ToDo: Create another class scheme. See below:
  (*
  TvBaseNodeData
               +->TvSeparatorNodeData
-              +->TvCustomNodeData
+              +->TvCustomRealNodeData
                                 +->TvCategoryData
                                 +->TvFileNodeData
                                                 +->TvFolderNodeData
@@ -40,6 +39,7 @@ type
 
   TProcessInfo = record
     RunMode     : TRunMode;
+    RunFromCat  : Boolean;
     //Misc
     PathExe     : string;
     WorkingDir  : string;
@@ -62,6 +62,7 @@ type
     FDataType    : TvTreeDataType;
     FImageIndex  : Integer;
     FParentNode  : PVirtualNode;
+    FPNode       : PVirtualNode; //Self PVirtualNode
     FAddDate     : Int64;
     FEditDate    : Int64;
     FHideFromMenu : Boolean;
@@ -89,6 +90,7 @@ type
     property DataType: TvTreeDataType read GetDataType write SetDataType;
     property ImageIndex: Integer read FImageIndex write FImageIndex;
     property ParentNode: PVirtualNode read FParentNode write FParentNode;
+    property PNode: PVirtualNode read FPNode write FPNode;
     property AddDate: TDateTime read GetAddDate write SetAddDate;
     property UnixAddDate: Int64 read GetUnixAddDate write SetUnixAddDate;
     property EditDate: TDateTime read GetEditDate write SetEditDate;
@@ -115,11 +117,10 @@ type
     procedure SetMRUPosition(Value: Int64);
     procedure SetClickCount(Value: Integer);
     procedure SetAutorun(value:TAutorunType);
-    function InternalExecute(ProcessInfo: TProcessInfo): boolean; virtual;
   public
     constructor Create(AType: TvTreeDataType); // virtual;
     procedure Copy(source:TvBaseNodeData); override;
-    function Execute(Tree: TBaseVirtualTree;ProcessInfo: TProcessInfo): boolean;
+    function Execute(Tree: TBaseVirtualTree;ProcessInfo: TProcessInfo): boolean; virtual;
     property MRUPosition: Int64 read FMRUPosition write SetMRUPosition;
     property ClickCount: Integer read FClickCount write SetClickCount;
     property PathIcon: string read FPathIcon write SetPathIcon;
@@ -137,6 +138,7 @@ type
   TvCategoryNodeData = class(TvCustomRealNodeData)
   private
     //Specific private variables and functions
+    function InternalExecute(Tree: TBaseVirtualTree; NodeData: TvBaseNodeData;ProcessInfo: TProcessInfo): boolean;
   public
     //Specific properties
     constructor Create; overload;
@@ -151,6 +153,7 @@ type
     property UnixAddDate;
     property EditDate;
     property UnixEditDate;
+    function Execute(Tree: TBaseVirtualTree;ProcessInfo: TProcessInfo): boolean; override;
   end;
   PvCategoryNodeData = ^TvCategoryNodeData;
 
@@ -174,7 +177,7 @@ type
     procedure SetNoMRU(value:Boolean);
     procedure SetNoMFU(value:Boolean);
     procedure SetShortcutDesktop(value:Boolean);
-    function InternalExecute(ProcessInfo: TProcessInfo): boolean; override;
+    function InternalExecute(ProcessInfo: TProcessInfo): boolean;
     function RunProcess(ProcessInfo: TProcessInfo): boolean;
     function RunProcessAsUser(ProcessInfo: TProcessInfo): boolean;
     function RunProcessAsAdmin(ProcessInfo: TProcessInfo): boolean;
@@ -202,6 +205,7 @@ type
     property WorkingDirAbsolute: string read FWorkingDirAbsolute write FWorkingDirAbsolute;
     property ShortcutDesktop:Boolean read FShortcutDesktop write SetShortcutDesktop;
     property RunFromCategory: Boolean read FRunFromCategory write FRunFromCategory;
+    function Execute(Tree: TBaseVirtualTree;ProcessInfo: TProcessInfo): boolean; override;
   end;
   PvFileNodeData = ^TvFileNodeData;
 
@@ -228,7 +232,6 @@ type
   rBaseData = record
     Data     : TvBaseNodeData;
     MenuItem : TMenuItem;
-    pNode    : PVirtualNode;
   end;
   PBaseData = ^rBaseData;
 
@@ -265,6 +268,7 @@ begin
   FImageIndex  := -1;
   FDataType    := AType;
   FParentNode  := nil;
+  FPNode       := nil;
   FHideFromMenu := False;
   FAddDate     := DateTimeToUnix(Now);
   FEditDate    := FAddDate;
@@ -369,6 +373,43 @@ begin
   FRunFromCategory := False;
 end;
 
+function TvFileNodeData.Execute(Tree: TBaseVirtualTree; ProcessInfo: TProcessInfo): boolean;
+begin
+  //If runmode is rmAutorunSingleInstance, check if process exists
+  if ProcessInfo.RunMode = rmAutorunSingleInstance then
+    if IsProcessExists(ExtractFileName(Self.PathAbsoluteExe)) then
+    begin
+      Result := True;
+      Exit;
+    end;
+  //Run process
+  Result := InternalExecute(ProcessInfo);
+  if Result then
+  begin
+    //Add to MFU and increment clickcount
+    Inc(FClickCount);
+    if not(Self.NoMFU) then
+      MFUList.Add(Self);
+    MFUList.Sort;
+    if (ProcessInfo.RunMode <> rmAutorunSingleInstance) and
+       (ProcessInfo.RunMode <> rmAutorun) then
+    begin
+      //Add to mru and update mruposition
+      if not(Self.NoMRU) then
+        MRUList.Insert(0, Self);
+      FMRUPosition := DateTimeToUnix(Now);
+      //Run action after execution
+      if Not(ProcessInfo.RunFromCat) then
+        RunActionOnExe(Self.ActionOnExe);
+    end;
+    inherited;
+  end
+  else begin
+    //Show error message
+    ShowMessage(Format(msgErrRun,[FName]),true);
+  end;
+end;
+
 procedure TvFileNodeData.Copy(source:TvBaseNodeData);
 var
   FileNodeData : TvFileNodeData;
@@ -456,16 +497,19 @@ begin
   else
     ProcessInfo.WorkingDir := RelativeToAbsolute(FWorkingDir);
   //Window state
-  case FWindowState of
-    1: ProcessInfo.WindowState := SW_SHOWNOACTIVATE;
-    2: ProcessInfo.WindowState := SW_SHOWMAXIMIZED;
-  else
-    ProcessInfo.WindowState := SW_SHOWDEFAULT;
+  if Not(ProcessInfo.RunFromCat) or (ProcessInfo.WindowState = -1) then
+  begin
+    case FWindowState of
+      1: ProcessInfo.WindowState := SW_SHOWMINNOACTIVE;
+      2: ProcessInfo.WindowState := SW_SHOWMAXIMIZED;
+    else
+      ProcessInfo.WindowState := SW_SHOWDEFAULT;
+    end;
   end;
   //Parameters
   ProcessInfo.Parameters := RelativeToAbsolute(FParameters);
   //Execution
-  if (ProcessInfo.RunMode = rmNormal) or (ProcessInfo.RunMode = rmAutorun) then
+  if (ProcessInfo.RunMode in [rmNormal,rmAutorun,rmAutorunSingleInstance]) then
     Result := Self.RunProcess(ProcessInfo)
   else
     if ProcessInfo.RunMode = rmRunAs then
@@ -593,37 +637,11 @@ begin
     FPathCacheIcon := '';
 end;
 
-function TvCustomRealNodeData.InternalExecute(ProcessInfo: TProcessInfo): boolean;
-begin
-  Result := False;
-end;
-
 function TvCustomRealNodeData.Execute(Tree: TBaseVirtualTree;ProcessInfo: TProcessInfo): boolean;
 begin
-  Result := InternalExecute(ProcessInfo);
-  if Result then
-  begin
-    //Add to MFU and increment clickcount
-    Inc(FClickCount);
-    if not(TvFileNodeData(Self).NoMFU) then
-      MFUList.Add(Self);
-    MFUList.Sort;
-    if ProcessInfo.RunMode <> rmAutorun then
-    begin
-      //Add to mru and update mruposition
-      if not(TvFileNodeData(Self).NoMRU) then
-        MRUList.Insert(0, Self);
-      FMRUPosition := DateTimeToUnix(Now);
-      //Run action after execution
-      RunActionOnExe(TvFileNodeData(Self));
-    end;
-    FChanged := True;
-    RefreshList(Tree);
-  end
-  else begin
-    //Show error message
-    ShowMessage(Format(msgErrRun,[FName]),true);
-  end;
+  FChanged := True;
+  RefreshList(Tree);
+  Result := True;
 end;
 
 procedure TvCustomRealNodeData.SetAutorun(value:TAutorunType);
@@ -653,6 +671,50 @@ begin
   end;
   //Set new value
   FAutorun := value;
+end;
+
+//------------------------------------------------------------------------------
+
+{ TvCategoryNodeData }
+
+function TvCategoryNodeData.Execute(Tree: TBaseVirtualTree;
+  ProcessInfo: TProcessInfo): boolean;
+var
+  Node : PVirtualNode;
+  CurrentNodeData : TvBaseNodeData;
+begin
+  //Get Category's child (only first level)
+  Node := FPNode.FirstChild;
+  try
+    while Assigned(Node) do
+    begin
+      CurrentNodeData := PBaseData(Tree.GetNodeData(Node)).Data;
+      if (CurrentNodeData.DataType in [vtdtFile,vtdtFolder]) then
+        InternalExecute(Tree,CurrentNodeData,ProcessInfo);
+      Node := Node.NextSibling;
+    end;
+  finally
+    //Override action on execute property
+    if ProcessInfo.RunMode <> rmAutorun then
+      RunActionOnExe(Self.ActionOnExe);
+    Result := True;
+  end;
+end;
+
+function TvCategoryNodeData.InternalExecute(Tree: TBaseVirtualTree;
+  NodeData: TvBaseNodeData;ProcessInfo: TProcessInfo): boolean;
+begin
+  Result := False;
+  //If necessary, Override child item's FWindowState
+  case FWindowState of
+    0: ProcessInfo.WindowState := -1;
+    1: ProcessInfo.WindowState := SW_SHOWDEFAULT;
+    2: ProcessInfo.WindowState := SW_SHOWMINNOACTIVE;
+    3: ProcessInfo.WindowState := SW_SHOWMAXIMIZED;
+  end;
+  //Execute file item
+  if TvFileNodeData(NodeData).RunFromCategory then
+    Result := TvFileNodeData(NodeData).Execute(Tree, ProcessInfo);
 end;
 
 end.

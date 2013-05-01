@@ -431,7 +431,7 @@ begin
       nType := TvTreeDataType(SQLFilesData.itemtype);
       Node  := Tree.AddChild(ParentNode, CreateNodeData(nType));
       vData := PBaseData(Tree.GetNodeData(Node)).Data;
-      PBaseData(Tree.GetNodeData(Node)).pNode := Node;
+      PBaseData(Tree.GetNodeData(Node)).Data.pNode := Node;
       if IsImport then
         Tree.CheckType[Node] := ctTriStateCheckBox
       else

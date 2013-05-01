@@ -140,8 +140,8 @@ begin
           Result := Tree.AddChild(Parent, TvSeparatorNodeData.Create);
     //Add checkbox
     Tree.CheckType[Result] := ctTriStateCheckBox;
-    NodeData       := Tree.GetNodeData(Result);
-    NodeData.pNode := Result;
+    NodeData := Tree.GetNodeData(Result);
+    NodeData.Data.pNode  := Result;
     CustomRealNodeData   := TvCustomRealNodeData(NodeData.Data);
     //Get base properties
     if (CustomRealNodeData.DataType <> vtdtSeparator) then
@@ -288,9 +288,9 @@ begin
           Result := Tree.AddChild(Parent, CreateNodeData(vtdtSeparator));
     //Add checkbox
     Tree.CheckType[Result] := ctTriStateCheckBox;
-    NodeData       := Tree.GetNodeData(Result);
-    NodeData.pNode := Result;
-    CustomRealNodeData   := TvCustomRealNodeData(NodeData.Data);
+    NodeData := Tree.GetNodeData(Result);
+    NodeData.Data.pNode := Result;
+    CustomRealNodeData  := TvCustomRealNodeData(NodeData.Data);
     //Get base properties
     if CustomRealNodeData.DataType <> vtdtSeparator then
     begin
@@ -469,7 +469,7 @@ var
         UnixAddDate  := DateTimeToUnix(Now);
         UnixEditDate := NodeData.Data.UnixAddDate;
       end;
-      NodeData.pNode := tn;
+      NodeData.Data.pNode := tn;
     end;
     tnImp := tnImp.FirstChild;
     while Assigned(tnImp) do

@@ -32,6 +32,7 @@ type
   );
 
   //Run action on file execution
+  //Todo: Rename in TActionOnExecute
   TActionOnExecution = (
       aeDefault = 0,     //Value From Config.cxActionOnExe
       aeJustRun = 1,
@@ -69,6 +70,7 @@ type
       rmRunAs,
       rmRunAsAdmin,
       rmAutorun,
+      rmAutorunSingleInstance,
       rmOpenFolder
   );
 

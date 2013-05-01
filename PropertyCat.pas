@@ -175,7 +175,7 @@ var
 begin
   CurrentFileData := TvCustomRealNodeData(PBaseData(Sender.GetNodeData(Node)).Data);
   if (CurrentFileData.DataType in [vtdtFile,vtdtFolder]) and
-     (Node.Parent = FNodeData.pNode) then
+     (Node.Parent = FNodeData.Data.pNode) then
   begin
     //Add new checked node in vstCategoryItems
     NewNode     := vstCategoryItems.AddChild(vstCategoryItems.RootNode);
@@ -200,7 +200,7 @@ begin
   edtName.Text     := AData.name;
   edtPathIcon.Text := AData.PathIcon;
   //Get items list
-  frmMain.vstList.IterateSubtree(FNodeData.pNode,GetCategoryItems,nil,[],False);
+  frmMain.vstList.IterateSubtree(FNodeData.Data.pNode,GetCategoryItems,nil,[],False);
   cxActionOnExe.ItemIndex := Ord(AData.ActionOnExe);
   cxAutoExecute.ItemIndex := Ord(AData.Autorun);
   btnChangeOrder.Enabled  := (cxAutoExecute.ItemIndex <> 0);

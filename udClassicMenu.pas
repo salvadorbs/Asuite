@@ -226,11 +226,11 @@ begin
       end;
       MenuItem.ImageIndex := NodeData.Data.ImageIndex;
     end;
-    MenuItem.Data      := NodeData.Data;
-    MenuItem.pNode     := NodeData.pNode;
-    MenuItem.Visible   := not(NodeData.Data.HideFromMenu);
+    MenuItem.Data       := NodeData.Data;
+    MenuItem.Data.pNode := NodeData.Data.pNode;
+    MenuItem.Visible    := not(NodeData.Data.HideFromMenu);
     //Set NodeData's MenuItem
-    NodeData.MenuItem  := MenuItem;
+    NodeData.MenuItem   := MenuItem;
   end;
 end;
 
