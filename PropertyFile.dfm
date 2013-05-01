@@ -44,14 +44,10 @@ object frmPropertyFile: TfrmPropertyFile
     Top = 8
     Width = 385
     Height = 313
-    ActivePage = tsInfo1
+    ActivePage = tsInfo2
     TabOrder = 0
     object tsInfo1: TTabSheet
       Caption = 'General'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object lbInfo1: TLabel
         Left = 9
         Top = 9
@@ -144,10 +140,6 @@ object frmPropertyFile: TfrmPropertyFile
     end
     object tsInfo2: TTabSheet
       Caption = 'Advanced'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object lbPathIcon: TLabel
         Left = 8
         Top = 48
@@ -223,7 +215,7 @@ object frmPropertyFile: TfrmPropertyFile
         Items.Strings = (
           'Never'
           'Always on startup'
-          'Only if no previous instances are running'
+          'Startup, only if no previous instances are running'
           'Always on shutdown')
       end
       object cxWindowState: TComboBox

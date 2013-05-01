@@ -283,7 +283,6 @@ procedure GetChildNodesIcons(Sender: TBaseVirtualTree; Node: PVirtualNode;UseCac
 var
   ChildNode : PVirtualNode;
   NodeData  : TvBaseNodeData;
-  Cache     : Boolean;
 begin
   //Get items' icons
   ChildNode := Sender.GetFirstChild(Node);

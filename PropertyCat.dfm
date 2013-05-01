@@ -44,7 +44,7 @@ object frmPropertyCat: TfrmPropertyCat
     Top = 8
     Width = 385
     Height = 216
-    ActivePage = tsInfo1
+    ActivePage = tsInfo2
     TabOrder = 0
     object tsInfo1: TTabSheet
       Caption = 'General'
@@ -67,7 +67,7 @@ object frmPropertyCat: TfrmPropertyCat
       object lblNote: TLabel
         Left = 3
         Top = 151
-        Width = 371
+        Width = 360
         Height = 26
         Caption = 
           'Note: In this list you can find all software items of this categ' +
@@ -171,17 +171,18 @@ object frmPropertyCat: TfrmPropertyCat
         Items.Strings = (
           'Never'
           'Always on startup'
-          'Only if no previous instances are running'
+          'Startup, only if no previous instances are running'
           'Always on shutdown')
       end
       object cxWindowState: TComboBox
         Left = 8
         Top = 107
-        Width = 102
+        Width = 145
         Height = 21
         Style = csDropDownList
-        TabOrder = 5
+        TabOrder = 4
         Items.Strings = (
+          'Default (item'#39's settings)'
           'Normal'
           'Minimized'
           'Maximized')
@@ -192,7 +193,7 @@ object frmPropertyCat: TfrmPropertyCat
         Width = 153
         Height = 21
         Style = csDropDownList
-        TabOrder = 4
+        TabOrder = 5
         Items.Strings = (
           'Default (options)'
           'Just run file'

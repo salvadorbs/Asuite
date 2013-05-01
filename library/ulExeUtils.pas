@@ -28,7 +28,7 @@ uses
 { Processes, execution }
 procedure ActionOnExe(Action: TActionOnExecution);
 function  IsProcessExists(exeFileName: string): Boolean;
-procedure RunActionOnExe(NodeData: TvFileNodeData);
+procedure RunActionOnExe(Action: TActionOnExecution);
 
 { Windows Api }
 function CreateProcessWithLogonW(
@@ -93,17 +93,17 @@ begin
   FileClose(hSnapShot);
 end;
 
-procedure RunActionOnExe(NodeData: TvFileNodeData);
+procedure RunActionOnExe(Action: TActionOnExecution);
 var
   ActionTemp : TActionOnExecution;
 begin
-  if NodeData.ActionOnExe = aeDefault then
+  if Action = aeDefault then
   begin
     ActionTemp := TActionOnExecution(Ord(Config.ActionOnExe) + 1);
     ActionOnExe(ActionTemp);
   end
   else
-    ActionOnExe(NodeData.ActionOnExe);
+    ActionOnExe(Action);
 end;
 
 end.
