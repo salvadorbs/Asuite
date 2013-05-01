@@ -150,7 +150,7 @@ begin
   AData.Parameters  := edtParameters.Text;
   //Advanced
   AData.WorkingDir  := edtWorkingDir.Text;
-  AData.ActionOnExe := TActionOnExecution(cxActionOnExe.ItemIndex);
+  AData.ActionOnExe := TActionOnExecute(cxActionOnExe.ItemIndex);
   AData.Autorun     := TAutorunType(cxAutoExecute.ItemIndex);
   //Others
   AData.NoMRU        := cbDontInsertMRU.Checked;

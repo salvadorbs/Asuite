@@ -26,9 +26,9 @@ uses
   Windows, SysUtils, ulEnumerations, ulNodeDataTypes, Main, ulAppConfig, TlHelp32;
 
 { Processes, execution }
-procedure ActionOnExe(Action: TActionOnExecution);
+procedure ActionOnExe(Action: TActionOnExecute);
 function  IsProcessExists(exeFileName: string): Boolean;
-procedure RunActionOnExe(Action: TActionOnExecution);
+procedure RunActionOnExe(Action: TActionOnExecute);
 
 { Windows Api }
 function CreateProcessWithLogonW(
@@ -50,7 +50,7 @@ const
 
 implementation
 
-procedure ActionOnExe(Action: TActionOnExecution);
+procedure ActionOnExe(Action: TActionOnExecute);
 begin
   case Action of
     aeRunAndHide:
@@ -93,16 +93,12 @@ begin
   FileClose(hSnapShot);
 end;
 
-procedure RunActionOnExe(Action: TActionOnExecution);
-var
-  ActionTemp : TActionOnExecution;
+procedure RunActionOnExe(Action: TActionOnExecute);
 begin
+  //If Action is aeDefault, using launcher options
   if Action = aeDefault then
-  begin
-    ActionTemp := TActionOnExecution(Ord(Config.ActionOnExe) + 1);
-    ActionOnExe(ActionTemp);
-  end
-  else
+    ActionOnExe(TActionOnExecute(Ord(Config.ActionOnExe) + 1))
+  else //Else software options
     ActionOnExe(Action);
 end;
 

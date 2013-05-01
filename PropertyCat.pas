@@ -224,7 +224,7 @@ begin
     ImagesDM.DeleteCacheIcon(AData);
     AData.ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(AData));
   end;
-  AData.ActionOnExe  := TActionOnExecution(cxActionOnExe.ItemIndex);
+  AData.ActionOnExe  := TActionOnExecute(cxActionOnExe.ItemIndex);
   AData.Autorun      := TAutorunType(cxAutoExecute.ItemIndex);
   AData.WindowState  := cxWindowState.ItemIndex;
   AData.HideFromMenu := cbHideSoftware.Checked;

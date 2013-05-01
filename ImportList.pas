@@ -160,7 +160,7 @@ begin
           WorkingDir  := GetStrPropertyXML (XMLNode, 'WorkingDir', '');
           WindowState := GetIntPropertyXML (XMLNode, 'WindowState',0);
           ShortcutDesktop := GetBoolPropertyXML(XMLNode, 'ShortcutDesktop',false);
-          ActionOnExe := TActionOnExecution(GetIntPropertyXML(XMLNode, 'ActionOnExe',0));
+          ActionOnExe := TActionOnExecute(GetIntPropertyXML(XMLNode, 'ActionOnExe',0));
           Autorun     := TAutorunType(GetIntPropertyXML(XMLNode, 'Autorun',0));
           AutorunPos  := GetIntPropertyXML (XMLNode, 'AutorunPosition',0);
         end;
@@ -308,7 +308,7 @@ begin
           WorkingDir  := GetStrPropertyXML (XMLNode, 'WorkingDir','');
           WindowState := GetIntPropertyXML (XMLNode, 'WindowState',0);
           ShortcutDesktop := GetBoolPropertyXML(XMLNode, 'ShortcutDesktop',false);
-          ActionOnExe := TActionOnExecution(GetIntPropertyXML(XMLNode, 'ActionOnExe',0));
+          ActionOnExe := TActionOnExecute(GetIntPropertyXML(XMLNode, 'ActionOnExe',0));
           Autorun     := TAutorunType(GetIntPropertyXML(XMLNode, 'Autorun',0));
           AutorunPos  := GetIntPropertyXML(XMLNode, 'AutorunPosition',0);
         end;
@@ -602,7 +602,7 @@ begin
       Config.Autorun        := GetBoolPropertyXML(Node, 'ActiveAutorun',true);
       Config.Cache          := GetBoolPropertyXML(Node, 'ActiveCache',true);
       //Execution
-      Config.ActionOnExe    := TActionOnExecution(GetIntPropertyXML(Node, 'ActionOnExe',0));
+      Config.ActionOnExe    := TActionOnExecute(GetIntPropertyXML(Node, 'ActionOnExe',0));
       Config.RunSingleClick := GetBoolPropertyXML(Node, 'RunSingleClick',false);
       //Trayicon
       Config.TrayIcon           := GetBoolPropertyXML(Node, 'ActiveTrayIcon',true);

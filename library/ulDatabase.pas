@@ -135,7 +135,7 @@ type
     FAutorun            : Boolean;
     FCache              : Boolean;
     //Execution
-    FActionOnExe        : TActionOnExecution;
+    FActionOnExe        : TActionOnExecute;
     FRunSingleClick     : Boolean;
     //Trayicon
     FTrayIcon           : Boolean;
@@ -184,7 +184,7 @@ type
     property autorun: Boolean read FAutorun write FAutorun;
     property cache: Boolean read FCache write FCache;
     // Execution
-    property actiononexe: TActionOnExecution read FActionOnExe write FActionOnExe;
+    property actiononexe: TActionOnExecute read FActionOnExe write FActionOnExe;
     property runsingleclick: Boolean read FRunSingleClick write FRunSingleClick;
     // Trayicon
     property trayicon: Boolean read FTrayIcon write FTrayIcon;
@@ -454,7 +454,7 @@ begin
           AutorunPos  := SQLFilesData.autorun_position;
           Autorun     := TAutorunType(SQLFilesData.autorun);
           WindowState := SQLFilesData.window_state;
-          ActionOnExe := TActionOnExecution(SQLFilesData.onlaunch);
+          ActionOnExe := TActionOnExecute(SQLFilesData.onlaunch);
           ClickCount  := SQLFilesData.clicks;
         end;
         if (nType = vtdtFile) then
@@ -535,7 +535,7 @@ begin
         Config.Autorun        := SQLOptionsData.autorun;
         Config.Cache          := SQLOptionsData.cache;
         //Execution
-        Config.ActionOnExe    := TActionOnExecution(SQLOptionsData.actiononexe);
+        Config.ActionOnExe    := TActionOnExecute(SQLOptionsData.actiononexe);
         Config.RunSingleClick := SQLOptionsData.runsingleclick;
         //Trayicon
         Config.TrayIcon           := SQLOptionsData.trayicon;
@@ -708,7 +708,7 @@ begin
     SQLOptionsData.autorun      := Config.Autorun;
     SQLOptionsData.cache        := Config.Cache;
     //execution
-    SQLOptionsData.actiononexe    := TActionOnExecution(Config.ActionOnExe);
+    SQLOptionsData.actiononexe    := TActionOnExecute(Config.ActionOnExe);
     SQLOptionsData.runsingleclick := Config.RunSingleClick;
     //trayicon
     SQLOptionsData.trayicon := Config.TrayIcon;

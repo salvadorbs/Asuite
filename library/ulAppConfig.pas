@@ -64,7 +64,7 @@ type
     FAutorun            : Boolean;
     FCache              : Boolean;
     //Execution
-    FActionOnExe        : TActionOnExecution;
+    FActionOnExe        : TActionOnExecute;
     FRunSingleClick     : Boolean;
     //Trayicon
     FTrayIcon           : Boolean;
@@ -133,7 +133,7 @@ type
     property Autorun: Boolean read FAutorun write FAutorun;
     property Cache: Boolean read FCache write SetCache;
     // Execution
-    property ActionOnExe: TActionOnExecution read FActionOnExe write FActionOnExe;
+    property ActionOnExe: TActionOnExecute read FActionOnExe write FActionOnExe;
     property RunSingleClick: Boolean read FRunSingleClick write FRunSingleClick;
     // Trayicon
     property TrayIcon: Boolean read FTrayIcon write SetTrayIcon;

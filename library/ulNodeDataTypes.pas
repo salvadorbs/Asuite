@@ -109,7 +109,7 @@ type
     FMRUPosition : Int64;
     FClickCount  : Integer;
     FWindowState : Integer;
-    FActionOnExe : TActionOnExecution;
+    FActionOnExe : TActionOnExecute;
     FAutorun     : TAutorunType;
     FAutorunPos  : Integer; //Position for ASuiteStartUpApp and ASuiteShutdownApp
     procedure SetPathIcon(value:string);
@@ -128,7 +128,7 @@ type
     property CacheID: Integer read FCacheID write SetPathCacheIcon;
     property PathCacheIcon: string read FPathCacheIcon write FPathCacheIcon;
     property WindowState: Integer read FWindowState write FWindowState;
-    property ActionOnExe: TActionOnExecution read FActionOnExe write FActionOnExe;
+    property ActionOnExe: TActionOnExecute read FActionOnExe write FActionOnExe;
     property Autorun: TAutorunType read FAutorun write SetAutorun;
     property AutorunPos: Integer read FAutorunPos write FAutorunPos;
   end;

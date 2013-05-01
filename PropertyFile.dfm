@@ -48,6 +48,10 @@ object frmPropertyFile: TfrmPropertyFile
     TabOrder = 0
     object tsInfo1: TTabSheet
       Caption = 'General'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lbInfo1: TLabel
         Left = 9
         Top = 9
@@ -140,6 +144,10 @@ object frmPropertyFile: TfrmPropertyFile
     end
     object tsInfo2: TTabSheet
       Caption = 'Advanced'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lbPathIcon: TLabel
         Left = 8
         Top = 48
