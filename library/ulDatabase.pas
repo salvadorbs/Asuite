@@ -66,10 +66,12 @@ type
     Fdsk_shortcut     : Boolean;
     Ficon             : RawUTF8;
     Fcacheicon_id     : Integer;
-    Fonlaunch         : Integer;
+    Fonlaunch         : Integer; //Todo: Use Byte as type
     Fwindow_state     : Integer;
-    Fautorun          : Integer;
+    Fautorun          : Integer; //Todo: Use Byte as type
     Fautorun_position : Integer;
+    Fscheduler_mode   : Byte;
+    Fscheduler_datetime : TDateTime;
     Frun_from_category : Boolean;
   published
     //property FIELDNAME: TYPE read FFIELDNAME write FFIELDNAME;
@@ -94,6 +96,8 @@ type
     property window_state: Integer read Fwindow_state write Fwindow_state;
     property autorun: Integer read Fautorun write Fautorun;
     property autorun_position: Integer read Fautorun_position write Fautorun_position;
+    property scheduler_mode: Byte read Fscheduler_mode write Fscheduler_mode;
+    property scheduler_datetime: TDateTime read Fscheduler_datetime write Fscheduler_datetime;
     property run_from_category: Boolean read Frun_from_category write Frun_from_category default True;
   end;
 
@@ -134,6 +138,7 @@ type
     //Other functions
     FAutorun            : Boolean;
     FCache              : Boolean;
+    FScheduler          : Boolean;
     //Execution
     FActionOnExe        : TActionOnExecute;
     FRunSingleClick     : Boolean;
@@ -183,6 +188,7 @@ type
     // Other functions
     property autorun: Boolean read FAutorun write FAutorun;
     property cache: Boolean read FCache write FCache;
+    property scheduler: Boolean read FScheduler write FScheduler;
     // Execution
     property actiononexe: TActionOnExecute read FActionOnExe write FActionOnExe;
     property runsingleclick: Boolean read FRunSingleClick write FRunSingleClick;
@@ -355,7 +361,7 @@ begin
       SQLFilesData.lastModified   := AData.UnixEditDate;
       SQLFilesData.hide_from_menu := AData.HideFromMenu;
       //Add category and file fields
-      with TvFileNodeData(AData) do
+      with TvCustomRealNodeData(AData) do
       begin
         SQLFilesData.cacheicon_id := CacheID;
         SQLFilesData.icon_path    := StringToUTF8(PathIcon);
@@ -364,6 +370,8 @@ begin
         SQLFilesData.autorun      := Ord(Autorun);
         SQLFilesData.autorun_position := AutorunPos;
         SQLFilesData.onlaunch     := Ord(ActionOnExe);
+        SQLFilesData.scheduler_mode := Ord(SchMode);
+        SQLFilesData.scheduler_datetime := SchDateTime;
       end;
       //Add file fields
       if (AData.DataType = vtdtFile) then
@@ -453,6 +461,8 @@ begin
           PathIcon    := UTF8ToString(SQLFilesData.icon_path);
           AutorunPos  := SQLFilesData.autorun_position;
           Autorun     := TAutorunType(SQLFilesData.autorun);
+          SchMode     := TSchedulerMode(SQLFilesData.scheduler_mode);
+          SchDateTime := SQLFilesData.scheduler_datetime;
           WindowState := SQLFilesData.window_state;
           ActionOnExe := TActionOnExecute(SQLFilesData.onlaunch);
           ClickCount  := SQLFilesData.clicks;
@@ -534,6 +544,7 @@ begin
         //Other functions
         Config.Autorun        := SQLOptionsData.autorun;
         Config.Cache          := SQLOptionsData.cache;
+        Config.Scheduler      := SQLOptionsData.scheduler;
         //Execution
         Config.ActionOnExe    := TActionOnExecute(SQLOptionsData.actiononexe);
         Config.RunSingleClick := SQLOptionsData.runsingleclick;
@@ -707,6 +718,7 @@ begin
     //other functions
     SQLOptionsData.autorun      := Config.Autorun;
     SQLOptionsData.cache        := Config.Cache;
+    SQLOptionsData.scheduler    := Config.Scheduler;
     //execution
     SQLOptionsData.actiononexe    := TActionOnExecute(Config.ActionOnExe);
     SQLOptionsData.runsingleclick := Config.RunSingleClick;
@@ -795,6 +807,8 @@ begin
           SQLFilesData.autorun      := Ord(Autorun);
           SQLFilesData.autorun_position := AutorunPos;
           SQLFilesData.onlaunch     := Ord(ActionOnExe);
+          SQLFilesData.scheduler_mode := Ord(SchMode);
+          SQLFilesData.scheduler_datetime := SchDateTime;
         end;
         //Update file specific fields
         if (AData.DataType = vtdtFile) then

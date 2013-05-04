@@ -63,6 +63,7 @@ type
     //Other functions
     FAutorun            : Boolean;
     FCache              : Boolean;
+    FScheduler          : Boolean;
     //Execution
     FActionOnExe        : TActionOnExecute;
     FRunSingleClick     : Boolean;
@@ -95,6 +96,7 @@ type
     procedure SetStartWithWindows(value: boolean);
     procedure SetLanguage(value: string);
     procedure SetTVFont(value: TFont);
+    procedure SetScheduler(value: Boolean);
   public
     { public declarations }
     constructor Create; overload;
@@ -132,6 +134,7 @@ type
     // Other functions
     property Autorun: Boolean read FAutorun write FAutorun;
     property Cache: Boolean read FCache write SetCache;
+    property Scheduler: Boolean read FScheduler write SetScheduler;
     // Execution
     property ActionOnExe: TActionOnExecute read FActionOnExe write FActionOnExe;
     property RunSingleClick: Boolean read FRunSingleClick write FRunSingleClick;
@@ -195,6 +198,7 @@ begin
   //Other functions
   FAutorun            := True;
   FCache              := True;
+  FScheduler          := True;
   //Execution
   FActionOnExe        := aeDefault;
   FRunSingleClick     := False;
@@ -236,6 +240,12 @@ begin
     frmMain.FormStyle := fsStayOnTop
   else
     frmMain.FormStyle := fsNormal;
+end;
+
+procedure TConfiguration.SetScheduler(value: Boolean);
+begin
+  FScheduler := value;
+  frmMain.tmScheduler.Enabled := FScheduler;
 end;
 
 procedure TConfiguration.SetSensorLeftClick(aIndex: Integer; value: Integer);

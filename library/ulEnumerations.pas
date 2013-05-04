@@ -73,6 +73,15 @@ type
       rmOpenFolder
   );
 
+  //Run modes
+  TSchedulerMode = (
+      smDisabled = 0,
+      smOnce = 1,
+      smHourly = 2,
+      smDaily = 3,
+      smWeekly = 4
+  );
+
 implementation
 
 end.

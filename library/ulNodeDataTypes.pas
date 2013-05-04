@@ -112,11 +112,14 @@ type
     FActionOnExe : TActionOnExecute;
     FAutorun     : TAutorunType;
     FAutorunPos  : Integer; //Position for ASuiteStartUpApp and ASuiteShutdownApp
+    FSchMode     : TSchedulerMode; //0 Disabled, 1 Once, 2 Hourly, 3 Daily, 4 Weekly
+    FSchDateTime : TDateTime;
     procedure SetPathIcon(value:string);
     procedure SetPathCacheIcon(value:integer);
     procedure SetMRUPosition(Value: Int64);
     procedure SetClickCount(Value: Integer);
     procedure SetAutorun(value:TAutorunType);
+    procedure SetSchMode(value: TSchedulerMode);
   public
     constructor Create(AType: TvTreeDataType); // virtual;
     procedure Copy(source:TvBaseNodeData); override;
@@ -131,6 +134,8 @@ type
     property ActionOnExe: TActionOnExecute read FActionOnExe write FActionOnExe;
     property Autorun: TAutorunType read FAutorun write SetAutorun;
     property AutorunPos: Integer read FAutorunPos write FAutorunPos;
+    property SchMode: TSchedulerMode read FSchMode write SetSchMode;
+    property SchDateTime: TDateTime read FSchDateTime write FSchDateTime;
   end;
   PvCustomRealNodeData = ^TvCustomRealNodeData;
 
@@ -606,6 +611,7 @@ begin
   FPathIcon    := '';
   FCacheID     := -1;
   FPathCacheIcon := '';
+  FSchMode     := 0;
 end;
 
 procedure TvCustomRealNodeData.SetMRUPosition(Value: Int64);
@@ -626,6 +632,18 @@ procedure TvCustomRealNodeData.SetPathIcon(value:string);
 begin
   FPathIcon := value;
   FPathAbsoluteIcon := RelativeToAbsolute(value);
+end;
+
+procedure TvCustomRealNodeData.SetSchMode(value: TSchedulerMode);
+begin
+  if (FSchMode <> value) then
+  begin
+    if (FSchMode <> 0) and (value = 0) then
+      SchedulerItemList.Remove(Self);
+    if (FSchMode = 0) and (value <> 0) then
+      SchedulerItemList.Add(Self);
+  end;
+  FSchMode := value;
 end;
 
 procedure TvCustomRealNodeData.SetPathCacheIcon(value:integer);
@@ -695,7 +713,8 @@ begin
     end;
   finally
     //Override action on execute property
-    if ProcessInfo.RunMode <> rmAutorun then
+    if (ProcessInfo.RunMode <> rmAutorunSingleInstance) and
+       (ProcessInfo.RunMode <> rmAutorun) then
       RunActionOnExe(Self.ActionOnExe);
     Result := True;
   end;
