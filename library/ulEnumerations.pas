@@ -78,8 +78,7 @@ type
       smDisabled = 0,
       smOnce = 1,
       smHourly = 2,
-      smDaily = 3,
-      smWeekly = 4
+      smDaily = 3
   );
 
 implementation

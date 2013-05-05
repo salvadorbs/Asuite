@@ -25,10 +25,6 @@ object frmOption: TfrmOption
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'General'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object gbWindow: TGroupBox
         Left = 8
         Top = 88
@@ -308,6 +304,14 @@ object frmOption: TfrmOption
           Height = 19
           Caption = 'Enable autorun'
           TabOrder = 1
+        end
+        object cbScheduler: TCheckBox
+          Left = 8
+          Top = 68
+          Width = 233
+          Height = 17
+          Caption = 'Enable scheduler'
+          TabOrder = 2
         end
       end
       object gbClearElements: TGroupBox

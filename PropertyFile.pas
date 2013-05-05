@@ -63,6 +63,10 @@ type
     cbHideSoftware: TCheckBox;
     btnChangeOrder: TButton;
     cbDontInsertMFU: TCheckBox;
+    dtpSchTime: TDateTimePicker;
+    dtpSchDate: TDateTimePicker;
+    cxScheduler: TComboBox;
+    lbScheduler: TLabel;
     procedure Browse(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
@@ -72,6 +76,7 @@ type
     procedure btnChangeOrderClick(Sender: TObject);
     procedure cxAutoExecuteChange(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure cxSchedulerChange(Sender: TObject);
   private
     { Private declarations }
     FNodeData: PBaseData;
@@ -115,19 +120,23 @@ end;
 
 procedure TfrmPropertyFile.LoadNodeData(AData: TvFileNodeData);
 begin
-  edtName.Text              := AData.name;
-  edtPathExe.Text           := AData.PathExe;
+  edtName.Text             := AData.name;
+  edtPathExe.Text          := AData.PathExe;
   if not(FileFolderPageWebExists(AData.PathAbsoluteExe)) then
   begin
     edtPathExe.Font.Color  := clRed;
     edtPathExe.Hint        := msgFileNotFound;
   end;
-  edtParameters.Text        := AData.Parameters;
-  edtWorkingDir.Text        := AData.WorkingDir;
-  edtPathIcon.Text          := AData.PathIcon;
-  cxActionOnExe.ItemIndex   := Ord(AData.ActionOnExe);
-  cxAutoExecute.ItemIndex   := Ord(AData.Autorun);
-  btnChangeOrder.Enabled    := (cxAutoExecute.ItemIndex <> 0);
+  edtParameters.Text       := AData.Parameters;
+  edtWorkingDir.Text       := AData.WorkingDir;
+  edtPathIcon.Text         := AData.PathIcon;
+  cxActionOnExe.ItemIndex  := Ord(AData.ActionOnExe);
+  cxAutoExecute.ItemIndex  := Ord(AData.Autorun);
+  btnChangeOrder.Enabled   := (cxAutoExecute.ItemIndex <> 0);
+  //Scheduler
+  cxScheduler.ItemIndex    := Ord(AData.SchMode);
+  dtpSchDate.Date          := AData.SchDateTime;
+  dtpSchTime.Time          := AData.SchDateTime;
   //Window State
   if (AData.WindowState <> -1) and Not(AData.WindowState >= 4) then
     cxWindowState.ItemIndex := AData.WindowState
@@ -138,6 +147,7 @@ begin
   cbDontInsertMFU.Checked   := AData.NoMFU;
   cbShortcutDesktop.Checked := AData.ShortcutDesktop;
   cbHideSoftware.Checked    := AData.HideFromMenu;
+  cxSchedulerChange(Self);
 end;
 
 procedure TfrmPropertyFile.SaveNodeData(AData: TvFileNodeData);
@@ -152,6 +162,9 @@ begin
   AData.WorkingDir  := edtWorkingDir.Text;
   AData.ActionOnExe := TActionOnExecute(cxActionOnExe.ItemIndex);
   AData.Autorun     := TAutorunType(cxAutoExecute.ItemIndex);
+  //Scheduler
+  AData.SchMode     := TSchedulerMode(cxScheduler.ItemIndex);
+  AData.SchDateTime := Int(dtpSchDate.Date) + Frac(dtpSchTime.Time);
   //Others
   AData.NoMRU        := cbDontInsertMRU.Checked;
   AData.NoMFU        := cbDontInsertMFU.Checked;
@@ -246,6 +259,13 @@ end;
 procedure TfrmPropertyFile.cxAutoExecuteChange(Sender: TObject);
 begin
   btnChangeOrder.Enabled := (cxAutoExecute.ItemIndex <> 0);
+end;
+
+procedure TfrmPropertyFile.cxSchedulerChange(Sender: TObject);
+begin
+  dtpSchDate.Enabled := cxScheduler.ItemIndex = Ord(smOnce);
+  dtpSchTime.Enabled := (cxScheduler.ItemIndex = Ord(smOnce)) or
+                        (cxScheduler.ItemIndex = Ord(smDaily));
 end;
 
 procedure TfrmPropertyFile.edtPathExeExit(Sender: TObject);

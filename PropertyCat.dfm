@@ -4,7 +4,7 @@ object frmPropertyCat: TfrmPropertyCat
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Properties'
-  ClientHeight = 263
+  ClientHeight = 314
   ClientWidth = 402
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,8 +19,8 @@ object frmPropertyCat: TfrmPropertyCat
   PixelsPerInch = 96
   TextHeight = 13
   object btnCancel: TButton
-    Left = 319
-    Top = 230
+    Left = 316
+    Top = 281
     Width = 75
     Height = 25
     Caption = 'Cancel'
@@ -29,8 +29,8 @@ object frmPropertyCat: TfrmPropertyCat
     OnClick = btnCancelClick
   end
   object btnOk: TButton
-    Left = 238
-    Top = 230
+    Left = 235
+    Top = 281
     Width = 75
     Height = 25
     Caption = 'Ok'
@@ -43,15 +43,11 @@ object frmPropertyCat: TfrmPropertyCat
     Left = 9
     Top = 8
     Width = 385
-    Height = 216
+    Height = 267
     ActivePage = tsInfo2
     TabOrder = 0
     object tsInfo1: TTabSheet
       Caption = 'General'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object lbName: TLabel
         Left = 3
         Top = 5
@@ -111,10 +107,6 @@ object frmPropertyCat: TfrmPropertyCat
     end
     object tsInfo2: TTabSheet
       Caption = 'Advanced'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object lbPathIcon: TLabel
         Left = 8
         Top = 8
@@ -150,6 +142,13 @@ object frmPropertyCat: TfrmPropertyCat
         Caption = 'On execution'
         Color = clBtnFace
         ParentColor = False
+      end
+      object lbScheduler: TLabel
+        Left = 8
+        Top = 135
+        Width = 47
+        Height = 13
+        Caption = 'Scheduler'
       end
       object edtPathIcon: TEdit
         Left = 8
@@ -209,8 +208,8 @@ object frmPropertyCat: TfrmPropertyCat
           'Run and close ASuite')
       end
       object cbHideSoftware: TCheckBox
-        Left = 8
-        Top = 134
+        Left = 213
+        Top = 152
         Width = 161
         Height = 19
         Caption = 'Hide this software from menu'
@@ -224,6 +223,41 @@ object frmPropertyCat: TfrmPropertyCat
         Caption = 'Change order'
         TabOrder = 3
         OnClick = btnChangeOrderClick
+      end
+      object dtpSchTime: TDateTimePicker
+        Left = 8
+        Top = 205
+        Width = 129
+        Height = 21
+        Date = 39092.942361111110000000
+        Format = 'hh:mm'
+        Time = 39092.942361111110000000
+        DateMode = dmUpDown
+        Kind = dtkTime
+        TabOrder = 7
+      end
+      object dtpSchDate: TDateTimePicker
+        Left = 8
+        Top = 178
+        Width = 129
+        Height = 21
+        Date = 39092.942071932870000000
+        Time = 39092.942071932870000000
+        TabOrder = 8
+      end
+      object cxScheduler: TComboBox
+        Left = 8
+        Top = 151
+        Width = 129
+        Height = 21
+        Style = csDropDownList
+        TabOrder = 9
+        OnChange = cxSchedulerChange
+        Items.Strings = (
+          'Disabled'
+          'Once'
+          'Hourly'
+          'Daily')
       end
     end
   end

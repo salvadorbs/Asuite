@@ -30,7 +30,7 @@ type
 
   { TfrmOption }
 
-  TfrmOption = class(TGTForm)
+  TfrmOption = class(TForm)
     cxLCBottom: TComboBox;
     cxLCLeft: TComboBox;
     cxLCRight: TComboBox;
@@ -110,6 +110,7 @@ type
     cbTrayCustomIcon: TCheckBox;
     btnChangeOrder: TButton;
     lblAutorunOrder: TLabel;
+    cbScheduler: TCheckBox;
     procedure btnOkClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure tbMRUChange(Sender: TObject);
@@ -131,7 +132,7 @@ type
 var
   frmOption: TfrmOption;
 
-  arrayOfMouseSensorsString:array[1..4] of string = (
+  arrayOfMouseSensorsString:array[0..3] of string = (
      'Disabled','Show window','Show default menu','Show classic menu'
   );
 
@@ -139,7 +140,7 @@ implementation
 
 uses
   ClearElements, AppConfig, ulSysUtils, ulAppConfig, udClassicMenu, ulTreeView,
-  Main, OrderSoftware;
+  Main, OrderSoftware, gnugettext;
 
 {$R *.dfm}
 
@@ -214,12 +215,10 @@ begin
   Config.MRU        := cbMRU.Checked;
   Config.SubMenuMRU := cbSubMenuMRU.Checked;
   Config.MRUNumber  := tbMRU.Position;
-  MRUList.SetMaxItems(Config.MRUNumber);
   //MFU
   Config.MFU        := cbMFU.Checked;
   Config.SubMenuMFU := cbSubMenuMFU.Checked;
   Config.MFUNumber  := tbMFU.Position;
-  MFUList.SetMaxItems(Config.MFUNumber);
   //Backup
   Config.Backup     := cbBackup.Checked;
   //Delete backup useless
@@ -227,12 +226,12 @@ begin
     DeleteOldBackups(tbBackup.Position);
   Config.BackupNumber   := tbBackup.Position;
   //Various
-  Config.ActionOnExe    := TActionOnExecution(cxActionOnExe.ItemIndex);
+  Config.ActionOnExe    := TActionOnExecute(cxActionOnExe.ItemIndex);
   Config.RunSingleClick := cbRunSingleClick.Checked;
   Config.Autorun        := cbAutorun.Checked;
   Config.Cache          := cbCache.Checked;
+  Config.Scheduler      := cbScheduler.Checked;
   //Trayicon
-  ClassicMenu.tiTrayMenu.Visible := False;
   Config.TrayUseCustomIcon := cbTrayCustomIcon.Checked;
   Config.TrayIcon          := cbTrayicon.Checked;
   Config.ActionClickLeft   := cxLeftClick.ItemIndex;
@@ -291,6 +290,7 @@ var
   i:integer;
   //  searchResult : TSearchRec;
 begin
+  TranslateComponent(self);
   PageControl1.TabIndex      := 0;
   //General
   cbAutoOpClCat.Checked      := Config.TVAutoOpClCats;
@@ -351,6 +351,7 @@ begin
   cbRunSingleClick.Checked  := Config.RunSingleClick;
   cbAutorun.Checked         := Config.Autorun;
   cbCache.Checked           := Config.Cache;
+  cbScheduler.Checked       := Config.Scheduler;
   //Trayicon
   cbTrayicon.Checked        := Config.TrayIcon;
   cbTrayCustomIcon.Checked  := Config.TrayUseCustomIcon;
@@ -361,7 +362,7 @@ begin
   cbTrayCustomIcon.Enabled  := cbTrayicon.Checked;
   btnTrayCustomIcon.Enabled := cbTrayicon.Checked;
   //Mouse Sensors
-  for I := 1 to 4 do
+  for I := 0 to 3 do
     begin
       //Left Click
       cxLCTop.Items.Add(arrayOfMouseSensorsString[i]);

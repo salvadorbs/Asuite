@@ -53,6 +53,10 @@ type
     lblListItems: TLabel;
     lblNote: TLabel;
     vstCategoryItems: TVirtualStringTree;
+    dtpSchTime: TDateTimePicker;
+    dtpSchDate: TDateTimePicker;
+    cxScheduler: TComboBox;
+    lbScheduler: TLabel;
     procedure btnBrowseIconClick(Sender: TObject);
     procedure edtNameEnter(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
@@ -66,6 +70,7 @@ type
     procedure vstCategoryItemsGetText(Sender: TBaseVirtualTree;
       Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
       var CellText: string);
+    procedure cxSchedulerChange(Sender: TObject);
   private
     { Private declarations }
     FNodeData: PBaseData;
@@ -152,6 +157,13 @@ begin
   CheckPropertyName(edtName);
 end;
 
+procedure TfrmPropertyCat.cxSchedulerChange(Sender: TObject);
+begin
+  dtpSchDate.Enabled := cxScheduler.ItemIndex = Ord(smOnce);
+  dtpSchTime.Enabled := (cxScheduler.ItemIndex = Ord(smOnce)) or
+                        (cxScheduler.ItemIndex = Ord(smDaily));
+end;
+
 procedure TfrmPropertyCat.FormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
 begin
@@ -204,12 +216,17 @@ begin
   cxActionOnExe.ItemIndex := Ord(AData.ActionOnExe);
   cxAutoExecute.ItemIndex := Ord(AData.Autorun);
   btnChangeOrder.Enabled  := (cxAutoExecute.ItemIndex <> 0);
+  //Scheduler
+  cxScheduler.ItemIndex    := Ord(AData.SchMode);
+  dtpSchDate.Date          := AData.SchDateTime;
+  dtpSchTime.Time          := AData.SchDateTime;
   //Window State
   if (AData.WindowState <> -1) and Not(AData.WindowState >= 4) then
     cxWindowState.ItemIndex := AData.WindowState
   else
     cxWindowState.ItemIndex := 0;
   cbHideSoftware.Checked  := AData.HideFromMenu;
+  cxSchedulerChange(Self);
 end;
 
 procedure TfrmPropertyCat.SaveNodeData(AData: TvCategoryNodeData);
@@ -226,6 +243,9 @@ begin
   end;
   AData.ActionOnExe  := TActionOnExecute(cxActionOnExe.ItemIndex);
   AData.Autorun      := TAutorunType(cxAutoExecute.ItemIndex);
+  //Scheduler
+  AData.SchMode     := TSchedulerMode(cxScheduler.ItemIndex);
+  AData.SchDateTime := Int(dtpSchDate.Date) + Frac(dtpSchTime.Time);
   AData.WindowState  := cxWindowState.ItemIndex;
   AData.HideFromMenu := cbHideSoftware.Checked;
   AData.Changed := True;
@@ -234,11 +254,11 @@ end;
 procedure TfrmPropertyCat.SetCategoryItems(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
 var
-  ListNodeData : TvFileNodeData;
+  FileNodeData : TvFileNodeData;
 begin
-  ListNodeData := TvFileNodeData(GetNodeDataSearch(Node,vstCategoryItems,frmMain.vstList).Data);
-  ListNodeData.RunFromCategory := (Node.CheckState = csCheckedNormal);
-  ListNodeData.Changed := True;
+  FileNodeData := TvFileNodeData(GetNodeDataSearch(Node,vstCategoryItems,frmMain.vstList).Data);
+  FileNodeData.RunFromCategory := (Node.CheckState = csCheckedNormal);
+  FileNodeData.Changed := True;
 end;
 
 procedure TfrmPropertyCat.vstCategoryItemsGetImageIndex(

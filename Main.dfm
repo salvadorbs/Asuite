@@ -430,4 +430,10 @@ object frmMain: TfrmMain
       OnClick = ChangeSearchTextHint
     end
   end
+  object tmScheduler: TTimer
+    Enabled = False
+    OnTimer = tmSchedulerTimer
+    Left = 144
+    Top = 32
+  end
 end

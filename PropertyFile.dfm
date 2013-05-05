@@ -48,10 +48,6 @@ object frmPropertyFile: TfrmPropertyFile
     TabOrder = 0
     object tsInfo1: TTabSheet
       Caption = 'General'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object lbInfo1: TLabel
         Left = 9
         Top = 9
@@ -144,10 +140,6 @@ object frmPropertyFile: TfrmPropertyFile
     end
     object tsInfo2: TTabSheet
       Caption = 'Advanced'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object lbPathIcon: TLabel
         Left = 8
         Top = 48
@@ -168,7 +160,7 @@ object frmPropertyFile: TfrmPropertyFile
       end
       object lbWindowState: TLabel
         Left = 272
-        Top = 176
+        Top = 185
         Width = 66
         Height = 13
         Caption = 'Window state'
@@ -192,6 +184,13 @@ object frmPropertyFile: TfrmPropertyFile
         Caption = 'On execution'
         Color = clBtnFace
         ParentColor = False
+      end
+      object lbScheduler: TLabel
+        Left = 8
+        Top = 132
+        Width = 47
+        Height = 13
+        Caption = 'Scheduler'
       end
       object edtPathIcon: TEdit
         Left = 8
@@ -228,7 +227,7 @@ object frmPropertyFile: TfrmPropertyFile
       end
       object cxWindowState: TComboBox
         Left = 272
-        Top = 192
+        Top = 204
         Width = 102
         Height = 21
         Style = csDropDownList
@@ -270,7 +269,7 @@ object frmPropertyFile: TfrmPropertyFile
       end
       object cbDontInsertMRU: TCheckBox
         Left = 8
-        Top = 219
+        Top = 247
         Width = 224
         Height = 19
         Caption = 'Don'#39't insert this software in recents (MRU)'
@@ -278,15 +277,15 @@ object frmPropertyFile: TfrmPropertyFile
       end
       object cbShortcutDesktop: TCheckBox
         Left = 8
-        Top = 250
+        Top = 263
         Width = 264
         Height = 19
         Caption = 'Create shortcut on desktop when ASuite is running'
         TabOrder = 11
       end
       object cbHideSoftware: TCheckBox
-        Left = 8
-        Top = 152
+        Left = 213
+        Top = 231
         Width = 161
         Height = 19
         Caption = 'Hide this software from menu'
@@ -303,11 +302,46 @@ object frmPropertyFile: TfrmPropertyFile
       end
       object cbDontInsertMFU: TCheckBox
         Left = 8
-        Top = 188
+        Top = 231
         Width = 176
         Height = 19
         Caption = 'Don'#39't insert this software in MFU'
         TabOrder = 9
+      end
+      object dtpSchTime: TDateTimePicker
+        Left = 8
+        Top = 204
+        Width = 129
+        Height = 21
+        Date = 39092.942361111110000000
+        Format = 'HH:mm'
+        Time = 39092.942361111110000000
+        DateMode = dmUpDown
+        Kind = dtkTime
+        TabOrder = 12
+      end
+      object dtpSchDate: TDateTimePicker
+        Left = 8
+        Top = 177
+        Width = 129
+        Height = 21
+        Date = 39092.942071932870000000
+        Time = 39092.942071932870000000
+        TabOrder = 13
+      end
+      object cxScheduler: TComboBox
+        Left = 8
+        Top = 148
+        Width = 129
+        Height = 21
+        Style = csDropDownList
+        TabOrder = 14
+        OnChange = cxSchedulerChange
+        Items.Strings = (
+          'Disabled'
+          'Once'
+          'Hourly'
+          'Daily')
       end
     end
   end

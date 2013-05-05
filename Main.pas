@@ -26,7 +26,7 @@ uses
   Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
   ComCtrls, VirtualTrees, ActiveX, AppConfig, ulNodeDataTypes, ulCommonClasses,
   UDImages, ASuiteForm, StdCtrls, Buttons, Sensor, System.UITypes, mORMotUILogin,
-  ulEnumerations;
+  ulEnumerations, Vcl.ExtCtrls, System.DateUtils;
 
 type
 
@@ -96,6 +96,7 @@ type
     edtSearch: TEdit;
     miRunAs: TMenuItem;
     miRunAsAdmin: TMenuItem;
+    tmScheduler: TTimer;
     procedure miOptionsClick(Sender: TObject);
     procedure miStatisticsClick(Sender: TObject);
     procedure OpenFolderSw(Sender: TObject);
@@ -164,6 +165,7 @@ type
       Pt: TPoint; var Effect: Integer; Mode: TDropMode);
     procedure miRunAsClick(Sender: TObject);
     procedure miRunAsAdminClick(Sender: TObject);
+    procedure tmSchedulerTimer(Sender: TObject);
   private
     { Private declarations }
     function  GetActiveTree: TBaseVirtualTree;
@@ -179,8 +181,8 @@ type
   end;
 
 var
-  frmMain : TfrmMain;
-  FormSensors         : Array[0..3] of TfrmSensor;
+  frmMain     : TfrmMain;
+  FormSensors : Array[0..3] of TfrmSensor;
 
 implementation
 
@@ -940,6 +942,54 @@ begin
   end;
 end;
 
+procedure TfrmMain.tmSchedulerTimer(Sender: TObject);
+var
+  NodeData    : TvCustomRealNodeData;
+  NowDateTime : TDateTime;
+  ProcessInfo : TProcessInfo;
+  I           : Integer;
+  schTime     : TDateTime;
+begin
+  NowDateTime := RecodeMilliSecond(Now,0);
+  //Check scheduler list to know which items to run
+  for I := 0 to SchedulerItemList.Count - 1 do
+  begin
+    if Assigned(SchedulerItemList[I]) then
+    begin
+      NodeData := SchedulerItemList[I];
+      //Compare time and/or date based of scheduler mode
+      case NodeData.SchMode of
+        smOnce: schTime  := NodeData.SchDateTime;
+        smHourly:
+        begin
+          //Run software every hour
+          schTime := RecodeMinute(NowDateTime,0);
+          schTime := RecodeSecond(schTime,0);
+        end;
+        smDaily:
+        begin
+          //Run software every day (user choose time, hour and minute)
+          schTime := RecodeYear(NodeData.SchDateTime, YearOf(NowDateTime));
+          schTime := RecodeMonth(schTime, MonthOf(NowDateTime));
+          schTime := RecodeDay(schTime, DayOf(NowDateTime));
+        end;
+      end;
+      //If is its turn, run item
+      if (CompareDateTime(NowDateTime, schTime) = 0) then
+      begin
+        ProcessInfo.RunFromCat := (NodeData.DataType = vtdtCategory);
+        ProcessInfo.RunMode := rmNormal;
+        //Start process
+        if NodeData.DataType in [vtdtFile,vtdtFolder] then
+          TvFileNodeData(NodeData).Execute(vstList, ProcessInfo)
+        else
+          if NodeData.DataType = vtdtCategory then
+            TvCategoryNodeData(NodeData).Execute(vstList, ProcessInfo);
+      end;
+    end;
+  end;
+end;
+
 procedure TfrmMain.miEditClick(Sender: TObject);
 begin
   miPaste1.Enabled := IsFormatInClipBoard(CF_VIRTUALTREE);
@@ -962,10 +1012,6 @@ begin
 end;
 
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
-var
-  I        : Integer;
-  NodeData : TvCustomRealNodeData;
-  ProcessInfo : TProcessInfo;
 begin
   RunShutdownProcess;
   //Execute actions on asuite's shutdown (inside vstList)
@@ -992,6 +1038,7 @@ begin
   //Create TNodeLists for autorun
   ASuiteStartUpApp  := TAutorunItemList.Create;
   ASuiteShutdownApp := TAutorunItemList.Create;
+  SchedulerItemList := TNodeDataList.Create;
   //Set NodeDataSize for trees
   vstList.NodeDataSize   := SizeOf(rBaseData);
   vstSearch.NodeDataSize := SizeOf(TTreeDataX);
@@ -1024,6 +1071,7 @@ begin
   FreeAndNil(MFUList);
   FreeAndNil(ASuiteStartUpApp);
   FreeAndNil(ASuiteShutdownApp);
+  FreeAndNil(SchedulerItemList);
   Config.Destroy;
 end;
 

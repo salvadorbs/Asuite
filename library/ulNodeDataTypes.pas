@@ -118,8 +118,9 @@ type
     procedure SetPathCacheIcon(value:integer);
     procedure SetMRUPosition(Value: Int64);
     procedure SetClickCount(Value: Integer);
-    procedure SetAutorun(value:TAutorunType);
+    procedure SetAutorun(value: TAutorunType);
     procedure SetSchMode(value: TSchedulerMode);
+    procedure SetSchDateTime(value: TDateTime);
   public
     constructor Create(AType: TvTreeDataType); // virtual;
     procedure Copy(source:TvBaseNodeData); override;
@@ -135,7 +136,7 @@ type
     property Autorun: TAutorunType read FAutorun write SetAutorun;
     property AutorunPos: Integer read FAutorunPos write FAutorunPos;
     property SchMode: TSchedulerMode read FSchMode write SetSchMode;
-    property SchDateTime: TDateTime read FSchDateTime write FSchDateTime;
+    property SchDateTime: TDateTime read FSchDateTime write SetSchDateTime;
   end;
   PvCustomRealNodeData = ^TvCustomRealNodeData;
 
@@ -611,7 +612,8 @@ begin
   FPathIcon    := '';
   FCacheID     := -1;
   FPathCacheIcon := '';
-  FSchMode     := 0;
+  FSchMode     := smDisabled;
+  FSchDateTime := Now;
 end;
 
 procedure TvCustomRealNodeData.SetMRUPosition(Value: Int64);
@@ -628,6 +630,17 @@ begin
     MFUList.Add(Self);
 end;
 
+procedure TvCustomRealNodeData.SetSchDateTime(value: TDateTime);
+var
+  DateTime: TDateTime;
+begin
+  //If value is not a empty TDateTime, set it in FSchDateTime
+  if value <> 0 then
+    FSchDateTime := value
+  else //Else use function Now
+    FSchDateTime := Now;
+end;
+
 procedure TvCustomRealNodeData.SetPathIcon(value:string);
 begin
   FPathIcon := value;
@@ -638,9 +651,9 @@ procedure TvCustomRealNodeData.SetSchMode(value: TSchedulerMode);
 begin
   if (FSchMode <> value) then
   begin
-    if (FSchMode <> 0) and (value = 0) then
+    if (FSchMode <> smDisabled) and (value = smDisabled) then
       SchedulerItemList.Remove(Self);
-    if (FSchMode = 0) and (value <> 0) then
+    if (FSchMode = smDisabled) and (value <> smDisabled) then
       SchedulerItemList.Add(Self);
   end;
   FSchMode := value;
