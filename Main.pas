@@ -172,12 +172,12 @@ type
     procedure LoadGlyphs;
     procedure RunStartupProcess;
     procedure RunShutdownProcess;
-    procedure HideMainForm;
     procedure ExecuteSelectedNode(ProcessInfo: TProcessInfo);
     procedure RunNormalSw;
   public
     { Public declarations }
     procedure ShowMainForm(Sender: TObject);
+    procedure HideMainForm;
   end;
 
 var
@@ -1039,6 +1039,7 @@ begin
   ASuiteStartUpApp  := TAutorunItemList.Create;
   ASuiteShutdownApp := TAutorunItemList.Create;
   SchedulerItemList := TNodeDataList.Create;
+  HotKeyApp := TNodeDataList.Create;
   //Set NodeDataSize for trees
   vstList.NodeDataSize   := SizeOf(rBaseData);
   vstSearch.NodeDataSize := SizeOf(TTreeDataX);
@@ -1072,6 +1073,7 @@ begin
   FreeAndNil(ASuiteStartUpApp);
   FreeAndNil(ASuiteShutdownApp);
   FreeAndNil(SchedulerItemList);
+  FreeAndNil(HotKeyApp);
   Config.Destroy;
 end;
 
