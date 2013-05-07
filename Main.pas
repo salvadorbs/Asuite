@@ -166,6 +166,8 @@ type
     procedure miRunAsClick(Sender: TObject);
     procedure miRunAsAdminClick(Sender: TObject);
     procedure tmSchedulerTimer(Sender: TObject);
+    procedure vstListEditing(Sender: TBaseVirtualTree; Node: PVirtualNode;
+      Column: TColumnIndex; var Allowed: Boolean);
   private
     { Private declarations }
     function  GetActiveTree: TBaseVirtualTree;
@@ -807,6 +809,15 @@ begin
   accept := true;
 end;
 
+procedure TfrmMain.vstListEditing(Sender: TBaseVirtualTree; Node: PVirtualNode;
+  Column: TColumnIndex; var Allowed: Boolean);
+var
+  NodeData : PBaseData;
+begin
+  NodeData := Sender.GetNodeData(Node);
+  Allowed  := (NodeData.Data.DataType <> vtdtSeparator) and Not(Config.RunSingleClick);
+end;
+
 procedure TfrmMain.vstListExpanding(Sender: TBaseVirtualTree;
   Node: PVirtualNode; var Allowed: Boolean);
 begin
@@ -951,6 +962,7 @@ var
   schTime     : TDateTime;
 begin
   NowDateTime := RecodeMilliSecond(Now,0);
+  schTime     := NowDateTime;
   //Check scheduler list to know which items to run
   for I := 0 to SchedulerItemList.Count - 1 do
   begin

@@ -631,8 +631,6 @@ begin
 end;
 
 procedure TvCustomRealNodeData.SetSchDateTime(value: TDateTime);
-var
-  DateTime: TDateTime;
 begin
   //If value is not a empty TDateTime, set it in FSchDateTime
   if value <> 0 then

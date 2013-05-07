@@ -85,7 +85,7 @@ object frmMain: TfrmMain
         ClipboardFormats.Strings = (
           'Virtual Tree Data')
         DragMode = dmAutomatic
-        EditDelay = 750
+        EditDelay = 500
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
@@ -108,7 +108,7 @@ object frmMain: TfrmMain
         TabOrder = 0
         TextMargin = 2
         TreeOptions.AutoOptions = [toAutoDropExpand, toAutoExpand, toAutoScroll, toAutoScrollOnExpand, toAutoTristateTracking]
-        TreeOptions.MiscOptions = [toAcceptOLEDrop, toEditable, toFullRepaintOnResize, toToggleOnDblClick, toWheelPanning]
+        TreeOptions.MiscOptions = [toAcceptOLEDrop, toEditable, toFullRepaintOnResize, toToggleOnDblClick, toWheelPanning, toEditOnClick]
         TreeOptions.PaintOptions = [toShowBackground, toShowButtons, toShowDropmark, toShowRoot, toShowTreeLines, toThemeAware, toUseBlendedImages]
         TreeOptions.SelectionOptions = [toFullRowSelect, toMultiSelect, toRightClickSelect]
         TreeOptions.StringOptions = [toAutoAcceptEditChange]
@@ -117,6 +117,7 @@ object frmMain: TfrmMain
         OnDblClick = RunDoubleClick
         OnDragOver = vstListDragOver
         OnDragDrop = vstListDragDrop
+        OnEditing = vstListEditing
         OnExpanding = vstListExpanding
         OnFreeNode = vstListFreeNode
         OnGetText = vstListGetText
@@ -131,10 +132,6 @@ object frmMain: TfrmMain
     end
     object tbSearch: TTabSheet
       Caption = 'Search'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object sbtnSearch: TSpeedButton
         Left = 152
         Top = 0
