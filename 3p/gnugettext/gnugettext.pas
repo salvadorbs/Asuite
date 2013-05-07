@@ -48,7 +48,7 @@ interface
 // If the conditional define DXGETTEXTDEBUG is defined, debugging log is activated.
 // Use DefaultInstance.DebugLogToFile() to write the log to a file.
 {$IFDEF DEBUG}
-  {$define DXGETTEXTDEBUG}
+  {.$define DXGETTEXTDEBUG}
 {$ENDIF}
 
 {$ifdef VER140}

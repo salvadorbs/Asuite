@@ -262,7 +262,7 @@ begin
       DBImp.Destroy;
     end;
   vstListImp.EndUpdate;
-  GetChildNodesIcons(Tree, Tree.RootNode, False);
+  ImagesDM.GetChildNodesIcons(Tree, Tree.RootNode, False);
 end;
 
 function TfrmImportList.wppLauncherNodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
@@ -347,7 +347,7 @@ end;
 procedure TfrmImportList.vstListImpExpanding(Sender: TBaseVirtualTree;
   Node: PVirtualNode; var Allowed: Boolean);
 begin
-  GetChildNodesIcons(Sender, Node, False);
+  ImagesDM.GetChildNodesIcons(Sender, Node, False);
 end;
 
 procedure TfrmImportList.vstListImpFreeNode(Sender: TBaseVirtualTree;

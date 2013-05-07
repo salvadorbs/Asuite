@@ -810,7 +810,7 @@ end;
 procedure TfrmMain.vstListExpanding(Sender: TBaseVirtualTree;
   Node: PVirtualNode; var Allowed: Boolean);
 begin
-  GetChildNodesIcons(Sender, Node);
+  ImagesDM.GetChildNodesIcons(Sender, Node);
 end;
 
 procedure TfrmMain.vstListFreeNode(Sender: TBaseVirtualTree;

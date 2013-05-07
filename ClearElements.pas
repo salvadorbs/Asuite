@@ -56,7 +56,8 @@ var
 
 implementation   
 
-uses Main, ulTreeView, ulNodeDataTypes, ulSysUtils, ulEnumerations;
+uses
+  Main, ulTreeView, ulNodeDataTypes, ulSysUtils, ulEnumerations, udImages;
 
 {$R *.dfm}
 
@@ -86,7 +87,7 @@ begin
   if cbCache.Checked then
   begin
     frmMain.vstList.IterateSubtree(nil, ClearCache, nil, [], True);
-    GetChildNodesIcons(frmMain.vstList, frmMain.vstList.RootNode);
+    ImagesDM.GetChildNodesIcons(frmMain.vstList, frmMain.vstList.RootNode);
     frmMain.vstList.FullCollapse;
   end;
   RefreshList(frmMain.vstList);
