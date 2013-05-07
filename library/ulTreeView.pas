@@ -72,6 +72,7 @@ var
   ASuiteStartUpApp,                     //Software in StartUp list
   ASuiteShutdownApp : TAutorunItemList; //Software in Shutdown list
   SchedulerItemList : TNodeDataList;
+  HotKeyApp : TNodeDataList;
   ListStats: TListStats;     //Stats
 
 implementation

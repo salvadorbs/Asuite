@@ -8,7 +8,7 @@ object frmSensor: TfrmSensor
   ClientHeight = 6
   ClientWidth = 124
   Color = clBtnFace
-  DefaultMonitor = dmDesktop
+  DefaultMonitor = dmMainForm
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11

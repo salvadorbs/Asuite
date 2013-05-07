@@ -40,9 +40,6 @@ type
     { Public declarations }
   end;
 
-var
-  frmSensor     : TfrmSensor;
-
 const
   crNewCur = 1;
 
@@ -59,6 +56,7 @@ uses Main, ulAppConfig, AppConfig, udClassicMenu;
 procedure CreateFormSensors;
 var
   I : Integer;
+  frmSensor :TfrmSensor;
 begin
   //Create FormSensors and set its height and width
   for I := 0 to 3 do
@@ -69,7 +67,7 @@ begin
       begin
         if (Config.SensorLeftClick[I] <> 0) or (Config.SensorRightClick[I] <> 0) then
         begin
-          Application.CreateForm(TfrmSensor,frmSensor);
+          frmSensor := TfrmSensor.Create(Application);
           frmSensor.Height := 1;
           frmSensor.Width  := GetDeviceCaps(GetDC(frmMain.Handle), HORZRES);
         end
@@ -78,7 +76,7 @@ begin
       begin
         if (Config.SensorLeftClick[I] <> 0) or (Config.SensorRightClick[I] <> 0) then
         begin
-          Application.CreateForm(TfrmSensor,frmSensor);
+          frmSensor := TfrmSensor.Create(Application);
           frmSensor.Height := GetDeviceCaps(GetDC(frmMain.Handle), VERTRES);
           frmSensor.Width  := 1;
         end
@@ -87,7 +85,7 @@ begin
       begin
         if (Config.SensorLeftClick[I] <> 0) or (Config.SensorRightClick[I] <> 0) then
         begin
-          Application.CreateForm(TfrmSensor,frmSensor);
+          frmSensor := TfrmSensor.Create(Application);
           frmSensor.Left   := GetDeviceCaps(GetDC(frmMain.Handle), HORZRES) - 1;
           frmSensor.Height := GetDeviceCaps(GetDC(frmMain.Handle), VERTRES);
           frmSensor.Width  := 1;
@@ -97,7 +95,7 @@ begin
       begin
         if (Config.SensorLeftClick[I] <> 0) or (Config.SensorRightClick[I] <> 0) then
         begin
-          Application.CreateForm(TfrmSensor,frmSensor);
+          frmSensor := TfrmSensor.Create(Application);
           frmSensor.Top    := GetDeviceCaps(GetDC(frmMain.Handle), VERTRES) - 1;
           frmSensor.Height := 1;
           frmSensor.Width  := GetDeviceCaps(GetDC(frmMain.Handle), HORZRES);

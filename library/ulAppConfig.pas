@@ -67,6 +67,7 @@ type
     //Execution
     FActionOnExe        : TActionOnExecute;
     FRunSingleClick     : Boolean;
+    FHotKey             : Boolean;
     //Trayicon
     FTrayIcon           : Boolean;
     FTrayUseCustomIcon  : Boolean;
@@ -138,6 +139,8 @@ type
     // Execution
     property ActionOnExe: TActionOnExecute read FActionOnExe write FActionOnExe;
     property RunSingleClick: Boolean read FRunSingleClick write FRunSingleClick;
+    //HotKeys
+    property HotKey: Boolean read FHotKey write FHotKey;
     // Trayicon
     property TrayIcon: Boolean read FTrayIcon write SetTrayIcon;
     property TrayUseCustomIcon: Boolean read FTrayUseCustomIcon write SetTrayUseCustomIcon;

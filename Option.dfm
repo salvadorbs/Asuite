@@ -25,86 +25,13 @@ object frmOption: TfrmOption
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'General'
-      object gbWindow: TGroupBox
-        Left = 8
-        Top = 88
-        Width = 257
-        Height = 265
-        Caption = 'Window'
-        TabOrder = 1
-        object lbLanguage: TLabel
-          Left = 8
-          Top = 186
-          Width = 47
-          Height = 13
-          Caption = 'Language'
-          Color = clBtnFace
-          ParentColor = False
-        end
-        object cxLanguage: TComboBox
-          Left = 8
-          Top = 202
-          Width = 153
-          Height = 21
-          Style = csDropDownList
-          Enabled = False
-          TabOrder = 4
-        end
-        object cbWindowOnTop: TCheckBox
-          Left = 8
-          Top = 43
-          Width = 92
-          Height = 19
-          Caption = 'Window on top'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Shell Dlg 2'
-          Font.Style = []
-          ParentFont = False
-          TabOrder = 1
-        end
-        object cbHoldSize: TCheckBox
-          Left = 8
-          Top = 18
-          Width = 101
-          Height = 19
-          Caption = 'Hold window size'
-          TabOrder = 0
-        end
-        object cbCustomTitle: TCheckBox
-          Left = 8
-          Top = 142
-          Width = 116
-          Height = 19
-          Caption = 'Custom window title'
-          TabOrder = 2
-          OnClick = cbCustomTitleClick
-        end
-        object edtCustomTitle: TEdit
-          Left = 8
-          Top = 162
-          Width = 153
-          Height = 21
-          TabOrder = 3
-          Text = 'ASuite'
-        end
-        object cbHideSearch: TCheckBox
-          Left = 8
-          Top = 226
-          Width = 96
-          Height = 19
-          Caption = 'Hide tab Search'
-          TabOrder = 5
-        end
-      end
       object gbTreeView: TGroupBox
         Left = 8
         Top = 362
         Width = 257
         Height = 103
         Caption = 'Treeview'
-        TabOrder = 2
+        TabOrder = 1
         object cbBackground: TCheckBox
           Left = 8
           Top = 32
@@ -180,14 +107,267 @@ object frmOption: TfrmOption
           TabOrder = 2
         end
       end
+      object gbWindow: TGroupBox
+        Left = 8
+        Top = 88
+        Width = 257
+        Height = 265
+        Caption = 'Window'
+        TabOrder = 2
+        object lbLanguage: TLabel
+          Left = 8
+          Top = 200
+          Width = 47
+          Height = 13
+          Margins.Bottom = 0
+          Caption = 'Language'
+        end
+        object cxLanguage: TComboBox
+          Left = 8
+          Top = 216
+          Width = 153
+          Height = 21
+          Style = csDropDownList
+          TabOrder = 11
+        end
+        object cxWindowHotKeyCode: TComboBox
+          Left = 167
+          Top = 84
+          Width = 57
+          Height = 21
+          Style = csDropDownList
+          TabOrder = 5
+          Items.Strings = (
+            'A'
+            'B'
+            'C'
+            'D'
+            'E'
+            'F'
+            'G'
+            'H'
+            'I'
+            'J'
+            'K'
+            'L'
+            'M'
+            'N'
+            'O'
+            'P'
+            'Q'
+            'R'
+            'S'
+            'T'
+            'U'
+            'V'
+            'W'
+            'X'
+            'Y'
+            'Z'
+            'F1'
+            'F2'
+            'F3'
+            'F4'
+            'F5'
+            'F6'
+            'F7'
+            'F8'
+            'F9'
+            'F10'
+            'F11'
+            'F12'
+            '1'
+            '2'
+            '3'
+            '4'
+            '5'
+            '6'
+            '7'
+            '8'
+            '9'
+            '0')
+        end
+        object cxWindowHotKeyMod: TComboBox
+          Left = 8
+          Top = 84
+          Width = 153
+          Height = 21
+          Style = csDropDownList
+          TabOrder = 4
+          Items.Strings = (
+            'Alt'
+            'Crtl'
+            'Shift'
+            'Crtl + Alt'
+            'Shift + Alt'
+            'Shift + Crtl'
+            'Shift + Crtl + Alt'
+            'WinKey'
+            'WinKey + Alt'
+            'WinKey + Crtl'
+            'WinKey + Shift'
+            'WinKey + Crtl + Alt'
+            'WinKey + Shift + Alt'
+            'WinKey + Shift + Crtl'
+            'WinKey + Shift + Crtl + Alt')
+        end
+        object cbWindowHotKey: TCheckBox
+          Left = 8
+          Top = 64
+          Width = 233
+          Height = 17
+          Caption = 'Show window when hotkey is pressed'
+          TabOrder = 3
+        end
+        object cbWindowOnTop: TCheckBox
+          Left = 8
+          Top = 48
+          Width = 233
+          Height = 17
+          Caption = 'Window on top'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Shell Dlg 2'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 2
+        end
+        object cbFormCard: TCheckBox
+          Left = 8
+          Top = 32
+          Width = 233
+          Height = 17
+          Caption = 'Show application info'
+          TabOrder = 1
+        end
+        object cbHoldSize: TCheckBox
+          Left = 8
+          Top = 16
+          Width = 233
+          Height = 17
+          Caption = 'Hold window size'
+          TabOrder = 0
+        end
+        object cbCustomTitle: TCheckBox
+          Left = 8
+          Top = 156
+          Width = 233
+          Height = 17
+          Caption = 'Custom window title'
+          TabOrder = 9
+          OnClick = cbCustomTitleClick
+        end
+        object edtCustomTitle: TEdit
+          Left = 8
+          Top = 176
+          Width = 153
+          Height = 21
+          TabOrder = 10
+          Text = 'ASuite'
+        end
+        object cbHideSearch: TCheckBox
+          Left = 8
+          Top = 240
+          Width = 233
+          Height = 17
+          Caption = 'Hide tab Search'
+          TabOrder = 12
+        end
+        object cbMenuHotKey: TCheckBox
+          Left = 8
+          Top = 111
+          Width = 241
+          Height = 17
+          Caption = 'Show trayicon menu when hotkey is pressed'
+          TabOrder = 6
+        end
+        object cxMenuHotKeyCode: TComboBox
+          Left = 167
+          Top = 131
+          Width = 57
+          Height = 21
+          Style = csDropDownList
+          TabOrder = 8
+          Items.Strings = (
+            'A'
+            'B'
+            'C'
+            'D'
+            'E'
+            'F'
+            'G'
+            'H'
+            'I'
+            'J'
+            'K'
+            'L'
+            'M'
+            'N'
+            'O'
+            'P'
+            'Q'
+            'R'
+            'S'
+            'T'
+            'U'
+            'V'
+            'W'
+            'X'
+            'Y'
+            'Z'
+            'F1'
+            'F2'
+            'F3'
+            'F4'
+            'F5'
+            'F6'
+            'F7'
+            'F8'
+            'F9'
+            'F10'
+            'F11'
+            'F12'
+            '1'
+            '2'
+            '3'
+            '4'
+            '5'
+            '6'
+            '7'
+            '8'
+            '9'
+            '0')
+        end
+        object cxMenuHotKeyMod: TComboBox
+          Left = 8
+          Top = 131
+          Width = 153
+          Height = 21
+          Style = csDropDownList
+          TabOrder = 7
+          Items.Strings = (
+            'Alt'
+            'Crtl'
+            'Shift'
+            'Crtl + Alt'
+            'Shift + Alt'
+            'Shift + Crtl'
+            'Shift + Crtl + Alt'
+            'WinKey'
+            'WinKey + Alt'
+            'WinKey + Crtl'
+            'WinKey + Shift'
+            'WinKey + Crtl + Alt'
+            'WinKey + Shift + Alt'
+            'WinKey + Shift + Crtl'
+            'WinKey + Shift + Crtl + Alt')
+        end
+      end
     end
     object TabSheet2: TTabSheet
       Caption = 'Advanced'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object gbRecents: TGroupBox
         Left = 8
         Top = 16
@@ -395,10 +575,6 @@ object frmOption: TfrmOption
     object TabSheet3: TTabSheet
       Caption = 'Various'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object gbExecution: TGroupBox
         Left = 8
         Top = 8
