@@ -88,8 +88,8 @@ end;
 procedure TfrmOrderSoftware.btnOkClick(Sender: TObject);
 begin
   //Save Startup and Shutdown lists
-  SaveInAutorunItemList(lstStartUp,ASuiteStartUpApp);
-  SaveInAutorunItemList(lstShutdown,ASuiteShutdownApp);
+  SaveInAutorunItemList(lstStartUp,StartupItemList);
+  SaveInAutorunItemList(lstShutdown,ShutdownItemList);
   Close;
 end;
 
@@ -162,8 +162,8 @@ begin
       pgcSoftwareOrder.ActivePageIndex := 1;
   end;
   //Populate lstStartUp and lstShutdown
-  PopulateLstAutoExe(lstStartUp,ASuiteStartUpApp);
-  PopulateLstAutoExe(lstShutdown,ASuiteShutdownApp);
+  PopulateLstAutoExe(lstStartUp,StartupItemList);
+  PopulateLstAutoExe(lstShutdown,ShutdownItemList);
 end;
 
 end.

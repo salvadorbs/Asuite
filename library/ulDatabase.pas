@@ -66,9 +66,9 @@ type
     Fdsk_shortcut     : Boolean;
     Ficon             : RawUTF8;
     Fcacheicon_id     : Integer;
-    Fonlaunch         : Integer; //Todo: Use Byte as type
+    Fonlaunch         : Byte;
     Fwindow_state     : Integer;
-    Fautorun          : Integer; //Todo: Use Byte as type
+    Fautorun          : Byte;
     Fautorun_position : Integer;
     Fscheduler_mode   : Byte;
     Fscheduler_datetime : TDateTime;
@@ -92,9 +92,9 @@ type
     property dsk_shortcut: Boolean read Fdsk_shortcut write Fdsk_shortcut;
     property icon_path: RawUTF8 read Ficon write Ficon;
     property cacheicon_id: Integer read Fcacheicon_id write Fcacheicon_id;
-    property onlaunch: Integer read Fonlaunch write Fonlaunch;
+    property onlaunch: Byte read Fonlaunch write Fonlaunch;
     property window_state: Integer read Fwindow_state write Fwindow_state;
-    property autorun: Integer read Fautorun write Fautorun;
+    property autorun: Byte read Fautorun write Fautorun;
     property autorun_position: Integer read Fautorun_position write Fautorun_position;
     property scheduler_mode: Byte read Fscheduler_mode write Fscheduler_mode;
     property scheduler_datetime: TDateTime read Fscheduler_datetime write Fscheduler_datetime;

@@ -103,9 +103,6 @@ type
       property Build: Integer   read FBuild   write FBuild;
   end;
 
-var
-  ASuiteStartUpApp: TAutorunItemList;
-
 implementation
 
 constructor TNodeDataList.Create;

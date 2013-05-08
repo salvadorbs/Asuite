@@ -68,9 +68,8 @@ var
   MFUList : TMFUList;
   SearchType : TSearchType;
   IterateSubTreeProcs : TIterateSubtreeProcs;
-  //Todo: Rename ASuiteStartupApp in StartupItemList
-  ASuiteStartUpApp,                     //Software in StartUp list
-  ASuiteShutdownApp : TAutorunItemList; //Software in Shutdown list
+  StartupItemList,                      //Software in StartUp list
+  ShutdownItemList  : TAutorunItemList; //Software in Shutdown list
   SchedulerItemList : TNodeDataList;
   HotKeyApp : TNodeDataList;
   ListStats: TListStats;     //Stats

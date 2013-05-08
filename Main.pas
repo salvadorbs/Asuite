@@ -888,9 +888,9 @@ begin
   //Autorun - Execute software
   if (Config.Autorun) then
   begin
-    for I := 0 to ASuiteStartUpApp.Count - 1 do
+    for I := 0 to StartupItemList.Count - 1 do
     begin
-      NodeData := ASuiteStartUpApp[I];
+      NodeData := StartupItemList[I];
       ProcessInfo.RunFromCat := (NodeData.DataType = vtdtCategory);
       //Set RunMode
       if (NodeData.Autorun = atSingleInstance) then
@@ -917,9 +917,9 @@ begin
   //Autorun - Execute software
   if (Config.Autorun) then
   begin
-    for I := 0 to ASuiteShutdownApp.Count - 1 do
+    for I := 0 to ShutdownItemList.Count - 1 do
     begin
-      NodeData := ASuiteShutdownApp[I];
+      NodeData := ShutdownItemList[I];
       ProcessInfo.RunFromCat := (NodeData.DataType = vtdtCategory);
       ProcessInfo.RunMode := rmAutorun;
       //Start process
@@ -1048,8 +1048,8 @@ begin
   Application.CreateForm(TClassicMenu, ClassicMenu);
   pcList.ActivePageIndex := PG_LIST;
   //Create TNodeLists for autorun
-  ASuiteStartUpApp  := TAutorunItemList.Create;
-  ASuiteShutdownApp := TAutorunItemList.Create;
+  StartupItemList   := TAutorunItemList.Create;
+  ShutdownItemList  := TAutorunItemList.Create;
   SchedulerItemList := TNodeDataList.Create;
   HotKeyApp := TNodeDataList.Create;
   //Set NodeDataSize for trees
@@ -1082,8 +1082,8 @@ begin
   //Fix memory leaks
   FreeAndNil(MRUList);
   FreeAndNil(MFUList);
-  FreeAndNil(ASuiteStartUpApp);
-  FreeAndNil(ASuiteShutdownApp);
+  FreeAndNil(StartupItemList);
+  FreeAndNil(ShutdownItemList);
   FreeAndNil(SchedulerItemList);
   FreeAndNil(HotKeyApp);
   Config.Destroy;

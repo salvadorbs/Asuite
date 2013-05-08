@@ -680,23 +680,23 @@ begin
   begin
     if (FAutorun in [atAlwaysOnStart, atSingleInstance, atNever]) and (value in [atAlwaysOnClose]) then
     begin
-      ASuiteStartUpApp.Remove(Self);
-      ASuiteShutdownApp.Insert(Self.FAutorunPos, Self)
+      StartupItemList.Remove(Self);
+      ShutdownItemList.Insert(Self.FAutorunPos, Self)
     end
     else
       if (FAutorun in [atAlwaysOnClose, atNever]) and (value in [atAlwaysOnStart, atSingleInstance]) then
       begin
-        ASuiteShutdownApp.Remove(Self);
-        ASuiteStartUpApp.Insert(Self.FAutorunPos, Self);
+        ShutdownItemList.Remove(Self);
+        StartupItemList.Insert(Self.FAutorunPos, Self);
       end;
   end
   else begin
     //If it is changed, remove from old list
     if (FAutorun in [atAlwaysOnStart, atSingleInstance]) and (value in [atNever]) then
-      ASuiteStartUpApp.Remove(Self)
+      StartupItemList.Remove(Self)
     else
       if (FAutorun in [atAlwaysOnClose]) and (value in [atNever]) then
-        ASuiteShutdownApp.Remove(Self);
+        ShutdownItemList.Remove(Self);
   end;
   //Set new value
   FAutorun := value;
