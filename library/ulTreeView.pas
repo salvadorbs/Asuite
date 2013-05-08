@@ -392,6 +392,12 @@ begin
     //Remove item from special menu
     MRUList.Remove(NodeData);
     MFUList.Remove(NodeData);
+    if NodeData.SchMode <> smDisabled then
+      SchedulerItemList.Remove(NodeData);
+    if (NodeData.Autorun in [atAlwaysOnStart, atSingleInstance]) then
+      StartupItemList.Remove(NodeData);
+    if (NodeData.Autorun in [atAlwaysOnClose]) then
+      ShutdownItemList.Remove(NodeData);
   end;
   //Remove item from sqlite database
   DBManager.DeleteItem(NodeData.ID);

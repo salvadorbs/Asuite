@@ -961,6 +961,8 @@ var
   I           : Integer;
   schTime     : TDateTime;
 begin
+  if (Config.ASuiteState = asStartUp) or (Config.ASuiteState = asShutdown) then
+    Exit;
   NowDateTime := RecodeMilliSecond(Now,0);
   schTime     := NowDateTime;
   //Check scheduler list to know which items to run
@@ -971,7 +973,8 @@ begin
       NodeData := SchedulerItemList[I];
       //Compare time and/or date based of scheduler mode
       case NodeData.SchMode of
-        smOnce: schTime  := NodeData.SchDateTime;
+        smDisabled: schTime := 0;
+        smOnce:     schTime := NodeData.SchDateTime;
         smHourly:
         begin
           //Run software every hour
@@ -987,7 +990,7 @@ begin
         end;
       end;
       //If is its turn, run item
-      if (CompareDateTime(NowDateTime, schTime) = 0) then
+      if (CompareDateTime(NowDateTime, schTime) = 0) and (NodeData.SchMode <> smDisabled) then
       begin
         ProcessInfo.RunFromCat := (NodeData.DataType = vtdtCategory);
         ProcessInfo.RunMode := rmNormal;
