@@ -85,7 +85,8 @@ type
   TASuiteState = (
       asStartUp,  //ASuite Startup Time
       asShutdown, //ASuite Shutdown Time
-      asNormal
+      asNormal,
+      asImporting
   );
 
 implementation

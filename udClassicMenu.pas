@@ -277,7 +277,7 @@ begin
   if (Sender is TASMenuItem) then
   begin
     MenuItem := (Sender as TASMenuItem);
-    ImagesDM.GetChildNodesIcons(frmMain.vstList, MenuItem.pNode, True, False);
+    ImagesDM.GetChildNodesIcons(frmMain.vstList, MenuItem.pNode, False);
     for I := 0 to MenuItem.Count - 1 do
     begin
       if MenuItem.Items[I].ImageIndex = -1 then

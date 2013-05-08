@@ -41,14 +41,14 @@ type
     { Private declarations }
     function LoadASuiteIconFromFile(const IconName: String): Integer;
     procedure SaveCacheIcon(Path: string; NodeData: TvCustomRealNodeData; ImageIndex: Integer);
-    procedure InternalGetChildNodesIcons(Tree: TBaseVirtualTree;Node: PVirtualNode; UseCache: Boolean);
+    procedure InternalGetChildNodesIcons(Tree: TBaseVirtualTree;Node: PVirtualNode);
   public
     { Public declarations }
-    function GetIconIndex(NodeData:TvCustomRealNodeData;UseCache: Boolean = True): Integer;
+    function GetIconIndex(NodeData:TvCustomRealNodeData): Integer;
     procedure DeleteCacheIcon(NodeData: TvCustomRealNodeData);
     function GetSimpleIconIndex(xpath : string): integer;
     procedure GetChildNodesIcons(Sender: TBaseVirtualTree; Node: PVirtualNode;
-                                 UseCache: Boolean = True; UseThread: Boolean = True);
+                                 UseThread: Boolean = True);
   end;
 
   TGetNodeIconsThread = class(TThread)
@@ -56,10 +56,9 @@ type
     { private declarations }
     FTree: TBaseVirtualTree;
     FNode: PVirtualNode;
-    FUseCache: Boolean;
   public
     { public declarations }
-    constructor Create(Suspended: Boolean;Tree: TBaseVirtualTree;Node: PVirtualNode; UseCache: Boolean = True);
+    constructor Create(Suspended: Boolean;Tree: TBaseVirtualTree;Node: PVirtualNode);
     Procedure Execute; override;
   end;
 
@@ -74,24 +73,24 @@ uses
 {$R *.dfm}
 
 procedure TImagesDM.GetChildNodesIcons(Sender: TBaseVirtualTree;
-  Node: PVirtualNode; UseCache: Boolean; UseThread: Boolean);
+  Node: PVirtualNode; UseThread: Boolean);
 var
   GetNodeIconsThread: TGetNodeIconsThread;
 begin
   if UseThread then
-    GetNodeIconsThread := TGetNodeIconsThread.Create(False, Sender, Node, UseCache)
+    GetNodeIconsThread := TGetNodeIconsThread.Create(False, Sender, Node)
   else
-    InternalGetChildNodesIcons(Sender, Node, UseCache);
+    InternalGetChildNodesIcons(Sender, Node);
 end;
 
-function TImagesDM.GetIconIndex(NodeData:TvCustomRealNodeData;UseCache: Boolean = True): Integer;
+function TImagesDM.GetIconIndex(NodeData:TvCustomRealNodeData): Integer;
 var
   TempPath : String;
 begin
   Result := -1;
   //Priority cache->icon->exe
   //Check cache icon
-  if UseCache then
+  if Config.ASuiteState <> asImporting then
   begin
     if Not(FileExists(NodeData.PathCacheIcon)) and (NodeData.CacheID <> -1) then
       NodeData.CacheID := -1;
@@ -120,7 +119,7 @@ begin
   if (TempPath <> '') and (Result <> IMAGE_INDEX_Cat) then
     Result := GetSimpleIconIndex(TempPath);
   //Save icon cache
-  if UseCache then
+  if Config.ASuiteState <> asImporting then
     SaveCacheIcon(TempPath, NodeData, Result);
 end;
 
@@ -230,7 +229,7 @@ begin
 end;
 
 procedure TImagesDM.InternalGetChildNodesIcons(Tree: TBaseVirtualTree;
-  Node: PVirtualNode; UseCache: Boolean);
+  Node: PVirtualNode);
 var
   NodeData: TvBaseNodeData;
   ChildNode: PVirtualNode;
@@ -242,7 +241,7 @@ begin
     NodeData := PBaseData(Tree.GetNodeData(ChildNode)).Data;
     //Get imageindex
     if Assigned(NodeData) and (NodeData.ImageIndex = -1) and (NodeData.DataType <> vtdtSeparator) then
-      NodeData.ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(NodeData), True);
+      NodeData.ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(NodeData));
     //Repaint node
     Tree.InvalidateNode(ChildNode);
     //Next node
@@ -253,14 +252,13 @@ end;
 { TGetNodeIconsThread }
 
 constructor TGetNodeIconsThread.Create(Suspended: Boolean;Tree: TBaseVirtualTree;
-  Node: PVirtualNode; UseCache: Boolean);
+  Node: PVirtualNode);
 begin
   inherited Create(Suspended);
 
   //Set thread's variables
   Self.FTree     := Tree;
   Self.FNode     := Node;
-  Self.FUseCache := UseCache;
 
   Self.Priority  := tpNormal;
   Self.FreeOnTerminate := True;
@@ -269,7 +267,7 @@ end;
 procedure TGetNodeIconsThread.Execute;
 begin
   inherited;
-  ImagesDM.InternalGetChildNodesIcons(FTree, FNode, FUseCache);
+  ImagesDM.InternalGetChildNodesIcons(FTree, FNode);
 end;
 
 end.

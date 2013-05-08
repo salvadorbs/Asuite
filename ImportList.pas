@@ -262,7 +262,7 @@ begin
       DBImp.Destroy;
     end;
   vstListImp.EndUpdate;
-  ImagesDM.GetChildNodesIcons(Tree, Tree.RootNode, False);
+  ImagesDM.GetChildNodesIcons(Tree, Tree.RootNode);
 end;
 
 function TfrmImportList.wppLauncherNodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
@@ -347,7 +347,7 @@ end;
 procedure TfrmImportList.vstListImpExpanding(Sender: TBaseVirtualTree;
   Node: PVirtualNode; var Allowed: Boolean);
 begin
-  ImagesDM.GetChildNodesIcons(Sender, Node, False);
+  ImagesDM.GetChildNodesIcons(Sender, Node);
 end;
 
 procedure TfrmImportList.vstListImpFreeNode(Sender: TBaseVirtualTree;
@@ -509,6 +509,7 @@ begin
     lblTitle.Caption := msgImportTitle3;
     btnNext.Caption  := msgImport;
     //Import list in temporary vst
+    Config.ASuiteState := asImporting;
     PopulateTree(vstListImp, edtPathList.Text);
   end
   else //Else next page
@@ -634,6 +635,7 @@ end;
 
 procedure TfrmImportList.tsProgressShow(Sender: TObject);
 begin
+  Config.ASuiteState := asNormal;
   btnBack.Enabled  := False;
   btnNext.Enabled  := False;
   try
