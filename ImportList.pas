@@ -356,8 +356,7 @@ var
   NodeData : PBaseData;
 begin
   NodeData := Sender.GetNodeData(Node);
-  if (Node.CheckState = csUncheckedNormal) then
-    FreeAndNil(NodeData.Data);
+  FreeAndNil(NodeData.Data);
 end;
 
 procedure TfrmImportList.vstListImpGetImageIndex(Sender: TBaseVirtualTree;
@@ -453,23 +452,26 @@ var
   begin
     if (tnImp = nil) then Exit;
     NodeDataImp := TreeImp.GetNodeData(tnImp);
+    //Import checked item in main list
     if (tnImp.CheckState = csCheckedNormal) or (tnImp.CheckState = csMixedNormal) then
     begin
+      //Update progress bar
       pbImport.Position := pbImport.Position + 1;
       lblItems.Caption  := Format(msgProcessingItems, [((pbImport.Position / pbImport.Max) * 100), pbImport.Max]);
       Self.Update;
-      tn             := Tree.AddChild(tn);
+      //Create new node in vstList
+      tn             := Tree.AddChild(tn, CreateNodeData(NodeDataImp.Data.DataType));
       NodeData       := Tree.GetNodeData(tn);
-      NodeData^      := NodeDataImp^;
-      with NodeData.Data do
-      begin
-        ID           := -1;
-        ParentID     := -1;
-        Position     := tn.Index;
-        UnixAddDate  := DateTimeToUnix(Now);
-        UnixEditDate := NodeData.Data.UnixAddDate;
-      end;
-      NodeData.Data.pNode := tn;
+      //Copy from NodeDataImp
+      NodeData.Data.Copy(NodeDataImp.Data);
+      //Set some properties
+      NodeData.Data.Name     := NodeDataImp.Data.Name;
+      NodeData.Data.Position := tn.Index;
+      NodeData.Data.pNode    := tn;
+      NodeData.Data.ParentNode := tn.Parent;
+      //Get icon item, only if tn is in first level
+      if (NodeData.Data.DataType <> vtdtSeparator) and (Tree.GetNodeLevel(tn) = 0) then
+        NodeData.Data.ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(NodeData.Data));;
     end;
     tnImp := tnImp.FirstChild;
     while Assigned(tnImp) do
