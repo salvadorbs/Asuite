@@ -252,7 +252,7 @@ function CreateNodeData(AType: TvTreeDataType): TvBaseNodeData;
 implementation
 
 uses
-  ulSysUtils, ulTreeView, ulExeUtils, ulCommonUtils;
+  ulSysUtils, ulTreeView, ulExeUtils, ulCommonUtils, ulAppConfig;
 
 function CreateNodeData(AType: TvTreeDataType): TvBaseNodeData;
 begin
@@ -456,34 +456,43 @@ end;
 
 procedure TvFileNodeData.SetNoMRU(value:Boolean);
 begin
-  //If value is true, delete it from list
-  if (value and (FNoMRU <> value)) then
-    MRUList.Remove(Self)
-  else //else add it in list
-    if (not value and (FNoMRU <> value)) and (FMRUPosition > -1) then
-      MRUList.Add(Self);
+  if (Config.ASuiteState <> asImporting) then
+  begin
+    //If value is true, delete it from list
+    if (value and (FNoMRU <> value)) then
+      MRUList.Remove(Self)
+    else //else add it in list
+      if (not value and (FNoMRU <> value)) and (FMRUPosition > -1) then
+        MRUList.Add(Self);
+  end;
   FNoMRU := value;
 end;
 
 procedure TvFileNodeData.SetNoMFU(value:Boolean);
 begin
-  //If value is true, delete it from list
-  if (value and (FNoMFU <> value)) then
-    MFUList.Remove(Self)
-  else //else add it in list
-    if (not value and (FNoMFU <> value)) and (FClickCount > 0) then
-      MFUList.Add(Self);
+  if (Config.ASuiteState <> asImporting) then
+  begin
+    //If value is true, delete it from list
+    if (value and (FNoMFU <> value)) then
+      MFUList.Remove(Self)
+    else //else add it in list
+      if (not value and (FNoMFU <> value)) and (FClickCount > 0) then
+        MFUList.Add(Self);
+  end;
   FNoMFU := value;
 end;
 
 procedure TvFileNodeData.SetShortcutDesktop(value:Boolean);
 begin
-  //If value is true, create shortcut in desktop
-  if (value and (FShortcutDesktop <> value)) then
-    CreateShortcutOnDesktop(Name + EXT_LNK, FPathAbsoluteExe,FParameters,FWorkingDir)
-  else //else delete it from desktop
-    if (not value and (FShortcutDesktop <> value)) then
-      DeleteShortcutOnDesktop(FName + EXT_LNK);
+  if (Config.ASuiteState <> asImporting) then
+  begin
+    //If value is true, create shortcut in desktop
+    if (value and (FShortcutDesktop <> value)) then
+      CreateShortcutOnDesktop(Name + EXT_LNK, FPathAbsoluteExe,FParameters,FWorkingDir)
+    else //else delete it from desktop
+      if (not value and (FShortcutDesktop <> value)) then
+        DeleteShortcutOnDesktop(FName + EXT_LNK);
+  end;
   FShortcutDesktop := value;
 end;
 
@@ -616,15 +625,17 @@ end;
 procedure TvCustomRealNodeData.SetMRUPosition(Value: Int64);
 begin
   FMRUPosition := Value;
-  if (FMRUPosition > -1) and (not TvFileNodeData(Self).FNoMRU) then
-    MRUList.Add(Self);
+  if (Config.ASuiteState <> asImporting) then
+    if (FMRUPosition > -1) and (not TvFileNodeData(Self).FNoMRU) then
+      MRUList.Add(Self);
 end;
 
 procedure TvCustomRealNodeData.SetClickCount(Value: Integer);
 begin
   FClickCount := Value;
-  if (FClickCount > 0) and (not TvFileNodeData(Self).FNoMFU) then
-    MFUList.Add(Self);
+  if (Config.ASuiteState <> asImporting) then
+    if (FClickCount > 0) and (not TvFileNodeData(Self).FNoMFU) then
+      MFUList.Add(Self);
 end;
 
 procedure TvCustomRealNodeData.SetSchDateTime(value: TDateTime);
@@ -644,13 +655,14 @@ end;
 
 procedure TvCustomRealNodeData.SetSchMode(value: TSchedulerMode);
 begin
-  if (FSchMode <> value) then
-  begin
-    if (FSchMode <> smDisabled) and (value = smDisabled) then
-      SchedulerItemList.Remove(Self);
-    if (FSchMode = smDisabled) and (value <> smDisabled) then
-      SchedulerItemList.Add(Self);
-  end;
+  if (Config.ASuiteState <> asImporting) then
+    if (FSchMode <> value) then
+    begin
+      if (FSchMode <> smDisabled) and (value = smDisabled) then
+        SchedulerItemList.Remove(Self);
+      if (FSchMode = smDisabled) and (value <> smDisabled) then
+        SchedulerItemList.Add(Self);
+    end;
   FSchMode := value;
 end;
 
@@ -672,28 +684,31 @@ end;
 
 procedure TvCustomRealNodeData.SetAutorun(value:TAutorunType);
 begin
-  //If it is changed, remove from old list and insert in new list
-  if (value > atNever) and ((FAutorun) <> (value)) then
+  if (Config.ASuiteState <> asImporting) then
   begin
-    if (FAutorun in [atAlwaysOnStart, atSingleInstance, atNever]) and (value in [atAlwaysOnClose]) then
+    //If it is changed, remove from old list and insert in new list
+    if (value > atNever) and ((FAutorun) <> (value)) then
     begin
-      StartupItemList.Remove(Self);
-      ShutdownItemList.Insert(Self.FAutorunPos, Self)
-    end
-    else
-      if (FAutorun in [atAlwaysOnClose, atNever]) and (value in [atAlwaysOnStart, atSingleInstance]) then
+      if (FAutorun in [atAlwaysOnStart, atSingleInstance, atNever]) and (value in [atAlwaysOnClose]) then
       begin
-        ShutdownItemList.Remove(Self);
-        StartupItemList.Insert(Self.FAutorunPos, Self);
-      end;
-  end
-  else begin
-    //If it is changed, remove from old list
-    if (FAutorun in [atAlwaysOnStart, atSingleInstance]) and (value in [atNever]) then
-      StartupItemList.Remove(Self)
-    else
-      if (FAutorun in [atAlwaysOnClose]) and (value in [atNever]) then
-        ShutdownItemList.Remove(Self);
+        StartupItemList.Remove(Self);
+        ShutdownItemList.Insert(Self.FAutorunPos, Self)
+      end
+      else
+        if (FAutorun in [atAlwaysOnClose, atNever]) and (value in [atAlwaysOnStart, atSingleInstance]) then
+        begin
+          ShutdownItemList.Remove(Self);
+          StartupItemList.Insert(Self.FAutorunPos, Self);
+        end;
+    end
+    else begin
+      //If it is changed, remove from old list
+      if (FAutorun in [atAlwaysOnStart, atSingleInstance]) and (value in [atNever]) then
+        StartupItemList.Remove(Self)
+      else
+        if (FAutorun in [atAlwaysOnClose]) and (value in [atNever]) then
+          ShutdownItemList.Remove(Self);
+    end;
   end;
   //Set new value
   FAutorun := value;
