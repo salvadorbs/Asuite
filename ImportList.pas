@@ -110,7 +110,8 @@ implementation
 {$R *.dfm}
 
 uses
-  Main, ulNodeDataTypes, ulCommonUtils, ulTreeView, udImages, ulAppConfig;
+  Main, ulNodeDataTypes, ulCommonUtils, ulTreeView, udImages, ulAppConfig,
+  ulSysUtils;
 
 procedure TfrmImportList.btnCancelClick(Sender: TObject);
 begin
@@ -472,6 +473,7 @@ var
       //Copy from NodeDataImp
       NodeData.Data.Copy(NodeDataImp.Data);
       //Set some properties
+      RenameShortcutOnDesktop(NodeData.Data.Name + EXT_LNK,NodeDataImp.Data.Name + EXT_LNK);
       NodeData.Data.Name     := NodeDataImp.Data.Name;
       NodeData.Data.Position := tn.Index;
       NodeData.Data.pNode    := tn;

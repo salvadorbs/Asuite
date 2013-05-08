@@ -231,8 +231,7 @@ end;
 
 procedure TfrmPropertyCat.SaveNodeData(AData: TvCategoryNodeData);
 begin
-  AData.Name := StringReplace(edtName.Text, '&&', '&', [rfIgnoreCase,rfReplaceAll]);
-  AData.Name := StringReplace(AData.Name, '&', '&&', [rfIgnoreCase,rfReplaceAll]);
+  AData.Name := edtName.Text;
   vstCategoryItems.IterateSubtree(nil,SetCategoryItems,nil,[],False);
   //If changed, refresh cache icon
   if AData.PathIcon <> edtPathIcon.Text then

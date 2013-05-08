@@ -46,6 +46,7 @@ procedure DeleteOldBackups(MaxNumber: Integer);
 procedure CreateShortcutOnDesktop(FileName: String;TargetFilePath, Params, WorkingDir: String);
 procedure DeleteShortcutOnDesktop(FileName: String);
 function  GetShortcutTarget(LinkFileName:String;ShortcutType: TShortcutField):String;
+procedure RenameShortcutOnDesktop(OldFileName, FileName: String);
 
 { Relative & Absolute path }
 function AbsoluteToRelative(APath: String): string;
@@ -238,25 +239,37 @@ var
   Info      : Array[0..MAX_PATH] of Char;
   wfs       : TWin32FindData;
 begin
-   CoCreateInstance(CLSID_ShellLink,nil,CLSCTX_INPROC_SERVER,IShellLink,ISLink);
-   if ISLink.QueryInterface(IPersistFile, IPFile) = 0 then
-   begin
-     {$IFDEF UNICODE}
-     WidePath := PWideChar(LinkFileName);
-     {$ELSE}
-     MultiByteToWideChar(CP_ACP,MB_PRECOMPOSED,PChar(LinkFileName),-1,@WidePath,MAX_PATH);
-     {$ENDIF}
-     //Get pathexe, parameters or working directory from shortcut
-     IPFile.Load(WidePath, STGM_READ);
-     case ShortcutType of
-       sfPathExe    : ISLink.GetPath(@info,MAX_PATH,wfs,SLGP_UNCPRIORITY);
-       sfParameter  : ISLink.GetArguments(@info,MAX_PATH);
-       sfWorkingDir : ISLink.GetWorkingDirectory(@info,MAX_PATH);
-     end;
-     Result := info
-   end
-   else
-     Result := LinkFileName;
+  CoCreateInstance(CLSID_ShellLink,nil,CLSCTX_INPROC_SERVER,IShellLink,ISLink);
+  if ISLink.QueryInterface(IPersistFile, IPFile) = 0 then
+  begin
+    {$IFDEF UNICODE}
+    WidePath := PWideChar(LinkFileName);
+    {$ELSE}
+    MultiByteToWideChar(CP_ACP,MB_PRECOMPOSED,PChar(LinkFileName),-1,@WidePath,MAX_PATH);
+    {$ENDIF}
+    //Get pathexe, parameters or working directory from shortcut
+    IPFile.Load(WidePath, STGM_READ);
+    case ShortcutType of
+     sfPathExe    : ISLink.GetPath(@info,MAX_PATH,wfs,SLGP_UNCPRIORITY);
+     sfParameter  : ISLink.GetArguments(@info,MAX_PATH);
+     sfWorkingDir : ISLink.GetWorkingDirectory(@info,MAX_PATH);
+    end;
+    Result := info
+  end
+  else
+    Result := LinkFileName;
+end;
+
+procedure RenameShortcutOnDesktop(OldFileName, FileName: String);
+var
+  PIDL        : PItemIDList;
+  DesktopPath : array[0..MAX_PATH] of Char;
+  sDesktopPath : string;
+begin
+  SHGetSpecialFolderLocation(0, CSIDL_DESKTOPDIRECTORY, PIDL);
+  SHGetPathFromIDList(PIDL, DesktopPath);
+  sDesktopPath := DesktopPath;
+  RenameFile(sDesktopPath + PathDelim + OldFileName,sDesktopPath + PathDelim + FileName);
 end;
 
 function AbsoluteToRelative(APath: String): string;

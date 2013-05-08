@@ -78,8 +78,7 @@ end;
 
 procedure TfrmPropertySeparator.SaveNodeData(AData: TvBaseNodeData);
 begin
-  AData.Name    := StringReplace(edtName.Text, '&&', '&', [rfIgnoreCase,rfReplaceAll]);
-  AData.Name    := StringReplace(AData.Name, '&', '&&', [rfIgnoreCase,rfReplaceAll]);
+  AData.Name    := edtName.Text;
   AData.Changed := true;
 end;
 
