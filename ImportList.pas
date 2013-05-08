@@ -120,7 +120,8 @@ end;
 function TfrmImportList.ASuite1NodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
                                           Parent: PVirtualNode): PVirtualNode;
 var
-  NodeData     : PBaseData;
+  NodeData : PBaseData;
+  schDate, schTime   : string;
   CustomRealNodeData : TvCustomRealNodeData;
 begin
   Result := nil;
@@ -149,6 +150,12 @@ begin
       CustomRealNodeData.Name     := String(XMLNode.Attributes['name']);
       CustomRealNodeData.PathIcon := GetStrPropertyXML(XMLNode, 'PathIcon', '');
       CustomRealNodeData.HideFromMenu := GetBoolPropertyXML(XMLNode, 'HideSoftwareMenu', false);
+      CustomRealNodeData.SchMode  := TSchedulerMode(GetIntPropertyXML (XMLNode, 'SchedulerMode',0));
+      //Scheduler date and time
+      schDate := GetStrPropertyXML(XMLNode, 'SchedulerDate', '');
+      schTime := GetStrPropertyXML(XMLNode, 'SchedulerTime', '');
+      if (schDate <> '') and (schTime <> '') then
+        CustomRealNodeData.SchDateTime := StrToDateTime(schDate + ' ' + schTime);
       //Check if it is a software, so get software properties
       if (CustomRealNodeData.DataType = vtdtFile) then
       begin
