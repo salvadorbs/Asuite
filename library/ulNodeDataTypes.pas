@@ -283,7 +283,7 @@ end;
 procedure TvBaseNodeData.Copy(source:TvBaseNodeData);
 begin
   FName       := msgCopy + source.Name;
-  FImageIndex := source.ImageIndex;
+  FImageIndex := -1;
   FDataType   := source.DataType;
   FHideFromMenu := source.HideFromMenu;
 end;
@@ -418,25 +418,20 @@ end;
 
 procedure TvFileNodeData.Copy(source:TvBaseNodeData);
 var
-  FileNodeData : TvFileNodeData;
+  SourceNodeData : TvFileNodeData;
 begin
   inherited;
   if source is TvFileNodeData then
   begin
-    FileNodeData     := TvFileNodeData(source);
-    //Paths
-    SetPathExe(FileNodeData.PathExe);
-    SetPathIcon(FileNodeData.PathIcon);
-    //Advanced
-    FParameters      := FileNodeData.Parameters;
-    FWorkingDir      := FileNodeData.WorkingDir;
-    FWindowState     := FileNodeData.WindowState;
-    FActionOnExe     := FileNodeData.ActionOnExe;
-    FNoMRU           := FileNodeData.FNoMRU;
-    FNoMFU           := FileNodeData.FNoMFU;
-    SetShortcutDesktop(FileNodeData.ShortcutDesktop);
-    //Misc
-    SetAutorun(FileNodeData.Autorun);
+    SourceNodeData     := TvFileNodeData(source);
+    //Copy from source
+    SetPathExe(SourceNodeData.PathExe);
+    FParameters      := SourceNodeData.Parameters;
+    FWorkingDir      := SourceNodeData.WorkingDir;
+    FNoMRU           := SourceNodeData.FNoMRU;
+    FNoMFU           := SourceNodeData.FNoMFU;
+    SetShortcutDesktop(SourceNodeData.ShortcutDesktop);
+    FRunFromCategory := SourceNodeData.FRunFromCategory;
   end;
 end;
 
@@ -590,17 +585,19 @@ end;
 
 procedure TvCustomRealNodeData.Copy(source: TvBaseNodeData);
 var
-  CustomRealNodeData : TvCustomRealNodeData;
+  SourceNodeData : TvCustomRealNodeData;
 begin
   inherited;
   if source is TvCustomRealNodeData then
   begin
-    CustomRealNodeData := TvFileNodeData(source);
-    //Set nil to some specific properties
-    FPathIcon      := CustomRealNodeData.PathIcon;
-    FCacheID       := -1;
-    FPathCacheIcon := '';
-    PathAbsoluteIcon := '';
+    SourceNodeData := TvCustomRealNodeData(source);
+    //Copy from source
+    SetPathIcon(SourceNodeData.PathIcon);
+    FWindowState := SourceNodeData.WindowState;
+    FActionOnExe := SourceNodeData.ActionOnExe;
+    SetAutorun(SourceNodeData.Autorun);
+    SetSchMode(SourceNodeData.SchMode);
+    SetSchDateTime(SourceNodeData.SchDateTime);
   end;
 end;
 
