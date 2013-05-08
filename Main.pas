@@ -1009,7 +1009,7 @@ end;
 
 procedure TfrmMain.miExitClick(Sender: TObject);
 begin
-  ShutdownTime := True;
+  Config.ASuiteState := asShutdown;
   Close;
 end;
 
@@ -1036,7 +1036,7 @@ begin
   if Not(Config.TrayIcon) then
     CanClose := True
   else
-    CanClose := (ShutdownTime or SessionEnding);
+    CanClose := ((Config.ASuiteState = asShutdown) or (SessionEnding));
   //If user close window (not ASuite), hide form and taskbar icon
   if not (CanClose) then
     HideMainForm;

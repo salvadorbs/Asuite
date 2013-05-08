@@ -81,6 +81,13 @@ type
       smDaily = 3
   );
 
+  //ASuite State
+  TASuiteState = (
+      asStartUp,  //ASuite Startup Time
+      asShutdown, //ASuite Shutdown Time
+      asNormal
+  );
+
 implementation
 
 end.

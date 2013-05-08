@@ -27,8 +27,6 @@ type
   TASuiteForm = class(TGTForm)
   private
     FSessionEnding : Boolean;
-    FStartUpTime   : Boolean;
-    FShutdownTime  : Boolean;
     FOldPoint      : TPoint;
     procedure WMQueryEndSession(var Message: TMessage); message WM_QUERYENDSESSION;
     procedure WMEndSession(var Msg : TWMEndSession); message WM_ENDSESSION;
@@ -40,8 +38,6 @@ type
     destructor Destroy; override;
     procedure RefreshTranslation; virtual;
     property SessionEnding: Boolean read FSessionEnding write FSessionEnding;
-    property StartUpTime: Boolean read FStartUpTime write FStartUpTime;
-    property ShutdownTime: Boolean read FShutdownTime write FShutdownTime;
     property OldPoint: TPoint read FOldPoint write FOldPoint;
   published
 
@@ -55,10 +51,8 @@ uses
 
 constructor TASuiteForm.Create(AOwner: TComponent);
 begin
-  FShutdownTime := False;
-  FStartUpTime  := True;
   inherited;
-  FStartUpTime  := False;
+  Config.ASuiteState := asNormal;
 end;
 
 destructor TASuiteForm.Destroy;
@@ -92,7 +86,7 @@ begin
   //Close ASuite on Windows shutdown
   if Msg.EndSession = True then
   begin
-    FShutdownTime := True;
+    Config.ASuiteState := asShutdown;
     Close;
   end;
 end;

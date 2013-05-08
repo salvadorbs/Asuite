@@ -80,6 +80,7 @@ type
     //Misc
     FReadOnlyMode       : Boolean;
     FChanged            : Boolean;
+    FASuiteState        : TASuiteState;
     procedure SetHoldSize(value: Boolean);
     procedure SetAlwaysOnTop(value: Boolean);
     procedure SetSensorLeftClick(aIndex: Integer; value: Integer);
@@ -147,12 +148,13 @@ type
     property TrayCustomIconPath: String read FTrayCustomIconPath write FTrayCustomIconPath;
     property ActionClickLeft: Integer read FActionClickLeft write FActionClickLeft;
     property ActionClickRight: Integer read FActionClickRight write FActionClickRight;
-    // Misc
-    property ReadOnlyMode: Boolean read FReadOnlyMode write FReadOnlyMode;
-    property Changed: Boolean read FChanged write FChanged;
     //Mouse Sensor
     property SensorLeftClick[aIndex: Integer]:Integer read GetSensorLeftClick write setSensorLeftClick;
     property SensorRightClick[aIndex: Integer]:Integer read GetSensorRightClick write setSensorRightClick;
+    // Misc
+    property ReadOnlyMode: Boolean read FReadOnlyMode write FReadOnlyMode;
+    property Changed: Boolean read FChanged write FChanged;
+    property ASuiteState: TASuiteState read FASuiteState write FASuiteState;
   end;
 
 var
@@ -214,6 +216,7 @@ begin
   //Misc
   FReadOnlyMode       := False;
   FChanged            := False;
+  FASuiteState        := asStartUp;
 end;
 
 destructor TConfiguration.Destroy;

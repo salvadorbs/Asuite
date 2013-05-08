@@ -61,7 +61,7 @@ begin
     aeRunAndClose:
     begin
       //Close application
-      frmMain.ShutdownTime := True;
+      Config.ASuiteState := asShutdown;
       frmMain.Close;
     end;
   end;

@@ -146,7 +146,7 @@ end;
 procedure TClassicMenu.tiTrayMenuMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
-  if frmMain.StartUpTime or IsTrayMenuOpen then
+  if (Config.ASuiteState = asStartUp) or (IsTrayMenuOpen) then
     Exit;
   if (Button = mbLeft) then
   begin
