@@ -2681,7 +2681,7 @@ type
     procedure WriteObjectAsString(Value: TObject;
       Options: TTextWriterWriteObjectOptions=[woDontStoreDefault]);
     /// override method, able to write sets using RTTI
-    procedure AddTypedJSON(aTypeInfo: pointer; var aValue); override;
+    procedure AddTypedJSON(aTypeInfo: pointer; var aValue); {override;}
     /// relase all used memory and handles
     destructor Destroy; override;
     /// define a custom serialization for a given class

@@ -24874,6 +24874,7 @@ begin
     {$elseif defined(VER220)} 'Delphi XE'
     {$elseif defined(VER230)} 'Delphi XE2'
     {$elseif defined(VER240)} 'Delphi XE3'
+    {$elseif defined(VER250)} 'Delphi XE4'
     {$ifend}
   {$endif}
 {$endif}
