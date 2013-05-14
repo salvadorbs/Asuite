@@ -360,6 +360,7 @@ begin
     end;
     end;
     fDatabase.Open;
+    inherited Connect; // notify any re-connection 
     Log.Log(sllDB,'Connected to % (%)',
       [fDatabase.ProviderName,fDatabase.ServerVersionFull]);
   except
@@ -373,9 +374,12 @@ end;
 
 procedure TSQLDBUniDACConnection.Disconnect;
 begin
-  inherited;
-  if fDatabase<>nil then
-    fDatabase.Close;
+  try
+    inherited Disconnect; // flush any cached statement
+  finally
+    if fDatabase<>nil then
+      fDatabase.Close;
+  end;
 end;
 
 destructor TSQLDBUniDACConnection.Destroy;

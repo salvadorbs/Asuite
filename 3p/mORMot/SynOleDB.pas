@@ -96,7 +96,8 @@ unit SynOleDB;
   - added TOleDBMSSQL2005ConnectionProperties, TOleDBMSSQL2008ConnectionProperties
     and TOleDBMSSQL2012ConnectionProperties classes to specify every available
     MS SQL Server providers SQLNCLI, SQLNCLI10 or SQLNCLI11
-  - now trim any spaces when retrieving database schema text values 
+  - now trim any spaces when retrieving database schema text values
+  - added TOleDBStatement.UpdateCount overriden method (dc proposal)
   - fixed ticket [4c68975022] about broken SQL statement when logging active
   - fixed ticket [a24cbd30e3] about 64 bit compilation
   - fixed issue in TOleDBConnectionProperties.ColumnTypeNativeToDB() about
@@ -812,6 +813,7 @@ type
     fOleDBConnection: TOleDBConnection;
     fDBParams: TDBParams;
     fRowBufferSize: integer;
+    fUpdateCount: integer;
     fAlignBuffer: boolean;
     procedure SetRowBufferSize(Value: integer);
     /// resize fParams[] if necessary, set the VType and return pointer to
@@ -918,6 +920,8 @@ type
      - this overriden implementation will reset all bindings and the cursor state 
      - raise an EOleDBException on any error }
     procedure Reset; override;
+    /// gets a number of updates made by latest executed statement
+    function UpdateCount: integer; override;
 
     {{ retrieve the parameter content, after SQL execution
      - the leftmost SQL parameter has an index of 1 
@@ -1589,7 +1593,7 @@ begin
       end;
     end else
       // 3.2 ExpectResults=false (e.g. SQL UPDATE) -> leave fRowSet=nil
-      OleDBConnection.OleDBCheck(fCommand.Execute(nil,DB_NULLGUID,fDBParams,nil,nil));
+      OleDBConnection.OleDBCheck(fCommand.Execute(nil,DB_NULLGUID,fDBParams,@fUpdateCount,nil));
   except
     on E: Exception do begin
       Log.Log(sllError,E);
@@ -1734,6 +1738,14 @@ begin
     fcommand := nil;
     Prepare(fSQL,fExpectResults);
   end;
+  fUpdateCount := 0;
+end;
+
+function TOleDBStatement.UpdateCount: integer;
+begin
+  if not fExpectResults then
+    result := fUpdateCount else
+    result := 0;
 end;
 
 function OleDBColumnToFieldType(wType: DBTYPE; bScale: byte): TSQLDBFieldType;
@@ -1902,6 +1914,7 @@ begin
     if fSession.QueryInterface(IID_ITransactionLocal,unknown)=S_OK then
       fTransaction := unknown as ITransactionLocal else
       fTransaction := nil;
+    inherited Connect; // notify any re-connection 
   except
     on E: Exception do begin
       Log.Log(sllError,E);
@@ -1942,17 +1955,21 @@ end;
 procedure TOleDBConnection.Disconnect;
 begin
   SynDBLog.Enter(self);
-  if not Connected then
-    exit;
-  fTransaction := nil;
-  fSession := nil;
-  OleDBCheck(fDBInitialize.Uninitialize);
-  fDBInitialize := nil;
+  try
+    inherited Disconnect; // flush any cached statement
+  finally
+    if Connected then begin
+      fTransaction := nil;
+      fSession := nil;
+      OleDBCheck(fDBInitialize.Uninitialize);
+      fDBInitialize := nil;
+    end;
+  end;
 end;
 
 function TOleDBConnection.IsConnected: boolean;
 begin
-  result := (self<>nil) and (fSession<>nil);
+  result := fSession<>nil;
 end;
 
 function TOleDBConnection.NewStatement: TSQLDBStatement;

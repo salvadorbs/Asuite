@@ -1,6 +1,6 @@
 /// DB VCL dataset using SynDB data access
 // - this unit is a part of the freeware Synopse framework,
-// licensed under a MPL/GPL/LGPL tri-license; version 1.17
+// licensed under a MPL/GPL/LGPL tri-license; version 1.18
 unit SynDBVCL;
 
 {
@@ -44,7 +44,10 @@ unit SynDBVCL;
   ***** END LICENSE BLOCK *****
 
   Version 1.17
-  - first public release, corresponding to Synopse mORMOT Framework 1.17
+  - first public release, corresponding to Synopse mORMot Framework 1.17
+
+  Version 1.18
+  - use now TQuery.PreparedSQLDBStatement property internaly 
 
 
 }
@@ -90,15 +93,13 @@ implementation
 var
   GlobalDataSetCount: integer;
 
-type
-  TQueryWrapper = class(SynDB.TQuery);
-
 function QueryToDataSet(aOwner: TComponent; aStatement: SynDB.TQuery;
   aMaxRowCount: integer): TDataSet;
 begin
   if aStatement=nil then
     result := nil else
-    result := StatementToDataSet(aOwner,TQueryWrapper(aStatement).fPrepared,aMaxRowCount);
+    result := StatementToDataSet(aOwner,
+      aStatement.PreparedSQLDBStatement.Instance,aMaxRowCount);
 end;
 
 function StatementToDataSet(aOwner: TComponent; aStatement: TSQLDBStatement;

@@ -433,6 +433,7 @@ begin
     fDatabase.Open;
     Log.Log(sllDB,'Connected to % using % %',
       [fProperties.ServerName,fProperties.DatabaseName,fDatabase.GetClientVersion]);
+    inherited Connect; // notify any re-connection 
   except
     on E: Exception do begin
       Log.Log(sllError,E);
@@ -444,9 +445,12 @@ end;
 
 procedure TSQLDBZEOSConnection.Disconnect;
 begin
-  inherited;
-  if (fDatabase<>nil) and not fDatabase.IsClosed then
-    fDatabase.Close;
+  try
+    inherited Disconnect; // flush any cached statement
+  finally
+    if (fDatabase<>nil) and not fDatabase.IsClosed then
+      fDatabase.Close;
+  end;
 end;
 
 function TSQLDBZEOSConnection.IsConnected: boolean;

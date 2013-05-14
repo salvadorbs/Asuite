@@ -331,6 +331,7 @@ begin
     ServerEngine.Connected := True;
     fDatabase.Name := ClassName;
     fDatabase.Connect;
+    inherited Connect; // notify any re-connection 
   except
     on E: Exception do begin
       Log.Log(sllError,E);
@@ -393,14 +394,16 @@ end;
 
 procedure TSQLDBNexusDBConnection.Disconnect;
 begin
-  inherited;
-  if Assigned(fDatabase) then
-    fDatabase.Close;
-  if Assigned(fSession) and fSession.Active then
-  begin
-    fSession.CloseInactiveTables;
-    fSession.CloseInactiveFolders;
-    fSession.Close;
+  try
+    inherited Disconnect; // flush any cached statements
+  finally
+    if Assigned(fDatabase) then
+      fDatabase.Close;
+    if Assigned(fSession) and fSession.Active then begin
+      fSession.CloseInactiveTables;
+      fSession.CloseInactiveFolders;
+      fSession.Close;
+    end;
   end;
 end;
 

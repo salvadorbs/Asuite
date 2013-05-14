@@ -368,6 +368,9 @@ unit SynCommons;
   - added TypeInfo, ElemSize, ElemType read-only properties to TDynArray
   - added TDynArrayHashed.HashElement property
   - added TSynLogFile.Freq read-only property
+  - added DefaultSynLogExceptionToStr() function and TSynLogExceptionToStrCustom
+    variable, and ESynException.CustomLog() method to customize how raised
+    exception are logged when intercepted - feature request [495720e0b9] 
   - now FileSize() function won't raise any exception if the file does not exist
   - added DirectoryDelete() function
   - added GetNextItemCardinalStrict() and UpperCaseCopy() functions
@@ -381,15 +384,17 @@ unit SynCommons;
   - added TTextWriter.AddDynArrayJSON() overloaded method and new function
     DynArrayLoadJSON() to be used e.g. for custom record JSON serialization,
     within TDynArrayJSONCustomReader/TDynArrayJSONCustomWriter callbacks
+  - added TTextWriter.AddTypedJSON() method
   - added TJSONWriter.EndJSONObject() method, for writing an optional
     ',"rowCount":' field in non expanded mode - used for all JSON creation
   - introducing new TTextWriterEcho class, dedicated to row text multicast
   - added QuickSortIndexedPUTF8Char() and FastFindIndexedPUTF8Char() 
-  - added RawUnicodeToUtf8() overloaded procedure
+  - added RawUnicodeToUtf8() and UTF8ToSynUnicode() overloaded procedures
   - added UrlDecodeNextValue() and UrlDecodeNextNameValue() functions
   - added Utf8DecodeToRawUnicodeUI() overloaded function returning text as var
   - added optional aOwnObjects parameter to TRawUTF8List.Create() constructor
   - added JSON_CONTENT_TYPE_HEADER constant
+  - new DateToSQL() overloaded function with direct Year/Month/Day parameters
   - added IsEqual(const A,B: TSQLFieldBits): boolean function
   - enhanced FPC/Lazarus Win32/Win64 compilation
   - TDynArrayHashed is now a record with Delphi 2009+, due to a bug in latest
@@ -430,13 +435,22 @@ unit SynCommons;
     (now properly handles SQL null and more than MAX_SQLFIELDS parameters)
   - introducing TSQLParamType / TSQLParamTypeDynArray generic parameters
   - added RemoveCommentsFromJSON() procedure - from MPV proposal
+  - added GarbageCollectorFreeAndNil() procedure to handle global variables
+    proper finalization to nil - avoid error [8e3073c8c7] and [8546b4af1d] e.g.
+    when used as design package in Delphi IDE (for all globals and class VMTs)
   - fixed rouding issue e.g. for ExtendedToString(double(22.99999999999997))
   - fixed potential GPF in TRawUTF8List.SetTextPtr() - ticket [d947b36cf9]
   - fixed potential GPF in function UrlDecodeNeedParameters()
   - fixed ticket [ad55566b10] about JSON string escape parsing
-  - fixed ticket [cce54e98ca] about overflow in TTextWriter.AddJSONEscapeW()
+  - fixed ticket [cce54e98ca], [388c2768b6] and [355249a9d1] about overflow in
+    TTextWriter.AddJSONEscapeW()
   - fixed ticket [19e567b8ca] about TSynLog issue in heavily concurrent mode
   - fixed ticket [01408fd389] in TRawUTF8List.GetText()
+  - fixed ticket [1c940a4437] to avoid negative value in TPrecisionTimer.PerSec,
+    in case of incorrect Start/Stop methods sequence
+  - fixed ticket [815facfe57] in UTF8ILComp()
+  - fixed UTF8ToWideChar() functions to always append a WideChar(0) to the end
+    of the destination buffer, even if returned length is 0
   - fixed IdemPChar() in pure pascal to behave like the asm version (i.e.
     if up parameter is nil, will return TRUE)
   - confusing-named RoundTo2Digits() function renamed into Trunc2ToDigit()
@@ -504,16 +518,6 @@ const
   // - a similar constant shall be defined in SynCrtSock.pas
   SYNOPSE_FRAMEWORK_VERSION = '1.18'{$ifdef LVCL}+' LVCL'{$endif};
 
-
-  
-{ ************ some custom Exception classes }
-
-type
-  /// generic parent class of all custom Exception types of this unit
-  ESynException = class(Exception);
-
-  /// exception raised by all TSynTable related code
-  ETableDataException = class(Exception);
 
 
 { ************ common types used for compatibility between compilers and CPU }
@@ -1317,6 +1321,9 @@ function UTF8ToSynUnicode(const Text: RawUTF8): SynUnicode; overload;
 
 /// convert any UTF-8 encoded String into a generic SynUnicode Text
 procedure UTF8ToSynUnicode(const Text: RawUTF8; var result: SynUnicode); overload;
+
+/// convert any UTF-8 encoded buffer into a generic SynUnicode Text
+procedure UTF8ToSynUnicode(Text: PUTF8Char; Len: integer; var result: SynUnicode); overload;
 
 /// convert any Ansi 7 bit encoded String into a generic VCL Text
 // - the Text content must contain only 7 bit pure ASCII characters
@@ -3820,6 +3827,7 @@ type
     procedure Add(P: PUTF8Char; Len: PtrInt; Escape: TTextWriterKind); overload;
     /// write some #0 ended Unicode text as UTF-8, according to the specified format
     procedure AddW(P: PWord; Len: PtrInt; Escape: TTextWriterKind);
+      {$ifdef HASINLINE}inline;{$endif}
     /// append some UTF-8 encoded chars to the buffer, from the main AnsiString type
     // - use the current system code page for AnsiString parameter
     procedure AddAnsiString(const s: AnsiString; Escape: TTextWriterKind);
@@ -3922,6 +3930,10 @@ type
     // - this method will first create a void record (i.e. filled with #0 bytes)
     // then save its content with default or custom serialization
     procedure AddVoidRecordJSON(TypeInfo: pointer);
+    /// append a JSON value from its RTTI type
+    // - will handle tkClass,tkEnumeration,tkRecord,tkDynArray,tkVariant types
+    // - write null for other types
+    procedure AddTypedJSON(aTypeInfo: pointer; var aValue); virtual;
     /// define a custom serialization for a given dynamic array or record
     // - expects TypeInfo() from a dynamic array or a record (will raise an
     // exception otherwise)
@@ -4668,7 +4680,7 @@ type
 /// FileSeek() overloaded function, working with huge files
 // - Delphi FileSeek() is buggy -> use this function to safe access files > 2 GB
 // (thanks to sanyin for the report)
-function FileSeek64(Handle: THandle; const Offset: Int64; Origin: DWORD): Int64;
+function FileSeek64(Handle: THandle; const Offset: Int64; Origin: cardinal): Int64;
 
 /// encode the supplied data as an UTF-8 valid JSON object content
 // - data must be supplied two by two, as Name,Value pairs, e.g.
@@ -5297,7 +5309,16 @@ function Chars3ToInt18(P: pointer): cardinal;
 // (JSON_SQLDATE_MAGIC will be used as prefix to create '\uFFF1...' pattern)
 // - to be used e.g. as in:
 // ! aRec.CreateAndFillPrepare(Client,'Datum=?',[DateToSQL(EncodeDate(2012,5,4))]);
-function DateToSQL(Date: TDateTime): RawUTF8;
+function DateToSQL(Date: TDateTime): RawUTF8; overload;
+
+/// convert a date to a ISO-8601 string format for SQL '?' inlined parameters
+// - will return the date encoded as '\uFFF1YYYY-MM-DD' - therefore
+// ':("\uFFF12012-05-04"):' pattern will be recognized as a sftDateTime
+// inline parameter in  SQLParamContent() / ExtractInlineParameters() functions
+// (JSON_SQLDATE_MAGIC will be used as prefix to create '\uFFF1...' pattern)
+// - to be used e.g. as in:
+// ! aRec.CreateAndFillPrepare(Client,'Datum=?',[DateToSQL(2012,5,4)]);
+function DateToSQL(Year,Month,Day: cardinal): RawUTF8; overload;
 
 /// convert a date/time to a ISO-8601 string format for SQL '?' inlined parameters
 // - if DT=0, returns ''
@@ -5849,10 +5870,12 @@ type
 /// Self-modifying code - change some memory buffer in the code segment
 // - if Backup is not nil, it should point to a Size array of bytes, ready
 // to contain the overriden code buffer, for further hook disabling
-procedure PatchCode(Old,New: pointer; Size: integer; Backup: pointer=nil);
+procedure PatchCode(Old,New: pointer; Size: integer; Backup: pointer=nil;
+  LeaveUnprotected: boolean=false);
 
 /// Self-modifying code - change one PtrUInt in the code segment
-procedure PatchCodePtrUInt(Code: PPtrUInt; Value: PtrUInt);
+procedure PatchCodePtrUInt(Code: PPtrUInt; Value: PtrUInt;
+  LeaveUnprotected: boolean=false);
 
 /// Self-modifying code - add an asm JUMP to a redirected function
 // - if Backup is not nil, it should point to a Size array of bytes, ready
@@ -5914,10 +5937,25 @@ type
 
 var
   /// a global "Garbage collector", for some classes instances which must
-  // live for all the main executable process
+  // live during whole main executable process
   // - used to avoid any memory leak with e.g. 'class var RecordProps', i.e.
   // some singleton or static objects
+  // - to be used, e.g. as:
+  // !  Version := TFileVersion.Create(InstanceFileName,DefaultVersion);
+  // !  GarbageCollector.Add(Version);
   GarbageCollector: TObjectList;
+
+/// a global "Garbage collector" for some TObject global variables which must
+// live during whole main executable process
+// - this list expects a pointer to the TObject instance variable to be
+// specified, and will be set to nil (like a FreeAndNil)
+// - this may be useful when used when targetting Delphi IDE packages,
+// to circumvent the bug of duplicated finalization of units, in the scope
+// of global variables
+// - to be used, e.g. as:
+// !  if SynAnsiConvertList=nil then
+// !    GarbageCollectorFreeAndNil(SynAnsiConvertList,TObjectList.Create);
+procedure GarbageCollectorFreeAndNil(var InstanceVariable; Instance: TObject);
 
 
 { ************ TSynTable generic types and classes }
@@ -6736,6 +6774,7 @@ function SynRegisterCustomVariantType(aClass: TSynInvokeableVariantTypeClass): T
 type
 {$ifdef MSWINDOWS}
   /// high resolution timer (for accurate speed statistics)
+  // - WARNING: this record MUST be aligned to 32 bits, otherwise iFreq=0
   TPrecisionTimer = {$ifndef UNICODE}object{$else}record{$endif}
   private
     iStart,iStop,iResume: Int64;
@@ -7542,7 +7581,6 @@ type
     procedure AddStackTrace(Stack: PPtrUInt);
     procedure RecursionGrow;
     procedure PerformRotation;
-    procedure AddTyped(aTypeInfo: pointer; var aValue); virtual;
     procedure AddRecursion(aIndex: integer; aLevel: TSynLogInfo);
     procedure AddCurrentThreadIndex;
     function Instance: TSynLog;
@@ -7907,7 +7945,6 @@ type
     property LogProcCount: integer read fLogProcCurrentCount;
   end;
 
-
 const
   /// up to 16 TSynLogFamily, i.e. TSynLog children classes can be defined
   MAX_SYNLOGFAMILY = 15;
@@ -7928,17 +7965,65 @@ const
     '  +    ', '  -    ',
     ' OSERR ', ' EXC   ', ' EXCOS ', ' mem   ', ' stack ', ' fail  ',
     ' SQL   ', ' cache ', ' res   ', ' DB    ', ' http  ', ' clnt  ', ' srvr  ',
-    ' call  ', ' ret   ', ' auth  ', 
+    ' call  ', ' ret   ', ' auth  ',
     ' cust1 ', ' cust2 ', ' cust3 ', ' cust4 ', ' rotat ');
 
   /// the "magic" number used to identify .log.synlz compressed files, as
   // created by TSynLogFamily.EventArchiveSynLZ
   LOG_MAGIC = $ABA51051;
 
+type
+  /// calling context of TSynLogExceptionToStr callbacks
+  TSynLogExceptionContext = record
+    /// the raised exception class
+    EClass: ExceptClass;
+    /// the Delphi Exception instance
+    // - may be nil for external/OS exceptions
+    EInstance: Exception;
+    /// the OS-level exception code
+    // - could be $0EEDFAE0 of $0EEDFADE for Delphi-generated exceptions
+    ECode: DWord;
+    /// the address where the exception occured
+    EAddr: PtrUInt;
+    /// the current logging level
+    // - may be either sllException or sllExceptionOS
+    Level: TSynLogInfo;
+  end;
+
+  /// global hook callback to customize exceptions logged by TSynLog
+  // - should return FALSE if Context.EAddr and Stack trace is to be appended
+  TSynLogExceptionToStr = function(WR: TTextWriter; const Context: TSynLogExceptionContext): boolean;
+
+  /// generic parent class of all custom Exception types of this unit
+  ESynException = class(Exception)
+  public
+    {$ifndef NOEXCEPTIONINTERCEPT}
+    /// can be used to customize how the exception is logged
+    // - this default implementation will call the DefaultSynLogExceptionToStr()
+    // function or the TSynLogExceptionToStrCustom global callback, if defined
+    // - override this method to provide a custom logging content
+    // - should return TRUE if Context.EAddr and Stack trace is not to be
+    // written (i.e. as for any TSynLogExceptionToStr callback)
+    function CustomLog(WR: TTextWriter; const Context: TSynLogExceptionContext): boolean; virtual;
+    {$endif}
+  end;
+
+  /// exception raised by all TSynTable related code
+  ETableDataException = class(ESynException);
+
 var
   /// the kind of .log file generated by TSynTestsLogged
   TSynLogTestLog: TSynLogClass = TSynLog;
 
+  /// allow to customize the Exception logging message
+  TSynLogExceptionToStrCustom: TSynLogExceptionToStr = nil;
+
+
+/// default exception logging callback
+// - will add the default Exception details, including any Exception.Message
+// - if the exception inherits from ESynException
+// - returns TRUE: caller will then append ' at EAddr' and the stack trace
+function DefaultSynLogExceptionToStr(WR: TTextWriter; const Context: TSynLogExceptionContext): boolean;
 
 /// compress a data content using the SynLZ algorithm from one stream into another
 // - returns the number of bytes written to Dest
@@ -8169,10 +8254,8 @@ end;
 class function TSynAnsiConvert.Engine(aCodePage: integer): TSynAnsiConvert;
 var i: integer;
 begin
-  if SynAnsiConvertList=nil then begin
-    SynAnsiConvertList := TObjectList.Create;
-    GarbageCollector.Add(SynAnsiConvertList); // global list
-  end else
+  if SynAnsiConvertList=nil then
+    GarbageCollectorFreeAndNil(SynAnsiConvertList,TObjectList.Create) else
     for i := 0 to SynAnsiConvertList.Count-1 do begin
       result := SynAnsiConvertList.List[i];
       if result.CodePage=aCodePage then
@@ -8876,11 +8959,18 @@ var c: cardinal;
     endSource: PUTF8Char;
     endDest: PWideChar;
     i,extra: integer;
-label quit;
+label Quit, NoSource;
 begin
   result := 0;
-  if (source=nil) or (dest=nil) or (sourceBytes=0) then
+  if dest=nil then
    exit;
+  if source=nil then
+    goto NoSource;
+  if sourceBytes=0 then begin
+    if source^=#0 then
+      goto NoSource;
+    sourceBytes := StrLen(source);
+  end;
   endSource := source+sourceBytes;
   endDest := dest+MaxDestChars;
   begd := dest;
@@ -8922,8 +9012,9 @@ begin
       break;
   until false;
 Quit:
-  dest^ := #0; // always append a WideChar(0) to the end of the buffer
   result := PtrUInt(dest)-PtrUInt(begd); // dest-begd return char length
+NoSource:
+  dest^ := #0; // always append a WideChar(0) to the end of the buffer
 end;
 
 function UTF8ToWideChar(dest: pWideChar; source: PUTF8Char; sourceBytes: PtrInt=0): PtrInt;
@@ -8932,14 +9023,16 @@ var c: cardinal;
     begd: pWideChar;
     endSource: PUTF8Char;
     i,extra: integer;
-label quit;
+label Quit, NoSource;
 begin
   result := 0;
-  if source=nil then
+  if dest=nil then
    exit;
+  if source=nil then
+    goto NoSource;
   if sourceBytes=0 then begin
     if source^=#0 then
-      exit;
+      goto NoSource;
     sourceBytes := StrLen(source);
   end;
   begd := dest;
@@ -8997,8 +9090,9 @@ begin
       break;
   until false;
 Quit:
-  dest^ := #0; // always append a WideChar(0) to the end of the buffer
   result := PtrUInt(dest)-PtrUInt(begd); // dest-begd return char length
+NoSource:
+  dest^ := #0; // always append a WideChar(0) to the end of the buffer
 end;
 
 function Utf8ToUnicodeLength(source: PUTF8Char): PtrUInt;
@@ -9277,18 +9371,19 @@ begin
   UTF8DecodeToUnicodeString(P,L,result);
 end;
 
-procedure UTF8DecodeToUnicodeString(P: PUTF8Char; L: integer; var result: UnicodeString); 
-var L2: integer;
+procedure UTF8DecodeToUnicodeString(P: PUTF8Char; L: integer; var result: UnicodeString);
+var short: array[byte] of WideChar;
+    L2: integer;
 begin
-  result := ''; // somewhat faster if result is freed before any SetLength()
   if L=0 then
-    L := StrLen(P);
-  if L=0 then
-    exit;
-  SetString(result,nil,L); // maximum posible unicode size (if all <#128)
-  L2 := UTF8ToWideChar(pointer(result),P,L) shr 1;
-  if L2<>L then
-    SetLength(result,L2);
+    result := '' else
+  if L<sizeof(short)shr 1 then
+    SetString(result,short,UTF8ToWideChar(short,P,L) shr 1) else begin
+    SetString(result,nil,L); // maximum posible unicode size (if all <#128)
+    L2 := UTF8ToWideChar(pointer(result),P,L) shr 1;
+    if L2<>L then
+      SetLength(result,L2);
+  end;
 end;
 
 function WinAnsiToUnicodeString(WinAnsi: PAnsiChar; WinAnsiLen: integer): UnicodeString;
@@ -9627,30 +9722,24 @@ begin
 end;
 
 function UTF8ToSynUnicode(const Text: RawUTF8): SynUnicode;
-var tmp: RawUnicode;
-    L: integer;
-    short: array[byte] of WideChar;
 begin
-  L := length(Text);
-  if L<sizeof(short)shr 1 then
-    SetString(result,short,UTF8ToWideChar(short,pointer(Text),L) shr 1) else begin
-    SetLength(tmp,L*2+1); // maximum posible unicode size (if all <#128)
-    SetString(result,PWideChar(pointer(tmp)),
-      UTF8ToWideChar(pointer(tmp),pointer(Text),L) shr 1);
-  end;
+  UTF8ToSynUnicode(pointer(Text),length(Text),result);
 end;
 
 procedure UTF8ToSynUnicode(const Text: RawUTF8; var result: SynUnicode); overload;
+begin
+  UTF8ToSynUnicode(pointer(Text),length(Text),result);
+end;
+
+procedure UTF8ToSynUnicode(Text: PUTF8Char; Len: integer; var result: SynUnicode); overload;
 var tmp: RawUnicode;
-    L: integer;
     short: array[byte] of WideChar;
 begin
-  L := length(Text);
-  if L<sizeof(short)shr 1 then
-    SetString(result,short,UTF8ToWideChar(short,pointer(Text),L) shr 1) else begin
-    SetLength(tmp,L*2+1); // maximum posible unicode size (if all <#128)
+  if Len<sizeof(short)shr 1 then
+    SetString(result,short,UTF8ToWideChar(short,Text,Len) shr 1) else begin
+    SetLength(tmp,Len*2+1); // maximum posible unicode size (if all <#128)
     SetString(result,PWideChar(pointer(tmp)),
-      UTF8ToWideChar(pointer(tmp),pointer(Text),L) shr 1);
+      UTF8ToWideChar(pointer(tmp),Text,Len) shr 1);
   end;
 end;
 
@@ -12747,7 +12836,7 @@ begin // fast UTF-8 comparaison using the NormToUpper[] array for all 8 bits val
       extra := UTF8_EXTRABYTES[result];
       if extra=0 then goto neg; // invalid leading byte
       dec(L1,extra);
-      if L1<=0 then goto neg;
+      if Integer(L1)<0 then goto neg;
       for i := 0 to extra-1 do
         result := result shl 6+pByteArray(u1)[i];
       dec(result,UTF8_EXTRA[extra].offset);
@@ -12766,7 +12855,7 @@ begin // fast UTF-8 comparaison using the NormToUpper[] array for all 8 bits val
       extra := UTF8_EXTRABYTES[c2];
       if extra=0 then goto pos;
       dec(L2,extra);
-      if L2<=0 then goto pos;
+      if integer(L2)<0 then goto pos;
       for i := 0 to extra-1 do
         c2 := c2 shl 6+pByteArray(u2)[i];
       dec(c2,UTF8_EXTRA[extra].offset);
@@ -13395,14 +13484,27 @@ end;
 
 function DateToSQL(Date: TDateTime): RawUTF8;
 begin
-  SetLength(result,13);
-  PCardinal(pointer(result))^ := JSON_SQLDATE_MAGIC;
-  DateToIso8601PChar(Date,PUTF8Char(pointer(result))+3,True);
+  if Date<=0 then
+    result := '' else begin
+    SetLength(result,13);
+    PCardinal(pointer(result))^ := JSON_SQLDATE_MAGIC;
+    DateToIso8601PChar(Date,PUTF8Char(pointer(result))+3,True);
+  end;
+end;
+
+function DateToSQL(Year,Month,Day: Cardinal): RawUTF8; overload;
+begin
+  if (Year=0) or (Month-1>11) or (Day-1>30) then
+    result := '' else begin
+    SetLength(result,13);
+    PCardinal(pointer(result))^ := JSON_SQLDATE_MAGIC;
+    DateToIso8601PChar(PUTF8Char(pointer(result))+3,True,Year,Month,Day);
+  end;
 end;
 
 function DateTimeToSQL(DT: TDateTime): RawUTF8;
 begin
-  if DT=0 then
+  if DT<=0 then
     result := '' else begin
     SetLength(result,3);
     PCardinal(pointer(result))^ := JSON_SQLDATE_MAGIC;
@@ -18343,7 +18445,8 @@ begin
     result := false;
 end;
 
-procedure PatchCode(Old,New: pointer; Size: integer; Backup: pointer=nil);
+procedure PatchCode(Old,New: pointer; Size: integer; Backup: pointer=nil;
+  LeaveUnprotected: boolean=false);
 var RestoreProtection, Ignore: DWORD;
     i: integer;
 begin
@@ -18354,14 +18457,16 @@ begin
         PByteArray(Backup)^[i] := PByteArray(Old)^[i];
     for i := 0 to Size-1 do    // do not use Move() here
       PByteArray(Old)^[i] := PByteArray(New)^[i];
-    VirtualProtect(Old, Size, RestoreProtection, Ignore);
+    if not LeaveUnprotected then
+      VirtualProtect(Old, Size, RestoreProtection, Ignore);
     FlushInstructionCache(GetCurrentProcess, Old, Size);
   end;
 end;
 
-procedure PatchCodePtrUInt(Code: PPtrUInt; Value: PtrUInt);
+procedure PatchCodePtrUInt(Code: PPtrUInt; Value: PtrUInt;
+  LeaveUnprotected: boolean=false);
 begin
-  PatchCode(Code,@Value,SizeOf(Code^));
+  PatchCode(Code,@Value,SizeOf(Code^),nil,LeaveUnprotected);
 end;
 
 procedure RedirectCode(Func, RedirectFunc: Pointer; Backup: PPatchCode=nil);
@@ -22369,7 +22474,7 @@ begin
       for i := 0 to Count-1 do begin
         self.Add('"');
         {$ifdef UNICODE}
-        self.AddJSONEscapeW(pointer(Strings[i]));
+        self.AddJSONEscapeW(pointer(Strings[i]),Length(Strings[i]));
         {$else}
         self.AddJSONEscapeAnsiString(Strings[i]);
         {$endif}
@@ -22499,13 +22604,40 @@ begin
     raise ESynException.CreateFmt('Unhandled variant type %d',[VType]);
   end;
 end;
-{$endif USEVARIANTS}      
+{$endif USEVARIANTS}
 
 procedure TTextWriter.AddDynArrayJSON(aTypeInfo: pointer; var aValue);
 var DynArray: TDynArray;
 begin
   DynArray.Init(aTypeInfo,aValue);
   AddDynArrayJSON(DynArray);
+end;
+
+procedure TTextWriter.AddTypedJSON(aTypeInfo: pointer; var aValue);
+begin
+  case PByte(aTypeInfo)^ of
+    tkClass:
+      WriteObject(TObject(aValue),[woFullExpand]);
+    tkEnumeration:
+{$ifdef PUREPASCAL}
+      Add(byte(aValue));
+{$else} begin
+      Add('"');
+      AddShort(GetEnumName(aTypeInfo,byte(aValue))^);
+      Add('"');
+    end;
+{$endif}
+    tkRecord:
+      AddRecordJSON(aValue,aTypeInfo);
+    tkDynArray:
+      AddDynArrayJSON(DynArray(aTypeInfo,aValue));
+{$ifdef USEVARIANTS}
+    tkVariant:
+      AddVariantJSON(variant(aValue));
+{$endif}
+    else
+      AddShort('null');
+  end;
 end;
 
 procedure TTextWriter.AddDynArrayJSON(const aDynArray: TDynArray);
@@ -22881,18 +23013,18 @@ begin
 end;
 
 procedure TTextWriter.AddAnsiString(const s: AnsiString; Escape: TTextWriterKind);
-var tmp: PWideChar;
+var tmp: PUTF8Char;
     L: PtrInt;
-    buf: array[byte] of WideChar;
+    buf: array[byte] of AnsiChar;
 begin
   L := length(S);
   if L=0 then
     exit;
-  if L>=high(buf) then
-    GetMem(tmp,L*2+2) else
+  if L>=high(buf)shr 1 then
+    GetMem(tmp,L*2+1) else
     tmp := @buf;
-  L := CurrentAnsiConvert.AnsiBufferToUnicode(tmp,pointer(s),L)-tmp;
-  AddW(pointer(tmp),L,Escape);
+  L := CurrentAnsiConvert.AnsiBufferToUTF8(tmp,pointer(s),L)-tmp;
+  Add(pointer(tmp),L,Escape);
   if tmp<>@buf then
     Freemem(tmp);
 end;
@@ -23061,6 +23193,7 @@ Escape: B^ := '\';
         B^ := '\';
         AddShort('u00');
         v := byte(PAnsiChar(P)^);
+        inc(P);
         Add(HexChars[v shr 4],HexChars[v and $F]);
         if PtrUInt(P)<PEnd then continue else break;
       end;
@@ -23084,7 +23217,8 @@ begin
         vtString:     AddJSONEscape(@VString^[1],ord(VString^[0]));
         vtAnsiString: AddJSONEscape(pointer(RawUTF8(VAnsiString)));
     {$ifdef UNICODE}
-        vtUnicodeString: AddJSONEscapeW(pointer(string(VUnicodeString)));
+        vtUnicodeString: AddJSONEscapeW(
+          pointer(string(VUnicodeString)),length(string(VUnicodeString)));
     {$endif}
         vtPChar:      AddJSONEscape(VPChar);
         vtChar:       AddJSONEscape(@VChar,1);
@@ -23138,11 +23272,12 @@ end;
 
 procedure TTextWriter.AddJSONEscapeString(const s: string);
 begin
-  {$ifdef UNICODE}
-  AddJSONEscapeW(pointer(s));
-  {$else}
-  AddJSONEscapeAnsiString(s);
-  {$endif}
+  if s<>'' then
+    {$ifdef UNICODE}
+    AddJSONEscapeW(pointer(s),Length(s));
+    {$else}
+    AddAnsiString(s,twJSONEscape);
+    {$endif}
 end;
 
 procedure TTextWriter.AddJSONEscapeAnsiString(const s: AnsiString);
@@ -24663,7 +24798,7 @@ end;
 
 function TPrecisionTimer.PerSec(Count: cardinal): cardinal;
 begin
-  if iTime=0 then
+  if iTime<=0 then // avoid negative value in case of incorrect Start/Stop sequence
     result := 0 else // avoid div per 0 exception
     result := (Int64(Count)*(1000*1000))div iTime;
 end;
@@ -27758,8 +27893,7 @@ begin
   {$endif}
   {$endif}
 {$endif}
-    SynVariantTypes := TObjectList.Create;
-    GarbageCollector.Add(SynVariantTypes);
+    GarbageCollectorFreeAndNil(SynVariantTypes,TObjectList.Create);
   end;
   result :=  aClass.Create; // register variant type
   SynVariantTypes.Add(result);
@@ -30260,8 +30394,16 @@ threadvar
   // - TSynLogFile instance is SynLogFile[SynLogFileIndex[TSynLogFamily.Ident]-1]
   SynLogFileIndexThreadVar: TSynLogFileIndex;
 
-
 {$ifndef NOEXCEPTIONINTERCEPT}
+
+{ ESynException }
+
+function ESynException.CustomLog(WR: TTextWriter; const Context: TSynLogExceptionContext): boolean; 
+begin
+  if Assigned(TSynLogExceptionToStrCustom) then
+    result := TSynLogExceptionToStrCustom(WR,Context) else
+    result := DefaultSynLogExceptionToStr(WR,Context);
+end;
 
 /// if defined, will use AddVectoredExceptionHandler() API call
 // - this one does not produce accurate stack trace by now, and is supported
@@ -30381,10 +30523,10 @@ type
 const
   cDelphiExcept = $0EEDFAE0;
   cDelphiException = $0EEDFADE;
-  // see http://msdn.microsoft.com/en-us/library/xcb2z8hs
+  // see http://msdn.microsoft.com/en-us/library/xcb2z8hs 
   cSetThreadNameException = $406D1388;
 
-  DOTNET_EXCEPTIONNAME: array[0..79] of RawUTF8 = (
+  DOTNET_EXCEPTIONNAME: array[0..83] of RawUTF8 = (
   'Access', 'AmbiguousMatch', 'appdomainUnloaded', 'Application', 'Argument',
   'ArgumentNull', 'ArgumentOutOfRange', 'Arithmetic', 'ArrayTypeMismatch',
   'BadImageFormat', 'CannotUnloadappdomain', 'ContextMarshal', 'Cryptographic',
@@ -30403,8 +30545,10 @@ const
   'SUDSGenerator', 'SUDSParser', 'SynchronizationLock', 'System', 'Target',
   'TargetInvocation', 'TargetParameterCount', 'ThreadAbort', 'ThreadInterrupted',
   'ThreadState', 'ThreadStop', 'TypeInitialization', 'TypeLoad', 'TypeUnloaded',
-  'UnauthorizedAccess');
-  DOTNET_EXCEPTIONHRESULT: array[0..79] of cardinal = (
+  'UnauthorizedAccess', 'InClassConstructor', 'KeyNotFound', 'InsufficientStack',
+  'InsufficientMemory');
+  // http://blogs.msdn.com/b/yizhang/archive/2010/12/17/interpreting-hresults-returned-from-net-clr-0x8013xxxx.aspx
+  DOTNET_EXCEPTIONHRESULT: array[0..83] of cardinal = (
    $8013151A, $8000211D, $80131015, $80131600, $80070057, $80004003, $80131502,
    $80070216, $80131503, $8007000B, $80131015, $80090020, $80004001, $80131431,
    $80131537, $80070003, $80030003, $80020012, $80131524, $80131529, $801338,
@@ -30416,7 +30560,8 @@ const
    $80131602, $8013150B, $8013150B, $80131533, $80131538, $8013150A, $80004005,
    $8013150C, $8013150E, $800703E9, $80131500, $80131500, $80131518, $80131501,
    $80131603, $80131604, $80138002, $80131530, $80131519, $80131520, $80131521,
-   $80131534, $80131522, $80131013, $80070005);
+   $80131534, $80131522, $80131013, $80070005, $80131543, $80131577, $80131578,
+   $8013153D);
 
 type
   // avoid linking of ComObj.pas just for EOleSysError
@@ -30439,13 +30584,37 @@ begin // avoid linking of ComObj.pas just for EOleSysError
   result := false;
 end;
 
+function DefaultSynLogExceptionToStr(WR: TTextWriter; const Context: TSynLogExceptionContext): boolean;
+var i: integer;
+begin
+  WR.AddClassName(Context.EClass);
+  if (Context.Level=sllException) and (Context.EInstance<>nil) and
+     (Context.EClass<>EExternalException) then begin
+    if ExceptionInheritsFrom(Context.EClass,'EOleSysError') then begin
+      WR.Add(' ');
+      WR.AddPointer(EOleSysError(Context.EInstance).ErrorCode);
+      for i := 0 to high(DOTNET_EXCEPTIONHRESULT) do
+        if DOTNET_EXCEPTIONHRESULT[i]=EOleSysError(Context.EInstance).ErrorCode then begin
+          WR.AddShort(' [.NET/CLR unhandled ');
+          WR.AddString(DOTNET_EXCEPTIONNAME[i]);
+          WR.AddShort('Exception]');
+        end; // no break on purpose, if ErrorCode matches more than one Exception
+    end;
+    WR.AddShort(' ("');
+    WR.AddJSONEscapeString(Context.EInstance.Message);
+    WR.AddShort('")');
+  end else begin
+    WR.AddShort(' (');
+    WR.AddPointer(Context.ECode);
+    WR.AddShort(')');
+  end;
+  result := true; // caller should append "at EAddr" and the stack trace
+end;
+
 procedure LogExcept(stack: PPtrUInt; const Exc: TExceptionRecord);
 var SynLog: TSynLog;
-    Level: TSynLogInfo;
-    E: ExceptClass;
+    Ctxt: TSynLogExceptionContext;
     LastError: DWORD;
-    EAddr: PtrUInt;
-    i: integer;
 begin
   SynLog := GetHandleExceptionSynLog;
   if (SynLog=nil) or (Exc.ExceptionCode=cSetThreadNameException) then
@@ -30453,45 +30622,42 @@ begin
   LastError := GetLastError;
   if (Exc.ExceptionCode=cDelphiException) and (Exc.ExceptObject<>nil) then begin
     if Exc.ExceptObject.InheritsFrom(Exception) then
-      E := PPointer(Exc.ExceptObject)^ else
-      E := EExternalException;
+      Ctxt.EClass := PPointer(Exc.ExceptObject)^ else
+      Ctxt.EClass := EExternalException;
     if sllException in SynLog.fFamily.Level then
-      Level := sllException else
-      Level := sllError;
-    EAddr := Exc.ExceptAddr;
+      Ctxt.Level := sllException else
+      Ctxt.Level := sllError;
+    Ctxt.EAddr := Exc.ExceptAddr;
   end else begin
     if Assigned(ExceptClsProc) then
-      E := GetExceptionClass(ExceptClsProc)(Exc) else
-      E := EExternal;
-    Level := sllExceptionOS;
-    EAddr := Exc.ExceptionAddress;
+      Ctxt.EClass := GetExceptionClass(ExceptClsProc)(Exc) else
+      Ctxt.EClass := EExternal;
+    Ctxt.Level := sllExceptionOS;
+    Ctxt.EAddr := Exc.ExceptionAddress;
   end;
-  if (Level<>sllError) and
-     (SynLog.fFamily.ExceptionIgnore.IndexOf(E)<0) then begin
-    SynLog.LogHeaderLock(Level);
-    with SynLog.fWriter do begin
-      AddClassName(E);
-      if (Level=sllException) and (E<>EExternalException) then begin
-        if ExceptionInheritsFrom(E,'EOleSysError') then
-          for i := 0 to high(DOTNET_EXCEPTIONHRESULT) do
-            if DOTNET_EXCEPTIONHRESULT[i]=EOleSysError(E).ErrorCode then begin
-              AddShort(' [.NET/CLR unhandled ');
-              AddString(DOTNET_EXCEPTIONNAME[i]);
-              AddShort('Exception]');
-            end;
-        AddShort(' ("');
-        AddJSONEscapeString(Exc.ExceptObject.Message);
-        AddShort('") at ');
-      end else begin
-        AddShort(' (');
-        AddPointer(Exc.ExceptionCode);
-        AddShort(') at ');
-      end;
-    end;
-    TSynMapFile.Log(SynLog.fWriter,EAddr);
+  if (Ctxt.Level<>sllError) and
+     (SynLog.fFamily.ExceptionIgnore.IndexOf(Ctxt.EClass)<0) then begin
+    SynLog.LogHeaderLock(Ctxt.Level);
+    Ctxt.EInstance := Exc.ExceptObject;
+    Ctxt.ECode := Exc.ExceptionCode;
+    repeat
+      if (Ctxt.Level=sllException) and (Exc.ExceptionCode=cDelphiException) and
+         Ctxt.EInstance.InheritsFrom(ESynException) then begin
+        if ESynException(Ctxt.EInstance).CustomLog(SynLog.fWriter,Ctxt) then
+          break;
+      end else
+      if Assigned(TSynLogExceptionToStrCustom) then begin
+        if TSynLogExceptionToStrCustom(SynLog.fWriter,Ctxt) then
+          break;
+      end else
+        if DefaultSynLogExceptionToStr(SynLog.fWriter,Ctxt) then
+          break;
+      SynLog.fWriter.AddShort(' at ');
+      TSynMapFile.Log(SynLog.fWriter,Ctxt.EAddr);
 {$ifndef WITH_VECTOREXCEPT} // stack frame is only correct for RTLUnwindProc
-    SynLog.AddStackTrace(stack);
+      SynLog.AddStackTrace(stack);
 {$endif}
+    until false;
     SynLog.fWriter.Flush; // we expect exceptions to be available on disk
     SynLog.fWriter.AddCR;
     LeaveCriticalSection(SynLog.fLock);
@@ -30595,10 +30761,8 @@ end;
 constructor TSynLogFamily.Create(aSynLog: TSynLogClass);
 begin
   fSynLogClass := aSynLog;
-  if SynLogFamily=nil then begin
-    SynLogFamily := TObjectList.Create;
-    GarbageCollector.Add(SynLogFamily);
-  end;
+  if SynLogFamily=nil then
+    GarbageCollectorFreeAndNil(SynLogFamily,TList.Create);
   fIdent := SynLogFamily.Add(self);
   fDestinationPath := ExtractFilePath(paramstr(0)); // use .exe path 
   fDefaultExtension := '.log';
@@ -30614,10 +30778,8 @@ end;
 function TSynLogFamily.CreateSynLog: TSynLog;
 var i: integer;
 begin
-  if SynLogFile=nil then begin
-    SynLogFile := TObjectList.Create;
-    GarbageCollector.Add(SynLogFile);
-  end;
+  if SynLogFile=nil then
+    GarbageCollectorFreeAndNil(SynLogFile,TObjectList.Create);
   result := fSynLogClass.Create(self);
   i := SynLogFile.Add(result);
   if (fPerThreadLog=ptOneFilePerThread) and
@@ -31012,6 +31174,7 @@ begin
 end;
 
 class function TSynLog.FamilyCreate: TSynLogFamily;
+var PVMT: pointer;
 begin // private sub function makes the code faster in most case
   if not InheritsFrom(TSynLog) then
     // invalid call
@@ -31019,7 +31182,13 @@ begin // private sub function makes the code faster in most case
     // create the properties information from RTTI
     result := TSynLogFamily.Create(self);
     // store the TSynLogFamily  instance into AutoTable unused VMT entry
-    PatchCodePtrUInt(pointer(PtrInt(self)+vmtAutoTable),PtrUInt(result));
+    PVMT := pointer(PtrInt(self)+vmtAutoTable);
+    if PPointer(PVMT)^<>nil then
+      raise ESynException.CreateFmt('%s.AutoTable VMT entry already set',
+        [PShortString(PPointer(PtrInt(self)+vmtClassName)^)^]);
+    PatchCodePtrUInt(PVMT,PtrUInt(result),true); // LeaveUnprotected=true
+    // register to the internal garbage collection (avoid memory leak)
+    GarbageCollectorFreeAndNil(PVMT^,result); // set to nil at finalization
   end;
 end;
 
@@ -31186,10 +31355,8 @@ begin
     if fFileRotationSize>0 then
       fFamily.HighResolutionTimeStamp := false;
   ExeVersionRetrieve;
-  if InstanceMapFile=nil then begin
-    InstanceMapFile := TSynMapFile.Create;
-    GarbageCollector.Add(InstanceMapFile);
-  end;
+  if InstanceMapFile=nil then
+    GarbageCollectorFreeAndNil(InstanceMapFile,TSynMapFile.Create);
   WithinEvents := fWriter.fTotalFileSize>0;
   // array of const is buggy under Delphi 5 :( -> use fWriter.Add*()
   with ExeVersion, SystemInfo, OSVersionInfo, fWriter do begin
@@ -31385,22 +31552,6 @@ begin
   LogTrailerUnLock(Level);
 end;
 
-procedure TSynLog.AddTyped(aTypeInfo: pointer; var aValue);
-begin
-  case PByte(aTypeInfo)^ of
-    tkClass:
-      fWriter.WriteObject(TObject(aValue),[woFullExpand]);
-    tkEnumeration:
-{$ifdef PUREPASCAL}
-      fWriter.Add(byte(aValue));
-{$else}
-      fWriter.AddShort(GetEnumName(aTypeInfo,byte(aValue))^);
-{$endif}
-    tkDynArray:
-      fWriter.AddDynArrayJSON(DynArray(aTypeInfo,aValue));
-  end;
-end;
-
 procedure TSynLog.LogInternal(Level: TSynLogInfo; aName: PWinAnsiChar;
    aTypeInfo: pointer; var aValue; Instance: TObject=nil);
 begin
@@ -31409,7 +31560,7 @@ begin
     fWriter.AddInstancePointer(Instance,' ');
   fWriter.AddNoJSONEscape(aName);
   fWriter.Add('=');
-  AddTyped(aTypeInfo,aValue);
+  fWriter.AddTypedJSON(aTypeInfo,aValue);
   LogTrailerUnLock(Level);
 end;
 
@@ -32552,7 +32703,11 @@ begin
   {$endif FPC}
 end;
 
+var
+  GarbageCollectorFreeAndNilList: TList;
+  
 procedure GarbageCollectorFree;
+type PObject = ^TObject;
 var i: integer;
 begin
   for i := GarbageCollector.Count-1 downto 0 do // last in, first out
@@ -32562,12 +32717,26 @@ begin
     on E: Exception do
       ; // just ignore exceptions in client code destructors
   end;
-  GarbageCollector.Free;
+  for i := GarbageCollectorFreeAndNilList.Count-1 downto 0 do // LIFO
+  try
+    FreeAndNil(PObject(GarbageCollectorFreeAndNilList.List[i])^);
+  except
+    on E: Exception do
+      ; // just ignore exceptions in client code destructors
+  end;
+  FreeAndNil(GarbageCollectorFreeAndNilList);
+end;
+
+procedure GarbageCollectorFreeAndNil(var InstanceVariable; Instance: TObject);
+begin
+  TObject(InstanceVariable) := Instance;
+  GarbageCollectorFreeAndNilList.Add(@InstanceVariable);
 end;
 
 initialization
   // initialization of global variables
-  GarbageCollector := TObjectList.Create;
+  GarbageCollectorFreeAndNilList := TList.Create;
+  GarbageCollectorFreeAndNil(GarbageCollector,TObjectList.Create);
   InitRedirectCode;
   InitSynCommonsConversionTables;
   {$ifdef MSWINDOWS}

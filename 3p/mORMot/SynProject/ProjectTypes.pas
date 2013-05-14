@@ -285,7 +285,7 @@ type
     procedure TestGetDescr(Test, DIDetails: TSection; TestDoc: PDocument; out docname, title: string);
     procedure HeaderOnly;
     procedure HeaderAndFooter;
-    procedure Footer(const FooterTitle: string);
+    procedure Footer(WR: TProjectWriter; const FooterTitle: string);
     procedure AddReferenceDocument(aSec: TSection);
     function PictureCaption(var FileName: string; Coords: PString=nil;
       aGraphValues: TSection=nil): string;
@@ -1494,6 +1494,7 @@ begin
         if SameText(SectionNameKind,Doc.Params.SectionName) then begin
           // write general description text (from [SAD-LIS] body)
           title := DisplayName(Doc.Params);
+          ForceFooter(format('%s - %s',[Doc.Params.ItemName,title]));
           ParseTitleOffset := Parse[i].ReadInteger('TitleOffset',1);
           if ParseTitleOffset>0 then
             WR.RtfTitle(title,1,true,SectionNameValue);
@@ -1510,7 +1511,7 @@ begin
             if isTrue(ParseSAD.Params['WithAllfields']) then
               par := '*' else
               par := ParseSAD.Params['UnitsUsed'];
-            SAD.RtfUsesUnitsDescription(WR,ParseTitleOffset+1,par);
+            SAD.RtfUsesUnitsDescription(WR,ParseTitleOffset+1,par,Footer);
           end;
         end;
       SAD.Free;
@@ -2267,7 +2268,7 @@ begin
     HeaderOnly;
   end else
     WR.RtfEndSection;
-  Footer(FooterTitle);
+  Footer(WR,FooterTitle);
   WR.RtfParDefault;
 end;
 
@@ -2286,7 +2287,7 @@ end;
 procedure TProject.HeaderAndFooter;
 begin
   HeaderOnly;
-  Footer(Header.DocumentTitle);
+  Footer(WR,Header.DocumentTitle);
 end;
 
 procedure TProject.HeaderOnly;
@@ -2318,7 +2319,7 @@ begin
   end;
 end;
 
-procedure TProject.Footer(const FooterTitle: string);
+procedure TProject.Footer(WR: TProjectWriter; const FooterTitle: string);
 var conf: string;
 begin
   with Header do begin

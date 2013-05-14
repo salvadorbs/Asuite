@@ -44,7 +44,7 @@ unit SynSQLite3;
   ***** END LICENSE BLOCK *****
 
 
-       SQLite3 3.7.16.1 database engine
+       SQLite3 3.7.16.2 database engine
       **********************************
 
      Brand new SQLite3 library to be used with Delphi
@@ -132,7 +132,7 @@ unit SynSQLite3;
   - moved all static .obj code into new SynSQLite3Static unit
   - allow either static .obj use via SynSQLite3Static or external .dll linking
     using TSQLite3LibraryDynamic to bind all APIs to the global sqlite3 variable
-  - updated SQLite3 engine to version 3.7.16.1
+  - updated SQLite3 engine to version 3.7.16.2
   - raise an ESQLite3Exception if DBOpen method is called twice
   - TSQLDataBase.DBClose returns now the sqlite3_close() status code
   - "rowCount": is added in TSQLRequest.Execute at the end of the non-expanded
@@ -146,6 +146,7 @@ unit SynSQLite3;
   - set SQLITE_TRANSIENT_VIRTUALTABLE constant, to circumvent Win64 Sqlite3 bug
   - TSQLStatementCached.Prepare won't call BindReset, since it is not mandatory;
     see http://hoogli.com/items/Avoid_sqlite3_clear_bindings().html
+  - fixed ticket [f79ff5714b] about potential finalization issues as .bpl in IDE
 
 
     Todo:
@@ -995,7 +996,7 @@ type
     close: function(DB: TSQLite3DB): integer; {$ifndef USEFASTCALL}cdecl;{$endif}
 
     {/ Return the version of the SQLite database engine, in ascii format
-      - currently returns '3.7.16.1' }
+      - currently returns '3.7.16.2' }
     libversion: function: PUTF8Char; {$ifndef USEFASTCALL}cdecl;{$endif}
 
     {/ Returns English-language text that describes an error,
@@ -3218,7 +3219,7 @@ begin
   sqlite3.create_collation(DB,'SYSTEMNOCASE',SQLITE_UTF8,nil,Utf8SQLCompNoCase);
   // our custom fast ISO-8601 date time encoded
   sqlite3.create_collation(DB,'ISO8601',SQLITE_UTF8,nil,Utf8SQLDateTime);
-  // two slow but alwyas accurate compare, using the Win32 Unicode API
+  // two slow but always accurate compare, using the Win32 Unicode API
   sqlite3.create_collation(DB,'WIN32CASE',SQLITE_UTF16,nil,Utf16SQLCompCase);
   sqlite3.create_collation(DB,'WIN32NOCASE',SQLITE_UTF16,nil,Utf16SQLCompNoCase);
   // register the MOD() user function, similar to the standard % operator
@@ -4115,6 +4116,6 @@ end;
 initialization
 
 finalization
-  sqlite3.Free;
+  FreeAndNil(sqlite3); // sqlite3.Free is not reintrant e.g. as .bpl in IDE
 end.
 

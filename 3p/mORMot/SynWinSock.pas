@@ -54,6 +54,12 @@ unit SynWinSock;
    - Arnaud Bouchez, Jan 2009, for SynCrtSock: see http://synopse.info
      Delphi 2009/2010 compatibility (Jan 2010): the WinSock library
        expects Ansi encoded parameters
+
+
+  Version 1.18
+  - fixed ticket [f79ff5714b] about potential finalization issues as .bpl in IDE
+
+
 }
 
 {.$DEFINE WINSOCK1}
@@ -1312,6 +1318,50 @@ begin
       if LibHandle <> 0 then begin
         FreeLibrary(libHandle);
         LibHandle := 0;
+        // HH reset routine pointers to avoid jumping into limbo
+        WSAIoctl := nil;
+        __WSAFDIsSet := nil;
+        CloseSocket := nil;
+        IoctlSocket := nil;
+        WSAGetLastError := nil;
+        WSAStartup := nil;
+        WSACleanup := nil;
+        ssAccept := nil;
+        ssBind := nil;
+        ssConnect := nil;
+        ssGetPeerName := nil;
+        ssGetSockName := nil;
+        GetSockOpt := nil;
+        Htonl := nil;
+        Htons := nil;
+        Inet_Addr := nil;
+        Inet_Ntoa := nil;
+        Listen := nil;
+        Ntohl := nil;
+        Ntohs := nil;
+        Recv := nil;
+        RecvFrom := nil;
+        Select := nil;
+        Send := nil;
+        SendTo := nil;
+        SetSockOpt := nil;
+        ShutDown := nil;
+        Socket := nil;
+        GetHostByAddr := nil;
+        GetHostByName := nil;
+        GetProtoByName := nil;
+        GetProtoByNumber := nil;
+        GetServByName := nil;
+        GetServByPort := nil;
+        ssGetHostName := nil;
+{$IFNDEF FORCEOLDAPI}
+        GetAddrInfo := nil;
+        FreeAddrInfo := nil;
+        GetNameInfo := nil;
+        GetAddrInfo := nil;
+        FreeAddrInfo := nil;
+        GetNameInfo := nil;
+{$ENDIF}
       end;
       if LibWship6Handle <> 0 then begin
         FreeLibrary(LibWship6Handle);

@@ -383,7 +383,7 @@ function RemoteIP: RawUTF8;
 begin
   result := FCGX_GetParam('REMOTE_ADDR',envp);
 end;}
-var Method, URL, Headers, Resp, Content: RawUTF8;
+var call: TSQLRestServerURIParams;
     ContentLength: integer;
 begin
   if FCGX_IsCGI then
@@ -603,6 +603,7 @@ begin
   with call do begin
     Url := fRequestURL;
     Method := fRequestMethod;
+    InHead := 'ConnectionID: '+CardinalToHex(fRequestID);
     InBody := Request;
     RestAccessRights := @SUPERVISOR_ACCESS_RIGHTS;
     Server.URI(call);

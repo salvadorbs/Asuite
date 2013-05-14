@@ -49,6 +49,8 @@ unit mORmotVCL;
   Version 1.18
   - renamed SQLite3VCL.pas to mORMotVCL.pas
   - fixed ticket [9de8be5d9e] with some types like TEnumeration or TTimeLog
+  - fixed process with Unicode content
+  - introduced new aForceWideString optional parameter for ticket [2970335e40]
 
 }
 
@@ -71,26 +73,35 @@ uses
 /// convert a TSQLTable result into a VCL DataSet
 // - current implementation will return a TClientDataSet instance, created from
 // the supplied TSQLTable content (a more optimized version may appear later)
+// - with non-Unicode version of Delphi, you can set aForceWideString to
+// force the use of WideString fields instead of AnsiString, if needed
 // - for better speed with Delphi older than Delphi 2009 Update 3, it is
 // recommended to use http://andy.jgknet.de/blog/bugfix-units/midas-speed-fix-12
-function TSQLTableToDataSet(aOwner: TComponent; aTable: TSQLTable; aClient: TSQLRest=nil): TDataSet;
+function TSQLTableToDataSet(aOwner: TComponent; aTable: TSQLTable; aClient: TSQLRest=nil
+  {$ifndef UNICODE}; aForceWideString: boolean=false{$endif}): TDataSet;
 
 /// convert a JSON result into a VCL DataSet
 // - current implementation will return a TClientDataSet instance, created from
 // the supplied TSQLTable content (a more optimized version may appear later)
+// - with non-Unicode version of Delphi, you can set aForceWideString to
+// force the use of WideString fields instead of AnsiString, if needed
+// - with Unicode version of Delphi (2009+), UnicodeString will be used
 // - for better speed with Delphi older than Delphi 2009 Update 3, it is
 // recommended to use http://andy.jgknet.de/blog/bugfix-units/midas-speed-fix-12
-function JSONToDataSet(aOwner: TComponent; const aJSON: RawUTF8; aClient: TSQLRest=nil): TDataSet;
+function JSONToDataSet(aOwner: TComponent; const aJSON: RawUTF8; aClient: TSQLRest=nil
+  {$ifndef UNICODE}; aForceWideString: boolean=false{$endif}): TDataSet;
 
 
 implementation
 
-function JSONToDataSet(aOwner: TComponent; const aJSON: RawUTF8; aClient: TSQLRest): TDataSet;
+function JSONToDataSet(aOwner: TComponent; const aJSON: RawUTF8; aClient: TSQLRest
+  {$ifndef UNICODE}; aForceWideString: boolean{$endif}): TDataSet;
 var T: TSQLTableJSON;
 begin
   T := TSQLTableJSON.Create([],'',aJSON);
   try
-    result := TSQLTableToDataSet(aOwner,T,aClient);
+    result := TSQLTableToDataSet(aOwner,T,aClient
+      {$ifndef UNICODE},aForceWideString{$endif});
   finally
     T.Free;
   end;
@@ -99,7 +110,8 @@ end;
 var
   GlobalDataSetCount: integer;
 
-function TSQLTableToDataSet(aOwner: TComponent; aTable: TSQLTable; aClient: TSQLRest): TDataSet;
+function TSQLTableToDataSet(aOwner: TComponent; aTable: TSQLTable; aClient: TSQLRest
+  {$ifndef UNICODE}; aForceWideString: boolean{$endif}): TDataSet;
 var F,i: integer;
     aFieldName: string;
     Types: array of record
@@ -137,6 +149,14 @@ begin
           Add(aFieldName,ftDateTime);
         sftBlob:
           Add(aFieldName,ftBlob,(aTable.FieldLengthMax(F,true)*3) shr 2);
+        sftUTF8Text:
+          {$ifdef UNICODE} // for Delphi 2009+ TWideStringField = UnicodeString!
+          Add(aFieldName,ftWideString,aTable.FieldLengthMax(F,true));
+          {$else}
+          if aForceWideString then
+            Add(aFieldName,ftWideString,aTable.FieldLengthMax(F,true)) else
+            Add(aFieldName,ftString,aTable.FieldLengthMax(F,true));
+          {$endif}
         else
           Add(aFieldName,ftString,aTable.FieldLengthMax(F,true));
         end;
@@ -147,11 +167,13 @@ begin
     for i := 1 to aTable.RowCount do begin
       result.Append;
       for F := 0 to result.FieldCount-1 do
+      if aTable.Get(i,F)=nil then
+        result.Fields[F].Clear else
       case Types[F].SQLType of
       sftBoolean:
         result.Fields[F].AsBoolean := aTable.GetAsInteger(i,F)<>0;
       sftInteger: // handle Int64 values directly
-        (result.Fields[F] as TLargeintField).AsLargeInt := GetInt64(aTable.Get(i,F));
+        (result.Fields[F] as TLargeintField).Value := GetInt64(aTable.Get(i,F));
       sftFloat, sftCurrency:
         result.Fields[F].AsFloat := GetExtended(aTable.Get(i,F));
       sftID:
@@ -159,8 +181,10 @@ begin
       sftEnumerate, sftSet:
         if Types[F].EnumType=nil then
           result.Fields[F].AsInteger := aTable.GetAsInteger(i,F) else
-          result.Fields[F].AsString := aTable.GetS(i,F);
-      sftDateTime, sftTimeLog, sftModTime, sftCreateTime:
+          result.Fields[F].AsString := aTable.GetString(i,F);
+      sftDateTime:
+        result.Fields[F].AsDateTime := Iso8601ToDateTimePUTF8Char(aTable.Get(i,F),0);
+      sftTimeLog, sftModTime, sftCreateTime:
         result.Fields[F].AsDateTime := aTable.GetVariant(i,F,aClient);
       sftBlob:
         {$ifdef UNICODE}
@@ -169,9 +193,15 @@ begin
         result.Fields[F].AsString := aTable.GetBlob(i,F);
         {$endif}
       sftUTF8Text:
-        result.Fields[F].AsString := aTable.GetS(i,F);
-      else
-        result.Fields[F].AsString := string(aTable.GetVariant(i,F,aClient));
+        {$ifdef UNICODE} // for Delphi 2009+ TWideStringField = UnicodeString!
+        (result.Fields[F] as TWideStringField).Value := aTable.GetSynUnicode(i,F);
+        {$else}
+        if aForceWideString then
+          (result.Fields[F] as TWideStringField).Value := aTable.GetSynUnicode(i,F) else
+          result.Fields[F].AsString := aTable.GetString(i,F);
+        {$endif}
+      else   
+        result.Fields[F].AsVariant := aTable.GetVariant(i,F,aClient);
       end;
       result.Post;
     end;

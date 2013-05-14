@@ -95,7 +95,8 @@ begin
     try
       // register our IRemoteSQL service on the server side
       aServer.ServiceRegister(TServiceRemoteSQL,[TypeInfo(IRemoteSQL)],sicClientDriven).
-        SetOptions([],[optExecInMainThread]);
+        // fProps should better be executed/released in the one main thread
+        SetOptions([],[optExecInMainThread,optFreeInMainThread]);
       // launch the HTTP server
       aHTTPServer := TSQLHttpServer.Create('888',[aServer]);
       try

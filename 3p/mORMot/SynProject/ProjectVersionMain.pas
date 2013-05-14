@@ -96,6 +96,8 @@ unit ProjectVersionMain;
   - enhanced SAD layout, when working with non flat titles (e.g. for mORMot)
   - added NoProjectDetailsLogo option in DocumentFrontPage/SubDocFrontPage
   - added optional EditorRightMargin=... parameter in [Project] section
+  - a new section with dedicated footer is created in SAD for each unit
+    (implements feature request [f33db9cd0e])
 
 
 *)

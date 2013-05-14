@@ -59,6 +59,7 @@ unit SynDBODBC;
   - fixed unexpected exception raised if SQL_NO_DATA is returned
   - now trim any spaces when retrieving database schema text values 
   - fixed ticket [4c68975022] about broken SQL statement when logging active
+  - fixed ticket [d48283f5ec] about error at binding void string parameter
 
   TODO:
   - implement array binding of parameters
@@ -939,6 +940,7 @@ begin
     fDBMS := TYPES[IdemPCharArray(pointer(fDBMSName),PCHARS)];
     Check(GetInfoW(fDbc,SQL_DBMS_VER,@Info,sizeof(Info)shr 1,@Len),SQL_HANDLE_DBC,fDbc);
     fDBMSVersion := RawUnicodeToUtf8(Info,Len shr 1);
+    inherited Connect; // notify any re-connection 
   except
     on E: Exception do begin
       Log.Log(sllError,E);
@@ -967,12 +969,16 @@ end;
 
 procedure TODBCConnection.Disconnect;
 begin
-  if (ODBC<>nil) and (fDbc<>nil) then
-  with ODBC do begin
-    SynDBLog.Enter(self);
-    Disconnect(fDbc);
-    FreeHandle(SQL_HANDLE_DBC,fDbc);
-    fDbc := nil;
+  try
+    inherited Disconnect; // flush any cached statement
+  finally
+    if (ODBC<>nil) and (fDbc<>nil) then
+    with ODBC do begin
+      SynDBLog.Enter(self);
+      Disconnect(fDbc);
+      FreeHandle(SQL_HANDLE_DBC,fDbc);
+      fDbc := nil;
+    end;
   end;
 end;
 
@@ -1315,6 +1321,9 @@ begin
   end;
 end;
 
+const
+  NULCHAR: WideChar = #0;
+
 procedure TODBCStatement.ExecutePrepared;
 const
   ODBC_IOTYPE_TO_PARAM: array[TSQLDBParamInOutType] of ShortInt = (
@@ -1380,7 +1389,9 @@ retry:      VData := CurrentAnsiConvert.UTF8ToAnsi(VData);
           raise EODBCException.CreateFmt('Invalid bound parameter #%d',[p+1]);
         end;
         if ParameterValue=nil then begin
-          ParameterValue := pointer(VData);
+          if pointer(VData)=nil then
+            ParameterValue := @NULCHAR else
+            ParameterValue := pointer(VData);
           ColumnSize := length(VData);
           if (ValueType=SQL_C_CHAR) or (ValueType=SQL_C_WCHAR) then
             inc(ColumnSize); // include last #0
@@ -1414,7 +1425,7 @@ retry:      VData := CurrentAnsiConvert.UTF8ToAnsi(VData);
           PDateTime(@VInt64)^ := PSQL_TIMESTAMP_STRUCT(VData)^.ToDateTime;
       ftUTF8:
         if DriverDoesNotHandleUnicode then
-          VData := CurrentAnsiConvert.AnsiToUTF8(VData) else
+          VData := CurrentAnsiConvert.AnsiBufferToRawUTF8(pointer(VData),StrLen(pointer(VData))) else
           VData := RawUnicodeToUtf8(pointer(VData),StrLenW(pointer(VData)));
     end;
   end;
@@ -1570,10 +1581,8 @@ end;
 constructor TODBCConnectionProperties.Create(const aServerName,
   aDatabaseName, aUserID, aPassWord: RawUTF8);
 begin
-  if ODBC=nil then begin
-    ODBC := TODBCLib.Create;
-    GarbageCollector.Add(ODBC);
-  end;
+  if ODBC=nil then
+    GarbageCollectorFreeAndNil(ODBC,TODBCLib.Create);
   inherited;
 end;
 

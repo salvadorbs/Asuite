@@ -1,10 +1,13 @@
 unit SynDBExplorerMain;
 
+{$I Synopse.inc} // define HASINLINE USETYPEINFO CPU32 CPU64 OWNNORMTOUPPER
+
 interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Grids, ExtCtrls, StdCtrls, Consts,
+  {$ifdef HASINLINE}XPMan,{$endif}
   SynCommons, SynZip, mORMot, SynSQLite3, SynSQLite3Static,
   mORMoti18n, mORMotUI, mORMotUIEdit, mORMotUILogin, mORMotToolBar,
   SynTaskDialog,  SynDB, SynDBOracle, SynOleDB, SynDBSQLite3, SynDBODBC,
@@ -51,8 +54,6 @@ resourcestring
 
 
 implementation
-
-{$I Synopse.inc} // define HASINLINE USETYPEINFO CPU32 CPU64 OWNNORMTOUPPER
 
 {$ifndef HASINLINE}
   {$R Vista.res}

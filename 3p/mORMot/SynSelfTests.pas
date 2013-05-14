@@ -88,8 +88,11 @@ unit SynSelfTests;
     from SynCommons.pas, or TTestSQLite3Engine from SQLite3.pas
   - added test for variant JSON serialization for interface-based services and
     for ORM (aka TSQLRecord)
+  - added test for SynLZdecompress1partial() new function
   - added external TSQLRecordOnlyBlob test associated to ticket [21c2d5ae96] 
-  - included testing of interface-based services in sicSingle mode
+  - included testing of interface-based services in sicSingle, sicPerSession,
+    sicPerUser, sicPerGroup and sicPerThread modes
+  - included testing of ServiceContext threadvar for optExecInMainThread option 
 
 }
 
@@ -311,6 +314,8 @@ type
     procedure _SHA256;
     /// AES encryption/decryption functions
     procedure _AES256;
+    /// RC4 encryption function
+    procedure _RC4;
     /// Base-64 encoding/decoding functions
     procedure Base64;
   end;
@@ -639,18 +644,60 @@ type
     property Imaginary: double read GetImaginary write SetImaginary;
   end;
 
+  /// a test interface, used by TTestServiceOrientedArchitecture
+  // - to test sicPerUser implementation pattern
+  ITestUser = interface(IInvokable)
+    ['{EABB42BF-FD08-444A-BF9C-6B73FA4C4788}']
+    function GetContextSessionID: integer;
+    function GetContextSessionUser: integer;
+    function GetContextSessionGroup: integer;
+  end;
+
+  /// a test interface, used by TTestServiceOrientedArchitecture
+  // - to test sicPerGroup implementation pattern
+  ITestGroup = interface(ITestUser)
+    ['{DCBA5A38-62CC-4A52-8639-E709B31DDCE1}']
+  end;
+
+  /// a test interface, used by TTestServiceOrientedArchitecture
+  // - to test sicPerSession implementation pattern
+  ITestSession = interface(ITestUser)
+    ['{5237A687-C0B2-46BA-9F39-BEEA7C3AA6A9}']
+  end;
+
+  ITestPerThread = interface(IInvokable)
+    ['{202B6C9F-FCCB-488D-A425-5472554FD9B1}']
+    function GetThreadIDAtCreation: cardinal;
+    function GetCurrentThreadID: cardinal;
+  end;
+
+
 const
   IID_ICalculator: TGUID = '{9A60C8ED-CEB2-4E09-87D4-4A16F496E5FE}';
 
 type
+  TTestServiceInstances = record
+    I: ICalculator;
+    CC: IComplexCalculator;
+    CN: IComplexNumber;
+    CU: ITestUSer;
+    CG: ITestGroup;
+    CS: ITestSession;
+    CT: ITestPerThread;
+    ExpectedSessionID: integer;
+    ExpectedUserID: integer;
+    ExpectedGroupID: integer;
+  end;
+
   /// a test case which will test the interface-based SOA implementation of
   // the mORMot framework
   TTestServiceOrientedArchitecture = class(TSynTestCase)
   protected
     fModel: TSQLModel;
     fClient: TSQLRestClientDB;
-    procedure Test(const I: ICalculator; const CC: IComplexCalculator; const CN: IComplexNumber);
-    procedure ClientTest(aRouting: TServiceRoutingMode; RunInMainThread: boolean=false);
+    procedure Test(const Inst: TTestServiceInstances);
+    procedure ClientTest(aRouting: TServiceRoutingMode
+      {$ifndef LVCL}; RunInMainThread: boolean=false{$endif});
     class function CustomReader(P: PUTF8Char; var aValue; out aValid: Boolean): PUTF8Char;
     class procedure CustomWriter(const aWriter: TTextWriter; const aValue);
     procedure IntSubtractJSON(Ctxt: TOnInterfaceStubExecuteParamsJSON);
@@ -2042,7 +2089,12 @@ begin
     WA := IsWinAnsi(pointer(Unic));
     Check(IsWinAnsi(pointer(Unic),length(Unic)shr 1)=WA);
     Check(IsWinAnsiU(pointer(U))=WA);
-    Check(UpperCase(LowerCase(U))=UpperCase(U));
+    Up := UpperCase(U);
+    Check(UpperCase(LowerCase(U))=Up);
+    Check(UTF8IComp(pointer(U),pointer(U))=0);
+    Check(UTF8IComp(pointer(U),pointer(Up))=0);
+    Check(UTF8ILComp(pointer(U),pointer(U),length(U),length(U))=0);
+    Check(UTF8ILComp(pointer(U),pointer(Up),length(U),length(Up))=0);
     {$ifndef ENHANCEDRTL}
     Check(LowerCase(U)=RawUTF8(SysUtils.LowerCase(string(U))));
     Check(UpperCase(U)=RawUTF8(SysUtils.UpperCase(string(U))));
@@ -3884,10 +3936,11 @@ end;
 
 procedure TTestCompression._SynLZ;
 var s,t: RawByteString;
-    i: integer;
+    i,j, complen2: integer;
+    comp2,dec1: array of byte;
     {$ifndef PUREPASCAL}
-    comp1,comp2,dec1,dec2: array of byte;
-    complen1,complen2: integer;
+    comp1,dec2: array of byte;
+    complen1: integer;
     {$endif}
 begin
   for i := 0 to 1000 do begin
@@ -3896,13 +3949,13 @@ begin
     Check(CompressSynLZ(s,true)='synlz');
     Check(CompressSynLZ(s,false)='synlz');
     Check(s=t);
+    SetLength(comp2,SynLZcompressdestlen(length(s)));
+    complen2 := SynLZcompress1pas(Pointer(s),length(s),pointer(comp2));
+    Check(complen2<length(comp2));
     {$ifndef PUREPASCAL}
     SetLength(comp1,SynLZcompressdestlen(length(s)));
     complen1 := SynLZcompress1asm(Pointer(s),length(s),pointer(comp1));
     Check(complen1<length(comp1));
-    SetLength(comp2,SynLZcompressdestlen(length(s)));
-    complen2 := SynLZcompress1pas(Pointer(s),length(s),pointer(comp2));
-    Check(complen2<length(comp2));
     Check(complen1=complen2);
     Check(CompareMem(pointer(comp1),pointer(comp2),complen1));
     Check(SynLZdecompressdestlen(pointer(comp1))=length(s));
@@ -3914,6 +3967,12 @@ begin
     Check(SynLZdecompress1asm(Pointer(comp2),complen2,pointer(dec2))=length(s));
     Check(CompareMem(pointer(dec1),pointer(s),length(s)));
     {$endif}
+  end;
+  SetLength(dec1,0); // force filled with 0
+  SetLength(dec1,length(t));
+  for j := 0 to length(t) do begin
+    Check(SynLZdecompress1partial(pointer(comp2),complen2,Pointer(dec1),j)=j);
+    Check(CompareMem(pointer(dec1),pointer(t),j));
   end;
   s := Data;
   Check(CompressSynLZ(s,true)='synlz');
@@ -4037,6 +4096,11 @@ end;
 procedure TTestCryptographicRoutines._MD5;
 begin
   Check(MD5SelfTest);
+end;
+
+procedure TTestCryptographicRoutines._RC4;
+begin
+  Check(RC4SelfTest);
 end;
 
 procedure TTestCryptographicRoutines._SHA1;
@@ -4329,16 +4393,16 @@ begin
     Check(length(s)>6780);
     {$else}
     i := PosEx('/FontBBox [',s);
-    if CheckFailed(i=5650) then exit;
+    if CheckFailed(i=5658) then exit;
     fillchar(s[i],32,32);
     j := PosEx('/FontBBox [',s);
-    if CheckFailed(j=6009) then exit;
+    if CheckFailed(j=6017) then exit;
     fillchar(s[j],32,32);
     i := PosEx('/FontBBox [',s);
-    if CheckFailed(i=6425) then exit;
+    if CheckFailed(i=6433) then exit;
     fillchar(s[i],32,32);
     H := Hash32(s);
-    Check(H=$F6B2289F);
+    Check(H=$C94F3581);
     {$endif}
     MS.SaveToFile(ChangeFileExt(paramstr(0),'.pdf'));
   finally
@@ -4714,6 +4778,9 @@ begin
     Rec.Free;
   end;
   // test average speed for a 5 KB request 
+  Resp := Client.List([TSQLRecordPeople],'*',Req);
+  Check(Resp<>nil);
+  Resp.Free;
 {$ifdef WTIME}
   Timer.Start;
 {$endif}
@@ -6153,12 +6220,14 @@ end;
 
 procedure TTestSQLite3Engine._TSQLTableJSON;
 var J: TSQLTableJSON;
-    aR, aF, n: integer;
-    Comp: TUTF8Compare;
+    aR, aF, F1,F2, n: integer;
+    Comp, Comp1,Comp2: TUTF8Compare;
     {$ifdef UNICODE}
     Peoples: TObjectList<TSQLRecordPeople>;
     {$endif}
+    {$ifndef LVCL}
     row: variant;
+    {$endif}
 begin
   J := TSQLTableJSON.Create([],'',JS);
   try
@@ -6200,6 +6269,7 @@ begin
         inc(n);
       end;
       check(n=J.RowCount);
+      {$ifndef LVCL}
       n := 0;
       if not CheckFailed(Step(true,@row)) then
         repeat
@@ -6211,11 +6281,12 @@ begin
           inc(n);
        until not Step(false,@row);
       check(n=J.RowCount);
+      {$endif}
       with ToObjectList(TSQLRecordPeople) do
       try
         check(Count=J.RowCount);
         for aR := 1 to Count do
-        with Items[aR-1] as TSQLRecordPeople do begin
+        with TSQLRecordPeople(Items[aR-1])  do begin
           Check(fID=J.GetAsInteger(aR,FieldIndex('ID')));
           Check(FirstName=J.GetU(aR,FieldIndex('FirstName')));
           Check(LastName=J.GetU(aR,FieldIndex('LastName')));
@@ -6251,6 +6322,45 @@ begin
         for aR := 1 to J.RowCount-1 do // ensure data sorted in increasing order
           Check(Comp(pointer(J.Get(aR,aF)),pointer(J.Get(aR+1,aF)))<=0,'SortCompare');
     end;
+    for aF := 0 to J.FieldCount-1 do begin
+      J.SortFields(aF,false);
+      Comp := J.SortCompare(aF);
+      if @Comp<>nil then // BLOB field will be ignored
+        for aR := 1 to J.RowCount-1 do // ensure data sorted in decreasing order
+          Check(Comp(pointer(J.Get(aR,aF)),pointer(J.Get(aR+1,aF)))>=0,'SortCompare');
+    end;
+    for F1 := 0 to J.FieldCount-1 do
+    for F2 := 0 to J.FieldCount-1 do
+      if F1<>F2 then begin
+        Comp1 := J.SortCompare(F1);
+        Comp2 := J.SortCompare(F2);
+        if (@Comp1=nil) or (@Comp2=nil) then
+          continue; // BLOB fields will be ignored
+        J.SortFields([F1,F2],[]);
+        for aR := 1 to J.RowCount-1 do begin
+          // ensure data sorted in increasing order for both fields
+          aF := Comp1(pointer(J.Get(aR,F1)),pointer(J.Get(aR+1,F1)));
+          Check(aF<=0,'SortCompare');
+          if aF=0 then // 1st field idem -> check sorted by 2nd field 
+            Check(Comp2(pointer(J.Get(aR,F2)),pointer(J.Get(aR+1,F2)))<=0);
+        end;
+      end;
+    for F1 := 0 to J.FieldCount-1 do
+    for F2 := 0 to J.FieldCount-1 do
+      if F1<>F2 then begin
+        Comp1 := J.SortCompare(F1);
+        Comp2 := J.SortCompare(F2);
+        if (@Comp1=nil) or (@Comp2=nil) then
+          continue; // BLOB fields will be ignored
+        J.SortFields([F1,F2],[false,true]); // 1st=DESC, 2nd=ASC order
+        for aR := 1 to J.RowCount-1 do begin
+          // ensure data sorted in expected order for both fields
+          aF := Comp1(pointer(J.Get(aR,F1)),pointer(J.Get(aR+1,F1)));
+          Check(aF>=0,'SortCompare');
+          if aF=0 then // 1st field idem -> check ASC sorted by 2nd field
+            Check(Comp2(pointer(J.Get(aR,F2)),pointer(J.Get(aR+1,F2)))<=0);
+        end;
+      end;
   finally
     J.Free;
   end;
@@ -6376,6 +6486,22 @@ type
     procedure Add(aReal, aImaginary: double);
     property Real: double read GetReal write SetReal;
     property Imaginary: double read GetImaginary write SetImaginary;
+  end;
+
+  TServiceUserGroupSession = class(TInterfacedObject,ITestUser,ITestGroup,ITestSession)
+  public
+    function GetContextSessionID: integer;
+    function GetContextSessionUser: integer;
+    function GetContextSessionGroup: integer;
+  end;
+
+  TServicePerThread = class(TInterfacedObjectWithCustomCreate,ITestPerThread)
+  protected
+    fThreadIDAtCreation: cardinal;
+  public
+    constructor Create; override;
+    function GetThreadIDAtCreation: cardinal;
+    function GetCurrentThreadID: cardinal;
   end;
 
 
@@ -6510,10 +6636,55 @@ begin
 end;
 
 
+{ TServiceUserGroupSession }
+
+function TServiceUserGroupSession.GetContextSessionGroup: integer;
+begin
+  with ServiceContext do
+    if Session=nil then
+      result := 0 else
+      result := Session.SessionGroup;
+end;
+
+function TServiceUserGroupSession.GetContextSessionID: integer;
+begin
+  with ServiceContext do
+    if Session=nil then
+      result := 0 else
+      result := Session.Session;
+end;
+
+function TServiceUserGroupSession.GetContextSessionUser: integer;
+begin
+  with ServiceContext do
+    if Session=nil then
+      result := 0 else
+      result := Session.SessionUser;
+end;
+
+
+{ TServicePerThread }
+
+constructor TServicePerThread.Create;
+begin
+  inherited;
+  fThreadIDAtCreation := Windows.GetCurrentThreadID;
+end;
+
+function TServicePerThread.GetCurrentThreadID: cardinal;
+begin
+  result := Windows.GetCurrentThreadID;
+end;
+
+function TServicePerThread.GetThreadIDAtCreation: cardinal;
+begin
+  result := fThreadIDAtCreation;
+end;
+
+
 { TTestServiceOrientedArchitecture }
 
-procedure TTestServiceOrientedArchitecture.Test(const I: ICalculator;
-  const CC: IComplexCalculator; const CN: IComplexNumber);
+procedure TTestServiceOrientedArchitecture.Test(const Inst: TTestServiceInstances);
 procedure TestCalculator(const I: ICalculator);
 var t,i1,i2,i3: integer;
     c: cardinal;
@@ -6593,14 +6764,15 @@ var s: RawUTF8;
     V1,V2,V3: variant;
 {$endif}
 begin
-  Check(I.Add(1,2)=3);
-  Check(I.Multiply(2,3)=6);
-  CheckSame(I.Subtract(23,20),3);
-  I.ToText(3.14,s);
+  Check(Inst.I.Add(1,2)=3);
+  Check(Inst.I.Multiply(2,3)=6);
+  CheckSame(Inst.I.Subtract(23,20),3);
+  Inst.I.ToText(3.14,s);
   Check(s='3.14');
-  Check(I.ToTextFunc(777)='777');
-  TestCalculator(I);
-  TestCalculator(CC); // test the fact that CC inherits from ICalculator
+  Check(Inst.I.ToTextFunc(777)='777');
+  Check(Inst.CT.GetCurrentThreadID=Inst.CT.GetThreadIDAtCreation);
+  TestCalculator(Inst.I);
+  TestCalculator(Inst.CC); // test the fact that CC inherits from ICalculator
   {$ifndef LVCL}   /// in LVCL, TPersistent doesn't have any RTTI information
   C3 := TComplexNumber.Create(0,0);
   C1 := TComplexNumber.Create(2,3);
@@ -6609,14 +6781,14 @@ begin
   Copy := TCollTestsI.Create;
   Item := TCollTest.Create(nil);
   try
-    Check(CC.IsNull(C3));
+    Check(Inst.CC.IsNull(C3));
     for c := 0 to 700 do begin
-      Check(not CC.IsNull(C1));
+      Check(not Inst.CC.IsNull(C1));
       C3.Imaginary := 0;
-      CC.Substract(C1,C2,C3);
+      Inst.CC.Substract(C1,C2,C3);
       CheckSame(C3.Real,c-18.0);
       CheckSame(C3.Imaginary,-27);
-      with CC.TestBlob(C3) do begin
+      with Inst.CC.TestBlob(C3) do begin
         Check(Header=TEXT_CONTENT_TYPE_HEADER);
         Check(Content=FormatUTF8('%,%',[C3.Real,C3.Imaginary]));
       end;
@@ -6628,7 +6800,7 @@ begin
       1: s := Int32ToUtf8(c);
       2: s := QuotedStr(Int32ToUtf8(c),'"');
       end;
-      V3 := CC.TestVariants(s,V1,V2);
+      V3 := Inst.CC.TestVariants(s,V1,V2);
       CheckSame(V1,C3.Real);
       CheckSame(V2,C3.Real+c);
       Check(VariantSaveJSON(V3)=s);
@@ -6637,7 +6809,7 @@ begin
         Item.Color := Item.Color+1;
         Item.Length := Item.Color*2;
         Item.Name := Int32ToUtf8(Item.Color);
-        CC.Collections(Item,List,Copy);
+        Inst.CC.Collections(Item,List,Copy);
       end;
       if not CheckFailed(List.Count=Item.Color) or
          not CheckFailed(Copy.Count=List.Count) then
@@ -6663,40 +6835,48 @@ begin
     List.Free;
     Copy.Free;
   end;
-  n2 := CN.Imaginary;
+  n2 := Inst.CN.Imaginary;
   for c := 0 to 200 do begin
-    CheckSame(CN.Imaginary,n2);
+    CheckSame(Inst.CN.Imaginary,n2);
     n1 := Random*1000;
-    CN.Real := n1;
-    CheckSame(CN.Real,n1);
-    CheckSame(CN.Imaginary,n2);
+    Inst.CN.Real := n1;
+    CheckSame(Inst.CN.Real,n1);
+    CheckSame(Inst.CN.Imaginary,n2);
     n2 := Random*1000;
-    CN.Imaginary := n2;
-    CheckSame(CN.Real,n1);
-    CheckSame(CN.Imaginary,n2);
-    CN.Add(1,2);
-    CheckSame(CN.Real,n1+1);
+    Inst.CN.Imaginary := n2;
+    CheckSame(Inst.CN.Real,n1);
+    CheckSame(Inst.CN.Imaginary,n2);
+    Inst.CN.Add(1,2);
+    CheckSame(Inst.CN.Real,n1+1);
     n2 := n2+2;
-    CheckSame(CN.Imaginary,n2);
+    CheckSame(Inst.CN.Imaginary,n2);
   end;
   {$endif}
-  CN.Assign(3.14,1.05946);
-  CheckSame(CN.Real,3.14);
-  CheckSame(CN.Imaginary,1.05946);
+  Inst.CN.Assign(3.14,1.05946);
+  CheckSame(Inst.CN.Real,3.14);
+  CheckSame(Inst.CN.Imaginary,1.05946);
+  Check(Inst.CU.GetContextSessionID=Inst.ExpectedSessionID);
+  Check(Inst.CG.GetContextSessionGroup=Inst.ExpectedGroupID);
+  Check(Inst.CS.GetContextSessionUser=Inst.ExpectedUserID);
+  Check(Inst.CT.GetCurrentThreadID=Inst.CT.GetThreadIDAtCreation);
 end;
 
-procedure TTestServiceOrientedArchitecture.ClientTest(aRouting: TServiceRoutingMode;
-  RunInMainThread: boolean=false);
-var I: ICalculator;
-    CC: IComplexCalculator;
-    CN: IComplexNumber;
+procedure TTestServiceOrientedArchitecture.ClientTest(aRouting: TServiceRoutingMode
+  {$ifndef LVCL}; RunInMainThread: boolean=false{$endif});
+var Inst: TTestServiceInstances;
     O: TObject;
+{$ifndef LVCL}
     s: integer;
+{$endif}
 begin
-  if RunInMainThread then 
+  fillchar(Inst,sizeof(Inst),0);
+  {$ifndef LVCL}
+  if RunInMainThread then
     with fClient.Server.Services do
     for s := 0 to Count-1 do
-      (Index(s) as TServiceFactoryServer).SetOptions([],[optExecInMainThread]);
+      if Index(s).InterfaceTypeInfo<>TypeInfo(ITestPerThread) then
+        (Index(s) as TServiceFactoryServer).SetOptions([],[optExecInMainThread]);
+  {$endif}
   fClient.Server.ServicesRouting := aRouting;
   fClient.ServicesRouting := aRouting;
   (fClient.Server.Services as TServiceContainerServer).PublishSignature := true;
@@ -6705,69 +6885,112 @@ begin
   (fClient.Server.Services as TServiceContainerServer).PublishSignature := false;
   Check(fClient.Services['Calculator'].RetrieveSignature='');
   // once registered, can be accessed by its GUID or URI
-  if CheckFailed(fClient.Services.Info(TypeInfo(ICalculator)).Get(I)) or
-     CheckFailed(fClient.Services.Info(TypeInfo(IComplexCalculator)).Get(CC)) or
-     // here, IComplexNumber is not yet registered on the client side -> done now
-     CheckFailed(fClient.Services.Info(TypeInfo(IComplexNumber)).Get(CN)) then
+  if CheckFailed(fClient.Services.Info(TypeInfo(ICalculator)).Get(Inst.I)) or
+     CheckFailed(fClient.Services.Info(TypeInfo(IComplexCalculator)).Get(Inst.CC)) or
+     CheckFailed(fClient.Services.Info(TypeInfo(IComplexNumber)).Get(Inst.CN)) or
+     CheckFailed(fClient.Services.Info(TypeInfo(ITestUser)).Get(Inst.CU)) or
+     CheckFailed(fClient.Services.Info(TypeInfo(ITestSession)).Get(Inst.CS)) or
+     CheckFailed(fClient.Services.Info(TypeInfo(ITestGroup)).Get(Inst.CG)) or
+     CheckFailed(fClient.Services.Info(TypeInfo(ITestPerThread)).Get(Inst.CT)) then
     exit;
-  O := ObjectFromInterface(I);
-  Check((O<>nil) and (O.ClassName='TInterfacedObjectFake'),
-    'ObjectFromInterface for '+O.ClassName);
-  Test(I,CC,CN);
-  I := nil;
-  if CheckFailed(fClient.Services.GUID(IID_ICalculator).Get(I)) then
+  O := ObjectFromInterface(Inst.I);
+  Check((O<>nil) and (O.ClassName='TInterfacedObjectFake'),'ObjectFromInterface('+O.ClassName);
+  Inst.ExpectedSessionID := fClient.SessionID;
+  fClient.Retrieve('LogonName=?',[],[fClient.SessionUser.LogonName],fClient.SessionUser);
+  Inst.ExpectedUserID := fClient.SessionUser.ID;
+  Inst.ExpectedGroupID := fClient.SessionUser.GroupRights.ID;
+  Test(Inst);
+  Inst.I := nil;
+  if CheckFailed(fClient.Services.GUID(IID_ICalculator).Get(Inst.I)) then
     exit;
-  Test(I,CC,CN);
-  I := nil;
-  CC := nil;
-  CN := nil;
-  if CheckFailed(fClient.Services['Calculator'].Get(I)) or
-     CheckFailed(fClient.Services['ComplexCalculator'].Get(CC)) or
-     CheckFailed(fClient.Services['ComplexNumber'].Get(CN)) then
+  Test(Inst);
+  Finalize(Inst);
+  if CheckFailed(fClient.Services['Calculator'].Get(Inst.I)) or
+     CheckFailed(fClient.Services['ComplexCalculator'].Get(Inst.CC)) or
+     CheckFailed(fClient.Services['ComplexNumber'].Get(Inst.CN))
+{$ifdef ISDELPHI2010}
+     then exit;
+  Inst.CU := fClient.Service<ITestUser>;
+  if CheckFailed(Inst.CU<>nil) then exit;
+  Inst.CS := fClient.Service<ITestSession>;
+  if CheckFailed(Inst.CS<>nil) then exit;
+  Inst.CG := fClient.Service<ITestGroup>;
+  if CheckFailed(Inst.CG<>nil) then exit;
+  Inst.CT := fClient.Service<ITestPerThread>;
+  if CheckFailed(Inst.CT<>nil) then exit;
+{$else} or
+     CheckFailed(fClient.Services['TestUser'].Get(Inst.CU)) or
+     CheckFailed(fClient.Services['TestSession'].Get(Inst.CS)) or
+     CheckFailed(fClient.Services['TestGroup'].Get(Inst.CG)) or
+     CheckFailed(fClient.Services['testperthread'].Get(Inst.CT)) then
     exit;
-  CN.Imaginary;
-  Test(I,CC,CN);
+{$endif}
+  Inst.CN.Imaginary;
+  Test(Inst);
+  {$ifndef LVCL}
   if RunInMainThread then
     with fClient.Server.Services do
     for s := 0 to Count-1 do
       (Index(s) as TServiceFactoryServer).SetOptions([],[]);
+  {$endif}
 end;
 
 procedure TTestServiceOrientedArchitecture.DirectCall;
-var I: ICalculator;
-    CC: IComplexCalculator;
-    CN: IComplexNumber;
+var Inst: TTestServiceInstances;
 begin
-  I := TServiceCalculator.Create;
-  CC := TServiceComplexCalculator.Create;
-  CN := TServiceComplexNumber.Create;
-  Test(I,CC,CN);
-  Test(I,CC,CN);
-  Test(I,CC,CN);
+  fillchar(Inst,sizeof(Inst),0); // all Expected..ID=0
+  Inst.I := TServiceCalculator.Create;
+  Inst.CC := TServiceComplexCalculator.Create;
+  Inst.CN := TServiceComplexNumber.Create;
+  Inst.CS := TServiceUserGroupSession.Create;
+  Inst.CG := TServiceUserGroupSession.Create;
+  Inst.CU := TServiceUserGroupSession.Create;
+  Inst.CT := TServicePerThread.Create;
+  Test(Inst);
+  Test(Inst);
+  Test(Inst);
 end;
 
 procedure TTestServiceOrientedArchitecture.ServerSide;
-var I: ICalculator;
-    CC: IComplexCalculator;
-    CN: IComplexNumber;
+var Inst: TTestServiceInstances;
 begin
+  fillchar(Inst,sizeof(Inst),0); // all Expected..ID=0
   if CheckFailed(fModel<>nil) or CheckFailed(fClient<>nil) or
-     CheckFailed(fClient.Server.Services.Count=3) or
-     CheckFailed(fClient.Server.Services.Index(0).Get(I)) or
-     CheckFailed(Assigned(I)) or
-     CheckFailed(fClient.Server.Services.Info(TypeInfo(IComplexCalculator)).Get(CC)) or
-     CheckFailed(fClient.Server.Services.Info(TypeInfo(IComplexNumber)).Get(CN)) then
+     CheckFailed(fClient.Server.Services.Count=7) or
+     CheckFailed(fClient.Server.Services.Index(0).Get(Inst.I)) or
+     CheckFailed(Assigned(Inst.I)) or
+     CheckFailed(fClient.Server.Services.Info(TypeInfo(IComplexCalculator)).Get(Inst.CC)) or
+     CheckFailed(fClient.Server.Services.Info(TypeInfo(IComplexNumber)).Get(Inst.CN)) or
+     CheckFailed(fClient.Server.Services.Info(TypeInfo(ITestUser)).Get(Inst.CU)) or
+     CheckFailed(fClient.Server.Services.Info(TypeInfo(ITestSession)).Get(Inst.CS)) or
+     CheckFailed(fClient.Server.Services.Info(TypeInfo(ITestGroup)).Get(Inst.CG)) or
+     CheckFailed(fClient.Server.Services.Info(TypeInfo(ITestPerThread)).Get(Inst.CT)) then
     exit;
-  Test(I,CC,CN);
-  I := nil;
-  CC := nil;
-  CN := nil;
-  if CheckFailed(fClient.Server.Services['Calculator'].Get(I)) or
-     CheckFailed(fClient.Server.Services['ComplexCalculator'].Get(CC)) or
-     CheckFailed(fClient.Server.Services['ComplexNumber'].Get(CN)) then
+  Test(Inst);
+  Finalize(Inst);
+  Check(Inst.I=nil);
+  if CheckFailed(fClient.Server.Services['Calculator'].Get(Inst.I)) or
+     CheckFailed(fClient.Server.Services['ComplexCalculator'].Get(Inst.CC)) or
+     CheckFailed(fClient.Server.Services['ComplexNumber'].Get(Inst.CN))
+{$ifdef ISDELPHI2010}
+     then exit;
+  Inst.CU := fClient.Server.Service<ITestUser>;
+  if CheckFailed(Inst.CU<>nil) then exit;
+  Inst.CS := fClient.Server.Service<ITestSession>;
+  if CheckFailed(Inst.CS<>nil) then exit;
+  Inst.CG := fClient.Server.Service<ITestGroup>;
+  if CheckFailed(Inst.CG<>nil) then exit;
+  Inst.CT := fClient.Server.Service<ITestPerThread>;
+  if CheckFailed(Inst.CT<>nil) then exit;
+{$else} or
+     CheckFailed(fClient.Server.Services['TestUser'].Get(Inst.CU)) or
+     CheckFailed(fClient.Server.Services['TestSession'].Get(Inst.CS)) or
+     CheckFailed(fClient.Server.Services['TestGroup'].Get(Inst.CG)) or
+     CheckFailed(fClient.Server.Services['TestPerThread'].Get(Inst.CT)) then
     exit;
-  Test(I,CC,CN);
-  Test(I,CC,CN);
+{$endif}
+  Test(Inst);
+  Test(Inst);
 end;
 
 procedure TTestServiceOrientedArchitecture.ServiceInitialization;
@@ -6808,7 +7031,7 @@ const ExpectedURI: array[0..4] of RawUTF8 =
 begin
   if CheckFailed(fModel=nil) then exit; // should be called once
   // create model, client and server
-  fModel := TSQLModel.Create([TSQLRecordPeople]);
+  fModel := TSQLModel.Create([TSQLRecordPeople,TSQLAuthUser,TSQLAuthGroup]);
   fClient := TSQLRestClientDB.Create(fModel,nil,'test.db3',TSQLRestServerDB,true);
   Check(fClient.SetUser('User','synopse')); // default user for Security tests
   // register TServiceCalculator as the ICalculator implementation on the server
@@ -6873,6 +7096,10 @@ begin
   // IComplexCalculator + IComplexNumber services
   Check(fClient.Server.ServiceRegister(TServiceComplexCalculator,[TypeInfo(IComplexCalculator)],sicSingle)<>nil);
   Check(fClient.Server.ServiceRegister(TServiceComplexNumber,[TypeInfo(IComplexNumber)],sicClientDriven)<>nil);
+  Check(fClient.Server.ServiceRegister(TServiceUserGroupSession,[TypeInfo(ITestSession)],sicPerSession)<>nil);
+  Check(fClient.Server.ServiceRegister(TServiceUserGroupSession,[TypeInfo(ITestUser)],sicPerUser)<>nil);
+  Check(fClient.Server.ServiceRegister(TServiceUserGroupSession,[TypeInfo(ITestGroup)],sicPerGroup)<>nil);
+  Check(fClient.Server.ServiceRegister(TServicePerThread,[TypeInfo(ITestPerThread)],sicPerThread)<>nil);
   // JSON-level access
   for routing := low(routing) to high(routing) do begin
     fClient.Server.ServicesRouting := routing;
@@ -6954,17 +7181,31 @@ begin
   Test([1,2,3,4,5],'restore allowed for everybody');
 end;
 
+procedure TTestServiceOrientedArchitecture.ClientSideREST;
+begin
+  Check(fClient.ServiceRegister([TypeInfo(ICalculator)],sicShared));
+  Check(fClient.ServiceRegister([TypeInfo(IComplexCalculator)],sicSingle));
+  Check(fClient.ServiceRegister([TypeInfo(ITestSession)],sicPerSession));
+  Check(fClient.ServiceRegister([TypeInfo(ITestUser)],sicPerUser));
+  Check(fClient.ServiceRegister([TypeInfo(ITestGroup)],sicPerGroup));
+  Check(fClient.ServiceRegister([TypeInfo(ITestPerThread)],sicPerThread));
+  ClientTest(rmREST);
+end;
+
 procedure TTestServiceOrientedArchitecture.ClientSideJSONRPC;
 begin
   ClientTest(rmJSON_RPC);
 end;
 
-procedure TTestServiceOrientedArchitecture.ClientSideREST;
+procedure TTestServiceOrientedArchitecture.Cleanup;
 begin
-  Check(fClient.ServiceRegister([TypeInfo(ICalculator)],sicShared));
-  Check(fClient.ServiceRegister([TypeInfo(IComplexCalculator)],sicSingle));
-  ClientTest(rmREST);
+  FreeAndNil(fClient);
+  FreeAndNil(fModel);
 end;
+
+
+{$ifndef LVCL}
+{ TTestThread }
 
 type
   TTestThread = class(TThread)
@@ -6973,16 +7214,6 @@ type
   public
     Test: TTestServiceOrientedArchitecture;
   end;
-
-  
-procedure TTestServiceOrientedArchitecture.Cleanup;
-begin
-  FreeAndNil(fClient);
-  FreeAndNil(fModel);
-end;
-
-
-{ TTestThread }
 
 procedure TTestThread.Execute;
 begin
@@ -6994,8 +7225,6 @@ begin
   end;
 end;
 
-
-{$ifndef LVCL}
 procedure TTestServiceOrientedArchitecture.ClientSideSynchronizedREST;
 begin
   with TTestThread.Create(true) do
@@ -7430,6 +7659,8 @@ end;
 
 {$endif DELPHI5OROLDER}
 {$endif FPC}
+
+
 
 end.
 

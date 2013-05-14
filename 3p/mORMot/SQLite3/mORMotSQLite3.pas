@@ -202,7 +202,7 @@ unit mORMotSQLite3;
 
     Version 1.18
     - unit SQLite3.pas renamed mORMotSQLite3.pas
-    - updated SQLite3 engine to version 3.7.16.1
+    - updated SQLite3 engine to version 3.7.16.2
     - fixed potential GPF issue in TSQLRestServerDB.Destroy when registered
       TSQLVVirtualtableModuleDBs are already destroyed
     - fixed ticket [64c90ade80] in TSQLRestClientDB.Destroy when associated
@@ -667,8 +667,7 @@ begin
       JSONRetrieveIDField(pointer(SentData)))+';';
   if EngineExecute(SQL) then begin
     result := DB.LastInsertRowID;
-    if Assigned(OnUpdateEvent) then
-       OnUpdateEvent(self,seAdd,Table,result);
+    InternalUpdateEvent(seAdd,Table,result);
   end else
     result := 0;
 end;
@@ -809,8 +808,7 @@ begin
     result := false; // avoid GPF
     exit;
   end;
-  if Assigned(OnUpdateEvent) then
-     OnUpdateEvent(self,seDelete,Table,ID); // notify BEFORE deletion
+  InternalUpdateEvent(seDelete,Table,ID); // notify BEFORE deletion
   result := EngineExecuteFmt(
     'DELETE FROM % WHERE RowID=:(%):;',[Table.RecordProps.SQLTableName,ID]);
 end;
@@ -823,9 +821,8 @@ begin
     result := false;
     exit;
   end;
-  if Assigned(OnUpdateEvent) then
-    for i := 0 to high(IDs) do
-      OnUpdateEvent(self,seDelete,Table,IDs[i]); // notify BEFORE deletion
+  for i := 0 to high(IDs) do
+    InternalUpdateEvent(seDelete,Table,IDs[i]); // notify BEFORE deletion
   result := EngineExecuteFmt(
     'DELETE FROM % WHERE %',[Table.RecordProps.SQLTableName,SQLWhere]);
 end;
@@ -1117,8 +1114,7 @@ begin
     // this SQL statement use :(inlined params): for all values
     result := EngineExecuteFmt('UPDATE % SET % WHERE RowID=:(%):;',
       [Table.RecordProps.SQLTableName,GetJSONObjectAsSQL(SentData,true,true),ID]);
-    if Assigned(OnUpdateEvent) then
-       OnUpdateEvent(self,seUpdate,Table,ID);
+    InternalUpdateEvent(seUpdate,Table,ID);
   end;
 end;
 
@@ -1207,8 +1203,8 @@ begin
           exit;
       result := EngineExecuteFmt('UPDATE % SET %=:(%): WHERE %=:(%):',
         [SQLTableName,SetFieldName,SetValue,WhereFieldName,WhereValue]);
-      if (WhereID>0) and Assigned(OnUpdateEvent) then
-        OnUpdateEvent(self,seUpdate,Table,WhereID);
+      if WhereID>0 then
+        InternalUpdateEvent(seUpdate,Table,WhereID);
     end;
 end;
 
@@ -1478,6 +1474,9 @@ var call: TSQLRestServerURIParams;
 begin
   call.Url := url;
   call.Method := method;
+  call.InHead := 'RemoteIP: 127.0.0.1'#13#10'ConnectionID: '+PointerToHex(self);
+  if Head<>nil then
+    call.InHead := Head^+#13#10+call.InHead;
   if SendData<>nil then
     call.InBody := SendData^;
   call.RestAccessRights := @FULL_ACCESS_RIGHTS;

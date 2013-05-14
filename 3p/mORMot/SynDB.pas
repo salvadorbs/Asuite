@@ -146,6 +146,11 @@ unit SynDB;
   Version 1.18
   - SQL statements are now cached by default - in some cases, it will increase
     individual reading or writing speed by a factor of 4x
+  - new TSQLDBConnectionProperties/TSQLDBConnection.OnProcess event handlers
+  - TSQLDBConnection.Connect will now trigger OnProcess(speReconnected) and
+    update the new TSQLDBConnection.TotalConnectionCount property
+  - TSQLDBConnection.Disconnect will now flush internal statement cache
+  - TQuery.Execute() is now able to try to re-connect once in case of failure
   - introducing new ISQLDBStatement interface, used by SQL statement cache
   - avoid syntax error for some engines which do not accept an ending ';' in
     SQL statements
@@ -171,15 +176,17 @@ unit SynDB;
   - TSQLDBStatement.GetParamValueAsText() will truncate to a given number of
     chars the returned text
   - added DoNotFletchBlobs optional parameter to TSQLDBStatement.FetchAllAsJSON()
-    FetchAllToJSON(), and ColumnsToJSON() methods (used e.g. by SynDBExplorer)  
+    FetchAllToJSON(), and ColumnsToJSON() methods (used e.g. by SynDBExplorer)
   - added generic ReplaceParamsByNames() function
   - added missing ColumnToVarData() method to ISQLDBRows interface
+  - added TSQLDBConnection[Properties].OnProgress callback event handler
   - now trim any spaces when retrieving database schema text values
   - fixed ticket [4c68975022] about broken SQL statement when logging active
   - fixed potential GPF after TSQLDBConnectionProperties.ExecuteNoResult() method call
   - fixed TSQLDBConnectionProperties.SQLGetField() returned value for dFirebird
   - fixed unnecessary limitation to 64 params for TSQLDBStatementWithParams
   - TSQLDBStatement.Bind() will now handle a nil parameter to SQL null bound value
+  - TSQLDBStatement.ColumnToVariant() will now handle VariantStringAsWideString
 
 }
 
@@ -481,6 +488,13 @@ type
        since Delphi 2009: you may not loose any data during charset conversion
      - a ftBlob BLOB content will be mapped into a TBlobData AnsiString variant }
     function ColumnVariant(Col: integer): Variant; overload;
+    {/ return a Column as a variant, first Col is 0
+     - this default implementation will call Column*() method above
+     - a ftUTF8 TEXT content will be mapped into a generic WideString variant
+       for pre-Unicode version of Delphi, and a generic UnicodeString (=string)
+       since Delphi 2009: you may not loose any data during charset conversion
+     - a ftBlob BLOB content will be mapped into a TBlobData AnsiString variant }
+    function ColumnToVariant(Col: integer; var Value: Variant): TSQLDBFieldType; overload;
     {$endif}
     {/ return a Column integer value of the current Row, from a supplied column name }
     function ColumnInt(const ColName: RawUTF8): Int64; overload;
@@ -679,6 +693,25 @@ type
 
   TSQLDBConnection = class;
 
+  /// possible events notified to TOnSQLDBProcess callback method
+  // - event handler is specified by TSQLDBConnectionProperties.OnProcess or
+  // TSQLDBConnection.OnProcess properties
+  // - speNonActive / speActive will be used to notify external DB blocking
+  // access, so can be used e.g. to change the mouse cursor shape (this trigger
+  // is re-entrant, i.e. it will be executed only once in case of nested calls) 
+  // - speReconnected will be called if TSQLDBConnection did successfully
+  // recover its database connection (on error, TQuery will call speConnectionLost)
+  // - speConnectionLost will be called by TQuery in case of broken connection,
+  // and if Disconnect/Reconnect did not restore it as expected (i.e. speReconnected)
+  TOnSQLDBProcessEvent = (
+    speNonActive, speActive,
+    speConnectionLost, speReconnected);
+
+  /// event handler called during all external DB process
+  // - event handler is specified by TSQLDBConnectionProperties.OnProcess or
+  // TSQLDBConnection.OnProperties properties
+  TOnSQLDBProcess = procedure(Sender: TSQLDBConnection; Event: TOnSQLDBProcessEvent) of object;
+
   /// abstract class used to set Database-related properties
   // - handle e.g. the Database server location and connection parameters (like
   // UserID and password)
@@ -704,6 +737,7 @@ type
     fSQLGetServerTimeStamp: RawUTF8;
     fEngineName: RawUTF8;
     fDBMS: TSQLDBDefinition;
+    fOnProcess: TOnSQLDBProcess;
     // this default implementation just returns the fDBMS value or dDefault
     // (never returns dUnknwown)
     function GetDBMS: TSQLDBDefinition; virtual;
@@ -772,7 +806,7 @@ type
     // connection pool, and allow automatic reconnection
     procedure ClearConnectionPool; virtual;
     /// create a new thread-safe statement
-    // - this method will call ThreadSafeConnection.NewStatement 
+    // - this method will call ThreadSafeConnection.NewStatement
     function NewThreadSafeStatement: TSQLDBStatement;
     /// create a new thread-safe statement from an internal cache (if any)
     // - will call ThreadSafeConnection.NewStatementPrepared
@@ -961,6 +995,10 @@ type
     // - will cache only statements containing ? parameters or a SELECT with no
     // WHERE clause within
     property UseCache: boolean read fUseCache;
+    /// this event handler will be called during all process
+    // - can be used e.g. to change the desktop cursor
+    // - you can override this property directly in the TSQLDBConnection
+    property OnProcess: TOnSQLDBProcess read fOnProcess write fOnProcess;
   published { to be logged as JSON - no UserID nor Password for security :) }
     /// return the database engine name, as computed from the class name
     // - 'TSQLDBConnectionProperties' will be trimmed left side of the class name
@@ -1008,8 +1046,6 @@ type
   // - more than one TSQLDBConnection instance can be run for the same
   // TSQLDBConnectionProperties
   TSQLDBConnection = class
-  private
-    function GetInTransaction: boolean;
   protected
     fProperties: TSQLDBConnectionProperties;
     fErrorException: ExceptClass;
@@ -1017,9 +1053,15 @@ type
     fTransactionCount: integer;
     fServerTimeStampOffset: TDateTime;
     fCache: TRawUTF8ListHashed;
+    fOnProcess: TOnSQLDBProcess;
+    fTotalConnectionCount: integer;
+    fInternalProcessActive: integer;
+    function GetInTransaction: boolean; virtual;
     function GetServerTimeStamp: TTimeLog; virtual;
     /// raise an exception
     procedure CheckConnection;
+    /// call OnProcess() call back event, if needed
+    procedure InternalProcess(Event: TOnSQLDBProcessEvent);
   public
     /// connect to a specified database engine
     constructor Create(aProperties: TSQLDBConnectionProperties); virtual;
@@ -1028,10 +1070,15 @@ type
 
     /// connect to the specified database
     // - should raise an Exception on error
-    procedure Connect; virtual; abstract;
+    // - this default implementation will notify OnProgress callback for
+    // sucessfull re-connection: it should be called in overriden methods
+    // AFTER actual connection process
+    procedure Connect; virtual;
     /// stop connection to the specified database
     // - should raise an Exception on error
-    procedure Disconnect; virtual; abstract;
+    // - this default implementation will release all cached statements: so it
+    // should be called in overriden methods BEFORE actual disconnection
+    procedure Disconnect; virtual;
     /// return TRUE if Connect has been already successfully called
     function IsConnected: boolean; virtual; abstract;
     /// initialize a new SQL query statement for the given connection
@@ -1080,11 +1127,18 @@ type
     // after correction from the Server returned time-stamp (if any)
     // - default implementation will return the executable time, i.e. Iso8601Now
     property ServerTimeStamp: TTimeLog read GetServerTimeStamp;
+    /// this event handler will be called during all process
+    // - can be used e.g. to change the desktop cursor
+    // - by default, will follow TSQLDBConnectionProperties.OnProcess property 
+    property OnProcess: TOnSQLDBProcess read fOnProcess write fOnProcess;
   published { to be logged as JSON }
     /// the associated database properties
     property Properties: TSQLDBConnectionProperties read fProperties;
     /// returns TRUE if the connection was set
     property Connected: boolean read IsConnected;
+    /// number of sucessfull connections for this instance
+    // - can be greater than 1 in case of re-connection via Disconnect/Connect 
+    property TotalConnectionCount: integer read fTotalConnectionCount;
     /// some error message, e.g. during execution of NewStatementPrepared
     property LastErrorMessage: RawUTF8 read fErrorMessage;
     /// some error exception, e.g. during execution of NewStatementPrepared
@@ -1992,7 +2046,7 @@ type
   TQuery = class
   protected
     fSQL: TStringList;
-    fPrepared: TSQLDBStatement;
+    fPrepared: ISQLDBStatement;
     fRowIndex: Integer;
     fConnection: TSQLDBConnection;
     fParams: TQueryValueDynArray;
@@ -2083,6 +2137,9 @@ type
     /// retrieve a  bound parameters in the current SQL statement
     // - will return nil in case of error, e.g. out of range index
     property Params[aIndex: integer]: TParam read GetParam;
+    /// non VCL property to access the internal SynDB prepared statement
+    // - is nil if the TQuery is not prepared (e.g. after Close)
+    property PreparedSQLDBStatement: ISQLDBStatement read fPrepared;
   end;
 
 {$endif EMULATES_TQUERY}
@@ -2439,7 +2496,7 @@ end;
 procedure TQuery.Close;
 begin
   try
-    FreeAndNil(fPrepared);
+    fPrepared := nil;
   finally
     //fSQL.Clear; // original TQuery expect SQL content to be preserved
     fParam.Clear;
@@ -2576,7 +2633,7 @@ function TQuery.GetSQLAsText: string;
 begin
   if (self=nil) or (fPrepared=nil) then
     result := '' else
-    result := Utf8ToString(fPrepared.GetSQLWithInlinedParams);
+    result := Utf8ToString(fPrepared.Instance.GetSQLWithInlinedParams);
 end;
 
 procedure TQuery.OnSQLChange(Sender: TObject);
@@ -2589,10 +2646,15 @@ procedure TQuery.Next;
 begin
   if (self=nil) or (fPrepared=nil) then
     raise ESQLQueryException.Create('Next: Invalid call');
-  if fPrepared.Step(false) then
-    inc(fRowIndex) else
-    // no more row is available
-    fRowIndex := 0;
+  Connection.InternalProcess(speActive);
+  try
+    if fPrepared.Step(false) then
+      inc(fRowIndex) else
+      // no more row is available
+      fRowIndex := 0;
+  finally
+    Connection.InternalProcess(speNonActive);
+  end;
 end;
 
 {
@@ -2668,10 +2730,8 @@ begin
      (fConnection=nil) or (fPrepared<>nil) then
     raise ESQLQueryException.Create('TQuery.Prepare called with no previous Close');
   fRowIndex := -1;
-  if Connection<>nil then
-    fPrepared := Connection.NewStatement;
-  if fPrepared=nil then
-    raise ESQLQueryException.Create('Connection to DB failed');
+  if fConnection=nil then
+    raise ESQLQueryException.Create('No Connection to DB specified');
   req := Trim(StringToUTF8(SQL.Text));
   P := pointer(req);
   if P=nil then
@@ -2711,18 +2771,35 @@ begin
     cols[col] := i;
     inc(col);
   until P^=#0;
-  for i := 0 to col-1 do
-    try
-      with fParams[cols[i]] do // the leftmost SQL parameter has an index of 1
-        fPrepared.BindVariant(i+1,fValue,fValueBlob,DB2OLE[fParamType]);
-    except
-      on E: Exception do
-        raise ESQLQueryException.CreateFmt(
-          'Error "%s" at binding value for parameter "%s" in "%s"',
-          [E.Message,fParams[cols[i]].fName,req]);
-    end;
-  fPrepared.Prepare(new,ExpectResults);
-  fPrepared.ExecutePrepared;
+  Connection.InternalProcess(speActive);
+  try
+    fPrepared := Connection.NewStatementPrepared(new,ExpectResults);
+    if fPrepared=nil then
+      try
+        SynDBLog.Add.Log(sllDB,'TQuery.Execute() now tries to reconnect');
+        Connection.Disconnect;
+        Connection.Connect;
+        fPrepared := Connection.NewStatementPrepared(new,ExpectResults);
+        if fPrepared=nil then
+          raise ESQLQueryException.Create('Connection to DB failed');
+      finally
+        if fPrepared=nil then
+          Connection.InternalProcess(speConnectionLost);
+      end;
+    for i := 0 to col-1 do
+      try
+        with fParams[cols[i]] do // the leftmost SQL parameter has an index of 1
+          fPrepared.BindVariant(i+1,fValue,fValueBlob,DB2OLE[fParamType]);
+      except
+        on E: Exception do
+          raise ESQLQueryException.CreateFmt(
+            'Error "%s" at binding value for parameter "%s" in "%s"',
+            [E.Message,fParams[cols[i]].fName,req]);
+      end;
+    fPrepared.ExecutePrepared;
+  finally
+    Connection.InternalProcess(speNonActive);
+  end;
 end;
 
 {$endif EMULATES_TQUERY}
@@ -2732,9 +2809,31 @@ end;
 
 procedure TSQLDBConnection.CheckConnection;
 begin
+  if self=nil then
+    raise ESQLDBException.Create('TSQLDBConnection not created');
   if not Connected then
     raise ESQLDBException.CreateFmt('%s on %s/%s should be connected',
       [ClassName,Properties.ServerName,Properties.DataBaseName]);
+end;
+
+procedure TSQLDBConnection.InternalProcess(Event: TOnSQLDBProcessEvent);
+begin
+  if (self=nil) or not Assigned(OnProcess) then
+    exit;
+  case Event of
+  speActive: begin
+    if fInternalProcessActive=0 then
+      OnProcess(self,Event);
+    inc(fInternalProcessActive);
+  end;
+  speNonActive: begin
+    dec(fInternalProcessActive);
+    if fInternalProcessActive=0 then
+      OnProcess(self,Event);
+  end;
+  else
+    OnProcess(self,Event);
+  end;
 end;
 
 procedure TSQLDBConnection.Commit;
@@ -2748,24 +2847,40 @@ end;
 constructor TSQLDBConnection.Create(aProperties: TSQLDBConnectionProperties);
 begin
   fProperties := aProperties;
+  if aProperties<>nil then
+    fOnProcess := aProperties.OnProcess;
 end;
 
-destructor TSQLDBConnection.Destroy;
+procedure TSQLDBConnection.Connect;
+begin
+  inc(fTotalConnectionCount);
+  if fTotalConnectionCount>1 then
+    InternalProcess(speReconnected);
+end;
+
+procedure TSQLDBConnection.Disconnect;
 var i: integer;
     Obj: PPointerArray;
 begin
-  try
+  if fCache<>nil then begin
+    InternalProcess(speActive);
     try
-      if fCache<>nil then begin
-        Obj := fCache.ObjectPtr;
-        if Obj<>nil then
-          for i := 0 to fCache.Count-1 do
-            TSQLDBStatement(Obj[i]).FRefCount := 0; // force clean release
-        FreeAndNil(fCache); // release all cached statements
-      end;
+      Obj := fCache.ObjectPtr;
+      if Obj<>nil then
+        for i := 0 to fCache.Count-1 do
+          TSQLDBStatement(Obj[i]).FRefCount := 0; // force clean release
+      FreeAndNil(fCache); // release all cached statements
     finally
-      Disconnect;
+      InternalProcess(speNonActive);
     end;
+  end;
+  fTransactionCount := 0; // flush transaction nesting level
+end;
+
+destructor TSQLDBConnection.Destroy;
+begin
+  try
+    Disconnect;
   except
     on E: Exception do
       SynDBLog.Add.Log(sllError,E);
@@ -2819,15 +2934,20 @@ begin
   // default implementation with no cache
   Stmt := nil;
   try
-    Stmt := NewStatement;
-    Stmt.Prepare(aSQL,ExpectResults);
-    if ToCache then begin
-      if fCache=nil then
-        fCache := TRawUTF8ListHashed.Create(true);
-      fCache.AddObject(aSQL,Stmt);
-      Stmt._AddRef;
+    InternalProcess(speActive);
+    try
+      Stmt := NewStatement;
+      Stmt.Prepare(aSQL,ExpectResults);
+      if ToCache then begin
+        if fCache=nil then
+          fCache := TRawUTF8ListHashed.Create(true);
+        fCache.AddObject(aSQL,Stmt);
+        Stmt._AddRef;
+      end;
+      result := Stmt;
+    finally
+      InternalProcess(speNonActive);
     end;
-    result := Stmt;
   except
     on E: Exception do begin
       Stmt.Free;
@@ -2871,6 +2991,7 @@ begin
     StartTransaction; // MUCH faster within a transaction
   try
     Ins := nil;
+   InternalProcess(speActive);
     try
       while Rows.Step do begin
         // init when first row of data is available
@@ -2893,6 +3014,7 @@ begin
         Commit;
     finally
       Ins.Free;
+      InternalProcess(speNonActive);
     end;
   except
     on Exception do begin
@@ -3901,7 +4023,12 @@ begin
       ftDate:     Value := ColumnDateTime(Col);
       ftCurrency: Value := ColumnCurrency(Col);
       ftBlob:     Value := ColumnBlob(Col);
-      ftUTF8:     Value := UTF8ToSynUnicode(ColumnUTF8(Col));
+      ftUTF8:
+        {$ifndef UNICODE}                
+        if fConnection.fProperties.VariantStringAsWideString then
+          Value := UTF8ToSynUnicode(ColumnUTF8(Col)) else
+        {$endif}
+          Value := UTF8ToString(ColumnUTF8(Col));
       else raise ESQLDBException.CreateFmt(
         'TSQLDBStatement.ColumnToVariant: Invalid ColumnType()=%d',[ord(result)]);
     end;
@@ -4035,8 +4162,13 @@ end;
 
 procedure TSQLDBStatement.Execute(const aSQL: RawUTF8; ExpectResults: Boolean);
 begin
-  Prepare(aSQL,ExpectResults);
-  ExecutePrepared;
+  Connection.InternalProcess(speActive);
+  try
+    Prepare(aSQL,ExpectResults);
+    ExecutePrepared;
+  finally
+    Connection.InternalProcess(speNonActive);
+  end;
 end;
 
 function TSQLDBStatement.FetchAllToJSON(JSON: TStream; Expanded: boolean;
@@ -4047,6 +4179,7 @@ begin
   result := 0;
   W := TJSONWriter.Create(JSON,Expanded,false);
   try
+    Connection.InternalProcess(speActive);
     // get col names and types
     SetLength(W.ColNames,ColumnCount);
     for col := 0 to ColumnCount-1 do
@@ -4063,6 +4196,7 @@ begin
     W.EndJSONObject(0,result);
   finally
     W.Free;
+    Connection.InternalProcess(speNonActive);
   end;
 end;
 
@@ -4154,9 +4288,14 @@ end;
 procedure TSQLDBStatement.Execute(const aSQL: RawUTF8;
   ExpectResults: Boolean; const Params: array of const);
 begin
-  Prepare(aSQL,ExpectResults);
-  Bind(Params);
-  ExecutePrepared;
+  Connection.InternalProcess(speActive);
+  try
+    Prepare(aSQL,ExpectResults);
+    Bind(Params);
+    ExecutePrepared;
+  finally
+    Connection.InternalProcess(speNonActive);
+  end;
 end;
 
 procedure TSQLDBStatement.Execute(SQLFormat: PUTF8Char;
@@ -4371,13 +4510,18 @@ procedure TSQLDBStatement.Prepare(const aSQL: RawUTF8;
   ExpectResults: Boolean);
 var L: integer;
 begin
-  L := length(aSQL);
-  if (L<>0) and (aSQL[L]=';') then // avoid syntax error for some drivers
-    fSQL := copy(aSQL,1,L-1) else
-    fSQL := aSQL;
-  fExpectResults := ExpectResults;
-  if not fConnection.IsConnected then
-    fConnection.Connect;
+  Connection.InternalProcess(speActive);
+  try
+    L := length(aSQL);
+    if (L<>0) and (aSQL[L]=';') then // avoid syntax error for some drivers
+      fSQL := copy(aSQL,1,L-1) else
+      fSQL := aSQL;
+    fExpectResults := ExpectResults;
+    if not fConnection.IsConnected then
+      fConnection.Connect;
+  finally
+    Connection.InternalProcess(speNonActive);
+  end;
 end;
 
 procedure TSQLDBStatement.Reset;

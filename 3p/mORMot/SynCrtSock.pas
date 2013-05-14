@@ -135,6 +135,7 @@ unit SynCrtSock;
   - included more detailed information to HTTP client User-Agent header
   - added ResolveTimeout/ConnectTimeout/SendTimeout/ReceiveTimeout properties
     to TWinHttpAPI classes - feature request [bfe485b678]
+  - added 'ConnectionID: 1234578' to the HTTP headers - request [0636eeec54]
   - fixed ticket [82df275784] TWinHttpAPI with responses without Content-Length
   - fixed ticket [f0749956af] TWinINet does not work with HTTPS servers
   - fixed ticket [842a5ae15a] THttpApiServer.Execute/SendError message
@@ -142,6 +143,7 @@ unit SynCrtSock;
   - fixed ticket [73da2c17b1] about unneeded Accept-Encoding header in response
   - fixed ticket [cbcbb3b2fc] about PtrInt definition
   - fixed ticket [91f8f3ec6f] about error retrieving unknown headers
+  - fixed ticket [f79ff5714b] about potential finalization issues as .bpl in IDE
 
 }
 
@@ -2811,6 +2813,21 @@ begin
 end;
 
 
+const
+  HexChars: array[0..15] of AnsiChar = '0123456789ABCDEF';
+
+procedure BinToHexDisplay(Bin: PByte; BinBytes: integer; var result: shortstring);
+var j: cardinal;
+begin
+  result[0] := AnsiChar(BinBytes*2);
+  for j := BinBytes-1 downto 0 do begin
+    result[j*2+1] := HexChars[Bin^ shr 4];
+    result[j*2+2] := HexChars[Bin^ and $F];
+    inc(Bin);
+  end;
+end;
+
+
 { THttpServerSocket }
 
 procedure THttpServerSocket.InitRequest(aClientSock: TSocket);
@@ -2829,8 +2846,10 @@ end;
 function THttpServerSocket.HeaderGetText: RawByteString;
 var Name: TVarSin;
     IP: RawByteString;
+    ConnectionID: shortstring;
 begin
-  result := inherited HeaderGetText;
+  BinToHexDisplay(@Sock,4,ConnectionID);
+  result := inherited HeaderGetText+'ConnectionID: '+ConnectionID+#13#10;
   if GetSockName(Sock,Name)<>0 then
     exit;
   IP := GetSinIP(Name);
@@ -2898,14 +2917,11 @@ begin
   inherited CreateFmt('%s %d',[Msg,-Error]);
 end;
 
-
 {$ifdef Win32}
 function GetRemoteMacAddress(const IP: AnsiString): RawByteString;
 // implements http://msdn.microsoft.com/en-us/library/aa366358
 type
   TSendARP = function(DestIp: DWORD; srcIP: DWORD; pMacAddr: pointer; PhyAddrLen: Pointer): DWORD; stdcall;
-const
-  HexChars: array[0..15] of AnsiChar = '0123456789ABCDEF';
 var dwRemoteIP: DWORD;
     PhyAddrLen: Longword;
     pMacAddr : array [0..7] of byte;
@@ -3712,7 +3728,7 @@ end;
 destructor THttpApiServer.Destroy;
 var i: Integer;
 begin
-  if fClones<>nil then begin  // fClones=nil for clone threads
+  if (fClones<>nil) and (Http.Module<>0) then begin  // fClones=nil for clone threads
     if fReqQueue<>0 then begin 
       for i := 0 to high(fRegisteredUrl) do
         Http.RemoveUrl(fReqQueue,Pointer(fRegisteredUrl[i]));
@@ -3757,50 +3773,54 @@ const
     'Proxy-Authorization','Referer','Range','TE','Translate','User-Agent');
   REMOTEIP_HEADERLEN = 10;
   REMOTEIP_HEADER: string[REMOTEIP_HEADERLEN] = 'RemoteIP: ';
+  CONNECTIONID_HEADERLEN = 14;
+  CONNECTIONID_HEADER: string[CONNECTIONID_HEADERLEN] = 'ConnectionID: ';
 
-function RetrieveHeaders(const Head: HTTP_REQUEST_HEADERS;
-  const Address: PSOCKADDR): RawByteString;
+function RetrieveHeaders(const Request: HTTP_REQUEST): RawByteString;
 var i, L: integer;
     H: THttpHeader;
     P: PHTTP_UNKNOWN_HEADER;
     D: PAnsiChar;
-    RemoteIP: ShortString;
+    RemoteIP, ConnectionID: ShortString;
 begin
-  assert(low(KNOWNHEADERS_NAME)=low(Head.KnownHeaders));
-  assert(high(KNOWNHEADERS_NAME)=high(Head.KnownHeaders));
-  if Address<>nil then
-    GetSinIPShort(PVarSin(Address)^,RemoteIP) else
+  assert(low(KNOWNHEADERS_NAME)=low(Request.Headers.KnownHeaders));
+  assert(high(KNOWNHEADERS_NAME)=high(Request.Headers.KnownHeaders));
+  if Request.Address.pRemoteAddress<>nil then
+    GetSinIPShort(PVarSin(Request.Address.pRemoteAddress)^,RemoteIP) else
     RemoteIP[0] := #0;
+  BinToHexDisplay(@Request.ConnectionId,8,ConnectionID);
   // compute headers length
   if RemoteIP[0]<>#0 then
     L := (REMOTEIP_HEADERLEN+2)+ord(RemoteIP[0]) else
     L := 0;
+  inc(L,(CONNECTIONID_HEADERLEN+2)+ord(ConnectionID[0]));
   for H := low(KNOWNHEADERS_NAME) to high(KNOWNHEADERS_NAME) do
-    if Head.KnownHeaders[H].RawValueLength<>0 then
-      inc(L,Head.KnownHeaders[H].RawValueLength+ord(KNOWNHEADERS_NAME[H][0])+4);
-  P := Head.pUnknownHeaders;
+    if Request.Headers.KnownHeaders[H].RawValueLength<>0 then
+      inc(L,Request.Headers.KnownHeaders[H].RawValueLength+ord(KNOWNHEADERS_NAME[H][0])+4);
+  P := Request.Headers.pUnknownHeaders;
   if P<>nil then
-    for i := 1 to Head.UnknownHeaderCount do begin
+    for i := 1 to Request.Headers.UnknownHeaderCount do begin
       inc(L,P^.NameLength+P^.RawValueLength+4); // +4 for each ': '+#13#10
       inc(P);
     end;
   // set headers content
   SetString(result,nil,L);
   D := pointer(result);
-  for H := low(Head.KnownHeaders) to high(Head.KnownHeaders) do
-    if Head.KnownHeaders[H].RawValueLength<>0 then begin
+  for H := low(KNOWNHEADERS_NAME) to high(KNOWNHEADERS_NAME) do
+    if Request.Headers.KnownHeaders[H].RawValueLength<>0 then begin
       move(KNOWNHEADERS_NAME[H][1],D^,ord(KNOWNHEADERS_NAME[H][0]));
       inc(D,ord(KNOWNHEADERS_NAME[H][0]));
       PWord(D)^ := ord(':')+ord(' ')shl 8;
       inc(D,2);
-      move(Head.KnownHeaders[H].pRawValue^,D^,Head.KnownHeaders[H].RawValueLength);
-      inc(D,Head.KnownHeaders[H].RawValueLength);
+      move(Request.Headers.KnownHeaders[H].pRawValue^,D^,
+        Request.Headers.KnownHeaders[H].RawValueLength);
+      inc(D,Request.Headers.KnownHeaders[H].RawValueLength);
       PWord(D)^ := 13+10 shl 8;
       inc(D,2);
     end;
-  P := Head.pUnknownHeaders;
+  P := Request.Headers.pUnknownHeaders;
   if P<>nil then
-    for i := 1 to Head.UnknownHeaderCount do begin
+    for i := 1 to Request.Headers.UnknownHeaderCount do begin
       move(P^.pName^,D^,P^.NameLength);
       inc(D,P^.NameLength);
       PWord(D)^ := ord(':')+ord(' ')shl 8;
@@ -3819,6 +3839,12 @@ begin
     PWord(D)^ := 13+10 shl 8;
     inc(D,2);
   end;
+  move(CONNECTIONID_HEADER[1],D^,CONNECTIONID_HEADERLEN);
+  inc(D,CONNECTIONID_HEADERLEN);
+  move(ConnectionID[1],D^,ord(ConnectionID[0]));
+  inc(D,ord(ConnectionID[0]));
+  PWord(D)^ := 13+10 shl 8;
+  inc(D,2);
   assert(D-pointer(result)=L);
 end;
 
@@ -3894,7 +3920,7 @@ begin
           with Req^.Headers.KnownHeaders[reqAcceptEncoding] do
             SetString(InAcceptEncoding,pRawValue,RawValueLength);
           InCompressAccept := SetCompressHeader(fCompress,pointer(InAcceptEncoding));
-          Context.fInHeaders := RetrieveHeaders(Req^.Headers,Req^.Address.pRemoteAddress);
+          Context.fInHeaders := RetrieveHeaders(Req^);
           // retrieve body
           Context.fInContent := '';
           if HTTP_REQUEST_FLAG_MORE_ENTITY_BODY_EXISTS and Req^.Flags<>0 then begin
@@ -4580,6 +4606,15 @@ initialization
 
 finalization
   if WsaDataOnce.wVersion<>0 then
-    WSACleanup;
+  try
+    if Assigned(WSACleanup) then
+      WSACleanup;
+  finally
+    fillchar(WsaDataOnce,sizeof(WsaDataOnce),0);
+  end;
+  if Http.Module<>0 then begin
+    FreeLibrary(Http.Module);
+    Http.Module := 0;
+  end;
   DestroySocketInterface;
 end.

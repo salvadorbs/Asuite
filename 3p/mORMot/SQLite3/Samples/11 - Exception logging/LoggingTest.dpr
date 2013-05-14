@@ -16,6 +16,7 @@ program LoggingTest;
 uses
   Windows,
   SysUtils,
+  ComObj,
   //SynZip,
 {$ifdef CONDITIONALEXPRESSIONS}
   mORMot,
@@ -181,6 +182,20 @@ begin
   except
     on E: Exception do
       TSQLLog.Add.Log(sllInfo,'^^^^^^^^  nothing should be logged just above',E);
+  end;
+  // try an Exception with message='' - see ticket [388c2768b6]
+  try
+    raise Exception.Create('');
+  except
+    on E: Exception do
+      TSQLLog.Add.Log(sllInfo,'^^^^^^^^  Exception.Message=""',E);
+  end;
+  // try a EOleSysError, as if it was triggered from the .Net CLR
+  try
+    raise EOleSysError.Create('Test',HRESULT($80004003),0);
+  except
+    on E: Exception do
+      TSQLLog.Add.Log(sllInfo,'^^^^^^^^  should be recognized as NullReferenceException',E);
   end;
 end;
 

@@ -183,8 +183,13 @@ unit mORMotReport;
   - TGdiPages now handles several page layouts per report - see new overloaded
     TGDIPages.NewPageLayout() methods and also Orientation property which now
     allows several page orientations per report - feature request [204b698b3d]
+  - now internal page content (TMetaFile) is compressed using our SynLZ
+    algorithm: we were able to generate reports with more than 20,000 pages! 
+  - speed up and memory resource decrease for pdf export of huge reports
   - fixed issue about disabled Zoom menu entry if no Outline is defined
   - added ExportPDFBackground property
+  - added setter method for ZoomStatus property (during preview) - [dd656b470b]
+  - added TGDIPages.ExportPDFStream() method - to be used e.g. on servers
 
 
 *)
@@ -214,7 +219,7 @@ interface
 {$I Synopse.inc} // define HASINLINE USETYPEINFO CPU32 CPU64 OWNNORMTOUPPER
 
 uses
-  SynCommons,
+  SynCommons, SynLz,
 {$ifndef USEPDFPRINTER}
   SynPdf,
 {$endif}
@@ -323,9 +328,9 @@ type
   end;
 
   /// contains one page
-  TGDIPageContent = record
-    /// drawn content of the page
-    MetaFile: TMetaFile;
+  TGDIPageContent = object
+    /// SynLZ-compressed content of the page
+    MetaFileCompressed: RawByteString;
     /// text equivalent of the page
     Text: string;
     /// the physical page size
@@ -443,14 +448,18 @@ type
     fPagesToFooterText: string; // not SynUnicode, since calls format()
     fPagesToFooterAt: TPoint;
     fPagesToFooterState: TSavedState;
+    fMetaFileForPage: TMetaFile;
+    fCurrentMetaFile: TMetaFile;
 
     procedure GetPrinterParams;
     procedure SetAnyCustomPagePx;
     function  GetPaperSize: TSize;
-    procedure UpdatePageSettings;
+    procedure FlushPageContent;
     function  PrinterPxToScreenPxX(PrinterPx: integer): integer;
     function  PrinterPxToScreenPxY(PrinterPx: integer): integer;
     procedure ResizeAndCenterPaintbox;
+    function GetMetaFileForPage(PageIndex: integer): TMetaFile;
+    procedure SetMetaFileForPage(PageIndex: integer; MetaFile: TMetaFile);
 
     function  GetOrientation: TPrinterOrientation;
     procedure SetOrientation(orientation: TPrinterOrientation);
@@ -481,6 +490,7 @@ type
     procedure PrintColumnHeaders;
 
     procedure SetZoom(zoom: integer);
+    procedure SetZoomStatus(aZoomStatus: TZoomStatus); 
     procedure ZoomTimerInternal(X,Y: integer; ZoomIn: boolean);
     procedure ZoomTimer(Sender: TObject);
 
@@ -727,7 +737,7 @@ type
     // - if PrintFrom=0 and PrintTo=0, then all pages are printed
     // - if PrintFrom=-1 or PrintTo=-1, then a printer dialog is displayed
     function PrintPages(PrintFrom, PrintTo: integer): boolean;
-    /// export the current report as PDF
+    /// export the current report as PDF file
 {$ifdef USEPDFPRINTER}
     // - uses an external 'PDF' printer
 {$else}
@@ -736,6 +746,12 @@ type
 {$endif}
     function ExportPDF(aPdfFileName: TFileName; ShowErrorOnScreen: boolean;
       LaunchAfter: boolean=true): boolean;
+{$ifndef USEPDFPRINTER}
+    /// export the current report as PDF in a specified stream
+    // - uses internal PDF code, from Synopse PDF engine (handle bookmarks,
+    // outline and twin bitmaps) - in this case, a file name can be set
+    function ExportPDFStream(aDest: TStream): boolean;
+{$endif}
     /// show a form with the preview, allowing the user to browse pages and
     // print the report
     procedure ShowPreviewForm;
@@ -1010,9 +1026,17 @@ type
     /// the paper orientation
     property Orientation: TPrinterOrientation read GetOrientation write SetOrientation;
     /// the current Zoom value, according to the zoom status
+    // - you can use PAGE_WIDTH and PAGE_FIT constants to force the corresponding
+    // zooming mode (similar to ZoomStatus property setter)
+    // - set this property will work only when the report is already shown
+    // in preview mode, not before ShowPreviewForm method call
     property Zoom: integer read fZoom write SetZoom;
     /// the current Zoom procedure, i.e. zsPercent, zsPageFit or zsPageWidth
-    property ZoomStatus: TZoomStatus read fZoomStatus;
+    // - set this property will define the Zoom at PAGE_WIDTH or PAGE_FIT
+    // special constant, if needed
+    // - set this property will work only when the report is already shown
+    // in preview mode, not before ShowPreviewForm method call
+    property ZoomStatus: TZoomStatus read fZoomStatus write SetZoomStatus;
     /// if set to true, we reduce the precision for better screen display
     property ForceScreenResolution: boolean
       read fForceScreenResolution write fForceScreenResolution;
@@ -1317,8 +1341,9 @@ const
   /// minimum gray border with around preview page
   GRAY_MARGIN = 10;
 
-  //preview page zoom options...
+  /// TGdiPages.Zoom property value for "Page width" layout during preview
   PAGE_WIDTH = -1;
+  /// TGdiPages.Zoom property value for "Page fit" layout during preview
   PAGE_FIT   = -2;
 
   //TEXT FORMAT FLAGS...
@@ -1769,6 +1794,41 @@ begin
   end;
 end;
 
+procedure TGDIPages.SetMetaFileForPage(PageIndex: integer; MetaFile: TMetaFile);
+var stream: TRawByteStringStream;
+begin
+  if cardinal(PageIndex)>=cardinal(length(fPages)) then
+    exit;
+  stream := TRawByteStringStream.Create;
+  try
+    MetaFile.SaveToStream(stream);
+    fPages[PageIndex].MetaFileCompressed := stream.DataString;
+    CompressSynLZ(fPages[PageIndex].MetaFileCompressed,true);
+  finally
+    stream.Free;
+  end;
+end;
+
+function TGDIPages.GetMetaFileForPage(PageIndex: integer): TMetaFile;
+var tmp: RawByteString;
+    stream: TStream;
+begin
+  if fMetaFileForPage=nil then
+    fMetaFileForPage := TMetafile.Create else
+    fMetaFileForPage.Clear;
+  result := fMetaFileForPage;
+  if cardinal(PageIndex)>=cardinal(length(fPages)) then
+    exit;
+  tmp := fPages[PageIndex].MetaFileCompressed;
+  CompressSynLZ(tmp,false);
+  stream := TRawByteStringStream.Create(tmp);
+  try
+    fMetaFileForPage.LoadFromStream(stream);
+  finally
+    stream.Free;
+  end;
+end;
+
 function TGDIPages.PrinterPxToScreenPxX(PrinterPx: integer): integer;
 begin
   if (Self=nil) or (fPrinterPxPerInch.x=0) then
@@ -2044,23 +2104,27 @@ begin
   result.Height := aHeight;
 end;
 
-procedure TGDIPages.UpdatePageSettings;
+procedure TGDIPages.FlushPageContent;
 var n: integer;
 begin
   n := length(fPages);
-  if n>0 then
+  if n>0 then begin
     with fPages[n-1] do begin
       Text := fCanvasText;
       SizePx := fPhysicalSizePx;
       MarginPx := fPageMarginsPx;
       OffsetPx := fPhysicalOffsetPx;
     end;
+    if fCurrentMetaFile<>nil then begin
+      SetMetaFileForPage(n-1,fCurrentMetaFile);
+      FreeAndNil(fCurrentMetaFile);
+    end;
+  end;
 end;
 
 procedure TGDIPages.NewPageInternal;
 var n: integer;
     UsedGroupSpace: integer;
-    NewPage: TMetafile;
     InGroup: boolean;
     GroupText: string;
 begin
@@ -2070,8 +2134,8 @@ begin
   if InGroup then begin // close the Group Canvas
     UsedGroupSpace := fCurrentYPos;
     FreeAndNil(fCanvas); // now recreate/redraw a fresh fCanvas for DoFooter
-    fCanvas := CreateMetafileCanvas(fPages[high(fPages)].MetaFile);
-    fCanvas.Draw(0,0,fPages[high(fPages)].MetaFile); // re-draw last page
+    fCanvas := CreateMetafileCanvas(fCurrentMetaFile);
+    fCanvas.Draw(0,0,fCurrentMetaFile); // re-draw last page
     GroupText := fCanvasText;
     fCanvasText := fBeforeGroupText;
   end;
@@ -2079,20 +2143,19 @@ begin
   //create a new metafile and its canvas ...
   if Assigned(fCanvas) then
     FreeAndNil(fCanvas);
-  UpdatePageSettings;
+  FlushPageContent;
   SetAnyCustomPagePx;
-  NewPage := CreateMetaFile(fPhysicalSizePx.x,fPhysicalSizePx.y);
   //NewPage.MMWidth := (fPhysicalSizePx.x*2540) div fPrinterPxPerInch.x;
   //NewPage.MMHeight := (fPhysicalSizePx.y*2540) div fPrinterPxPerInch.y;
-  n := Length(fPages);
-  SetLength(fPages,n+1);
-  fPages[n].MetaFile := NewPage;
-  fCanvas := CreateMetafileCanvas(NewPage);
+  n := Length(fPages)+1;
+  SetLength(fPages,n);
+  fCurrentMetaFile := CreateMetaFile(fPhysicalSizePx.x,fPhysicalSizePx.y);
+  fCanvas := CreateMetafileCanvas(fCurrentMetaFile);
   fCanvasText := '';
   inc(fVirtualPageNum);
   fCurrentYPos := fPageMarginsPx.top;
   if Assigned(fStartNewPage) then
-    fStartNewPage(Self,n+1);
+    fStartNewPage(Self,n);
   fHeaderDone := false;
   fColumnHeaderPrinted := false; // when next col. started add header
   if InGroup then begin // draw the group at the begining of new page + EndGroup
@@ -2310,6 +2373,19 @@ begin
     fColumnHeaderInGroup := true;
   fColumnHeaderPrintedAtLeastOnce :=
     ForceCopyTextAsWholeContent; // don't reproduce headers every page
+end;
+
+procedure TGDIPages.SetZoomStatus(aZoomStatus: TZoomStatus);
+var zoom: integer;
+begin
+  if (self=nil) or (aZoomStatus=fZoomStatus) then
+    exit;
+  case aZoomStatus of
+    zsPageFit:   zoom := PAGE_FIT;
+    zsPageWidth: zoom := PAGE_WIDTH;
+    else         zoom := fZoom;
+  end;
+  SetZoom(zoom);
 end;
 
 procedure TGDIPages.SetZoom(Zoom: integer);
@@ -2638,8 +2714,6 @@ end;
 
 procedure TGDIPages.PreviewPaint(Sender: TObject);
 var R: TRect;
-    MS: TMemoryStream;
-    Img: TMetaFile;
     P1,P2: TPoint;
 begin
   if not Visible then begin
@@ -2669,25 +2743,13 @@ begin
 {$ifdef GDIPLUSDRAW} // anti aliased drawing:
       if not ForceNoAntiAliased then
         DrawEmfGdip(PreviewSurfaceBitmap.Canvas.Handle,
-          fPages[Page-1].MetaFile,R,ForceInternalAntiAliased,
+          GetMetaFileForPage(Page-1),R,ForceInternalAntiAliased,
           ForceInternalAntiAliasedFontFallBack) else
 {$endif} begin // fast direct GDI painting, with no antialiaising:
-        // PreviewSurfaceBitmap.Canvas.StretchDraw(R,TMetaFile(Pages.Objects[Page-1]))
-        // is not to be used here:
-        // we must use a temporary TMetaFile, otherwize the Pages[] content
+        // note: we must use a temporary TMetaFile, otherwize the Pages[] content
         // is changed (screen dpi is changed but not reset in nested emf) and the
         // resulting report is incorrect on most printers, due to a driver bug :(
-        MS := TMemoryStream.Create;
-        Img := TMetaFile.Create;
-        try
-          fPages[Page-1].MetaFile.SaveToStream(MS);
-          MS.Seek(0,soFromBeginning);
-          Img.LoadFromStream(MS);
-          PreviewSurfaceBitmap.Canvas.StretchDraw(R,Img);
-        finally
-          Img.Free;
-          MS.Free;
-        end;
+        PreviewSurfaceBitmap.Canvas.StretchDraw(R,GetMetaFileForPage(Page-1));
       end;
       PreviewSurfaceBitmap.Canvas.Refresh;
     end;
@@ -3083,6 +3145,8 @@ begin
   fOutline.Free;
   fLinks.Free;
   fBookmarks.Free;
+  fMetaFileForPage.Free;
+  fCurrentMetaFile.Free;
   inherited Destroy;
 end;
 
@@ -3474,15 +3538,13 @@ begin
 end;
 
 procedure TGDIPages.EndGroup;
-var LastPage: TMetaFile;
 begin
   if Self=nil then exit; // avoid GPF
   if not Assigned(fGroupPage) then
     exit;
   FreeAndNil(fCanvas); //closes fGroupPage canvas
-  LastPage := fPages[high(fPages)].MetaFile;
-  fCanvas := CreateMetafileCanvas(LastPage);
-  fCanvas.Draw(0,0,LastPage);     //re-draw the last page
+  fCanvas := CreateMetafileCanvas(fCurrentMetaFile);
+  fCanvas.Draw(0,0,fCurrentMetaFile);     //re-draw the last page
   fCanvas.Draw(0,fGroupVerticalPos,fGroupPage); //add the Group data
   FreeAndNil(fGroupPage);                       //destroy Group metafile
   inc(fCurrentYPos,fGroupVerticalPos);
@@ -3551,30 +3613,33 @@ begin
   n := length(fPages);
   if (n>1) and not HeaderDone then begin
     // cancel the last page if it hasn't been started ...
-    fPages[n-1].MetaFile.Free;
+    FreeAndNil(fCurrentMetaFile);
     dec(n);
     SetLength(fPages,n);
   end else
-    UpdatePageSettings;
+    FlushPageContent;
   if (n>0) and (fPagesToFooterText<>'') then
     // add 'Page #/#' caption at the specified position
-    for i := 0 to n-1 do
-    with fPages[i] do begin
-      Page := CreateMetaFile(SizePx.X,SizePx.Y);
-      fCanvas := CreateMetafileCanvas(Page);
-      fCanvas.Draw(0,0,MetaFile); // re-draw the original page
-      s := format(fPagesToFooterText,[i+1,n]); // add 'Page #/#' caption
-      aX := fPagesToFooterAt.X;
-      if aX<0 then
-        aX := SizePx.X-MarginPx.Right;
-      SavedState := fPagesToFooterState;
-      if TextAlign=taRight then
-        dec(aX,fCanvas.TextWidth(s));
-      fCanvas.TextOut(aX,SizePx.Y-MarginPx.bottom-fFooterHeight+
-        fFooterGap+fPagesToFooterAt.Y,s);
-      FreeAndNil(fCanvas);
-      MetaFile.Free;
-      MetaFile := Page; // replace page content
+    for i := 0 to n-1 do begin
+      Page := CreateMetaFile(fPages[i].SizePx.X,fPages[i].SizePx.Y);
+      try
+        fCanvas := CreateMetafileCanvas(Page);
+        fCanvas.Draw(0,0,GetMetaFileForPage(i)); // re-draw the original page
+        s := format(fPagesToFooterText,[i+1,n]); // add 'Page #/#' caption
+        aX := fPagesToFooterAt.X;
+        if aX<0 then
+          aX := fPages[i].SizePx.X-fPages[i].MarginPx.Right;
+        SavedState := fPagesToFooterState;
+        if TextAlign=taRight then
+          dec(aX,fCanvas.TextWidth(s));
+        with fPages[i] do
+          fCanvas.TextOut(aX,SizePx.Y-MarginPx.bottom-fFooterHeight+
+            fFooterGap+fPagesToFooterAt.Y,s);
+        FreeAndNil(fCanvas);
+        SetMetaFileForPage(i,Page); // replace page content
+      finally
+        Page.Free;
+      end;
     end;
   // OK, all Metafile pages have now been created and added to Pages[]
   if Assigned(fOnDocumentProducedEvent) then
@@ -3690,7 +3755,7 @@ begin
           BMP.Height := GetDeviceCaps(handle, PHYSICALHEIGHT);
           for i := PrintFrom to PrintTo do
           with fPages[i] do begin
-            BMP.Canvas.StretchDraw(Rect(0,0,Bmp.Width,Bmp.Height),MetaFile);
+            BMP.Canvas.StretchDraw(Rect(0,0,Bmp.Width,Bmp.Height),GetMetaFileForPage(i));
             Canvas.Draw(-OffsetPx.x,-OffsetPx.y,BMP);
             if i<PrintTo then
               NewPage;
@@ -3707,13 +3772,13 @@ begin
             GetDeviceCaps(handle, PHYSICALHEIGHT));
           OffsetRect(rec, -GetDeviceCaps(handle,PHYSICALOFFSETX),
             -GetDeviceCaps(handle,PHYSICALOFFSETY));
-          Canvas.StretchDraw(rec,Pages[i].MetaFile);
+          Canvas.StretchDraw(rec,GetMetaFileForPage(i));
         end else
         with fPages[i] do
         if UseStretchDraw then
           Canvas.StretchDraw(Rect(-OffsetPx.x,-OffsetPx.y,
-            SizePx.x-OffsetPx.x, SizePx.y-OffsetPx.y),MetaFile) else
-          Canvas.Draw(-OffsetPx.x,-OffsetPx.y,MetaFile);
+            SizePx.x-OffsetPx.x, SizePx.y-OffsetPx.y),GetMetaFileForPage(i)) else
+          Canvas.Draw(-OffsetPx.x,-OffsetPx.y,GetMetaFileForPage(i));
         if i<PrintTo then
           NewPage;
       end;
@@ -4231,15 +4296,13 @@ begin
     List.Objects[i].Free;
   List.Clear;
 end;
-var i: integer;
 begin
   if Self=nil then exit; // avoid GPF
   if Assigned(fCanvas) then
     FreeAndNil(fCanvas);
   if Assigned(fGroupPage) then
     FreeAndNil(fGroupPage);
-  for i := 0 to high(fPages) do
-    fPages[i].MetaFile.Free;
+  FreeAndNil(fCurrentMetaFile);
   SetLength(fPages,0);
   ClearObjects(fBookmarks);
   ClearObjects(fLinks);
@@ -4545,6 +4608,61 @@ begin
     OnPopupMenuPopup(Sender);
 end;
 
+{$ifndef USEPDFPRINTER}
+function TGDIPages.ExportPDFStream(aDest: TStream): boolean;
+var PDF: TPDFDocument;
+    BackgroundImage: TPdfImage;
+    page: TPdfPage;
+    i: integer;
+begin
+  try
+    PDF := TPDFDocument.Create(UseOutlines,0,ExportPDFA1);
+    try
+      //PDF.CompressionMethod := cmNone;
+      with PDF.Info do begin
+        Title := SysUtils.Trim(Caption);
+        if ExportPDFApplication='' then
+          Creator := trim(Application.Title) else
+          Creator := trim(ExportPDFApplication);
+        Author := ExportPDFAuthor;
+        Subject := ExportPDFSubject;
+        Keywords := ExportPDFKeywords;
+      end;
+      PDF.EmbeddedTTF := ExportPDFEmbeddedTTF;
+      {$ifndef NO_USE_UNISCRIBE}
+      PDF.UseUniscribe := ExportPDFUseUniscribe;
+      {$endif}
+      PDF.UseFontFallBack := ExportPDFUseFontFallBack;
+      if ExportPDFFontFallBackName<>'' then
+        PDF.FontFallBackName := ExportPDFFontFallBackName;
+      PDF.ForceJPEGCompression := ExportPDFForceJPEGCompression;
+      if ExportPDFBackground=nil then
+        BackgroundImage := nil else begin
+        BackgroundImage := TPdfImage.Create(PDF,ExportPDFBackground,true);
+        PDF.AddXObject('BackgroundImage',BackgroundImage);
+      end;
+      PDF.SaveToStreamDirectBegin(aDest);
+      for i := 0 to PageCount-1 do
+      with Pages[i] do begin
+        // this loop will do all the magic :)
+        PDF.DefaultPageWidth := PdfCoord(25.4*SizePx.X/fPrinterPxPerInch.x);
+        PDF.DefaultPageHeight := PdfCoord(25.4*SizePx.Y/fPrinterPxPerInch.y);
+        page := PDF.AddPage;
+        if BackgroundImage<>nil then
+          PDF.Canvas.DrawXObject(0,0,page.PageWidth,page.PageHeight,'BackgroundImage');
+        PDF.Canvas.RenderMetaFile(GetMetaFileForPage(i),Screen.PixelsPerInch/fPrinterPxPerInch.x);
+        PDF.SaveToStreamDirectPageFlush;
+      end;
+      PDF.SaveToStreamDirectEnd;
+    finally
+      PDF.Free;
+    end;
+    result := true;
+  except
+    result := false;
+  end;
+end;
+{$endif}
 
 function TGDIPages.ExportPDF(aPdfFileName: TFileName; ShowErrorOnScreen: boolean;
   LaunchAfter: boolean): boolean;
@@ -4563,13 +4681,11 @@ begin
   SetLength(Result,i);
   result := trim(result);
 end;
-var PDF: TPDFDocument;
-    PDFFileName: TFileName;
+var PDFFileName: TFileName;
+    PDFFile: TFileStream;
     i: integer;
     Name: string;
     TempDir: TFileName;
-    BackgroundImage: TPdfImage;
-    page: TPdfPage;
 {$endif}
 begin
   result := False;
@@ -4609,46 +4725,12 @@ begin
     Free;
   end else
     PDFFileName := aPdfFileName;
-  PDF := TPDFDocument.Create(UseOutlines,0,ExportPDFA1);
   try
+    PDFFile := TFileStream.Create(PDFFileName,fmCreate);
     try
-      //PDF.CompressionMethod := cmNone;
-      with PDF.Info do begin
-        Title := SysUtils.Trim(Caption);
-        if ExportPDFApplication='' then
-          Name := Application.Title else
-          Name := ExportPDFApplication;
-        Creator := Name;
-        Author := ExportPDFAuthor;
-        Subject := ExportPDFSubject;
-        Keywords := ExportPDFKeywords;
-      end;
-      PDF.EmbeddedTTF := ExportPDFEmbeddedTTF;
-      {$ifndef NO_USE_UNISCRIBE}
-      PDF.UseUniscribe := ExportPDFUseUniscribe;
-      {$endif}
-      PDF.UseFontFallBack := ExportPDFUseFontFallBack;
-      if ExportPDFFontFallBackName<>'' then
-        PDF.FontFallBackName := ExportPDFFontFallBackName;
-      PDF.ForceJPEGCompression := ExportPDFForceJPEGCompression;
-      if ExportPDFBackground=nil then
-        BackgroundImage := nil else begin
-        BackgroundImage := TPdfImage.Create(PDF,ExportPDFBackground,true);
-        PDF.AddXObject('BackgroundImage',BackgroundImage);
-      end;
-      for i := 0 to PageCount-1 do
-      with Pages[i] do begin
-        // this loop will do all the magic :)
-        PDF.DefaultPageWidth := PdfCoord(25.4*SizePx.X/fPrinterPxPerInch.x);
-        PDF.DefaultPageHeight := PdfCoord(25.4*SizePx.Y/fPrinterPxPerInch.y);
-        page := PDF.AddPage;
-        if BackgroundImage<>nil then
-          PDF.Canvas.DrawXObject(0,0,page.PageWidth,page.PageHeight,'BackgroundImage');
-        PDF.Canvas.RenderMetaFile(MetaFile,Screen.PixelsPerInch/fPrinterPxPerInch.x);
-      end;
-      PDF.SaveToFile(PDFFileName);
+      ExportPDFStream(PDFFile);
     finally
-      PDF.Free;
+      PDFFile.Free;
     end;
     if LaunchAfter then
       ShellExecute(Application.MainForm.Handle,'open',Pointer(PDFFileName),

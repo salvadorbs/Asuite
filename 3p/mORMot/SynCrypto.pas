@@ -203,6 +203,11 @@ unit SynCrypto;
      PKCS7 padding)
    - added pure pascal version (for XE2 64 compilation) of all algorithms
 
+   Version 1.18
+   - tested compilation for Win64 platform
+   - added overloaded procedure TMD5.Final()
+   - introduce new TRC4 object for RC4 encryption algorithm
+
 *)
 
 interface
@@ -311,7 +316,7 @@ type
   end;
 
   TAESAbstractClass = class of TAESAbstract;
-  
+
   /// handle AES cypher/uncypher with chaining
   // - use any of the inherited implementation, accorsponding to the chaining
   // mode required - TAESECB, TAESCBC, TAESCFB, TAESOFB and TAESCTR classes to
@@ -336,7 +341,7 @@ type
     constructor Create(const aKey; aKeySize: cardinal; const aIV: TAESBlock); virtual;
     /// perform the AES cypher in the corresponding mode
     // - this abstract method will set CV from AES.Context, and fIn/fOut
-    // from BufIn/BufOut 
+    // from BufIn/BufOut
     procedure Encrypt(BufIn, BufOut: pointer; Count: cardinal); virtual;
     /// perform the AES un-cypher in the corresponding mode
     // - this abstract method will set CV from AES.Context, and fIn/fOut
@@ -457,12 +462,14 @@ type
   TMD5Digest = array[0..15] of Byte;
   PMD5 = ^TMD5;
   TMD5Buf = array[0..3] of cardinal;
+
   /// handle MD5 hashing
   TMD5 = object
   private
     buf: TMD5Buf;
     bytes: array[0..1] of cardinal;
     in_: TMD5In;
+    procedure Finalize;
   public
     /// initialize MD5 context for hashing
     procedure Init;
@@ -470,10 +477,37 @@ type
     procedure Update(const buffer; Len: cardinal);
     /// finalize and compute the resulting MD5 hash Digest of all data
     // affected to Update() method
-    function Final: TMD5Digest;
+    procedure Final(out result: TMD5Digest); overload;
+    /// finalize and compute the resulting MD5 hash Digest of all data
+    // affected to Update() method
+    function Final: TMD5Digest; overload;
     /// one method to rule them all
     // - call Init, then Update(), then Final()
     procedure Full(Buffer: pointer; Len: integer; out Digest: TMD5Digest);
+  end;
+
+  /// internal key permutation buffer, as used by TRC4
+  TRC4InternalKey = array[byte] of byte;
+
+  /// handle RC4 encryption/decryption
+  TRC4 = object
+  private
+    key: TRC4InternalKey;
+  public
+    /// initialize the RC4 encryption/decryption
+    // - KeyLen is in bytes, and should be within 1..255 range
+    procedure Init(const aKey; aKeyLen: integer);
+    /// perform the RC4 cypher encryption/decryption on a buffer
+    // - each call to this method shall be preceded with an Init() call,
+    // or a RestoreKey() from a previous SaveKey(), since it will change
+    // the internal key[] during its process
+    // - RC4 is a symetrical algorithm: use this Encrypt() method for both
+    // encryption and decryption of any buffer
+    procedure Encrypt(const BufIn; var BufOut; Count: cardinal);
+    /// save the internal key computed by Init()
+    procedure SaveKey(out Backup: TRC4InternalKey);
+    /// restore the internal key as computed by Init()
+    procedure RestoreKey(const Backup: TRC4InternalKey);
   end;
 
 {$A-} { packed memory structure }
@@ -655,6 +689,8 @@ function SHA256SelfTest: boolean;
 /// self test of AES routines
 function AESSelfTest: boolean;
 
+/// self test of RC4 routines
+function RC4SelfTest: boolean;
 
 // little endian fast conversion
 // - 32 bits  = 1 integer
@@ -3541,6 +3577,18 @@ begin
 end;
 
 function TMD5.Final: TMD5Digest;
+begin
+  Finalize;
+  Move(buf,result,sizeof(result));
+end;
+
+procedure TMD5.Final(out result: TMD5Digest);
+begin
+  Finalize;
+  Move(buf,result,sizeof(result));
+end;
+
+procedure TMD5.Finalize;
 var count: Integer;
     p: ^Byte;
 begin
@@ -3553,8 +3601,8 @@ begin
   // Bytes of padding needed to make 56 bytes (-8..55) 
   count := 56 - 1 - count;
   if count < 0 then begin  //  Padding forces an extra block 
-    FillChar(p^, count + 8, 0);
-    MD5Transform(buf, in_);
+    FillChar(p^,count + 8, 0);
+    MD5Transform(buf,in_);
     p := @in_;
     count := 56;
   end;
@@ -3562,15 +3610,15 @@ begin
   // Append length in bits and transform 
   in_[14] := bytes[0] shl 3;
   in_[15] := (bytes[1] shl 3) or (bytes[0] shr 29);
-  MD5Transform(buf, in_);
-  Move(buf, Result, 16);
+  MD5Transform(buf,in_);
 end;
 
 procedure TMD5.Full(Buffer: pointer; Len: integer; out Digest: TMD5Digest);
 begin
   Init;
   Update(Buffer^,Len);
-  Digest := Final;
+  Finalize;
+  Move(buf,Digest,sizeof(Digest));
 end;
 
 procedure TMD5.Init;
@@ -3680,6 +3728,7 @@ begin
   result := htdigest('agent007','download area','secret')=
     'agent007:download area:8364d0044ef57b3defcfa141e8f77b65';
 end;
+
 
 { TSHA1 }
 
@@ -4142,10 +4191,90 @@ begin
 end;
 
 
+{ TRC4 }
+
+procedure TRC4.Init(const aKey; aKeyLen: integer);
+var i,k: integer;
+    j,tmp: byte;
+begin
+  if aKeyLen<=0 then
+    raise Exception.CreateFmt('TRC4.Init(invalid aKeyLen=%d)',[aKeyLen]);
+  dec(aKeyLen);
+  for i := 0 to high(key) do
+    key[i] := i;
+  j := 0;
+  k := 0;
+  for i := 0 to high(key) do begin
+    inc(j,key[i]+TByteArray(aKey)[k]);
+    tmp := key[i];
+    key[i] := key[j];
+    key[j] := tmp;
+    if k>=aKeyLen then // avoid slow mod operation within loop
+      k := 0 else
+      inc(k);
+  end;
+end;
+
+procedure TRC4.Encrypt(const BufIn; var BufOut; Count: cardinal);
+var ndx: cardinal;
+    i,j,t,kj: byte;
+begin
+  i := 0;
+  j := 0;
+  for ndx := 0 to Count-1 do begin
+    inc(i);
+    t := key[i];
+    inc(j,t);
+    kj := key[j];
+    key[i] := kj;
+    key[j] := t;
+    TByteArray(BufOut)[ndx] := TByteArray(BufIn)[ndx] xor key[t+kj];
+  end;
+end;
+
+procedure TRC4.RestoreKey(const Backup: TRC4InternalKey);
+begin
+  move(Backup,key,sizeof(key));
+end;
+
+procedure TRC4.SaveKey(out Backup: TRC4InternalKey);
+begin
+  move(key,Backup,sizeof(key));
+end;
+
+function RC4SelfTest: boolean;
+const
+  Key: array[0..4] of byte = ($61,$8A,$63,$D2,$FB);
+  InDat: array[0..4] of byte = ($DC,$EE,$4C,$F9,$2C);
+  OutDat: array[0..4] of byte = ($F1,$38,$29,$C9,$DE);
+var RC4: TRC4;
+    Dat: array[0..4] of byte;
+    Backup: TRC4InternalKey;
+begin
+  RC4.Init(Key,sizeof(Key));
+  RC4.Encrypt(InDat,Dat,sizeof(InDat));
+  result := CompareMem(@Dat,@OutDat,sizeof(Dat));
+  if not result then exit;
+  RC4.Init(Key,sizeof(Key));
+  RC4.SaveKey(Backup);
+  RC4.Encrypt(InDat,Dat,sizeof(InDat));
+  result := CompareMem(@Dat,@OutDat,sizeof(Dat));
+  if not result then exit;
+  RC4.RestoreKey(Backup);
+  RC4.Encrypt(InDat,Dat,sizeof(InDat));
+  result := CompareMem(@Dat,@OutDat,sizeof(Dat));
+  if not result then exit;
+  RC4.RestoreKey(Backup);
+  RC4.Encrypt(OutDat,Dat,sizeof(InDat));
+  result := CompareMem(@Dat,@InDat,sizeof(Dat));
+end;
+
+
 initialization
 {$ifdef USEPADLOCK}
   PadlockInit;
 {$endif}
+  assert(sizeof(TMD5Buf)=sizeof(TMD5Digest));
   assert(sizeof(TAESContext)=AESContextSize);
   assert(sizeof(TSHAContext)=SHAContextSize);
   assert(sizeof(TAESFullHeader)=AESBlockSize);

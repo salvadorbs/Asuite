@@ -185,6 +185,15 @@ unit SynPdf;
     enabled by default for use within the framework)
 
   Version 1.18
+  - major speed up of TPdfCanvas.RenderMetaFile() by caching printer resolution
+  - introducing TPdfDocument.SaveToStreamDirectBegin/PageFlush/End methods,
+    able to render all page content directly to the destination stream/file,
+    therefore reducing the memory use to a minimal value for huge content - used
+    e.g. in TPdfDocumentGDI.SaveToStream() and TGDIPages.ExportPDFStream()
+  - TPdfDocumentGDI will now compress (via our SynLZ algorithm) all its page
+    content (TMetaFile) for efficiency
+  - therefore, TPdfDocumentGDI will use much less resource and memory with no
+    swaping to disk (tested with 200,000 simple text pages)
   - fixed potential GPF issue in TPdfWrite.AddUnicodeHex and TPdfWrite.AddHex
   - fixed compilation warnings regarding Delphi XE3 regressions
   - fixed text color process in TPdfEnum
@@ -207,15 +216,30 @@ unit SynPdf;
       coordinates are set to use Point(0,0) )
     - fixed null pen and not stroke
     - few more issues still remains (gradient fill, some text size issues...)
-  - added EMR_POLYDRAW, EMR_POLYDRAW16 process (from CoMPi proposal)
+  - added EMR_POLYDRAW, EMR_POLYDRAW16 process (from CoMPi proposal - thanks!)
+  - added EMR_FILLRGN process (from RyanC proposal - thanks for the feedback!)
   - some fixes and added EMR_TRANSPARENTBLT + mirrored bitmaps (patch from Chaa)
+  - fix for EMR_SET*COLOR clNone color rendering (patch from vmkmg)
+  - fixed SYMBOL_CHARSET kind of fonts (e.g. bullets from Symbol font)
+  - fixed EMR_TEXTOUT rotated text positioning (patch pkrott)
   - added PdfCoord() function
+  - increased allowed number of EMR_SAVEDC/EMR_RESTOREDC pairs during rendering
+  - introducing TPdfDocumentGDI.UseMetaFileTextPositioning instead of former
+    UseSetTextJustification property: now you can force exact font kerning
+    positioning for each character, via tpExactTextCharacterPositining; this
+    parameter has been also added to TPdfCanvas.RenderMetaFile() - it will
+    produce bigger pdf file size, but will fulfill feature request [7d6a3a3f0f]  
 
 }
 
 
 {$I Synopse.inc} // define HASINLINE USETYPEINFO CPU32 CPU64
 
+{.$define USE_PDFSECURITY}
+{ - if defined, the TPdfDocument*.Create() constructor will have an additional
+  AEncryption: TPdfSecurity parameter able to create secured PDF files
+  - this feature will need the SynCrypto unit for MD5 and RC4 algorithms }
+  
 {$define USE_UNISCRIBE}
 { - if defined, the PDF engine will use the Windows Uniscribe API to
   render Ordering and Shaping of the text (usefull for Hebrew, Arabic and
@@ -271,11 +295,14 @@ uses
   {$else}
   Graphics,
   {$endif}
-  SynCommons,
+  SynCommons, SynLZ,
   {$ifdef USE_SYNZIP}
   SynZip,
   {$else}
   ZLib,
+  {$endif}
+  {$ifdef USE_PDFSECURITY}
+  SynCrypto,
   {$endif}
   {$ifdef USE_SYNGDIPLUS}
   SynGdiPlus; // use our GDI+ library for handling TJpegImage and such
@@ -446,7 +473,7 @@ const
   PDF_IN_USE_ENTRY = 'n';
   /// used for an unused (free) xref entry, e.g. the root entry
   PDF_FREE_ENTRY = 'f';
-  /// used e.g. for the root xref entry 
+  /// used e.g. for the root xref entry
   PDF_MAX_GENERATION_NUM = 65535;
 
   PDF_ENTRY_CLOSED = 0;
@@ -472,13 +499,13 @@ const
   // - to not embedd these fonts in the PDF document, and save some KB,
   // just use the EmbeddedTTFIgnore property of TPdfDocument/TPdfDocumentGDI:
   // !   PdfDocument.EmbeddedTTFIgnore.Text := MSWINDOWS_DEFAULT_FONTS;
-  // - note that this is usefull only if the EmbeddedTTF property was set to TRUE  
+  // - note that this is usefull only if the EmbeddedTTF property was set to TRUE
   MSWINDOWS_DEFAULT_FONTS: RawUTF8 =
     'Arial'#13#10'Courier New'#13#10'Georgia'#13#10+
     'Impact'#13#10'Lucida Console'#13#10'Roman'#13#10'Symbol'#13#10+
     'Tahoma'#13#10'Times New Roman'#13#10'Trebuchet'#13#10+
     'Verdana'#13#10'WingDings';
-    
+
 type
   /// PDF text paragraph alignment
   TPdfAlignment = (paLeftJustify, paRightJustify, paCenter);
@@ -506,6 +533,83 @@ type
   TPdfFont = class;
   TPdfFontTrueType = class;
   TPdfDocument = class;
+
+{$ifdef USE_PDFSECURITY}
+  /// the available encryption levels
+  // - in current version only RC4 40-bit and RC4 128-bit are available, which
+  // correspond respectively to PDF 1.3 and PDF 1.4 formats
+  // - for RC4 40-bit and RC4 128-bit, associated password are restricted to a
+  // maximum length of 32 characters and could contain only characters from the
+  // Latin-1 encoding (i.e. no accent)
+  TPdfEncryptionLevel = (elNone, elRC4_40, elRC4_128);
+
+  /// PDF can encode various restrictions on document operations which can be
+  // granted or denied individually (some settings depend on others, though):
+  // - Printing: If printing is not allowed, the print button in Acrobat will be
+  // disabled. Acrobat supports a distinction between high-resolution and
+  // low-resolution printing. Low-resolution printing generates a bitmapped
+  // image of the page which is suitable only for personal use, but prevents
+  // high-quality reproduction and re-distilling. Note that bitmap printing
+  // not only results in low output quality, but will also considerably slow
+  // down the printing process.
+  // - General Editing: If this is disabled, any document modification is
+  // prohibited. Content extraction and printing are allowed.
+  // - Content Copying and Extraction: If this is disabled, selecting document
+  // contents and copying it to the clipboard for repurposing the contents is
+  // prohibited. The accessibility interface also is disabled. If you need to
+  // search such documents with Acrobat you must select the Certified Plugins
+  // Only preference in Acrobat.
+  // - Authoring Comments and Form Fields: If this is disabled, adding,
+  // modifying, or deleting comments and form fields is prohibited. Form field
+  // filling is allowed.
+  // - Form Field Fill-in or Signing: If this is enabled, users can sign and
+  // fill in forms, but not create form fields.
+  // - Document Assembly: If this is disabled, inserting, deleting or rotating
+  // pages, or creating bookmarks and thumbnails is prohibited.
+  TPdfEncryptionPermission = (epPrinting, epGeneralEditing, epContentCopy,
+    epAuthoringComment, epPrintingHighResolution, epFillingForms,
+    epContentExtraction, epDocumentAssembly);
+
+  /// set of restrictions on PDF document operations
+  TPdfEncryptionPermissions = set of TPdfEncryptionPermission;
+
+  /// abstract class to handle PDF security
+  TPdfEncryption = class
+  protected
+    fLevel: TPdfEncryptionLevel;
+    fInternalKey: TByteDynArray;
+    fPermissions: TPdfEncryptionPermissions;
+    fUserPassword: string;
+    fOwnerPassword: string;
+    procedure EncodeBuffer(const BufIn; var BufOut; Count: cardinal;
+      ObjectNumber,GenerationNumber: integer); virtual; abstract;
+  public
+    /// initialize the internal structures with the proper classes
+    // - do not call this method directly, but class function TPdfEncryption.New()
+    constructor Create(aLevel: TPdfEncryptionLevel; aPermissions: TPdfEncryptionPermissions;
+      const aUserPassword, aOwnerPassword: string); virtual;
+    /// will create the expected TPdfEncryption instance, depending on aLevel
+    class function New(aLevel: TPdfEncryptionLevel;
+      const aUserPassword, aOwnerPassword: string;
+      aPermissions: TPdfEncryptionPermissions): TPdfEncryption;
+  end;
+
+  /// handle PDF security with RC4+MD5 scheme in 40-bit and 128-bit
+  TPdfEncryptionRC4MD5 = class(TPdfEncryption)
+  protected
+    fLastObjectNumber: integer;
+    fLastGenerationNumber: Integer;
+    fLastRC4Key: TRC4InternalKey;
+    procedure EncodeBuffer(const BufIn; var BufOut; Count: cardinal;
+      ObjectNumber,GenerationNumber: integer); override;
+  public
+    /// initialize the internal structures
+    // - allowed aLevel here are only elRC4_40 and elRC4_128
+    // - do not call this method directly, but class function TPdfEncryption.New()
+    constructor Create(aLevel: TPdfEncryptionLevel; aPermissions: TPdfEncryptionPermissions;
+      const aUserPassword, aOwnerPassword: string); override;
+  end;
+{$endif}
 
   /// buffered writer class, specialized for PDF encoding
   TPdfWrite = class
@@ -638,6 +742,7 @@ type
     FObjectType: TPdfObjectType;
     FObjectNumber: integer;
     FGenerationNumber: integer;
+    FSaveAtTheEnd: boolean;
   protected
     procedure InternalWriteTo(var W: TPdfWrite); virtual;
     procedure SetObjectNumber(Value: integer);
@@ -981,7 +1086,7 @@ type
     /// return either 'f' (PDF_FREE_ENTRY), either 'n' (PDF_IN_USE_ENTRY)
     property EntryType: PDFString read FEntryType write FEntryType;
     /// the position (in bytes) in the PDF file content stream
-    property ByteOffset: integer read FByteOffSet write FByteOffset;
+    property ByteOffset: integer read FByteOffSet;
     /// the associated Generation Number
     // - mostly 0, or 65535 (PDF_MAX_GENERATION_NUM) for the root 'f' entry
     property GenerationNumber: integer read FGenerationNumber write FGenerationNumber;
@@ -1020,6 +1125,7 @@ type
 
   /// generic PDF Outlines entries, stored as a PDF dictionary
   TPdfOutlines = class(TPdfDictionary);
+
 
   TPdfInfo = class;
   TPdfCatalog = class;
@@ -1062,6 +1168,7 @@ type
     FTrueTypeFontLastIndex: integer;
     FDC: HDC;
     FScreenLogPixels: Integer;
+    FPrinterPxPerInch: TPoint;
     FStandardFontsReplace: boolean;
     fEmbeddedTTF: boolean;
     fEmbeddedWholeTTF: boolean;
@@ -1081,7 +1188,11 @@ type
     /// internal temporary variable - used by CreateOutline
     fLastOutline: TPdfOutlineEntry;
     fPDFA1: boolean;
-
+    fSaveToStreamWriter: TPdfWrite;
+{$ifdef USE_PDFSECURITY}
+    fEncryption: TPdfEncryption;
+    fFileID: TMD5Digest;
+{$endif}
     function GetInfo: TPdfInfo;     {$ifdef HASINLINE}inline;{$endif}
     function GetOutlineRoot: TPdfOutlineRoot; {$ifdef HASINLINE}inline;{$endif}
     procedure SetStandardFontsReplace(const Value: boolean); {$ifdef HASINLINE}inline;{$endif}
@@ -1136,8 +1247,10 @@ type
     // - you can specify a Code Page to be used for the PDFString encoding;
     // by default (ACodePage left to 0), the current system code page is used
     // - you can create a PDF/A-1 compliant document by setting APDFA1 to true
+    // - you can set an encryption instance, by using TPdfEncryption.New()
     constructor Create(AUseOutlines: Boolean=false; ACodePage: integer=0;
-      APDFA1: boolean=false); reintroduce;
+      APDFA1: boolean=false
+      {$ifdef USE_PDFSECURITY}; AEncryption: TPdfEncryption=nil{$endif}); reintroduce;
     /// release the PDF document instance
     destructor Destroy; override;
     /// create a new document
@@ -1159,6 +1272,22 @@ type
     function AddXObject(const AName: PDFString; AXObject: TPdfXObject): integer;
     /// save the PDF file content into a specified Stream
     procedure SaveToStream(AStream: TStream; ForceModDate: TDateTime=0); virtual;
+    /// prepare to save the PDF file content into a specified Stream
+    // - is called by SaveToStream() method
+    // - you can then append other individual pages with SaveToStreamCurrentPage
+    // to avoid most resource usage (e.g. for report creation)
+    // - shall be finished by a SaveToStreamDirectEnd call
+    procedure SaveToStreamDirectBegin(AStream: TStream; ForceModDate: TDateTime=0);
+    /// save the current page content to the PDF file
+    // - shall be made one or several times after a SaveToStreamDirectBegin() call
+    // and before a final SaveToStreamDirectEnd call
+    // - see TPdfDocumentGDI.SaveToStream() in this unit, and
+    // TGDIPages.ExportPDFStream() in mORMotReport.pas for real use cases
+    procedure SaveToStreamDirectPageFlush;
+    /// prepare to save the PDF file content into a specified Stream
+    // - shall be made once after a SaveToStreamDirectBegin() call
+    // - is called by SaveToStream() method
+    procedure SaveToStreamDirectEnd;
     /// save the PDF file content into a specified file
     // - return FALSE on any writing error (e.g. if the file is opened in the
     // Acrobar Reader)
@@ -1300,7 +1429,7 @@ type
     // for a faster process, if you do not want to use this feature
     property ForceNoBitmapReuse: boolean read fForceNoBitmapReuse write fForceNoBitmapReuse;
     /// direct read-only access to all corresponding TPdfPage
-    // - can be useful in descendant
+    // - can be useful in inherited classe
     property RawPages: TList read fRawPages;
     /// the resolution used for pixel to PDF coordinates conversion
     // - by default, contains the Number of pixels per logical inch
@@ -1378,6 +1507,18 @@ type
     property PageLandscape: Boolean read GetPageLandscape write SetPageLandscape;
   end;
 
+  /// is used to define how TMetaFile text positioning is rendered
+  // - tpSetTextJustification will handle efficiently the fact that TMetaFileCanvas
+  // used SetTextJustification() API calls to justify text: it will converted
+  // to SetWordSpace() pdf rendering
+  // - tpExactTextCharacterPositining will use the individual glyph positioning
+  // information as specified within the TMetaFile content: resulting pdf size
+  // will be bigger, but font kerning will be rendered as expected
+  // - tpKerningFromAveragePosition will use global font kerning via
+  // SetHorizontalScaling() pdf rendering
+  TPdfCanvasRenderMetaFileTextPositioning = (
+    tpKerningFromAveragePosition, tpSetTextJustification, tpExactTextCharacterPositining);
+
   /// access to the PDF Canvas, used to draw on the page
   TPdfCanvas = class(TObject)
   protected
@@ -1412,7 +1553,7 @@ type
     fRightToLeftText: Boolean;
 {$endif}
     /// parameters taken from RenderMetaFile() call
-    fUseSetTextJustification: Boolean;
+    fUseMetaFileTextPositioning: TPdfCanvasRenderMetaFileTextPositioning;
     fKerningHScaleBottom: Single;
     fKerningHScaleTop: Single;
     // some cache
@@ -1786,8 +1927,9 @@ type
     // if the EMF content used SetTextJustification() API call to justify text
     // - KerningHScaleBottom/KerningHScaleTop are limits below which and over
     // which Font Kerning is transformed into PDF Horizontal Scaling commands
-    procedure RenderMetaFile(MF: TMetaFile; Scale: Single=1.0; XOff: single=0.0;
-      YOff: single=0.0; UseSetTextJustification: boolean=true;
+    procedure RenderMetaFile(MF: TMetaFile; Scale: Single=1.0;
+      XOff: single=0.0; YOff: single=0.0;
+      TextPositioning: TPdfCanvasRenderMetaFileTextPositioning=tpSetTextJustification;
       KerningHScaleBottom: single=99.0; KerningHScaleTop: single=101.0);
   public
     /// retrieve the current Canvas content stream, i.e. where the PDF
@@ -1809,7 +1951,7 @@ type
     FData: TPdfDictionary;
     function GetHasData: boolean;
   protected
-    procedure SetData(AData: TPdfDictionary); virtual;
+    procedure SetData(AData: TPdfDictionary); 
   public
     /// the associated dictionary, containing all data
     property Data: TPdfDictionary read FData write SetData;
@@ -1976,8 +2118,6 @@ type
     // - WidthArray[0]=Ascent, WidthArray[1]=Descent, WidthArray[2..]=Width(#32..)
     constructor Create(AXref: TPdfXref; const AName: PDFString;
       WidthArray: PSmallIntArray); reintroduce;
-    /// set internaly the font data
-    procedure SetData(Value: TPdfDictionary); override;
   end;
 
   /// an embedded Composite CIDFontType2
@@ -2223,12 +2363,15 @@ type
   TPdfPageGDI = class(TPdfPage)
   private
     // don't use these fVCL* properties directly, but via TPdfDocumentGdi.VCLCanvas
-    fVCLMetaFile: TMetafile;
+    fVCLMetaFileCompressed: RawByteString;
     fVCLCanvasSize: TSize;
-    // it is in fact a TMetaFileCanvas instance
-    fVCLCanvas: TCanvas;
+    // it is in fact a TMetaFileCanvas instance from fVCLCurrentMetaFile
+    fVCLCurrentCanvas: TCanvas;
+    fVCLCurrentMetaFile: TMetaFile;
     // allow to create the meta file and its canvas only if necessary
-    procedure CreateVCLMetaFile;
+    procedure CreateVCLCanvas;
+    procedure SetVCLCurrentMetaFile;
+    procedure FlushVCLCanvas;
   public
     /// release associated memory
     destructor Destroy; override;
@@ -2239,15 +2382,19 @@ type
   // - handles also PDF creation directly from TMetaFile content
   TPdfDocumentGDI = class(TPdfDocument)
   private
-    fUseSetTextJustification: Boolean;
+    fUseMetaFileTextPositioning: TPdfCanvasRenderMetaFileTextPositioning;
     fKerningHScaleTop: Single;
     fKerningHScaleBottom: Single;
     function GetVCLCanvas: TCanvas;   {$ifdef HASINLINE}inline;{$endif}
     function GetVCLCanvasSize: TSize; {$ifdef HASINLINE}inline;{$endif}
   public
     /// create the PDF document instance, with a VCL Canvas property
+    // - see TPdfDocument.Create connstructor for the arguments expectations
     constructor Create(AUseOutlines: Boolean=false; ACodePage: integer=0;
-      APDFA1: boolean=false);
+      APDFA1: boolean=false
+      {$ifdef USE_PDFSECURITY}; AEncryption: TPdfEncryption=nil{$endif});
+    /// add a Page to the current PDF document
+    function AddPage: TPdfPage; override;
     /// save the PDF file content into a specified Stream
     // - this overriden method draw first the all VCLCanvas content into the PDF
     procedure SaveToStream(AStream: TStream; ForceModDate: TDateTime=0); override;
@@ -2257,16 +2404,22 @@ type
     // - usefull to calculate coordinates for the current page
     // - filled with (0,0) before first call to VCLCanvas property
     property VCLCanvasSize: TSize read GetVCLCanvasSize;
-    /// UseSetTextJustification is to be set to true to ensure better rendering
-    // if the Canvas used SetTextJustification() API call to justify text
-    // - set to true by default
-    property UseSetTextJustification: Boolean read fUseSetTextJustification write fUseSetTextJustification;
+    /// defines how TMetaFile text positioning is rendered
+    // - default is tpSetTextJustification
+    // - tpSetTextJustification if content used SetTextJustification() API calls
+    // - tpExactTextCharacterPositining for exact font kerning, but resulting
+    // in bigger pdf size
+    // - tpKerningFromAveragePosition will compute average pdf Horizontal Scaling
+    // in association with KerningHScaleBottom/KerningHScaleTop properties
+    // - replace deprecated property UseSetTextJustification
+    property UseMetaFileTextPositioning: TPdfCanvasRenderMetaFileTextPositioning
+      read fUseMetaFileTextPositioning write fUseMetaFileTextPositioning;
     /// the % limit below which Font Kerning is transformed into PDF Horizontal
-    // Scaling commands
+    // Scaling commands (when text positioning is tpKerningFromAveragePosition)
     // - set to 99.0 by default
     property KerningHScaleBottom: Single read fKerningHScaleBottom write fKerningHScaleBottom;
     /// the % limit over which Font Kerning is transformed into PDF Horizontal
-    // Scaling commands
+    // Scaling commands (when text positioning is tpKerningFromAveragePosition)
     // - set to 101.0 by default
     property KerningHScaleTop: Single read fKerningHScaleTop write fKerningHScaleTop;
   end;
@@ -2354,7 +2507,7 @@ function PdfCoord(MM: single): integer;
 /// retrieve the paper size used by the current selected printer
 function CurrentPrinterPaperSize: TPDFPaperSize;
 
-/// retrieve the paper resolution
+/// retrieve the current printer resolution
 function CurrentPrinterRes: TPoint;
 
 /// append a EMR_GDICOMMENT message for handling PDF bookmarks
@@ -2692,12 +2845,12 @@ begin
 end;
 
 function CurrentPrinterRes: TPoint;
-var
-  DefaultPrinter: array[0..1023] of Char;
-  PC: PChar;
-  PtrHdl: THandle;
+var DefaultPrinter: array[0..1023] of Char;
+    PC: PChar;
+    PtrHdl: THandle;
 begin
-  Result := Point(600,600); //default
+  result.X := 300;
+  result.Y := 300; // default standard printer resolution
   if not PrinterDriverExists then
     exit;
   GetProfileString('windows','device',nil,DefaultPrinter,SizeOf(DefaultPrinter)-1);
@@ -2707,8 +2860,8 @@ begin
   try
     PtrHdl := CreateDC(nil,PC,nil,nil);
     try
-      Result.x := GetDeviceCaps(PtrHdl, LOGPIXELSX);
-      Result.y := GetDeviceCaps(PtrHdl, LOGPIXELSY);
+      result.x := GetDeviceCaps(PtrHdl, LOGPIXELSX);
+      result.y := GetDeviceCaps(PtrHdl, LOGPIXELSY);
     finally
       DeleteDC(PtrHdl);
     end;
@@ -2981,7 +3134,7 @@ procedure TPdfArray.InternalWriteTo(var W: TPdfWrite);
 var i: integer;
 begin
   W.Add('[');
-  for i := 0 to FArray.Count - 1 do begin
+  for i := 0 to FArray.Count-1 do begin
     TPdfObject(FArray[i]).WriteTo(W);
     W.Add(' ');
   end;
@@ -3035,7 +3188,7 @@ end;
 destructor TPdfArray.Destroy;
 var i: integer;
 begin
-  for i := 0 to FArray.Count - 1 do
+  for i := 0 to FArray.Count-1 do
     TPdfObject(FArray.List[i]).Free;
   FArray.Free;
   inherited;
@@ -3054,7 +3207,7 @@ end;
 function TPdfArray.FindName(const AName: PDFString): TPdfName;
 var i: integer;
 begin
-  for i := 0 to ItemCount - 1 do begin
+  for i := 0 to ItemCount-1 do begin
     result := TPdfName(FArray.List[i]);
     if (result<>nil) and result.InheritsFrom(TPdfName) and
        (result.Value=AName) then
@@ -3123,7 +3276,7 @@ var i: integer;
     FElement: TPdfDictionaryElement;
 begin
   W.Add('<<'#10);
-  for i := 0 to FArray.Count - 1 do begin
+  for i := 0 to FArray.Count-1 do begin
     FElement := FArray.List[i];
     if not FElement.IsInternal then begin
       FElement.FKey.WriteTo(W);
@@ -3145,7 +3298,7 @@ end;
 destructor TPdfDictionary.Destroy;
 var i: integer;
 begin
-  for i := 0 to FArray.Count - 1 do
+  for i := 0 to FArray.Count-1 do
     TPdfDictionaryElement(FArray[i]).Free;
   FArray.Free;
   inherited;
@@ -3275,7 +3428,7 @@ var i: integer;
     FElement: TPdfDictionaryElement;
 begin
   if Self<>nil then
-  for i := 0 to FArray.Count - 1 do begin
+  for i := 0 to FArray.Count-1 do begin
     FElement := FArray.List[i];
     if FElement.FKey.Value=AKey then begin
       FArray.Remove(FElement);
@@ -3329,6 +3482,7 @@ begin
       finally
         TmpStream.Free;
       end;
+      FWriter.fDestStream.Size := 0; // release internal steram memory
       exit;
     end;
   FLength.Value := TmpSize;
@@ -3337,6 +3491,7 @@ begin
   FAttributes.WriteTo(W);
   W.Add(#10'stream'#10).Add(TMemoryStream(FWriter.fDestStream).Memory,TmpSize).
     Add(#10'endstream');
+  FWriter.fDestStream.Size := 0; // release internal steram memory
 end;
 
 constructor TPdfStream.Create(ADoc: TPdfDocument; DontAddToFXref: boolean=false);
@@ -4352,7 +4507,7 @@ end;
 destructor TPdfXref.Destroy;
 var i: integer;
 begin
-  for i := 0 to FXrefEntries.Count - 1 do
+  for i := 0 to FXrefEntries.Count-1 do
     GetItem(i).Free;
   FXrefEntries.Free;
   inherited;
@@ -4421,11 +4576,14 @@ begin
 end;
 
 constructor TPdfDocument.Create(AUseOutlines: Boolean=false; ACodePage: integer=0;
-  APDFA1: boolean=false);
+  APDFA1: boolean=false{$ifdef USE_PDFSECURITY}; AEncryption: TPdfEncryption=nil{$endif});
 var LFont: TLogFontW; // either TLogFontA or TLogFontW idem as TRawUTF8List
     i: integer;
 begin
   fPDFA1 := APDFA1;
+  {$ifdef USE_PDFSECURITY}
+  fEncryption := AEncryption;
+  {$endif}
   fTPdfPageClass := TPdfPage;
   if ACodePage=0 then
     FCodePage := LCIDToCodePage(SysLocale.DefaultLCID) else // GetACP can be<>SysLocale
@@ -4687,6 +4845,7 @@ function TPdfDocument.CreatePages(Parent: TPdfDictionary): TPdfDictionary;
 begin
   // create pages object and register to xref.
   result := TPdfDictionary.Create(FXref);
+  result.FSaveAtTheEnd := True;
   FXref.AddObject(Result);
   with result do begin
     AddItem('Type', 'Pages');
@@ -4700,7 +4859,7 @@ end;
 
 function TPdfDocument.GetXObjectIndex(const AName: PDFString): integer;
 begin
-  for result := 0 to FXObjectList.ItemCount - 1 do
+  for result := 0 to FXObjectList.ItemCount-1 do
     with TPdfXObject(FXObjectList.FArray.List[result]) do
     if (FObjectType<>otVirtualObject) and (Attributes<>nil) and
        (TPdfName(Attributes.ValueByName('Name')).Value=AName) then
@@ -4711,7 +4870,7 @@ end;
 function TPdfDocument.GetXObject(const AName: PDFString): TPdfXObject;
 var i: integer;
 begin
-  for i := 0 to FXObjectList.ItemCount - 1 do begin
+  for i := 0 to FXObjectList.ItemCount-1 do begin
     result := TPdfXObject(FXObjectList.FArray.List[i]);
     if result.FObjectType=otVirtualObject then begin
       result := TPdfXObject(FXRef.GetObject(result.FObjectNumber));
@@ -4731,7 +4890,7 @@ var Obj: TPdfXObject;
     Img: TPdfImage absolute Obj;
     i: integer;
 begin
-  for i := 0 to FXObjectList.ItemCount - 1 do begin
+  for i := 0 to FXObjectList.ItemCount-1 do begin
     Obj := TPdfXObject(FXObjectList.FArray.List[i]);
     if Obj.FObjectType=otVirtualObject then
       Obj := TPdfXObject(FXRef.GetObject(Obj.FObjectNumber));
@@ -4818,6 +4977,14 @@ procedure TPdfDocument.NewDoc;
 var CatalogDictionary: TPdfDictionary;
     Dico: TPdfDictionary;
     RGB: TPdfStream;
+    ID: TPdfArray;
+    IDs: PDFString;
+    i: integer;
+    NeedFileID: boolean;
+    FileID: array[0..3] of cardinal;
+    {$ifndef USE_PDFSECURITY}
+    P: PAnsiChar;
+    {$endif}
 const
   PDFHEADER: array[boolean] of PDFString = (
     '%PDF-1.3'#10, '%PDF-1.4'#10'%'#228#229#230#240#10);
@@ -4838,10 +5005,11 @@ begin
   fLastOutline := nil;
   FreeDoc;
   FXref := TPdfXref.Create;
-  FHeader := TPdfRawText.Create(PDFHEADER[PDFA1]);
   FTrailer := TPdfTrailer.Create(FXref);
+  FHeader := TPdfRawText.Create(PDFHEADER[PDFA1]);
   FFontList := TList.Create;
   FXObjectList := TPdfArray.Create(FXref);
+  FXObjectList.FSaveAtTheEnd := true;
   FObjectList := TList.Create;
   FRoot := TPdfCatalog.Create;
   CatalogDictionary := TPdfDictionary.Create(FXref);
@@ -4859,6 +5027,7 @@ begin
   FInfo.CreationDate := now;
   FCurrentPages := CreatePages(nil); // nil -> create root Pages XObject
   FRoot.SetPages(FCurrentPages);
+  NeedFileID := false;
   if PDFA1 then begin
     fUseFontFallBack := true;
     FOutputIntents := TPdfArray.Create(FXref);
@@ -4879,6 +5048,27 @@ begin
     FMetaData.Filter.RemoveName('FlateDecode');
     CatalogDictionary.AddItem('MarkInfo',TPdfRawText.Create('<</Marked true>>'));
     CatalogDictionary.AddItem('Metadata',FMetadata);
+    NeedFileID := true;
+  end;
+  if NeedFileID then begin
+    Randomize;
+    for i := 0 to high(FileID) do
+      FileID[i] := cardinal(Random(MaxInt));
+    inc(FileID[0],GetTickCount);
+    {$ifdef USE_PDFSECURITY}
+    fFileID := MD5Buf(FileID[0],16);
+    IDs := '<'+MD5DigestToString(fFileID)+'>';
+    {$else}
+    SetLength(IDs,34);
+    P := pointer(IDs);
+    P[0] := '<';
+    SynCommons.BinToHex(PAnsiChar(@FileID[0]),P+1,16);
+    P[33] := '>';
+    {$endif}
+    ID := TPdfArray.Create(FXref);
+    ID.AddItem(TPdfRawText.Create(IDs));
+    ID.AddItem(TPdfRawText.Create(IDs));
+    FTrailer.Attributes.AddItem('ID',ID);
   end;
 end;
 
@@ -4924,10 +5114,10 @@ var i: integer;
 begin
   if FXObjectList<>nil then begin
     FreeAndNil(FXObjectList);
-    for i := FFontList.Count - 1 downto 0 do
+    for i := FFontList.Count-1 downto 0 do
       TObject(FFontList.List[i]).Free;
     FreeAndNil(FFontList);
-    for i := FObjectList.Count - 1 downto 0 do
+    for i := FObjectList.Count-1 downto 0 do
       TObject(FObjectList.List[i]).Free;
     FreeAndNil(FObjectList);
     FreeAndNil(FXref);
@@ -4937,29 +5127,45 @@ begin
 end;
 
 procedure TPdfDocument.SaveToStream(AStream: TStream; ForceModDate: TDateTime=0);
-const IDSIZE=32;
-var i, V: integer;
-    Pos: integer;
-    W: TPdfWrite; // main buffered write of the pdf content
-    ID: TPdfArray;
-    IDs: PDFString;
-    P: PAnsiChar;
 begin
   if FCanvas.Page=nil then
     RaiseInvalidOperation;
+  SaveToStreamDirectBegin(AStream,ForceModDate);
+  SaveToStreamDirectEnd;
+end;
+
+procedure TPdfDocument.RaiseInvalidOperation;
+begin
+  raise EPdfInvalidOperation.Create('TPdfDocument.Document is null');
+end;
+
+function TPdfDocument.SaveToFile(const aFileName: TFileName): boolean;
+var FS: TFileStream;
+begin
+  try
+    FS := TFileStream.Create(aFileName,fmCreate);
+    try
+      SaveToStream(FS);
+      result := true;
+    finally
+      FS.Free;
+    end;
+  except
+    on E: Exception do // error on file creation (opened in reader?)
+      result := false;
+  end;
+end;
+
+procedure TPdfDocument.SaveToStreamDirectBegin(AStream: TStream;
+  ForceModDate: TDateTime);
+begin
+  if fSaveToStreamWriter<>nil then
+    raise EPdfInvalidOperation.Create('SaveToStreamDirectBegin');
   // write all objects to specified stream
   if ForceModDate=0 then
     FInfo.ModDate := Now else
     FInfo.ModDate := ForceModDate;
   FRoot.SaveOpenAction;
-  // saving outline tree
-  if UseOutlines then
-    FOutlineRoot.Save;
-  // update font details
-  for i := 0 to FFontList.Count-1 do
-  with TPdfFontTrueType(FFontList.List[i]) do
-    if fTrueTypeFontsIndex<>0 then
-      PrepareForSaving;
   // some PDF/A-1 requirements
   if PDFA1 then begin
     FMetaData.Writer.Add(RawByteString(
@@ -4985,59 +5191,53 @@ begin
       '<rdf:Description rdf:about="" xmlns:pdfaid="http://www.aiim.org/pdfa/ns/id/">'+
       '<pdfaid:part>1</pdfaid:part><pdfaid:conformance>A</pdfaid:conformance>'+
       '</rdf:Description></rdf:RDF></x:xmpmeta><?xpacket end="w"?>');
-    ID := TPdfArray.Create(FXref);
-    SetLength(IDs,IDSIZE+2);
-    Randomize;
-    P := pointer(IDs);
-    P[0] := '<';
-    for i := 0 to (IDSIZE div (sizeof(V)*2))-1 do begin
-      V := Random(MaxInt);
-      SynCommons.BinToHex(@V,P+i*(sizeof(V)*2)+1,sizeof(V));
-    end;
-    P[IDSIZE+1] := '>';
-    ID.AddItem(TPdfRawText.Create(IDs));
-    ID.AddItem(TPdfRawText.Create(IDs));
-    FTrailer.Attributes.AddItem('ID',ID);
   end;
-  // write content
-  W := TPdfWrite.Create(AStream,FCodePage);
-  try
-    FHeader.WriteTo(W);
-    for i := 1 to FXref.ItemCount - 1 do // ignore FXref[0] = root PDF_FREE_ENTRY
-    with FXref.Items[i] do begin
-      Pos := W.Position;
-      Value.WriteValueTo(W);
-      ByteOffset := Pos;
+  // write beginning of the content
+  fSaveToStreamWriter := TPdfWrite.Create(AStream,FCodePage);
+  FHeader.WriteTo(fSaveToStreamWriter);
+end;
+
+procedure TPdfDocument.SaveToStreamDirectPageFlush;
+var i: integer;
+begin
+  if (self=nil) or (fSaveToStreamWriter=nil) or (FCanvas.FPage=nil) then
+    raise EPdfInvalidOperation.Create('SaveToStreamDirectPageFlush');
+  for i := 1 to FXref.ItemCount-1 do  // ignore FXref[0] = root PDF_FREE_ENTRY
+    with FXref.Items[i] do
+    if (ByteOffset<=0) and not Value.FSaveAtTheEnd then begin
+      fByteOffset := fSaveToStreamWriter.Position;
+      Value.WriteValueTo(fSaveToStreamWriter);
     end;
-    FTrailer.XrefAddress := W.Position;
-    FXref.WriteTo(W);
+end;
+
+procedure TPdfDocument.SaveToStreamDirectEnd;
+var i: integer;
+begin
+  if (self=nil) or (fSaveToStreamWriter=nil) then
+    raise EPdfInvalidOperation.Create('SaveToStreamDirectEnd');
+  try
+    // saving outline tree
+    if UseOutlines then
+      FOutlineRoot.Save;
+    // update font details after all the pages are drawn
+    for i := 0 to FFontList.Count-1 do
+    with TPdfFontTrueType(FFontList.List[i]) do
+      if fTrueTypeFontsIndex<>0 then
+        PrepareForSaving;
+    // write pending objects
+    for i := 1 to FXref.ItemCount-1 do
+      with FXref.Items[i] do
+      if ByteOffset<=0 then begin
+        fByteOffset := fSaveToStreamWriter.Position;
+        Value.WriteValueTo(fSaveToStreamWriter);
+      end;
+    FTrailer.XrefAddress := fSaveToStreamWriter.Position;
+    FXref.WriteTo(fSaveToStreamWriter);
     FTrailer.Attributes.PdfNumberByName('Size').Value := FXref.ItemCount;
-    FTrailer.WriteTo(W);
-    W.Save; // flush TPdfWrite buffer into AStream
+    FTrailer.WriteTo(fSaveToStreamWriter);
+    fSaveToStreamWriter.Save; // flush TPdfWrite buffer into AStream
   finally
-    W.Free;
-  end;
-end;
-
-procedure TPdfDocument.RaiseInvalidOperation;
-begin
-  raise EPdfInvalidOperation.Create('TPdfDocument.Document is null');
-end;
-
-function TPdfDocument.SaveToFile(const aFileName: TFileName): boolean;
-var FS: TFileStream;
-begin
-  try
-    FS := TFileStream.Create(aFileName,fmCreate);
-    try
-      SaveToStream(FS);
-      result := true;
-    finally
-      FS.Free;
-    end;
-  except
-    on E: Exception do // error on file creation (opened in reader?)
-      result := false;
+    FreeAndNil(fSaveToStreamWriter);
   end;
 end;
 
@@ -5365,6 +5565,7 @@ begin
 end;
 {$endif}
 
+
 function TPdfDocument.CreateOrGetImage(B: TBitmap; DrawAt: PPdfBox; ClipRc: PPdfBox): PDFString;
 var J: TJpegImage;
     Img: TPdfImage;
@@ -5456,6 +5657,7 @@ begin
     result := '';
 end;
 
+
 { TPdfCanvas }
 
 constructor TPdfCanvas.Create(APdfDoc: TPdfDocument);
@@ -5466,7 +5668,7 @@ begin
   FFactorY := FFactor;
   FDevScale := 1;
   FMappingMode := MM_TEXT;
-  fUseSetTextJustification := true;
+  fUseMetaFileTextPositioning := tpSetTextJustification;
   fKerningHScaleBottom := 99.0;
   fKerningHScaleTop := 101.0;
 end;
@@ -6397,6 +6599,8 @@ end;
 procedure TPdfDictionaryWrapper.SetData(AData: TPdfDictionary);
 begin
   FData := AData;
+  if FData<>nil then
+    FData.FSaveAtTheEnd := true;
 end;
 
 function TPdfDictionaryWrapper.GetHasData: boolean;
@@ -6646,7 +6850,7 @@ constructor TPdfFont.Create(AXref: TPdfXref; const AName: PDFString);
 begin
   inherited Create;
   FName := AName;
-  FData := TPdfDictionary.Create(AXref);
+  Data := TPdfDictionary.Create(AXref);
   AXref.AddObject(FData);
 end;
 
@@ -6677,15 +6881,19 @@ end;
 
 constructor TPdfFontType1.Create(AXref: TPdfXref; const AName: PDFString;
   WidthArray: PSmallIntArray);
+var i: integer;
+    c: AnsiChar;
+    DefaultWidth: word;
+    Widths: TPdfArray;
 begin
   inherited Create(AXref, AName);
   // adding standard element to the font definition
-  FData.AddItem('Type','Font');
-  FData.AddItem('Subtype','Type1');
-  FData.AddItem('Encoding','WinAnsiEncoding');
-  FData.AddItem('FirstChar',32);
-  FData.AddItem('LastChar',255);
-  FData.AddItem('BaseFont', FName);
+  Data.AddItem('Type','Font');
+  Data.AddItem('Subtype','Type1');
+  Data.AddItem('Encoding','WinAnsiEncoding');
+  Data.AddItem('FirstChar',32);
+  Data.AddItem('LastChar',255);
+  Data.AddItem('BaseFont', FName);
   // register font
   if WidthArray=nil then begin
      // [] -> Courier fixed-width font
@@ -6697,18 +6905,8 @@ begin
     fAscent := WidthArray^[0];
     fDescent := WidthArray^[1];
     // create "Width" table of the font  (256-32=224)
-    FData.AddItem('Widths',TPdfArray.Create(AXref, @WidthArray^[2], 224), true);
+    Data.AddItem('Widths',TPdfArray.Create(AXref, @WidthArray^[2], 224), true);
   end;
-  SetData(FData);
-end;
-
-procedure TPdfFontType1.SetData(Value: TPdfDictionary);
-var i: integer;
-    c: AnsiChar;
-    DefaultWidth: word;
-    Widths: TPdfArray;
-begin
-  inherited;
   // initialize char widths array by default value (if missing width parameter
   // is defined, use it as default value.)
   if Data.PdfNumberByName('MissingWidth')<>nil then
@@ -6722,7 +6920,7 @@ begin
   // fill width array with "Widths" table values.
   Widths := Data.PdfArrayByName('Widths');
   if Widths<>nil then
-  for i := 0 to Widths.ItemCount - 1 do
+  for i := 0 to Widths.ItemCount-1 do
     if FFirstChar+i >= 32 then
       fWinAnsiWidth^[AnsiChar(FFirstChar+i)] := TPdfNumber(Widths[i]).Value;
 end;
@@ -6796,7 +6994,7 @@ var old: THandle;
     W: packed array of TABC;
     c: AnsiChar;
     aFontName: PDFString;
-    //Flags: integer;    Acrobat Reader 9 doesn't like this setting! :(
+    Flags: integer;    
 begin
   if AWinAnsiFont<>nil then // we use the Postscript Name here
     aFontName := AWinAnsiFont.fName else
@@ -6812,14 +7010,14 @@ begin
   end else
     fWinAnsiFont := self;
   // adding element to the dictionary
-  FData.AddItem('Type', 'Font');
-  FData.AddItem('BaseFont', FName);
+  Data.AddItem('Type', 'Font');
+  Data.AddItem('BaseFont', FName);
   // retrieve font details
   fLogFont := ALogFont; // we always need our local copy
   if Unicode then begin
     // 1. Unicode Font
-    FData.AddItem('Subtype', 'Type0');
-    FData.AddItem('Encoding', 'Identity-H');
+    Data.AddItem('Subtype', 'Type0');
+    Data.AddItem('Encoding', 'Identity-H');
     // Retrieve some font details from WinAnsi version
     fHGDI := AWinAnsiFont.fHGDI; // only one GDI resource is used for both
     fFixedWidth := AWinAnsiFont.fFixedWidth;
@@ -6831,8 +7029,8 @@ begin
     TPdfTTF.Create(self).Free; // all the magic in one line :)
   end else begin
     // 2. WinAnsi Font
-    FData.AddItem('Subtype', 'TrueType');
-    FData.AddItem('Encoding', 'WinAnsiEncoding');
+    Data.AddItem('Subtype', 'TrueType');
+    Data.AddItem('Encoding', 'WinAnsiEncoding');
     // retrieve default WinAnsi characters widths
     fHGDI := CreateFontIndirectW(ALogFont);
     old := SelectObject(fDoc.FDC,fHGDI);
@@ -6854,6 +7052,7 @@ begin
           fWinAnsiWidth[c] := integer(abcA+integer(abcB)+abcC);
     // create font descriptor (the WinAnsi one is used also for unicode)
     FFontDescriptor := TPdfDictionary.Create(ADoc.FXref);
+    FFontDescriptor.FSaveAtTheEnd := true;
     ADoc.FXref.AddObject(FFontDescriptor);
     FFontDescriptor.AddItem('Type','FontDescriptor');
     FFontDescriptor.AddItem('FontName',FName);
@@ -6869,11 +7068,14 @@ begin
       Flags := Flags or PDF_FONT_ITALIC;
     if Flags=0 then
       Flags := PDF_FONT_STD_CHARSET;}
-    FFontDescriptor.AddItem('Flags',PDF_FONT_STD_CHARSET);
+    if ALogFont.lfCharSet=SYMBOL_CHARSET then
+      Flags := PDF_FONT_SYMBOLIC else
+      Flags := PDF_FONT_STD_CHARSET;
+    FFontDescriptor.AddItem('Flags',Flags);
     with fOTM.otmrcFontBox do
       FFontDescriptor.AddItem('FontBBox',
         TPdfArray.Create(fDoc.FXref,[Left,Bottom,Right,Top]));
-    FData.AddItem('FontDescriptor',fFontDescriptor);
+    Data.AddItem('FontDescriptor',fFontDescriptor);
   end;
   fAscent := fOTM.otmAscent;
   fDescent := fOTM.otmDescent;
@@ -6988,7 +7190,7 @@ begin
       // create and associate descendant fonts array
       Descendants := TPdfArray.Create(fDoc.FXref);
       Descendants.AddItem(Descendant);
-      FData.AddItem('DescendantFonts',Descendants);
+      Data.AddItem('DescendantFonts',Descendants);
       // create ToUnicode CMaping
       ToUnicode := TPdfStream.Create(fDoc);
       ToUnicode.Writer.Add('/CIDInit /ProcSet findresource begin'#10+
@@ -7018,7 +7220,7 @@ begin
       end;
       ToUnicode.Writer.Add('endcmap'#10+
         'CMapName currentdict /CMap defineresource pop'#10'end'#10'end');
-      FData.AddItem('ToUnicode', ToUnicode);
+      Data.AddItem('ToUnicode', ToUnicode);
     end else begin
       // 2. WinAnsi Font
       for c := #32 to #255 do
@@ -7032,8 +7234,8 @@ begin
           Break;
         end;
       if fFirstChar<>0 then begin
-        FData.AddItem('FirstChar',fFirstChar);
-        FData.AddItem('LastChar',fLastChar);
+        Data.AddItem('FirstChar',fFirstChar);
+        Data.AddItem('LastChar',fLastChar);
         WR.Add('[');
         for c := AnsiChar(fFirstChar) to AnsiChar(fLastChar) do
           if c in fWinAnsiUsed then
@@ -7442,6 +7644,7 @@ begin
       [0,0,ADoc.DefaultPageWidth,ADoc.DefaultPageHeight]);
     AddItem('MediaBox',FMediaBox);
   end;
+  FSaveAtTheEnd := true;
 end;
 
 function TPdfPage.GetPageHeight: Integer;
@@ -7578,12 +7781,20 @@ end;
 
 { TPdfDocumentGDI }
 
+function TPdfDocumentGDI.AddPage: TPdfPage;
+begin
+  if (FCanvas<>nil) and (FCanvas.FPage<>nil) then
+    TPdfPageGdi(FCanvas.FPage).FlushVCLCanvas;
+  result := inherited AddPage;
+  FCanvas.FContents.FSaveAtTheEnd := true; // as expected in SaveToStream() below
+end;
+
 constructor TPdfDocumentGDI.Create(AUseOutlines: Boolean=false; ACodePage: integer=0;
-  APDFA1: boolean=false);
+  APDFA1: boolean=false {$ifdef USE_PDFSECURITY}; AEncryption: TPdfEncryption=nil{$endif});
 begin
   inherited;
   fTPdfPageClass := TPdfPageGdi;
-  fUseSetTextJustification := true;
+  fUseMetaFileTextPositioning := tpSetTextJustification;
   fKerningHScaleBottom := 99.0;
   fKerningHScaleTop := 101.0;
 end;
@@ -7591,9 +7802,9 @@ end;
 function TPdfDocumentGDI.GetVCLCanvas: TCanvas;
 begin
   with TPdfPageGdi(FCanvas.FPage) do begin
-    if fVCLMetaFile=nil then
-      CreateVCLMetaFile;
-    result := fVCLCanvas;
+    if fVCLCurrentCanvas=nil then
+      CreateVCLCanvas;
+    result := fVCLCurrentCanvas;
   end;
 end;
 
@@ -7608,37 +7819,82 @@ procedure TPdfDocumentGDI.SaveToStream(AStream: TStream; ForceModDate: TDateTime
 var i: integer;
     P: TPdfPageGDI;
 begin
-  // first draw the pages VCL Canvas content
+  // write the file header
+  SaveToStreamDirectBegin(AStream,ForceModDate);
+  // then draw the pages VCL Canvas content on the fly (miminal memory use)
   for i := 0 to fRawPages.Count-1 do begin
     P := fRawPages.List[i];
-    if P.fVCLMetaFile<>nil then begin
-      FreeAndNil(P.fVCLCanvas); // flush VCL canvas content into the metafile
-      FCanvas.SetPage(P);
-      FCanvas.RenderMetaFile(
-        P.fVCLMetaFile,1,0,0,UseSetTextJustification,KerningHScaleBottom,KerningHScaleBottom);
+    P.FlushVCLCanvas;
+    if P.fVCLMetaFileCompressed<>'' then begin
+      P.SetVCLCurrentMetaFile;
+      try
+        FCanvas.SetPage(P);
+        FCanvas.RenderMetaFile(P.fVCLCurrentMetaFile,1,0,0,
+          fUseMetaFileTextPositioning,KerningHScaleBottom,KerningHScaleBottom);
+      finally
+        FreeAndNil(P.fVCLCurrentMetaFile);
+      end;
+      SaveToStreamDirectPageFlush;
     end;
   end;
-  // then write PDF content to destination stream
-  inherited;
+  // finish to write PDF content to destination stream
+  SaveToStreamDirectEnd;
 end;
 
 
 { TPdfPageGDI }
 
-procedure TPdfPageGDI.CreateVCLMetaFile;
+procedure TPdfPageGDI.SetVCLCurrentMetaFile;
+var tmp: RawByteString;
+    Stream: TStream;
 begin
-  fVCLMetaFile := TMetaFile.Create;
+  assert(fVCLCurrentMetaFile=nil);
+  fVCLCurrentMetaFile := TMetaFile.Create;
   fVCLCanvasSize.cx := MulDiv(PageWidth,FDoc.FScreenLogPixels,72);
   fVCLCanvasSize.cy := MulDiv(PageHeight,FDoc.FScreenLogPixels,72);
-  fVCLMetaFile.Width := fVCLCanvasSize.cx;
-  fVCLMetaFile.Height := fVCLCanvasSize.cy;
-  fVCLCanvas := TMetaFileCanvas.Create(fVCLMetaFile,FDoc.FDC);
+  fVCLCurrentMetaFile.Width  := fVCLCanvasSize.cx;
+  fVCLCurrentMetaFile.Height := fVCLCanvasSize.cy;
+  if fVCLMetaFileCompressed<>'' then begin
+    tmp := fVCLMetaFileCompressed;
+    CompressSynLZ(tmp,false);
+    Stream := TRawByteStringStream.Create(tmp);
+    try
+      fVCLCurrentMetaFile.LoadFromStream(Stream);
+    finally
+      Stream.Free;
+    end;
+  end;
 end;
+
+procedure TPdfPageGDI.CreateVCLCanvas;
+begin
+  SetVCLCurrentMetaFile;
+  fVCLCurrentCanvas := TMetaFileCanvas.Create(fVCLCurrentMetaFile,FDoc.FDC);
+end;
+
+procedure TPdfPageGDI.FlushVCLCanvas;
+var Stream: TRawByteStringStream;
+begin
+  if (self=nil) or (fVCLCurrentCanvas=nil) then
+    exit;
+  FreeAndNil(fVCLCurrentCanvas);
+  assert(fVCLCurrentMetaFile<>nil);
+  Stream := TRawByteStringStream.Create;
+  try
+    fVCLCurrentMetaFile.SaveToStream(Stream);
+    fVCLMetaFileCompressed := Stream.DataString;
+    CompressSynLZ(fVCLMetaFileCompressed,true);
+  finally
+    Stream.Free;
+  end;
+  FreeAndNil(fVCLCurrentMetaFile);
+end;
+
 
 destructor TPdfPageGDI.Destroy;
 begin
-  fVCLCanvas.Free;
-  fVCLMetaFile.Free;
+  FreeAndNil(fVCLCurrentCanvas);
+  FreeAndNil(fVCLCurrentMetaFile);
   inherited;
 end;
 
@@ -7711,15 +7967,16 @@ type
     end;
     // SaveDC/RestoreDC stack
     nDC: integer;
-    DC: array[0..10] of TPdfEnumState;
+    DC: array[0..31] of TPdfEnumState;
   public
     constructor Create(ACanvas: TPdfCanvas);
     procedure SaveDC;
     procedure RestoreDC;
     procedure NeedPen;
-    procedure TextOut(var R: TEMRExtTextOut);
     procedure NeedBrushAndPen;
     procedure FlushPenBrush;
+    procedure SelectObjectFromIndex(iObject: integer);
+    procedure TextOut(var R: TEMRExtTextOut);
     procedure ScaleMatrix(Custom: PXForm; iMode: Integer);
     procedure HandleComment(Kind: TPdfGDIComment; P: PAnsiChar; Len: integer);
     procedure CreateFont(aLogFont: PEMRExtCreateFontIndirect);
@@ -7756,10 +8013,9 @@ const
 // - draw most content on PDF canvas (do not render 100% GDI content yet)
 function EnumEMFFunc(DC: HDC; var Table: THandleTable; R: PEnhMetaRecord;
    NumObjects: DWord; E: TPdfEnum): LongBool; stdcall;
-var
-  i, num: integer;
-  InitTransX: XForm;
-  polytypes: PByteArray;
+var i: integer;
+    InitTransX: XForm;
+    polytypes: PByteArray;
 begin
   result := true;
 
@@ -7791,9 +8047,13 @@ begin
   EMR_SETBKMODE:
     font.BkMode := PEMRSetBkMode(R)^.iMode;
   EMR_SETBKCOLOR:
-    font.BkColor := PEMRSetBkColor(R)^.crColor;
+    if PEMRSetBkColor(R)^.crColor=cardinal(clNone) then
+      font.BkColor := 0 else
+      font.BkColor := PEMRSetBkColor(R)^.crColor;
   EMR_SETTEXTCOLOR:
-    font.Color := PEMRSetTextColor(R)^.crColor;
+    if PEMRSetTextColor(R)^.crColor=cardinal(clNone) then
+      font.Color := 0 else
+      font.Color := PEMRSetTextColor(R)^.crColor;
   EMR_SETTEXTALIGN:
     font.Align := PEMRSetTextAlign(R)^.iMode;
   EMR_EXTTEXTOUTA, EMR_EXTTEXTOUTW:
@@ -7824,51 +8084,7 @@ begin
     if PEMRDeleteObject(R)^.ihObject-1<cardinal(length(E.Obj)) then // avoid GPF
       E.obj[PEMRDeleteObject(R)^.ihObject-1].kind := 0;
   EMR_SELECTOBJECT:
-    if integer(PEMRSelectObject(R)^.ihObject)<0 then begin // stock object?
-      num := PEMRSelectObject(R)^.ihObject and $7fffffff;
-      case num of
-        NULL_BRUSH:
-          brush.null := true;
-        WHITE_BRUSH..BLACK_BRUSH: begin
-          brush.color := STOCKBRUSHCOLOR[num];
-          brush.null := false;
-        end;
-        NULL_PEN: begin
-          pen.style := PS_NULL;
-          pen.null := true;
-        end;
-        WHITE_PEN, BLACK_PEN: begin
-          pen.color := STOCKPENCOLOR[num];
-          pen.null := false;
-        end;
-      end;
-    end else
-    if PEMRSelectObject(R)^.ihObject-1<cardinal(length(E.Obj)) then // avoid GPF
-      with E.Obj[PEMRSelectObject(R)^.ihObject-1] do
-      case Kind of // ignore any invalid reference
-        OBJ_PEN: begin
-          if E.fInLined and
-            ((pen.color<>PenColor) or (pen.width<>PenWidth) or
-             (pen.style<>PenStyle)) then begin
-            E.fInLined := False;
-            if not pen.null then
-              E.Canvas.Stroke;
-          end;
-          pen.null := (PenWidth<0) or (PenStyle=PS_NULL); // !! 0 means as thick as possible
-          pen.color := PenColor;
-          pen.width := PenWidth;
-          pen.style := PenStyle;
-        end;
-        OBJ_BRUSH: begin
-          brush.null := BrushNull;
-          brush.color := BrushColor;
-          brush.style := BrushStyle;
-        end;
-        OBJ_FONT: begin
-          font.spec := FontSpec;
-          move(LogFont,font.LogFont,sizeof(LogFont));
-        end;
-      end;
+    E.SelectObjectFromIndex(PEMRSelectObject(R)^.ihObject);
   EMR_MOVETOEX: begin
     Moved := PEMRMoveToEx(R)^.ptl; // temp var to ignore unused moves
     if E.Canvas.FNewPath then
@@ -7903,6 +8119,11 @@ begin
       E.Canvas.RoundRectI(rclBox.left,rclBox.top,rclBox.right,rclBox.bottom,
         szlCorner.cx,szlCorner.cy);
     E.FlushPenBrush;
+  end;
+  EMR_FILLRGN: begin
+    E.SelectObjectFromIndex(PEMRFillRgn(R)^.ihBrush);
+    E.NeedBrushAndPen;
+    E.FillRectangle(PRgnDataHeader(@PEMRFillRgn(R)^.RgnData[0])^.rcBound);
   end;
   EMR_POLYGON, EMR_POLYLINE, EMR_POLYGON16, EMR_POLYLINE16:
   if (not brush.null) or (not pen.null) then begin
@@ -8293,7 +8514,8 @@ begin
 end;
 
 procedure TPdfCanvas.RenderMetaFile(MF: TMetaFile; Scale, XOff, YOff: single;
-  UseSetTextJustification: boolean; KerningHScaleBottom, KerningHScaleTop: single);
+  TextPositioning: TPdfCanvasRenderMetaFileTextPositioning;
+  KerningHScaleBottom, KerningHScaleTop: single);
 var E: TPdfEnum;
     R: TRect;
 begin
@@ -8301,17 +8523,18 @@ begin
   R.Top := 0;
   R.Right := MF.Width;
   R.Bottom := MF.Height;
-
   E := TPdfEnum.Create(self);
   try
     FOffsetXDef := XOff;
     FOffsetYDef := YOff;
     FDevScale := Scale * FFactor;
     FEmfBounds := R; // keep device rect
-    fUseSetTextJustification := UseSetTextJustification;
+    fUseMetaFileTextPositioning := TextPositioning;
     fKerningHScaleBottom := KerningHScaleBottom;
     fKerningHScaleTop := KerningHScaleTop;
-    FPrinterPxPerInch := CurrentPrinterRes;
+    if FDoc.FPrinterPxPerInch.X=0 then
+      FDoc.FPrinterPxPerInch := CurrentPrinterRes; // caching for major speedup
+    FPrinterPxPerInch := FDoc.FPrinterPxPerInch;
     with E.DC[0] do begin
       Int64(WinSize) := PInt64(@R.Right)^;
       ViewSize := WinSize;
@@ -8326,6 +8549,7 @@ begin
     E.Free;
   end;
 end;
+
 
 
 { TPdfEnum }
@@ -8566,6 +8790,57 @@ begin
     if pen.null then
       Canvas.Fill else
       Canvas.FillStroke;
+  end;
+end;
+
+procedure TPdfEnum.SelectObjectFromIndex(iObject: integer);
+begin
+  with DC[nDC] do begin
+    if iObject<0 then begin // stock object?
+      iObject := iObject and $7fffffff;
+      case iObject of
+        NULL_BRUSH:
+          brush.null := true;
+        WHITE_BRUSH..BLACK_BRUSH: begin
+          brush.color := STOCKBRUSHCOLOR[iObject];
+          brush.null := false;
+        end;
+        NULL_PEN: begin
+          pen.style := PS_NULL;
+          pen.null := true;
+        end;
+        WHITE_PEN, BLACK_PEN: begin
+          pen.color := STOCKPENCOLOR[iObject];
+          pen.null := false;
+        end;
+      end;
+    end else
+    if cardinal(iObject-1)<cardinal(length(Obj)) then // avoid GPF
+      with Obj[iObject-1] do
+      case Kind of // ignore any invalid reference
+        OBJ_PEN: begin
+          if fInLined and
+            ((pen.color<>PenColor) or (pen.width<>PenWidth) or
+             (pen.style<>PenStyle)) then begin
+            fInLined := False;
+            if not pen.null then
+              Canvas.Stroke;
+          end;
+          pen.null := (PenWidth<0) or (PenStyle=PS_NULL); // !! 0 means as thick as possible
+          pen.color := PenColor;
+          pen.width := PenWidth;
+          pen.style := PenStyle;
+        end;
+        OBJ_BRUSH: begin
+          brush.null := BrushNull;
+          brush.color := BrushColor;
+          brush.style := BrushStyle;
+        end;
+        OBJ_FONT: begin
+          font.spec := FontSpec;
+          move(LogFont,font.LogFont,sizeof(LogFont));
+        end;
+      end;
   end;
 end;
 
@@ -8850,14 +9125,17 @@ end;
 
 procedure TPdfEnum.TextOut(var R: TEMRExtTextOut);
 var nspace,i: integer;
+    cur: cardinal;
     wW, measW, W,H,hscale: Single;
     DX: PIntegerArray; // not handled during drawing yet
-    ASize: single;
+    ASize, PosX, PosY: single;
     tmp: array of WideChar; // R.emrtext is not #0 terminated -> use tmp[]
+    tmpChar: array[0..1] of WideChar;
     a, acos, asin, fscaleX, fscaleY: single;
     WithClip, bOpaque: Boolean;
     ClipRect: TPdfBox;
     ASignX, ASignY: Integer;
+    Positioning: TPdfCanvasRenderMetaFileTextPositioning;
 
 procedure DrawLine(var P: TPoint; aH: Single);
 var tmp: TPdfEnumStatePen;
@@ -8882,10 +9160,10 @@ begin
   end;
 end;
 begin
+  if R.emrtext.nChars>0 then
   with DC[nDC] do begin
     SetLength(tmp,R.emrtext.nChars+1); // faster than WideString for our purpose
     Move(pointer(PtrUInt(@R)+R.emrtext.offString)^,tmp[0],R.emrtext.nChars*2);
-
     ASignY := 1;
     ASignX := 1;
     if (Canvas.FWorldFactorY) < 0 then
@@ -8901,12 +9179,16 @@ begin
     // ensure this font is selected (very fast if was already selected)
     Canvas.SetFont(Canvas.FDoc.FDC, font.LogFont, ASize);
     // calculate coordinates
+    Positioning := Canvas.fUseMetaFileTextPositioning;
     if (R.emrtext.fOptions and ETO_GLYPH_INDEX<>0) then
       measW := 0 else
       measW := Round(Canvas.UnicodeTextWidth(Pointer(tmp)) / fscaleX);
-    if R.emrtext.offDx=0 then
-      W := measW
-    else begin
+    if R.emrtext.offDx=0 then begin
+      DX := nil;
+      W := measW;
+      if Positioning=tpExactTextCharacterPositining then
+        Positioning := tpSetTextJustification; // Exact position expects offDX
+    end else begin
       DX := pointer(PtrUInt(@R)+R.emrtext.offDx);
       W := DXTextWidth(DX, R.emrText.nChars);
     end;
@@ -8916,23 +9198,34 @@ begin
       for i := 0 to R.emrtext.nChars-1 do
         if tmp[i]=' ' then
           inc(nspace);
-      if Canvas.fUseSetTextJustification and (nspace>0) and ((W-measW)>(nspace*2)) then
+      if (Positioning=tpSetTextJustification) and
+         ((nspace=0) or ((W-measW)<nspace)) then
+          Positioning := tpKerningFromAveragePosition;
+      if (Positioning=tpExactTextCharacterPositining) and (font.spec.angle<>0) then
+        Positioning := tpKerningFromAveragePosition;
+      case Positioning of
+      tpSetTextJustification:
         // we should have had a SetTextJustification() call -> modify word space
         with Canvas do
-          SetWordSpace(((W-measW) * fscaleX)/nspace)
-      else begin
+          SetWordSpace(((W-measW) * fscaleX)/nspace);
+      tpKerningFromAveragePosition: begin
         // check if DX[] width differs from PDF width
-        nspace := 0;
         hscale := (W*100) / measW;
         // implement some global kerning if needed (allow hysteresis around 100%)
         if (hscale<Canvas.fKerningHScaleBottom) or
            (hscale>Canvas.fKerningHScaleTop) then begin
           if font.spec.angle=0 then
-            Canvas.SetHorizontalScaling(hscale)
+            Canvas.SetHorizontalScaling(hscale) else
+            hscale := 100;
         end else
           hscale := 100;
       end;
-    end;
+      tpExactTextCharacterPositining: begin
+        tmpChar[1] := #0;
+      end;
+      end;
+    end else
+      Positioning := tpSetTextJustification;
     wW := W;                                    // right x
     if (font.Align and TA_CENTER)=TA_CENTER then
       W := W/2                                  // center x
@@ -8992,24 +9285,44 @@ begin
       a := font.spec.angle*(PI/180);
       acos := cos(a);
       asin := sin(a);
+      PosX := 0;
+      PosY := 0;
       Canvas.SetTextMatrix(acos, asin, -asin, acos,
-        Canvas.I2X(R.emrtext.ptlReference.X+Round(W*acos-H*asin)),
+        Canvas.I2X(R.emrtext.ptlReference.X-Round(W*acos-H*asin)),
         Canvas.I2Y(R.emrtext.ptlReference.Y-Round(H*acos-W*asin)));
     end else begin
       acos := 0;
       asin := 0;
-      Canvas.MoveTextPoint(
-        Canvas.I2X(R.emrtext.ptlReference.X-W),
-        Canvas.I2Y(R.emrtext.ptlReference.Y-H));
+      PosX := R.emrtext.ptlReference.X-W;
+      PosY := R.emrtext.ptlReference.Y-H;
+      Canvas.MoveTextPoint(Canvas.I2X(PosX),Canvas.I2Y(PosY));
     end;
     if (R.emrtext.fOptions and ETO_GLYPH_INDEX)<>0 then
       Canvas.ShowGlyph(pointer(tmp),R.emrtext.nChars) else
-      Canvas.ShowText(pointer(tmp));
+      if Positioning=tpExactTextCharacterPositining then begin
+        cur := 0;
+        repeat
+          tmpChar[0] := tmp[cur];
+          Canvas.ShowText(@tmpChar,false);
+          if cur=R.emrtext.nChars-1 then
+            break;
+          PosX := PosX+DX^[cur];
+          Canvas.EndText;
+          Canvas.BeginText;
+          Canvas.MoveTextPoint(Canvas.I2X(PosX),Canvas.I2Y(PosY));
+          inc(cur);
+        until false;
+      end else
+        Canvas.ShowText(pointer(tmp));
     Canvas.EndText;
-    if nspace>0 then
-      Canvas.SetWordSpace(0);
-    if hscale<>100 then
-      Canvas.SetHorizontalScaling(100); //reset hor. scaling
+    case Positioning of
+    tpSetTextJustification:
+      if nspace>0 then
+        Canvas.SetWordSpace(0);
+    tpKerningFromAveragePosition:
+      if hscale<>100 then
+        Canvas.SetHorizontalScaling(100); //reset hor. scaling
+    end;
     // handle underline or strike out styles (direct draw PDF lines on canvas)
     if font.LogFont.lfUnderline<>0 then
       DrawLine(R.emrtext.ptlReference, aSize / 8 / Canvas.GetWorldFactorX / Canvas.FDevScale);
@@ -9269,6 +9582,72 @@ begin
   end;
 end;
 
+
+{$ifdef USE_PDFSECURITY}
+
+{ TPdfEncryption }
+
+constructor TPdfEncryption.Create(aLevel: TPdfEncryptionLevel;
+  aPermissions: TPdfEncryptionPermissions;
+  const aUserPassword, aOwnerPassword: string);
+begin
+  fLevel := aLevel;
+  fPermissions := aPermissions;
+  fUserPassword := aUserPassword;
+  fOwnerPassword := aOwnerPassword;
+end;
+
+class function TPdfEncryption.New(aLevel: TPdfEncryptionLevel;
+  const aUserPassword, aOwnerPassword: string;
+  aPermissions: TPdfEncryptionPermissions): TPdfEncryption;
+begin
+  case aLevel of
+  elRC4_40, elRC4_128:
+    result := TPdfEncryptionRC4MD5.Create(aLevel,aPermissions,aUserPassword,aOwnerPassword);
+  else
+    result := nil;
+  end;
+end;
+
+{ TPdfEncryptionRC4MD5 }
+
+constructor TPdfEncryptionRC4MD5.Create(aLevel: TPdfEncryptionLevel;
+  aPermissions: TPdfEncryptionPermissions; const aUserPassword,
+  aOwnerPassword: string);
+begin
+  inherited;
+
+end;
+
+procedure TPdfEncryptionRC4MD5.EncodeBuffer(const BufIn; var BufOut; Count: cardinal;
+  ObjectNumber, GenerationNumber: integer);
+// see http://www.cs.cmu.edu/~dst/Adobe/Gallery/anon21jul01-pdf-encryption.txt
+var RC4: TRC4;
+  procedure ComputeNewRC4Key;
+  const HASHSIZE: array[elRC4_40..elRC4_128] of integer = (5,16);
+        KEYSIZE:  array[elRC4_40..elRC4_128] of integer = (10,16);
+  var MD5: TMD5;
+      Digest: TMD5Digest;
+  begin
+    MD5.Init;
+    MD5.Update(fInternalKey[0],HASHSIZE[fLevel]);
+    MD5.Update(ObjectNumber,3);
+    MD5.Update(GenerationNumber,2);
+    MD5.Final(Digest);
+    RC4.Init(Digest,KEYSIZE[fLevel]);
+    RC4.SaveKey(fLastRC4Key); // a lot of string encodings have the same context
+    fLastObjectNumber := ObjectNumber;
+    fLastGenerationNumber := GenerationNumber;
+  end;
+begin
+  if (ObjectNumber<>fLastObjectNumber) or
+     (GenerationNumber<>fLastGenerationNumber) then
+    ComputeNewRC4Key else
+    RC4.RestoreKey(fLastRC4Key);
+  RC4.Encrypt(BufIn,BufOut,Count); // RC4 allows in-place encryption :)
+end;
+
+{$endif USE_PDFSECURITY}
 
 initialization
 {$ifdef USE_SYNGDIPLUS}

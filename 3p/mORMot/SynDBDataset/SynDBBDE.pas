@@ -226,6 +226,7 @@ begin
   try
     fSession.Open;
     fDatabase.Open;
+    inherited Connect; // notify any re-connection 
   except
     on E: Exception do begin
       Log.Log(sllError,E);
@@ -249,11 +250,14 @@ end;
 
 procedure TSQLDBBDEConnection.Disconnect;
 begin
-  inherited;
-  if fDatabase<>nil then
-    fDatabase.Close;
-  if (fSession<>nil) and fSession.Active then
-    fSession.Close;
+  try
+    inherited Disconnect; // flush any cached statements 
+  finally
+    if fDatabase<>nil then
+      fDatabase.Close;
+    if (fSession<>nil) and fSession.Active then
+      fSession.Close;
+  end;
 end;
 
 function TSQLDBBDEConnection.IsConnected: boolean;

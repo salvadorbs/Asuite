@@ -301,10 +301,11 @@ type
     fRowFetchedEnded: boolean;
     fRowBuffer: TByteDynArray;
     fInternalBufferSize: cardinal;
-    fUseServerSideStatementCache: boolean;
 {$ifndef DELPHI5OROLDER}
+    // warning: shall be 32 bits aligned!
     fTimeElapsed: TPrecisionTimer;
 {$endif}
+    fUseServerSideStatementCache: boolean;
     procedure FreeHandles;
     procedure FetchTest(Status: integer);
     /// Col=0...fColumnCount-1
@@ -1452,10 +1453,8 @@ constructor TSQLDBOracleConnectionProperties.CreateWithCodePage(const aServerNam
 begin
   fDBMS := dOracle;
   inherited Create(aServerName,'',aUserID,aPassWord);
-  if OCI=nil then begin
-    OCI := TSQLDBOracleLib.Create;
-    GarbageCollector.Add(OCI);
-  end;
+  if OCI=nil then
+    GarbageCollectorFreeAndNil(OCI,TSQLDBOracleLib.Create);
   if aCodePage=0 then
     aCodePage := EnvVariableToCodePage;
   fCodePage := aCodePage;
@@ -1575,6 +1574,7 @@ begin
       Free;
     end;
     //Check(TransStart(fContext,fError,0,OCI_DEFAULT),fError);
+    inherited Connect; // notify any re-connection 
   except
     on E: Exception do begin
       Log.Log(sllError,E);
@@ -1615,24 +1615,28 @@ end;
 
 procedure TSQLDBOracleConnection.Disconnect;
 begin
-  if (fError<>nil) and (OCI<>nil) then
-  with OCI do begin
-    SynDBLog.Enter(self);
-    if fTrans<>nil then begin
-      // close any opened session
-      HandleFree(fTrans,OCI_HTYPE_TRANS);
-      fTrans := nil;
-      Check(SessionEnd(fContext,fError,fSession,OCI_DEFAULT),fError,false,sllError);
-      Check(ServerDetach(fServer,fError,OCI_DEFAULT),fError,false,sllError);
+  try
+    inherited Disconnect; // flush any cached statement
+  finally
+    if (fError<>nil) and (OCI<>nil) then
+    with OCI do begin
+      SynDBLog.Enter(self);
+      if fTrans<>nil then begin
+        // close any opened session
+        HandleFree(fTrans,OCI_HTYPE_TRANS);
+        fTrans := nil;
+        Check(SessionEnd(fContext,fError,fSession,OCI_DEFAULT),fError,false,sllError);
+        Check(ServerDetach(fServer,fError,OCI_DEFAULT),fError,false,sllError);
+      end;
+      HandleFree(fSession,OCI_HTYPE_SESSION);
+      HandleFree(fContext,OCI_HTYPE_SVCCTX);
+      HandleFree(fServer,OCI_HTYPE_SERVER);
+      HandleFree(fError,OCI_HTYPE_ERROR);
+      fSession := nil;
+      fContext := nil;
+      fServer := nil;
+      fError := nil;
     end;
-    HandleFree(fSession,OCI_HTYPE_SESSION);
-    HandleFree(fContext,OCI_HTYPE_SVCCTX);
-    HandleFree(fServer,OCI_HTYPE_SERVER);
-    HandleFree(fError,OCI_HTYPE_ERROR);
-    fSession := nil;
-    fContext := nil;
-    fServer := nil;
-    fError := nil;
   end;
 end;
 

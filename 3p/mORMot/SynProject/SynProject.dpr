@@ -65,7 +65,8 @@ uses
   ProjectParser in 'ProjectParser.pas',
   ProjectRTF in 'ProjectRTF.pas',
   ProjectTrkTool in 'ProjectTrkTool.pas',
-  ProjectFormSelection in 'ProjectFormSelection.pas' {SelectionForm};
+  ProjectFormSelection in 'ProjectFormSelection.pas' {SelectionForm},
+  ProjectDiagrams in 'ProjectDiagrams.pas';
 
 {$R *.res}
 {$R Vista.res} 

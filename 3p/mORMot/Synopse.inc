@@ -191,10 +191,10 @@
       {$define WITHUXTHEME}
     {$endif}
     {$if CompilerVersion >= 17}
-      {$define HASINLINE}     // Delphi 2005 or newer
     {$ifend}
     {$if CompilerVersion >= 18}
       {$define HASNEWFILEAGE} // Delphi 2006 or newer
+      {$define HASINLINE}     
     {$ifend}
     {$if CompilerVersion > 18}
       {$define ISDELPHI2007ANDUP} // Delphi 2007 or newer

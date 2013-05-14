@@ -530,6 +530,7 @@ begin
     BufAddStr(ord(dpb_password),fProperties.PassWord);
     Check(isc_attach_database(fStatus,length(ServerName),pointer(ServerName),
       fDatabase,fBufLen,fBuf),fStatus);
+    inherited Connect; // notify any re-connection 
   end;
 end;
 
@@ -552,15 +553,17 @@ end;
 
 procedure TSQLDBFirebirdConnection.Disconnect;
 begin
-  if fFirebirdInstance=nil then
-    raise EFirebirdException.Create('No lib');
-  if fDatabase=nil then
-    exit; 
-  SynDBLog.Enter(self);
-  with TFirebirdLib(fFirebirdInstance) do begin
-    if TransactionCount>0 then
-      Rollback;
-    Check(isc_detach_database(fStatus,fDatabase),fStatus);
+  try
+    inherited Disconnect; // flush any cached statement
+  finally
+    if fFirebirdInstance=nil then
+      raise EFirebirdException.Create('No lib');
+    if fDatabase<>nil then
+      with TFirebirdLib(fFirebirdInstance) do begin
+        if TransactionCount>0 then
+          Rollback;
+        Check(isc_detach_database(fStatus,fDatabase),fStatus);
+      end;
   end;
 end;
 
@@ -695,7 +698,7 @@ begin
 end;
 
 procedure TSQLDBFirebirdStatement.ColumnsToJSON(WR: TJSONWriter; DoNotFletchBlobs: boolean);
-var col: integer;
+var col, METHODTOBEWRITTEN: integer;
 begin
   if (CurrentRow<=0) then
     raise EFirebirdException.Create('TSQLDBFirebirdStatement.ColumnsToJSON() with no prior Step');

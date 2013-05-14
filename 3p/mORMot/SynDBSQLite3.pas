@@ -389,10 +389,12 @@ begin
   Disconnect; // force fTrans=fError=fServer=fContext=nil
   fDB := TSQLDatabase.Create(UTF8ToString(Properties.ServerName),Properties.PassWord);
   //fDB.SetWalMode(true); // slower INSERT in WAL mode for huge number of rows
+  inherited Connect; // notify any re-connection
 end;
 
 procedure TSQLDBSQLite3Connection.Disconnect;
 begin
+  inherited Disconnect; // flush any cached statement
   FreeAndNil(fDB);
 end;
 
@@ -405,7 +407,7 @@ end;
 
 function TSQLDBSQLite3Connection.IsConnected: boolean;
 begin
-  result := (self<>nil) and (fDB<>nil);
+  result := fDB<>nil;
 end;
 
 function TSQLDBSQLite3Connection.NewStatement: TSQLDBStatement;

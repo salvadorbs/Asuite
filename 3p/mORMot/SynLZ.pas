@@ -192,6 +192,8 @@ unit SynLZ;
 
   Version 1.18
   - unit fixed and tested with Delphi XE2/XE3 64-bit compiler
+  - added SynLZdecompress1partial() function for partial and secure (but slower)
+    decompression - implements feature request [82ca067959]
 
 }
 
@@ -207,8 +209,17 @@ function SynLZdecompressdestlen(in_p: PAnsiChar): integer;
 
 /// 1st compression method uses hashing with a 32bits control word
 function SynLZcompress1pas(src: PAnsiChar; size: integer; dst: PAnsiChar): integer;
+
 /// 1st compression method uses hashing with a 32bits control word
+// - this is the fastest pure pascal method
 function SynLZdecompress1pas(src: PAnsiChar; size: integer; dst: PAnsiChar): Integer;
+
+/// 1st compression method uses hashing with a 32bits control word
+// - this overload function is slower, but will allow to uncompress only the start
+// of the content (e.g. to read some metadata header)
+// - it will also check for dst buffer overflow, so will be more secure than
+// other functions, which expect the content to be verified (e.g. via CRC)
+function SynLZdecompress1partial(src: PAnsiChar; size: integer; dst: PAnsiChar; maxDst: Integer): Integer; 
 
 {$ifndef PUREPASCAL}
 /// optimized asm version of the 1st compression method
@@ -809,13 +820,89 @@ nextCW:
       if dst-offset[h]<t then // avoid overlaping move() bug
         movechars(offset[h],dst,t) else
         move(offset[h]^,dst^,t);
+      if src>=src_end then break;
       while last_hashed<dst do begin
         inc(last_hashed);
         v := pInteger(last_hashed)^;
         offset[((v shr 12) xor v) and 4095] := last_hashed;
       end;
       inc(dst,t);
+      last_hashed := dst-1;
+      CWbit := CWbit shl 1;
+      if CWbit<>0 then
+        continue else
+        goto nextCW;
+    end;
+  until false;
+end;
+
+function SynLZdecompress1partial(src: PAnsiChar; size: integer; dst: PAnsiChar; maxDst: Integer): Integer;
+var last_hashed: PAnsiChar; // initial src and dst value
+    src_end,dst_End: PAnsiChar;
+    CWbit: integer;
+    CW, v, t, h: integer;
+    offset: array[0..4095] of PAnsiChar; // 16KB hashing code
+label nextCW;
+begin
+  src_end := src+size;
+  // 1. retrieve out_len
+  result := pWord(src)^;
+  if result=0 then exit;
+  inc(src,2);
+  if result and $8000<>0 then begin
+    result := (result and $7fff) or (integer(pWord(src)^) shl 15);
+    inc(src,2);
+  end;
+  if maxDst<result then
+    result := maxDst;
+  if result<=0 then
+    exit; // nothing to decompress
+  dst_end := dst+result; // will also avoid any buffer overflow errors
+  // 2. decompress
+  last_hashed := dst-1;
+nextCW:
+  CW := pInteger(src)^;
+  inc(src,4);
+  CWbit := 1;
+  if src<src_end then
+  repeat
+    if CW and CWbit=0 then begin
+      dst^ := src^;
+      inc(src);
+      inc(dst);
+      if (src>=src_end) or (dst>=dst_end) then break;
+      if last_hashed<dst-3 then begin
+        inc(last_hashed);
+        v := pInteger(last_hashed)^;
+        offset[((v shr 12) xor v) and 4095] := last_hashed;
+      end;
+      CWbit := CWbit shl 1;
+      if CWbit<>0 then
+        continue else
+        goto nextCW;
+    end else begin
+      h := pWord(src)^;
+      inc(src,2);
+      t := (h and 15)+2;
+      h := h shr 4;
+      if t=2 then begin
+        t := ord(src^)+(16+2);
+        inc(src);
+      end;
+      if dst+t>=dst_end then begin
+        movechars(offset[h],dst,dst_end-dst);
+        break;
+      end;
+      if dst-offset[h]<t then // avoid overlaping move() bug
+        movechars(offset[h],dst,t) else
+        move(offset[h]^,dst^,t);
       if src>=src_end then break;
+      while last_hashed<dst do begin
+        inc(last_hashed);
+        v := pInteger(last_hashed)^;
+        offset[((v shr 12) xor v) and 4095] := last_hashed;
+      end;
+      inc(dst,t);
       last_hashed := dst-1;
       CWbit := CWbit shl 1;
       if CWbit<>0 then

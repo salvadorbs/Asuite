@@ -52,6 +52,8 @@ uses
   PasDoc_Light;
 
 type
+  TProjectFooter =  procedure(WR: TProjectWriter; const FooterTitle: string) of object;
+  
   /// Delphi project parser (PasDoc based), for creating source documentation
   TProjectBrowser = class(TPasDocLight)
   private
@@ -102,10 +104,11 @@ type
     procedure AddGraph(graph: string; WR: TProjectWriter);
 {$endif}
     // write the description of this unit
-    procedure RtfUnitDescription(aUnit: TPasUnit; WR: TProjectWriter; TitleLevel: integer; withFields: boolean);
+    procedure RtfUnitDescription(aUnit: TPasUnit; WR: TProjectWriter; TitleLevel: integer;
+      withFields: boolean; OnFooter: TProjectFooter);
     // write all used unit detailled description if not already done
     procedure RtfUsesUnitsDescription(WR: TProjectWriter; TitleLevel: integer;
-      const CSVUnitsWithFields: string);
+      const CSVUnitsWithFields: string; OnFooter: TProjectFooter);
     // the associated project
     property Project: TProject read FProject;
     // the current class hierarchy
@@ -159,10 +162,12 @@ resourcestring
   sImplementedInN = '%s implemented in the {\i %s} unit';
   sPurpose = 'Purpose';
   sQuotedInN = 'The {\i %s} unit is quoted in the following items';
+  sUnitN = '%s unit';
   sUnitsUsedInN = 'Units used in the {\i %s} unit';
   sUnitName = 'Unit Name';
   sUnitsLocatedInN = 'Units located in the "%s" directory';
   sSourceFileName = 'Source File Name';
+  sUnitDependenciesInDir = 'Unit dependencies in the "%s" directory';
 
 { TProjectBrowser }
 
@@ -1124,8 +1129,8 @@ begin
           CreateEmf(GraphFileNameOK(dir,false));
         dir := item;
       end;
-      GraphTitle := 'Unit dependencies in the "'+
-        RtfBackSlash(ExcludeTrailingPathDelimiter(dir))+'" directory';
+      GraphTitle := format(sUnitDependenciesInDir,
+        [RtfBackSlash(ExcludeTrailingPathDelimiter(dir))]);
       for i := 0 to InterfaceUsesUnits.Count-1 do begin
         p := Units.FindName(InterfaceUsesUnits[i]);
         if (p=nil) or (p.ClassType<>TPasUnit) or CSVContains(Ignore,p.Name) then continue;
@@ -1386,7 +1391,7 @@ end;
 
 
 procedure TProjectBrowser.RtfUnitDescription(aUnit: TPasUnit; WR: TProjectWriter; TitleLevel: integer;
-  withFields: boolean);
+  withFields: boolean; OnFooter: TProjectFooter);
 var procnames: string; // CSV TClass.Funct,globalproc to be highlighted
     unitName: string;
 procedure Details(Items: TPasItems; const ItemName: string;
@@ -1620,7 +1625,12 @@ var i,j: integer;
     ok: boolean;
 begin
   unitName := aUnit.Name+'.pas';
-  WR.RtfTitle(aUnit.Name+' unit',TitleLevel,(TitleLevel>=0),aUnit.OutputFileName);
+  if Assigned(OnFooter) then begin
+    WR.RtfEndSection;
+    OnFooter(WR,format(sUnitN,[unitName]));
+    WR.RtfParDefault;
+  end;
+  WR.RtfTitle(format(sUnitN,[unitName]),TitleLevel,(TitleLevel>=0),aUnit.OutputFileName);
   WR.AddRtfContent('{\i '+sPurpose+'}: '+aUnit.UnitDescription(false));
   WR.RtfPar;
   procnames := '';
@@ -1712,7 +1722,7 @@ begin
 end;
 
 procedure TProjectBrowser.RtfUsesUnitsDescription(WR: TProjectWriter; TitleLevel: integer;
-  const CSVUnitsWithFields: string);
+  const CSVUnitsWithFields: string; OnFooter: TProjectFooter);
 var u: integer;
     aUnit: TPasUnit;
     withFields: boolean;
@@ -1725,7 +1735,7 @@ begin
     if CSVUnitsWithFields='*' then
       withFields := true else
       withFields := CSVContains(CSVUnitsWithFields,aUnit.OutputFileName);
-    RtfUnitDescription(aUnit,WR,TitleLevel,withFields);
+    RtfUnitDescription(aUnit,WR,TitleLevel,withFields,OnFooter);
   end;
 end;
 
