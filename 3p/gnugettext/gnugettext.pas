@@ -3,7 +3,7 @@
   All parts of the translation system are kept in this unit.
 
   @author Lars B. Dybdahl and others
-  @version $LastChangedRevision: 421 $
+  @version $LastChangedRevision: 220 $
   @see http://dybdahl.dk/dxgettext/
 -------------------------------------------------------------------------------}
 unit gnugettext;
@@ -15,15 +15,15 @@ unit gnugettext;
 (*  Contributors: Peter Thornqvist, Troy Wolbrink,            *)
 (*                Frank Andreas de Groot, Igor Siticov,       *)
 (*                Jacques Garcia Vazquez, Igor Gitman,        *)
-(*                Arvid Winkelsdorf                           *)
+(*                Arvid Winkelsdorf, Thomas Mueller           *)
 (*                                                            *)
 (*  See http://dybdahl.dk/dxgettext/ for more information     *)
 (*                                                            *)
 (**************************************************************)
 
 // Information about this file:
-// $LastChangedDate: 2012-10-31 15:46:19 +0100 (mer. 31 oct. 2012) $
-// $LastChangedRevision: 421 $
+// $LastChangedDate: 2010-08-25 15:40:17 +0200 (on, 25 aug 2010) $
+// $LastChangedRevision: 220 $
 // $HeadURL: http://svn.berlios.de/svnroot/repos/dxgettext/trunk/dxgettext/sample/gnugettext.pas $
 
 // Redistribution and use in source and binary forms, with or without
@@ -47,89 +47,120 @@ interface
 
 // If the conditional define DXGETTEXTDEBUG is defined, debugging log is activated.
 // Use DefaultInstance.DebugLogToFile() to write the log to a file.
-{$IFDEF DEBUG}
-  {.$define DXGETTEXTDEBUG}
-{$ENDIF}
+{.$define DXGETTEXTDEBUG}
+
+// ### LO - Workaround aka hack for programs compiled with German Delphi
+//
+// If the current OS Language is not German, immediately add a Delphi RTL domain
+// to the resource domains and bind the text domain to a fixed German->English
+// translation.
+// Using a fixed German->English translation because the OS
+// Language may not be one of the installed translations.
+// Otherwise the German RTL resourcestrings will not be translated.
+// This results in German menu shortcuts 'Strg+', 'Umsch+' instead of
+// 'Ctrl+', 'Shift+' and so on.
+//
+// Since there is no way to automatically determine whether the compiling version
+// is German, you must enable the following conditional define to enable it.
+// Be warned: This has not been thoroughly tested.
+// Default is turned off.
+{.$define dx_German_Delphi_fix}
+
+// if the conditional dx_SupportsResources is defined the .mo files
+// can also be added to the executable as Windows resources
+// Be warned: This has not been thoroughly tested.
+// Default is turned off.
+{.$define dx_SupportsResources}
 
 {$ifdef VER140}
   // Delphi 6
-{$ifdef MSWINDOWS}
-  {$DEFINE DELPHI6OROLDER}
-{$endif}
+  {$DEFINE dx_Hinstance_is_Integer}
+  {$DEFINE dx_NativeInt_is_Integer}
 {$endif}
 {$ifdef VER150}
   // Delphi 7
-  {$DEFINE DELPHI7OROLDER}
+  {$DEFINE dx_has_Unsafe_Warnings}
+  {$DEFINE dx_Hinstance_is_Integer}
+  {$DEFINE dx_NativeInt_is_Integer}
 {$endif}
 {$ifdef VER160}
   // Delphi 8
-  {$DEFINE DELPHI8OROLDER}
+  {$DEFINE dx_has_Unsafe_Warnings}
+  {$DEFINE dx_has_WideStrings}
+  {$DEFINE dx_Hinstance_is_Integer}
+  {$DEFINE dx_NativeInt_is_Integer}
 {$endif}
 {$ifdef VER170}
   // Delphi 2005
-  {$DEFINE DELPHI2005OROLDER}
+  {$DEFINE dx_has_Unsafe_Warnings}
+  {$DEFINE dx_has_WideStrings}
+  {$DEFINE dx_Hinstance_is_Integer}
+  {$DEFINE dx_NativeInt_is_Integer}
 {$endif}
 {$ifdef VER180}
-  {$ifndef VER185}
   // Delphi 2006
-  {$DEFINE DELPHI2006OROLDER}
-  {$else}
-  // Delphi 2007
-  {$DEFINE DELPHI2007OROLDER}
-  {$endif}
+  {$DEFINE dx_has_Unsafe_Warnings}
+  {$DEFINE dx_has_WideStrings}
+  {$DEFINE dx_Hinstance_is_Integer}
+  {$DEFINE dx_NativeInt_is_Integer}
 {$endif}
 {$ifdef VER190}
   // Delphi 2007
-  {$DEFINE DELPHI2007OROLDER}
+  {$DEFINE dx_has_Unsafe_Warnings}
+  {$DEFINE dx_has_WideStrings}
+  {$DEFINE dx_Hinstance_is_Integer}
+  {$DEFINE dx_NativeInt_is_Integer}
 {$endif}
 {$ifdef VER200}
   // Delphi 2009 with Unicode
-  {$DEFINE DELPHI2009OROLDER}
+  {$DEFINE dx_has_Unsafe_Warnings}
+  {$DEFINE dx_has_WideStrings}
+  {$DEFINE dx_Hinstance_is_Integer}
+  {$DEFINE dx_NativeInt_is_Integer}
+  {$DEFINE dx_StringList_has_OwnsObjects}
 {$endif}
 {$ifdef VER210}
   // Delphi 2010 with Unicode
-  {$DEFINE DELPHI2010OROLDER}
+  {$DEFINE dx_has_Unsafe_Warnings}
+  {$DEFINE dx_has_WideStrings}
+  {$DEFINE dx_Hinstance_is_Integer}
+  {$DEFINE dx_NativeInt_is_Integer}
+  {$DEFINE dx_StringList_has_OwnsObjects}
 {$endif}
 {$ifdef VER220}
-  // Delphi 2011 with Unicode
-  {$DEFINE DELPHI2011OROLDER}
+  // Delphi 2011/XE with Unicode
+  {$DEFINE dx_has_Unsafe_Warnings}
+  {$DEFINE dx_has_WideStrings}
+  {$DEFINE dx_Hinstance_is_Integer}
+  {$DEFINE dx_NativeInt_is_Integer}
+  {$DEFINE dx_StringList_has_OwnsObjects}
 {$endif}
 {$ifdef VER230}
-  // Delphi 2012 with Unicode
-  {$DEFINE DELPHI2012OROLDER}
+  // Delphi 2012/XE2 with Unicode
+  {$DEFINE dx_has_Unsafe_Warnings}
+  {$DEFINE dx_has_WideStrings}
+  {$DEFINE dx_StringList_has_OwnsObjects}
 {$endif}
 {$ifdef VER240}
   // Delphi 2013/XE3 with Unicode
-  {$DEFINE DELPHI2013OROLDER}
+  {$DEFINE dx_has_Unsafe_Warnings}
+  {$DEFINE dx_has_WideStrings}
+  {$DEFINE dx_StringList_has_OwnsObjects}
+  {$DEFINE dx_GetStrProp_reads_unicode}
+{$endif}
+{$ifdef VER250}
+  // Delphi 2013/XE4 with Unicode
+  {$DEFINE dx_has_Unsafe_Warnings}
+  {$DEFINE dx_has_WideStrings}
+  {$DEFINE dx_StringList_has_OwnsObjects}
+  {$DEFINE dx_GetStrProp_reads_unicode}
 {$endif}
 
-{$ifdef DELPHI2013OROLDER}
-  {$DEFINE DELPHI2012OROLDER}
-{$endif}
-
-{$ifdef DELPHI2012OROLDER}
-  {$DEFINE DELPHI2011OROLDER}
-{$endif}
-
-{$ifdef DELPHI2011OROLDER}
-  {$DEFINE DELPHI2010OROLDER}
-{$endif}
-
-{$ifdef DELPHI2010OROLDER}
-  {$DEFINE DELPHI2009OROLDER}
-{$endif}
-
-{$ifdef DELPHI2009OROLDER}
-  {$DEFINE DELPHI2007OROLDER}
-{$endif}
-
-{$ifdef DELPHI2007OROLDER}
-  {$DEFINE DELPHI7OROLDER}
-{$endif}
-
-{$ifdef DELPHI7OROLDER}
-  {$DEFINE DELPHI6OROLDER}
-{$endif}
+{$ifdef dx_has_Unsafe_Warnings}
+  {$WARN UNSAFE_TYPE OFF}
+  {$WARN UNSAFE_CODE OFF}
+  {$WARN UNSAFE_CAST OFF}
+{$endif dx_has_Unsafe_Warnings}
 
 uses
 {$ifdef MSWINDOWS}
@@ -140,6 +171,9 @@ uses
   CWString,
 {$endif}
 {$endif}
+{$IFDEF dx_has_WideStrings}
+  WideStrings,
+{$ENDIF dx_has_WideStrings}
   Classes, StrUtils, SysUtils, TypInfo;
 
 (*****************************************************************************)
@@ -194,7 +228,6 @@ procedure TP_GlobalIgnoreClass (IgnClass:TClass);
 function TP_TryGlobalIgnoreClass (IgnClass:TClass): boolean;
 procedure TP_GlobalIgnoreClassProperty (IgnClass:TClass;const propertyname:ComponentNameString);
 procedure TP_GlobalHandleClass (HClass:TClass;Handler:TTranslator);
-procedure TP_Remember(AnObject: TObject; PropName:ComponentNameString; OldValue:TranslatedUnicodeString);
 procedure TranslateComponent(AnObject: TComponent; const TextDomain:DomainString='');
 procedure RetranslateComponent(AnObject: TComponent; const TextDomain:DomainString='');
 
@@ -240,7 +273,7 @@ const
 
 const
   // Subversion source code version control version information
-  VCSVersion='$LastChangedRevision: 421 $';
+  VCSVersion='$LastChangedRevision: 220 $';
 
 type
   EGnuGettext=class(Exception);
@@ -265,14 +298,6 @@ procedure HookIntoResourceStrings (enabled:boolean=true; SupportPackages:boolean
 (*                                                                           *)
 (*****************************************************************************)
 
-{$ifdef MSWINDOWS}
-{$ifndef DELPHI6OROLDER}
-{$WARN UNSAFE_TYPE OFF}
-{$WARN UNSAFE_CODE OFF}
-{$WARN UNSAFE_CAST OFF}
-{$endif}
-{$endif}
-
 type
   TOnDebugLine = Procedure (Sender: TObject; const Line: String; var Discard: Boolean) of Object;  // Set Discard to false if output should still go to ordinary debug log
   TGetPluralForm=function (Number:Longint):Integer;
@@ -290,7 +315,8 @@ type
       Users:Integer; /// Reference count. If it reaches zero, this object should be destroyed.
       constructor Create (const filename: FilenameString;
                           const Offset: int64; Size: int64;
-                          const xUseMemoryMappedFiles: Boolean);
+                          const xUseMemoryMappedFiles: Boolean;
+                          const ResName: string);
       destructor Destroy; override;
       function gettext(const msgid: RawUtf8String;var found:boolean): RawUtf8String; // uses mo file and utf-8
       property isSwappedArchitecture:boolean read doswap;
@@ -352,7 +378,7 @@ type
   IGnuGettextInstanceWhenNewLanguageListener = interface
     procedure WhenNewLanguage (const LanguageID:LanguageString);
   end;
-    
+
 {*------------------------------------------------------------------------------
   The main translation engine.
 -------------------------------------------------------------------------------}
@@ -389,7 +415,6 @@ type
       procedure TP_GlobalIgnoreClass (IgnClass:TClass);
       procedure TP_GlobalIgnoreClassProperty (IgnClass:TClass;propertyname:ComponentNameString);
       procedure TP_GlobalHandleClass (HClass:TClass;Handler:TTranslator);
-      procedure TP_Remember(AnObject: TObject; PropName:ComponentNameString; OldValue:TranslatedUnicodeString);
       procedure TranslateProperties(AnObject: TObject; textdomain:DomainString='');
       procedure TranslateComponent(AnObject: TComponent; const TextDomain:DomainString='');
       procedure RetranslateComponent(AnObject: TComponent; const TextDomain:DomainString='');
@@ -424,6 +449,9 @@ type
       procedure UnregisterWhenNewLanguageListener(Listener: IGnuGettextInstanceWhenNewLanguageListener);
     protected
       procedure TranslateStrings (sl:TStrings;const TextDomain:DomainString);
+      {$IFDEF dx_has_WideStrings}
+      procedure TranslateWideStrings (sl: TWideStrings;const TextDomain:DomainString);
+      {$ENDIF dx_has_WideStrings}
 
       // Override these three, if you want to inherited from this class
       // to create a new class that handles other domain and language dependent
@@ -452,7 +480,6 @@ type
       {$endif}
       function TP_CreateRetranslator:TExecutable;  // Must be freed by caller!
       procedure FreeTP_ClassHandlingItems;
-      function ClassIsIgnored(AClass:TClass): Boolean;
       {$ifdef DXGETTEXTDEBUG}
       procedure DebugWriteln(line: ansistring);
       {$endif}
@@ -469,11 +496,6 @@ var
   DefaultInstance:TGnuGettextInstance;  /// Default instance of the main API for singlethreaded applications.
 
 implementation
-
-{$ifdef DELPHI2012OROLDER}
-uses
-  Vcl.Themes;
-{$endif DELPHI2012OROLDER}
 
 {$ifndef MSWINDOWS}
 {$ifndef LINUX}
@@ -516,6 +538,13 @@ type
     class
       offset,size:int64;
     end;
+{$IFDEF dx_SupportsResources}
+  TResourceFileInfo = class
+  public
+    ResourceName: string;
+    constructor Create(const _ResourceName: string);
+  end;
+{$ENDIF dx_SupportsResources}
   TFileLocator=
     class // This class finds files even when embedded inside executable
       constructor Create;
@@ -528,6 +557,9 @@ type
     private
       basedirectory:FilenameString;
       filelist:TStringList; //Objects are TEmbeddedFileInfo. Filenames are relative to .exe file
+{$IFDEF dx_SupportsResources}
+      FResourceList: TStringList; // Objects are TResourceFileInfo, Filenames are relative to .exe file
+{$ENDIF dx_SupportsResources}
       MoFilesCS:TMultiReadExclusiveWriteSynchronizer;
       MoFiles:TStringList; // Objects are filenames+offset, objects are TMoFile
       function ReadInt64 (str:TStream):int64;
@@ -569,43 +601,10 @@ type
       procedure Shutdown; // Same as destroy, except that object is not destroyed
     end;
 
-  PProxyClassData = ^TProxyClassData;
-  TProxyClassData = record
-    SelfPtr: TClass;
-    IntfTable: Pointer;
-    AutoTable: Pointer;
-    InitTable: Pointer;
-    TypeInfo: PTypeInfo;
-    FieldTable: Pointer;
-    MethodTable: Pointer;
-    DynamicTable: Pointer;
-    ClassName: PShortString;
-    InstanceSize: Integer;
-    Parent: ^TClass;
-  end;
-
-  THookedObjects=
-    class(TList)
-    private
-      interceptorClassDatas:TList;
-      interceptorClassDataParents:array of TClass;
-
-      function findInterceptorClassData(aClass:TClass):Pointer;
-
-      procedure BeforeDestructionHook;
-      function GetBeforeDestructionHookAddress: Pointer;
-    public
-      constructor Create;
-      destructor Destroy; override;
-
-      procedure Proxify(obj:TObject);
-      procedure Unproxify(obj:TObject);
-    end;
-
 var
   // System information
   Win32PlatformIsUnicode:boolean=False;
-  
+
   // Information about files embedded inside .exe file
   FileLocator:TFileLocator;
 
@@ -617,8 +616,6 @@ var
   HookLoadResString:THook;
   HookLoadStr:THook;
   HookFmtLoadStr:THook;
-  HookedObjects:THookedObjects;
-  KnownRetranslators:TList;
 
 function GGGetEnvironmentVariable(const Name:widestring):widestring;
 var
@@ -846,11 +843,6 @@ begin
   DefaultInstance.TP_GlobalHandleClass (HClass, Handler);
 end;
 
-procedure TP_Remember(AnObject: TObject; PropName:ComponentNameString; OldValue:TranslatedUnicodeString);
-begin
-  DefaultInstance.TP_Remember(AnObject, PropName, OldValue);
-end;
-
 procedure TranslateComponent(AnObject: TComponent; const TextDomain:DomainString='');
 begin
   DefaultInstance.TranslateComponent(AnObject, TextDomain);
@@ -1003,71 +995,6 @@ begin
   end;
   Result := langcode;
 end;
-
-const GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS = $00000004;
-const GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT = $00000002;
-
-function GetModuleHandleEx(dwFlags: DWORD; lpModuleName: PChar; out phModule: HMODULE): BOOL; stdcall; external kernel32 name 'GetModuleHandleExA';
-
-{$ifndef DELPHI2010OROLDER}
-type
-  LPVOID = Pointer;
-  NativeUInt = Cardinal;
-  NativeInt = Integer;
-{$endif}
-
-type
-  TModuleInfo = record
-    lpBaseOfDll: LPVOID;
-    SizeOfImage: DWORD;
-    EntryPoint: LPVOID;
-  end;
-
-function GetModuleInformation(hProcess: THANDLE; hModule: HMODULE; var lpmodinfo: TModuleInfo; cb: DWORD): BOOL; stdcall; external 'psapi' name 'GetModuleInformation';
-
-function GetModuleRegionInfoByAddr(Addr: Pointer; out Base: Pointer; out Size: NativeUInt): Boolean;
-var
-  Tmm: TMemoryBasicInformation;
-  DllModule: HMODULE;
-  ModuleInfo: TModuleInfo;
-begin
-  Result := GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS or GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, Addr, DllModule);
-  if Result then
-  begin
-    ZeroMemory(@ModuleInfo, SizeOf(ModuleInfo));
-    Result := GetModuleInformation(GetCurrentProcess, DllModule, ModuleInfo, SizeOf(ModuleInfo));
-    if Result then
-    begin
-      Base := ModuleInfo.lpBaseOfDll;
-      Size := ModuleInfo.SizeOfImage;
-    end;
-  end
-  else
-  begin
-    ZeroMemory(@Tmm, SizeOf(Tmm));
-    Result := VirtualQuery(addr, Tmm, SizeOf(Tmm)) = SizeOf(Tmm);
-    if Result then
-    begin
-      Base := Tmm.AllocationBase;
-      Size := (NativeUInt(Addr) - NativeUInt(Base)) * 2;
-    end;
-  end;
-end;
-
-var
-  FModuleBase:Pointer;
-  FModuleSize:NativeUInt;
-
-function AddrInModule(Addr: Pointer): Boolean; {$ifdef DELPHI2006OROLDER}inline;{$endif}
-begin
-  Result := (NativeUInt(Addr) >= NativeUInt(FModuleBase)) and
-            (NativeUInt(Addr) < NativeUInt(FModuleBase) + FModuleSize);
-end;
-
-procedure SetupModuleInfo;
-begin
-  GetModuleRegionInfoByAddr(@SetupModuleInfo, FModuleBase, FModuleSize);
-end;
 {$endif}
 
 {$ifndef UNICODE}
@@ -1088,16 +1015,29 @@ begin
 end;
 
 type
+{$ifdef dx_Hinstance_is_Integer}
+  THInstanceType = Integer;
+{$else dx_Hinstance_is_Integer}
+  THInstanceType = NativeInt;
+{$endif dx_Hinstance_is_Integer}
+
+{$ifdef dx_NativeInt_is_Integer}
+  TNativeInt = Integer;
+{$else dx_NativeInt_is_Integer}
+  TNativeInt= NativeInt;
+{$endif dx_NativeInt_is_Integer}
+
+type
   PStrData = ^TStrData;
   TStrData = record
-    Ident: Integer;
+    Ident: TNativeInt;
     Str: String;
   end;
-  
-function SysUtilsEnumStringModules(Instance: {$IFDEF DELPHI2012OROLDER}NativeInt{$ELSE}Integer{$ENDIF DELPHI2012OROLDER}; Data: Pointer): Boolean;
+
+function SysUtilsEnumStringModules(Instance: THInstanceType; Data: Pointer): Boolean;
 {$IFDEF MSWINDOWS}
 var
-  Buffer: array [0..1023] of Char; // WideChar in Delphi 2008, AnsiChar before that
+  Buffer: array [0..1023] of Char; // WideChar in Delphi 2009, AnsiChar before that
 begin
   with PStrData(Data)^ do begin
     SetString(Str, Buffer,
@@ -1121,7 +1061,7 @@ begin
 end;
 {$ENDIF}
 
-function SysUtilsFindStringResource(Ident: NativeInt): string;
+function SysUtilsFindStringResource(Ident: TNativeInt): string;
 var
   StrData: TStrData;
 begin
@@ -1276,7 +1216,7 @@ var
   s:string;
 begin
   Propertyname:=uppercase(Propertyname)+': ';
-  sl:=TStringList.Create;    
+  sl:=TStringList.Create;
   try
     sl.Text:=utf8decode(gettext(''));
     for i:=0 to sl.Count-1 do begin
@@ -1431,7 +1371,7 @@ begin
   n1:=Number mod 10;
   n2:=Number mod 100;
 
-  if Number=1 then Result:=0 
+  if Number=1 then Result:=0
   else if (n1>=2) and (n1<=4) and ((n2<10) or (n2>=20)) then Result:=1
   else Result:=2;
 end;
@@ -1937,10 +1877,14 @@ begin
             tkString, tkLString :
               old := GetStrProp(AnObject, PropName);
             tkWString :
-              old := GetWideStrProp(AnObject, PropName);
+              old :=
+                {$IFDEF dx_GetStrProp_reads_unicode}GetStrProp{$ELSE}GetWideStrProp{$ENDIF}
+                  (AnObject, PropName);
             {$IFDEF UNICODE}
             tkUString :
-              old := GetUnicodeStrProp(AnObject, PropName);
+              old :=
+                {$IFDEF dx_GetStrProp_reads_unicode}GetStrProp{$ELSE}GetUnicodeStrProp{$ENDIF}
+                  (AnObject, PropName);
             {$ENDIF}
           else
             raise Exception.Create ('Internal error: Illegal property type. This problem needs to be solved by a programmer, try to find a workaround.');
@@ -1992,53 +1936,6 @@ begin
   end;
 end;
 
-function ObjectHasAssignedAction(AnObject: TObject; PropList: PPropList; Count: Integer; var ActionProperty: TObject): Boolean;
-var
-  I: Integer;
-  PropInfo: PPropInfo;
-  Obj: TObject;
-begin
-  Result := False;
-  I := 0;
-  while not Result and (I < Count) do
-  begin
-    PropInfo := PropList[I];
-    if (PropInfo^.PropType^.Kind = tkClass) then
-    begin
-      Obj := GetObjectProp(AnObject, string(PropInfo.Name));
-      Result := Obj is TBasicAction;
-      if Result then
-        ActionProperty := Obj;
-    end;
-
-    Inc(I);
-  end;
-end;
-
-function TGnuGettextInstance.ClassIsIgnored(AClass:TClass): Boolean;
-var
-  cm:TClassMode;
-  i:integer;
-begin
-  for i:=0 to TP_GlobalClassHandling.Count-1 do begin
-    cm:=TObject(TP_GlobalClassHandling.Items[i]) as TClassMode;
-    if AClass.InheritsFrom(cm.HClass) and (cm.PropertiesToIgnore.Count = 0) then
-    begin
-      Result := True;
-      exit;
-    end;
-  end;
-  for i:=0 to TP_ClassHandling.Count-1 do begin
-    cm:=TObject(TP_ClassHandling.Items[i]) as TClassMode;
-    if AClass.InheritsFrom(cm.HClass) then
-    begin
-      Result := True;
-      exit;
-    end;
-  end;
-  Result := False;
-end;
-
 procedure TGnuGettextInstance.TranslateProperties(AnObject: TObject; textdomain:DomainString='');
 var
   TodoList:TStringList; // List of Name/TObject's that is to be processed
@@ -2054,7 +1951,6 @@ var
   ObjectPropertyIgnoreList:TStringList;
   objid:string;
   Name:ComponentNameString;
-  ActionProperty:TObject;
 begin
   {$ifdef DXGETTEXTDEBUG}
   DebugWriteln ('----------------------------------------------------------------------');
@@ -2146,9 +2042,6 @@ begin
 
         Count := GetPropList(AnObject, PropList);
         try
-          if ObjectHasAssignedAction(AnObject, PropList, Count, ActionProperty) and not ClassIsIgnored(ActionProperty.ClassType) then
-            Continue;
-
           for j := 0 to Count - 1 do begin
             PropInfo := PropList[j];
             {$IFDEF UNICODE}
@@ -2169,6 +2062,13 @@ begin
           if Count<>0 then
             FreeMem (PropList);
         end;
+        {$IFDEF dx_has_WideStrings}
+        if AnObject is TWideStrings then begin
+          if ((AnObject as TWideStrings).Text<>'') and (TP_Retranslator<>nil) then
+            (TP_Retranslator as TTP_Retranslator).Remember(AnObject, 'Text', (AnObject as TWideStrings).Text);
+          TranslateWideStrings (AnObject as TWideStrings,TextDomain);
+        end;
+        {$ENDIF dx_has_WideStrings}
         if AnObject is TStrings then begin
           if ((AnObject as TStrings).Text<>'') and (TP_Retranslator<>nil) then
             (TP_Retranslator as TTP_Retranslator).Remember(AnObject, 'Text', (AnObject as TStrings).Text);
@@ -2282,24 +2182,24 @@ var
   line: string;
   i: integer;
   s:TStringList;
-  {$ifdef DELPHI2009OROLDER}
+  {$ifdef dx_StringList_has_OwnsObjects}
   slAsTStringList:TStringList;
   originalOwnsObjects: Boolean;
-  {$endif}
+  {$endif dx_StringList_has_OwnsObjects}
 begin
   if sl.Count > 0 then begin
-    // From D2009 onward, the TStringList class has a OwnsObjects property, just like
-    // TObjectList has. This means that when we will be calling Clear on the given
+    {$ifdef dx_StringList_has_OwnsObjects}
+    // From D2009 onward, the TStringList class has an OwnsObjects property, just like
+    // TObjectList has. This means that if we call Clear on the given
     // list in the sl parameter, we could destroy the objects it contains.
     // To avoid this we must disable OwnsObjects while we replace the strings, but
     // only if sl is a TStringList instance and if using Delphi 2009 or upper.
-    {$ifdef DELPHI2009OROLDER}
     originalOwnsObjects := False; // avoid warning
     if sl is TStringList then
       slAsTStringList := TStringList(sl)
     else
       slAsTStringList := nil;
-    {$endif}
+    {$endif dx_StringList_has_OwnsObjects}
 
     sl.BeginUpdate;
     try
@@ -2318,21 +2218,21 @@ begin
               s.Strings[i]:=dgettext(TextDomain,line);
         end;
 
-        {$ifdef DELPHI2009OROLDER}
+        {$ifdef dx_StringList_has_OwnsObjects}
         if Assigned(slAsTStringList) then begin
           originalOwnsObjects := slAsTStringList.OwnsObjects;
           slAsTStringList.OwnsObjects := False;
         end;
-        {$endif}
+        {$endif dx_StringList_has_OwnsObjects}
         try
           // same here, we don't want to modify the properties of the orignal string list
           sl.Clear;
           sl.AddStrings(s);
         finally
-          {$ifdef DELPHI2009OROLDER}
+          {$ifdef dx_StringList_has_OwnsObjects}
           if Assigned(slAsTStringList) then
             slAsTStringList.OwnsObjects := originalOwnsObjects;
-          {$endif}
+          {$endif dx_StringList_has_OwnsObjects}
         end;
       finally
         FreeAndNil (s);
@@ -2342,6 +2242,75 @@ begin
     end;
   end;
 end;
+
+{$IFDEF dx_has_WideStrings}
+procedure TGnuGettextInstance.TranslateWideStrings(sl: TWideStrings;
+  const TextDomain: DomainString);
+var
+  line: string;
+  i: integer;
+  s:TWideStringList;
+  {$ifdef dx_StringList_has_OwnsObjects}
+  slAsTStringList:TWideStringList;
+  originalOwnsObjects: Boolean;
+  {$endif dx_StringList_has_OwnsObjects}
+begin
+  if sl.Count > 0 then begin
+    {$ifdef dx_StringList_has_OwnsObjects}
+    // From D2009 onward, the TStringList class has a OwnsObjects property, just like
+    // TObjectList has. This means that if we call Clear on the given
+    // list in the sl parameter, we could destroy the objects it contains.
+    // To avoid this we must disable OwnsObjects while we replace the strings, but
+    // only if sl is a TStringList instance and if using Delphi 2009 or upper.
+    originalOwnsObjects := False; // avoid warning
+    if sl is TWideStringList then
+      slAsTStringList := TWideStringList(sl)
+    else
+      slAsTStringList := nil;
+    {$endif dx_StringList_has_OwnsObjects}
+
+    sl.BeginUpdate;
+    try
+      s := TWideStringList.Create;
+      try
+        // don't use Assign here as it will propagate the Sorted property (among others)
+        // in versions of Delphi from Delphi XE ownard
+        s.AddStrings(sl);
+
+        for i:=0 to s.Count-1 do begin
+          line := s.Strings[i];
+          if line<>'' then
+            if TextDomain = '' then
+              s.Strings[i] := ComponentGettext(line)
+            else
+              s.Strings[i] := dgettext(TextDomain,line);
+        end;
+
+        {$ifdef dx_StringList_has_OwnsObjects}
+        if Assigned(slAsTStringList) then begin
+          originalOwnsObjects := slAsTStringList.OwnsObjects;
+          slAsTStringList.OwnsObjects := False;
+        end;
+        {$endif dx_StringList_has_OwnsObjects}
+        try
+          // same here, we don't want to modify the properties of the orignal string list
+          sl.Clear;
+          sl.AddStrings(s);
+        finally
+          {$ifdef dx_StringList_has_OwnsObjects}
+          if Assigned(slAsTStringList) then
+            slAsTStringList.OwnsObjects := originalOwnsObjects;
+          {$endif dx_StringList_has_OwnsObjects}
+        end;
+      finally
+        FreeAndNil (s);
+      end;
+    finally
+      sl.EndUpdate;
+    end;
+  end;
+end;
+{$ENDIF dx_has_WideStrings}
 
 function TGnuGettextInstance.GetTranslatorNameAndEmail: TranslatedUnicodeString;
 begin
@@ -2614,7 +2583,7 @@ begin
     end else begin
       Result := '';
       Len := 0;
-      While Length(Result)<=Len+1 do begin     
+      While Length(Result)<=Len+1 do begin
         if Length(Result) = 0 then
           SetLength(Result, 1024)
         else
@@ -2754,15 +2723,6 @@ begin
   {$endif}
 end;
 
-procedure TGnuGettextInstance.TP_Remember(AnObject: TObject;
-  PropName: ComponentNameString; OldValue: TranslatedUnicodeString);
-begin
-  if Assigned(TP_Retranslator) then
-    (TP_Retranslator as TTP_Retranslator).Remember(AnObject, PropName, OldValue)
-  else
-    raise EGGProgrammingError.Create ('You can only call TP_Remember when doing the initial translation (TP_Retranslator is not set).');
-end;
-
 procedure TGnuGettextInstance.FreeTP_ClassHandlingItems;
 begin
   while TP_ClassHandling.Count<>0 do begin
@@ -2849,7 +2809,7 @@ begin
   SetLength (a, bufsize);
   SetLength (b, bufsize);
   str.Read(a[1],bufsize);
-  
+
   while true do begin
     rd:=str.Read(b[1],bufsize);
     p:=pos(signature,a+b);
@@ -2937,7 +2897,7 @@ begin
 
         // go to beginning of embedded block
         fs.Seek(headerbeginpos, soFromBeginning);
-        
+
         offset := tableoffset;
         Assert(sizeof(offset)=8);
         while (true) and (fs.Position<headerendpos) do begin
@@ -2992,15 +2952,36 @@ begin
   filelist.CaseSensitive:=False;
   {$endif}
   filelist.Sorted:=True;
+{$IFDEF dx_SupportsResources}
+  FResourceList := TStringList.Create;
+  FResourceList.Duplicates := dupError;
+  FResourceList.CaseSensitive := False;
+  FResourceList.Sorted := True;
+{$ENDIF dx_SupportsResources}
 end;
 
 destructor TFileLocator.Destroy;
+var
+  Idx: integer;
 begin
-  while filelist.count<>0 do begin
-    filelist.Objects[0].Free;
-    filelist.Delete (0);
+{$IFDEF dx_SupportsResources}
+  if Assigned(FResourceList) then begin
+    while FResourceList.Count > 0 do begin
+      Idx := FResourceList.Count - 1;
+      FResourceList.Objects[Idx].Free;
+      FResourceList.Delete(Idx);
+    end;
+    FreeAndNil(FResourceList);
+  end;
+{$ENDIF dx_SupportsResources}
+
+  while filelist.count > 0 do begin
+    Idx := filelist.Count - 1;
+    filelist.Objects[Idx].Free;
+    filelist.Delete (Idx);
   end;
   FreeAndNil (filelist);
+
   FreeAndNil (MoFiles);
   FreeAndNil (MoFilesCS);
   inherited;
@@ -3009,12 +2990,33 @@ end;
 function TFileLocator.FileExists(filename: FilenameString): boolean;
 var
   idx:integer;
+{$IFDEF dx_SupportsResources}
+  ResName: string;
+  HResInfo: HRSRC;
+{$ENDIF dx_SupportsResources}
 begin
   if LeftStr(filename,length(basedirectory))=basedirectory then begin
     // Cut off basedirectory if the file is located beneath that base directory
     filename:=MidStr(filename,length(basedirectory)+1,maxint);
   end;
   Result:=filelist.Find(filename,idx);
+
+{$IFDEF dx_SupportsResources}
+  if not Result then begin
+    Result := FResourceList.Find(filename, Idx);
+    if not Result then begin
+      ResName := UpperCase(filename);
+      ResName := StringReplace(ResName,  '/', '_', [rfReplaceAll]);
+      ResName := StringReplace(ResName,  '\', '_', [rfReplaceAll]);
+      ResName := StringReplace(ResName, '_LC_MESSAGES_', '_', [rfReplaceAll]);
+      ResName := StringReplace(ResName, '.MO', '', [rfReplaceAll]);
+      HResInfo := FindResource(hInstance, PChar(ResName), RT_RCDATA);
+      Result := (HResInfo <> 0);
+      if Result then
+        FResourceList.AddObject(filename, TResourceFileInfo.Create(ResName));
+    end;
+  end;
+{$ENDIF dx_SupportsResources}
 end;
 
 function TFileLocator.GetMoFile(filename: FilenameString; DebugLogger:TDebugLogger): TMoFile;
@@ -3024,10 +3026,12 @@ var
   idxname:FilenameString;
   Offset, Size: Int64;
   realfilename:FilenameString;
+  ResName: string;
 begin
   // Find real filename
   offset:=0;
   size:=0;
+  Resname := '';
   realfilename:=filename;
   if LeftStr(filename,length(basedirectory))=basedirectory then begin
     filename:=MidStr(filename,length(basedirectory)+1,maxint);
@@ -3040,7 +3044,19 @@ begin
       {$ifdef DXGETTEXTDEBUG}
       DebugLogger ('Instead of '+filename+', using '+realfilename+' from offset '+IntTostr(offset)+', size '+IntToStr(size));
       {$endif}
+    end
+{$IFDEF dx_SupportsResources}
+    else begin
+      Idx := FResourceList.IndexOf(filename);
+      if Idx <> -1 then begin
+        realfilename := ExecutableFilename;
+        ResName := (FResourceList.Objects[Idx] as TResourceFileInfo).ResourceName;
+  {$ifdef DXGETTEXTDEBUG}
+      DebugLogger ('Instead of '+filename+', using resource '+ResName+' from '+realfilename);
+  {$endif}
+      end;
     end;
+{$ENDIF dx_SupportsResources}
   end;
 
 
@@ -3051,11 +3067,16 @@ begin
   // Find TMoFile object
   MoFilesCS.BeginWrite;
   try
-    idxname:=realfilename+' //\\ '+IntToStr(offset);
+{$IFDEF dx_SupportsResources}
+    if ResName <> '' then begin
+      idxname := realfilename + ' //\\ ' + ResName;
+    end else
+{$ENDIF dx_SupportsResources}
+      idxname:=realfilename+' //\\ '+IntToStr(offset);
     if MoFiles.Find(idxname, idx) then begin
       Result:=MoFiles.Objects[idx] as TMoFile;
     end else begin
-      Result:=TMoFile.Create (realfilename, Offset, Size, UseMemoryMappedFiles);
+      Result:=TMoFile.Create (realfilename, Offset, Size, UseMemoryMappedFiles, ResName);
       MoFiles.AddObject(idxname, Result);
     end;
     Inc (Result.Users);
@@ -3075,7 +3096,7 @@ var
   i:integer;
 begin
   Assert (mofile<>nil);
-  
+
   MoFilesCS.BeginWrite;
   try
     dec (mofile.Users);
@@ -3100,7 +3121,6 @@ end;
 constructor TTP_Retranslator.Create;
 begin
   list:=TList.Create;
-  KnownRetranslators.Add(Self);
 end;
 
 destructor TTP_Retranslator.Destroy;
@@ -3110,35 +3130,7 @@ begin
   for i:=0 to list.Count-1 do
     TObject(list.Items[i]).Free;
   FreeAndNil (list);
-  KnownRetranslators.Remove(Self);
   inherited;
-end;
-
-procedure RemoveFromKnowRetranslators(obj: TObject); {$ifdef DELPHI2006OROLDER}inline;{$endif}
-var
-  retranslatorIndex:Integer;
-  retranslator:TTP_Retranslator;
-  itemIndex:Integer;
-  item:TTP_RetranslatorItem;
-begin
-  for retranslatorIndex:=0 to KnownRetranslators.Count-1 do
-  begin
-    retranslator:=TTP_Retranslator(KnownRetranslators.List[retranslatorIndex]);
-    itemIndex:=0;
-    while itemIndex<retranslator.list.Count do
-    begin
-      item:=TTP_RetranslatorItem(retranslator.list.List[itemIndex]);
-      if item.obj=obj then
-      begin
-        item.Free;
-        retranslator.list.delete(itemIndex);
-      end
-      else
-      begin
-        inc(itemIndex);
-      end;
-    end;
-  end;
 end;
 
 procedure TTP_Retranslator.Execute;
@@ -3155,7 +3147,7 @@ begin
     if item.obj is TComponent then begin
       comp:=TComponent(item.obj).FindComponent('GNUgettextMarker') as TGnuGettextComponentMarker;
       if Assigned(comp) and (self<>comp.Retranslator) then begin
-        comp.Retranslator.Execute; 
+        comp.Retranslator.Execute;
         Continue;
       end;
     end;
@@ -3205,12 +3197,6 @@ begin
   item.Propname:=Propname;
   item.OldValue:=OldValue;
   list.Add(item);
-
-  // As we are storing a reference to an object in our list, we must be notified
-  // when that object is deleted.
-  // The only way to do that for any instance of TObject is to hook into
-  // BeforeDestruction via the virtual method table.
-  HookedObjects.Proxify(obj);
 end;
 
 { TGnuGettextComponentMarker }
@@ -3365,11 +3351,12 @@ end;
 
 constructor TMoFile.Create(const filename: FilenameString;
                            const Offset: int64; Size: int64;
-                           const xUseMemoryMappedFiles: Boolean);
+                           const xUseMemoryMappedFiles: Boolean;
+                           const ResName: string);
 var
   i:cardinal;
   nn:integer;
-  mofile:TFileStream;
+  mofile:TStream;
 begin
   if sizeof(i) <> 4 then
     raise EGGProgrammingError.Create('TDomain in gnugettext is written for an architecture that has 32 bit integers.');
@@ -3382,6 +3369,20 @@ begin
   FUseMemoryMappedFiles := False;
   {$endif}
 
+{$IFDEF dx_SupportsResources}
+  if ResName <> '' then begin
+    // Read the whole file into memory
+    mofile:=TResourceStream.Create(HInstance, ResName, RT_RCDATA);
+    try
+      size := mofile.Size;
+      Getmem (momemoryHandle, size);
+      momemory := momemoryHandle;
+      mofile.ReadBuffer(momemory^, size);
+    finally
+      FreeAndNil(mofile);
+    end;
+  end else
+{$endif dx_SupportsResources}
   if FUseMemoryMappedFiles then
   begin
     // Map the mo file into memory and let the operating system decide how to cache
@@ -3489,7 +3490,7 @@ begin
       inc (a);
       inc (b);
     end;
-    if CompareResult=0 then 
+    if CompareResult=0 then
       CompareResult:=msgidsize-size;
     if CompareResult=0 then begin  // msgid=s
       // Found the msgid
@@ -3520,178 +3521,50 @@ begin
   end;
 end;
 
-{ THookedObjects }
+{$ifdef dx_German_Delphi_fix}
+  // ### LO - Workaround for programs compiled with German Delphi
+  //
+  // If the current OS Language is not German, immediately add a Delphi RTL domain
+  // to the resource domains and bind the text domain to a fixed German->English
+  // translation.
+  // Using a fixed German->English translation because the OS
+  // Language may not be one of the installed translations.
+  // Otherwise the German RTL resourcestrings will not be translated.
+  // This results in German menu shortcuts 'Strg+', 'Umsch+' instead of
+  // 'Ctrl+', 'Shift+' and so on.
 
-function getClassData(aClass:TClass):PProxyClassData; overload; {$ifdef DELPHI2006OROLDER}inline;{$endif}
-begin
-  Result:=PProxyClassData((PAnsiChar(aClass) + vmtSelfPtr));
-end;
-
-function getClassData(obj:TObject):PProxyClassData; overload; {$ifdef DELPHI2006OROLDER}inline;{$endif}
-begin
-  Result:=getClassData(obj.ClassType);
-end;
-
-function GetBeforeDestructionVmtAddress(AClass: TClass): PPointer; overload;
-asm
-  {$IFDEF CPU386}
-  lea eax, eax + VMTOFFSET TObject.BeforeDestruction
-  {$ENDIF CPU386}
-  {$IFDEF CPUx64}
-  lea rax, rcx + VMTOFFSET TObject.BeforeDestruction
-  {$ENDIF CPUx64}
-end;
-
-procedure THookedObjects.BeforeDestructionHook;
-type
-  TOriginalBeforeDestruction = procedure of object;
-var
-  method:TMethod;
-begin
-  // NOTE: this method is declared inside inside THookedObjects to have access
-  // to Self, but because it is used as a hook for other classes' BeforeDestruction,
-  // Self will not be an instance of THookedObjects but one of the hooked class.
-
-  // remove ourselves from known retranslators
-  RemoveFromKnowRetranslators(Self);
-
-  // call the inherited BeforeDestruction
-  // we must do it via the parent class type because simply writing
-  // inherited BeforeDestruction will be resolved at compile time to
-  // TObject.BeforeDestruction which is not what we want
-  method.Code:=GetBeforeDestructionVmtAddress(getClassData(ClassType)^.Parent^)^;
-  method.Data:=Self;
-  TOriginalBeforeDestruction(method);
-
-  // Remove from hooked objects (Remember, Self is not a THookedObjects instance)
-  HookedObjects.Remove(Self);
-end;
-
-constructor THookedObjects.Create;
-begin
-  inherited Create;
-
-  interceptorClassDatas:=TList.Create;
-  SetLength(interceptorClassDataParents,50);
-end;
-
-destructor THookedObjects.Destroy;
-var
-  i:Integer;
-begin
-  for i:=0 to Count-1 do
-    Unproxify(TObject(Items[i]));
-
-  for i:=0 to interceptorClassDatas.Count-1 do
-    FreeMem(interceptorClassDatas[i]);
-  interceptorClassDatas.Free;
-
-  inherited Destroy;
-end;
-
-function THookedObjects.GetBeforeDestructionHookAddress: Pointer;
-type
-  TBeforeDestructionHook=procedure of object;
-var
-  m:TBeforeDestructionHook;
-begin
-  m:=BeforeDestructionHook;
-  Result:=TMethod(m).Code;
-end;
-
-function THookedObjects.findInterceptorClassData(aClass:TClass):Pointer;
-var
-  i:Integer;
-  proxyClassData:Pointer;
-begin
-  i:=0;
-  Result:=nil;
-  while (i<interceptorClassDatas.Count) and (Result=nil) do
-  begin
-    proxyClassData:=interceptorClassDatas[i];
-    if PProxyClassData(proxyClassData)^.Parent^=aClass then
-      Result:=proxyClassData;
-
-    Inc(i);
-  end;
-end;
-
-{$ifdef DELPHI2012OROLDER}
-type
-  TCustomStyleEngineAccess=
-    class(TCustomStyleEngine)
-    public
-      class property RegisteredStyleHooks;
-    end;
-{$endif DELPHI2012OROLDER}
-
-procedure THookedObjects.Proxify(obj:TObject);
+procedure CheckForGermanDelphi;
 const
-  growthCapacity=50;
-var
-  proxyClass:TClass;
-  proxyClassData:Pointer;
-  size,classOfs:Integer;
-  p:PAnsiChar;
-  beforeDestructionVmtAddr:PPointer;
-begin
-  if IndexOf(obj)<0 then
+  DefaultRTLDomain = 'delphi'; // German to English translation of Delphi RTL strings
+  DefaultShortcuts = 'shortcuts'; // German to English translation of ressource strings
+
+  procedure AddAndBindDomain(szDomain: DomainString);
   begin
-    classOfs:=-vmtSelfPtr;
-    proxyClassData:=findInterceptorClassData(obj.ClassType);
-    if proxyClassData=nil then
-    begin
-      // All virtual method pointers are located after the start of the metaclass
-      // and the last one is followed by an invalid address.
-      // So to figure out the size, we walk the memory looking for the first
-      // invalid address.
-      proxyClassData:=getClassData(obj.ClassType);
-      p:=PAnsiChar(proxyClassData)+classofs;
-      while AddrInModule(PPointer(p)^) do
-        Inc(p, SizeOf(Pointer));
-      size:=NativeUInt(p)-NativeUInt(proxyClassData);
+    AddDomainForResourceString(szDomain);
+    with DefaultInstance do
+      bindtextdomainToFile(szDomain, DefaultDomainDirectory + '\' + szDomain + '.mo');
+  end;
 
-      proxyClassData:=AllocMem(size);
-
-      interceptorClassDatas.Add(proxyClassData);
-      if Length(interceptorClassDataParents)<interceptorClassDatas.Count then
-        SetLength(interceptorClassDataParents, interceptorClassDatas.Count+growthCapacity);
-
-      interceptorClassDataParents[interceptorClassDatas.Count-1]:=obj.ClassType;
-
-      proxyClass:=TClass(PAnsiChar(proxyClassData) + classOfs);
-      System.Move(getClassData(obj)^, proxyClassData^, size);
-      PProxyClassData(proxyClassData)^.Parent := @interceptorClassDataParents[interceptorClassDatas.Count-1];
-      PProxyClassData(proxyClassData)^.SelfPtr := proxyClass;
-
-      beforeDestructionVmtAddr:=GetBeforeDestructionVmtAddress(proxyClass);
-      beforeDestructionVmtAddr^:=GetBeforeDestructionHookAddress;
-
-      {$ifdef DELPHI2012OROLDER}
-      // As we replace the metaclass for the object, the style engine will not
-      // know about our new metaclass, and thus we must tell it it exists.
-      if TCustomStyleEngineAccess.RegisteredStyleHooks.ContainsKey(obj.ClassType) and
-         not TCustomStyleEngineAccess.RegisteredStyleHooks.ContainsKey(proxyClass) then
-        TCustomStyleEngine.RegisterStyleHook(proxyClass, TCustomStyleEngineAccess.RegisteredStyleHooks[obj.ClassType].Last);
-      {$endif DELPHI2012OROLDER}
-    end
-    else
-    begin
-      proxyClass:=TClass(PAnsiChar(proxyClassData) + classOfs);
-    end;
-
-    PPointer(obj)^:=proxyClass;
-    Add(obj);
+begin
+  if not AnsiStartsText('de', GetCurrentLanguage) then begin
+    AddAndBindDomain(DefaultShortcuts);
+    AddAndBindDomain(DefaultRTLDomain);
   end;
 end;
-
-procedure THookedObjects.Unproxify(obj:TObject);
-begin
-  PPointer(obj)^:=getClassData(obj)^.Parent^;
-end;
+{$endif dx_German_Delphi_fix}
 
 var
   param0:string;
+
+{$IFDEF dx_SupportsResources}
+{ TResourceFileInfo }
+
+constructor TResourceFileInfo.Create(const _ResourceName: string);
+begin
+  inherited Create;
+  ResourceName := _ResourceName;
+end;
+{$ENDIF dx_SupportsResources}
 
 initialization
   {$ifdef DXGETTEXTDEBUG}
@@ -3713,7 +3586,6 @@ initialization
   {$ifdef MSWINDOWS}
   SetLength(ExecutableFilename, GetModuleFileName(HInstance,
     PChar(ExecutableFilename), Length(ExecutableFilename)));
-  SetupModuleInfo;
   {$endif}
   {$ifdef LINUX}
   if ModuleIsLib or ModuleIsPackage then
@@ -3750,8 +3622,9 @@ initialization
     HookIntoResourceStrings (AutoCreateHooks,false);
   param0:='';
 
-  HookedObjects:=THookedObjects.Create;
-  KnownRetranslators:=TList.Create;
+{$ifdef dx_German_Delphi_fix}
+  CheckForGermanDelphi;
+{$endif dx_German_Delphi_fix}
 
 finalization
   FreeAndNil (DefaultInstance);
@@ -3763,8 +3636,6 @@ finalization
   FreeAndNil (HookLoadStr);
   FreeAndNil (HookLoadResString);
   FreeAndNil (FileLocator);
-  FreeAndNil (HookedObjects);
-  FreeAndNil (KnownRetranslators);
 
 end.
 
