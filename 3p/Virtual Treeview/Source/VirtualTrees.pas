@@ -3536,6 +3536,7 @@ type
     property DragWidth;
     property DrawSelectionMode;
     property EditDelay;
+    property EmptyListMessage;
     property Enabled;
     property Font;
     property Header;
@@ -6327,6 +6328,7 @@ var
   LeaveStates: TChangeStates;
 
 begin
+  {$if CompilerVersion >= 21} TThread.NameThreadForDebugging('VirtualTrees.TWorkerThread');{$ifend}
   while not Terminated do
   begin
     WaitForSingleObject(WorkEvent, INFINITE);
@@ -14582,8 +14584,10 @@ begin
       // required. Only top and bottom bounds of the rectangle matter.
       if SimpleSelection then
       begin
-        IsInOldRect := (NextTop > OldRect.Top) and (CurrentTop < OldRect.Bottom);
-        IsInNewRect := (NextTop > NewRect.Top) and (CurrentTop < NewRect.Bottom);
+        IsInOldRect := (NextTop > OldRect.Top) and (CurrentTop < OldRect.Bottom) and
+          ((FHeader.Columns.Count = 0) or (FHeader.Columns.TotalWidth > OldRect.Left)) and (NodeLeft < OldRect.Right);
+        IsInNewRect := (NextTop > NewRect.Top) and (CurrentTop < NewRect.Bottom) and
+          ((FHeader.Columns.Count = 0) or (FHeader.Columns.TotalWidth > NewRect.Left)) and (NodeLeft < NewRect.Right);
       end
       else
       begin
@@ -20124,7 +20128,7 @@ begin
       DoScale := True;
     if DoScale then
     begin
-      FDefaultNodeHeight := MulDiv(FDefaultNodeHeight, M, D);
+      SetDefaultNodeHeight(MulDiv(FDefaultNodeHeight, M, D));
       FHeader.ChangeScale(M, D);
     end;
   end;
@@ -22356,7 +22360,7 @@ begin
         begin
           if (suoRepaintHeader in Options) and (hoVisible in FHeader.FOptions) then
             FHeader.Invalidate(nil);
-          if not (tsSizing in FStates) and (FScrollBarOptions.ScrollBars in [ssHorizontal, ssBoth]) then
+          if not (tsSizing in FStates) and (FScrollBarOptions.ScrollBars in [{$if CompilerVersion >=24}System.UITypes.TScrollStyle.{$ifend}ssHorizontal, {$if CompilerVersion >=24}System.UITypes.TScrollStyle.{$ifend}ssBoth]) then
             UpdateHorizontalScrollBar(suoRepaintScrollbars in Options);
         end;
 
@@ -22364,7 +22368,7 @@ begin
         begin
           UpdateVerticalScrollBar(suoRepaintScrollbars in Options);
           if not (FHeader.UseColumns or IsMouseSelecting) and
-            (FScrollBarOptions.ScrollBars in [ssHorizontal, ssBoth]) then
+            (FScrollBarOptions.ScrollBars in [{$if CompilerVersion >=24}System.UITypes.TScrollStyle.{$ifend}ssHorizontal, {$if CompilerVersion >=24}System.UITypes.TScrollStyle.{$ifend}ssBoth]) then
             UpdateHorizontalScrollBar(suoRepaintScrollbars in Options);
         end;
       end;
@@ -23549,7 +23553,8 @@ begin
   if tsUseExplorerTheme in FStates then
     Include(CheckPositions, hiOnItemButtonExact);
 
-  if (CheckPositions * HitInfo.HitPositions = []) and not (toFullRowSelect in FOptions.FSelectionOptions) then
+  if (CheckPositions * HitInfo.HitPositions = []) and
+    (not (toFullRowSelect in FOptions.FSelectionOptions) or (hiNowhere in HitInfo.HitPositions)) then
     HitInfo.HitNode := nil;
   if (HitInfo.HitNode <> FCurrentHotNode) or (HitInfo.HitColumn <> FCurrentHotColumn) then
   begin
@@ -24043,7 +24048,9 @@ begin
     MultiSelect := toMultiSelect in FOptions.FSelectionOptions;
     ShiftEmpty := ShiftState = [];
     NodeSelected := IsAnyHit and (vsSelected in HitInfo.HitNode.States);
-    FullRowDrag := toFullRowDrag in FOptions.FMiscOptions;
+    FullRowDrag := (toFullRowDrag in FOptions.FMiscOptions) and IsCellHit and
+      not (hiNowhere in HitInfo.HitPositions) and
+      (NodeSelected or (hiOnItemLabel in HitInfo.HitPositions) or (hiOnNormalIcon in HitInfo.HitPositions));
     IsHeightTracking := (Message.Msg = WM_LBUTTONDOWN) and
                         (hiOnItem in HitInfo.HitPositions) and
                         ([hiUpperSplitter, hiLowerSplitter] * HitInfo.HitPositions <> []);
@@ -24054,7 +24061,7 @@ begin
 
     // Query the application to learn if dragging may start now (if set to dmManual).
     if Assigned(HitInfo.HitNode) and not AutoDrag and (DragMode = dmManual) then
-      AutoDrag := DoBeforeDrag(HitInfo.HitNode, Column) and (not IsCellHit or FullRowDrag);
+      AutoDrag := DoBeforeDrag(HitInfo.HitNode, Column) and (IsCellHit or FullRowDrag);
 
     // handle node height tracking
     if IsHeightTracking then
@@ -24139,7 +24146,7 @@ begin
       // selection, but without a change event if it is the only selected node.
       // The same applies if the Alt key is pressed, which allows to start drawing the selection rectangle also
       // on node captions and images. Here the previous selection state does not matter, though.
-      if NodeSelected or (AltPressed and Assigned(HitInfo.HitNode) and (HitInfo.HitColumn = FHeader.MainColumn)) then
+      if NodeSelected or (AltPressed and Assigned(HitInfo.HitNode) and (HitInfo.HitColumn = FHeader.MainColumn)) and not (hiNowhere in HitInfo.HitPositions) then
       begin
         NeedChange := FSelectionCount > 1;
         InternalClearSelection;
@@ -24164,7 +24171,7 @@ begin
     begin
       // The original code here was moved up to fix issue #187.
       // In order not to break the semantics of this procedure, we are leaving these if statements here
-      if not IsCellHit then
+      if not IsCellHit or (hiNowhere in HitInfo.HitPositions) then
         Exit;
     end;
 
@@ -25248,7 +25255,7 @@ begin
     IntersectClipRect(DC, RC.Left, RC.Top, RC.Right, RC.Bottom);
 
     // Determine inner rectangle to exclude (RC corresponds then to the client area).
-    InflateRect(RC, -BorderWidth, -BorderWidth);
+    InflateRect(RC, -Integer(BorderWidth), -Integer(BorderWidth));
 
     // Remove the inner rectangle.
     ExcludeClipRect(DC, RC.Left, RC.Top, RC.Right, RC.Bottom);
@@ -32219,7 +32226,7 @@ begin
         R.Bottom := TargetRect.Bottom -2;
         TargetCanvas.Font.Color := clGrayText;
         {$if CompilerVersion >= 20}
-        TargetCanvas.TextRect(R, FEmptyListMessage, [tfNoClip, tfLeft]);
+        TargetCanvas.TextRect(R, FEmptyListMessage, [tfNoClip, tfLeft, tfWordBreak]);
         {$else}
         TextOutW(TargetCanvas.Handle, 2 - Window.Left, 2 - Window.Top, PWideChar(FEmptyListMessage), Length(FEmptyListMessage));
         {$ifend}
@@ -32899,7 +32906,7 @@ begin
     else
       if (R.Bottom > ClientHeight) or Center then
       begin
-        HScrollBarVisible := (ScrollBarOptions.ScrollBars in [ssBoth, ssHorizontal]) and
+        HScrollBarVisible := (ScrollBarOptions.ScrollBars in [{$if CompilerVersion >=24}System.UITypes.TScrollStyle.{$ifend}ssBoth, {$if CompilerVersion >=24}System.UITypes.TScrollStyle.{$ifend}ssHorizontal]) and
           (ScrollBarOptions.AlwaysVisible or (Integer(FRangeX) > ClientWidth));
         if Center then
           SetOffsetY(FOffsetY - R.Bottom + ClientHeight div 2)
@@ -33779,7 +33786,7 @@ begin
   else
     FEffectiveOffsetX := -FOffsetX;
 
-  if FScrollBarOptions.ScrollBars in [ssHorizontal, ssBoth] then
+  if FScrollBarOptions.ScrollBars in [{$if CompilerVersion >=24}System.UITypes.TScrollStyle.{$ifend}ssHorizontal, {$if CompilerVersion >=24}System.UITypes.TScrollStyle.{$ifend}ssBoth] then
   begin
     ZeroMemory (@ScrollInfo, SizeOf(ScrollInfo));
     ScrollInfo.cbSize := SizeOf(ScrollInfo);
