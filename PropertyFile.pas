@@ -154,6 +154,8 @@ procedure TfrmPropertyFile.SaveNodeData(AData: TvFileNodeData);
 begin
   if (edtPathExe.Text = '') then
     edtPathExe.Text := CONST_PATH_DRIVE;
+  edtName.Text      := StringReplace(edtName.Text, '&&', '&', [rfIgnoreCase,rfReplaceAll]);
+  edtName.Text      := StringReplace(edtName.Text, '&', '&&', [rfIgnoreCase,rfReplaceAll]);
   if (AData.ShortcutDesktop) and (cbShortcutDesktop.Checked) then
     RenameShortcutOnDesktop(AData.Name + EXT_LNK,edtName.Text + EXT_LNK);
   AData.Name        := edtName.Text;
