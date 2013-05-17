@@ -1,0 +1,57 @@
+package pkCindyDBCtrlsPackDXE4;
+
+{$R *.res}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES ON}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE DEBUG}
+{$ENDIF IMPLICITBUILDING}
+{$DESCRIPTION 'Cindy DB controls package'}
+{$RUNONLY}
+{$IMPLICITBUILD OFF}
+
+requires
+  vclimg,
+  rtl,
+  vcl,
+  dbrtl,
+  vcldb,
+  pkCindyPackDXE4;
+
+contains
+  cyBookmarkList in 'cyBookmarkList.pas',
+  cyBaseDBGrid in 'cyBaseDBGrid.pas',
+  cyBookmarks in 'cyBookmarks.pas',
+  cyDBAdvGrid in 'cyDBAdvGrid.pas',
+  cyDBAdvLed in 'cyDBAdvLed.pas',
+  cyDBAdvSpeedButton in 'cyDBAdvSpeedButton.pas',
+  cyDBEdit in 'cyDBEdit.pas',
+  cyDBGrid in 'cyDBGrid.pas',
+  cyDBHotLabel in 'cyDBHotLabel.pas',
+  cyDBLabel in 'cyDBLabel.pas',
+  cyDBLed in 'cyDBLed.pas',
+  cyDBRadioButton in 'cyDBRadioButton.pas',
+  cyDBSimpleGauge in 'cyDBSimpleGauge.pas',
+  cyDBSpeedButton in 'cyDBSpeedButton.pas', 
+  cyFieldLink in 'cyFieldLink.pas';
+
+end.

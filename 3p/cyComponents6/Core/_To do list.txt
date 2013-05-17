@@ -1,0 +1,3 @@
+- Vertical oriented captions with accelerator key in function cyDrawVerticalText()  
+- Vertical oriented captions with WordWrap in function cyDrawVerticalText() 
+- Gradient with angle

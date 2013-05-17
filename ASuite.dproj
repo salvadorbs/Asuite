@@ -5,7 +5,7 @@
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
         <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
         <DCC_DependencyCheckOutputName>bin\ASuite.exe</DCC_DependencyCheckOutputName>
-        <ProjectVersion>14.4</ProjectVersion>
+        <ProjectVersion>14.6</ProjectVersion>
         <Config Condition="'$(Config)'==''">Debug</Config>
         <Base>True</Base>
         <AppType>Application</AppType>
@@ -62,7 +62,8 @@
         <DCC_DependencyCheckOutputName>ASuite.exe</DCC_DependencyCheckOutputName>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
-        <DCC_UnitSearchPath>3p;3p\Virtual Treeview\Source;3p\mormot\SynDBDataset;3p\mormot;3p\mormot\sqlite3;3p\gnugettext;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_DcuOutput>dcu</DCC_DcuOutput>
+        <DCC_UnitSearchPath>3p;3p\Virtual Treeview\Source;3p\mormot\SynDBDataset;3p\mormot;3p\mormot\sqlite3;3p\gnugettext;3p\cyComponents6\Core;3p\cyComponents6\VCLPack;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
         <Debugger_RunParams>debug</Debugger_RunParams>
@@ -80,7 +81,6 @@
         <DCC_Optimize>False</DCC_Optimize>
         <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
         <DCC_ExeOutput>bin</DCC_ExeOutput>
-        <DCC_DcuOutput>dcu</DCC_DcuOutput>
         <DCC_ObjOutput>dcu</DCC_ObjOutput>
         <DCC_HppOutput>dcu</DCC_HppOutput>
     </PropertyGroup>
@@ -97,13 +97,12 @@
         <Version>7.0</Version>
         <DCC_Optimize>False</DCC_Optimize>
         <DCC_ExeOutput>bin</DCC_ExeOutput>
-        <DCC_DcuOutput>dcu</DCC_DcuOutput>
         <DCC_ObjOutput>dcu</DCC_ObjOutput>
         <DCC_HppOutput>dcu</DCC_HppOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1179;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
-        <VerInfo_Build>1179</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1182;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
+        <VerInfo_Build>1182</VerInfo_Build>
         <ILINK_MapFileType>DetailedSegments</ILINK_MapFileType>
         <MapFile>3</MapFile>
         <DCC_MapFile>3</DCC_MapFile>
@@ -125,7 +124,7 @@
                     <VersionInfo Name="MajorVer">2</VersionInfo>
                     <VersionInfo Name="MinorVer">0</VersionInfo>
                     <VersionInfo Name="Release">0</VersionInfo>
-                    <VersionInfo Name="Build">1122</VersionInfo>
+                    <VersionInfo Name="Build">1125</VersionInfo>
                     <VersionInfo Name="Debug">False</VersionInfo>
                     <VersionInfo Name="PreRelease">False</VersionInfo>
                     <VersionInfo Name="Special">False</VersionInfo>
@@ -137,7 +136,7 @@
                 <VersionInfoKeys>
                     <VersionInfoKeys Name="CompanyName">SalvadorSoftware</VersionInfoKeys>
                     <VersionInfoKeys Name="FileDescription"/>
-                    <VersionInfoKeys Name="FileVersion">2.0.0.1122</VersionInfoKeys>
+                    <VersionInfoKeys Name="FileVersion">2.0.0.1125</VersionInfoKeys>
                     <VersionInfoKeys Name="InternalName"/>
                     <VersionInfoKeys Name="LegalCopyright"/>
                     <VersionInfoKeys Name="LegalTrademarks"/>
@@ -150,8 +149,8 @@
                     <Source Name="MainSource">ASuite.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k170.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp170.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k180.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp180.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <ModelSupport>False</ModelSupport>

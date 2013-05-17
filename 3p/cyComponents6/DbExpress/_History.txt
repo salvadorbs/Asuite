@@ -1,0 +1,72 @@
+Cindy components V6.00
+12/04/2013 - Windows 64 bits support platform
+
+Cindy components V5.14
+15/02/2013 - Now may compile on Delphi XE2/XE3
+
+Cindy components V5.11.2
+21/11/2012 - cyDbxSimpleTable.pas - Corrected SetConnection procedure
+
+Cindy components V5.11.1
+19/11/2012 - cyDbxBaseTable.pas - Modified property type of TcyDbxAutoRefreshOptions.AfterPostNewRecord from boolean to TRefreshType
+19/11/2012 - cyDbxImportDataset.pas - Added parameter to function ImportRecords(const MaxErrors: Integer = -1)
+19/11/2012 - cyDbxImportDataset.pas - Added OnImportErrorEvent event
+
+Cindy components V5.11
+13/11/2012 - cyDbxTable.pas - Added RecordLockOptions: TcyDbxRecordLockOptions for cindy record lock feature
+13/11/2012 - cyDbxSimpleTable.pas - Added RecordLockOptions: TcyDbxRecordLockOptions for cindy record lock feature
+08/11/2012 - cyDbxBaseTable.pas - Created unit
+08/11/2012 - cyDbxBaseTable.pas - Created unit
+08/11/2012 - cyDbxSimpleTable.pas - Added property Provider: TDatasetProvider to handle properties and events on object inspector
+08/11/2012 - cyDbxSimpleTable.pas - Removed needless property ProviderOptions: TcyProviderOptions
+08/11/2012 - cyDbxTable.pas - Added property UpdatesOptions.SendResetAutoIncCmd: Boolean
+08/11/2012 - cyDbxSimpleTable.pas - Added property UpdatesOptions.SendResetAutoIncCmd: Boolean
+
+Cindy components V5.10.1
+05/11/2012 - cyDbxSimpleTable.pas - Removed not used herited property "Providername"
+01/11/2012 - cyDbxImportDataset.pas - Now handling when field.Datatype is ftTypedBinary
+
+Cindy components V5.10
+23/10/2012 - cyDbxSimpleTable.pas - Removed InternalConnection feature: component must be attached to a TSQLConnection component. 
+
+Cindy components V5.09.1
+03/10/2012 - cyDbxSimpleTable.pas - Corrected component to avoid to put Dataset in active 
+
+Cindy components V5.09
+03/10/2012 - cyDbxSimpleTable.pas - Created TcySimpleTable component based on TSimpleDataset
+21/09/2012 - cyDbxImportDataset.pas - Minor bugs fixed on fields creation 
+21/09/2012 - cyDbxTable.pas - Corrected "Stack overflow" error if MasterSource assigned and AutoRefreshOptions.MovingToFirst is true
+
+Cindy components V5.07
+14/09/2012 - cyDbxTable.pas - Added procedure Refresh; for refresh data from server
+12/09/2012 - cyDbxImportDataset.pas - Corrected error on procedure ImportRecords;
+12/09/2012 - cyDbxImportDataset.pas - Added missing cindy compiler file {$I ..\Core\cyCompilerDefines.inc}
+
+Cindy components V5.06
+25/07/2012 - cyDbxImportDataset.pas - Created TcyDbxImportDataset component
+
+Cindy components V5.02
+05/07/2012 - cyDbxUpdateSql.pas - Renamed property DiscardIfExists to DiscardIfExistsCmd
+05/07/2012 - cyDbxTable.pas - Corrected bug inserting new record on empty table
+
+Cindy components V4.51
+28/06/2012 - cyDbxUpdateSql.pas - Removed Options.UseTransaction property
+
+Cindy components V4.50
+15/06/2012 - created install packages according to Delphi version
+14/06/2012 - cyDbxReconcileError.pas - Created TcyDbxReconcileError component
+13/06/2012 - cyDbxTable.pas.pas - Created TcyDbxTable component
+08/06/2012 - cyDbxUpdateSql.pas - Added SQLUpdates[].DiscardIfExists property 
+
+Cindy components V4.45
+05/06/2012 - cyDbxUpdateSql.pas - Added Options.UseTransaction property
+
+Cindy components V4.44
+08/05/2012 - cyDbxUpdateSql.pas - Added Options property
+
+Cindy components V4.43
+27/04/2012 - Added compatibility for older versions of mySQL
+11/04/2012 - Small improvments on TcyDBXSQLUpdate component
+
+Cindy components V4.42
+21/12/2011 - New component: TcyDBXSQLUpdate on new palette "Cindy DBX"

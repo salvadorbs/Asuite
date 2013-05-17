@@ -1,0 +1,153 @@
+Cindy components V6.0
+12/04/2013 - Windows 64 bits support platform
+11/04/2013 - Prefixed with "VCL." all windows platform units
+10/04/2013 - Renamed ShellExecuteAsAdmin() to ShellExecuteExAsAdmin()
+10/04/2013 - Added ShellExecuteEx() function 
+20/03/2013 - cyDBX.pas - cross-platform ready
+20/03/2013 - cyStrUtils.pas - cross-platform ready
+20/03/2013 - cyDateUtils.pas - cross-platform ready
+
+Cindy components V5.14
+15/02/2013 - Now may compile on Delphi XE2/XE3
+08/02/2013 - cyDBX.pas - Added TQuery.ParamCheck := false in some functions 
+11/01/2013 - cyObjUtils.pas - function GetControlBitmap now paint TRichEdit controls
+11/01/2013 - cyObjUtils.pas - Added function GetRichEditBitmap()
+
+Cindy components V5.13
+14/12/2012 - cyDBX.pas - Added function SQLReturnFieldValueAsInteger()
+
+Cindy components V5.11
+15/11/2012 - cyDBX.pas - Added function SQLReturnFieldValueAsString() 
+13/11/2012 - cyDBX.pas - Added function SQLGetPrimaryKey()
+13/11/2012 - cyDBX.pas - Renamed SQLConnection_GetLastInsertID() to SQLExecute_GetLastInsertID()
+13/11/2012 - cyDBX.pas - Created function BackQuotedStr() 
+12/11/2012 - cyDBX.pas - Added functions GetInternalRecordLockId() and IsFreeLockId() 
+08/11/2012 - cyDBX.pas - Added SQLExecuteInsert() function that retrieve PrimaryKey value of inserted record
+08/11/2012 - cyDBX.pas - Added const OnlyFirstFound: Boolean parameter on function ExtractSQLTableNames()
+
+Cindy components V5.10.2
+06/11/2012 - cyDBX.pas - Now i use FormatSettings instead of deprecated global variables like DecimalSeparator
+
+Cindy components V5.10
+30/10/2012 - cyObjUtils.pas - Added RichEditSetStr() to set formated rtf text to a RichEdit
+30/10/2012 - cyDBX.pas - SQLExecute() and SQLReturnFieldValue can now accept until 8 sql lines on parameters
+24/10/2012 - cyStrUtils - Improved speed on String_SubstCar() and String_Subst(), String_Subst() now 2x faster than SysUtils.StringReplace()
+19/10/2012 - cyWinUtils.pas - Added unit
+19/10/2012 - cySysUtils.pas - Added unit
+
+Cindy components V5.09.2
+18/10/2012 - cyDBX.pas - Corrected compilation problems with old Delphi versions
+
+Cindy components V5.09
+04/03/2012 - cyStrUtils.pas - Added function SearchPos(SubStr: String; Str: String; MaxErrors: Integer): Integer;
+03/10/2012 - cyDBX.pas - Modified ClientDS_GetProvider() function to work if ProviderName = '' (like on TSimpleDataset)
+
+
+Cindy components V5.07
+13/08/2012 - cyDBX.pas - Added ExtractSQLTableNames(), ExtractSQLFields() and ExtractSQLOrderByFields() functions 
+13/08/2012 - cyDBX.pas - Removed SQLGetBooleanExpr()and SQLGetBooleanParam() because it depends if field is signed or not
+
+Cindy components V5.05
+13/07/2012 - cyGraphics.pas - Created TLineCoord type 
+13/07/2012 - cyGraphics.pas - Added Result: TLineCoord and OnlyCalcFoldLine: Boolean parameter to DrawLeftTurnPageEffect() and DrawRightTurnPageEffect()
+
+Cindy components V5.04
+12/07/2012 - cyGraphics.pas - Added DrawLeftTurnPageEffect() and DrawRightTurnPageEffect() functions
+12/07/2012 - cyGraphics.pas - Added GetProportionalRect() function 
+12/07/2012 - cyGraphics.pas - Added DrawCanvas() function using Windows GDI API
+12/07/2012 - cyGraphics.pas - Use DrawCanvas() on DrawGraphic()function instead of using TCanvas.StretchDraw() if it is a bitmap
+
+Cindy components V5.0
+31/06/2012 - cyObjUtils - Added unit 
+
+Cindy components V4.51
+25/06/2012 - cyCtrlUtils.pas - Added unit 
+
+Cindy components V4.50
+22/06/2012 - cyGraphics.pas - Added function cyDrawCheckBox()
+22/06/2012 - cyGraphics.pas - Added function cyDrawButton()
+22/06/2012 - cyGraphics.pas - Added function cyDrawButtonFace()
+22/06/2012 - cyGraphics.pas - Added function cyDrawSingleLineText()
+21/06/2012 - cyGraphics.pas - Added overloaded function cyFrame()
+21/06/2012 - cyGraphics.pas - Added function DrawMosaicPortion()
+21/06/2012 - cyGraphics.pas - Added function DrawRectangleInside()
+21/06/2012 - cyGraphics.pas - Added function DrawCanvas()
+21/06/2012 - cyGraphics.pas - Added overloaded function DrawGraphic() with source Rect parameter and transparent color 
+21/06/2012 - cyGraphics.pas - Added function ColorSetPercentPale()
+21/06/2012 - cyGraphics.pas - Added function ColorSetPercentContrast()
+21/06/2012 - cyGraphics.pas - Added function ColorModify()
+21/06/2012 - cyGraphics.pas - Renamed ExposeToLight() to ColorSetPercentBrightness()
+19/06/2012 - cyImage.pas - Created unit with some image processing functions 
+19/06/2012 - cyBDE.pas - Created unit with some BDE functions 
+15/06/2012 - cyBDX.pas - Renamed cDbxErrorServerEdit constant to cDbxErrorServerModify
+11/06/2012 - cyBDX.pas - Added SQLGetBooleanExpr() and SQLGetBooleanParam() functions
+11/06/2012 - cyBDX.pas - Changed SQLConnection_GetLastInsertID() function Result to String
+08/06/2012 - cyStrUtils.pas - Corrected bug on String_Copy() function 
+
+Cindy components V4.42
+07/02/2012 - cyStrUtils.pas - New functions : String_ExtractCars() and Char_GetType()
+
+Cindy components V4.40
+13/10/2011 - cyDBX.pas - Created SQLGetStringExpr() function
+13/10/2011 - cyDBX.pas - Created SQLGetFloatExpr() and SQLGetFloatParam() functions
+13/10/2011 - cyStrUtils.pas - Created String_Quote() function
+10/10/2011 - cyDateUtils.pas - Added IntersectPeriods() function
+10/10/2011 - Renamed MergeDateAndTime to MergeDateWithTime
+06/10/2011 - cyDateUtils.pas - Added function GetSecondsBetween(DateTime1, DateTime2: TDateTime): Int64;
+16/09/2011 - cyCompilerDefines.inc - Added support for Delphi XE2
+
+Cindy components V4.18
+24/06/2011 - cyDBX.pas - New functions added. 
+
+Cindy components V4.17
+09/05/2011 - cyDBX.pas - added unit! Clientdataset/DatasetProvider functions. 
+
+Cindy components V4.16
+27/05/2011 - cyDateUtils - Added function ShortTimeStringToTime(ShortTimeStr: String; const ShortTimeFormat: String = 'hh:nn:ss'): TDateTime;
+27/05/2011 - cyDateUtils - Added function GetMinutesBetween(DateTime1, DateTime2: TDateTime): Int64;
+27/05/2011 - cyDateUtils - Added function GetMinutesBetween(From_ShortTimeStr, To_ShortTimeStr: String; const ShortTimeFormat: String = 'hh:nn:ss'): Int64; 
+
+
+Cindy components V4.1 - *** Added code library units in \core folder ***
+25/03/2011 - Added cyStrUtils unit 
+25/03/2011 - Added cyDateUtils unit 
+15/11/2010 - cyGraphics - corrected ProgressionRGB declaration to ProgressionRGB: Array[0..2] of SmallInt in cyGradientFill() procedure. 
+
+20/09/2010
+cyCompilerDefines.inc - Added complier directive support for Delphi XE
+
+14/05/2010
+cyClasses - Created TcyShadowText.DrawShadowText() function to paint Shadow text. 
+
+13/05/2010
+cyGraphics - Renamed cyAcceleratorTextWidth funtion do CanvasAcceleratorTextWidth
+cyGraphics - Created procedure cyDrawText()
+cyGraphics - Created function DrawTextFormatFlags()
+cyGraphics - Created function cyCreateFontIndirect
+
+12/05/2010
+cyGraphics - Modified TBgStyle type to TBgStyle = (bgNone, bgNormal, bgMosaic, bgStretch, bgStretchProportional)
+cyGraphics - Created TBgPosition type: TBgPosition = (bgCentered, bgTopLeft, bgTopCenter, bgTopRight, bgCenterRight, bgBottomRight, bgBottomCenter, bgBottomLeft, bgCenterLeft)
+cyGraphics - Modified procedure DrawGraphic() to exploit TBgStyle and TBgPosition 
+cyTypes    - Created cyTypes unit and moved some code from cyGraphics to it. 
+cyClasses  - Created cyClasses unit and moved some code from cyGraphics to it. 
+
+11/05/2010
+cyGraphics - Created procedure DrawGraphic(Destination: TCanvas; DestRect: TRect; aGraphic: TGraphic; Transparent: Boolean;
+                      Style: TBgStyle; IndentX, IndentY, IntervalX, IntervalY, RepeatX, RepeatY: Integer)
+
+06/05/2010
+cyGraphics - Created RunTimeDesign class for component moving/resizing feature at run-time. 
+
+27/04/2010
+cyGraphics - Created function PictureIsTransparentAtPos(aPicture: TPicture; aPoint: TPoint): boolean;
+cyGraphics - Created function PngImageIsTransparentAtPos(aPngImage: TPngImage; aPoint: TPoint): boolean;
+
+01/04/2010
+cyGraphics - Added function SomethingToDraw: Boolean to TcyBgPicture class. 
+
+30/03/2010
+cyGraphics - Added jpeg unit to the Uses because jpeg images don' t appear at run-time. 
+
+29/09/2009
+Created "Core" directory for easy to use by all components packages. 

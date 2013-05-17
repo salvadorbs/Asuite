@@ -1,0 +1,88 @@
+Cindy components V6.00
+12/04/2013 - Windows 64 bits support platform
+
+Cindy components V5.05 
+16/10/2012 - cyBaseWebBrowser.pas - Written Inherited Navigate2() instead of simply write Inherited;
+
+Cindy components V4.40
+06/10/2011 - Added property Navigating: Boolean 
+16/09/2011 - Added support for Delphi XE2
+
+21/12/2010 
+cyIEUtils - Renamed RemoveHtmlEncodingPrefix() to RemoveHtmlUnicodePrefix
+cyIEUtils - Added AddHtmlEncodingPrefix()
+cyBaseWebBrowser - Changed LoadFromString() functions in order to add unicode prefix to the string 
+cyBaseWebBrowserD2007 - Changed LoadFromString() function in order to add unicode prefix to the string 
+
+16/11/2010
+cyBaseWebBrowserUnicode.pas - Added function LoadFromString(const aString: string; CharEncoding: TEncoding; const TextContent: TTextContent = tcDocument): boolean; in order to load a document with specified charset. 
+cyBaseWebBrowserD2007 - removed some functions presents in cyCustomWeBrowser.pas
+ 
+14/09/2010
+cyBaseWebBrowser - getting html source in a string now remove any encoding prefix from it
+
+12/05/2010 
+cyBaseWebBrowser - Added function SetFocusToDoc: Boolean;
+
+05/05/2010 
+cyBaseWebBrowser - Added GetIEHandle function
+
+19/03/2010
+- Redefined print functions: 
+Print; Print(wbPageSetup: TwbPageSetup); PrintDialog(ModalDialog: Boolean); and PrintModalDialog(wbPageSetup: TwbPageSetup);
+
+15/03/2010
+- moved CopyToBitmap, FindDialog, PageSetupDialog, Print, PrintPreview and ViewSource to TcyCustomWebBrowser component. 
+- Renamed procedure PageSetup to PageSetupDialog. 
+- Added GetPageSetupFromRegistry and SetPageSetupToRegistry functions. 
+- Added PrintPreview(wbPageSetup: TwbPageSetup) and Print(ShowDialogBox: Boolean; wbPageSetup: TwbPageSetup) functions.
+
+10/03/2010
+- Added ViewTextSize property 
+
+09/01/2010
+Corrected non heritable navigate() functions
+Created Charset property
+
+08/01/2010 
+Corrected memory leak on LoadFromString function
+
+25/01/2010
+Added property AsynchMode: Boolean; for asynchronous mode with the following functions: 
+- function NavigateToLocalFile(const FileName: string): Boolean;
+- procedure NavigateToResource(const Module: HMODULE; const ResName: PChar; const ResType: PChar = nil); overload;
+- procedure NavigateToResource(const ModuleName: string; const ResName: PChar; const ResType: PChar = nil); overload;
+- procedure NavigateToURL(const URL: String);
+
+22/01/2010
+Solved problems with non ANSI html files when trying do get Html source (Only on Delphi 2009 and above). 
+
+19/01/2010 
+Added property DesignMode: Boolean;
+Added property SelectionText: String;
+Added function GetIHTMLDocument2(var aIHTMLDocument2: IHTMLDocument2): Boolean;
+Added function GetSelectionObject(var aIHTMLSelectionObject: IHTMLSelectionObject): Boolean;
+function ExecCommand(CmdID: WideString; ShowUI: Boolean; Value: OleVariant): Boolean;
+
+18/01/2010
+Created function InternalLoadBodyTextFromStream(const Stream: TStringStream): Boolean;
+Created InternalLoadBodyHtmlFromStream(const Stream: TStringStream): Boolean;
+property BodyHtml: String not readOnly anymore
+property BodyTextual: String not readOnly anymore
+
+25/11/2009
+Added default editor/about box at design time
+
+02/10/2009 
+Removed from requires some unused *.dcp files
+
+29/09/2009
+Created TcyCustomWebBrowser and TcyWebBrowser components. 
+
+22/09/2009
+Starting Adding new properties and functions 
+
+21/09/2009
+Corrected source code bugs for Delphi 2009 from 
+UWebBrowserWrapper.pas unit by Peter Johnson: 
+http://www.delphidabbler.com/articles.php?article=14

@@ -1,0 +1,52 @@
+package pkCindyDBCtrlsPack;
+
+{$R *.res}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'Cindy DB controls package'}
+{$RUNONLY}
+{$IMPLICITBUILD OFF}
+{$DEFINE RELEASE}
+
+requires
+  dbrtl,
+  vcldb,
+  pkCindyPack;
+
+contains
+  cyBookmarkListD2007 in 'cyBookmarkListD2007.pas',
+  cyBaseDBGrid in 'cyBaseDBGrid.pas',
+  cyBookmarks in 'cyBookmarks.pas',
+  cyDBAdvGrid in 'cyDBAdvGrid.pas',
+  cyDBAdvLed in 'cyDBAdvLed.pas',
+  cyDBAdvSpeedButton in 'cyDBAdvSpeedButton.pas',
+  cyDBEdit in 'cyDBEdit.pas',
+  cyDBGrid in 'cyDBGrid.pas',
+  cyDBHotLabel in 'cyDBHotLabel.pas',
+  cyDBLabel in 'cyDBLabel.pas',
+  cyDBLed in 'cyDBLed.pas',
+  cyDBRadioButton in 'cyDBRadioButton.pas',
+  cyDBSimpleGauge in 'cyDBSimpleGauge.pas',
+  cyDBSpeedButton in 'cyDBSpeedButton.pas',
+  cyFieldLink in 'cyFieldLink.pas';
+
+end.

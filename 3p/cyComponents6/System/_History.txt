@@ -1,0 +1,6 @@
+Cindy components V6.00
+10/04/2013 - Renamed "Design" directoy to "System"
+
+Cindy components V4.40
+07/11/2011 - formAbout.pas - renamed to cyformAbout.pas
+16/09/2011 - Added support for Delphi XE2

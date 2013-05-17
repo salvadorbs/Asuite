@@ -1,0 +1,1 @@
+Make all components avaible for fireMonkey. 
