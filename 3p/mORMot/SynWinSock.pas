@@ -1037,6 +1037,30 @@ begin
   end;
 end;
 
+function StrLen(S: PAnsiChar): integer;
+begin
+  result := 0;
+  if S<>nil then
+  while true do
+    if S[0]<>#0 then
+    if S[1]<>#0 then
+    if S[2]<>#0 then
+    if S[3]<>#0 then begin
+      inc(S,4);
+      inc(result,4);
+    end else begin
+      inc(result,3);
+      exit;
+    end else begin
+      inc(result,2);
+      exit;
+    end else begin
+      inc(result);
+      exit;
+    end else
+      exit;
+end;
+
 procedure GetSinIPShort(const Sin: TVarSin; var result: shortstring);
 var p: PAnsiChar;
     host: array[0..NI_MAXHOST] of AnsiChar;

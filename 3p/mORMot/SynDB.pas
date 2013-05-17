@@ -182,6 +182,7 @@ unit SynDB;
   - added TSQLDBConnection[Properties].OnProgress callback event handler
   - now trim any spaces when retrieving database schema text values
   - fixed ticket [4c68975022] about broken SQL statement when logging active
+  - fixed ticket [545fbe7579] about TSQLDBConnection.LastErrorMessage not reset
   - fixed potential GPF after TSQLDBConnectionProperties.ExecuteNoResult() method call
   - fixed TSQLDBConnectionProperties.SQLGetField() returned value for dFirebird
   - fixed unnecessary limitation to 64 params for TSQLDBStatementWithParams
@@ -2917,6 +2918,7 @@ var Stmt: TSQLDBStatement;
     ToCache: boolean;
     ndx: integer;
 begin
+  fErrorMessage := '';
   if length(aSQL)<5 then begin
     result := nil;
     exit;

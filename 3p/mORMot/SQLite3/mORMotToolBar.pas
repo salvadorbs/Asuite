@@ -97,7 +97,7 @@ interface
     - includes new TSynAnsiConvert classes for handling Ansi charsets
 
     Version 1.18
-	- renamed SQLite3ToolBar.pas to mORMotToolBar.pas
+  	- renamed SQLite3ToolBar.pas as mORMotToolBar.pas
     - introducing TSQLPropInfo* classes to decouple ORM definitions from RTTI
 
 }
@@ -1493,12 +1493,12 @@ begin
     case aTabParameters.Layout of
     llLeft, llLeftUp: begin
       FrameLeft.Width := (Page.ClientWidth*LW)div 100;
-      FrameLeft.Align := alLeft;
+      FrameLeft.Align := Controls.alLeft;
       FrameSplit.Left:= FrameLeft.Width;
     end;
     llUp: begin
       FrameLeft.Height := (Page.ClientHeight*LW)div 100;
-      FrameLeft.Align := alTop;
+      FrameLeft.Align := Controls.alTop;
       FrameSplit.Top := FrameLeft.Height;
     end;
     end;

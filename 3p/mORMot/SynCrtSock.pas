@@ -1462,6 +1462,30 @@ end;
 
 const CRLF: array[0..1] of AnsiChar = (#13,#10);
 
+function StrLen(S: PAnsiChar): integer;
+begin
+  result := 0;
+  if S<>nil then
+  while true do
+    if S[0]<>#0 then
+    if S[1]<>#0 then
+    if S[2]<>#0 then
+    if S[3]<>#0 then begin
+      inc(S,4);
+      inc(result,4);
+    end else begin
+      inc(result,3);
+      exit;
+    end else begin
+      inc(result,2);
+      exit;
+    end else begin
+      inc(result);
+      exit;
+    end else
+      exit;
+end;
+
 procedure TCrtSocket.SockSend(const Values: array of const);
 var i: integer;
     tmp: shortstring;

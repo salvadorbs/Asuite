@@ -1384,6 +1384,7 @@ procedure Register;
 implementation
 
 uses
+  {$ifdef ISDELPHIXE3}System.UITypes,{$endif}
   Types, Clipbrd, Consts;
 
 type

@@ -31,6 +31,10 @@ program SynDBExplorer;
   - SQLite3 engine updated to revision 3.7.13
   - changed .config file format from binary to JSON (with Base64+Zip if needed)
 
+  Version 1.18
+  - SQlite3 engine updated to revision 3.7.16.2
+  - optimized grid content initialization speed and layout
+
   first line of uses clause must be  {$I SynDprUses.inc}  to enable FastMM4
   conditional define should contain INCLUDE_FTS3 to handle FTS3/FTS4 in SQLite3 
 

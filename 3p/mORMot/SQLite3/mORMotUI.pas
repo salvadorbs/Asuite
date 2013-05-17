@@ -102,6 +102,12 @@ unit mORMotUI;
     - renamed SQLite3UI.pas to mORMotUI.pas
     - introducing TSQLPropInfo* classes to decouple ORM definitions from RTTI
     - fix TSynLabeledEdit.IsValid for currency kind of values
+    - ensure TSQLTableToGrid.Create() uses TDrawGrid font to compute row height
+    - new TSQLTableToGrid.Aligned[] property: replace former SetCentered() method,
+      allowing right cell alignment - and associated SetAligned() /
+      SetAlignedByType() methods as expected by feature request [749dfbdb6a]
+    - new TSQLTableToGrid.CustomFormat[] format, for custom numerical or
+      date/time mask - and associated SetCustomFormatByType() methods  
 
 *)
 
@@ -112,6 +118,7 @@ interface
 
 uses
   Windows,
+  Types,
   SynCommons, mORMot, mORMoti18n,
   SysUtils, Classes, Messages, Variants,
   {$ifdef WITHUXTHEME}
@@ -191,6 +198,9 @@ type
   /// kind of event used to display a menu on a cell right click
   TRightClickCellEvent = procedure(Sender: TSQLTable; ACol, ARow, MouseX, MouseY: Integer) of object;
 
+  /// the available alignments of a TSQLTableToGrid cell
+  TSQLTableToGridAlign = (alLeft, alCenter, alRight);
+
   /// a hidden component, used for displaying a TSQLTable in a TDrawGrid
   // - just call  TSQLTableToGrid.Create(Grid,Table)  to initiate the association
   // - the Table will be released when no longer necessary
@@ -217,6 +227,10 @@ type
     function GetMarkedTotalCount: integer;
     // function because field information may be set manually after Create
     function GetFieldIndexTimeLogForMark: integer;
+    function GetAlign(aCol: cardinal): TSQLTableToGridAlign;
+    procedure SetAlign(aCol: cardinal; Value: TSQLTableToGridAlign);
+    function GetCustomFormat(aCol: cardinal): string;
+    procedure SetCustomFormat(aCol: cardinal; const Value: string);
   protected
     fOnValueText: TValueTextEvent;
     fOnHintText: THintTextEvent;
@@ -234,8 +248,10 @@ type
     fIncrementalSearchMove: boolean;
     /// used to display some hint text
     fHint: THintWindowDelayed;
-    /// text of this field must be centered
-    fCentered: Int64;
+    /// text of this field must be aligned as set by Aligned[] property
+    fAligned: array of TSQLTableToGridAlign;
+    /// custom formats as set by CustomFormat[] property
+    fCustomFormat: array of string;
     /// text of this column/field name has been truncated
     fFieldNameTruncated: Int64;
     /// used by OnTableUpdate() event
@@ -305,10 +321,24 @@ type
     // ! end;
     // - usefull even if ID column was hidden with IDColumnHide
     function SelectedRecordCreate: TSQLRecord;
-    /// set columns number which must be centered
-    procedure SetCentered(const Cols: array of cardinal); overload;
-    /// set a column number which must be centered
-    procedure SetCentered(aCol: cardinal); overload;
+    /// set individual column alignment
+    property Aligned[aCol: cardinal]: TSQLTableToGridAlign read GetAlign write SetAlign;
+    /// set columns number which must be aligned to non default left layout
+    // - a faster overload to Aligned[] property
+    procedure SetAligned(const aCols: array of cardinal; aAlign: TSQLTableToGridAlign);
+    /// set column alignment for a given type
+    // - a faster overload to Aligned[] property
+    procedure SetAlignedByType(aFieldType: TSQLFieldType; aAlign: TSQLTableToGridAlign);
+    /// set individual column custom format
+    // - as handled by TSQLTable.ExpandAsString() method, i.e. Format() or
+    // FormatFloat()/FormatCurrency() mask for sftFloat or sftCurrency, or
+    // FormatDateTime() mask for sftDateTime, sftDateTime, sftTimeLog, sftModTime,
+    // sftCreateTime)
+    property CustomFormat[aCol: cardinal]: string read GetCustomFormat write SetCustomFormat;
+    /// set a custom format for all columns of a given type
+    // - a faster overload to CustomFormat[] property
+    // - only support the field types and formats handled by CustomFormat[] property
+    procedure SetCustomFormatByType(aFieldType: TSQLFieldType; const aCustomFormat: string);
     /// force the mean of characters length for every field
     // - supply a string with every character value is proportionate to
     // the corresponding column width
@@ -361,8 +391,6 @@ type
     /// assign an event here to customize the background drawing of a cell
     property OnDrawCellBackground: TDrawCellEvent read fOnDrawCellBackground
       write fOnDrawCellBackground;
-    /// individual bits of this field is set to display a column data as centered
-    property Centered: Int64 read fCentered;
     /// true if Marked[] is available (add checkboxes at the left side of every row)
     property MarkAllowed: boolean read fMarkAllowed;
     /// true if any Marked[] is checked
@@ -557,6 +585,7 @@ procedure FillStringGrid(Source: TSQLTable; Dest: TStringGrid; Client: TSQLRest=
 implementation
 
 uses
+  {$ifdef ISDELPHIXE3}System.UITypes,{$endif}
   ShellApi, ComObj, Activex, Shlobj, VarUtils;
 
 procedure CreateShellLink (const Filename, Description, ShortcutTo, Parameters,
@@ -903,6 +932,7 @@ begin
   fHint := THintWindowDelayed.Create(self);
   aOwner.RowCount := 2; // first reset row count, to avoid flicking
   aOwner.FixedRows := 1;
+  aOwner.Canvas.Font := aOwner.Font;
   with aOwner.Canvas.TextExtent('jQH°;') do
     aOwner.DefaultRowHeight := cy+4;
   aOwner.Options := [goFixedHorzLine,goFixedVertLine,goVertLine,
@@ -987,7 +1017,8 @@ procedure TSQLTableToGrid.DrawCell(Sender: TObject; ACol, ARow: Integer;
 var Options, x,y, L, i, XInc: integer;
     StringValue: string; // generic string type, VCL ready
     Points: array[0..2] of TPoint;
-    Centered, WithMark: boolean;
+    WithMark: boolean;
+    Aligned: TSQLTableToGridAlign;
     tmp: array[0..255] of WideChar; // 255 chars is wide enough inside a cell
 begin
   // default cell draw
@@ -1013,8 +1044,10 @@ begin
       L := Rect.Right-Rect.Left;
       if WithMark then
         dec(L,CheckBoxWidth+4);
-      Centered := TextWidth(StringValue)<L;
-      if Centered then begin
+      if TextWidth(StringValue)<L then
+        Aligned := alCenter else
+        Aligned := alLeft;
+      if Aligned=alCenter then begin
         UnSetBit64(fFieldNameTruncated,ACol);
         XInc := L shr 1;
         SetTextAlign(Handle,TA_CENTER);
@@ -1026,7 +1059,7 @@ begin
         inc(XInc,CheckBoxWidth+4);
       ExtTextOut(Handle, Rect.Left+XInc,Rect.Top+2, Options, @Rect, pointer(StringValue),
         length(StringValue), nil); // direct translated text centered draw
-      if Centered then
+      if Aligned=alCenter then
         SetTextAlign(Handle,TA_LEFT);
       Font.Style := [];
       if fCurrentFieldOrder=ACol then begin
@@ -1062,26 +1095,33 @@ begin
       end;
     end else begin
       // 2. field value rows
-      Centered := GetBit64(fCentered,ACol);
-      if Centered then begin
+      L := Rect.Right-Rect.Left;
+      if WithMark then
+        dec(L,CheckBoxWidth+4);
+      Aligned := self.Aligned[ACol];
+      case Aligned of
+      alCenter: begin
         SetTextAlign(Handle,TA_CENTER);
-        L := Rect.Right-Rect.Left;
-        if WithMark then
-          dec(L,CheckBoxWidth+4);
         XInc := L shr 1;
-      end else
+      end;
+      alRight: begin
+        SetTextAlign(Handle,TA_RIGHT);
+        XInc := L-4;
+      end else 
         XInc := 4;
+      end;
       if WithMark then
         inc(XInc,CheckBoxWidth+4);
       if Assigned(OnValueText) and OnValueText(Table,ACol,ARow,StringValue) then
         ExtTextOut(Handle, Rect.Left+XInc, Rect.Top+2, Options, @Rect, pointer(StringValue),
           length(StringValue), nil) else // translated text
-      case Table.ExpandAsString(ARow,ACol,Client,StringValue) of
+      case Table.ExpandAsString(ARow,ACol,Client,StringValue,GetCustomFormat(ACol)) of
       // very fast response (calculated once)
       sftBoolean:
         // display boolean as checkbox
         DrawCheckBox(TDrawGrid(Owner).Handle, Handle, Rect,
           PWord(Table.Get(ARow,ACol))^<>ord('0')); // fast StrComp(,'0')
+      sftInteger, sftFloat, sftCurrency,
       sftEnumerate, sftTimeLog, sftRecord, sftDateTime:
         ExtTextOut(Handle, Rect.Left+XInc, Rect.Top+2, Options, @Rect, pointer(StringValue),
           length(StringValue), nil); // translated text
@@ -1096,7 +1136,7 @@ begin
         ExtTextOutW(Handle, Rect.Left+XInc, Rect.Top+2, Options, @Rect, tmp, L, nil);
       end;
       end;
-      if Centered then
+      if Aligned<>alLeft then
         SetTextAlign(Handle,TA_LEFT);
     end;
     if WithMark then begin // draw left side checkbox with Marked[] value
@@ -1109,8 +1149,7 @@ end;
 
 procedure TSQLTableToGrid.SortForce(ACol: integer; Ascending: boolean;
   ARow: integer=-1);
-var
-    MIDs: TIntegerDynArray;
+var MIDs: TIntegerDynArray;
 begin
   if NotDefined or (ACol>=Table.FieldCount) then // we allow ACol<0 (see below)
     exit;
@@ -1384,21 +1423,69 @@ begin
   end;
 end;
 
-procedure TSQLTableToGrid.SetCentered(const Cols: array of cardinal);
-var i: integer;
+function TSQLTableToGrid.GetAlign(aCol: cardinal): TSQLTableToGridAlign;
 begin
-  fCentered := 0;
-  if Table<>nil then
-  for i := 0 to high(Cols) do
-    if Cols[i]<cardinal(Table.FieldCount) then
-      SetBit64(fCentered,Cols[i]-1);
+  if (self=nil) or (Table=nil) or (aCol>=cardinal(length(fAligned))) or
+     (aCol>=Cardinal(Table.FieldCount)) then
+    result := alLeft else
+    result := fAligned[aCol];
 end;
 
-procedure TSQLTableToGrid.SetCentered(aCol: cardinal);
+procedure TSQLTableToGrid.SetAlign(aCol: cardinal; Value: TSQLTableToGridAlign);
 begin
-  if self<>nil then
-    if aCol<cardinal(Table.FieldCount) then
-      SetBit64(fCentered,aCol);
+  if (self=nil) or (Table=nil) or (aCol>=Cardinal(Table.FieldCount)) then
+    exit;
+  if length(fAligned)<Table.FieldCount then
+    SetLength(fAligned,Table.FieldCount);
+  fAligned[aCol] := Value;
+end;
+
+
+function TSQLTableToGrid.GetCustomFormat(aCol: cardinal): string;
+begin
+  if (self=nil) or (Table=nil) or (aCol>=cardinal(length(fCustomFormat))) or
+     (aCol>=Cardinal(Table.FieldCount)) then
+    result := '' else
+    result := fCustomFormat[aCol];
+end;
+
+procedure TSQLTableToGrid.SetCustomFormat(aCol: cardinal; const Value: string);
+begin
+  if (self=nil) or (Table=nil) or (aCol>=Cardinal(Table.FieldCount)) then
+    exit;
+  if length(fCustomFormat)<Table.FieldCount then
+    SetLength(fCustomFormat,Table.FieldCount);
+  fCustomFormat[aCol] := Value;
+end;
+
+procedure TSQLTableToGrid.SetAligned(const aCols: array of cardinal; aAlign: TSQLTableToGridAlign);
+var i: integer;
+begin
+  if Table<>nil then
+  for i := 0 to high(aCols) do
+    SetAlign(aCols[i],aAlign);
+end;
+
+procedure TSQLTableToGrid.SetAlignedByType(aFieldType: TSQLFieldType;
+  aAlign: TSQLTableToGridAlign);
+var i: integer;
+begin
+  if (self=nil) or (Table=nil) then
+    exit;
+  for i := 0 to Table.FieldCount-1 do
+    if Table.FieldType(i)=aFieldType then
+      SetAlign(i,aAlign);
+end;
+
+procedure TSQLTableToGrid.SetCustomFormatByType(aFieldType: TSQLFieldType;
+  const aCustomFormat: string);
+var i: integer;
+begin
+  if (self=nil) or (Table=nil) then
+    exit;
+  for i := 0 to Table.FieldCount-1 do
+    if Table.FieldType(i)=aFieldType then
+      SetCustomFormat(i,aCustomFormat);
 end;
 
 procedure TSQLTableToGrid.PageChanged;
@@ -1465,7 +1552,7 @@ begin
     for i := 0 to L-1 do begin
       c := Lengths[i+1];
       if c in ['a'..'z'] then begin
-        SetCentered(i);
+        Aligned[i] := alCenter;
         dec(c,32);
       end;
       Means[i] := ord(c)+(-ord('A')+1);

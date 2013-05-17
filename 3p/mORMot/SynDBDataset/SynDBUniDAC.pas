@@ -280,7 +280,7 @@ var List: TStringList;
 begin
   List := TStringList.Create;
   try
-    (MainConnection as TSQLDBUniDACConnection).fDatabase.GetTableNames(List,false,true);
+    (MainConnection as TSQLDBUniDACConnection).fDatabase.GetTableNames(List);
     SetLength(Tables,List.Count);
     for i := 0 to List.Count-1 do
       Tables[i] := StringToUTF8(List[i]);

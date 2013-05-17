@@ -107,7 +107,8 @@ unit SynDBOracle;
   - when a column charset does not match the connection value, log a warning and
     force connection-level code page instead of raising an Exception
   - fixed ticket [4c68975022] about broken SQL statement when logging active
-  - fixed ticket [5df9d39858] about NULL bindings in TSQLDBOracleStatement 
+  - fixed ticket [545fbe7579] about TSQLDBConnection.LastErrorMessage not reset
+  - fixed ticket [5df9d39858] about NULL bindings in TSQLDBOracleStatement
   - fixed truncated error message in TSQLDBOracleLib.HandleError() method
   - fix potential ORA-24333 error when using stored procedures
 
@@ -1654,6 +1655,7 @@ function TSQLDBOracleConnection.NewStatementPrepared(const aSQL: RawUTF8;
   ExpectResults: Boolean; RaiseExceptionOnError: Boolean=false): ISQLDBStatement;
 var Stmt: TSQLDBOracleStatement;
 begin
+  fErrorMessage := '';
   Stmt := nil;
   try
     Stmt := TSQLDBOracleStatement.Create(self);

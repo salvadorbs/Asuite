@@ -6443,13 +6443,14 @@ begin
       break;
     end else
     if SysLocale.PriLangID=LANG_JAPANESE then
-      if ByteType(S, i)=mbTrailByte then
+      if {$ifdef ISDELPHIXE4}System.AnsiStrings.{$endif}ByteType(S, i)=mbTrailByte then
         if (S[i+1]<>#129) or not(S[i+2] in [#65,#66]) then begin
           result := Copy(S, Index, i - (Index - 1));
           break;
         end else
           inc(i) else
-      if ((i < ln) and (ByteType(S, i + 1)=mbLeadByte)) then begin
+      if ((i < ln) and
+         ({$ifdef ISDELPHIXE4}System.AnsiStrings.{$endif}ByteType(S, i + 1)=mbLeadByte)) then begin
         result := Copy(S, Index, i - (Index - 1));
         break;
       end else

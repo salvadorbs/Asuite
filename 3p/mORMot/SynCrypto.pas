@@ -2942,7 +2942,7 @@ begin
       with TMemoryStream(OutStream) do begin
         P := Seek(0,soFromCurrent);
         Size := P+Len; // auto-reserve space (no Realloc:)
-        Seek(P+Len,soFromBeginning);
+        Seek(P+Len,soBeginning);
         bOut := PAnsiChar(Memory)+P;
         pOut := bOut;
         OutStream := nil; //  OutStream is slower and use no thread

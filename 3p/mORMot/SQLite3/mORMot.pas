@@ -797,6 +797,8 @@ unit mORMot;
       to TSQLRecord classes and not to plain TClass (e.g. for QueryTables[])
     - added TSQLTable.SortFields() overloaded method, able to sort a TSQLTable
       row content by multiple fields - implements feature request [d277153f03]
+    - added optional CustomFormat: string parameter to TSQLTable.ExpandAsString()
+      to allow numerical or date/time format for a given column [749dfbdb6a]
     - added optional CustomCompare: TUTF8Compare param to TSQLTable.SortFields()
       to allow any kind of custom ordering - feature request [c6804d48a4]
     - speed up of TSQLTable.FieldIndex() method (using binary search)
@@ -2681,7 +2683,7 @@ type
     procedure WriteObjectAsString(Value: TObject;
       Options: TTextWriterWriteObjectOptions=[woDontStoreDefault]);
     /// override method, able to write sets using RTTI
-    procedure AddTypedJSON(aTypeInfo: pointer; var aValue); {override;}
+    procedure AddTypedJSON(aTypeInfo: pointer; var aValue); override;
     /// relase all used memory and handles
     destructor Destroy; override;
     /// define a custom serialization for a given class
@@ -4351,8 +4353,14 @@ type
        with Get*() methods above
      - returns '' for other properties kind, if UTF8ToString is nil,
        or the ready to be displayed value if UTF8ToString event is set
-       (to be used mostly with Language.UTF8ToString) }
-    function ExpandAsString(Row,Field: integer; Client: TObject; out Text: string): TSQLFieldType;
+       (to be used mostly with Language.UTF8ToString)
+      - CustomFormat can optionaly set a custom format string, e.g. '%f' or '%n'
+        or complex FormatFloat()/FormatCurr() syntax (as '#,##0.00') for sftFloat
+        and sftCurrency columns (instead of plain JSON float value), or
+        date/time format as expected by FormatDateTime() for all date time kind
+        of fields (as sftDateTime, sftTimeLog, sftModTime, sftCreateTime) }
+    function ExpandAsString(Row,Field: integer; Client: TObject; out Text: string;
+      const CustomFormat: string=''): TSQLFieldType;
     {/ read-only access to a particular field value, as VCL text
      - this method is just a wrapper around ExpandAsString method, returning
        the content as a SynUnicode string type (i.e. UnicodeString since Delphi
@@ -4437,7 +4445,7 @@ type
      - sftBlob is returned if the field is encoded as SQLite3 BLOB literals
        (X'53514C697465' e.g.)
      - since TSQLTable data is PUTF8Char, string type is sftUTF8Text only }
-    function FieldType(Field: integer; EnumTypeInfo: PPointer): TSQLFieldType;
+    function FieldType(Field: integer; EnumTypeInfo: PPointer=nil): TSQLFieldType;
     {/ get the appropriate Sort comparaison function for a field,
       nil if not available (bad field index or field is blob)
       - field type is guessed from first data row }
@@ -15401,11 +15409,12 @@ end;
 {$endif}
 
 function TSQLTable.ExpandAsString(Row, Field: integer; Client: TObject;
-  out Text: string): TSQLFieldType;
+  out Text: string; const CustomFormat: string): TSQLFieldType;
 var EnumType: PEnumType;
     err: integer;
     Value: Int64;
     Ref: RecordRef absolute Value;
+label IsDateTime;
 begin // Text was already forced to '' because was defined as "out" parameter
   if Row=0 then begin // Field Name
     result := sftUnknown;
@@ -15415,8 +15424,14 @@ begin // Text was already forced to '' because was defined as "out" parameter
   result := FieldType(Field,@EnumType);
   case result of
   sftDateTime: begin
-    Value := Iso8601ToSecondsPUTF8Char(Get(Row,Field),0);
+   Value := Iso8601ToSecondsPUTF8Char(Get(Row,Field),0);
+IsDateTime:
     if Value<>0 then begin
+      if CustomFormat<>'' then begin
+        Text := FormatDateTime(CustomFormat,Iso8601(Value).ToDateTime);
+        if Text<>CustomFormat then
+          exit; // valid conversion
+      end;
       if Assigned(i18nDateText) then
         Text := i18nDateText(Value) else
         Text := {$ifdef UNICODE}Ansi7ToString{$endif}(Iso8601(Value).Text(true,' '));
@@ -15425,6 +15440,28 @@ begin // Text was already forced to '' because was defined as "out" parameter
   end;
   sftBlob:
     Text := '???';
+  sftFloat:
+    if CustomFormat<>'' then
+    try
+      if pos('%',CustomFormat)>0 then
+        Text := Format(CustomFormat,[GetExtended(Get(Row,Field))]) else
+        Text := FormatFloat(CustomFormat,GetExtended(Get(Row,Field)));
+      exit;
+    except
+      on EConvertError do
+        Text := '';
+    end;
+  sftCurrency:
+    if CustomFormat<>'' then
+    try
+      if pos('%',CustomFormat)>0 then
+        Text := Format(CustomFormat,[StrToCurrency(Get(Row,Field))]) else
+        Text := FormatCurr(CustomFormat,StrToCurrency(Get(Row,Field)));
+      exit;
+    except
+      on EConvertError do
+        Text := '';
+    end;
   sftEnumerate, sftSet, sftRecord, sftID, sftTimeLog, sftModTime, sftCreateTime: begin
     Value := GetInt64(Get(Row,Field),err);
     if err<>0 then
@@ -15435,14 +15472,8 @@ begin // Text was already forced to '' because was defined as "out" parameter
         Text := EnumType^.GetCaption(Value);
         exit;
       end;
-      sftTimeLog, sftModTime, sftCreateTime: begin
-        if Value=0 then
-          Text := '' else
-        if Assigned(i18nDateText) then
-          Text := i18nDateText(Value) else
-          Text := {$ifdef UNICODE}Ansi7ToString{$endif}(Iso8601(Value).Text(true,' '));
-        exit;
-      end;
+      sftTimeLog, sftModTime, sftCreateTime:
+        goto IsDateTime;
 {      sftID, sftSet:
         result := sftUTF8Text; // will display INTEGER field as number }
       sftRecord:

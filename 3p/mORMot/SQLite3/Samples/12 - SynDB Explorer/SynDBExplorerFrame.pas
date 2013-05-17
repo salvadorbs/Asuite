@@ -276,6 +276,7 @@ begin
             Stop := Timer.Stop;
             Table := TSQLTableJSON.Create([],'',pointer(fJSONBuffer),length(fJSONBuffer));
             fGrid := TSQLTableToGrid.Create(DrawGrid,Table,nil);
+            fGrid.SetAlignedByType(sftCurrency,alRight);
             fGrid.OnValueText := OnText;
             fGrid.SetFieldFixedWidth(100);
             fGrid.FieldTitleTruncatedNotShownAsHint := true;

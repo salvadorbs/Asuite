@@ -124,7 +124,7 @@ This document focuses on the {\i Synopse mORMot Framework} library.
 The purpose of this @DI@ is to detail the marketing requirements/product specifications for the 1.18 release of the {\i Synopse mORMot Framework library}. The requirements and specifications found in this document are derived from customer market research, regulatory input and industry common practice.
 :  Concept Statement
 It was observed that a true JSON and RESTful oriented Client-Server framework was missing in the Delphi programing environment.
-Latest versions of Delphi (i.e. Delphi 2010/XE/XE2/XE3) provide a JSON and RESTful mechanism named DataSnap (in the {\i Architect} or {\i Enterprise} editions), but such a feature could be implemented with previous versions of the Delphi compiler as well, with a more open architecture.
+Latest versions of Delphi (i.e. Delphi 2010/XE/XE2/XE3/XE4) provide a JSON and RESTful mechanism named DataSnap (in the {\i Architect} or {\i Enterprise} editions), but such a feature could be implemented with previous versions of the Delphi compiler as well, with a more open architecture.
 This framework shall use a innovative ORM (Object-relational mapping) approach, based on the RTTI (Runtime Type Information) provided by the Delphi language. It shall expose Server data access and business services to Clients, using JSON over several communication protocols.
 After evaluation of most used database engines, the {\i SQLite3} engine was found out to be secure, fast, and perfectly adapted as a stand-alone database engine for this framework, able to access other remote database engines using its unique {\i Virtual Tables} mechanism.
 Together with this Client-Server data and business architecture, a set of User Interface components (especially Database Grid and Reporting system) are provided within the framework.
@@ -132,7 +132,7 @@ The main approach of this framework is to avoid RAD in the development of projec
 : Expected Use
 Any application which need moderate database usage (up to some GB of data) with easy setup and administration, together with a secure @*ACID@ behavior in a Client-Server environment should consider using the {\i Synopse mORMot Framework}.
 : Requirement Exceptions
-This framework was developed in order to run under any Delphi compiler, from version Delphi 6 to version Delphi XE3. It targets both {\i Win32} and {\i Win64} platforms, using the 64 bit compiler included in latest Delphi XE2/XE3 IDE.
+This framework was developed in order to run under any Delphi compiler, from version Delphi 6 to version Delphi XE4. It targets both {\i Win32} and {\i Win64} platforms, using the 64 bit compiler included in latest Delphi XE2/XE3/XE4 IDE.
 It was conceived so that it could be compatible also with the {\i Free Pascal Compiler}, which is more advanced than the Embarcadero Delphi compiler for cross-platform support. This support is not tested nor fully supported, but was taken in account during coding.
 =[License]
 \page
@@ -459,7 +459,7 @@ The {\i Synopse mORMot Framework} shall provide User Interface and Report genera
 Such a ribbon-oriented interface shall be made available, in a per-table approach, and associated reports.
 Here is a sample of screen content, using proprietary TMS components:
 %synfiletms.png
-And here is the same application compiled using only VCL components, available from Delphi 6 up to XE3:
+And here is the same application compiled using only VCL components, available from Delphi 6 up to XE4:
 %synfilevcl.png
 
 [SRS-DI-2.3.1]
@@ -562,7 +562,7 @@ TitleOffset=0
 DisplayName=mORMot Framework Overview
 
 :Synopse mORMot Overview
-{\i Synopse mORMot} is a @*Client-Server@ @*ORM@ and Service Oriented Architecture framework (@*SOA@) for Delphi 6 up to XE3, targeting {\i Win32} and {\i Win64} platforms.
+{\i Synopse mORMot} is a @*Client-Server@ @*ORM@ and Service Oriented Architecture framework (@*SOA@) for Delphi 6 up to XE4, targeting {\i Win32} and {\i Win64} platforms.
 %IamLost.png
 The main two features of {\i mORMot} are therefore:
 - Client-Server {\i ORM}: objects persistence and remote access;
@@ -643,7 +643,7 @@ At first, some points can be highlighted, which make this framework distinct to 
 - More than 1000 pages of documentation;
 - Delphi and @*AJAX@ clients can share the same server;
 - Full source code provided - so you can enhance it to fulfill any need;
-- Works from Delphi 6 up to XE3, truly Unicode (uses UTF-8 encoding in its kernel, just like JSON), with any version of Delphi (no need to upgrade your IDE).
+- Works from Delphi 6 up to XE4, truly Unicode (uses UTF-8 encoding in its kernel, just like JSON), with any version of Delphi (no need to upgrade your IDE).
 \page
 : Benefits
 As you can see from the previous section, {\i mORMot} provides a comprehensive set of features that can help you to manage your crosscutting concerns though a reusable set of components and core functionality.
@@ -1101,7 +1101,7 @@ In the following next paragraphs, we'll comment some main features of the lowest
 - {\i @*Dynamic array@} wrappers ({\f1\fs20 TDynArray} and {\f1\fs20 TDynArrayHashed});
 - @*Log@ging.
 :32 Unicode and UTF-8
-Our {\i mORMot} Framework has 100% UNICODE compatibility, that is compilation under Delphi 2009/2010/XE/XE2/XE3. The code has been deeply rewritten and @*test@ed, in order to provide compatibility with the {\f1\fs20 String=UnicodeString} paradigm of these compilers.  But the code will also handle safely Unicode for older versions, i.e. from Delphi 6 up to Delphi 2007.
+Our {\i mORMot} Framework has 100% UNICODE compatibility, that is compilation under Delphi 2009/2010/XE/XE2/XE3/XE4. The code has been deeply rewritten and @*test@ed, in order to provide compatibility with the {\f1\fs20 String=UnicodeString} paradigm of these compilers.  But the code will also handle safely Unicode for older versions, i.e. from Delphi 6 up to Delphi 2007.
 Since our framework is natively @**UTF-8@ (this is the better character encoding for fast @*JSON@ streaming/parsing and it is natively supported by the {\i SQLite3} engine), we had to establish a secure way our framework used strings, in order to handle all versions of Delphi (even pre-Unicode versions, especially the Delphi 7 version we like so much), and provide compatibility with the {\i Free Pascal Compiler}.
 Some string types have been defined, and used in the code for best cross-compiler efficiency (avoiding most conversion between formats):
 - {\f1\fs20 @**RawUTF8@} is used for every internal data usage, since both {\i @*SQLite3@} and JSON do expect UTF-8 encoding;
@@ -1199,7 +1199,7 @@ Here is how those new methods work:
 !  if GroupA.Find(v)<0 then // fast binary search
 !    ShowMessage('Error: 1500 not found!');
 Some unique methods like {\f1\fs20 Slice, Reverse} or {\f1\fs20 AddArray} are also available, and mimic well-known Python methods.
-Still closer to the generic paradigm, working for Delphi 6 up to XE3, without the need of the slow enhanced RTTI...
+Still closer to the generic paradigm, working for Delphi 6 up to XE4, without the need of the slow enhanced RTTI...
 :  Capacity handling via an external Count
 One common speed issue with the default usage of {\f1\fs20 TDynArray} is that the internal memory buffer is reallocated when you change its length, just like a regular Delphi {\i dynamic array}.
 That is, whenever you call {\f1\fs20 Add} or {\f1\fs20 Delete} methods, an internal call to {\f1\fs20 SetLength(DynArrayVariable)} is performed. This could be slow, because it always executes some extra code, including a call to {\f1\fs20 ReallocMem}.
@@ -5708,7 +5708,7 @@ If you compare with existing mocking frameworks, even in other languages / platf
 - Most common parameters and results can be defined as simple {\f1\fs20 array of const} in the Delphi code, or by supplying JSON arrays (needed e.g. for more complex structures like {\f1\fs20 record} values);
 - Execution trace retrieval in easy to read or write text format (and not via complex "fluent" interface e.g. with {\f1\fs20 When} clauses);
 - Auto-release of the {\f1\fs20 TInterfaceStub TInterfaceMock TInterfaceMockSpy} generator instance, when the interface is no longer required, to minimize the code to type, and avoid potential memory leaks;
-- Works from Delphi 6 up to XE3 - since no use of syntax sugar like generics, nor the {\f1\fs20 RTTI.pas} features;
+- Works from Delphi 6 up to XE4 - since no use of syntax sugar like generics, nor the {\f1\fs20 RTTI.pas} features;
 - Very good performance (the faster Delphi mocking framework, for sure), due to very low overhead and its reuse of {\i mORMot}'s low-level interface-based services kernel using JSON serialization, which does not rely on the slow and limited {\f1\fs20 TVirtualInterface}.
 :  Stubbing complex return values
 Just imagine that the {\f1\fs20 ForgotMyPassword} method does perform an internal test:
@@ -5858,7 +5858,7 @@ Here are the key features of the current implementation of services using interf
 |Factory driven|Get an implementation instance from a given interface
 |Server factory|You can get an implementation on the server side
 |Client factory|You can get a "fake" implementation on the client side, remotely calling the server to execute the process
-|Auto marshaling|The contract is transparently implemented: no additional code is needed e.g. on the client side, and will handle simple types (strings, numbers, dates, sets and enumerations) and high-level types (objects, collections, records, dynamic arrays, variants) from Delphi 6 up to XE3
+|Auto marshaling|The contract is transparently implemented: no additional code is needed e.g. on the client side, and will handle simple types (strings, numbers, dates, sets and enumerations) and high-level types (objects, collections, records, dynamic arrays, variants) from Delphi 6 up to XE4
 |Flexible|Methods accept per-value or per-reference parameters
 |Instance lifetime|An implementation class can be:\line - Created on every call,\line - Shared among all calls,\line - Shared for a particular user or group,\line - Dedicated to the thread it runs on,\line - Alive as long as the client-side interface is not released,\line - Or as long as an @*authentication@ session exists
 |Stateless|Following a standard request/reply pattern
@@ -7169,7 +7169,7 @@ And even better, testing-driven coding can be encouraged:
 It could sounds like a waste of time, but such coding improve your code quality a lot, and, at least, it help you write and optimize every implementation feature.
 The framework has been implemented using this approach, and provide all the tools to write tests.
 :  Involved classes in Unitary testing
-The @!TSynTest,TSynTestCase,TSynTests!Lib\SynCommons.pas@ unit defines two classes (both inheriting from {\f1\fs20 TSynTest}), implementing a complete Unitary testing mechanism similar to {\i DUnit}, with less code overhead, and direct interface with the framework units and requirements (@*UTF-8@ ready, code compilation from Delphi 6 up to XE3, no external dependency).
+The @!TSynTest,TSynTestCase,TSynTests!Lib\SynCommons.pas@ unit defines two classes (both inheriting from {\f1\fs20 TSynTest}), implementing a complete Unitary testing mechanism similar to {\i DUnit}, with less code overhead, and direct interface with the framework units and requirements (@*UTF-8@ ready, code compilation from Delphi 6 up to XE4, no external dependency).
 The following diagram defines this class hierarchy:
 \graph HierTSynTest TSynTest classes hierarchy
 \TSynTests\TSynTest
@@ -7338,12 +7338,12 @@ Follow these steps:
 - Finally, click on the "{\i Zip Archive}" link, available at the end of the "{\i Overview}" header, right ahead to the "{\i Other Links}" title. This link will build a {\f1\fs20 .zip} archive of the complete source code and download it to your browser.
 :  Expected compilation platform
 The framework source code tree will compile and is tested for the following platform:
-- Delphi 6 up to Delphi XE3 compiler and IDE (@**FPC@ support is not yet finished);
+- Delphi 6 up to Delphi XE4 compiler and IDE (@**FPC@ support is not yet finished);
 - For Windows 32 bit and @**64 bit@ platform (Delphi XE2 and up is expected when targeting {\i Win64});
 - GUI may be compiled optionally with third-party non Open-Source @*TMS@ Components, instead of default VCL components - see @http://www.tmssoftware.com/site/tmspack.asp
 Some part of the library (e.g. {\f1\fs20 SynCommons.pas} or the @27@ units) are also compatible with Delphi 5.
 If you want to compile {\i mORMot} unit into @*packages@, to avoid an obfuscated {\i [DCC Error] @*E2201@ Need imported data reference ($G) to access 'VarCopyProc'} error at compilation, you should defined the {\f1\fs20 USEPACKAGES} conditional in your project's options. Open {\f1\fs20 SynCommons.inc} for a description of this conditional, and all over definitions global to all {\i mORMot} units - see @45@.
-Note that the framework is expected to create only Windows applications yet. But cross-platform is on its way: it will probably use the Delphi XE2/XE3 FireMonkey library for User Interface generation, {\i Free Pascal Compiler} (FPC) / {\i @*Lazarus@} support, or other tools more neutral, using @*JavaScript@ and @*AJAX@ - or both. The framework source code implementation and design tried to be as cross-platform as possible, since the beginning.
+Note that the framework is expected to create only Windows applications yet. But cross-platform is on its way: it will probably use the Delphi XE2/XE3/XE4 FireMonkey library for User Interface generation, {\i Free Pascal Compiler} (FPC) / {\i @*Lazarus@} support, or other tools more neutral, using @*JavaScript@ and @*AJAX@ - or both. The framework source code implementation and design tried to be as cross-platform as possible, since the beginning.
 The latest versions of the {\i Free Pascal Compiler} together with its great {\i Lazarus} IDE, are now very stable and easy to work with. I've tried for instance the {\i CodeTyphon} release (which is not the stable branch, but the latest version of both FPC and Lazarus) - see @http://www.pilotlogic.com - and found it to be impressive. This is amazing to build the whole set of compilers and IDE, with a lot of components, for several platforms (this is a cross-platform project), just from the sources. I like Lazarus stability and speed much more than Delphi, even if the compiler is slower than Delphi's. At least, it works, and works well. So stay tuned!
 :  Note about sqlite3*.obj files
 In order to maintain the source code repository in a decent size, we excluded the {\f1\fs20 sqlite3*.obj} storage in it, but provide the full source code of the {\i @*SQlite3@} engine in the corresponding {\f1\fs20 sqlite3.c} file, ready to be compiled with all conditional defined as expected by {\f1\fs20 SynSQlite3Static.pas}.
@@ -7612,7 +7612,7 @@ The {\i Office UI licensing program} was designed by {\i Microsoft} for software
 If you want to design your user interface using a Office 2007/2010 ribbon look, please take a look at those official guidelines: @http://msdn.microsoft.com/en-us/library/cc872782.aspx
 Here is the screen content, using the TMS components:
 %synfiletms.png
-And here is the same application compiled using only VCL components, available from Delphi 6 up to XE3:
+And here is the same application compiled using only VCL components, available from Delphi 6 up to XE4:
 %synfilevcl.png
 We did not use yet the Ribbon component as was introduced in Delphi 2009. Its action-driven design won't make it easy to interface with the event-driven design of our User Interface handling, and we have to confess that this component has rather bad reputation (at least in the Delphi 2009 version). Feel free to adapt our Open Source code to use it - we'll be very pleased to release a new version supporting it, but we don't have time nor necessity to do it by ourself.
 :  Enumeration types

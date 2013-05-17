@@ -357,7 +357,8 @@ unit SynCommons;
   Version 1.18
   - breaking change of TTextWriter.WriteObject() method: serialization is now
     defined with a new TTextWriterWriteObjectOptions set
-  - unit fixed and tested with Delphi XE2/XE3 64-bit compiler under Windows
+  - Delphi XE4 compatibility (Windows target platform only)
+  - unit fixed and tested with Delphi XE2/XE3/XE4 64-bit compiler under Windows
   - UTF-8 process will now handle UTF-16 surrogates - see ticket [4a0382367d] -
     UnicodeCharToUTF8/NextUTF8Char are renamed WideCharToUTF8/NextUTF8UCS4 and
     new UTF16CharToUTF8/UCS4ToUTF8 functions have been introduced
@@ -470,6 +471,7 @@ unit SynCommons;
   - added ConsoleWaitForEnterKey function, able to handle Synchronize() calls
   - added PtrUIntScanIndex() function
   - fixed TTextWriter.RegisterCustomJSONSerializer() method when unregistering
+  - fixed TTextWriter.AddFloatStr() method when processing '-.5' input
   - extraction of TTestLowLevelCommon code into SynSelfTests.pas unit
   - introduced TSynInvokeableVariantType.Clear() and Copy() default methods
   - internal DispInvoke() function speed-up by caching the latest accessed type
@@ -555,6 +557,9 @@ type
   // Delphi 5 doesn't have those base types defined :(
 const
   varInt64 = $0014; { vt_i8 }
+
+  soBeginning = soFromBeginning;
+  soCurrent = soFromCurrent;
 
 type
   PPointer = ^Pointer;
@@ -18666,11 +18671,11 @@ begin
     i := Seek(0,soFromCurrent); // no direct access to fSize -> use Seek() trick
     if NewCapacity=Seek(0,soFromEnd) then begin // avoid ReallocMem() if just truncate
       result := Memory;
-      Seek(i,soFromBeginning);
+      Seek(i,soBeginning);
       exit;
     end;
     NewCapacity := (NewCapacity + (MemoryDelta - 1)) and not (MemoryDelta - 1);
-    Seek(i,soFromBeginning);
+    Seek(i,soBeginning);
   end;
   Result := Memory;
   if NewCapacity <> Capacity then begin
@@ -20303,7 +20308,7 @@ procedure TDynArray.LoadFromStream(Stream: TCustomMemoryStream);
 var P: PAnsiChar;
 begin
   P := PAnsiChar(Stream.Memory)+Stream.Seek(0,soFromCurrent);
-  Stream.Seek(LoadFrom(P)-P,soFromCurrent);
+  Stream.Seek(LoadFrom(P)-P,soCurrent);
 end;
 
 function TDynArray.SaveTo(Dest: PAnsiChar): PAnsiChar;
@@ -22264,7 +22269,7 @@ begin
       FlushInc else
       inc(B);
     if PWord(P)^=ord('-')+ord('.')shl 8 then begin
-      PWord(B)^ := ord('-')+ord('.')shl 8; // '-.3' -> '-0.3'
+      PWord(B)^ := ord('-')+ord('0')shl 8; // '-.3' -> '-0.3'
       inc(B,2);
       inc(P);
       dec(L);
@@ -23635,7 +23640,7 @@ begin
   // trim first row data
   if P^<>#0 then
     move(P^,PBegin^,PEnd-P); // erase content
-  fStream.Seek(PBegin-P,soFromCurrent); // adjust current stream position
+  fStream.Seek(PBegin-P,soCurrent); // adjust current stream position
 end;
 
 

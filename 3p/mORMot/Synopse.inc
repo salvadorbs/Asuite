@@ -65,6 +65,7 @@
 
   Version 1.18
   - added NOX64PATCHRTL conditional (unset by default, for better speed)
+  - now handles Delphi XE3 and XE4 (32 and 64 bit)
 
 }
 
@@ -218,6 +219,9 @@
     {$ifend}
     {$if CompilerVersion >= 24.0}
       {$define ISDELPHIXE3}
+    {$ifend}
+    {$if CompilerVersion >= 25.0}
+      {$define ISDELPHIXE4}
     {$ifend}
   {$ELSE}
     // Delphi 5 or older
