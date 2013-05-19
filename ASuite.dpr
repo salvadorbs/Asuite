@@ -30,7 +30,10 @@ uses
   ASuiteForm in 'library\ASuiteForm.pas',
   ulTreeView in 'library\ulTreeView.pas',
   Stats in 'Stats.pas' {frmStats},
-  SynSQLite3Static; //SQLite3 static library
+  SynSQLite3Static,
+  Menu in 'Menu.pas' {frmMenu};
+
+//SQLite3 static library
 
 {$IFDEF DEBUG}
 var
@@ -57,8 +60,7 @@ begin
     Application.Title := APP_TITLE;
 
     Application.CreateForm(TfrmMain, frmMain);
-
-    //Show MainForm and/or TrayMenu
+  //Show MainForm and/or TrayMenu
     Application.ShowMainForm := Config.ShowPanelAtStartUp;
     if (Config.ShowMenuAtStartUp) then
       ClassicMenu.ShowTrayiconMenu;
