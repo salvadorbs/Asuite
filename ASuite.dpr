@@ -31,7 +31,8 @@ uses
   ulTreeView in 'library\ulTreeView.pas',
   Stats in 'Stats.pas' {frmStats},
   SynSQLite3Static,
-  Menu in 'Menu.pas' {frmMenu};
+  Menu in 'Menu.pas' {frmMenu},
+  notifications in '3p\notifications.pas' {frmNotification};
 
 //SQLite3 static library
 
@@ -64,6 +65,7 @@ begin
     Application.ShowMainForm := Config.ShowPanelAtStartUp;
     if (Config.ShowMenuAtStartUp) then
       ClassicMenu.ShowTrayiconMenu;
+    TfrmNotification.Execute(Format('%s %s', [APP_NAME, VERSION_COMPLETE]),'');
     Application.Run;
 
     {$IFDEF DEBUG}

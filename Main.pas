@@ -190,7 +190,7 @@ implementation
 uses
   Option, PropertyFile, PropertyCat, About, ulCommonUtils, udClassicMenu,
   PropertySeparator, ulExeUtils, ImportList, Stats, ulAppConfig, ulTreeView,
-  ulDatabase;
+  ulDatabase, notifications;
 
 {$R *.dfm}
 
@@ -1083,6 +1083,7 @@ end;
 
 procedure TfrmMain.FormDestroy(Sender: TObject);
 begin
+  TfrmNotification.Stop;
   //Fix memory leaks
   FreeAndNil(MRUList);
   FreeAndNil(MFUList);

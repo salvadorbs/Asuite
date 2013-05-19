@@ -223,6 +223,10 @@
             <Form>frmMenu</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="3p\notifications.pas">
+            <Form>frmNotification</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <None Include="ASuite.inc"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>
