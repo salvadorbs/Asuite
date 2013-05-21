@@ -244,6 +244,7 @@ class procedure TfrmNotification.Stop;
 begin
   if TheForm <> nil then
     TheForm.StopDisplay;
+  TheForm.Free;
 end;
 
 procedure TfrmNotification.StopDisplay;
