@@ -31,7 +31,7 @@ uses
   ulTreeView in 'library\ulTreeView.pas',
   Stats in 'Stats.pas' {frmStats},
   SynSQLite3Static,
-  Menu in 'Menu.pas' {frmMenu},
+  GraphicMenu in 'GraphicMenu.pas' {frmMenu},
   notifications in '3p\notifications.pas' {frmNotification};
 
 //SQLite3 static library

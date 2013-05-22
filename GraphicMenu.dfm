@@ -22,6 +22,14 @@ object frmMenu: TfrmMenu
   ScreenSnap = True
   PixelsPerInch = 96
   TextHeight = 13
+  object imgBackground: TImage
+    Left = 0
+    Top = 0
+    Width = 406
+    Height = 573
+    Align = alClient
+    ExplicitTop = 66
+  end
   object lblDriveName: TLabel
     Left = 8
     Top = 549

@@ -17,14 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 }
 
-unit menu;
+unit GraphicMenu;
 
 interface
 
 uses
   Windows, Classes, Forms, StdCtrls, Buttons, ExtCtrls, ComCtrls, Messages,
 	ShellAPI, Controls, Graphics, Dialogs, SysUtils, VirtualTrees, AppEvnts,
-  Vcl.Imaging.pngimage, cySkinButton;
+  Vcl.Imaging.pngimage, cySkinButton, IniFiles;
 
 type
 	TfrmMenu = class(TForm)
@@ -55,6 +55,7 @@ type
     sknbtnMFU: TcySkinButton;
     sknbtnEject: TcySkinButton;
     sknbtnExit: TcySkinButton;
+    imgBackground: TImage;
 	private    
     { Private declarations }
     procedure CopyImageInVst(Source:TImage;Dest:TVirtualStringTree);
