@@ -1,4 +1,4 @@
-object frmMenu: TfrmMenu
+object frmGraphicMenu: TfrmGraphicMenu
   Left = 1200
   Top = 394
   AlphaBlend = True
@@ -20,6 +20,7 @@ object frmMenu: TfrmMenu
   Position = poDesigned
   Scaled = False
   ScreenSnap = True
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object imgBackground: TImage
@@ -280,6 +281,7 @@ object frmMenu: TfrmMenu
   end
   object tmrFader: TTimer
     Interval = 20
+    OnTimer = tmrFaderTimer
     Left = 248
     Top = 8
   end

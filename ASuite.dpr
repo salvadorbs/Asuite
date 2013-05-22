@@ -31,7 +31,7 @@ uses
   ulTreeView in 'library\ulTreeView.pas',
   Stats in 'Stats.pas' {frmStats},
   SynSQLite3Static,
-  GraphicMenu in 'GraphicMenu.pas' {frmMenu},
+  GraphicMenu in 'GraphicMenu.pas' {frmGraphicMenu},
   notifications in '3p\notifications.pas' {frmNotification};
 
 //SQLite3 static library
@@ -61,6 +61,7 @@ begin
     Application.Title := APP_TITLE;
 
     Application.CreateForm(TfrmMain, frmMain);
+    Application.CreateForm(TfrmGraphicMenu, frmGraphicMenu);
   //Show MainForm and/or TrayMenu
     Application.ShowMainForm := Config.ShowPanelAtStartUp;
     if (Config.ShowMenuAtStartUp) then

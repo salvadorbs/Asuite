@@ -27,7 +27,7 @@ uses
   Vcl.Imaging.pngimage, cySkinButton, IniFiles;
 
 type
-	TfrmMenu = class(TForm)
+	TfrmGraphicMenu = class(TForm)
   	imgDriveSpace: TImage;
 	  imgDivider2: TImage;
   	lblDriveName: TLabel;
@@ -56,15 +56,19 @@ type
     sknbtnEject: TcySkinButton;
     sknbtnExit: TcySkinButton;
     imgBackground: TImage;
+    procedure FormCreate(Sender: TObject);
+    procedure tmrFaderTimer(Sender: TObject);
 	private    
     { Private declarations }
     procedure CopyImageInVst(Source:TImage;Dest:TVirtualStringTree);
 	public
     { Public declarations }
+    procedure OpenMenu;
+  	procedure CloseMenu;
   end;
 
 var
-	frmMenu : TfrmMenu;
+	frmGraphicMenu : TfrmGraphicMenu;
   Opening : Boolean;
 
 implementation
@@ -72,9 +76,16 @@ implementation
 {$R *.dfm}
 
 uses
-  Main, Option, ulSysUtils, AppConfig;
+  Main, Option, ulSysUtils, AppConfig, ulAppConfig;
 
-procedure TfrmMenu.CopyImageInVst(Source: TImage;Dest: TVirtualStringTree);
+procedure TfrmGraphicMenu.CloseMenu;
+begin
+  //Fade in out
+  Opening := False;
+  tmrFader.Enabled:= True;
+end;
+
+procedure TfrmGraphicMenu.CopyImageInVst(Source: TImage;Dest: TVirtualStringTree);
 var
   RectSource, RectDest : TRect;
   bmpTempImage, bmpTempBG : TBitmap;
@@ -107,6 +118,47 @@ begin
   finally
     bmpTempImage.Free;
     bmpTempBG.Free;
+  end;
+end;
+
+procedure TfrmGraphicMenu.FormCreate(Sender: TObject);
+begin
+  //Position
+  Top  := Screen.WorkAreaRect.Bottom - Height;
+  Left := Screen.WorkAreaRect.Right - Width;
+end;
+
+procedure TfrmGraphicMenu.OpenMenu;
+begin
+  //Fade in now
+  Opening := True;
+  tmrFader.Enabled:= True;
+  //Show frmMenu
+  Show;
+  SetForegroundWindow(Handle);
+  if Not(IsWindowVisible(frmMain.Handle)) then
+    ShowWindow(Application.Handle, SW_HIDE);
+end;
+
+procedure TfrmGraphicMenu.tmrFaderTimer(Sender: TObject);
+begin
+  if Opening then
+  begin
+    if (Self.AlphaBlendValue < 225) and Config.GraphicMenuFade then
+   	  Self.AlphaBlendValue := Self.AlphaBlendValue + 30
+    else begin
+ 	    Self.AlphaBlendValue := 255;
+   	  tmrFader.Enabled     := False;
+    end;
+  end
+  else begin
+    if (Self.AlphaBlendValue > 30) and Config.GraphicMenuFade then
+      Self.AlphaBlendValue := Self.AlphaBlendValue - 30
+    else begin
+      Self.AlphaBlendValue := 0;
+      tmrFader.Enabled     := False;
+      Self.Hide;
+    end;
   end;
 end;
 

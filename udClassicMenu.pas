@@ -63,7 +63,9 @@ type
     procedure PopulateDirectory(Sender: TObject);
   public
     { Public declarations }
-    procedure ShowTrayiconMenu;
+    procedure ShowClassicMenu;
+    procedure ShowGraphicMenu;
+    procedure ShowTrayiconMenu; //In based of config, open ClassicMenu or GraphicMenu
   end;
 
 type
@@ -125,7 +127,7 @@ implementation
 
 uses
   AppConfig, udImages, Main, ulNodeDataTypes, ulEnumerations, ulAppConfig,
-  ulTreeView, ulCommonUtils;
+  ulTreeView, ulCommonUtils, GraphicMenu;
 
 {$R *.dfm}
 
@@ -170,6 +172,15 @@ begin
 end;
 
 procedure TClassicMenu.ShowTrayiconMenu;
+begin
+  //In based of config, open ClassicMenu or GraphicMenu
+  if Config.UseClassicMenu then
+    ShowClassicMenu
+  else
+    ShowGraphicMenu;
+end;
+
+procedure TClassicMenu.ShowClassicMenu;
 var
   Point: TPoint;
 begin
@@ -183,6 +194,14 @@ begin
   //Show classic menu
   pmTrayicon.Popup(Point.X, Point.Y);
   IsTrayMenuOpen := False;
+end;
+
+procedure TClassicMenu.ShowGraphicMenu;
+begin
+  if frmGraphicMenu.Visible then
+    frmGraphicMenu.CloseMenu
+  else
+    frmGraphicMenu.OpenMenu;
 end;
 
 procedure TClassicMenu.CreateListItems(Sender: TBaseVirtualTree; Node: PVirtualNode;

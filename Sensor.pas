@@ -159,7 +159,7 @@ begin
       end;
       3: //Classic Menu
       begin
-        ClassicMenu.ShowTrayiconMenu;
+        ClassicMenu.ShowClassicMenu;
       end;
     end;
   frmMain.BringToFront;
