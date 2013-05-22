@@ -43,7 +43,7 @@ const
   BACKUP_DIR    = 'backup\';
   CACHE_DIR     = 'cache\';
   ICONS_DIR     = 'icons\';
-//  MENUTHEMES_DIR = 'menuthemes\'; -> For graphic menu
+  MENUTHEMES_DIR = 'menuthemes\';
 
   // Caratteri speciali
   LF                = #10;              { line feed }
@@ -67,6 +67,7 @@ const
 
   //File
   DEBUG_FILE    = 'Debug.txt';
+  THEME_INI     = 'theme.ini';
 
   //Form
   frmMainWidth  = 190;
@@ -119,6 +120,7 @@ var
   SUITE_CACHE_PATH   : String;
   SUITE_BACKUP_PATH  : String;
   SUITE_ICONS_PATH   : String;
+  SUITE_MENUTHEMES_PATH : String;
 
   // Application's files
   SUITE_LIST_PATH    : String;
@@ -210,6 +212,7 @@ initialization
   SUITE_CACHE_PATH          := SUITE_WORKING_PATH + CACHE_DIR;
   SUITE_BACKUP_PATH         := SUITE_WORKING_PATH + BACKUP_DIR;
   SUITE_ICONS_PATH          := SUITE_WORKING_PATH + ICONS_DIR;
+  SUITE_MENUTHEMES_PATH     := SUITE_WORKING_PATH + MENUTHEMES_DIR;
   //List
   if (ExtractFileExt(ParamStr(1)) = EXT_SQL) and FileExists(ParamStr(1)) then
     SUITE_LIST_PATH := ParamStr(1)

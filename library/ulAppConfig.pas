@@ -73,6 +73,9 @@ type
     FTrayCustomIconPath : string;
     FActionClickLeft    : Integer;
     FActionClickRight   : Integer;
+    FUseClassicMenu     : Boolean;
+    FGraphicMenuTheme   : string;
+    FGraphicMenuFade    : Boolean;
     //Mouse Sensors
     FSensorLeftClick    : Array[0..3] of Integer; //0 Top, 1 Left, 2 Right, 3 Bottom
     FSensorRightClick   : Array[0..3] of Integer;
@@ -98,6 +101,7 @@ type
     procedure SetLanguage(value: string);
     procedure SetTVFont(value: TFont);
     procedure SetScheduler(value: Boolean);
+    procedure SetGraphicMenuTheme(value: string);
   public
     { public declarations }
     constructor Create; overload;
@@ -147,6 +151,9 @@ type
     property TrayCustomIconPath: String read FTrayCustomIconPath write FTrayCustomIconPath;
     property ActionClickLeft: Integer read FActionClickLeft write FActionClickLeft;
     property ActionClickRight: Integer read FActionClickRight write FActionClickRight;
+    property UseClassicMenu: Boolean read FUseClassicMenu write FUseClassicMenu;
+    property GraphicMenuTheme: string read FGraphicMenuTheme write SetGraphicMenuTheme;
+    property GraphicMenuFade: Boolean read FGraphicMenuFade write FGraphicMenuFade;
     //Mouse Sensor
     property SensorLeftClick[aIndex: Integer]:Integer read GetSensorLeftClick write setSensorLeftClick;
     property SensorRightClick[aIndex: Integer]:Integer read GetSensorRightClick write setSensorRightClick;
@@ -212,6 +219,9 @@ begin
   FTrayCustomIconPath := '';
   FActionClickLeft    := 0;
   FActionClickRight   := 2;
+  FUseClassicMenu     := False;
+  FGraphicMenuTheme   := 'Default';
+  FGraphicMenuFade    := True;
   //Misc
   FReadOnlyMode       := False;
   FChanged            := False;
@@ -399,6 +409,14 @@ begin
     if (not DirectoryExists(SUITE_CACHE_PATH)) then
       CreateDir(SUITE_CACHE_PATH);
   end;
+end;
+
+procedure TConfiguration.SetGraphicMenuTheme(value: string);
+begin
+  if value = '' then
+    FGraphicMenuTheme := 'default'
+  else
+    FGraphicMenuTheme := value;
 end;
 
 procedure TConfiguration.SetStartWithWindows(value: Boolean);

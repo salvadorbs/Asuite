@@ -21,7 +21,7 @@ object frmOption: TfrmOption
     Top = 8
     Width = 281
     Height = 497
-    ActivePage = TabSheet1
+    ActivePage = TabSheet3
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'General'
@@ -579,7 +579,7 @@ object frmOption: TfrmOption
         Left = 8
         Top = 8
         Width = 257
-        Height = 132
+        Height = 121
         Caption = 'Execution'
         TabOrder = 0
         object lbActionOnExe: TLabel
@@ -632,14 +632,14 @@ object frmOption: TfrmOption
       end
       object gbTrayicon: TGroupBox
         Left = 8
-        Top = 146
+        Top = 132
         Width = 257
-        Height = 152
+        Height = 197
         Caption = 'System Tray'
         TabOrder = 1
         object lbTrayLeftClick: TLabel
           Left = 8
-          Top = 64
+          Top = 72
           Width = 41
           Height = 13
           Caption = 'Left click'
@@ -648,28 +648,36 @@ object frmOption: TfrmOption
         end
         object lbTrayRightClick: TLabel
           Left = 8
-          Top = 104
+          Top = 112
           Width = 47
           Height = 13
           Caption = 'Right click'
           Color = clBtnFace
           ParentColor = False
         end
+        object lbMenuTheme: TLabel
+          Left = 9
+          Top = 150
+          Width = 32
+          Height = 13
+          Margins.Bottom = 0
+          Caption = 'Theme'
+        end
         object cxLeftClick: TComboBox
           Left = 8
-          Top = 79
+          Top = 87
           Width = 145
           Height = 21
           Style = csDropDownList
-          TabOrder = 1
+          TabOrder = 4
           Items.Strings = (
             'No action'
             'Show window'
             'Show menu')
         end
         object btnTrayCustomIcon: TButton
-          Left = 165
-          Top = 45
+          Left = 170
+          Top = 37
           Width = 84
           Height = 21
           Caption = 'Choose icon'
@@ -678,7 +686,7 @@ object frmOption: TfrmOption
         end
         object cbTrayicon: TCheckBox
           Left = 8
-          Top = 24
+          Top = 20
           Width = 156
           Height = 19
           Caption = 'Enable the System Tray icon'
@@ -687,11 +695,11 @@ object frmOption: TfrmOption
         end
         object cxRightClick: TComboBox
           Left = 8
-          Top = 119
+          Top = 127
           Width = 145
           Height = 21
           Style = csDropDownList
-          TabOrder = 3
+          TabOrder = 5
           Items.Strings = (
             'No action'
             'Show window'
@@ -699,16 +707,40 @@ object frmOption: TfrmOption
         end
         object cbTrayCustomIcon: TCheckBox
           Left = 8
-          Top = 47
+          Top = 38
           Width = 101
           Height = 19
           Caption = 'Custom tray icon'
-          TabOrder = 4
+          TabOrder = 1
+        end
+        object cbMenuFade: TCheckBox
+          Left = 156
+          Top = 167
+          Width = 241
+          Height = 19
+          Caption = 'Enable fade menu'
+          TabOrder = 7
+        end
+        object cxTheme: TComboBox
+          Left = 9
+          Top = 166
+          Width = 145
+          Height = 21
+          Style = csDropDownList
+          TabOrder = 6
+        end
+        object cbClassicMenu: TCheckBox
+          Left = 9
+          Top = 57
+          Width = 241
+          Height = 17
+          Caption = 'Use classic menu'
+          TabOrder = 3
         end
       end
       object gbMouse: TGroupBox
         Left = 8
-        Top = 306
+        Top = 332
         Width = 257
         Height = 136
         Caption = 'Mouse sensors'

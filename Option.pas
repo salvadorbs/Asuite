@@ -116,6 +116,10 @@ type
     cbMenuHotKey: TCheckBox;
     cxMenuHotKeyCode: TComboBox;
     cxMenuHotKeyMod: TComboBox;
+    cbMenuFade: TCheckBox;
+    cxTheme: TComboBox;
+    lbMenuTheme: TLabel;
+    cbClassicMenu: TCheckBox;
     procedure btnOkClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure tbMRUChange(Sender: TObject);
@@ -241,6 +245,9 @@ begin
   Config.TrayIcon          := cbTrayicon.Checked;
   Config.ActionClickLeft   := cxLeftClick.ItemIndex;
   Config.ActionClickRight  := cxRightClick.ItemIndex;
+  Config.UseClassicMenu    := cbClassicMenu.Checked;
+  Config.GraphicMenuTheme  := cxTheme.Items[cxTheme.ItemIndex];
+  Config.GraphicMenuFade   := cbMenuFade.Checked;
   //Mouse Sensors
   //Left
   Config.SensorLeftClick[0]  := cxLCTop.ItemIndex;
@@ -292,8 +299,8 @@ end;
 
 procedure TfrmOption.FormCreate(Sender: TObject);
 var
-  i:integer;
-  //  searchResult : TSearchRec;
+  I: integer;
+  searchResult : TSearchRec;
 begin
   TranslateComponent(self);
   PageControl1.TabIndex      := 0;
@@ -366,6 +373,19 @@ begin
   cxRightClick.Enabled      := cbTrayicon.Checked;
   cbTrayCustomIcon.Enabled  := cbTrayicon.Checked;
   btnTrayCustomIcon.Enabled := cbTrayicon.Checked;
+  cbClassicMenu.Checked     := Config.UseClassicMenu;
+  //Only default menu
+  if FindFirst(SUITE_MENUTHEMES_PATH + '*.*', faDirectory, searchResult) = 0 then
+  begin
+    repeat
+      if ((searchResult.Name <> '.') and (searchResult.Name <> '..')) and
+         ((searchResult.Attr and faDirectory) = (faDirectory)) then
+        cxTheme.AddItem(SearchResult.Name,sender);
+    until FindNext(searchResult) <> 0;
+    FindClose(searchResult);
+  end;
+  cxTheme.ItemIndex         := cxTheme.Items.IndexOf(Config.GraphicMenuTheme);
+  cbMenuFade.Checked        := Config.GraphicMenuFade;
   //Mouse Sensors
   for I := 0 to 3 do
     begin

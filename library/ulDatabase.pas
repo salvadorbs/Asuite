@@ -147,6 +147,9 @@ type
     FTrayCustomIconPath : RawUTF8;
     FActionClickLeft    : Integer;
     FActionClickRight   : Integer;
+    FUseClassicMenu     : Boolean;
+    FGraphicMenuTheme   : string;
+    FGraphicMenuFade    : Boolean;
     //Mouse Sensors
     FSensorLeftClick    : RawUTF8; //0 Top, 1 Left, 2 Right, 3 Bottom
     FSensorRightClick   : RawUTF8;
@@ -197,6 +200,9 @@ type
     property traycustomiconpath: RawUTF8 read FTrayCustomIconPath write FTrayCustomIconPath;
     property actionclickleft: Integer read FActionClickLeft write FActionClickLeft;
     property actionclickright: Integer read FActionClickRight write FActionClickRight;
+    property useclassicmenu: Boolean read Fuseclassicmenu write Fuseclassicmenu;
+    property graphicmenutheme: string read Fgraphicmenutheme write Fgraphicmenutheme;
+    property graphicmenufade: Boolean read Fgraphicmenufade write Fgraphicmenufade;
     //Mouse Sensor
     property mousesensorleft:RawUTF8 read FSensorLeftClick write FSensorLeftClick;
     property mousesensorright:RawUTF8 read FSensorRightClick write FSensorRightClick;
@@ -553,6 +559,9 @@ begin
         Config.TrayUseCustomIcon  := SQLOptionsData.trayusecustomicon;
         Config.ActionClickLeft    := SQLOptionsData.actionclickleft;
         Config.ActionClickRight   := SQLOptionsData.actionclickright;
+        Config.UseClassicMenu     := SQLOptionsData.useclassicmenu;
+        Config.GraphicMenuTheme   := SQLOptionsData.graphicmenutheme;
+        Config.GraphicMenuFade    := SQLOptionsData.graphicmenufade;
         //Mouse sensors
         UTF8ToMouseSensors(SQLOptionsData.mousesensorleft,mbLeft);
         UTF8ToMouseSensors(SQLOptionsData.mousesensorright,mbRight);
@@ -727,6 +736,9 @@ begin
     SQLOptionsData.traycustomiconpath := StringToUTF8(Config.TrayCustomIconPath);
     SQLOptionsData.actionclickleft    := Config.ActionClickLeft;
     SQLOptionsData.actionclickright   := Config.ActionClickRight;
+    SQLOptionsData.useclassicmenu     := Config.UseClassicMenu;
+    SQLOptionsData.graphicmenutheme   := Config.GraphicMenuTheme;
+    SQLOptionsData.graphicmenufade    := Config.GraphicMenuFade;
     //Mouse Sensor
     SQLOptionsData.mousesensorleft  := MouseSensorsToUTF8(mbLeft);
     SQLOptionsData.mousesensorright := MouseSensorsToUTF8(mbRight);
