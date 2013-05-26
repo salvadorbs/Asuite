@@ -84,7 +84,7 @@ object frmGraphicMenu: TfrmGraphicMenu
   end
   object imgDivider2: TImage
     Left = 269
-    Top = 353
+    Top = 345
     Width = 120
     Height = 2
     Picture.Data = {
@@ -116,7 +116,7 @@ object frmGraphicMenu: TfrmGraphicMenu
       362D3B362D3B362D3B362D3B362D3B362D3B362D3B362D3B362D3B362D3B362D
       3B362D3B362D3B362D00}
   end
-  object imgDragSpaceHidden: TImage
+  object imgLogo: TImage
     Left = 15
     Top = 10
     Width = 160
@@ -176,6 +176,7 @@ object frmGraphicMenu: TfrmGraphicMenu
     Top = 85
     Width = 120
     Height = 30
+    OnClick = sknbtnASuiteClick
   end
   object sknbtnOptions: TcySkinButton
     Left = 269
@@ -189,31 +190,31 @@ object frmGraphicMenu: TfrmGraphicMenu
     Width = 120
     Height = 30
   end
-  object sknbtnMusic: TcySkinButton
+  object sknbtnPictures: TcySkinButton
     Left = 269
     Top = 201
     Width = 120
     Height = 30
   end
-  object sknbtnPictures: TcySkinButton
+  object sknbtnAbout: TcySkinButton
     Left = 269
-    Top = 361
-    Width = 120
-    Height = 30
-  end
-  object sknbtnVideo: TcySkinButton
-    Left = 269
-    Top = 317
+    Top = 353
     Width = 120
     Height = 30
   end
   object sknbtnExplore: TcySkinButton
     Left = 269
+    Top = 309
+    Width = 120
+    Height = 30
+  end
+  object sknbtnVideos: TcySkinButton
+    Left = 269
     Top = 273
     Width = 120
     Height = 30
   end
-  object sknbtnAbout: TcySkinButton
+  object sknbtnMusic: TcySkinButton
     Left = 269
     Top = 237
     Width = 120

@@ -195,6 +195,16 @@ resourcestring
   //Misc
   msgVersion        = 'Version %s %s';
 
+  //Graphic Menu
+  msgGMASuite    = APP_NAME;
+  msgGMOptions   = 'Options';
+  msgGMAbout     = 'About';
+  msgGMDocuments = 'Documents';
+  msgGMMusic     = 'Music';
+  msgGMPictures  = 'Pictures';
+  msgGMVideos    = 'Videos';
+  msgGMExplore   = 'Explore';
+
 implementation
 
 uses ulSysUtils;
