@@ -75,7 +75,9 @@ type
     imgBackground: TImage;
     procedure FormCreate(Sender: TObject);
     procedure tmrFaderTimer(Sender: TObject);
-    procedure sknbtnASuiteClick(Sender: TObject);
+    procedure imgLogoMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure OpenRightButton(Sender: TObject);
 	private    
     { Private declarations }
     procedure CopyImageInVst(Source:TImage;Dest:TVirtualStringTree);
@@ -85,6 +87,7 @@ type
                                         PNGImage: TPngImage;ButtonType: TGraphicMenuButton);
     function GetButtonCaption(IniFile: TIniFile;ButtonType: TGraphicMenuButton): string;
     function GetButtonIconPath(IniFile: TIniFile;ButtonType: TGraphicMenuButton): string;
+    procedure OpenFolder(FolderPath: string);
 	public
     { Public declarations }
     procedure OpenMenu;
@@ -101,13 +104,22 @@ implementation
 {$R *.dfm}
 
 uses
-  Main, Option, ulSysUtils, AppConfig, ulAppConfig, ulCommonUtils;
+  Main, Option, ulSysUtils, AppConfig, ulAppConfig, ulCommonUtils, About;
 
 procedure TfrmGraphicMenu.CloseMenu;
 begin
   //Fade in out
   Opening := False;
   tmrFader.Enabled:= True;
+end;
+
+procedure TfrmGraphicMenu.OpenFolder(FolderPath: string);
+var
+  ErrorCode: Integer;
+begin
+  ErrorCode := ShellExecute(GetDesktopWindow, 'open', PChar(FolderPath), PChar(''), PChar(FolderPath), SW_SHOWDEFAULT);
+  if ErrorCode <= 32 then
+    ShowMessageFmt(msgErrGeneric, ['', SysErrorMessage(ErrorCode)]);
 end;
 
 procedure TfrmGraphicMenu.DrawAndIconTextInPNGImage(IniFile: TIniFile;ButtonState: TButtonState;
@@ -282,6 +294,51 @@ begin
   end;
 end;
 
+procedure TfrmGraphicMenu.imgLogoMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+const
+  SC_DRAGMOVE = $F012;
+begin
+  if Button = mbLeft then
+  begin
+    ReleaseCapture;
+    Perform(WM_SYSCOMMAND, SC_DRAGMOVE, 0);
+  end;
+end;
+
+procedure TfrmGraphicMenu.OpenRightButton(Sender: TObject);
+begin
+  if (Sender is TcySkinButton) then
+  begin
+    if (Sender = sknbtnASuite) then
+    begin
+      frmMain.ShowMainForm(Sender);
+      frmMain.pcList.ActivePageIndex := 0;
+      frmMain.SetFocus;
+    end;
+    if (Sender = sknbtnOptions) then
+      frmMain.miOptionsClick(Sender);
+    //TODO: Use Config.ButtonPATH*
+    if (Sender = sknbtnDocuments) then
+      OpenFolder('e:\documents');
+    if (Sender = sknbtnMusic) then
+      OpenFolder('e:\music');
+    if (Sender = sknbtnPictures) then
+      OpenFolder('e:\pictures');
+    if (Sender = sknbtnVideos) then
+      OpenFolder('e:\videos');
+    if (Sender = sknbtnExplore) then
+      OpenFolder('e:\');
+    if (Sender = sknbtnAbout) then
+    begin
+      if not IsFormOpen('frmAbout') then
+        Application.CreateForm(TfrmAbout, frmAbout);
+      frmAbout.Show;
+      frmAbout.SetFocus;
+    end;
+  end;
+end;
+
 procedure TfrmGraphicMenu.OpenMenu;
 begin
   //Fade in now
@@ -293,14 +350,6 @@ begin
   if Not(IsWindowVisible(frmMain.Handle)) then
     ShowWindow(Application.Handle, SW_HIDE);
 end;
-
-procedure TfrmGraphicMenu.sknbtnASuiteClick(Sender: TObject);
-begin
-  frmMain.ShowMainForm(Sender);
-  frmMain.pcList.ActivePageIndex := 0;
-  frmMain.SetFocus;
-end;
-
 procedure TfrmGraphicMenu.tmrFaderTimer(Sender: TObject);
 begin
   if Opening then

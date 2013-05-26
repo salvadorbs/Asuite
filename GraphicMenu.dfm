@@ -122,6 +122,7 @@ object frmGraphicMenu: TfrmGraphicMenu
     Width = 160
     Height = 50
     Cursor = crSizeAll
+    OnMouseDown = imgLogoMouseDown
   end
   object bvlPersonalPicture: TBevel
     Left = 347
@@ -176,49 +177,56 @@ object frmGraphicMenu: TfrmGraphicMenu
     Top = 85
     Width = 120
     Height = 30
-    OnClick = sknbtnASuiteClick
+    OnClick = OpenRightButton
   end
   object sknbtnOptions: TcySkinButton
     Left = 269
     Top = 121
     Width = 120
     Height = 30
+    OnClick = OpenRightButton
   end
   object sknbtnDocuments: TcySkinButton
     Left = 269
     Top = 165
     Width = 120
     Height = 30
+    OnClick = OpenRightButton
   end
   object sknbtnPictures: TcySkinButton
     Left = 269
     Top = 201
     Width = 120
     Height = 30
+    OnClick = OpenRightButton
   end
   object sknbtnAbout: TcySkinButton
     Left = 269
     Top = 353
     Width = 120
     Height = 30
+    OnClick = OpenRightButton
   end
   object sknbtnExplore: TcySkinButton
     Left = 269
     Top = 309
     Width = 120
     Height = 30
+    OnClick = OpenRightButton
   end
   object sknbtnVideos: TcySkinButton
     Left = 269
     Top = 273
     Width = 120
     Height = 30
+    OnClick = OpenRightButton
   end
   object sknbtnMusic: TcySkinButton
     Left = 269
     Top = 237
     Width = 120
     Height = 30
+    OnClick = OpenRightButton
   end
   object sknbtnList: TcySkinButton
     Left = 27
