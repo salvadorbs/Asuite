@@ -27,7 +27,8 @@ uses
   Vcl.Imaging.pngimage, cySkinButton, IniFiles;
 
 type
-  TGraphicMenuButton = (
+  TGraphicMenuElement = (
+      //RightButtons
       gmbASuite,
       gmbOptions,
       gmbDocuments,
@@ -35,7 +36,10 @@ type
       gmbPictures,
       gmbVideos,
       gmbExplore,
-      gmbAbout
+      gmbAbout,
+      //Other buttons
+      gmbEject,
+      gmbExit
   );
 
   TButtonState = (
@@ -80,14 +84,18 @@ type
     procedure OpenRightButton(Sender: TObject);
 	private    
     { Private declarations }
+    FOpening   : Boolean;
+    FThemePath : string;
     procedure CopyImageInVst(Source:TImage;Dest:TVirtualStringTree);
-    procedure DrawRightButton(IniFile: TIniFile;Button: TcySkinButton;
-                                ButtonType: TGraphicMenuButton);
+    procedure DrawButton(IniFile: TIniFile;Button: TcySkinButton;
+                         ButtonType: TGraphicMenuElement);
     procedure DrawAndIconTextInPNGImage(IniFile: TIniFile;ButtonState: TButtonState;
-                                        PNGImage: TPngImage;ButtonType: TGraphicMenuButton);
-    function GetButtonCaption(IniFile: TIniFile;ButtonType: TGraphicMenuButton): string;
-    function GetButtonIconPath(IniFile: TIniFile;ButtonType: TGraphicMenuButton): string;
+                                        PNGImage: TPngImage;ButtonType: TGraphicMenuElement);
+    function GetButtonCaption(IniFile: TIniFile;ButtonType: TGraphicMenuElement): string;
+    function GetButtonIconPath(IniFile: TIniFile;ButtonType: TGraphicMenuElement): string;
+    function GetIniFileSection(ElementType: TGraphicMenuElement): string;
     procedure OpenFolder(FolderPath: string);
+    function IsRightButton(ButtonType: TGraphicMenuElement): Boolean;
 	public
     { Public declarations }
     procedure OpenMenu;
@@ -96,8 +104,45 @@ type
 
 var
 	frmGraphicMenu : TfrmGraphicMenu;
-  Opening   : Boolean;
-  ThemePath : String;
+
+const
+  //Theme.ini structure
+  //Sections
+  INIFILE_SECTION_INFO         = 'info';
+  INIFILE_SECTION_GENERAL      = 'general';
+  INIFILE_SECTION_RIGHTBUTTONS = 'rightbuttons';
+  INIFILE_SECTION_LIST         = 'list';
+  INIFILE_SECTION_RECENTS      = 'recent';
+  INIFILE_SECTION_MOSTUSED     = 'mostused';
+  INIFILE_SECTION_EJECTBUTTON  = 'ejectbutton';
+  INIFILE_SECTION_EXITBUTTON   = 'exitbutton';
+  //Keys
+  //Info
+  INIFILE_KEY_NAME    = 'name';
+  INIFILE_KEY_AUTHOR  = 'author';
+  INIFILE_KEY_VERSION = 'version';
+  INIFILE_KEY_URL     = 'url';
+  //Images
+  INIFILE_KEY_IMAGENORMAL  = 'image_normal';
+  INIFILE_KEY_IMAGEHOVER   = 'image_hover';
+  INIFILE_KEY_IMAGECLICKED = 'image_clicked';
+  INIFILE_KEY_IMAGEBACKGROUND = 'image_background';
+  INIFILE_KEY_IMAGELOGO    = 'image_logo';
+  //Fonts
+  INIFILE_KEY_FONTNORMAL   = 'font_normal';
+  INIFILE_KEY_FONTHOVER    = 'font_hover';
+  INIFILE_KEY_FONTCLICKED  = 'font_clicked';
+  INIFILE_KEY_FONT         = 'font'; //For treeviews
+  //Icons
+  INIFILE_KEY_ICONASUITE   = 'icon_asuite';
+  INIFILE_KEY_ICONEXPLORE  = 'icon_explore';
+  INIFILE_KEY_ICONDOCUMENT = 'icon_document';
+  INIFILE_KEY_ICONMUSIC    = 'icon_music';
+  INIFILE_KEY_ICONPICTURES = 'icon_pictures';
+  INIFILE_KEY_ICONVIDEOS   = 'icon_videos';
+  INIFILE_KEY_ICONOPTIONS  = 'icon_options';
+  INIFILE_KEY_ICONHELP     = 'icon_help';
+  INIFILE_KEY_ICONSEARCH   = 'icon_search';
 
 implementation
 
@@ -109,7 +154,7 @@ uses
 procedure TfrmGraphicMenu.CloseMenu;
 begin
   //Fade in out
-  Opening := False;
+  FOpening := False;
   tmrFader.Enabled:= True;
 end;
 
@@ -123,27 +168,30 @@ begin
 end;
 
 procedure TfrmGraphicMenu.DrawAndIconTextInPNGImage(IniFile: TIniFile;ButtonState: TButtonState;
-                                                    PNGImage: TPngImage;ButtonType: TGraphicMenuButton);
+                                                    PNGImage: TPngImage;ButtonType: TGraphicMenuElement);
 var
   TopText  : Integer;
   FontText : TFont;
   Icon     : TIcon;
-  IconPath, Caption : string;
+  IconPath, Caption, IniFile_Section : string;
 begin
+  if Not Assigned(PNGImage) then
+    Exit;
   Icon := TIcon.Create;
   try
     //Get and draw icon
+    IniFile_Section := GetIniFileSection(ButtonType);
     IconPath := GetButtonIconPath(IniFile, ButtonType);
-    if FileExists(ThemePath + IconPath) then
+    if FileExists(FThemePath + IconPath) then
     begin
-      Icon.LoadFromFile(ThemePath + IconPath);
+      Icon.LoadFromFile(FThemePath + IconPath);
       PNGImage.Canvas.Draw(5, 3, Icon);
     end;
     //Get font
     case ButtonState of
-      bsNormal  : FontText := StrToFont(IniFile.ReadString('rightbuttons', 'font_normal', ''));
-      bsHover   : FontText := StrToFont(IniFile.ReadString('rightbuttons', 'font_hover', ''));
-      bsClicked : FontText := StrToFont(IniFile.ReadString('rightbuttons', 'font_clicked', ''));
+      bsNormal  : FontText := StrToFont(IniFile.ReadString(IniFile_Section, INIFILE_KEY_FONTNORMAL, ''));
+      bsHover   : FontText := StrToFont(IniFile.ReadString(IniFile_Section, INIFILE_KEY_FONTHOVER, ''));
+      bsClicked : FontText := StrToFont(IniFile.ReadString(IniFile_Section, INIFILE_KEY_FONTCLICKED, ''));
     end;
     //Get caption and draw it
     Caption  := GetButtonCaption(IniFile, ButtonType);
@@ -179,6 +227,7 @@ begin
     RectDest.Right      := Dest.Width;
     RectDest.Bottom     := Dest.Height;
     //CopyRect in bmpTempImage and use it as background for Dest vst
+    //TODO: Check this IF
     if (Source.Picture.graphic is TPNGImage) then
     begin
       bmpTempBG.Assign(Source.Picture.Graphic);
@@ -194,20 +243,21 @@ begin
   end;
 end;
 
-procedure TfrmGraphicMenu.DrawRightButton(IniFile: TIniFile;Button: TcySkinButton;
-                                            ButtonType: TGraphicMenuButton);
+procedure TfrmGraphicMenu.DrawButton(IniFile: TIniFile;Button: TcySkinButton;
+                                            ButtonType: TGraphicMenuElement);
 var
   PNGImage_Normal, PNGImage_Hover, PNGImage_Clicked: TPngImage;
-  Image_Normal, Image_Hover, Image_Clicked: string;
+  Image_Normal, Image_Hover, Image_Clicked, IniFile_Section: string;
 begin
   PNGImage_Normal  := TPngImage.Create;
   PNGImage_Hover   := TPngImage.Create;
   PNGImage_Clicked := TPngImage.Create;
   try
+    IniFile_Section := GetIniFileSection(ButtonType);
     //Get images path
-    Image_Normal  := ThemePath + IniFile.ReadString('rightbuttons', 'image_normal', '');
-    Image_Hover   := ThemePath + IniFile.ReadString('rightbuttons', 'image_hover', '');
-    Image_Clicked := ThemePath + IniFile.ReadString('rightbuttons', 'image_clicked', '');
+    Image_Normal  := FThemePath + IniFile.ReadString(IniFile_Section, INIFILE_KEY_IMAGENORMAL, '');
+    Image_Hover   := FThemePath + IniFile.ReadString(IniFile_Section, INIFILE_KEY_IMAGEHOVER, '');
+    Image_Clicked := FThemePath + IniFile.ReadString(IniFile_Section, INIFILE_KEY_IMAGECLICKED, '');
     //Load png button states
     if FileExists(Image_Normal) then
       PNGImage_Normal.LoadFromFile(Image_Normal);
@@ -215,14 +265,20 @@ begin
       PNGImage_Hover.LoadFromFile(Image_Hover);
     if FileExists(Image_Clicked) then
       PNGImage_Clicked.LoadFromFile(Image_Clicked);
-    //Draw caption and icon in PNGImage_*
-    DrawAndIconTextInPNGImage(IniFile,bsNormal,PNGImage_Normal,ButtonType);
-    DrawAndIconTextInPNGImage(IniFile,bsHover,PNGImage_Hover,ButtonType);
-    DrawAndIconTextInPNGImage(IniFile,bsClicked,PNGImage_Clicked,ButtonType);
+    //Draw caption and icon in PNGImage_*, if button is a RightButton
+    if IsRightButton(ButtonType) then
+    begin
+      DrawAndIconTextInPNGImage(IniFile,bsNormal,PNGImage_Normal,ButtonType);
+      DrawAndIconTextInPNGImage(IniFile,bsHover,PNGImage_Hover,ButtonType);
+      DrawAndIconTextInPNGImage(IniFile,bsClicked,PNGImage_Clicked,ButtonType);
+    end;
     //Set Button's PicNormal, PicMouseOver and PicMouseDown
-    Button.PicNormal.Assign(PNGImage_Normal);
-    Button.PicMouseOver.Assign(PNGImage_Hover);
-    Button.PicMouseDown.Assign(PNGImage_Clicked);
+    if Assigned(PNGImage_Normal) then
+      Button.PicNormal.Assign(PNGImage_Normal);
+    if Assigned(PNGImage_Hover) then
+      Button.PicMouseOver.Assign(PNGImage_Hover);
+    if Assigned(PNGImage_Clicked) then
+      Button.PicMouseDown.Assign(PNGImage_Clicked);
   finally
     PNGImage_Normal.Free;
     PNGImage_Hover.Free;
@@ -235,28 +291,31 @@ var
   IniFile: TIniFile;
   BackgroundPath, LogoPath: string;
 begin
-  ThemePath := SUITE_MENUTHEMES_PATH + Config.GraphicMenuTheme + '\';
-  IniFile := TIniFile.Create(ThemePath + THEME_INI);
+  FThemePath := IncludeTrailingBackslash(SUITE_MENUTHEMES_PATH + Config.GraphicMenuTheme);
+  IniFile := TIniFile.Create(FThemePath + THEME_INI);
   try
     //IniFile Section General
     //Background
-    BackgroundPath := ThemePath + IniFile.ReadString('general', 'image_background', '');
+    BackgroundPath := FThemePath + IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGEBACKGROUND, '');
     if FileExists(BackgroundPath) then
       imgBackground.Picture.LoadFromFile(BackgroundPath);
     //Logo
-    LogoPath := ThemePath + IniFile.ReadString('general', 'image_logo', '');
+    LogoPath := FThemePath + IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGELOGO, '');
     if FileExists(LogoPath) then
       imgLogo.Picture.LoadFromFile(LogoPath);
     //IniFile Section RightButtons
     //Draw Right Buttons
-    DrawRightButton(IniFile,sknbtnASuite,gmbASuite);
-    DrawRightButton(IniFile,sknbtnOptions,gmbOptions);
-    DrawRightButton(IniFile,sknbtnDocuments,gmbDocuments);
-    DrawRightButton(IniFile,sknbtnMusic,gmbMusic);
-    DrawRightButton(IniFile,sknbtnPictures,gmbPictures);
-    DrawRightButton(IniFile,sknbtnVideos,gmbVideos);
-    DrawRightButton(IniFile,sknbtnExplore,gmbExplore);
-    DrawRightButton(IniFile,sknbtnAbout,gmbAbout);
+    DrawButton(IniFile,sknbtnASuite,gmbASuite);
+    DrawButton(IniFile,sknbtnOptions,gmbOptions);
+    DrawButton(IniFile,sknbtnDocuments,gmbDocuments);
+    DrawButton(IniFile,sknbtnMusic,gmbMusic);
+    DrawButton(IniFile,sknbtnPictures,gmbPictures);
+    DrawButton(IniFile,sknbtnVideos,gmbVideos);
+    DrawButton(IniFile,sknbtnExplore,gmbExplore);
+    DrawButton(IniFile,sknbtnAbout,gmbAbout);
+    //Eject and Close Buttons
+    DrawButton(IniFile,sknbtnEject,gmbEject);
+    DrawButton(IniFile,sknbtnExit,gmbExit);
   finally
     IniFile.Free;
   end;
@@ -265,8 +324,9 @@ begin
   Left := Screen.WorkAreaRect.Right - Width;
 end;
 
-function TfrmGraphicMenu.GetButtonCaption(IniFile: TIniFile;ButtonType: TGraphicMenuButton): string;
+function TfrmGraphicMenu.GetButtonCaption(IniFile: TIniFile;ButtonType: TGraphicMenuElement): string;
 begin
+  Result := '';
   case ButtonType of
     gmbASuite    : Result := msgGMASuite;
     gmbOptions   : Result := msgGMOptions;
@@ -280,18 +340,41 @@ begin
 end;
 
 function TfrmGraphicMenu.GetButtonIconPath(IniFile: TIniFile;
-  ButtonType: TGraphicMenuButton): string;
+  ButtonType: TGraphicMenuElement): string;
 begin
+  Result := '';
   case ButtonType of
-    gmbASuite    : Result := IniFile.ReadString('rightbuttons', 'icon_asuite', '');
-    gmbOptions   : Result := IniFile.ReadString('rightbuttons', 'icon_options', '');
-    gmbDocuments : Result := IniFile.ReadString('rightbuttons', 'icon_document', '');
-    gmbMusic     : Result := IniFile.ReadString('rightbuttons', 'icon_music', '');
-    gmbPictures  : Result := IniFile.ReadString('rightbuttons', 'icon_pictures', '');
-    gmbVideos    : Result := IniFile.ReadString('rightbuttons', 'icon_videos', '');
-    gmbExplore   : Result := IniFile.ReadString('rightbuttons', 'icon_explore', '');
-    gmbAbout     : Result := IniFile.ReadString('rightbuttons', 'icon_help', '');
+    gmbASuite    :
+      Result := IniFile.ReadString(INIFILE_SECTION_RIGHTBUTTONS, INIFILE_KEY_ICONASUITE, '');
+    gmbOptions   :
+      Result := IniFile.ReadString(INIFILE_SECTION_RIGHTBUTTONS, INIFILE_KEY_ICONOPTIONS, '');
+    gmbDocuments :
+      Result := IniFile.ReadString(INIFILE_SECTION_RIGHTBUTTONS, INIFILE_KEY_ICONDOCUMENT, '');
+    gmbMusic     :
+      Result := IniFile.ReadString(INIFILE_SECTION_RIGHTBUTTONS, INIFILE_KEY_ICONMUSIC, '');
+    gmbPictures  :
+      Result := IniFile.ReadString(INIFILE_SECTION_RIGHTBUTTONS, INIFILE_KEY_ICONPICTURES, '');
+    gmbVideos    :
+      Result := IniFile.ReadString(INIFILE_SECTION_RIGHTBUTTONS, INIFILE_KEY_ICONVIDEOS, '');
+    gmbExplore   :
+      Result := IniFile.ReadString(INIFILE_SECTION_RIGHTBUTTONS, INIFILE_KEY_ICONEXPLORE, '');
+    gmbAbout     :
+      Result := IniFile.ReadString(INIFILE_SECTION_RIGHTBUTTONS, INIFILE_KEY_ICONHELP, '');
   end;
+end;
+
+function TfrmGraphicMenu.GetIniFileSection(ElementType: TGraphicMenuElement): string;
+begin
+  Result := '';
+  //Right Buttons
+  if IsRightButton(ElementType) then
+    Result := INIFILE_SECTION_RIGHTBUTTONS
+  else //Eject
+    if ElementType in [gmbEject] then
+      Result := INIFILE_SECTION_EJECTBUTTON
+    else //Exit Button
+      if ElementType in [gmbExit] then
+        Result := INIFILE_SECTION_EXITBUTTON;
 end;
 
 procedure TfrmGraphicMenu.imgLogoMouseDown(Sender: TObject;
@@ -304,6 +387,14 @@ begin
     ReleaseCapture;
     Perform(WM_SYSCOMMAND, SC_DRAGMOVE, 0);
   end;
+end;
+
+function TfrmGraphicMenu.IsRightButton(ButtonType: TGraphicMenuElement): Boolean;
+begin
+  Result := False;
+  if ButtonType in [gmbASuite,gmbOptions,gmbDocuments,gmbMusic,gmbPictures,
+                    gmbVideos,gmbExplore,gmbAbout] then
+    Result := True;
 end;
 
 procedure TfrmGraphicMenu.OpenRightButton(Sender: TObject);
@@ -342,7 +433,7 @@ end;
 procedure TfrmGraphicMenu.OpenMenu;
 begin
   //Fade in now
-  Opening := True;
+  FOpening := True;
   tmrFader.Enabled:= True;
   //Show frmMenu
   Show;
@@ -350,9 +441,10 @@ begin
   if Not(IsWindowVisible(frmMain.Handle)) then
     ShowWindow(Application.Handle, SW_HIDE);
 end;
+
 procedure TfrmGraphicMenu.tmrFaderTimer(Sender: TObject);
 begin
-  if Opening then
+  if FOpening then
   begin
     if (Self.AlphaBlendValue < 225) and Config.GraphicMenuFade then
    	  Self.AlphaBlendValue := Self.AlphaBlendValue + 30
