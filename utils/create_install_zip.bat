@@ -1,5 +1,5 @@
-@SET BDS=%programfiles%\Embarcadero\RAD Studio\10.0
-@SET BDSCOMMONDIR=%ALLUSERSPROFILE%\Documenti\RAD Studio\10.0
+@SET BDS=%programfiles%\Embarcadero\RAD Studio\11.0
+@SET BDSCOMMONDIR=%ALLUSERSPROFILE%\Documenti\RAD Studio\11.0
 @SET FrameworkDir=%SYSTEMROOT%\Microsoft.NET\Framework\
 @SET FrameworkVersion=v2.0.50727
 @SET FrameworkSDKDir=
@@ -8,7 +8,7 @@
 
 @SET PATH=%FrameworkDir%%FrameworkVersion%;%FrameworkSDKDir%;%PATH%
 
-call "%ProgramFiles(x86)%\Embarcadero\RAD Studio\10.0\bin\rsvars.bat"
+call "%ProgramFiles(x86)%\Embarcadero\RAD Studio\11.0\bin\rsvars.bat"
 
 msbuild.exe ..\ASuite.dproj /t:clean /p:configuration=release
 msbuild.exe ..\ASuite.dproj /t:build /p:configuration=release
@@ -55,9 +55,9 @@ copy ..\..\bin\Docs\license.txt Docs
 copy "..\..\bin\Docs\SalvadorSoftware Site.url" Docs
 copy "..\..\bin\Docs\Project ASuite.url" Docs
 
-"%programfiles%\7-zip\7z.exe" a -tzip ..\asuite20a1.zip
+"%programfiles%\7-zip\7z.exe" a -tzip ..\asuite20a3.zip
 
-"%programfiles%\7-zip\7z.exe" a -t7z ..\asuite20a1.7z
+"%programfiles%\7-zip\7z.exe" a -t7z ..\asuite20a3.7z
 
 cd ..
 
