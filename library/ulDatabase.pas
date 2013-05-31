@@ -150,6 +150,13 @@ type
     FUseClassicMenu     : Boolean;
     FGraphicMenuTheme   : string;
     FGraphicMenuFade    : Boolean;
+    //HotKeys
+    FWindowHotKey       : Boolean;
+    FWindowHotKeyCode   : Integer;
+    FWindowHotKeyMod    : Integer;
+    FMenuHotKey         : Boolean;
+    FMenuHotKeyCode     : Integer;
+    FMenuHotKeyMod      : Integer;
     //Mouse Sensors
     FSensorLeftClick    : RawUTF8; //0 Top, 1 Left, 2 Right, 3 Bottom
     FSensorRightClick   : RawUTF8;
@@ -203,6 +210,13 @@ type
     property useclassicmenu: Boolean read Fuseclassicmenu write Fuseclassicmenu;
     property graphicmenutheme: string read Fgraphicmenutheme write Fgraphicmenutheme;
     property graphicmenufade: Boolean read Fgraphicmenufade write Fgraphicmenufade;
+    //Hot Keys
+    property windowhotkey: Boolean read FWindowHotKey write FWindowHotKey;
+    property windowhotkeycode: Integer read FWindowHotKeyCode write FWindowHotKeyCode;
+    property windowhotkeymod: Integer read FWindowHotKeyMod write FWindowHotKeyMod;
+    property menuhotkey: Boolean read FMenuHotKey write FMenuHotKey;
+    property menuhotkeycode: Integer read FMenuHotKeyCode write FMenuHotKeyCode;
+    property menuhotkeymod: Integer read FMenuHotKeyMod write FMenuHotKeyMod;
     //Mouse Sensor
     property mousesensorleft:RawUTF8 read FSensorLeftClick write FSensorLeftClick;
     property mousesensorright:RawUTF8 read FSensorRightClick write FSensorRightClick;
@@ -562,6 +576,13 @@ begin
         Config.UseClassicMenu     := SQLOptionsData.useclassicmenu;
         Config.GraphicMenuTheme   := SQLOptionsData.graphicmenutheme;
         Config.GraphicMenuFade    := SQLOptionsData.graphicmenufade;
+        //Hot Keys
+        Config.WindowHotKey       := SQLOptionsData.WindowHotKey;
+        Config.WindowHotKeyCode   := SQLOptionsData.WindowHotKeyCode;
+        Config.WindowHotKeyMod    := SQLOptionsData.WindowHotKeyMod;
+        Config.MenuHotKey         := SQLOptionsData.MenuHotKey;
+        Config.MenuHotKeyCode     := SQLOptionsData.MenuHotKeyCode;
+        Config.MenuHotKeyMod      := SQLOptionsData.MenuHotKeyMod;
         //Mouse sensors
         UTF8ToMouseSensors(SQLOptionsData.mousesensorleft,mbLeft);
         UTF8ToMouseSensors(SQLOptionsData.mousesensorright,mbRight);
@@ -569,6 +590,7 @@ begin
     finally
       SQLOptionsData.Free;
       Config.UpdateSensors;
+      Config.RegisterHotKeys;
     end;
   end
   else
@@ -739,6 +761,13 @@ begin
     SQLOptionsData.useclassicmenu     := Config.UseClassicMenu;
     SQLOptionsData.graphicmenutheme   := Config.GraphicMenuTheme;
     SQLOptionsData.graphicmenufade    := Config.GraphicMenuFade;
+    //Hot Keys
+    SQLOptionsData.WindowHotKey       := Config.WindowHotKey;
+    SQLOptionsData.WindowHotKeyCode   := Config.WindowHotKeyCode;
+    SQLOptionsData.WindowHotKeyMod    := Config.WindowHotKeyMod;
+    SQLOptionsData.MenuHotKey         := Config.MenuHotKey;
+    SQLOptionsData.MenuHotKeyCode     := Config.MenuHotKeyCode;
+    SQLOptionsData.MenuHotKeyMod      := Config.MenuHotKeyMod;
     //Mouse Sensor
     SQLOptionsData.mousesensorleft  := MouseSensorsToUTF8(mbLeft);
     SQLOptionsData.mousesensorright := MouseSensorsToUTF8(mbRight);

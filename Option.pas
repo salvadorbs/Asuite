@@ -132,6 +132,8 @@ type
     procedure btnClearElementsClick(Sender: TObject);
     procedure tbMFUChange(Sender: TObject);
     procedure btnChangeOrderClick(Sender: TObject);
+    procedure cbWindowHotKeyClick(Sender: TObject);
+    procedure cbMenuHotKeyClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -248,6 +250,13 @@ begin
   Config.UseClassicMenu    := cbClassicMenu.Checked;
   Config.GraphicMenuTheme  := cxTheme.Items[cxTheme.ItemIndex];
   Config.GraphicMenuFade   := cbMenuFade.Checked;
+  //Hot Keys
+  Config.WindowHotKey      := cbWindowHotKey.Checked;
+  Config.WindowHotKeyCode  := cxWindowHotKeyCode.ItemIndex;
+  Config.WindowHotKeyMod   := cxWindowHotKeyMod.ItemIndex;
+  Config.MenuHotKey        := cbMenuHotKey.Checked;
+  Config.MenuHotKeyCode    := cxMenuHotKeyCode.ItemIndex;
+  Config.MenuHotKeyMod     := cxMenuHotKeyMod.ItemIndex;
   //Mouse Sensors
   //Left
   Config.SensorLeftClick[0]  := cxLCTop.ItemIndex;
@@ -261,6 +270,8 @@ begin
   Config.SensorRightClick[3] := cxRCBottom.ItemIndex;
   //Config changed and if frmMain is visible, focus vstList (repaint)
   Config.Changed := True;
+  //Register HotKeys
+  Config.RegisterHotKeys;
   //Update sensors
   Config.UpdateSensors;
   if frmMain.Visible then
@@ -278,12 +289,24 @@ begin
   edtCustomTitle.Enabled := cbCustomTitle.Checked;
 end;
 
+procedure TfrmOption.cbMenuHotKeyClick(Sender: TObject);
+begin
+  cxMenuHotKeyMod.Enabled  := cbMenuHotKey.Checked;
+  cxMenuHotKeyCode.Enabled := cbMenuHotKey.Checked;
+end;
+
 procedure TfrmOption.cbTrayiconClick(Sender: TObject);
 begin
   cbTrayCustomIcon.Enabled  := cbTrayicon.Checked;
   btnTrayCustomIcon.Enabled := cbTrayicon.Checked;
   cxLeftClick.Enabled       := cbTrayicon.Checked;
   cxRightClick.Enabled      := cbTrayicon.Checked;
+end;
+
+procedure TfrmOption.cbWindowHotKeyClick(Sender: TObject);
+begin
+  cxWindowHotKeyMod.Enabled  := cbWindowHotKey.Checked;
+  cxWindowHotKeyCode.Enabled := cbWindowHotKey.Checked;
 end;
 
 procedure TfrmOption.btnClearElementsClick(Sender: TObject);
@@ -386,6 +409,50 @@ begin
   end;
   cxTheme.ItemIndex         := cxTheme.Items.IndexOf(Config.GraphicMenuTheme);
   cbMenuFade.Checked        := Config.GraphicMenuFade;
+
+  //Hot Keys
+  //TODO -.... SOLO PER FARLO ANDARE
+  Config.HotKey := True;
+  //Window's Hotkey
+  cbWindowHotKey.Checked       := Config.WindowHotKey;
+  cbWindowHotKey.Enabled       := Config.HotKey;
+  cxWindowHotKeyCode.Enabled   := (cbWindowHotKey.Checked) And (Config.HotKey);
+  cxWindowHotKeyMod.Enabled    := (cbWindowHotKey.Checked) And (Config.HotKey);
+//  cxWindowHotKeyCode.ItemIndex := Config.WindowHotKeyCode;
+//  cxWindowHotKeyMod.ItemIndex  := Config.WindowHotKeyMod;
+  cbMenuHotKey.Checked         := Config.MenuHotKey;
+  cxMenuHotKeyCode.ItemIndex   := Config.MenuHotKeyCode;
+  cxMenuHotKeyMod.ItemIndex    := Config.MenuHotKeyMod;
+  if Config.WindowHotKeyMod <> -1 then
+    cxWindowHotKeyMod.ItemIndex := Config.WindowHotKeyMod
+  else
+    cxWindowHotKeyMod.ItemIndex := 0;
+  if Config.WindowHotKeyCode <> -1 then
+    cxWindowHotKeyCode.ItemIndex := Config.WindowHotKeyCode
+  else
+    cxWindowHotKeyCode.ItemIndex := 0;
+
+   //Window's menu Hotkey
+  cbMenuHotKey.Checked     := Config.MenuHotkey;
+  cbMenuHotKey.Enabled     := Config.HotKey;
+  cxMenuHotKeyMod.Enabled  := (cbMenuHotKey.Checked) And (Config.HotKey);
+  cxMenuHotKeyCode.Enabled := (cbMenuHotKey.Checked) And (Config.HotKey);
+  if Config.MenuHotKeyMod <> -1 then
+    cxMenuHotKeyMod.ItemIndex := Config.MenuHotKeyMod
+  else
+    cxMenuHotKeyMod.ItemIndex := 0;
+  if Config.MenuHotKeyCode <> -1 then
+    cxMenuHotKeyCode.ItemIndex := Config.MenuHotKeyCode
+  else
+    cxMenuHotKeyCode.ItemIndex := 0;
+
+
+
+
+
+
+
+
   //Mouse Sensors
   for I := 0 to 3 do
     begin

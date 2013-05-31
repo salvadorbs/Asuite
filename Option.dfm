@@ -21,7 +21,7 @@ object frmOption: TfrmOption
     Top = 8
     Width = 281
     Height = 497
-    ActivePage = TabSheet3
+    ActivePage = TabSheet1
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'General'
@@ -218,6 +218,7 @@ object frmOption: TfrmOption
           Height = 17
           Caption = 'Show window when hotkey is pressed'
           TabOrder = 3
+          OnClick = cbWindowHotKeyClick
         end
         object cbWindowOnTop: TCheckBox
           Left = 8
@@ -281,6 +282,7 @@ object frmOption: TfrmOption
           Height = 17
           Caption = 'Show trayicon menu when hotkey is pressed'
           TabOrder = 6
+          OnClick = cbMenuHotKeyClick
         end
         object cxMenuHotKeyCode: TComboBox
           Left = 167

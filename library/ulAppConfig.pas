@@ -76,6 +76,13 @@ type
     FUseClassicMenu     : Boolean;
     FGraphicMenuTheme   : string;
     FGraphicMenuFade    : Boolean;
+    //HotKeys
+    FWindowHotKey       : Boolean;
+    FWindowHotKeyCode   : Integer;
+    FWindowHotKeyMod    : Integer;
+    FMenuHotKey         : Boolean;
+    FMenuHotKeyCode     : Integer;
+    FMenuHotKeyMod      : Integer;
     //Mouse Sensors
     FSensorLeftClick    : Array[0..3] of Integer; //0 Top, 1 Left, 2 Right, 3 Bottom
     FSensorRightClick   : Array[0..3] of Integer;
@@ -154,6 +161,14 @@ type
     property UseClassicMenu: Boolean read FUseClassicMenu write FUseClassicMenu;
     property GraphicMenuTheme: string read FGraphicMenuTheme write SetGraphicMenuTheme;
     property GraphicMenuFade: Boolean read FGraphicMenuFade write FGraphicMenuFade;
+    //Hot Keys
+    property WindowHotKey: Boolean read FWindowHotKey write FWindowHotKey;
+    property WindowHotKeyCode: Integer read FWindowHotKeyCode write FWindowHotKeyCode;
+    property WindowHotKeyMod: Integer read FWindowHotKeyMod write FWindowHotKeyMod;
+    property MenuHotKey: Boolean read FMenuHotKey write FMenuHotKey;
+    property MenuHotKeyCode: Integer read FMenuHotKeyCode write FMenuHotKeyCode;
+    property MenuHotKeyMod: Integer read FMenuHotKeyMod write FMenuHotKeyMod;
+    procedure RegisterHotKeys;
     //Mouse Sensor
     property SensorLeftClick[aIndex: Integer]:Integer read GetSensorLeftClick write setSensorLeftClick;
     property SensorRightClick[aIndex: Integer]:Integer read GetSensorRightClick write setSensorRightClick;
@@ -169,7 +184,7 @@ var
 implementation
 
 uses
-  Main, udClassicMenu, ulSysUtils, AppConfig, Sensor;
+  Main, udClassicMenu, ulSysUtils, AppConfig, Sensor, ulCommonUtils;
 
 constructor TConfiguration.Create;
 begin
@@ -226,6 +241,16 @@ begin
   FReadOnlyMode       := False;
   FChanged            := False;
   FASuiteState        := asStartUp;
+
+  //TODO COCCE
+  FHotKey             := True;
+
+  FWindowHotKey       := False;
+  FWindowHotKeyCode   := 0;
+  FWindowHotKeyMod    := 0;
+  FMenuHotKey         := False;
+  FMenuHotKeyCode     := 0;
+  FMenuHotKeyMod      := 0;
 end;
 
 destructor TConfiguration.Destroy;
@@ -281,6 +306,43 @@ end;
 function TConfiguration.GetSensorRightClick(aIndex: Integer): Integer;
 begin
   Result := FSensorRightClick[aIndex];
+end;
+
+procedure TConfiguration.RegisterHotKeys;
+begin
+  if Config.HotKey then
+  begin
+    //Unregister hotkey (if actived)
+    if (Config.HotKey) then
+    begin
+      UnregisterHotKey(frmMain.Handle, frmMain.Handle);
+      UnregisterHotKey(frmMain.Handle, frmMenuID);
+    end;
+    //Register hotkey
+    if (Config.WindowHotKey) then
+    begin
+      if Not(RegisterHotKey(frmMain.Handle, frmMain.Handle,
+                            GetHotKeyMod(Config.WindowHotKeyMod),
+                            GetHotKeyCode(Config.WindowHotKeyCode))) then
+      begin
+        ShowMessage('HotKeys - Error 1!');
+//        cbWindowHotKey.Checked := false;
+        exit;
+      end;
+    end;
+    //Register Menuhotkey
+    if (Config.MenuHotKey) then
+    begin
+      if Not(RegisterHotKey(frmMain.Handle, frmMenuID,
+                            GetHotKeyMod(Config.MenuHotKeyMod),
+                            GetHotKeyCode(Config.MenuHotKeyCode))) then
+      begin
+        ShowMessage('HotKeys - Error 2!');
+//        cbWindowHotKey.Checked := false;
+        exit;
+      end;
+    end;
+  end;
 end;
 
 procedure TConfiguration.SetTrayIcon(value: Boolean);

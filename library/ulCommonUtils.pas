@@ -66,6 +66,11 @@ function  DiskFreePercentual(Drive: Char): double;
 function  CompareVersionInfo(Version1, Version2: TVersionInfo): Integer;
 function  CompareInteger(int1, int2: Integer): Integer;
 
+{ HotKey }
+//function  AddHotkey(Sender: TBaseVirtualTree;Node: PVirtualNode;HKId: integer): integer;
+function  GetHotKeyCode(KeyCode: Integer) : Integer;
+function  GetHotKeyMod(KeyMod: Integer) : Integer;
+
 //type
 //  TScanFolderSettings = record
 //    LastFolderPath   : String;
@@ -450,5 +455,105 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+{
+function AddHotkey(Sender: TBaseVirtualTree;Node: PVirtualNode;HKId: integer): integer;
+var
+  NodeData : PTreeData;
+begin
+  Result   := HKID;
+  NodeData := Sender.GetNodeData(Node);
+  if (NodeData.HKModifier <> -1) and (NodeData.HKCode <> -1) then
+  begin
+    Result          := HKID + 1;
+    //Register Hotkey with HKModifier and HKCode
+    if RegisterHotKey(frmMain.Handle, HKId, GetHotKeyMod(NodeData.HKModifier),
+                      GetHotKeyCode(NodeData.HKCode)) then
+    begin
+      SetLength(HotKeyApp, Result);
+      HotKeyApp[HKID] := Node;
+    end
+    else
+      Result := 0;
+  end;
+end;
+}
+
+Function GetHotKeyCode(KeyCode: Integer) : Integer;
+begin
+  Result := -1;
+  case KeyCode of
+    0: Result := VkKeyScan('a');
+    1: Result := VkKeyScan('b');
+    2: Result := VkKeyScan('c');
+    3: Result := VkKeyScan('d');
+    4: Result := VkKeyScan('e');
+    5: Result := VkKeyScan('f');
+    6: Result := VkKeyScan('g');
+    7: Result := VkKeyScan('h');
+    8: Result := VkKeyScan('i');
+    9: Result := VkKeyScan('j');
+    10: Result := VkKeyScan('k');
+    11: Result := VkKeyScan('l');
+    12: Result := VkKeyScan('m');
+    13: Result := VkKeyScan('n');
+    14: Result := VkKeyScan('o');
+    15: Result := VkKeyScan('p');
+    16: Result := VkKeyScan('q');
+    17: Result := VkKeyScan('r');
+    18: Result := VkKeyScan('s');
+    19: Result := VkKeyScan('t');
+    20: Result := VkKeyScan('u');
+    21: Result := VkKeyScan('v');
+    22: Result := VkKeyScan('w');
+    23: Result := VkKeyScan('x');
+    24: Result := VkKeyScan('y');
+    25: Result := VkKeyScan('z');
+    26: Result := Vk_F1;
+    27: Result := Vk_F2;
+    28: Result := Vk_F3;
+    29: Result := Vk_F4;
+    30: Result := Vk_F5;
+    31: Result := Vk_F6;
+    32: Result := Vk_F7;
+    33: Result := Vk_F8;
+    34: Result := Vk_F9;
+    35: Result := Vk_F10;
+    36: Result := Vk_F11;
+    37: Result := Vk_F12;
+    38: Result := VkKeyScan('1');
+    39: Result := VkKeyScan('2');
+    40: Result := VkKeyScan('3');
+    41: Result := VkKeyScan('4');
+    42: Result := VkKeyScan('5');
+    43: Result := VkKeyScan('6');
+    44: Result := VkKeyScan('7');
+    45: Result := VkKeyScan('8');
+    46: Result := VkKeyScan('9');
+    47: Result := VkKeyScan('0');
+  end;
+end;
+
+Function GetHotKeyMod(KeyMod: Integer) : Integer;
+begin
+  Result := -1;
+  case KeyMod of
+    0:  Result := MOD_ALT;
+    1:  Result := MOD_CONTROL;
+    2:  Result := MOD_SHIFT;
+    3:  Result := MOD_CONTROL or MOD_ALT;
+    4:  Result := MOD_SHIFT or MOD_ALT;
+    5:  Result := MOD_SHIFT or MOD_CONTROL;
+    6:  Result := MOD_SHIFT or MOD_CONTROL or MOD_ALT;
+   	7:  Result := MOD_WIN;
+    8:  Result := MOD_WIN or MOD_ALT;
+    9:  Result := MOD_WIN or MOD_CONTROL;
+    10: Result := MOD_WIN or MOD_SHIFT;
+    11: Result := MOD_WIN or MOD_CONTROL or MOD_ALT;
+    12: Result := MOD_WIN or MOD_SHIFT or MOD_ALT;
+    13: Result := MOD_WIN or MOD_SHIFT or MOD_CONTROL;
+    14: Result := MOD_WIN or MOD_SHIFT or MOD_CONTROL or MOD_ALT;
+  end;
+end;
+
 
 end.
