@@ -39,7 +39,11 @@ type
       gmbAbout,
       //Other buttons
       gmbEject,
-      gmbExit
+      gmbExit,
+      //Tabs
+      gmbList,
+      gmbMRU,
+      gmbMFU
   );
 
   TButtonState = (
@@ -89,13 +93,18 @@ type
     procedure CopyImageInVst(Source:TImage;Dest:TVirtualStringTree);
     procedure DrawButton(IniFile: TIniFile;Button: TcySkinButton;
                          ButtonType: TGraphicMenuElement);
-    procedure DrawAndIconTextInPNGImage(IniFile: TIniFile;ButtonState: TButtonState;
-                                        PNGImage: TPngImage;ButtonType: TGraphicMenuElement);
+    procedure DrawIconInPNGImage(IniFile: TIniFile;PNGImage: TPngImage;
+                                 ButtonType: TGraphicMenuElement);
+    procedure DrawTextInPNGImage(IniFile: TIniFile;ButtonState: TButtonState;
+                                 PNGImage: TPngImage;ButtonType: TGraphicMenuElement; SpaceForIcon: Boolean = True);
     function GetButtonCaption(IniFile: TIniFile;ButtonType: TGraphicMenuElement): string;
     function GetButtonIconPath(IniFile: TIniFile;ButtonType: TGraphicMenuElement): string;
     function GetIniFileSection(ElementType: TGraphicMenuElement): string;
     procedure OpenFolder(FolderPath: string);
     function IsRightButton(ButtonType: TGraphicMenuElement): Boolean;
+    procedure DrawIconAndTextInPNGImage(IniFile: TIniFile;
+      ButtonState: TButtonState; PNGImage: TPngImage;
+      ButtonType: TGraphicMenuElement);
 	public
     { Public declarations }
     procedure OpenMenu;
@@ -167,45 +176,6 @@ begin
     ShowMessageFmt(msgErrGeneric, ['', SysErrorMessage(ErrorCode)]);
 end;
 
-procedure TfrmGraphicMenu.DrawAndIconTextInPNGImage(IniFile: TIniFile;ButtonState: TButtonState;
-                                                    PNGImage: TPngImage;ButtonType: TGraphicMenuElement);
-var
-  TopText  : Integer;
-  FontText : TFont;
-  Icon     : TIcon;
-  IconPath, Caption, IniFile_Section : string;
-begin
-  if Not Assigned(PNGImage) then
-    Exit;
-  Icon := TIcon.Create;
-  try
-    //Get and draw icon
-    IniFile_Section := GetIniFileSection(ButtonType);
-    IconPath := GetButtonIconPath(IniFile, ButtonType);
-    if FileExists(FThemePath + IconPath) then
-    begin
-      Icon.LoadFromFile(FThemePath + IconPath);
-      PNGImage.Canvas.Draw(5, 3, Icon);
-    end;
-    //Get font
-    case ButtonState of
-      bsNormal  : FontText := StrToFont(IniFile.ReadString(IniFile_Section, INIFILE_KEY_FONTNORMAL, ''));
-      bsHover   : FontText := StrToFont(IniFile.ReadString(IniFile_Section, INIFILE_KEY_FONTHOVER, ''));
-      bsClicked : FontText := StrToFont(IniFile.ReadString(IniFile_Section, INIFILE_KEY_FONTCLICKED, ''));
-    end;
-    //Get caption and draw it
-    Caption  := GetButtonCaption(IniFile, ButtonType);
-    if Assigned(FontText) then
-      PNGImage.Canvas.Font.Assign(FontText);
-    PNGImage.Canvas.Brush.Style := bsClear;
-    TopText := (PNGImage.Height - Abs(PNGImage.Canvas.Font.Height)) div 2;
-    PNGImage.Canvas.TextOut(35, TopText - 1, Caption);
-  finally
-    FontText.Free;
-    Icon.Free;
-  end;
-end;
-
 procedure TfrmGraphicMenu.CopyImageInVst(Source: TImage;Dest: TVirtualStringTree);
 var
   RectSource, RectDest : TRect;
@@ -268,10 +238,17 @@ begin
     //Draw caption and icon in PNGImage_*, if button is a RightButton
     if IsRightButton(ButtonType) then
     begin
-      DrawAndIconTextInPNGImage(IniFile,bsNormal,PNGImage_Normal,ButtonType);
-      DrawAndIconTextInPNGImage(IniFile,bsHover,PNGImage_Hover,ButtonType);
-      DrawAndIconTextInPNGImage(IniFile,bsClicked,PNGImage_Clicked,ButtonType);
-    end;
+      DrawIconAndTextInPNGImage(IniFile,bsNormal,PNGImage_Normal,ButtonType);
+      DrawIconAndTextInPNGImage(IniFile,bsHover,PNGImage_Hover,ButtonType);
+      DrawIconAndTextInPNGImage(IniFile,bsClicked,PNGImage_Clicked,ButtonType);
+    end
+    else
+      if ButtonType in [gmbList, gmbMRU, gmbMFU] then
+      begin
+        DrawTextInPNGImage(IniFile,bsNormal,PNGImage_Normal,ButtonType,False);
+        DrawTextInPNGImage(IniFile,bsHover,PNGImage_Hover,ButtonType,False);
+        DrawTextInPNGImage(IniFile,bsClicked,PNGImage_Clicked,ButtonType,False);
+      end;
     //Set Button's PicNormal, PicMouseOver and PicMouseDown
     if Assigned(PNGImage_Normal) then
       Button.PicNormal.Assign(PNGImage_Normal);
@@ -283,6 +260,73 @@ begin
     PNGImage_Normal.Free;
     PNGImage_Hover.Free;
     PNGImage_Clicked.Free;
+  end;
+end;
+
+procedure TfrmGraphicMenu.DrawIconAndTextInPNGImage(IniFile: TIniFile;
+  ButtonState: TButtonState; PNGImage: TPngImage;
+  ButtonType: TGraphicMenuElement);
+begin
+  DrawIconInPNGImage(IniFile,PNGImage,ButtonType);
+  DrawTextInPNGImage(IniFile,ButtonState,PNGImage,ButtonType);
+end;
+
+procedure TfrmGraphicMenu.DrawIconInPNGImage(IniFile: TIniFile; PNGImage: TPngImage;
+  ButtonType: TGraphicMenuElement);
+var
+  Icon : TIcon;
+  IconPath, IniFile_Section : string;
+begin
+  if Not Assigned(PNGImage) then
+    Exit;
+  Icon := TIcon.Create;
+  try
+    //Get and draw icon
+    IniFile_Section := GetIniFileSection(ButtonType);
+    IconPath := GetButtonIconPath(IniFile, ButtonType);
+    if FileExists(FThemePath + IconPath) then
+    begin
+      Icon.LoadFromFile(FThemePath + IconPath);
+      PNGImage.Canvas.Draw(5, 3, Icon);
+    end;
+  finally
+    Icon.Free;
+  end;
+end;
+
+procedure TfrmGraphicMenu.DrawTextInPNGImage(IniFile: TIniFile;
+  ButtonState: TButtonState; PNGImage: TPngImage;
+  ButtonType: TGraphicMenuElement; SpaceForIcon: Boolean = True);
+var
+  TopText  : Integer;
+  FontText : TFont;
+  Caption, IniFile_Section : string;
+begin
+  if Not Assigned(PNGImage) then
+    Exit;
+  try
+    IniFile_Section := GetIniFileSection(ButtonType);
+    //Get font
+    case ButtonState of
+      bsNormal  : FontText := StrToFont(IniFile.ReadString(IniFile_Section, INIFILE_KEY_FONTNORMAL, ''));
+      bsHover   : FontText := StrToFont(IniFile.ReadString(IniFile_Section, INIFILE_KEY_FONTHOVER, ''));
+      bsClicked : FontText := StrToFont(IniFile.ReadString(IniFile_Section, INIFILE_KEY_FONTCLICKED, ''));
+    end;
+    //Get caption and draw it
+    Caption  := GetButtonCaption(IniFile, ButtonType);
+    if Caption <> '' then
+    begin
+      if Assigned(FontText) then
+        PNGImage.Canvas.Font.Assign(FontText);
+      PNGImage.Canvas.Brush.Style := bsClear;
+      TopText := (PNGImage.Height - Abs(PNGImage.Canvas.Font.Height)) div 2;
+      if SpaceForIcon then
+        PNGImage.Canvas.TextOut(35, TopText - 1, Caption)
+      else
+        PNGImage.Canvas.TextOut(10, TopText - 1, Caption);
+    end;
+  finally
+    FontText.Free;
   end;
 end;
 
@@ -303,8 +347,11 @@ begin
     LogoPath := FThemePath + IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGELOGO, '');
     if FileExists(LogoPath) then
       imgLogo.Picture.LoadFromFile(LogoPath);
-    //IniFile Section RightButtons
-    //Draw Right Buttons
+    //Tabs
+    DrawButton(IniFile,sknbtnList,gmbList);
+    DrawButton(IniFile,sknbtnRecents,gmbMRU);
+    DrawButton(IniFile,sknbtnMFU,gmbMFU);
+    //Right Buttons
     DrawButton(IniFile,sknbtnASuite,gmbASuite);
     DrawButton(IniFile,sknbtnOptions,gmbOptions);
     DrawButton(IniFile,sknbtnDocuments,gmbDocuments);
@@ -328,6 +375,7 @@ function TfrmGraphicMenu.GetButtonCaption(IniFile: TIniFile;ButtonType: TGraphic
 begin
   Result := '';
   case ButtonType of
+    //Right buttons
     gmbASuite    : Result := msgGMASuite;
     gmbOptions   : Result := msgGMOptions;
     gmbDocuments : Result := msgGMDocuments;
@@ -336,6 +384,10 @@ begin
     gmbVideos    : Result := msgGMVideos;
     gmbExplore   : Result := msgGMExplore;
     gmbAbout     : Result := msgGMAbout;
+    //Tabs
+    gmbList      : Result := msgList;
+    gmbMRU       : Result := msgLongMRU;
+    gmbMFU       : Result := msgLongMFU;
   end;
 end;
 
@@ -368,13 +420,22 @@ begin
   Result := '';
   //Right Buttons
   if IsRightButton(ElementType) then
-    Result := INIFILE_SECTION_RIGHTBUTTONS
-  else //Eject
-    if ElementType in [gmbEject] then
-      Result := INIFILE_SECTION_EJECTBUTTON
-    else //Exit Button
-      if ElementType in [gmbExit] then
-        Result := INIFILE_SECTION_EXITBUTTON;
+    Result := INIFILE_SECTION_RIGHTBUTTONS else
+  //Eject
+  if ElementType in [gmbEject] then
+    Result := INIFILE_SECTION_EJECTBUTTON else
+  //Exit Button
+  if ElementType in [gmbExit] then
+    Result := INIFILE_SECTION_EXITBUTTON else
+  //List Tab
+  if ElementType in [gmbList] then
+    Result := INIFILE_SECTION_LIST else
+  //MRU Tab
+  if ElementType in [gmbMRU] then
+    Result := INIFILE_SECTION_RECENTS else
+  //MFU Tab
+  if ElementType in [gmbMFU] then
+    Result := INIFILE_SECTION_MOSTUSED;
 end;
 
 procedure TfrmGraphicMenu.imgLogoMouseDown(Sender: TObject;

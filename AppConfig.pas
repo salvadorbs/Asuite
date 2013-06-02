@@ -175,13 +175,22 @@ resourcestring
   //Classic TrayMenu
   msgShowASuite     = 'Show ASuite';
   msgOpenOptions    = 'Options...';
-  msgLongMFU        = 'Most Frequently Used';
+  msgLongMFU        = 'Most Used';
   msgLongMRU        = 'Recents';
   msgShortMFU       = 'MFU';
   msgShortMRU       = 'MRU';
   msgList           = 'List';
   msgEjectHardware  = 'Safely remove hardware';
   msgExit           = 'Exit';
+  //Graphic Menu
+  msgGMASuite    = APP_NAME;
+  msgGMOptions   = 'Options';
+  msgGMAbout     = 'About';
+  msgGMDocuments = 'Documents';
+  msgGMMusic     = 'Music';
+  msgGMPictures  = 'Pictures';
+  msgGMVideos    = 'Videos';
+  msgGMExplore   = 'Explore';
   //Errors
   msgErrEmptyName   = 'Application''s name field is empty';
   msgErrGeneric     = '%s error raised, with message: %s';
@@ -194,16 +203,6 @@ resourcestring
   msgErrEmptyUserName = 'Username field is empty';
   //Misc
   msgVersion        = 'Version %s %s';
-
-  //Graphic Menu
-  msgGMASuite    = APP_NAME;
-  msgGMOptions   = 'Options';
-  msgGMAbout     = 'About';
-  msgGMDocuments = 'Documents';
-  msgGMMusic     = 'Music';
-  msgGMPictures  = 'Pictures';
-  msgGMVideos    = 'Videos';
-  msgGMExplore   = 'Explore';
 
 implementation
 
