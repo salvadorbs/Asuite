@@ -120,6 +120,7 @@ const
   INIFILE_SECTION_INFO         = 'info';
   INIFILE_SECTION_GENERAL      = 'general';
   INIFILE_SECTION_RIGHTBUTTONS = 'rightbuttons';
+  INIFILE_SECTION_SEARCH       = 'search';
   INIFILE_SECTION_LIST         = 'list';
   INIFILE_SECTION_RECENTS      = 'recent';
   INIFILE_SECTION_MOSTUSED     = 'mostused';
@@ -141,7 +142,7 @@ const
   INIFILE_KEY_FONTNORMAL   = 'font_normal';
   INIFILE_KEY_FONTHOVER    = 'font_hover';
   INIFILE_KEY_FONTCLICKED  = 'font_clicked';
-  INIFILE_KEY_FONT         = 'font'; //For treeviews
+  INIFILE_KEY_FONT         = 'font'; //Generic font key
   //Icons
   INIFILE_KEY_ICONASUITE   = 'icon_asuite';
   INIFILE_KEY_ICONEXPLORE  = 'icon_explore';
@@ -151,14 +152,14 @@ const
   INIFILE_KEY_ICONVIDEOS   = 'icon_videos';
   INIFILE_KEY_ICONOPTIONS  = 'icon_options';
   INIFILE_KEY_ICONHELP     = 'icon_help';
-  INIFILE_KEY_ICONSEARCH   = 'icon_search';
+  INIFILE_KEY_ICON         = 'icon'; //Generic icon key
 
 implementation
 
 {$R *.dfm}
 
 uses
-  Main, Option, ulSysUtils, AppConfig, ulAppConfig, ulCommonUtils, About;
+  Main, Option, ulSysUtils, AppConfig, ulAppConfig, ulCommonUtils, About, udImages;
 
 procedure TfrmGraphicMenu.CloseMenu;
 begin
@@ -333,7 +334,7 @@ end;
 procedure TfrmGraphicMenu.FormCreate(Sender: TObject);
 var
   IniFile: TIniFile;
-  BackgroundPath, LogoPath: string;
+  BackgroundPath, LogoPath, IconPath: string;
 begin
   FThemePath := IncludeTrailingBackslash(SUITE_MENUTHEMES_PATH + Config.GraphicMenuTheme);
   IniFile := TIniFile.Create(FThemePath + THEME_INI);
@@ -363,6 +364,10 @@ begin
     //Eject and Close Buttons
     DrawButton(IniFile,sknbtnEject,gmbEject);
     DrawButton(IniFile,sknbtnExit,gmbExit);
+    //Search
+    IconPath := FThemePath + IniFile.ReadString(INIFILE_SECTION_SEARCH, INIFILE_KEY_ICON, '');
+    if FileExists(IconPath) then
+      btnSearch.RightButton.ImageIndex := ImagesDM.GetSimpleIconIndex(IconPath);
   finally
     IniFile.Free;
   end;

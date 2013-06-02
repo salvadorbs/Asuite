@@ -286,6 +286,8 @@ object frmGraphicMenu: TfrmGraphicMenu
     Top = 519
     Width = 240
     Height = 21
+    Images = ImagesDM.IcoImages
+    RightButton.Visible = True
     TabOrder = 1
   end
   object tmrFader: TTimer
