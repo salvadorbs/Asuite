@@ -173,8 +173,8 @@ type
     procedure LoadGlyphs;
     procedure RunStartupProcess;
     procedure RunShutdownProcess;
-    procedure ExecuteSelectedNode(ProcessInfo: TProcessInfo);
-    procedure RunNormalSw;
+    procedure ExecuteSelectedNode(TreeView: TBaseVirtualTree;ProcessInfo: TProcessInfo);
+    procedure RunNormalSw(TreeView: TBaseVirtualTree);
   public
     { Public declarations }
     procedure ShowMainForm(Sender: TObject);
@@ -309,7 +309,7 @@ var
 begin
   ProcessInfo.RunFromCat := False;
   ProcessInfo.RunMode := rmOpenFolder;
-  ExecuteSelectedNode(ProcessInfo);
+  ExecuteSelectedNode(GetActiveTree,ProcessInfo);
 end;
 
 procedure TfrmMain.RunDoubleClick(Sender: TObject);
@@ -317,7 +317,7 @@ begin
   //Check if user click on node or expand button (+/-)
   if (Sender is TBaseVirtualTree) then
     if Not(ClickOnButtonTree((Sender as TBaseVirtualTree))) then
-      RunNormalSw;
+      RunNormalSw(GetActiveTree);
 end;
 
 procedure TfrmMain.miImportListClick(Sender: TObject);
@@ -344,7 +344,7 @@ var
   ProcessInfo : TProcessInfo;
 begin
   ProcessInfo.RunMode := rmRunAsAdmin;
-  ExecuteSelectedNode(ProcessInfo);
+  ExecuteSelectedNode(GetActiveTree,ProcessInfo);
 end;
 
 procedure TfrmMain.miRunAsClick(Sender: TObject);
@@ -355,14 +355,14 @@ begin
   //Call login dialog for Windows username and password
   TLoginForm.Login(msgRunAsTitle,msgInsertWinUserInfo,ProcessInfo.UserName,ProcessInfo.Password,true,'');
   if ProcessInfo.UserName <> '' then
-    ExecuteSelectedNode(ProcessInfo)
+    ExecuteSelectedNode(GetActiveTree,ProcessInfo)
   else
     ShowMessage(msgErrEmptyUserName,true);
 end;
 
 procedure TfrmMain.miRunSelectedSwClick(Sender: TObject);
 begin
-  RunNormalSw;
+  RunNormalSw(GetActiveTree);
 end;
 
 procedure TfrmMain.miOptionsClick(Sender: TObject);
@@ -566,12 +566,12 @@ begin
   end;
 end;
 
-procedure TfrmMain.RunNormalSw;
+procedure TfrmMain.RunNormalSw(TreeView: TBaseVirtualTree);
 var
   ProcessInfo: TProcessInfo;
 begin
   ProcessInfo.RunMode := rmNormal;
-  ExecuteSelectedNode(ProcessInfo);
+  ExecuteSelectedNode(TreeView,ProcessInfo);
 end;
 
 procedure TfrmMain.HideMainForm;
@@ -588,14 +588,12 @@ begin
   end;
 end;
 
-procedure TfrmMain.ExecuteSelectedNode(ProcessInfo: TProcessInfo);
+procedure TfrmMain.ExecuteSelectedNode(TreeView: TBaseVirtualTree;ProcessInfo: TProcessInfo);
 var
   Node         : PVirtualNode;
   BaseNodeData : TvBaseNodeData;
   BaseNode     : PBaseData;
-  TreeView     : TBaseVirtualTree;
 begin
-  TreeView := GetActiveTree;
   //First selected node
   Node := TreeView.GetFirstSelected;
   while Assigned(Node) do
@@ -657,7 +655,7 @@ end;
 procedure TfrmMain.vstListKeyPress(Sender: TObject; var Key: Char);
 begin
   if Ord(Key) = VK_RETURN then
-    RunNormalSw;
+    RunNormalSw(GetActiveTree);
 end;
 
 procedure TfrmMain.vstListLoadNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
@@ -725,7 +723,7 @@ begin
   if (Sender is TBaseVirtualTree) then
     if Not(ClickOnButtonTree((Sender as TBaseVirtualTree))) then
       if (Config.RunSingleClick) then
-        RunNormalSw;
+        RunNormalSw(GetActiveTree);
 end;
 
 procedure TfrmMain.vstListCompareNodes(Sender: TBaseVirtualTree; Node1,
@@ -822,7 +820,7 @@ end;
 procedure TfrmMain.vstListExpanding(Sender: TBaseVirtualTree;
   Node: PVirtualNode; var Allowed: Boolean);
 begin
-  ImagesDM.GetChildNodesIcons(Sender, Node);
+  ImagesDM.GetChildNodesIcons(Sender, nil, Node);
 end;
 
 procedure TfrmMain.vstListFreeNode(Sender: TBaseVirtualTree;
