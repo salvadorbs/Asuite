@@ -40,24 +40,25 @@ type
     { Private declarations }
     function LoadASuiteIconFromFile(const IconName: String): Integer;
     procedure SaveCacheIcon(Path: string; NodeData: TvCustomRealNodeData; ImageIndex: Integer);
-    procedure InternalGetChildNodesIcons(Tree: TBaseVirtualTree;Node: PVirtualNode);
+    procedure InternalGetChildNodesIcons(MainTree, SubTree: TBaseVirtualTree;Node: PVirtualNode);
   public
     { Public declarations }
     function GetIconIndex(NodeData:TvCustomRealNodeData): Integer;
     procedure DeleteCacheIcon(NodeData: TvCustomRealNodeData);
     function GetSimpleIconIndex(xpath : string): integer;
-    procedure GetChildNodesIcons(Sender: TBaseVirtualTree; Node: PVirtualNode;
+    procedure GetChildNodesIcons(MainTree, SubTree: TBaseVirtualTree; Node: PVirtualNode;
                                  UseThread: Boolean = True);
   end;
 
   TGetNodeIconsThread = class(TThread)
   private
     { private declarations }
-    FTree: TBaseVirtualTree;
+    FMainTree: TBaseVirtualTree;
+    FSubTree: TBaseVirtualTree;
     FNode: PVirtualNode;
   public
     { public declarations }
-    constructor Create(Suspended: Boolean;Tree: TBaseVirtualTree;Node: PVirtualNode);
+    constructor Create(Suspended: Boolean;MainTree, SubTree: TBaseVirtualTree;Node: PVirtualNode);
     Procedure Execute; override;
   end;
 
@@ -71,15 +72,15 @@ uses
 
 {$R *.dfm}
 
-procedure TImagesDM.GetChildNodesIcons(Sender: TBaseVirtualTree;
-  Node: PVirtualNode; UseThread: Boolean);
+procedure TImagesDM.GetChildNodesIcons(MainTree, SubTree: TBaseVirtualTree; Node: PVirtualNode;
+                                       UseThread: Boolean = True);
 var
   GetNodeIconsThread: TGetNodeIconsThread;
 begin
   if UseThread then
-    GetNodeIconsThread := TGetNodeIconsThread.Create(False, Sender, Node)
+    GetNodeIconsThread := TGetNodeIconsThread.Create(False, MainTree, SubTree, Node)
   else
-    InternalGetChildNodesIcons(Sender, Node);
+    InternalGetChildNodesIcons(MainTree, SubTree, Node);
 end;
 
 function TImagesDM.GetIconIndex(NodeData:TvCustomRealNodeData): Integer;
@@ -227,36 +228,46 @@ begin
   IMAGE_INDEX_Cancel     := LoadASuiteIconFromFile(FILEICON_Cancel);
 end;
 
-procedure TImagesDM.InternalGetChildNodesIcons(Tree: TBaseVirtualTree;
+procedure TImagesDM.InternalGetChildNodesIcons(MainTree, SubTree: TBaseVirtualTree;
   Node: PVirtualNode);
 var
   NodeData: TvBaseNodeData;
   ChildNode: PVirtualNode;
+  IsMainList: Boolean;
 begin
+  //If SubTree is nil, get child node's icons directly from MainTree
+  IsMainList := Not(Assigned(SubTree));
   //Get items' icons
-  ChildNode := Tree.GetFirstChild(Node);
+  ChildNode := MainTree.GetFirstChild(Node);
   while Assigned(ChildNode) do
   begin
-    NodeData := PBaseData(Tree.GetNodeData(ChildNode)).Data;
+    if IsMainList then
+      NodeData := PBaseData(MainTree.GetNodeData(ChildNode)).Data
+    else
+      NodeData := PBaseData(GetNodeDataSearch(ChildNode,SubTree,MainTree)).Data;
     //Get imageindex
     if Assigned(NodeData) and (NodeData.ImageIndex = -1) and (NodeData.DataType <> vtdtSeparator) then
       NodeData.ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(NodeData));
     //Repaint node
-    Tree.InvalidateNode(ChildNode);
+    if IsMainList then
+      MainTree.InvalidateNode(ChildNode)
+    else
+      SubTree.InvalidateNode(ChildNode);
     //Next node
-    ChildNode := Tree.GetNextSibling(ChildNode);
+    ChildNode := MainTree.GetNextSibling(ChildNode);
   end;
 end;
 
 { TGetNodeIconsThread }
 
-constructor TGetNodeIconsThread.Create(Suspended: Boolean;Tree: TBaseVirtualTree;
+constructor TGetNodeIconsThread.Create(Suspended: Boolean;MainTree, SubTree: TBaseVirtualTree;
   Node: PVirtualNode);
 begin
   inherited Create(Suspended);
 
   //Set thread's variables
-  Self.FTree     := Tree;
+  Self.FMainTree := MainTree;
+  Self.FSubTree  := SubTree;
   Self.FNode     := Node;
 
   Self.Priority  := tpNormal;
@@ -266,7 +277,7 @@ end;
 procedure TGetNodeIconsThread.Execute;
 begin
   inherited;
-  ImagesDM.InternalGetChildNodesIcons(FTree, FNode);
+  ImagesDM.InternalGetChildNodesIcons(FMainTree, FSubTree, FNode);
 end;
 
 end.

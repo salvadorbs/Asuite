@@ -607,7 +607,7 @@ begin
   //Backup sqlite database
   DBManager.DoBackupList;
   //Get rootnode's Icons
-  ImagesDM.GetChildNodesIcons(Tree, Tree.RootNode);
+  ImagesDM.GetChildNodesIcons(Tree, nil, Tree.RootNode);
 end;
 
 function TDBManager.MouseSensorsToUTF8(MouseButton: TMouseButton): RawUTF8;

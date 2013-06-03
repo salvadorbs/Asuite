@@ -86,7 +86,7 @@ begin
   if cbCache.Checked then
   begin
     frmMain.vstList.IterateSubtree(nil, ClearCache, nil, [], True);
-    ImagesDM.GetChildNodesIcons(frmMain.vstList, frmMain.vstList.RootNode);
+    ImagesDM.GetChildNodesIcons(frmMain.vstList, nil, frmMain.vstList.RootNode);
     frmMain.vstList.FullCollapse;
   end;
   RefreshList(frmMain.vstList);
