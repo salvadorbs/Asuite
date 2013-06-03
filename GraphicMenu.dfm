@@ -234,30 +234,35 @@ object frmGraphicMenu: TfrmGraphicMenu
     Top = 78
     Width = 70
     Height = 20
+    OnClick = sknbtnListClick
   end
   object sknbtnRecents: TcySkinButton
     Left = 99
     Top = 78
     Width = 70
     Height = 20
+    OnClick = sknbtnRecentsClick
   end
   object sknbtnMFU: TcySkinButton
     Left = 171
     Top = 78
     Width = 70
     Height = 20
+    OnClick = sknbtnMFUClick
   end
   object sknbtnEject: TcySkinButton
     Left = 255
     Top = 546
     Width = 70
     Height = 20
+    OnClick = sknbtnEjectClick
   end
   object sknbtnExit: TcySkinButton
     Left = 326
     Top = 546
     Width = 70
     Height = 20
+    OnClick = sknbtnExitClick
   end
   object btnSearch: TButtonedEdit
     Left = 15
@@ -306,12 +311,12 @@ object frmGraphicMenu: TfrmGraphicMenu
         TabOrder = 0
         TreeOptions.PaintOptions = [toHideFocusRect, toShowBackground, toShowDropmark, toShowTreeLines, toThemeAware, toUseBlendedImages]
         TreeOptions.SelectionOptions = [toDisableDrawSelection, toFullRowSelect]
-        OnClick = vstListClick
         OnDblClick = vstListDblClick
         OnExpanding = vstListExpanding
         OnGetText = vstListGetText
         OnGetImageIndex = vstListGetImageIndex
-        ExplicitHeight = 400
+        OnKeyPress = vstListKeyPress
+        OnMouseMove = vstListMouseMove
         Columns = <>
       end
     end
@@ -387,11 +392,13 @@ object frmGraphicMenu: TfrmGraphicMenu
     Top = 8
   end
   object ApplicationEvents1: TApplicationEvents
+    OnMessage = ApplicationEvents1Message
     Left = 280
     Top = 8
   end
   object tmrWatchFocus: TTimer
     Interval = 250
+    OnTimer = tmrWatchFocusTimer
     Left = 216
     Top = 8
   end
