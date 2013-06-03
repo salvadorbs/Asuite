@@ -120,6 +120,7 @@ type
     cxTheme: TComboBox;
     lbMenuTheme: TLabel;
     cbClassicMenu: TCheckBox;
+    cbHotKey: TCheckBox;
     procedure btnOkClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure tbMRUChange(Sender: TObject);
@@ -251,6 +252,7 @@ begin
   Config.GraphicMenuTheme  := cxTheme.Items[cxTheme.ItemIndex];
   Config.GraphicMenuFade   := cbMenuFade.Checked;
   //Hot Keys
+  Config.HotKey            := cbHotKey.Checked;
   Config.WindowHotKey      := cbWindowHotKey.Checked;
   Config.WindowHotKeyCode  := cxWindowHotKeyCode.ItemIndex;
   Config.WindowHotKeyMod   := cxWindowHotKeyMod.ItemIndex;
@@ -407,12 +409,10 @@ begin
     until FindNext(searchResult) <> 0;
     FindClose(searchResult);
   end;
-  cxTheme.ItemIndex         := cxTheme.Items.IndexOf(Config.GraphicMenuTheme);
-  cbMenuFade.Checked        := Config.GraphicMenuFade;
-
+  cxTheme.ItemIndex  := cxTheme.Items.IndexOf(Config.GraphicMenuTheme);
+  cbMenuFade.Checked := Config.GraphicMenuFade;
   //Hot Keys
-  //TODO -.... SOLO PER FARLO ANDARE
-  Config.HotKey := True;
+  cbHotKey.Checked   := Config.HotKey;
   //Window's Hotkey
   cbWindowHotKey.Checked       := Config.WindowHotKey;
   cbWindowHotKey.Enabled       := Config.HotKey;
@@ -445,14 +445,6 @@ begin
     cxMenuHotKeyCode.ItemIndex := Config.MenuHotKeyCode
   else
     cxMenuHotKeyCode.ItemIndex := 0;
-
-
-
-
-
-
-
-
   //Mouse Sensors
   for I := 0 to 3 do
     begin

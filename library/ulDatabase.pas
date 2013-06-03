@@ -151,6 +151,7 @@ type
     FGraphicMenuTheme   : string;
     FGraphicMenuFade    : Boolean;
     //HotKeys
+    FHotKey             : Boolean;
     FWindowHotKey       : Boolean;
     FWindowHotKeyCode   : Integer;
     FWindowHotKeyMod    : Integer;
@@ -211,6 +212,7 @@ type
     property graphicmenutheme: string read Fgraphicmenutheme write Fgraphicmenutheme;
     property graphicmenufade: Boolean read Fgraphicmenufade write Fgraphicmenufade;
     //Hot Keys
+    property hotkey: Boolean read FHotKey write FHotKey;
     property windowhotkey: Boolean read FWindowHotKey write FWindowHotKey;
     property windowhotkeycode: Integer read FWindowHotKeyCode write FWindowHotKeyCode;
     property windowhotkeymod: Integer read FWindowHotKeyMod write FWindowHotKeyMod;
@@ -577,6 +579,7 @@ begin
         Config.GraphicMenuTheme   := SQLOptionsData.graphicmenutheme;
         Config.GraphicMenuFade    := SQLOptionsData.graphicmenufade;
         //Hot Keys
+        Config.HotKey             := SQLOptionsData.HotKey;
         Config.WindowHotKey       := SQLOptionsData.WindowHotKey;
         Config.WindowHotKeyCode   := SQLOptionsData.WindowHotKeyCode;
         Config.WindowHotKeyMod    := SQLOptionsData.WindowHotKeyMod;
@@ -762,6 +765,7 @@ begin
     SQLOptionsData.graphicmenutheme   := Config.GraphicMenuTheme;
     SQLOptionsData.graphicmenufade    := Config.GraphicMenuFade;
     //Hot Keys
+    SQLOptionsData.HotKey             := Config.HotKey;
     SQLOptionsData.WindowHotKey       := Config.WindowHotKey;
     SQLOptionsData.WindowHotKeyCode   := Config.WindowHotKeyCode;
     SQLOptionsData.WindowHotKeyMod    := Config.WindowHotKeyMod;

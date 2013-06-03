@@ -21,7 +21,7 @@ object frmOption: TfrmOption
     Top = 8
     Width = 281
     Height = 497
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'General'
@@ -468,32 +468,40 @@ object frmOption: TfrmOption
         Left = 8
         Top = 346
         Width = 257
-        Height = 88
+        Height = 95
         Caption = 'Other functions'
         TabOrder = 3
         object cbCache: TCheckBox
           Left = 8
-          Top = 22
-          Width = 83
+          Top = 33
+          Width = 233
           Height = 19
           Caption = 'Enable cache'
-          TabOrder = 0
+          TabOrder = 1
         end
         object cbAutorun: TCheckBox
           Left = 8
-          Top = 46
-          Width = 93
+          Top = 52
+          Width = 233
           Height = 19
           Caption = 'Enable autorun'
-          TabOrder = 1
+          TabOrder = 2
         end
         object cbScheduler: TCheckBox
           Left = 8
-          Top = 68
+          Top = 71
           Width = 233
           Height = 17
           Caption = 'Enable scheduler'
-          TabOrder = 2
+          TabOrder = 3
+        end
+        object cbHotKey: TCheckBox
+          Left = 8
+          Top = 16
+          Width = 233
+          Height = 17
+          Caption = 'Enable hotkey'
+          TabOrder = 0
         end
       end
       object gbClearElements: TGroupBox
