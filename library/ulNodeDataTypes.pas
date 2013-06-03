@@ -236,10 +236,12 @@ type
 
   rBaseData = record
     Data     : TvBaseNodeData;
-    MenuItem : TMenuItem;
+    MenuItem : TMenuItem; //Classic Menu
+    MenuNode : PVirtualNode; //Graphic Menu
   end;
   PBaseData = ^rBaseData;
 
+  //TODO: Rename TTreeDataX in rTreeDataX
   PTreeDataX = ^TTreeDataX; //X = Search or TrayMenu
   TTreeDataX = record
     pNodeList : PVirtualNode;

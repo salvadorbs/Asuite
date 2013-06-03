@@ -21,6 +21,7 @@ object frmGraphicMenu: TfrmGraphicMenu
   Scaled = False
   ScreenSnap = True
   OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object imgBackground: TImage
@@ -258,29 +259,6 @@ object frmGraphicMenu: TfrmGraphicMenu
     Width = 70
     Height = 20
   end
-  object vstMenu: TVirtualStringTree
-    Left = 15
-    Top = 104
-    Width = 240
-    Height = 409
-    BorderStyle = bsNone
-    Header.AutoSizeIndex = 0
-    Header.Font.Charset = DEFAULT_CHARSET
-    Header.Font.Color = clWindowText
-    Header.Font.Height = -11
-    Header.Font.Name = 'Tahoma'
-    Header.Font.Style = []
-    Header.MainColumn = -1
-    Header.Options = [hoColumnResize, hoDrag]
-    HintMode = hmHint
-    ParentShowHint = False
-    ScrollBarOptions.ScrollBars = ssNone
-    ShowHint = True
-    TabOrder = 0
-    TreeOptions.PaintOptions = [toHideFocusRect, toShowBackground, toShowDropmark, toShowTreeLines, toThemeAware, toUseBlendedImages]
-    TreeOptions.SelectionOptions = [toDisableDrawSelection, toFullRowSelect]
-    Columns = <>
-  end
   object btnSearch: TButtonedEdit
     Left = 15
     Top = 519
@@ -288,7 +266,115 @@ object frmGraphicMenu: TfrmGraphicMenu
     Height = 21
     Images = ImagesDM.IcoImages
     RightButton.Visible = True
+    TabOrder = 0
+  end
+  object pgcTreeViews: TPageControl
+    Left = 15
+    Top = 104
+    Width = 240
+    Height = 409
+    Margins.Left = 0
+    Margins.Top = 0
+    Margins.Right = 0
+    Margins.Bottom = 0
+    ActivePage = tsList
+    Style = tsFlatButtons
     TabOrder = 1
+    object tsList: TTabSheet
+      Caption = 'tsList'
+      TabVisible = False
+      object vstList: TVirtualStringTree
+        Left = 0
+        Top = 0
+        Width = 232
+        Height = 399
+        Align = alClient
+        BorderStyle = bsNone
+        Header.AutoSizeIndex = 0
+        Header.Font.Charset = DEFAULT_CHARSET
+        Header.Font.Color = clWindowText
+        Header.Font.Height = -11
+        Header.Font.Name = 'Tahoma'
+        Header.Font.Style = []
+        Header.MainColumn = -1
+        Header.Options = [hoColumnResize, hoDrag]
+        HintMode = hmHint
+        Images = ImagesDM.IcoImages
+        ParentShowHint = False
+        ScrollBarOptions.ScrollBars = ssVertical
+        ShowHint = True
+        TabOrder = 0
+        TreeOptions.PaintOptions = [toHideFocusRect, toShowBackground, toShowDropmark, toShowTreeLines, toThemeAware, toUseBlendedImages]
+        TreeOptions.SelectionOptions = [toDisableDrawSelection, toFullRowSelect]
+        OnClick = vstListClick
+        OnDblClick = vstListDblClick
+        OnExpanding = vstListExpanding
+        OnGetText = vstListGetText
+        OnGetImageIndex = vstListGetImageIndex
+        ExplicitHeight = 400
+        Columns = <>
+      end
+    end
+    object tsMRU: TTabSheet
+      Caption = 'tsRecents'
+      ImageIndex = 1
+      TabVisible = False
+      object vstRecents: TVirtualStringTree
+        Left = 0
+        Top = 0
+        Width = 232
+        Height = 399
+        Align = alClient
+        BorderStyle = bsNone
+        Header.AutoSizeIndex = 0
+        Header.Font.Charset = DEFAULT_CHARSET
+        Header.Font.Color = clWindowText
+        Header.Font.Height = -11
+        Header.Font.Name = 'Tahoma'
+        Header.Font.Style = []
+        Header.MainColumn = -1
+        Header.Options = [hoColumnResize, hoDrag]
+        HintMode = hmHint
+        Images = ImagesDM.IcoImages
+        ParentShowHint = False
+        ScrollBarOptions.ScrollBars = ssNone
+        ShowHint = True
+        TabOrder = 0
+        TreeOptions.PaintOptions = [toHideFocusRect, toShowBackground, toShowDropmark, toShowTreeLines, toThemeAware, toUseBlendedImages]
+        TreeOptions.SelectionOptions = [toDisableDrawSelection, toFullRowSelect]
+        Columns = <>
+      end
+    end
+    object tsMFU: TTabSheet
+      Caption = 'tsMostUsed'
+      ImageIndex = 2
+      TabVisible = False
+      object vstMostUsed: TVirtualStringTree
+        Left = 0
+        Top = 0
+        Width = 232
+        Height = 399
+        Align = alClient
+        BorderStyle = bsNone
+        Header.AutoSizeIndex = 0
+        Header.Font.Charset = DEFAULT_CHARSET
+        Header.Font.Color = clWindowText
+        Header.Font.Height = -11
+        Header.Font.Name = 'Tahoma'
+        Header.Font.Style = []
+        Header.MainColumn = -1
+        Header.Options = [hoColumnResize, hoDrag]
+        HintMode = hmHint
+        Images = ImagesDM.IcoImages
+        ParentShowHint = False
+        ScrollBarOptions.ScrollBars = ssNone
+        ShowHint = True
+        TabOrder = 0
+        TreeOptions.PaintOptions = [toHideFocusRect, toShowBackground, toShowDropmark, toShowTreeLines, toThemeAware, toUseBlendedImages]
+        TreeOptions.SelectionOptions = [toDisableDrawSelection, toFullRowSelect]
+        Columns = <>
+      end
+    end
   end
   object tmrFader: TTimer
     Interval = 20

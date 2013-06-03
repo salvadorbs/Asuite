@@ -51,6 +51,11 @@ type
       bsHover,
       bsClicked
   );
+  //Workaround for TPageControl without borders
+  TPageControl = class(Vcl.ComCtrls.TPageControl)
+  private
+    procedure TCMAdjustRect(var Msg: TMessage); message $1300 + 40; //TCM_ADJUSTRECT
+  end;
 
 	TfrmGraphicMenu = class(TForm)
   	imgDriveSpace: TImage;
@@ -61,7 +66,7 @@ type
     imgLogo: TImage;
     imgPersonalPicture: TImage;
     bvlPersonalPicture: TBevel;
-    vstMenu: TVirtualStringTree;
+    vstList: TVirtualStringTree;
     OpenDialog1: TOpenDialog;
     imgDivider1: TImage;
     ApplicationEvents1: TApplicationEvents;
@@ -81,16 +86,32 @@ type
     sknbtnEject: TcySkinButton;
     sknbtnExit: TcySkinButton;
     imgBackground: TImage;
+    pgcTreeViews: TPageControl;
+    tsList: TTabSheet;
+    tsMRU: TTabSheet;
+    tsMFU: TTabSheet;
+    vstMostUsed: TVirtualStringTree;
+    vstRecents: TVirtualStringTree;
     procedure FormCreate(Sender: TObject);
     procedure tmrFaderTimer(Sender: TObject);
     procedure imgLogoMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure OpenRightButton(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure vstListGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
+      Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+    procedure vstListClick(Sender: TObject);
+    procedure vstListDblClick(Sender: TObject);
+    procedure vstListGetImageIndex(Sender: TBaseVirtualTree; Node: PVirtualNode;
+      Kind: TVTImageKind; Column: TColumnIndex; var Ghosted: Boolean;
+      var ImageIndex: Integer);
+    procedure vstListExpanding(Sender: TBaseVirtualTree; Node: PVirtualNode;
+      var Allowed: Boolean);
 	private    
     { Private declarations }
     FOpening   : Boolean;
     FThemePath : string;
-    procedure CopyImageInVst(Source:TImage;Dest:TVirtualStringTree);
+    procedure CopyImageInVst(Source:TImage;DestVST:TVirtualStringTree;Page: TPageControl);
     procedure DrawButton(IniFile: TIniFile;Button: TcySkinButton;
                          ButtonType: TGraphicMenuElement);
     procedure DrawIconInPNGImage(IniFile: TIniFile;PNGImage: TPngImage;
@@ -105,6 +126,8 @@ type
     procedure DrawIconAndTextInPNGImage(IniFile: TIniFile;
       ButtonState: TButtonState; PNGImage: TPngImage;
       ButtonType: TGraphicMenuElement);
+    procedure PopulateMenuTree(Sender: TBaseVirtualTree; Node: PVirtualNode;
+                               Data: Pointer; var Abort: Boolean);
 	public
     { Public declarations }
     procedure OpenMenu;
@@ -159,7 +182,8 @@ implementation
 {$R *.dfm}
 
 uses
-  Main, Option, ulSysUtils, AppConfig, ulAppConfig, ulCommonUtils, About, udImages;
+  Main, Option, ulSysUtils, AppConfig, ulAppConfig, ulCommonUtils, About,
+  udImages, ulNodeDataTypes, ulTreeView, ulEnumerations;
 
 procedure TfrmGraphicMenu.CloseMenu;
 begin
@@ -177,7 +201,7 @@ begin
     ShowMessageFmt(msgErrGeneric, ['', SysErrorMessage(ErrorCode)]);
 end;
 
-procedure TfrmGraphicMenu.CopyImageInVst(Source: TImage;Dest: TVirtualStringTree);
+procedure TfrmGraphicMenu.CopyImageInVst(Source: TImage;DestVST: TVirtualStringTree;Page: TPageControl);
 var
   RectSource, RectDest : TRect;
   bmpTempImage, bmpTempBG : TBitmap;
@@ -185,29 +209,25 @@ begin
   bmpTempImage := TBitmap.Create;
   bmpTempBG    := TBitmap.Create;
   try
-    bmpTempImage.Height := Dest.Height;
-    bmpTempImage.Width  := Dest.Width;
+    bmpTempImage.Height := Page.Height;
+    bmpTempImage.Width  := Page.Width;
     //Set RectSource size
-    RectSource.Left     := Dest.Left;
-    RectSource.Top      := Dest.Top;
-    RectSource.Right    := Dest.Left + Dest.Width;
-    RectSource.Bottom   := Dest.Top + Dest.Height;
-    //Set RectSource size
+    RectSource.Left     := Page.Left;
+    RectSource.Top      := Page.Top;
+    RectSource.Right    := Page.Left + Page.Width;
+    RectSource.Bottom   := Page.Top + Page.Height;
+    //Set RectDest size
     RectDest.Left       := 0;
     RectDest.Top        := 0;
-    RectDest.Right      := Dest.Width;
-    RectDest.Bottom     := Dest.Height;
+    RectDest.Right      := Page.Width;
+    RectDest.Bottom     := Page.Height;
     //CopyRect in bmpTempImage and use it as background for Dest vst
-    //TODO: Check this IF
-    if (Source.Picture.graphic is TPNGImage) then
-    begin
-      bmpTempBG.Assign(Source.Picture.Graphic);
-    end
-    else
-      bmpTempBG.Assign(Source.Picture.Graphic);
+    bmpTempBG.Width := Source.Picture.Width;
+    bmpTempBG.Height := Source.Picture.Height;
+    bmpTempBG.Canvas.Draw(0, 0, Source.Picture.Graphic);
     bmpTempImage.canvas.CopyRect(RectDest, bmpTempBG.Canvas, RectSource);
-    Dest.Background.Bitmap := bmpTempImage;
-    Dest.Background.Bitmap.Transparent := true;
+    DestVST.Background.Bitmap := bmpTempImage;
+    DestVST.Background.Bitmap.Transparent := True;
   finally
     bmpTempImage.Free;
     bmpTempBG.Free;
@@ -336,6 +356,12 @@ var
   IniFile: TIniFile;
   BackgroundPath, LogoPath, IconPath: string;
 begin
+  pgcTreeViews.TabIndex := 0;
+  //NodeDataSize
+  vstList.NodeDataSize     := SizeOf(TTreeDataX);
+  vstRecents.NodeDataSize  := SizeOf(TTreeDataX);
+  vstMostUsed.NodeDataSize := SizeOf(TTreeDataX);
+  //Load theme
   FThemePath := IncludeTrailingBackslash(SUITE_MENUTHEMES_PATH + Config.GraphicMenuTheme);
   IniFile := TIniFile.Create(FThemePath + THEME_INI);
   try
@@ -371,9 +397,23 @@ begin
   finally
     IniFile.Free;
   end;
+  //Workaround for vst trasparent
+  CopyImageInVst(imgBackground,vstList,pgcTreeViews);
+  CopyImageInVst(imgBackground,vstRecents,pgcTreeViews);
+  CopyImageInVst(imgBackground,vstMostUsed,pgcTreeViews);
   //Position
   Top  := Screen.WorkAreaRect.Bottom - Height;
   Left := Screen.WorkAreaRect.Right - Width;
+end;
+
+procedure TfrmGraphicMenu.FormShow(Sender: TObject);
+begin
+  //Clear virtualtrees
+  vstList.Clear;
+  vstRecents.Clear;
+  vstMostUsed.Clear;
+  //Refresh Menu
+  frmMain.vstList.IterateSubtree(nil, PopulateMenuTree, nil, [], False);
 end;
 
 function TfrmGraphicMenu.GetButtonCaption(IniFile: TIniFile;ButtonType: TGraphicMenuElement): string;
@@ -496,6 +536,34 @@ begin
   end;
 end;
 
+procedure TfrmGraphicMenu.PopulateMenuTree(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
+var
+  NewNodeData : PTreeDataX;
+  NodeData, ParentNodeData : PBaseData;
+  NewNode     : PVirtualNode;
+begin
+  if Assigned(Node) then
+  begin
+    NodeData := Sender.GetNodeData(Node);
+    if Not(NodeData.Data.HideFromMenu) then
+    begin
+      if (Node.Parent <> Sender.RootNode) then
+      begin
+        ParentNodeData := Sender.GetNodeData(Node.Parent);
+        NewNode        := vstList.AddChild(ParentNodeData.MenuNode);
+      end
+      else
+        NewNode        := vstList.AddChild(nil);
+      NewNodeData      := vstList.GetNodeData(NewNode);
+      NodeData.MenuNode     := NewNode;
+      //References
+      NewNodeData.pNodeList := Node;
+      NewNodeData.pNodeX    := NewNode;
+    end;
+  end;
+end;
+
 procedure TfrmGraphicMenu.OpenMenu;
 begin
   //Fade in now
@@ -528,6 +596,73 @@ begin
       Self.Hide;
     end;
   end;
+end;
+
+procedure TfrmGraphicMenu.vstListClick(Sender: TObject);
+begin
+  frmMain.RunSingleClick(Sender);
+end;
+
+procedure TfrmGraphicMenu.vstListDblClick(Sender: TObject);
+begin
+  frmMain.RunDoubleClick(Sender);
+end;
+
+procedure TfrmGraphicMenu.vstListExpanding(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; var Allowed: Boolean);
+begin
+  ImagesDM.GetChildNodesIcons(frmMain.vstList, Sender, Node);
+end;
+
+procedure TfrmGraphicMenu.vstListGetImageIndex(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
+  var Ghosted: Boolean; var ImageIndex: Integer);
+var
+  NodeData : TvBaseNodeData;
+begin
+  NodeData   := GetNodeDataSearch(Node,vstList,frmMain.vstList).Data;
+  ImageIndex := NodeData.ImageIndex;
+end;
+
+procedure TfrmGraphicMenu.vstListGetText(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
+  var CellText: string);
+var
+  NodeData : PBaseData;
+  I   : Byte;
+  str : string;
+begin
+  NodeData := GetNodeDataSearch(Node,vstList,frmMain.vstList);
+  if Assigned(NodeData) then
+  begin
+    if NodeData.Data.DataType = vtdtSeparator then
+    begin
+      I := 50 - (Length(NodeData.Data.Name));
+      str := '---------------------------';
+      if I >= 10 then
+        SetLength(str, I div 2)
+      else
+        SetLength(str, 5);
+      CellText := str + ' ' + NodeData.Data.Name + ' ' + str;
+    end
+    else
+      CellText := StringReplace(NodeData.Data.Name, '&&', '&', [rfIgnoreCase,rfReplaceAll]);
+  end;
+end;
+
+{ TPageControl }
+
+procedure TPageControl.TCMAdjustRect(var Msg: TMessage);
+begin
+  if Self.TabPosition = tpTop then
+  begin
+    PRect(Msg.LParam)^.Left  := 0;
+    PRect(Msg.LParam)^.Right := Self.ClientWidth;
+    Dec(PRect(Msg.LParam)^.Top, 4);
+    PRect(Msg.LParam)^.Bottom := Self.ClientHeight;
+  end
+  else
+    inherited;
 end;
 
 end.
