@@ -127,7 +127,7 @@ implementation
 
 uses
   AppConfig, udImages, Main, ulNodeDataTypes, ulEnumerations, ulAppConfig,
-  ulTreeView, ulCommonUtils, GraphicMenu;
+  ulTreeView, ulCommonUtils, GraphicMenu, ulSysUtils;
 
 {$R *.dfm}
 
@@ -268,23 +268,6 @@ begin
     else
       ShowMessage(Format(msgErrRun, [StringReplace((Sender as TASMenuItem).Caption, '&', '', [])]),True);
   end;
-end;
-
-procedure TClassicMenu.EjectDialog(Sender: TObject);
-var
-  WindowsPath : string;
-begin
-  //Call "Safe Remove hardware" Dialog
-  WindowsPath := GetEnvironmentVariable('WinDir');
-  if FileExists(PChar(WindowsPath + '\System32\Rundll32.exe')) then
-  begin
-    ShellExecute(0,'open',
-                 PChar(WindowsPath + '\System32\Rundll32.exe'),
-                 PChar('Shell32,Control_RunDLL hotplug.dll'),
-                 PChar(WindowsPath + '\System32'),SW_SHOWNORMAL);
-  end;
-  //Close ASuite
-  frmMain.miExitClick(Sender);
 end;
 
 procedure TClassicMenu.GetItemsIcons(Sender: TObject);
@@ -584,6 +567,11 @@ begin
     end else
       ACanvas.Pixels[I, ATop] := AColor;
   end;
+end;
+
+procedure TClassicMenu.EjectDialog(Sender: TObject);
+begin
+  ulSysUtils.EjectDialog(Sender);
 end;
 
 procedure TClassicMenu.CreateSeparator(Menu: TPopupMenu;Text: String;ListMenuItem: TMenuItem = nil);

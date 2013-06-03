@@ -56,13 +56,14 @@ procedure SetASuiteAtWindowsStartup;
 procedure DeleteASuiteAtWindowsStartup;
 
 { Misc }
+procedure EjectDialog(Sender: TObject);
 function ExtractDirectoryName(const Filename: string): string;
 function GetCorrectWorkingDir(Default: string): string;
 
 implementation
 
 uses
-  ulStringUtils;
+  ulStringUtils, Main;
 
 function BrowseCallbackProc(hwnd: HWND; uMsg: UINT; lParam, lpData: LPARAM): Integer; stdcall;
 begin
@@ -310,6 +311,23 @@ begin
     Result := APath;
 end;
 
+procedure EjectDialog(Sender: TObject);
+var
+  WindowsPath : string;
+begin
+  //Call "Safe Remove hardware" Dialog
+  WindowsPath := GetEnvironmentVariable('WinDir');
+  if FileExists(PChar(WindowsPath + '\System32\Rundll32.exe')) then
+  begin
+    ShellExecute(0,'open',
+                 PChar(WindowsPath + '\System32\Rundll32.exe'),
+                 PChar('Shell32,Control_RunDLL hotplug.dll'),
+                 PChar(WindowsPath + '\System32'),SW_SHOWNORMAL);
+  end;
+  //Close ASuite
+  frmMain.miExitClick(Sender);
+end;
+
 function ExtractDirectoryName(const Filename: string): string;
 var
   AList : TStringList;
@@ -370,6 +388,5 @@ begin
   if SysUtils.DirectoryExists(sPath) then
     Result := sPath;
 end;
-
 
 end.
