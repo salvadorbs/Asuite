@@ -77,7 +77,7 @@ implementation
 
 uses
   Menus, PropertyFile, PropertyCat, ulSysUtils, udImages, PropertySeparator,
-  Main, ulDatabase, ulAppConfig;
+  Main, ulDatabase, ulAppConfig, ulFileFolder;
 
 function AddNode(Sender: TBaseVirtualTree;AType: TvTreeDataType): PBaseData;
 var
@@ -130,7 +130,7 @@ begin
     begin
       //Folder
       TvCustomRealNodeData(NodeData.Data).PathIcon := AbsoluteToRelative(SUITE_ICONS_PATH + FILEICON_Folder);
-      FolderPath             := BrowseForFolder('',SUITE_WORKING_PATH);
+      FolderPath := BrowseForFolder('',SUITE_WORKING_PATH);
       if FolderPath <> '' then
       begin
         tempName := ExtractDirectoryName(FolderPath + PathDelim);

@@ -95,7 +95,7 @@ implementation
 
 uses
   AppConfig, ulEnumerations, udImages, ulSysUtils, OrderSoftware, Main,
-  ulCommonUtils;
+  ulCommonUtils, ulFileFolder;
 
 class function TfrmPropertyFile.Edit(AOwner: TComponent; NodeData: PBaseData): TModalResult;
 begin

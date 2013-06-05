@@ -227,6 +227,7 @@
             <Form>frmNotification</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="library\ulFileFolder.pas"/>
         <None Include="ASuite.inc"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>

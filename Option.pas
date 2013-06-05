@@ -152,7 +152,7 @@ implementation
 
 uses
   ClearElements, AppConfig, ulSysUtils, ulAppConfig, udClassicMenu, ulTreeView,
-  Main, OrderSoftware, gnugettext;
+  Main, OrderSoftware, gnugettext, ulFileFolder;
 
 {$R *.dfm}
 

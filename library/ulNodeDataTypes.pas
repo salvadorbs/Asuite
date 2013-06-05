@@ -253,7 +253,7 @@ function CreateNodeData(AType: TvTreeDataType): TvBaseNodeData;
 implementation
 
 uses
-  ulSysUtils, ulTreeView, ulExeUtils, ulCommonUtils, ulAppConfig;
+  ulSysUtils, ulTreeView, ulExeUtils, ulCommonUtils, ulAppConfig, ulFileFolder;
 
 function CreateNodeData(AType: TvTreeDataType): TvBaseNodeData;
 begin
