@@ -65,6 +65,7 @@ type
     Fdsk_shortcut     : Boolean;
     Ficon             : RawUTF8;
     Fcacheicon_id     : Integer;
+    Fcachelargeicon_id : Integer;
     Fonlaunch         : Byte;
     Fwindow_state     : Integer;
     Fautorun          : Byte;
@@ -91,6 +92,7 @@ type
     property dsk_shortcut: Boolean read Fdsk_shortcut write Fdsk_shortcut;
     property icon_path: RawUTF8 read Ficon write Ficon;
     property cacheicon_id: Integer read Fcacheicon_id write Fcacheicon_id;
+    property cachelargeicon_id: Integer read Fcachelargeicon_id write Fcachelargeicon_id;
     property onlaunch: Byte read Fonlaunch write Fonlaunch;
     property window_state: Integer read Fwindow_state write Fwindow_state;
     property autorun: Byte read Fautorun write Fautorun;
@@ -385,6 +387,7 @@ begin
       with TvCustomRealNodeData(AData) do
       begin
         SQLFilesData.cacheicon_id := CacheID;
+        SQLFilesData.cachelargeicon_id := CacheLargeID;
         SQLFilesData.icon_path    := StringToUTF8(PathIcon);
         SQLFilesData.clicks       := ClickCount;
         SQLFilesData.window_state := WindowState;
@@ -429,12 +432,11 @@ begin
     //Create special list
     MRUList := TMRUList.Create;
     MFUList := TMFUList.Create;
-    //Create folder cache, if it doesn't exist
-    if (not DirectoryExists(SUITE_CACHE_PATH)) then
-      CreateDir(SUITE_CACHE_PATH);
-    //Create folder backup, if it doesn't exist
-    if not (DirectoryExists(SUITE_BACKUP_PATH)) then
-      CreateDir(SUITE_BACKUP_PATH);
+
+    //Create cache and backup folders
+    CreateCacheFolders;
+    CreateBackupFolder;
+
     //Load list
     InternalLoadListItems(Tree, 0, nil, false);
   except
@@ -465,7 +467,10 @@ begin
         Tree.CheckType[Node] := ctTriStateCheckBox
       else
         if (nType <> vtdtSeparator) then
+        begin
           TvCustomRealNodeData(vData).CacheID := SQLFilesData.cacheicon_id;
+          TvCustomRealNodeData(vData).CacheLargeID := SQLFilesData.cacheLargeicon_id;
+        end;
       // generic fields
       vData.Name          := UTF8ToString(SQLFilesData.title);
       vData.id            := SQLFilesData.ID;
@@ -845,6 +850,7 @@ begin
         with TvCustomRealNodeData(AData) do
         begin
           SQLFilesData.cacheicon_id := CacheID;
+          SQLFilesData.cachelargeicon_id := CacheLargeID;
           SQLFilesData.icon_path    := StringToUTF8(PathIcon);
           SQLFilesData.clicks       := ClickCount;
           SQLFilesData.window_state := WindowState;

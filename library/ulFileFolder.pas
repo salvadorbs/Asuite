@@ -13,6 +13,11 @@ function  BrowseForFolder(const Caption, InitialDir: String): String;
 procedure DeleteFiles(PathDir, FileName: String);
 procedure DeleteOldBackups(MaxNumber: Integer);
 
+{ Folders }                 
+procedure CreateBackupFolder;
+procedure CreateCacheFolders;  
+procedure RemoveCacheFolders;
+
 { Desktop shortcut }
 procedure CreateShortcutOnDesktop(FileName: String;TargetFilePath, Params, WorkingDir: String);
 procedure DeleteShortcutOnDesktop(FileName: String);
@@ -70,6 +75,37 @@ begin
   for I := 1 to BackupList.Count - MaxNumber do
     DeleteFile(SUITE_BACKUP_PATH + BackupList[I - 1]);
   BackupList.Free;
+end; 
+
+procedure CreateBackupFolder;
+begin
+  //Create folder backup, if it doesn't exist
+  if not (SysUtils.DirectoryExists(SUITE_BACKUP_PATH)) then
+    CreateDir(SUITE_BACKUP_PATH);
+end;         
+
+procedure CreateCacheFolders; 
+begin  
+  //Create folder cache, if it doesn't exist
+  if (not SysUtils.DirectoryExists(SUITE_CACHE_PATH)) then
+    CreateDir(SUITE_CACHE_PATH);
+  if (not SysUtils.DirectoryExists(SUITE_CACHELARGE_PATH)) then
+    CreateDir(SUITE_CACHELARGE_PATH);
+end;
+
+procedure RemoveCacheFolders;
+begin
+  //Delete all file icon-cache and folder cache
+  if (SysUtils.DirectoryExists(SUITE_CACHE_PATH)) then
+  begin
+    if (SysUtils.DirectoryExists(SUITE_CACHELARGE_PATH)) then
+    begin
+      DeleteFiles(SUITE_CACHELARGE_PATH,'*.*');
+      RemoveDir(SUITE_CACHELARGE_PATH);
+    end;
+    DeleteFiles(SUITE_CACHE_PATH,'*.*');
+    RemoveDir(SUITE_CACHE_PATH);
+  end;
 end;
 
 procedure CreateShortcutOnDesktop(FileName: String;TargetFilePath, Params, WorkingDir: String);

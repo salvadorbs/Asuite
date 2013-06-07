@@ -457,20 +457,11 @@ end;
 procedure TConfiguration.SetCache(value: Boolean);
 begin
   FCache := value;
+  //If disabled, delete all file icon-cache and folders cache
   if Not(FCache) then
-  begin
-    //Delete all file icon-cache and folder cache
-    if (DirectoryExists(SUITE_CACHE_PATH)) then
-    begin
-      DeleteFiles(SUITE_CACHE_PATH,'*.*');
-      RemoveDir(SUITE_CACHE_PATH);
-    end;
-  end
-  else begin
-    //Create folder cache, if it doesn't exist
-    if (not DirectoryExists(SUITE_CACHE_PATH)) then
-      CreateDir(SUITE_CACHE_PATH);
-  end;
+    RemoveCacheFolders
+  else //Else create folders cache
+    CreateCacheFolders;
 end;
 
 procedure TConfiguration.SetGraphicMenuTheme(value: string);
