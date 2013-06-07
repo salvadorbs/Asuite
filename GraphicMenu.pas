@@ -24,7 +24,7 @@ interface
 uses
   Windows, Classes, Forms, StdCtrls, Buttons, ExtCtrls, ComCtrls, Messages,
 	ShellAPI, Controls, Graphics, Dialogs, SysUtils, VirtualTrees, AppEvnts,
-  Vcl.Imaging.pngimage, cySkinButton, IniFiles;
+  Vcl.Imaging.pngimage, cySkinButton, IniFiles, ulCommonClasses;
 
 type
   TGraphicMenuElement = (
@@ -52,7 +52,7 @@ type
       bsClicked
   );
   //Workaround for TPageControl without borders
-  TPageControl = class(Vcl.ComCtrls.TPageControl)
+  TPageControl = class(ComCtrls.TPageControl)
   private
     procedure TCMAdjustRect(var Msg: TMessage); message $1300 + 40; //TCM_ADJUSTRECT
   end;
@@ -98,10 +98,9 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure OpenRightButton(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure vstListGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
+    procedure vstGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
-    procedure vstListDblClick(Sender: TObject);
-    procedure vstListGetImageIndex(Sender: TBaseVirtualTree; Node: PVirtualNode;
+    procedure vstGetBigImageIndex(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Kind: TVTImageKind; Column: TColumnIndex; var Ghosted: Boolean;
       var ImageIndex: Integer);
     procedure vstListExpanding(Sender: TBaseVirtualTree; Node: PVirtualNode;
@@ -113,9 +112,16 @@ type
     procedure sknbtnExitClick(Sender: TObject);
     procedure ApplicationEvents1Message(var Msg: tagMSG; var Handled: Boolean);
     procedure tmrWatchFocusTimer(Sender: TObject);
-    procedure vstListKeyPress(Sender: TObject; var Key: Char);
-    procedure vstListMouseMove(Sender: TObject; Shift: TShiftState; X,
+    procedure vstKeyPress(Sender: TObject; var Key: Char);
+    procedure vstMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
+    procedure vstInitNode(Sender: TBaseVirtualTree; ParentNode,
+      Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+    procedure vstGetImageIndex(Sender: TBaseVirtualTree; Node: PVirtualNode;
+      Kind: TVTImageKind; Column: TColumnIndex; var Ghosted: Boolean;
+      var ImageIndex: Integer);
+    procedure vstNodeClick(Sender: TBaseVirtualTree;
+      const HitInfo: THitInfo);
 	private    
     { Private declarations }
     FOpening   : Boolean;
@@ -137,6 +143,7 @@ type
       ButtonType: TGraphicMenuElement);
     procedure PopulateMenuTree(Sender: TBaseVirtualTree; Node: PVirtualNode;
                                Data: Pointer; var Abort: Boolean);
+    procedure PopulateSpecialTree(Tree: TBaseVirtualTree;SList: TNodeDataList;MaxItems: Integer);
 	public
     { Public declarations }
     procedure OpenMenu;
@@ -445,8 +452,10 @@ begin
   vstList.Clear;
   vstRecents.Clear;
   vstMostUsed.Clear;
-  //Refresh Menu
+  //Refresh VirtualTrees
   frmMain.vstList.IterateSubtree(nil, PopulateMenuTree, nil, [], False);
+  PopulateSpecialTree(vstRecents,MRUList,Config.MRUNumber);
+  PopulateSpecialTree(vstMostUsed,MFUList,Config.MFUNumber);
 end;
 
 function TfrmGraphicMenu.GetButtonCaption(IniFile: TIniFile;ButtonType: TGraphicMenuElement): string;
@@ -597,6 +606,38 @@ begin
   end;
 end;
 
+procedure TfrmGraphicMenu.PopulateSpecialTree(Tree: TBaseVirtualTree;
+  SList: TNodeDataList; MaxItems: Integer);
+var
+  NewNodeData : PTreeDataX;
+  NewNode     : PVirtualNode;
+  I, ItemCount : Integer;
+begin
+  //Set limit based on MaxItems or SList.Count
+  if MaxItems < SList.Count then
+    ItemCount := MaxItems
+  else
+    ItemCount := SList.Count;
+  for I := 0 to ItemCount - 1 do
+  begin
+    if Assigned(SList[I]) then
+    begin
+      //Create MenuItem
+      if Assigned(SList[I]) then
+      begin
+        NewNode     := Tree.AddChild(nil);
+        NewNodeData := Tree.GetNodeData(NewNode);
+        //References
+        NewNodeData.pNodeList := TvCustomRealNodeData(SList[I]).pNode;
+        NewNodeData.pNodeX    := NewNode;
+      end
+      else
+        SList.Delete(I);
+    end;
+  end;
+  ImagesDM.GetChildNodesIcons(frmMain.vstList, Tree, Tree.RootNode, False, False);
+end;
+
 procedure TfrmGraphicMenu.sknbtnEjectClick(Sender: TObject);
 begin
   EjectDialog(Sender);
@@ -614,7 +655,7 @@ end;
 
 procedure TfrmGraphicMenu.sknbtnMFUClick(Sender: TObject);
 begin
-  pgcTreeViews.ActivePageIndex := 3;
+  pgcTreeViews.ActivePageIndex := 2;
 end;
 
 procedure TfrmGraphicMenu.sknbtnRecentsClick(Sender: TObject);
@@ -628,8 +669,8 @@ begin
   FOpening := True;
   tmrFader.Enabled:= True;
   //Show frmMenu
-  Show;
-  SetForegroundWindow(Handle);
+  Self.Show;
+  SetForegroundWindow(Self.Handle);
   if Not(IsWindowVisible(frmMain.Handle)) then
     ShowWindow(Application.Handle, SW_HIDE);
 end;
@@ -663,11 +704,6 @@ begin
     CloseMenu;
 end;
 
-procedure TfrmGraphicMenu.vstListDblClick(Sender: TObject);
-begin
-  frmMain.RunDoubleClick(Sender);
-end;
-
 procedure TfrmGraphicMenu.vstListExpanding(Sender: TBaseVirtualTree;
   Node: PVirtualNode; var Allowed: Boolean);
 var
@@ -678,7 +714,20 @@ begin
     ImagesDM.GetChildNodesIcons(frmMain.vstList, Sender, Node);
 end;
 
-procedure TfrmGraphicMenu.vstListGetImageIndex(Sender: TBaseVirtualTree;
+procedure TfrmGraphicMenu.vstNodeClick(Sender: TBaseVirtualTree;
+  const HitInfo: THitInfo);
+var
+  NodeData : PBaseData;
+begin
+  NodeData := GetNodeDataSearch(HitInfo.HitNode,vstList,frmMain.vstList);
+  if NodeData.Data.DataType = vtdtCategory then
+    Sender.Expanded[HitInfo.HitNode] := Not(Sender.Expanded[HitInfo.HitNode])
+  else
+    if NodeData.Data.DataType = vtdtFile then
+      frmMain.RunDoubleClick(Sender);
+end;
+
+procedure TfrmGraphicMenu.vstGetImageIndex(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
   var Ghosted: Boolean; var ImageIndex: Integer);
 var
@@ -688,7 +737,17 @@ begin
   ImageIndex := NodeData.ImageIndex;
 end;
 
-procedure TfrmGraphicMenu.vstListGetText(Sender: TBaseVirtualTree;
+procedure TfrmGraphicMenu.vstGetBigImageIndex(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
+  var Ghosted: Boolean; var ImageIndex: Integer);
+var
+  NodeData : TvBaseNodeData;
+begin
+  NodeData   := GetNodeDataSearch(Node,vstList,frmMain.vstList).Data;
+  ImageIndex := NodeData.ImageLargeIndex;
+end;
+
+procedure TfrmGraphicMenu.vstGetText(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
   var CellText: string);
 var
@@ -714,39 +773,39 @@ begin
   end;
 end;
 
-procedure TfrmGraphicMenu.vstListKeyPress(Sender: TObject; var Key: Char);
+procedure TfrmGraphicMenu.vstKeyPress(Sender: TObject; var Key: Char);
 begin
   frmMain.vstListKeyPress(Sender, Key);
 end;
 
-procedure TfrmGraphicMenu.vstListMouseMove(Sender: TObject; Shift: TShiftState;
+procedure TfrmGraphicMenu.vstMouseMove(Sender: TObject; Shift: TShiftState;
   X, Y: Integer);
 var
   Node : PVirtualNode;
 begin
-  FocusControl(Sender as TBaseVirtualTree);
-  with (Sender as TBaseVirtualTree) do
+  if (Sender is TBaseVirtualTree) then
   begin
-    Node := GetNodeAt(X,Y);
-    if Assigned(Node) then
+    FocusControl(Sender as TBaseVirtualTree);
+    with (Sender as TBaseVirtualTree) do
     begin
-      Selected[Node] := True;
-      FocusedNode    := Node;
-    end
-    else begin
-      Selected[FocusedNode] := False;
-      FocusedNode    := nil;
+      Node := GetNodeAt(X,Y);
+      if Assigned(Node) then
+      begin
+        Selected[Node] := True;
+        FocusedNode    := Node;
+      end
+      else begin
+        Selected[FocusedNode] := False;
+        FocusedNode    := nil;
+      end;
     end;
   end;
-  if (Sender = vstRecents) then
-  begin
-    vstList.Selected[vstList.FocusedNode] := False;
-    vstList.FocusedNode := nil;
-  end
-  else begin
-    vstRecents.Selected[vstRecents.FocusedNode] := False;
-    vstRecents.FocusedNode := nil;
-  end;
+end;
+
+procedure TfrmGraphicMenu.vstInitNode(Sender: TBaseVirtualTree;
+  ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+begin
+  Node.NodeHeight := 36;
 end;
 
 { TPageControl }

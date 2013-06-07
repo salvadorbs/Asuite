@@ -282,7 +282,7 @@ object frmGraphicMenu: TfrmGraphicMenu
     Margins.Top = 0
     Margins.Right = 0
     Margins.Bottom = 0
-    ActivePage = tsList
+    ActivePage = tsMRU
     Style = tsFlatButtons
     TabOrder = 1
     object tsList: TTabSheet
@@ -311,12 +311,12 @@ object frmGraphicMenu: TfrmGraphicMenu
         TabOrder = 0
         TreeOptions.PaintOptions = [toHideFocusRect, toShowBackground, toShowDropmark, toShowTreeLines, toThemeAware, toUseBlendedImages]
         TreeOptions.SelectionOptions = [toDisableDrawSelection, toFullRowSelect]
-        OnDblClick = vstListDblClick
         OnExpanding = vstListExpanding
-        OnGetText = vstListGetText
-        OnGetImageIndex = vstListGetImageIndex
-        OnKeyPress = vstListKeyPress
-        OnMouseMove = vstListMouseMove
+        OnGetText = vstGetText
+        OnGetImageIndex = vstGetImageIndex
+        OnKeyPress = vstKeyPress
+        OnMouseMove = vstMouseMove
+        OnNodeClick = vstNodeClick
         Columns = <>
       end
     end
@@ -340,13 +340,19 @@ object frmGraphicMenu: TfrmGraphicMenu
         Header.MainColumn = -1
         Header.Options = [hoColumnResize, hoDrag]
         HintMode = hmHint
-        Images = ImagesDM.IcoImages
+        Images = ImagesDM.LargeIcoImages
         ParentShowHint = False
         ScrollBarOptions.ScrollBars = ssNone
         ShowHint = True
         TabOrder = 0
         TreeOptions.PaintOptions = [toHideFocusRect, toShowBackground, toShowDropmark, toShowTreeLines, toThemeAware, toUseBlendedImages]
         TreeOptions.SelectionOptions = [toDisableDrawSelection, toFullRowSelect]
+        OnGetText = vstGetText
+        OnGetImageIndex = vstGetBigImageIndex
+        OnInitNode = vstInitNode
+        OnKeyPress = vstKeyPress
+        OnMouseMove = vstMouseMove
+        OnNodeClick = vstNodeClick
         Columns = <>
       end
     end
@@ -370,13 +376,19 @@ object frmGraphicMenu: TfrmGraphicMenu
         Header.MainColumn = -1
         Header.Options = [hoColumnResize, hoDrag]
         HintMode = hmHint
-        Images = ImagesDM.IcoImages
+        Images = ImagesDM.LargeIcoImages
         ParentShowHint = False
         ScrollBarOptions.ScrollBars = ssNone
         ShowHint = True
         TabOrder = 0
         TreeOptions.PaintOptions = [toHideFocusRect, toShowBackground, toShowDropmark, toShowTreeLines, toThemeAware, toUseBlendedImages]
         TreeOptions.SelectionOptions = [toDisableDrawSelection, toFullRowSelect]
+        OnGetText = vstGetText
+        OnGetImageIndex = vstGetBigImageIndex
+        OnInitNode = vstInitNode
+        OnKeyPress = vstKeyPress
+        OnMouseMove = vstMouseMove
+        OnNodeClick = vstNodeClick
         Columns = <>
       end
     end
