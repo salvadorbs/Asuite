@@ -167,6 +167,7 @@ type
     procedure tmSchedulerTimer(Sender: TObject);
     procedure vstListEditing(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex; var Allowed: Boolean);
+    procedure FormActivate(Sender: TObject);
   private
     { Private declarations }
     function  GetActiveTree: TBaseVirtualTree;
@@ -190,7 +191,7 @@ implementation
 uses
   Option, PropertyFile, PropertyCat, About, ulCommonUtils, udClassicMenu,
   PropertySeparator, ulExeUtils, ImportList, Stats, ulAppConfig, ulTreeView,
-  ulDatabase, notifications;
+  ulDatabase, notifications, GraphicMenu;
 
 {$R *.dfm}
 
@@ -1028,6 +1029,12 @@ begin
     CopyFile(PChar(DBManager.DBFileName),PChar(SaveDialog1.FileName),false)
   end;
   SetCurrentDir(SUITE_WORKING_PATH);
+end;
+
+procedure TfrmMain.FormActivate(Sender: TObject);
+begin
+  if IsFormOpen('frmGraphicMenu') then
+    frmGraphicMenu.CloseMenu;
 end;
 
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);

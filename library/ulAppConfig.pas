@@ -76,6 +76,7 @@ type
     FUseClassicMenu     : Boolean;
     FGraphicMenuTheme   : string;
     FGraphicMenuFade    : Boolean;
+    FGraphicMenuPersonalPicture: string;
     //HotKeys
     FWindowHotKey       : Boolean;
     FWindowHotKeyCode   : Integer;
@@ -159,8 +160,10 @@ type
     property ActionClickLeft: Integer read FActionClickLeft write FActionClickLeft;
     property ActionClickRight: Integer read FActionClickRight write FActionClickRight;
     property UseClassicMenu: Boolean read FUseClassicMenu write FUseClassicMenu;
+    //Graphic Menu
     property GraphicMenuTheme: string read FGraphicMenuTheme write SetGraphicMenuTheme;
     property GraphicMenuFade: Boolean read FGraphicMenuFade write FGraphicMenuFade;
+    property GraphicMenuPersonalPicture: string read FGraphicMenuPersonalPicture write FGraphicMenuPersonalPicture;
     //Hot Keys
     property WindowHotKey: Boolean read FWindowHotKey write FWindowHotKey;
     property WindowHotKeyCode: Integer read FWindowHotKeyCode write FWindowHotKeyCode;

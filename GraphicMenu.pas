@@ -92,6 +92,7 @@ type
     tsMFU: TTabSheet;
     vstMostUsed: TVirtualStringTree;
     vstRecents: TVirtualStringTree;
+    imgDriveBackground: TImage;
     procedure FormCreate(Sender: TObject);
     procedure tmrFaderTimer(Sender: TObject);
     procedure imgLogoMouseDown(Sender: TObject; Button: TMouseButton;
@@ -122,11 +123,12 @@ type
       var ImageIndex: Integer);
     procedure vstNodeClick(Sender: TBaseVirtualTree;
       const HitInfo: THitInfo);
+    procedure imgPersonalPictureClick(Sender: TObject);
 	private    
     { Private declarations }
     FOpening   : Boolean;
     FThemePath : string;
-    procedure CopyImageInVst(Source:TImage;DestVST:TVirtualStringTree;Page: TPageControl);
+    procedure CopyImageInVst(Source:TImage;Page: TPageControl);
     procedure DrawButton(IniFile: TIniFile;Button: TcySkinButton;
                          ButtonType: TGraphicMenuElement);
     procedure DrawIconInPNGImage(IniFile: TIniFile;PNGImage: TPngImage;
@@ -144,6 +146,7 @@ type
     procedure PopulateMenuTree(Sender: TBaseVirtualTree; Node: PVirtualNode;
                                Data: Pointer; var Abort: Boolean);
     procedure PopulateSpecialTree(Tree: TBaseVirtualTree;SList: TNodeDataList;MaxItems: Integer);
+    procedure DrawHardDiskSpace(IniFile: TIniFile; DriveBackGround, DriveSpace: TImage);
 	public
     { Public declarations }
     procedure OpenMenu;
@@ -159,6 +162,7 @@ const
   INIFILE_SECTION_INFO         = 'info';
   INIFILE_SECTION_GENERAL      = 'general';
   INIFILE_SECTION_RIGHTBUTTONS = 'rightbuttons';
+  INIFILE_SECTION_HARDDISK     = 'harddisk';
   INIFILE_SECTION_SEARCH       = 'search';
   INIFILE_SECTION_LIST         = 'list';
   INIFILE_SECTION_RECENTS      = 'recent';
@@ -177,6 +181,8 @@ const
   INIFILE_KEY_IMAGECLICKED = 'image_clicked';
   INIFILE_KEY_IMAGEBACKGROUND = 'image_background';
   INIFILE_KEY_IMAGELOGO    = 'image_logo';
+  INIFILE_KEY_IMAGESPACE   = 'image_space';
+  INIFILE_KEY_IMAGESEPARATOR = 'image_separator';
   //Fonts
   INIFILE_KEY_FONTNORMAL   = 'font_normal';
   INIFILE_KEY_FONTHOVER    = 'font_hover';
@@ -232,6 +238,19 @@ begin
   tmrFader.Enabled:= True;
 end;
 
+procedure TfrmGraphicMenu.DrawHardDiskSpace(IniFile: TIniFile; DriveBackGround, DriveSpace: TImage);
+var
+  HDPath, HDSpacePath: string;
+begin
+  //Hard Disk Space
+  HDPath := FThemePath + IniFile.ReadString(INIFILE_SECTION_HARDDISK, INIFILE_KEY_IMAGEBACKGROUND, '');
+  HDSpacePath := FThemePath + IniFile.ReadString(INIFILE_SECTION_HARDDISK, INIFILE_KEY_IMAGESPACE, '');
+  if FileExists(HDPath) then
+    DriveBackGround.Picture.LoadFromFile(HDPath);
+  if FileExists(HDSpacePath) then
+    DriveSpace.Picture.LoadFromFile(HDSpacePath);
+end;
+
 procedure TfrmGraphicMenu.OpenFolder(FolderPath: string);
 var
   ErrorCode: Integer;
@@ -241,7 +260,7 @@ begin
     ShowMessageFmt(msgErrGeneric, ['', SysErrorMessage(ErrorCode)]);
 end;
 
-procedure TfrmGraphicMenu.CopyImageInVst(Source: TImage;DestVST: TVirtualStringTree;Page: TPageControl);
+procedure TfrmGraphicMenu.CopyImageInVst(Source: TImage;Page: TPageControl);
 var
   RectSource, RectDest : TRect;
   bmpTempImage, bmpTempBG : TBitmap;
@@ -266,8 +285,10 @@ begin
     bmpTempBG.Height := Source.Picture.Height;
     bmpTempBG.Canvas.Draw(0, 0, Source.Picture.Graphic);
     bmpTempImage.canvas.CopyRect(RectDest, bmpTempBG.Canvas, RectSource);
-    DestVST.Background.Bitmap := bmpTempImage;
-    DestVST.Background.Bitmap.Transparent := True;
+    //Change vst's bitmapList
+    vstList.Background.Bitmap     := bmpTempImage;
+    vstRecents.Background.Bitmap  := bmpTempImage;
+    vstMostUsed.Background.Bitmap := bmpTempImage;
   finally
     bmpTempImage.Free;
     bmpTempBG.Free;
@@ -393,8 +414,9 @@ end;
 
 procedure TfrmGraphicMenu.FormCreate(Sender: TObject);
 var
-  IniFile: TIniFile;
-  BackgroundPath, LogoPath, IconPath: string;
+  IniFile : TIniFile;
+  HDFont  : TFont;
+  BackgroundPath, SeparatorPath, LogoPath, IconPath: string;
 begin
   //NodeDataSize
   vstList.NodeDataSize     := SizeOf(TTreeDataX);
@@ -413,6 +435,10 @@ begin
     LogoPath := FThemePath + IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGELOGO, '');
     if FileExists(LogoPath) then
       imgLogo.Picture.LoadFromFile(LogoPath);
+    //Separator
+    SeparatorPath := FThemePath + IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGESEPARATOR, '');
+    imgDivider1.Picture.LoadFromFile(SeparatorPath);
+    imgDivider2.Picture.LoadFromFile(SeparatorPath);
     //Tabs
     DrawButton(IniFile,sknbtnList,gmbList);
     DrawButton(IniFile,sknbtnRecents,gmbMRU);
@@ -433,19 +459,28 @@ begin
     IconPath := FThemePath + IniFile.ReadString(INIFILE_SECTION_SEARCH, INIFILE_KEY_ICON, '');
     if FileExists(IconPath) then
       btnSearch.RightButton.ImageIndex := ImagesDM.GetSimpleIconIndex(IconPath);
+    //Hard Disk
+    DrawHardDiskSpace(IniFile,imgDriveBackground,imgDriveSpace);
+    lblDriveName.Caption := UpperCase(ExtractFileDrive(SUITE_WORKING_PATH));
+    HDFont := StrToFont(IniFile.ReadString(INIFILE_SECTION_HARDDISK, INIFILE_KEY_FONT, ''));
+    lblDriveName.Font.Assign(HDFont);
+    lblDriveSpace.Font.Assign(HDFont);
   finally
     IniFile.Free;
+    HDFont.Free;
   end;
   //Workaround for vst trasparent
-  CopyImageInVst(imgBackground,vstList,pgcTreeViews);
-  CopyImageInVst(imgBackground,vstRecents,pgcTreeViews);
-  CopyImageInVst(imgBackground,vstMostUsed,pgcTreeViews);
+  CopyImageInVst(imgBackground,pgcTreeViews);
   //Position
   Top  := Screen.WorkAreaRect.Bottom - Height;
   Left := Screen.WorkAreaRect.Right - Width;
 end;
 
 procedure TfrmGraphicMenu.FormShow(Sender: TObject);
+var
+  Drive        : Char;
+  dblDriveSize : Double;
+  dblDriveUsed : Double;
 begin
   pgcTreeViews.ActivePageIndex := 0;
   //Clear virtualtrees
@@ -456,6 +491,12 @@ begin
   frmMain.vstList.IterateSubtree(nil, PopulateMenuTree, nil, [], False);
   PopulateSpecialTree(vstRecents,MRUList,Config.MRUNumber);
   PopulateSpecialTree(vstMostUsed,MFUList,Config.MFUNumber);
+  //Calculate and display the drive size
+  Drive := ExtractFileDrive(SUITE_WORKING_PATH)[1];
+  dblDriveSize := DiskSize(Ord(Drive) - 64);
+  dblDriveUsed := dblDriveSize - DiskFree(Ord(Drive) - 64);
+  imgDriveSpace.Width   := Round(dblDriveUsed/dblDriveSize * 131);
+  lblDriveSpace.Caption := Format(msgGMHardDiskSpace,[DiskFreeString(Drive, True),DiskSizeString(Drive, True)])
 end;
 
 function TfrmGraphicMenu.GetButtonCaption(IniFile: TIniFile;ButtonType: TGraphicMenuElement): string;
@@ -537,6 +578,22 @@ begin
   end;
 end;
 
+procedure TfrmGraphicMenu.imgPersonalPictureClick(Sender: TObject);
+var
+  TempString : string;
+begin
+  TempString := '';
+  OpenDialog1.Filter     := 'Personal Picture [48x48] (*.jpg, *.png)|*.jpg;*.png';
+  OpenDialog1.InitialDir := ExtractFileDir(RelativeToAbsolute(Config.GraphicMenuPersonalPicture));
+  if OpenDialog1.Execute then
+  begin
+    TempString := OpenDialog1.FileName;
+		imgPersonalPicture.Picture.LoadFromFile(TempString);
+    Config.GraphicMenuPersonalPicture := AbsoluteToRelative(TempString);
+  end;
+  SetCurrentDir(SUITE_WORKING_PATH);
+end;
+
 function TfrmGraphicMenu.IsRightButton(ButtonType: TGraphicMenuElement): Boolean;
 begin
   Result := False;
@@ -549,6 +606,8 @@ procedure TfrmGraphicMenu.OpenRightButton(Sender: TObject);
 begin
   if (Sender is TcySkinButton) then
   begin
+    //Close Graphic Menu
+    frmGraphicMenu.CloseMenu;
     if (Sender = sknbtnASuite) then
     begin
       frmMain.ShowMainForm(Sender);

@@ -193,6 +193,7 @@ resourcestring
   msgGMPictures  = 'Pictures';
   msgGMVideos    = 'Videos';
   msgGMExplore   = 'Explore';
+  msgGMHardDiskSpace = '%s free of %s';
   //Errors
   msgErrEmptyName   = 'Application''s name field is empty';
   msgErrGeneric     = '%s error raised, with message: %s';

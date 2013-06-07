@@ -52,6 +52,7 @@ object frmMain: TfrmMain
     00008001000081FF000080010000800100008001000080010000FFFF0000}
   Menu = MainMenu
   OldCreateOrder = True
+  OnActivate = FormActivate
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -132,6 +133,10 @@ object frmMain: TfrmMain
     end
     object tbSearch: TTabSheet
       Caption = 'Search'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object sbtnSearch: TSpeedButton
         Left = 152
         Top = 0
