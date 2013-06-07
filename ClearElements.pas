@@ -96,22 +96,13 @@ end;
 procedure TfrmClearElements.ClearCache(Sender: TBaseVirtualTree; Node: PVirtualNode;
                             Data: Pointer; var Abort: Boolean);
 var
-  CurrentNodeData : PBaseData;
+  CurrentNodeData : TvCustomRealNodeData;
 begin
-  CurrentNodeData := PBaseData(Sender.GetNodeData(Node));
-  if CurrentNodeData.Data.DataType <> vtdtSeparator then
+  CurrentNodeData := TvCustomRealNodeData(PBaseData(Sender.GetNodeData(Node)).Data);
+  if CurrentNodeData.DataType <> vtdtSeparator then
   begin
-    with TvCustomRealNodeData(CurrentNodeData.Data) do
-    begin
-      if (CacheID <> -1) then
-      begin
-        if FileExists(PathCacheIcon) then
-          DeleteFile(PathCacheIcon);
-        CacheID    := -1;
-        ImageIndex := -1;
-        Changed    := True;
-      end;
-    end;
+    CurrentNodeData.CacheID      := -1;
+    CurrentNodeData.CacheLargeID := -1;
   end;
 end;
 

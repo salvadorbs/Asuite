@@ -42,6 +42,7 @@ const
 
   BACKUP_DIR    = 'backup\';
   CACHE_DIR     = 'cache\';
+  CACHELARGE_DIR = 'cache\large\';
   ICONS_DIR     = 'icons\';
   MENUTHEMES_DIR = 'menuthemes\';
 
@@ -118,6 +119,7 @@ var
   SUITE_PATH         : String;
   SUITE_WORKING_PATH : String;
   SUITE_CACHE_PATH   : String;
+  SUITE_CACHELARGE_PATH : String;
   SUITE_BACKUP_PATH  : String;
   SUITE_ICONS_PATH   : String;
   SUITE_MENUTHEMES_PATH : String;
@@ -219,6 +221,7 @@ initialization
     else SUITE_WORKING_PATH := SUITE_PATH;
   SUITE_WORKING_PATH        := LowerCase(SUITE_WORKING_PATH);
   SUITE_CACHE_PATH          := SUITE_WORKING_PATH + CACHE_DIR;
+  SUITE_CACHELARGE_PATH     := SUITE_WORKING_PATH + CACHELARGE_DIR;
   SUITE_BACKUP_PATH         := SUITE_WORKING_PATH + BACKUP_DIR;
   SUITE_ICONS_PATH          := SUITE_WORKING_PATH + ICONS_DIR;
   SUITE_MENUTHEMES_PATH     := SUITE_WORKING_PATH + MENUTHEMES_DIR;

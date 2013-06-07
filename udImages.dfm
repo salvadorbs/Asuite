@@ -9,4 +9,12 @@ object ImagesDM: TImagesDM
     Left = 36
     Top = 16
   end
+  object LargeIcoImages: TImageList
+    ColorDepth = cd32Bit
+    DrawingStyle = dsTransparent
+    Height = 32
+    Width = 32
+    Left = 108
+    Top = 16
+  end
 end

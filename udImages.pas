@@ -35,19 +35,21 @@ type
 
   TImagesDM = class(TDataModule)
     IcoImages: TImageList;
+    LargeIcoImages: TImageList;
     procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }
     function LoadASuiteIconFromFile(const IconName: String): Integer;
-    procedure SaveCacheIcon(Path: string; NodeData: TvCustomRealNodeData; ImageIndex: Integer);
-    procedure InternalGetChildNodesIcons(MainTree, SubTree: TBaseVirtualTree;Node: PVirtualNode);
+    procedure SaveCacheIcon(Path: string; NodeData: TvCustomRealNodeData;
+                            ImageIndex: Integer;SmallIcon: Boolean);
+    procedure InternalGetChildNodesIcons(MainTree, SubTree: TBaseVirtualTree;
+                                         Node: PVirtualNode;SmallIcon: Boolean = True);
   public
     { Public declarations }
-    function GetIconIndex(NodeData:TvCustomRealNodeData): Integer;
-    procedure DeleteCacheIcon(NodeData: TvCustomRealNodeData);
-    function GetSimpleIconIndex(xpath : string): integer;
+    function GetIconIndex(NodeData:TvCustomRealNodeData;SmallIcon: Boolean = True): Integer;
+    function GetSimpleIconIndex(xpath : string;SmallIcon: Boolean = True): integer;
     procedure GetChildNodesIcons(MainTree, SubTree: TBaseVirtualTree; Node: PVirtualNode;
-                                 UseThread: Boolean = True);
+                                 UseThread: Boolean = True; SmallIcon: Boolean = True);
   end;
 
   TGetNodeIconsThread = class(TThread)
@@ -56,9 +58,11 @@ type
     FMainTree: TBaseVirtualTree;
     FSubTree: TBaseVirtualTree;
     FNode: PVirtualNode;
+    FSmallIcon: Boolean;
   public
     { public declarations }
-    constructor Create(Suspended: Boolean;MainTree, SubTree: TBaseVirtualTree;Node: PVirtualNode);
+    constructor Create(Suspended: Boolean;MainTree, SubTree: TBaseVirtualTree;
+                       Node: PVirtualNode;SmallIcon: Boolean = True);
     Procedure Execute; override;
   end;
 
@@ -73,32 +77,42 @@ uses
 {$R *.dfm}
 
 procedure TImagesDM.GetChildNodesIcons(MainTree, SubTree: TBaseVirtualTree; Node: PVirtualNode;
-                                       UseThread: Boolean = True);
-var
-  GetNodeIconsThread: TGetNodeIconsThread;
+                                       UseThread: Boolean = True; SmallIcon: Boolean = True);
 begin
   if UseThread then
-    GetNodeIconsThread := TGetNodeIconsThread.Create(False, MainTree, SubTree, Node)
-  else
-    InternalGetChildNodesIcons(MainTree, SubTree, Node);
+    TGetNodeIconsThread.Create(False, MainTree, SubTree, Node, SmallIcon)
+  else begin
+    InternalGetChildNodesIcons(MainTree, SubTree, Node, SmallIcon);
+  end;
 end;
 
-function TImagesDM.GetIconIndex(NodeData:TvCustomRealNodeData): Integer;
+function TImagesDM.GetIconIndex(NodeData:TvCustomRealNodeData;SmallIcon: Boolean = True): Integer;
 var
   TempPath : String;
+  TempCacheID : Integer;
+  TempCachePath : string;
 begin
   Result := -1;
+  if SmallIcon then
+  begin
+    TempCacheID   := NodeData.CacheID;
+    TempCachePath := NodeData.PathCacheIcon;
+  end
+  else begin
+    TempCacheID   := NodeData.CacheLargeID;
+    TempCachePath := NodeData.PathCacheLargeIcon;
+  end;
   //Priority cache->icon->exe
   //Check cache icon
   if Config.ASuiteState <> asImporting then
   begin
-    if Not(FileExists(NodeData.PathCacheIcon)) and (NodeData.CacheID <> -1) then
-      NodeData.CacheID := -1;
-    if (Config.Cache) and FileExists(NodeData.PathCacheIcon) then
-        TempPath := NodeData.PathCacheIcon;
+    if Not(FileExists(TempCachePath)) and (TempCacheID <> -1) then
+      TempCacheID := -1;
+    if (Config.Cache) and FileExists(TempCachePath) then
+      TempPath := TempCachePath;
   end;
   //Icon
-  if NodeData.CacheID = -1 then
+  if TempCacheID = -1 then
   begin
     if FileExists(NodeData.PathAbsoluteIcon) then
       TempPath := NodeData.PathAbsoluteIcon
@@ -117,30 +131,35 @@ begin
   end;
   //Get image index
   if (TempPath <> '') and (Result <> IMAGE_INDEX_Cat) then
-    Result := GetSimpleIconIndex(TempPath);
+    Result := GetSimpleIconIndex(TempPath, SmallIcon);
   //Save icon cache
   if Config.ASuiteState <> asImporting then
-    SaveCacheIcon(TempPath, NodeData, Result);
+    SaveCacheIcon(TempPath, NodeData, Result, SmallIcon);
 end;
 
-procedure TImagesDM.DeleteCacheIcon(NodeData: TvCustomRealNodeData);
-begin
-  //Check Cache icon
-  if (Config.Cache) then
-  begin
-    if FileExists(NodeData.PathCacheIcon) then
-      DeleteFile(PWideChar(NodeData.PathCacheIcon));
-    NodeData.CacheID := -1;
-    NodeData.Changed := True;
-  end
-end;
-
-procedure TImagesDM.SaveCacheIcon(Path: string; NodeData: TvCustomRealNodeData; ImageIndex: Integer);
+procedure TImagesDM.SaveCacheIcon(Path: string; NodeData: TvCustomRealNodeData;
+                                  ImageIndex: Integer;SmallIcon: Boolean);
 var
   I    : Integer;
   Icon : TIcon;
+  TempCacheID   : Integer;
+  TempCachePath : string;
+  TempImageList : TImageList;
 begin
-  if (NodeData.CacheID = -1) and (Config.Cache) then
+  //SmallIcon
+  if SmallIcon then
+  begin
+    TempCacheID   := NodeData.CacheID;
+    TempCachePath := SUITE_CACHE_PATH;
+    TempImageList := IcoImages;
+  end //Else large icon
+  else begin
+    TempCacheID   := NodeData.CacheLargeID;
+    TempCachePath := SUITE_CACHELARGE_PATH;
+    TempImageList := LargeIcoImages;
+  end;
+
+  if (TempCacheID = -1) and (Config.Cache) then
   begin
     //Save file cache-icon
     if (FileExists(Path)) then
@@ -148,16 +167,16 @@ begin
       begin
         I := 0;
         //Get first ID slot free
-        while (FileExists(SUITE_CACHE_PATH + IntToStr(I) + EXT_ICO)) do
+        while (FileExists(TempCachePath + IntToStr(I) + EXT_ICO)) do
           Inc(I);
         //Save cache icon in disk
         Icon := TIcon.Create;
         try
-          IcoImages.GetIcon(ImageIndex, Icon);
+          TempImageList.GetIcon(ImageIndex, Icon);
           if Icon.HandleAllocated then
           begin
-            Icon.SaveToFile(SUITE_CACHE_PATH + IntToStr(I) + EXT_ICO);
-            NodeData.CacheID := I;
+            Icon.SaveToFile(TempCachePath + IntToStr(I) + EXT_ICO);
+            TempCacheID      := I;
             NodeData.Changed := True;
           end;
         finally
@@ -165,7 +184,24 @@ begin
         end;
       end
       else
-        NodeData.CacheID := -1;
+        TempCacheID := -1;
+    //If CacheID change, set property Changed to true
+    if SmallIcon then
+    begin
+      if TempCacheID <> NodeData.CacheID then
+        NodeData.Changed := True;
+    end
+    else
+      if TempCacheID <> NodeData.CacheLargeID then
+        NodeData.Changed := True;
+    //Save TempCacheID
+    if (TempCacheID <> -1) then
+    begin
+      if SmallIcon then
+        NodeData.CacheID := TempCacheID
+      else
+        NodeData.CacheLargeID := TempCacheID;
+    end;
   end;
 end;
 
@@ -181,15 +217,20 @@ begin
     ShowMessage(Format(msgErrNoIcon, [FileName]),true);
 end;
 
-function TImagesDM.GetSimpleIconIndex(xpath: string): integer;
+function TImagesDM.GetSimpleIconIndex(xpath: string;SmallIcon: Boolean = True): integer;
 var
   FileInfo : TSHFileInfo;
+  Flags: integer;
 begin
  //Get icon
   Result := -1;
-  if SHGetFileInfo(PChar(xpath), 0, FileInfo, SizeOf(TSHFileInfo),
-        SHGFI_SYSICONINDEX or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES) <> 0
-  then
+  //Small icon
+  if SmallIcon then
+    Flags := SHGFI_SYSICONINDEX or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES
+  else //Else large icon
+    Flags := SHGFI_SYSICONINDEX or SHGFI_LARGEICON or SHGFI_USEFILEATTRIBUTES;
+  //Get index
+  if SHGetFileInfo(PChar(xpath), 0, FileInfo, SizeOf(TSHFileInfo), Flags) <> 0 then
     Result := FileInfo.iIcon;
 end;
 
@@ -202,6 +243,9 @@ begin
   Flags := SHGFI_SYSICONINDEX or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES;
   IcoImages.Handle      := SHGetFileInfo('', 0, SFI, SizeOf(TSHFileInfo), Flags);
   IcoImages.ShareImages := True;
+  Flags := SHGFI_SYSICONINDEX or SHGFI_LARGEICON or SHGFI_USEFILEATTRIBUTES;
+  LargeIcoImages.Handle      := SHGetFileInfo('', 0, SFI, SizeOf(TSHFileInfo), Flags);
+  LargeIcoImages.ShareImages := True;
   //Menu icons
   IMAGE_INDEX_Help       := LoadASuiteIconFromFile(FILEICON_Help);
   IMAGE_INDEX_Options    := LoadASuiteIconFromFile(FILEICON_Options);
@@ -229,7 +273,7 @@ begin
 end;
 
 procedure TImagesDM.InternalGetChildNodesIcons(MainTree, SubTree: TBaseVirtualTree;
-  Node: PVirtualNode);
+  Node: PVirtualNode;SmallIcon: Boolean = True);
 var
   NodeData: TvBaseNodeData;
   ChildNode: PVirtualNode;
@@ -246,8 +290,18 @@ begin
     else
       NodeData := PBaseData(GetNodeDataSearch(ChildNode,SubTree,MainTree)).Data;
     //Get imageindex
-    if Assigned(NodeData) and (NodeData.ImageIndex = -1) and (NodeData.DataType <> vtdtSeparator) then
-      NodeData.ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(NodeData));
+    if Assigned(NodeData) and (NodeData.DataType <> vtdtSeparator) then
+    begin
+      if SmallIcon then
+      begin
+        if (NodeData.ImageIndex = -1) then
+          NodeData.ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(NodeData));
+      end
+      else begin
+        if (NodeData.ImageLargeIndex = -1) then
+          NodeData.ImageLargeIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(NodeData), False);
+      end;
+    end;
     //Repaint node
     if IsMainList then
       MainTree.InvalidateNode(ChildNode)
@@ -261,23 +315,27 @@ end;
 { TGetNodeIconsThread }
 
 constructor TGetNodeIconsThread.Create(Suspended: Boolean;MainTree, SubTree: TBaseVirtualTree;
-  Node: PVirtualNode);
+  Node: PVirtualNode;SmallIcon: Boolean = True);
 begin
   inherited Create(Suspended);
 
   //Set thread's variables
-  Self.FMainTree := MainTree;
-  Self.FSubTree  := SubTree;
-  Self.FNode     := Node;
+  Self.FMainTree  := MainTree;
+  Self.FSubTree   := SubTree;
+  Self.FNode      := Node;
+  Self.FSmallIcon := SmallIcon;
 
-  Self.Priority  := tpNormal;
+  Self.Priority   := tpNormal;
   Self.FreeOnTerminate := True;
 end;
 
 procedure TGetNodeIconsThread.Execute;
 begin
   inherited;
-  ImagesDM.InternalGetChildNodesIcons(FMainTree, FSubTree, FNode);
+  if FSmallIcon then
+    ImagesDM.InternalGetChildNodesIcons(FMainTree, FSubTree, FNode)
+  else
+    ImagesDM.InternalGetChildNodesIcons(FMainTree, FSubTree, FNode, False);
 end;
 
 end.

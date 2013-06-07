@@ -177,7 +177,8 @@ begin
   if AData.PathIcon <> edtPathIcon.Text then
   begin
     AData.PathIcon   := edtPathIcon.Text;
-    ImagesDM.DeleteCacheIcon(AData);
+    AData.CacheID    := -1;
+    AData.CacheLargeID := -1;
     AData.ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(AData));
   end;
   AData.Changed    := true;

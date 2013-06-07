@@ -60,6 +60,7 @@ type
     FName        : String;
     FDataType    : TvTreeDataType;
     FImageIndex  : Integer;
+    FImageLargeIndex : Integer;
     FParentNode  : PVirtualNode;
     FPNode       : PVirtualNode; //Self PVirtualNode
     FAddDate     : Int64;
@@ -88,6 +89,7 @@ type
     property Name: string read GetName write SetName;
     property DataType: TvTreeDataType read GetDataType write SetDataType;
     property ImageIndex: Integer read FImageIndex write FImageIndex;
+    property ImageLargeIndex: Integer read FImageLargeIndex write FImageLargeIndex;
     property ParentNode: PVirtualNode read FParentNode write FParentNode;
     property PNode: PVirtualNode read FPNode write FPNode;
     property AddDate: TDateTime read GetAddDate write SetAddDate;
@@ -104,7 +106,9 @@ type
     FPathIcon    : String;
     FPathAbsoluteIcon : String;
     FCacheID     : Integer;
+    FCacheLargeID  : Integer;
     FPathCacheIcon : string;
+    FPathCacheLargeIcon : string;
     FMRUPosition : Int64;
     FClickCount  : Integer;
     FWindowState : Integer;
@@ -114,7 +118,8 @@ type
     FSchMode     : TSchedulerMode; //0 Disabled, 1 Once, 2 Hourly, 3 Daily, 4 Weekly
     FSchDateTime : TDateTime;
     procedure SetPathIcon(value:string);
-    procedure SetPathCacheIcon(value:integer);
+    procedure SetCacheIcon(value:integer);
+    procedure SetCacheLargeIcon(value:integer);
     procedure SetMRUPosition(Value: Int64);
     procedure SetClickCount(Value: Integer);
     procedure SetAutorun(value: TAutorunType);
@@ -128,8 +133,10 @@ type
     property ClickCount: Integer read FClickCount write SetClickCount;
     property PathIcon: string read FPathIcon write SetPathIcon;
     property PathAbsoluteIcon: String read FPathAbsoluteIcon write FPathAbsoluteIcon;
-    property CacheID: Integer read FCacheID write SetPathCacheIcon;
+    property CacheID: Integer read FCacheID write SetCacheIcon;
+    property CacheLargeID: Integer read FCacheLargeID write SetCacheLargeIcon;
     property PathCacheIcon: string read FPathCacheIcon write FPathCacheIcon;
+    property PathCacheLargeIcon: string read FPathCacheLargeIcon write FPathCacheLargeIcon;
     property WindowState: Integer read FWindowState write FWindowState;
     property ActionOnExe: TActionOnExecute read FActionOnExe write FActionOnExe;
     property Autorun: TAutorunType read FAutorun write SetAutorun;
@@ -153,6 +160,7 @@ type
     property ParentNode;
     property PathIcon;
     property CacheID;
+    property CacheLargeID;
     property PathCacheIcon;
     property AddDate;
     property UnixAddDate;
@@ -200,6 +208,7 @@ type
     property ImageIndex;
     property ParentNode;
     property CacheID;
+    property CacheLargeID;
     property PathCacheIcon;
     property NoMRU: Boolean read FNoMRU write SetNoMRU;
     property NoMFU: Boolean read FNoMFU write SetNoMFU;
@@ -273,6 +282,7 @@ begin
   FParentID    := -1;
   FName        := '';
   FImageIndex  := -1;
+  FImageLargeIndex := -1;
   FDataType    := AType;
   FParentNode  := nil;
   FPNode       := nil;
@@ -285,6 +295,7 @@ procedure TvBaseNodeData.Copy(source:TvBaseNodeData);
 begin
   FName       := msgCopy + source.Name;
   FImageIndex := -1;
+  FImageLargeIndex := -1;
   FDataType   := source.DataType;
   FHideFromMenu := source.HideFromMenu;
 end;
@@ -618,6 +629,7 @@ begin
   FClickCount  := 0;
   FPathIcon    := '';
   FCacheID     := -1;
+  FCacheLargeID  := -1;
   FPathCacheIcon := '';
   FSchMode     := smDisabled;
   FSchDateTime := Now;
@@ -667,13 +679,36 @@ begin
   FSchMode := value;
 end;
 
-procedure TvCustomRealNodeData.SetPathCacheIcon(value:integer);
+procedure TvCustomRealNodeData.SetCacheIcon(value:integer);
 begin
   FCacheID := value;
   if (value <> -1) then
     FPathCacheIcon := SUITE_CACHE_PATH + IntToStr(value) + EXT_ICO
-  else
+  else begin
+    if FileExists(FPathCacheIcon) then
+    begin
+      DeleteFile(PWideChar(FPathCacheIcon));
+      FImageIndex := -1;
+      FChanged := True;
+    end;
     FPathCacheIcon := '';
+  end;
+end;
+
+procedure TvCustomRealNodeData.SetCacheLargeIcon(value: integer);
+begin
+  FCacheLargeID := value;
+  if (value <> -1) then
+    FPathCacheLargeIcon := SUITE_CACHELARGE_PATH + IntToStr(value) + EXT_ICO
+  else begin
+    if FileExists(FPathCacheLargeIcon) then
+    begin
+      DeleteFile(PWideChar(FPathCacheLargeIcon));
+      FImageLargeIndex := -1;
+      FChanged := True;
+    end;
+    FPathCacheLargeIcon := '';
+  end;
 end;
 
 function TvCustomRealNodeData.Execute(Tree: TBaseVirtualTree;ProcessInfo: TProcessInfo): boolean;
