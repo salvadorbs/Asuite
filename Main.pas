@@ -317,7 +317,7 @@ begin
   //Check if user click on node or expand button (+/-)
   if (Sender is TBaseVirtualTree) then
     if Not(ClickOnButtonTree((Sender as TBaseVirtualTree))) then
-      RunNormalSw(GetActiveTree);
+      RunNormalSw((Sender as TBaseVirtualTree));
 end;
 
 procedure TfrmMain.miImportListClick(Sender: TObject);
@@ -654,8 +654,9 @@ end;
 
 procedure TfrmMain.vstListKeyPress(Sender: TObject; var Key: Char);
 begin
-  if Ord(Key) = VK_RETURN then
-    RunNormalSw(GetActiveTree);
+  if (Sender is TBaseVirtualTree) then
+    if Ord(Key) = VK_RETURN then
+        RunNormalSw((Sender as TBaseVirtualTree));
 end;
 
 procedure TfrmMain.vstListLoadNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
@@ -723,7 +724,7 @@ begin
   if (Sender is TBaseVirtualTree) then
     if Not(ClickOnButtonTree((Sender as TBaseVirtualTree))) then
       if (Config.RunSingleClick) then
-        RunNormalSw(GetActiveTree);
+        RunNormalSw((Sender as TBaseVirtualTree));
 end;
 
 procedure TfrmMain.vstListCompareNodes(Sender: TBaseVirtualTree; Node1,
@@ -819,8 +820,12 @@ end;
 
 procedure TfrmMain.vstListExpanding(Sender: TBaseVirtualTree;
   Node: PVirtualNode; var Allowed: Boolean);
+var
+  NodeData : TvBaseNodeData;
 begin
-  ImagesDM.GetChildNodesIcons(Sender, nil, Node);
+  NodeData := PBaseData(Sender.GetNodeData(Node)).Data;
+  if NodeData.DataType = vtdtCategory then
+    ImagesDM.GetChildNodesIcons(Sender, nil, Node);
 end;
 
 procedure TfrmMain.vstListFreeNode(Sender: TBaseVirtualTree;
