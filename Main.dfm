@@ -133,10 +133,6 @@ object frmMain: TfrmMain
     end
     object tbSearch: TTabSheet
       Caption = 'Search'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object sbtnSearch: TSpeedButton
         Left = 152
         Top = 0
@@ -285,7 +281,7 @@ object frmMain: TfrmMain
       end
       object miProperty1: TMenuItem
         Caption = 'Properties'
-        OnClick = ShowProperty
+        OnClick = miPropertyClick
       end
     end
     object miHelp: TMenuItem
@@ -329,7 +325,7 @@ object frmMain: TfrmMain
     end
     object miOpenFolderSw: TMenuItem
       Caption = 'Show application'#39's folder'
-      OnClick = OpenFolderSw
+      OnClick = miOpenFolderSwClick
     end
     object N9: TMenuItem
       Caption = '-'
@@ -388,7 +384,7 @@ object frmMain: TfrmMain
     object miProperty2: TMenuItem
       Caption = 'Properties'
       ShortCut = 116
-      OnClick = ShowProperty
+      OnClick = miPropertyClick
     end
   end
   object SaveDialog1: TSaveDialog

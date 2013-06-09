@@ -79,6 +79,11 @@ const
   PG_LIST       = 0;
   PG_SEARCH     = 1;
 
+  // PageControl Indexes
+  PG_MENULIST   = 0;
+  PG_MENUMRU    = 1;
+  PG_MENUMFU    = 2;
+
   //ASuite placeholders for path
   CONST_PATH_ASUITE  = '$asuite';
   CONST_PATH_DRIVE   = '$drive';

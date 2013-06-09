@@ -98,14 +98,13 @@ type
     tmScheduler: TTimer;
     procedure miOptionsClick(Sender: TObject);
     procedure miStatisticsClick(Sender: TObject);
-    procedure OpenFolderSw(Sender: TObject);
     procedure pcListChange(Sender: TObject);
     procedure miImportListClick(Sender: TObject);
     procedure miSaveListClick(Sender: TObject);
     procedure vstListDragOver(Sender: TBaseVirtualTree; Source: TObject;
       Shift: TShiftState; State: TDragState; Pt: TPoint; Mode: TDropMode;
       var Effect: Integer; var Accept: Boolean);
-    procedure ShowProperty(Sender: TObject);
+    procedure miPropertyClick(Sender: TObject);
     procedure DeleteSwCat(Sender: TObject);
     procedure AddFolder(Sender: TObject);
     procedure AddSoftware(Sender: TObject);
@@ -168,6 +167,7 @@ type
     procedure vstListEditing(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex; var Allowed: Boolean);
     procedure FormActivate(Sender: TObject);
+    procedure miOpenFolderSwClick(Sender: TObject);
   private
     { Private declarations }
     function  GetActiveTree: TBaseVirtualTree;
@@ -175,11 +175,15 @@ type
     procedure RunStartupProcess;
     procedure RunShutdownProcess;
     procedure ExecuteSelectedNode(TreeView: TBaseVirtualTree;ProcessInfo: TProcessInfo);
-    procedure RunNormalSw(TreeView: TBaseVirtualTree);
   public
     { Public declarations }
     procedure ShowMainForm(Sender: TObject);
     procedure HideMainForm;
+    procedure RunNormalSw(TreeView: TBaseVirtualTree);
+    procedure RunAs(TreeView: TBaseVirtualTree);
+    procedure RunAsAdmin(TreeView: TBaseVirtualTree);
+    procedure OpenFolder(TreeView: TBaseVirtualTree);
+    procedure ShowItemProperty(TreeView: TBaseVirtualTree);
   end;
 
 var
@@ -304,15 +308,6 @@ begin
   vstList.CutToClipBoard;
 end;
 
-procedure TfrmMain.OpenFolderSw(Sender: TObject);
-var
-  ProcessInfo : TProcessInfo;
-begin
-  ProcessInfo.RunFromCat := False;
-  ProcessInfo.RunMode := rmOpenFolder;
-  ExecuteSelectedNode(GetActiveTree,ProcessInfo);
-end;
-
 procedure TfrmMain.RunDoubleClick(Sender: TObject);
 begin
   //Check if user click on node or expand button (+/-)
@@ -341,29 +336,23 @@ begin
 end;
 
 procedure TfrmMain.miRunAsAdminClick(Sender: TObject);
-var
-  ProcessInfo : TProcessInfo;
 begin
-  ProcessInfo.RunMode := rmRunAsAdmin;
-  ExecuteSelectedNode(GetActiveTree,ProcessInfo);
+  RunAsAdmin(GetActiveTree);
 end;
 
 procedure TfrmMain.miRunAsClick(Sender: TObject);
-var
-  ProcessInfo : TProcessInfo;
 begin
-  ProcessInfo.RunMode := rmRunAs;
-  //Call login dialog for Windows username and password
-  TLoginForm.Login(msgRunAsTitle,msgInsertWinUserInfo,ProcessInfo.UserName,ProcessInfo.Password,true,'');
-  if ProcessInfo.UserName <> '' then
-    ExecuteSelectedNode(GetActiveTree,ProcessInfo)
-  else
-    ShowMessage(msgErrEmptyUserName,true);
+  RunAs(GetActiveTree);
 end;
 
 procedure TfrmMain.miRunSelectedSwClick(Sender: TObject);
 begin
   RunNormalSw(GetActiveTree);
+end;
+
+procedure TfrmMain.miOpenFolderSwClick(Sender: TObject);
+begin
+  OpenFolder(GetActiveTree);
 end;
 
 procedure TfrmMain.miOptionsClick(Sender: TObject);
@@ -587,6 +576,59 @@ begin
     if IsWindowVisible(Application.Handle) then
       ShowWindow(Application.Handle, SW_HIDE);
   end;
+end;
+
+procedure TfrmMain.OpenFolder(TreeView: TBaseVirtualTree);
+var
+  ProcessInfo: TProcessInfo;
+begin
+  ProcessInfo.RunFromCat := False;
+  ProcessInfo.RunMode := rmOpenFolder;
+  ExecuteSelectedNode(TreeView, ProcessInfo);
+end;
+
+procedure TfrmMain.ShowItemProperty(TreeView: TBaseVirtualTree);
+var
+  BaseNode: PBaseData;
+  OK: Boolean;
+begin
+  BaseNode := GetNodeDataEx(TreeView.FocusedNode, TreeView, vstSearch, vstList);
+  if Assigned(BaseNode) then
+  begin
+    case BaseNode.Data.DataType of
+      vtdtFile:
+        OK := (TfrmPropertyFile.Edit(Self, BaseNode) = mrOK);
+      vtdtCategory:
+        OK := (TfrmPropertyCat.Edit(Self, BaseNode) = mrOK);
+      vtdtSeparator:
+        OK := (TfrmPropertySeparator.Edit(Self, BaseNode) = mrOK);
+    else
+      OK := False;
+    end;
+    if Ok then
+      RefreshList(vstList);
+  end;
+end;
+
+procedure TfrmMain.RunAsAdmin(TreeView: TBaseVirtualTree);
+var
+  ProcessInfo: TProcessInfo;
+begin
+  ProcessInfo.RunMode := rmRunAsAdmin;
+  ExecuteSelectedNode(TreeView, ProcessInfo);
+end;
+
+procedure TfrmMain.RunAs(TreeView: TBaseVirtualTree);
+var
+  ProcessInfo: TProcessInfo;
+begin
+  ProcessInfo.RunMode := rmRunAs;
+  //Call login dialog for Windows username and password
+  TLoginForm.Login(msgRunAsTitle, msgInsertWinUserInfo, ProcessInfo.UserName, ProcessInfo.Password, true, '');
+  if ProcessInfo.UserName <> '' then
+    ExecuteSelectedNode(TreeView, ProcessInfo)
+  else
+    ShowMessage(msgErrEmptyUserName, true);
 end;
 
 procedure TfrmMain.ExecuteSelectedNode(TreeView: TBaseVirtualTree;ProcessInfo: TProcessInfo);
@@ -937,25 +979,9 @@ begin
   end;
 end;
 
-procedure TfrmMain.ShowProperty(Sender: TObject);
-var
-  NodeData : PBaseData;
-  OK       : Boolean;
-  TreeView : TBaseVirtualTree;
+procedure TfrmMain.miPropertyClick(Sender: TObject);
 begin
-  TreeView := GetActiveTree;
-  NodeData := GetNodeDataEx(TreeView.FocusedNode, TreeView, vstSearch, vstList);
-  if Assigned(NodeData) then
-  begin
-    case NodeData.Data.DataType of
-      vtdtFile      : OK := (TfrmPropertyFile.Edit(Self, NodeData) = mrOK);
-      vtdtCategory  : OK := (TfrmPropertyCat.Edit(Self, NodeData) = mrOK);
-      vtdtSeparator : OK := (TfrmPropertySeparator.Edit(Self, NodeData) = mrOK);
-      else            OK := False;
-    end;
-    if Ok then
-      RefreshList(vstList);
-  end;
+  ShowItemProperty(GetActiveTree);
 end;
 
 procedure TfrmMain.tmSchedulerTimer(Sender: TObject);

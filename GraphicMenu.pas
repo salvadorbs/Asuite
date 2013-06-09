@@ -24,7 +24,7 @@ interface
 uses
   Windows, Classes, Forms, StdCtrls, Buttons, ExtCtrls, ComCtrls, Messages,
 	ShellAPI, Controls, Graphics, Dialogs, SysUtils, VirtualTrees, AppEvnts,
-  Vcl.Imaging.pngimage, cySkinButton, IniFiles, ulCommonClasses;
+  Vcl.Imaging.pngimage, cySkinButton, IniFiles, ulCommonClasses, Vcl.Menus;
 
 type
   TGraphicMenuElement = (
@@ -93,6 +93,13 @@ type
     vstMostUsed: TVirtualStringTree;
     vstRecents: TVirtualStringTree;
     imgDriveBackground: TImage;
+    pmWindow: TPopupMenu;
+    miRunSelectedSw: TMenuItem;
+    miRunAs: TMenuItem;
+    miRunAsAdmin: TMenuItem;
+    miOpenFolderSw: TMenuItem;
+    N6: TMenuItem;
+    miProperty2: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure tmrFaderTimer(Sender: TObject);
     procedure imgLogoMouseDown(Sender: TObject; Button: TMouseButton;
@@ -124,6 +131,11 @@ type
     procedure vstNodeClick(Sender: TBaseVirtualTree;
       const HitInfo: THitInfo);
     procedure imgPersonalPictureClick(Sender: TObject);
+    procedure miProperty2Click(Sender: TObject);
+    procedure miRunSelectedSwClick(Sender: TObject);
+    procedure miRunAsClick(Sender: TObject);
+    procedure miRunAsAdminClick(Sender: TObject);
+    procedure miOpenFolderSwClick(Sender: TObject);
 	private    
     { Private declarations }
     FOpening   : Boolean;
@@ -147,6 +159,7 @@ type
                                Data: Pointer; var Abort: Boolean);
     procedure PopulateSpecialTree(Tree: TBaseVirtualTree;SList: TNodeDataList;MaxItems: Integer);
     procedure DrawHardDiskSpace(IniFile: TIniFile; DriveBackGround, DriveSpace: TImage);
+    function  GetActiveTree: TBaseVirtualTree;
 	public
     { Public declarations }
     procedure OpenMenu;
@@ -499,6 +512,17 @@ begin
   lblDriveSpace.Caption := Format(msgGMHardDiskSpace,[DiskFreeString(Drive, True),DiskSizeString(Drive, True)])
 end;
 
+function TfrmGraphicMenu.GetActiveTree: TBaseVirtualTree;
+begin
+  case pgcTreeViews.ActivePageIndex of
+    PG_MENULIST : Result := vstList;
+    PG_MENUMRU  : Result := vstRecents;
+    PG_MENUMFU  : Result := vstMostUsed;
+  else
+    Result := nil;
+  end;
+end;
+
 function TfrmGraphicMenu.GetButtonCaption(IniFile: TIniFile;ButtonType: TGraphicMenuElement): string;
 begin
   Result := '';
@@ -600,6 +624,31 @@ begin
   if ButtonType in [gmbASuite,gmbOptions,gmbDocuments,gmbMusic,gmbPictures,
                     gmbVideos,gmbExplore,gmbAbout] then
     Result := True;
+end;
+
+procedure TfrmGraphicMenu.miOpenFolderSwClick(Sender: TObject);
+begin
+  frmMain.OpenFolder(GetActiveTree);
+end;
+
+procedure TfrmGraphicMenu.miProperty2Click(Sender: TObject);
+begin
+  frmMain.ShowItemProperty(GetActiveTree);
+end;
+
+procedure TfrmGraphicMenu.miRunAsAdminClick(Sender: TObject);
+begin
+  frmMain.RunAsAdmin(GetActiveTree);
+end;
+
+procedure TfrmGraphicMenu.miRunAsClick(Sender: TObject);
+begin
+  frmMain.RunAs(GetActiveTree);
+end;
+
+procedure TfrmGraphicMenu.miRunSelectedSwClick(Sender: TObject);
+begin
+  frmMain.RunNormalSw(GetActiveTree);
 end;
 
 procedure TfrmGraphicMenu.OpenRightButton(Sender: TObject);

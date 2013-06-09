@@ -249,6 +249,7 @@ object frmGraphicMenu: TfrmGraphicMenu
         HintMode = hmHint
         Images = ImagesDM.IcoImages
         ParentShowHint = False
+        PopupMenu = pmWindow
         ScrollBarOptions.ScrollBars = ssVertical
         ShowHint = True
         TabOrder = 0
@@ -285,6 +286,7 @@ object frmGraphicMenu: TfrmGraphicMenu
         HintMode = hmHint
         Images = ImagesDM.LargeIcoImages
         ParentShowHint = False
+        PopupMenu = pmWindow
         ScrollBarOptions.ScrollBars = ssNone
         ShowHint = True
         TabOrder = 0
@@ -321,6 +323,7 @@ object frmGraphicMenu: TfrmGraphicMenu
         HintMode = hmHint
         Images = ImagesDM.LargeIcoImages
         ParentShowHint = False
+        PopupMenu = pmWindow
         ScrollBarOptions.ScrollBars = ssNone
         ShowHint = True
         TabOrder = 0
@@ -356,5 +359,34 @@ object frmGraphicMenu: TfrmGraphicMenu
     OnTimer = tmrWatchFocusTimer
     Left = 216
     Top = 8
+  end
+  object pmWindow: TPopupMenu
+    Left = 184
+    Top = 8
+    object miRunSelectedSw: TMenuItem
+      Caption = 'Run'
+      Default = True
+      OnClick = miRunSelectedSwClick
+    end
+    object miRunAs: TMenuItem
+      Caption = 'Run as...'
+      OnClick = miRunAsClick
+    end
+    object miRunAsAdmin: TMenuItem
+      Caption = 'Run as admin'
+      OnClick = miRunAsAdminClick
+    end
+    object miOpenFolderSw: TMenuItem
+      Caption = 'Show application'#39's folder'
+      OnClick = miOpenFolderSwClick
+    end
+    object N6: TMenuItem
+      Caption = '-'
+    end
+    object miProperty2: TMenuItem
+      Caption = 'Properties'
+      ShortCut = 116
+      OnClick = miProperty2Click
+    end
   end
 end
