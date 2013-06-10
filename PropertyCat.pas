@@ -202,7 +202,6 @@ begin
       CurrentFileData.ImageIndex := ImagesDM.GetIconIndex(CurrentFileData);
     //Set pointers
     NewNodeData.pNodeList := Node;
-    NewNodeData.pNodeX    := NewNode;
   end;
 end;
 

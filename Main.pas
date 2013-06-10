@@ -184,6 +184,8 @@ type
     procedure RunAsAdmin(TreeView: TBaseVirtualTree);
     procedure OpenFolder(TreeView: TBaseVirtualTree);
     procedure ShowItemProperty(TreeView: TBaseVirtualTree);
+    procedure DoSearchItem(TreeSearch: TBaseVirtualTree; Keyword: string;
+                           Callback: TVTGetNodeProc);
   end;
 
 var
@@ -206,28 +208,8 @@ begin
 end;
 
 procedure TfrmMain.btnedtSearchRightButtonClick(Sender: TObject);
-var
-  NodeData: PBaseData;
 begin
-  vstSearch.Clear;
-  if Length(edtSearch.Text) > 0 then
-  begin
-    New(NodeData);
-    NodeData.Data := CreateNodeData(vtdtFile);
-    with TvFileNodeData(NodeData.Data) do
-    begin
-      case SearchType of
-        stName       : Name       := edtSearch.Text;
-        stPathExe    : PathExe    := edtSearch.Text;
-        stPathIcon   : PathIcon   := edtSearch.Text;
-        stWorkingDir : WorkingDir := edtSearch.Text;
-        stParameters : Parameters := edtSearch.Text;
-      end;
-    end;
-    vstList.IterateSubtree(nil, IterateSubtreeProcs.FindNode, NodeData.Data, [], True);
-    FreeAndNil(NodeData.Data);
-    Dispose(NodeData);
-  end;
+  DoSearchItem(vstSearch,edtSearch.Text,IterateSubtreeProcs.FindNode);
 end;
 
 procedure TfrmMain.DeleteSwCat(Sender: TObject);
@@ -607,6 +589,32 @@ begin
     end;
     if Ok then
       RefreshList(vstList);
+  end;
+end;
+
+procedure TfrmMain.DoSearchItem(TreeSearch: TBaseVirtualTree; Keyword: string;
+                                Callback: TVTGetNodeProc);
+var
+  NodeData: PBaseData;
+begin
+  TreeSearch.Clear;
+  if Length(Keyword) > 0 then
+  begin
+    New(NodeData);
+    NodeData.Data := CreateNodeData(vtdtFile);
+    with TvFileNodeData(NodeData.Data) do
+    begin
+      case SearchType of
+        stName       : Name       := Keyword;
+        stPathExe    : PathExe    := Keyword;
+        stPathIcon   : PathIcon   := Keyword;
+        stWorkingDir : WorkingDir := Keyword;
+        stParameters : Parameters := Keyword;
+      end;
+    end;
+    vstList.IterateSubtree(nil, CallBack, NodeData.Data, [], True);
+    FreeAndNil(NodeData.Data);
+    Dispose(NodeData);
   end;
 end;
 

@@ -46,6 +46,8 @@ type
   TIterateSubtreeProcs = class //Class for IterateSubtree
     procedure FindNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
                        Data: Pointer; var Abort: Boolean);
+    procedure GMFindNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
+                       Data: Pointer; var Abort: Boolean);
     procedure BeforeDeleteNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
                                Data: Pointer; var Abort: Boolean);
     procedure ActionsOnShutdown(Sender: TBaseVirtualTree; Node: PVirtualNode;
@@ -77,7 +79,7 @@ implementation
 
 uses
   Menus, PropertyFile, PropertyCat, ulSysUtils, udImages, PropertySeparator,
-  Main, ulDatabase, ulAppConfig, ulFileFolder;
+  Main, ulDatabase, ulAppConfig, ulFileFolder, GraphicMenu;
 
 function AddNode(Sender: TBaseVirtualTree;AType: TvTreeDataType): PBaseData;
 var
@@ -369,7 +371,38 @@ begin
       if CurrentFileData.ImageIndex = -1 then
         CurrentFileData.ImageIndex := ImagesDM.GetIconIndex(CurrentFileData);
       FoundNodeData.pNodeList := Node;
-      FoundNodeData.pNodeX    := FoundNode;
+    end;
+  end;
+end;
+
+procedure TIterateSubtreeProcs.GMFindNode(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
+var
+  FilterData, CurrentFileData : TvFileNodeData;
+  FoundNodeData : PTreeDataX;
+  FoundNode     : PVirtualNode;
+  Found         : Boolean;
+begin
+  FilterData      := Data;
+  CurrentFileData := TvFileNodeData(PBaseData(Sender.GetNodeData(Node)).Data);
+  if (CurrentFileData.DataType in [vtdtFile,vtdtFolder]) then
+  begin
+    Found := False;
+    case SearchType of
+      stName       : Found := Pos(LowerCase(FilterData.Name),LowerCase(CurrentFileData.Name)) <> 0;
+      stPathExe    : Found := Pos(LowerCase(FilterData.PathExe),LowerCase(CurrentFileData.PathExe)) <> 0;
+      stPathIcon   : Found := Pos(LowerCase(FilterData.PathIcon),LowerCase(CurrentFileData.PathIcon)) <> 0;
+      stWorkingDir : Found := Pos(LowerCase(FilterData.WorkingDir),LowerCase(CurrentFileData.WorkingDir)) <> 0;
+      stParameters : Found := Pos(LowerCase(FilterData.Parameters),LowerCase(CurrentFileData.Parameters)) <> 0;
+    end;
+    if Found then
+    begin
+      FoundNode               := frmGraphicMenu.vstSearch.AddChild(nil);
+      FoundNodeData           := frmGraphicMenu.vstSearch.GetNodeData(FoundNode);
+      //Get node's image, if it hasn't
+      if CurrentFileData.ImageLargeIndex = -1 then
+        CurrentFileData.ImageLargeIndex := ImagesDM.GetIconIndex(CurrentFileData, True);
+      FoundNodeData.pNodeList := Node;
     end;
   end;
 end;

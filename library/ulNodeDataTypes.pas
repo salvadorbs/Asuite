@@ -254,7 +254,6 @@ type
   PTreeDataX = ^TTreeDataX; //X = Search or TrayMenu
   TTreeDataX = record
     pNodeList : PVirtualNode;
-    pNodeX    : PVirtualNode;
   end;
 
 function CreateNodeData(AType: TvTreeDataType): TvBaseNodeData;

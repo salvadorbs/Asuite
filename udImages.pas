@@ -55,10 +55,10 @@ type
   TGetNodeIconsThread = class(TThread)
   private
     { private declarations }
-    FMainTree: TBaseVirtualTree;
-    FSubTree: TBaseVirtualTree;
-    FNode: PVirtualNode;
-    FSmallIcon: Boolean;
+    FMainTree  : TBaseVirtualTree; //frmMain.vstList
+    FSubTree   : TBaseVirtualTree;
+    FNode      : PVirtualNode;
+    FSmallIcon : Boolean;
   public
     { public declarations }
     constructor Create(Suspended: Boolean;MainTree, SubTree: TBaseVirtualTree;

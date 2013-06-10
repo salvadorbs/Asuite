@@ -213,8 +213,11 @@ object frmGraphicMenu: TfrmGraphicMenu
     Width = 240
     Height = 21
     Images = ImagesDM.IcoImages
+    PopupMenu = frmMain.pmSearch
     RightButton.Visible = True
     TabOrder = 0
+    OnKeyPress = btnSearchKeyPress
+    OnRightButtonClick = btnSearchClick
   end
   object pgcTreeViews: TPageControl
     Left = 15
@@ -293,7 +296,7 @@ object frmGraphicMenu: TfrmGraphicMenu
         TreeOptions.PaintOptions = [toHideFocusRect, toShowBackground, toShowDropmark, toShowTreeLines, toThemeAware, toUseBlendedImages]
         TreeOptions.SelectionOptions = [toDisableDrawSelection, toFullRowSelect]
         OnGetText = vstGetText
-        OnGetImageIndex = vstGetBigImageIndex
+        OnGetImageIndex = vstGetImageLargeIndex
         OnInitNode = vstInitNode
         OnKeyPress = vstKeyPress
         OnMouseMove = vstMouseMove
@@ -330,7 +333,44 @@ object frmGraphicMenu: TfrmGraphicMenu
         TreeOptions.PaintOptions = [toHideFocusRect, toShowBackground, toShowDropmark, toShowTreeLines, toThemeAware, toUseBlendedImages]
         TreeOptions.SelectionOptions = [toDisableDrawSelection, toFullRowSelect]
         OnGetText = vstGetText
-        OnGetImageIndex = vstGetBigImageIndex
+        OnGetImageIndex = vstGetImageLargeIndex
+        OnInitNode = vstInitNode
+        OnKeyPress = vstKeyPress
+        OnMouseMove = vstMouseMove
+        OnNodeClick = vstNodeClick
+        Columns = <>
+      end
+    end
+    object tsSearch: TTabSheet
+      Caption = 'tsSearch'
+      ImageIndex = 3
+      TabVisible = False
+      object vstSearch: TVirtualStringTree
+        Left = 0
+        Top = 0
+        Width = 232
+        Height = 399
+        Align = alClient
+        BorderStyle = bsNone
+        Header.AutoSizeIndex = 0
+        Header.Font.Charset = DEFAULT_CHARSET
+        Header.Font.Color = clWindowText
+        Header.Font.Height = -11
+        Header.Font.Name = 'Tahoma'
+        Header.Font.Style = []
+        Header.MainColumn = -1
+        Header.Options = [hoColumnResize, hoDrag]
+        HintMode = hmHint
+        Images = ImagesDM.LargeIcoImages
+        ParentShowHint = False
+        PopupMenu = pmWindow
+        ScrollBarOptions.ScrollBars = ssVertical
+        ShowHint = True
+        TabOrder = 0
+        TreeOptions.PaintOptions = [toHideFocusRect, toShowBackground, toShowDropmark, toThemeAware, toUseBlendedImages]
+        TreeOptions.SelectionOptions = [toDisableDrawSelection, toFullRowSelect]
+        OnGetText = vstGetText
+        OnGetImageIndex = vstGetImageLargeIndex
         OnInitNode = vstInitNode
         OnKeyPress = vstKeyPress
         OnMouseMove = vstMouseMove

@@ -100,6 +100,8 @@ type
     miOpenFolderSw: TMenuItem;
     N6: TMenuItem;
     miProperty2: TMenuItem;
+    tsSearch: TTabSheet;
+    vstSearch: TVirtualStringTree;
     procedure FormCreate(Sender: TObject);
     procedure tmrFaderTimer(Sender: TObject);
     procedure imgLogoMouseDown(Sender: TObject; Button: TMouseButton;
@@ -108,7 +110,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure vstGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
-    procedure vstGetBigImageIndex(Sender: TBaseVirtualTree; Node: PVirtualNode;
+    procedure vstGetImageLargeIndex(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Kind: TVTImageKind; Column: TColumnIndex; var Ghosted: Boolean;
       var ImageIndex: Integer);
     procedure vstListExpanding(Sender: TBaseVirtualTree; Node: PVirtualNode;
@@ -136,6 +138,8 @@ type
     procedure miRunAsClick(Sender: TObject);
     procedure miRunAsAdminClick(Sender: TObject);
     procedure miOpenFolderSwClick(Sender: TObject);
+    procedure btnSearchClick(Sender: TObject);
+    procedure btnSearchKeyPress(Sender: TObject; var Key: Char);
 	private    
     { Private declarations }
     FOpening   : Boolean;
@@ -242,6 +246,18 @@ begin
       Tree.FocusedNode := nil;
     end;
   end;
+end;
+
+procedure TfrmGraphicMenu.btnSearchClick(Sender: TObject);
+begin
+  pgcTreeViews.ActivePageIndex := PG_MENUSEARCH;
+  frmMain.DoSearchItem(vstSearch,btnSearch.Text,IterateSubtreeProcs.GMFindNode);
+end;
+
+procedure TfrmGraphicMenu.btnSearchKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Ord(Key) = VK_RETURN then
+    btnSearchClick(Sender);
 end;
 
 procedure TfrmGraphicMenu.CloseMenu;
@@ -495,7 +511,7 @@ var
   dblDriveSize : Double;
   dblDriveUsed : Double;
 begin
-  pgcTreeViews.ActivePageIndex := 0;
+  pgcTreeViews.ActivePageIndex := PG_MENULIST;
   //Clear virtualtrees
   vstList.Clear;
   vstRecents.Clear;
@@ -660,7 +676,7 @@ begin
     if (Sender = sknbtnASuite) then
     begin
       frmMain.ShowMainForm(Sender);
-      frmMain.pcList.ActivePageIndex := 0;
+      frmMain.pcList.ActivePageIndex := PG_LIST;
       frmMain.SetFocus;
     end;
     if (Sender = sknbtnOptions) then
@@ -709,7 +725,6 @@ begin
       NodeData.MenuNode     := NewNode;
       //References
       NewNodeData.pNodeList := Node;
-      NewNodeData.pNodeX    := NewNode;
     end;
   end;
 end;
@@ -737,7 +752,6 @@ begin
         NewNodeData := Tree.GetNodeData(NewNode);
         //References
         NewNodeData.pNodeList := TvCustomRealNodeData(SList[I]).pNode;
-        NewNodeData.pNodeX    := NewNode;
       end
       else
         SList.Delete(I);
@@ -758,17 +772,17 @@ end;
 
 procedure TfrmGraphicMenu.sknbtnListClick(Sender: TObject);
 begin
-  pgcTreeViews.ActivePageIndex := 0;
+  pgcTreeViews.ActivePageIndex := PG_MENULIST;
 end;
 
 procedure TfrmGraphicMenu.sknbtnMFUClick(Sender: TObject);
 begin
-  pgcTreeViews.ActivePageIndex := 2;
+  pgcTreeViews.ActivePageIndex := PG_MENUMFU;
 end;
 
 procedure TfrmGraphicMenu.sknbtnRecentsClick(Sender: TObject);
 begin
-  pgcTreeViews.ActivePageIndex := 1;
+  pgcTreeViews.ActivePageIndex := PG_MENUMRU;
 end;
 
 procedure TfrmGraphicMenu.OpenMenu;
@@ -845,13 +859,13 @@ begin
   ImageIndex := NodeData.ImageIndex;
 end;
 
-procedure TfrmGraphicMenu.vstGetBigImageIndex(Sender: TBaseVirtualTree;
+procedure TfrmGraphicMenu.vstGetImageLargeIndex(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
   var Ghosted: Boolean; var ImageIndex: Integer);
 var
   NodeData : TvBaseNodeData;
 begin
-  NodeData   := GetNodeDataSearch(Node,vstList,frmMain.vstList).Data;
+  NodeData   := GetNodeDataSearch(Node,Sender,frmMain.vstList).Data;
   ImageIndex := NodeData.ImageLargeIndex;
 end;
 

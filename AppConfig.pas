@@ -83,6 +83,7 @@ const
   PG_MENULIST   = 0;
   PG_MENUMRU    = 1;
   PG_MENUMFU    = 2;
+  PG_MENUSEARCH = 3;
 
   //ASuite placeholders for path
   CONST_PATH_ASUITE  = '$asuite';
