@@ -164,6 +164,7 @@ type
     procedure PopulateSpecialTree(Tree: TBaseVirtualTree;SList: TNodeDataList;MaxItems: Integer);
     procedure DrawHardDiskSpace(IniFile: TIniFile; DriveBackGround, DriveSpace: TImage);
     function  GetActiveTree: TBaseVirtualTree;
+    procedure AssignFontFromString(strfont: string;CompFont: TFont);
 	public
     { Public declarations }
     procedure OpenMenu;
@@ -239,7 +240,10 @@ begin
         Tree := vstRecents
       else
         if vstMostUsed.Handle = Msg.hwnd then
-          Tree := vstMostUsed;
+          Tree := vstMostUsed
+        else
+          if vstSearch.Handle = Msg.hwnd then
+            Tree := vstSearch;
     if Assigned(Tree) and Assigned(Tree.FocusedNode) then
     begin
       Tree.Selected[Tree.FocusedNode] := False;
@@ -265,6 +269,18 @@ begin
   //Fade in out
   FOpening := False;
   tmrFader.Enabled:= True;
+end;
+
+procedure TfrmGraphicMenu.AssignFontFromString(strfont: string;CompFont: TFont);
+var
+  vFont: TFont;
+begin
+  try
+    vFont := StrToFont(strfont);
+    CompFont.Assign(vFont);
+  finally
+    vFont.Free;
+  end;
 end;
 
 procedure TfrmGraphicMenu.DrawHardDiskSpace(IniFile: TIniFile; DriveBackGround, DriveSpace: TImage);
@@ -454,7 +470,7 @@ end;
 procedure TfrmGraphicMenu.FormCreate(Sender: TObject);
 var
   IniFile : TIniFile;
-  HDFont  : TFont;
+  strFont : string;
   BackgroundPath, SeparatorPath, LogoPath, IconPath: string;
 begin
   //NodeDataSize
@@ -501,12 +517,16 @@ begin
     //Hard Disk
     DrawHardDiskSpace(IniFile,imgDriveBackground,imgDriveSpace);
     lblDriveName.Caption := UpperCase(ExtractFileDrive(SUITE_WORKING_PATH));
-    HDFont := StrToFont(IniFile.ReadString(INIFILE_SECTION_HARDDISK, INIFILE_KEY_FONT, ''));
-    lblDriveName.Font.Assign(HDFont);
-    lblDriveSpace.Font.Assign(HDFont);
+    strFont := IniFile.ReadString(INIFILE_SECTION_HARDDISK, INIFILE_KEY_FONT, '');
+    AssignFontFromString(strFont,lblDriveName.Font);
+    AssignFontFromString(strFont,lblDriveSpace.Font);
+    //VirtualTrees
+    AssignFontFromString(IniFile.ReadString(INIFILE_SECTION_LIST, INIFILE_KEY_FONT, ''), vstList.Font);
+    AssignFontFromString(IniFile.ReadString(INIFILE_SECTION_RECENTS, INIFILE_KEY_FONT, ''), vstRecents.Font);
+    AssignFontFromString(IniFile.ReadString(INIFILE_SECTION_MOSTUSED, INIFILE_KEY_FONT, ''), vstMostUsed.Font);
+    AssignFontFromString(IniFile.ReadString(INIFILE_SECTION_SEARCH, INIFILE_KEY_FONT, ''), vstSearch.Font);
   finally
     IniFile.Free;
-    HDFont.Free;
   end;
   //Workaround for vst trasparent
   CopyImageInVst(imgBackground,pgcTreeViews);
