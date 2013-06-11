@@ -398,7 +398,12 @@ begin
     if FileExists(FThemePath + IconPath) then
     begin
       Icon.LoadFromFile(FThemePath + IconPath);
-      PNGImage.Canvas.Draw(5, 3, Icon);
+      PNGImage.Canvas.Lock;
+      try
+        PNGImage.Canvas.Draw(5, 3, Icon);
+      finally
+        PNGImage.Canvas.Unlock;
+      end;
     end;
   finally
     Icon.Free;
@@ -427,14 +432,19 @@ begin
     Caption  := GetButtonCaption(IniFile, ButtonType);
     if Caption <> '' then
     begin
-      if Assigned(FontText) then
-        PNGImage.Canvas.Font.Assign(FontText);
-      PNGImage.Canvas.Brush.Style := bsClear;
-      TopText := (PNGImage.Height - Abs(PNGImage.Canvas.Font.Height)) div 2;
-      if SpaceForIcon then
-        PNGImage.Canvas.TextOut(35, TopText - 1, Caption)
-      else
-        PNGImage.Canvas.TextOut(10, TopText - 1, Caption);
+      PNGImage.Canvas.Lock;
+      try
+        if Assigned(FontText) then
+          PNGImage.Canvas.Font.Assign(FontText);
+        PNGImage.Canvas.Brush.Style := bsClear;
+        TopText := (PNGImage.Height - Abs(PNGImage.Canvas.Font.Height)) div 2;
+        if SpaceForIcon then
+          PNGImage.Canvas.TextOut(35, TopText - 1, Caption)
+        else
+          PNGImage.Canvas.TextOut(10, TopText - 1, Caption);
+      finally
+        PNGImage.Canvas.Unlock;
+      end;
     end;
   finally
     FontText.Free;
