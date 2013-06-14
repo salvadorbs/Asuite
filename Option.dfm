@@ -25,6 +25,10 @@ object frmOption: TfrmOption
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'General'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object gbTreeView: TGroupBox
         Left = 8
         Top = 362
@@ -119,7 +123,6 @@ object frmOption: TfrmOption
           Top = 200
           Width = 47
           Height = 13
-          Margins.Bottom = 0
           Caption = 'Language'
         end
         object cxLanguage: TComboBox
@@ -370,6 +373,10 @@ object frmOption: TfrmOption
     object TabSheet2: TTabSheet
       Caption = 'Advanced'
       ImageIndex = 4
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object gbRecents: TGroupBox
         Left = 8
         Top = 16
@@ -585,6 +592,10 @@ object frmOption: TfrmOption
     object TabSheet3: TTabSheet
       Caption = 'Various'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object gbExecution: TGroupBox
         Left = 8
         Top = 8
@@ -670,7 +681,6 @@ object frmOption: TfrmOption
           Top = 150
           Width = 32
           Height = 13
-          Margins.Bottom = 0
           Caption = 'Theme'
         end
         object cxLeftClick: TComboBox

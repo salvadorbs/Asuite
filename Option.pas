@@ -249,8 +249,8 @@ begin
   Config.ActionClickLeft   := cxLeftClick.ItemIndex;
   Config.ActionClickRight  := cxRightClick.ItemIndex;
   Config.UseClassicMenu    := cbClassicMenu.Checked;
-  Config.GraphicMenuTheme  := cxTheme.Items[cxTheme.ItemIndex];
-  Config.GraphicMenuFade   := cbMenuFade.Checked;
+  Config.GMTheme           := cxTheme.Items[cxTheme.ItemIndex];
+  Config.GMFade            := cbMenuFade.Checked;
   //Hot Keys
   Config.HotKey            := cbHotKey.Checked;
   Config.WindowHotKey      := cbWindowHotKey.Checked;
@@ -409,8 +409,8 @@ begin
     until FindNext(searchResult) <> 0;
     FindClose(searchResult);
   end;
-  cxTheme.ItemIndex  := cxTheme.Items.IndexOf(Config.GraphicMenuTheme);
-  cbMenuFade.Checked := Config.GraphicMenuFade;
+  cxTheme.ItemIndex  := cxTheme.Items.IndexOf(Config.GMTheme);
+  cbMenuFade.Checked := Config.GMFade;
   //Hot Keys
   cbHotKey.Checked   := Config.HotKey;
   //Window's Hotkey

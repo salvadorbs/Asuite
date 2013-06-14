@@ -74,9 +74,16 @@ type
     FActionClickLeft    : Integer;
     FActionClickRight   : Integer;
     FUseClassicMenu     : Boolean;
-    FGraphicMenuTheme   : string;
-    FGraphicMenuFade    : Boolean;
-    FGraphicMenuPersonalPicture: string;
+    //Graphic Menu
+    FGMTheme            : string;
+    FGMFade             : Boolean;
+    FGMPersonalPicture  : string;
+    //Right buttons
+    FGMBtnDocuments     : string;
+    FGMBtnMusic         : string;
+    FGMBtnPictures      : string;
+    FGMBtnVideos        : string;
+    FGMBtnExplore       : string;
     //HotKeys
     FWindowHotKey       : Boolean;
     FWindowHotKeyCode   : Integer;
@@ -109,7 +116,12 @@ type
     procedure SetLanguage(value: string);
     procedure SetTVFont(value: TFont);
     procedure SetScheduler(value: Boolean);
-    procedure SetGraphicMenuTheme(value: string);
+    procedure SetGMTheme(value: string);
+    procedure SetGMBtnDocuments(Value: string);
+    procedure SetGMBtnExplore(Value: string);
+    procedure SetGMBtnMusic(Value: string);
+    procedure SetGMBtnPictures(Value: string);
+    procedure SetGMBtnVideos(Value: string);
   public
     { public declarations }
     constructor Create; overload;
@@ -161,9 +173,15 @@ type
     property ActionClickRight: Integer read FActionClickRight write FActionClickRight;
     property UseClassicMenu: Boolean read FUseClassicMenu write FUseClassicMenu;
     //Graphic Menu
-    property GraphicMenuTheme: string read FGraphicMenuTheme write SetGraphicMenuTheme;
-    property GraphicMenuFade: Boolean read FGraphicMenuFade write FGraphicMenuFade;
-    property GraphicMenuPersonalPicture: string read FGraphicMenuPersonalPicture write FGraphicMenuPersonalPicture;
+    property GMTheme: string read FGMTheme write SetGMTheme;
+    property GMFade: Boolean read FGMFade write FGMFade;
+    property GMPersonalPicture: string read FGMPersonalPicture write FGMPersonalPicture;
+    //Right buttons
+    property GMBtnDocuments: string read FGMBtnDocuments write SetGMBtnDocuments;
+    property GMBtnPictures: string read FGMBtnPictures write SetGMBtnPictures;
+    property GMBtnMusic: string read FGMBtnMusic write SetGMBtnMusic;
+    property GMBtnVideos: string read FGMBtnVideos write SetGMBtnVideos;
+    property GMBtnExplore: string read FGMBtnExplore write SetGMBtnExplore;
     //Hot Keys
     property WindowHotKey: Boolean read FWindowHotKey write FWindowHotKey;
     property WindowHotKeyCode: Integer read FWindowHotKeyCode write FWindowHotKeyCode;
@@ -238,8 +256,16 @@ begin
   FActionClickLeft    := 0;
   FActionClickRight   := 2;
   FUseClassicMenu     := False;
-  FGraphicMenuTheme   := 'Default';
-  FGraphicMenuFade    := True;
+  //Graphic Menu
+  FGMTheme            := 'Default';
+  FGMFade             := True;
+  FGMPersonalPicture  := 'PersonalPicture.jpg';
+  //Right buttons
+  FGMBtnDocuments     := '%USERPROFILE%\Documents';
+  FGMBtnPictures      := '%USERPROFILE%\Pictures';
+  FGMBtnMusic         := '%USERPROFILE%\Music';
+  FGMBtnVideos        := '%USERPROFILE%\Videos';
+  FGMBtnExplore       := '$drive';
   //Misc
   FReadOnlyMode       := False;
   FChanged            := False;
@@ -467,12 +493,52 @@ begin
     CreateCacheFolders;
 end;
 
-procedure TConfiguration.SetGraphicMenuTheme(value: string);
+procedure TConfiguration.SetGMBtnDocuments(Value: string);
 begin
   if value = '' then
-    FGraphicMenuTheme := 'default'
+    FGMBtnDocuments := '%USERPROFILE%\Documents'
   else
-    FGraphicMenuTheme := value;
+    FGMBtnDocuments := value;
+end;
+
+procedure TConfiguration.SetGMBtnExplore(Value: string);
+begin
+  if value = '' then
+    FGMBtnExplore := '$drive\'
+  else
+    FGMBtnExplore := value;
+end;
+
+procedure TConfiguration.SetGMBtnMusic(Value: string);
+begin
+  if value = '' then
+    FGMBtnMusic := '%USERPROFILE%\Music'
+  else
+    FGMBtnMusic := value;
+end;
+
+procedure TConfiguration.SetGMBtnPictures(Value: string);
+begin
+  if value = '' then
+    FGMBtnPictures := '%USERPROFILE%\Pictures'
+  else
+    FGMBtnPictures := value;
+end;
+
+procedure TConfiguration.SetGMBtnVideos(Value: string);
+begin
+  if value = '' then
+    FGMBtnVideos := '%USERPROFILE%\Videos'
+  else
+    FGMBtnVideos := value;
+end;
+
+procedure TConfiguration.SetGMTheme(value: string);
+begin
+  if value = '' then
+    FGMTheme := 'default'
+  else
+    FGMTheme := value;
 end;
 
 procedure TConfiguration.SetStartWithWindows(value: Boolean);

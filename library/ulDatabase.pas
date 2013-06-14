@@ -150,8 +150,16 @@ type
     FActionClickLeft    : Integer;
     FActionClickRight   : Integer;
     FUseClassicMenu     : Boolean;
-    FGraphicMenuTheme   : string;
-    FGraphicMenuFade    : Boolean;
+    //Graphic Menu
+    FGMTheme            : string;
+    FGMFade             : Boolean;
+    FGMPersonalPicture  : string;
+    //Right buttons
+    FGMBtnDocuments     : string;
+    FGMBtnMusic         : string;
+    FGMBtnPictures      : string;
+    FGMBtnVideos        : string;
+    FGMBtnExplore       : string;
     //HotKeys
     FHotKey             : Boolean;
     FWindowHotKey       : Boolean;
@@ -211,8 +219,16 @@ type
     property actionclickleft: Integer read FActionClickLeft write FActionClickLeft;
     property actionclickright: Integer read FActionClickRight write FActionClickRight;
     property useclassicmenu: Boolean read Fuseclassicmenu write Fuseclassicmenu;
-    property graphicmenutheme: string read Fgraphicmenutheme write Fgraphicmenutheme;
-    property graphicmenufade: Boolean read Fgraphicmenufade write Fgraphicmenufade;
+    //Graphic Menu
+    property gmtheme: string read FGMTheme write FGMTheme;
+    property gmfade: Boolean read FGMFade write FGMFade;
+    property gmpersonalpicture: string read FGMPersonalPicture write FGMPersonalPicture;
+    //Right buttons
+    property gmbtndocuments: string read FGMBtnDocuments write FGMBtnDocuments;
+    property gmbtnpictures: string read FGMBtnPictures write FGMBtnPictures;
+    property gmbtnmusic: string read FGMBtnMusic write FGMBtnMusic;
+    property gmbtnvideos: string read FGMBtnVideos write FGMBtnVideos;
+    property gmbtnexplore: string read FGMBtnExplore write FGMBtnExplore;
     //Hot Keys
     property hotkey: Boolean read FHotKey write FHotKey;
     property windowhotkey: Boolean read FWindowHotKey write FWindowHotKey;
@@ -581,8 +597,16 @@ begin
         Config.ActionClickLeft    := SQLOptionsData.actionclickleft;
         Config.ActionClickRight   := SQLOptionsData.actionclickright;
         Config.UseClassicMenu     := SQLOptionsData.useclassicmenu;
-        Config.GraphicMenuTheme   := SQLOptionsData.graphicmenutheme;
-        Config.GraphicMenuFade    := SQLOptionsData.graphicmenufade;
+        //Graphic Menu
+        Config.GMTheme            := SQLOptionsData.gmtheme;
+        Config.GMFade             := SQLOptionsData.gmfade;
+        Config.GMPersonalPicture  := SQLOptionsData.gmpersonalpicture;
+        //Right buttons
+        Config.GMBtnDocuments     := SQLOptionsData.gmbtndocuments;
+        Config.GMBtnPictures      := SQLOptionsData.gmbtnpictures;
+        Config.GMBtnMusic         := SQLOptionsData.gmbtnmusic;
+        Config.GMBtnVideos        := SQLOptionsData.gmbtnvideos;
+        Config.GMBtnExplore       := SQLOptionsData.gmbtnexplore;
         //Hot Keys
         Config.HotKey             := SQLOptionsData.HotKey;
         Config.WindowHotKey       := SQLOptionsData.WindowHotKey;
@@ -766,9 +790,17 @@ begin
     SQLOptionsData.traycustomiconpath := StringToUTF8(Config.TrayCustomIconPath);
     SQLOptionsData.actionclickleft    := Config.ActionClickLeft;
     SQLOptionsData.actionclickright   := Config.ActionClickRight;
-    SQLOptionsData.useclassicmenu     := Config.UseClassicMenu;
-    SQLOptionsData.graphicmenutheme   := Config.GraphicMenuTheme;
-    SQLOptionsData.graphicmenufade    := Config.GraphicMenuFade;
+    SQLOptionsData.useclassicmenu     := Config.UseClassicMenu;    
+    //Graphic Menu
+    SQLOptionsData.gmtheme            := Config.GMTheme;
+    SQLOptionsData.gmfade             := Config.GMFade;
+    SQLOptionsData.gmpersonalpicture  := Config.GMPersonalPicture;
+    //Right buttons
+    SQLOptionsData.gmbtndocuments     := Config.GMBtnDocuments;
+    SQLOptionsData.gmbtnpictures      := Config.GMBtnPictures;
+    SQLOptionsData.gmbtnmusic         := Config.GMBtnMusic;
+    SQLOptionsData.gmbtnvideos        := Config.GMBtnVideos;
+    SQLOptionsData.gmbtnexplore       := Config.GMBtnExplore;
     //Hot Keys
     SQLOptionsData.HotKey             := Config.HotKey;
     SQLOptionsData.WindowHotKey       := Config.WindowHotKey;

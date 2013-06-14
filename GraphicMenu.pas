@@ -478,7 +478,7 @@ begin
   vstRecents.NodeDataSize  := SizeOf(TTreeDataX);
   vstMostUsed.NodeDataSize := SizeOf(TTreeDataX);
   //Load theme
-  FThemePath := IncludeTrailingBackslash(SUITE_MENUTHEMES_PATH + Config.GraphicMenuTheme);
+  FThemePath := IncludeTrailingBackslash(SUITE_MENUTHEMES_PATH + Config.GMTheme);
   IniFile := TIniFile.Create(FThemePath + THEME_INI);
   try
     //IniFile Section General
@@ -654,12 +654,12 @@ var
 begin
   TempString := '';
   OpenDialog1.Filter     := 'Personal Picture [48x48] (*.jpg, *.png)|*.jpg;*.png';
-  OpenDialog1.InitialDir := ExtractFileDir(RelativeToAbsolute(Config.GraphicMenuPersonalPicture));
+  OpenDialog1.InitialDir := ExtractFileDir(RelativeToAbsolute(Config.GMPersonalPicture));
   if OpenDialog1.Execute then
   begin
     TempString := OpenDialog1.FileName;
 		imgPersonalPicture.Picture.LoadFromFile(TempString);
-    Config.GraphicMenuPersonalPicture := AbsoluteToRelative(TempString);
+    Config.GMPersonalPicture := AbsoluteToRelative(TempString);
   end;
   SetCurrentDir(SUITE_WORKING_PATH);
 end;
@@ -711,17 +711,16 @@ begin
     end;
     if (Sender = sknbtnOptions) then
       frmMain.miOptionsClick(Sender);
-    //TODO: Use Config.ButtonPATH*
     if (Sender = sknbtnDocuments) then
-      OpenFolder('e:\documents');
+      OpenFolder(Config.GMBtnDocuments);
     if (Sender = sknbtnMusic) then
-      OpenFolder('e:\music');
+      OpenFolder(Config.GMBtnMusic);
     if (Sender = sknbtnPictures) then
-      OpenFolder('e:\pictures');
+      OpenFolder(Config.GMBtnPictures);
     if (Sender = sknbtnVideos) then
-      OpenFolder('e:\videos');
+      OpenFolder(Config.GMBtnVideos);
     if (Sender = sknbtnExplore) then
-      OpenFolder('e:\');
+      OpenFolder(Config.GMBtnExplore);
     if (Sender = sknbtnAbout) then
     begin
       if not IsFormOpen('frmAbout') then
@@ -822,16 +821,16 @@ begin
   tmrFader.Enabled:= True;
   //Show frmMenu
   Self.Show;
-  SetForegroundWindow(Self.Handle);
-  if Not(IsWindowVisible(frmMain.Handle)) then
-    ShowWindow(Application.Handle, SW_HIDE);
+//  SetForegroundWindow(Self.Handle);
+//  if Not(IsWindowVisible(frmMain.Handle)) then
+//    ShowWindow(Application.Handle, SW_HIDE);
 end;
 
 procedure TfrmGraphicMenu.tmrFaderTimer(Sender: TObject);
 begin
   if FOpening then
   begin
-    if (Self.AlphaBlendValue < 225) and Config.GraphicMenuFade then
+    if (Self.AlphaBlendValue < 225) and Config.GMFade then
    	  Self.AlphaBlendValue := Self.AlphaBlendValue + 30
     else begin
  	    Self.AlphaBlendValue := 255;
@@ -839,7 +838,7 @@ begin
     end;
   end
   else begin
-    if (Self.AlphaBlendValue > 30) and Config.GraphicMenuFade then
+    if (Self.AlphaBlendValue > 30) and Config.GMFade then
       Self.AlphaBlendValue := Self.AlphaBlendValue - 30
     else begin
       Self.AlphaBlendValue := 0;
