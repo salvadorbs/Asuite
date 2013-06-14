@@ -146,23 +146,12 @@ end;
 
 procedure TfrmSensor.ExecuteActionSensor(SensorSide: Integer);
 begin
-  with frmMain do
-    case SensorSide of
-      1: ShowMainForm(self);
-      2: //Default Menu
-      begin
-        //TODO not yet converted from 1.X source
-        //if frmMenu.Visible then
-        //  frmMenu.CloseMenu
-        //else
-        //  frmMenu.OpenMenu;
-      end;
-      3: //Classic Menu
-      begin
-        ClassicMenu.ShowClassicMenu;
-      end;
-    end;
-  frmMain.BringToFront;
+  case SensorSide of
+    1: frmMain.ShowMainForm(self);
+    2: ClassicMenu.ShowGraphicMenu;
+    3: ClassicMenu.ShowClassicMenu;
+  end;
+//  frmMain.BringToFront;
 end;
 
 procedure TfrmSensor.FormMouseMove(Sender: TObject; Shift: TShiftState; X,
