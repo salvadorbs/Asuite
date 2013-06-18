@@ -195,7 +195,7 @@ var
 implementation
 
 uses
-  Option, PropertyFile, PropertyCat, About, ulCommonUtils, udClassicMenu,
+  Options, PropertyFile, PropertyCat, About, ulCommonUtils, udClassicMenu,
   PropertySeparator, ulExeUtils, ImportList, Stats, ulAppConfig, ulTreeView,
   ulDatabase, notifications, GraphicMenu;
 
@@ -341,14 +341,14 @@ procedure TfrmMain.miOptionsClick(Sender: TObject);
 begin
   if not IsFormOpen('frmOption') then
     try
-      Application.CreateForm(TfrmOption, frmOption);
-      frmOption.FormStyle := Self.FormStyle;
-      frmOption.showmodal;
+      Application.CreateForm(TfrmOptions, frmOptions);
+      frmOptions.FormStyle := Self.FormStyle;
+      frmOptions.showmodal;
     finally
-      frmOption.Free;
+      frmOptions.Free;
     end
   else
-    frmOption.show;
+    frmOptions.show;
   RefreshList(vstList);
 end;
 

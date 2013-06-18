@@ -93,6 +93,8 @@
         <DCC_Optimize>true</DCC_Optimize>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
+        <DCC_DebugDCUs>true</DCC_DebugDCUs>
+        <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
         <DCC_DependencyCheckOutputName>bin\ASuite.exe</DCC_DependencyCheckOutputName>
         <Version>7.0</Version>
         <DCC_Optimize>False</DCC_Optimize>
@@ -101,8 +103,8 @@
         <DCC_HppOutput>dcu</DCC_HppOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1191;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
-        <VerInfo_Build>1191</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1197;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
+        <VerInfo_Build>1197</VerInfo_Build>
         <ILINK_MapFileType>DetailedSegments</ILINK_MapFileType>
         <MapFile>3</MapFile>
         <DCC_MapFile>3</DCC_MapFile>
@@ -124,7 +126,7 @@
                     <VersionInfo Name="MajorVer">2</VersionInfo>
                     <VersionInfo Name="MinorVer">0</VersionInfo>
                     <VersionInfo Name="Release">0</VersionInfo>
-                    <VersionInfo Name="Build">1135</VersionInfo>
+                    <VersionInfo Name="Build">1141</VersionInfo>
                     <VersionInfo Name="Debug">False</VersionInfo>
                     <VersionInfo Name="PreRelease">False</VersionInfo>
                     <VersionInfo Name="Special">False</VersionInfo>
@@ -136,7 +138,7 @@
                 <VersionInfoKeys>
                     <VersionInfoKeys Name="CompanyName">SalvadorSoftware</VersionInfoKeys>
                     <VersionInfoKeys Name="FileDescription"/>
-                    <VersionInfoKeys Name="FileVersion">2.0.0.1135</VersionInfoKeys>
+                    <VersionInfoKeys Name="FileVersion">2.0.0.1141</VersionInfoKeys>
                     <VersionInfoKeys Name="InternalName"/>
                     <VersionInfoKeys Name="LegalCopyright"/>
                     <VersionInfoKeys Name="LegalTrademarks"/>
@@ -184,9 +186,6 @@
         <DCCReference Include="ClearElements.pas">
             <Form>frmClearElements</Form>
         </DCCReference>
-        <DCCReference Include="Option.pas">
-            <Form>frmOption</Form>
-        </DCCReference>
         <DCCReference Include="3p\CheckPrevious.pas"/>
         <DCCReference Include="library\ulNodeDataTypes.pas"/>
         <DCCReference Include="OrderSoftware.pas">
@@ -228,6 +227,45 @@
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="library\ulFileFolder.pas"/>
+        <DCCReference Include="Options.pas">
+            <Form>frmOptions</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="frame\BaseOptionsPage.pas">
+            <Form>frmBaseOptionsPage</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="frame\GeneralOptionsPage.pas">
+            <Form>frmGeneralOptionsPage</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="frame\AdvancedOptionsPage.pas">
+            <Form>frmAdvancedOptionsPage</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="frame\TrayIconOptionsPage.pas">
+            <Form>frmTrayiconOptionsPage</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="frame\ClassicMenuOptionsPage.pas">
+            <Form>frmClassicMenuOptionsPage</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="frame\GraphicMenuOptionsPage.pas">
+            <Form>frmGraphicMenuOptionsPage</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="frame\StatsOptionsPage.pas">
+            <Form>frmStatsOptionsPage</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
         <None Include="ASuite.inc"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>

@@ -1,5 +1,11 @@
 program ASuite;
 
+
+
+
+
+
+
 uses
   Forms,
   SysUtils,
@@ -13,7 +19,6 @@ uses
   PropertyCat in 'PropertyCat.pas' {frmPropertyCat},
   About in 'About.pas' {frmAbout},
   ClearElements in 'ClearElements.pas' {frmClearElements},
-  Option in 'Option.pas' {frmOption},
   CheckPrevious in '3p\CheckPrevious.pas',
   ulNodeDataTypes in 'library\ulNodeDataTypes.pas',
   OrderSoftware in 'OrderSoftware.pas' {frmOrderSoftware},
@@ -33,7 +38,15 @@ uses
   SynSQLite3Static,
   GraphicMenu in 'GraphicMenu.pas' {frmGraphicMenu},
   notifications in '3p\notifications.pas' {frmNotification},
-  ulFileFolder in 'library\ulFileFolder.pas';
+  ulFileFolder in 'library\ulFileFolder.pas',
+  Options in 'Options.pas' {frmOptions},
+  BaseOptionsPage in 'frame\BaseOptionsPage.pas' {frmBaseOptionsPage: TFrame},
+  GeneralOptionsPage in 'frame\GeneralOptionsPage.pas' {frmGeneralOptionsPage: TFrame},
+  AdvancedOptionsPage in 'frame\AdvancedOptionsPage.pas' {frmAdvancedOptionsPage: TFrame},
+  TrayIconOptionsPage in 'frame\TrayIconOptionsPage.pas' {frmTrayiconOptionsPage: TFrame},
+  ClassicMenuOptionsPage in 'frame\ClassicMenuOptionsPage.pas' {frmClassicMenuOptionsPage: TFrame},
+  GraphicMenuOptionsPage in 'frame\GraphicMenuOptionsPage.pas' {frmGraphicMenuOptionsPage: TFrame},
+  StatsOptionsPage in 'frame\StatsOptionsPage.pas' {frmStatsOptionsPage: TFrame};
 
 //SQLite3 static library
 
@@ -63,6 +76,7 @@ begin
 
     Application.CreateForm(TfrmMain, frmMain);
   Application.CreateForm(TfrmGraphicMenu, frmGraphicMenu);
+  Application.CreateForm(TfrmOptions, frmOptions);
   //Show MainForm and/or TrayMenu
     Application.ShowMainForm := Config.ShowPanelAtStartUp;
     if (Config.ShowMenuAtStartUp) then

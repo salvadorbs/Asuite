@@ -1,0 +1,2 @@
+inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
+end

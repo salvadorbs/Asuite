@@ -1,0 +1,2 @@
+inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
+end

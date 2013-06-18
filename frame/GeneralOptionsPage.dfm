@@ -1,0 +1,2 @@
+inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
+end

@@ -1,0 +1,2 @@
+inherited frmStatsOptionsPage: TfrmStatsOptionsPage
+end
