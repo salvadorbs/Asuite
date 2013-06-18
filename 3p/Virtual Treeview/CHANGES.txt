@@ -1,6 +1,21 @@
+- Fixed issue #206: Column painting issue with coWrapCaption in Options
+- Fixed issue #336 by ignoring PARENTDOUBLEBUFFEREDCHANGED message.
+- Fixed issue #342 by adding a new implementation of the VCL's DoubleBuffered property.
+  The inherited DoubleBuffered property of TWinControl must not be set to True!
+
+V5.1.3: (17 Apr 2013)
+- Fixed #340: GetHitTestInfoAt on right border of fixed column.
+- Fixed #337: Cannot "grab" item for dragging, odd behaviour of multi selecting with the selection
+  rectangle when toFullRowSelect is True but toSimpleDrawSelection is False.  (thx to Stefan Glienke)
+- Fixed #341: Error when unloading DLL due to missing UnRegisterStyleHook
+- Improved fix for #323: The fix applied in V5.1.2 was a breaking change for some projects, especially
+  if not all the initialization was done in the OnInitNode event (reported as #338). vsInitialUserData
+  has been renamed to vsOnFreeNodeCallRequired and is now set when GetNodeData is called. This fixes
+  the possible memory leak reported in #323 and has better backward compatibility. 
 - Fixed #316: These fixes are to make the treeview behave more like the windows explorer regarding
   selecting and dragging. Thanks to Stefan Glienke.
 - Fixed #333: Possible Integer overflow in 64Bit builds.
+- Compatibility with / packages for Delphi Xe$ / RAD Studio XE4 have been added.
 
 V5.1.2 (04 Apr 2013):
  - Added function TVirtualTreeColumns.GetFirstColumn that returns the first column in display order.

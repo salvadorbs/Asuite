@@ -1,7 +1,5 @@
 unit VirtualTrees;
 
-// Version 5.1.2
-//
 // The contents of this file are subject to the Mozilla Public License
 // Version 1.1 (the "License"); you may not use this file except in compliance
 // with the License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
@@ -91,6 +89,9 @@ uses
   {$IFEND}
   ;
 
+const
+  VTVersion = '5.1.4';
+
 {$if CompilerVersion < 20}
 type
   UnicodeString = WideString;
@@ -129,7 +130,6 @@ type
 {$ifend}
 
 const
-  VTVersion = '5.0.1';
   VTTreeStreamVersion = 2;
   VTHeaderStreamVersion = 6;    // The header needs an own stream version to indicate changes only relevant to the header.
 
@@ -299,7 +299,7 @@ type
     vsHasChildren,       // Indicates the presence of child nodes without actually setting them.
     vsVisible,           // Indicate whether the node is visible or not (independant of the expand states of its parents).
     vsSelected,          // Set if the node is in the current selection.
-    vsInitialUserData,   // Set if (via AddChild or InsertNode) initial user data has been set which requires OnFreeNode.
+    vsOnFreeNodeCallRequired,   // Set if user data has been set which requires OnFreeNode.
     vsAllChildrenHidden, // Set if vsHasChildren is set and no child node has the vsVisible flag set.
     vsClearing,          // A node's children are being deleted. Don't register structure change event.
     vsMultiline,         // Node text is wrapped at the cell boundaries instead of being shorted.
@@ -2406,6 +2406,7 @@ type
     FSetOrRestoreBevelKindAndBevelWidth: Boolean;
     procedure CMStyleChanged(var Message: TMessage); message CM_STYLECHANGED;
     procedure CMBorderChanged(var Message: TMessage); message CM_BORDERCHANGED;
+    procedure CMParentDoubleBufferedChange(var Message: TMessage); message CM_PARENTDOUBLEBUFFEREDCHANGED;
     {$ifend}
 
     procedure AdjustCoordinatesByIndent(var PaintInfo: TVTPaintInfo; Indent: Integer);
@@ -2575,6 +2576,8 @@ type
     procedure WMThemeChanged(var Message: TMessage); message WM_THEMECHANGED;
     procedure WMVScroll(var Message: TWMVScroll); message WM_VSCROLL;
     function GetRangeX: Cardinal;
+    function GetDoubleBuffered: Boolean;
+    procedure SetDoubleBuffered(const Value: Boolean);
   protected
     procedure AddToSelection(Node: PVirtualNode); overload; virtual;
     procedure AddToSelection(const NewItems: TNodeArray; NewLength: Integer; ForceInsert: Boolean = False); overload; virtual;
@@ -2742,6 +2745,7 @@ type
     function GetHintWindowClass: THintWindowClass; virtual;
     procedure GetImageIndex(var Info: TVTPaintInfo; Kind: TVTImageKind; InfoIndex: TVTImageInfoIndex;
       DefaultImages: TCustomImageList); virtual;
+    function GetNodeImageSize(Node: PVirtualNode): TSize; virtual;
     function GetMaxRightExtend: Cardinal; virtual;
     procedure GetNativeClipboardFormats(var Formats: TFormatEtcArray); virtual;
     function GetOperationCanceled: Boolean;
@@ -3014,6 +3018,7 @@ type
     constructor Create(AOwner: TComponent); override;
     {$if CompilerVersion >= 23 }
     class constructor Create;
+    class destructor Destroy;
     {$ifend}
     destructor Destroy; override;
 
@@ -3239,6 +3244,7 @@ type
     property VisibleCount: Cardinal read FVisibleCount;
     property VisiblePath[Node: PVirtualNode]: Boolean read GetVisiblePath write SetVisiblePath;
     property UpdateCount: Cardinal read FUpdateCount;
+    property DoubleBuffered: Boolean read GetDoubleBuffered write SetDoubleBuffered default True;
   end;
 
 
@@ -3712,6 +3718,7 @@ type
     property OnUpdating;
     {$if CompilerVersion>=21}
     property OnCanResize;
+    property Touch;
     {$ifend}
   end;
 
@@ -10266,7 +10273,7 @@ var
 
 begin
   Result := InvalidColumn;
-  if Relative and (P.X > Header.Columns.GetVisibleFixedWidth) then
+  if Relative and (P.X >= Header.Columns.GetVisibleFixedWidth) then
     ColumnLeft := -FHeader.Treeview.FEffectiveOffsetX
   else
     ColumnLeft := 0;
@@ -14090,7 +14097,7 @@ begin
   FHeader := GetHeaderClass.Create(Self);
 
   // we have an own double buffer handling
-  DoubleBuffered := False;
+  inherited DoubleBuffered := False;
 
   FCheckImageKind := ckSystemDefault;
   FCheckImages := SystemCheckImages;
@@ -14320,7 +14327,7 @@ begin
     if ShowImages or ShowStateImages then
     begin
       if ShowImages then
-        VAlign := FImages.Height
+        VAlign := GetNodeImageSize(Node).cy
       else
         VAlign := FStateImages.Height;
       VAlign := MulDiv((Integer(NodeHeight[Node]) - VAlign), Node.Align, 100) + VAlign div 2;
@@ -14512,7 +14519,6 @@ var
   NodeWidth,
   Dummy: Integer;
   MinY, MaxY: Integer;
-  ImageOffset,
   StateImageOffset: Integer;
   IsInOldRect,
   IsInNewRect: Boolean;
@@ -14538,10 +14544,6 @@ begin
   WithCheck := (toCheckSupport in FOptions.FMiscOptions) and Assigned(FCheckImages);
   // Don't check the events here as descendant trees might have overriden the DoGetImageIndex method.
   WithImages := Assigned(FImages);
-  if WithImages then
-    ImageOffset := FImages.Width + 2
-  else
-    ImageOffset := 0;
   WithStateImages := Assigned(FStateImages);
   if WithStateImages then
     StateImageOffset := FStateImages.Width + 2
@@ -14572,7 +14574,7 @@ begin
       if WithCheck and (Run.CheckType <> ctNone) then
         Inc(TextLeft, CheckOffset);
       if WithImages and HasImage(Run, ikNormal, MainColumn) then
-        Inc(TextLeft, ImageOffset);
+        Inc(TextLeft, GetNodeImageSize(run).cx + 2);
       if WithStateImages and HasImage(Run, ikState, MainColumn) then
         Inc(TextLeft, StateImageOffset);
       // Ensure the node's height is determined.
@@ -14582,7 +14584,7 @@ begin
 
       // Simple selection allows to draw the selection rectangle anywhere. No intersection with node captions is
       // required. Only top and bottom bounds of the rectangle matter.
-      if SimpleSelection then
+      if SimpleSelection or (toFullRowSelect in FOptions.FSelectionOptions) then
       begin
         IsInOldRect := (NextTop > OldRect.Top) and (CurrentTop < OldRect.Bottom) and
           ((FHeader.Columns.Count = 0) or (FHeader.Columns.TotalWidth > OldRect.Left)) and (NodeLeft < OldRect.Right);
@@ -14694,7 +14696,6 @@ var
   NodeWidth,
   Dummy: Integer;
   MinY, MaxY: Integer;
-  ImageOffset,
   StateImageOffset: Integer;
   IsInOldRect,
   IsInNewRect: Boolean;
@@ -14722,10 +14723,6 @@ begin
   WithCheck := (toCheckSupport in FOptions.FMiscOptions) and Assigned(FCheckImages);
   // Don't check the events here as descendant trees might have overriden the DoGetImageIndex method.
   WithImages := Assigned(FImages);
-  if WithImages then
-    ImageOffset := FImages.Width + 2
-  else
-    ImageOffset := 0;
   WithStateImages := Assigned(FStateImages);
   if WithStateImages then
     StateImageOffset := FStateImages.Width + 2
@@ -14756,7 +14753,7 @@ begin
       if WithCheck and (Run.CheckType <> ctNone) then
         Dec(TextRight, CheckOffset);
       if WithImages and HasImage(Run, ikNormal, MainColumn) then
-        Dec(TextRight, ImageOffset);
+        Dec(TextRight, GetNodeImageSize(run).cx + 2);
       if WithStateImages and HasImage(Run, ikState, MainColumn) then
         Dec(TextRight, StateImageOffset);
       // Ensure the node's height is determined.
@@ -16533,6 +16530,20 @@ end;
 
 //----------------------------------------------------------------------------------------------------------------------
 
+procedure TBaseVirtualTree.SetDoubleBuffered(const Value: Boolean);
+begin
+  // empty by intention, we do our own buffering
+end;
+
+//----------------------------------------------------------------------------------------------------------------------
+
+function TBaseVirtualTree.GetDoubleBuffered: Boolean;
+begin
+  Result := True; // we do our own buffering
+end;
+
+//----------------------------------------------------------------------------------------------------------------------
+
 procedure TBaseVirtualTree.SetEmptyListMessage(const Value: UnicodeString);
 
 begin
@@ -17463,14 +17474,18 @@ begin
     FSavedBorderWidth := BorderWidth;
   end;
 end;
-{$IFEND}
 
- {$if CompilerVersion >= 23 }
 procedure TBaseVirtualTree.CMStyleChanged(var Message: TMessage);
 begin
   VclStyleChanged;
   RecreateWnd;
 end;
+
+procedure TBaseVirtualTree.CMParentDoubleBufferedChange(var Message: TMessage);
+begin
+  // empty by intention, we do our own buffering
+end;
+
 {$ifend}
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -17996,7 +18011,6 @@ begin
 end;
 
 //----------------------------------------------------------------------------------------------------------------------
-
 procedure TBaseVirtualTree.CMSysColorChange(var Message: TMessage);
 
 begin
@@ -20316,6 +20330,11 @@ class constructor TBaseVirtualTree.Create;
 begin
   TCustomStyleEngine.RegisterStyleHook(TBaseVirtualTree, TVclStyleScrollBarsHook);
 end;
+
+class destructor TBaseVirtualTree.Destroy;
+begin
+  TCustomStyleEngine.UnRegisterStyleHook(TBaseVirtualTree,  TVclStyleScrollBarsHook);
+end;
 {$ifend}
 
 procedure TBaseVirtualTree.CreateParams(var Params: TCreateParams);
@@ -20597,7 +20616,7 @@ begin
         else
         begin
           if Assigned(FImages) and HasImage(HitInfo.HitNode, ikNormal, HitInfo.HitColumn) then
-            Inc(ImageOffset, FImages.Width + 2);
+            Inc(ImageOffset, GetNodeImageSize(HitInfo.HitNode).cx + 2);
           if Offset < ImageOffset then
             Include(HitInfo.HitPositions, hiOnNormalIcon)
           else
@@ -20734,7 +20753,7 @@ begin
         else
         begin
           if Assigned(FImages) and HasImage(HitInfo.HitNode, ikNormal, HitInfo.HitColumn) then
-            Dec(ImageOffset, FImages.Width + 2);
+            Dec(ImageOffset, GetNodeImageSize(HitInfo.HitNode).cx + 2);
           if Offset > ImageOffset then
             Include(HitInfo.HitPositions, hiOnNormalIcon)
           else
@@ -21690,7 +21709,7 @@ begin
     FDropTargetNode := nil;
   if Node = FLastStructureChangeNode then
     FLastStructureChangeNode := nil;
-  if Assigned(FOnFreeNode) and ([vsInitialized, vsInitialUserData] * Node.States <> []) then
+  if Assigned(FOnFreeNode) and ([vsInitialized, vsOnFreeNodeCallRequired] * Node.States <> []) then
     FOnFreeNode(Self, Node);
   FreeMem(Node);
 end;
@@ -23411,6 +23430,23 @@ end;
 
 //----------------------------------------------------------------------------------------------------------------------
 
+function TBaseVirtualTree.GetNodeImageSize(Node: PVirtualNode): TSize;
+
+  // Returns the size of an image
+  // Override if you need different sized images for certain nodes.
+begin
+  if Assigned(fImages) then begin
+    Result.cx := fImages.Width;
+    Result.cy := FImages.Height;
+  end
+  else begin
+    Result.cx := 0;
+    Result.cy := 0;
+  end;
+end;
+
+//----------------------------------------------------------------------------------------------------------------------
+
 function TBaseVirtualTree.GetMaxRightExtend: Cardinal;
 
 // Determines the maximum with of the currently visible part of the tree, depending on the length
@@ -24061,7 +24097,7 @@ begin
 
     // Query the application to learn if dragging may start now (if set to dmManual).
     if Assigned(HitInfo.HitNode) and not AutoDrag and (DragMode = dmManual) then
-      AutoDrag := DoBeforeDrag(HitInfo.HitNode, Column) and (IsCellHit or FullRowDrag);
+      AutoDrag := DoBeforeDrag(HitInfo.HitNode, Column) and (IsAnyHit or FullRowDrag);
 
     // handle node height tracking
     if IsHeightTracking then
@@ -27059,7 +27095,7 @@ begin
       Body.ChildCount := ChildCount;
       Body.NodeHeight := NodeHeight;
       // Some states are only temporary so take them out as they make no sense at the new location.
-      Body.States := States - [vsChecking, vsCutOrCopy, vsDeleting, vsInitialUserData, vsHeightMeasured];
+      Body.States := States - [vsChecking, vsCutOrCopy, vsDeleting, vsOnFreeNodeCallRequired, vsHeightMeasured];
       Body.Align := Align;
       Body.CheckState := CheckState;
       Body.CheckType := CheckType;
@@ -27202,7 +27238,7 @@ begin
       begin
         NodeData := Pointer(PByte(@Result.Data) + FTotalInternalDataSize);
         NodeData^ := UserData;
-        Include(Result.States, vsInitialUserData);
+        Include(Result.States, vsOnFreeNodeCallRequired);
       end
       else
         ShowError(SCannotSetUserData, hcTFCannotSetUserData);
@@ -28408,7 +28444,7 @@ begin
     if Assigned(FStateImages) and HasImage(Node, ikState, Column) then
       Inc(Offset, FStateImages.Width + 2);
     if Assigned(FImages) and HasImage(Node, ikNormal, Column) then
-      Inc(Offset, FImages.Width + 2);
+      Inc(Offset, GetNodeImageSize(Node).cx + 2);
 
     // Offset contains now the distance from the left or right border of the rectangle (depending on bidi mode).
     // Now consider the alignment too and calculate the final result.
@@ -28921,7 +28957,7 @@ begin
   // Convert position into absolute coordinate if necessary.
   if Relative then
   begin
-    if X > Header.Columns.GetVisibleFixedWidth then
+    if X >= Header.Columns.GetVisibleFixedWidth then
       Inc(X, FEffectiveOffsetX);
     Inc(Y, -FOffsetY);
   end;
@@ -29992,9 +30028,8 @@ begin
   if (FNodeDataSize <= 0) or (Node = nil) or (Node = FRoot) then
     Result := nil
   else begin
-    if ([vsInitialized, vsInitialUserData] * Node.States = []) then
-      InitNode(Node);
     Result := PByte(@Node.Data) + FTotalInternalDataSize;
+    Include(Node.States, vsOnFreeNodeCallRequired); // We now need to call OnFreeNode, see bug #323
   end;
 end;
 
@@ -31011,7 +31046,7 @@ begin
       begin
         NodeData := Pointer(PByte(@Result.Data) + FTotalInternalDataSize);
         NodeData^ := UserData;
-        Include(Result.States, vsInitialUserData);
+        Include(Result.States, vsOnFreeNodeCallRequired);
       end
       else
         ShowError(SCannotSetUserData, hcTFCannotSetUserData);
@@ -31907,7 +31942,7 @@ begin
                           begin
                             GetImageIndex(PaintInfo, ImageKind[vsSelected in Node.States], iiNormal, FImages);
                             if ImageInfo[iiNormal].Index > -1 then
-                              AdjustImageBorder(FImages, BidiMode, VAlign, ContentRect, ImageInfo[iiNormal]);
+                              AdjustImageBorder(ImageInfo[iiNormal].Images, BidiMode, VAlign, ContentRect, ImageInfo[iiNormal]);
                           end
                           else
                             ImageInfo[iiNormal].Index := -1;
