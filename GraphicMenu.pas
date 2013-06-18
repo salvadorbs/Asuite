@@ -222,7 +222,7 @@ implementation
 {$R *.dfm}
 
 uses
-  Main, Option, ulSysUtils, AppConfig, ulAppConfig, ulCommonUtils, About,
+  Main, Options, ulSysUtils, AppConfig, ulAppConfig, ulCommonUtils, About,
   udImages, ulNodeDataTypes, ulTreeView, ulEnumerations;
 
 procedure TfrmGraphicMenu.ApplicationEvents1Message(var Msg: tagMSG;

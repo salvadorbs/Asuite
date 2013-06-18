@@ -228,7 +228,7 @@ object frmGraphicMenu: TfrmGraphicMenu
     Margins.Top = 0
     Margins.Right = 0
     Margins.Bottom = 0
-    ActivePage = tsMRU
+    ActivePage = tsSearch
     Style = tsFlatButtons
     TabOrder = 1
     object tsList: TTabSheet
@@ -256,7 +256,7 @@ object frmGraphicMenu: TfrmGraphicMenu
         ScrollBarOptions.ScrollBars = ssVertical
         ShowHint = True
         TabOrder = 0
-        TreeOptions.PaintOptions = [toHideFocusRect, toShowBackground, toShowDropmark, toShowTreeLines, toThemeAware, toUseBlendedImages]
+        TreeOptions.PaintOptions = [toHideFocusRect, toShowBackground, toShowDropmark, toShowTreeLines, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
         TreeOptions.SelectionOptions = [toDisableDrawSelection, toFullRowSelect]
         OnExpanding = vstListExpanding
         OnGetText = vstGetText
@@ -293,7 +293,7 @@ object frmGraphicMenu: TfrmGraphicMenu
         ScrollBarOptions.ScrollBars = ssNone
         ShowHint = True
         TabOrder = 0
-        TreeOptions.PaintOptions = [toHideFocusRect, toShowBackground, toShowDropmark, toShowTreeLines, toThemeAware, toUseBlendedImages]
+        TreeOptions.PaintOptions = [toHideFocusRect, toShowBackground, toShowDropmark, toShowTreeLines, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
         TreeOptions.SelectionOptions = [toDisableDrawSelection, toFullRowSelect]
         OnGetText = vstGetText
         OnGetImageIndex = vstGetImageLargeIndex
@@ -330,7 +330,7 @@ object frmGraphicMenu: TfrmGraphicMenu
         ScrollBarOptions.ScrollBars = ssNone
         ShowHint = True
         TabOrder = 0
-        TreeOptions.PaintOptions = [toHideFocusRect, toShowBackground, toShowDropmark, toShowTreeLines, toThemeAware, toUseBlendedImages]
+        TreeOptions.PaintOptions = [toHideFocusRect, toShowBackground, toShowDropmark, toShowTreeLines, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
         TreeOptions.SelectionOptions = [toDisableDrawSelection, toFullRowSelect]
         OnGetText = vstGetText
         OnGetImageIndex = vstGetImageLargeIndex
@@ -367,7 +367,7 @@ object frmGraphicMenu: TfrmGraphicMenu
         ScrollBarOptions.ScrollBars = ssVertical
         ShowHint = True
         TabOrder = 0
-        TreeOptions.PaintOptions = [toHideFocusRect, toShowBackground, toShowDropmark, toThemeAware, toUseBlendedImages]
+        TreeOptions.PaintOptions = [toHideFocusRect, toShowBackground, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
         TreeOptions.SelectionOptions = [toDisableDrawSelection, toFullRowSelect]
         OnGetText = vstGetText
         OnGetImageIndex = vstGetImageLargeIndex
