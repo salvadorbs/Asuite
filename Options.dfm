@@ -2,7 +2,7 @@ object frmOptions: TfrmOptions
   Left = 0
   Top = 0
   Caption = 'Options'
-  ClientHeight = 369
+  ClientHeight = 326
   ClientWidth = 513
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -16,8 +16,8 @@ object frmOptions: TfrmOptions
   PixelsPerInch = 96
   TextHeight = 13
   object btnOk: TButton
-    Left = 349
-    Top = 336
+    Left = 351
+    Top = 294
     Width = 75
     Height = 25
     Caption = 'Ok'
@@ -25,7 +25,7 @@ object frmOptions: TfrmOptions
   end
   object btnCancel: TButton
     Left = 430
-    Top = 336
+    Top = 294
     Width = 75
     Height = 25
     Caption = 'Cancel'
@@ -35,15 +35,15 @@ object frmOptions: TfrmOptions
   object pnlOptionsPage: TPanel
     Left = 175
     Top = 8
-    Width = 330
-    Height = 320
+    Width = 331
+    Height = 280
     TabOrder = 3
   end
   object vstListCategory: TVirtualStringTree
     Left = 8
     Top = 8
     Width = 161
-    Height = 320
+    Height = 280
     Header.AutoSizeIndex = 0
     Header.Font.Charset = DEFAULT_CHARSET
     Header.Font.Color = clWindowText
@@ -55,7 +55,12 @@ object frmOptions: TfrmOptions
     TabOrder = 0
     OnFreeNode = vstListCategoryFreeNode
     OnGetText = vstListCategoryGetText
+    OnInitNode = vstListCategoryInitNode
     OnNodeClick = vstListCategoryNodeClick
     Columns = <>
+  end
+  object OpenDialog1: TOpenDialog
+    Left = 8
+    Top = 296
   end
 end

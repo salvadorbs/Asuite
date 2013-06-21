@@ -13,6 +13,7 @@ type
     btnCancel: TButton;
     pnlOptionsPage: TPanel;
     vstListCategory: TVirtualStringTree;
+    OpenDialog1: TOpenDialog;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure vstListCategoryGetText(Sender: TBaseVirtualTree;
@@ -23,6 +24,8 @@ type
     procedure vstListCategoryNodeClick(Sender: TBaseVirtualTree;
       const HitInfo: THitInfo);
     procedure btnCancelClick(Sender: TObject);
+    procedure vstListCategoryInitNode(Sender: TBaseVirtualTree; ParentNode,
+      Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
   private
     { Private declarations }
     function AddFrameNode(Parent: PVirtualNode; FramePage: TPageFrameClass): PVirtualNode;
@@ -48,8 +51,8 @@ implementation
 {$R *.dfm}
 
 uses
-  GeneralOptionsPage, AdvancedOptionsPage, TrayIconOptionsPage, ClassicMenuOptionsPage,
-  GraphicMenuOptionsPage, StatsOptionsPage;
+  GeneralOptionsPage, AdvancedOptionsPage, TrayIconOptionsPage, SensorsOptionsPage,
+  StatsOptionsPage, HotkeyOptionsPage, ItemsOptionsPage;
 
 { TfrmOptions }
 
@@ -65,17 +68,18 @@ end;
 
 procedure TfrmOptions.FormShow(Sender: TObject);
 var
-  FrameGeneral, FrameAdvanced, FrameTrayIcon: PVirtualNode;
+  FrameGeneral, FrameAdvanced: PVirtualNode;
 begin
   vstListCategory.Clear;
   //General
   FrameGeneral  := AddFrameNode(nil,TPageFrameClass(TfrmGeneralOptionsPage.Create(Self)));
   //Advanced
   FrameAdvanced := AddFrameNode(nil,TPageFrameClass(TfrmAdvancedOptionsPage.Create(Self)));
+  AddFrameNode(FrameAdvanced,TPageFrameClass(TfrmItemsOptionsPage.Create(Self)));
+  AddFrameNode(FrameAdvanced,TPageFrameClass(TfrmHotkeyOptionsPage.Create(Self)));
+  AddFrameNode(FrameAdvanced,TPageFrameClass(TfrmSensorsOptionsPage.Create(Self)));
   //TrayIcon
-  FrameTrayIcon := AddFrameNode(nil,TPageFrameClass(TfrmTrayiconOptionsPage.Create(Self)));
-  AddFrameNode(FrameTrayIcon,TPageFrameClass(TfrmClassicMenuOptionsPage.Create(Self)));
-  AddFrameNode(FrameTrayIcon,TPageFrameClass(TfrmGraphicMenuOptionsPage.Create(Self)));
+  AddFrameNode(nil,TPageFrameClass(TfrmTrayiconOptionsPage.Create(Self)));
   //Stats
   AddFrameNode(nil,TPageFrameClass(TfrmStatsOptionsPage.Create(Self)));
 
@@ -147,6 +151,12 @@ begin
   if Assigned(NodeData) then
     if NodeData.Title <> '' then
       CellText := NodeData.Title;
+end;
+
+procedure TfrmOptions.vstListCategoryInitNode(Sender: TBaseVirtualTree;
+  ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+begin
+  Node.NodeHeight := 36;
 end;
 
 procedure TfrmOptions.vstListCategoryNodeClick(Sender: TBaseVirtualTree;

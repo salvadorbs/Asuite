@@ -1,2 +1,0 @@
-inherited frmClassicMenuOptionsPage: TfrmClassicMenuOptionsPage
-end

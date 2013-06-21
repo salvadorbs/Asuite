@@ -1,2 +1,0 @@
-inherited frmGraphicMenuOptionsPage: TfrmGraphicMenuOptionsPage
-end

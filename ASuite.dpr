@@ -44,9 +44,10 @@ uses
   GeneralOptionsPage in 'frame\GeneralOptionsPage.pas' {frmGeneralOptionsPage: TFrame},
   AdvancedOptionsPage in 'frame\AdvancedOptionsPage.pas' {frmAdvancedOptionsPage: TFrame},
   TrayIconOptionsPage in 'frame\TrayIconOptionsPage.pas' {frmTrayiconOptionsPage: TFrame},
-  ClassicMenuOptionsPage in 'frame\ClassicMenuOptionsPage.pas' {frmClassicMenuOptionsPage: TFrame},
-  GraphicMenuOptionsPage in 'frame\GraphicMenuOptionsPage.pas' {frmGraphicMenuOptionsPage: TFrame},
-  StatsOptionsPage in 'frame\StatsOptionsPage.pas' {frmStatsOptionsPage: TFrame};
+  HotkeyOptionsPage in 'frame\HotkeyOptionsPage.pas' {frmHotkeyOptionsPage: TFrame},
+  StatsOptionsPage in 'frame\StatsOptionsPage.pas' {frmStatsOptionsPage: TFrame},
+  ItemsOptionsPage in 'frame\ItemsOptionsPage.pas' {frmItemsOptionsPage: TFrame},
+  SensorsOptionsPage in 'frame\SensorsOptionsPage.pas' {frmSensorsOptionsPage: TFrame};
 
 //SQLite3 static library
 
@@ -76,7 +77,6 @@ begin
 
     Application.CreateForm(TfrmMain, frmMain);
   Application.CreateForm(TfrmGraphicMenu, frmGraphicMenu);
-  Application.CreateForm(TfrmOptions, frmOptions);
   //Show MainForm and/or TrayMenu
     Application.ShowMainForm := Config.ShowPanelAtStartUp;
     if (Config.ShowMenuAtStartUp) then
