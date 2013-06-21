@@ -228,7 +228,7 @@ object frmGraphicMenu: TfrmGraphicMenu
     Margins.Top = 0
     Margins.Right = 0
     Margins.Bottom = 0
-    ActivePage = tsSearch
+    ActivePage = tsList
     Style = tsFlatButtons
     TabOrder = 1
     object tsList: TTabSheet
@@ -271,6 +271,10 @@ object frmGraphicMenu: TfrmGraphicMenu
       Caption = 'tsRecents'
       ImageIndex = 1
       TabVisible = False
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object vstRecents: TVirtualStringTree
         Left = 0
         Top = 0
@@ -308,6 +312,10 @@ object frmGraphicMenu: TfrmGraphicMenu
       Caption = 'tsMostUsed'
       ImageIndex = 2
       TabVisible = False
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object vstMostUsed: TVirtualStringTree
         Left = 0
         Top = 0

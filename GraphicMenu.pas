@@ -821,9 +821,9 @@ begin
   tmrFader.Enabled:= True;
   //Show frmMenu
   Self.Show;
-//  SetForegroundWindow(Self.Handle);
-//  if Not(IsWindowVisible(frmMain.Handle)) then
-//    ShowWindow(Application.Handle, SW_HIDE);
+  SetForegroundWindow(Self.Handle);
+  if Not(IsWindowVisible(frmMain.Handle)) then
+    ShowWindow(Application.Handle, SW_HIDE);
 end;
 
 procedure TfrmGraphicMenu.tmrFaderTimer(Sender: TObject);
@@ -875,7 +875,10 @@ begin
     Sender.Expanded[HitInfo.HitNode] := Not(Sender.Expanded[HitInfo.HitNode])
   else
     if NodeData.Data.DataType = vtdtFile then
+    begin
       frmMain.RunDoubleClick(Sender);
+      CloseMenu;
+    end;
 end;
 
 procedure TfrmGraphicMenu.vstGetImageIndex(Sender: TBaseVirtualTree;
@@ -927,6 +930,7 @@ end;
 procedure TfrmGraphicMenu.vstKeyPress(Sender: TObject; var Key: Char);
 begin
   frmMain.vstListKeyPress(Sender, Key);
+  CloseMenu;
 end;
 
 procedure TfrmGraphicMenu.vstMouseMove(Sender: TObject; Shift: TShiftState;
