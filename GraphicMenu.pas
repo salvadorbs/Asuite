@@ -786,6 +786,7 @@ begin
         SList.Delete(I);
     end;
   end;
+  Tree.ValidateNode(Tree.RootNode,True);
   ImagesDM.GetChildNodesIcons(frmMain.vstList, Tree, Tree.RootNode, False, False);
 end;
 
@@ -971,7 +972,7 @@ begin
   begin
     PRect(Msg.LParam)^.Left  := 0;
     PRect(Msg.LParam)^.Right := Self.ClientWidth;
-    Dec(PRect(Msg.LParam)^.Top, 4);
+    Dec(PRect(Msg.LParam)^.Top, 2);
     PRect(Msg.LParam)^.Bottom := Self.ClientHeight;
   end
   else
