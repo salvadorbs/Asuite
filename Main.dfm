@@ -64,7 +64,7 @@ object frmMain: TfrmMain
     Top = 0
     Width = 184
     Height = 340
-    ActivePage = tbSearch
+    ActivePage = tbList
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText

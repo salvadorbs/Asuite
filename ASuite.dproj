@@ -103,8 +103,8 @@
         <DCC_HppOutput>dcu</DCC_HppOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1198;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
-        <VerInfo_Build>1198</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1200;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
+        <VerInfo_Build>1200</VerInfo_Build>
         <ILINK_MapFileType>DetailedSegments</ILINK_MapFileType>
         <MapFile>3</MapFile>
         <DCC_MapFile>3</DCC_MapFile>
@@ -126,7 +126,7 @@
                     <VersionInfo Name="MajorVer">2</VersionInfo>
                     <VersionInfo Name="MinorVer">0</VersionInfo>
                     <VersionInfo Name="Release">0</VersionInfo>
-                    <VersionInfo Name="Build">1143</VersionInfo>
+                    <VersionInfo Name="Build">1145</VersionInfo>
                     <VersionInfo Name="Debug">False</VersionInfo>
                     <VersionInfo Name="PreRelease">False</VersionInfo>
                     <VersionInfo Name="Special">False</VersionInfo>
@@ -138,7 +138,7 @@
                 <VersionInfoKeys>
                     <VersionInfoKeys Name="CompanyName">SalvadorSoftware</VersionInfoKeys>
                     <VersionInfoKeys Name="FileDescription"/>
-                    <VersionInfoKeys Name="FileVersion">2.0.0.1143</VersionInfoKeys>
+                    <VersionInfoKeys Name="FileVersion">2.0.0.1145</VersionInfoKeys>
                     <VersionInfoKeys Name="InternalName"/>
                     <VersionInfoKeys Name="LegalCopyright"/>
                     <VersionInfoKeys Name="LegalTrademarks"/>
@@ -183,9 +183,6 @@
         <DCCReference Include="About.pas">
             <Form>frmAbout</Form>
         </DCCReference>
-        <DCCReference Include="ClearElements.pas">
-            <Form>frmClearElements</Form>
-        </DCCReference>
         <DCCReference Include="3p\CheckPrevious.pas"/>
         <DCCReference Include="library\ulNodeDataTypes.pas"/>
         <DCCReference Include="OrderSoftware.pas">
@@ -215,9 +212,6 @@
         </DCCReference>
         <DCCReference Include="library\ASuiteForm.pas"/>
         <DCCReference Include="library\ulTreeView.pas"/>
-        <DCCReference Include="Stats.pas">
-            <Form>frmStats</Form>
-        </DCCReference>
         <DCCReference Include="GraphicMenu.pas">
             <Form>frmGraphicMenu</Form>
             <FormType>dfm</FormType>
