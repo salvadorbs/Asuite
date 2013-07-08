@@ -98,6 +98,7 @@ type
     FReadOnlyMode       : Boolean;
     FChanged            : Boolean;
     FASuiteState        : TASuiteState;
+    FUseMouseSensors    : Boolean;
     procedure SetHoldSize(value: Boolean);
     procedure SetAlwaysOnTop(value: Boolean);
     procedure SetSensorLeftClick(aIndex: Integer; value: Integer);
@@ -122,6 +123,10 @@ type
     procedure SetGMBtnMusic(Value: string);
     procedure SetGMBtnPictures(Value: string);
     procedure SetGMBtnVideos(Value: string);
+    procedure SetMenuHotKeyCode(const Value: Integer);
+    procedure SetMenuHotKeyMod(const Value: Integer);
+    procedure SetWindowHotKeyCode(const Value: Integer);
+    procedure SetWindowHotKeyMod(const Value: Integer);
   public
     { public declarations }
     constructor Create; overload;
@@ -184,13 +189,14 @@ type
     property GMBtnExplore: string read FGMBtnExplore write SetGMBtnExplore;
     //Hot Keys
     property WindowHotKey: Boolean read FWindowHotKey write FWindowHotKey;
-    property WindowHotKeyCode: Integer read FWindowHotKeyCode write FWindowHotKeyCode;
-    property WindowHotKeyMod: Integer read FWindowHotKeyMod write FWindowHotKeyMod;
+    property WindowHotKeyCode: Integer read FWindowHotKeyCode write SetWindowHotKeyCode;
+    property WindowHotKeyMod: Integer read FWindowHotKeyMod write SetWindowHotKeyMod;
     property MenuHotKey: Boolean read FMenuHotKey write FMenuHotKey;
-    property MenuHotKeyCode: Integer read FMenuHotKeyCode write FMenuHotKeyCode;
-    property MenuHotKeyMod: Integer read FMenuHotKeyMod write FMenuHotKeyMod;
+    property MenuHotKeyCode: Integer read FMenuHotKeyCode write SetMenuHotKeyCode;
+    property MenuHotKeyMod: Integer read FMenuHotKeyMod write SetMenuHotKeyMod;
     procedure RegisterHotKeys;
     //Mouse Sensor
+    property UseMouseSensors: Boolean read FUseMouseSensors write FUseMouseSensors;
     property SensorLeftClick[aIndex: Integer]:Integer read GetSensorLeftClick write setSensorLeftClick;
     property SensorRightClick[aIndex: Integer]:Integer read GetSensorRightClick write setSensorRightClick;
     // Misc
@@ -403,6 +409,22 @@ begin
     frmMain.Caption := APP_TITLE;
 end;
 
+procedure TConfiguration.SetWindowHotKeyCode(const Value: Integer);
+begin
+  if Value <> -1 then
+    FWindowHotKeyCode := Value
+  else
+    FWindowHotKeyCode := 0;
+end;
+
+procedure TConfiguration.SetWindowHotKeyMod(const Value: Integer);
+begin
+  if Value <> -1 then
+    FWindowHotKeyMod := Value
+  else
+    FWindowHotKeyMod := 0;
+end;
+
 procedure TConfiguration.SetTVAutoOpClCats(value: Boolean);
 begin
   FTVAutoOpClCats := value;
@@ -559,6 +581,22 @@ begin
   end
   else
     FLanguage := value;
+end;
+
+procedure TConfiguration.SetMenuHotKeyCode(const Value: Integer);
+begin
+  if Value <> -1 then
+    FMenuHotKeyCode := Value
+  else
+    FMenuHotKeyCode := 0;
+end;
+
+procedure TConfiguration.SetMenuHotKeyMod(const Value: Integer);
+begin
+  if Value <> -1 then
+    FMenuHotKeyMod := Value
+  else
+    FMenuHotKeyMod := 0;
 end;
 
 end.

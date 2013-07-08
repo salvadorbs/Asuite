@@ -169,6 +169,7 @@ type
     FMenuHotKeyCode     : Integer;
     FMenuHotKeyMod      : Integer;
     //Mouse Sensors
+    FUseMouseSensors    : Boolean;
     FSensorLeftClick    : RawUTF8; //0 Top, 1 Left, 2 Right, 3 Bottom
     FSensorRightClick   : RawUTF8;
   published
@@ -238,6 +239,7 @@ type
     property menuhotkeycode: Integer read FMenuHotKeyCode write FMenuHotKeyCode;
     property menuhotkeymod: Integer read FMenuHotKeyMod write FMenuHotKeyMod;
     //Mouse Sensor
+    property usemousesensors: Boolean read FUseMouseSensors write FUseMouseSensors;
     property mousesensorleft:RawUTF8 read FSensorLeftClick write FSensorLeftClick;
     property mousesensorright:RawUTF8 read FSensorRightClick write FSensorRightClick;
   end;
@@ -616,6 +618,7 @@ begin
         Config.MenuHotKeyCode     := SQLOptionsData.MenuHotKeyCode;
         Config.MenuHotKeyMod      := SQLOptionsData.MenuHotKeyMod;
         //Mouse sensors
+        Config.UseMouseSensors    := SQLOptionsData.UseMouseSensors;
         UTF8ToMouseSensors(SQLOptionsData.mousesensorleft,mbLeft);
         UTF8ToMouseSensors(SQLOptionsData.mousesensorright,mbRight);
       end
@@ -810,8 +813,9 @@ begin
     SQLOptionsData.MenuHotKeyCode     := Config.MenuHotKeyCode;
     SQLOptionsData.MenuHotKeyMod      := Config.MenuHotKeyMod;
     //Mouse Sensor
-    SQLOptionsData.mousesensorleft  := MouseSensorsToUTF8(mbLeft);
-    SQLOptionsData.mousesensorright := MouseSensorsToUTF8(mbRight);
+    SQLOptionsData.usemousesensors    := Config.UseMouseSensors;
+    SQLOptionsData.mousesensorleft    := MouseSensorsToUTF8(mbLeft);
+    SQLOptionsData.mousesensorright   := MouseSensorsToUTF8(mbRight);
     FDatabase.Add(SQLOptionsData,true);
   finally
     SQLOptionsData.Free;
