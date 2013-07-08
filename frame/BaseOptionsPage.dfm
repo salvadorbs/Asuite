@@ -4,4 +4,8 @@ object frmBaseOptionsPage: TfrmBaseOptionsPage
   Width = 330
   Height = 280
   TabOrder = 0
+  object OpenDialog1: TOpenDialog
+    Left = 296
+    Top = 4
+  end
 end

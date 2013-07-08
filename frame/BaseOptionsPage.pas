@@ -8,14 +8,17 @@ uses
 
 type
   TfrmBaseOptionsPage = class(TFrame)
+    OpenDialog1: TOpenDialog;
   private
     { Private declarations }
   strict protected
     function GetTitle: string; virtual;
     function InternalLoadData: Boolean; virtual;
+    function InternalSaveData: Boolean; virtual;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
+    procedure SaveData; virtual;
     property Title: string read GetTitle;
   end;
 
@@ -41,6 +44,16 @@ end;
 function TfrmBaseOptionsPage.InternalLoadData: Boolean;
 begin
   Result := True;
+end;
+
+function TfrmBaseOptionsPage.InternalSaveData: Boolean;
+begin
+  Result := True;
+end;
+
+procedure TfrmBaseOptionsPage.SaveData;
+begin
+  Self.InternalSaveData;
 end;
 
 end.

@@ -127,6 +127,7 @@ type
     procedure SetMenuHotKeyMod(const Value: Integer);
     procedure SetWindowHotKeyCode(const Value: Integer);
     procedure SetWindowHotKeyMod(const Value: Integer);
+    procedure SetBackupNumber(const Value: Integer);
   public
     { public declarations }
     constructor Create; overload;
@@ -160,7 +161,7 @@ type
     property MFUNumber: Integer read FMFUNumber write FMFUNumber;
     // Backup
     property Backup: Boolean read FBackup write FBackup;
-    property BackupNumber: Integer read FBackupNumber write FBackupNumber;
+    property BackupNumber: Integer read FBackupNumber write SetBackupNumber;
     // Other functions
     property Autorun: Boolean read FAutorun write FAutorun;
     property Cache: Boolean read FCache write SetCache;
@@ -315,6 +316,13 @@ begin
     frmMain.FormStyle := fsStayOnTop
   else
     frmMain.FormStyle := fsNormal;
+end;
+
+procedure TConfiguration.SetBackupNumber(const Value: Integer);
+begin
+  if Value < FBackupNumber then
+    DeleteOldBackups(Value);
+  FBackupNumber := Value;
 end;
 
 procedure TConfiguration.SetScheduler(value: Boolean);

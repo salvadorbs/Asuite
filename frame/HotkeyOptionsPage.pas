@@ -24,6 +24,7 @@ type
   strict protected
     function GetTitle: string; override;
     function InternalLoadData: Boolean; override;
+    function InternalSaveData: Boolean; override;
   public
     { Public declarations }
   end;
@@ -72,7 +73,7 @@ begin
   cbWindowHotKey.Checked       := Config.WindowHotKey;
   cxWindowHotKeyMod.ItemIndex  := Config.WindowHotKeyMod;
   cxWindowHotKeyCode.ItemIndex := Config.WindowHotKeyCode;
-   //Window's menu Hotkey
+  //Menu's  Hotkey
   cbMenuHotKey.Checked         := Config.MenuHotkey;
   cxMenuHotKeyMod.ItemIndex    := Config.MenuHotKeyMod;
   cxMenuHotKeyCode.ItemIndex   := Config.MenuHotKeyCode;
@@ -80,6 +81,23 @@ begin
   cbHotKeyClick(Self);
   cbMenuHotKeyClick(Self);
   cbWindowHotKeyClick(Self);
+end;
+
+function TfrmHotkeyOptionsPage.InternalSaveData: Boolean;
+begin
+  inherited;
+  //Hot Keys
+  Config.HotKey           := cbHotKey.Checked;
+  //Window's Hotkey
+  Config.WindowHotKey     := cbWindowHotKey.Checked;
+  Config.WindowHotKeyCode := cxWindowHotKeyCode.ItemIndex;
+  Config.WindowHotKeyMod  := cxWindowHotKeyMod.ItemIndex;
+  //Menu's Hotkey
+  Config.MenuHotKey       := cbMenuHotKey.Checked;
+  Config.MenuHotKeyCode   := cxMenuHotKeyCode.ItemIndex;
+  Config.MenuHotKeyMod    := cxMenuHotKeyMod.ItemIndex;
+  //Register HotKeys
+  Config.RegisterHotKeys;
 end;
 
 end.

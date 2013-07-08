@@ -1,5 +1,5 @@
 inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
-  object gbTrayicon: TGroupBox
+  object gbTrayicon: TGroupBox [0]
     Left = 3
     Top = 3
     Width = 320
@@ -43,6 +43,7 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
       Height = 21
       Caption = 'Browse'
       TabOrder = 3
+      OnClick = btnBrowseClick
     end
     object cbTrayicon: TCheckBox
       Left = 8
@@ -89,10 +90,9 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
       Width = 241
       Height = 21
       TabOrder = 2
-      Text = 'edtCustomIcon'
     end
   end
-  object grpGraphicMenu: TGroupBox
+  object grpGraphicMenu: TGroupBox [1]
     Left = 3
     Top = 167
     Width = 158
@@ -123,7 +123,7 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
       TabOrder = 0
     end
   end
-  object grpClassicMenu: TGroupBox
+  object grpClassicMenu: TGroupBox [2]
     Left = 165
     Top = 167
     Width = 158

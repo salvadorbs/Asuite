@@ -52,6 +52,7 @@ type
   strict protected
     function GetTitle: string; override;
     function InternalLoadData: Boolean; override;
+    function InternalSaveData: Boolean; override;
   public
     { Public declarations }
   end;
@@ -179,6 +180,23 @@ begin
   cbBackupClick(Self);
   cbMFUClick(Self);
   cbMRUClick(Self);
+end;
+
+function TfrmAdvancedOptionsPage.InternalSaveData: Boolean;
+begin
+  inherited;
+  //MRU
+  Config.MRU       := cbMRU.Checked;
+  Config.MRUNumber := tbMRU.Position;
+  //MFU
+  Config.MFU       := cbMFU.Checked;
+  Config.MFUNumber := tbMFU.Position;
+  //Backup
+  Config.Backup    := cbBackup.Checked;
+  Config.BackupNumber := tbBackup.Position;
+  //Other functions
+  Config.Cache     := cbCache.Checked;
+  Config.Scheduler := cbScheduler.Checked;
 end;
 
 procedure TfrmAdvancedOptionsPage.TrackBarChange(Sender: TObject);

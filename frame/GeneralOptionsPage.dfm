@@ -1,5 +1,5 @@
 inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
-  object gbWindow: TGroupBox
+  object gbWindow: TGroupBox [0]
     Left = 3
     Top = 3
     Width = 142
@@ -54,7 +54,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
       TabOrder = 2
     end
   end
-  object gbStartup: TGroupBox
+  object gbStartup: TGroupBox [1]
     Left = 151
     Top = 3
     Width = 174
@@ -86,7 +86,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
       TabOrder = 2
     end
   end
-  object gbTreeView: TGroupBox
+  object gbTreeView: TGroupBox [2]
     Left = 3
     Top = 137
     Width = 324
@@ -126,6 +126,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
       Height = 21
       Caption = 'Browse'
       TabOrder = 3
+      OnClick = btnBrowseBackgroundClick
     end
     object cbAutoOpClCat: TCheckBox
       Left = 8
@@ -136,7 +137,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
       TabOrder = 0
     end
   end
-  object grpLanguage: TGroupBox
+  object grpLanguage: TGroupBox [3]
     Left = 151
     Top = 84
     Width = 174
@@ -152,7 +153,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
       TabOrder = 0
     end
   end
-  object FontDialog1: TFontDialog
+  object FontDialog1: TFontDialog [4]
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -11

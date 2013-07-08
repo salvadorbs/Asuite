@@ -28,11 +28,13 @@ type
     procedure cbClassicMenuClick(Sender: TObject);
     procedure cbTrayCustomIconClick(Sender: TObject);
     procedure cbTrayiconClick(Sender: TObject);
+    procedure btnBrowseClick(Sender: TObject);
   private
     { Private declarations }
   strict protected
     function GetTitle: string; override;
     function InternalLoadData: Boolean; override;
+    function InternalSaveData: Boolean; override;
   public
     { Public declarations }
   end;
@@ -43,11 +45,25 @@ var
 implementation
 
 uses
-  ulAppConfig, AppConfig;
+  ulAppConfig, AppConfig, ulSysUtils;
 
 {$R *.dfm}
 
 { TfrmTrayiconOptionsPage }
+
+procedure TfrmTrayiconOptionsPage.btnBrowseClick(Sender: TObject);
+var
+  PathTemp: string;
+begin
+  OpenDialog1.Filter     := 'Files supported (*.ico)|*.ico';
+  OpenDialog1.InitialDir := ExtractFileDir(RelativeToAbsolute(Config.TrayCustomIconPath));
+  if (OpenDialog1.Execute) then
+  begin
+    PathTemp := AbsoluteToRelative(OpenDialog1.FileName);
+    edtCustomIcon.Text := PathTemp;
+  end;
+  SetCurrentDir(SUITE_WORKING_PATH);
+end;
 
 procedure TfrmTrayiconOptionsPage.cbClassicMenuClick(Sender: TObject);
 begin
@@ -119,6 +135,24 @@ begin
   cbTrayiconClick(Self);
   cbTrayCustomIconClick(Self);
   cbClassicMenuClick(Self);
+end;
+
+function TfrmTrayiconOptionsPage.InternalSaveData: Boolean;
+begin
+  inherited;
+  //Trayicon
+  Config.TrayIcon           := cbTrayicon.Checked;
+  Config.TrayCustomIconPath := edtCustomIcon.Text;
+  Config.TrayUseCustomIcon  := cbTrayCustomIcon.Checked;
+  Config.UseClassicMenu     := cbClassicMenu.Checked;
+  Config.ActionClickLeft    := cxLeftClick.ItemIndex;
+  Config.ActionClickRight   := cxRightClick.ItemIndex;
+  //Graphic Menu
+  Config.GMTheme    := cxTheme.Items[cxTheme.ItemIndex];
+  Config.GMFade     := cbMenuFade.Checked;
+  //Submenu
+  Config.SubMenuMRU := cbSubMenuMRU.Checked;
+  Config.SubMenuMFU := cbSubMenuMFU.Checked;
 end;
 
 end.

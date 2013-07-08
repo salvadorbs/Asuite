@@ -31,6 +31,7 @@ type
   strict protected
     function GetTitle: string; override;
     function InternalLoadData: Boolean; override;
+    function InternalSaveData: Boolean; override;
   public
     { Public declarations }
   end;
@@ -102,6 +103,25 @@ begin
   cxRCBottom.ItemIndex := Config.SensorRightClick[3];
   //Enable/Disable visual components
   cbMouseSensorsClick(Self);
+end;
+
+function TfrmSensorsOptionsPage.InternalSaveData: Boolean;
+begin
+  inherited;
+  //Mouse Sensors
+  Config.UseMouseSensors     := cbMouseSensors.Checked;
+  //Left
+  Config.SensorLeftClick[0]  := cxLCTop.ItemIndex;
+  Config.SensorLeftClick[1]  := cxLCLeft.ItemIndex;
+  Config.SensorLeftClick[2]  := cxLCRight.ItemIndex;
+  Config.SensorLeftClick[3]  := cxLCBottom.ItemIndex;
+  //Right
+  Config.SensorRightClick[0] := cxRCTop.ItemIndex;
+  Config.SensorRightClick[1] := cxRCLeft.ItemIndex;
+  Config.SensorRightClick[2] := cxRCRight.ItemIndex;
+  Config.SensorRightClick[3] := cxRCBottom.ItemIndex;
+  //Update sensors
+  Config.UpdateSensors;
 end;
 
 end.

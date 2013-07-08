@@ -1,9 +1,10 @@
 object frmOptions: TfrmOptions
   Left = 0
   Top = 0
+  BorderStyle = bsDialog
   Caption = 'Options'
-  ClientHeight = 326
-  ClientWidth = 513
+  ClientHeight = 325
+  ClientWidth = 517
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -11,6 +12,7 @@ object frmOptions: TfrmOptions
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  Position = poMainFormCenter
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
@@ -22,6 +24,7 @@ object frmOptions: TfrmOptions
     Height = 25
     Caption = 'Ok'
     TabOrder = 1
+    OnClick = btnOkClick
   end
   object btnCancel: TButton
     Left = 430
@@ -53,14 +56,11 @@ object frmOptions: TfrmOptions
     Header.MainColumn = -1
     Images = ImagesDM.IcoImages
     TabOrder = 0
+    TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowRoot, toShowTreeLines, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
     OnFreeNode = vstListCategoryFreeNode
     OnGetText = vstListCategoryGetText
     OnInitNode = vstListCategoryInitNode
     OnNodeClick = vstListCategoryNodeClick
     Columns = <>
-  end
-  object OpenDialog1: TOpenDialog
-    Left = 8
-    Top = 296
   end
 end

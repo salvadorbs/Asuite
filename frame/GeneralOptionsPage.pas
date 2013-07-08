@@ -30,11 +30,13 @@ type
     procedure cbBackgroundClick(Sender: TObject);
     procedure cbCustomTitleClick(Sender: TObject);
     procedure btnFontSettingsClick(Sender: TObject);
+    procedure btnBrowseBackgroundClick(Sender: TObject);
   private
     { Private declarations }
   strict protected
     function GetTitle: string; override;
     function InternalLoadData: Boolean; override;
+    function InternalSaveData: Boolean; override;
   public
     { Public declarations }
   end;
@@ -45,11 +47,25 @@ var
 implementation
 
 uses
-  ulAppConfig;
+  ulAppConfig, ulSysUtils, AppConfig;
 
 {$R *.dfm}
 
 { TfrmGeneralOptionsPage }
+
+procedure TfrmGeneralOptionsPage.btnBrowseBackgroundClick(Sender: TObject);
+var
+  PathTemp: string;
+begin
+  OpenDialog1.Filter     := 'Files supported (*.png;*.bmp)|*.png;*.bmp|All files|*.*';
+  OpenDialog1.InitialDir := ExtractFileDir(RelativeToAbsolute(edtBackground.Text));
+  if (OpenDialog1.Execute) then
+  begin
+    PathTemp := AbsoluteToRelative(OpenDialog1.FileName);
+    edtBackground.Text := PathTemp;
+  end;
+  SetCurrentDir(SUITE_WORKING_PATH);
+end;
 
 procedure TfrmGeneralOptionsPage.btnFontSettingsClick(Sender: TObject);
 begin
@@ -119,6 +135,31 @@ begin
   //Update controls
   cbCustomTitleClick(Self);
   cbBackgroundClick(Self);
+end;
+
+function TfrmGeneralOptionsPage.InternalSaveData: Boolean;
+begin
+  inherited;
+  //Window
+  Config.HoldSize           := cbHoldSize.Checked;
+  Config.AlwaysOnTop        := cbWindowOnTop.Checked;
+  Config.HideTabSearch      := cbHideSearch.Checked;
+  Config.UseCustomTitle     := cbCustomTitle.Checked;
+  Config.CustomTitleString  := edtCustomTitle.Text;
+  //Startup
+  Config.StartWithWindows   := cbWindowsStartup.Checked;
+  Config.ShowPanelAtStartUp := cbShowPanelStartup.Checked;
+  Config.ShowMenuAtStartUp  := cbShowMenuStartup.Checked;
+  //Language
+  { TODO -oMatteo -c : Language code 29/11/2009 21:39:41 }
+//  Config.LangName         := cxLanguage.Items[cxLanguage.ItemIndex];
+  //Treeview
+  Config.TVAutoOpClCats     := cbAutoOpClCat.Checked;
+  //Treeview
+  Config.TVBackgroundPath   := edtBackground.Text;
+  Config.TVBackground       := cbBackground.Checked;
+  //Treeview Font
+  Config.TVFont             := FontDialog1.Font;
 end;
 
 end.

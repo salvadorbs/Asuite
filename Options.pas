@@ -13,7 +13,6 @@ type
     btnCancel: TButton;
     pnlOptionsPage: TPanel;
     vstListCategory: TVirtualStringTree;
-    OpenDialog1: TOpenDialog;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure vstListCategoryGetText(Sender: TBaseVirtualTree;
@@ -26,9 +25,12 @@ type
     procedure btnCancelClick(Sender: TObject);
     procedure vstListCategoryInitNode(Sender: TBaseVirtualTree; ParentNode,
       Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+    procedure btnOkClick(Sender: TObject);
   private
     { Private declarations }
     function AddFrameNode(Parent: PVirtualNode; FramePage: TPageFrameClass): PVirtualNode;
+    procedure SaveOptions(Sender: TBaseVirtualTree; Node: PVirtualNode;
+                          Data: Pointer; var Abort: Boolean);
   strict private
     FCurrentPage: TfrmBaseOptionsPage;
   public
@@ -48,16 +50,36 @@ var
 
 implementation
 
-{$R *.dfm}
-
 uses
   GeneralOptionsPage, AdvancedOptionsPage, TrayIconOptionsPage, SensorsOptionsPage,
-  StatsOptionsPage, HotkeyOptionsPage, ItemsOptionsPage;
+  StatsOptionsPage, HotkeyOptionsPage, ItemsOptionsPage, ulAppConfig, Main;
+
+{$R *.dfm}
 
 { TfrmOptions }
 
+procedure TfrmOptions.SaveOptions(Sender: TBaseVirtualTree; Node: PVirtualNode;
+                            Data: Pointer; var Abort: Boolean);
+
+var
+  NodeData : POptionsNodeData;
+begin
+  //Call Frame's function SaveData
+  NodeData := vstListCategory.GetNodeData(Node);
+  TfrmBaseOptionsPage(NodeData.Frame).SaveData;
+end;
+
 procedure TfrmOptions.btnCancelClick(Sender: TObject);
 begin
+  Close;
+end;
+
+procedure TfrmOptions.btnOkClick(Sender: TObject);
+begin
+  vstListCategory.IterateSubtree(nil, SaveOptions, nil, [], True);
+  Config.Changed := True;
+  if frmMain.Visible then
+    frmMain.FocusControl(frmMain.vstList);
   Close;
 end;
 

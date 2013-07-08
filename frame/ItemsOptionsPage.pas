@@ -31,9 +31,11 @@ type
     procedure PopulateLstAutoExe(ListBox: TListBox;AutorunItemList: TAutorunItemList);
     procedure MoveItemUp(ListBox: TListBox);
     procedure MoveItemDown(ListBox: TListBox);
+    procedure SaveInAutorunItemList(ListBox: TListBox;AutorunItemList: TAutorunItemList);
   strict protected
     function GetTitle: string; override;
     function InternalLoadData: Boolean; override;
+    function InternalSaveData: Boolean; override;
   public
     { Public declarations }
     property AutorunType: TAutorunType read FAutorunType write FAutorunType;
@@ -87,6 +89,21 @@ begin
   ListBox.Items.EndUpdate;
 end;
 
+procedure TfrmItemsOptionsPage.SaveInAutorunItemList(ListBox: TListBox;
+  AutorunItemList: TAutorunItemList);
+var
+  I: Integer;
+  NodeData: TvFileNodeData;
+begin
+  AutorunItemList.Clear;
+  for I := 0 to ListBox.Count - 1 do
+  begin
+    NodeData := TvFileNodeData(ListBox.Items.Objects[I]);
+    NodeData.AutorunPos := AutorunItemList.Add(NodeData);
+    NodeData.Changed := True;
+  end;
+end;
+
 procedure TfrmItemsOptionsPage.MoveItemUp(ListBox: TListBox);
 var
   CurrIndex: Integer;
@@ -135,6 +152,19 @@ begin
   //Populate lstStartUp and lstShutdown
   PopulateLstAutoExe(lstStartUp,StartupItemList);
   PopulateLstAutoExe(lstShutdown,ShutdownItemList);
+end;
+
+function TfrmItemsOptionsPage.InternalSaveData: Boolean;
+begin
+  inherited;
+  //Execution options
+  Config.ActionOnExe    := TActionOnExecute(cxActionOnExe.ItemIndex);
+  Config.RunSingleClick := cbRunSingleClick.Checked;
+  //Autorun
+  Config.Autorun        := cbAutorun.Checked;
+  //Save Startup and Shutdown lists
+  SaveInAutorunItemList(lstStartUp,StartupItemList);
+  SaveInAutorunItemList(lstShutdown,ShutdownItemList);
 end;
 
 end.
