@@ -2,12 +2,12 @@ inherited frmSensorsOptionsPage: TfrmSensorsOptionsPage
   object gbMouse: TGroupBox
     Left = 3
     Top = 3
-    Width = 294
+    Width = 320
     Height = 158
     Caption = 'Mouse sensors'
     TabOrder = 0
     object lbSide: TLabel
-      Left = 5
+      Left = 8
       Top = 38
       Width = 24
       Height = 13
@@ -54,7 +54,7 @@ inherited frmSensorsOptionsPage: TfrmSensorsOptionsPage
       ParentFont = False
     end
     object lbBottom: TLabel
-      Left = 5
+      Left = 8
       Top = 130
       Width = 34
       Height = 13
@@ -64,7 +64,7 @@ inherited frmSensorsOptionsPage: TfrmSensorsOptionsPage
       ParentColor = False
     end
     object lbRight: TLabel
-      Left = 5
+      Left = 8
       Top = 105
       Width = 25
       Height = 13
@@ -74,7 +74,7 @@ inherited frmSensorsOptionsPage: TfrmSensorsOptionsPage
       ParentColor = False
     end
     object lbLeft: TLabel
-      Left = 5
+      Left = 8
       Top = 80
       Width = 19
       Height = 13
@@ -83,7 +83,7 @@ inherited frmSensorsOptionsPage: TfrmSensorsOptionsPage
       ParentColor = False
     end
     object lbTop: TLabel
-      Left = 5
+      Left = 8
       Top = 55
       Width = 18
       Height = 13
@@ -155,13 +155,14 @@ inherited frmSensorsOptionsPage: TfrmSensorsOptionsPage
       Style = csDropDownList
       TabOrder = 4
     end
-    object chkMouseSensors: TCheckBox
-      Left = 5
+    object cbMouseSensors: TCheckBox
+      Left = 8
       Top = 17
       Width = 306
       Height = 17
       Caption = 'Enable Mouse Sensors'
       TabOrder = 0
+      OnClick = cbMouseSensorsClick
     end
   end
 end

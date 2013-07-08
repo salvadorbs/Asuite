@@ -12,8 +12,10 @@ type
     { Private declarations }
   strict protected
     function GetTitle: string; virtual;
+    function InternalLoadData: Boolean; virtual;
   public
     { Public declarations }
+    constructor Create(AOwner: TComponent); override;
     property Title: string read GetTitle;
   end;
 
@@ -25,9 +27,20 @@ implementation
 
 { TfrmBaseOptionsPage }
 
+constructor TfrmBaseOptionsPage.Create(AOwner: TComponent);
+begin
+  inherited;
+  Self.InternalLoadData;
+end;
+
 function TfrmBaseOptionsPage.GetTitle: string;
 begin
   Result := '';
+end;
+
+function TfrmBaseOptionsPage.InternalLoadData: Boolean;
+begin
+  Result := True;
 end;
 
 end.

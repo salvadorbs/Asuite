@@ -51,6 +51,7 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
       Height = 19
       Caption = 'Enable the System Tray icon'
       TabOrder = 0
+      OnClick = cbTrayiconClick
     end
     object cxRightClick: TComboBox
       Left = 162
@@ -71,6 +72,7 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
       Height = 19
       Caption = 'Custom tray icon'
       TabOrder = 1
+      OnClick = cbTrayCustomIconClick
     end
     object cbClassicMenu: TCheckBox
       Left = 8
@@ -79,6 +81,7 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
       Height = 17
       Caption = 'Use classic menu'
       TabOrder = 4
+      OnClick = cbClassicMenuClick
     end
     object edtCustomIcon: TEdit
       Left = 8
@@ -109,7 +112,7 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
       Width = 145
       Height = 21
       Style = csDropDownList
-      TabOrder = 0
+      TabOrder = 1
     end
     object cbMenuFade: TCheckBox
       Left = 8
@@ -117,7 +120,7 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
       Width = 241
       Height = 19
       Caption = 'Enable fade menu'
-      TabOrder = 1
+      TabOrder = 0
     end
   end
   object grpClassicMenu: TGroupBox

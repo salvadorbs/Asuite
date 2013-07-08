@@ -2,12 +2,12 @@ inherited frmItemsOptionsPage: TfrmItemsOptionsPage
   object gbExecution: TGroupBox
     Left = 3
     Top = 3
-    Width = 324
+    Width = 320
     Height = 86
     Caption = 'Execution'
     TabOrder = 0
     object lbActionOnExe: TLabel
-      Left = 5
+      Left = 8
       Top = 37
       Width = 64
       Height = 13
@@ -16,7 +16,7 @@ inherited frmItemsOptionsPage: TfrmItemsOptionsPage
       ParentColor = False
     end
     object cbRunSingleClick: TCheckBox
-      Left = 5
+      Left = 8
       Top = 18
       Width = 134
       Height = 19
@@ -24,7 +24,7 @@ inherited frmItemsOptionsPage: TfrmItemsOptionsPage
       TabOrder = 0
     end
     object cxActionOnExe: TComboBox
-      Left = 5
+      Left = 8
       Top = 50
       Width = 169
       Height = 21
@@ -39,19 +39,19 @@ inherited frmItemsOptionsPage: TfrmItemsOptionsPage
   object grpOrderSoftware: TGroupBox
     Left = 3
     Top = 95
-    Width = 324
+    Width = 320
     Height = 179
     Caption = 'Autorun'
     TabOrder = 1
     object lblOrderInfo: TLabel
-      Left = 5
+      Left = 8
       Top = 39
       Width = 175
       Height = 13
       Caption = 'Order of autorun programs in ASuite'
     end
     object pgcSoftwareOrder: TPageControl
-      Left = 3
+      Left = 8
       Top = 55
       Width = 276
       Height = 115
@@ -59,8 +59,6 @@ inherited frmItemsOptionsPage: TfrmItemsOptionsPage
       TabOrder = 1
       object tsStartUp: TTabSheet
         Caption = 'StartUp'
-        ExplicitTop = 1
-        ExplicitWidth = 308
         object lstStartUp: TListBox
           AlignWithMargins = True
           Left = 3
@@ -70,15 +68,15 @@ inherited frmItemsOptionsPage: TfrmItemsOptionsPage
           Align = alClient
           ItemHeight = 13
           TabOrder = 0
-          ExplicitWidth = 200
-          ExplicitHeight = 35
         end
       end
       object tsShutdown: TTabSheet
         Caption = 'Shutdown'
         ImageIndex = 1
-        ExplicitWidth = 265
-        ExplicitHeight = 104
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lstShutdown: TListBox
           AlignWithMargins = True
           Left = 3
@@ -88,13 +86,11 @@ inherited frmItemsOptionsPage: TfrmItemsOptionsPage
           Align = alClient
           ItemHeight = 13
           TabOrder = 0
-          ExplicitWidth = 259
-          ExplicitHeight = 98
         end
       end
     end
     object cbAutorun: TCheckBox
-      Left = 5
+      Left = 8
       Top = 20
       Width = 96
       Height = 19
@@ -102,8 +98,8 @@ inherited frmItemsOptionsPage: TfrmItemsOptionsPage
       TabOrder = 0
     end
     object btnDown: TBitBtn
-      Left = 285
-      Top = 90
+      Left = 288
+      Top = 121
       Width = 27
       Height = 25
       Glyph.Data = {
@@ -133,11 +129,12 @@ inherited frmItemsOptionsPage: TfrmItemsOptionsPage
         FFFFFFFFFFFF04733AB0DEC7ABDCC3A6DABF91D2B17ECAA37ECAA304733AFFFF
         FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF1A774704733A04733A04
         733A04733A04733A04733A1A7747FFFFFFFFFFFFFFFFFFFFFFFF}
-      TabOrder = 2
+      TabOrder = 3
+      OnClick = btnDownClick
     end
     object btnUp: TBitBtn
-      Left = 285
-      Top = 121
+      Left = 288
+      Top = 90
       Width = 27
       Height = 25
       Glyph.Data = {
@@ -167,7 +164,8 @@ inherited frmItemsOptionsPage: TfrmItemsOptionsPage
         FFFFFFFFFFFFFFFFFFFFFFFF9AACA32D885A2D88599AACA3FFFFFFFFFFFFFFFF
         FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF63
         8D78638D78FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-      TabOrder = 3
+      TabOrder = 2
+      OnClick = btnUpClick
     end
   end
 end

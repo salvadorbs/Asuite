@@ -1,26 +1,18 @@
 inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
-  object cbHotKey: TCheckBox
-    Left = 8
-    Top = 16
-    Width = 233
-    Height = 17
-    Caption = 'Enable hotkey'
+  object gbHotkey: TGroupBox
+    Left = 3
+    Top = 0
+    Width = 320
+    Height = 129
+    Caption = 'Hotkey'
     TabOrder = 0
-  end
-  object gbWindow: TGroupBox
-    Left = 8
-    Top = 55
-    Width = 257
-    Height = 265
-    Caption = 'Window'
-    TabOrder = 1
     object cxWindowHotKeyCode: TComboBox
       Left = 167
-      Top = 84
+      Top = 52
       Width = 57
       Height = 21
       Style = csDropDownList
-      TabOrder = 2
+      TabOrder = 3
       Items.Strings = (
         'A'
         'B'
@@ -73,11 +65,11 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     end
     object cxWindowHotKeyMod: TComboBox
       Left = 8
-      Top = 84
+      Top = 52
       Width = 153
       Height = 21
       Style = csDropDownList
-      TabOrder = 1
+      TabOrder = 2
       Items.Strings = (
         'Alt'
         'Crtl'
@@ -97,27 +89,29 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     end
     object cbWindowHotKey: TCheckBox
       Left = 8
-      Top = 64
+      Top = 32
       Width = 233
       Height = 17
       Caption = 'Show window when hotkey is pressed'
-      TabOrder = 0
+      TabOrder = 1
+      OnClick = cbWindowHotKeyClick
     end
     object cbMenuHotKey: TCheckBox
       Left = 8
-      Top = 111
+      Top = 79
       Width = 241
       Height = 17
       Caption = 'Show trayicon menu when hotkey is pressed'
-      TabOrder = 3
+      TabOrder = 4
+      OnClick = cbMenuHotKeyClick
     end
     object cxMenuHotKeyCode: TComboBox
       Left = 167
-      Top = 131
+      Top = 99
       Width = 57
       Height = 21
       Style = csDropDownList
-      TabOrder = 5
+      TabOrder = 6
       Items.Strings = (
         'A'
         'B'
@@ -170,11 +164,11 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     end
     object cxMenuHotKeyMod: TComboBox
       Left = 8
-      Top = 131
+      Top = 99
       Width = 153
       Height = 21
       Style = csDropDownList
-      TabOrder = 4
+      TabOrder = 5
       Items.Strings = (
         'Alt'
         'Crtl'
@@ -191,6 +185,15 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
         'WinKey + Shift + Alt'
         'WinKey + Shift + Crtl'
         'WinKey + Shift + Crtl + Alt')
+    end
+    object cbHotKey: TCheckBox
+      Left = 8
+      Top = 16
+      Width = 233
+      Height = 17
+      Caption = 'Enable hotkey'
+      TabOrder = 0
+      OnClick = cbHotKeyClick
     end
   end
 end

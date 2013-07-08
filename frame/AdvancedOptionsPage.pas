@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BaseOptionsPage, Vcl.StdCtrls,
-  Vcl.ComCtrls;
+  Vcl.ComCtrls, VirtualTrees;
 
 type
   TfrmAdvancedOptionsPage = class(TfrmBaseOptionsPage)
@@ -27,17 +27,31 @@ type
     grpClearElements: TGroupBox;
     lbClearElements: TLabel;
     cbRecents: TCheckBox;
-    CheckBox1: TCheckBox;
-    CheckBox2: TCheckBox;
-    cbCache: TCheckBox;
+    cbClearMFU: TCheckBox;
+    cbClearBackup: TCheckBox;
+    cbClearCache: TCheckBox;
     btnClear: TButton;
     gbOtherFunctions: TGroupBox;
-    CheckBox3: TCheckBox;
+    cbCache: TCheckBox;
     cbScheduler: TCheckBox;
+    cbClearMRU: TCheckBox;
+    procedure btnClearClick(Sender: TObject);
+    procedure TrackBarChange(Sender: TObject);
+    procedure UpdateBtnClear(Sender: TObject);
+    procedure cbMRUClick(Sender: TObject);
+    procedure cbMFUClick(Sender: TObject);
+    procedure cbBackupClick(Sender: TObject);
   private
     { Private declarations }
+    procedure ClearCache(Sender: TBaseVirtualTree; Node: PVirtualNode;
+                         Data: Pointer; var Abort: Boolean);
+    procedure ClearMFU(Sender: TBaseVirtualTree; Node: PVirtualNode;
+                       Data: Pointer; var Abort: Boolean);
+    procedure ClearMRU(Sender: TBaseVirtualTree; Node: PVirtualNode;
+                       Data: Pointer; var Abort: Boolean);
   strict protected
     function GetTitle: string; override;
+    function InternalLoadData: Boolean; override;
   public
     { Public declarations }
   end;
@@ -47,13 +61,136 @@ var
 
 implementation
 
+uses
+  Main, ulTreeView, ulNodeDataTypes, ulFileFolder, ulEnumerations, udImages,
+  AppConfig, ulAppConfig;
+
 {$R *.dfm}
 
 { TfrmAdvancedOptionsPage }
 
+procedure TfrmAdvancedOptionsPage.UpdateBtnClear(Sender: TObject);
+begin
+  btnClear.Enabled := cbClearMFU.Checked or cbClearMRU.Checked or cbClearBackup.Checked or
+                      cbClearCache.Checked;
+end;
+
+procedure TfrmAdvancedOptionsPage.cbBackupClick(Sender: TObject);
+begin
+  tbBackup.Enabled := cbBackup.Checked;
+end;
+
+procedure TfrmAdvancedOptionsPage.cbMFUClick(Sender: TObject);
+begin
+  tbMFU.Enabled := cbMFU.Checked
+end;
+
+procedure TfrmAdvancedOptionsPage.cbMRUClick(Sender: TObject);
+begin
+  tbMRU.Enabled := cbMRU.Checked
+end;
+
+procedure TfrmAdvancedOptionsPage.ClearCache(Sender: TBaseVirtualTree; Node: PVirtualNode;
+                            Data: Pointer; var Abort: Boolean);
+var
+  CurrentNodeData : TvCustomRealNodeData;
+begin
+  CurrentNodeData := TvCustomRealNodeData(PBaseData(Sender.GetNodeData(Node)).Data);
+  if CurrentNodeData.DataType <> vtdtSeparator then
+  begin
+    CurrentNodeData.CacheID      := -1;
+    CurrentNodeData.CacheLargeID := -1;
+  end;
+end;
+
+procedure TfrmAdvancedOptionsPage.ClearMRU(Sender: TBaseVirtualTree; Node: PVirtualNode;
+                            Data: Pointer; var Abort: Boolean);
+var
+  NodeData : TvCustomRealNodeData;
+begin
+  NodeData := TvCustomRealNodeData(PBaseData(Sender.GetNodeData(Node)).Data);
+  NodeData.MRUPosition := -1;
+  NodeData.Changed := True;
+end;
+
+procedure TfrmAdvancedOptionsPage.ClearMFU(Sender: TBaseVirtualTree; Node: PVirtualNode;
+                            Data: Pointer; var Abort: Boolean);
+var
+  NodeData : TvCustomRealNodeData;
+begin
+  NodeData := TvCustomRealNodeData(PBaseData(Sender.GetNodeData(Node)).Data);
+  NodeData.ClickCount := 0;
+  NodeData.Changed := True;
+end;
+
+
+procedure TfrmAdvancedOptionsPage.btnClearClick(Sender: TObject);
+begin
+  //Clear MRU
+  if cbClearMRU.Checked then
+  begin
+    MRUList.Clear;
+    frmMain.vstList.IterateSubtree(nil, ClearMRU, nil, [], True);
+  end;
+  //Clear MFU
+  if cbClearMFU.Checked then
+  begin
+    MFUList.Clear;
+    frmMain.vstList.IterateSubtree(nil, ClearMFU, nil, [], True);
+  end;
+  //Clear Backup
+  if cbClearBackup.Checked then
+    DeleteFiles(SUITE_BACKUP_PATH, APP_NAME + '_*' + EXT_SQLBCK);
+  //Clear Cache
+  if cbClearCache.Checked then
+  begin
+    frmMain.vstList.IterateSubtree(nil, ClearCache, nil, [], True);
+    ImagesDM.GetChildNodesIcons(frmMain.vstList, nil, frmMain.vstList.RootNode);
+    frmMain.vstList.FullCollapse;
+  end;
+  RefreshList(frmMain.vstList);
+end;
+
 function TfrmAdvancedOptionsPage.GetTitle: string;
 begin
   Result := 'Advanced';
+end;
+
+function TfrmAdvancedOptionsPage.InternalLoadData: Boolean;
+begin
+  inherited;
+  //MRU
+  cbMRU.Checked        := Config.MRU;
+  tbMRU.position       := Config.MRUNumber;
+  lbNumbMRU.Caption    := IntToStr(Config.MRUNumber);
+  //MFU
+  cbMFU.Checked        := Config.MFU;
+  tbMFU.position       := Config.MFUNumber;
+  lbNumbMFU.Caption    := IntToStr(Config.MFUNumber);
+  //Backup
+  cbBackup.Checked     := Config.Backup;
+  tbBackup.position    := Config.BackupNumber;
+  lbNumbBackup.Caption := IntToStr(Config.BackupNumber);
+  //Other functions
+  cbCache.Checked      := Config.Cache;
+  cbScheduler.Checked  := Config.Scheduler;
+  //Enable/disable visual components
+  UpdateBtnClear(Self);
+  cbBackupClick(Self);
+  cbMFUClick(Self);
+  cbMRUClick(Self);
+end;
+
+procedure TfrmAdvancedOptionsPage.TrackBarChange(Sender: TObject);
+begin
+  if Sender = tbMRU then
+    lbNumbMRU.Caption := IntToStr(tbMRU.position)
+  else
+    if Sender = tbMFU then
+      lbNumbMFU.Caption := IntToStr(tbMFU.position)
+    else
+      if Sender = tbBackup then
+        lbNumbBackup.Caption := IntToStr(tbBackup.position);
 end;
 
 end.

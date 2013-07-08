@@ -2,7 +2,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
   object gbASuite: TGroupBox
     Left = 3
     Top = 133
-    Width = 324
+    Width = 320
     Height = 65
     Caption = 'ASuite'
     Font.Charset = DEFAULT_CHARSET
@@ -100,7 +100,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
   object gbSupport: TGroupBox
     Left = 3
     Top = 68
-    Width = 324
+    Width = 320
     Height = 65
     Caption = 'Drive X:'
     Font.Charset = DEFAULT_CHARSET
@@ -198,7 +198,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
   object gbSystem: TGroupBox
     Left = 3
     Top = 3
-    Width = 324
+    Width = 320
     Height = 65
     Caption = 'System'
     Font.Charset = DEFAULT_CHARSET

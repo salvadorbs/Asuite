@@ -31,6 +31,7 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
       Height = 19
       Caption = 'Active MRU'
       TabOrder = 0
+      OnClick = cbMRUClick
     end
     object tbMRU: TTrackBar
       Left = 3
@@ -39,6 +40,7 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
       Height = 25
       ShowSelRange = False
       TabOrder = 1
+      OnChange = TrackBarChange
     end
   end
   object gbMFU: TGroupBox
@@ -73,6 +75,7 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
       Height = 19
       Caption = 'Active MFU'
       TabOrder = 0
+      OnClick = cbMFUClick
     end
     object tbMFU: TTrackBar
       Left = 8
@@ -81,6 +84,7 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
       Height = 25
       ShowSelRange = False
       TabOrder = 1
+      OnChange = TrackBarChange
     end
   end
   object gbBackup: TGroupBox
@@ -115,6 +119,7 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
       Height = 19
       Caption = 'Active backup'
       TabOrder = 0
+      OnClick = cbBackupClick
     end
     object tbBackup: TTrackBar
       Left = 3
@@ -123,13 +128,14 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
       Height = 25
       ShowSelRange = False
       TabOrder = 1
+      OnChange = TrackBarChange
     end
   end
   object grpClearElements: TGroupBox
     Left = 167
     Top = 97
     Width = 158
-    Height = 118
+    Height = 152
     Caption = 'Clear elements'
     TabOrder = 3
     object lbClearElements: TLabel
@@ -147,38 +153,51 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
       Caption = 'Recents'
       TabOrder = 0
     end
-    object CheckBox1: TCheckBox
-      Left = 8
-      Top = 29
-      Width = 147
-      Height = 17
-      Caption = 'Most Frequently Used'
-      TabOrder = 1
-    end
-    object CheckBox2: TCheckBox
+    object cbClearMFU: TCheckBox
       Left = 8
       Top = 46
       Width = 147
       Height = 17
-      Caption = 'Backups'
+      Caption = 'Most Frequently Used'
       TabOrder = 2
+      OnClick = UpdateBtnClear
     end
-    object cbCache: TCheckBox
+    object cbClearBackup: TCheckBox
       Left = 8
       Top = 63
       Width = 147
       Height = 17
-      Caption = 'Cache icons'
+      Caption = 'Backups'
       TabOrder = 3
+      OnClick = UpdateBtnClear
+    end
+    object cbClearCache: TCheckBox
+      Left = 8
+      Top = 80
+      Width = 147
+      Height = 17
+      Caption = 'Cache icons'
+      TabOrder = 4
+      OnClick = UpdateBtnClear
     end
     object btnClear: TButton
-      Left = 50
-      Top = 86
+      Left = 49
+      Top = 104
       Width = 59
       Height = 25
       Caption = 'Clear'
       Default = True
-      TabOrder = 4
+      TabOrder = 5
+      OnClick = btnClearClick
+    end
+    object cbClearMRU: TCheckBox
+      Left = 8
+      Top = 29
+      Width = 147
+      Height = 17
+      Caption = 'Recents'
+      TabOrder = 1
+      OnClick = UpdateBtnClear
     end
   end
   object gbOtherFunctions: TGroupBox
@@ -188,7 +207,7 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
     Height = 62
     Caption = 'Other functions'
     TabOrder = 4
-    object CheckBox3: TCheckBox
+    object cbCache: TCheckBox
       Left = 8
       Top = 17
       Width = 147
