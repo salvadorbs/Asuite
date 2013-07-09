@@ -105,8 +105,6 @@ const
   FILEICON_Property   = '8.ico';
   FILEICON_Save       = '9.ico';
   FILEICON_Folder     = '10.ico';
-  FILEICON_AddGroupFile = '11.ico';
-  FILEICON_GroupFile  = '12.ico';
   FILEICON_NOTFOUND   = '13.ico';
   FILEICON_Run        = '14.ico';
   FILEICON_Cut        = '15.ico';

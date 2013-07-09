@@ -94,7 +94,7 @@ implementation
 {$R *.dfm}
 
 uses
-  AppConfig, ulEnumerations, udImages, ulSysUtils, OrderSoftware, Main,
+  AppConfig, ulEnumerations, udImages, ulSysUtils, Main,
   ulCommonUtils, ulFileFolder;
 
 class function TfrmPropertyFile.Edit(AOwner: TComponent; NodeData: PBaseData): TModalResult;
@@ -238,14 +238,14 @@ begin
   with TvFileNodeData(FNodeData.Data) do
   begin
     Autorun := TAutorunType(cxAutoExecute.ItemIndex);
-    try
-      Application.CreateForm(TfrmOrderSoftware, frmOrderSoftware);
-      frmOrderSoftware.FormStyle   := Self.FormStyle;
-      frmOrderSoftware.AutorunType := Autorun;
-      frmOrderSoftware.ShowModal;
-    finally
-      frmOrderSoftware.Free;
-    end;
+//    try
+//      Application.CreateForm(TfrmOrderSoftware, frmOrderSoftware);
+//      frmOrderSoftware.FormStyle   := Self.FormStyle;
+//      frmOrderSoftware.AutorunType := Autorun;
+//      frmOrderSoftware.ShowModal;
+//    finally
+//      frmOrderSoftware.Free;
+//    end;
   end;
 end;
 

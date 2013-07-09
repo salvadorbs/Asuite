@@ -20,7 +20,6 @@ uses
   About in 'About.pas' {frmAbout},
   CheckPrevious in '3p\CheckPrevious.pas',
   ulNodeDataTypes in 'library\ulNodeDataTypes.pas',
-  OrderSoftware in 'OrderSoftware.pas' {frmOrderSoftware},
   ulEnumerations in 'library\ulEnumerations.pas',
   ulSysUtils in 'library\ulSysUtils.pas',
   ulStringUtils in 'library\ulStringUtils.pas',

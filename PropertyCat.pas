@@ -91,7 +91,7 @@ implementation
 
 uses
   appConfig, udImages, ulSysUtils, Main, ulCommonUtils, ulEnumerations,
-  OrderSoftware, ulAppConfig, ulTreeView;
+  ulAppConfig, ulTreeView;
 
 {$R *.dfm}
 
@@ -140,14 +140,14 @@ begin
   with TvCustomRealNodeData(FNodeData.Data) do
   begin
     Autorun := TAutorunType(cxAutoExecute.ItemIndex);
-    try
-      Application.CreateForm(TfrmOrderSoftware, frmOrderSoftware);
-      frmOrderSoftware.FormStyle   := Self.FormStyle;
-      frmOrderSoftware.AutorunType := Autorun;
-      frmOrderSoftware.ShowModal;
-    finally
-      frmOrderSoftware.Free;
-    end;
+//    try
+//      Application.CreateForm(TfrmOrderSoftware, frmOrderSoftware);
+//      frmOrderSoftware.FormStyle   := Self.FormStyle;
+//      frmOrderSoftware.AutorunType := Autorun;
+//      frmOrderSoftware.ShowModal;
+//    finally
+//      frmOrderSoftware.Free;
+//    end;
   end;
 end;
 

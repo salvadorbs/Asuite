@@ -196,7 +196,7 @@ implementation
 
 uses
   Options, PropertyFile, PropertyCat, About, ulCommonUtils, udClassicMenu,
-  PropertySeparator, ulExeUtils, ImportList, Stats, ulAppConfig, ulTreeView,
+  PropertySeparator, ulExeUtils, ImportList, ulAppConfig, ulTreeView,
   ulDatabase, notifications, GraphicMenu;
 
 {$R *.dfm}
@@ -353,15 +353,16 @@ begin
 end;
 
 procedure TfrmMain.miStatisticsClick(Sender: TObject);
-var
-   frmStats:TfrmStats;
+//var
+//  frmStats: TfrmStats;
 begin
-  frmStats := TfrmStats.Create(self);
-  try
-    frmStats.ShowModal();
-  finally
-    frmStats.Free;
-  end;
+  //TODO: Call Stats in Options
+//  frmStats := TfrmStats.Create(self);
+//  try
+//    frmStats.ShowModal();
+//  finally
+//    frmStats.Free;
+//  end;
 end;
 
 procedure TfrmMain.miPaste2Click(Sender: TObject);

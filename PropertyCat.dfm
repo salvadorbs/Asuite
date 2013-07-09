@@ -111,10 +111,6 @@ object frmPropertyCat: TfrmPropertyCat
     end
     object tsInfo2: TTabSheet
       Caption = 'Advanced'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object lbPathIcon: TLabel
         Left = 8
         Top = 8
