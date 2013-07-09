@@ -20,8 +20,6 @@ type
       var CellText: string);
     procedure vstListCategoryFreeNode(Sender: TBaseVirtualTree;
       Node: PVirtualNode);
-    procedure vstListCategoryNodeClick(Sender: TBaseVirtualTree;
-      const HitInfo: THitInfo);
     procedure btnCancelClick(Sender: TObject);
     procedure vstListCategoryInitNode(Sender: TBaseVirtualTree; ParentNode,
       Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
@@ -29,6 +27,8 @@ type
     procedure vstListCategoryGetImageIndex(Sender: TBaseVirtualTree;
       Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
       var Ghosted: Boolean; var ImageIndex: Integer);
+    procedure vstListCategoryAddToSelection(Sender: TBaseVirtualTree;
+      Node: PVirtualNode);
   private
     { Private declarations }
     function AddFrameNode(Parent: PVirtualNode; FramePage: TPageFrameClass;
@@ -155,6 +155,12 @@ begin
   end;
 end;
 
+procedure TfrmOptions.vstListCategoryAddToSelection(Sender: TBaseVirtualTree;
+  Node: PVirtualNode);
+begin
+  LoadPageByNode(vstListCategory, Node);
+end;
+
 procedure TfrmOptions.vstListCategoryFreeNode(Sender: TBaseVirtualTree;
   Node: PVirtualNode);
 var
@@ -196,13 +202,6 @@ procedure TfrmOptions.vstListCategoryInitNode(Sender: TBaseVirtualTree;
   ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
 begin
   Node.NodeHeight := 36;
-end;
-
-procedure TfrmOptions.vstListCategoryNodeClick(Sender: TBaseVirtualTree;
-  const HitInfo: THitInfo);
-begin
-  if hiOnItemLabel in HitInfo.HitPositions then
-    LoadPageByNode(vstListCategory, HitInfo.HitNode);
 end;
 
 end.

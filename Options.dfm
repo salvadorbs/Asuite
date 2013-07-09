@@ -57,11 +57,11 @@ object frmOptions: TfrmOptions
     Images = ImagesDM.LargeIcoImages
     TabOrder = 0
     TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowRoot, toShowTreeLines, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
+    OnAddToSelection = vstListCategoryAddToSelection
     OnFreeNode = vstListCategoryFreeNode
     OnGetText = vstListCategoryGetText
     OnGetImageIndex = vstListCategoryGetImageIndex
     OnInitNode = vstListCategoryInitNode
-    OnNodeClick = vstListCategoryNodeClick
     Columns = <>
   end
 end
