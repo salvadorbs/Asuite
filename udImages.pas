@@ -261,8 +261,6 @@ begin
   IMAGE_INDEX_Property   := LoadASuiteIconFromFile(FILEICON_Property);
   IMAGE_INDEX_Save       := LoadASuiteIconFromFile(FILEICON_Save);
   IMAGE_INDEX_Folder     := LoadASuiteIconFromFile(FILEICON_Folder);
-  IMAGE_INDEX_AddGroupFile := LoadASuiteIconFromFile(FILEICON_AddGroupFile);
-  IMAGE_INDEX_GroupFile  := LoadASuiteIconFromFile(FILEICON_GroupFile);
   IMAGE_INDEX_NOTFOUND   := LoadASuiteIconFromFile(FILEICON_NOTFOUND);
   IMAGE_INDEX_Run        := LoadASuiteIconFromFile(FILEICON_Run);
   IMAGE_INDEX_Cut        := LoadASuiteIconFromFile(FILEICON_Cut);
