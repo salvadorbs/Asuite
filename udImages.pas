@@ -39,7 +39,7 @@ type
     procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }
-    function LoadASuiteIconFromFile(const IconName: String): Integer;
+    function LoadASuiteIconFromFile(const IconName: String;SmallIcon: Boolean = True): Integer;
     procedure SaveCacheIcon(Path: string; NodeData: TvCustomRealNodeData;
                             ImageIndex: Integer;SmallIcon: Boolean);
     procedure InternalGetChildNodesIcons(MainTree, SubTree: TBaseVirtualTree;
@@ -205,14 +205,17 @@ begin
   end;
 end;
 
-function TImagesDM.LoadASuiteIconFromFile(const IconName: String): Integer;
+function TImagesDM.LoadASuiteIconFromFile(const IconName: String; SmallIcon: Boolean): Integer;
 var
   FileName : String;
 begin
   Result   := -1;
-  FileName := SUITE_ICONS_PATH + IconName;
+  if SmallIcon then
+    FileName := SUITE_ICONS_PATH + IconName
+  else
+    FileName := SUITE_LARGEICONS_PATH + IconName;
   if FileExists(FileName) then
-    Result := GetSimpleIconIndex(FileName)
+    Result := GetSimpleIconIndex(FileName, SmallIcon)
   else
     ShowMessage(Format(msgErrNoIcon, [FileName]),true);
 end;
@@ -246,7 +249,7 @@ begin
   Flags := SHGFI_SYSICONINDEX or SHGFI_LARGEICON or SHGFI_USEFILEATTRIBUTES;
   LargeIcoImages.Handle      := SHGetFileInfo('', 0, SFI, SizeOf(TSHFileInfo), Flags);
   LargeIcoImages.ShareImages := True;
-  //Menu icons
+  //Menu small icons
   IMAGE_INDEX_Help       := LoadASuiteIconFromFile(FILEICON_Help);
   IMAGE_INDEX_Options    := LoadASuiteIconFromFile(FILEICON_Options);
   IMAGE_INDEX_AddCat     := LoadASuiteIconFromFile(FILEICON_AddCat);
@@ -270,6 +273,14 @@ begin
   IMAGE_INDEX_Url        := LoadASuiteIconFromFile(FILEICON_Url);
   IMAGE_INDEX_Accept     := LoadASuiteIconFromFile(FILEICON_Accept);
   IMAGE_INDEX_Cancel     := LoadASuiteIconFromFile(FILEICON_Cancel);
+  //Menu large icons
+  IMAGELARGE_INDEX_General  := LoadASuiteIconFromFile(FILELARGEICON_General, false);
+  IMAGELARGE_INDEX_Advanced := LoadASuiteIconFromFile(FILELARGEICON_Advanced, false);
+  IMAGELARGE_INDEX_Items    := LoadASuiteIconFromFile(FILELARGEICON_Items, false);
+  IMAGELARGE_INDEX_Hotkey   := LoadASuiteIconFromFile(FILELARGEICON_Hotkey, false);
+  IMAGELARGE_INDEX_Mouse    := LoadASuiteIconFromFile(FILELARGEICON_Mouse, false);
+  IMAGELARGE_INDEX_Trayicon := LoadASuiteIconFromFile(FILELARGEICON_Trayicon, false);
+  IMAGELARGE_INDEX_Stats    := LoadASuiteIconFromFile(FILELARGEICON_Stats, false);
 end;
 
 procedure TImagesDM.InternalGetChildNodesIcons(MainTree, SubTree: TBaseVirtualTree;

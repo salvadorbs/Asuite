@@ -26,9 +26,13 @@ type
     procedure vstListCategoryInitNode(Sender: TBaseVirtualTree; ParentNode,
       Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
     procedure btnOkClick(Sender: TObject);
+    procedure vstListCategoryGetImageIndex(Sender: TBaseVirtualTree;
+      Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
+      var Ghosted: Boolean; var ImageIndex: Integer);
   private
     { Private declarations }
-    function AddFrameNode(Parent: PVirtualNode; FramePage: TPageFrameClass): PVirtualNode;
+    function AddFrameNode(Parent: PVirtualNode; FramePage: TPageFrameClass;
+                          ImageIndex: Integer): PVirtualNode;
     procedure SaveOptions(Sender: TBaseVirtualTree; Node: PVirtualNode;
                           Data: Pointer; var Abort: Boolean);
   strict private
@@ -42,6 +46,7 @@ type
   rOptionsNodeData = record
     Title : string;
     Frame : TPageFrameClass;
+    ImageIndex: Integer;
   end;
   POptionsNodeData = ^rOptionsNodeData;
 
@@ -52,7 +57,7 @@ implementation
 
 uses
   GeneralOptionsPage, AdvancedOptionsPage, TrayIconOptionsPage, SensorsOptionsPage,
-  StatsOptionsPage, HotkeyOptionsPage, ItemsOptionsPage, ulAppConfig, Main;
+  StatsOptionsPage, HotkeyOptionsPage, ItemsOptionsPage, ulAppConfig, Main, AppConfig;
 
 {$R *.dfm}
 
@@ -94,16 +99,16 @@ var
 begin
   vstListCategory.Clear;
   //General
-  FrameGeneral  := AddFrameNode(nil,TPageFrameClass(TfrmGeneralOptionsPage.Create(Self)));
+  FrameGeneral  := AddFrameNode(nil,TPageFrameClass(TfrmGeneralOptionsPage.Create(Self)),IMAGELARGE_INDEX_General);
   //Advanced
-  FrameAdvanced := AddFrameNode(nil,TPageFrameClass(TfrmAdvancedOptionsPage.Create(Self)));
-  AddFrameNode(FrameAdvanced,TPageFrameClass(TfrmItemsOptionsPage.Create(Self)));
-  AddFrameNode(FrameAdvanced,TPageFrameClass(TfrmHotkeyOptionsPage.Create(Self)));
-  AddFrameNode(FrameAdvanced,TPageFrameClass(TfrmSensorsOptionsPage.Create(Self)));
+  FrameAdvanced := AddFrameNode(nil,TPageFrameClass(TfrmAdvancedOptionsPage.Create(Self)),IMAGELARGE_INDEX_Advanced);
+  AddFrameNode(FrameAdvanced,TPageFrameClass(TfrmItemsOptionsPage.Create(Self)),IMAGELARGE_INDEX_Items);
+  AddFrameNode(FrameAdvanced,TPageFrameClass(TfrmHotkeyOptionsPage.Create(Self)),IMAGELARGE_INDEX_Hotkey);
+  AddFrameNode(FrameAdvanced,TPageFrameClass(TfrmSensorsOptionsPage.Create(Self)),IMAGELARGE_INDEX_Mouse);
   //TrayIcon
-  AddFrameNode(nil,TPageFrameClass(TfrmTrayiconOptionsPage.Create(Self)));
+  AddFrameNode(nil,TPageFrameClass(TfrmTrayiconOptionsPage.Create(Self)),IMAGELARGE_INDEX_Trayicon);
   //Stats
-  AddFrameNode(nil,TPageFrameClass(TfrmStatsOptionsPage.Create(Self)));
+  AddFrameNode(nil,TPageFrameClass(TfrmStatsOptionsPage.Create(Self)),IMAGELARGE_INDEX_Stats);
 
   LoadPageByNode(vstListCategory, FrameGeneral);
   vstListCategory.FullExpand;
@@ -136,7 +141,7 @@ begin
     LoadPage(NodeData.Frame);
 end;
 
-function TfrmOptions.AddFrameNode(Parent: PVirtualNode; FramePage: TPageFrameClass): PVirtualNode;
+function TfrmOptions.AddFrameNode(Parent: PVirtualNode; FramePage: TPageFrameClass; ImageIndex: Integer): PVirtualNode;
 var
   NodeData: POptionsNodeData;
 begin
@@ -146,6 +151,7 @@ begin
   begin
     NodeData.Frame := FramePage;
     NodeData.Title := TfrmBaseOptionsPage(FramePage).Title;
+    NodeData.ImageIndex := ImageIndex;
   end;
 end;
 
@@ -160,6 +166,17 @@ begin
     TfrmBaseOptionsPage(NodeData.Frame).Free;
     NodeData.Title := '';
   end;
+end;
+
+procedure TfrmOptions.vstListCategoryGetImageIndex(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
+  var Ghosted: Boolean; var ImageIndex: Integer);
+var
+  NodeData : POptionsNodeData;
+begin
+  NodeData := vstListCategory.GetNodeData(Node);
+  if Assigned(NodeData) then
+    ImageIndex := NodeData.ImageIndex;
 end;
 
 procedure TfrmOptions.vstListCategoryGetText(Sender: TBaseVirtualTree;

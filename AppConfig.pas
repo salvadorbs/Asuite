@@ -40,10 +40,11 @@ const
   VERSION_PRERELEASE = 'Alpha 3'; //For Alpha and Beta version
                                  //(VERSION_RELEASE + VERSION_PRERELEASE = Version)
 
-  BACKUP_DIR    = 'backup\';
-  CACHE_DIR     = 'cache\';
+  BACKUP_DIR     = 'backup\';
+  CACHE_DIR      = 'cache\';
   CACHELARGE_DIR = 'cache\large\';
-  ICONS_DIR     = 'icons\';
+  ICONS_DIR      = 'icons\';
+  LARGEICONS_DIR = ICONS_DIR + '32x32\';
   MENUTHEMES_DIR = 'menuthemes\';
 
   // Caratteri speciali
@@ -117,6 +118,14 @@ const
   FILEICON_Accept     = '21.ico';
   FILEICON_Cancel     = '22.ico';
 
+  FILELARGEICON_General  = '0.ico';
+  FILELARGEICON_Advanced = '1.ico';
+  FILELARGEICON_Items    = '2.ico';
+  FILELARGEICON_Hotkey   = '3.ico';
+  FILELARGEICON_Mouse    = '4.ico';
+  FILELARGEICON_Trayicon = '5.ico';
+  FILELARGEICON_Stats    = '6.ico';
+
 var
   //Paths
   SUITE_FULLFILENAME : String;
@@ -128,12 +137,13 @@ var
   SUITE_CACHELARGE_PATH : String;
   SUITE_BACKUP_PATH  : String;
   SUITE_ICONS_PATH   : String;
+  SUITE_LARGEICONS_PATH : String;
   SUITE_MENUTHEMES_PATH : String;
 
   // Application's files
   SUITE_LIST_PATH    : String;
 
-  //Menu icons
+  //Menu small icons
   IMAGE_INDEX_ASuite,       //ID = 0;
   IMAGE_INDEX_Cat,          //ID = 1;
   IMAGE_INDEX_Help,         //ID = 2;
@@ -157,6 +167,16 @@ var
   IMAGE_INDEX_Url,          //ID = 20;
   IMAGE_INDEX_Accept,       //ID = 21;
   IMAGE_INDEX_Cancel        //ID = 22;
+                            : Integer;
+
+  //Menu large icons
+  IMAGELARGE_INDEX_General,  //ID = 0;
+  IMAGELARGE_INDEX_Advanced, //ID = 1;
+  IMAGELARGE_INDEX_Items,    //ID = 2;
+  IMAGELARGE_INDEX_Hotkey,   //ID = 3;
+  IMAGELARGE_INDEX_Mouse,    //ID = 4;
+  IMAGELARGE_INDEX_Trayicon, //ID = 5;
+  IMAGELARGE_INDEX_Stats     //ID = 6;
                             : Integer;
 
   //Misc
@@ -231,6 +251,7 @@ initialization
   SUITE_CACHELARGE_PATH     := SUITE_WORKING_PATH + CACHELARGE_DIR;
   SUITE_BACKUP_PATH         := SUITE_WORKING_PATH + BACKUP_DIR;
   SUITE_ICONS_PATH          := SUITE_WORKING_PATH + ICONS_DIR;
+  SUITE_LARGEICONS_PATH     := SUITE_WORKING_PATH + LARGEICONS_DIR;
   SUITE_MENUTHEMES_PATH     := SUITE_WORKING_PATH + MENUTHEMES_DIR;
   //List
   if (ExtractFileExt(ParamStr(1)) = EXT_SQL) and FileExists(ParamStr(1)) then

@@ -4,7 +4,7 @@ object frmOptions: TfrmOptions
   BorderStyle = bsDialog
   Caption = 'Options'
   ClientHeight = 325
-  ClientWidth = 517
+  ClientWidth = 529
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,7 +18,7 @@ object frmOptions: TfrmOptions
   PixelsPerInch = 96
   TextHeight = 13
   object btnOk: TButton
-    Left = 351
+    Left = 367
     Top = 294
     Width = 75
     Height = 25
@@ -27,7 +27,7 @@ object frmOptions: TfrmOptions
     OnClick = btnOkClick
   end
   object btnCancel: TButton
-    Left = 430
+    Left = 446
     Top = 294
     Width = 75
     Height = 25
@@ -36,7 +36,7 @@ object frmOptions: TfrmOptions
     OnClick = btnCancelClick
   end
   object pnlOptionsPage: TPanel
-    Left = 175
+    Left = 191
     Top = 8
     Width = 331
     Height = 280
@@ -45,7 +45,7 @@ object frmOptions: TfrmOptions
   object vstListCategory: TVirtualStringTree
     Left = 8
     Top = 8
-    Width = 161
+    Width = 177
     Height = 280
     Header.AutoSizeIndex = 0
     Header.Font.Charset = DEFAULT_CHARSET
@@ -54,11 +54,12 @@ object frmOptions: TfrmOptions
     Header.Font.Name = 'Tahoma'
     Header.Font.Style = []
     Header.MainColumn = -1
-    Images = ImagesDM.IcoImages
+    Images = ImagesDM.LargeIcoImages
     TabOrder = 0
     TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowRoot, toShowTreeLines, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
     OnFreeNode = vstListCategoryFreeNode
     OnGetText = vstListCategoryGetText
+    OnGetImageIndex = vstListCategoryGetImageIndex
     OnInitNode = vstListCategoryInitNode
     OnNodeClick = vstListCategoryNodeClick
     Columns = <>
