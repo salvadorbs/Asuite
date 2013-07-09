@@ -165,6 +165,7 @@ type
     procedure DrawHardDiskSpace(IniFile: TIniFile; DriveBackGround, DriveSpace: TImage);
     function  GetActiveTree: TBaseVirtualTree;
     procedure AssignFontFromString(strfont: string;CompFont: TFont);
+    procedure LoadGlyphs;
 	public
     { Public declarations }
     procedure OpenMenu;
@@ -533,6 +534,8 @@ begin
   //Position
   Top  := Screen.WorkAreaRect.Bottom - Height;
   Left := Screen.WorkAreaRect.Right - Width;
+  //Load menu icons
+  LoadGlyphs;
 end;
 
 procedure TfrmGraphicMenu.FormShow(Sender: TObject);
@@ -670,6 +673,13 @@ begin
   if ButtonType in [gmbASuite,gmbOptions,gmbDocuments,gmbMusic,gmbPictures,
                     gmbVideos,gmbExplore,gmbAbout] then
     Result := True;
+end;
+
+procedure TfrmGraphicMenu.LoadGlyphs;
+begin
+  //Set PopUpMenu's ImageIndexes
+  miRunSelectedSw.ImageIndex := IMAGE_INDEX_Run;
+  miProperty2.ImageIndex   := IMAGE_INDEX_Property;
 end;
 
 procedure TfrmGraphicMenu.miOpenFolderSwClick(Sender: TObject);
