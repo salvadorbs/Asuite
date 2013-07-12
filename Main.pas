@@ -168,6 +168,9 @@ type
       Column: TColumnIndex; var Allowed: Boolean);
     procedure FormActivate(Sender: TObject);
     procedure miOpenFolderSwClick(Sender: TObject);
+    procedure vstListDrawText(Sender: TBaseVirtualTree; TargetCanvas: TCanvas;
+      Node: PVirtualNode; Column: TColumnIndex; const Text: string;
+      const CellRect: TRect; var DefaultDraw: Boolean);
   private
     { Private declarations }
     function  GetActiveTree: TBaseVirtualTree;
@@ -690,18 +693,13 @@ var
   str      : string;
 begin
   NodeData := Sender.GetNodeData(Node);
-  if NodeData.Data.DataType = vtdtSeparator then
+  if Assigned(NodeData) then
   begin
-    I := 40 - (Length(NodeData.Data.Name));
-    str := '----------------------';
-    if I >= 10 then
-      SetLength(str, I div 2)
+    if (NodeData.Data.DataType = vtdtSeparator) and (NodeData.Data.Name = '') then
+      CellText := ' '
     else
-      SetLength(str, 5);
-    CellText := str + ' ' + NodeData.Data.Name + ' ' + str;
-  end
-  else
-    CellText := StringReplace(NodeData.Data.Name, '&&', '&', [rfIgnoreCase,rfReplaceAll]);
+      CellText := StringReplace(NodeData.Data.Name, '&&', '&', [rfIgnoreCase,rfReplaceAll]);
+  end;
 end;
 
 procedure TfrmMain.vstListKeyPress(Sender: TObject; var Key: Char);
@@ -859,6 +857,20 @@ procedure TfrmMain.vstListDragOver(Sender: TBaseVirtualTree; Source: TObject;
   var Effect: Integer; var Accept: Boolean);
 begin
   accept := true;
+end;
+
+procedure TfrmMain.vstListDrawText(Sender: TBaseVirtualTree;
+  TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
+  const Text: string; const CellRect: TRect; var DefaultDraw: Boolean);
+var
+  NodeData: TvBaseNodeData;
+begin
+  NodeData := PBaseData(Sender.GetNodeData(Node)).Data;
+  if NodeData.DataType = vtdtSeparator then
+  begin
+    ClassicMenu.DoDrawCaptionedSeparator(Sender,TargetCanvas,CellRect,NodeData.Name);
+    DefaultDraw := False;
+  end;
 end;
 
 procedure TfrmMain.vstListEditing(Sender: TBaseVirtualTree; Node: PVirtualNode;

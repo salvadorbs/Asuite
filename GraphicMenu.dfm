@@ -258,6 +258,8 @@ object frmGraphicMenu: TfrmGraphicMenu
         TabOrder = 0
         TreeOptions.PaintOptions = [toHideFocusRect, toShowBackground, toShowDropmark, toShowTreeLines, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
         TreeOptions.SelectionOptions = [toDisableDrawSelection, toFullRowSelect]
+        OnAddToSelection = vstListAddToSelection
+        OnDrawText = vstListDrawText
         OnExpanding = vstListExpanding
         OnGetText = vstGetText
         OnGetImageIndex = vstGetImageIndex
@@ -271,10 +273,6 @@ object frmGraphicMenu: TfrmGraphicMenu
       Caption = 'tsRecents'
       ImageIndex = 1
       TabVisible = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object vstRecents: TVirtualStringTree
         Left = 0
         Top = 0
@@ -312,10 +310,6 @@ object frmGraphicMenu: TfrmGraphicMenu
       Caption = 'tsMostUsed'
       ImageIndex = 2
       TabVisible = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object vstMostUsed: TVirtualStringTree
         Left = 0
         Top = 0
@@ -353,10 +347,6 @@ object frmGraphicMenu: TfrmGraphicMenu
       Caption = 'tsSearch'
       ImageIndex = 3
       TabVisible = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object vstSearch: TVirtualStringTree
         Left = 0
         Top = 0

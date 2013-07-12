@@ -140,6 +140,11 @@ type
     procedure miOpenFolderSwClick(Sender: TObject);
     procedure btnSearchClick(Sender: TObject);
     procedure btnSearchKeyPress(Sender: TObject; var Key: Char);
+    procedure vstListDrawText(Sender: TBaseVirtualTree; TargetCanvas: TCanvas;
+      Node: PVirtualNode; Column: TColumnIndex; const Text: string;
+      const CellRect: TRect; var DefaultDraw: Boolean);
+    procedure vstListAddToSelection(Sender: TBaseVirtualTree;
+      Node: PVirtualNode);
 	private    
     { Private declarations }
     FOpening: Boolean;
@@ -223,7 +228,7 @@ implementation
 
 uses
   Main, Options, ulSysUtils, AppConfig, ulAppConfig, ulCommonUtils, About,
-  udImages, ulNodeDataTypes, ulTreeView, ulEnumerations;
+  udImages, ulNodeDataTypes, ulTreeView, ulEnumerations, udClassicMenu;
 
 procedure TfrmGraphicMenu.ApplicationEvents1Message(var Msg: tagMSG;
   var Handled: Boolean);
@@ -871,6 +876,30 @@ begin
     CloseMenu;
 end;
 
+procedure TfrmGraphicMenu.vstListAddToSelection(Sender: TBaseVirtualTree;
+  Node: PVirtualNode);
+var
+  NodeData: TvBaseNodeData;
+begin
+  NodeData := GetNodeDataSearch(Node,vstList,frmMain.vstList).Data;
+  if NodeData.DataType = vtdtSeparator then
+    Sender.Selected[Node] := False;
+end;
+
+procedure TfrmGraphicMenu.vstListDrawText(Sender: TBaseVirtualTree;
+  TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
+  const Text: string; const CellRect: TRect; var DefaultDraw: Boolean);
+var
+  NodeData: TvBaseNodeData;
+begin
+  NodeData := GetNodeDataSearch(Node,vstList,frmMain.vstList).Data;
+  if NodeData.DataType = vtdtSeparator then
+  begin
+    ClassicMenu.DoDrawCaptionedSeparator(Sender,TargetCanvas,CellRect,NodeData.Name);
+    DefaultDraw := False;
+  end;
+end;
+
 procedure TfrmGraphicMenu.vstListExpanding(Sender: TBaseVirtualTree;
   Node: PVirtualNode; var Allowed: Boolean);
 var
@@ -922,22 +951,12 @@ procedure TfrmGraphicMenu.vstGetText(Sender: TBaseVirtualTree;
   var CellText: string);
 var
   NodeData : PBaseData;
-  I   : Byte;
-  str : string;
 begin
   NodeData := GetNodeDataSearch(Node,vstList,frmMain.vstList);
   if Assigned(NodeData) then
   begin
-    if NodeData.Data.DataType = vtdtSeparator then
-    begin
-      I := 50 - (Length(NodeData.Data.Name));
-      str := '---------------------------';
-      if I >= 10 then
-        SetLength(str, I div 2)
-      else
-        SetLength(str, 5);
-      CellText := str + ' ' + NodeData.Data.Name + ' ' + str;
-    end
+    if (NodeData.Data.DataType = vtdtSeparator) and (NodeData.Data.Name = '') then
+      CellText := ' '
     else
       CellText := StringReplace(NodeData.Data.Name, '&&', '&', [rfIgnoreCase,rfReplaceAll]);
   end;

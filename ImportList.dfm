@@ -102,10 +102,6 @@ object frmImportList: TfrmImportList
       Caption = 'tsLaunchers'
       TabVisible = False
       OnShow = tsLaunchersShow
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object rgrpLauncher: TRadioGroup
         Left = 12
         Top = 38
@@ -125,10 +121,6 @@ object frmImportList: TfrmImportList
       ImageIndex = 1
       TabVisible = False
       OnShow = tsSettingsShow
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object gbElements: TGroupBox
         Left = 12
         Top = 119
@@ -235,6 +227,7 @@ object frmImportList: TfrmImportList
         TreeOptions.AutoOptions = [toAutoDropExpand, toAutoScrollOnExpand, toAutoTristateTracking]
         TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning]
         TreeOptions.SelectionOptions = [toFullRowSelect, toRightClickSelect]
+        OnDrawText = vstListImpDrawText
         OnExpanding = vstListImpExpanding
         OnFreeNode = vstListImpFreeNode
         OnGetText = vstListImpGetText
@@ -265,10 +258,6 @@ object frmImportList: TfrmImportList
       ImageIndex = 3
       TabVisible = False
       OnShow = tsProgressShow
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object lblItems: TLabel
         Left = 12
         Top = 120

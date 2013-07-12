@@ -84,6 +84,9 @@ type
     procedure tsListShow(Sender: TObject);
     procedure tsProgressShow(Sender: TObject);
     procedure vstListImpFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
+    procedure vstListImpDrawText(Sender: TBaseVirtualTree;
+      TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
+      const Text: string; const CellRect: TRect; var DefaultDraw: Boolean);
   private
     { Private declarations }
     procedure ImportSettingsInASuite;
@@ -112,7 +115,7 @@ implementation
 
 uses
   Main, ulNodeDataTypes, ulCommonUtils, ulTreeView, udImages, ulAppConfig,
-  ulFileFolder;
+  ulFileFolder, udClassicMenu;
 
 procedure TfrmImportList.btnCancelClick(Sender: TObject);
 begin
@@ -353,6 +356,20 @@ begin
   ImagesDM.IcoImages.GetBitmap(IMAGE_INDEX_Cancel,imgSettings.Picture.Bitmap);
 end;
 
+procedure TfrmImportList.vstListImpDrawText(Sender: TBaseVirtualTree;
+  TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
+  const Text: string; const CellRect: TRect; var DefaultDraw: Boolean);
+var
+  NodeData: TvBaseNodeData;
+begin
+  NodeData := PBaseData(Sender.GetNodeData(Node)).Data;
+  if NodeData.DataType = vtdtSeparator then
+  begin
+    ClassicMenu.DoDrawCaptionedSeparator(Sender,TargetCanvas,CellRect,NodeData.Name);
+    DefaultDraw := False;
+  end;
+end;
+
 procedure TfrmImportList.vstListImpExpanding(Sender: TBaseVirtualTree;
   Node: PVirtualNode; var Allowed: Boolean);
 begin
@@ -384,22 +401,15 @@ procedure TfrmImportList.vstListImpGetText(Sender: TBaseVirtualTree; Node: PVirt
   Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
 var
   NodeData : PBaseData;
-  I        : Byte;
-  str      : string;
 begin
   NodeData := Sender.GetNodeData(Node);
-  if NodeData.Data.DataType = vtdtSeparator then
+  if Assigned(NodeData) then
   begin
-    I := 40 - (Length(NodeData.Data.Name));
-    str := '----------------------';
-    if I >= 10 then
-      SetLength(str, I div 2)
+    if (NodeData.Data.DataType = vtdtSeparator) and (NodeData.Data.Name = '') then
+      CellText := ' '
     else
-      SetLength(str, 5);
-    CellText := str + ' ' + NodeData.Data.Name + ' ' + str;
-  end
-  else
-    CellText := StringReplace(NodeData.Data.Name, '&&', '&', [rfIgnoreCase,rfReplaceAll]);
+      CellText := StringReplace(NodeData.Data.Name, '&&', '&', [rfIgnoreCase,rfReplaceAll]);
+  end;
 end;
 
 procedure TfrmImportList.XMLToTree(Tree: TVirtualStringTree;CallBack: TImportListToTree;

@@ -26,7 +26,7 @@ interface
 uses
   Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   Menus, ExtCtrls, VirtualTrees, ulCommonClasses, ShellApi, Vcl.ImgList,
-  Winapi.Messages;
+  Winapi.Messages, ulNodeDataTypes;
 
 type
   TClassicMenu = class(TDataModule)
@@ -51,8 +51,6 @@ type
     procedure UpdateSpecialList(PopupMenu: TMenuItem;SList: TNodeDataList;MaxItems: Integer);
     procedure MeasureCaptionedSeparator(Sender: TObject; ACanvas: TCanvas; var Width,
       Height: Integer);
-    procedure DrawCaptionedSeparator(Sender: TObject; ACanvas: TCanvas; ARect: TRect;
-      Selected: Boolean);
     procedure DrawFadeLine(ACanvas: TCanvas; AClipRect, ALineRect: TRect; AColor: TColor; AFadeWidth: Integer; AClip: Boolean);
     procedure CreateSeparator(Menu: TPopupMenu;Text: String;ListMenuItem: TMenuItem = nil);
     function  IsCaptionedSeparator(MenuItem: TMenuItem): Boolean;
@@ -61,11 +59,15 @@ type
     procedure AddSub(MI: TMenuItem);
     procedure AddItem(TargetItem, AMenuItem: TMenuItem);
     procedure PopulateDirectory(Sender: TObject);
+    procedure DrawCaptionedSeparator(Sender: TObject; ACanvas: TCanvas; ARect: TRect;
+      Selected: Boolean);
   public
     { Public declarations }
     procedure ShowClassicMenu;
     procedure ShowGraphicMenu;
     procedure ShowTrayiconMenu; //In based of config, open ClassicMenu or GraphicMenu
+    procedure DoDrawCaptionedSeparator(Sender: TObject; ACanvas: TCanvas; ARect: TRect;
+      ACaption: string = '');
   end;
 
 type
@@ -126,8 +128,8 @@ var
 implementation
 
 uses
-  AppConfig, udImages, Main, ulNodeDataTypes, ulEnumerations, ulAppConfig,
-  ulTreeView, ulCommonUtils, GraphicMenu, ulSysUtils;
+  AppConfig, udImages, Main, ulEnumerations, ulAppConfig, ulTreeView, ulSysUtils,
+  ulCommonUtils, GraphicMenu;
 
 {$R *.dfm}
 
@@ -448,11 +450,17 @@ end;
 
 procedure TClassicMenu.DrawCaptionedSeparator(Sender: TObject; ACanvas: TCanvas; ARect: TRect;
   Selected: Boolean);
-
-function RectWidth(const ARect: TRect): Integer;
 begin
-  Result := ARect.Right - ARect.Left;
+  DoDrawCaptionedSeparator(Sender, ACanvas, ARect);
 end;
+
+procedure TClassicMenu.DoDrawCaptionedSeparator(Sender: TObject; ACanvas: TCanvas; ARect: TRect;
+  ACaption: string);
+
+  function RectWidth(const ARect: TRect): Integer;
+  begin
+    Result := ARect.Right - ARect.Left;
+  end;
 
 var
   TextArea, LineArea: TRect;
@@ -460,20 +468,32 @@ var
   LineCaption : string;  
   TextSpace   : Cardinal;
 begin
-  //Don't highlight menu item
-  ACanvas.Brush.Color := clMenu;
-  ACanvas.Font.Color  := clWindowText;
   LineArea := ARect;
   TextArea := LineArea;
   Dec(TextArea.Bottom, 1);
   Flags := DT_SINGLELINE or DT_NOPREFIX or DT_VCENTER or DT_CENTER;
-  if (Sender as TMenuItem).Hint <> '' then
+  TextSpace := 0;
+  if (Sender is TMenuItem) then
   begin
-    LineCaption := Format(' %s ', [(Sender as TMenuItem).Hint]);
-    TextSpace   := 1;
+    //Don't highlight menu item
+    ACanvas.Brush.Color := clMenu;
+    ACanvas.Font.Color  := clWindowText;
+    if (Sender as TMenuItem).Hint <> '' then
+    begin
+      LineCaption := Format(' %s ', [(Sender as TMenuItem).Hint]);
+      TextSpace   := 1;
+    end;
   end
   else
-    TextSpace := 0;
+    if (Sender is TBaseVirtualTree) then
+    begin
+      ACanvas.Font.Assign((Sender as TBaseVirtualTree).Font);
+      if ACaption <> '' then
+      begin
+        LineCaption := Format(' %s ', [ACaption]);
+        TextSpace   := 1;
+      end;
+    end;
   DrawText(ACanvas.Handle, PChar(LineCaption), Length(LineCaption), TextArea, Flags or DT_CALCRECT);
   OffsetRect(TextArea, Round((RectWidth(LineArea) - RectWidth(TextArea)) / 2 - TextSpace), 0);
   Inc(ARect.Top, (CaptionLineItemHeight div 2) - 1);
