@@ -212,7 +212,8 @@ var
 implementation
 
 uses
-  Main, udClassicMenu, ulSysUtils, AppConfig, Sensor, ulCommonUtils, ulFileFolder;
+  Main, udClassicMenu, ulSysUtils, AppConfig, Sensor, ulCommonUtils, ulFileFolder,
+  udImages, GraphicMenu;
 
 constructor TConfiguration.Create;
 begin
@@ -397,13 +398,19 @@ begin
 end;
 
 procedure TConfiguration.SetTrayUseCustomIcon(value: Boolean);
+var
+  sPath: string;
 begin
   FTrayUseCustomIcon := value;
   ClassicMenu.tiTrayMenu.Visible := False;
-  if (FTrayUseCustomIcon) and (FileExists(RelativeToAbsolute(FTrayCustomIconPath))) then
-    ClassicMenu.tiTrayMenu.Icon.LoadFromFile(RelativeToAbsolute(FTrayCustomIconPath))
-  else
-    ClassicMenu.tiTrayMenu.Icon.LoadFromFile(RelativeToAbsolute(SUITE_ICONS_PATH + FILEICON_ASuite));
+  sPath := RelativeToAbsolute(FTrayCustomIconPath);
+  if (FTrayUseCustomIcon) and (FileExists(sPath)) then
+    ClassicMenu.tiTrayMenu.Icon.LoadFromFile(sPath)
+  else begin
+    sPath := RelativeToAbsolute(SUITE_ICONS_PATH + FILEICON_ASuite);
+    if FileExists(sPath) then
+      ClassicMenu.tiTrayMenu.Icon.LoadFromFile(sPath);
+  end;
   //If you can't change trayicon's property visible, it will use old icon
   ClassicMenu.tiTrayMenu.Visible := FTrayIcon;
 end;
@@ -569,6 +576,19 @@ begin
     FGMTheme := 'default'
   else
     FGMTheme := value;
+  //Set Paths
+  SUITE_CURRENTTHEME_PATH := IncludeTrailingBackslash(SUITE_MENUTHEMES_PATH + FGMTheme);
+  SUITE_ICONS_PATH      := SUITE_CURRENTTHEME_PATH + ICONS_DIR;
+  SUITE_LARGEICONS_PATH := SUITE_CURRENTTHEME_PATH + LARGEICONS_DIR;
+  //Loading icons
+  ImagesDM.LoadASuiteIcons;
+  frmMain.LoadGlyphs;
+  //Refresh GraphicMenu
+  if Assigned(frmGraphicMenu) then
+  begin
+    frmGraphicMenu.Free;
+    Application.CreateForm(TfrmGraphicMenu, frmGraphicMenu);
+  end;
 end;
 
 procedure TConfiguration.SetStartWithWindows(value: Boolean);

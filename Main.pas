@@ -171,7 +171,6 @@ type
   private
     { Private declarations }
     function  GetActiveTree: TBaseVirtualTree;
-    procedure LoadGlyphs;
     procedure RunStartupProcess;
     procedure RunShutdownProcess;
     procedure ExecuteSelectedNode(TreeView: TBaseVirtualTree;ProcessInfo: TProcessInfo);
@@ -186,6 +185,7 @@ type
     procedure ShowItemProperty(TreeView: TBaseVirtualTree);
     procedure DoSearchItem(TreeSearch: TBaseVirtualTree; Keyword: string;
                            Callback: TVTGetNodeProc);
+    procedure LoadGlyphs;
   end;
 
 var
@@ -846,7 +846,7 @@ begin
       end;
     except
       on E : Exception do
-        ShowMessage(Format(msgErrGeneric,[E.ClassName,E.Message]), true);
+        ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message], true);
     end;
     vstList.Repaint;
     RefreshList(vstList);
@@ -1117,8 +1117,6 @@ begin
       miSaveList1.Enabled := False;
     end;
   end;
-  //Loading icons
-  LoadGlyphs;
   //List & Options
   DBManager.LoadData(vstList);
   RunStartupProcess;

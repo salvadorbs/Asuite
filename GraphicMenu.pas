@@ -142,8 +142,7 @@ type
     procedure btnSearchKeyPress(Sender: TObject; var Key: Char);
 	private    
     { Private declarations }
-    FOpening   : Boolean;
-    FThemePath : string;
+    FOpening: Boolean;
     procedure CopyImageInVst(Source:TImage;Page: TPageControl);
     procedure DrawButton(IniFile: TIniFile;Button: TcySkinButton;
                          ButtonType: TGraphicMenuElement);
@@ -289,8 +288,8 @@ var
   HDPath, HDSpacePath: string;
 begin
   //Hard Disk Space
-  HDPath := FThemePath + IniFile.ReadString(INIFILE_SECTION_HARDDISK, INIFILE_KEY_IMAGEBACKGROUND, '');
-  HDSpacePath := FThemePath + IniFile.ReadString(INIFILE_SECTION_HARDDISK, INIFILE_KEY_IMAGESPACE, '');
+  HDPath := SUITE_CURRENTTHEME_PATH + IniFile.ReadString(INIFILE_SECTION_HARDDISK, INIFILE_KEY_IMAGEBACKGROUND, '');
+  HDSpacePath := SUITE_CURRENTTHEME_PATH + IniFile.ReadString(INIFILE_SECTION_HARDDISK, INIFILE_KEY_IMAGESPACE, '');
   if FileExists(HDPath) then
     DriveBackGround.Picture.LoadFromFile(HDPath);
   if FileExists(HDSpacePath) then
@@ -303,7 +302,7 @@ var
 begin
   ErrorCode := ShellExecute(GetDesktopWindow, 'open', PChar(FolderPath), PChar(''), PChar(FolderPath), SW_SHOWDEFAULT);
   if ErrorCode <= 32 then
-    ShowMessageFmt(msgErrGeneric, ['', SysErrorMessage(ErrorCode)]);
+    ShowMessageFmt(msgErrGeneric, ['', SysErrorMessage(ErrorCode)], True);
 end;
 
 procedure TfrmGraphicMenu.CopyImageInVst(Source: TImage;Page: TPageControl);
@@ -353,9 +352,9 @@ begin
   try
     IniFile_Section := GetIniFileSection(ButtonType);
     //Get images path
-    Image_Normal  := FThemePath + IniFile.ReadString(IniFile_Section, INIFILE_KEY_IMAGENORMAL, '');
-    Image_Hover   := FThemePath + IniFile.ReadString(IniFile_Section, INIFILE_KEY_IMAGEHOVER, '');
-    Image_Clicked := FThemePath + IniFile.ReadString(IniFile_Section, INIFILE_KEY_IMAGECLICKED, '');
+    Image_Normal  := SUITE_CURRENTTHEME_PATH + IniFile.ReadString(IniFile_Section, INIFILE_KEY_IMAGENORMAL, '');
+    Image_Hover   := SUITE_CURRENTTHEME_PATH + IniFile.ReadString(IniFile_Section, INIFILE_KEY_IMAGEHOVER, '');
+    Image_Clicked := SUITE_CURRENTTHEME_PATH + IniFile.ReadString(IniFile_Section, INIFILE_KEY_IMAGECLICKED, '');
     //Load png button states
     if FileExists(Image_Normal) then
       PNGImage_Normal.LoadFromFile(Image_Normal);
@@ -412,9 +411,9 @@ begin
     //Get and draw icon
     IniFile_Section := GetIniFileSection(ButtonType);
     IconPath := GetButtonIconPath(IniFile, ButtonType);
-    if FileExists(FThemePath + IconPath) then
+    if FileExists(SUITE_CURRENTTHEME_PATH + IconPath) then
     begin
-      Icon.LoadFromFile(FThemePath + IconPath);
+      Icon.LoadFromFile(SUITE_CURRENTTHEME_PATH + IconPath);
       PNGImage.Canvas.Lock;
       try
         PNGImage.Canvas.Draw(5, 3, Icon);
@@ -479,55 +478,61 @@ begin
   vstRecents.NodeDataSize  := SizeOf(TTreeDataX);
   vstMostUsed.NodeDataSize := SizeOf(TTreeDataX);
   //Load theme
-  FThemePath := IncludeTrailingBackslash(SUITE_MENUTHEMES_PATH + Config.GMTheme);
-  IniFile := TIniFile.Create(FThemePath + THEME_INI);
-  try
-    //IniFile Section General
-    //Background
-    BackgroundPath := FThemePath + IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGEBACKGROUND, '');
-    if FileExists(BackgroundPath) then
-      imgBackground.Picture.LoadFromFile(BackgroundPath);
-    //Logo
-    LogoPath := FThemePath + IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGELOGO, '');
-    if FileExists(LogoPath) then
-      imgLogo.Picture.LoadFromFile(LogoPath);
-    //Separator
-    SeparatorPath := FThemePath + IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGESEPARATOR, '');
-    imgDivider1.Picture.LoadFromFile(SeparatorPath);
-    imgDivider2.Picture.LoadFromFile(SeparatorPath);
-    //Tabs
-    DrawButton(IniFile,sknbtnList,gmbList);
-    DrawButton(IniFile,sknbtnRecents,gmbMRU);
-    DrawButton(IniFile,sknbtnMFU,gmbMFU);
-    //Right Buttons
-    DrawButton(IniFile,sknbtnASuite,gmbASuite);
-    DrawButton(IniFile,sknbtnOptions,gmbOptions);
-    DrawButton(IniFile,sknbtnDocuments,gmbDocuments);
-    DrawButton(IniFile,sknbtnMusic,gmbMusic);
-    DrawButton(IniFile,sknbtnPictures,gmbPictures);
-    DrawButton(IniFile,sknbtnVideos,gmbVideos);
-    DrawButton(IniFile,sknbtnExplore,gmbExplore);
-    DrawButton(IniFile,sknbtnAbout,gmbAbout);
-    //Eject and Close Buttons
-    DrawButton(IniFile,sknbtnEject,gmbEject);
-    DrawButton(IniFile,sknbtnExit,gmbExit);
-    //Search
-    IconPath := FThemePath + IniFile.ReadString(INIFILE_SECTION_SEARCH, INIFILE_KEY_ICON, '');
-    if FileExists(IconPath) then
-      btnSearch.RightButton.ImageIndex := ImagesDM.GetSimpleIconIndex(IconPath);
-    //Hard Disk
-    DrawHardDiskSpace(IniFile,imgDriveBackground,imgDriveSpace);
-    lblDriveName.Caption := UpperCase(ExtractFileDrive(SUITE_WORKING_PATH));
-    strFont := IniFile.ReadString(INIFILE_SECTION_HARDDISK, INIFILE_KEY_FONT, '');
-    AssignFontFromString(strFont,lblDriveName.Font);
-    AssignFontFromString(strFont,lblDriveSpace.Font);
-    //VirtualTrees
-    AssignFontFromString(IniFile.ReadString(INIFILE_SECTION_LIST, INIFILE_KEY_FONT, ''), vstList.Font);
-    AssignFontFromString(IniFile.ReadString(INIFILE_SECTION_RECENTS, INIFILE_KEY_FONT, ''), vstRecents.Font);
-    AssignFontFromString(IniFile.ReadString(INIFILE_SECTION_MOSTUSED, INIFILE_KEY_FONT, ''), vstMostUsed.Font);
-    AssignFontFromString(IniFile.ReadString(INIFILE_SECTION_SEARCH, INIFILE_KEY_FONT, ''), vstSearch.Font);
-  finally
-    IniFile.Free;
+  if FileExists(SUITE_CURRENTTHEME_PATH + THEME_INI) then
+  begin
+    IniFile := TIniFile.Create(SUITE_CURRENTTHEME_PATH + THEME_INI);
+    try
+      //IniFile Section General
+      //Background
+      BackgroundPath := SUITE_CURRENTTHEME_PATH + IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGEBACKGROUND, '');
+      if FileExists(BackgroundPath) then
+        imgBackground.Picture.LoadFromFile(BackgroundPath);
+      //Logo
+      LogoPath := SUITE_CURRENTTHEME_PATH + IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGELOGO, '');
+      if FileExists(LogoPath) then
+        imgLogo.Picture.LoadFromFile(LogoPath);
+      //Separator
+      SeparatorPath := SUITE_CURRENTTHEME_PATH + IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGESEPARATOR, '');
+      imgDivider1.Picture.LoadFromFile(SeparatorPath);
+      imgDivider2.Picture.LoadFromFile(SeparatorPath);
+      //Tabs
+      DrawButton(IniFile,sknbtnList,gmbList);
+      DrawButton(IniFile,sknbtnRecents,gmbMRU);
+      DrawButton(IniFile,sknbtnMFU,gmbMFU);
+      //Right Buttons
+      DrawButton(IniFile,sknbtnASuite,gmbASuite);
+      DrawButton(IniFile,sknbtnOptions,gmbOptions);
+      DrawButton(IniFile,sknbtnDocuments,gmbDocuments);
+      DrawButton(IniFile,sknbtnMusic,gmbMusic);
+      DrawButton(IniFile,sknbtnPictures,gmbPictures);
+      DrawButton(IniFile,sknbtnVideos,gmbVideos);
+      DrawButton(IniFile,sknbtnExplore,gmbExplore);
+      DrawButton(IniFile,sknbtnAbout,gmbAbout);
+      //Eject and Close Buttons
+      DrawButton(IniFile,sknbtnEject,gmbEject);
+      DrawButton(IniFile,sknbtnExit,gmbExit);
+      //Search
+      IconPath := SUITE_CURRENTTHEME_PATH + IniFile.ReadString(INIFILE_SECTION_SEARCH, INIFILE_KEY_ICON, '');
+      if FileExists(IconPath) then
+        btnSearch.RightButton.ImageIndex := ImagesDM.GetSimpleIconIndex(IconPath);
+      //Hard Disk
+      DrawHardDiskSpace(IniFile,imgDriveBackground,imgDriveSpace);
+      lblDriveName.Caption := UpperCase(ExtractFileDrive(SUITE_WORKING_PATH));
+      strFont := IniFile.ReadString(INIFILE_SECTION_HARDDISK, INIFILE_KEY_FONT, '');
+      AssignFontFromString(strFont,lblDriveName.Font);
+      AssignFontFromString(strFont,lblDriveSpace.Font);
+      //VirtualTrees
+      AssignFontFromString(IniFile.ReadString(INIFILE_SECTION_LIST, INIFILE_KEY_FONT, ''), vstList.Font);
+      AssignFontFromString(IniFile.ReadString(INIFILE_SECTION_RECENTS, INIFILE_KEY_FONT, ''), vstRecents.Font);
+      AssignFontFromString(IniFile.ReadString(INIFILE_SECTION_MOSTUSED, INIFILE_KEY_FONT, ''), vstMostUsed.Font);
+      AssignFontFromString(IniFile.ReadString(INIFILE_SECTION_SEARCH, INIFILE_KEY_FONT, ''), vstSearch.Font);
+    finally
+      IniFile.Free;
+    end;
+  end
+  else begin
+    ShowMessageFmt(msgErrNoThemeIni, [SUITE_CURRENTTHEME_PATH + THEME_INI], True);
+    Config.UseClassicMenu := True;
   end;
   //Workaround for vst trasparent
   CopyImageInVst(imgBackground,pgcTreeViews);

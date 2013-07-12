@@ -43,9 +43,9 @@ const
   BACKUP_DIR     = 'backup\';
   CACHE_DIR      = 'cache\';
   CACHELARGE_DIR = 'cache\large\';
+  MENUTHEMES_DIR = 'menuthemes\';
   ICONS_DIR      = 'icons\';
   LARGEICONS_DIR = ICONS_DIR + '32x32\';
-  MENUTHEMES_DIR = 'menuthemes\';
 
   // Caratteri speciali
   LF                = #10;              { line feed }
@@ -137,6 +137,7 @@ var
   SUITE_ICONS_PATH   : String;
   SUITE_LARGEICONS_PATH : String;
   SUITE_MENUTHEMES_PATH : String;
+  SUITE_CURRENTTHEME_PATH : String;
 
   // Application's files
   SUITE_LIST_PATH    : String;
@@ -223,6 +224,7 @@ resourcestring
   msgErrGeneric     = '%s error raised, with message: %s';
   msgErrIcon        = 'Cannot use icon %s';
   msgErrNoIcon      = 'Couldn''t find the icon %s';
+  msgErrNoThemeIni  = 'Couldn''t find theme ini %s';
   msgErrRun         = 'Cannot run %s';
   msgErrSave        = 'Save failed because of an error';
   msgFileNotFound   = 'File not found';
@@ -248,8 +250,6 @@ initialization
   SUITE_CACHE_PATH          := SUITE_WORKING_PATH + CACHE_DIR;
   SUITE_CACHELARGE_PATH     := SUITE_WORKING_PATH + CACHELARGE_DIR;
   SUITE_BACKUP_PATH         := SUITE_WORKING_PATH + BACKUP_DIR;
-  SUITE_ICONS_PATH          := SUITE_WORKING_PATH + ICONS_DIR;
-  SUITE_LARGEICONS_PATH     := SUITE_WORKING_PATH + LARGEICONS_DIR;
   SUITE_MENUTHEMES_PATH     := SUITE_WORKING_PATH + MENUTHEMES_DIR;
   //List
   if (ExtractFileExt(ParamStr(1)) = EXT_SQL) and FileExists(ParamStr(1)) then
