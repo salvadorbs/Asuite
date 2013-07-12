@@ -234,7 +234,7 @@ begin
     except
       on E : Exception do
       begin
-        ShowMessage(Format(msgErrGeneric,[E.ClassName,E.Message]),True);
+        ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message],True);
         lblItems.Caption := msgImportFailed;
       end;
     end;

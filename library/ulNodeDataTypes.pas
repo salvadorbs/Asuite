@@ -423,7 +423,7 @@ begin
   end
   else begin
     //Show error message
-    ShowMessage(Format(msgErrRun,[FName]),true);
+    ShowMessageFmt(msgErrRun,[FName],true);
   end;
 end;
 

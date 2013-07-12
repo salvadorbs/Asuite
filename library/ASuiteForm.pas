@@ -48,7 +48,7 @@ implementation
 
 uses
   ulTreeView, Main, ulAppConfig, ulNodeDataTypes, AppConfig, udClassicMenu,
-  ulEnumerations;
+  ulEnumerations, ulCommonUtils;
 
 constructor TASuiteForm.Create(AOwner: TComponent);
 begin
@@ -129,7 +129,7 @@ begin
           end;
         end
         else begin
-          ShowMessage(msgErrGeneric);
+          ShowMessage(msgErrGeneric, True);
           exit;
         end;
       end;

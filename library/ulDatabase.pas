@@ -332,7 +332,7 @@ begin
     InternalLoadListItems(Tree, 0, nil, true);
   except
     on E : Exception do
-      ShowMessage(Format(msgErrGeneric,[E.ClassName,E.Message]),True);
+      ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message],True);
   end;
 end;
 
@@ -342,7 +342,7 @@ begin
     InternalLoadOptions;
   except
     on E : Exception do
-      ShowMessage(Format(msgErrGeneric,[E.ClassName,E.Message]),True);
+      ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message],True);
   end;
 end;
 
@@ -459,7 +459,7 @@ begin
     InternalLoadListItems(Tree, 0, nil, false);
   except
     on E : Exception do
-      ShowMessage(Format(msgErrGeneric,[E.ClassName,E.Message]),True);
+      ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message],True);
   end;
 end;
 
@@ -545,6 +545,8 @@ begin
       //Get options from DBTable
       while SQLOptionsData.FillOne do
       begin
+        //Get GMTheme before everything (so ASuite know where icons folder)
+        Config.GMTheme            := SQLOptionsData.gmtheme;
         //General
         Config.StartWithWindows   := SQLOptionsData.startwithwindows;
         Config.ShowPanelAtStartUp := SQLOptionsData.showpanelatstartup;
@@ -600,7 +602,6 @@ begin
         Config.ActionClickRight   := SQLOptionsData.actionclickright;
         Config.UseClassicMenu     := SQLOptionsData.useclassicmenu;
         //Graphic Menu
-        Config.GMTheme            := SQLOptionsData.gmtheme;
         Config.GMFade             := SQLOptionsData.gmfade;
         Config.GMPersonalPicture  := SQLOptionsData.gmpersonalpicture;
         //Right buttons
@@ -704,7 +705,7 @@ begin
     end;
   except
     on E : Exception do begin
-      ShowMessage(Format(msgErrGeneric,[E.ClassName,E.Message]),True);
+      ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message],True);
       FDatabase.Rollback(1);
     end;
   end;
@@ -732,7 +733,7 @@ begin
         InternalSaveListItems(Tree, Node.FirstChild, vData.ID);
     except
       on E : Exception do
-        ShowMessage(Format(msgErrGeneric,[E.ClassName,E.Message]),True);
+        ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message],True);
     end;
     Node := Node.NextSibling;
   end;

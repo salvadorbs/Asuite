@@ -1,11 +1,5 @@
 program ASuite;
 
-
-
-
-
-
-
 uses
   Forms,
   SysUtils,

@@ -266,7 +266,7 @@ begin
     if Assigned(NodeData) then
       TvFileNodeData(NodeData).Execute(frmMain.vstList, ProcessInfo)
     else
-      ShowMessage(Format(msgErrRun, [StringReplace((Sender as TASMenuItem).Caption, '&', '', [])]),True);
+      ShowMessageFmt(msgErrRun, [StringReplace((Sender as TASMenuItem).Caption, '&', '', [])],True);
   end;
 end;
 

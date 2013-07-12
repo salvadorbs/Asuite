@@ -50,6 +50,7 @@ function  GetFirstFreeIndex(ArrayString: Array of WideString): Integer;
 function  IfThen(AValue: Boolean; ATrue, AFalse: String): String;
 function  IsFormatInClipBoard(format: Word): Boolean;
 procedure ShowMessage(const Msg: string; Error: boolean=false);
+procedure ShowMessageFmt(const Msg: string; Params: array of const; Error: boolean=false);
 
 { Stats }
 function  GetCurrentUserName: string;
@@ -283,6 +284,16 @@ var
   Task: TTaskDialog;
 begin
   Task.Content := Msg;
+  Task.Execute([cbOK],mrOk,[],IconError[Error]);
+end;
+
+procedure ShowMessageFmt(const Msg: string; Params: array of const; Error: boolean=false);
+const
+  IconError: array[boolean] of TTaskDialogIcon = (tiInformation, tiError);
+var
+  Task: TTaskDialog;
+begin
+  Task.Content := Format(Msg, Params);
   Task.Execute([cbOK],mrOk,[],IconError[Error]);
 end;
 
