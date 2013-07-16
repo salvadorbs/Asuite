@@ -4,11 +4,11 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BaseOptionsPage, Vcl.StdCtrls,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BaseEntityPage, Vcl.StdCtrls,
   Vcl.ComCtrls, Vcl.Buttons, ulEnumerations, ulCommonClasses;
 
 type
-  TfrmItemsOptionsPage = class(TfrmBaseOptionsPage)
+  TfrmItemsOptionsPage = class(TfrmBaseEntityPage)
     gbExecution: TGroupBox;
     lbActionOnExe: TLabel;
     cbRunSingleClick: TCheckBox;

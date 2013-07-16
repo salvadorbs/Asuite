@@ -4,10 +4,10 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BaseOptionsPage, Vcl.StdCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BaseEntityPage, Vcl.StdCtrls;
 
 type
-  TfrmGeneralOptionsPage = class(TfrmBaseOptionsPage)
+  TfrmGeneralOptionsPage = class(TfrmBaseEntityPage)
     gbWindow: TGroupBox;
     cbWindowOnTop: TCheckBox;
     cbHoldSize: TCheckBox;
@@ -144,8 +144,8 @@ begin
   Config.HoldSize           := cbHoldSize.Checked;
   Config.AlwaysOnTop        := cbWindowOnTop.Checked;
   Config.HideTabSearch      := cbHideSearch.Checked;
-  Config.UseCustomTitle     := cbCustomTitle.Checked;
   Config.CustomTitleString  := edtCustomTitle.Text;
+  Config.UseCustomTitle     := cbCustomTitle.Checked;
   //Startup
   Config.StartWithWindows   := cbWindowsStartup.Checked;
   Config.ShowPanelAtStartUp := cbShowPanelStartup.Checked;

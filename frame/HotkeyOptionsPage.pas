@@ -4,10 +4,10 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BaseOptionsPage, Vcl.StdCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BaseEntityPage, Vcl.StdCtrls;
 
 type
-  TfrmHotkeyOptionsPage = class(TfrmBaseOptionsPage)
+  TfrmHotkeyOptionsPage = class(TfrmBaseEntityPage)
     gbHotkey: TGroupBox;
     cxWindowHotKeyCode: TComboBox;
     cxWindowHotKeyMod: TComboBox;

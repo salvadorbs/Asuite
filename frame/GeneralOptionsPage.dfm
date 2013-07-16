@@ -153,7 +153,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
       TabOrder = 0
     end
   end
-  object FontDialog1: TFontDialog [4]
+  object FontDialog1: TFontDialog
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -11

@@ -32,7 +32,7 @@ interface
 
 uses
   VirtualTrees, Menus, SysUtils, Dialogs, appConfig, DateUtils, ulEnumerations,
-  Winapi.ShellAPI, Winapi.Windows;
+  Winapi.ShellAPI, Winapi.Windows, BaseEntityPage;
 
 type
 
@@ -255,6 +255,14 @@ type
   TTreeDataX = record
     pNodeList : PVirtualNode;
   end;
+
+  //Record for Options and Property form
+  rFramesNodeData = record
+    Title : string;
+    Frame : TPageFrameClass;
+    ImageIndex: Integer;
+  end;
+  PFramesNodeData = ^rFramesNodeData;
 
 function CreateNodeData(AType: TvTreeDataType): TvBaseNodeData;
 

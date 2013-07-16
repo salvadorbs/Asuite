@@ -1,4 +1,4 @@
-unit BaseOptionsPage;
+unit BaseEntityPage;
 
 interface
 
@@ -7,7 +7,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs;
 
 type
-  TfrmBaseOptionsPage = class(TFrame)
+  TfrmBaseEntityPage = class(TFrame)
     OpenDialog1: TOpenDialog;
   private
     { Private declarations }
@@ -22,36 +22,36 @@ type
     property Title: string read GetTitle;
   end;
 
-TPageFrameClass = class of TfrmBaseOptionsPage;
+TPageFrameClass = class of TfrmBaseEntityPage;
 
 implementation
 
 {$R *.dfm}
 
-{ TfrmBaseOptionsPage }
+{ TfrmBaseEntityPage }
 
-constructor TfrmBaseOptionsPage.Create(AOwner: TComponent);
+constructor TfrmBaseEntityPage.Create(AOwner: TComponent);
 begin
   inherited;
   Self.InternalLoadData;
 end;
 
-function TfrmBaseOptionsPage.GetTitle: string;
+function TfrmBaseEntityPage.GetTitle: string;
 begin
   Result := '';
 end;
 
-function TfrmBaseOptionsPage.InternalLoadData: Boolean;
+function TfrmBaseEntityPage.InternalLoadData: Boolean;
 begin
   Result := True;
 end;
 
-function TfrmBaseOptionsPage.InternalSaveData: Boolean;
+function TfrmBaseEntityPage.InternalSaveData: Boolean;
 begin
   Result := True;
 end;
 
-procedure TfrmBaseOptionsPage.SaveData;
+procedure TfrmBaseEntityPage.SaveData;
 begin
   Self.InternalSaveData;
 end;
