@@ -40,7 +40,7 @@ type
   public
     { Public declarations }
   end;
-
+  TfrmGeneralOptionsPageClass = class of TfrmGeneralOptionsPage;
 var
   frmGeneralOptionsPage: TfrmGeneralOptionsPage;
 

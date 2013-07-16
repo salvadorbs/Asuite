@@ -37,6 +37,7 @@ type
   public
     { Public declarations }
   end;
+  TfrmStatsOptionsPageClass = class of TfrmStatsOptionsPage;
 
 var
   frmStatsOptionsPage: TfrmStatsOptionsPage;

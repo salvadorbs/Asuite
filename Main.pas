@@ -200,7 +200,7 @@ implementation
 uses
   Options, PropertyFile, PropertyCat, About, ulCommonUtils, udClassicMenu,
   PropertySeparator, ulExeUtils, ImportList, ulAppConfig, ulTreeView,
-  ulDatabase, notifications, GraphicMenu;
+  ulDatabase, notifications, GraphicMenu, StatsOptionsPage;
 
 {$R *.dfm}
 
@@ -342,29 +342,31 @@ end;
 
 procedure TfrmMain.miOptionsClick(Sender: TObject);
 begin
-  if not IsFormOpen('frmOption') then
+//  if not IsFormOpen('frmOption') then
     try
       Application.CreateForm(TfrmOptions, frmOptions);
       frmOptions.FormStyle := Self.FormStyle;
-      frmOptions.showmodal;
+      frmOptions.Execute();
     finally
       frmOptions.Free;
-    end
-  else
-    frmOptions.show;
+    end;
+//  else
+//    frmOptions.show;
   RefreshList(vstList);
 end;
 
 procedure TfrmMain.miStatisticsClick(Sender: TObject);
-//var
-//  frmStats: TfrmStats;
 begin
-  //TODO: Call Stats in Options
-//  frmStats := TfrmStats.Create(self);
-//  try
-//    frmStats.ShowModal();
-//  finally
-//    frmStats.Free;
+//  if not IsFormOpen('frmOption') then
+    try
+      Application.CreateForm(TfrmOptions, frmOptions);
+      frmOptions.FormStyle := Self.FormStyle;
+      frmOptions.Execute(TfrmStatsOptionsPage);
+    finally
+      frmOptions.Free;
+    end;
+//  else begin
+//    frmOptions.show;
 //  end;
 end;
 
@@ -933,6 +935,10 @@ begin
   miDelete1.ImageIndex     := IMAGE_INDEX_Delete;
   miProperty1.ImageIndex   := IMAGE_INDEX_Property;
   miInfoASuite.ImageIndex  := IMAGE_INDEX_Help;
+  //TODO ...image for stats
+//  miStatistics.ImageIndex  := IMAGE_INDEX_sHelp;
+
+
   //Set PopUpMenu's ImageIndexes
   miRunSelectedSw.ImageIndex := IMAGE_INDEX_Run;
   miAddCat2.ImageIndex     := IMAGE_INDEX_AddCat;

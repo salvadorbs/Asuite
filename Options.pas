@@ -13,7 +13,6 @@ type
     btnCancel: TButton;
     pnlOptionsPage: TPanel;
     vstListCategory: TVirtualStringTree;
-    procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure vstListCategoryGetText(Sender: TBaseVirtualTree;
       Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
@@ -31,14 +30,17 @@ type
       Node: PVirtualNode);
   private
     { Private declarations }
+    function GetNodeByFrameClass(AFramePage: TPageFrameClass):PVirtualNode;
     function AddFrameNode(Parent: PVirtualNode; FramePage: TPageFrameClass;
                           ImageIndex: Integer): PVirtualNode;
     procedure SaveOptions(Sender: TBaseVirtualTree; Node: PVirtualNode;
                           Data: Pointer; var Abort: Boolean);
   strict private
     FCurrentPage: TfrmBaseOptionsPage;
+    FFrameGeneral, FFrameAdvanced: PVirtualNode;
   public
     { Public declarations }
+    function Execute(APage:TPageFrameClass = nil):Integer;
     procedure LoadPage(Page: TPageFrameClass);
     procedure LoadPageByNode(Tree: TBaseVirtualTree;Node: PVirtualNode);
   end;
@@ -88,30 +90,52 @@ begin
   Close;
 end;
 
+function TfrmOptions.Execute(APage: TPageFrameClass): Integer;
+var
+  selNode :PVirtualNode;
+begin
+  if not Assigned(APage) then
+    selNode := FFrameGeneral
+  else
+    selNode := GetNodeByFrameClass(APage);
+  LoadPageByNode(vstListCategory, selNode);
+  vstListCategory.FullExpand;
+  result := ShowModal;
+end;
+
 procedure TfrmOptions.FormCreate(Sender: TObject);
 begin
   vstListCategory.NodeDataSize := SizeOf(rOptionsNodeData);
-end;
-
-procedure TfrmOptions.FormShow(Sender: TObject);
-var
-  FrameGeneral, FrameAdvanced: PVirtualNode;
-begin
   vstListCategory.Clear;
   //General
-  FrameGeneral  := AddFrameNode(nil,TPageFrameClass(TfrmGeneralOptionsPage.Create(Self)),IMAGELARGE_INDEX_General);
+  FFrameGeneral  := AddFrameNode(nil,TPageFrameClass(TfrmGeneralOptionsPage.Create(Self)),IMAGELARGE_INDEX_General);
   //Advanced
-  FrameAdvanced := AddFrameNode(nil,TPageFrameClass(TfrmAdvancedOptionsPage.Create(Self)),IMAGELARGE_INDEX_Advanced);
-  AddFrameNode(FrameAdvanced,TPageFrameClass(TfrmItemsOptionsPage.Create(Self)),IMAGELARGE_INDEX_Items);
-  AddFrameNode(FrameAdvanced,TPageFrameClass(TfrmHotkeyOptionsPage.Create(Self)),IMAGELARGE_INDEX_Hotkey);
-  AddFrameNode(FrameAdvanced,TPageFrameClass(TfrmSensorsOptionsPage.Create(Self)),IMAGELARGE_INDEX_Mouse);
+  FFrameAdvanced := AddFrameNode(nil,TPageFrameClass(TfrmAdvancedOptionsPage.Create(Self)),IMAGELARGE_INDEX_Advanced);
+  AddFrameNode(FFrameAdvanced,TPageFrameClass(TfrmItemsOptionsPage.Create(Self)),IMAGELARGE_INDEX_Items);
+  AddFrameNode(FFrameAdvanced,TPageFrameClass(TfrmHotkeyOptionsPage.Create(Self)),IMAGELARGE_INDEX_Hotkey);
+  AddFrameNode(FFrameAdvanced,TPageFrameClass(TfrmSensorsOptionsPage.Create(Self)),IMAGELARGE_INDEX_Mouse);
   //TrayIcon
   AddFrameNode(nil,TPageFrameClass(TfrmTrayiconOptionsPage.Create(Self)),IMAGELARGE_INDEX_Trayicon);
   //Stats
   AddFrameNode(nil,TPageFrameClass(TfrmStatsOptionsPage.Create(Self)),IMAGELARGE_INDEX_Stats);
+end;
 
-  LoadPageByNode(vstListCategory, FrameGeneral);
-  vstListCategory.FullExpand;
+function TfrmOptions.GetNodeByFrameClass(
+  AFramePage: TPageFrameClass): PVirtualNode;
+var
+  node:PVirtualNode;
+  nodeData:POptionsNodeData;
+begin
+  Result := nil;
+  node := vstListCategory.GetFirst();
+  while Assigned(node) do begin
+    nodeData := vstListCategory.GetNodeData(node);
+    if TfrmBaseOptionsPage(nodeData.Frame).ClassName = AFramePage.ClassName then begin
+      Exit(node);
+    end;
+    node := vstListCategory.GetNextSibling(node);
+  end;
+
 end;
 
 procedure TfrmOptions.LoadPage(Page: TPageFrameClass);
@@ -137,8 +161,10 @@ var
   NodeData : POptionsNodeData;
 begin
   NodeData := Tree.GetNodeData(Node);
-  if Assigned(NodeData) then
+  if Assigned(NodeData) then begin
+    Tree.Selected[Node] := True;
     LoadPage(NodeData.Frame);
+  end;
 end;
 
 function TfrmOptions.AddFrameNode(Parent: PVirtualNode; FramePage: TPageFrameClass; ImageIndex: Integer): PVirtualNode;
