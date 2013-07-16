@@ -1,28 +1,35 @@
+#asuite folders
 bck/
 lib/
 tmp/
 backup/
 cache/
 
-*.lps
+#asuite files
+*.sqlite
+debug.txt
+
+#compiled
+*.exe
 *.compiled
+*.map
+*.dll
+*.dcu
+
+#lazarus
+*.lps
 *.[oa]
 *.ppu
 *.rst
 *.cgi
-*.exe
 *.log
 *.bak*
-*.sqlite
 
 #delphi
-*.dcu
+__history
 *.~*~
 *.local
 *.identcache
-__history
 *.drc
-*.map
-*.dll
-
-debug.txt
+*.vlb
+*.cbk
