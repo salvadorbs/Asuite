@@ -1,3 +1,19 @@
+Cindy components V6.01.2
+05/07/2013 - cyBaseDBGrid.pas - Corrected scrollbar bug with when ClientColumn is enabled
+
+Cindy components V6.01.1
+04/07/2013 - cyBaseDBGrid.pas - Corrected scrollbar bug
+
+Cindy components V6.01
+03/07/2013 - cyResizer.pas - Corrected OnControlListInsert not always called 
+03/07/2013 - cyResizer.pas - Corrected bug (thanks Andreas) on OnControlListInsert "Control" parameter 
+02/07/2013 - cyRuntimeResize.pas - Added removing control notification
+26/06/2013 - cyBaseLed.pas - Added ShowHint to published properties
+13/06/2013 - cyTabControl.pas - Added property Values: TStrings 
+13/06/2013 - cyPageControl.pas - Added property Values: TStrings 
+22/05/2013 - cyBaseDBGrid.pas - Better handling Scrollbars view and corrected TDBGrid vertical scrollbar disappear
+15/05/2013 - cyBaseDBGrid.pas - Added AdjustColumnsToContent() function 
+
 Cindy components V6.00
 12/04/2013 - Windows 64 bits support platform
 

@@ -82,9 +82,16 @@ begin
   FModifyAction  := raCancel;
   FDeleteAction  := raCancel;
 
-  FInsertMessage := cyDBX.cDbxErrorServerInsert;
-  FModifyMessage := cyDBX.cDbxErrorServerModify;
-  FDeleteMessage := cyDBX.cDbxErrorServerDelete;
+  // Determine at design time if
+  // the form is loading or if we have just added the component at design time :
+  if csDesigning in ComponentState then
+    if Owner <> nil then
+      if not (csLoading in Owner.ComponentState) then  // we have just added the component at design time
+      begin
+        FInsertMessage := cyDBX.cDbxErrorServerInsert;
+        FModifyMessage := cyDBX.cDbxErrorServerModify;
+        FDeleteMessage := cyDBX.cDbxErrorServerDelete;
+      end;
 end;
 
 destructor TcyDbxReconcileError.Destroy;

@@ -35,7 +35,7 @@ interface
 
 const
   // Cindy components global version :
-  CindyComponentsVersion = '6.00';
+  CindyComponentsVersion = '6.01.2';
 
 resourcestring
 

@@ -1,3 +1,6 @@
+Cindy components V6.01
+15/05/2013 - cyDbxReconcileError.pas - Corrected messages error initialization
+
 Cindy components V6.00
 12/04/2013 - Windows 64 bits support platform
 

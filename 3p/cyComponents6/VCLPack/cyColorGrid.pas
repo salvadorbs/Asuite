@@ -71,7 +71,7 @@ type
   TProcOnPaintBox = procedure (Sender: TObject; aRect: TRect; aState: TColorState; aRow: integer; aCol: integer; aColor: TColor) of object;
   TProcOnBoxClick = procedure (Sender: TObject; aRow: integer; aCol: integer; aColor: TColor) of object;
 
-TcyColorGrid = class(TGraphicControl)
+  TcyColorGrid = class(TGraphicControl)
     FColorList: TStrings;
   private
     FValidHotColor: Boolean;

@@ -62,6 +62,7 @@ type
     FSpacing: Integer;
     FMargin: Integer;
     FWordWrap: Boolean;
+    FValues: Tstrings;
     procedure WMPaint(var Message: TWMPaint); message WM_PAINT;
 //    procedure WMEraseBkgnd(var Message: TWmEraseBkgnd); message WM_ERASEBKGND;
 //    procedure WMNCPaint(var Message: TWMNCPaint); message WM_NCPAINT;
@@ -75,6 +76,7 @@ type
     procedure SetMargin(const Value: Integer);
     procedure SetSpacing(const Value: Integer);
     procedure SetWordWrap(const Value: Boolean);
+    procedure SetValues(const Value: Tstrings);
     // Only called if OwnerDraw is True, purpous is to call DrawTab():
     // procedure CNDrawItem(var Message: TWMDrawItem); message CN_DRAWITEM;
   protected
@@ -98,6 +100,7 @@ type
     property Layout: TButtonLayout read FLayout write SetLayout default blGlyphLeft;
     property Margin: Integer read FMargin write SetMargin default -1;
     property Spacing: Integer read FSpacing write SetSpacing default 4;
+    property Values: Tstrings read FValues write SetValues;
     property WordWrap: Boolean read FWordWrap write SetWordWrap default false;
     property OnAdvancedDrawTabBackground: TProcAdvancedDrawTabBackground read FOnAdvancedDrawTabBackground write FOnAdvancedDrawTabBackground;
     property OnAdvancedDrawTab: TProcAdvancedDrawTab read FOnAdvancedDrawTab write FOnAdvancedDrawTab;
@@ -124,6 +127,7 @@ begin
   FMargin := -1;
   FSpacing := 4;
   FLayout := blGlyphLeft;
+  FValues := TStringList.Create;
   FWordWrap := false;
 end;
 
@@ -133,6 +137,7 @@ begin
   FInactiveTabColors.Free;
   FActiveTabFont.Free;
   FInactiveTabFont.Free;
+  FValues.Free;
   inherited;
 end;
 
@@ -328,6 +333,14 @@ begin
 
   FThinBorder := Value;
   RecreateWnd;
+end;
+
+procedure TcyTabControl.SetValues(const Value: Tstrings);
+begin
+  if Assigned(FValues) then
+    FValues.Assign(Value)
+  else
+    FValues := Value;
 end;
 
 procedure TcyTabControl.SetWordWrap(const Value: Boolean);

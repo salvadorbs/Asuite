@@ -1937,7 +1937,8 @@ begin
           if not (ssCtrl in Shift)   // Add control to handled ControlList
           then begin
             if Assigned(FOnControlListInsert)
-            then FOnControlListInsert(Self, aHandlingControl, ControlAccepted);
+            then FOnControlListInsert(Self, FLastMouseDownControl, ControlAccepted);
+            // Old 2013-07-03 then FOnControlListInsert(Self, aHandlingControl, ControlAccepted);
 
             if ControlAccepted
             then begin
@@ -2198,18 +2199,26 @@ procedure TcyResizer.InsertControlsInRect(ParentControl: TWinControl; ControlRec
 var
   i: Integer;
   aRsltRect: TRect;
+  ControlAccepted: Boolean;
 begin
   for i := 0 to ParentControl.ControlCount-1 do
     if not (ParentControl.Controls[i] is TcyResizer)
     then
       if ParentControl.Controls[i].Visible
       then
-        if IntersectRect(aRsltRect, ControlRect, ParentControl.Controls[i].BoundsRect)
-        then begin
-          FHandlingControlList.InsertControl(ParentControl.Controls[i]);
+        if IntersectRect(aRsltRect, ControlRect, ParentControl.Controls[i].BoundsRect) then
+        begin
+            ControlAccepted := true;
+            if Assigned(FOnControlListInsert) then
+              FOnControlListInsert(Self, ParentControl.Controls[i], ControlAccepted);
 
-          if not (roMouseMultiSelect in FOptions) then
-            Break;
+            if ControlAccepted then
+            begin
+              FHandlingControlList.InsertControl(ParentControl.Controls[i]);
+
+              if not (roMouseMultiSelect in FOptions) then
+                Break;
+            end;
         end;
 end;
 
@@ -2682,6 +2691,7 @@ procedure TcyResizer.KeyDown(var Key: Word; Shift: TShiftState);
 var
   aJob: TKeyJob;
   ParentCtrl: TControl;
+  ControlAccepted: Boolean;
 begin
   Inherited;
 
@@ -2692,10 +2702,17 @@ begin
     then begin
       ParentCtrl := FHandlingControlList.Items[FHandlingControlList.Count-1].FControl.Parent;
 
-      if ParentCtrl <> FSurface
-      then begin
-        FHandlingControlList.Clear;
-        FHandlingControlList.InsertControl(ParentCtrl);
+      if ParentCtrl <> FSurface then
+      begin
+        ControlAccepted := true;
+        if Assigned(FOnControlListInsert) then
+          FOnControlListInsert(Self, ParentCtrl, ControlAccepted);
+
+        if ControlAccepted then
+        begin
+          FHandlingControlList.Clear;
+          FHandlingControlList.InsertControl(ParentCtrl);
+        end;
       end
       else
         if roKeyUnselectAll in FOptions    // Unselect all ...
@@ -2734,6 +2751,7 @@ procedure TcyResizer.CMWantSpecialKey(var Msg: TCMWantSpecialKey);
 var
   c: Integer;
   Nearest: TControl;
+  ControlAccepted: Boolean;
 begin
   { Important Note :
     Msg.Result := 1 will permit ".KeyDown" call
@@ -2807,10 +2825,17 @@ begin
           end;
 
           // Select nearest control :
-          if Nearest <> Nil
-          then begin
-            FHandlingControlList.Clear;
-            FHandlingControlList.InsertControl(Nearest);
+          if Nearest <> Nil then
+          begin
+            ControlAccepted := true;
+            if Assigned(FOnControlListInsert) then
+              FOnControlListInsert(Self, Nearest, ControlAccepted);
+
+            if ControlAccepted then
+            begin
+              FHandlingControlList.Clear;
+              FHandlingControlList.InsertControl(Nearest);
+            end;
           end;
         end;
 

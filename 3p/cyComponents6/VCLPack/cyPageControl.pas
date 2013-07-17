@@ -70,6 +70,7 @@ type
     FSpacing: Integer;
     FMargin: Integer;
     FWordWrap: Boolean;
+    FValues: Tstrings;
     procedure SetThinBorder(const Value: Boolean);
     procedure WMPaint(var Message: TWMPaint); message WM_PAINT;
     procedure SetStyle(const Value: TcyTabStyle);
@@ -81,6 +82,7 @@ type
     procedure SetMargin(const Value: Integer);
     procedure SetSpacing(const Value: Integer);
     procedure SetWordWrap(const Value: Boolean);
+    procedure SetValues(const Value: Tstrings);
   protected
     procedure WndProc(var Msg: TMessage); override;
     procedure VisualChanged(Sender: TObject);
@@ -104,6 +106,7 @@ type
     property Layout: TButtonLayout read FLayout write SetLayout default blGlyphLeft;
     property Margin: Integer read FMargin write SetMargin default -1;
     property Spacing: Integer read FSpacing write SetSpacing default 4;
+    property Values: Tstrings read FValues write SetValues;
     property WordWrap: Boolean read FWordWrap write SetWordWrap default false;
     property OnAdvancedDrawTabBackground: TProcAdvancedDrawTabBackground read FOnAdvancedDrawTabBackground write FOnAdvancedDrawTabBackground;
     property OnAdvancedDrawTab: TProcAdvancedDrawTab read FOnAdvancedDrawTab write FOnAdvancedDrawTab;
@@ -142,6 +145,7 @@ begin
   FMargin := -1;
   FSpacing := 4;
   FLayout := blGlyphLeft;
+  FValues := TStringList.Create;
   FWordWrap := false;
 end;
 
@@ -151,6 +155,7 @@ begin
   FInactiveTabColors.Free;
   FActiveTabFont.Free;
   FInactiveTabFont.Free;
+  FValues.Free;
   inherited;
 end;
 
@@ -375,6 +380,14 @@ begin
 
   FThinBorder := Value;
   RecreateWnd;
+end;
+
+procedure TcyPageControl.SetValues(const Value: Tstrings);
+begin
+  if Assigned(FValues) then
+    FValues.Assign(Value)
+  else
+    FValues := Value;
 end;
 
 procedure TcyPageControl.SetWordWrap(const Value: Boolean);

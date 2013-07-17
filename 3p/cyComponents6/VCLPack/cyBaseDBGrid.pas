@@ -451,7 +451,6 @@ type
     {$IFDEF SCROLL_FEATURE}
     procedure UpdateScrollBar; override;
     {$ENDIF}
-    procedure UpdateScrollBarsView;
     procedure AfterDrawCell(ACol, ARow: Longint; ARect: TRect; AState: TGridDrawState);
     procedure AfterPaint; virtual;
     procedure BeforeDrawCell(ACol, ARow: Longint; ARect: TRect; AState: TGridDrawState);
@@ -535,6 +534,7 @@ type
     procedure ClientColumnByIndex(ColumnIndex: Integer; MinWidth: Integer);
     function GetCheckBoxColumnIndex: Integer;
     function ClientRectDataCells: TRect;
+    procedure UpdateScrollBarsView;   // Called in WMSize ...
     procedure AdjustClientColumn;
     procedure UpdateLayout;
     function PointInCheckBox(CellRect: TRect; X, Y: Integer): Boolean;
@@ -556,9 +556,58 @@ type
 const
   IsChecked : array[Boolean] of Integer = (DFCS_BUTTONCHECK, DFCS_BUTTONCHECK or DFCS_CHECKED);
 
+  procedure AdjustColumnsToContent(aDBGrid: DBGrids.TDBGrid; const incColumnWidth: Integer = 30);
+
 implementation
 
 uses SysUtils, cyMathParser;
+
+procedure AdjustColumnsToContent(aDBGrid: DBGrids.TDBGrid; const incColumnWidth: Integer = 30);
+var
+  Array_ColWidths: Array of Integer;
+  C, FieldValueWidth: Integer;
+  DS: TDataSet;
+  Bookmark: TBookmark;
+begin
+  with aDBGrid do
+  begin
+    // *** INITIALISATIONS *** //
+    DS := DataSource.DataSet;
+    BookMark := DS.GetBookmark;
+    Ds.DisableControls;
+
+    SetLength(Array_ColWidths, Columns.Count);
+
+    for C := 0 to Columns.Count-1 do
+      if Columns[C].Visible then
+        Array_ColWidths[C] := Canvas.TextWidth(Columns[C].Title.Caption);  // Prendre en compte la largeur des titres
+
+    // Parcourir tous les enregistrements 1 seule fois:
+    DS.First;
+    while not DS.Eof do
+    begin
+      for C := 0 to aDBGrid.Columns.Count - 1 do
+        if aDBGrid.Columns[C].Visible then
+        begin
+          // Déterminer la largeur en pixels du contenu du champ:
+          FieldValueWidth := Canvas.TextWidth(aDBGrid.Columns[C].Field.AsString);
+          if Array_ColWidths[C] < FieldValueWidth then
+            Array_ColWidths[C] := FieldValueWidth;
+        end;
+
+      DS.Next;
+    end;
+
+    // Appliquer largeur des colonnes :
+    for C := 0 to Columns.Count-1 do
+      if Columns[C].Visible then
+        Columns[C].Width :=  Array_ColWidths[C] + incColumnWidth;
+
+    DS.GotoBookmark(Bookmark);
+    DS.FreeBookmark(Bookmark);
+    DS.EnableControls;
+  end;
+end;
 
 {TcyEditorOptions}
 constructor TcyEditorOptions.Create(AOwner: TComponent);
@@ -581,7 +630,6 @@ begin
   FVisible := Value;
 
   ShowScrollBar(FBaseGrid.Handle, SB_HORZ, FVisible);  // will be displayed only if needed ...
-//  FBaseGrid.Invalidate;
 end;
 
 { TcyVertScrollbar }
@@ -604,7 +652,6 @@ begin
   FVisible := Value;
 
   ShowScrollBar(FBaseGrid.Handle, SB_VERT, FVisible);
-//  FBaseGrid.Invalidate;
 end;
 
 { TcyClientColumn }
@@ -778,8 +825,8 @@ end;
 
 procedure TcyCustomLayoutOptions.SetIndicatorColumnWidth(const Value: Integer);
 begin
-  if FIndicatorColumnWidth <> Value
-  then begin
+  if FIndicatorColumnWidth <> Value then
+  begin
     FIndicatorColumnWidth := Value;
     FGrid.AdjustClientColumn;
     FGrid.UpdateLayout;
@@ -935,11 +982,9 @@ begin
   inherited Create(AOwner);
 
   // Vertical scrollbar that disapears (Delphi TDBGrid bug) :
-  // We need only to initialize ScrollBars property to ssNone
-//  if ScrollBars <> ssNone then
-//    ScrollBars := ssNone;
-// Conflicting with UpdateScrollBarsView!
-
+  // We need only to initialize ScrollBars property to ssBoth
+//  if ScrollBars <> ssHorizontal then              // ssHorizontal by default
+//    ScrollBars := ssHorizontal;
 
   // Create a RichEdit for embedded rtf rendering :
   FRichEdit := TRichEdit.Create(Self);
@@ -1028,23 +1073,40 @@ end;
 
 procedure TcyBaseDBGrid.WndProc(var Message: TMessage);
 begin
-  // UpdateScrollBarsView;
   Inherited WndProc(Message);
 end;
 
 procedure TcyBaseDBGrid.WMNCCalcSize(var Msg: TMessage);
 begin
-  UpdateScrollBarsView;
   inherited;
+  // 2013-05-22 No need here ...   UpdateScrollBarsView;
 end;
 
-// ScrollBars property value are not correct!
-procedure TcyBaseDBGrid.UpdateScrollBarsView;
+ procedure TcyBaseDBGrid.UpdateScrollBarsView;
 var
   VertScrollBarVisible, HorzScrollBarVisible, NeedHorzScrollBars: Boolean;
   wl: Integer;
 begin
-  // Show/hide scrollbars (Vertical scrollbar will be always seen after scroll record, so, we need to hide it) :
+{  // Show/hide scrollbars (Vertical scrollbar will be always seen after scroll record, so, we need to hide it) :
+  if not FIsLoaded then Exit;
+  if csDestroying in ComponentState then Exit;
+
+  wl := GetWindowlong(Handle, GWL_STYLE);
+  HorzScrollBarVisible := (wl and WS_HSCROLL) <> 0;
+  VertScrollBarVisible := (wl and WS_VSCROLL) <> 0;
+
+  // Check if we need to hide Horizontal ScrollBar :
+  if (not FHorzScrollBar.Visible) and HorzScrollBarVisible then
+      ShowScrollBar(Handle, SB_HORZ, FHorzScrollBar.Visible);
+
+  // After handling horizontal scrollbar because of AdjustClientColumn :
+  if FVertScrollBar.Visible <> VertScrollBarVisible then
+  begin
+    ShowScrollBar(Handle, SB_VERT, FVertScrollBar.Visible);
+    AdjustClientColumn;
+  end;  }
+
+
   if FIsLoaded and (not (csDestroying in ComponentState)) then
   begin
     // Check if we need to hide Horizontal ScrollBar :
@@ -1070,38 +1132,10 @@ begin
       if VertScrollBarVisible then
       begin
         if ShowScrollBar(Handle, SB_VERT, FVertScrollBar.Visible) then
-          AdjustClientColumn;
+          // AdjustClientColumn; // 2013-07-05 Already called after calling UpdateScrollBarsView
+          ;
       end;
     end;
-
-(* Old: Não gere bem quando as barras invisiveis ...
-
-  // Horizontal scrollbar :
-    wl := GetWindowlong(Handle, GWL_STYLE);
-    HorzScrollBarVisible := (wl and WS_HSCROLL) <> 0;
-    NeedHorzScrollBars := CalcColumnsWidth > ClientWidth;
-
-    if HorzScrollBarVisible then
-    begin
-      if not FHorzScrollBar.Visible then
-        ShowScrollBar(Handle, SB_HORZ, false)
-      else
-        if NeedHorzScrollBars <> HorzScrollBarVisible then
-          ShowScrollBar(Handle, SB_HORZ, NeedHorzScrollBars);
-    end
-    else
-      if NeedHorzScrollBars <> HorzScrollBarVisible then
-        ShowScrollBar(Handle, SB_HORZ, NeedHorzScrollBars);
-
-
-    // Vertical scrollbar (After handling horizontal scrollbar because of AdjustClientColumn) :
-    wl := GetWindowlong(Handle, GWL_STYLE);
-    VertScrollBarVisible := (wl and WS_VSCROLL) <> 0;
-
-    // if VertScrollBarVisible and (not FVertScrollBar.Visible) then
-    if VertScrollBarVisible <> FVertScrollBar.Visible then
-      if ShowScrollBar(Handle, SB_VERT, FVertScrollBar.Visible) then
-        AdjustClientColumn;    *)
   end;
 end;
 
@@ -1120,7 +1154,9 @@ begin
   FCheckedList.LinkActive(Value);
 
   if Value and (not (csLoading in ComponentState)) then
+  begin
     AdjustClientColumn;
+  end;
 end;
 
 function TcyBaseDBGrid.SelectCell(ACol, ARow: Longint): Boolean;
@@ -1659,10 +1695,13 @@ begin
   inherited;
 
   if not (csLoading in ComponentState) then
+  begin
+    UpdateScrollBarsView;  // Added 2013-05-22
     AdjustClientColumn;
+  end;
 
-  if Assigned(FOnResize)
-  then FOnResize(Self);
+  if Assigned(FOnResize) then
+    FOnResize(Self);
 end;
 
 procedure TcyBaseDBGrid.WMVScroll(var Message: TWMVScroll);
@@ -1760,8 +1799,10 @@ begin
 
   Result := 1; // In order to see last column frame ...
 
-  if dgIndicator in Options
-  then
+  if dgIndicator in Options then
+  begin
+    inc(Result, ColInc);
+
     if FCustomLayoutOptions.FIndicatorColumnWidth <> 0
     then
       inc(Result, FCustomLayoutOptions.FIndicatorColumnWidth)
@@ -1769,6 +1810,7 @@ begin
       if (FCheckBoxes.ColumnMode = cmIndicatorsCol) and (FCheckBoxes.Visible)
       then inc(Result, FCheckBoxes.Size + FCheckBoxes.Margin * 2)            // CheckBoxes on indicators column
       else inc(Result, DBGrids.IndicatorWidth);
+  end;
 
   for c := 0 to Columns.Count - 1 do
     inc(Result, Columns[c].Width + ColInc);
@@ -1776,7 +1818,7 @@ end;
 
 procedure TcyBaseDBGrid.ClientColumnByIndex(ColumnIndex: Integer; MinWidth: Integer);
 var
-  ColsWidth, NewWidth: Integer;
+  _ClientWidth, ColsWidth, NewWidth: Integer;
 begin
   if (ColumnIndex = -1) or (ColumnIndex > Columns.Count-1) then
     ColumnIndex := Columns.Count-1;
@@ -1786,13 +1828,21 @@ begin
 
   ColsWidth := CalcColumnsWidth;
 
-  if ColsWidth <> ClientWidth
-  then begin
-    NewWidth := ClientWidth - (ColsWidth - Columns[ColumnIndex].Width);
+  _ClientWidth := ClientWidth;
+
+{ Experiment ...
+  if FVertScrollBar.FVisible then
+    if _ClientWidth + 4 >= Width then
+      _ClientWidth := _ClientWidth - 30; }
+
+  if ColsWidth <> _ClientWidth then
+  begin
+    NewWidth := _ClientWidth - (ColsWidth - Columns[ColumnIndex].Width);
+
     if NewWidth < MinWidth then
       NewWidth := MinWidth;
-    if Columns[ColumnIndex].Width <> NewWidth
-    then Columns[ColumnIndex].Width := NewWidth;
+    if Columns[ColumnIndex].Width <> NewWidth then
+      Columns[ColumnIndex].Width := NewWidth;
   end;
 end;
 
@@ -1875,8 +1925,9 @@ end;
 
 procedure TcyBaseDBGrid.UpdateLayout;
 begin
+  // 2013-07-04 We need this code in order to update CheckBoxes visually in the DBGrid :
   BeginLayout;
-  LayoutChanged;      // It seems not needed 05/07/2011 ...
+  LayoutChanged;
   EndLayout;
 end;
 
@@ -1884,6 +1935,9 @@ procedure TcyBaseDBGrid.LayoutChanged;
 var R: Integer;
 begin
   inherited LayoutChanged;
+
+  if csDestroying in ComponentState then
+    Exit;
 
 //  if FixedCols < ColCount-1 then
 //    FixedCols := 2;
@@ -2107,9 +2161,30 @@ end;
 
 {$IFDEF SCROLL_FEATURE}
 procedure TcyBaseDBGrid.UpdateScrollBar;
+var
+  VertScrollBarVisible, HorzScrollBarVisible: Boolean;
 begin
-  inherited;
+  Inherited;
   if not DataLink.Active then Exit;
+
+  // 2013-07-05 Show vertical scrollbar if ClientColumn :
+  if FVertScrollBar.Visible then
+    if FClientColumn.FEnabled then
+      if ClientWidth + 4 >= Width then
+      begin
+        // VertScrollBarVisible := Compare "ClientWidth" with "Width";
+        HorzScrollBarVisible := CalcColumnsWidth > ClientWidth;
+
+        if HorzScrollBarVisible
+        then ScrollBars := ssBoth
+        else ScrollBars := ssVertical;
+
+        AdjustClientColumn;
+        UpdateLayout;
+      end;
+
+
+
 
   // If any field data changed, UpdateScrollBar is also called.
   // So, we need to control if we have really moved to another record.

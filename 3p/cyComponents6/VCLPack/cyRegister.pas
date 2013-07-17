@@ -51,7 +51,10 @@ uses
 
   // Non visual components :
   cyIniForm, cySearchFiles, cyCopyFiles, cyFlyingContainer, cyModalContainer, cyResizer, cyVirtualGrid, cyProgressionPanel,
-  cyAdvProgressionPanel, cyRunTimeResize, cyCommRoomConnector, cyCommunicate, cyAppInstances, cyClipboard, cyDDECmd, cyMathParser, cyDebug;
+  cyAdvProgressionPanel, cyRunTimeResize, cyCommRoomConnector, cyCommunicate, cyAppInstances, cyClipboard, cyDDECmd, cyMathParser, cyDebug,
+
+
+  Menus;
 
 
 

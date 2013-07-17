@@ -54,6 +54,7 @@ type
     procedure SetControl(const Value: TControl);
     function GetControl: TControl;
   protected
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -101,12 +102,25 @@ begin
   RESULT := FOptions.Control;
 end;
 
+procedure TcyRunTimeResize.Notification(AComponent: TComponent; Operation: TOperation);
+begin
+  inherited Notification(AComponent, Operation);
+
+  if Assigned(FOptions) then
+    if FOptions.Control <> nil then
+      if (Operation = opRemove) and (AComponent = FOptions.Control) then
+        FOptions.Control := nil;
+end;
+
 procedure TcyRunTimeResize.SetControl(const Value: TControl);
 begin
-  if FOptions.Control <> Value
-  then begin
+  if FOptions.Control <> Value then
+  begin
     FOptions.Job := rjNothing;
     FOptions.Control := Value;
+
+    if Value <> nil then
+      Value.FreeNotification(Self);  // Inform TcyRunTimeResize if component removed ...
   end;
 end;
 

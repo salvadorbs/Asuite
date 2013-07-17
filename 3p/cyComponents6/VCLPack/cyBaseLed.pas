@@ -80,6 +80,7 @@ type
     property LedStatus: TLedStatus read GetLedStatus;
     procedure Switch;
   published
+    property ShowHint;
   end;
 
 implementation
