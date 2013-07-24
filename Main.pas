@@ -198,9 +198,9 @@ var
 implementation
 
 uses
-  Options, PropertyFile, PropertyCat, About, ulCommonUtils, udClassicMenu,
-  PropertySeparator, ulExeUtils, ImportList, ulAppConfig, ulTreeView,
-  ulDatabase, notifications, GraphicMenu, StatsOptionsPage;
+  Options, About, ulCommonUtils, udClassicMenu, ulExeUtils, ImportList,
+  ulAppConfig, ulTreeView, ulDatabase, notifications, GraphicMenu, StatsOptionsPage,
+  PropertyItem;
 
 {$R *.dfm}
 
@@ -342,32 +342,24 @@ end;
 
 procedure TfrmMain.miOptionsClick(Sender: TObject);
 begin
-//  if not IsFormOpen('frmOption') then
-    try
-      Application.CreateForm(TfrmOptions, frmOptions);
-      frmOptions.FormStyle := Self.FormStyle;
-      frmOptions.Execute();
-    finally
-      frmOptions.Free;
-    end;
-//  else
-//    frmOptions.show;
-  RefreshList(vstList);
+  try
+    Application.CreateForm(TfrmOptions, frmOptions);
+    frmOptions.FormStyle := Self.FormStyle;
+    frmOptions.Execute();
+  finally
+    frmOptions.Free;
+  end;
 end;
 
 procedure TfrmMain.miStatisticsClick(Sender: TObject);
 begin
-//  if not IsFormOpen('frmOption') then
-    try
-      Application.CreateForm(TfrmOptions, frmOptions);
-      frmOptions.FormStyle := Self.FormStyle;
-      frmOptions.Execute(TfrmStatsOptionsPage);
-    finally
-      frmOptions.Free;
-    end;
-//  else begin
-//    frmOptions.show;
-//  end;
+  try
+    Application.CreateForm(TfrmOptions, frmOptions);
+    frmOptions.FormStyle := Self.FormStyle;
+    frmOptions.Execute(TfrmStatsOptionsPage);
+  finally
+    frmOptions.Free;
+  end;
 end;
 
 procedure TfrmMain.miPaste2Click(Sender: TObject);
@@ -582,17 +574,24 @@ var
 begin
   BaseNode := GetNodeDataEx(TreeView.FocusedNode, TreeView, vstSearch, vstList);
   if Assigned(BaseNode) then
-  begin
-    case BaseNode.Data.DataType of
-      vtdtFile:
-        OK := (TfrmPropertyFile.Edit(Self, BaseNode) = mrOK);
-      vtdtCategory:
-        OK := (TfrmPropertyCat.Edit(Self, BaseNode) = mrOK);
-      vtdtSeparator:
-        OK := (TfrmPropertySeparator.Edit(Self, BaseNode) = mrOK);
-    else
-      OK := False;
+    begin
+    try
+      Application.CreateForm(TfrmPropertyItem, frmPropertyItem);
+      frmPropertyItem.FormStyle := Self.FormStyle;
+      frmPropertyItem.Execute();
+    finally
+      frmPropertyItem.Free;
     end;
+//    case BaseNode.Data.DataType of
+//      vtdtFile:
+//        OK := (TfrmPropertyFile.Edit(Self, BaseNode) = mrOK);
+//      vtdtCategory:
+//        OK := (TfrmPropertyCat.Edit(Self, BaseNode) = mrOK);
+//      vtdtSeparator:
+//        OK := (TfrmPropertySeparator.Edit(Self, BaseNode) = mrOK);
+//    else
+//      OK := False;
+//    end;
     if Ok then
       RefreshList(vstList);
   end;
@@ -691,8 +690,6 @@ procedure TfrmMain.vstListGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
   Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
 var
   NodeData : PBaseData;
-  I        : Byte;
-  str      : string;
 begin
   NodeData := Sender.GetNodeData(Node);
   if Assigned(NodeData) then

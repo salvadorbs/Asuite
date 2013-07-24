@@ -9,8 +9,6 @@ uses
   AppConfig in 'AppConfig.pas',
   ulAppConfig in 'library\ulAppConfig.pas',
   Main in 'Main.pas' {frmMain},
-  PropertyFile in 'PropertyFile.pas' {frmPropertyFile},
-  PropertyCat in 'PropertyCat.pas' {frmPropertyCat},
   About in 'About.pas' {frmAbout},
   CheckPrevious in '3p\CheckPrevious.pas',
   ulNodeDataTypes in 'library\ulNodeDataTypes.pas',
@@ -20,7 +18,6 @@ uses
   udImages in 'udImages.pas' {ImagesDM: TDataModule},
   ulDatabase in 'library\ulDatabase.pas',
   udClassicMenu in 'udClassicMenu.pas' {ClassicMenu: TDataModule},
-  PropertySeparator in 'PropertySeparator.pas' {frmPropertySeparator},
   ulExeUtils in 'library\ulExeUtils.pas',
   ImportList in 'ImportList.pas' {frmImportList},
   Sensor in 'Sensor.pas' {frmSensor},
@@ -31,14 +28,21 @@ uses
   notifications in '3p\notifications.pas' {frmNotification},
   ulFileFolder in 'library\ulFileFolder.pas',
   Options in 'Options.pas' {frmOptions},
-  BaseOptionsPage in 'frame\BaseOptionsPage.pas' {frmBaseOptionsPage: TFrame},
+  BaseEntityPage in 'frame\BaseEntityPage.pas' {frmBaseEntityPage: TFrame},
   GeneralOptionsPage in 'frame\GeneralOptionsPage.pas' {frmGeneralOptionsPage: TFrame},
   AdvancedOptionsPage in 'frame\AdvancedOptionsPage.pas' {frmAdvancedOptionsPage: TFrame},
   TrayIconOptionsPage in 'frame\TrayIconOptionsPage.pas' {frmTrayiconOptionsPage: TFrame},
   HotkeyOptionsPage in 'frame\HotkeyOptionsPage.pas' {frmHotkeyOptionsPage: TFrame},
   StatsOptionsPage in 'frame\StatsOptionsPage.pas' {frmStatsOptionsPage: TFrame},
   ItemsOptionsPage in 'frame\ItemsOptionsPage.pas' {frmItemsOptionsPage: TFrame},
-  SensorsOptionsPage in 'frame\SensorsOptionsPage.pas' {frmSensorsOptionsPage: TFrame};
+  SensorsOptionsPage in 'frame\SensorsOptionsPage.pas' {frmSensorsOptionsPage: TFrame},
+  PropertyItem in 'PropertyItem.pas' {frmPropertyItem},
+  ulFrameUtils in 'library\ulFrameUtils.pas',
+  AdvancedPropertyPage in 'frame\AdvancedPropertyPage.pas' {frmAdvancedPropertyPage: TFrame},
+  BehaviorPropertyPage in 'frame\BehaviorPropertyPage.pas' {frmBehaviorPropertyPage: TFrame},
+  BaseGeneralPropertyPage in 'frame\BaseGeneralPropertyPage.pas' {frmBaseGeneralPropertyPage: TFrame},
+  SWGeneralPropertyPage in 'frame\SWGeneralPropertyPage.pas' {frmSWGeneralPropertyPage: TFrame},
+  CatGeneralPropertyPage in 'frame\CatGeneralPropertyPage.pas' {frmCatGeneralPropertyPage: TFrame};
 
 //SQLite3 static library
 
@@ -68,6 +72,8 @@ begin
 
     Application.CreateForm(TfrmMain, frmMain);
   Application.CreateForm(TfrmGraphicMenu, frmGraphicMenu);
+  Application.CreateForm(TfrmPropertyItem, frmPropertyItem);
+  Application.CreateForm(TfrmBaseGeneralPropertyPage, frmBaseGeneralPropertyPage);
   //Show MainForm and/or TrayMenu
     Application.ShowMainForm := Config.ShowPanelAtStartUp;
     if (Config.ShowMenuAtStartUp) then

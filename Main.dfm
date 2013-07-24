@@ -101,7 +101,6 @@ object frmMain: TfrmMain
         Header.MainColumn = -1
         Header.Options = [hoColumnResize, hoDrag]
         HintMode = hmHint
-        Images = ImagesDM.IcoImages
         ParentFont = False
         ParentShowHint = False
         PopupMenu = pmWindow

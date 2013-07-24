@@ -103,8 +103,8 @@
         <DCC_HppOutput>dcu</DCC_HppOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1201;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
-        <VerInfo_Build>1201</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1202;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
+        <VerInfo_Build>1202</VerInfo_Build>
         <ILINK_MapFileType>DetailedSegments</ILINK_MapFileType>
         <MapFile>3</MapFile>
         <DCC_MapFile>3</DCC_MapFile>
@@ -126,7 +126,7 @@
                     <VersionInfo Name="MajorVer">2</VersionInfo>
                     <VersionInfo Name="MinorVer">0</VersionInfo>
                     <VersionInfo Name="Release">0</VersionInfo>
-                    <VersionInfo Name="Build">1147</VersionInfo>
+                    <VersionInfo Name="Build">1148</VersionInfo>
                     <VersionInfo Name="Debug">False</VersionInfo>
                     <VersionInfo Name="PreRelease">False</VersionInfo>
                     <VersionInfo Name="Special">False</VersionInfo>
@@ -138,7 +138,7 @@
                 <VersionInfoKeys>
                     <VersionInfoKeys Name="CompanyName">SalvadorSoftware</VersionInfoKeys>
                     <VersionInfoKeys Name="FileDescription"/>
-                    <VersionInfoKeys Name="FileVersion">2.0.0.1147</VersionInfoKeys>
+                    <VersionInfoKeys Name="FileVersion">2.0.0.1148</VersionInfoKeys>
                     <VersionInfoKeys Name="InternalName"/>
                     <VersionInfoKeys Name="LegalCopyright"/>
                     <VersionInfoKeys Name="LegalTrademarks"/>
@@ -174,12 +174,6 @@
         <DCCReference Include="Main.pas">
             <Form>frmMain</Form>
         </DCCReference>
-        <DCCReference Include="PropertyFile.pas">
-            <Form>frmPropertyFile</Form>
-        </DCCReference>
-        <DCCReference Include="PropertyCat.pas">
-            <Form>frmPropertyCat</Form>
-        </DCCReference>
         <DCCReference Include="About.pas">
             <Form>frmAbout</Form>
         </DCCReference>
@@ -196,9 +190,6 @@
         <DCCReference Include="udClassicMenu.pas">
             <Form>ClassicMenu</Form>
             <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="PropertySeparator.pas">
-            <Form>frmPropertySeparator</Form>
         </DCCReference>
         <DCCReference Include="library\ulExeUtils.pas"/>
         <DCCReference Include="ImportList.pas">
@@ -222,8 +213,8 @@
             <Form>frmOptions</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="frame\BaseOptionsPage.pas">
-            <Form>frmBaseOptionsPage</Form>
+        <DCCReference Include="frame\BaseEntityPage.pas">
+            <Form>frmBaseEntityPage</Form>
             <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
@@ -259,6 +250,36 @@
         </DCCReference>
         <DCCReference Include="frame\SensorsOptionsPage.pas">
             <Form>frmSensorsOptionsPage</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="PropertyItem.pas">
+            <Form>frmPropertyItem</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="library\ulFrameUtils.pas"/>
+        <DCCReference Include="frame\AdvancedPropertyPage.pas">
+            <Form>frmAdvancedPropertyPage</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="frame\BehaviorPropertyPage.pas">
+            <Form>frmBehaviorPropertyPage</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="frame\BaseGeneralPropertyPage.pas">
+            <Form>frmBaseGeneralPropertyPage</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="frame\SWGeneralPropertyPage.pas">
+            <Form>frmSWGeneralPropertyPage</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="frame\CatGeneralPropertyPage.pas">
+            <Form>frmCatGeneralPropertyPage</Form>
             <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
