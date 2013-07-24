@@ -125,7 +125,7 @@ procedure TfrmOptions.vstListCategoryFreeNode(Sender: TBaseVirtualTree;
 var
   NodeData : PFramesNodeData;
 begin
-  NodeData := vstListCategory.GetNodeData(Node);
+  NodeData := Sender.GetNodeData(Node);
   if Assigned(NodeData) then
   begin
     TfrmBaseEntityPage(NodeData.Frame).Free;
@@ -139,7 +139,7 @@ procedure TfrmOptions.vstListCategoryGetImageIndex(Sender: TBaseVirtualTree;
 var
   NodeData : PFramesNodeData;
 begin
-  NodeData := vstListCategory.GetNodeData(Node);
+  NodeData := Sender.GetNodeData(Node);
   if Assigned(NodeData) then
     ImageIndex := NodeData.ImageIndex;
 end;
@@ -150,7 +150,7 @@ procedure TfrmOptions.vstListCategoryGetText(Sender: TBaseVirtualTree;
 var
   NodeData : PFramesNodeData;
 begin
-  NodeData := vstListCategory.GetNodeData(Node);
+  NodeData := Sender.GetNodeData(Node);
   CellText := 'Options Page';
   if Assigned(NodeData) then
     if NodeData.Title <> '' then

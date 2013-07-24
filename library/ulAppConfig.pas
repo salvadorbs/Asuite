@@ -128,6 +128,7 @@ type
     procedure SetWindowHotKeyCode(const Value: Integer);
     procedure SetWindowHotKeyMod(const Value: Integer);
     procedure SetBackupNumber(const Value: Integer);
+    procedure SetChanged(const Value: Boolean);
   public
     { public declarations }
     constructor Create; overload;
@@ -202,7 +203,7 @@ type
     property SensorRightClick[aIndex: Integer]:Integer read GetSensorRightClick write setSensorRightClick;
     // Misc
     property ReadOnlyMode: Boolean read FReadOnlyMode write FReadOnlyMode;
-    property Changed: Boolean read FChanged write FChanged;
+    property Changed: Boolean read FChanged write SetChanged;
     property ASuiteState: TASuiteState read FASuiteState write FASuiteState;
   end;
 
@@ -213,7 +214,7 @@ implementation
 
 uses
   Main, udClassicMenu, ulSysUtils, AppConfig, Sensor, ulCommonUtils, ulFileFolder,
-  udImages, GraphicMenu;
+  udImages, GraphicMenu, ulTreeView;
 
 constructor TConfiguration.Create;
 begin
@@ -528,6 +529,12 @@ begin
     RemoveCacheFolders
   else //Else create folders cache
     CreateCacheFolders;
+end;
+
+procedure TConfiguration.SetChanged(const Value: Boolean);
+begin
+  FChanged := Value;
+  RefreshList(frmMain.vstList);
 end;
 
 procedure TConfiguration.SetGMBtnDocuments(Value: string);
