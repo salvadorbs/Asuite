@@ -416,7 +416,7 @@ begin
   if (FTrayUseCustomIcon) and (FileExists(sPath)) then
     ClassicMenu.tiTrayMenu.Icon.LoadFromFile(sPath)
   else begin
-    sPath := RelativeToAbsolute(SUITE_ICONS_PATH + FILEICON_ASuite);
+    sPath := RelativeToAbsolute(SUITE_SMALLICONS_PATH + FILEICON_ASuite);
     if FileExists(sPath) then
       ClassicMenu.tiTrayMenu.Icon.LoadFromFile(sPath);
   end;
@@ -593,8 +593,8 @@ begin
     FGMTheme := value;
   //Set Paths
   SUITE_CURRENTTHEME_PATH := IncludeTrailingBackslash(SUITE_MENUTHEMES_PATH + FGMTheme);
-  SUITE_ICONS_PATH      := SUITE_CURRENTTHEME_PATH + ICONS_DIR;
-  SUITE_LARGEICONS_PATH := SUITE_CURRENTTHEME_PATH + LARGEICONS_DIR;
+  SUITE_SMALLICONS_PATH   := SUITE_CURRENTTHEME_PATH + SMALLICONS_DIR;
+  SUITE_LARGEICONS_PATH   := SUITE_CURRENTTHEME_PATH + LARGEICONS_DIR;
   //Loading icons
   ImagesDM.LoadASuiteIcons;
   frmMain.LoadGlyphs;

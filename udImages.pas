@@ -90,35 +90,36 @@ end;
 procedure TImagesDM.LoadASuiteIcons;
 begin
   //Menu small icons
-  IMAGE_INDEX_Help := LoadASuiteIconFromFile(FILEICON_Help);
-  IMAGE_INDEX_Options := LoadASuiteIconFromFile(FILEICON_Options);
-  IMAGE_INDEX_AddCat := LoadASuiteIconFromFile(FILEICON_AddCat);
-  IMAGE_INDEX_AddFile := LoadASuiteIconFromFile(FILEICON_AddFile);
+  IMAGE_INDEX_Help     := LoadASuiteIconFromFile(FILEICON_Help);
+  IMAGE_INDEX_Options  := LoadASuiteIconFromFile(FILEICON_Options);
+  IMAGE_INDEX_AddCat   := LoadASuiteIconFromFile(FILEICON_AddCat);
+  IMAGE_INDEX_AddFile  := LoadASuiteIconFromFile(FILEICON_AddFile);
   IMAGE_INDEX_AddFolder := LoadASuiteIconFromFile(FILEICON_AddFolder);
-  IMAGE_INDEX_Delete := LoadASuiteIconFromFile(FILEICON_Delete);
-  IMAGE_INDEX_ASuite := LoadASuiteIconFromFile(FILEICON_ASuite);
-  IMAGE_INDEX_Cat := LoadASuiteIconFromFile(FILEICON_Cat);
+  IMAGE_INDEX_Delete   := LoadASuiteIconFromFile(FILEICON_Delete);
+  IMAGE_INDEX_ASuite   := LoadASuiteIconFromFile(FILEICON_ASuite);
+  IMAGE_INDEX_Cat      := LoadASuiteIconFromFile(FILEICON_Cat);
   IMAGE_INDEX_Property := LoadASuiteIconFromFile(FILEICON_Property);
-  IMAGE_INDEX_Save := LoadASuiteIconFromFile(FILEICON_Save);
-  IMAGE_INDEX_Folder := LoadASuiteIconFromFile(FILEICON_Folder);
+  IMAGE_INDEX_Save     := LoadASuiteIconFromFile(FILEICON_Save);
+  IMAGE_INDEX_Folder   := LoadASuiteIconFromFile(FILEICON_Folder);
   IMAGE_INDEX_NOTFOUND := LoadASuiteIconFromFile(FILEICON_NOTFOUND);
-  IMAGE_INDEX_Run := LoadASuiteIconFromFile(FILEICON_Run);
-  IMAGE_INDEX_Cut := LoadASuiteIconFromFile(FILEICON_Cut);
-  IMAGE_INDEX_Copy := LoadASuiteIconFromFile(FILEICON_Copy);
-  IMAGE_INDEX_Paste := LoadASuiteIconFromFile(FILEICON_Paste);
-  IMAGE_INDEX_Search := LoadASuiteIconFromFile(FILEICON_Search);
+  IMAGE_INDEX_Run      := LoadASuiteIconFromFile(FILEICON_Run);
+  IMAGE_INDEX_Cut      := LoadASuiteIconFromFile(FILEICON_Cut);
+  IMAGE_INDEX_Copy     := LoadASuiteIconFromFile(FILEICON_Copy);
+  IMAGE_INDEX_Paste    := LoadASuiteIconFromFile(FILEICON_Paste);
+  IMAGE_INDEX_Search   := LoadASuiteIconFromFile(FILEICON_Search);
   IMAGE_INDEX_SearchType := LoadASuiteIconFromFile(FILEICON_SearchType);
-  IMAGE_INDEX_Url := LoadASuiteIconFromFile(FILEICON_Url);
-  IMAGE_INDEX_Accept := LoadASuiteIconFromFile(FILEICON_Accept);
-  IMAGE_INDEX_Cancel := LoadASuiteIconFromFile(FILEICON_Cancel);
+  IMAGE_INDEX_Url      := LoadASuiteIconFromFile(FILEICON_Url);
+  IMAGE_INDEX_Accept   := LoadASuiteIconFromFile(FILEICON_Accept);
+  IMAGE_INDEX_Cancel   := LoadASuiteIconFromFile(FILEICON_Cancel);
   //Menu large icons
-  IMAGELARGE_INDEX_General := LoadASuiteIconFromFile(FILELARGEICON_General, false);
+  IMAGELARGE_INDEX_General  := LoadASuiteIconFromFile(FILELARGEICON_General, false);
   IMAGELARGE_INDEX_Advanced := LoadASuiteIconFromFile(FILELARGEICON_Advanced, false);
-  IMAGELARGE_INDEX_Items := LoadASuiteIconFromFile(FILELARGEICON_Items, false);
-  IMAGELARGE_INDEX_Hotkey := LoadASuiteIconFromFile(FILELARGEICON_Hotkey, false);
-  IMAGELARGE_INDEX_Mouse := LoadASuiteIconFromFile(FILELARGEICON_Mouse, false);
+  IMAGELARGE_INDEX_Items    := LoadASuiteIconFromFile(FILELARGEICON_Items, false);
+  IMAGELARGE_INDEX_Hotkey   := LoadASuiteIconFromFile(FILELARGEICON_Hotkey, false);
+  IMAGELARGE_INDEX_Mouse    := LoadASuiteIconFromFile(FILELARGEICON_Mouse, false);
   IMAGELARGE_INDEX_Trayicon := LoadASuiteIconFromFile(FILELARGEICON_Trayicon, false);
-  IMAGELARGE_INDEX_Stats := LoadASuiteIconFromFile(FILELARGEICON_Stats, false);
+  IMAGELARGE_INDEX_Stats    := LoadASuiteIconFromFile(FILELARGEICON_Stats, false);
+  IMAGELARGE_INDEX_Behavior := LoadASuiteIconFromFile(FILELARGEICON_Behavior, false);
 end;
 
 function TImagesDM.GetIconIndex(NodeData:TvCustomRealNodeData;SmallIcon: Boolean = True): Integer;
@@ -246,7 +247,7 @@ var
 begin
   Result   := -1;
   if SmallIcon then
-    FileName := SUITE_ICONS_PATH + IconName
+    FileName := SUITE_SMALLICONS_PATH + IconName
   else
     FileName := SUITE_LARGEICONS_PATH + IconName;
   if FileExists(FileName) then

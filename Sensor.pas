@@ -130,7 +130,7 @@ end;
 
 procedure TfrmSensor.FormCreate(Sender: TObject);
 begin
-  Screen.Cursors[crNewCur] := LoadCursorFromFile(PChar(SUITE_ICONS_PATH + 'asuite.cur'));
+  Screen.Cursors[crNewCur] := LoadCursorFromFile(PChar(SUITE_SMALLICONS_PATH + 'asuite.cur'));
   Self.Top  := 0;
   Self.Left := 0;
 end;

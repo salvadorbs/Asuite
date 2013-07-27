@@ -72,7 +72,7 @@ begin
   FFrameGeneral  := AddFrameNode(vstCategory, nil,TPageFrameClass(TfrmSWGeneralPropertyPage.Create(Self)),IMAGELARGE_INDEX_General);
   FFrameGeneral  := AddFrameNode(vstCategory, nil,TPageFrameClass(TfrmCatGeneralPropertyPage.Create(Self)),IMAGELARGE_INDEX_General);
   FFrameAdvanced := AddFrameNode(vstCategory, nil,TPageFrameClass(TfrmAdvancedPropertyPage.Create(Self)),IMAGELARGE_INDEX_Advanced);
-  AddFrameNode(vstCategory, nil,TPageFrameClass(TfrmBehaviorPropertyPage.Create(Self)),IMAGELARGE_INDEX_Trayicon);
+  AddFrameNode(vstCategory, nil,TPageFrameClass(TfrmBehaviorPropertyPage.Create(Self)),IMAGELARGE_INDEX_Behavior);
 end;
 
 procedure TfrmPropertyItem.vstCategoryAddToSelection(Sender: TBaseVirtualTree;

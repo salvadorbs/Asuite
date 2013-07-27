@@ -131,7 +131,7 @@ begin
     vtdtFolder:
     begin
       //Folder
-      TvCustomRealNodeData(NodeData.Data).PathIcon := AbsoluteToRelative(SUITE_ICONS_PATH + FILEICON_Folder);
+      TvCustomRealNodeData(NodeData.Data).PathIcon := AbsoluteToRelative(SUITE_SMALLICONS_PATH + FILEICON_Folder);
       FolderPath := BrowseForFolder('',SUITE_WORKING_PATH);
       if FolderPath <> '' then
       begin
@@ -206,7 +206,7 @@ begin
   Name     := ExtractFileName(PathTemp);
   //If it is a directory, use folder icon else get its icon
   if DirectoryExists(PathTemp) then
-    CustomRealNodeData.PathIcon := AbsoluteToRelative(SUITE_ICONS_PATH + FILEICON_Folder)
+    CustomRealNodeData.PathIcon := AbsoluteToRelative(SUITE_SMALLICONS_PATH + FILEICON_Folder)
   else
     Delete(Name,pos(ExtractFileExt(PathTemp),name),Length(name));
   //Set some node record's variables
@@ -275,7 +275,7 @@ begin
       end;
     end;
     //Icon
-    PathIcon   := AbsoluteToRelative(SUITE_ICONS_PATH + FILEICON_Url);
+    PathIcon   := AbsoluteToRelative(SUITE_SMALLICONS_PATH + FILEICON_Url);
     ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(NodeData.Data));
     ParentNode := Node.Parent;
   end;

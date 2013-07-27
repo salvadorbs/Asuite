@@ -45,6 +45,7 @@ const
   CACHELARGE_DIR = 'cache\large\';
   MENUTHEMES_DIR = 'menuthemes\';
   ICONS_DIR      = 'icons\';
+  SMALLICONS_DIR = ICONS_DIR + '16x16\';
   LARGEICONS_DIR = ICONS_DIR + '32x32\';
 
   // Caratteri speciali
@@ -124,6 +125,7 @@ const
   FILELARGEICON_Mouse    = '4.ico';
   FILELARGEICON_Trayicon = '5.ico';
   FILELARGEICON_Stats    = '6.ico';
+  FILELARGEICON_Behavior = '7.ico';
 
 var
   //Paths
@@ -134,8 +136,8 @@ var
   SUITE_WORKING_PATH : String;
   SUITE_CACHE_PATH   : String;
   SUITE_CACHELARGE_PATH : String;
-  SUITE_BACKUP_PATH  : String;
-  SUITE_ICONS_PATH   : String;
+  SUITE_BACKUP_PATH     : String;
+  SUITE_SMALLICONS_PATH : String;
   SUITE_LARGEICONS_PATH : String;
   SUITE_MENUTHEMES_PATH : String;
   SUITE_CURRENTTHEME_PATH : String;
@@ -176,7 +178,8 @@ var
   IMAGELARGE_INDEX_Hotkey,   //ID = 3;
   IMAGELARGE_INDEX_Mouse,    //ID = 4;
   IMAGELARGE_INDEX_Trayicon, //ID = 5;
-  IMAGELARGE_INDEX_Stats     //ID = 6;
+  IMAGELARGE_INDEX_Stats,    //ID = 6;
+  IMAGELARGE_INDEX_Behavior  //ID = 7;
                             : Integer;
 
   //Misc

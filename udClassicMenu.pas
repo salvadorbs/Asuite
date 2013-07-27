@@ -673,7 +673,7 @@ procedure TClassicMenu.PopulateDirectory(Sender: TObject);
           NMI             := TMenuItem.Create(AMI);
           NMI.Caption     := SR.Name;
           NMI.Hint        := AMI.Hint + SR.Name + PathDelim;
-          NMI.ImageIndex  := ImagesDM.GetSimpleIconIndex(SUITE_ICONS_PATH + FILEICON_Folder); // folder image
+          NMI.ImageIndex  := ImagesDM.GetSimpleIconIndex(SUITE_SMALLICONS_PATH + FILEICON_Folder); // folder image
           //Set AutoHotkeys to maManual, speed up popup menu
           NMI.AutoHotkeys := maManual;
           //If it is not '.', expand folder else add OnClick event to open folder
