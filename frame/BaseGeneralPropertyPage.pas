@@ -18,6 +18,7 @@ type
     { Private declarations }
   strict protected
     function GetTitle: string; override;
+    function GetImageIndex: Integer; override;
     function InternalLoadData: Boolean; override;
     function InternalSaveData: Boolean; override;
   public
@@ -29,9 +30,17 @@ var
 
 implementation
 
+uses
+  AppConfig;
+
 {$R *.dfm}
 
 { TfrmGeneralPropertyPage }
+
+function TfrmBaseGeneralPropertyPage.GetImageIndex: Integer;
+begin
+  Result := IMAGELARGE_INDEX_PropGeneral;
+end;
 
 function TfrmBaseGeneralPropertyPage.GetTitle: string;
 begin

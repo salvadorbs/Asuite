@@ -1,5 +1,5 @@
 inherited frmSensorsOptionsPage: TfrmSensorsOptionsPage
-  object gbMouse: TGroupBox
+  object gbMouse: TGroupBox [0]
     Left = 3
     Top = 3
     Width = 320

@@ -1,5 +1,5 @@
 inherited frmItemsOptionsPage: TfrmItemsOptionsPage
-  object gbExecution: TGroupBox
+  object gbExecution: TGroupBox [0]
     Left = 3
     Top = 3
     Width = 320
@@ -36,7 +36,7 @@ inherited frmItemsOptionsPage: TfrmItemsOptionsPage
         'Run and close ASuite')
     end
   end
-  object grpOrderSoftware: TGroupBox
+  object grpOrderSoftware: TGroupBox [1]
     Left = 3
     Top = 95
     Width = 320

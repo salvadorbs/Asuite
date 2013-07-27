@@ -33,6 +33,7 @@ type
     { Private declarations }
   strict protected
     function GetTitle: string; override;
+    function GetImageIndex: Integer; override;
     function InternalLoadData: Boolean; override;
   public
     { Public declarations }
@@ -45,11 +46,16 @@ var
 implementation
 
 uses
-  Main, ulCommonUtils, ulTreeView;
+  Main, ulCommonUtils, ulTreeView, AppConfig;
 
 {$R *.dfm}
 
 { TfrmStatsOptionsPage }
+
+function TfrmStatsOptionsPage.GetImageIndex: Integer;
+begin
+  Result := IMAGELARGE_INDEX_Stats;
+end;
 
 function TfrmStatsOptionsPage.GetTitle: string;
 begin

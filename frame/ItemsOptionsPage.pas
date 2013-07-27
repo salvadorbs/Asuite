@@ -34,6 +34,7 @@ type
     procedure SaveInAutorunItemList(ListBox: TListBox;AutorunItemList: TAutorunItemList);
   strict protected
     function GetTitle: string; override;
+    function GetImageIndex: Integer; override;
     function InternalLoadData: Boolean; override;
     function InternalSaveData: Boolean; override;
   public
@@ -47,7 +48,7 @@ var
 implementation
 
 uses
-  ulNodeDataTypes, ulTreeView, ulAppConfig;
+  ulNodeDataTypes, ulTreeView, ulAppConfig, AppConfig;
 
 {$R *.dfm}
 
@@ -67,6 +68,11 @@ begin
     0: MoveItemUp(lstStartUp);
     1: MoveItemUp(lstShutdown);
   end;
+end;
+
+function TfrmItemsOptionsPage.GetImageIndex: Integer;
+begin
+  Result := IMAGELARGE_INDEX_Items;
 end;
 
 function TfrmItemsOptionsPage.GetTitle: string;

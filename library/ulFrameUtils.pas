@@ -7,13 +7,13 @@ uses
   ulNodeDataTypes, ulEnumerations, Classes, ShellApi, comobj, BaseEntityPage, extctrls;
 
 function AddFrameNode(Tree: TBaseVirtualTree; Parent: PVirtualNode;
-                      FramePage: TPageFrameClass; ImageIndex: Integer): PVirtualNode;
+                      FramePage: TPageFrameClass): PVirtualNode;
 function GetNodeByFrameClass(Tree: TBaseVirtualTree; AFramePage: TPageFrameClass):PVirtualNode;
 procedure LoadPage(var CurrentPage: TfrmBaseEntityPage; NewPage: TPageFrameClass; ParentPanel: TPanel);
 
 implementation
 
-function AddFrameNode(Tree: TBaseVirtualTree;Parent: PVirtualNode; FramePage: TPageFrameClass; ImageIndex: Integer): PVirtualNode;
+function AddFrameNode(Tree: TBaseVirtualTree;Parent: PVirtualNode; FramePage: TPageFrameClass): PVirtualNode;
 var
   NodeData: PFramesNodeData;
 begin
@@ -23,7 +23,7 @@ begin
   begin
     NodeData.Frame := FramePage;
     NodeData.Title := TfrmBaseEntityPage(FramePage).Title;
-    NodeData.ImageIndex := ImageIndex;
+    NodeData.ImageIndex := TfrmBaseEntityPage(FramePage).ImageIndex;
   end;
 end;
 

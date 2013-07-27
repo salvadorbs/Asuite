@@ -51,6 +51,7 @@ type
                        Data: Pointer; var Abort: Boolean);
   strict protected
     function GetTitle: string; override;
+    function GetImageIndex: Integer; override;
     function InternalLoadData: Boolean; override;
     function InternalSaveData: Boolean; override;
   public
@@ -150,6 +151,11 @@ begin
     frmMain.vstList.FullCollapse;
   end;
   RefreshList(frmMain.vstList);
+end;
+
+function TfrmAdvancedOptionsPage.GetImageIndex: Integer;
+begin
+  Result := IMAGELARGE_INDEX_Advanced;
 end;
 
 function TfrmAdvancedOptionsPage.GetTitle: string;

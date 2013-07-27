@@ -19,6 +19,7 @@ type
     { Private declarations }
   strict protected
     function GetTitle: string; override;
+    function GetImageIndex: Integer; override;
     function InternalLoadData: Boolean; override;
     function InternalSaveData: Boolean; override;
   public
@@ -30,9 +31,17 @@ var
 
 implementation
 
+uses
+  AppConfig;
+
 {$R *.dfm}
 
 { TfrmMenuPropertyPage }
+
+function TfrmBehaviorPropertyPage.GetImageIndex: Integer;
+begin
+  Result := IMAGELARGE_INDEX_Behavior;
+end;
 
 function TfrmBehaviorPropertyPage.GetTitle: string;
 begin

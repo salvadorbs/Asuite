@@ -35,6 +35,7 @@ type
     { Private declarations }
   strict protected
     function GetTitle: string; override;
+    function GetImageIndex: Integer; override;
     function InternalLoadData: Boolean; override;
     function InternalSaveData: Boolean; override;
   public
@@ -81,6 +82,11 @@ end;
 procedure TfrmGeneralOptionsPage.cbCustomTitleClick(Sender: TObject);
 begin
   edtCustomTitle.Enabled := cbCustomTitle.Checked;
+end;
+
+function TfrmGeneralOptionsPage.GetImageIndex: Integer;
+begin
+  Result := IMAGELARGE_INDEX_General;
 end;
 
 function TfrmGeneralOptionsPage.GetTitle: string;

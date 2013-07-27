@@ -30,6 +30,7 @@ type
     { Private declarations }
   strict protected
     function GetTitle: string; override;
+    function GetImageIndex: Integer; override;
     function InternalLoadData: Boolean; override;
     function InternalSaveData: Boolean; override;
   public
@@ -46,7 +47,7 @@ var
 implementation
 
 uses
-  ulAppConfig;
+  ulAppConfig, AppConfig;
 
 {$R *.dfm}
 
@@ -64,6 +65,11 @@ begin
   cxRCLeft.Enabled   := cbMouseSensors.Checked;
   cxRCRight.Enabled  := cbMouseSensors.Checked;
   cxRCBottom.Enabled := cbMouseSensors.Checked;
+end;
+
+function TfrmSensorsOptionsPage.GetImageIndex: Integer;
+begin
+  Result := IMAGELARGE_INDEX_Mouse;
 end;
 
 function TfrmSensorsOptionsPage.GetTitle: string;

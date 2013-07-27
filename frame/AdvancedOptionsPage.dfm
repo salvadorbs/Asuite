@@ -1,5 +1,5 @@
 inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
-  object gbRecents: TGroupBox
+  object gbRecents: TGroupBox [0]
     Left = 5
     Top = 3
     Width = 158
@@ -43,7 +43,7 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
       OnChange = TrackBarChange
     end
   end
-  object gbMFU: TGroupBox
+  object gbMFU: TGroupBox [1]
     Left = 167
     Top = 3
     Width = 158
@@ -87,7 +87,7 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
       OnChange = TrackBarChange
     end
   end
-  object gbBackup: TGroupBox
+  object gbBackup: TGroupBox [2]
     Left = 5
     Top = 97
     Width = 158
@@ -131,7 +131,7 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
       OnChange = TrackBarChange
     end
   end
-  object grpClearElements: TGroupBox
+  object grpClearElements: TGroupBox [3]
     Left = 167
     Top = 97
     Width = 158
@@ -200,7 +200,7 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
       OnClick = UpdateBtnClear
     end
   end
-  object gbOtherFunctions: TGroupBox
+  object gbOtherFunctions: TGroupBox [4]
     Left = 5
     Top = 187
     Width = 158

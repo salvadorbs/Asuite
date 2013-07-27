@@ -120,6 +120,7 @@ begin
   IMAGELARGE_INDEX_Trayicon := LoadASuiteIconFromFile(FILELARGEICON_Trayicon, false);
   IMAGELARGE_INDEX_Stats    := LoadASuiteIconFromFile(FILELARGEICON_Stats, false);
   IMAGELARGE_INDEX_Behavior := LoadASuiteIconFromFile(FILELARGEICON_Behavior, false);
+  IMAGELARGE_INDEX_PropGeneral := LoadASuiteIconFromFile(FILELARGEICON_PropGeneral, false);
 end;
 
 function TImagesDM.GetIconIndex(NodeData:TvCustomRealNodeData;SmallIcon: Boolean = True): Integer;

@@ -33,6 +33,7 @@ type
     { Private declarations }
   strict protected
     function GetTitle: string; override;
+    function GetImageIndex: Integer; override;
     function InternalLoadData: Boolean; override;
     function InternalSaveData: Boolean; override;
   public
@@ -96,6 +97,11 @@ begin
   cxLeftClick.Enabled      := cbTrayicon.Checked;
   cxRightClick.Enabled     := cbTrayicon.Checked;
   cbClassicMenuClick(Self);
+end;
+
+function TfrmTrayiconOptionsPage.GetImageIndex: Integer;
+begin
+  Result := IMAGELARGE_INDEX_Trayicon;
 end;
 
 function TfrmTrayiconOptionsPage.GetTitle: string;

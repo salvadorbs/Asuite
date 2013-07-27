@@ -1,5 +1,5 @@
 inherited frmStatsOptionsPage: TfrmStatsOptionsPage
-  object gbASuite: TGroupBox
+  object gbASuite: TGroupBox [0]
     Left = 3
     Top = 133
     Width = 320
@@ -97,7 +97,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       ParentFont = False
     end
   end
-  object gbSupport: TGroupBox
+  object gbSupport: TGroupBox [1]
     Left = 3
     Top = 68
     Width = 320
@@ -195,7 +195,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       ParentFont = False
     end
   end
-  object gbSystem: TGroupBox
+  object gbSystem: TGroupBox [2]
     Left = 3
     Top = 3
     Width = 320

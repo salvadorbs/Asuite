@@ -1,5 +1,5 @@
 inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
-  object gbHotkey: TGroupBox
+  object gbHotkey: TGroupBox [0]
     Left = 3
     Top = 0
     Width = 320

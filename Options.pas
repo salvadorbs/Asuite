@@ -98,16 +98,16 @@ begin
   vstListCategory.NodeDataSize := SizeOf(rFramesNodeData);
   vstListCategory.Clear;
   //General
-  FFrameGeneral  := AddFrameNode(vstListCategory, nil,TPageFrameClass(TfrmGeneralOptionsPage.Create(Self)),IMAGELARGE_INDEX_General);
+  FFrameGeneral  := AddFrameNode(vstListCategory, nil,TPageFrameClass(TfrmGeneralOptionsPage.Create(Self)));
   //Advanced
-  FFrameAdvanced := AddFrameNode(vstListCategory, nil,TPageFrameClass(TfrmAdvancedOptionsPage.Create(Self)),IMAGELARGE_INDEX_Advanced);
-  AddFrameNode(vstListCategory, FFrameAdvanced,TPageFrameClass(TfrmItemsOptionsPage.Create(Self)),IMAGELARGE_INDEX_Items);
-  AddFrameNode(vstListCategory, FFrameAdvanced,TPageFrameClass(TfrmHotkeyOptionsPage.Create(Self)),IMAGELARGE_INDEX_Hotkey);
-  AddFrameNode(vstListCategory, FFrameAdvanced,TPageFrameClass(TfrmSensorsOptionsPage.Create(Self)),IMAGELARGE_INDEX_Mouse);
+  FFrameAdvanced := AddFrameNode(vstListCategory, nil,TPageFrameClass(TfrmAdvancedOptionsPage.Create(Self)));
+  AddFrameNode(vstListCategory, FFrameAdvanced,TPageFrameClass(TfrmItemsOptionsPage.Create(Self)));
+  AddFrameNode(vstListCategory, FFrameAdvanced,TPageFrameClass(TfrmHotkeyOptionsPage.Create(Self)));
+  AddFrameNode(vstListCategory, FFrameAdvanced,TPageFrameClass(TfrmSensorsOptionsPage.Create(Self)));
   //TrayIcon
-  AddFrameNode(vstListCategory, nil,TPageFrameClass(TfrmTrayiconOptionsPage.Create(Self)),IMAGELARGE_INDEX_Trayicon);
+  AddFrameNode(vstListCategory, nil,TPageFrameClass(TfrmTrayiconOptionsPage.Create(Self)));
   //Stats
-  AddFrameNode(vstListCategory, nil,TPageFrameClass(TfrmStatsOptionsPage.Create(Self)),IMAGELARGE_INDEX_Stats);
+  AddFrameNode(vstListCategory, nil,TPageFrameClass(TfrmStatsOptionsPage.Create(Self)));
 end;
 
 procedure TfrmOptions.vstListCategoryAddToSelection(Sender: TBaseVirtualTree;

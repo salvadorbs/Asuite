@@ -10,9 +10,11 @@ type
   TfrmBaseEntityPage = class(TFrame)
     OpenDialog1: TOpenDialog;
   private
+    FImageIndex: integer;
     { Private declarations }
   strict protected
     function GetTitle: string; virtual;
+    function GetImageIndex: integer; virtual;
     function InternalLoadData: Boolean; virtual;
     function InternalSaveData: Boolean; virtual;
   public
@@ -20,6 +22,7 @@ type
     constructor Create(AOwner: TComponent); override;
     procedure SaveData; virtual;
     property Title: string read GetTitle;
+    property ImageIndex: integer read GetImageIndex;
   end;
 
 TPageFrameClass = class of TfrmBaseEntityPage;
@@ -34,6 +37,11 @@ constructor TfrmBaseEntityPage.Create(AOwner: TComponent);
 begin
   inherited;
   Self.InternalLoadData;
+end;
+
+function TfrmBaseEntityPage.GetImageIndex: integer;
+begin
+  Result := -1;
 end;
 
 function TfrmBaseEntityPage.GetTitle: string;

@@ -69,10 +69,10 @@ begin
   vstCategory.NodeDataSize := SizeOf(rFramesNodeData);
   vstCategory.Clear;
   //General
-  FFrameGeneral  := AddFrameNode(vstCategory, nil,TPageFrameClass(TfrmSWGeneralPropertyPage.Create(Self)),IMAGELARGE_INDEX_General);
-  FFrameGeneral  := AddFrameNode(vstCategory, nil,TPageFrameClass(TfrmCatGeneralPropertyPage.Create(Self)),IMAGELARGE_INDEX_General);
-  FFrameAdvanced := AddFrameNode(vstCategory, nil,TPageFrameClass(TfrmAdvancedPropertyPage.Create(Self)),IMAGELARGE_INDEX_Advanced);
-  AddFrameNode(vstCategory, nil,TPageFrameClass(TfrmBehaviorPropertyPage.Create(Self)),IMAGELARGE_INDEX_Behavior);
+  FFrameGeneral  := AddFrameNode(vstCategory, nil,TPageFrameClass(TfrmSWGeneralPropertyPage.Create(Self)));
+  FFrameGeneral  := AddFrameNode(vstCategory, nil,TPageFrameClass(TfrmCatGeneralPropertyPage.Create(Self)));
+  FFrameAdvanced := AddFrameNode(vstCategory, nil,TPageFrameClass(TfrmAdvancedPropertyPage.Create(Self)));
+  AddFrameNode(vstCategory, nil,TPageFrameClass(TfrmBehaviorPropertyPage.Create(Self)));
 end;
 
 procedure TfrmPropertyItem.vstCategoryAddToSelection(Sender: TBaseVirtualTree;

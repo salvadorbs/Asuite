@@ -23,6 +23,7 @@ type
     { Private declarations }
   strict protected
     function GetTitle: string; override;
+    function GetImageIndex: Integer; override;
     function InternalLoadData: Boolean; override;
     function InternalSaveData: Boolean; override;
   public
@@ -35,7 +36,7 @@ var
 implementation
 
 uses
-  ulAppConfig;
+  ulAppConfig, AppConfig;
 
 {$R *.dfm}
 
@@ -57,6 +58,11 @@ procedure TfrmHotkeyOptionsPage.cbWindowHotKeyClick(Sender: TObject);
 begin
   cxWindowHotKeyMod.Enabled  := (cbWindowHotKey.Checked) And (cbHotKey.Checked);
   cxWindowHotKeyCode.Enabled := (cbWindowHotKey.Checked) And (cbHotKey.Checked);
+end;
+
+function TfrmHotkeyOptionsPage.GetImageIndex: Integer;
+begin
+  Result := IMAGELARGE_INDEX_Hotkey;
 end;
 
 function TfrmHotkeyOptionsPage.GetTitle: string;

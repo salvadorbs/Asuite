@@ -126,6 +126,7 @@ const
   FILELARGEICON_Trayicon = '5.ico';
   FILELARGEICON_Stats    = '6.ico';
   FILELARGEICON_Behavior = '7.ico';
+  FILELARGEICON_PropGeneral = '8.ico';
 
 var
   //Paths
@@ -179,7 +180,8 @@ var
   IMAGELARGE_INDEX_Mouse,    //ID = 4;
   IMAGELARGE_INDEX_Trayicon, //ID = 5;
   IMAGELARGE_INDEX_Stats,    //ID = 6;
-  IMAGELARGE_INDEX_Behavior  //ID = 7;
+  IMAGELARGE_INDEX_Behavior, //ID = 7;
+  IMAGELARGE_INDEX_PropGeneral //ID = 8;
                             : Integer;
 
   //Misc
