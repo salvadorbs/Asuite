@@ -129,6 +129,7 @@ type
     procedure SetWindowHotKeyMod(const Value: Integer);
     procedure SetBackupNumber(const Value: Integer);
     procedure SetChanged(const Value: Boolean);
+    procedure SetBackup(const Value: Boolean);
   public
     { public declarations }
     constructor Create; overload;
@@ -161,7 +162,7 @@ type
     property SubMenuMFU: Boolean read FSubMenuMFU write FSubMenuMFU;
     property MFUNumber: Integer read FMFUNumber write FMFUNumber;
     // Backup
-    property Backup: Boolean read FBackup write FBackup;
+    property Backup: Boolean read FBackup write SetBackup;
     property BackupNumber: Integer read FBackupNumber write SetBackupNumber;
     // Other functions
     property Autorun: Boolean read FAutorun write FAutorun;
@@ -318,6 +319,13 @@ begin
     frmMain.FormStyle := fsStayOnTop
   else
     frmMain.FormStyle := fsNormal;
+end;
+
+procedure TConfiguration.SetBackup(const Value: Boolean);
+begin
+  FBackup := Value;
+  if FBackup then
+    CheckBackupFolder;
 end;
 
 procedure TConfiguration.SetBackupNumber(const Value: Integer);
@@ -528,7 +536,7 @@ begin
   if Not(FCache) then
     RemoveCacheFolders
   else //Else create folders cache
-    CreateCacheFolders;
+    CheckCacheFolders;
 end;
 
 procedure TConfiguration.SetChanged(const Value: Boolean);

@@ -14,8 +14,8 @@ procedure DeleteFiles(PathDir, FileName: String);
 procedure DeleteOldBackups(MaxNumber: Integer);
 
 { Folders }                 
-procedure CreateBackupFolder;
-procedure CreateCacheFolders;  
+procedure CheckBackupFolder;
+procedure CheckCacheFolders;
 procedure RemoveCacheFolders;
 
 { Desktop shortcut }
@@ -77,20 +77,17 @@ begin
   BackupList.Free;
 end; 
 
-procedure CreateBackupFolder;
+procedure CheckBackupFolder;
 begin
-  //Create folder backup, if it doesn't exist
-  if not (SysUtils.DirectoryExists(SUITE_BACKUP_PATH)) then
-    CreateDir(SUITE_BACKUP_PATH);
+  //Check if folder backup exists, else create it
+  ForceDirectories(SUITE_BACKUP_PATH);
 end;         
 
-procedure CreateCacheFolders; 
-begin  
-  //Create folder cache, if it doesn't exist
-  if (not SysUtils.DirectoryExists(SUITE_CACHE_PATH)) then
-    CreateDir(SUITE_CACHE_PATH);
-  if (not SysUtils.DirectoryExists(SUITE_CACHELARGE_PATH)) then
-    CreateDir(SUITE_CACHELARGE_PATH);
+procedure CheckCacheFolders;
+begin
+  //Check if folder cache exists, else create it
+  ForceDirectories(SUITE_CACHE_PATH);
+  ForceDirectories(SUITE_CACHELARGE_PATH);
 end;
 
 procedure RemoveCacheFolders;

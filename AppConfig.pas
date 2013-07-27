@@ -70,6 +70,7 @@ const
   //File
   DEBUG_FILE    = 'Debug.txt';
   THEME_INI     = 'theme.ini';
+  BACKUP_FILE   = APP_NAME + '_%s' + EXT_SQLBCK;
 
   //Form
   frmMainWidth  = 190;

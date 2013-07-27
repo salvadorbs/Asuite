@@ -321,7 +321,7 @@ begin
   if (Config.Backup) then
   begin
     CopyFile(PChar(FDBFileName),
-             PChar(SUITE_BACKUP_PATH + APP_NAME + '_' + GetDateTime + EXT_SQLBCK), false);
+             PChar(Format(SUITE_BACKUP_PATH + BACKUP_FILE,[GetDateTime])),false);
     DeleteOldBackups(Config.BackupNumber);
   end;
 end;
@@ -450,10 +450,6 @@ begin
     //Create special list
     MRUList := TMRUList.Create;
     MFUList := TMFUList.Create;
-
-    //Create cache and backup folders
-    CreateCacheFolders;
-    CreateBackupFolder;
 
     //Load list
     InternalLoadListItems(Tree, 0, nil, false);

@@ -266,7 +266,7 @@ begin
       try
         PText := GlobalLock(Medium.hGlobal);
         try
-          PathExe := PText;
+          PathExe := string(PText);
         finally
           GlobalUnlock(Medium.hGlobal);
         end;
