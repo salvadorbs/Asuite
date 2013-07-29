@@ -200,7 +200,7 @@ implementation
 uses
   Options, About, ulCommonUtils, udClassicMenu, ulExeUtils, ImportList,
   ulAppConfig, ulTreeView, ulDatabase, notifications, GraphicMenu, StatsOptionsPage,
-  PropertyItem;
+  PropertyItem, PropertySeparator;
 
 {$R *.dfm}
 
@@ -570,30 +570,23 @@ end;
 procedure TfrmMain.ShowItemProperty(TreeView: TBaseVirtualTree);
 var
   BaseNode: PBaseData;
-  OK: Boolean;
 begin
   BaseNode := GetNodeDataEx(TreeView.FocusedNode, TreeView, vstSearch, vstList);
   if Assigned(BaseNode) then
     begin
-    try
-      Application.CreateForm(TfrmPropertyItem, frmPropertyItem);
-      frmPropertyItem.FormStyle := Self.FormStyle;
-      frmPropertyItem.Execute();
-    finally
-      frmPropertyItem.Free;
-    end;
-//    case BaseNode.Data.DataType of
-//      vtdtFile:
-//        OK := (TfrmPropertyFile.Edit(Self, BaseNode) = mrOK);
-//      vtdtCategory:
-//        OK := (TfrmPropertyCat.Edit(Self, BaseNode) = mrOK);
-//      vtdtSeparator:
-//        OK := (TfrmPropertySeparator.Edit(Self, BaseNode) = mrOK);
-//    else
-//      OK := False;
-//    end;
-    if Ok then
-      RefreshList(vstList);
+      if BaseNode.Data.DataType in [vtdtFile, vtdtCategory, vtdtFolder] then
+      begin
+        try
+          Application.CreateForm(TfrmPropertyItem, frmPropertyItem);
+          frmPropertyItem.FormStyle := Self.FormStyle;
+          frmPropertyItem.Execute(TvCustomRealNodeData((BaseNode).Data));
+        finally
+          frmPropertyItem.Free;
+        end;
+      end
+      else
+        TfrmPropertySeparator.Edit(Self, BaseNode);
+    RefreshList(vstList);
   end;
 end;
 

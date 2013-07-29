@@ -143,6 +143,7 @@ type
     property AutorunPos: Integer read FAutorunPos write FAutorunPos;
     property SchMode: TSchedulerMode read FSchMode write SetSchMode;
     property SchDateTime: TDateTime read FSchDateTime write SetSchDateTime;
+    procedure ResetIcon;
   end;
   PvCustomRealNodeData = ^TvCustomRealNodeData;
 
@@ -314,7 +315,8 @@ end;
 
 procedure TvBaseNodeData.SetName(Value: String);
 begin
-  FName := Value;
+  FName := StringReplace(Value, '&&', '&', [rfIgnoreCase,rfReplaceAll]);
+  FName := StringReplace(FName, '&', '&&', [rfIgnoreCase,rfReplaceAll]);
 end;
 
 function TvBaseNodeData.GetDataType: TvTreeDataType;
@@ -723,6 +725,13 @@ begin
   FChanged := True;
   RefreshList(Tree);
   Result := True;
+end;
+
+procedure TvCustomRealNodeData.ResetIcon;
+begin
+  Self.CacheID      := -1;
+  Self.CacheLargeID := -1;
+  Self.ImageIndex   := -1;
 end;
 
 procedure TvCustomRealNodeData.SetAutorun(value:TAutorunType);
