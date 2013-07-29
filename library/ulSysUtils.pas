@@ -121,9 +121,12 @@ begin
 end;
 
 function FileFolderPageWebExists(Path: String): Boolean;
+var
+  PathTemp : String;
 begin
-  Result := ((FileExists(Path)) or (SysUtils.DirectoryExists(Path)) or
-             (IsUrl(Path)));
+  PathTemp := RelativeToAbsolute(Path);
+  Result := ((FileExists(PathTemp)) or (SysUtils.DirectoryExists(PathTemp)) or
+             (IsUrl(PathTemp)));
 end;
 
 function AbsoluteToRelative(APath: String): string;

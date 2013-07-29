@@ -39,6 +39,7 @@ begin
   //Call Browse for folder dialog and get new path
   if SelectDirectory('','',Path) then
     Result := Path;
+  SetCurrentDir(SUITE_WORKING_PATH);
 end;
 
 procedure DeleteFiles(PathDir, FileName: String);

@@ -560,7 +560,7 @@ begin
   vstRecents.Clear;
   vstMostUsed.Clear;
   //Refresh VirtualTrees
-  frmMain.vstList.IterateSubtree(nil, PopulateMenuTree, nil, [], False);
+  frmMain.vstList.IterateSubtree(nil, PopulateMenuTree, nil);
   PopulateSpecialTree(vstRecents,MRUList,Config.MRUNumber);
   PopulateSpecialTree(vstMostUsed,MFUList,Config.MFUNumber);
   //Calculate and display the drive size

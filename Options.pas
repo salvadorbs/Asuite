@@ -56,7 +56,6 @@ uses
 
 procedure TfrmOptions.SaveOptions(Sender: TBaseVirtualTree; Node: PVirtualNode;
                             Data: Pointer; var Abort: Boolean);
-
 var
   NodeData : PFramesNodeData;
 begin
@@ -72,7 +71,7 @@ end;
 
 procedure TfrmOptions.btnOkClick(Sender: TObject);
 begin
-  vstListCategory.IterateSubtree(nil, SaveOptions, nil, [], True);
+  vstListCategory.IterateSubtree(nil, SaveOptions, nil);
   Config.Changed := True;
   if frmMain.Visible then
     frmMain.FocusControl(frmMain.vstList);

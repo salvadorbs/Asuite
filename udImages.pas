@@ -129,6 +129,7 @@ var
   TempCacheID : Integer;
   TempCachePath : string;
 begin
+  //TODO: Rewrite this function in two separate functions
   Result := -1;
   if SmallIcon then
   begin
@@ -139,39 +140,49 @@ begin
     TempCacheID   := NodeData.CacheLargeID;
     TempCachePath := NodeData.PathCacheLargeIcon;
   end;
-  //Priority cache->icon->exe
-  //Check cache icon
-  if Config.ASuiteState <> asImporting then
+  if ((NodeData.ImageIndex = -1) and (SmallIcon)) or
+     ((NodeData.ImageLargeIndex = -1) and (Not SmallIcon)) then
   begin
-    if Not(FileExists(TempCachePath)) and (TempCacheID <> -1) then
-      TempCacheID := -1;
-    if (Config.Cache) and FileExists(TempCachePath) then
-      TempPath := TempCachePath;
-  end;
-  //Icon
-  if TempCacheID = -1 then
-  begin
-    if FileExists(NodeData.PathAbsoluteIcon) then
-      TempPath := NodeData.PathAbsoluteIcon
+    //Priority cache->icon->exe
+    //Check cache icon
+    if Config.ASuiteState <> asImporting then
+    begin
+      if Not(FileExists(TempCachePath)) and (TempCacheID <> -1) then
+        TempCacheID := -1;
+      if (Config.Cache) and FileExists(TempCachePath) then
+        TempPath := TempCachePath;
+    end;
+    //Icon
+    if TempCacheID = -1 then
+    begin
+      if FileExists(NodeData.PathAbsoluteIcon) then
+        TempPath := NodeData.PathAbsoluteIcon
+      else
+        //Exe, if nodedata is a file item
+        if NodeData.DataType = vtdtFile then
+        begin
+          if (FileExists((NodeData as TvFileNodeData).PathAbsoluteExe)) or
+             (DirectoryExists((NodeData as TvFileNodeData).PathAbsoluteExe)) then
+            TempPath := (NodeData as TvFileNodeData).PathAbsoluteExe;
+        end
+        else begin
+          if NodeData.DataType = vtdtCategory then
+            Result := IMAGE_INDEX_Cat;
+        end;
+    end;
+    //Get image index
+    if (TempPath <> '') and (Result <> IMAGE_INDEX_Cat) then
+      Result := GetSimpleIconIndex(TempPath, SmallIcon);
+    //Save icon cache
+    if Config.ASuiteState <> asImporting then
+      SaveCacheIcon(TempPath, NodeData, Result, SmallIcon);
+  end
+  else begin
+    if SmallIcon then
+      Result := NodeData.ImageIndex
     else
-      //Exe, if nodedata is a file item
-      if NodeData.DataType = vtdtFile then
-      begin
-        if (FileExists((NodeData as TvFileNodeData).PathAbsoluteExe)) or
-           (DirectoryExists((NodeData as TvFileNodeData).PathAbsoluteExe)) then
-          TempPath := (NodeData as TvFileNodeData).PathAbsoluteExe;
-      end
-      else begin
-        if NodeData.DataType = vtdtCategory then
-          Result := IMAGE_INDEX_Cat;
-      end;
+      Result := NodeData.ImageLargeIndex
   end;
-  //Get image index
-  if (TempPath <> '') and (Result <> IMAGE_INDEX_Cat) then
-    Result := GetSimpleIconIndex(TempPath, SmallIcon);
-  //Save icon cache
-  if Config.ASuiteState <> asImporting then
-    SaveCacheIcon(TempPath, NodeData, Result, SmallIcon);
 end;
 
 procedure TImagesDM.SaveCacheIcon(Path: string; NodeData: TvCustomRealNodeData;

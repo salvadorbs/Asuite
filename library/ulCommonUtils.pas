@@ -44,7 +44,7 @@ function GetIntPropertyXML(Node : IXMLNode;Name: String;Default: Integer): Integ
 function GetBoolPropertyXML(Node : IXMLNode;Name: String;Default: Boolean): Boolean;
 
 { Misc }
-procedure CheckPropertyName(Edit: TEdit);
+function CheckPropertyName(Edit: TEdit): Boolean;
 function  GetDateTime: String;
 function  GetFirstFreeIndex(ArrayString: Array of WideString): Integer;
 function  IfThen(AValue: Boolean; ATrue, AFalse: String): String;
@@ -227,13 +227,15 @@ begin
       Result := ulStringUtils.StrToBool(PropertyNode.Text);
 end;
 
-procedure CheckPropertyName(Edit: TEdit);
+function CheckPropertyName(Edit: TEdit): Boolean;
 begin
+  Result := True;
   // Check if inserted name is empty, then
   if (Trim(Edit.Text) = '') then
   begin
     ShowMessage(msgErrEmptyName,true);
     Edit.Color := clYellow;
+    Result := False;
   end;
 end;
 
