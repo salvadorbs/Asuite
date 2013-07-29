@@ -66,7 +66,7 @@ function TfrmStatsOptionsPage.InternalLoadData: Boolean;
 var
   Drive: char;
 begin
-  inherited;
+  Result := inherited;
   //System
   TfrmStatsOptionsPage(Self).lbOs2.Caption     := GetWindowsVersion;
   TfrmStatsOptionsPage(Self).lbNamePc2.Caption := GetComputerName;
@@ -82,7 +82,7 @@ begin
   begin
     SwCount  := 0;
     CatCount := 0;
-    frmMain.vstList.IterateSubtree(nil, IterateSubtreeProcs.UpdateListItemCount, nil, [], False);
+    frmMain.vstList.IterateSubtree(nil, IterateSubtreeProcs.UpdateListItemCount, nil);
     TfrmStatsOptionsPage(Self).lbSoftware2.Caption := IntToStr(SwCount);
     TfrmStatsOptionsPage(Self).lbCat2.Caption      := IntToStr(CatCount);
     TfrmStatsOptionsPage(Self).lbTotal2.Caption    := IntToStr(SwCount + CatCount);

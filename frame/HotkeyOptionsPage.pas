@@ -72,7 +72,7 @@ end;
 
 function TfrmHotkeyOptionsPage.InternalLoadData: Boolean;
 begin
-  inherited;
+  Result := inherited;
   //Hot Keys
   cbHotKey.Checked := Config.HotKey;
   //Window's Hotkey
@@ -91,7 +91,7 @@ end;
 
 function TfrmHotkeyOptionsPage.InternalSaveData: Boolean;
 begin
-  inherited;
+  Result := inherited;
   //Hot Keys
   Config.HotKey           := cbHotKey.Checked;
   //Window's Hotkey

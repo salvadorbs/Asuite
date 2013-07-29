@@ -165,7 +165,7 @@ end;
 
 function TfrmAdvancedOptionsPage.InternalLoadData: Boolean;
 begin
-  inherited;
+  Result := inherited;
   //MRU
   cbMRU.Checked        := Config.MRU;
   tbMRU.position       := Config.MRUNumber;
@@ -190,7 +190,7 @@ end;
 
 function TfrmAdvancedOptionsPage.InternalSaveData: Boolean;
 begin
-  inherited;
+  Result := inherited;
   //MRU
   Config.MRU       := cbMRU.Checked;
   Config.MRUNumber := tbMRU.Position;

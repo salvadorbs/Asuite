@@ -142,7 +142,7 @@ end;
 
 function TfrmItemsOptionsPage.InternalLoadData: Boolean;
 begin
-  inherited;
+  Result := inherited;
   //Execution options
   cxActionOnExe.ItemIndex   := Ord(Config.ActionOnExe);
   cbRunSingleClick.Checked  := Config.RunSingleClick;
@@ -162,7 +162,7 @@ end;
 
 function TfrmItemsOptionsPage.InternalSaveData: Boolean;
 begin
-  inherited;
+  Result := inherited;
   //Execution options
   Config.ActionOnExe    := TActionOnExecute(cxActionOnExe.ItemIndex);
   Config.RunSingleClick := cbRunSingleClick.Checked;

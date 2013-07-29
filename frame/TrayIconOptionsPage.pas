@@ -63,7 +63,6 @@ begin
     PathTemp := AbsoluteToRelative(OpenDialog1.FileName);
     edtCustomIcon.Text := PathTemp;
   end;
-  SetCurrentDir(SUITE_WORKING_PATH);
 end;
 
 procedure TfrmTrayiconOptionsPage.cbClassicMenuClick(Sender: TObject);
@@ -113,7 +112,7 @@ function TfrmTrayiconOptionsPage.InternalLoadData: Boolean;
 var
   searchResult : TSearchRec;
 begin
-  inherited;
+  Result := inherited;
   //Trayicon
   cbTrayicon.Checked        := Config.TrayIcon;
   cbTrayCustomIcon.Checked  := Config.TrayUseCustomIcon;
@@ -145,7 +144,7 @@ end;
 
 function TfrmTrayiconOptionsPage.InternalSaveData: Boolean;
 begin
-  inherited;
+  Result := inherited;
   //Trayicon
   Config.TrayIcon           := cbTrayicon.Checked;
   Config.TrayCustomIconPath := edtCustomIcon.Text;

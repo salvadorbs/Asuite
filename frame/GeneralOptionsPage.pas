@@ -65,7 +65,6 @@ begin
     PathTemp := AbsoluteToRelative(OpenDialog1.FileName);
     edtBackground.Text := PathTemp;
   end;
-  SetCurrentDir(SUITE_WORKING_PATH);
 end;
 
 procedure TfrmGeneralOptionsPage.btnFontSettingsClick(Sender: TObject);
@@ -96,7 +95,7 @@ end;
 
 function TfrmGeneralOptionsPage.InternalLoadData: Boolean;
 begin
-  inherited;
+  Result := inherited;
   //Window
   cbHoldSize.Checked         := Config.HoldSize;
   cbWindowOnTop.Checked      := Config.AlwaysOnTop;
@@ -145,7 +144,7 @@ end;
 
 function TfrmGeneralOptionsPage.InternalSaveData: Boolean;
 begin
-  inherited;
+  Result := inherited;
   //Window
   Config.HoldSize           := cbHoldSize.Checked;
   Config.AlwaysOnTop        := cbWindowOnTop.Checked;

@@ -81,7 +81,7 @@ function TfrmSensorsOptionsPage.InternalLoadData: Boolean;
 var
   I: Integer;
 begin
-  inherited;
+  Result := inherited;
   //Mouse Sensors
   for I := 0 to 3 do
     begin
@@ -113,7 +113,7 @@ end;
 
 function TfrmSensorsOptionsPage.InternalSaveData: Boolean;
 begin
-  inherited;
+  Result := inherited;
   //Mouse Sensors
   Config.UseMouseSensors     := cbMouseSensors.Checked;
   //Left
