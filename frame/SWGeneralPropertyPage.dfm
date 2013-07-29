@@ -59,14 +59,15 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Width = 65
       Height = 21
       Caption = 'Browse'
-      TabOrder = 0
+      TabOrder = 3
+      OnClick = btnBrowseWorkingDirClick
     end
     object edtWorkingDir: TEdit
       Left = 8
       Top = 64
       Width = 267
       Height = 21
-      TabOrder = 1
+      TabOrder = 2
       Text = '$ASuite\'
     end
     object btnBrowseExe: TButton
@@ -75,14 +76,15 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Width = 65
       Height = 21
       Caption = 'Browse'
-      TabOrder = 2
+      TabOrder = 1
+      OnClick = btnBrowseExeClick
     end
     object edtParameters: TEdit
       Left = 8
       Top = 98
       Width = 267
       Height = 21
-      TabOrder = 3
+      TabOrder = 4
     end
     object edtPathExe: TEdit
       Left = 8
@@ -91,8 +93,9 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Height = 21
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 4
+      TabOrder = 0
       Text = '$ASuite\'
+      OnExit = edtPathExeExit
     end
   end
 end

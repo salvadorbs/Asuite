@@ -9,7 +9,7 @@ inherited frmCatGeneralPropertyPage: TfrmCatGeneralPropertyPage
     object lblNote: TLabel
       Left = 8
       Top = 136
-      Width = 338
+      Width = 335
       Height = 39
       Caption = 
         'Note: In this list you can find all software items of this categ' +
@@ -34,6 +34,8 @@ inherited frmCatGeneralPropertyPage: TfrmCatGeneralPropertyPage
       TabOrder = 0
       TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
       TreeOptions.PaintOptions = [toShowDropmark, toThemeAware, toUseBlendedImages]
+      OnGetText = vstCategoryItemsGetText
+      OnGetImageIndex = vstCategoryItemsGetImageIndex
       Columns = <>
     end
   end
