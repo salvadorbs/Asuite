@@ -23,6 +23,7 @@ object frmPropertyItem: TfrmPropertyItem
     Height = 25
     Caption = 'Ok'
     TabOrder = 0
+    OnClick = btnOkClick
   end
   object btnCancel: TButton
     Left = 476

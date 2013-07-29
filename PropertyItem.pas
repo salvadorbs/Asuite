@@ -4,7 +4,8 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, VirtualTrees, Vcl.ExtCtrls, Vcl.StdCtrls, BaseEntityPage;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, VirtualTrees, Vcl.ExtCtrls, Vcl.StdCtrls, BaseEntityPage,
+  ulNodeDataTypes;
 
 type
   TfrmPropertyItem = class(TForm)
@@ -24,14 +25,18 @@ type
       Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
     procedure FormCreate(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
+    procedure btnOkClick(Sender: TObject);
   private
     { Private declarations }
+    procedure SaveNodeData(Sender: TBaseVirtualTree; Node: PVirtualNode;
+                           Data: Pointer; var Abort: Boolean);
   strict private
     FCurrentPage: TfrmBaseEntityPage;
     FFrameGeneral, FFrameAdvanced: PVirtualNode;
+    FListNodeData: TvCustomRealNodeData;
   public
     { Public declarations }
-    function Execute(APage:TPageFrameClass = nil):Integer;
+    function Execute(ANodeData:TvCustomRealNodeData):Integer;
   end;
 
 var
@@ -40,8 +45,9 @@ var
 implementation
 
 uses
-  ulNodeDataTypes, ulFrameUtils, BaseGeneralPropertyPage, AdvancedPropertyPage,
-  BehaviorPropertyPage, AppConfig, CatGeneralPropertyPage, SWGeneralPropertyPage;
+  ulFrameUtils, BaseGeneralPropertyPage, AdvancedPropertyPage, ulEnumerations,
+  BehaviorPropertyPage, AppConfig, CatGeneralPropertyPage, SWGeneralPropertyPage,
+  Main, udImages;
 
 {$R *.dfm}
 
@@ -50,29 +56,55 @@ begin
   Close;
 end;
 
-function TfrmPropertyItem.Execute(APage: TPageFrameClass): Integer;
+procedure TfrmPropertyItem.btnOkClick(Sender: TObject);
 var
-  selNode :PVirtualNode;
+  ResultNode: PVirtualNode;
 begin
-  if not Assigned(APage) then
-    selNode := FFrameGeneral
+  //If IterateSubtree returns a value, something is wrong
+  ResultNode := vstCategory.IterateSubtree(nil, SaveNodeData, nil);
+  if Not Assigned(ResultNode) then
+  begin
+    FListNodeData.Changed := True;
+    //If changed, refresh cache icon
+    FListNodeData.ResetIcon;
+    FListNodeData.ImageIndex := ImagesDM.GetIconIndex(FListNodeData);
+    if frmMain.Visible then
+      frmMain.FocusControl(frmMain.vstList);
+    Close;
+  end;
+end;
+
+function TfrmPropertyItem.Execute(ANodeData: TvCustomRealNodeData): Integer;
+begin
+  FListNodeData := ANodeData;
+  //General
+  if (ANodeData.DataType = vtdtFile) or (ANodeData.DataType = vtdtFolder) then
+    FFrameGeneral := AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmSWGeneralPropertyPage.Create(Self, ANodeData)))
   else
-    selNode := GetNodeByFrameClass(vstCategory, APage);
+    if ANodeData.DataType = vtdtCategory then
+      FFrameGeneral := AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmCatGeneralPropertyPage.Create(Self, ANodeData)));
+  FFrameAdvanced := AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmAdvancedPropertyPage.Create(Self, ANodeData)));
+  AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmBehaviorPropertyPage.Create(Self, ANodeData)));
   //Select node (automatically open frame using vst's AddToSelection event)
-  vstCategory.Selected[selNode] := True;
+  vstCategory.Selected[FFrameGeneral] := True;
   vstCategory.FullExpand;
-  result := ShowModal;
+  Result := ShowModal;
 end;
 
 procedure TfrmPropertyItem.FormCreate(Sender: TObject);
 begin
   vstCategory.NodeDataSize := SizeOf(rFramesNodeData);
   vstCategory.Clear;
-  //General
-  FFrameGeneral  := AddFrameNode(vstCategory, nil,TPageFrameClass(TfrmSWGeneralPropertyPage.Create(Self)));
-  FFrameGeneral  := AddFrameNode(vstCategory, nil,TPageFrameClass(TfrmCatGeneralPropertyPage.Create(Self)));
-  FFrameAdvanced := AddFrameNode(vstCategory, nil,TPageFrameClass(TfrmAdvancedPropertyPage.Create(Self)));
-  AddFrameNode(vstCategory, nil,TPageFrameClass(TfrmBehaviorPropertyPage.Create(Self)));
+end;
+
+procedure TfrmPropertyItem.SaveNodeData(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
+var
+  NodeData : PFramesNodeData;
+begin
+  //Call Frame's function SaveData
+  NodeData := vstCategory.GetNodeData(Node);
+  Abort := Not(TfrmBaseEntityPage(NodeData.Frame).SaveData);
 end;
 
 procedure TfrmPropertyItem.vstCategoryAddToSelection(Sender: TBaseVirtualTree;
