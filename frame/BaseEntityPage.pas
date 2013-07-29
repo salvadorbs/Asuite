@@ -9,6 +9,7 @@ uses
 type
   TfrmBaseEntityPage = class(TFrame)
     OpenDialog1: TOpenDialog;
+    procedure OpenDialog1Close(Sender: TObject);
   private
     FImageIndex: integer;
     { Private declarations }
@@ -20,7 +21,7 @@ type
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
-    procedure SaveData; virtual;
+    function SaveData: Boolean; virtual;
     property Title: string read GetTitle;
     property ImageIndex: integer read GetImageIndex;
   end;
@@ -28,6 +29,9 @@ type
 TPageFrameClass = class of TfrmBaseEntityPage;
 
 implementation
+
+uses
+  AppConfig;
 
 {$R *.dfm}
 
@@ -59,9 +63,14 @@ begin
   Result := True;
 end;
 
-procedure TfrmBaseEntityPage.SaveData;
+procedure TfrmBaseEntityPage.OpenDialog1Close(Sender: TObject);
 begin
-  Self.InternalSaveData;
+  SetCurrentDir(SUITE_WORKING_PATH);
+end;
+
+function TfrmBaseEntityPage.SaveData: Boolean;
+begin
+  Result := Self.InternalSaveData;
 end;
 
 end.

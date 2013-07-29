@@ -1,6 +1,4 @@
 inherited frmBaseGeneralPropertyPage: TfrmBaseGeneralPropertyPage
-  Width = 360
-  ExplicitWidth = 360
   object gbItem: TGroupBox [0]
     Left = 3
     Top = 3
@@ -32,6 +30,7 @@ inherited frmBaseGeneralPropertyPage: TfrmBaseGeneralPropertyPage
       Width = 145
       Height = 21
       TabOrder = 0
+      OnEnter = edtNameEnter
     end
     object edtPathIcon: TEdit
       Left = 8
@@ -50,6 +49,7 @@ inherited frmBaseGeneralPropertyPage: TfrmBaseGeneralPropertyPage
       Height = 21
       Caption = 'Browse'
       TabOrder = 2
+      OnClick = btnBrowseIconClick
     end
   end
 end

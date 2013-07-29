@@ -5,6 +5,7 @@ object frmBaseEntityPage: TfrmBaseEntityPage
   Height = 280
   TabOrder = 0
   object OpenDialog1: TOpenDialog
+    OnClose = OpenDialog1Close
     Left = 276
     Top = 4
   end
