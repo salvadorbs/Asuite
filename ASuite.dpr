@@ -42,7 +42,9 @@ uses
   BehaviorPropertyPage in 'frame\BehaviorPropertyPage.pas' {frmBehaviorPropertyPage: TFrame},
   BaseGeneralPropertyPage in 'frame\BaseGeneralPropertyPage.pas' {frmBaseGeneralPropertyPage: TFrame},
   SWGeneralPropertyPage in 'frame\SWGeneralPropertyPage.pas' {frmSWGeneralPropertyPage: TFrame},
-  CatGeneralPropertyPage in 'frame\CatGeneralPropertyPage.pas' {frmCatGeneralPropertyPage: TFrame};
+  CatGeneralPropertyPage in 'frame\CatGeneralPropertyPage.pas' {frmCatGeneralPropertyPage: TFrame},
+  PropertySeparator in 'PropertySeparator.pas' {frmPropertySeparator},
+  BasePropertyPage in 'frame\BasePropertyPage.pas' {frmBasePropertyPage: TFrame};
 
 //SQLite3 static library
 
@@ -72,8 +74,7 @@ begin
 
     Application.CreateForm(TfrmMain, frmMain);
   Application.CreateForm(TfrmGraphicMenu, frmGraphicMenu);
-  Application.CreateForm(TfrmPropertyItem, frmPropertyItem);
-  Application.CreateForm(TfrmBaseGeneralPropertyPage, frmBaseGeneralPropertyPage);
+  Application.CreateForm(TfrmPropertySeparator, frmPropertySeparator);
   //Show MainForm and/or TrayMenu
     Application.ShowMainForm := Config.ShowPanelAtStartUp;
     if (Config.ShowMenuAtStartUp) then
