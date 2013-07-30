@@ -106,9 +106,10 @@ begin
   if Assigned(CurrentNodeData) then
   begin
     FileNodeData := TvFileNodeData(CurrentNodeData);
-    if (edtPathExe.Text = '') then
-      edtPathExe.Text := CONST_PATH_DRIVE;
-    FileNodeData.PathExe    := edtPathExe.Text;
+    if (edtPathExe.Text <> '') then
+      FileNodeData.PathExe  := edtPathExe.Text
+    else
+      FileNodeData.PathExe  := CONST_PATH_DRIVE;
     FileNodeData.Parameters := edtParameters.Text;
     FileNodeData.WorkingDir := edtWorkingDir.Text;
   end;

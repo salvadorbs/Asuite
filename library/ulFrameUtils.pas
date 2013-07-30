@@ -8,7 +8,7 @@ uses
 
 function AddFrameNode(Tree: TBaseVirtualTree; Parent: PVirtualNode;
                       FramePage: TPageFrameClass): PVirtualNode;
-function GetNodeByFrameClass(Tree: TBaseVirtualTree; AFramePage: TPageFrameClass):PVirtualNode;
+function GetNodeByFrameClass(Tree: TBaseVirtualTree; AFramePage: TPageFrameClass; Node: PVirtualNode = nil):PVirtualNode;
 procedure LoadPage(var CurrentPage: TfrmBaseEntityPage; NewPage: TPageFrameClass; ParentPanel: TPanel);
 
 implementation
@@ -27,18 +27,20 @@ begin
   end;
 end;
 
-function GetNodeByFrameClass(Tree: TBaseVirtualTree; AFramePage: TPageFrameClass): PVirtualNode;
+function GetNodeByFrameClass(Tree: TBaseVirtualTree; AFramePage: TPageFrameClass; Node: PVirtualNode): PVirtualNode;
 var
-  node:PVirtualNode;
   nodeData:PFramesNodeData;
 begin
   Result := nil;
-  node   := Tree.GetFirst();
-  while Assigned(node) do begin
-    nodeData := Tree.GetNodeData(node);
+  if Node = nil then
+    Node := Tree.GetFirst;
+  while Assigned(Node) do begin
+    nodeData := Tree.GetNodeData(Node);
     if TfrmBaseEntityPage(nodeData.Frame).ClassName = AFramePage.ClassName then
-      Exit(node);
-    node := Tree.GetNextSibling(node);
+      Exit(Node);
+    if Node.ChildCount > 0 then
+      Result := GetNodeByFrameClass(Tree, AFramePage, Node.FirstChild);
+    Node := Tree.GetNextSibling(Node);
   end;
 end;
 

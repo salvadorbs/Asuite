@@ -66,7 +66,7 @@ end;
 
 procedure TfrmOptions.btnCancelClick(Sender: TObject);
 begin
-  Close;
+  ModalResult := mrCancel;
 end;
 
 procedure TfrmOptions.btnOkClick(Sender: TObject);
@@ -75,7 +75,7 @@ begin
   Config.Changed := True;
   if frmMain.Visible then
     frmMain.FocusControl(frmMain.vstList);
-  Close;
+  ModalResult := mrOk;
 end;
 
 function TfrmOptions.Execute(APage: TPageFrameClass): Integer;

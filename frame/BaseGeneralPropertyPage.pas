@@ -34,7 +34,8 @@ var
 implementation
 
 uses
-  AppConfig, PropertyItem, ulSysUtils, ulCommonUtils, udImages;
+  AppConfig, PropertyItem, ulSysUtils, ulCommonUtils, udImages, ulEnumerations,
+  ulNodeDataTypes;
 
 {$R *.dfm}
 
@@ -80,6 +81,9 @@ begin
   begin
     if Assigned(CurrentNodeData) then
     begin
+      //Delete desktop shortcut
+      if (CurrentNodeData.DataType = vtdtFile) then
+        TvFileNodeData(CurrentNodeData).ShortcutDesktop := False;
       CurrentNodeData.Name     := edtName.Text;
       CurrentNodeData.PathIcon := edtPathIcon.Text;
     end;

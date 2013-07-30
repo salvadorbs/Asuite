@@ -374,8 +374,7 @@ end;
 constructor TvCategoryNodeData.Create;
 begin
   inherited Create(vtdtCategory);
-  FAddDate    := 0;
-  FEditDate   := 0;
+  FImageIndex := IMAGE_INDEX_Cat;
 end;
 
 //------------------------------------------------------------------------------
@@ -389,7 +388,7 @@ begin
   //Advanced
   FParameters      := '';
   FWorkingDir      := '';
-  FWindowState     := -1;
+  FWindowState     := 0;
   FActionOnExe     := aeDefault;
   FNoMRU           := False;
   FNoMFU           := False;
@@ -509,7 +508,7 @@ begin
   begin
     //If value is true, create shortcut in desktop
     if (value and (FShortcutDesktop <> value)) then
-      CreateShortcutOnDesktop(Name + EXT_LNK, FPathAbsoluteExe,FParameters,FWorkingDir)
+      CreateShortcutOnDesktop(Name + EXT_LNK, FPathAbsoluteExe, FParameters, FWorkingDir)
     else //else delete it from desktop
       if (not value and (FShortcutDesktop <> value)) then
         DeleteShortcutOnDesktop(FName + EXT_LNK);
