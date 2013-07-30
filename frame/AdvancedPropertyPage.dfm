@@ -1,6 +1,4 @@
 inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
-  Width = 360
-  ExplicitWidth = 360
   object cbShortcutDesktop: TCheckBox [0]
     Left = 13
     Top = 195
@@ -23,6 +21,7 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       Height = 21
       Style = csDropDownList
       TabOrder = 0
+      OnChange = cxSchedulerChange
       Items.Strings = (
         'Disabled'
         'Once'

@@ -4,11 +4,11 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BaseEntityPage, Vcl.ComCtrls,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BasePropertyPage, Vcl.ComCtrls,
   Vcl.StdCtrls;
 
 type
-  TfrmAdvancedPropertyPage = class(TfrmBaseEntityPage)
+  TfrmAdvancedPropertyPage = class(TfrmBasePropertyPage)
     cbShortcutDesktop: TCheckBox;
     grpScheduler: TGroupBox;
     cxScheduler: TComboBox;
@@ -22,6 +22,7 @@ type
     cbHotKey: TCheckBox;
     cxHotkey1: TComboBox;
     cxHotKey2: TComboBox;
+    procedure cxSchedulerChange(Sender: TObject);
   private
     { Private declarations }
   strict protected
@@ -39,11 +40,18 @@ var
 implementation
 
 uses
-  AppConfig;
+  AppConfig, PropertyItem, ulEnumerations, ulNodeDataTypes;
 
 {$R *.dfm}
 
 { TfrmAdvancedPropertyPage }
+
+procedure TfrmAdvancedPropertyPage.cxSchedulerChange(Sender: TObject);
+begin
+  dtpSchDate.Enabled := cxScheduler.ItemIndex = Ord(smOnce);
+  dtpSchTime.Enabled := (cxScheduler.ItemIndex = Ord(smOnce)) or
+                        (cxScheduler.ItemIndex = Ord(smDaily));
+end;
 
 function TfrmAdvancedPropertyPage.GetImageIndex: Integer;
 begin
@@ -57,12 +65,53 @@ end;
 
 function TfrmAdvancedPropertyPage.InternalLoadData: Boolean;
 begin
+  Result := inherited;
+  if Assigned(CurrentNodeData) then
+  begin
+    //Scheduler
+    cxScheduler.ItemIndex := Ord(CurrentNodeData.SchMode);
+    dtpSchDate.Date       := CurrentNodeData.SchDateTime;
+    dtpSchTime.Time       := CurrentNodeData.SchDateTime;
+    cxSchedulerChange(Self);
+    //Hotkey
 
+    //Specific file settings
+    cbHideSoftware.Checked := CurrentNodeData.HideFromMenu;
+    if CurrentNodeData.DataType = vtdtFile then
+    begin
+      cbDontInsertMRU.Checked   := TvFileNodeData(CurrentNodeData).NoMRU;
+      cbDontInsertMFU.Checked   := TvFileNodeData(CurrentNodeData).NoMFU;
+      cbShortcutDesktop.Checked := TvFileNodeData(CurrentNodeData).ShortcutDesktop;
+    end
+    else
+      if CurrentNodeData.DataType = vtdtCategory then
+      begin
+        cbDontInsertMRU.Enabled   := False;
+        cbDontInsertMFU.Enabled   := False;
+        cbShortcutDesktop.Enabled := False;
+      end;
+  end;
 end;
 
 function TfrmAdvancedPropertyPage.InternalSaveData: Boolean;
 begin
+  Result := inherited;
+  if Assigned(CurrentNodeData) then
+  begin
+    //Scheduler
+    CurrentNodeData.SchMode     := TSchedulerMode(cxScheduler.ItemIndex);
+    CurrentNodeData.SchDateTime := Int(dtpSchDate.Date) + Frac(dtpSchTime.Time);
+    //Hotkey
 
+    //Specific file settings
+    CurrentNodeData.HideFromMenu := cbHideSoftware.Checked;
+    if CurrentNodeData.DataType = vtdtFile then
+    begin
+      TvFileNodeData(CurrentNodeData).NoMRU := cbDontInsertMRU.Checked;
+      TvFileNodeData(CurrentNodeData).NoMFU := cbDontInsertMFU.Checked;
+      TvFileNodeData(CurrentNodeData).ShortcutDesktop := cbShortcutDesktop.Checked;
+    end;
+  end;
 end;
 
 end.
