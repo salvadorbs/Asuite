@@ -1,6 +1,4 @@
 inherited frmBehaviorPropertyPage: TfrmBehaviorPropertyPage
-  Width = 360
-  ExplicitWidth = 360
   object grpAutoExecute: TGroupBox [0]
     Left = 3
     Top = 3
@@ -15,6 +13,7 @@ inherited frmBehaviorPropertyPage: TfrmBehaviorPropertyPage
       Height = 21
       Style = csDropDownList
       TabOrder = 0
+      OnChange = cxAutoExecuteChange
       Items.Strings = (
         'Never'
         'Always on startup'
@@ -28,19 +27,20 @@ inherited frmBehaviorPropertyPage: TfrmBehaviorPropertyPage
       Height = 21
       Caption = 'Change order'
       TabOrder = 1
+      OnClick = btnChangeOrderClick
     end
   end
   object grpWindowState: TGroupBox [1]
-    Left = 215
+    Left = 191
     Top = 56
-    Width = 142
+    Width = 166
     Height = 53
     Caption = 'Window State'
     TabOrder = 1
     object cxWindowState: TComboBox
       Left = 8
       Top = 19
-      Width = 126
+      Width = 150
       Height = 21
       Style = csDropDownList
       TabOrder = 0
@@ -53,14 +53,14 @@ inherited frmBehaviorPropertyPage: TfrmBehaviorPropertyPage
   object grpOnExecute: TGroupBox [2]
     Left = 3
     Top = 56
-    Width = 207
+    Width = 182
     Height = 53
     Caption = 'On Execute'
     TabOrder = 2
     object cxActionOnExe: TComboBox
       Left = 8
-      Top = 17
-      Width = 191
+      Top = 19
+      Width = 165
       Height = 21
       Style = csDropDownList
       TabOrder = 0
