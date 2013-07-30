@@ -185,7 +185,7 @@ type
     procedure RunAs(TreeView: TBaseVirtualTree);
     procedure RunAsAdmin(TreeView: TBaseVirtualTree);
     procedure OpenFolder(TreeView: TBaseVirtualTree);
-    procedure ShowItemProperty(TreeView: TBaseVirtualTree);
+    function  ShowItemProperty(TreeView: TBaseVirtualTree; Node: PVirtualNode = nil): Integer;
     procedure DoSearchItem(TreeSearch: TBaseVirtualTree; Keyword: string;
                            Callback: TVTGetNodeProc);
     procedure LoadGlyphs;
@@ -567,11 +567,15 @@ begin
   ExecuteSelectedNode(TreeView, ProcessInfo);
 end;
 
-procedure TfrmMain.ShowItemProperty(TreeView: TBaseVirtualTree);
+function TfrmMain.ShowItemProperty(TreeView: TBaseVirtualTree; Node: PVirtualNode): Integer;
 var
   BaseNode: PBaseData;
 begin
-  BaseNode := GetNodeDataEx(TreeView.FocusedNode, TreeView, vstSearch, vstList);
+  Result := mrCancel;
+  if Assigned(Node) then
+    BaseNode := GetNodeDataEx(Node, TreeView, vstSearch, vstList)
+  else
+    BaseNode := GetNodeDataEx(TreeView.FocusedNode, TreeView, vstSearch, vstList);
   if Assigned(BaseNode) then
     begin
       if BaseNode.Data.DataType in [vtdtFile, vtdtCategory, vtdtFolder] then
@@ -579,13 +583,13 @@ begin
         try
           Application.CreateForm(TfrmPropertyItem, frmPropertyItem);
           frmPropertyItem.FormStyle := Self.FormStyle;
-          frmPropertyItem.Execute(TvCustomRealNodeData((BaseNode).Data));
+          Result := frmPropertyItem.Execute(TvCustomRealNodeData((BaseNode).Data));
         finally
           frmPropertyItem.Free;
         end;
       end
       else
-        TfrmPropertySeparator.Edit(Self, BaseNode);
+        Result := TfrmPropertySeparator.Edit(Self, BaseNode);
     RefreshList(vstList);
   end;
 end;

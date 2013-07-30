@@ -79,7 +79,7 @@ implementation
 
 uses
   Menus, ulSysUtils, udImages, Main, ulDatabase, ulAppConfig, ulFileFolder,
-  GraphicMenu;
+  GraphicMenu, PropertyItem, PropertySeparator;
 
 function AddNode(Sender: TBaseVirtualTree;AType: TvTreeDataType): PBaseData;
 var
@@ -87,9 +87,10 @@ var
   NodeData             : PBaseData;
   FolderPath, tempName : String;
 begin
+  Result     := nil;
   FolderPath := '';
-  CurrNode := Sender.FocusedNode;
-  if (CurrNode <> nil) then
+  CurrNode   := Sender.FocusedNode;
+  if Assigned(CurrNode) then
     begin
       NodeData := Sender.GetNodeData(CurrNode);
       // Separator: always insert after
@@ -99,8 +100,8 @@ begin
         if (NodeData.Data.DataType = vtdtCategory) then
         begin
           // if category then expand and add subnode
-          Sender.Expanded[CurrNode] := true;
           ChildNode := Sender.AddChild(CurrNode, CreateNodeData(AType));
+          Sender.Expanded[CurrNode] := True;
         end
         else // else get parent and add to it
           ChildNode := Sender.InsertNode(CurrNode, amInsertAfter, CreateNodeData(AType));
@@ -112,25 +113,17 @@ begin
   NodeData.Data.pNode := ChildNode;
   NodeData.Data.ParentNode := ChildNode.Parent;
   NodeData.Data.Name := msgNoName + IntToStr(Sender.TotalCount);
-  //Set some its variables depending on its type
-  //Don't necessary for separator
-  case AType of
-    vtdtCategory:
+  //ShowPropertyItem
+  //Separator
+  if AType = vtdtSeparator then
+  begin
+    if (TfrmPropertySeparator.Edit(Sender, NodeData) <> mrOK) then
+      Sender.DeleteNode(ChildNode);
+  end //Other types
+  else begin
+    //Add Cat ImageIndex
+    if AType = vtdtFolder then
     begin
-      //Category
-      NodeData.Data.ImageIndex := IMAGE_INDEX_Cat;
-//      if (TfrmPropertyCat.Edit(Sender, NodeData) <> mrOK) then
-//        Sender.DeleteNode(ChildNode);
-    end;
-    vtdtFile:
-    begin
-      //File
-//      if (TfrmPropertyFile.Edit(Sender, NodeData) <> mrOK) then
-//        Sender.DeleteNode(ChildNode);
-    end;
-    vtdtFolder:
-    begin
-      //Folder
       TvCustomRealNodeData(NodeData.Data).PathIcon := AbsoluteToRelative(SUITE_SMALLICONS_PATH + FILEICON_Folder);
       FolderPath := BrowseForFolder('',SUITE_WORKING_PATH);
       if FolderPath <> '' then
@@ -139,21 +132,17 @@ begin
         if tempName <> '' then
           NodeData.Data.Name   := tempName;
         TvFileNodeData(NodeData.Data).PathExe := AbsoluteToRelative(FolderPath + PathDelim);
-//        if (TfrmPropertyFile.Edit(Sender, NodeData) <> mrOK) then
-//          Sender.DeleteNode(ChildNode);
       end
-      else
+      else begin
         Sender.DeleteNode(ChildNode);
+        Exit;
+      end;
     end;
-    vtdtSeparator:
-    begin
-      //Separator
-//      if (TfrmPropertySeparator.Edit(Sender, NodeData) <> mrOK) then
-//        Sender.DeleteNode(ChildNode);
-    end;
+    if (frmMain.ShowItemProperty(Sender, ChildNode) <> mrOK) then
+      Sender.DeleteNode(ChildNode);
   end;
-  RefreshList(Sender);
-  Result := NodeData;
+  if Assigned(NodeData) then
+    Result := NodeData;
 end;
 
 function ClickOnButtonTree(Sender: TBaseVirtualTree): Boolean;

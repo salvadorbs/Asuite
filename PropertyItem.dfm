@@ -22,6 +22,7 @@ object frmPropertyItem: TfrmPropertyItem
     Width = 75
     Height = 25
     Caption = 'Ok'
+    ModalResult = 1
     TabOrder = 0
     OnClick = btnOkClick
   end
@@ -31,6 +32,7 @@ object frmPropertyItem: TfrmPropertyItem
     Width = 75
     Height = 25
     Caption = 'Cancel'
+    ModalResult = 2
     TabOrder = 1
     OnClick = btnCancelClick
   end

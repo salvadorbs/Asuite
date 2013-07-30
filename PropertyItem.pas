@@ -53,7 +53,7 @@ uses
 
 procedure TfrmPropertyItem.btnCancelClick(Sender: TObject);
 begin
-  Close;
+  ModalResult := mrCancel;
 end;
 
 procedure TfrmPropertyItem.btnOkClick(Sender: TObject);
@@ -70,7 +70,7 @@ begin
     FListNodeData.ImageIndex := ImagesDM.GetIconIndex(FListNodeData);
     if frmMain.Visible then
       frmMain.FocusControl(frmMain.vstList);
-    Close;
+    ModalResult := mrOk;
   end;
 end;
 
