@@ -714,7 +714,7 @@ begin
   New(DataSource);
   Stream.ReadBuffer(DataSource^,SizeOf(rBaseData));
   //Copy source's properties in DataDest
-  DataDest := vstList.GetNodeData(Node);
+  DataDest := Sender.GetNodeData(Node);
   DataDest.Data := CreateNodeData(DataSource.Data.DataType);
   //Copy DataSource in DataDest
   case DataSource.Data.DataType of
@@ -760,7 +760,7 @@ procedure TfrmMain.vstListSaveNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
 var
   Data: PBaseData;
 begin
-  Data := vstList.GetNodeData(Node);
+  Data := Sender.GetNodeData(Node);
   Stream.WriteBuffer(Data^,SizeOf(rBaseData));
 end;
 
@@ -803,49 +803,52 @@ var
   AttachMode : TVTNodeAttachMode;
 begin
   Sender.BeginUpdate;
-  case Mode of
-    dmAbove  : AttachMode := amInsertBefore;
-    dmOnNode : AttachMode := amAddChildLast;
-    dmBelow  : AttachMode := amInsertAfter;
-  else
-    AttachMode := amNowhere;
-  end;
-  if Assigned(DataObject) then
-  begin
-    NodeData := Sender.GetNodeData(Sender.DropTargetNode);
-    if Mode = dmOnNode then
+  try
+    case Mode of
+      dmAbove  : AttachMode := amInsertBefore;
+      dmOnNode : AttachMode := amAddChildLast;
+      dmBelow  : AttachMode := amInsertAfter;
+    else
+      AttachMode := amNowhere;
+    end;
+    if Assigned(DataObject) then
     begin
-      //Check if DropMode is in a vtdtCategory (so expand it, before drop item)
-      //or another item type (change Mode and AttachMode for insert after new nodes)
-      if NodeData.Data.DataType <> vtdtCategory then
+      NodeData := Sender.GetNodeData(Sender.DropTargetNode);
+      if Mode = dmOnNode then
       begin
-        Mode := dmBelow;
-        AttachMode := amInsertAfter;
-      end
-      else
-        vstList.Expanded[Sender.DropTargetNode] := True;
-    end;
-    try
-      for I := 0 to High(Formats) - 1 do
-      begin
-        //Files
-        if Formats[I] = CF_HDROP then
-          DragDropFiles(Sender,DataObject, AttachMode, Mode)
-        else //VirtualTree Nodes
-          if Formats[I] = CF_VIRTUALTREE then
-            Sender.ProcessDrop(DataObject, Sender.DropTargetNode, Effect, AttachMode)
-          else //Text
-            if Formats[I] = CF_TEXT then
-              DragDropText(Sender,DataObject, AttachMode, Mode);
+        //Check if DropMode is in a vtdtCategory (so expand it, before drop item)
+        //or another item type (change Mode and AttachMode for insert after new nodes)
+        if NodeData.Data.DataType <> vtdtCategory then
+        begin
+          Mode := dmBelow;
+          AttachMode := amInsertAfter;
+        end
+        else
+          vstList.Expanded[Sender.DropTargetNode] := True;
       end;
-    except
-      on E : Exception do
-        ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message], true);
+      try
+        for I := 0 to High(Formats) - 1 do
+        begin
+          //Files
+          if Formats[I] = CF_HDROP then
+            DragDropFiles(Sender,DataObject, AttachMode, Mode)
+          else //VirtualTree Nodes
+            if Formats[I] = CF_VIRTUALTREE then
+              Sender.ProcessDrop(DataObject, Sender.DropTargetNode, Effect, AttachMode)
+            else //Text
+              if Formats[I] = CF_TEXT then
+                DragDropText(Sender,DataObject, AttachMode, Mode);
+        end;
+      except
+        on E : Exception do
+          ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message], true);
+      end;
+      vstList.Repaint;
+      RefreshList(vstList);
     end;
-    vstList.Repaint;
-    RefreshList(vstList);
+  finally
+    Sender.EndUpdate;
   end;
-  Sender.EndUpdate;
 end;
 
 procedure TfrmMain.vstListDragOver(Sender: TBaseVirtualTree; Source: TObject;
@@ -929,9 +932,6 @@ begin
   miDelete1.ImageIndex     := IMAGE_INDEX_Delete;
   miProperty1.ImageIndex   := IMAGE_INDEX_Property;
   miInfoASuite.ImageIndex  := IMAGE_INDEX_Help;
-  //TODO ...image for stats
-//  miStatistics.ImageIndex  := IMAGE_INDEX_sHelp;
-
 
   //Set PopUpMenu's ImageIndexes
   miRunSelectedSw.ImageIndex := IMAGE_INDEX_Run;
@@ -1115,7 +1115,7 @@ begin
   HotKeyApp := TNodeDataList.Create;
   //Set NodeDataSize for trees
   vstList.NodeDataSize   := SizeOf(rBaseData);
-  vstSearch.NodeDataSize := SizeOf(TTreeDataX);
+  vstSearch.NodeDataSize := SizeOf(rTreeDataX);
   //Read Only Mode
   with Config do
   begin

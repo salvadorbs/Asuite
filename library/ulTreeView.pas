@@ -124,13 +124,12 @@ begin
     //Add Cat ImageIndex
     if AType = vtdtFolder then
     begin
-      TvCustomRealNodeData(NodeData.Data).PathIcon := AbsoluteToRelative(SUITE_SMALLICONS_PATH + FILEICON_Folder);
       FolderPath := BrowseForFolder('',SUITE_WORKING_PATH);
       if FolderPath <> '' then
       begin
         tempName := ExtractDirectoryName(FolderPath + PathDelim);
         if tempName <> '' then
-          NodeData.Data.Name   := tempName;
+          NodeData.Data.Name := tempName;
         TvFileNodeData(NodeData.Data).PathExe := AbsoluteToRelative(FolderPath + PathDelim);
       end
       else begin
@@ -173,9 +172,9 @@ begin
     begin
       //Add new node
       if Assigned(Sender.DropTargetNode) then
-        Node := Sender.InsertNode(Sender.DropTargetNode, AttachMode,TvFileNodeData.Create)
+        Node := Sender.InsertNode(Sender.DropTargetNode, AttachMode,TvFileNodeData.Create(vtdtFile))
       else
-        Node := Sender.AddChild(nil,TvFileNodeData.Create);
+        Node := Sender.AddChild(nil,TvFileNodeData.Create(vtdtFile));
       //Set node properties
       GetDropFileProperty(Sender,Node,FileNames[I]);
     end;
@@ -238,9 +237,9 @@ var
 begin
   //Add node
   if Assigned(Sender.DropTargetNode) then
-    Node := Sender.InsertNode(Sender.DropTargetNode, AttachMode, TvFileNodeData.Create)
+    Node := Sender.InsertNode(Sender.DropTargetNode, AttachMode, TvFileNodeData.Create(vtdtFile))
   else
-    Node := Sender.AddChild(nil,TvFileNodeData.Create);
+    Node := Sender.AddChild(nil,TvFileNodeData.Create(vtdtFile));
   NodeData := Sender.GetNodeData(Node);
   //Set node properties
   NodeData.Data.pNode := Node;

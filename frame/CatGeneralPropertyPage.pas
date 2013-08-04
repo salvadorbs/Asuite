@@ -76,7 +76,7 @@ var
   Node: PVirtualNode;
 begin
   Result := inherited;
-  vstCategoryItems.NodeDataSize := SizeOf(TTreeDataX);
+  vstCategoryItems.NodeDataSize := SizeOf(rTreeDataX);
   vstCategoryItems.Images       := ImagesDM.IcoImages;
   if Assigned(CurrentNodeData) then
   begin

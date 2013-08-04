@@ -479,9 +479,9 @@ var
   BackgroundPath, SeparatorPath, LogoPath, IconPath: string;
 begin
   //NodeDataSize
-  vstList.NodeDataSize     := SizeOf(TTreeDataX);
-  vstRecents.NodeDataSize  := SizeOf(TTreeDataX);
-  vstMostUsed.NodeDataSize := SizeOf(TTreeDataX);
+  vstList.NodeDataSize     := SizeOf(rTreeDataX);
+  vstRecents.NodeDataSize  := SizeOf(rTreeDataX);
+  vstMostUsed.NodeDataSize := SizeOf(rTreeDataX);
   //Load theme
   if FileExists(SUITE_CURRENTTHEME_PATH + THEME_INI) then
   begin

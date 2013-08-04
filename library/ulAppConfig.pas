@@ -130,6 +130,8 @@ type
     procedure SetBackupNumber(const Value: Integer);
     procedure SetChanged(const Value: Boolean);
     procedure SetBackup(const Value: Boolean);
+    procedure SetWindowHotKey(const Value: Boolean);
+    procedure SetMenuHotKey(const Value: Boolean);
   public
     { public declarations }
     constructor Create; overload;
@@ -171,8 +173,6 @@ type
     // Execution
     property ActionOnExe: TActionOnExecute read FActionOnExe write FActionOnExe;
     property RunSingleClick: Boolean read FRunSingleClick write FRunSingleClick;
-    //HotKeys
-    property HotKey: Boolean read FHotKey write FHotKey;
     // Trayicon
     property TrayIcon: Boolean read FTrayIcon write SetTrayIcon;
     property TrayUseCustomIcon: Boolean read FTrayUseCustomIcon write SetTrayUseCustomIcon;
@@ -190,14 +190,14 @@ type
     property GMBtnMusic: string read FGMBtnMusic write SetGMBtnMusic;
     property GMBtnVideos: string read FGMBtnVideos write SetGMBtnVideos;
     property GMBtnExplore: string read FGMBtnExplore write SetGMBtnExplore;
-    //Hot Keys
-    property WindowHotKey: Boolean read FWindowHotKey write FWindowHotKey;
+    //HotKeys
+    property HotKey: Boolean read FHotKey write FHotKey;
+    property WindowHotKey: Boolean read FWindowHotKey write SetWindowHotKey;
     property WindowHotKeyCode: Integer read FWindowHotKeyCode write SetWindowHotKeyCode;
     property WindowHotKeyMod: Integer read FWindowHotKeyMod write SetWindowHotKeyMod;
-    property MenuHotKey: Boolean read FMenuHotKey write FMenuHotKey;
+    property MenuHotKey: Boolean read FMenuHotKey write SetMenuHotKey;
     property MenuHotKeyCode: Integer read FMenuHotKeyCode write SetMenuHotKeyCode;
     property MenuHotKeyMod: Integer read FMenuHotKeyMod write SetMenuHotKeyMod;
-    procedure RegisterHotKeys;
     //Mouse Sensor
     property UseMouseSensors: Boolean read FUseMouseSensors write FUseMouseSensors;
     property SensorLeftClick[aIndex: Integer]:Integer read GetSensorLeftClick write setSensorLeftClick;
@@ -280,10 +280,7 @@ begin
   FReadOnlyMode       := False;
   FChanged            := False;
   FASuiteState        := asStartUp;
-
-  //TODO COCCE
   FHotKey             := True;
-
   FWindowHotKey       := False;
   FWindowHotKeyCode   := 0;
   FWindowHotKeyMod    := 0;
@@ -361,43 +358,6 @@ begin
   Result := FSensorRightClick[aIndex];
 end;
 
-procedure TConfiguration.RegisterHotKeys;
-begin
-  if Config.HotKey then
-  begin
-    //Unregister hotkey (if actived)
-    if (Config.HotKey) then
-    begin
-      UnregisterHotKey(frmMain.Handle, frmMain.Handle);
-      UnregisterHotKey(frmMain.Handle, frmMenuID);
-    end;
-    //Register hotkey
-    if (Config.WindowHotKey) then
-    begin
-      if Not(RegisterHotKey(frmMain.Handle, frmMain.Handle,
-                            GetHotKeyMod(Config.WindowHotKeyMod),
-                            GetHotKeyCode(Config.WindowHotKeyCode))) then
-      begin
-        ShowMessage('HotKeys - Error 1!');
-//        cbWindowHotKey.Checked := false;
-        exit;
-      end;
-    end;
-    //Register Menuhotkey
-    if (Config.MenuHotKey) then
-    begin
-      if Not(RegisterHotKey(frmMain.Handle, frmMenuID,
-                            GetHotKeyMod(Config.MenuHotKeyMod),
-                            GetHotKeyCode(Config.MenuHotKeyCode))) then
-      begin
-        ShowMessage('HotKeys - Error 2!');
-//        cbWindowHotKey.Checked := false;
-        exit;
-      end;
-    end;
-  end;
-end;
-
 procedure TConfiguration.SetTrayIcon(value: Boolean);
 begin
   FTrayIcon := value;
@@ -431,6 +391,24 @@ begin
     frmMain.Caption := FCustomTitleString
   else
     frmMain.Caption := APP_TITLE;
+end;
+
+procedure TConfiguration.SetWindowHotKey(const Value: Boolean);
+begin
+  if (Config.HotKey) then
+  begin
+    //Unregister hotkey (if actived)
+    UnregisterHotKey(frmMain.Handle, frmMain.Handle);
+    //Register hotkey
+    if (Config.WindowHotKey) then
+    begin
+      if Not(RegisterHotKey(frmMain.Handle, frmMain.Handle,
+                            GetHotKeyMod(FWindowHotKeyMod),
+                            GetHotKeyCode(FWindowHotKeyCode))) then
+        ShowMessage(msgErrRegHotkey);
+    end;
+  end;
+  FWindowHotKey := Value;
 end;
 
 procedure TConfiguration.SetWindowHotKeyCode(const Value: Integer);
@@ -624,6 +602,24 @@ begin
   end
   else
     FLanguage := value;
+end;
+
+procedure TConfiguration.SetMenuHotKey(const Value: Boolean);
+begin
+  if (Config.HotKey) then
+  begin
+    //Unregister hotkey
+    UnregisterHotKey(frmMain.Handle, frmMenuID);
+    //Register Menuhotkey
+    if (value) then
+    begin
+      if Not(RegisterHotKey(frmMain.Handle, frmMenuID,
+                            GetHotKeyMod(Config.MenuHotKeyMod),
+                            GetHotKeyCode(Config.MenuHotKeyCode))) then
+        ShowMessage(msgErrRegHotkey);
+    end;
+  end;
+  FMenuHotKey := Value;
 end;
 
 procedure TConfiguration.SetMenuHotKeyCode(const Value: Integer);

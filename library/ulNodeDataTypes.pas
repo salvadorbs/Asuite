@@ -100,7 +100,7 @@ type
   end;
   PvBaseNodeData = ^TvBaseNodeData;
 
-  //Separator
+  //Custom
   TvCustomRealNodeData = class(TvBaseNodeData)
   private
     FPathIcon    : String;
@@ -117,6 +117,9 @@ type
     FAutorunPos  : Integer; //Position for ASuiteStartUpApp and ASuiteShutdownApp
     FSchMode     : TSchedulerMode; //0 Disabled, 1 Once, 2 Hourly, 3 Daily, 4 Weekly
     FSchDateTime : TDateTime;
+    FHotkey      : Boolean;
+    FHotkeyMod   : Integer;
+    FHotkeyCode  : Integer;
     procedure SetPathIcon(value:string);
     procedure SetCacheIcon(value:integer);
     procedure SetCacheLargeIcon(value:integer);
@@ -125,6 +128,9 @@ type
     procedure SetAutorun(value: TAutorunType);
     procedure SetSchMode(value: TSchedulerMode);
     procedure SetSchDateTime(value: TDateTime);
+    procedure SetHotkeyCode(const Value: Integer);
+    procedure SetHotkeyMod(const Value: Integer);
+    procedure SetHotkey(const Value: Boolean);
   public
     constructor Create(AType: TvTreeDataType); // virtual;
     procedure Copy(source:TvBaseNodeData); override;
@@ -143,6 +149,9 @@ type
     property AutorunPos: Integer read FAutorunPos write FAutorunPos;
     property SchMode: TSchedulerMode read FSchMode write SetSchMode;
     property SchDateTime: TDateTime read FSchDateTime write SetSchDateTime;
+    property Hotkey: Boolean read FHotkey write SetHotkey;
+    property HotkeyMod: Integer read FHotkeyMod write SetHotkeyMod;
+    property HotkeyCode: Integer read FHotkeyCode write SetHotkeyCode;
     procedure ResetIcon;
   end;
   PvCustomRealNodeData = ^TvCustomRealNodeData;
@@ -197,7 +206,7 @@ type
     function RunProcessAsAdmin(ProcessInfo: TProcessInfo): boolean;
   public
     //Specific properties
-    constructor Create; overload;
+    constructor Create(AType: TvTreeDataType); overload;
     procedure Copy(source:TvBaseNodeData); override;
     function OpenExtractedFolder: Boolean;
     property Name;
@@ -251,11 +260,10 @@ type
   end;
   PBaseData = ^rBaseData;
 
-  //TODO: Rename TTreeDataX in rTreeDataX
-  PTreeDataX = ^TTreeDataX; //X = Search or TrayMenu
-  TTreeDataX = record
+  rTreeDataX = record
     pNodeList : PVirtualNode;
   end;
+  PTreeDataX = ^rTreeDataX; //X = Search or TrayMenu
 
   //Record for Options and Property form
   rFramesNodeData = record
@@ -277,7 +285,7 @@ begin
   case AType of
     vtdtCategory  : Result := TvCategoryNodeData.Create;
     vtdtFile      : Result := TvFileNodeData.Create(vtdtFile);
-    vtdtFolder    : Result := TvFileNodeData.Create(vtdtFile);
+    vtdtFolder    : Result := TvFileNodeData.Create(vtdtFolder);
     vtdtSeparator : Result := TvSeparatorNodeData.Create;
   else
     Result := nil;
@@ -379,9 +387,11 @@ end;
 
 //------------------------------------------------------------------------------
 
-constructor TvFileNodeData.Create;
+constructor TvFileNodeData.Create(AType: TvTreeDataType);
 begin
   inherited Create(vtdtFile);
+  if AType = vtdtFolder then
+    FPathIcon := AbsoluteToRelative(SUITE_SMALLICONS_PATH + FILEICON_Folder);
   //Paths
   FPathExe         := '';
   FPathAbsoluteExe := '';
@@ -641,6 +651,9 @@ begin
   FPathCacheIcon := '';
   FSchMode     := smDisabled;
   FSchDateTime := Now;
+  FHotkey      := False;
+  FHotkeyMod   := 0;
+  FHotkeyCode  := 0;
 end;
 
 procedure TvCustomRealNodeData.SetMRUPosition(Value: Int64);
@@ -657,6 +670,27 @@ begin
   if (Config.ASuiteState <> asImporting) then
     if (FClickCount > 0) and (not TvFileNodeData(Self).FNoMFU) then
       MFUList.Add(Self);
+end;
+
+procedure TvCustomRealNodeData.SetHotkey(const Value: Boolean);
+begin
+  FHotkey := Value;
+end;
+
+procedure TvCustomRealNodeData.SetHotkeyCode(const Value: Integer);
+begin
+  if Value <> -1 then
+    FHotkeyCode := Value
+  else
+    FHotkeyCode := 0;
+end;
+
+procedure TvCustomRealNodeData.SetHotkeyMod(const Value: Integer);
+begin
+  if Value <> -1 then
+    FHotkeyMod := Value
+  else
+    FHotkeyMod := 0;
 end;
 
 procedure TvCustomRealNodeData.SetSchDateTime(value: TDateTime);

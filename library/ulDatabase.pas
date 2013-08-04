@@ -72,7 +72,10 @@ type
     Fautorun_position : Integer;
     Fscheduler_mode   : Byte;
     Fscheduler_datetime : TDateTime;
-    Frun_from_category : Boolean;
+    Frun_from_category  : Boolean;
+    FHotkey           : Boolean;
+    FHotkeyMod        : integer;
+    FHotkeyCode       : integer;
   published
     //property FIELDNAME: TYPE read FFIELDNAME write FFIELDNAME;
     property itemtype: Integer read Ftype write Ftype;
@@ -99,6 +102,9 @@ type
     property autorun_position: Integer read Fautorun_position write Fautorun_position;
     property scheduler_mode: Byte read Fscheduler_mode write Fscheduler_mode;
     property scheduler_datetime: TDateTime read Fscheduler_datetime write Fscheduler_datetime;
+    property hotkey: Boolean read FHotkey write FHotkey;
+    property hotkeymod: integer read FHotkeyMod write FHotkeyMod;
+    property hotkeycode: integer read FHotkeyCode write FHotkeyCode;
     property run_from_category: Boolean read Frun_from_category write Frun_from_category default True;
   end;
 
@@ -414,6 +420,9 @@ begin
         SQLFilesData.onlaunch     := Ord(ActionOnExe);
         SQLFilesData.scheduler_mode := Ord(SchMode);
         SQLFilesData.scheduler_datetime := SchDateTime;
+        SQLFilesData.hotkey       := Hotkey;
+        SQLFilesData.hotkeymod    := HotkeyMod;
+        SQLFilesData.hotkeycode   := HotkeyCode;
       end;
       //Add file fields
       if (AData.DataType = vtdtFile) then
@@ -503,6 +512,9 @@ begin
           Autorun     := TAutorunType(SQLFilesData.autorun);
           SchMode     := TSchedulerMode(SQLFilesData.scheduler_mode);
           SchDateTime := SQLFilesData.scheduler_datetime;
+          Hotkey      := SQLFilesData.hotkey;
+          HotkeyMod   := SQLFilesData.hotkeymod;
+          HotkeyCode  := SQLFilesData.hotkeycode;
           WindowState := SQLFilesData.window_state;
           ActionOnExe := TActionOnExecute(SQLFilesData.onlaunch);
           ClickCount  := SQLFilesData.clicks;
@@ -608,12 +620,12 @@ begin
         Config.GMBtnExplore       := SQLOptionsData.gmbtnexplore;
         //Hot Keys
         Config.HotKey             := SQLOptionsData.HotKey;
-        Config.WindowHotKey       := SQLOptionsData.WindowHotKey;
         Config.WindowHotKeyCode   := SQLOptionsData.WindowHotKeyCode;
         Config.WindowHotKeyMod    := SQLOptionsData.WindowHotKeyMod;
-        Config.MenuHotKey         := SQLOptionsData.MenuHotKey;
+        Config.WindowHotKey       := SQLOptionsData.WindowHotKey;
         Config.MenuHotKeyCode     := SQLOptionsData.MenuHotKeyCode;
         Config.MenuHotKeyMod      := SQLOptionsData.MenuHotKeyMod;
+        Config.MenuHotKey         := SQLOptionsData.MenuHotKey;
         //Mouse sensors
         Config.UseMouseSensors    := SQLOptionsData.UseMouseSensors;
         UTF8ToMouseSensors(SQLOptionsData.mousesensorleft,mbLeft);
@@ -622,7 +634,6 @@ begin
     finally
       SQLOptionsData.Free;
       Config.UpdateSensors;
-      Config.RegisterHotKeys;
     end;
   end
   else
@@ -892,6 +903,9 @@ begin
           SQLFilesData.onlaunch     := Ord(ActionOnExe);
           SQLFilesData.scheduler_mode := Ord(SchMode);
           SQLFilesData.scheduler_datetime := SchDateTime;
+          SQLFilesData.hotkey       := Hotkey;
+          SQLFilesData.hotkeymod    := HotkeyMod;
+          SQLFilesData.hotkeycode   := HotkeyCode;
         end;
         //Update file specific fields
         if (AData.DataType = vtdtFile) then

@@ -236,6 +236,7 @@ resourcestring
   msgFileNotFound   = 'File not found';
   msgImportFailed   = 'Import failed because of an error';
   msgErrEmptyUserName = 'Username field is empty';
+  msgErrRegHotkey   = 'Register hotkey failed';
   //Misc
   msgVersion        = 'Version %s %s';
 

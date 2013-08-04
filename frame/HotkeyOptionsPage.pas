@@ -95,15 +95,13 @@ begin
   //Hot Keys
   Config.HotKey           := cbHotKey.Checked;
   //Window's Hotkey
-  Config.WindowHotKey     := cbWindowHotKey.Checked;
   Config.WindowHotKeyCode := cxWindowHotKeyCode.ItemIndex;
   Config.WindowHotKeyMod  := cxWindowHotKeyMod.ItemIndex;
+  Config.WindowHotKey     := cbWindowHotKey.Checked;
   //Menu's Hotkey
-  Config.MenuHotKey       := cbMenuHotKey.Checked;
   Config.MenuHotKeyCode   := cxMenuHotKeyCode.ItemIndex;
   Config.MenuHotKeyMod    := cxMenuHotKeyMod.ItemIndex;
-  //Register HotKeys
-  Config.RegisterHotKeys;
+  Config.MenuHotKey       := cbMenuHotKey.Checked;
 end;
 
 end.
