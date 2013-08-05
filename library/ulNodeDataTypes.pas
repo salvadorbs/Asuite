@@ -153,6 +153,7 @@ type
     property HotkeyMod: Integer read FHotkeyMod write SetHotkeyMod;
     property HotkeyCode: Integer read FHotkeyCode write SetHotkeyCode;
     procedure ResetIcon;
+    procedure DeleteCacheIcon;
   end;
   PvCustomRealNodeData = ^TvCustomRealNodeData;
 
@@ -230,6 +231,7 @@ type
     property ShortcutDesktop:Boolean read FShortcutDesktop write SetShortcutDesktop;
     property RunFromCategory: Boolean read FRunFromCategory write FRunFromCategory;
     function Execute(Tree: TBaseVirtualTree;ProcessInfo: TProcessInfo): boolean; override;
+    procedure DeleteShortcutFile;
   end;
   PvFileNodeData = ^TvFileNodeData;
 
@@ -408,6 +410,12 @@ begin
   FAutorun         := atNever;
   FAutorunPos      := 0;
   FRunFromCategory := False;
+end;
+
+procedure TvFileNodeData.DeleteShortcutFile;
+begin
+  if (FShortcutDesktop) then
+    DeleteShortcutOnDesktop(FName + EXT_LNK);
 end;
 
 function TvFileNodeData.Execute(Tree: TBaseVirtualTree; ProcessInfo: TProcessInfo): boolean;
@@ -655,6 +663,13 @@ begin
   FHotkey      := False;
   FHotkeyMod   := 0;
   FHotkeyCode  := 0;
+end;
+
+procedure TvCustomRealNodeData.DeleteCacheIcon;
+begin
+  if FCacheID <> -1 then
+    if FileExists(FPathCacheIcon) then
+      SysUtils.DeleteFile(FPathCacheIcon);
 end;
 
 procedure TvCustomRealNodeData.SetMRUPosition(Value: Int64);

@@ -404,14 +404,11 @@ begin
   NodeData := TvCustomRealNodeData(PBaseData(Sender.GetNodeData(Node)).Data);
   if (NodeData.DataType <> vtdtSeparator) then
   begin
-    //TODO Create a method in TvCustomRealNodeData to delete cache file
     //Delete cache icon
-    if FileExists(NodeData.PathCacheIcon) then
-      DeleteFile(NodeData.PathCacheIcon);
-    //TODO Create a method in TvCustomRealNodeData to delete shortcut file
-    //Delete desktop's shortcut, if exists
-    if (TvFileNodeData(NodeData).ShortcutDesktop) then
-      DeleteShortcutOnDesktop(TvFileNodeData(NodeData).Name + EXT_LNK);
+    NodeData.DeleteCacheIcon;
+    //Delete desktop's shortcut
+    if NodeData is TvFileNodeData then
+      TvFileNodeData(NodeData).DeleteShortcutFile;
     //Remove item from special lists
     MRUList.Remove(NodeData);
     MFUList.Remove(NodeData);
