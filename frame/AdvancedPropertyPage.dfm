@@ -64,8 +64,9 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       Height = 17
       Caption = 'Active hotkey'
       TabOrder = 0
+      OnClick = cbHotKeyClick
     end
-    object cxHotkey1: TComboBox
+    object cxHotkeyMod: TComboBox
       Left = 8
       Top = 44
       Width = 130
@@ -89,7 +90,7 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
         'WinKey + Shift + Crtl'
         'WinKey + Shift + Crtl + Alt')
     end
-    object cxHotKey2: TComboBox
+    object cxHotKeyCode: TComboBox
       Left = 140
       Top = 44
       Width = 49

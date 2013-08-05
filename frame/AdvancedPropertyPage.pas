@@ -20,9 +20,10 @@ type
     cbDontInsertMRU: TCheckBox;
     cbDontInsertMFU: TCheckBox;
     cbHotKey: TCheckBox;
-    cxHotkey1: TComboBox;
-    cxHotKey2: TComboBox;
+    cxHotkeyMod: TComboBox;
+    cxHotKeyCode: TComboBox;
     procedure cxSchedulerChange(Sender: TObject);
+    procedure cbHotKeyClick(Sender: TObject);
   private
     { Private declarations }
   strict protected
@@ -45,6 +46,12 @@ uses
 {$R *.dfm}
 
 { TfrmAdvancedPropertyPage }
+
+procedure TfrmAdvancedPropertyPage.cbHotKeyClick(Sender: TObject);
+begin
+  cxHotkeyMod.Enabled  := cbHotKey.Checked;
+  cxHotKeyCode.Enabled := cbHotKey.Checked;
+end;
 
 procedure TfrmAdvancedPropertyPage.cxSchedulerChange(Sender: TObject);
 begin
@@ -69,12 +76,15 @@ begin
   if Assigned(CurrentNodeData) then
   begin
     //Scheduler
-    cxScheduler.ItemIndex := Ord(CurrentNodeData.SchMode);
-    dtpSchDate.Date       := CurrentNodeData.SchDateTime;
-    dtpSchTime.Time       := CurrentNodeData.SchDateTime;
+    cxScheduler.ItemIndex  := Ord(CurrentNodeData.SchMode);
+    dtpSchDate.Date        := CurrentNodeData.SchDateTime;
+    dtpSchTime.Time        := CurrentNodeData.SchDateTime;
     cxSchedulerChange(Self);
     //Hotkey
-
+    cbHotKey.Checked       := CurrentNodeData.Hotkey;
+    cxHotkeyMod.ItemIndex  := CurrentNodeData.HotkeyMod;
+    cxHotKeyCode.ItemIndex := CurrentNodeData.HotkeyCode;
+    cbHotKeyClick(Self);
     //Specific file settings
     cbHideSoftware.Checked := CurrentNodeData.HideFromMenu;
     if CurrentNodeData.DataType = vtdtFile then
@@ -99,10 +109,12 @@ begin
   if Assigned(CurrentNodeData) then
   begin
     //Scheduler
-    CurrentNodeData.SchMode     := TSchedulerMode(cxScheduler.ItemIndex);
-    CurrentNodeData.SchDateTime := Int(dtpSchDate.Date) + Frac(dtpSchTime.Time);
+    CurrentNodeData.SchMode      := TSchedulerMode(cxScheduler.ItemIndex);
+    CurrentNodeData.SchDateTime  := Int(dtpSchDate.Date) + Frac(dtpSchTime.Time);
     //Hotkey
-
+    CurrentNodeData.HotkeyMod    := cxHotkeyMod.ItemIndex;
+    CurrentNodeData.HotkeyCode   := cxHotKeyCode.ItemIndex;
+    CurrentNodeData.Hotkey       := cbHotKey.Checked;
     //Specific file settings
     CurrentNodeData.HideFromMenu := cbHideSoftware.Checked;
     if CurrentNodeData.DataType = vtdtFile then

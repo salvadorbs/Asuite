@@ -70,10 +70,10 @@ var
   SearchType : TSearchType;
   IterateSubTreeProcs : TIterateSubtreeProcs;
   StartupItemList,                      //Software in StartUp list
-  ShutdownItemList  : TAutorunItemList; //Software in Shutdown list
-  SchedulerItemList : TNodeDataList;
-  HotKeyApp : TNodeDataList;
-  ListStats: TListStats;     //Stats
+  ShutdownItemList    : TAutorunItemList; //Software in Shutdown list
+  SchedulerItemList   : TNodeDataList;
+  HotKeyApp : THotkeyList;
+  ListStats : TListStats;     //Stats
 
 implementation
 
@@ -113,6 +113,8 @@ begin
   NodeData.Data.pNode := ChildNode;
   NodeData.Data.ParentNode := ChildNode.Parent;
   NodeData.Data.Name := msgNoName + IntToStr(Sender.TotalCount);
+  //Refresh List
+  RefreshList(frmMain.vstList);
   //ShowPropertyItem
   //Separator
   if AType = vtdtSeparator then
@@ -121,7 +123,6 @@ begin
       Sender.DeleteNode(ChildNode);
   end //Other types
   else begin
-    //Add Cat ImageIndex
     if AType = vtdtFolder then
     begin
       FolderPath := BrowseForFolder('',SUITE_WORKING_PATH);
@@ -403,15 +404,21 @@ begin
   NodeData := TvCustomRealNodeData(PBaseData(Sender.GetNodeData(Node)).Data);
   if (NodeData.DataType <> vtdtSeparator) then
   begin
+    //TODO Create a method in TvCustomRealNodeData to delete cache file
     //Delete cache icon
     if FileExists(NodeData.PathCacheIcon) then
       DeleteFile(NodeData.PathCacheIcon);
+    //TODO Create a method in TvCustomRealNodeData to delete shortcut file
     //Delete desktop's shortcut, if exists
     if (TvFileNodeData(NodeData).ShortcutDesktop) then
       DeleteShortcutOnDesktop(TvFileNodeData(NodeData).Name + EXT_LNK);
-    //Remove item from special menu
+    //Remove item from special lists
     MRUList.Remove(NodeData);
     MFUList.Remove(NodeData);
+    //Remove item from hotkey list
+    if NodeData.Hotkey then
+      HotKeyApp.Remove(NodeData);
+    //Remove item from scheduler list
     if NodeData.SchMode <> smDisabled then
       SchedulerItemList.Remove(NodeData);
     if (NodeData.Autorun in [atAlwaysOnStart, atSingleInstance]) then
@@ -426,7 +433,7 @@ end;
 procedure TIterateSubtreeProcs.ActionsOnShutdown(Sender: TBaseVirtualTree; Node: PVirtualNode;
                            Data: Pointer; var Abort: Boolean);
 var
-  NodeData : PBaseData;
+  NodeData: PBaseData;
 begin
   NodeData := Sender.GetNodeData(Node);
   if NodeData.Data.DataType = vtdtFile then

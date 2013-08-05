@@ -512,9 +512,9 @@ begin
           Autorun     := TAutorunType(SQLFilesData.autorun);
           SchMode     := TSchedulerMode(SQLFilesData.scheduler_mode);
           SchDateTime := SQLFilesData.scheduler_datetime;
-          Hotkey      := SQLFilesData.hotkey;
           HotkeyMod   := SQLFilesData.hotkeymod;
           HotkeyCode  := SQLFilesData.hotkeycode;
+          Hotkey      := SQLFilesData.hotkey;
           WindowState := SQLFilesData.window_state;
           ActionOnExe := TActionOnExecute(SQLFilesData.onlaunch);
           ClickCount  := SQLFilesData.clicks;

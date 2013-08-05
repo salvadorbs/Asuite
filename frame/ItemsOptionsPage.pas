@@ -83,7 +83,7 @@ end;
 procedure TfrmItemsOptionsPage.PopulateLstAutoExe(ListBox: TListBox;AutorunItemList: TAutorunItemList);
 var
   I: Integer;
-  NodeData: TvFileNodeData;
+  NodeData: TvCustomRealNodeData;
 begin
   ListBox.Items.BeginUpdate;
   for I := 0 to AutorunItemList.Count - 1 do

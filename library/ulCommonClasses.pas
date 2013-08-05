@@ -40,7 +40,7 @@ type
     procedure Insert(Index: integer; Item: TvCustomRealNodeData);
     function  Last: TvCustomRealNodeData;
     function  Remove(Item: TvCustomRealNodeData): Integer;
-    property  Items[Index: Integer]: TvCustomRealNodeData read GetItems write SetItems;
+    property  Items[Index: Integer]: TvCustomRealNodeData read GetItems write SetItems; default;
   end;
 
   //Most Recently Used
@@ -56,6 +56,15 @@ type
     constructor Create;
     procedure Add(Item: TvCustomRealNodeData);
     procedure Sort;
+  end;
+
+  THotkeyList = class(TNodeDataList)
+  public
+    function Add(Item: TvCustomRealNodeData): Integer;
+    function Remove(Item: TvCustomRealNodeData): Integer;
+    function IndexOfID(ID: Integer): TvCustomRealNodeData;
+    procedure RefreshRegs;
+    procedure Clear;
   end;
 
   //ASuite TrayIcon Menu
@@ -103,6 +112,9 @@ type
   end;
 
 implementation
+
+uses
+  Main, Windows, ulAppConfig, ulCommonUtils;
 
 constructor TNodeDataList.Create;
 begin
@@ -351,6 +363,67 @@ begin
                                   IntToStr(FMinor),
                                   IntToStr(FRelease),
                                   IntToStr(FBuild)]);
+end;
+
+{ THotkeyList }
+
+function THotkeyList.Add(Item: TvCustomRealNodeData): Integer;
+begin
+  Assert((Item.ID <> -1), 'Current Item doesn'' have a valid ID');
+
+  Result := inherited;
+  if Config.HotKey then
+    RegisterHotKey(frmMain.Handle, Item.ID,
+                      GetHotKeyMod(Item.HotkeyMod),
+                      GetHotKeyCode(Item.HotkeyCode));
+end;
+
+procedure THotkeyList.Clear;
+var
+  I: Integer;
+begin
+  for I := 0 to Self.Count - 1 do
+    UnregisterHotKey(frmMain.Handle, Self[I].ID);
+  inherited;
+end;
+
+function THotkeyList.IndexOfID(ID: Integer): TvCustomRealNodeData;
+var
+  I: Integer;
+begin
+  Result := nil;
+  for I := 0 to Self.Count - 1 do
+  begin
+    if Self[I].ID = ID then
+    begin
+      Result := Self[I];
+      Exit;
+    end;
+  end;
+end;
+
+procedure THotkeyList.RefreshRegs;
+var
+  I: Integer;
+begin
+  //This method unregister and register hotkey again for every item
+  for I := 0 to Self.Count - 1 do
+  begin
+    UnregisterHotKey(frmMain.Handle, Self[I].ID);
+    if Config.HotKey then
+      RegisterHotKey(frmMain.Handle, Self[I].ID,
+                     GetHotKeyMod(Self[I].HotkeyMod),
+                     GetHotKeyCode(Self[I].HotkeyCode));
+  end;
+end;
+
+function THotkeyList.Remove(Item: TvCustomRealNodeData): Integer;
+begin
+  Assert((Item.ID <> -1), 'Current Item doesn'' have a valid ID');
+
+  Result := inherited;
+  if Config.HotKey then
+    UnregisterHotKey(frmMain.Handle, Item.ID);
 end;
 
 end.

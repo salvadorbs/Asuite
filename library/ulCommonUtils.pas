@@ -467,30 +467,6 @@ begin
       Result := 0;
 end;
 
-//------------------------------------------------------------------------------
-{
-function AddHotkey(Sender: TBaseVirtualTree;Node: PVirtualNode;HKId: integer): integer;
-var
-  NodeData : PTreeData;
-begin
-  Result   := HKID;
-  NodeData := Sender.GetNodeData(Node);
-  if (NodeData.HKModifier <> -1) and (NodeData.HKCode <> -1) then
-  begin
-    Result          := HKID + 1;
-    //Register Hotkey with HKModifier and HKCode
-    if RegisterHotKey(frmMain.Handle, HKId, GetHotKeyMod(NodeData.HKModifier),
-                      GetHotKeyCode(NodeData.HKCode)) then
-    begin
-      SetLength(HotKeyApp, Result);
-      HotKeyApp[HKID] := Node;
-    end
-    else
-      Result := 0;
-  end;
-end;
-}
-
 Function GetHotKeyCode(KeyCode: Integer) : Integer;
 begin
   Result := -1;

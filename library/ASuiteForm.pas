@@ -100,7 +100,8 @@ end;
 
 procedure TASuiteForm.WMHotKey(var Msg: TWMHotKey);
 var
-  NodeData : PBaseData;
+  NodeData    : TvCustomRealNodeData;
+  ProcessInfo : TProcessInfo;
 begin
   if Config.HotKey then
   begin
@@ -114,18 +115,20 @@ begin
     end
     else begin
       if Msg.HotKey = frmMenuID then
-      begin
-        ClassicMenu.ShowTrayiconMenu;
-      end
+        ClassicMenu.ShowTrayiconMenu
       else begin
-        NodeData := frmMain.vstList.GetNodeData(HotKeyApp[Msg.HotKey]);
+        NodeData := HotKeyApp.IndexOfID(Msg.HotKey);
         if Assigned(NodeData) then
         begin
-          if (NodeData.Data.DataType <> vtdtCategory) then // <> Category
+          if (NodeData.DataType <> vtdtSeparator) then
           begin
-//            PvCustomRealNodeData(NodeData).Execute(frmMain.vstList,ProcessINfo);
-//            AddMRU(frmMain.vstList,CoolTrayIcon1,NodeData.pNode,NodeData.DontInsertMRU);
-//            RunActionOnExe(NodeData);
+            ProcessInfo.RunMode := rmNormal;
+            ProcessInfo.RunFromCat := (NodeData.DataType = vtdtCategory);
+            if (NodeData.DataType in [vtdtFile,vtdtFolder]) then
+              TvFileNodeData(NodeData).Execute(frmMain.vstList, ProcessInfo)
+            else
+              if (NodeData.DataType = vtdtCategory) then
+                TvCategoryNodeData(NodeData).Execute(frmMain.vstList, ProcessInfo);
           end;
         end
         else begin

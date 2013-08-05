@@ -132,6 +132,7 @@ type
     procedure SetBackup(const Value: Boolean);
     procedure SetWindowHotKey(const Value: Boolean);
     procedure SetMenuHotKey(const Value: Boolean);
+    procedure SetHotKey(const Value: Boolean);
   public
     { public declarations }
     constructor Create; overload;
@@ -191,7 +192,7 @@ type
     property GMBtnVideos: string read FGMBtnVideos write SetGMBtnVideos;
     property GMBtnExplore: string read FGMBtnExplore write SetGMBtnExplore;
     //HotKeys
-    property HotKey: Boolean read FHotKey write FHotKey;
+    property HotKey: Boolean read FHotKey write SetHotKey;
     property WindowHotKey: Boolean read FWindowHotKey write SetWindowHotKey;
     property WindowHotKeyCode: Integer read FWindowHotKeyCode write SetWindowHotKeyCode;
     property WindowHotKeyMod: Integer read FWindowHotKeyMod write SetWindowHotKeyMod;
@@ -306,6 +307,15 @@ begin
   else begin
     frmMain.BorderStyle := bsSizeable;
     frmMain.BorderIcons := [biSystemMenu, biMinimize, biMaximize];
+  end;
+end;
+
+procedure TConfiguration.SetHotKey(const Value: Boolean);
+begin
+  if (FHotKey <> Value) then
+  begin
+    FHotKey := Value;
+    HotKeyApp.RefreshRegs;
   end;
 end;
 

@@ -278,7 +278,8 @@ function CreateNodeData(AType: TvTreeDataType): TvBaseNodeData;
 implementation
 
 uses
-  ulSysUtils, ulTreeView, ulExeUtils, ulCommonUtils, ulAppConfig, ulFileFolder;
+  ulSysUtils, ulTreeView, ulExeUtils, ulCommonUtils, ulAppConfig, ulFileFolder,
+  Main;
 
 function CreateNodeData(AType: TvTreeDataType): TvBaseNodeData;
 begin
@@ -674,6 +675,12 @@ end;
 
 procedure TvCustomRealNodeData.SetHotkey(const Value: Boolean);
 begin
+  //Old value is true, remove it in HotKeyApp
+  if (FHotkey) then
+    HotKeyApp.Remove(Self);
+  //New value is true, add it in HotKeyApp
+  if (value) then
+    HotKeyApp.Add(Self);
   FHotkey := Value;
 end;
 

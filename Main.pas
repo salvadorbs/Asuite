@@ -645,28 +645,29 @@ procedure TfrmMain.ExecuteSelectedNode(TreeView: TBaseVirtualTree;ProcessInfo: T
 var
   Node         : PVirtualNode;
   BaseNodeData : TvBaseNodeData;
-  BaseNode     : PBaseData;
 begin
   //First selected node
   Node := TreeView.GetFirstSelected;
   while Assigned(Node) do
   begin
     //Get Node data
-    BaseNode     := PBaseData(GetNodeDataEx(Node, TreeView, vstSearch, vstList));
-    BaseNodeData := BaseNode.Data;
-    //Execute action
-    if ProcessInfo.RunMode <> rmOpenFolder then
+    BaseNodeData := PBaseData(GetNodeDataEx(Node, TreeView, vstSearch, vstList)).Data;
+    if Assigned(BaseNodeData) then
     begin
-      ProcessInfo.RunFromCat := (BaseNodeData.DataType = vtdtCategory);
-      if (BaseNodeData.DataType in [vtdtFile,vtdtFolder]) then
-        TvFileNodeData(BaseNodeData).Execute(vstList, ProcessInfo)
-      else
-        if (BaseNodeData.DataType = vtdtCategory) then
-          TvCategoryNodeData(BaseNodeData).Execute(vstList, ProcessInfo);
-    end
-    else begin
-      if (BaseNodeData.DataType in [vtdtFile,vtdtFolder]) then
-        TvFileNodeData(BaseNodeData).OpenExtractedFolder;
+      //Execute action
+      if ProcessInfo.RunMode <> rmOpenFolder then
+      begin
+        ProcessInfo.RunFromCat := (BaseNodeData.DataType = vtdtCategory);
+        if (BaseNodeData.DataType in [vtdtFile,vtdtFolder]) then
+          TvFileNodeData(BaseNodeData).Execute(vstList, ProcessInfo)
+        else
+          if (BaseNodeData.DataType = vtdtCategory) then
+            TvCategoryNodeData(BaseNodeData).Execute(vstList, ProcessInfo);
+      end
+      else begin
+        if (BaseNodeData.DataType in [vtdtFile,vtdtFolder]) then
+          TvFileNodeData(BaseNodeData).OpenExtractedFolder;
+      end;
     end;
     //Next selected node
     Node := TreeView.GetNextSelected(node);
@@ -1085,10 +1086,14 @@ begin
 end;
 
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
+var
+  I: Integer;
 begin
   RunShutdownProcess;
   //Execute actions on asuite's shutdown (inside vstList)
   vstList.IterateSubtree(nil, IterateSubtreeProcs.ActionsOnShutdown, nil, [], True);
+  //Hotkey
+  HotKeyApp.Clear;
   RefreshList(vstList);
 end;
 
@@ -1112,7 +1117,7 @@ begin
   StartupItemList   := TAutorunItemList.Create;
   ShutdownItemList  := TAutorunItemList.Create;
   SchedulerItemList := TNodeDataList.Create;
-  HotKeyApp := TNodeDataList.Create;
+  HotKeyApp := THotkeyList.Create;
   //Set NodeDataSize for trees
   vstList.NodeDataSize   := SizeOf(rBaseData);
   vstSearch.NodeDataSize := SizeOf(rTreeDataX);
