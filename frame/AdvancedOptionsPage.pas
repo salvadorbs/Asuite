@@ -49,6 +49,7 @@ type
                        Data: Pointer; var Abort: Boolean);
     procedure ClearMRU(Sender: TBaseVirtualTree; Node: PVirtualNode;
                        Data: Pointer; var Abort: Boolean);
+    procedure RefreshCache(Sender: TBaseVirtualTree);
   strict protected
     function GetTitle: string; override;
     function GetImageIndex: Integer; override;
@@ -105,6 +106,13 @@ begin
   end;
 end;
 
+procedure TfrmAdvancedOptionsPage.RefreshCache(Sender: TBaseVirtualTree);
+begin
+  Sender.IterateSubtree(nil, ClearCache, nil, [], True);
+  ImagesDM.GetChildNodesIcons(Sender, nil, Sender.RootNode);
+  Sender.FullCollapse;
+end;
+
 procedure TfrmAdvancedOptionsPage.ClearMRU(Sender: TBaseVirtualTree; Node: PVirtualNode;
                             Data: Pointer; var Abort: Boolean);
 var
@@ -145,11 +153,7 @@ begin
     DeleteFiles(SUITE_BACKUP_PATH, APP_NAME + '_*' + EXT_SQLBCK);
   //Clear Cache
   if cbClearCache.Checked then
-  begin
-    frmMain.vstList.IterateSubtree(nil, ClearCache, nil, [], True);
-    ImagesDM.GetChildNodesIcons(frmMain.vstList, nil, frmMain.vstList.RootNode);
-    frmMain.vstList.FullCollapse;
-  end;
+    RefreshCache(frmMain.vstList);
   RefreshList(frmMain.vstList);
 end;
 
@@ -201,7 +205,12 @@ begin
   Config.Backup    := cbBackup.Checked;
   Config.BackupNumber := tbBackup.Position;
   //Other functions
-  Config.Cache     := cbCache.Checked;
+  //Refresh icons, if user change cache settings
+  if (Config.Cache <> cbCache.Checked) then
+  begin
+    Config.Cache   := cbCache.Checked;
+    RefreshCache(frmMain.vstList);
+  end;
   Config.Scheduler := cbScheduler.Checked;
 end;
 

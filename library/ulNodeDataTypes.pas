@@ -667,9 +667,8 @@ end;
 
 procedure TvCustomRealNodeData.DeleteCacheIcon;
 begin
-  if FCacheID <> -1 then
-    if FileExists(FPathCacheIcon) then
-      SysUtils.DeleteFile(FPathCacheIcon);
+  Self.CacheID := -1;
+  Self.CacheLargeID := -1;
 end;
 
 procedure TvCustomRealNodeData.SetMRUPosition(Value: Int64);
@@ -746,32 +745,48 @@ end;
 procedure TvCustomRealNodeData.SetCacheIcon(value:integer);
 begin
   FCacheID := value;
-  if (value <> -1) then
-    FPathCacheIcon := SUITE_CACHE_PATH + IntToStr(value) + EXT_ICO
-  else begin
-    if FileExists(FPathCacheIcon) then
+  if Config.ASuiteState <> asImporting then
+  begin
+    //If value is correct, set FPathCacheIcon and check is it exists
+    if (value <> -1) then
     begin
-      DeleteFile(PWideChar(FPathCacheIcon));
-      FImageIndex := -1;
-      FChanged := True;
+      FPathCacheIcon := SUITE_CACHE_PATH + IntToStr(value) + EXT_ICO;
+      if Not(FileExists(FPathCacheIcon)) then
+        FCacheID := -1;
+    end
+    else begin //Else delete cache icon file and reset FPathCacheIcon
+      if FileExists(FPathCacheIcon) then
+      begin
+        DeleteFile(PWideChar(FPathCacheIcon));
+        FImageIndex := -1;
+        FChanged := True;
+      end;
+      FPathCacheIcon := '';
     end;
-    FPathCacheIcon := '';
   end;
 end;
 
 procedure TvCustomRealNodeData.SetCacheLargeIcon(value: integer);
 begin
   FCacheLargeID := value;
-  if (value <> -1) then
-    FPathCacheLargeIcon := SUITE_CACHELARGE_PATH + IntToStr(value) + EXT_ICO
-  else begin
-    if FileExists(FPathCacheLargeIcon) then
-    begin
-      DeleteFile(PWideChar(FPathCacheLargeIcon));
-      FImageLargeIndex := -1;
-      FChanged := True;
+  if Config.ASuiteState <> asImporting then
+  begin
+    //If value is correct, set FPathCacheIcon and check is it exists
+    if (value <> -1) then
+      begin
+        FPathCacheLargeIcon := SUITE_CACHELARGE_PATH + IntToStr(value) + EXT_ICO;
+        if Not(FileExists(FPathCacheIcon)) then
+          FCacheID := -1;
+      end
+    else begin
+      if FileExists(FPathCacheLargeIcon) then
+      begin
+        DeleteFile(PWideChar(FPathCacheLargeIcon));
+        FImageLargeIndex := -1;
+        FChanged := True;
+      end;
+      FPathCacheLargeIcon := '';
     end;
-    FPathCacheLargeIcon := '';
   end;
 end;
 
