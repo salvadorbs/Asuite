@@ -90,7 +90,7 @@ uses
   ;
 
 const
-  VTVersion = '5.1.4';
+  VTVersion = '5.2.0';
 
 {$if CompilerVersion < 20}
 type
@@ -1059,6 +1059,8 @@ type
     procedure ReadText(Reader: TReader);
     procedure WriteHint(Writer: TWriter);
     procedure WriteText(Writer: TWriter);
+    property HasImage: Boolean read fHasImage;
+    property ImageRect: TRect read fImageRect;
   public
     constructor Create(Collection: TCollection); override;
     destructor Destroy; override;
@@ -1098,7 +1100,7 @@ type
     property MinWidth: Integer read FMinWidth write SetMinWidth default 10;
     property Options: TVTColumnOptions read FOptions write SetOptions default DefaultColumnOptions;
     property Position: TColumnPosition read FPosition write SetPosition;
-    property Spacing: Integer read FSpacing write SetSpacing default 4;
+    property Spacing: Integer read FSpacing write SetSpacing default 3;
     property Style: TVirtualTreeColumnStyle read FStyle write SetStyle default vsText;
     property Tag: Integer read FTag write FTag default 0;
     property Text: UnicodeString read FText write SetText stored False; // Never let the VCL store the wide string,
@@ -1160,8 +1162,11 @@ type
 
     property HeaderBitmap: TBitmap read FHeaderBitmap;
     property PositionToIndex: TIndexArray read FPositionToIndex;
+    property HoverIndex: TColumnIndex read FHoverIndex;
+    property DownIndex: TColumnIndex read FDownIndex;
+    property CheckBoxHit: Boolean read FCheckBoxHit;
   public
-    constructor Create(AOwner: TVTHeader);
+    constructor Create(AOwner: TVTHeader); virtual;
     destructor Destroy; override;
 
     function Add: TVirtualTreeColumn; virtual;
@@ -1396,12 +1401,11 @@ type
   published
     property AutoSizeIndex: TColumnIndex read FAutoSizeIndex write SetAutoSizeIndex;
     property Background: TColor read FBackground write SetBackground default clBtnFace;
-    property Columns: TVirtualTreeColumns read FColumns write SetColumns stored False; // Stored by the owner tree to
-                                                                                       // support VFI.
-    property DefaultHeight: Integer read FDefaultHeight write SetDefaultHeight default 17;
+    property Columns: TVirtualTreeColumns read FColumns write SetColumns stored False; // Stored by the owner tree to support VFI.
+    property DefaultHeight: Integer read FDefaultHeight write SetDefaultHeight default 19;
     property Font: TFont read FFont write SetFont stored IsFontStored;
     property FixedAreaConstraints: TVTFixedAreaConstraints read FFixedAreaConstraints write FFixedAreaConstraints;
-    property Height: Integer read FHeight write SetHeight default 17;
+    property Height: Integer read FHeight write SetHeight default 19;
     property Images: TCustomImageList read FImages write SetImages;
     property MainColumn: TColumnIndex read GetMainColumn write SetMainColumn default 0;
     property MaxHeight: Integer read FMaxHeight write SetMaxHeight default 10000;
@@ -1508,7 +1512,6 @@ type
     tsMouseCheckPending,      // A check operation is under way, initiated by a mouse click. Ignore space key.
     tsMiddleButtonDown,       // Set when the middle mouse button is down.
     tsMiddleDblClick,         // Set when the middle mouse button was doubly clicked.
-    tsNeedScale,              // On next ChangeScale scale the default node height.
     tsNeedRootCountUpdate,    // Set if while loading a root node count is set.
     tsOLEDragging,            // OLE dragging in progress.
     tsOLEDragPending,         // User has requested to start delayed dragging.
@@ -1930,6 +1933,11 @@ type
   // operations
   TVTOperationEvent = procedure(Sender: TBaseVirtualTree; OperationKind: TVTOperationKind) of object;
 
+  TVTHintKind = (vhkText, vhkOwnerDraw);
+  TVTHintKindEvent = procedure(sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; var Kind: TVTHintKind) of object;
+  TVTDrawHintEvent = procedure(Sender: TBaseVirtualTree; HintCanvas: TCanvas; Node: PVirtualNode; R: TRect; Column: TColumnIndex) of object;
+  TVTGetHintSizeEvent = procedure(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; var R: TRect) of object;
+
   // miscellaneous
   TVTBeforeDrawLineImageEvent = procedure(Sender: TBaseVirtualTree; Node: PVirtualNode; Level: Integer; var PosX: Integer) of object;
   TVTGetNodeDataSizeEvent = procedure(Sender: TBaseVirtualTree; var NodeDataSize: Integer) of object;
@@ -2195,6 +2203,7 @@ type
     FDropTargetNode: PVirtualNode;               // node currently selected as drop target
     FLastDropMode: TDropMode;                    // set while dragging and used to track changes
     FDragSelection: TNodeArray;                  // temporary copy of FSelection used during drag'n drop
+    FLastDragEffect: LongInt;                    // The last executed drag effect
     FDragType: TVTDragType;                      // used to switch between OLE and VCL drag'n drop
     FDragImage: TVTDragImage;                    // drag image management
     FDragWidth,
@@ -2392,7 +2401,12 @@ type
 
     // search, sort
     FOnCompareNodes: TVTCompareEvent;            // used during sort
+    FOnDrawHint: TVTDrawHintEvent;
+    FOnGetHintSize: TVTGetHintSizeEvent;
+    fOnGetHintKind: TVTHintKindEvent;
     FOnIncrementalSearch: TVTIncrementalSearchEvent; // triggered on every key press (not key down)
+    FOnMouseEnter: TNotifyEvent;
+    FOnMouseLeave: TNotifyEvent;
 
     // operations
     FOnStartOperation: TVTOperationEvent;        // Called when an operation starts
@@ -2532,6 +2546,7 @@ type
     procedure CMFontChanged(var Message: TMessage); message CM_FONTCHANGED;
     procedure CMHintShow(var Message: TCMHintShow); message CM_HINTSHOW;
     procedure CMHintShowPause(var Message: TCMHintShowPause); message CM_HINTSHOWPAUSE;
+    procedure CMMouseEnter(var Message: TMessage); message CM_MOUSEENTER;
     procedure CMMouseLeave(var Message: TMessage); message CM_MOUSELEAVE;
     procedure CMMouseWheel(var Message: TCMMouseWheel); message CM_MOUSEWHEEL;
     procedure CMSysColorChange(var Message: TMessage); message CM_SYSCOLORCHANGE;
@@ -2648,10 +2663,13 @@ type
       var Effect: Integer): Boolean; virtual;
     procedure DoDragDrop(Source: TObject; DataObject: IDataObject; Formats: TFormatArray; Shift: TShiftState; Pt: TPoint;
       var Effect: Integer; Mode: TDropMode); virtual;
+    procedure DoDrawHint(Canvas: TCanvas; Node: PVirtualNode; R: TRect; Column:
+        TColumnIndex);
     procedure DoEdit; virtual;
     procedure DoEndDrag(Target: TObject; X, Y: Integer); override;
     function DoEndEdit: Boolean; virtual;
     procedure DoEndOperation(OperationKind: TVTOperationKind); virtual;
+    procedure DoEnter(); override;
     procedure DoExpanded(Node: PVirtualNode); virtual;
     function DoExpanding(Node: PVirtualNode): Boolean; virtual;
     procedure DoFocusChange(Node: PVirtualNode; Column: TColumnIndex); virtual;
@@ -2663,6 +2681,10 @@ type
       CellContentMarginType: TVTCellContentMarginType = ccmtAllSides; Canvas: TCanvas = nil): TPoint; virtual;
     procedure DoGetCursor(var Cursor: TCursor); virtual;
     procedure DoGetHeaderCursor(var Cursor: HCURSOR); virtual;
+    procedure DoGetHintSize(Node: PVirtualNode; Column: TColumnIndex; var R:
+        TRect); virtual;
+    procedure DoGetHintKind(Node: PVirtualNode; Column: TColumnIndex; var Kind:
+        TVTHintKind);
     function DoGetImageIndex(Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
       var Ghosted: Boolean; var Index: Integer): TCustomImageList; virtual;
     procedure DoGetImageText(Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
@@ -2692,6 +2714,8 @@ type
     function DoKeyAction(var CharCode: Word; var Shift: TShiftState): Boolean; virtual;
     procedure DoLoadUserData(Node: PVirtualNode; Stream: TStream); virtual;
     procedure DoMeasureItem(TargetCanvas: TCanvas; Node: PVirtualNode; var NodeHeight: Integer); virtual;
+    procedure DoMouseEnter(); virtual;
+    procedure DoMouseLeave(); virtual;
     procedure DoNodeCopied(Node: PVirtualNode); virtual;
     function DoNodeCopying(Node, NewParent: PVirtualNode): Boolean; virtual;
     procedure DoNodeClick(const HitInfo: THitInfo); virtual;
@@ -2741,6 +2765,7 @@ type
       ImgCheckState: TCheckState = csUncheckedNormal; ImgEnabled: Boolean = True): Integer; virtual;
     class function GetCheckImageListFor(Kind: TCheckImageKind): TCustomImageList; virtual;
     function GetColumnClass: TVirtualTreeColumnClass; virtual;
+    function GetDefaultHintKind: TVTHintKind; virtual;
     function GetHeaderClass: TVTHeaderClass; virtual;
     function GetHintWindowClass: THintWindowClass; virtual;
     procedure GetImageIndex(var Info: TVTPaintInfo; Kind: TVTImageKind; InfoIndex: TVTImageInfoIndex;
@@ -2844,12 +2869,14 @@ type
     property ClipboardFormats: TClipboardFormats read FClipboardFormats write SetClipboardFormats;
     property Colors: TVTColors read FColors write SetColors;
     property CustomCheckImages: TCustomImageList read FCustomCheckImages write SetCustomCheckImages;
+    property DefaultHintKind: TVTHintKind read GetDefaultHintKind;
     property DefaultNodeHeight: Cardinal read FDefaultNodeHeight write SetDefaultNodeHeight default 18;
     property DefaultPasteMode: TVTNodeAttachMode read FDefaultPasteMode write FDefaultPasteMode default amAddChildLast;
     property DragHeight: Integer read FDragHeight write FDragHeight default 350;
     property DragImageKind: TVTDragImageKind read FDragImageKind write FDragImageKind default diComplete;
     property DragOperations: TDragOperations read FDragOperations write FDragOperations default [doCopy, doMove];
     property DragSelection: TNodeArray read FDragSelection;
+    property LastDragEffect: LongInt read FLastDragEffect;
     property DragType: TVTDragType read FDragType write FDragType default dtOLE;
     property DragWidth: Integer read FDragWidth write FDragWidth default 200;
     property DrawSelectionMode: TVTDrawSelectionMode read FDrawSelectionMode write FDrawSelectionMode
@@ -2948,6 +2975,7 @@ type
     property OnDragAllowed: TVTDragAllowedEvent read FOnDragAllowed write FOnDragAllowed;
     property OnDragOver: TVTDragOverEvent read FOnDragOver write FOnDragOver;
     property OnDragDrop: TVTDragDropEvent read FOnDragDrop write FOnDragDrop;
+    property OnDrawHint: TVTDrawHintEvent read FOnDrawHint write FOnDrawHint;
     property OnEditCancelled: TVTEditCancelEvent read FOnEditCancelled write FOnEditCancelled;
     property OnEditing: TVTEditChangingEvent read FOnEditing write FOnEditing;
     property OnEdited: TVTEditChangeEvent read FOnEdited write FOnEdited;
@@ -2961,6 +2989,10 @@ type
     property OnGetCursor: TVTGetCursorEvent read FOnGetCursor write FOnGetCursor;
     property OnGetHeaderCursor: TVTGetHeaderCursorEvent read FOnGetHeaderCursor write FOnGetHeaderCursor;
     property OnGetHelpContext: TVTHelpContextEvent read FOnGetHelpContext write FOnGetHelpContext;
+    property OnGetHintSize: TVTGetHintSizeEvent read FOnGetHintSize write
+        FOnGetHintSize;
+    property OnGetHintKind: TVTHintKindEvent read fOnGetHintKind write
+        fOnGetHintKind;
     property OnGetImageIndex: TVTGetImageEvent read FOnGetImage write FOnGetImage;
     property OnGetImageIndexEx: TVTGetImageExEvent read FOnGetImageEx write FOnGetImageEx;
     property OnGetImageText: TVTGetImageTextEvent read FOnGetImageText write FOnGetImageText;
@@ -2992,6 +3024,8 @@ type
     property OnLoadNode: TVTSaveNodeEvent read FOnLoadNode write FOnLoadNode;
     property OnLoadTree: TVTSaveTreeEvent read FOnLoadTree write FOnLoadTree;
     property OnMeasureItem: TVTMeasureItemEvent read FOnMeasureItem write FOnMeasureItem;
+    property OnMouseEnter: TNotifyEvent read FOnMouseEnter write FOnMouseEnter;
+    property OnMouseLeave: TNotifyEvent read FOnMouseLeave write FOnMouseLeave;
     property OnNodeClick: TVTNodeClickEvent read FOnNodeClick write FOnNodeClick;
     property OnNodeCopied: TVTNodeCopiedEvent read FOnNodeCopied write FOnNodeCopied;
     property OnNodeCopying: TVTNodeCopyingEvent read FOnNodeCopying write FOnNodeCopying;
@@ -3016,10 +3050,6 @@ type
     property OnUpdating: TVTUpdatingEvent read FOnUpdating write FOnUpdating;
   public
     constructor Create(AOwner: TComponent); override;
-    {$if CompilerVersion >= 23 }
-    class constructor Create;
-    class destructor Destroy;
-    {$ifend}
     destructor Destroy; override;
 
     function AbsoluteIndex(Node: PVirtualNode): Cardinal;
@@ -3106,6 +3136,7 @@ type
     function GetNextVisibleNoInit(Node: PVirtualNode; ConsiderChildrenAbove: Boolean = True): PVirtualNode;
     function GetNextVisibleSibling(Node: PVirtualNode; IncludeFiltered: Boolean = False): PVirtualNode;
     function GetNextVisibleSiblingNoInit(Node: PVirtualNode; IncludeFiltered: Boolean = False): PVirtualNode;
+    function GetNodeAt(const P: TPoint): PVirtualNode; overload; {$if CompilerVersion >= 18}inline;{$ifend}
     function GetNodeAt(X, Y: Integer): PVirtualNode; overload;
     function GetNodeAt(X, Y: Integer; Relative: Boolean; var NodeTop: Integer): PVirtualNode; overload;
     function GetNodeData(Node: PVirtualNode): Pointer;
@@ -3497,6 +3528,7 @@ type
   public
     property Canvas;
     property RangeX;
+    property LastDragEffect;
   published
     property AccessibleName;
     property Action;
@@ -3633,6 +3665,7 @@ type
     property OnDragAllowed;
     property OnDragOver;
     property OnDragDrop;
+    property OnDrawHint;
     property OnDrawText;
     property OnEditCancelled;
     property OnEdited;
@@ -3653,6 +3686,8 @@ type
     property OnGetText;
     property OnPaintText;
     property OnGetHelpContext;
+    property OnGetHintKind;
+    property OnGetHintSize;
     property OnGetImageIndex;
     property OnGetImageIndexEx;
     property OnGetImageText;
@@ -3690,6 +3725,8 @@ type
     property OnMouseMove;
     property OnMouseUp;
     property OnMouseWheel;
+    property OnMouseEnter;
+    property OnMouseLeave;
     property OnNewText;
     property OnNodeClick;
     property OnNodeCopied;
@@ -3722,15 +3759,11 @@ type
     {$ifend}
   end;
 
-  TVTDrawHintEvent = procedure(Sender: TBaseVirtualTree; HintCanvas: TCanvas; Node: PVirtualNode; R: TRect;
-    Column: TColumnIndex) of object;
   TVTDrawNodeEvent = procedure(Sender: TBaseVirtualTree; const PaintInfo: TVTPaintInfo) of object;
   TVTGetCellContentMarginEvent = procedure(Sender: TBaseVirtualTree; HintCanvas: TCanvas; Node: PVirtualNode;
     Column: TColumnIndex; CellContentMarginType: TVTCellContentMarginType; var CellContentMargin: TPoint) of object;
   TVTGetNodeWidthEvent = procedure(Sender: TBaseVirtualTree; HintCanvas: TCanvas; Node: PVirtualNode;
     Column: TColumnIndex; var NodeWidth: Integer) of object;
-  TVTGetHintSizeEvent = procedure(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;
-    var R: TRect) of object;
 
   // Tree descendant to let an application draw its stuff itself.
   TCustomVirtualDrawTree = class(TBaseVirtualTree)
@@ -3738,20 +3771,15 @@ type
     FOnDrawNode: TVTDrawNodeEvent;
     FOnGetCellContentMargin: TVTGetCellContentMarginEvent;
     FOnGetNodeWidth: TVTGetNodeWidthEvent;
-    FOnGetHintSize: TVTGetHintSizeEvent;
-    FOnDrawHint: TVTDrawHintEvent;
   protected
-    procedure DoDrawHint(Canvas: TCanvas; Node: PVirtualNode; R: TRect; Column: TColumnIndex);
     function DoGetCellContentMargin(Node: PVirtualNode; Column: TColumnIndex;
       CellContentMarginType: TVTCellContentMarginType = ccmtAllSides; Canvas: TCanvas = nil): TPoint; override;
-    procedure DoGetHintSize(Node: PVirtualNode; Column: TColumnIndex; var R: TRect); virtual;
     function DoGetNodeWidth(Node: PVirtualNode; Column: TColumnIndex; Canvas: TCanvas = nil): Integer; override;
     procedure DoPaintNode(var PaintInfo: TVTPaintInfo); override;
+    function GetDefaultHintKind: TVTHintKind; override;
 
-    property OnDrawHint: TVTDrawHintEvent read FOnDrawHint write FOnDrawHint;
     property OnDrawNode: TVTDrawNodeEvent read FOnDrawNode write FOnDrawNode;
     property OnGetCellContentMargin: TVTGetCellContentMarginEvent read FOnGetCellContentMargin write FOnGetCellContentMargin;
-    property OnGetHintSize: TVTGetHintSizeEvent read FOnGetHintSize write FOnGetHintSize;
     property OnGetNodeWidth: TVTGetNodeWidthEvent read FOnGetNodeWidth write FOnGetNodeWidth;
   end;
 
@@ -3763,6 +3791,7 @@ type
     function GetOptionsClass: TTreeOptionsClass; override;
   public
     property Canvas;
+    property LastDragEffect;
   published
     property Action;
     property Align;
@@ -3914,6 +3943,7 @@ type
     property OnGetCursor;
     property OnGetHeaderCursor;
     property OnGetHelpContext;
+    property OnGetHintKind;
     property OnGetHintSize;
     property OnGetImageIndex;
     property OnGetImageIndexEx;
@@ -6085,7 +6115,7 @@ begin
   IsWinVistaOrAbove := (Win32MajorVersion >= 6);
 
   // Initialize OLE subsystem for drag'n drop and clipboard operations.
-  NeedToUnitialize := Succeeded(OleInitialize(nil));
+  NeedToUnitialize := not IsLibrary and Succeeded(OleInitialize(nil));
 
   // Register the tree reference clipboard format. Others will be handled in InternalClipboarFormats.
   CF_VTREFERENCE := RegisterClipboardFormat(CFSTR_VTREFERENCE);
@@ -6152,6 +6182,7 @@ begin
   // Predefined clipboard formats. Just add them to the internal list.
   RegisterVTClipboardFormat(CF_TEXT, TCustomVirtualStringTree, 100);
   RegisterVTClipboardFormat(CF_UNICODETEXT, TCustomVirtualStringTree, 95);
+  {$if CompilerVersion >= 23}TCustomStyleEngine.RegisterStyleHook(TBaseVirtualTree, TVclStyleScrollBarsHook);{$ifend}
 end;
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -6185,6 +6216,8 @@ begin
 
   if NeedToUnitialize then
     OleUninitialize;
+
+  {$if CompilerVersion >= 23}TCustomStyleEngine.UnRegisterStyleHook(TBaseVirtualTree,  TVclStyleScrollBarsHook);{$ifend}
 
   // If VT is used in a package and its special hint window was used then the last instance of this
   // window is not freed correctly (bug in the VCL). We explicitely tell the application to free it
@@ -7684,6 +7717,7 @@ var
   S: UnicodeString;
   DrawFormat: Cardinal;
   Shadow: Integer;
+  HintKind: TVTHintKind;
   LClipRect: TRect;
 
   {$IF CompilerVersion >= 23 }
@@ -7718,10 +7752,13 @@ begin
 
       R := Rect(0, 0, Width - Shadow, Height - Shadow);
 
-      if (Tree is TCustomVirtualDrawTree) and Assigned(Node) then
+      HintKind := vhkText;
+      if Assigned(Node) then
+        Tree.DoGetHintKind(Node, Column, HintKind);
+
+      if HintKind = vhkOwnerDraw then
       begin
-        // The draw tree has by default no hint text so let it draw the hint itself.
-        (Tree as TCustomVirtualDrawTree).DoDrawHint(Canvas, Node, R, Column);
+        Tree.DoDrawHint(Canvas, Node, R, Column);
       end
       else
         with Canvas do
@@ -7941,9 +7978,10 @@ begin
 
     with FHintData do
     begin
-      // The draw tree gets its hint size by the application (but only if not a header hint is about to show).
+      // The draw tree gets its hint size by the application (but only if not a header hint is about to show).      // If the user will be drawing the hint, it gets its hint size by the application
+      // (but only if not a header hint is about to show).
       // This size has already been determined in CMHintShow.
-      if (Tree is TCustomVirtualDrawTree) and Assigned(Node) then
+      if Assigned(Node) and (not IsRectEmpty(HintRect)) then
         Result := HintRect
       else
       begin
@@ -8773,7 +8811,7 @@ begin
   FMaxWidth := 10000;
   FImageIndex := -1;
   FMargin := 4;
-  FSpacing := 4;
+  FSpacing := 3;
   FText := '';
   FOptions := DefaultColumnOptions;
   FAlignment := taLeftJustify;
@@ -9349,7 +9387,7 @@ begin
     begin
       R := Client;
       if FCaptionText = '' then
-        FCaptionText := FText;
+        FCaptionText := WrapString(DC, FText, R, DT_RTLREADING and DrawFormat <> 0, DrawFormat);
 
       GetStringDrawRect(DC, FCaptionText, R, DrawFormat);
       TextSize.cx := Client.Right - Client.Left;
@@ -11220,7 +11258,7 @@ var
   var
     BackgroundRect: TRect;
     Details: TThemedElementDetails;
-    
+
   begin
     BackgroundRect := Rect(Target.X, Target.Y, Target.X + R.Right - R.Left, Target.Y + FHeader.Height);
 
@@ -11665,8 +11703,8 @@ begin
   inherited Create;
   FOwner := AOwner;
   FColumns := GetColumnsClass.Create(Self);
-  FHeight := 17;
-  FDefaultHeight := 17;
+  FHeight := 19;
+  FDefaultHeight := FHeight;
   FMinHeight := 10;
   FMaxHeight := 10000;
   FFont := TFont.Create;
@@ -11712,8 +11750,28 @@ end;
 //----------------------------------------------------------------------------------------------------------------------
 
 procedure TVTHeader.FontChanged(Sender: TObject);
-
+var
+  i: Integer;
+  lMaxHeight: Integer;
 begin
+  if toAutoChangeScale in Treeview.TreeOptions.AutoOptions then begin
+    // Find the largest Columns[].Spacing
+    lMaxHeight := 0;
+    for i:= 0 to Self.Columns.Count - 1 do
+      lMaxHeight := Max(lMaxHeight, Columns[i].Spacing);
+    // Calculate the required size based on the font, this is important as the use migth just vave increased the size of the icon font
+    With TBitmap.Create do
+      try
+        Canvas.Font.Assign(FFont);
+        lMaxHeight := lMaxHeight {top spacing} + (lMaxHeight div 2) {minimum bottom spacing} + Canvas.TextHeight('Q');
+      finally
+        Free;
+      end;
+    // Get the maximum of the scaled original value an
+    lMaxHeight := Max(lMaxHeight, fHeight);
+    // Set the calculated size
+    Self.SetHeight(lMaxHeight);
+  end;
   Invalidate(nil);
 end;
 
@@ -12027,7 +12085,11 @@ end;
 procedure TVTHeader.ChangeScale(M, D: Integer);
 
 begin
-  FFont.Size := MulDiv(FFont.Size, M, D);
+  // This method is only executed if toAutoChangeScale is set
+  if not ParentFont then
+    FFont.Size := MulDiv(FFont.Size, M, D);
+  Self.Height := MulDiv(fHeight, M, D);
+  //TODO: We should consider also scaling column width here
 end;
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -12600,6 +12662,8 @@ begin
                   // WM_NCLBUTTONDBLCLK
                   Button := mbLeft;
               end;
+              if Button = mbLeft then
+                Columns.AdjustDownColumn(P);
               FColumns.HandleClick(P, Button, True, True);
             end;
       end;
@@ -14118,6 +14182,7 @@ begin
   FDefaultPasteMode := amAddChildLast;
   FMargin := 4;
   FTextMargin := 4;
+  FLastDragEffect := DROPEFFECT_NONE;
   FDragType := dtOLE;
   FDragHeight := 350;
   FDragWidth := 200;
@@ -16496,7 +16561,6 @@ begin
     Value := 18;
   if FDefaultNodeHeight <> Value then
   begin
-    DoStateChange([tsNeedScale]);
     Inc(Integer(FRoot.TotalHeight), Integer(Value) - Integer(FDefaultNodeHeight));
     Inc(SmallInt(FRoot.NodeHeight), Integer(Value) - Integer(FDefaultNodeHeight));
     FDefaultNodeHeight := Value;
@@ -17655,7 +17719,7 @@ var
   ParentForm: TCustomForm;
   BottomRightCellContentMargin: TPoint;
   DummyLineBreakStyle: TVTTooltipLineBreakStyle;
-
+  HintKind: TVTHintKind;
 begin
   with Message do
   begin
@@ -17751,19 +17815,19 @@ begin
           begin
             if Assigned(HitInfo.HitNode) and (HitInfo.HitColumn > InvalidColumn) then
             begin
-              // A draw tree should only display a hint when at least its OnGetHintSize
-              // event handler is assigned.
-              if Self is TCustomVirtualDrawTree then
+              // An owner-draw tree should only display a hint when at least
+              // its OnGetHintSize event handler is assigned.
+              DoGetHintKind(HitInfo.HitNode, HitInfo.HitColumn, HintKind);
+              FHintData.HintRect := Rect(0, 0, 0, 0);
+              if (HintKind = vhkOwnerDraw) then
               begin
-                FHintData.HintRect := Rect(0, 0, 0, 0);
-                with Self as TCustomVirtualDrawTree do
-                  DoGetHintSize(HitInfo.HitNode, HitInfo.HitColumn, FHintData.HintRect);
+                DoGetHintSize(HitInfo.HitNode, HitInfo.HitColumn, FHintData.HintRect);
                 ShowOwnHint := not IsRectEmpty(FHintData.HintRect);
               end
               else
-                // For string trees a decision about showing the hint or not is based
+                // For trees displaying text hints, a decision about showing the hint or not is based
                 // on the hint string (if it is empty then no hint is shown).
-                ShowOwnHint := True;
+                ShowOwnHint := true;
 
               if ShowOwnHint then
               begin
@@ -17918,6 +17982,13 @@ end;
 
 //----------------------------------------------------------------------------------------------------------------------
 
+procedure TBaseVirtualTree.CMMouseEnter(var Message: TMessage);
+begin
+  DoMouseEnter();
+end;
+
+//----------------------------------------------------------------------------------------------------------------------
+
 procedure TBaseVirtualTree.CMMouseLeave(var Message: TMessage);
 
 var
@@ -17949,7 +18020,7 @@ begin
     Header.FColumns.FHoverIndex := NoColumn;
     Header.FColumns.FCheckBoxHit := False;
   end;
-
+  DoMouseLeave();
   inherited;
 end;
 
@@ -18447,7 +18518,7 @@ begin
         FCheckNode := nil;
       end;
 
-      if CharCode in [VK_HOME, VK_END, VK_PRIOR, VK_NEXT, VK_UP, VK_DOWN, VK_LEFT, VK_RIGHT, VK_BACK, VK_TAB] then
+      if (CharCode in [VK_HOME, VK_END, VK_PRIOR, VK_NEXT, VK_UP, VK_DOWN, VK_LEFT, VK_RIGHT, VK_BACK, VK_TAB]) and (RootNode.FirstChild<>nil) then
       begin
         HandleMultiSelect := (ssShift in Shift) and (toMultiSelect in FOptions.FSelectionOptions) and not IsEditing;
 
@@ -20128,23 +20199,13 @@ end;
 
 procedure TBaseVirtualTree.ChangeScale(M, D: Integer);
 
-var
-  DoScale: Boolean;
-
 begin
   inherited;
 
   if (M <> D) and (toAutoChangeScale in FOptions.FAutoOptions) then
   begin
-    if (csLoading in ComponentState) then
-      DoScale := tsNeedScale in FStates
-    else
-      DoScale := True;
-    if DoScale then
-    begin
-      SetDefaultNodeHeight(MulDiv(FDefaultNodeHeight, M, D));
-      FHeader.ChangeScale(M, D);
-    end;
+    SetDefaultNodeHeight(MulDiv(FDefaultNodeHeight, M, D));
+    FHeader.ChangeScale(M, D);
   end;
 end;
 
@@ -20324,18 +20385,6 @@ begin
 end;
 
 //----------------------------------------------------------------------------------------------------------------------
-
- {$if CompilerVersion >= 23 }
-class constructor TBaseVirtualTree.Create;
-begin
-  TCustomStyleEngine.RegisterStyleHook(TBaseVirtualTree, TVclStyleScrollBarsHook);
-end;
-
-class destructor TBaseVirtualTree.Destroy;
-begin
-  TCustomStyleEngine.UnRegisterStyleHook(TBaseVirtualTree,  TVclStyleScrollBarsHook);
-end;
-{$ifend}
 
 procedure TBaseVirtualTree.CreateParams(var Params: TCreateParams);
 
@@ -21403,7 +21452,6 @@ procedure TBaseVirtualTree.DoDragging(P: TPoint);
   //--------------- end local function ----------------------------------------
 
 var
-  DragEffect,
   AllowedEffects: LongInt;
   DragObject: TDragObject;
 
@@ -21445,10 +21493,10 @@ begin
 
     FLastDropMode := dmOnNode;
     // Don't forget to initialize the result. It might never be touched.
-    DragEffect := DROPEFFECT_NONE;
+    FLastDragEffect := DROPEFFECT_NONE;
     AllowedEffects := GetDragOperations;
     try
-      DragAndDrop(AllowedEffects, DataObject, DragEffect);
+      DragAndDrop(AllowedEffects, DataObject, FLastDragEffect);
       DragManager.ForceDragLeave;
     finally
       GetCursorPos(P);
@@ -21458,7 +21506,7 @@ begin
       FDragImage.EndDrag;
 
       // Finish the operation.
-      if (DragEffect = DROPEFFECT_MOVE) and (toAutoDeleteMovedNodes in TreeOptions.AutoOptions) then
+      if (FLastDragEffect = DROPEFFECT_MOVE) and (toAutoDeleteMovedNodes in TreeOptions.AutoOptions) then
       begin
         // The operation was a move so delete the previously selected nodes.
         DeleteSelectedNodes;
@@ -21598,6 +21646,17 @@ procedure TBaseVirtualTree.DoEndOperation(OperationKind: TVTOperationKind);
 begin
   if Assigned(FOnEndOperation) then
     FOnEndOperation(Self, OperationKind);
+end;
+
+//----------------------------------------------------------------------------------------------------------------------
+
+procedure TBaseVirtualTree.DoEnter();
+begin
+  inherited;
+  // Always select a node if the control gets the focus, #237
+  if FocusedNode = nil then begin
+    FocusedNode := Self.GetFirstVisible();
+  end;
 end;
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -22089,6 +22148,19 @@ begin
     FOnMeasureItem(Self, TargetCanvas, Node, NodeHeight);
 end;
 
+//----------------------------------------------------------------------------------------------------------------------
+
+procedure TBaseVirtualTree.DoMouseEnter();
+begin
+  if Assigned(FOnMouseEnter) then
+    FOnMouseEnter(Self);
+end;
+
+procedure TBaseVirtualTree.DoMouseLeave;
+begin
+  if Assigned(FOnMouseLeave) then
+    FOnMouseLeave(Self);
+end;
 //----------------------------------------------------------------------------------------------------------------------
 
 procedure TBaseVirtualTree.DoNodeCopied(Node: PVirtualNode);
@@ -23991,7 +24063,7 @@ var
 
   // helper variables to shorten boolean equations/expressions
   AutoDrag,              // automatic (or allowed) drag start
-  IsHit,                 // the node's caption or images are hit
+  IsLabelHit,            // the node's caption or images are hit
   IsCellHit,             // for grid extension or full row select (but not check box, button)
   IsAnyHit,              // either IsHit or IsCellHit
   IsHeightTracking,      // height tracking
@@ -24074,13 +24146,13 @@ begin
     // Various combinations determine what states the tree enters now.
     // We initialize shorthand variables to avoid the following expressions getting too large
     // and to avoid repeative expensive checks.
-    IsHit := not AltPressed and not (toSimpleDrawSelection in FOptions.FSelectionOptions) and
+    IsLabelHit := not AltPressed and not (toSimpleDrawSelection in FOptions.FSelectionOptions) and
              ((hiOnItemLabel in HitInfo.HitPositions) or (hiOnNormalIcon in HitInfo.HitPositions));
-    IsCellHit := not AltPressed and not IsHit and Assigned(HitInfo.HitNode) and
+    IsCellHit := not AltPressed and not IsLabelHit and Assigned(HitInfo.HitNode) and
       ([hiOnItemButton, hiOnItemCheckBox] * HitInfo.HitPositions = []) and
       ((toFullRowSelect in FOptions.FSelectionOptions) or
       ((toGridExtensions in FOptions.FMiscOptions) and (HitInfo.HitColumn > NoColumn)));
-    IsAnyHit := IsHit or IsCellHit;
+    IsAnyHit := IsLabelHit or IsCellHit;
     MultiSelect := toMultiSelect in FOptions.FSelectionOptions;
     ShiftEmpty := ShiftState = [];
     NodeSelected := IsAnyHit and (vsSelected in HitInfo.HitNode.States);
@@ -24097,7 +24169,7 @@ begin
 
     // Query the application to learn if dragging may start now (if set to dmManual).
     if Assigned(HitInfo.HitNode) and not AutoDrag and (DragMode = dmManual) then
-      AutoDrag := DoBeforeDrag(HitInfo.HitNode, Column) and (IsAnyHit or FullRowDrag);
+      AutoDrag := DoBeforeDrag(HitInfo.HitNode, Column) and (FullRowDrag or IsLabelHit);
 
     // handle node height tracking
     if IsHeightTracking then
@@ -24163,7 +24235,7 @@ begin
         (not (tsRightButtonDown in FStates) or not HasPopupMenu(HitNode, HitColumn, Point(XPos, YPos)));
 
     // User starts a selection with a selection rectangle.
-    if not (toDisableDrawSelection in FOptions.FSelectionOptions) and not (IsHit or FullRowDrag) and MultiSelect then
+    if not (toDisableDrawSelection in FOptions.FSelectionOptions) and not (IsLabelHit or FullRowDrag) and MultiSelect then
     begin
       SetCapture(Handle);
       DoStateChange([tsDrawSelPending]);
@@ -24203,7 +24275,7 @@ begin
       (hiOnItem in HitInfo.HitPositions))) and NodeSelected and not NewColumn and ShiftEmpty then
       DoStateChange([tsEditPending]);
 
-    if not (toDisableDrawSelection in FOptions.FSelectionOptions) and not (IsHit or FullRowDrag) and MultiSelect then
+    if not (toDisableDrawSelection in FOptions.FSelectionOptions) and not (IsLabelHit or FullRowDrag) and MultiSelect then
     begin
       // The original code here was moved up to fix issue #187.
       // In order not to break the semantics of this procedure, we are leaving these if statements here
@@ -24215,7 +24287,7 @@ begin
     FLastClickPos := Point(Message.XPos, Message.YPos);
 
     // Handle selection and node focus change.
-    if (IsHit or IsCellHit) and
+    if (IsLabelHit or IsCellHit) and
        DoFocusChanging(FFocusedNode, HitInfo.HitNode, FFocusedColumn, Column) then
     begin
       if NewColumn then
@@ -24334,7 +24406,7 @@ begin
          (toEditOnClick in FOptions.FMiscOptions) and CanEdit(FFocusedNode, HitInfo.HitColumn) then
       begin
         FEditColumn := FFocusedColumn;
-        SetTimer(Handle, EditTimer, FEditDelay, nil);
+        DoEdit;
       end
       else
         DoStateChange([], [tsEditPending]);
@@ -29256,11 +29328,10 @@ var
   NodeLeft,
   TextLeft,
   CurrentWidth: Integer;
+  AssumeImage: Boolean;
   WithCheck,
-  WithImages,
   WithStateImages: Boolean;
   CheckOffset,
-  ImageOffset,
   StateImageOffset: Integer;
 
 begin
@@ -29278,12 +29349,6 @@ begin
     if Assigned(FOnBeforeGetMaxColumnWidth) then
       FOnBeforeGetMaxColumnWidth(FHeader, Column, UseSmartColumnWidth);
 
-    // Don't check the event here as descendant trees might have overriden the DoGetImageIndex method.
-    WithImages := Assigned(FImages);
-    if WithImages then
-      ImageOffset := FImages.Width + 2
-    else
-      ImageOffset := 0;
     WithStateImages := Assigned(FStateImages);
     if WithStateImages then
       StateImageOffset := FStateImages.Width + 2
@@ -29328,13 +29393,16 @@ begin
     else
       LastNode := nil;
 
+    AssumeImage := False;
     while Assigned(Run) and not OperationCanceled do
     begin
       TextLeft := NodeLeft;
       if WithCheck and (Run.CheckType <> ctNone) then
         Inc(TextLeft, CheckOffset);
-      if WithImages and HasImage(Run, ikNormal, Column) then
-        Inc(TextLeft, ImageOffset);
+      if Assigned(fImages) and (AssumeImage or HasImage(Run, ikNormal, Column)) then begin
+        TextLeft := TextLeft + GetNodeImageSize(Run).cx + 2;
+        AssumeImage := True;// From now on, assume that the nodes do ave an image
+      end;
       if WithStateImages and HasImage(Run, ikState, Column) then
         Inc(TextLeft, StateImageOffset);
 
@@ -29961,6 +30029,11 @@ var
 
 begin
   Result := GetNodeAt(X, Y, True, Dummy);
+end;
+
+function TBaseVirtualTree.GetNodeAt(const P: TPoint): PVirtualNode;
+begin
+  Result := GetNodeAt(P.X, P.Y);
 end;
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -32601,6 +32674,44 @@ function TOLEMemoryStream.Write(const Buffer; Count: Integer): Integer;
 
 begin
   raise EStreamError.CreateRes(PResStringRec(@SCantWriteResourceStreamError));
+end;
+
+//----------------- TBaseVirtualTree -----------------------------------------------------------------------------
+
+procedure TBaseVirtualTree.DoDrawHint(Canvas: TCanvas; Node: PVirtualNode; R:
+    TRect; Column: TColumnIndex);
+
+begin
+  if Assigned(FOnDrawHint) then
+    FOnDrawHint(Self, Canvas, Node, R, Column);
+end;
+
+//----------------------------------------------------------------------------------------------------------------------
+
+procedure TBaseVirtualTree.DoGetHintSize(Node: PVirtualNode; Column:
+    TColumnIndex; var R: TRect);
+
+begin
+  if Assigned(FOnGetHintSize) then
+    FOnGetHintSize(Self, Node, Column, R);
+end;
+
+//----------------------------------------------------------------------------------------------------------------------
+
+procedure TBaseVirtualTree.DoGetHintKind(Node: PVirtualNode; Column:
+    TColumnIndex; var Kind: TVTHintKind);
+
+begin
+  if Assigned(fOnGetHintKind) then
+    fOnGetHintKind(Self, Node, Column, Kind)
+  else
+    Kind := DefaultHintKind;
+end;
+
+function TBaseVirtualTree.GetDefaultHintKind: TVTHintKind;
+
+begin
+  Result := vhkText;
 end;
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -36984,15 +37095,6 @@ begin
   Result := TStringTreeOptions;
 end;
 
-//----------------- TCustomVirtualDrawTree -----------------------------------------------------------------------------
-
-procedure TCustomVirtualDrawTree.DoDrawHint(Canvas: TCanvas; Node: PVirtualNode; R: TRect; Column: TColumnIndex);
-
-begin
-  if Assigned(FOnDrawHint) then
-    FOnDrawHint(Self, Canvas, Node, R, Column);
-end;
-
 //----------------------------------------------------------------------------------------------------------------------
 
 function TCustomVirtualDrawTree.DoGetCellContentMargin(Node: PVirtualNode; Column: TColumnIndex;
@@ -37005,15 +37107,6 @@ begin
 
   if Assigned(FOnGetCellContentMargin) then
     FOnGetCellContentMargin(Self, Canvas, Node, Column, CellContentMarginType, Result);
-end;
-
-//----------------------------------------------------------------------------------------------------------------------
-
-procedure TCustomVirtualDrawTree.DoGetHintSize(Node: PVirtualNode; Column: TColumnIndex; var R: TRect);
-
-begin
-  if Assigned(FOnGetHintSize) then
-    FOnGetHintSize(Self, Node, Column, R);
 end;
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -37036,6 +37129,12 @@ procedure TCustomVirtualDrawTree.DoPaintNode(var PaintInfo: TVTPaintInfo);
 begin
   if Assigned(FOnDrawNode) then
     FOnDrawNode(Self, PaintInfo);
+end;
+
+function TCustomVirtualDrawTree.GetDefaultHintKind: TVTHintKind;
+
+begin
+  Result := vhkOwnerDraw;
 end;
 
 //----------------- TVirtualDrawTree -----------------------------------------------------------------------------------
@@ -37999,6 +38098,7 @@ initialization
 
   // This watcher is used whenever a global structure could be modified by more than one thread.
   Watcher := TCriticalSection.Create;
+
 finalization
   if Initialized then
     FinalizeGlobalStructures;
