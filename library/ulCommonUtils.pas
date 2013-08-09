@@ -68,22 +68,11 @@ function  CompareVersionInfo(Version1, Version2: TVersionInfo): Integer;
 function  CompareInteger(int1, int2: Integer): Integer;
 
 { HotKey }
-//function  AddHotkey(Sender: TBaseVirtualTree;Node: PVirtualNode;HKId: integer): integer;
 function  GetHotKeyCode(KeyCode: Integer) : Integer;
 function  GetHotKeyMod(KeyMod: Integer) : Integer;
 
-//type
-//  TScanFolderSettings = record
-//    LastFolderPath   : String;
-//    SubFolders       : Boolean;
-//    FileTypes        : TStringList;
-//    ExcludeFiles     : TStringList;
-//    RetrieveInfo     : Boolean;
-//  end;
-
 const
   MAX_PROFILE_PATH = 255;
-
 
 implementation
 

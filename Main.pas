@@ -265,22 +265,22 @@ end;
 
 procedure TfrmMain.AddCategory(Sender: TObject);
 begin
-  AddNode(vstList,vtdtCategory);
+  CreateListItem(vstList,vtdtCategory);
 end;
 
 procedure TfrmMain.AddFolder(Sender: TObject);
 begin
-  AddNode(vstList,vtdtFolder);
+  CreateListItem(vstList,vtdtFolder);
 end;
 
 procedure TfrmMain.AddSoftware(Sender: TObject);
 begin
-  AddNode(vstList,vtdtFile);
+  CreateListItem(vstList,vtdtFile);
 end;
 
 procedure TfrmMain.miAddSeparator2Click(Sender: TObject);
 begin
-  AddNode(vstList,vtdtSeparator);
+  CreateListItem(vstList,vtdtSeparator);
 end;
 
 procedure TfrmMain.miCopy2Click(Sender: TObject);
@@ -726,7 +726,6 @@ begin
   end;
   //Set some personal record fields
   DataDest.Data.pNode := Node;
-  DataDest.Data.ParentNode := Node.Parent;
   //Icon
   DataDest.Data.ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(DataDest.Data));
   FreeMem(DataSource);
@@ -1086,8 +1085,6 @@ begin
 end;
 
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
-var
-  I: Integer;
 begin
   RunShutdownProcess;
   //Execute actions on asuite's shutdown (inside vstList)

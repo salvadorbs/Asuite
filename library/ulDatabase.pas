@@ -501,7 +501,6 @@ begin
       vData.Position      := Node.Index;
       vData.UnixAddDate   := SQLFilesData.dateAdded;
       vData.UnixEditDate  := SQLFilesData.lastModified;
-      vData.ParentNode    := ParentNode;
       vData.HideFromMenu  := SQLFilesData.hide_from_menu;
       if (nType <> vtdtSeparator) then
       begin

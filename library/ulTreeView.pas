@@ -26,7 +26,8 @@ uses
   ulNodeDataTypes, ulEnumerations, Classes, ShellApi, comobj;
 
 { List, Menu, MRU }
-function  AddNode(Sender: TBaseVirtualTree;AType: TvTreeDataType): PBaseData;
+function  AddNodeInVST(Sender: TBaseVirtualTree;ParentNode: PVirtualNode;AType: TvTreeDataType): PVirtualNode;
+function  CreateListItem(Sender: TBaseVirtualTree;AType: TvTreeDataType): PBaseData;
 function  ClickOnButtonTree(Sender: TBaseVirtualTree): Boolean;
 procedure DragDropFiles(Sender: TBaseVirtualTree; DataObject: IDataObject;
                         AttachMode: TVTNodeAttachMode; Mode: TDropMode);
@@ -81,7 +82,32 @@ uses
   Menus, ulSysUtils, udImages, Main, ulDatabase, ulAppConfig, ulFileFolder,
   GraphicMenu, PropertyItem, PropertySeparator;
 
-function AddNode(Sender: TBaseVirtualTree;AType: TvTreeDataType): PBaseData;
+function AddNodeInVST(Sender: TBaseVirtualTree;ParentNode: PVirtualNode;AType: TvTreeDataType): PVirtualNode;
+var
+  NodeData: PBaseData;
+begin
+  Result := nil;
+  if Assigned(ParentNode) then
+  begin
+    NodeData := Sender.GetNodeData(ParentNode);
+    case NodeData.Data.DataType of
+      //if category then expand and add subnode
+      vtdtCategory :
+      begin
+        Result := Sender.AddChild(ParentNode, CreateNodeData(AType));
+        Sender.Expanded[ParentNode] := True;
+      end;
+      //if separator, file or folder then always insert after
+      vtdtSeparator,
+      vtdtFile,
+      vtdtFolder   : Result := Sender.InsertNode(ParentNode, amInsertAfter, CreateNodeData(AType));
+    end;
+  end
+  else
+    Result := Sender.AddChild(Sender.RootNode, CreateNodeData(AType));
+end;
+
+function CreateListItem(Sender: TBaseVirtualTree;AType: TvTreeDataType): PBaseData;
 var
   CurrNode, ChildNode  : PVirtualNode;
   NodeData             : PBaseData;
@@ -90,28 +116,10 @@ begin
   Result     := nil;
   FolderPath := '';
   CurrNode   := Sender.FocusedNode;
-  if Assigned(CurrNode) then
-    begin
-      NodeData := Sender.GetNodeData(CurrNode);
-      // Separator: always insert after
-      if (AType = vtdtSeparator) then
-        ChildNode := Sender.InsertNode(CurrNode, amInsertAfter, CreateNodeData(AType))
-      else
-        if (NodeData.Data.DataType = vtdtCategory) then
-        begin
-          // if category then expand and add subnode
-          ChildNode := Sender.AddChild(CurrNode, CreateNodeData(AType));
-          Sender.Expanded[CurrNode] := True;
-        end
-        else // else get parent and add to it
-          ChildNode := Sender.InsertNode(CurrNode, amInsertAfter, CreateNodeData(AType));
-    end
-  else
-    ChildNode := Sender.AddChild(Sender.RootNode, CreateNodeData(AType));
+  ChildNode  := AddNodeInVST(Sender, CurrNode, AType);
   //Set ChildNode's pNode and name (temporary)
   NodeData            := Sender.GetNodeData(ChildNode);
   NodeData.Data.pNode := ChildNode;
-  NodeData.Data.ParentNode := ChildNode.Parent;
   NodeData.Data.Name := msgNoName + IntToStr(Sender.TotalCount);
   //Refresh List
   RefreshList(frmMain.vstList);
@@ -214,7 +222,6 @@ begin
     TvFileNodeData(CustomRealNodeData).PathExe := AbsoluteToRelative(PathTemp);
   CustomRealNodeData.DataType   := vtdtFile;
   CustomRealNodeData.ImageIndex := ImagesDM.GetIconIndex(CustomRealNodeData);
-  CustomRealNodeData.ParentNode := Node.Parent;
   NodeData.Data.pNode           := Node;
 end;
 
@@ -266,7 +273,6 @@ begin
     //Icon
     PathIcon   := AbsoluteToRelative(SUITE_SMALLICONS_PATH + FILEICON_Url);
     ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(NodeData.Data));
-    ParentNode := Node.Parent;
   end;
 end;
 

@@ -488,7 +488,6 @@ var
       NodeData.Data.Name     := NodeDataImp.Data.Name;
       NodeData.Data.Position := tn.Index;
       NodeData.Data.pNode    := tn;
-      NodeData.Data.ParentNode := tn.Parent;
       //Get icon item, only if tn is in first level
       if (NodeData.Data.DataType <> vtdtSeparator) and (Tree.GetNodeLevel(tn) = 0) then
         NodeData.Data.ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(NodeData.Data));;

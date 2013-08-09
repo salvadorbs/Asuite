@@ -61,7 +61,6 @@ type
     FDataType    : TvTreeDataType;
     FImageIndex  : Integer;
     FImageLargeIndex : Integer;
-    FParentNode  : PVirtualNode;
     FPNode       : PVirtualNode; //Self PVirtualNode
     FAddDate     : Int64;
     FEditDate    : Int64;
@@ -78,6 +77,7 @@ type
     procedure SetEditDate(Value: TDateTime);
     function GetUnixEditDateEdit:Int64;
     procedure SetUnixEditDateEdit(Value: Int64);
+    function GetParentNode: PVirtualNode;
   public
     //Base properties
     constructor Create(AType: TvTreeDataType); // virtual;
@@ -90,7 +90,7 @@ type
     property DataType: TvTreeDataType read GetDataType write SetDataType;
     property ImageIndex: Integer read FImageIndex write FImageIndex;
     property ImageLargeIndex: Integer read FImageLargeIndex write FImageLargeIndex;
-    property ParentNode: PVirtualNode read FParentNode write FParentNode;
+    property ParentNode: PVirtualNode read GetParentNode;
     property PNode: PVirtualNode read FPNode write FPNode;
     property AddDate: TDateTime read GetAddDate write SetAddDate;
     property UnixAddDate: Int64 read GetUnixAddDate write SetUnixAddDate;
@@ -303,7 +303,6 @@ begin
   FImageIndex  := -1;
   FImageLargeIndex := -1;
   FDataType    := AType;
-  FParentNode  := nil;
   FPNode       := nil;
   FHideFromMenu := False;
   FAddDate     := DateTimeToUnix(Now);
@@ -322,6 +321,11 @@ end;
 function TvBaseNodeData.GetName: String;
 begin
   Result := FName;
+end;
+
+function TvBaseNodeData.GetParentNode: PVirtualNode;
+begin
+  Result := FPNode.Parent;
 end;
 
 procedure TvBaseNodeData.SetName(Value: String);
