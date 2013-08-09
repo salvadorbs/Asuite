@@ -96,6 +96,7 @@ type
     miRunAs: TMenuItem;
     miRunAsAdmin: TMenuItem;
     tmScheduler: TTimer;
+    mniScanFolder: TMenuItem;
     procedure miOptionsClick(Sender: TObject);
     procedure miStatisticsClick(Sender: TObject);
     procedure pcListChange(Sender: TObject);
@@ -171,6 +172,7 @@ type
     procedure vstListDrawText(Sender: TBaseVirtualTree; TargetCanvas: TCanvas;
       Node: PVirtualNode; Column: TColumnIndex; const Text: string;
       const CellRect: TRect; var DefaultDraw: Boolean);
+    procedure mniScanFolderClick(Sender: TObject);
   private
     { Private declarations }
     function  GetActiveTree: TBaseVirtualTree;
@@ -200,7 +202,7 @@ implementation
 uses
   Options, About, ulCommonUtils, udClassicMenu, ulExeUtils, ImportList,
   ulAppConfig, ulTreeView, ulDatabase, notifications, GraphicMenu, StatsOptionsPage,
-  PropertyItem, PropertySeparator;
+  PropertyItem, PropertySeparator, ScanFolder;
 
 {$R *.dfm}
 
@@ -359,6 +361,17 @@ begin
     frmOptions.Execute(TfrmStatsOptionsPage);
   finally
     frmOptions.Free;
+  end;
+end;
+
+procedure TfrmMain.mniScanFolderClick(Sender: TObject);
+begin
+  try
+    Application.CreateForm(TfrmScanFolder, frmScanFolder);
+    frmScanFolder.showmodal;
+  finally
+    frmScanFolder.Free;
+    RefreshList(vstList);
   end;
 end;
 

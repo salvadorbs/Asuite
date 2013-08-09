@@ -44,7 +44,8 @@ uses
   SWGeneralPropertyPage in 'frame\SWGeneralPropertyPage.pas' {frmSWGeneralPropertyPage: TFrame},
   CatGeneralPropertyPage in 'frame\CatGeneralPropertyPage.pas' {frmCatGeneralPropertyPage: TFrame},
   PropertySeparator in 'PropertySeparator.pas' {frmPropertySeparator},
-  BasePropertyPage in 'frame\BasePropertyPage.pas' {frmBasePropertyPage: TFrame};
+  BasePropertyPage in 'frame\BasePropertyPage.pas' {frmBasePropertyPage: TFrame},
+  ScanFolder in 'ScanFolder.pas' {frmScanFolder};
 
 //SQLite3 static library
 
@@ -74,7 +75,6 @@ begin
 
     Application.CreateForm(TfrmMain, frmMain);
   Application.CreateForm(TfrmGraphicMenu, frmGraphicMenu);
-  Application.CreateForm(TfrmPropertySeparator, frmPropertySeparator);
   //Show MainForm and/or TrayMenu
     Application.ShowMainForm := Config.ShowPanelAtStartUp;
     if (Config.ShowMenuAtStartUp) then

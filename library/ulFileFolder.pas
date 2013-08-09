@@ -16,6 +16,7 @@ procedure DeleteOldBackups(MaxNumber: Integer);
 { Folders }                 
 procedure CheckBackupFolder;
 procedure CheckCacheFolders;
+function  GetNumberSubFolders(FolderPath: String): Integer;
 procedure RemoveCacheFolders;
 
 { Desktop shortcut }
@@ -89,6 +90,25 @@ begin
   //Check if folder cache exists, else create it
   ForceDirectories(SUITE_CACHE_PATH);
   ForceDirectories(SUITE_CACHELARGE_PATH);
+end;
+
+function GetNumberSubFolders(FolderPath: String): Integer;
+var
+  SearchRec: TSearchRec;
+begin
+  Result := 0;
+  //Count subfolders in FolderPath
+  if FindFirst(FolderPath + '*.*', faAnyFile, SearchRec) = 0 then
+  repeat
+    if ((SearchRec.Name <> '.') and (SearchRec.Name <> '..')) and
+       ((SearchRec.Attr and faDirectory) = (faDirectory)) then
+    begin
+      //Increment result
+      Inc(Result);
+      Result := Result + GetNumberSubFolders(IncludeTrailingBackslash(FolderPath + SearchRec.Name));
+    end;
+  until FindNext(SearchRec) <> 0;
+  FindClose(SearchRec);
 end;
 
 procedure RemoveCacheFolders;

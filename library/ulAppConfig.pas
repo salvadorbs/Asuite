@@ -23,12 +23,11 @@ interface
 
 uses
   Windows, SysUtils, Graphics, Forms, Controls, VirtualTrees, ulEnumerations,
-  Vcl.Imaging.pngimage, System.UITypes;
+  Vcl.Imaging.pngimage, System.UITypes, Classes;
 
 type
 
   { TConfiguration }
-
   TConfiguration = class
   private
     //General
@@ -99,6 +98,10 @@ type
     FChanged            : Boolean;
     FASuiteState        : TASuiteState;
     FUseMouseSensors    : Boolean;
+    FScanFolderLastPath: string;
+    FScanFolderSubFolders: boolean;
+    FScanFolderFileTypes: TStringList;
+    FScanFolderExcludeNames: TStringList;
     procedure SetHoldSize(value: Boolean);
     procedure SetAlwaysOnTop(value: Boolean);
     procedure SetSensorLeftClick(aIndex: Integer; value: Integer);
@@ -207,6 +210,10 @@ type
     property ReadOnlyMode: Boolean read FReadOnlyMode write FReadOnlyMode;
     property Changed: Boolean read FChanged write SetChanged;
     property ASuiteState: TASuiteState read FASuiteState write FASuiteState;
+    property ScanFolderLastPath: string read FScanFolderLastPath write FScanFolderLastPath;
+    property ScanFolderSubFolders: boolean read FScanFolderSubFolders write FScanFolderSubFolders;
+    property ScanFolderFileTypes: TStringList read FScanFolderFileTypes write FScanFolderFileTypes;
+    property ScanFolderExcludeNames: TStringList read FScanFolderExcludeNames write FScanFolderExcludeNames;
   end;
 
 var
@@ -282,18 +289,28 @@ begin
   FChanged            := False;
   FASuiteState        := asStartUp;
   FHotKey             := True;
+  //Hotkey
   FWindowHotKey       := False;
   FWindowHotKeyCode   := 0;
   FWindowHotKeyMod    := 0;
   FMenuHotKey         := False;
   FMenuHotKeyCode     := 0;
   FMenuHotKeyMod      := 0;
+  //ScanFolder
+  FScanFolderLastPath   := SUITE_WORKING_PATH;
+  FScanFolderSubFolders := True;
+  FScanFolderFileTypes  := TStringList.Create;
+  FScanFolderFileTypes.Add(EXT_LNK);
+  FScanFolderFileTypes.Add(EXT_EXE);
+  FScanFolderExcludeNames := TStringList.Create;
 end;
 
 destructor TConfiguration.Destroy;
 begin
   inherited Destroy;
   FTVFont.Free;
+  FScanFolderFileTypes.Free;
+  FScanFolderExcludeNames.Free;
 end;
 
 procedure TConfiguration.SetHoldSize(value: boolean);

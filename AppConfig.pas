@@ -67,6 +67,7 @@ const
   EXT_XMLBCK    = '.bck';
   EXT_ICO       = '.ico';
   EXT_LNK       = '.lnk';
+  EXT_EXE       = '.exe';
 
   //File
   DEBUG_FILE    = 'Debug.txt';
@@ -234,11 +235,14 @@ resourcestring
   msgErrRun         = 'Cannot run %s';
   msgErrSave        = 'Save failed because of an error';
   msgFileNotFound   = 'File not found';
+  msgFolderNotFound = 'Folder not found';
   msgImportFailed   = 'Import failed because of an error';
   msgErrEmptyUserName = 'Username field is empty';
   msgErrRegHotkey   = 'Register hotkey failed';
+  msgErrEmptyPath   = 'Path field is empty';
   //Misc
   msgVersion        = 'Version %s %s';
+  msgScanningProgress = 'Scanning in progress...';
 
 implementation
 

@@ -178,6 +178,10 @@ type
     FUseMouseSensors    : Boolean;
     FSensorLeftClick    : RawUTF8; //0 Top, 1 Left, 2 Right, 3 Bottom
     FSensorRightClick   : RawUTF8;
+    Fscanfolderlastpath : RawUTF8;
+    Fscanfoldersubfolders   : Boolean;
+    Fscanfolderfiletypes    : RawUTF8;
+    Fscanfolderexcludenames : RawUTF8;
   published
     //property FIELDNAME: TYPE read FFIELDNAME write FFIELDNAME;
     //General
@@ -248,6 +252,11 @@ type
     property usemousesensors: Boolean read FUseMouseSensors write FUseMouseSensors;
     property mousesensorleft:RawUTF8 read FSensorLeftClick write FSensorLeftClick;
     property mousesensorright:RawUTF8 read FSensorRightClick write FSensorRightClick;
+    //Scan Folder
+    property scanfolderlastpath: RawUTF8 read Fscanfolderlastpath write Fscanfolderlastpath;
+    property scanfoldersubfolders: Boolean read Fscanfoldersubfolders write Fscanfoldersubfolders;
+    property scanfolderfiletypes: RawUTF8 read Fscanfolderfiletypes write Fscanfolderfiletypes;
+    property scanfolderexcludenames: RawUTF8 read Fscanfolderexcludenames write Fscanfolderexcludenames;
   end;
 
   { TDBManager }
@@ -293,7 +302,8 @@ var
 implementation
 
 uses
-  AppConfig, ulAppConfig, ulFileFolder, ulCommonUtils, ulTreeView, Main, udImages;
+  AppConfig, ulAppConfig, ulFileFolder, ulCommonUtils, ulTreeView, Main, udImages,
+  ulStringUtils;
 
 { TDBManager }
 
@@ -629,6 +639,11 @@ begin
         Config.UseMouseSensors    := SQLOptionsData.UseMouseSensors;
         UTF8ToMouseSensors(SQLOptionsData.mousesensorleft,mbLeft);
         UTF8ToMouseSensors(SQLOptionsData.mousesensorright,mbRight);
+        //Scan Folder
+        Config.ScanFolderLastPath   := UTF8ToString(SQLOptionsData.scanfolderlastpath);
+        Config.ScanFolderSubFolders := SQLOptionsData.scanfoldersubfolders;
+        Config.ScanFolderFileTypes.Text    := UTF8ToString(SQLOptionsData.scanfolderfiletypes);
+        Config.ScanFolderExcludeNames.Text := UTF8ToString(SQLOptionsData.scanfolderexcludenames);
       end
     finally
       SQLOptionsData.Free;
@@ -823,6 +838,12 @@ begin
     SQLOptionsData.usemousesensors    := Config.UseMouseSensors;
     SQLOptionsData.mousesensorleft    := MouseSensorsToUTF8(mbLeft);
     SQLOptionsData.mousesensorright   := MouseSensorsToUTF8(mbRight);
+    //Scan Folder
+    SQLOptionsData.scanfolderlastpath     := StringToUTF8(Config.ScanFolderLastPath);
+    SQLOptionsData.scanfoldersubfolders   := Config.ScanFolderSubFolders;
+    SQLOptionsData.scanfolderfiletypes    := StringToUTF8(Config.ScanFolderFileTypes.Text);
+    SQLOptionsData.scanfolderexcludenames := StringToUTF8(Config.ScanFolderExcludeNames.Text);
+
     FDatabase.Add(SQLOptionsData,true);
   finally
     SQLOptionsData.Free;
