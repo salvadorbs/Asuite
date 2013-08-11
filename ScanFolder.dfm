@@ -1,9 +1,10 @@
 object frmScanFolder: TfrmScanFolder
   Left = 0
   Top = 0
+  BorderStyle = bsDialog
   Caption = 'Scan folder'
-  ClientHeight = 266
-  ClientWidth = 329
+  ClientHeight = 254
+  ClientWidth = 347
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -16,8 +17,8 @@ object frmScanFolder: TfrmScanFolder
   PixelsPerInch = 96
   TextHeight = 13
   object btnScan: TButton
-    Left = 160
-    Top = 232
+    Left = 181
+    Top = 223
     Width = 75
     Height = 25
     Caption = 'Scan'
@@ -26,8 +27,8 @@ object frmScanFolder: TfrmScanFolder
     OnClick = btnScanClick
   end
   object btnCancel: TButton
-    Left = 248
-    Top = 232
+    Left = 262
+    Top = 223
     Width = 75
     Height = 25
     Caption = 'Cancel'
@@ -37,137 +38,147 @@ object frmScanFolder: TfrmScanFolder
   object pnlScan: TPanel
     Left = 8
     Top = 8
-    Width = 313
-    Height = 217
+    Width = 329
+    Height = 209
     TabOrder = 2
-    object lbFolderPath: TLabel
+    object grpFileTypes: TGroupBox
       Left = 8
-      Top = 8
-      Width = 55
-      Height = 13
-      Caption = 'Folder path'
-    end
-    object lbTypes: TLabel
-      Left = 8
-      Top = 72
-      Width = 46
-      Height = 13
-      Caption = 'File types'
-    end
-    object lbExclude: TLabel
-      Left = 160
-      Top = 72
-      Width = 54
-      Height = 13
-      Caption = 'Exclude file'
-    end
-    object edtFolderPath: TEdit
-      Left = 8
-      Top = 24
-      Width = 225
-      Height = 21
-      TabOrder = 0
-    end
-    object btnBrowse: TButton
-      Left = 240
-      Top = 24
-      Width = 65
-      Height = 21
-      Caption = 'Browse'
+      Top = 88
+      Width = 154
+      Height = 114
+      Caption = 'File Types'
       TabOrder = 1
-      OnClick = btnBrowseClick
+      object btnTypesReplace: TButton
+        Left = 88
+        Top = 65
+        Width = 58
+        Height = 17
+        Caption = 'Replace'
+        TabOrder = 3
+        OnClick = btnTypesReplaceClick
+      end
+      object btnTypesDelete: TButton
+        Left = 88
+        Top = 86
+        Width = 58
+        Height = 17
+        Caption = 'Delete'
+        TabOrder = 4
+        OnClick = btnTypesDeleteClick
+      end
+      object lxTypes: TListBox
+        Left = 9
+        Top = 19
+        Width = 73
+        Height = 86
+        ItemHeight = 13
+        TabOrder = 0
+      end
+      object btnTypesAdd: TButton
+        Left = 88
+        Top = 44
+        Width = 58
+        Height = 17
+        Caption = 'Add'
+        TabOrder = 2
+        OnClick = btnTypesAddClick
+      end
+      object edtTypes: TEdit
+        Left = 88
+        Top = 19
+        Width = 58
+        Height = 21
+        TabOrder = 1
+      end
     end
-    object lxTypes: TListBox
-      Left = 8
+    object grpExclude: TGroupBox
+      Left = 168
       Top = 88
-      Width = 73
-      Height = 97
-      ItemHeight = 13
-      TabOrder = 3
-    end
-    object edtTypes: TEdit
-      Left = 88
-      Top = 88
-      Width = 65
-      Height = 21
-      TabOrder = 4
-    end
-    object btnTypesAdd: TButton
-      Left = 88
-      Top = 120
-      Width = 65
-      Height = 17
-      Caption = 'Add'
-      TabOrder = 5
-      OnClick = btnTypesAddClick
-    end
-    object btnTypesReplace: TButton
-      Left = 88
-      Top = 144
-      Width = 65
-      Height = 17
-      Caption = 'Replace'
-      TabOrder = 6
-      OnClick = btnTypesReplaceClick
-    end
-    object btnTypesDelete: TButton
-      Left = 88
-      Top = 168
-      Width = 65
-      Height = 17
-      Caption = 'Delete'
-      TabOrder = 7
-      OnClick = btnTypesDeleteClick
-    end
-    object cbSubfolders: TCheckBox
-      Left = 8
-      Top = 48
-      Width = 297
-      Height = 17
-      Caption = 'Scan subfolders'
+      Width = 154
+      Height = 114
+      Caption = 'Exclude file or folder'
       TabOrder = 2
+      object lxExclude: TListBox
+        Left = 9
+        Top = 19
+        Width = 73
+        Height = 86
+        ItemHeight = 13
+        TabOrder = 0
+      end
+      object edtExclude: TEdit
+        Left = 88
+        Top = 19
+        Width = 58
+        Height = 21
+        TabOrder = 1
+      end
+      object btnExcludeAdd: TButton
+        Left = 88
+        Top = 44
+        Width = 58
+        Height = 17
+        Caption = 'Add'
+        TabOrder = 2
+        OnClick = btnExcludeAddClick
+      end
+      object btnExcludeReplace: TButton
+        Left = 88
+        Top = 65
+        Width = 58
+        Height = 17
+        Caption = 'Replace'
+        TabOrder = 3
+        OnClick = btnExcludeReplaceClick
+      end
+      object btnExcludeDelete: TButton
+        Left = 88
+        Top = 86
+        Width = 58
+        Height = 17
+        Caption = 'Delete'
+        TabOrder = 4
+        OnClick = btnExcludeDeleteClick
+      end
     end
-    object lxExclude: TListBox
-      Left = 160
-      Top = 88
-      Width = 73
-      Height = 97
-      ItemHeight = 13
-      TabOrder = 8
-    end
-    object edtExclude: TEdit
-      Left = 240
-      Top = 88
-      Width = 65
-      Height = 21
-      TabOrder = 9
-    end
-    object btnExcludeAdd: TButton
-      Left = 240
-      Top = 120
-      Width = 65
-      Height = 17
-      Caption = 'Add'
-      TabOrder = 10
-      OnClick = btnExcludeAddClick
-    end
-    object btnExcludeReplace: TButton
-      Left = 240
-      Top = 144
-      Width = 65
-      Height = 17
-      Caption = 'Replace'
-      TabOrder = 11
-      OnClick = btnExcludeReplaceClick
-    end
-    object btnExcludeDelete: TButton
-      Left = 240
-      Top = 168
-      Width = 65
-      Height = 17
-      Caption = 'Delete'
-      TabOrder = 12
-      OnClick = btnExcludeDeleteClick
+    object grpPath: TGroupBox
+      Left = 8
+      Top = 0
+      Width = 314
+      Height = 84
+      Caption = 'General settings'
+      TabOrder = 0
+      object lbFolderPath: TLabel
+        Left = 9
+        Top = 17
+        Width = 55
+        Height = 13
+        Caption = 'Folder path'
+      end
+      object btnBrowse: TButton
+        Left = 239
+        Top = 33
+        Width = 65
+        Height = 21
+        Caption = 'Browse'
+        TabOrder = 0
+        OnClick = btnBrowseClick
+      end
+      object edtFolderPath: TEdit
+        Left = 8
+        Top = 33
+        Width = 225
+        Height = 21
+        TabOrder = 1
+      end
+      object cbSubfolders: TCheckBox
+        Left = 8
+        Top = 58
+        Width = 177
+        Height = 17
+        Caption = 'Scan subfolders'
+        TabOrder = 2
+      end
     end
   end
 end

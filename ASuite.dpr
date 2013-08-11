@@ -74,8 +74,8 @@ begin
     Application.Title := APP_TITLE;
 
     Application.CreateForm(TfrmMain, frmMain);
-  Application.CreateForm(TfrmGraphicMenu, frmGraphicMenu);
-  //Show MainForm and/or TrayMenu
+    Application.CreateForm(TfrmGraphicMenu, frmGraphicMenu);
+    //Show MainForm and/or TrayMenu
     Application.ShowMainForm := Config.ShowPanelAtStartUp;
     if (Config.ShowMenuAtStartUp) then
       ClassicMenu.ShowTrayiconMenu;
