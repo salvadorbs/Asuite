@@ -303,6 +303,7 @@ begin
   FScanFolderFileTypes.Add(EXT_LNK);
   FScanFolderFileTypes.Add(EXT_EXE);
   FScanFolderExcludeNames := TStringList.Create;
+  FScanFolderExcludeNames.Add('uninstall');
 end;
 
 destructor TConfiguration.Destroy;

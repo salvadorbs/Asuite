@@ -650,8 +650,10 @@ begin
       Config.UpdateSensors;
     end;
   end
-  else
+  else begin
+    Config.GMTheme := 'Default';
     Config.Changed := True;
+  end;
 end;
 
 procedure TDBManager.LoadData(Tree: TBaseVirtualTree);

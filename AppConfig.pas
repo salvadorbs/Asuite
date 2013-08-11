@@ -230,8 +230,8 @@ resourcestring
   msgErrEmptyName   = 'Application''s name field is empty';
   msgErrGeneric     = '%s error raised, with message: %s';
   msgErrIcon        = 'Cannot use icon %s';
-  msgErrNoIcon      = 'Couldn''t find the icon %s';
-  msgErrNoThemeIni  = 'Couldn''t find theme ini %s';
+  msgErrNoIcon      = 'Couldn''t find icon file %s';
+  msgErrNoThemeIni  = 'Couldn''t find file %s';
   msgErrRun         = 'Cannot run %s';
   msgErrSave        = 'Save failed because of an error';
   msgFileNotFound   = 'File not found';
