@@ -161,6 +161,13 @@ begin
       schTime := GetStrPropertyXML(XMLNode, 'SchedulerTime', '');
       if (schDate <> '') and (schTime <> '') then
         CustomRealNodeData.SchDateTime := StrToDateTime(schDate + ' ' + schTime);
+      CustomRealNodeData.ActionOnExe := TActionOnExecute(GetIntPropertyXML(XMLNode, 'ActionOnExe',0));
+      CustomRealNodeData.Autorun     := TAutorunType(GetIntPropertyXML(XMLNode, 'Autorun',0));
+      CustomRealNodeData.AutorunPos  := GetIntPropertyXML (XMLNode, 'AutorunPosition',0);
+      CustomRealNodeData.WindowState := GetIntPropertyXML (XMLNode, 'WindowState',0);
+      CustomRealNodeData.Hotkey      := GetBoolPropertyXML(XMLNode, 'HotKey',False);
+      CustomRealNodeData.HotkeyMod   := GetIntPropertyXML (XMLNode, 'HotKeyModifier',0);
+      CustomRealNodeData.HotkeyCode  := GetIntPropertyXML (XMLNode, 'HotKeyCode',0);
       //Check if it is a software, so get software properties
       if (CustomRealNodeData.DataType = vtdtFile) then
       begin
@@ -170,11 +177,7 @@ begin
           PathExe     := GetStrPropertyXML (XMLNode, 'PathExe', '');
           Parameters  := GetStrPropertyXML (XMLNode, 'Parameters', '');
           WorkingDir  := GetStrPropertyXML (XMLNode, 'WorkingDir', '');
-          WindowState := GetIntPropertyXML (XMLNode, 'WindowState',0);
           ShortcutDesktop := GetBoolPropertyXML(XMLNode, 'ShortcutDesktop',false);
-          ActionOnExe := TActionOnExecute(GetIntPropertyXML(XMLNode, 'ActionOnExe',0));
-          Autorun     := TAutorunType(GetIntPropertyXML(XMLNode, 'Autorun',0));
-          AutorunPos  := GetIntPropertyXML (XMLNode, 'AutorunPosition',0);
         end;
       end;
     end;
@@ -589,6 +592,16 @@ begin
       //frmMain's size
       frmMain.Width      := GetIntPropertyXML(Node,'ListFormWidth',frmMainWidth);
       frmMain.Height     := GetIntPropertyXML(Node,'ListFormHeight',frmMainHeight);
+      //Hotkey
+      Config.HotKey         := GetBoolPropertyXML(Node, 'ActiveHotKey',true);
+      //Window Hotkey
+      Config.WindowHotkeyMod  := GetIntPropertyXML(Node,'HotKeyModifier',-1);
+      Config.WindowHotkeyCode := GetIntPropertyXML(Node,'HotKeyCode',-1);
+      Config.WindowHotkey     := GetBoolPropertyXML(Node,'HotKey',false);
+      //Menu Hotkey
+      Config.MenuHotkeyMod  := GetIntPropertyXML(Node,'MenuHotKeyModifier',-1);
+      Config.MenuHotkeyCode := GetIntPropertyXML(Node,'MenuHotKeyCode',-1);
+      Config.MenuHotkey     := GetBoolPropertyXML(Node,'MenuHotKey',false);
       //frmMain position
       SetFormPosition(frmMain, GetIntPropertyXML(Node,'ListFormLeft',frmMain.Left),
                                GetIntPropertyXML(Node,'ListFormTop',frmMain.Top));
@@ -623,14 +636,20 @@ begin
       //Other functions
       Config.Autorun        := GetBoolPropertyXML(Node, 'ActiveAutorun',true);
       Config.Cache          := GetBoolPropertyXML(Node, 'ActiveCache',true);
+      Config.Scheduler      := GetBoolPropertyXML(Node, 'ActiveScheduler',true);
       //Execution
       Config.ActionOnExe    := TActionOnExecute(GetIntPropertyXML(Node, 'ActionOnExe',0));
       Config.RunSingleClick := GetBoolPropertyXML(Node, 'RunSingleClick',false);
       //Trayicon
-      Config.TrayIcon           := GetBoolPropertyXML(Node, 'ActiveTrayIcon',true);
       Config.TrayCustomIconPath := GetStrPropertyXML(Node, 'TrayIconPath','');
+      Config.TrayIcon           := GetBoolPropertyXML(Node, 'ActiveTrayIcon',true);
       Config.ActionClickLeft    := GetIntPropertyXML(Node, 'ActionClickLeft',0);
       Config.ActionClickRight   := GetIntPropertyXML(Node, 'ActionClickRight',2);
+      Config.UseCustomTitle     := GetBoolPropertyXML(Node, 'ClassicMenu',false);
+      //Only default menu
+      Config.GMTheme        := GetStrPropertyXML(Node, 'MenuTheme','Default');
+      Config.GMFade         := GetBoolPropertyXML(Node, 'MenuFade',true);
+      Config.GMPersonalPicture := GetStrPropertyXML(Node, 'MenuPersonalPicture','Default');
       //Mouse sensors
       for I := 0 to 3 do
       begin
