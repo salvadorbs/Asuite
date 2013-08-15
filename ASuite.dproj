@@ -1,317 +1,318 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <ProjectGuid>{982e1206-7a4f-49b2-95aa-a14066e9e1ac}</ProjectGuid>
-    <MainSource>ASuite.dpr</MainSource>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
-    <DCC_DependencyCheckOutputName>bin\ASuite.exe</DCC_DependencyCheckOutputName>
-    <ProjectVersion>14.6</ProjectVersion>
-    <Config Condition="'$(Config)'==''">Debug</Config>
-    <Base>True</Base>
-    <AppType>Application</AppType>
-    <FrameworkType>VCL</FrameworkType>
-    <Platform Condition="'$(Platform)'==''">Win32</Platform>
-    <TargetedPlatforms>1</TargetedPlatforms>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
-    <Base>true</Base>
-  </PropertyGroup>
-  <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
-    <Base_Win32>true</Base_Win32>
-    <CfgParent>Base</CfgParent>
-    <Base>true</Base>
-  </PropertyGroup>
-  <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Base)'=='true') or '$(Base_Win64)'!=''">
-    <Base_Win64>true</Base_Win64>
-    <CfgParent>Base</CfgParent>
-    <Base>true</Base>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_1)'!=''">
-    <Cfg_1>true</Cfg_1>
-    <CfgParent>Base</CfgParent>
-    <Base>true</Base>
-  </PropertyGroup>
-  <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win32)'!=''">
-    <Cfg_1_Win32>true</Cfg_1_Win32>
-    <CfgParent>Cfg_1</CfgParent>
-    <Cfg_1>true</Cfg_1>
-    <Base>true</Base>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_2)'!=''">
-    <Cfg_2>true</Cfg_2>
-    <CfgParent>Base</CfgParent>
-    <Base>true</Base>
-  </PropertyGroup>
-  <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
-    <Cfg_2_Win32>true</Cfg_2_Win32>
-    <CfgParent>Cfg_2</CfgParent>
-    <Cfg_2>true</Cfg_2>
-    <Base>true</Base>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Base)'!=''">
-    <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
-    <Manifest_File>None</Manifest_File>
-    <Icon_MainIcon>ASuite.ico</Icon_MainIcon>
-    <VerInfo_Locale>1040</VerInfo_Locale>
-    <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-    <VerInfo_MajorVer>2</VerInfo_MajorVer>
-    <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1165;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
-    <DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
-    <VerInfo_Build>1165</VerInfo_Build>
-    <DCC_UsePackage>vcl;rtl;vclx;vclactnband;dbrtl;vcldb;vcldbx;bdertl;dsnap;dsnapcon;TeeUI;TeeDB;Tee;adortl;IndyCore;IndySystem;IndyProtocols;xmlrtl;inet;intrawebdb_100_120;Intraweb_100_120;vclie;websnap;webdsnap;inetdbbde;inetdbxpress;soaprtl;vclribbon;dbexpress;DbxCommonDriver;DataSnapIndy10ServerTransport;DataSnapProviderClient;DataSnapServer;DbxClientDriver;DBXInterBaseDriver;DBXMySQLDriver;dbxcds;DBXSybaseASEDriver;DBXSybaseASADriver;DBXOracleDriver;DBXMSSQLDriver;DBXInformixDriver;DBXDb2Driver;VirtualTreesD12;$(DCC_UsePackage)</DCC_UsePackage>
-    <DCC_DependencyCheckOutputName>ASuite.exe</DCC_DependencyCheckOutputName>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Base_Win32)'!=''">
-    <DCC_DcuOutput>dcu</DCC_DcuOutput>
-    <DCC_UnitSearchPath>3p;3p\Virtual Treeview\Source;3p\mormot\SynDBDataset;3p\mormot;3p\mormot\sqlite3;3p\gnugettext;3p\cyComponents6\Core;3p\cyComponents6\VCLPack;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
-    <VerInfo_Locale>1033</VerInfo_Locale>
-    <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
-    <Debugger_RunParams>debug</Debugger_RunParams>
-    <DCC_Namespace>Data.Win;Datasnap.Win;Web.Win;Soap.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Base_Win64)'!=''">
-    <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
-    <Icon_MainIcon>ASuite_Icon13.ico</Icon_MainIcon>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Cfg_1)'!=''">
-    <DCC_DependencyCheckOutputName>bin\ASuite.exe</DCC_DependencyCheckOutputName>
-    <Version>7.0</Version>
-    <DCC_DebugInformation>False</DCC_DebugInformation>
-    <DCC_LocalDebugSymbols>False</DCC_LocalDebugSymbols>
-    <DCC_Optimize>False</DCC_Optimize>
-    <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
-    <DCC_ExeOutput>bin</DCC_ExeOutput>
-    <DCC_ObjOutput>dcu</DCC_ObjOutput>
-    <DCC_HppOutput>dcu</DCC_HppOutput>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-    <VerInfo_Build>1170</VerInfo_Build>
-    <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1170;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
-    <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
-    <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
-    <VerInfo_Locale>1033</VerInfo_Locale>
-    <DCC_Optimize>true</DCC_Optimize>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Cfg_2)'!=''">
-    <DCC_DebugDCUs>true</DCC_DebugDCUs>
-    <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
-    <DCC_DependencyCheckOutputName>bin\ASuite.exe</DCC_DependencyCheckOutputName>
-    <Version>7.0</Version>
-    <DCC_Optimize>False</DCC_Optimize>
-    <DCC_ExeOutput>bin</DCC_ExeOutput>
-    <DCC_ObjOutput>dcu</DCC_ObjOutput>
-    <DCC_HppOutput>dcu</DCC_HppOutput>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-    <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1207;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
-    <VerInfo_Build>1207</VerInfo_Build>
-    <ILINK_MapFileType>DetailedSegments</ILINK_MapFileType>
-    <MapFile>3</MapFile>
-    <DCC_MapFile>3</DCC_MapFile>
-    <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
-    <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
-    <VerInfo_Locale>1033</VerInfo_Locale>
-  </PropertyGroup>
-  <ProjectExtensions>
-    <Borland.Personality>Delphi.Personality.12</Borland.Personality>
-    <Borland.ProjectType>VCLApplication</Borland.ProjectType>
-    <BorlandProject>
-      <Delphi.Personality>
-        <Parameters>
-          <Parameters Name="RunParams">debug</Parameters>
-        </Parameters>
-        <VersionInfo>
-          <VersionInfo Name="IncludeVerInfo">True</VersionInfo>
-          <VersionInfo Name="AutoIncBuild">True</VersionInfo>
-          <VersionInfo Name="MajorVer">2</VersionInfo>
-          <VersionInfo Name="MinorVer">0</VersionInfo>
-          <VersionInfo Name="Release">0</VersionInfo>
-          <VersionInfo Name="Build">1154</VersionInfo>
-          <VersionInfo Name="Debug">False</VersionInfo>
-          <VersionInfo Name="PreRelease">False</VersionInfo>
-          <VersionInfo Name="Special">False</VersionInfo>
-          <VersionInfo Name="Private">False</VersionInfo>
-          <VersionInfo Name="DLL">False</VersionInfo>
-          <VersionInfo Name="Locale">1040</VersionInfo>
-          <VersionInfo Name="CodePage">1252</VersionInfo>
-        </VersionInfo>
-        <VersionInfoKeys>
-          <VersionInfoKeys Name="CompanyName">SalvadorSoftware</VersionInfoKeys>
-          <VersionInfoKeys Name="FileDescription" />
-          <VersionInfoKeys Name="FileVersion">2.0.0.1154</VersionInfoKeys>
-          <VersionInfoKeys Name="InternalName" />
-          <VersionInfoKeys Name="LegalCopyright" />
-          <VersionInfoKeys Name="LegalTrademarks" />
-          <VersionInfoKeys Name="OriginalFilename" />
-          <VersionInfoKeys Name="ProductName">ASuite</VersionInfoKeys>
-          <VersionInfoKeys Name="ProductVersion">1.5.2</VersionInfoKeys>
-          <VersionInfoKeys Name="Comments" />
-        </VersionInfoKeys>
-        <Source>
-          <Source Name="MainSource">ASuite.dpr</Source>
-        </Source>
-        <Excluded_Packages>
-          <Excluded_Packages Name="$(BDSBIN)\dcloffice2k180.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-          <Excluded_Packages Name="$(BDSBIN)\dclofficexp180.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
-          <Excluded_Packages Name="C:\Program Files\FastReports\FastReport 4\LibD18\dclfsibx18.bpl">FastScript 1.9 IBX Components</Excluded_Packages>
-          <Excluded_Packages Name="C:\Program Files\FastReports\FastReport 4\LibD18\dclfrxibx18.bpl">FastReport 4.0 IBX Components</Excluded_Packages>
-          <Excluded_Packages Name="E:\Dropbox\Progetti\VFS\prototypes\libs\PascalScript\Dcu\D18\PascalScript_Core_Ext_D18.bpl">File E:\Dropbox\Progetti\VFS\prototypes\libs\PascalScript\Dcu\D18\PascalScript_Core_Ext_D18.bpl not found</Excluded_Packages>
-        </Excluded_Packages>
-      </Delphi.Personality>
-      <ModelSupport>False</ModelSupport>
-      <Platforms>
-        <Platform value="Win32">True</Platform>
-        <Platform value="Win64">False</Platform>
-      </Platforms>
-    </BorlandProject>
-    <ProjectFileVersion>12</ProjectFileVersion>
-  </ProjectExtensions>
-  <ItemGroup>
-    <DelphiCompile Include="$(MainSource)">
-      <MainSource>MainSource</MainSource>
-    </DelphiCompile>
-    <DCCReference Include="library\ulCommonUtils.pas" />
-    <DCCReference Include="library\ulCommonClasses.pas" />
-    <DCCReference Include="AppConfig.pas" />
-    <DCCReference Include="library\ulAppConfig.pas" />
-    <DCCReference Include="Main.pas">
-      <Form>frmMain</Form>
-    </DCCReference>
-    <DCCReference Include="About.pas">
-      <Form>frmAbout</Form>
-    </DCCReference>
-    <DCCReference Include="3p\CheckPrevious.pas" />
-    <DCCReference Include="library\ulNodeDataTypes.pas" />
-    <DCCReference Include="library\ulEnumerations.pas" />
-    <DCCReference Include="library\ulSysUtils.pas" />
-    <DCCReference Include="library\ulStringUtils.pas" />
-    <DCCReference Include="udImages.pas">
-      <Form>ImagesDM</Form>
-      <DesignClass>TDataModule</DesignClass>
-    </DCCReference>
-    <DCCReference Include="library\ulDatabase.pas" />
-    <DCCReference Include="udClassicMenu.pas">
-      <Form>ClassicMenu</Form>
-      <DesignClass>TDataModule</DesignClass>
-    </DCCReference>
-    <DCCReference Include="library\ulExeUtils.pas" />
-    <DCCReference Include="ImportList.pas">
-      <Form>frmImportList</Form>
-    </DCCReference>
-    <DCCReference Include="Sensor.pas">
-      <Form>frmSensor</Form>
-    </DCCReference>
-    <DCCReference Include="library\ASuiteForm.pas" />
-    <DCCReference Include="library\ulTreeView.pas" />
-    <DCCReference Include="GraphicMenu.pas">
-      <Form>frmGraphicMenu</Form>
-      <FormType>dfm</FormType>
-    </DCCReference>
-    <DCCReference Include="3p\notifications.pas">
-      <Form>frmNotification</Form>
-      <FormType>dfm</FormType>
-    </DCCReference>
-    <DCCReference Include="library\ulFileFolder.pas" />
-    <DCCReference Include="Options.pas">
-      <Form>frmOptions</Form>
-      <FormType>dfm</FormType>
-    </DCCReference>
-    <DCCReference Include="frame\BaseEntityPage.pas">
-      <Form>frmBaseEntityPage</Form>
-      <FormType>dfm</FormType>
-      <DesignClass>TFrame</DesignClass>
-    </DCCReference>
-    <DCCReference Include="frame\GeneralOptionsPage.pas">
-      <Form>frmGeneralOptionsPage</Form>
-      <FormType>dfm</FormType>
-      <DesignClass>TFrame</DesignClass>
-    </DCCReference>
-    <DCCReference Include="frame\AdvancedOptionsPage.pas">
-      <Form>frmAdvancedOptionsPage</Form>
-      <FormType>dfm</FormType>
-      <DesignClass>TFrame</DesignClass>
-    </DCCReference>
-    <DCCReference Include="frame\TrayIconOptionsPage.pas">
-      <Form>frmTrayiconOptionsPage</Form>
-      <FormType>dfm</FormType>
-      <DesignClass>TFrame</DesignClass>
-    </DCCReference>
-    <DCCReference Include="frame\HotkeyOptionsPage.pas">
-      <Form>frmHotkeyOptionsPage</Form>
-      <FormType>dfm</FormType>
-      <DesignClass>TFrame</DesignClass>
-    </DCCReference>
-    <DCCReference Include="frame\StatsOptionsPage.pas">
-      <Form>frmStatsOptionsPage</Form>
-      <FormType>dfm</FormType>
-      <DesignClass>TFrame</DesignClass>
-    </DCCReference>
-    <DCCReference Include="frame\ItemsOptionsPage.pas">
-      <Form>frmItemsOptionsPage</Form>
-      <FormType>dfm</FormType>
-      <DesignClass>TFrame</DesignClass>
-    </DCCReference>
-    <DCCReference Include="frame\SensorsOptionsPage.pas">
-      <Form>frmSensorsOptionsPage</Form>
-      <FormType>dfm</FormType>
-      <DesignClass>TFrame</DesignClass>
-    </DCCReference>
-    <DCCReference Include="PropertyItem.pas">
-      <Form>frmPropertyItem</Form>
-      <FormType>dfm</FormType>
-    </DCCReference>
-    <DCCReference Include="library\ulFrameUtils.pas" />
-    <DCCReference Include="frame\AdvancedPropertyPage.pas">
-      <Form>frmAdvancedPropertyPage</Form>
-      <FormType>dfm</FormType>
-      <DesignClass>TFrame</DesignClass>
-    </DCCReference>
-    <DCCReference Include="frame\BehaviorPropertyPage.pas">
-      <Form>frmBehaviorPropertyPage</Form>
-      <FormType>dfm</FormType>
-      <DesignClass>TFrame</DesignClass>
-    </DCCReference>
-    <DCCReference Include="frame\BaseGeneralPropertyPage.pas">
-      <Form>frmBaseGeneralPropertyPage</Form>
-      <FormType>dfm</FormType>
-      <DesignClass>TFrame</DesignClass>
-    </DCCReference>
-    <DCCReference Include="frame\SWGeneralPropertyPage.pas">
-      <Form>frmSWGeneralPropertyPage</Form>
-      <FormType>dfm</FormType>
-      <DesignClass>TFrame</DesignClass>
-    </DCCReference>
-    <DCCReference Include="frame\CatGeneralPropertyPage.pas">
-      <Form>frmCatGeneralPropertyPage</Form>
-      <FormType>dfm</FormType>
-      <DesignClass>TFrame</DesignClass>
-    </DCCReference>
-    <DCCReference Include="PropertySeparator.pas">
-      <Form>frmPropertySeparator</Form>
-      <FormType>dfm</FormType>
-    </DCCReference>
-    <DCCReference Include="frame\BasePropertyPage.pas">
-      <Form>frmBasePropertyPage</Form>
-      <FormType>dfm</FormType>
-      <DesignClass>TFrame</DesignClass>
-    </DCCReference>
-    <DCCReference Include="ScanFolder.pas">
-      <Form>frmScanFolder</Form>
-      <FormType>dfm</FormType>
-    </DCCReference>
-    <None Include="ASuite.inc" />
-    <BuildConfiguration Include="Debug">
-      <Key>Cfg_2</Key>
-      <CfgParent>Base</CfgParent>
-    </BuildConfiguration>
-    <BuildConfiguration Include="Base">
-      <Key>Base</Key>
-    </BuildConfiguration>
-    <BuildConfiguration Include="Release">
-      <Key>Cfg_1</Key>
-      <CfgParent>Base</CfgParent>
-    </BuildConfiguration>
-  </ItemGroup>
-  <Import Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')" Project="$(BDS)\Bin\CodeGear.Delphi.Targets" />
-  <Import Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')" Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj" />
+    <PropertyGroup>
+        <ProjectGuid>{982e1206-7a4f-49b2-95aa-a14066e9e1ac}</ProjectGuid>
+        <MainSource>ASuite.dpr</MainSource>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
+        <DCC_DependencyCheckOutputName>bin\ASuite.exe</DCC_DependencyCheckOutputName>
+        <ProjectVersion>14.6</ProjectVersion>
+        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Base>True</Base>
+        <AppType>Application</AppType>
+        <FrameworkType>VCL</FrameworkType>
+        <Platform Condition="'$(Platform)'==''">Win32</Platform>
+        <TargetedPlatforms>1</TargetedPlatforms>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
+        <Base_Win32>true</Base_Win32>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Base)'=='true') or '$(Base_Win64)'!=''">
+        <Base_Win64>true</Base_Win64>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_1)'!=''">
+        <Cfg_1>true</Cfg_1>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win32)'!=''">
+        <Cfg_1_Win32>true</Cfg_1_Win32>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_2)'!=''">
+        <Cfg_2>true</Cfg_2>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
+        <Cfg_2_Win32>true</Cfg_2_Win32>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base)'!=''">
+        <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
+        <Manifest_File>None</Manifest_File>
+        <Icon_MainIcon>ASuite.ico</Icon_MainIcon>
+        <VerInfo_Locale>1040</VerInfo_Locale>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_MajorVer>2</VerInfo_MajorVer>
+        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1165;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
+        <DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
+        <VerInfo_Build>1165</VerInfo_Build>
+        <DCC_UsePackage>vcl;rtl;vclx;vclactnband;dbrtl;vcldb;vcldbx;bdertl;dsnap;dsnapcon;TeeUI;TeeDB;Tee;adortl;IndyCore;IndySystem;IndyProtocols;xmlrtl;inet;intrawebdb_100_120;Intraweb_100_120;vclie;websnap;webdsnap;inetdbbde;inetdbxpress;soaprtl;vclribbon;dbexpress;DbxCommonDriver;DataSnapIndy10ServerTransport;DataSnapProviderClient;DataSnapServer;DbxClientDriver;DBXInterBaseDriver;DBXMySQLDriver;dbxcds;DBXSybaseASEDriver;DBXSybaseASADriver;DBXOracleDriver;DBXMSSQLDriver;DBXInformixDriver;DBXDb2Driver;VirtualTreesD12;$(DCC_UsePackage)</DCC_UsePackage>
+        <DCC_DependencyCheckOutputName>ASuite.exe</DCC_DependencyCheckOutputName>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win32)'!=''">
+        <DCC_DcuOutput>dcu</DCC_DcuOutput>
+        <DCC_UnitSearchPath>3p;3p\Virtual Treeview\Source;3p\mormot\SynDBDataset;3p\mormot;3p\mormot\sqlite3;3p\gnugettext;3p\cyComponents6\Core;3p\cyComponents6\VCLPack;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <Debugger_RunParams>debug</Debugger_RunParams>
+        <DCC_Namespace>Data.Win;Datasnap.Win;Web.Win;Soap.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win64)'!=''">
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <Icon_MainIcon>ASuite_Icon13.ico</Icon_MainIcon>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1)'!=''">
+        <DCC_DependencyCheckOutputName>bin\ASuite.exe</DCC_DependencyCheckOutputName>
+        <Version>7.0</Version>
+        <DCC_DebugInformation>False</DCC_DebugInformation>
+        <DCC_LocalDebugSymbols>False</DCC_LocalDebugSymbols>
+        <DCC_Optimize>False</DCC_Optimize>
+        <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+        <DCC_ExeOutput>bin</DCC_ExeOutput>
+        <DCC_ObjOutput>dcu</DCC_ObjOutput>
+        <DCC_HppOutput>dcu</DCC_HppOutput>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+        <VerInfo_Build>1170</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1170;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <DCC_Optimize>true</DCC_Optimize>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2)'!=''">
+        <DCC_DebugDCUs>true</DCC_DebugDCUs>
+        <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
+        <DCC_DependencyCheckOutputName>bin\ASuite.exe</DCC_DependencyCheckOutputName>
+        <Version>7.0</Version>
+        <DCC_Optimize>False</DCC_Optimize>
+        <DCC_ExeOutput>bin</DCC_ExeOutput>
+        <DCC_ObjOutput>dcu</DCC_ObjOutput>
+        <DCC_HppOutput>dcu</DCC_HppOutput>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1215;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
+        <VerInfo_Build>1215</VerInfo_Build>
+        <ILINK_MapFileType>DetailedSegments</ILINK_MapFileType>
+        <MapFile>3</MapFile>
+        <DCC_MapFile>3</DCC_MapFile>
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+    </PropertyGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Delphi.Personality.12</Borland.Personality>
+        <Borland.ProjectType>VCLApplication</Borland.ProjectType>
+        <BorlandProject>
+            <Delphi.Personality>
+                <Parameters>
+                    <Parameters Name="RunParams">debug</Parameters>
+                </Parameters>
+                <VersionInfo>
+                    <VersionInfo Name="IncludeVerInfo">True</VersionInfo>
+                    <VersionInfo Name="AutoIncBuild">True</VersionInfo>
+                    <VersionInfo Name="MajorVer">2</VersionInfo>
+                    <VersionInfo Name="MinorVer">0</VersionInfo>
+                    <VersionInfo Name="Release">0</VersionInfo>
+                    <VersionInfo Name="Build">1162</VersionInfo>
+                    <VersionInfo Name="Debug">False</VersionInfo>
+                    <VersionInfo Name="PreRelease">False</VersionInfo>
+                    <VersionInfo Name="Special">False</VersionInfo>
+                    <VersionInfo Name="Private">False</VersionInfo>
+                    <VersionInfo Name="DLL">False</VersionInfo>
+                    <VersionInfo Name="Locale">1040</VersionInfo>
+                    <VersionInfo Name="CodePage">1252</VersionInfo>
+                </VersionInfo>
+                <VersionInfoKeys>
+                    <VersionInfoKeys Name="CompanyName">SalvadorSoftware</VersionInfoKeys>
+                    <VersionInfoKeys Name="FileDescription"/>
+                    <VersionInfoKeys Name="FileVersion">2.0.0.1162</VersionInfoKeys>
+                    <VersionInfoKeys Name="InternalName"/>
+                    <VersionInfoKeys Name="LegalCopyright"/>
+                    <VersionInfoKeys Name="LegalTrademarks"/>
+                    <VersionInfoKeys Name="OriginalFilename"/>
+                    <VersionInfoKeys Name="ProductName">ASuite</VersionInfoKeys>
+                    <VersionInfoKeys Name="ProductVersion">1.5.2</VersionInfoKeys>
+                    <VersionInfoKeys Name="Comments"/>
+                </VersionInfoKeys>
+                <Source>
+                    <Source Name="MainSource">ASuite.dpr</Source>
+                </Source>
+                <Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k180.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp180.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Program Files\FastReports\FastReport 4\LibD18\dclfsibx18.bpl">FastScript 1.9 IBX Components</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Program Files\FastReports\FastReport 4\LibD18\dclfrxibx18.bpl">FastReport 4.0 IBX Components</Excluded_Packages>
+                    <Excluded_Packages Name="E:\Dropbox\Progetti\VFS\prototypes\libs\PascalScript\Dcu\D18\PascalScript_Core_Ext_D18.bpl">File E:\Dropbox\Progetti\VFS\prototypes\libs\PascalScript\Dcu\D18\PascalScript_Core_Ext_D18.bpl not found</Excluded_Packages>
+                </Excluded_Packages>
+            </Delphi.Personality>
+            <ModelSupport>False</ModelSupport>
+            <Platforms>
+                <Platform value="Win32">True</Platform>
+                <Platform value="Win64">False</Platform>
+            </Platforms>
+        </BorlandProject>
+        <ProjectFileVersion>12</ProjectFileVersion>
+    </ProjectExtensions>
+    <ItemGroup>
+        <DelphiCompile Include="$(MainSource)">
+            <MainSource>MainSource</MainSource>
+        </DelphiCompile>
+        <DCCReference Include="library\ulCommonUtils.pas"/>
+        <DCCReference Include="library\ulCommonClasses.pas"/>
+        <DCCReference Include="AppConfig.pas"/>
+        <DCCReference Include="library\ulAppConfig.pas"/>
+        <DCCReference Include="Main.pas">
+            <Form>frmMain</Form>
+        </DCCReference>
+        <DCCReference Include="About.pas">
+            <Form>frmAbout</Form>
+        </DCCReference>
+        <DCCReference Include="3p\CheckPrevious.pas"/>
+        <DCCReference Include="library\ulNodeDataTypes.pas"/>
+        <DCCReference Include="library\ulEnumerations.pas"/>
+        <DCCReference Include="library\ulSysUtils.pas"/>
+        <DCCReference Include="library\ulStringUtils.pas"/>
+        <DCCReference Include="udImages.pas">
+            <Form>ImagesDM</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="library\ulDatabase.pas"/>
+        <DCCReference Include="udClassicMenu.pas">
+            <Form>ClassicMenu</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="library\ulExeUtils.pas"/>
+        <DCCReference Include="ImportList.pas">
+            <Form>frmImportList</Form>
+        </DCCReference>
+        <DCCReference Include="Sensor.pas">
+            <Form>frmSensor</Form>
+        </DCCReference>
+        <DCCReference Include="library\ASuiteForm.pas"/>
+        <DCCReference Include="library\ulTreeView.pas"/>
+        <DCCReference Include="GraphicMenu.pas">
+            <Form>frmGraphicMenu</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="3p\notifications.pas">
+            <Form>frmNotification</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="library\ulFileFolder.pas"/>
+        <DCCReference Include="Options.pas">
+            <Form>frmOptions</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="frame\BaseEntityPage.pas">
+            <Form>frmBaseEntityPage</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="frame\GeneralOptionsPage.pas">
+            <Form>frmGeneralOptionsPage</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="frame\AdvancedOptionsPage.pas">
+            <Form>frmAdvancedOptionsPage</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="frame\TrayIconOptionsPage.pas">
+            <Form>frmTrayiconOptionsPage</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="frame\HotkeyOptionsPage.pas">
+            <Form>frmHotkeyOptionsPage</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="frame\StatsOptionsPage.pas">
+            <Form>frmStatsOptionsPage</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="frame\ItemsOptionsPage.pas">
+            <Form>frmItemsOptionsPage</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="frame\SensorsOptionsPage.pas">
+            <Form>frmSensorsOptionsPage</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="PropertyItem.pas">
+            <Form>frmPropertyItem</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="library\ulFrameUtils.pas"/>
+        <DCCReference Include="frame\AdvancedPropertyPage.pas">
+            <Form>frmAdvancedPropertyPage</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="frame\BehaviorPropertyPage.pas">
+            <Form>frmBehaviorPropertyPage</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="frame\BaseGeneralPropertyPage.pas">
+            <Form>frmBaseGeneralPropertyPage</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="frame\SWGeneralPropertyPage.pas">
+            <Form>frmSWGeneralPropertyPage</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="frame\CatGeneralPropertyPage.pas">
+            <Form>frmCatGeneralPropertyPage</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="PropertySeparator.pas">
+            <Form>frmPropertySeparator</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="frame\BasePropertyPage.pas">
+            <Form>frmBasePropertyPage</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="ScanFolder.pas">
+            <Form>frmScanFolder</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="library\ulXMLUtils.pas"/>
+        <None Include="ASuite.inc"/>
+        <BuildConfiguration Include="Debug">
+            <Key>Cfg_2</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Base">
+            <Key>Base</Key>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Release">
+            <Key>Cfg_1</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+    </ItemGroup>
+    <Import Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')" Project="$(BDS)\Bin\CodeGear.Delphi.Targets"/>
+    <Import Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')" Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj"/>
 </Project>

@@ -64,7 +64,7 @@ type
     function Remove(Item: TvCustomRealNodeData): Integer;
     function IndexOfID(ID: Integer): TvCustomRealNodeData;
     procedure RefreshRegs;
-    procedure Clear;
+    procedure Clear; override;
   end;
 
   //ASuite TrayIcon Menu
@@ -369,7 +369,9 @@ end;
 
 function THotkeyList.Add(Item: TvCustomRealNodeData): Integer;
 begin
-  Assert((Item.ID <> -1), 'Current Item doesn'' have a valid ID');
+  Result := -1;
+  if (Item.ID = -1) then
+    Exit;
 
   Result := inherited;
   if Config.HotKey then

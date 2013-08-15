@@ -11,7 +11,6 @@ type
     OpenDialog1: TOpenDialog;
     procedure OpenDialog1Close(Sender: TObject);
   private
-    FImageIndex: integer;
     { Private declarations }
   strict protected
     function GetTitle: string; virtual;

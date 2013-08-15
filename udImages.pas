@@ -326,10 +326,7 @@ end;
 procedure TGetNodeIconsThread.Execute;
 begin
   inherited;
-  if FSmallIcon then
-    ImagesDM.InternalGetChildNodesIcons(FMainTree, FSubTree, FNode)
-  else
-    ImagesDM.InternalGetChildNodesIcons(FMainTree, FSubTree, FNode, False);
+  ImagesDM.InternalGetChildNodesIcons(FMainTree, FSubTree, FNode, FSmallIcon)
 end;
 
 end.

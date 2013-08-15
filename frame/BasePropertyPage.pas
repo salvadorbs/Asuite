@@ -13,7 +13,7 @@ type
     FCurrentNodeData: TvCustomRealNodeData;
   public
     { Public declarations }
-    constructor Create(AOwner: TComponent; ListNodeData: TvCustomRealNodeData); overload;
+    constructor Create(AOwner: TComponent; ListNodeData: TvCustomRealNodeData); reintroduce;
     property CurrentNodeData: TvCustomRealNodeData read FCurrentNodeData write FCurrentNodeData;
   end;
 

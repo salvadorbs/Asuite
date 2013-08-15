@@ -141,7 +141,9 @@ var
   TempFullName, TempShortName, PathTemp : String;
   ProgressBar   : TProgressBar;
 begin
-  ProgressBar := TProgressBar(ProgressDialog.FindComponent('Progress'));
+  ChildNode     := nil;
+  ChildNodeData := nil;
+  ProgressBar   := TProgressBar(ProgressDialog.FindComponent('Progress'));
   if FindFirst(FolderPath + '*.*', faAnyFile, SearchRec) = 0 then
   begin
     repeat

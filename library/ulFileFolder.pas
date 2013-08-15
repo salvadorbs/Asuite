@@ -82,14 +82,14 @@ end;
 procedure CheckBackupFolder;
 begin
   //Check if folder backup exists, else create it
-  ForceDirectories(SUITE_BACKUP_PATH);
+  SysUtils.ForceDirectories(SUITE_BACKUP_PATH);
 end;         
 
 procedure CheckCacheFolders;
 begin
   //Check if folder cache exists, else create it
-  ForceDirectories(SUITE_CACHE_PATH);
-  ForceDirectories(SUITE_CACHELARGE_PATH);
+  SysUtils.ForceDirectories(SUITE_CACHE_PATH);
+  SysUtils.ForceDirectories(SUITE_CACHELARGE_PATH);
 end;
 
 function GetNumberSubFolders(FolderPath: String): Integer;

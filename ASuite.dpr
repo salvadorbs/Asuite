@@ -45,7 +45,8 @@ uses
   CatGeneralPropertyPage in 'frame\CatGeneralPropertyPage.pas' {frmCatGeneralPropertyPage: TFrame},
   PropertySeparator in 'PropertySeparator.pas' {frmPropertySeparator},
   BasePropertyPage in 'frame\BasePropertyPage.pas' {frmBasePropertyPage: TFrame},
-  ScanFolder in 'ScanFolder.pas' {frmScanFolder};
+  ScanFolder in 'ScanFolder.pas' {frmScanFolder},
+  ulXMLUtils in 'library\ulXMLUtils.pas';
 
 //SQLite3 static library
 
@@ -70,12 +71,11 @@ begin
     Application.Initialize;
     SetCurrentDir(SUITE_WORKING_PATH);
     Config    := TConfiguration.Create;
-    DBManager := TDBManager.Create(SUITE_LIST_PATH);
     Application.Title := APP_TITLE;
 
     Application.CreateForm(TfrmMain, frmMain);
-    Application.CreateForm(TfrmGraphicMenu, frmGraphicMenu);
-    //Show MainForm and/or TrayMenu
+  Application.CreateForm(TfrmGraphicMenu, frmGraphicMenu);
+  //Show MainForm and/or TrayMenu
     Application.ShowMainForm := Config.ShowPanelAtStartUp;
     if (Config.ShowMenuAtStartUp) then
       ClassicMenu.ShowTrayiconMenu;
