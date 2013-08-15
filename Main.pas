@@ -25,7 +25,7 @@ uses
   Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
   ComCtrls, VirtualTrees, ActiveX, AppConfig, ulNodeDataTypes, ulCommonClasses,
   UDImages, ASuiteForm, StdCtrls, Buttons, Sensor, System.UITypes, mORMotUILogin,
-  ulEnumerations, Vcl.ExtCtrls, System.DateUtils;
+  ulEnumerations, Vcl.ExtCtrls, System.DateUtils, XMLDoc;
 
 type
 
@@ -179,6 +179,7 @@ type
     procedure RunStartupProcess;
     procedure RunShutdownProcess;
     procedure ExecuteSelectedNode(TreeView: TBaseVirtualTree;ProcessInfo: TProcessInfo);
+    procedure LoadDataFromXML(FileName: string);
   public
     { Public declarations }
     procedure ShowMainForm(Sender: TObject);
@@ -200,9 +201,9 @@ var
 implementation
 
 uses
-  Options, About, ulCommonUtils, udClassicMenu, ulExeUtils, ImportList,
+  Options, About, ulCommonUtils, udClassicMenu, ulExeUtils, ImportList, ulFileFolder,
   ulAppConfig, ulTreeView, ulDatabase, notifications, GraphicMenu, StatsOptionsPage,
-  PropertyItem, PropertySeparator, ScanFolder;
+  PropertyItem, PropertySeparator, ScanFolder, ulXMLUtils;
 
 {$R *.dfm}
 
@@ -960,6 +961,25 @@ begin
   ImagesDM.IcoImages.GetBitmap(IMAGE_INDEX_Search,sbtnSearch.Glyph);
 end;
 
+procedure TfrmMain.LoadDataFromXML(FileName: string);
+var
+  XMLDoc: TXMLDocument;
+begin
+  //Create XMLDoc
+  XMLDoc := TXMLDocument.Create(Self);
+  XMLDoc.FileName := SUITE_WORKING_PATH + ChangeFileExt(SUITE_FILENAME, EXT_XML);
+  XMLDoc.Active := True;
+  //Load list and settings
+  if (XMLDoc.DocumentElement.NodeName = 'ASuite') then
+  begin
+    LoadXMLSettings(XMLDoc);
+    XMLToTree(vstList, ImportOldListProcs.ASuite1NodeToTree, XMLDoc);
+    Config.Changed := True;
+  end;
+  DeleteFile(SUITE_WORKING_PATH + ChangeFileExt(SUITE_FILENAME, EXT_XML));
+  RefreshList(vstList);
+end;
+
 procedure TfrmMain.RunStartupProcess;
 var
   NodeData    : TvCustomRealNodeData;
@@ -1119,10 +1139,16 @@ begin
 end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);
+var
+  UseXMLList: Boolean;
+  XMLFileName: string;
 begin
   Application.CreateForm(TImagesDM, ImagesDM);
   Application.CreateForm(TClassicMenu, ClassicMenu);
   pcList.ActivePageIndex := PG_LIST;
+  //Create special list
+  MRUList := TMRUList.Create;
+  MFUList := TMFUList.Create;
   //Create TNodeLists for autorun
   StartupItemList   := TAutorunItemList.Create;
   ShutdownItemList  := TAutorunItemList.Create;
@@ -1145,7 +1171,18 @@ begin
     end;
   end;
   //List & Options
-  DBManager.LoadData(vstList);
+  XMLFileName := SUITE_WORKING_PATH + ChangeFileExt(SUITE_FILENAME, EXT_XML);
+  UseXMLList  := (Not FileExists(SUITE_LIST_PATH)) and (FileExists(XMLFileName));
+  DBManager   := TDBManager.Create(SUITE_LIST_PATH);
+  //If exists old list format (xml), use it
+  if UseXMLList then
+    LoadDataFromXML(XMLFileName)
+  else //Use new list format (sqlite db)
+    DBManager.LoadData(vstList);
+  //Backup sqlite database
+  DBManager.DoBackupList;
+  //Get rootnode's Icons
+  ImagesDM.GetChildNodesIcons(vstList, nil, vstList.RootNode);
   RunStartupProcess;
   //Get placeholder for edtSearch
   edtSearch.TextHint := StringReplace(miSearchName.Caption, '&', '', []);

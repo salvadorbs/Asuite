@@ -27,8 +27,6 @@ uses
   XMLIntf, msxmldom, XMLDoc, ulEnumerations, ulDatabase, DateUtils, xmldom;
 
 type
-  TImportListToTree = function(Tree: TVirtualStringTree;Node: IXMLNode;Parent: PVirtualNode): PVirtualNode of object;
-
   TfrmImportList = class(TGTForm)
     bvl1: TBevel;
     bvl2: TBevel;
@@ -89,19 +87,13 @@ type
       const Text: string; const CellRect: TRect; var DefaultDraw: Boolean);
   private
     { Private declarations }
-    procedure ImportSettingsInASuite;
+    procedure ImportSettingsInASuite(XMLDoc: TXMLDocument);
     procedure ImportListInASuite;
     function  TreeImp2Tree(TreeImp, Tree: TVirtualStringTree): Boolean;
     function  GetNumberNodeImp(Sender: TBaseVirtualTree): Integer;
     procedure PopulateTree(Tree: TVirtualStringTree;FilePath: String);
-    function ASuite1NodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
-                               Parent: PVirtualNode): PVirtualNode;
-    function wppLauncherNodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
-                                    Parent: PVirtualNode): PVirtualNode;
-    procedure XMLToTree(Tree: TVirtualStringTree;CallBack: TImportListToTree;
-  XMLDoc: TXMLDocument);
     procedure CheckAllItems(State: TCheckState);
-    function InternalImportOptions: Boolean;
+    function InternalImportOptions(XMLDoc: TXMLDocument): Boolean;
   public
     { Public declarations }
   end;
@@ -115,73 +107,11 @@ implementation
 
 uses
   Main, ulNodeDataTypes, ulCommonUtils, ulTreeView, udImages, ulAppConfig,
-  ulFileFolder, udClassicMenu;
+  ulFileFolder, udClassicMenu, ulXMLUtils;
 
 procedure TfrmImportList.btnCancelClick(Sender: TObject);
 begin
   Close;
-end;
-
-function TfrmImportList.ASuite1NodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
-                                          Parent: PVirtualNode): PVirtualNode;
-var
-  NodeData : PBaseData;
-  schDate, schTime   : string;
-  CustomRealNodeData : TvCustomRealNodeData;
-begin
-  Result := nil;
-  if ((XMLNode.HasAttribute('name')) or (XMLNode.NodeName = 'Separator')) and
-     ((XMLNode.NodeName = 'Software') or (XMLNode.NodeName = 'Category') or
-      (XMLNode.NodeName = 'Separator')) then
-  begin
-    //Create a new XMLNode
-    //Get item type
-    if (XMLNode.NodeName = 'Category') then
-      Result := Tree.AddChild(Parent, TvCategoryNodeData.Create)
-    else
-      if (XMLNode.NodeName = 'Software') then
-        Result := Tree.AddChild(Parent, TvFileNodeData.Create(vtdtFile))
-      else
-        if XMLNode.NodeName = 'Separator' then
-          Result := Tree.AddChild(Parent, TvSeparatorNodeData.Create);
-    //Add checkbox
-    Tree.CheckType[Result] := ctTriStateCheckBox;
-    NodeData := Tree.GetNodeData(Result);
-    NodeData.Data.pNode  := Result;
-    CustomRealNodeData   := TvCustomRealNodeData(NodeData.Data);
-    //Get base properties
-    if (CustomRealNodeData.DataType <> vtdtSeparator) then
-    begin
-      CustomRealNodeData.Name     := String(XMLNode.Attributes['name']);
-      CustomRealNodeData.PathIcon := GetStrPropertyXML(XMLNode, 'PathIcon', '');
-      CustomRealNodeData.HideFromMenu := GetBoolPropertyXML(XMLNode, 'HideSoftwareMenu', false);
-      CustomRealNodeData.SchMode  := TSchedulerMode(GetIntPropertyXML (XMLNode, 'SchedulerMode',0));
-      //Scheduler date and time
-      schDate := GetStrPropertyXML(XMLNode, 'SchedulerDate', '');
-      schTime := GetStrPropertyXML(XMLNode, 'SchedulerTime', '');
-      if (schDate <> '') and (schTime <> '') then
-        CustomRealNodeData.SchDateTime := StrToDateTime(schDate + ' ' + schTime);
-      CustomRealNodeData.ActionOnExe := TActionOnExecute(GetIntPropertyXML(XMLNode, 'ActionOnExe',0));
-      CustomRealNodeData.Autorun     := TAutorunType(GetIntPropertyXML(XMLNode, 'Autorun',0));
-      CustomRealNodeData.AutorunPos  := GetIntPropertyXML (XMLNode, 'AutorunPosition',0);
-      CustomRealNodeData.WindowState := GetIntPropertyXML (XMLNode, 'WindowState',0);
-      CustomRealNodeData.Hotkey      := GetBoolPropertyXML(XMLNode, 'HotKey',False);
-      CustomRealNodeData.HotkeyMod   := GetIntPropertyXML (XMLNode, 'HotKeyModifier',0);
-      CustomRealNodeData.HotkeyCode  := GetIntPropertyXML (XMLNode, 'HotKeyCode',0);
-      //Check if it is a software, so get software properties
-      if (CustomRealNodeData.DataType = vtdtFile) then
-      begin
-        with TvFileNodeData(CustomRealNodeData) do
-        begin
-          NoMRU       := GetBoolPropertyXML(XMLNode, 'DontInsertMRU',false);
-          PathExe     := GetStrPropertyXML (XMLNode, 'PathExe', '');
-          Parameters  := GetStrPropertyXML (XMLNode, 'Parameters', '');
-          WorkingDir  := GetStrPropertyXML (XMLNode, 'WorkingDir', '');
-          ShortcutDesktop := GetBoolPropertyXML(XMLNode, 'ShortcutDesktop',false);
-        end;
-      end;
-    end;
-  end;
 end;
 
 procedure TfrmImportList.btnBackClick(Sender: TObject);
@@ -213,12 +143,12 @@ begin
                      ((edtPathList.Text <> '') and FileExists(edtPathList.Text));
 end;
 
-procedure TfrmImportList.ImportSettingsInASuite;
+procedure TfrmImportList.ImportSettingsInASuite(XMLDoc: TXMLDocument);
 begin
   //Import settings
   if (cbImportSettings.Checked) then
   begin
-    if InternalImportOptions then
+    if InternalImportOptions(XMLDoc) then
       ImagesDM.IcoImages.GetIcon(IMAGE_INDEX_Accept, imgSettings.Picture.Icon)
     else
       ImagesDM.IcoImages.GetIcon(IMAGE_INDEX_Cancel,imgList.Picture.Icon);
@@ -261,13 +191,13 @@ begin
   begin
     XMLDocument1.FileName := FilePath;
     XMLDocument1.Active   := True;
-      //Identify launcher xml from first node
-      //ASuite 1.x
-      if (XMLDocument1.DocumentElement.NodeName = 'ASuite') then
-        XMLToTree(vstListImp,ASuite1NodeToTree,XMLDocument1)
-      else //winPenPack Launcher 1.x
-        if ChangeFileExt(FileName,'') = 'winpenpack' then
-          XMLToTree(vstListImp,wppLauncherNodeToTree,XMLDocument1);
+    //Identify launcher xml from first node
+    //ASuite 1.x
+    if (XMLDocument1.DocumentElement.NodeName = 'ASuite') then
+      XMLToTree(vstListImp,ImportOldListProcs.ASuite1NodeToTree,XMLDocument1)
+    else //winPenPack Launcher 1.x
+      if ChangeFileExt(FileName,'') = 'winpenpack' then
+        XMLToTree(vstListImp,ImportOldListProcs.wppLauncherNodeToTree,XMLDocument1);
   end
   else //ASuite 2.x
     if (FileExt = EXT_SQL) or (FileExt = EXT_SQLBCK) then
@@ -278,58 +208,6 @@ begin
     end;
   vstListImp.EndUpdate;
   ImagesDM.GetChildNodesIcons(Tree, nil, Tree.RootNode);
-end;
-
-function TfrmImportList.wppLauncherNodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
-                                               Parent: PVirtualNode): PVirtualNode;
-var
-  NodeData     : PBaseData;
-  CustomRealNodeData : TvCustomRealNodeData;
-begin
-  Result := nil;
-  if ((XMLNode.HasAttribute(Name)) or (XMLNode.NodeName = 'separator')) and
-     ((XMLNode.NodeName = 'file') or (XMLNode.NodeName = 'files') or
-      (XMLNode.NodeName = 'separator')) then
-  begin
-    //Create a new XMLNode
-    //Get item type
-    if (XMLNode.NodeName = 'files') then
-      Result := tree.AddChild(Parent, CreateNodeData(vtdtCategory))
-    else
-      if (XMLNode.NodeName = 'file') then
-        Result := tree.AddChild(Parent, CreateNodeData(vtdtFile))
-      else
-        if XMLNode.NodeName = 'separator' then
-          Result := Tree.AddChild(Parent, CreateNodeData(vtdtSeparator));
-    //Add checkbox
-    Tree.CheckType[Result] := ctTriStateCheckBox;
-    NodeData := Tree.GetNodeData(Result);
-    NodeData.Data.pNode := Result;
-    CustomRealNodeData  := TvCustomRealNodeData(NodeData.Data);
-    //Get base properties
-    if CustomRealNodeData.DataType <> vtdtSeparator then
-    begin
-      CustomRealNodeData.Name     := String(XMLNode.Attributes['name']);
-      CustomRealNodeData.PathIcon := GetStrPropertyXML(XMLNode,'icon','');
-      CustomRealNodeData.HideFromMenu := GetBoolPropertyXML(XMLNode, 'HideSoftwareMenu', false);
-      //Check if it is a software, so get software properties
-      if (CustomRealNodeData.DataType = vtdtFile) then
-      begin
-        with TvFileNodeData(CustomRealNodeData) do
-        begin
-          NoMRU       := GetBoolPropertyXML(XMLNode, 'DontInsertMRU',false);
-          PathExe     := GetStrPropertyXML (XMLNode, 'path','');
-          Parameters  := GetStrPropertyXML (XMLNode, 'parameters','');
-          WorkingDir  := GetStrPropertyXML (XMLNode, 'WorkingDir','');
-          WindowState := GetIntPropertyXML (XMLNode, 'WindowState',0);
-          ShortcutDesktop := GetBoolPropertyXML(XMLNode, 'ShortcutDesktop',false);
-          ActionOnExe := TActionOnExecute(GetIntPropertyXML(XMLNode, 'ActionOnExe',0));
-          Autorun     := TAutorunType(GetIntPropertyXML(XMLNode, 'Autorun',0));
-          AutorunPos  := GetIntPropertyXML(XMLNode, 'AutorunPosition',0);
-        end;
-      end;
-    end;
-  end;
 end;
 
 procedure TfrmImportList.btnDeselectAllClick(Sender: TObject);
@@ -413,39 +291,6 @@ begin
     else
       CellText := StringReplace(NodeData.Data.Name, '&&', '&', [rfIgnoreCase,rfReplaceAll]);
   end;
-end;
-
-procedure TfrmImportList.XMLToTree(Tree: TVirtualStringTree;CallBack: TImportListToTree;
-  XMLDoc: TXMLDocument);
-var
-  cXMLNode : IXMLNode;
-
-  procedure ProcessNode(XMLNode : IXMLNode;TreeNode : PVirtualNode);
-  var
-    cNode : IXMLNode;
-  begin
-    if XMLNode = nil then Exit;
-    //Import xml node in vstListImp
-    TreeNode := CallBack(vstListImp, XMLNode, TreeNode);
-    //Next nodes
-    cNode := XMLNode.ChildNodes.First;
-    while Assigned(cNode) do
-    begin
-      ProcessNode(cNode,TreeNode);
-      cNode := cNode.NextSibling;
-    end;
-  end;
-
-begin
-  Tree.Clear;
-  Tree.BeginUpdate;
-  cXMLNode := XMLDoc.DocumentElement.ChildNodes.First;
-  while Assigned(cXMLNode) do
-  begin
-    ProcessNode(cXMLNode,nil);
-    cXMLNode := cXMLNode.NextSibling;
-  end;
-  Tree.EndUpdate;
 end;
 
 procedure TfrmImportList.CheckAllItems(State: TCheckState);
@@ -562,101 +407,16 @@ begin
   Result := NumberNode;
 end;
 
-function TfrmImportList.InternalImportOptions: Boolean;
+function TfrmImportList.InternalImportOptions(XMLDoc: TXMLDocument): Boolean;
 var
-  DBImp  : TDBManager;
-  Node, tvFontStyle : IXMLNode;
+  DBImp : TDBManager;
   ImportFileExt : String;
-  I      : Integer;
 begin
   Result := False;
   try
     ImportFileExt := LowerCase(ExtractFileExt(edtPathList.Text));
     if (ImportFileExt = EXT_XML) or (ImportFileExt = EXT_XMLBCK) then
-    begin
-      XMLDocument1.FileName := edtPathList.Text;
-      XMLDocument1.Active   := True;
-      //ASuite 1.x - wppLauncher
-      Node := XMLDocument1.DocumentElement.ChildNodes['Option'];
-      //General
-      Config.StartWithWindows   := GetBoolPropertyXML(Node, 'StartOnWindowsStartup', false);
-      Config.ShowPanelAtStartUp := GetBoolPropertyXML(Node, 'StartUpShowPanel', true);
-      Config.ShowMenuAtStartUp  := GetBoolPropertyXML(Node, 'StartUpShowMenu', false);
-      //Main Form
-      Config.CustomTitleString := GetStrPropertyXML(Node, 'CustomTitleString', APP_TITLE);
-      Config.UseCustomTitle    := GetBoolPropertyXML(Node, 'CustomTitle', false);
-      Config.HideTabSearch     := GetBoolPropertyXML(Node, 'HideSearch', false);
-      //Main Form - Position and size
-      Config.HoldSize    := GetBoolPropertyXML(Node, 'HoldSize', false);
-      Config.AlwaysOnTop := GetBoolPropertyXML(Node, 'MainOnTop', false);
-      //frmMain's size
-      frmMain.Width      := GetIntPropertyXML(Node,'ListFormWidth',frmMainWidth);
-      frmMain.Height     := GetIntPropertyXML(Node,'ListFormHeight',frmMainHeight);
-      //Hotkey
-      Config.HotKey         := GetBoolPropertyXML(Node, 'ActiveHotKey',true);
-      //Window Hotkey
-      Config.WindowHotkeyMod  := GetIntPropertyXML(Node,'HotKeyModifier',-1);
-      Config.WindowHotkeyCode := GetIntPropertyXML(Node,'HotKeyCode',-1);
-      Config.WindowHotkey     := GetBoolPropertyXML(Node,'HotKey',false);
-      //Menu Hotkey
-      Config.MenuHotkeyMod  := GetIntPropertyXML(Node,'MenuHotKeyModifier',-1);
-      Config.MenuHotkeyCode := GetIntPropertyXML(Node,'MenuHotKeyCode',-1);
-      Config.MenuHotkey     := GetBoolPropertyXML(Node,'MenuHotKey',false);
-      //frmMain position
-      SetFormPosition(frmMain, GetIntPropertyXML(Node,'ListFormLeft',frmMain.Left),
-                               GetIntPropertyXML(Node,'ListFormTop',frmMain.Top));
-      frmMain.Position := poDesigned;
-      //Main Form - Treevew
-      Config.TVBackgroundPath := GetStrPropertyXML(Node, 'BackgroundPath','');
-      Config.TVBackground     := GetBoolPropertyXML(Node, 'Background',False);
-      Config.TVAutoOpClCats   := GetBoolPropertyXML(Node, 'AutoOpClCategories',False);
-      //Treeview Font
-      Config.TVFont.Name      := GetStrPropertyXML(Node, 'TreeViewFontName','MS Sans Serif');
-      tvFontStyle             := Node.ChildNodes['TreeViewFontStyle'];
-      if Assigned(tvFontStyle) then
-      begin
-        if GetBoolPropertyXML(tvFontStyle,'fsBold',false) then
-          Config.TVFont.Style := Config.TVFont.Style + [fsBold];
-        if GetBoolPropertyXML(tvFontStyle,'fsItalic',false) then
-          Config.TVFont.Style := Config.TVFont.Style + [fsItalic];
-        if GetBoolPropertyXML(tvFontStyle,'fsUnderline',false) then
-          Config.TVFont.Style := Config.TVFont.Style + [fsUnderline];
-        if GetBoolPropertyXML(tvFontStyle,'fsStrikeOut',false) then
-          Config.TVFont.Style := Config.TVFont.Style + [fsStrikeOut];
-      end;
-      Config.TVFont.Size    := GetIntPropertyXML(Node,'TreeViewFontSize',8);
-      Config.TVFont.Color   := GetIntPropertyXML(Node,'TreeViewFontColor',clWindowText);
-      //MRU
-      Config.MRU            := GetBoolPropertyXML(Node, 'ActiveMRU',true);
-      Config.SubMenuMRU     := GetBoolPropertyXML(Node, 'ActiveSubMenuMRU',false);
-      Config.MRUNumber      := GetIntPropertyXML(Node, 'MRUNumber',5);
-      //Backup
-      Config.Backup         := GetBoolPropertyXML(Node, 'ActiveBackup',true);
-      Config.BackupNumber   := GetIntPropertyXML(Node, 'BackupNumber',5);
-      //Other functions
-      Config.Autorun        := GetBoolPropertyXML(Node, 'ActiveAutorun',true);
-      Config.Cache          := GetBoolPropertyXML(Node, 'ActiveCache',true);
-      Config.Scheduler      := GetBoolPropertyXML(Node, 'ActiveScheduler',true);
-      //Execution
-      Config.ActionOnExe    := TActionOnExecute(GetIntPropertyXML(Node, 'ActionOnExe',0));
-      Config.RunSingleClick := GetBoolPropertyXML(Node, 'RunSingleClick',false);
-      //Trayicon
-      Config.TrayCustomIconPath := GetStrPropertyXML(Node, 'TrayIconPath','');
-      Config.TrayIcon           := GetBoolPropertyXML(Node, 'ActiveTrayIcon',true);
-      Config.ActionClickLeft    := GetIntPropertyXML(Node, 'ActionClickLeft',0);
-      Config.ActionClickRight   := GetIntPropertyXML(Node, 'ActionClickRight',2);
-      Config.UseCustomTitle     := GetBoolPropertyXML(Node, 'ClassicMenu',false);
-      //Only default menu
-      Config.GMTheme        := GetStrPropertyXML(Node, 'MenuTheme','Default');
-      Config.GMFade         := GetBoolPropertyXML(Node, 'MenuFade',true);
-      Config.GMPersonalPicture := GetStrPropertyXML(Node, 'MenuPersonalPicture','Default');
-      //Mouse sensors
-      for I := 0 to 3 do
-      begin
-        Config.SensorLeftClick[I]  := GetIntPropertyXML(Node.ChildNodes['Mouse'],'SensorLeftClick' + IntToStr(I), 0);
-        Config.SensorRightClick[I] := GetIntPropertyXML(Node.ChildNodes['Mouse'],'SensorRightClick' + IntToStr(I), 0);
-      end;
-    end
+      LoadXMLSettings(XMLDoc)
     else
       if (ImportFileExt = EXT_SQL) or (ImportFileExt = EXT_SQLBCK)then
       begin
@@ -692,7 +452,7 @@ begin
     lblSettings.Enabled := cbImportSettings.Checked;
     //Import list
     ImportListInASuite;
-    ImportSettingsInASuite;
+    ImportSettingsInASuite(XMLDocument1);
   finally
     btnNext.Enabled  := True;
     btnNext.Caption  := msgClose;

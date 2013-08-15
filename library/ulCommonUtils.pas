@@ -38,11 +38,6 @@ function  CreateDialogProgressBar(DialogMsg: String;NumberFolders: Integer): TFo
 function  IsFormOpen(const FormName : string): Boolean;
 procedure SetFormPosition(Form: TForm;ListFormLeft, ListFormTop: Integer);
 
-{ XML }
-function GetStrPropertyXML(Node : IXMLNode;Name: String;Default: String): String;
-function GetIntPropertyXML(Node : IXMLNode;Name: String;Default: Integer): Integer;
-function GetBoolPropertyXML(Node : IXMLNode;Name: String;Default: Boolean): Boolean;
-
 { Misc }
 function CheckPropertyName(Edit: TEdit): Boolean;
 function  GetDateTime: String;
@@ -178,42 +173,6 @@ begin
   end
   else
     Form.Position := poDesktopCenter;
-end;
-
-function GetStrPropertyXML(Node : IXMLNode;Name: String;Default: String): String;
-var
-  PropertyNode: IXMLNode;
-begin
-  Result := Default;
-  PropertyNode := Node.ChildNodes[Name];
-  //Check if PropertyNode exists
-  if Assigned(PropertyNode) then
-    if PropertyNode.Text <> '' then
-      Result := PropertyNode.Text;
-end;
-
-function GetIntPropertyXML(Node : IXMLNode;Name: String;Default: Integer): Integer;
-var
-  PropertyNode: IXMLNode;
-begin
-  Result := Default;
-  PropertyNode := Node.ChildNodes[Name];
-  //Check if PropertyNode exists
-  if Assigned(PropertyNode) then
-    if PropertyNode.Text <> '' then
-      Result := StrToInt(PropertyNode.Text);
-end;
-
-function GetBoolPropertyXML(Node : IXMLNode;Name: String;Default: Boolean): Boolean;
-var
-  PropertyNode: IXMLNode;
-begin
-  Result := Default;
-  PropertyNode := Node.ChildNodes[Name];
-  //Check if PropertyNode exists
-  if Assigned(PropertyNode) then
-    if PropertyNode.Text <> '' then
-      Result := ulStringUtils.StrToBool(PropertyNode.Text);
 end;
 
 function CheckPropertyName(Edit: TEdit): Boolean;

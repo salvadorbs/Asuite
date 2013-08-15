@@ -23,7 +23,7 @@ interface
 
 uses
   Windows, SysUtils, ActiveX, VirtualTrees, Controls, ulCommonClasses, AppConfig,
-  ulNodeDataTypes, ulEnumerations, Classes, ShellApi, comobj;
+  ulNodeDataTypes, ulEnumerations, Classes, ShellApi, comobj, ulXMLUtils;
 
 { List, Menu, MRU }
 function  AddNodeInVST(Sender: TBaseVirtualTree;ParentNode: PVirtualNode;AType: TvTreeDataType): PVirtualNode;
@@ -70,7 +70,8 @@ var
   MFUList : TMFUList;
   SearchType : TSearchType;
   IterateSubTreeProcs : TIterateSubtreeProcs;
-  StartupItemList,                      //Software in StartUp list
+  ImportOldListProcs  : TImportOldListProcs;
+  StartupItemList,                        //Software in StartUp list
   ShutdownItemList    : TAutorunItemList; //Software in Shutdown list
   SchedulerItemList   : TNodeDataList;
   HotKeyApp : THotkeyList;

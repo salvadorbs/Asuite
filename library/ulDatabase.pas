@@ -466,10 +466,6 @@ begin
     InternalLoadVersion;
     //Load Options
     InternalLoadOptions;
-    //Create special list
-    MRUList := TMRUList.Create;
-    MFUList := TMFUList.Create;
-
     //Load list
     InternalLoadListItems(Tree, 0, nil, false);
   except
@@ -660,10 +656,6 @@ procedure TDBManager.LoadData(Tree: TBaseVirtualTree);
 begin
   //List & Options
   DBManager.InternalLoadData(Tree);
-  //Backup sqlite database
-  DBManager.DoBackupList;
-  //Get rootnode's Icons
-  ImagesDM.GetChildNodesIcons(Tree, nil, Tree.RootNode);
 end;
 
 function TDBManager.MouseSensorsToUTF8(MouseButton: TMouseButton): RawUTF8;
