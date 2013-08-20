@@ -22,7 +22,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, VirtualTrees, ComCtrls;
+  Dialogs, StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, DKLang;
 
 type
   TfrmScanFolder = class(TForm)
@@ -46,6 +46,7 @@ type
     edtFolderPath: TEdit;
     cbSubfolders: TCheckBox;
     lbFolderPath: TLabel;
+    DKLanguageController1: TDKLanguageController;
     procedure btnBrowseClick(Sender: TObject);
     procedure btnScanClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -192,7 +193,7 @@ var
   Dialog: TForm;
 begin
   //Run scan
-  Dialog := CreateDialogProgressBar(msgScanningProgress, GetNumberSubFolders(TempPath));
+  Dialog := CreateDialogProgressBar(DKLangConstW('msgScanningProgress'), GetNumberSubFolders(TempPath));
   Tree.BeginUpdate;
   try
     DoScanFolder(Tree, TempPath, ChildNode, Dialog);
@@ -230,12 +231,12 @@ begin
   //Check if user insert a valid path
   if TempPath = '' then
   begin
-    ShowMessage(msgErrEmptyPath);
+    ShowMessage(DKLangConstW('msgErrEmptyPath'));
     Exit;
   end;
   if Not(DirectoryExists(TempPath)) then
   begin
-    ShowMessage(msgFolderNotFound);
+    ShowMessage(DKLangConstW('msgFolderNotFound'));
     Exit;
   end;
   //Add parent node

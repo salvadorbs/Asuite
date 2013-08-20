@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BasePropertyPage, Vcl.StdCtrls,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BasePropertyPage, Vcl.StdCtrls, DKLang,
   BaseEntityPage;
 
 type
@@ -43,7 +43,7 @@ uses
 
 procedure TfrmBaseGeneralPropertyPage.btnBrowseIconClick(Sender: TObject);
 begin
-  OpenDialog1.Filter     := 'Files supported (*.ico;*.exe)|*.ico;*.exe|All files|*.*';
+  OpenDialog1.Filter     := DKLangConstW('msgFilterIconExe');
   OpenDialog1.InitialDir := ExtractFileDir(RelativeToAbsolute(edtPathIcon.Text));
   if (OpenDialog1.Execute) then
     edtPathIcon.Text := AbsoluteToRelative(OpenDialog1.FileName);
@@ -61,7 +61,7 @@ end;
 
 function TfrmBaseGeneralPropertyPage.GetTitle: string;
 begin
-  Result := 'General';
+  Result := DKLangConstW('msgGeneral');
 end;
 
 function TfrmBaseGeneralPropertyPage.InternalLoadData: Boolean;

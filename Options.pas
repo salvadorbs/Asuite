@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.ComCtrls,
-  Vcl.StdCtrls, BaseEntityPage, VirtualTrees;
+  Vcl.StdCtrls, BaseEntityPage, VirtualTrees, DKLang;
 
 type
   TfrmOptions = class(TForm)
@@ -13,6 +13,7 @@ type
     btnCancel: TButton;
     pnlOptionsPage: TPanel;
     vstListCategory: TVirtualStringTree;
+    DKLanguageController1: TDKLanguageController;
     procedure FormCreate(Sender: TObject);
     procedure vstListCategoryGetText(Sender: TBaseVirtualTree;
       Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;

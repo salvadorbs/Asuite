@@ -22,10 +22,10 @@ unit ASuiteForm;
 interface
 
 uses
-  Forms, Controls, Classes, Dialogs, ActnList, Graphics, Windows, Messages, GTForm;
+  Forms, Controls, Classes, Dialogs, ActnList, Graphics, Windows, Messages, DKLang;
 
 type
-  TASuiteForm = class(TGTForm)
+  TASuiteForm = class(TForm)
   private
     FSessionEnding : Boolean;
     FOldPoint      : TPoint;
@@ -132,7 +132,7 @@ begin
           end;
         end
         else begin
-          ShowMessage(msgErrGeneric, True);
+          ShowMessage(DKLangConstW('msgErrGeneric'), True);
           exit;
         end;
       end;

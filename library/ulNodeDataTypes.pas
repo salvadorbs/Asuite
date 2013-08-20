@@ -32,7 +32,7 @@ interface
 
 uses
   VirtualTrees, Menus, SysUtils, Dialogs, appConfig, DateUtils, ulEnumerations,
-  Winapi.ShellAPI, Winapi.Windows, BaseEntityPage;
+  Winapi.ShellAPI, Winapi.Windows, BaseEntityPage, DKLang;
 
 type
 
@@ -311,7 +311,7 @@ end;
 
 procedure TvBaseNodeData.Copy(source:TvBaseNodeData);
 begin
-  FName       := msgCopy + source.Name;
+  FName       := DKLangConstW('msgCopy') + source.Name;
   FImageIndex := -1;
   FImageLargeIndex := -1;
   FDataType   := source.DataType;
@@ -455,7 +455,7 @@ begin
   end
   else begin
     //Show error message
-    ShowMessageFmt(msgErrRun,[FName],true);
+    ShowMessageFmt(DKLangConstW('msgErrRun'),[FName],true);
   end;
 end;
 

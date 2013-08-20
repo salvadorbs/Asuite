@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BaseEntityPage, Vcl.StdCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BaseEntityPage, Vcl.StdCtrls, DKLang;
 
 type
   TfrmHotkeyOptionsPage = class(TfrmBaseEntityPage)
@@ -16,6 +16,7 @@ type
     cxMenuHotKeyCode: TComboBox;
     cxMenuHotKeyMod: TComboBox;
     cbHotKey: TCheckBox;
+    DKLanguageController1: TDKLanguageController;
     procedure cbHotKeyClick(Sender: TObject);
     procedure cbWindowHotKeyClick(Sender: TObject);
     procedure cbMenuHotKeyClick(Sender: TObject);
@@ -67,7 +68,7 @@ end;
 
 function TfrmHotkeyOptionsPage.GetTitle: string;
 begin
-  Result := 'HotKey';
+  Result := DKLangConstW('msgHotkey');
 end;
 
 function TfrmHotkeyOptionsPage.InternalLoadData: Boolean;

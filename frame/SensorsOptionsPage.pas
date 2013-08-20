@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BaseEntityPage, Vcl.StdCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BaseEntityPage, Vcl.StdCtrls, DKLang;
 
 type
   TfrmSensorsOptionsPage = class(TfrmBaseEntityPage)
@@ -25,6 +25,7 @@ type
     lbRight: TLabel;
     lbLeft: TLabel;
     lbTop: TLabel;
+    DKLanguageController1: TDKLanguageController;
     procedure cbMouseSensorsClick(Sender: TObject);
   private
     { Private declarations }
@@ -39,10 +40,6 @@ type
 
 var
   frmSensorsOptionsPage: TfrmSensorsOptionsPage;
-
-  arrayOfMouseSensorsString:array[0..3] of string = (
-     'Disabled','Show window','Show default menu','Show classic menu'
-  );
 
 implementation
 
@@ -74,28 +71,12 @@ end;
 
 function TfrmSensorsOptionsPage.GetTitle: string;
 begin
-  Result := 'Mouse Sensors';
+  Result := DKLangConstW('msgMouseSensors');
 end;
 
 function TfrmSensorsOptionsPage.InternalLoadData: Boolean;
-var
-  I: Integer;
 begin
   Result := inherited;
-  //Mouse Sensors
-  for I := 0 to 3 do
-    begin
-      //Left Click
-      cxLCTop.Items.Add(arrayOfMouseSensorsString[I]);
-      cxLCLeft.Items.Add(arrayOfMouseSensorsString[I]);
-      cxLCRight.Items.Add(arrayOfMouseSensorsString[I]);
-      cxLCBottom.Items.Add(arrayOfMouseSensorsString[I]);
-      //Right Click
-      cxRCTop.Items.Add(arrayOfMouseSensorsString[I]);
-      cxRCLeft.Items.Add(arrayOfMouseSensorsString[I]);
-      cxRCRight.Items.Add(arrayOfMouseSensorsString[I]);
-      cxRCBottom.Items.Add(arrayOfMouseSensorsString[I]);
-    end;
   cbMouseSensors.Checked := Config.UseMouseSensors;
   //Left Click
   cxLCTop.ItemIndex    := Config.SensorLeftClick[0];

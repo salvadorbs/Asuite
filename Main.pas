@@ -25,7 +25,7 @@ uses
   Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
   ComCtrls, VirtualTrees, ActiveX, AppConfig, ulNodeDataTypes, ulCommonClasses,
   UDImages, ASuiteForm, StdCtrls, Buttons, Sensor, System.UITypes, mORMotUILogin,
-  ulEnumerations, Vcl.ExtCtrls, System.DateUtils, XMLDoc;
+  ulEnumerations, Vcl.ExtCtrls, System.DateUtils, XMLDoc, DKLang;
 
 type
 
@@ -97,6 +97,7 @@ type
     miRunAsAdmin: TMenuItem;
     tmScheduler: TTimer;
     mniScanFolder: TMenuItem;
+    DKLanguageController1: TDKLanguageController;
     procedure miOptionsClick(Sender: TObject);
     procedure miStatisticsClick(Sender: TObject);
     procedure pcListChange(Sender: TObject);
@@ -223,7 +224,7 @@ var
   Nodes: TNodeArray;
   I: Integer;
 begin
-  if (vstList.GetFirstSelected <> nil) and (MessageDlg((msgConfirm),mtWarning, [mbYes,mbNo], 0) = mrYes) then
+  if (vstList.GetFirstSelected <> nil) and (MessageDlg((DKLangConstW('msgConfirm')),mtWarning, [mbYes,mbNo], 0) = mrYes) then
   begin
     //Run actions (ex. remove node from MRU list) before delete nodes
     Nodes := vstList.GetSortedSelection(true);
@@ -250,9 +251,9 @@ end;
 procedure TfrmMain.miSaveListClick(Sender: TObject);
 begin;
   if DBManager.SaveData(vstList) then
-    showmessage(msgSaveCompleted)
+    showmessage(DKLangConstW('msgSaveCompleted'))
   else
-    showmessage(msgErrSave,true);
+    showmessage(DKLangConstW('msgErrSave'),true);
 end;
 
 procedure TfrmMain.ChangeSearchTextHint(Sender: TObject);
@@ -648,11 +649,11 @@ var
 begin
   ProcessInfo.RunMode := rmRunAs;
   //Call login dialog for Windows username and password
-  TLoginForm.Login(msgRunAsTitle, msgInsertWinUserInfo, ProcessInfo.UserName, ProcessInfo.Password, true, '');
+  TLoginForm.Login(DKLangConstW('msgRunAsTitle'), DKLangConstW('msgInsertWinUserInfo'), ProcessInfo.UserName, ProcessInfo.Password, true, '');
   if ProcessInfo.UserName <> '' then
     ExecuteSelectedNode(TreeView, ProcessInfo)
   else
-    ShowMessage(msgErrEmptyUserName, true);
+    ShowMessage(DKLangConstW('msgErrEmptyUserName'), true);
 end;
 
 procedure TfrmMain.ExecuteSelectedNode(TreeView: TBaseVirtualTree;ProcessInfo: TProcessInfo);
@@ -855,7 +856,7 @@ begin
         end;
       except
         on E : Exception do
-          ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message], true);
+          ShowMessageFmt(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message], true);
       end;
       vstList.Repaint;
       RefreshList(vstList);

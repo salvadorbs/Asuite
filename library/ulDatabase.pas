@@ -23,7 +23,7 @@ interface
 
 uses
   Windows, SysUtils, Forms, Dialogs, VirtualTrees, ulNodeDataTypes, ulEnumerations,
-  ulCommonClasses, Classes, mORMot, SynCommons, mORMotSQLite3,
+  ulCommonClasses, Classes, mORMot, SynCommons, mORMotSQLite3, DKLang,
   System.UITypes, Vcl.Controls;
 
 type
@@ -348,7 +348,7 @@ begin
     InternalLoadListItems(Tree, 0, nil, true);
   except
     on E : Exception do
-      ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message],True);
+      ShowMessageFmt(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message],True);
   end;
 end;
 
@@ -358,7 +358,7 @@ begin
     InternalLoadOptions;
   except
     on E : Exception do
-      ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message],True);
+      ShowMessageFmt(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message],True);
   end;
 end;
 
@@ -470,7 +470,7 @@ begin
     InternalLoadListItems(Tree, 0, nil, false);
   except
     on E : Exception do
-      ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message],True);
+      ShowMessageFmt(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message],True);
   end;
 end;
 
@@ -720,7 +720,7 @@ begin
     end;
   except
     on E : Exception do begin
-      ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message],True);
+      ShowMessageFmt(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message],True);
       FDatabase.Rollback(1);
     end;
   end;
@@ -748,7 +748,7 @@ begin
         InternalSaveListItems(Tree, Node.FirstChild, vData.ID);
     except
       on E : Exception do
-        ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message],True);
+        ShowMessageFmt(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message],True);
     end;
     Node := Node.NextSibling;
   end;

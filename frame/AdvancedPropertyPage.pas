@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BasePropertyPage, Vcl.ComCtrls,
-  Vcl.StdCtrls;
+  Vcl.StdCtrls, DKLang;
 
 type
   TfrmAdvancedPropertyPage = class(TfrmBasePropertyPage)
@@ -22,6 +22,7 @@ type
     cbHotKey: TCheckBox;
     cxHotkeyMod: TComboBox;
     cxHotKeyCode: TComboBox;
+    DKLanguageController1: TDKLanguageController;
     procedure cxSchedulerChange(Sender: TObject);
     procedure cbHotKeyClick(Sender: TObject);
   private
@@ -67,7 +68,7 @@ end;
 
 function TfrmAdvancedPropertyPage.GetTitle: string;
 begin
-  Result := 'Advanced';
+  Result := DKLangConstW('msgAdvanced');
 end;
 
 function TfrmAdvancedPropertyPage.InternalLoadData: Boolean;

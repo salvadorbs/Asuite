@@ -25,7 +25,8 @@ interface
 
 uses
   SysUtils, Classes, Controls, Windows, Graphics, Dialogs, ulEnumerations,
-  ulNodeDataTypes, ShellApi, CommCtrl, Vcl.ImgList, ulCommonUtils, VirtualTrees;
+  ulNodeDataTypes, ShellApi, CommCtrl, Vcl.ImgList, ulCommonUtils, VirtualTrees,
+  DKLang;
 
 type
   TRGBArray = array[Word] of TRGBTriple;
@@ -198,7 +199,7 @@ begin
   if FileExists(FileName) then
     Result := GetSimpleIconIndex(FileName, SmallIcon)
   else
-    ShowMessageFmt(msgErrNoIcon, [FileName],true);
+    ShowMessageFmt(DKLangConstW('msgErrNoIcon'), [FileName],true);
 end;
 
 function TImagesDM.GetSimpleIconIndex(xpath: string;SmallIcon: Boolean = True): integer;

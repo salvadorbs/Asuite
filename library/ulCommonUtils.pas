@@ -23,7 +23,7 @@ interface
 
 uses
   Windows, SysUtils, Classes, Graphics, Forms, Dialogs, ComCtrls, Clipbrd,
-  AppConfig, StdCtrls, ulCommonClasses, XMLIntf, System.UITypes,
+  AppConfig, StdCtrls, ulCommonClasses, XMLIntf, System.UITypes, DKLang,
   ulAppConfig;
 
 { Converters }
@@ -181,7 +181,7 @@ begin
   // Check if inserted name is empty, then
   if (Trim(Edit.Text) = '') then
   begin
-    ShowMessage(msgErrEmptyName,true);
+    ShowMessage(DKLangConstW('msgErrEmptyName'),true);
     Edit.Color := clYellow;
     Result := False;
   end;

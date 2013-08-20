@@ -23,11 +23,12 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, AppConfig, GTForm, System.UITypes,
-  XMLIntf, msxmldom, XMLDoc, ulEnumerations, ulDatabase, DateUtils, xmldom;
+  Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, AppConfig, System.UITypes,
+  XMLIntf, msxmldom, XMLDoc, ulEnumerations, ulDatabase, DateUtils, xmldom,
+  DKLang;
 
 type
-  TfrmImportList = class(TGTForm)
+  TfrmImportList = class(TForm)
     bvl1: TBevel;
     bvl2: TBevel;
     pgcImport: TPageControl;
@@ -60,6 +61,7 @@ type
     lblLauncher: TLabel;
     imgSettings: TImage;
     lblSettings: TLabel;
+    DKLanguageController1: TDKLanguageController;
     procedure btnDeselectAllClick(Sender: TObject);
     procedure btnSelectAllClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
@@ -166,12 +168,12 @@ begin
         ImagesDM.IcoImages.GetIcon(IMAGE_INDEX_Accept,imgList.Picture.Icon)
       else
         ImagesDM.IcoImages.GetIcon(IMAGE_INDEX_Cancel,imgList.Picture.Icon);
-      lblItems.Caption := Format(msgItemsImported,[pbImport.Max]);
+      lblItems.Caption := Format(DKLangConstW('msgItemsImported'),[pbImport.Max]);
     except
       on E : Exception do
       begin
-        ShowMessageFmt(msgErrGeneric,[E.ClassName,E.Message],True);
-        lblItems.Caption := msgImportFailed;
+        ShowMessageFmt(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message],True);
+        lblItems.Caption := DKLangConstW('msgImportFailed');
       end;
     end;
   end;
@@ -324,7 +326,7 @@ var
     begin
       //Update progress bar
       pbImport.Position := pbImport.Position + 1;
-      lblItems.Caption  := Format(msgProcessingItems, [((pbImport.Position / pbImport.Max) * 100), pbImport.Max]);
+      lblItems.Caption  := Format(DKLangConstW('msgProcessingItems'), [((pbImport.Position / pbImport.Max) * 100), pbImport.Max]);
       Self.Update;
       //Create new node in vstList
       tn             := Tree.AddChild(tn, CreateNodeData(NodeDataImp.Data.DataType));
@@ -365,8 +367,8 @@ end;
 
 procedure TfrmImportList.tsLaunchersShow(Sender: TObject);
 begin
-  lblTitle.Caption := msgImportTitle1;
-  btnNext.Caption  := msgNext;
+  lblTitle.Caption := DKLangConstW('msgImportTitle1');
+  btnNext.Caption  := DKLangConstW('msgNext');
   btnNext.Enabled  := True;
 end;
 
@@ -375,8 +377,8 @@ begin
   //If cbImportList is checked, import selected list in VirtualTree
   if (cbImportList.Checked) then
   begin
-    lblTitle.Caption := msgImportTitle3;
-    btnNext.Caption  := msgImport;
+    lblTitle.Caption := DKLangConstW('msgImportTitle3');
+    btnNext.Caption  := DKLangConstW('msgImport');
     //Import list in temporary vst
     Config.ASuiteState := asImporting;
     PopulateTree(vstListImp, edtPathList.Text);
@@ -387,14 +389,14 @@ end;
 
 procedure TfrmImportList.tsSettingsShow(Sender: TObject);
 begin
-  lblTitle.Caption := msgImportTitle2;
+  lblTitle.Caption := DKLangConstW('msgImportTitle2');
   btnNext.Enabled  := (edtPathList.Text <> '') and FileExists(edtPathList.Text);
-  btnNext.Caption  := msgNext;
+  btnNext.Caption  := DKLangConstW('msgNext');
   //Change opendialog's filter depending on chosen launcher
   case rgrpLauncher.ItemIndex of
-    0: OpenDialog1.Filter:= Format('ASuite 2.x List (*%s, *%s)|*%s;*%s',    [EXT_SQL,EXT_SQLBCK,EXT_SQL,EXT_SQLBCK]);
-    1: OpenDialog1.Filter:= Format('ASuite 1.x List (*%s, *%s)|*%s;*%s',    [EXT_XML,EXT_XMLBCK,EXT_XML,EXT_XMLBCK]);
-    2: OpenDialog1.Filter:= Format('winPenPack 1.x List (*%s, *%s)|*%s;*%s',[EXT_XML,EXT_XMLBCK,EXT_XML,EXT_XMLBCK]);
+    0: OpenDialog1.Filter:= Format(DKLangConstW('msgFilterASuite2'),   [EXT_SQL,EXT_SQLBCK,EXT_SQL,EXT_SQLBCK]);
+    1: OpenDialog1.Filter:= Format(DKLangConstW('msgFilterASuite1'),   [EXT_XML,EXT_XMLBCK,EXT_XML,EXT_XMLBCK]);
+    2: OpenDialog1.Filter:= Format(DKLangConstW('msgFilterWinPenPack'),[EXT_XML,EXT_XMLBCK,EXT_XML,EXT_XMLBCK]);
   end;
 end;
 
@@ -439,7 +441,7 @@ begin
   btnBack.Enabled  := False;
   btnNext.Enabled  := False;
   try
-    lblTitle.Caption := msgImportProgress;
+    lblTitle.Caption := DKLangConstW('msgImportProgress');
     //Which launcher?
     case rgrpLauncher.ItemIndex of
       0,1: lblLauncher.Caption := Format(lblLauncher.Caption,['ASuite']);
@@ -455,7 +457,7 @@ begin
     ImportSettingsInASuite(XMLDocument1);
   finally
     btnNext.Enabled  := True;
-    btnNext.Caption  := msgClose;
+    btnNext.Caption  := DKLangConstW('msgClose');
     Self.Show;
   end;
 end;

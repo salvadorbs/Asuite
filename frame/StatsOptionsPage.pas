@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BaseEntityPage, Vcl.StdCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BaseEntityPage, Vcl.StdCtrls, DKLang;
 
 type
   TfrmStatsOptionsPage = class(TfrmBaseEntityPage)
@@ -29,6 +29,7 @@ type
     lbOs2: TLabel;
     lbNamePc2: TLabel;
     lbUser2: TLabel;
+    DKLanguageController1: TDKLanguageController;
   private
     { Private declarations }
   strict protected
@@ -59,7 +60,7 @@ end;
 
 function TfrmStatsOptionsPage.GetTitle: string;
 begin
-  Result := 'Stats';
+  Result := DKLangConstW('msgStats');
 end;
 
 function TfrmStatsOptionsPage.InternalLoadData: Boolean;

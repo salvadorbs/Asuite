@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BasePropertyPage, Vcl.StdCtrls,
-  BaseEntityPage;
+  BaseEntityPage, DKLang;
 
 type
   TfrmBehaviorPropertyPage = class(TfrmBasePropertyPage)
@@ -16,6 +16,7 @@ type
     btnChangeOrder: TButton;
     cxActionOnExe: TComboBox;
     cxWindowState: TComboBox;
+    DKLanguageController1: TDKLanguageController;
     procedure cxAutoExecuteChange(Sender: TObject);
     procedure btnChangeOrderClick(Sender: TObject);
   private
@@ -68,7 +69,7 @@ end;
 
 function TfrmBehaviorPropertyPage.GetTitle: string;
 begin
-  Result := 'Behavior';
+  Result := DKLangConstW('msgBehavior');
 end;
 
 function TfrmBehaviorPropertyPage.InternalLoadData: Boolean;

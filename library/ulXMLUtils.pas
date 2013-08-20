@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, AppConfig, GTForm, System.UITypes,
+  Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, AppConfig, System.UITypes,
   XMLIntf, msxmldom, XMLDoc, ulEnumerations, ulDatabase, DateUtils, xmldom;
 
 { Load list or settings from xml file }

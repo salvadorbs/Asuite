@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BaseEntityPage, Vcl.StdCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BaseEntityPage, Vcl.StdCtrls, DKLang;
 
 type
   TfrmTrayiconOptionsPage = class(TfrmBaseEntityPage)
@@ -25,6 +25,7 @@ type
     edtCustomIcon: TEdit;
     cbSubMenuMFU: TCheckBox;
     cbSubMenuMRU: TCheckBox;
+    DKLanguageController1: TDKLanguageController;
     procedure cbClassicMenuClick(Sender: TObject);
     procedure cbTrayCustomIconClick(Sender: TObject);
     procedure cbTrayiconClick(Sender: TObject);
@@ -56,7 +57,7 @@ procedure TfrmTrayiconOptionsPage.btnBrowseClick(Sender: TObject);
 var
   PathTemp: string;
 begin
-  OpenDialog1.Filter     := 'Files supported (*.ico)|*.ico';
+  OpenDialog1.Filter     := DKLangConstW('msgFilterIcon');
   OpenDialog1.InitialDir := ExtractFileDir(RelativeToAbsolute(Config.TrayCustomIconPath));
   if (OpenDialog1.Execute) then
   begin
@@ -105,7 +106,7 @@ end;
 
 function TfrmTrayiconOptionsPage.GetTitle: string;
 begin
-  Result := 'TrayIcon';
+  Result := DKLangConstW('msgTrayIcon');
 end;
 
 function TfrmTrayiconOptionsPage.InternalLoadData: Boolean;

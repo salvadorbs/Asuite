@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BaseEntityPage, Vcl.StdCtrls,
-  Vcl.ComCtrls, Vcl.Buttons, ulEnumerations, ulCommonClasses;
+  Vcl.ComCtrls, Vcl.Buttons, ulEnumerations, ulCommonClasses, DKLang;
 
 type
   TfrmItemsOptionsPage = class(TfrmBaseEntityPage)
@@ -23,6 +23,7 @@ type
     cbAutorun: TCheckBox;
     btnDown: TBitBtn;
     btnUp: TBitBtn;
+    DKLanguageController1: TDKLanguageController;
     procedure btnDownClick(Sender: TObject);
     procedure btnUpClick(Sender: TObject);
   private
@@ -77,7 +78,7 @@ end;
 
 function TfrmItemsOptionsPage.GetTitle: string;
 begin
-  Result := 'Items';
+  Result := DKLangConstW('msgItems');
 end;
 
 procedure TfrmItemsOptionsPage.PopulateLstAutoExe(ListBox: TListBox;AutorunItemList: TAutorunItemList);

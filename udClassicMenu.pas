@@ -26,7 +26,7 @@ interface
 uses
   Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   Menus, ExtCtrls, VirtualTrees, ulCommonClasses, ShellApi, Vcl.ImgList,
-  Winapi.Messages, ulNodeDataTypes;
+  Winapi.Messages, ulNodeDataTypes, DKLang;
 
 type
   TClassicMenu = class(TDataModule)
@@ -268,7 +268,7 @@ begin
     if Assigned(NodeData) then
       TvFileNodeData(NodeData).Execute(frmMain.vstList, ProcessInfo)
     else
-      ShowMessageFmt(msgErrRun, [StringReplace((Sender as TASMenuItem).Caption, '&', '', [])],True);
+      ShowMessageFmt(DKLangConstW('msgErrRun'), [StringReplace((Sender as TASMenuItem).Caption, '&', '', [])],True);
   end;
 end;
 
@@ -301,14 +301,14 @@ begin
     if Config.SubMenuMFU then
     begin
       CreateSeparator(Menu,'');
-      CreateSpecialList(Menu,MFUList,Config.MFUNumber,msgLongMFU);
+      CreateSpecialList(Menu,MFUList,Config.MFUNumber,DKLangConstW('msgLongMFU'));
     end
     else begin
-      CreateSeparator(Menu,msgLongMFU);
+      CreateSeparator(Menu,DKLangConstW('msgLongMFU'));
       CreateSpecialList(Menu,MFUList,Config.MFUNumber,'');
     end;
   end;
-  CreateSeparator(Menu,msgList);
+  CreateSeparator(Menu,DKLangConstW('msgList'));
   //List
   frmMain.vstList.IterateSubtree(nil, CreateListItems, nil, [], False);
   //MRU
@@ -317,10 +317,10 @@ begin
     if Config.SubMenuMRU then
     begin
       CreateSeparator(Menu,'');
-      CreateSpecialList(Menu,MRUList,Config.MRUNumber,msgLongMRU);
+      CreateSpecialList(Menu,MRUList,Config.MRUNumber,DKLangConstW('msgLongMRU'));
     end
     else begin
-      CreateSeparator(Menu,msgLongMRU);
+      CreateSeparator(Menu,DKLangConstW('msgLongMRU'));
       CreateSpecialList(Menu,MRUList,Config.MRUNumber,'');
     end;
   end;
@@ -343,14 +343,14 @@ begin
     case I of
       0:
         begin
-          MenuItem.Caption := msgShowASuite;
+          MenuItem.Caption := DKLangConstW('msgShowASuite');
           MenuItem.ImageIndex := IMAGE_INDEX_ASuite;
           MenuItem.OnClick := ShowMainForm;
           MenuItem.Default := true;
         end;
       1:
         begin
-          MenuItem.Caption := msgOpenOptions;
+          MenuItem.Caption := DKLangConstW('msgOpenOptions');
           MenuItem.ImageIndex := IMAGE_INDEX_Options;
           MenuItem.OnClick := frmMain.miOptionsClick;
           MenuItem.Enabled := Not(Config.ReadOnlyMode);
@@ -401,12 +401,12 @@ begin
     case I of
       0:
         begin
-          MenuItem.Caption := msgEjectHardware;
+          MenuItem.Caption := DKLangConstW('msgEjectHardware');
           MenuItem.OnClick := EjectDialog;
         end;
       1:
         begin
-          MenuItem.Caption := msgExit;
+          MenuItem.Caption := DKLangConstW('msgExit');
           MenuItem.OnClick := frmMain.miExitClick;
         end;
     end;

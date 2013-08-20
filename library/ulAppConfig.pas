@@ -23,7 +23,7 @@ interface
 
 uses
   Windows, SysUtils, Graphics, Forms, Controls, VirtualTrees, ulEnumerations,
-  Vcl.Imaging.pngimage, System.UITypes, Classes;
+  Vcl.Imaging.pngimage, System.UITypes, Classes, DKLang;
 
 type
 
@@ -433,7 +433,7 @@ begin
       if Not(RegisterHotKey(frmMain.Handle, frmMain.Handle,
                             GetHotKeyMod(FWindowHotKeyMod),
                             GetHotKeyCode(FWindowHotKeyCode))) then
-        ShowMessage(msgErrRegHotkey);
+        ShowMessage(DKLangConstW('msgErrRegHotkey'));
     end;
   end;
   FWindowHotKey := Value;
@@ -644,7 +644,7 @@ begin
       if Not(RegisterHotKey(frmMain.Handle, frmMenuID,
                             GetHotKeyMod(Config.MenuHotKeyMod),
                             GetHotKeyCode(Config.MenuHotKeyCode))) then
-        ShowMessage(msgErrRegHotkey);
+        ShowMessage(DKLangConstW('msgErrRegHotkey'));
     end;
   end;
   FMenuHotKey := Value;

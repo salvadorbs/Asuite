@@ -22,16 +22,17 @@ unit PropertySeparator;
 interface
 
 uses
-  SysUtils, Classes, Controls, Forms, Dialogs, ulNodeDataTypes, StdCtrls, GTForm,
-  ExtCtrls;
+  SysUtils, Classes, Controls, Forms, Dialogs, ulNodeDataTypes, StdCtrls, ExtCtrls,
+  DKLang;
 
 type
-  TfrmPropertySeparator = class(TGTForm)
+  TfrmPropertySeparator = class(TForm)
     btnCancel: TButton;
     btnOk: TButton;
     Panel1: TPanel;
     lbName: TLabel;
     edtName: TEdit;
+    DKLanguageController1: TDKLanguageController;
   private
     { Private declarations }
     procedure LoadNodeData(AData: TvBaseNodeData);
@@ -55,7 +56,7 @@ class function TfrmPropertySeparator.Edit(AOwner: TComponent; NodeData: PBaseDat
 begin
   Result := mrCancel;
   if not Assigned(NodeData) then
-    ShowMessage(msgErrGeneric,true)
+    ShowMessage(DKLangConstW('msgErrGeneric'),true)
   else
     with TfrmPropertySeparator.Create(AOwner) do
       try

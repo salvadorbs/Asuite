@@ -23,7 +23,7 @@ interface
 
 uses
   Windows, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, VirtualTrees;
+  Dialogs, StdCtrls, ExtCtrls, VirtualTrees, DKLang;
 
 type
 
@@ -36,6 +36,7 @@ type
     lbASuiteVersion: TLabel;
     memIntro: TMemo;
     lnklblWebSite: TLinkLabel;
+    DKLanguageController1: TDKLanguageController;
     procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
@@ -54,7 +55,7 @@ uses AppConfig,Main;
 
 procedure TfrmAbout.FormCreate(Sender: TObject);
 begin
-  lbASuiteVersion.Caption := Format(msgVersion,[VERSION_COMPLETE,VERSION_PRERELEASE]);
+  lbASuiteVersion.Caption := Format(lbASuiteVersion.Caption,[VERSION_COMPLETE,VERSION_PRERELEASE]);
 end;
 
 end.

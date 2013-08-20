@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BaseEntityPage, Vcl.StdCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BaseEntityPage, Vcl.StdCtrls, DKLang;
 
 type
   TfrmGeneralOptionsPage = class(TfrmBaseEntityPage)
@@ -27,6 +27,7 @@ type
     grpLanguage: TGroupBox;
     cxLanguage: TComboBox;
     FontDialog1: TFontDialog;
+    DKLanguageController1: TDKLanguageController;
     procedure cbBackgroundClick(Sender: TObject);
     procedure cbCustomTitleClick(Sender: TObject);
     procedure btnFontSettingsClick(Sender: TObject);
@@ -58,7 +59,7 @@ procedure TfrmGeneralOptionsPage.btnBrowseBackgroundClick(Sender: TObject);
 var
   PathTemp: string;
 begin
-  OpenDialog1.Filter     := 'Files supported (*.png;*.bmp)|*.png;*.bmp|All files|*.*';
+  OpenDialog1.Filter     := DKLangConstW('msgFilterBackground');
   OpenDialog1.InitialDir := ExtractFileDir(RelativeToAbsolute(edtBackground.Text));
   if (OpenDialog1.Execute) then
   begin
@@ -90,7 +91,7 @@ end;
 
 function TfrmGeneralOptionsPage.GetTitle: string;
 begin
-  Result := 'General';
+  Result := DKLangConstW('msgGeneral');
 end;
 
 function TfrmGeneralOptionsPage.InternalLoadData: Boolean;

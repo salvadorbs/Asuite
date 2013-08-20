@@ -4,7 +4,8 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BaseGeneralPropertyPage, Vcl.StdCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BaseGeneralPropertyPage, Vcl.StdCtrls,
+  DKLang;
 
 type
   TfrmSWGeneralPropertyPage = class(TfrmBaseGeneralPropertyPage)
@@ -18,6 +19,7 @@ type
     lbParameters: TLabel;
     edtPathExe: TEdit;
     lbPathExe: TLabel;
+    DKLanguageController1: TDKLanguageController;
     procedure edtPathExeExit(Sender: TObject);
     procedure btnBrowseExeClick(Sender: TObject);
     procedure btnBrowseWorkingDirClick(Sender: TObject);
@@ -43,7 +45,7 @@ uses
 
 procedure TfrmSWGeneralPropertyPage.btnBrowseExeClick(Sender: TObject);
 begin
-  OpenDialog1.Filter     := 'Executables (*.exe)|*.exe|All files|*.*';
+  OpenDialog1.Filter     := DKLangConstW('msgFilterExe');
   OpenDialog1.InitialDir := ExtractFileDir(RelativeToAbsolute(edtPathExe.Text));
   if (OpenDialog1.Execute) then
   begin
@@ -67,7 +69,7 @@ begin
   begin
     //File not found - Change font color with red
     Edit.Font.Color := clRed;
-    Edit.Hint       := msgFileNotFound;
+    Edit.Hint       := DKLangConstW('msgFileNotFound');
   end
   else begin
     //File found - Change font color with clWindowText

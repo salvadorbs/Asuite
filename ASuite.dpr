@@ -57,6 +57,7 @@ var
 {$ENDIF}
 
 {$R *.res}
+{$R *.dkl_const.res}
 
 begin
   {$IFDEF DEBUG}

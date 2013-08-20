@@ -2173,10 +2173,10 @@ object frmAbout: TfrmAbout
     object lbASuiteVersion: TLabel
       Left = 14
       Top = 46
-      Width = 63
+      Width = 81
       Height = 13
       Anchors = []
-      Caption = 'Version x.y'
+      Caption = 'Version %s %s'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clNavy
       Font.Height = -12
@@ -2225,5 +2225,18 @@ object frmAbout: TfrmAbout
         'tware.com</a>'
       TabOrder = 1
     end
+  end
+  object DKLanguageController1: TDKLanguageController
+    IgnoreList.Strings = (
+      'lbASuiteTitle.*'
+      'lnklblWebSite.*')
+    Left = 56
+    Top = 128
+    LangData = {
+      080066726D41626F7574010100000001000000070043617074696F6E01060000
+      00090047726F7570426F783300000C00696D4153756974654C6F676F00000D00
+      6C624153756974655469746C6500000F006C6241537569746556657273696F6E
+      010100000003000000070043617074696F6E0008006D656D496E74726F010100
+      00000400000005004C696E6573000D006C6E6B6C626C576562536974650000}
   end
 end

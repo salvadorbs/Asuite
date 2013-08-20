@@ -24,7 +24,8 @@ interface
 uses
   Windows, Classes, Forms, StdCtrls, Buttons, ExtCtrls, ComCtrls, Messages,
 	ShellAPI, Controls, Graphics, Dialogs, SysUtils, VirtualTrees, AppEvnts,
-  Vcl.Imaging.pngimage, cySkinButton, IniFiles, ulCommonClasses, Vcl.Menus;
+  Vcl.Imaging.pngimage, cySkinButton, IniFiles, ulCommonClasses, Vcl.Menus,
+  DKLang;
 
 type
   TGraphicMenuElement = (
@@ -102,6 +103,7 @@ type
     miProperty2: TMenuItem;
     tsSearch: TTabSheet;
     vstSearch: TVirtualStringTree;
+    DKLanguageController1: TDKLanguageController;
     procedure FormCreate(Sender: TObject);
     procedure tmrFaderTimer(Sender: TObject);
     procedure imgLogoMouseDown(Sender: TObject; Button: TMouseButton;
@@ -307,7 +309,7 @@ var
 begin
   ErrorCode := ShellExecute(GetDesktopWindow, 'open', PChar(FolderPath), PChar(''), PChar(FolderPath), SW_SHOWDEFAULT);
   if ErrorCode <= 32 then
-    ShowMessageFmt(msgErrGeneric, ['', SysErrorMessage(ErrorCode)], True);
+    ShowMessageFmt(DKLangConstW('msgErrGeneric'), ['', SysErrorMessage(ErrorCode)], True);
 end;
 
 procedure TfrmGraphicMenu.CopyImageInVst(Source: TImage;Page: TPageControl);
@@ -536,7 +538,7 @@ begin
     end;
   end
   else begin
-    ShowMessageFmt(msgErrNoThemeIni, [SUITE_CURRENTTHEME_PATH + THEME_INI], True);
+    ShowMessageFmt(DKLangConstW('msgErrNoThemeIni'), [SUITE_CURRENTTHEME_PATH + THEME_INI], True);
     Config.UseClassicMenu := True;
   end;
   //Workaround for vst trasparent
@@ -568,7 +570,7 @@ begin
   dblDriveSize := DiskSize(Ord(Drive) - 64);
   dblDriveUsed := dblDriveSize - DiskFree(Ord(Drive) - 64);
   imgDriveSpace.Width   := Round(dblDriveUsed/dblDriveSize * 131);
-  lblDriveSpace.Caption := Format(msgGMHardDiskSpace,[DiskFreeString(Drive, True),DiskSizeString(Drive, True)])
+  lblDriveSpace.Caption := Format(DKLangConstW('msgGMHardDiskSpace'),[DiskFreeString(Drive, True),DiskSizeString(Drive, True)])
 end;
 
 function TfrmGraphicMenu.GetActiveTree: TBaseVirtualTree;
@@ -587,18 +589,18 @@ begin
   Result := '';
   case ButtonType of
     //Right buttons
-    gmbASuite    : Result := msgGMASuite;
-    gmbOptions   : Result := msgGMOptions;
-    gmbDocuments : Result := msgGMDocuments;
-    gmbMusic     : Result := msgGMMusic;
-    gmbPictures  : Result := msgGMPictures;
-    gmbVideos    : Result := msgGMVideos;
-    gmbExplore   : Result := msgGMExplore;
-    gmbAbout     : Result := msgGMAbout;
+    gmbASuite    : Result := DKLangConstW('msgGMASuite');
+    gmbOptions   : Result := DKLangConstW('msgGMOptions');
+    gmbDocuments : Result := DKLangConstW('msgGMDocuments');
+    gmbMusic     : Result := DKLangConstW('msgGMMusic');
+    gmbPictures  : Result := DKLangConstW('msgGMPictures');
+    gmbVideos    : Result := DKLangConstW('msgGMVideos');
+    gmbExplore   : Result := DKLangConstW('msgGMExplore');
+    gmbAbout     : Result := DKLangConstW('msgGMAbout');
     //Tabs
-    gmbList      : Result := msgList;
-    gmbMRU       : Result := msgLongMRU;
-    gmbMFU       : Result := msgLongMFU;
+    gmbList      : Result := DKLangConstW('msgList');
+    gmbMRU       : Result := DKLangConstW('msgLongMRU');
+    gmbMFU       : Result := DKLangConstW('msgLongMFU');
   end;
 end;
 
@@ -666,7 +668,7 @@ var
   TempString : string;
 begin
   TempString := '';
-  OpenDialog1.Filter     := 'Personal Picture [48x48] (*.jpg, *.png)|*.jpg;*.png';
+  OpenDialog1.Filter     := DKLangConstW('msgFilterPicture');
   OpenDialog1.InitialDir := ExtractFileDir(RelativeToAbsolute(Config.GMPersonalPicture));
   if OpenDialog1.Execute then
   begin

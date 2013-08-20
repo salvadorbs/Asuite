@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BaseEntityPage, Vcl.StdCtrls,
-  Vcl.ComCtrls, VirtualTrees;
+  Vcl.ComCtrls, VirtualTrees, DKLang;
 
 type
   TfrmAdvancedOptionsPage = class(TfrmBaseEntityPage)
@@ -35,6 +35,7 @@ type
     cbCache: TCheckBox;
     cbScheduler: TCheckBox;
     cbClearMRU: TCheckBox;
+    DKLanguageController1: TDKLanguageController;
     procedure btnClearClick(Sender: TObject);
     procedure TrackBarChange(Sender: TObject);
     procedure UpdateBtnClear(Sender: TObject);
@@ -164,7 +165,7 @@ end;
 
 function TfrmAdvancedOptionsPage.GetTitle: string;
 begin
-  Result := 'Advanced';
+  Result := DKLangConstW('msgAdvanced');
 end;
 
 function TfrmAdvancedOptionsPage.InternalLoadData: Boolean;

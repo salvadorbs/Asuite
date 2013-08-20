@@ -185,65 +185,6 @@ var
   IMAGELARGE_INDEX_PropGeneral //ID = 8;
                             : Integer;
 
-  //Misc
-
-resourcestring
-
-  msgCopy           = 'Copy_';
-  msgNoName         = 'No name';
-  msgSaveCompleted  = 'Save completed';
-  msgConfirm        = 'Are you sure?';
-  msgProcessingItems = 'Processing items (%.0f%%): %d';
-  msgRunAsTitle     = 'Run As...';
-  msgInsertWinUserInfo = 'Please insert username and password';
-  //Import
-  msgImportProgress = 'Import in progress...';
-  msgImportTitle1   = 'Select a launcher from which to import list and settings';
-  msgImportTitle2   = 'Select the location of list to import in ASuite. Select if you want import list and/or settings';
-  msgImportTitle3   = 'Select which items to import';
-  msgImportTitle4   = 'Complete';
-  msgItemsImported  = 'Import finished. %d items imported';
-  msgNext           = 'Next >';
-  msgImport         = 'Import';
-  msgClose          = 'Close';
-  //Classic TrayMenu
-  msgShowASuite     = 'Show ASuite';
-  msgOpenOptions    = 'Options...';
-  msgLongMFU        = 'Most Used';
-  msgLongMRU        = 'Recents';
-  msgShortMFU       = 'MFU';
-  msgShortMRU       = 'MRU';
-  msgList           = 'List';
-  msgEjectHardware  = 'Safely remove hardware';
-  msgExit           = 'Exit';
-  //Graphic Menu
-  msgGMASuite    = APP_NAME;
-  msgGMOptions   = 'Options';
-  msgGMAbout     = 'About';
-  msgGMDocuments = 'Documents';
-  msgGMMusic     = 'Music';
-  msgGMPictures  = 'Pictures';
-  msgGMVideos    = 'Videos';
-  msgGMExplore   = 'Explore';
-  msgGMHardDiskSpace = '%s free of %s';
-  //Errors
-  msgErrEmptyName   = 'Application''s name field is empty';
-  msgErrGeneric     = '%s error raised, with message: %s';
-  msgErrIcon        = 'Cannot use icon %s';
-  msgErrNoIcon      = 'Couldn''t find icon file %s';
-  msgErrNoThemeIni  = 'Couldn''t find file %s';
-  msgErrRun         = 'Cannot run %s';
-  msgErrSave        = 'Save failed because of an error';
-  msgFileNotFound   = 'File not found';
-  msgFolderNotFound = 'Folder not found';
-  msgImportFailed   = 'Import failed because of an error';
-  msgErrEmptyUserName = 'Username field is empty';
-  msgErrRegHotkey   = 'Register hotkey failed';
-  msgErrEmptyPath   = 'Path field is empty';
-  //Misc
-  msgVersion        = 'Version %s %s';
-  msgScanningProgress = 'Scanning in progress...';
-
 implementation
 
 uses ulSysUtils;

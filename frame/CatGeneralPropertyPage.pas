@@ -5,13 +5,14 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BaseGeneralPropertyPage, Vcl.StdCtrls,
-  VirtualTrees;
+  VirtualTrees, DKLang;
 
 type
   TfrmCatGeneralPropertyPage = class(TfrmBaseGeneralPropertyPage)
     grpSubItems: TGroupBox;
     vstCategoryItems: TVirtualStringTree;
     lblNote: TLabel;
+    DKLanguageController1: TDKLanguageController;
     procedure vstCategoryItemsGetImageIndex(Sender: TBaseVirtualTree;
       Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
       var Ghosted: Boolean; var ImageIndex: Integer);

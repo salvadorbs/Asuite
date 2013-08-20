@@ -23,7 +23,7 @@ interface
 
 uses
   Windows, SysUtils, ActiveX, VirtualTrees, Controls, ulCommonClasses, AppConfig,
-  ulNodeDataTypes, ulEnumerations, Classes, ShellApi, comobj, ulXMLUtils;
+  ulNodeDataTypes, ulEnumerations, Classes, ShellApi, comobj, ulXMLUtils, DKLang;
 
 { List, Menu, MRU }
 function  AddNodeInVST(Sender: TBaseVirtualTree;ParentNode: PVirtualNode;AType: TvTreeDataType): PVirtualNode;
@@ -121,7 +121,7 @@ begin
   //Set ChildNode's pNode and name (temporary)
   NodeData            := Sender.GetNodeData(ChildNode);
   NodeData.Data.pNode := ChildNode;
-  NodeData.Data.Name := msgNoName + IntToStr(Sender.TotalCount);
+  NodeData.Data.Name := DKLangConstW('msgNoName') + IntToStr(Sender.TotalCount);
   //Refresh List
   RefreshList(frmMain.vstList);
   //ShowPropertyItem
