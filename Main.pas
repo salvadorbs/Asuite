@@ -649,11 +649,13 @@ var
 begin
   ProcessInfo.RunMode := rmRunAs;
   //Call login dialog for Windows username and password
-  TLoginForm.Login(DKLangConstW('msgRunAsTitle'), DKLangConstW('msgInsertWinUserInfo'), ProcessInfo.UserName, ProcessInfo.Password, true, '');
-  if ProcessInfo.UserName <> '' then
-    ExecuteSelectedNode(TreeView, ProcessInfo)
-  else
-    ShowMessage(DKLangConstW('msgErrEmptyUserName'), true);
+  if TLoginForm.Login(DKLangConstW('msgRunAsTitle'), DKLangConstW('msgInsertWinUserInfo'), ProcessInfo.UserName, ProcessInfo.Password, true, '') then
+  begin
+    if ProcessInfo.UserName <> '' then
+      ExecuteSelectedNode(TreeView, ProcessInfo)
+    else
+      ShowMessage(DKLangConstW('msgErrEmptyUserName'), true);
+  end;
 end;
 
 procedure TfrmMain.ExecuteSelectedNode(TreeView: TBaseVirtualTree;ProcessInfo: TProcessInfo);
