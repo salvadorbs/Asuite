@@ -1,0 +1,113 @@
+<html>
+<!-- $Id$ -->
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+  <link rel="stylesheet" type="text/css" href="main.css">
+  <title>Revision History</title>
+<head>
+<body>
+<h1>Revision History</h1>
+<div class=pagebody>
+<!--------------------------------------------------------------------------------------------------------------------->
+
+<table>
+  <tr>
+    <td bgcolor=#f0f0f nowrap>DKLang 4.0RC1<br>
+      [Dec 13, 2008]</td>
+    <td bgcolor=#f0f0f>
+      <ul>
+        <li>Package rewritten for BDS 2009 compatibility, thanks to
+            <a href="http://rules-of-thumb.com" target=_blank>Bruce J. Miller</a>.</li>
+        <li>Component names moved from ANSI to Unicode</li>
+        <li>DFM resources moved from ANSI to UTF-8 (maintains backward compatiblity)</li>
+        <li>Examples upgraded to Delphi 2009</li>
+        <li>TntUnicode dependencies eliminated.</li>
+        <li>AnsiString returns eliminated.</li>
+        <li>TDKLanguageManager.TranslateFromStream(Stream: TStream) added. (Thanks to DenisDL.)</li>
+        <li>Removed ANSI example.</li>
+        <li>Help updated.</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td bgcolor=white nowrap>DKLang 3.01<br>
+      [Aug 22, 2006]</td>
+    <td bgcolor=white>
+      <ul>
+        <li>Updated for BDS 2006 compatibility, thanks to
+            <a href="http://club.telepolis.com/silverpointdev/" target=_blank>Robert Lee</a>.
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td bgcolor=#f0f0f0 nowrap>DKLang 3.0<br>
+      [Aug 08, 2006]</td>
+    <td bgcolor=#f0f0f0>
+      <ul>
+        <li>The package is rewritten to implement full Unicode support; initial Unicode-enabled version is developed by
+            <i>Bruce J. Miller</i>:
+            <ul>
+              <li><b>String</b> values became <b>WideString</b> (component property values, constants and all others
+                  except component, property and constant names).
+              <li>Added new TDKLanguageManager properties: CodePage, ConstantValueA[], ConstantValueW[].
+              <li>Added new TDKLanguageController options: dklcoIgnoreNonAlphaProps (ignore all properties with no alpha
+                  characters), dklcoIgnoreFontProps (ignore all TFont properties).
+              <li>Added new global functions for retrieving constant values: DKLangConstW(), DKLangConstA().
+              <li>Removed function GetLangIDName(); WideGetLocaleStr() should be used instead.
+            </ul>
+        <li>Constants are no longer stored in project resource file (.res). Instead, they are stored in a separate
+            resource file (.dkl_const.res).
+        <li>New examples: Ansi, Notepad.
+        <li>Converted all readme files into single .chm including API reference.
+        <li>Added support for BDS 2006.
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td bgcolor=white nowrap>DKLang 2.4<br>
+      [Jun 23, 2005]</td>
+    <td bgcolor=white>
+      <ul>
+        <li>Added property TDKLanguageController.SectionName which allows customizing section which stores language
+            data.
+        <li>Added properties TDKLanguageManager.LanguageIndex, TDKLanguageManager.LanguageResources[].
+        <li>Bug fix: TDKLanguageManager.IndexOfLanguageID() returned value less by 1 than correct value for non-default
+            languages.
+        <li>New examples: Frames, MDI, Resource.
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td bgcolor=#f0f0f0 nowrap>DKLang 2.3<br>
+      [Dec 21, 2004]</td>
+    <td bgcolor=#f0f0f0>
+      <ul>
+        <li>DKLang now uses a double licensing system. You may use, modify or redistribute it either under <b>Mozilla
+            Public License 1.1</b>, or under <b>GNU Lesser General Public License 2.1</b> terms. In particular, this
+            means the library can be used in any GPL-licensed application or library.
+        <li>Fixed dcldklang* installation problem under non-English versions of Delphi.
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td bgcolor=white nowrap>DKLang 2.2<br>
+      [Nov 27, 2004]</td>
+    <td bgcolor=white>
+      <ul>
+        <li>Added support for Delphi 2005.
+        <li>Changed the order of applying a language: first constants are updated, then controllers. This allows to read
+            correct constant values in controllers' OnLanguageChanged event handlers.
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td bgcolor=#f0f0f0 nowrap>DKLang 2.1<br>
+      [Sep 26, 2004]</td>
+    <td bgcolor=#f0f0f0>The first public release (all prior versions were only for private use).</td>
+  </tr>
+</table>
+
+<!--------------------------------------------------------------------------------------------------------------------->
+</div>
+</body>
+</html>

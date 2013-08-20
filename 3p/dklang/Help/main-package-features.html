@@ -1,0 +1,48 @@
+<html>
+<!-- $Id$ -->
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+  <link rel="stylesheet" type="text/css" href="main.css">
+  <title>Package Features</title>
+<head>
+<body>
+<h1>Package Features</h1>
+<div class=pagebody>
+<!--------------------------------------------------------------------------------------------------------------------->
+
+<ul>
+  <li>Ease of use. Put a <b>TDKLanguageController</b> on the form, save the project (this will automatically create a
+      language source file) and add a couple of lines to program code: you get a functional multilanguage application!
+      See the <a href="main-supplied-examples.html">included examples</a> to learn the details.
+  <li>Full integration with Delphi VCL component library. A possibility of automated change tracking in structure or
+      properties of forms, frames, data modules etc., and owned components. 
+  <li>Complete <b>Unicode</b> support.
+  <li>Storing property values for <b>String</b> (UnicodeString), <b>AnsiString</b>, <b>ShortString</b> and <b>WideString</b> properties.
+      Storing property values of class <b>TStrings</b>, <b>TCollection</b> item properties and
+      property values of <b>TPersistent</b> descendants. Only the properties recognized by the Delphi streaming mechanism as
+      <i>stored</i> are processed to avoid storing excessive data.
+  <li>A possibility for defining a set of string constants for a project. A constant is referred to by its name (binary
+      name search is implemented). See the <a href="example-constants.html">Constants Example</a>.
+  <li>Storing translations in plain-text files, which can be edited with any text editor. However,
+      there's a much more convenient tool available for creating the translations,
+      <a href="http://www.dk-soft.org/redir.php?product=dktraned&action=viewinfo" target=_blank>DKLang Translation
+      Editor</a>.
+  <li>Synchronous language switching in all displayed forms by changing the current language of global
+      <b>TDKLanguageManager</b> instance.
+  <li>Events fired in a non-visual component just before and after the language change.
+  <li>A possibility for ignoring any properties, as well as a list of forcibly stored properties recognized as not
+      stored. Both lists are formed using name masks (eg, *.Font.Name).
+  <li>Automated saving the localization data for the whole project into a so-called language source file (a file having
+      .dklang extension).
+  <li>A possibility of using the localization mechanism when no visual forms are instantiated (for localizing constants
+      only). A possibility of building the project with DKLang runtime package.
+  <li>A thread-safe design allowing for proper functioning in multithreaded environment. This allows non-blocking data
+      read access with a number of threads at once. 
+</ul>
+
+<p>Read <a href="main-technology-and-background.html">Technology And Background</a> section to learn the details.
+
+<!--------------------------------------------------------------------------------------------------------------------->
+</div>
+</body>
+</html>

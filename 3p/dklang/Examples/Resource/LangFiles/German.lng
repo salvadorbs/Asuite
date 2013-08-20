@@ -1,0 +1,20 @@
+﻿;***********************************************************************************************************************
+;  $Id: German.lng,v 1.6 2006-08-08 13:57:59 dale Exp $
+;-----------------------------------------------------------------------------------------------------------------------
+;  DKLang Localization Package
+;  Copyright 2002-2006 DK Software, http://www.dk-soft.org
+;***********************************************************************************************************************
+
+TargetApplication=DKLang_Simple_Demo
+Author=Dmitry Kann
+SourceLANGID=1033
+LANGID=1031
+Generator=DKLang Translation Editor v2.1
+LastModified=2004-09-08 18:26:51
+
+[fMain]
+00000001=Beispielform
+00000003=Abbrechen
+00000004=Das ist eine Beispielmitteilung.
+
+[$CONSTANTS]
