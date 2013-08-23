@@ -42,6 +42,7 @@ const
 
   BACKUP_DIR     = 'backup\';
   CACHE_DIR      = 'cache\';
+  LOCALE_DIR     = 'locale\';
   CACHELARGE_DIR = 'cache\large\';
   MENUTHEMES_DIR = 'menuthemes\';
   ICONS_DIR      = 'icons\';
@@ -136,6 +137,7 @@ var
   SUITE_DRIVE        : String;
   SUITE_PATH         : String;
   SUITE_WORKING_PATH : String;
+  SUITE_LOCALE_PATH  : String;
   SUITE_CACHE_PATH   : String;
   SUITE_CACHELARGE_PATH : String;
   SUITE_BACKUP_PATH     : String;
@@ -199,6 +201,7 @@ initialization
     then SUITE_WORKING_PATH := GetCorrectWorkingDir(SUITE_PATH)
     else SUITE_WORKING_PATH := SUITE_PATH;
   SUITE_WORKING_PATH        := LowerCase(SUITE_WORKING_PATH);
+  SUITE_LOCALE_PATH         := SUITE_WORKING_PATH + LOCALE_DIR;
   SUITE_CACHE_PATH          := SUITE_WORKING_PATH + CACHE_DIR;
   SUITE_CACHELARGE_PATH     := SUITE_WORKING_PATH + CACHELARGE_DIR;
   SUITE_BACKUP_PATH         := SUITE_WORKING_PATH + BACKUP_DIR;

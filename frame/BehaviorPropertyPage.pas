@@ -79,7 +79,7 @@ begin
   begin
     //Insert cat specific setting
     if CurrentNodeData.DataType = vtdtCategory then
-      cxWindowState.Items.Insert(0, 'Default (item''s settings)');
+      cxWindowState.Items.Insert(0, DKLangConstW('msgDefaultItemSettings'));
     cxActionOnExe.ItemIndex := Ord(CurrentNodeData.ActionOnExe);
     cxAutoExecute.ItemIndex := Ord(CurrentNodeData.Autorun);
     btnChangeOrder.Enabled  := (cxAutoExecute.ItemIndex <> 0);

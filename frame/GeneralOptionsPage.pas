@@ -95,6 +95,8 @@ begin
 end;
 
 function TfrmGeneralOptionsPage.InternalLoadData: Boolean;
+var
+  I: Integer;
 begin
   Result := inherited;
   //Window
@@ -109,23 +111,12 @@ begin
   cbShowPanelStartup.Checked := Config.ShowPanelAtStartUp;
   cbShowMenuStartup.Checked  := Config.ShowMenuAtStartUp;
   //Language
-  { TODO -oMatteo -c : Language code 29/11/2009 21:39:24 }
-//  if FindFirst(ApplicationPath + 'Lang\*.xml', faAnyFile, searchResult) = 0 then
-//  begin
-//    repeat
-//      cxLanguage.AddItem(SearchResult.Name,sender);
-//    until FindNext(searchResult) <> 0;
-//    FindClose(searchResult);
-//  end;
-//  if FindFirst(ApplicationPath + '*.xml', faAnyFile, searchResult) = 0 then
-//  begin
-//    repeat
-//      if (SearchResult.Name <> LauncherFileNameXML) and ((SearchResult.Name <> ExtractFileName(ConfigSqlTempFile))) then
-//        cxLanguage.AddItem(SearchResult.Name,sender);
-//    until FindNext(searchResult) <> 0;
-//    FindClose(searchResult);
-//  end;
-//  cxLanguage.ItemIndex   := cxLanguage.Items.IndexOf(Config.LangName);
+  for I := 0 to LangManager.LanguageCount - 1 do
+  begin
+    cxLanguage.Items.Add(LangManager.LanguageNames[I]);
+    if LangManager.LanguageIDs[I] = Config.LangID then
+      cxLanguage.ItemIndex  := I;
+  end;
   //Treeview
   cbAutoOpClCat.Checked := Config.TVAutoOpClCats;
   cbBackground.Checked  := Config.TVBackground;
@@ -157,8 +148,7 @@ begin
   Config.ShowPanelAtStartUp := cbShowPanelStartup.Checked;
   Config.ShowMenuAtStartUp  := cbShowMenuStartup.Checked;
   //Language
-  { TODO -oMatteo -c : Language code 29/11/2009 21:39:41 }
-//  Config.LangName         := cxLanguage.Items[cxLanguage.ItemIndex];
+  Config.LangID           := LangManager.LanguageIDs[cxLanguage.ItemIndex];
   //Treeview
   Config.TVAutoOpClCats     := cbAutoOpClCat.Checked;
   //Treeview

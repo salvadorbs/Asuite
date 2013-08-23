@@ -115,7 +115,7 @@ type
     FShowPanelAtStartUp : Boolean;
     FShowMenuAtStartUp  : Boolean;
     //Main Form
-    FLanguage           : RawUTF8; { TODO -oMatteo -c : Language code (type RawUTF8?) 01/12/2009 23:02:23 }
+    FLangID             : Word;
     FUseCustomTitle     : Boolean;
     FCustomTitleString  : RawUTF8;
     FHideTabSearch      : Boolean;
@@ -189,7 +189,7 @@ type
     property showpanelatstartup: Boolean read FShowPanelAtStartUp write FShowPanelAtStartUp;
     property showmenuatstartup: Boolean read FShowMenuAtStartUp write FShowMenuAtStartUp;
     // Main Form
-    property language: RawUTF8 read FLanguage write FLanguage;
+    property langid: Word read FLangID write FLangID;
     property usecustomtitle: Boolean read FUseCustomTitle write FUseCustomTitle;
     property customtitlestring : RawUTF8 read FCustomTitleString write FCustomTitleString;
     property hidetabsearch: Boolean read FHideTabSearch write FHideTabSearch;
@@ -565,11 +565,10 @@ begin
         Config.ShowPanelAtStartUp := SQLOptionsData.showpanelatstartup;
         Config.ShowMenuAtStartUp  := SQLOptionsData.showmenuatstartup;
         //Main Form
-        { TODO -oMatteo -c : Insert code for language 26/11/2009 22:21:05 }
-    //      FLanguage           := '';
-        Config.CustomTitleString := UTF8ToString(SQLOptionsData.customtitlestring);
-        Config.UseCustomTitle    := SQLOptionsData.usecustomtitle;
-        Config.HideTabSearch     := SQLOptionsData.hidetabsearch;
+        Config.LangID             := SQLOptionsData.langid;
+        Config.CustomTitleString  := UTF8ToString(SQLOptionsData.customtitlestring);
+        Config.UseCustomTitle     := SQLOptionsData.usecustomtitle;
+        Config.HideTabSearch      := SQLOptionsData.hidetabsearch;
         //Main Form - Position and size
         Config.HoldSize    := SQLOptionsData.holdsize;
         Config.AlwaysOnTop := SQLOptionsData.alwaysontop;
@@ -647,8 +646,9 @@ begin
     end;
   end
   else begin
-    Config.GMTheme := 'Default';
-    Config.Changed := True;
+    Config.LangID := 1033;
+    Config.GMTheme  := 'Default';
+    Config.Changed  := True;
   end;
 end;
 
@@ -769,7 +769,7 @@ begin
     SQLOptionsData.showpanelatstartup := Config.ShowPanelAtStartUp;
     SQLOptionsData.showmenuatstartup  := Config.ShowMenuAtStartUp;
     //main form
-    //SQLOptionsData.language           := Config.Language;
+    SQLOptionsData.langid            := Config.LangID;
     SQLOptionsData.usecustomtitle    := Config.UseCustomTitle;
     SQLOptionsData.customtitlestring := StringToUTF8(Config.CustomTitleString);
     SQLOptionsData.hidetabsearch     := Config.HideTabSearch;

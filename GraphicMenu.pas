@@ -589,7 +589,7 @@ begin
   Result := '';
   case ButtonType of
     //Right buttons
-    gmbASuite    : Result := DKLangConstW('msgGMASuite');
+    gmbASuite    : Result := APP_NAME;
     gmbOptions   : Result := DKLangConstW('msgGMOptions');
     gmbDocuments : Result := DKLangConstW('msgGMDocuments');
     gmbMusic     : Result := DKLangConstW('msgGMMusic');

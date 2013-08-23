@@ -37,7 +37,6 @@ type
   public
     constructor Create(AOwner : TComponent); override;
     destructor Destroy; override;
-    procedure RefreshTranslation; virtual;
     property SessionEnding: Boolean read FSessionEnding write FSessionEnding;
     property OldPoint: TPoint read FOldPoint write FOldPoint;
   published
@@ -59,11 +58,6 @@ end;
 destructor TASuiteForm.Destroy;
 begin
   inherited;
-end;
-
-procedure TASuiteForm.RefreshTranslation;
-begin
-
 end;
 
 procedure TASuiteForm.WMQueryEndSession(var Message: TMessage);

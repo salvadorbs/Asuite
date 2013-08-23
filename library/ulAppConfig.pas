@@ -35,7 +35,7 @@ type
     FShowPanelAtStartUp : Boolean;
     FShowMenuAtStartUp  : Boolean;
     //Main Form
-    FLanguage           : String; { TODO -oMatteo -c : Language code (type string?) 01/12/2009 23:02:23 }
+    FLangID             : Word;
     FUseCustomTitle     : Boolean;
     FCustomTitleString  : string;
     FHideTabSearch      : Boolean;
@@ -117,7 +117,7 @@ type
     procedure SetTVBackground(value: Boolean);
     procedure SetCache(value: boolean);
     procedure SetStartWithWindows(value: boolean);
-    procedure SetLanguage(value: string);
+    procedure SetLangID(value: Word);
     procedure SetTVFont(value: TFont);
     procedure SetScheduler(value: Boolean);
     procedure SetGMTheme(value: string);
@@ -147,7 +147,7 @@ type
     property ShowPanelAtStartUp: Boolean read FShowPanelAtStartUp write SetShowPanelAtStartUp;
     property ShowMenuAtStartUp: Boolean read FShowMenuAtStartUp write FShowMenuAtStartUp;
     // Main Form
-    property Language: String read FLanguage write SetLanguage;
+    property LangID: Word read FLangID write SetLangID;
     property UseCustomTitle: Boolean read FUseCustomTitle write SetUseCustomTitle;
     property CustomTitleString : String read FCustomTitleString write FCustomTitleString;
     property HideTabSearch: Boolean read FHideTabSearch write SetHideTabSearch;
@@ -227,13 +227,14 @@ uses
 
 constructor TConfiguration.Create;
 begin
+  //Find language files and register them in LangManager
+  LangManager.ScanForLangFiles(SUITE_LOCALE_PATH, '*.lng', False);
   //General
   FStartWithWindows   := False;
   FShowPanelAtStartUp := True;
   FShowMenuAtStartUp  := False;
   //Main Form
-  { TODO -oMatteo -c : Insert code for language 26/11/2009 22:21:05 }
-//  FLanguage           := '';
+  FLangID             := 1033;
   FUseCustomTitle     := False;
   FCustomTitleString  := APP_TITLE;
   FHideTabSearch      := False;
@@ -621,15 +622,13 @@ begin
     DeleteASuiteAtWindowsStartup;
 end;
 
-procedure TConfiguration.SetLanguage(value: string);
+procedure TConfiguration.SetLangID(value: Word);
 begin
-  if value <> FLanguage then
-  begin
-    FLanguage := value;
-    frmMain.RefreshTranslation;
-  end
+  if (value <> -1) or (value <> 0) then
+    FLangID := value
   else
-    FLanguage := value;
+    FLangID := 1033;
+  LangManager.LanguageID := FLangID;
 end;
 
 procedure TConfiguration.SetMenuHotKey(const Value: Boolean);
