@@ -234,7 +234,7 @@ begin
   FShowPanelAtStartUp := True;
   FShowMenuAtStartUp  := False;
   //Main Form
-  FLangID             := 1033;
+  FLangID             := 1033; //1033 = English (United States)
   FUseCustomTitle     := False;
   FCustomTitleString  := APP_TITLE;
   FHideTabSearch      := False;

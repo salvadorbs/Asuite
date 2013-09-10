@@ -52,6 +52,7 @@ type
       bsHover,
       bsClicked
   );
+
   //Workaround for TPageControl without borders
   TPageControl = class(ComCtrls.TPageControl)
   private
@@ -147,9 +148,12 @@ type
       const CellRect: TRect; var DefaultDraw: Boolean);
     procedure vstListAddToSelection(Sender: TBaseVirtualTree;
       Node: PVirtualNode);
+    procedure btnSearchChange(Sender: TObject);
 	private    
     { Private declarations }
-    FOpening: Boolean;
+    FOpening    : Boolean;
+    FSearchIcon : Integer;
+    FCancelIcon : Integer;
     procedure CopyImageInVst(Source:TImage;Page: TPageControl);
     procedure DrawButton(IniFile: TIniFile;Button: TcySkinButton;
                          ButtonType: TGraphicMenuElement);
@@ -222,6 +226,8 @@ const
   INIFILE_KEY_ICONVIDEOS   = 'icon_videos';
   INIFILE_KEY_ICONOPTIONS  = 'icon_options';
   INIFILE_KEY_ICONHELP     = 'icon_help';
+  INIFILE_KEY_ICONSEARCH   = 'icon_search';
+  INIFILE_KEY_ICONCANCEL   = 'icon_cancel';
   INIFILE_KEY_ICON         = 'icon'; //Generic icon key
 
 implementation
@@ -259,10 +265,24 @@ begin
   end;
 end;
 
+procedure TfrmGraphicMenu.btnSearchChange(Sender: TObject);
+begin
+  if btnSearch.Text <> '' then
+  begin
+    btnSearch.RightButton.ImageIndex := FCancelIcon;
+    pgcTreeViews.ActivePageIndex := PG_MENUSEARCH;
+    frmMain.DoSearchItem(vstSearch,btnSearch.Text,IterateSubtreeProcs.GMFindNode);
+  end
+  else begin
+    btnSearch.RightButton.ImageIndex := FSearchIcon;
+    pgcTreeViews.ActivePageIndex := PG_LIST;
+    vstSearch.Clear;
+  end;
+end;
+
 procedure TfrmGraphicMenu.btnSearchClick(Sender: TObject);
 begin
-  pgcTreeViews.ActivePageIndex := PG_MENUSEARCH;
-  frmMain.DoSearchItem(vstSearch,btnSearch.Text,IterateSubtreeProcs.GMFindNode);
+  btnSearch.Text := '';
 end;
 
 procedure TfrmGraphicMenu.btnSearchKeyPress(Sender: TObject; var Key: Char);
@@ -480,6 +500,8 @@ var
   strFont : string;
   BackgroundPath, SeparatorPath, LogoPath, IconPath: string;
 begin
+  FSearchIcon := -1;
+  FCancelIcon := -1;
   //NodeDataSize
   vstList.NodeDataSize     := SizeOf(rTreeDataX);
   vstRecents.NodeDataSize  := SizeOf(rTreeDataX);
@@ -519,9 +541,13 @@ begin
       DrawButton(IniFile,sknbtnEject,gmbEject);
       DrawButton(IniFile,sknbtnExit,gmbExit);
       //Search
-      IconPath := SUITE_CURRENTTHEME_PATH + IniFile.ReadString(INIFILE_SECTION_SEARCH, INIFILE_KEY_ICON, '');
+      IconPath := SUITE_CURRENTTHEME_PATH + IniFile.ReadString(INIFILE_SECTION_SEARCH, INIFILE_KEY_ICONSEARCH, '');
       if FileExists(IconPath) then
-        btnSearch.RightButton.ImageIndex := ImagesDM.GetSimpleIconIndex(IconPath);
+        FSearchIcon := ImagesDM.GetSimpleIconIndex(IconPath);
+      IconPath := SUITE_CURRENTTHEME_PATH + IniFile.ReadString(INIFILE_SECTION_SEARCH, INIFILE_KEY_ICONCANCEL, '');
+      if FileExists(IconPath) then
+        FCancelIcon := ImagesDM.GetSimpleIconIndex(IconPath);
+      btnSearch.RightButton.ImageIndex := FSearchIcon;
       //Hard Disk
       DrawHardDiskSpace(IniFile,imgDriveBackground,imgDriveSpace);
       lblDriveName.Caption := UpperCase(ExtractFileDrive(SUITE_WORKING_PATH));

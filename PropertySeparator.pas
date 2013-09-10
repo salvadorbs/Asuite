@@ -55,9 +55,7 @@ uses
 class function TfrmPropertySeparator.Edit(AOwner: TComponent; NodeData: PBaseData): TModalResult;
 begin
   Result := mrCancel;
-  if not Assigned(NodeData) then
-    ShowMessage(DKLangConstW('msgErrGeneric'),true)
-  else
+  if Assigned(NodeData) then
     with TfrmPropertySeparator.Create(AOwner) do
       try
         LoadNodeData(NodeData.Data);
