@@ -195,35 +195,28 @@ end;
 
 procedure GetDropFileProperty(Sender: TBaseVirtualTree;Node: pVirtualNode;PathTemp: string);
 var
-  NodeData : PBaseData;
-  CustomRealNodeData : TvCustomRealNodeData;
-  Name     : string;
+  NodeData: PBaseData;
+  FileNodeData: TvFileNodeData;
 begin
   NodeData := PBaseData(Sender.GetNodeData(Node));
-  CustomRealNodeData := TvCustomRealNodeData(NodeData.Data);
-  Name     := ExtractFileName(PathTemp);
-  //If it is a directory, use folder icon else get its icon
-  if DirectoryExists(PathTemp) then
-    CustomRealNodeData.PathIcon := AbsoluteToRelative(SUITE_SMALLICONS_PATH + FILEICON_Folder)
-  else
-    Delete(Name,pos(ExtractFileExt(PathTemp),name),Length(name));
+  FileNodeData := TvFileNodeData(NodeData.Data);
   //Set some node record's variables
-  CustomRealNodeData.Name := Name;
+  FileNodeData.Name := ChangeFileExt(ExtractFileName(PathTemp), '');
   if LowerCase(ExtractFileExt(PathTemp)) = EXT_LNK then
   begin
     //Shortcut
-    with TvFileNodeData(CustomRealNodeData) do
-    begin
-      PathExe    := AbsoluteToRelative(GetShortcutTarget(PathTemp,sfPathExe));
-      Parameters := AbsoluteToRelative(GetShortcutTarget(PathTemp,sfParameter));
-      WorkingDir := AbsoluteToRelative(GetShortcutTarget(PathTemp,sfWorkingDir));
-    end;
+    FileNodeData.PathExe    := AbsoluteToRelative(GetShortcutTarget(PathTemp, sfPathExe));
+    FileNodeData.Parameters := AbsoluteToRelative(GetShortcutTarget(PathTemp, sfParameter));
+    FileNodeData.WorkingDir := AbsoluteToRelative(GetShortcutTarget(PathTemp, sfWorkingDir));
   end
   else //Normal file
-    TvFileNodeData(CustomRealNodeData).PathExe := AbsoluteToRelative(PathTemp);
-  CustomRealNodeData.DataType   := vtdtFile;
-  CustomRealNodeData.ImageIndex := ImagesDM.GetIconIndex(CustomRealNodeData);
-  NodeData.Data.pNode           := Node;
+    FileNodeData.PathExe := AbsoluteToRelative(PathTemp);
+  //If it is a directory, use folder icon
+  if DirectoryExists(FileNodeData.PathAbsoluteExe) then
+    FileNodeData.PathIcon := AbsoluteToRelative(SUITE_SMALLICONS_PATH + FILEICON_Folder);
+  FileNodeData.DataType   := vtdtFile;
+  FileNodeData.ImageIndex := ImagesDM.GetIconIndex(FileNodeData);
+  NodeData.Data.pNode     := Node;
 end;
 
 procedure DragDropText(Sender: TBaseVirtualTree;DataObject: IDataObject;
