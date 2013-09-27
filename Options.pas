@@ -76,6 +76,7 @@ begin
   Config.Changed := True;
   if frmMain.Visible then
     frmMain.FocusControl(frmMain.vstList);
+  LangManager.LanguageID := Config.LangID;
   ModalResult := mrOk;
 end;
 

@@ -628,7 +628,6 @@ begin
     FLangID := value
   else
     FLangID := 1033;
-  LangManager.LanguageID := FLangID;
 end;
 
 procedure TConfiguration.SetMenuHotKey(const Value: Boolean);

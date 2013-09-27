@@ -566,6 +566,7 @@ begin
         Config.ShowMenuAtStartUp  := SQLOptionsData.showmenuatstartup;
         //Main Form
         Config.LangID             := SQLOptionsData.langid;
+        LangManager.LanguageID    := Config.LangID;
         Config.CustomTitleString  := UTF8ToString(SQLOptionsData.customtitlestring);
         Config.UseCustomTitle     := SQLOptionsData.usecustomtitle;
         Config.HideTabSearch      := SQLOptionsData.hidetabsearch;
@@ -646,9 +647,10 @@ begin
     end;
   end
   else begin
-    Config.LangID := 1033;
-    Config.GMTheme  := 'Default';
-    Config.Changed  := True;
+    Config.LangID  := 1033;
+    LangManager.LanguageID := Config.LangID;
+    Config.GMTheme := 'Default';
+    Config.Changed := True;
   end;
 end;
 
@@ -807,6 +809,11 @@ begin
     SQLOptionsData.trayicon := Config.TrayIcon;
     SQLOptionsData.trayusecustomicon  := Config.TrayUseCustomIcon;
     SQLOptionsData.traycustomiconpath := StringToUTF8(Config.TrayCustomIconPath);
+
+    //Debug code
+    Assert((Config.ActionClickLeft <> -1),  'Config.ActionClickLeft is -1');
+    Assert((Config.ActionClickRight <> -1), 'Config.ActionClickRight is -1');
+
     SQLOptionsData.actionclickleft    := Config.ActionClickLeft;
     SQLOptionsData.actionclickright   := Config.ActionClickRight;
     SQLOptionsData.useclassicmenu     := Config.UseClassicMenu;    
