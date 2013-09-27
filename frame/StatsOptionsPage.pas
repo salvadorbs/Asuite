@@ -27,8 +27,8 @@ type
     lbNamePc: TLabel;
     lbUser: TLabel;
     lbOs2: TLabel;
-    lbNamePc2: TLabel;
     lbUser2: TLabel;
+    lbNamePc2: TLabel;
     DKLanguageController1: TDKLanguageController;
   private
     { Private declarations }
@@ -69,24 +69,25 @@ var
 begin
   Result := inherited;
   //System
-  TfrmStatsOptionsPage(Self).lbOs2.Caption     := GetWindowsVersion;
-  TfrmStatsOptionsPage(Self).lbNamePc2.Caption := GetComputerName;
-  TfrmStatsOptionsPage(Self).lbUser2.Caption   := GetCurrentUserName;
+  lbOs2.Caption := TOSVersion.Name + IfThen(TOSVersion.ServicePackMajor > 0, Format(' Service Pack (%d.%d)',
+                                           [TOSVersion.ServicePackMajor, TOSVersion.ServicePackMinor]), '');
+  lbNamePc2.Caption := GetEnvironmentVariable('ComputerName'); //GetComputerName;
+  lbUser2.Caption   := GetCurrentUserName;
   //Drive
   Drive := StringReplace(ExtractFileDrive(ParamStr(0)), ':', '', [])[1];
-  TfrmStatsOptionsPage(Self).gbSupport.Caption := Format(TfrmStatsOptionsPage(Self).gbSupport.Caption, [Drive]);
-  TfrmStatsOptionsPage(Self).lbSize2.Caption := DiskSizeString(Drive, True);
-  TfrmStatsOptionsPage(Self).lbSpaceFree2.Caption := DiskFreeString(Drive, True);
-  TfrmStatsOptionsPage(Self).lbSpaceUsed2.Caption := DiskUsedString(Drive, True);
+  gbSupport.Caption := Format(gbSupport.Caption, [Drive]);
+  lbSize2.Caption   := DiskSizeString(Drive, True);
+  lbSpaceFree2.Caption := DiskFreeString(Drive, True);
+  lbSpaceUsed2.Caption := DiskUsedString(Drive, True);
   //Launcher
   with ListStats do
   begin
     SwCount  := 0;
     CatCount := 0;
     frmMain.vstList.IterateSubtree(nil, IterateSubtreeProcs.UpdateListItemCount, nil);
-    TfrmStatsOptionsPage(Self).lbSoftware2.Caption := IntToStr(SwCount);
-    TfrmStatsOptionsPage(Self).lbCat2.Caption      := IntToStr(CatCount);
-    TfrmStatsOptionsPage(Self).lbTotal2.Caption    := IntToStr(SwCount + CatCount);
+    lbSoftware2.Caption := IntToStr(SwCount);
+    lbCat2.Caption      := IntToStr(CatCount);
+    lbTotal2.Caption    := IntToStr(SwCount + CatCount);
   end;
 end;
 

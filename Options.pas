@@ -88,6 +88,7 @@ begin
   else
     selNode := GetNodeByFrameClass(vstListCategory, APage);
   //Select node (automatically open frame using vst's AddToSelection event)
+  vstListCategory.FocusedNode := selNode;
   vstListCategory.Selected[selNode] := True;
   vstListCategory.FullExpand;
   result := ShowModal;

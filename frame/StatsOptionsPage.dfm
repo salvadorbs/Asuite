@@ -11,7 +11,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
     ParentFont = False
-    TabOrder = 0
+    TabOrder = 2
     object lbSoftware: TLabel
       Left = 8
       Top = 16
@@ -207,7 +207,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
     ParentFont = False
-    TabOrder = 2
+    TabOrder = 0
     object lbOs: TLabel
       Left = 8
       Top = 16
@@ -263,7 +263,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       Font.Style = []
       ParentFont = False
     end
-    object lbNamePc2: TLabel
+    object lbUser2: TLabel
       Left = 104
       Top = 48
       Width = 209
@@ -278,7 +278,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       Font.Style = []
       ParentFont = False
     end
-    object lbUser2: TLabel
+    object lbNamePc2: TLabel
       Left = 104
       Top = 32
       Width = 209
@@ -319,7 +319,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       65643200000800676253797374656D01010000000C000000070043617074696F
       6E0004006C624F7301010000000D000000070043617074696F6E0008006C624E
       616D65506301010000000E000000070043617074696F6E0006006C6255736572
-      01010000000F000000070043617074696F6E0005006C624F7332000009006C62
-      4E616D65506332000007006C6255736572320000}
+      01010000000F000000070043617074696F6E0005006C624F7332000007006C62
+      5573657232000009006C624E616D655063320000}
   end
 end
