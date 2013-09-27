@@ -23,7 +23,7 @@ object frmOptions: TfrmOptions
     Height = 25
     Caption = 'Ok'
     ModalResult = 1
-    TabOrder = 1
+    TabOrder = 2
     OnClick = btnOkClick
   end
   object btnCancel: TButton
@@ -33,7 +33,7 @@ object frmOptions: TfrmOptions
     Height = 25
     Caption = 'Cancel'
     ModalResult = 2
-    TabOrder = 2
+    TabOrder = 3
     OnClick = btnCancelClick
   end
   object pnlOptionsPage: TPanel
@@ -41,7 +41,7 @@ object frmOptions: TfrmOptions
     Top = 8
     Width = 331
     Height = 280
-    TabOrder = 3
+    TabOrder = 1
   end
   object vstListCategory: TVirtualStringTree
     Left = 8

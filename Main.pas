@@ -370,7 +370,8 @@ procedure TfrmMain.mniScanFolderClick(Sender: TObject);
 begin
   try
     Application.CreateForm(TfrmScanFolder, frmScanFolder);
-    frmScanFolder.showmodal;
+    frmScanFolder.FormStyle := Self.FormStyle;
+    frmScanFolder.ShowModal;
   finally
     frmScanFolder.Free;
     RefreshList(vstList);
@@ -970,17 +971,16 @@ var
 begin
   //Create XMLDoc
   XMLDoc := TXMLDocument.Create(Self);
-  XMLDoc.FileName := SUITE_WORKING_PATH + ChangeFileExt(SUITE_FILENAME, EXT_XML);
+  XMLDoc.FileName := FileName;
   XMLDoc.Active := True;
   //Load list and settings
   if (XMLDoc.DocumentElement.NodeName = 'ASuite') then
   begin
     LoadXMLSettings(XMLDoc);
     XMLToTree(vstList, ImportOldListProcs.ASuite1NodeToTree, XMLDoc);
-    Config.Changed := True;
   end;
-  DeleteFile(SUITE_WORKING_PATH + ChangeFileExt(SUITE_FILENAME, EXT_XML));
-  RefreshList(vstList);
+  DeleteFile(FileName);
+  Config.Changed := True;
 end;
 
 procedure TfrmMain.RunStartupProcess;
@@ -1143,8 +1143,8 @@ end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);
 var
-  UseXMLList: Boolean;
-  XMLFileName: string;
+  UseXMLList : Boolean;
+  sFilePath  : string;
 begin
   Application.CreateForm(TImagesDM, ImagesDM);
   Application.CreateForm(TClassicMenu, ClassicMenu);
@@ -1174,12 +1174,15 @@ begin
     end;
   end;
   //List & Options
-  XMLFileName := SUITE_WORKING_PATH + ChangeFileExt(SUITE_FILENAME, EXT_XML);
-  UseXMLList  := (Not FileExists(SUITE_LIST_PATH)) and (FileExists(XMLFileName));
+  if ExtractFileExt(SUITE_LIST_PATH) = EXT_XML then
+  begin
+    sFilePath := SUITE_LIST_PATH;
+    SUITE_LIST_PATH := ChangeFileExt(SUITE_LIST_PATH, EXT_SQL);
+  end;
   DBManager   := TDBManager.Create(SUITE_LIST_PATH);
   //If exists old list format (xml), use it
-  if UseXMLList then
-    LoadDataFromXML(XMLFileName)
+  if sFilePath <> '' then
+    LoadDataFromXML(sFilePath)
   else //Use new list format (sqlite db)
     DBManager.LoadData(vstList);
   //Backup sqlite database

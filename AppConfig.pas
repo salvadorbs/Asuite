@@ -22,7 +22,7 @@ unit AppConfig;
 interface
 
 uses
-  SysUtils, Forms;
+  SysUtils, Forms, CmdLineParser, CmdLineHelper;
 
 const
 
@@ -207,9 +207,13 @@ initialization
   SUITE_BACKUP_PATH         := SUITE_WORKING_PATH + BACKUP_DIR;
   SUITE_MENUTHEMES_PATH     := SUITE_WORKING_PATH + MENUTHEMES_DIR;
   //List
-  if (ExtractFileExt(ParamStr(1)) = EXT_SQL) and FileExists(ParamStr(1)) then
-    SUITE_LIST_PATH := ParamStr(1)
-  else
-    SUITE_LIST_PATH := SUITE_WORKING_PATH + ChangeFileExt(SUITE_FILENAME, EXT_SQL);
+  GetCmdLineSwitchValue(SUITE_LIST_PATH,'list');
+  if (SUITE_LIST_PATH = '') or not(FileExists(SUITE_LIST_PATH)) then
+  begin
+    //Check if xml list exists, else get sqlite list
+    SUITE_LIST_PATH := SUITE_WORKING_PATH + ChangeFileExt(SUITE_FILENAME, EXT_XML);
+    if not FileExists(SUITE_LIST_PATH) then
+      SUITE_LIST_PATH := SUITE_WORKING_PATH + ChangeFileExt(SUITE_FILENAME, EXT_SQL);
+  end;
 
 end.

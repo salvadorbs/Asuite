@@ -42,7 +42,8 @@ type
   end;
 
 const
-  crNewCur = 1;
+  crCurTL = 1;
+  crCurBR = 2;
 
 { Mouse Sensors}
 procedure CreateFormSensors;
@@ -90,6 +91,7 @@ begin
           frmSensor.Left   := GetDeviceCaps(GetDC(frmMain.Handle), HORZRES) - 1;
           frmSensor.Height := GetDeviceCaps(GetDC(frmMain.Handle), VERTRES);
           frmSensor.Width  := 1;
+          frmSensor.Tag    := 1;
         end
       end;
       3: //Bottom
@@ -99,6 +101,7 @@ begin
           frmSensor := TfrmSensor.Create(Application);
           frmSensor.Top    := GetDeviceCaps(GetDC(frmMain.Handle), VERTRES) - 1;
           frmSensor.Height := 1;
+          frmSensor.Tag    := 1;
           frmSensor.Width  := GetDeviceCaps(GetDC(frmMain.Handle), HORZRES);
         end
       end;
@@ -130,7 +133,8 @@ end;
 
 procedure TfrmSensor.FormCreate(Sender: TObject);
 begin
-  Screen.Cursors[crNewCur] := LoadCursorFromFile(PChar(SUITE_SMALLICONS_PATH + 'asuite.cur'));
+  Screen.Cursors[crCurTL] := LoadCursorFromFile(PChar(SUITE_CURRENTTHEME_PATH + ICONS_DIR + 'asuiteTL.cur'));
+  Screen.Cursors[crCurBR] := LoadCursorFromFile(PChar(SUITE_CURRENTTHEME_PATH + ICONS_DIR + 'asuiteBR.cur'));
   Self.Top  := 0;
   Self.Left := 0;
 end;
@@ -157,7 +161,7 @@ end;
 procedure TfrmSensor.FormMouseMove(Sender: TObject; Shift: TShiftState; X,
   Y: Integer);
 begin
-  cursor := crNewCur;
+  cursor := 0 + Tag;
 end;
 
 procedure TfrmSensor.CreateParams(var Params: TCreateParams);

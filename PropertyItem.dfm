@@ -23,7 +23,7 @@ object frmPropertyItem: TfrmPropertyItem
     Height = 25
     Caption = 'Ok'
     ModalResult = 1
-    TabOrder = 0
+    TabOrder = 2
     OnClick = btnOkClick
   end
   object btnCancel: TButton
@@ -33,7 +33,7 @@ object frmPropertyItem: TfrmPropertyItem
     Height = 25
     Caption = 'Cancel'
     ModalResult = 2
-    TabOrder = 1
+    TabOrder = 3
     OnClick = btnCancelClick
   end
   object pnlPropertyPage: TPanel
@@ -41,7 +41,7 @@ object frmPropertyItem: TfrmPropertyItem
     Top = 8
     Width = 361
     Height = 280
-    TabOrder = 2
+    TabOrder = 0
   end
   object vstCategory: TVirtualStringTree
     Left = 8
@@ -56,7 +56,7 @@ object frmPropertyItem: TfrmPropertyItem
     Header.Font.Style = []
     Header.MainColumn = -1
     Images = ImagesDM.LargeIcoImages
-    TabOrder = 3
+    TabOrder = 1
     TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowRoot, toShowTreeLines, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
     OnAddToSelection = vstCategoryAddToSelection
     OnFreeNode = vstCategoryFreeNode

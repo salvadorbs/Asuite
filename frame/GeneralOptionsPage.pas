@@ -148,7 +148,7 @@ begin
   Config.ShowPanelAtStartUp := cbShowPanelStartup.Checked;
   Config.ShowMenuAtStartUp  := cbShowMenuStartup.Checked;
   //Language
-  Config.LangID           := LangManager.LanguageIDs[cxLanguage.ItemIndex];
+  Config.LangID             := LangManager.LanguageIDs[cxLanguage.ItemIndex];
   //Treeview
   Config.TVAutoOpClCats     := cbAutoOpClCat.Checked;
   //Treeview
