@@ -671,20 +671,24 @@ procedure TClassicMenu.PopulateDirectory(Sender: TObject);
             AMI.Items[0].Visible := False;
           //Create new menuitem and add base properties
           NMI             := TMenuItem.Create(AMI);
-          NMI.Caption     := SR.Name;
           NMI.Hint        := AMI.Hint + SR.Name + PathDelim;
           NMI.ImageIndex  := ImagesDM.GetSimpleIconIndex(SUITE_SMALLICONS_PATH + FILEICON_Folder); // folder image
           //Set AutoHotkeys to maManual, speed up popup menu
           NMI.AutoHotkeys := maManual;
-          //If it is not '.', expand folder else add OnClick event to open folder
-          if NMI.Caption <> '.' then
-            NMI.OnClick := PopulateDirectory
-          else
-            NMI.OnClick := OpenFile;
           //Add item in traymenu
-          if NMI.Caption <> '.' then
-            AddSub(NMI);
           AddItem(AMI, NMI);
+          //If it is not '.', expand folder else add OnClick event to open folder
+          if SR.Name <> '.' then
+          begin
+            NMI.Caption := SR.Name;
+            NMI.OnClick := PopulateDirectory;
+            AddSub(NMI);
+          end
+          else begin
+            NMI.Caption := DKLangConstW('msgCMOpenFolder');
+            NMI.OnClick := OpenFile;
+            AMI.NewBottomLine;
+          end;
         end;
         //Next folder
         Found := FindNext(SR) = 0;
@@ -711,7 +715,7 @@ procedure TClassicMenu.PopulateDirectory(Sender: TObject);
         NMI.Caption     := SR.Name;
         NMI.Hint        := AMI.Hint + SR.Name;
         NMI.ImageIndex  := ImagesDM.GetSimpleIconIndex(AMI.Hint + SR.Name);
-          //Set AutoHotkeys to maManual, speed up popup menu
+        //Set AutoHotkeys to maManual, speed up popup menu
         NMI.AutoHotkeys := maManual;
         NMI.OnClick     := OpenFile;
         //Add item in traymenu

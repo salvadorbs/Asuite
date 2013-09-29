@@ -139,7 +139,7 @@ var
   SearchRec     : TSearchRec;
   ChildNode     : PVirtualNode;
   ChildNodeData : TvCustomRealNodeData;
-  TempFullName, TempShortName, PathTemp : String;
+  TempShortName, PathTemp, sFileExt : String;
   ProgressBar   : TProgressBar;
 begin
   ChildNode     := nil;
@@ -148,16 +148,16 @@ begin
   if FindFirst(FolderPath + '*.*', faAnyFile, SearchRec) = 0 then
   begin
     repeat
-      TempFullName  := LowerCase(SearchRec.Name);
-      TempShortName := TempFullName;
+      TempShortName := LowerCase(SearchRec.Name);
+      sFileExt := ExtractFileExt(TempShortName);
       //Absolute path->relative path
       PathTemp := AbsoluteToRelative(FolderPath + SearchRec.Name);
       //Add node in vstlist
       if ((SearchRec.Name <> '.') and (SearchRec.Name <> '..')) and
-         (((SearchRec.Attr and faDirectory) = (faDirectory)) or ((Config.ScanFolderFileTypes.IndexOf(ExtractFileExt(TempFullName)) <> -1))) then
+         (((SearchRec.Attr and faDirectory) = (faDirectory)) or ((Config.ScanFolderFileTypes.IndexOf(sFileExt) <> -1))) then
       begin
         //Extract file name without extension (.ext)
-        Delete(TempShortName,pos(ExtractFileExt(SearchRec.Name),SearchRec.Name),Length(SearchRec.Name));
+        TempShortName := ChangeFileExt(TempShortName,'');
         if (Config.ScanFolderExcludeNames.IndexOf(TempShortName) = -1) then
         begin
           if ((SearchRec.Attr and faDirectory) = (faDirectory)) and (Config.ScanFolderSubFolders) then
@@ -170,7 +170,7 @@ begin
             DoScanFolder(Sender, IncludeTrailingBackslash(FolderPath + SearchRec.Name), ChildNode, ProgressDialog);
           end
           else
-            if (SearchRec.Attr <> faDirectory) and (Config.ScanFolderFileTypes.IndexOf(ExtractFileExt(TempFullName)) <> -1) then
+            if (SearchRec.Attr <> faDirectory) and (Config.ScanFolderFileTypes.IndexOf(sFileExt) <> -1) then
             begin
               ChildNode := Sender.AddChild(ParentNode, CreateNodeData(vtdtFile));
               ChildNodeData := TvCustomRealNodeData(PBaseData(Sender.GetNodeData(ChildNode)).Data);

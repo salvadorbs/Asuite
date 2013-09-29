@@ -207,13 +207,13 @@ var
   FileInfo : TSHFileInfo;
   Flags: integer;
 begin
- //Get icon
+  //Get icon
   Result := -1;
   //Small icon
   if SmallIcon then
-    Flags := SHGFI_SYSICONINDEX or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES
+    Flags := SHGFI_SYSICONINDEX or SHGFI_SMALLICON
   else //Else large icon
-    Flags := SHGFI_SYSICONINDEX or SHGFI_LARGEICON or SHGFI_USEFILEATTRIBUTES;
+    Flags := SHGFI_SYSICONINDEX or SHGFI_LARGEICON;
   //Get index
   if SHGetFileInfo(PChar(xpath), 0, FileInfo, SizeOf(TSHFileInfo), Flags) <> 0 then
     Result := FileInfo.iIcon;
@@ -225,10 +225,10 @@ var
   SFI: TSHFileInfo;
 begin
   //Use System ImageList
-  Flags := SHGFI_SYSICONINDEX or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES;
+  Flags := SHGFI_SYSICONINDEX or SHGFI_SMALLICON;
   IcoImages.Handle      := SHGetFileInfo('', 0, SFI, SizeOf(TSHFileInfo), Flags);
   IcoImages.ShareImages := True;
-  Flags := SHGFI_SYSICONINDEX or SHGFI_LARGEICON or SHGFI_USEFILEATTRIBUTES;
+  Flags := SHGFI_SYSICONINDEX or SHGFI_LARGEICON;
   LargeIcoImages.Handle      := SHGetFileInfo('', 0, SFI, SizeOf(TSHFileInfo), Flags);
   LargeIcoImages.ShareImages := True;
 end;

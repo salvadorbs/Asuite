@@ -161,7 +161,7 @@ end;
 procedure TfrmSensor.FormMouseMove(Sender: TObject; Shift: TShiftState; X,
   Y: Integer);
 begin
-  cursor := 0 + Tag;
+  cursor := 1 + Tag;
 end;
 
 procedure TfrmSensor.CreateParams(var Params: TCreateParams);
