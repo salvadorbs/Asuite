@@ -386,8 +386,8 @@ begin
     end;
     if Found then
     begin
-      FoundNode               := frmGraphicMenu.vstSearch.AddChild(nil);
-      FoundNodeData           := frmGraphicMenu.vstSearch.GetNodeData(FoundNode);
+      FoundNode     := frmGraphicMenu.vstSearch.AddChild(nil);
+      FoundNodeData := frmGraphicMenu.vstSearch.GetNodeData(FoundNode);
       //Get node's image, if it hasn't
       if CurrentFileData.ImageLargeIndex = -1 then
         CurrentFileData.ImageLargeIndex := ImagesDM.GetIconIndex(CurrentFileData, True);

@@ -124,10 +124,6 @@ begin
               if (NodeData.DataType = vtdtCategory) then
                 TvCategoryNodeData(NodeData).Execute(frmMain.vstList, ProcessInfo);
           end;
-        end
-        else begin
-          ShowMessage(DKLangConstW('msgErrGeneric'), True);
-          exit;
         end;
       end;
     end;
