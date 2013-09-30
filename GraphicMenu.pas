@@ -154,7 +154,8 @@ type
     FOpening    : Boolean;
     FSearchIcon : Integer;
     FCancelIcon : Integer;
-    procedure CopyImageInVst(Source:TImage;Page: TPageControl);
+    procedure CopyImageInVst(Source:TImage;Page: TControl);
+    procedure CopySelectedRectInBitmap(Source:TImage;Page: TControl;bmp: TBitmap);
     procedure DrawButton(IniFile: TIniFile;Button: TcySkinButton;
                          ButtonType: TGraphicMenuElement);
     procedure DrawIconInPNGImage(IniFile: TIniFile;PNGImage: TPngImage;
@@ -176,6 +177,7 @@ type
     function  GetActiveTree: TBaseVirtualTree;
     procedure AssignFontFromString(strfont: string;CompFont: TFont);
     procedure LoadGlyphs;
+    procedure DrawEmptyButton(PNGImage: TPngImage; Button: TcySkinButton);
 	public
     { Public declarations }
     procedure OpenMenu;
@@ -298,13 +300,27 @@ begin
   tmrFader.Enabled:= True;
 end;
 
+procedure TfrmGraphicMenu.DrawEmptyButton(PNGImage: TPngImage; Button: TcySkinButton);
+var
+  bmp: TBitmap;
+begin
+  bmp := TBitmap.Create;
+  try
+    CopySelectedRectInBitmap(imgBackground, Button, bmp);
+    PNGImage.Assign(bmp);
+  finally
+    bmp.Free;
+  end;
+end;
+
 procedure TfrmGraphicMenu.AssignFontFromString(strfont: string;CompFont: TFont);
 var
   vFont: TFont;
 begin
+  vFont := StrToFont(strfont);
   try
-    vFont := StrToFont(strfont);
-    CompFont.Assign(vFont);
+    if Assigned(vFont) then
+      CompFont.Assign(vFont);
   finally
     vFont.Free;
   end;
@@ -332,38 +348,51 @@ begin
     ShowMessageFmt(DKLangConstW('msgErrGeneric'), ['', SysErrorMessage(ErrorCode)], True);
 end;
 
-procedure TfrmGraphicMenu.CopyImageInVst(Source: TImage;Page: TPageControl);
+procedure TfrmGraphicMenu.CopyImageInVst(Source: TImage;Page: TControl);
 var
-  RectSource, RectDest : TRect;
-  bmpTempImage, bmpTempBG : TBitmap;
+  bmpTempImage : TBitmap;
 begin
   bmpTempImage := TBitmap.Create;
-  bmpTempBG    := TBitmap.Create;
   try
-    bmpTempImage.Height := Page.Height;
-    bmpTempImage.Width  := Page.Width;
-    //Set RectSource size
-    RectSource.Left     := Page.Left;
-    RectSource.Top      := Page.Top;
-    RectSource.Right    := Page.Left + Page.Width;
-    RectSource.Bottom   := Page.Top + Page.Height;
-    //Set RectDest size
-    RectDest.Left       := 0;
-    RectDest.Top        := 0;
-    RectDest.Right      := Page.Width;
-    RectDest.Bottom     := Page.Height;
-    //CopyRect in bmpTempImage and use it as background for Dest vst
-    bmpTempBG.Width := Source.Picture.Width;
-    bmpTempBG.Height := Source.Picture.Height;
-    bmpTempBG.Canvas.Draw(0, 0, Source.Picture.Graphic);
-    bmpTempImage.canvas.CopyRect(RectDest, bmpTempBG.Canvas, RectSource);
-    //Change vst's bitmapList
+    CopySelectedRectInBitmap(Source, Page, bmpTempImage);
     vstList.Background.Bitmap     := bmpTempImage;
     vstRecents.Background.Bitmap  := bmpTempImage;
     vstMostUsed.Background.Bitmap := bmpTempImage;
   finally
     bmpTempImage.Free;
-    bmpTempBG.Free;
+  end;
+end;
+
+procedure TfrmGraphicMenu.CopySelectedRectInBitmap(Source: TImage;Page: TControl;
+  bmp: TBitmap);
+var
+  RectSource, RectDest : TRect;
+  bmpTempBG : TBitmap;
+begin
+  if Assigned(bmp) then
+  begin
+    bmpTempBG    := TBitmap.Create;
+    try
+      bmp.Height := Page.Height;
+      bmp.Width  := Page.Width;
+      //Set RectSource size
+      RectSource.Left     := Page.Left;
+      RectSource.Top      := Page.Top;
+      RectSource.Right    := Page.Left + Page.Width;
+      RectSource.Bottom   := Page.Top + Page.Height;
+      //Set RectDest size
+      RectDest.Left       := 0;
+      RectDest.Top        := 0;
+      RectDest.Right      := Page.Width;
+      RectDest.Bottom     := Page.Height;
+      //CopyRect in bmpTempImage
+      bmpTempBG.Width := Source.Picture.Width;
+      bmpTempBG.Height := Source.Picture.Height;
+      bmpTempBG.Canvas.Draw(0, 0, Source.Picture.Graphic);
+      bmp.Canvas.CopyRect(RectDest, bmpTempBG.Canvas, RectSource);
+    finally
+      bmpTempBG.Free;
+    end;
   end;
 end;
 
@@ -383,12 +412,21 @@ begin
     Image_Hover   := SUITE_CURRENTTHEME_PATH + IniFile.ReadString(IniFile_Section, INIFILE_KEY_IMAGEHOVER, '');
     Image_Clicked := SUITE_CURRENTTHEME_PATH + IniFile.ReadString(IniFile_Section, INIFILE_KEY_IMAGECLICKED, '');
     //Load png button states
+    //Normal state
     if FileExists(Image_Normal) then
-      PNGImage_Normal.LoadFromFile(Image_Normal);
+      PNGImage_Normal.LoadFromFile(Image_Normal)
+    else
+      DrawEmptyButton(PNGImage_Normal, Button);
+    //Hover state
     if FileExists(Image_Hover) then
-      PNGImage_Hover.LoadFromFile(Image_Hover);
+      PNGImage_Hover.LoadFromFile(Image_Hover)
+    else
+      DrawEmptyButton(PNGImage_Hover, Button);
+    //Clicked state
     if FileExists(Image_Clicked) then
-      PNGImage_Clicked.LoadFromFile(Image_Clicked);
+      PNGImage_Clicked.LoadFromFile(Image_Clicked)
+    else
+      DrawEmptyButton(PNGImage_Clicked, Button);
     //Draw caption and icon in PNGImage_*, if button is a RightButton
     if IsRightButton(ButtonType) then
     begin
@@ -550,7 +588,7 @@ begin
       btnSearch.RightButton.ImageIndex := FSearchIcon;
       //Hard Disk
       DrawHardDiskSpace(IniFile,imgDriveBackground,imgDriveSpace);
-      lblDriveName.Caption := UpperCase(ExtractFileDrive(SUITE_WORKING_PATH));
+      lblDriveName.Caption := format(DKLangConstW('msgGMDriveName'),[UpperCase(ExtractFileDrive(SUITE_WORKING_PATH))]);
       strFont := IniFile.ReadString(INIFILE_SECTION_HARDDISK, INIFILE_KEY_FONT, '');
       AssignFontFromString(strFont,lblDriveName.Font);
       AssignFontFromString(strFont,lblDriveSpace.Font);

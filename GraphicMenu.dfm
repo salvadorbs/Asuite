@@ -32,22 +32,6 @@ object frmGraphicMenu: TfrmGraphicMenu
     Align = alClient
     ExplicitTop = 66
   end
-  object lblDriveName: TLabel
-    Left = 8
-    Top = 549
-    Width = 123
-    Height = 13
-    AutoSize = False
-    BiDiMode = bdLeftToRight
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWhite
-    Font.Height = -9
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentBiDiMode = False
-    ParentFont = False
-    Transparent = True
-  end
   object imgDivider2: TImage
     Left = 269
     Top = 345
@@ -161,37 +145,37 @@ object frmGraphicMenu: TfrmGraphicMenu
     OnClick = sknbtnMFUClick
   end
   object sknbtnEject: TcySkinButton
-    Left = 255
-    Top = 546
-    Width = 70
-    Height = 20
+    Left = 263
+    Top = 544
+    Width = 68
+    Height = 22
     OnClick = sknbtnEjectClick
   end
   object sknbtnExit: TcySkinButton
-    Left = 326
-    Top = 546
-    Width = 70
-    Height = 20
+    Left = 331
+    Top = 544
+    Width = 68
+    Height = 22
     OnClick = sknbtnExitClick
   end
   object imgDriveBackground: TImage
-    Left = 116
-    Top = 547
-    Width = 136
-    Height = 17
+    Left = 10
+    Top = 544
+    Width = 247
+    Height = 22
     Stretch = True
   end
   object imgDriveSpace: TImage
-    Left = 118
+    Left = 15
     Top = 549
-    Width = 131
+    Width = 235
     Height = 13
     Stretch = True
   end
   object lblDriveSpace: TLabel
-    Left = 117
-    Top = 546
-    Width = 132
+    Left = 20
+    Top = 545
+    Width = 236
     Height = 19
     Alignment = taCenter
     AutoSize = False
@@ -207,9 +191,26 @@ object frmGraphicMenu: TfrmGraphicMenu
     Transparent = True
     Layout = tlCenter
   end
+  object lblDriveName: TLabel
+    Left = 15
+    Top = 546
+    Width = 113
+    Height = 19
+    AutoSize = False
+    BiDiMode = bdLeftToRight
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWhite
+    Font.Height = -9
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentBiDiMode = False
+    ParentFont = False
+    Transparent = True
+    Layout = tlCenter
+  end
   object btnSearch: TButtonedEdit
     Left = 15
-    Top = 519
+    Top = 513
     Width = 240
     Height = 21
     Images = ImagesDM.IcoImages
@@ -224,7 +225,7 @@ object frmGraphicMenu: TfrmGraphicMenu
     Left = 15
     Top = 104
     Width = 240
-    Height = 409
+    Height = 405
     Margins.Left = 0
     Margins.Top = 0
     Margins.Right = 0
@@ -239,7 +240,7 @@ object frmGraphicMenu: TfrmGraphicMenu
         Left = 0
         Top = 0
         Width = 232
-        Height = 399
+        Height = 395
         Align = alClient
         BorderStyle = bsNone
         Header.AutoSizeIndex = 0
@@ -274,11 +275,15 @@ object frmGraphicMenu: TfrmGraphicMenu
       Caption = 'tsRecents'
       ImageIndex = 1
       TabVisible = False
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object vstRecents: TVirtualStringTree
         Left = 0
         Top = 0
         Width = 232
-        Height = 399
+        Height = 395
         Align = alClient
         BorderStyle = bsNone
         Header.AutoSizeIndex = 0
@@ -311,11 +316,15 @@ object frmGraphicMenu: TfrmGraphicMenu
       Caption = 'tsMostUsed'
       ImageIndex = 2
       TabVisible = False
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object vstMostUsed: TVirtualStringTree
         Left = 0
         Top = 0
         Width = 232
-        Height = 399
+        Height = 395
         Align = alClient
         BorderStyle = bsNone
         Header.AutoSizeIndex = 0
@@ -348,11 +357,15 @@ object frmGraphicMenu: TfrmGraphicMenu
       Caption = 'tsSearch'
       ImageIndex = 3
       TabVisible = False
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object vstSearch: TVirtualStringTree
         Left = 0
         Top = 0
         Width = 232
-        Height = 399
+        Height = 395
         Align = alClient
         BorderStyle = bsNone
         Header.AutoSizeIndex = 0

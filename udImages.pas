@@ -100,7 +100,6 @@ begin
   IMAGE_INDEX_AddFolder := LoadASuiteIconFromFile(FILEICON_AddFolder);
   IMAGE_INDEX_Delete   := LoadASuiteIconFromFile(FILEICON_Delete);
   IMAGE_INDEX_ASuite   := LoadASuiteIconFromFile(FILEICON_ASuite);
-  IMAGE_INDEX_Cat      := LoadASuiteIconFromFile(FILEICON_Cat);
   IMAGE_INDEX_Property := LoadASuiteIconFromFile(FILEICON_Property);
   IMAGE_INDEX_Save     := LoadASuiteIconFromFile(FILEICON_Save);
   IMAGE_INDEX_Folder   := LoadASuiteIconFromFile(FILEICON_Folder);
@@ -114,6 +113,7 @@ begin
   IMAGE_INDEX_Url      := LoadASuiteIconFromFile(FILEICON_Url);
   IMAGE_INDEX_Accept   := LoadASuiteIconFromFile(FILEICON_Accept);
   IMAGE_INDEX_Cancel   := LoadASuiteIconFromFile(FILEICON_Cancel);
+  IMAGE_INDEX_Cat      := LoadASuiteIconFromFile(FILEICON_Cat);
   //Menu large icons
   IMAGELARGE_INDEX_General  := LoadASuiteIconFromFile(FILELARGEICON_General, false);
   IMAGELARGE_INDEX_Advanced := LoadASuiteIconFromFile(FILELARGEICON_Advanced, false);
