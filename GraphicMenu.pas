@@ -67,7 +67,6 @@ type
    	tmrFader: TTimer;
     imgLogo: TImage;
     imgPersonalPicture: TImage;
-    bvlPersonalPicture: TBevel;
     vstList: TVirtualStringTree;
     OpenDialog1: TOpenDialog;
     imgDivider1: TImage;
@@ -105,6 +104,7 @@ type
     tsSearch: TTabSheet;
     vstSearch: TVirtualStringTree;
     DKLanguageController1: TDKLanguageController;
+    imgUserFrame: TImage;
     procedure FormCreate(Sender: TObject);
     procedure tmrFaderTimer(Sender: TObject);
     procedure imgLogoMouseDown(Sender: TObject; Button: TMouseButton;
@@ -211,6 +211,7 @@ const
   INIFILE_KEY_IMAGEHOVER   = 'image_hover';
   INIFILE_KEY_IMAGECLICKED = 'image_clicked';
   INIFILE_KEY_IMAGEBACKGROUND = 'image_background';
+  INIFILE_KEY_IMAGEUSERFRAME  = 'image_userframe';
   INIFILE_KEY_IMAGELOGO    = 'image_logo';
   INIFILE_KEY_IMAGESPACE   = 'image_space';
   INIFILE_KEY_IMAGESEPARATOR = 'image_separator';
@@ -536,7 +537,7 @@ procedure TfrmGraphicMenu.FormCreate(Sender: TObject);
 var
   IniFile : TIniFile;
   strFont : string;
-  BackgroundPath, SeparatorPath, LogoPath, IconPath: string;
+  BackgroundPath, sTempPath: string;
 begin
   FSearchIcon := -1;
   FCancelIcon := -1;
@@ -554,14 +555,18 @@ begin
       BackgroundPath := SUITE_CURRENTTHEME_PATH + IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGEBACKGROUND, '');
       if FileExists(BackgroundPath) then
         imgBackground.Picture.LoadFromFile(BackgroundPath);
+      //User frame
+      sTempPath := SUITE_CURRENTTHEME_PATH + IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGEUSERFRAME, '');
+      if FileExists(sTempPath) then
+        imgUserFrame.Picture.LoadFromFile(sTempPath);
       //Logo
-      LogoPath := SUITE_CURRENTTHEME_PATH + IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGELOGO, '');
-      if FileExists(LogoPath) then
-        imgLogo.Picture.LoadFromFile(LogoPath);
+      sTempPath := SUITE_CURRENTTHEME_PATH + IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGELOGO, '');
+      if FileExists(sTempPath) then
+        imgLogo.Picture.LoadFromFile(sTempPath);
       //Separator
-      SeparatorPath := SUITE_CURRENTTHEME_PATH + IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGESEPARATOR, '');
-      imgDivider1.Picture.LoadFromFile(SeparatorPath);
-      imgDivider2.Picture.LoadFromFile(SeparatorPath);
+      sTempPath := SUITE_CURRENTTHEME_PATH + IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGESEPARATOR, '');
+      imgDivider1.Picture.LoadFromFile(sTempPath);
+      imgDivider2.Picture.LoadFromFile(sTempPath);
       //Tabs
       DrawButton(IniFile,sknbtnList,gmbList);
       DrawButton(IniFile,sknbtnRecents,gmbMRU);
@@ -579,12 +584,12 @@ begin
       DrawButton(IniFile,sknbtnEject,gmbEject);
       DrawButton(IniFile,sknbtnExit,gmbExit);
       //Search
-      IconPath := SUITE_CURRENTTHEME_PATH + IniFile.ReadString(INIFILE_SECTION_SEARCH, INIFILE_KEY_ICONSEARCH, '');
-      if FileExists(IconPath) then
-        FSearchIcon := ImagesDM.GetSimpleIconIndex(IconPath);
-      IconPath := SUITE_CURRENTTHEME_PATH + IniFile.ReadString(INIFILE_SECTION_SEARCH, INIFILE_KEY_ICONCANCEL, '');
-      if FileExists(IconPath) then
-        FCancelIcon := ImagesDM.GetSimpleIconIndex(IconPath);
+      sTempPath := SUITE_CURRENTTHEME_PATH + IniFile.ReadString(INIFILE_SECTION_SEARCH, INIFILE_KEY_ICONSEARCH, '');
+      if FileExists(sTempPath) then
+        FSearchIcon := ImagesDM.GetSimpleIconIndex(sTempPath);
+      sTempPath := SUITE_CURRENTTHEME_PATH + IniFile.ReadString(INIFILE_SECTION_SEARCH, INIFILE_KEY_ICONCANCEL, '');
+      if FileExists(sTempPath) then
+        FCancelIcon := ImagesDM.GetSimpleIconIndex(sTempPath);
       btnSearch.RightButton.ImageIndex := FSearchIcon;
       //Hard Disk
       DrawHardDiskSpace(IniFile,imgDriveBackground,imgDriveSpace);
@@ -619,7 +624,12 @@ var
   Drive        : Char;
   dblDriveSize : Double;
   dblDriveUsed : Double;
+  sTempPath    : string;
 begin
+  //User Picture
+  sTempPath := RelativeToAbsolute(Config.GMPersonalPicture);
+  if FileExists(sTempPath) then
+    imgPersonalPicture.Picture.LoadFromFile(sTempPath);
   pgcTreeViews.ActivePageIndex := PG_MENULIST;
   //Clear virtualtrees
   vstList.Clear;
@@ -739,6 +749,7 @@ begin
     TempString := OpenDialog1.FileName;
 		imgPersonalPicture.Picture.LoadFromFile(TempString);
     Config.GMPersonalPicture := AbsoluteToRelative(TempString);
+    Config.Changed := True;
   end;
   SetCurrentDir(SUITE_WORKING_PATH);
 end;
