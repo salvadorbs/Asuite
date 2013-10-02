@@ -105,6 +105,7 @@ type
     vstSearch: TVirtualStringTree;
     DKLanguageController1: TDKLanguageController;
     imgUserFrame: TImage;
+    imgDragSpaceHidden: TImage;
     procedure FormCreate(Sender: TObject);
     procedure tmrFaderTimer(Sender: TObject);
     procedure imgLogoMouseDown(Sender: TObject; Button: TMouseButton;

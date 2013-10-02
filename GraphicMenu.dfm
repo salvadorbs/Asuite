@@ -193,6 +193,14 @@ object frmGraphicMenu: TfrmGraphicMenu
     Transparent = True
     Layout = tlCenter
   end
+  object imgDragSpaceHidden: TImage
+    Left = 0
+    Top = 0
+    Width = 406
+    Height = 64
+    Cursor = crSizeAll
+    OnMouseDown = imgLogoMouseDown
+  end
   object imgPersonalPicture: TImage
     Left = 345
     Top = 10
@@ -260,7 +268,7 @@ object frmGraphicMenu: TfrmGraphicMenu
         ScrollBarOptions.ScrollBars = ssVertical
         ShowHint = True
         TabOrder = 0
-        TreeOptions.PaintOptions = [toHideFocusRect, toShowBackground, toShowDropmark, toShowTreeLines, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
+        TreeOptions.PaintOptions = [toHideFocusRect, toShowBackground, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
         TreeOptions.SelectionOptions = [toDisableDrawSelection, toFullRowSelect]
         OnAddToSelection = vstListAddToSelection
         OnDrawText = vstListDrawText
@@ -447,7 +455,7 @@ object frmGraphicMenu: TfrmGraphicMenu
     Top = 48
     LangData = {
       0E0066726D477261706869634D656E7501010000000100000007004361707469
-      6F6E012C0000000D00696D674261636B67726F756E6400000C006C626C447269
+      6F6E012D0000000D00696D674261636B67726F756E6400000C006C626C447269
       76654E616D6500000B00696D67446976696465723200000700696D674C6F676F
       00001200696D67506572736F6E616C5069637475726500000B00696D67446976
       696465723100000C00736B6E62746E41537569746500000D00736B6E62746E4F
@@ -470,6 +478,7 @@ object frmGraphicMenu: TfrmGraphicMenu
       6D696E010100000004000000070043617074696F6E000E006D694F70656E466F
       6C6465725377010100000005000000070043617074696F6E0002004E3600000B
       006D6950726F706572747932010100000006000000070043617074696F6E000C
-      00696D67557365724672616D650000}
+      00696D67557365724672616D6500001200696D67447261675370616365486964
+      64656E0000}
   end
 end
