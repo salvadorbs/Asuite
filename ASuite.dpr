@@ -10,7 +10,6 @@ uses
   ulAppConfig in 'library\ulAppConfig.pas',
   Main in 'Main.pas' {frmMain},
   About in 'About.pas' {frmAbout},
-  CheckPrevious in '3p\CheckPrevious.pas',
   ulNodeDataTypes in 'library\ulNodeDataTypes.pas',
   ulEnumerations in 'library\ulEnumerations.pas',
   ulSysUtils in 'library\ulSysUtils.pas',
@@ -25,7 +24,6 @@ uses
   ulTreeView in 'library\ulTreeView.pas',
   SynSQLite3Static,
   GraphicMenu in 'GraphicMenu.pas' {frmGraphicMenu},
-  notifications in '3p\notifications.pas' {frmNotification},
   ulFileFolder in 'library\ulFileFolder.pas',
   Options in 'Options.pas' {frmOptions},
   BaseEntityPage in 'frame\BaseEntityPage.pas' {frmBaseEntityPage: TFrame},
@@ -63,7 +61,8 @@ begin
   {$IFDEF DEBUG}
   ReportMemoryLeaksOnShutdown := True;
   {$ENDIF}
-  if not CheckPrevious.RestoreIfRunning(Application.Handle, 1) then
+  //TODO: Use another single instance solution (see Delphi Dabbler)
+//  if not CheckPrevious.RestoreIfRunning(Application.Handle, 1) then
   begin
     {$IFDEF DEBUG}
     cTempo1 := GetTickCount;
@@ -80,7 +79,6 @@ begin
     Application.ShowMainForm := Config.ShowPanelAtStartUp;
     if (Config.ShowMenuAtStartUp) then
       ClassicMenu.ShowTrayiconMenu;
-    TfrmNotification.Execute(Format('%s %s', [APP_NAME, VERSION_COMPLETE]),'');
     Application.Run;
 
     {$IFDEF DEBUG}

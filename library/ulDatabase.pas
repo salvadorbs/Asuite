@@ -24,7 +24,7 @@ interface
 uses
   Windows, SysUtils, Forms, Dialogs, VirtualTrees, ulNodeDataTypes, ulEnumerations,
   ulCommonClasses, Classes, mORMot, SynCommons, mORMotSQLite3, DKLang,
-  System.UITypes, Vcl.Controls, MadExcept;
+  System.UITypes, Vcl.Controls;
 
 type
 
@@ -469,10 +469,8 @@ begin
     //Load list
     InternalLoadListItems(Tree, 0, nil, false);
   except
-//    on E : Exception do
-//      ShowMessageFmt(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message],True);
-    on E : EOutOfResources do
-      CreateBugReport;
+    on E : Exception do
+      ShowMessageFmt(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message],True);
   end;
 end;
 

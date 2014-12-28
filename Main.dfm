@@ -191,13 +191,14 @@ object frmMain: TfrmMain
         Left = 0
         Top = 0
         Width = 149
-        Height = 21
+        Height = 23
         Align = alLeft
         Anchors = [akLeft, akTop, akRight]
         Constraints.MaxHeight = 21
         PopupMenu = pmSearch
         TabOrder = 1
         OnKeyPress = btnedtSearchKeyPress
+        ExplicitHeight = 21
       end
     end
   end
