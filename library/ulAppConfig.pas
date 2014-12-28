@@ -90,24 +90,16 @@ type
     FMenuHotKey         : Boolean;
     FMenuHotKeyCode     : Integer;
     FMenuHotKeyMod      : Integer;
-    //Mouse Sensors
-    FSensorLeftClick    : Array[0..3] of Integer; //0 Top, 1 Left, 2 Right, 3 Bottom
-    FSensorRightClick   : Array[0..3] of Integer;
     //Misc
     FReadOnlyMode       : Boolean;
     FChanged            : Boolean;
     FASuiteState        : TASuiteState;
-    FUseMouseSensors    : Boolean;
     FScanFolderLastPath: string;
     FScanFolderSubFolders: boolean;
     FScanFolderFileTypes: TStringList;
     FScanFolderExcludeNames: TStringList;
     procedure SetHoldSize(value: Boolean);
     procedure SetAlwaysOnTop(value: Boolean);
-    procedure SetSensorLeftClick(aIndex: Integer; value: Integer);
-    procedure SetSensorRightClick(aIndex: Integer; value: Integer);
-    function GetSensorLeftClick(aIndex: Integer): Integer;
-    function GetSensorRightClick(aIndex: Integer): Integer;
     procedure SetTrayIcon(value: Boolean);
     procedure SetTrayUseCustomIcon(value: Boolean);
     procedure SetUseCustomTitle(value: Boolean);
@@ -140,8 +132,6 @@ type
     { public declarations }
     constructor Create; overload;
     destructor Destroy; override;
-    //Mouse Sensor
-    procedure UpdateSensors;
     //General
     property StartWithWindows: Boolean read FStartWithWindows write SetStartWithWindows;
     property ShowPanelAtStartUp: Boolean read FShowPanelAtStartUp write SetShowPanelAtStartUp;
@@ -202,10 +192,6 @@ type
     property MenuHotKey: Boolean read FMenuHotKey write SetMenuHotKey;
     property MenuHotKeyCode: Integer read FMenuHotKeyCode write SetMenuHotKeyCode;
     property MenuHotKeyMod: Integer read FMenuHotKeyMod write SetMenuHotKeyMod;
-    //Mouse Sensor
-    property UseMouseSensors: Boolean read FUseMouseSensors write FUseMouseSensors;
-    property SensorLeftClick[aIndex: Integer]:Integer read GetSensorLeftClick write setSensorLeftClick;
-    property SensorRightClick[aIndex: Integer]:Integer read GetSensorRightClick write setSensorRightClick;
     // Misc
     property ReadOnlyMode: Boolean read FReadOnlyMode write FReadOnlyMode;
     property Changed: Boolean read FChanged write SetChanged;
@@ -222,7 +208,7 @@ var
 implementation
 
 uses
-  Main, udClassicMenu, ulSysUtils, AppConfig, Sensor, ulCommonUtils, ulFileFolder,
+  Main, udClassicMenu, ulSysUtils, AppConfig, ulCommonUtils, ulFileFolder,
   udImages, GraphicMenu, ulTreeView;
 
 constructor TConfiguration.Create;
@@ -367,26 +353,6 @@ begin
   frmMain.tmScheduler.Enabled := FScheduler;
 end;
 
-procedure TConfiguration.SetSensorLeftClick(aIndex: Integer; value: Integer);
-begin
-  FSensorLeftClick[aIndex] := value;
-end;
-
-procedure TConfiguration.SetSensorRightClick(aIndex: Integer; value: Integer);
-begin
-  FSensorRightClick[aIndex] := value;
-end;
-
-function TConfiguration.GetSensorLeftClick(aIndex: Integer): Integer;
-begin
-  Result := FSensorLeftClick[aIndex];
-end;
-
-function TConfiguration.GetSensorRightClick(aIndex: Integer): Integer;
-begin
-  Result := FSensorRightClick[aIndex];
-end;
-
 procedure TConfiguration.SetTrayIcon(value: Boolean);
 begin
   FTrayIcon := value;
@@ -528,12 +494,6 @@ begin
       Color := value.Color;
     end;
   end;
-end;
-
-procedure TConfiguration.UpdateSensors;
-begin
-  CloseFormSensors;
-  CreateFormSensors;
 end;
 
 procedure TConfiguration.SetCache(value: Boolean);

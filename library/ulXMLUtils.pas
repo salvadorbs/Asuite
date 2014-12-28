@@ -299,12 +299,6 @@ begin
     //Only default menu
     Config.GMFade         := GetBoolPropertyXML(Node, 'MenuFade',true);
     Config.GMPersonalPicture := GetStrPropertyXML(Node, 'MenuPersonalPicture','Default');
-    //Mouse sensors
-    for I := 0 to 3 do
-    begin
-      Config.SensorLeftClick[I]  := GetIntPropertyXML(Node.ChildNodes['Mouse'],'SensorLeftClick' + IntToStr(I), 0);
-      Config.SensorRightClick[I] := GetIntPropertyXML(Node.ChildNodes['Mouse'],'SensorRightClick' + IntToStr(I), 0);
-    end;
   end;
 end;
 

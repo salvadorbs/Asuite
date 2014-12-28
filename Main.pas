@@ -24,7 +24,7 @@ interface
 uses
   Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
   ComCtrls, VirtualTrees, ActiveX, AppConfig, ulNodeDataTypes, ulCommonClasses,
-  UDImages, ASuiteForm, StdCtrls, Buttons, Sensor, System.UITypes, mORMotUILogin,
+  UDImages, ASuiteForm, StdCtrls, Buttons, System.UITypes, mORMotUILogin,
   ulEnumerations, Vcl.ExtCtrls, System.DateUtils, XMLDoc, DKLang;
 
 type
@@ -197,7 +197,6 @@ type
 
 var
   frmMain     : TfrmMain;
-  FormSensors : Array[0..3] of TfrmSensor;
 
 implementation
 

@@ -174,10 +174,6 @@ type
     FMenuHotKey         : Boolean;
     FMenuHotKeyCode     : Integer;
     FMenuHotKeyMod      : Integer;
-    //Mouse Sensors
-    FUseMouseSensors    : Boolean;
-    FSensorLeftClick    : RawUTF8; //0 Top, 1 Left, 2 Right, 3 Bottom
-    FSensorRightClick   : RawUTF8;
     Fscanfolderlastpath : RawUTF8;
     Fscanfoldersubfolders   : Boolean;
     Fscanfolderfiletypes    : RawUTF8;
@@ -248,10 +244,6 @@ type
     property menuhotkey: Boolean read FMenuHotKey write FMenuHotKey;
     property menuhotkeycode: Integer read FMenuHotKeyCode write FMenuHotKeyCode;
     property menuhotkeymod: Integer read FMenuHotKeyMod write FMenuHotKeyMod;
-    //Mouse Sensor
-    property usemousesensors: Boolean read FUseMouseSensors write FUseMouseSensors;
-    property mousesensorleft:RawUTF8 read FSensorLeftClick write FSensorLeftClick;
-    property mousesensorright:RawUTF8 read FSensorRightClick write FSensorRightClick;
     //Scan Folder
     property scanfolderlastpath: RawUTF8 read Fscanfolderlastpath write Fscanfolderlastpath;
     property scanfoldersubfolders: Boolean read Fscanfoldersubfolders write Fscanfoldersubfolders;
@@ -281,8 +273,6 @@ type
     procedure InternalSaveVersion;
     procedure InternalSaveOptions;
     procedure ClearTable(SQLRecordClass:TSQLRecordClass);
-    procedure UTF8ToMouseSensors(StringSensors: RawUTF8; MouseButton: TMouseButton);
-    function  MouseSensorsToUTF8(MouseButton: TMouseButton): RawUTF8;
   public
     constructor Create(const DBFilePath: string);
     destructor Destroy; override;
@@ -359,29 +349,6 @@ begin
   except
     on E : Exception do
       ShowMessageFmt(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message],True);
-  end;
-end;
-
-procedure TDBManager.UTF8ToMouseSensors(StringSensors: RawUTF8; MouseButton: TMouseButton);
-var
-  Strs: TStringList;
-  I: Integer;
-begin
-  //Mouse Sensor
-  Strs := TStringList.Create;
-  try
-    Strs.Text := StringReplace(UTF8ToString(StringSensors), '.', ''#10'', [rfReplaceAll]);
-    if MouseButton = mbLeft then
-    begin
-      for I := 0 to 3 do
-        Config.SensorLeftClick[i] := StrToInt(Strs[I]);
-    end
-    else begin
-      for I := 0 to 3 do
-        Config.SensorRightClick[i] := StrToInt(Strs[I]);
-    end;
-  finally
-    Strs.Free;
   end;
 end;
 
@@ -631,10 +598,6 @@ begin
         Config.MenuHotKeyCode     := SQLOptionsData.MenuHotKeyCode;
         Config.MenuHotKeyMod      := SQLOptionsData.MenuHotKeyMod;
         Config.MenuHotKey         := SQLOptionsData.MenuHotKey;
-        //Mouse sensors
-        Config.UseMouseSensors    := SQLOptionsData.UseMouseSensors;
-        UTF8ToMouseSensors(SQLOptionsData.mousesensorleft,mbLeft);
-        UTF8ToMouseSensors(SQLOptionsData.mousesensorright,mbRight);
         //Scan Folder
         Config.ScanFolderLastPath   := UTF8ToString(SQLOptionsData.scanfolderlastpath);
         Config.ScanFolderSubFolders := SQLOptionsData.scanfoldersubfolders;
@@ -643,7 +606,6 @@ begin
       end
     finally
       SQLOptionsData.Free;
-      Config.UpdateSensors;
     end;
   end
   else begin
@@ -658,25 +620,6 @@ procedure TDBManager.LoadData(Tree: TBaseVirtualTree);
 begin
   //List & Options
   DBManager.InternalLoadData(Tree);
-end;
-
-function TDBManager.MouseSensorsToUTF8(MouseButton: TMouseButton): RawUTF8;
-var
-  I: Integer;
-  SensorString: String;
-begin
-  SensorString := '';
-  for I := 0 to 3 do
-  begin
-    if MouseButton = mbLeft then
-      SensorString := SensorString + IntToStr(Config.SensorLeftClick[I])
-    else
-      if MouseButton = mbRight then
-        SensorString := SensorString + IntToStr(Config.SensorRightClick[I]);
-    if I <> 3 then
-      SensorString := SensorString + '.'
-  end;
-  Result := StringToUTF8(SensorString);
 end;
 
 procedure TDBManager.InternalLoadVersion;
@@ -835,10 +778,6 @@ begin
     SQLOptionsData.MenuHotKey         := Config.MenuHotKey;
     SQLOptionsData.MenuHotKeyCode     := Config.MenuHotKeyCode;
     SQLOptionsData.MenuHotKeyMod      := Config.MenuHotKeyMod;
-    //Mouse Sensor
-    SQLOptionsData.usemousesensors    := Config.UseMouseSensors;
-    SQLOptionsData.mousesensorleft    := MouseSensorsToUTF8(mbLeft);
-    SQLOptionsData.mousesensorright   := MouseSensorsToUTF8(mbRight);
     //Scan Folder
     SQLOptionsData.scanfolderlastpath     := StringToUTF8(Config.ScanFolderLastPath);
     SQLOptionsData.scanfoldersubfolders   := Config.ScanFolderSubFolders;

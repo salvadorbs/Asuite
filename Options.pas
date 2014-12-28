@@ -47,7 +47,7 @@ var
 implementation
 
 uses
-  GeneralOptionsPage, AdvancedOptionsPage, TrayIconOptionsPage, SensorsOptionsPage,
+  GeneralOptionsPage, AdvancedOptionsPage, TrayIconOptionsPage,
   StatsOptionsPage, HotkeyOptionsPage, ItemsOptionsPage, ulAppConfig, Main, AppConfig,
   ulNodeDataTypes, ulFrameUtils;
 
@@ -105,7 +105,6 @@ begin
   FFrameAdvanced := AddFrameNode(vstListCategory, nil,TPageFrameClass(TfrmAdvancedOptionsPage.Create(Self)));
   AddFrameNode(vstListCategory, FFrameAdvanced,TPageFrameClass(TfrmItemsOptionsPage.Create(Self)));
   AddFrameNode(vstListCategory, FFrameAdvanced,TPageFrameClass(TfrmHotkeyOptionsPage.Create(Self)));
-  AddFrameNode(vstListCategory, FFrameAdvanced,TPageFrameClass(TfrmSensorsOptionsPage.Create(Self)));
   //TrayIcon
   AddFrameNode(vstListCategory, nil,TPageFrameClass(TfrmTrayiconOptionsPage.Create(Self)));
   //Stats

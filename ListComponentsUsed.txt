@@ -1,6 +1,4 @@
 VirtualTree (included in ASuite Source, folder 3p) https://code.google.com/p/virtual-treeview/
 mORMot (included in ASuite Source, folder 3p) http://synopse.info/fossil/wiki?name=SQLite3+Framework
-DKLang (included in ASuite Source, folder 3p) https://github.com/salvadorbs/dklang
-CheckPrevious (included in ASuite Source, folder 3p)
-Notifications (included in ASuite Source, folder 3p)
+DKLang (included in ASuite Source, folder 3p) http://yktoo.com/en/software/dklang
 cyComponents6 (included in ASuite Source, folder 3p) http://sourceforge.net/projects/tcycomponents/
