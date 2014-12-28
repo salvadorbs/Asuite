@@ -26,7 +26,7 @@ interface
 uses
   Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   Menus, ExtCtrls, VirtualTrees, ulCommonClasses, ShellApi, Vcl.ImgList,
-  Winapi.Messages, ulNodeDataTypes, DKLang;
+  Winapi.Messages, NodeDataTypes, DKLang;
 
 type
   TClassicMenu = class(TDataModule)
@@ -128,8 +128,8 @@ var
 implementation
 
 uses
-  AppConfig, udImages, Main, ulEnumerations, ulAppConfig, ulTreeView, ulSysUtils,
-  ulCommonUtils, GraphicMenu;
+  Kernel.Consts, DataModules.Images, Forms.Main, Kernel.Enumerations, Kernel.AppConfig,
+  Utility.Treeview, Utility.System, ulCommonUtils, Forms.GraphicMenu;
 
 {$R *.dfm}
 
@@ -591,7 +591,7 @@ end;
 
 procedure TClassicMenu.EjectDialog(Sender: TObject);
 begin
-  ulSysUtils.EjectDialog(Sender);
+  Utility.System.EjectDialog(Sender);
 end;
 
 procedure TClassicMenu.CreateSeparator(Menu: TPopupMenu;Text: String;ListMenuItem: TMenuItem = nil);

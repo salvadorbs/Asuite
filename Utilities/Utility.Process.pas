@@ -17,12 +17,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 }
 
-unit Utility.ExeUtils;
+unit Utility.Process;
 
 interface
 
 uses
-  Windows, SysUtils, ulEnumerations, ulNodeDataTypes, Main, ulAppConfig, TlHelp32;
+  Windows, SysUtils, Kernel.Enumerations, Forms.Main,
+  Kernel.AppConfig, TlHelp32;
 
 { Processes, execution }
 procedure ActionOnExe(Action: TActionOnExecute);

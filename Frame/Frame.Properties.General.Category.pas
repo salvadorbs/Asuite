@@ -4,8 +4,8 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BaseGeneralPropertyPage, Vcl.StdCtrls,
-  VirtualTrees, DKLang, Frame.Properties.General;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, VirtualTrees, DKLang,
+  Frame.Properties.General;
 
 type
   TfrmCatGeneralPropertyPage = class(TfrmBaseGeneralPropertyPage)
@@ -38,8 +38,8 @@ var
 implementation
 
 uses
-  AppConfig, PropertyItem, ulNodeDataTypes, udImages, ulEnumerations, Main,
-  ulTreeView;
+  Kernel.Consts, NodeDataTypes, DataModules.Images,
+  Kernel.Enumerations, Forms.Main, Utility.Treeview;
 
 {$R *.dfm}
 

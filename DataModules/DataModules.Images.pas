@@ -24,8 +24,8 @@ unit DataModules.Images;
 interface
 
 uses
-  SysUtils, Classes, Controls, Windows, Graphics, Dialogs, ulEnumerations,
-  ulNodeDataTypes, ShellApi, CommCtrl, Vcl.ImgList, ulCommonUtils, VirtualTrees,
+  SysUtils, Classes, Controls, Windows, Graphics, Dialogs, Kernel.Enumerations,
+  NodeDataTypes, ShellApi, CommCtrl, Vcl.ImgList, ulCommonUtils, VirtualTrees,
   DKLang;
 
 type
@@ -77,7 +77,7 @@ var
 implementation
 
 uses
-  AppConfig, ulAppConfig, ulTreeView, Main;
+  Kernel.Consts, Kernel.AppConfig, Utility.Treeview;
 
 {$R *.dfm}
 

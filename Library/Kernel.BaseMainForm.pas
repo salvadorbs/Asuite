@@ -22,7 +22,7 @@ unit Kernel.BaseMainForm;
 interface
 
 uses
-  Forms, Controls, Classes, Dialogs, ActnList, Graphics, Windows, Messages, DKLang;
+  Forms, Controls, Classes, Dialogs, ActnList, Graphics, Windows, Messages;
 
 type
   TASuiteForm = class(TForm)
@@ -46,8 +46,8 @@ type
 implementation
 
 uses
-  ulTreeView, Main, ulAppConfig, ulNodeDataTypes, AppConfig, udClassicMenu,
-  ulEnumerations, ulCommonUtils;
+  Utility.Treeview, Forms.Main, Kernel.AppConfig, NodeDataTypes, Kernel.Consts, DataModules.TrayMenu,
+  Kernel.Enumerations;
 
 constructor TASuiteForm.Create(AOwner: TComponent);
 begin

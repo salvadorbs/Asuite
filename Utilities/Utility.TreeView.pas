@@ -22,8 +22,8 @@ unit Utility.TreeView;
 interface
 
 uses
-  Windows, SysUtils, ActiveX, VirtualTrees, Controls, ulCommonClasses, AppConfig,
-  ulNodeDataTypes, ulEnumerations, Classes, ShellApi, comobj, ulXMLUtils, DKLang;
+  Windows, SysUtils, ActiveX, VirtualTrees, Controls, ulCommonClasses, Kernel.Consts,
+  NodeDataTypes, Kernel.Enumerations, Classes, ShellApi, comobj, Utility.XML, DKLang;
 
 { List, Menu, MRU }
 function  AddNodeInVST(Sender: TBaseVirtualTree;ParentNode: PVirtualNode;AType: TvTreeDataType): PVirtualNode;
@@ -80,8 +80,8 @@ var
 implementation
 
 uses
-  Menus, ulSysUtils, udImages, Main, ulDatabase, ulAppConfig, ulFileFolder,
-  GraphicMenu, PropertyItem, PropertySeparator;
+  Menus, Utility.System, DataModules.Images, Forms.Main, Database, Utility.FileFolder,
+  Forms.GraphicMenu, Forms.PropertySeparator;
 
 function AddNodeInVST(Sender: TBaseVirtualTree;ParentNode: PVirtualNode;AType: TvTreeDataType): PVirtualNode;
 var

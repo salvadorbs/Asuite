@@ -22,7 +22,7 @@ unit Utility.System;
 interface
 
 uses
-  AppConfig, Windows, ShellApi, SysUtils, Classes, ulEnumerations, Registry,
+  Kernel.Consts, Windows, ShellApi, SysUtils, Classes, Registry,
   ShlObj, ActiveX, ComObj, Forms, Dialogs, FileCtrl;
 
 { Browse }
@@ -52,7 +52,7 @@ function GetCorrectWorkingDir(Default: string): string;
 implementation
 
 uses
-  ulStringUtils, Main;
+  Utility.Strings, Forms.Main;
 
 function BrowseCallbackProc(hwnd: HWND; uMsg: UINT; lParam, lpData: LPARAM): Integer; stdcall;
 begin

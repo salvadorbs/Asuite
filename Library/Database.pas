@@ -22,9 +22,9 @@ unit Database;
 interface
 
 uses
-  Windows, SysUtils, Forms, Dialogs, VirtualTrees, ulNodeDataTypes, ulEnumerations,
+  Windows, SysUtils, Forms, Dialogs, VirtualTrees, NodeDataTypes, Kernel.Enumerations,
   ulCommonClasses, Classes, mORMot, SynCommons, mORMotSQLite3, DKLang,
-  System.UITypes, Vcl.Controls;
+  Vcl.Controls;
 
 type
 
@@ -292,8 +292,8 @@ var
 implementation
 
 uses
-  AppConfig, ulAppConfig, ulFileFolder, ulCommonUtils, ulTreeView, Main, udImages,
-  ulStringUtils;
+  Kernel.Consts, Kernel.AppConfig, Utility.FileFolder, ulCommonUtils,
+  Forms.Main;
 
 { TDBManager }
 

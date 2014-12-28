@@ -26,13 +26,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                 +->TvFolderNodeData
  *)
 
-unit Utility.NodeDataTypes;
+unit NodeDataTypes;
 
 interface
 
 uses
-  VirtualTrees, Menus, SysUtils, Dialogs, appConfig, DateUtils, ulEnumerations,
-  Winapi.ShellAPI, Winapi.Windows, BaseEntityPage, DKLang;
+  VirtualTrees, Menus, SysUtils, Dialogs, Kernel.Consts, DateUtils, Kernel.Enumerations,
+  Winapi.ShellAPI, Winapi.Windows, Frame.BaseEntity, DKLang;
 
 type
 
@@ -280,8 +280,8 @@ function CreateNodeData(AType: TvTreeDataType): TvBaseNodeData;
 implementation
 
 uses
-  ulSysUtils, ulTreeView, ulExeUtils, ulCommonUtils, ulAppConfig, ulFileFolder,
-  Main;
+  Utility.System, Utility.Treeview, Utility.Process, ulCommonUtils, Kernel.AppConfig,
+  Utility.FileFolder;
 
 function CreateNodeData(AType: TvTreeDataType): TvBaseNodeData;
 begin

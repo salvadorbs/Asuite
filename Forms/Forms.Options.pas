@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.ComCtrls,
-  Vcl.StdCtrls, BaseEntityPage, VirtualTrees, DKLang;
+  Vcl.StdCtrls, Frame.BaseEntity, VirtualTrees, DKLang;
 
 type
   TfrmOptions = class(TForm)
@@ -47,9 +47,9 @@ var
 implementation
 
 uses
-  GeneralOptionsPage, AdvancedOptionsPage, TrayIconOptionsPage,
-  StatsOptionsPage, HotkeyOptionsPage, ItemsOptionsPage, ulAppConfig, Main, AppConfig,
-  ulNodeDataTypes, ulFrameUtils;
+  Frame.Options.General, Frame.Options.Advanced, Frame.Options.TrayIcon,
+  Frame.Options.Stats, Frame.Options.HotKey, Frame.Options.Items, Kernel.AppConfig,
+  Forms.Main, Kernel.Consts, NodeDataTypes, Utility.Frame;
 
 {$R *.dfm}
 

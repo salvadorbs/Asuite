@@ -4,8 +4,8 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BaseEntityPage, Vcl.StdCtrls,
-  Vcl.ComCtrls, VirtualTrees, DKLang, Frame.BaseEntity;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Frame.BaseEntity,Vcl.StdCtrls,
+  Vcl.ComCtrls, VirtualTrees, DKLang;
 
 type
   TfrmAdvancedOptionsPage = class(TfrmBaseEntityPage)
@@ -66,8 +66,8 @@ var
 implementation
 
 uses
-  Main, ulTreeView, ulNodeDataTypes, ulFileFolder, ulEnumerations, udImages,
-  AppConfig, ulAppConfig;
+  Forms.Main, Utility.TreeView, NodeDataTypes, Utility.FileFolder, Kernel.Enumerations,
+  DataModules.Images, Kernel.Consts, Kernel.AppConfig;
 
 {$R *.dfm}
 

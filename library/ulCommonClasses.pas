@@ -22,7 +22,7 @@ unit ulCommonClasses;
 interface
 
 uses
-  Classes, VirtualTrees, ulNodeDataTypes, Menus, AppConfig, sysutils;
+  Classes, VirtualTrees, NodeDataTypes, Menus, Kernel.Consts, sysutils;
 
 type
   TNodeDataList = class (TList)
@@ -114,7 +114,7 @@ type
 implementation
 
 uses
-  Main, Windows, ulAppConfig, ulCommonUtils;
+  Forms.Main, Windows, Kernel.AppConfig, ulCommonUtils;
 
 constructor TNodeDataList.Create;
 begin

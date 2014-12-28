@@ -74,8 +74,8 @@ var
 implementation
 
 uses
-  Main, ulCommonUtils, AppConfig, ulFileFolder, ulNodeDataTypes, ulAppConfig,
-  ulEnumerations, ulTreeView, ulSysUtils, udImages;
+  Forms.Main, ulCommonUtils, Kernel.Consts, Utility.FileFolder, NodeDataTypes, Kernel.AppConfig,
+  Kernel.Enumerations, Utility.Treeview, Utility.System;
 
 {$R *.dfm}
 

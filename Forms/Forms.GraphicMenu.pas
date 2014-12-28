@@ -239,8 +239,9 @@ implementation
 {$R *.dfm}
 
 uses
-  Main, Options, ulSysUtils, AppConfig, ulAppConfig, ulCommonUtils, About,
-  udImages, ulNodeDataTypes, ulTreeView, ulEnumerations, udClassicMenu;
+  Forms.Main, Utility.System, Kernel.Consts, Kernel.AppConfig,
+  ulCommonUtils, Forms.About, DataModules.Images, NodeDataTypes, Utility.Treeview,
+  Kernel.Enumerations, DataModules.TrayMenu;
 
 procedure TfrmGraphicMenu.ApplicationEvents1Message(var Msg: tagMSG;
   var Handled: Boolean);

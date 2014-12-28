@@ -23,8 +23,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, AppConfig, System.UITypes,
-  XMLIntf, msxmldom, XMLDoc, ulEnumerations, ulDatabase, DateUtils, xmldom,
+  Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, Kernel.Consts,
+  XMLIntf, msxmldom, XMLDoc, Kernel.Enumerations, Database, DateUtils, xmldom,
   DKLang;
 
 type
@@ -108,8 +108,8 @@ implementation
 {$R *.dfm}
 
 uses
-  Main, ulNodeDataTypes, ulCommonUtils, ulTreeView, udImages, ulAppConfig,
-  ulFileFolder, udClassicMenu, ulXMLUtils;
+  Forms.Main, NodeDataTypes, ulCommonUtils, Utility.Treeview, DataModules.Images,
+  Kernel.AppConfig, Utility.FileFolder, DataModules.TrayMenu, Utility.XML;
 
 procedure TfrmImportList.btnCancelClick(Sender: TObject);
 begin

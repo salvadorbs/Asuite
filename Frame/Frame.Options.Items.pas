@@ -4,9 +4,8 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BaseEntityPage, Vcl.StdCtrls,
-  Vcl.ComCtrls, Vcl.Buttons, ulEnumerations, ulCommonClasses, DKLang,
-  Frame.BaseEntity;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.Buttons,
+  Kernel.Enumerations, ulCommonClasses, DKLang, Frame.BaseEntity;
 
 type
   TfrmItemsOptionsPage = class(TfrmBaseEntityPage)
@@ -50,7 +49,7 @@ var
 implementation
 
 uses
-  ulNodeDataTypes, ulTreeView, ulAppConfig, AppConfig;
+  NodeDataTypes, Utility.Treeview, Kernel.AppConfig, Kernel.Consts;
 
 {$R *.dfm}
 

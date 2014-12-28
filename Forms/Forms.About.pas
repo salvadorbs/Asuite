@@ -23,7 +23,7 @@ interface
 
 uses
   Windows, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, VirtualTrees, DKLang;
+  Dialogs, StdCtrls, ExtCtrls, DKLang;
 
 type
 
@@ -49,7 +49,8 @@ var
 
 implementation
 
-uses AppConfig,Main;
+uses
+  Kernel.Consts;
 
 {$R *.dfm}
 

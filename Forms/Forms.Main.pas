@@ -23,9 +23,9 @@ interface
 
 uses
   Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
-  ComCtrls, VirtualTrees, ActiveX, AppConfig, ulNodeDataTypes, ulCommonClasses,
-  UDImages, ASuiteForm, StdCtrls, Buttons, System.UITypes, mORMotUILogin,
-  ulEnumerations, Vcl.ExtCtrls, System.DateUtils, XMLDoc, DKLang;
+  ComCtrls, VirtualTrees, ActiveX, Kernel.Consts, NodeDataTypes, ulCommonClasses,
+  DataModules.Images, Kernel.BaseMainForm, StdCtrls, Buttons, System.UITypes, mORMotUILogin,
+  Kernel.Enumerations, Vcl.ExtCtrls, System.DateUtils, XMLDoc, DKLang;
 
 type
 
@@ -201,9 +201,9 @@ var
 implementation
 
 uses
-  Options, About, ulCommonUtils, udClassicMenu, ulExeUtils, ImportList, ulFileFolder,
-  ulAppConfig, ulTreeView, ulDatabase, GraphicMenu, StatsOptionsPage,
-  PropertyItem, PropertySeparator, ScanFolder, ulXMLUtils;
+  Forms.Options, Forms.About, ulCommonUtils, DataModules.TrayMenu, Forms.ImportList,
+  Kernel.AppConfig, Utility.Treeview, Database, Forms.GraphicMenu, Frame.Options.Stats,
+  Forms.PropertyItem, Forms.PropertySeparator, Forms.ScanFolder, Utility.XML;
 
 {$R *.dfm}
 

@@ -22,7 +22,7 @@ unit Kernel.Consts;
 interface
 
 uses
-  SysUtils, Forms, CmdLineParser, CmdLineHelper;
+  SysUtils, Forms, CmdLineParser;
 
 const
 
@@ -189,7 +189,7 @@ var
 
 implementation
 
-uses ulSysUtils;
+uses Utility.System;
 
 initialization
   //TODO: Move this code in appropriate place

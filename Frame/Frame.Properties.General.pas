@@ -4,8 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BasePropertyPage, Vcl.StdCtrls, DKLang,
-  BaseEntityPage;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, DKLang, Frame.Properties.Base;
 
 type
   TfrmBaseGeneralPropertyPage = class(TfrmBasePropertyPage)
@@ -34,8 +33,8 @@ var
 implementation
 
 uses
-  AppConfig, PropertyItem, ulSysUtils, ulCommonUtils, udImages, ulEnumerations,
-  ulNodeDataTypes;
+  Kernel.Consts, Utility.System, ulCommonUtils, Kernel.Enumerations,
+  NodeDataTypes;
 
 {$R *.dfm}
 

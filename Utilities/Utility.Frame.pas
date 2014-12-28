@@ -1,10 +1,10 @@
-unit Utility.FrameUtils;
+unit Utility.Frame;
 
 interface
 
 uses
-  Windows, SysUtils, ActiveX, VirtualTrees, Controls, ulCommonClasses, AppConfig,
-  ulNodeDataTypes, ulEnumerations, Classes, ShellApi, comobj, BaseEntityPage, extctrls;
+  Windows, SysUtils, ActiveX, VirtualTrees, Controls, Kernel.Consts,
+  NodeDataTypes, Classes, ShellApi, comobj, extctrls, Frame.BaseEntity;
 
 function AddFrameNode(Tree: TBaseVirtualTree; Parent: PVirtualNode;
                       FramePage: TPageFrameClass): PVirtualNode;

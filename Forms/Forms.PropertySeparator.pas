@@ -22,7 +22,7 @@ unit Forms.PropertySeparator;
 interface
 
 uses
-  SysUtils, Classes, Controls, Forms, Dialogs, ulNodeDataTypes, StdCtrls, ExtCtrls,
+  SysUtils, Classes, Controls, Forms, Dialogs, NodeDataTypes, StdCtrls, ExtCtrls,
   DKLang;
 
 type
@@ -48,7 +48,7 @@ var
 implementation
 
 uses
-  appConfig, Main, ulCommonUtils;
+  Kernel.Consts, Forms.Main;
 
 {$R *.dfm}
 

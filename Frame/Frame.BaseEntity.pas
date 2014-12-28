@@ -30,7 +30,7 @@ TPageFrameClass = class of TfrmBaseEntityPage;
 implementation
 
 uses
-  AppConfig;
+  Kernel.Consts;
 
 {$R *.dfm}
 

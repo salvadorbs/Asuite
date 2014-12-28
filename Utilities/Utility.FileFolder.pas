@@ -3,7 +3,7 @@ unit Utility.FileFolder;
 interface
 
 uses
-  AppConfig, Windows, SysUtils, Classes, ulEnumerations, ShlObj, ActiveX, ComObj,
+  Kernel.Consts, Windows, SysUtils, Classes, Kernel.Enumerations, ShlObj, ActiveX, ComObj,
   FileCtrl;
 
 { Browse }
@@ -28,7 +28,7 @@ procedure RenameShortcutOnDesktop(OldFileName, FileName: String);
 implementation
 
 uses
-  ulSysUtils;
+  Utility.System;
 
 function BrowseForFolder(const Caption, InitialDir: String): String;
 var

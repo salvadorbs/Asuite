@@ -4,8 +4,8 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, VirtualTrees, Vcl.ExtCtrls, Vcl.StdCtrls, BaseEntityPage,
-  ulNodeDataTypes, DKLang;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, VirtualTrees, Vcl.ExtCtrls, Vcl.StdCtrls, Frame.BaseEntity,
+  NodeDataTypes, DKLang;
 
 type
   TfrmPropertyItem = class(TForm)
@@ -46,9 +46,9 @@ var
 implementation
 
 uses
-  ulFrameUtils, BaseGeneralPropertyPage, AdvancedPropertyPage, ulEnumerations,
-  BehaviorPropertyPage, AppConfig, CatGeneralPropertyPage, SWGeneralPropertyPage,
-  Main, udImages;
+  Utility.Frame, Frame.Properties.Advanced, Kernel.Enumerations,
+  Frame.Properties.Behavior, Kernel.Consts, Frame.Properties.General.Category,
+  Frame.Properties.General.Software, Forms.Main, DataModules.Images;
 
 {$R *.dfm}
 

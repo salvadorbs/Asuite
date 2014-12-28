@@ -22,7 +22,7 @@ unit Kernel.AppConfig;
 interface
 
 uses
-  Windows, SysUtils, Graphics, Forms, Controls, VirtualTrees, ulEnumerations,
+  Windows, SysUtils, Graphics, Forms, Controls, VirtualTrees, Kernel.Enumerations,
   Vcl.Imaging.pngimage, System.UITypes, Classes, DKLang;
 
 type
@@ -208,8 +208,8 @@ var
 implementation
 
 uses
-  Main, udClassicMenu, ulSysUtils, AppConfig, ulCommonUtils, ulFileFolder,
-  udImages, GraphicMenu, ulTreeView;
+  Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, ulCommonUtils,
+  DataModules.Images, Forms.GraphicMenu, Utility.Treeview, Utility.FileFolder;
 
 constructor TConfiguration.Create;
 begin

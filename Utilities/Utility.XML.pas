@@ -4,8 +4,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, AppConfig, System.UITypes,
-  XMLIntf, msxmldom, XMLDoc, ulEnumerations, ulDatabase, DateUtils, xmldom;
+  Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, Kernel.Consts, System.UITypes,
+  XMLIntf, msxmldom, XMLDoc, Kernel.Enumerations, DateUtils, xmldom;
 
 { Load list or settings from xml file }
 type
@@ -30,8 +30,8 @@ function GetBoolPropertyXML(Node : IXMLNode;Name: String;Default: Boolean): Bool
 implementation
 
 uses
-  Main, ulNodeDataTypes, ulCommonUtils, ulTreeView, udImages, ulAppConfig,
-  ulFileFolder, udClassicMenu, ulStringUtils;
+  Forms.Main, NodeDataTypes, ulCommonUtils, Kernel.AppConfig,
+  Utility.Strings;
 
 function GetStrPropertyXML(Node : IXMLNode;Name: String;Default: String): String;
 var
@@ -66,7 +66,7 @@ begin
   //Check if PropertyNode exists
   if Assigned(PropertyNode) then
     if PropertyNode.Text <> '' then
-      Result := ulStringUtils.StrToBool(PropertyNode.Text);
+      Result := Utility.Strings.StrToBool(PropertyNode.Text);
 end;
 
 function TImportOldListProcs.ASuite1NodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;

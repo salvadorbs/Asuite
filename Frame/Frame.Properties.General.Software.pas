@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, BaseGeneralPropertyPage, Vcl.StdCtrls,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
   DKLang, Frame.Properties.General;
 
 type
@@ -39,7 +39,7 @@ var
 implementation
 
 uses
-  AppConfig, PropertyItem, ulSysUtils, ulNodeDataTypes, ulFileFolder;
+  Kernel.Consts, Utility.System, NodeDataTypes, Utility.FileFolder;
 
 {$R *.dfm}
 

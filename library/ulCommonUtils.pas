@@ -23,8 +23,7 @@ interface
 
 uses
   Windows, SysUtils, Classes, Graphics, Forms, Dialogs, ComCtrls, Clipbrd,
-  AppConfig, StdCtrls, ulCommonClasses, XMLIntf, System.UITypes, DKLang,
-  ulAppConfig;
+  Kernel.Consts, StdCtrls, ulCommonClasses, XMLIntf, System.UITypes, DKLang;
 
 { Converters }
 function RGBToHtml(iRGB: Cardinal): string;
@@ -72,7 +71,7 @@ const
 implementation
 
 uses
-  ulStringUtils, Registry, Main, SynTaskDialog;
+  Registry, SynTaskDialog;
 
 function RGBToHtml(iRGB: Cardinal): string;
 begin
