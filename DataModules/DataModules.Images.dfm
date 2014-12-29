@@ -1,6 +1,5 @@
-object ImagesDM: TImagesDM
+object dmImages: TdmImages
   OldCreateOrder = False
-  OnCreate = DataModuleCreate
   Height = 120
   Width = 201
   object IcoImages: TImageList

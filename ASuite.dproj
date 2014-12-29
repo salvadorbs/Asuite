@@ -104,8 +104,8 @@
         <DCC_HppOutput>dcu</DCC_HppOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1233;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
-        <VerInfo_Build>1233</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1236;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
+        <VerInfo_Build>1236</VerInfo_Build>
         <ILINK_MapFileType>DetailedSegments</ILINK_MapFileType>
         <MapFile>3</MapFile>
         <DCC_MapFile>3</DCC_MapFile>
@@ -495,22 +495,19 @@
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="DataModules\DataModules.Images.pas">
-            <Form>ImagesDM</Form>
+            <Form>dmImages</Form>
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="DataModules\DataModules.TrayMenu.pas">
-            <Form>ClassicMenu</Form>
+            <Form>dmTrayMenu</Form>
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="Library\Database.pas"/>
-        <DCCReference Include="Library\Kernel.AppConfig.pas"/>
+        <DCCReference Include="Library\AppConfig.Main.pas"/>
         <DCCReference Include="Library\Kernel.BaseMainForm.pas"/>
         <DCCReference Include="Library\Kernel.Consts.pas"/>
         <DCCReference Include="Library\Kernel.Enumerations.pas"/>
-        <DCCReference Include="Library\NodeDataTypes.pas"/>
-        <DCCReference Include="Library\ulCommonClasses.pas"/>
         <DCCReference Include="Library\ulCommonUtils.pas"/>
         <DCCReference Include="Utilities\Utility.FileFolder.pas"/>
         <DCCReference Include="Utilities\Utility.Strings.pas"/>
@@ -584,6 +581,24 @@
         </DCCReference>
         <DCCReference Include="Utilities\Utility.Frame.pas"/>
         <DCCReference Include="Utilities\Utility.Process.pas"/>
+        <DCCReference Include="Library\Database.Version.pas"/>
+        <DCCReference Include="Library\Database.Options.pas"/>
+        <DCCReference Include="Library\Database.List.pas"/>
+        <DCCReference Include="Library\Database.Manager.pas"/>
+        <DCCReference Include="Library\NodeDataTypes.Files.pas"/>
+        <DCCReference Include="Library\NodeDataTypes.Separator.pas"/>
+        <DCCReference Include="Library\NodeDataTypes.Base.pas"/>
+        <DCCReference Include="Library\NodeDataTypes.Category.pas"/>
+        <DCCReference Include="Library\NodeDataTypes.Custom.pas"/>
+        <DCCReference Include="Library\Kernel.Types.pas"/>
+        <DCCReference Include="Library\Lists.Base.pas"/>
+        <DCCReference Include="Library\Lists.Special.pas"/>
+        <DCCReference Include="Library\Lists.HotKey.pas"/>
+        <DCCReference Include="Library\Lists.Scheduler.pas"/>
+        <DCCReference Include="Library\Lists.Manager.pas"/>
+        <DCCReference Include="Library\Kernel.Singleton.pas"/>
+        <DCCReference Include="Library\AppConfig.Paths.pas"/>
+        <DCCReference Include="Library\Kernel.PopupMenu.pas"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

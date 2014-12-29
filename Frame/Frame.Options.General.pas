@@ -1,3 +1,22 @@
+{
+Copyright (C) 2006-2013 Matteo Salvi
+
+Website: http://www.salvadorsoftware.com/
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+}
+
 unit Frame.Options.General;
 
 interface
@@ -8,30 +27,7 @@ uses
 
 type
   TfrmGeneralOptionsPage = class(TfrmBaseEntityPage)
-    gbWindow: TGroupBox;
-    cbWindowOnTop: TCheckBox;
-    cbHoldSize: TCheckBox;
-    cbCustomTitle: TCheckBox;
-    edtCustomTitle: TEdit;
-    cbHideSearch: TCheckBox;
-    gbStartup: TGroupBox;
-    cbWindowsStartup: TCheckBox;
-    cbShowPanelStartup: TCheckBox;
-    cbShowMenuStartup: TCheckBox;
-    gbTreeView: TGroupBox;
-    cbBackground: TCheckBox;
-    btnFontSettings: TButton;
-    edtBackground: TEdit;
-    btnBrowseBackground: TButton;
-    cbAutoOpClCat: TCheckBox;
-    grpLanguage: TGroupBox;
-    cxLanguage: TComboBox;
-    FontDialog1: TFontDialog;
     DKLanguageController1: TDKLanguageController;
-    procedure cbBackgroundClick(Sender: TObject);
-    procedure cbCustomTitleClick(Sender: TObject);
-    procedure btnFontSettingsClick(Sender: TObject);
-    procedure btnBrowseBackgroundClick(Sender: TObject);
   private
     { Private declarations }
   strict protected
@@ -48,45 +44,13 @@ var
 
 implementation
 
-uses
-  Kernel.AppConfig, Utility.System, Kernel.Consts;
-
 {$R *.dfm}
 
 { TfrmGeneralOptionsPage }
 
-procedure TfrmGeneralOptionsPage.btnBrowseBackgroundClick(Sender: TObject);
-var
-  PathTemp: string;
-begin
-  OpenDialog1.Filter     := DKLangConstW('msgFilterBackground');
-  OpenDialog1.InitialDir := ExtractFileDir(RelativeToAbsolute(edtBackground.Text));
-  if (OpenDialog1.Execute) then
-  begin
-    PathTemp := AbsoluteToRelative(OpenDialog1.FileName);
-    edtBackground.Text := PathTemp;
-  end;
-end;
-
-procedure TfrmGeneralOptionsPage.btnFontSettingsClick(Sender: TObject);
-begin
-  FontDialog1.Execute;
-end;
-
-procedure TfrmGeneralOptionsPage.cbBackgroundClick(Sender: TObject);
-begin
-  edtBackground.Enabled := cbBackground.Checked;
-  btnBrowseBackground.Enabled := cbBackground.Checked;
-end;
-
-procedure TfrmGeneralOptionsPage.cbCustomTitleClick(Sender: TObject);
-begin
-  edtCustomTitle.Enabled := cbCustomTitle.Checked;
-end;
-
 function TfrmGeneralOptionsPage.GetImageIndex: Integer;
 begin
-  Result := IMAGELARGE_INDEX_General;
+//  Result := IMAGELARGE_INDEX_General;
 end;
 
 function TfrmGeneralOptionsPage.GetTitle: string;
@@ -99,63 +63,11 @@ var
   I: Integer;
 begin
   Result := inherited;
-  //Window
-  cbHoldSize.Checked         := Config.HoldSize;
-  cbWindowOnTop.Checked      := Config.AlwaysOnTop;
-  cbHideSearch.Checked       := Config.HideTabSearch;
-  cbCustomTitle.Checked      := Config.UseCustomTitle;
-  edtCustomTitle.Text        := Config.CustomTitleString;
-  edtCustomTitle.Enabled     := Config.UseCustomTitle;
-  //Startup
-  cbWindowsStartup.Checked   := Config.StartWithWindows;
-  cbShowPanelStartup.Checked := Config.ShowPanelAtStartUp;
-  cbShowMenuStartup.Checked  := Config.ShowMenuAtStartUp;
-  //Language
-  for I := 0 to LangManager.LanguageCount - 1 do
-  begin
-    cxLanguage.Items.Add(LangManager.LanguageNames[I]);
-    if LangManager.LanguageIDs[I] = Config.LangID then
-      cxLanguage.ItemIndex  := I;
-  end;
-  //Treeview
-  cbAutoOpClCat.Checked := Config.TVAutoOpClCats;
-  cbBackground.Checked  := Config.TVBackground;
-  edtBackground.Text    := Config.TVBackgroundPath;
-  //Treeview Font
-  with FontDialog1.Font do
-  begin
-    Name  := Config.TVFont.Name;
-    Style := Config.TVFont.Style;
-    Size  := Config.TVFont.Size;
-    Color := Config.TVFont.Color;
-  end;
-  //Update controls
-  cbCustomTitleClick(Self);
-  cbBackgroundClick(Self);
 end;
 
 function TfrmGeneralOptionsPage.InternalSaveData: Boolean;
 begin
   Result := inherited;
-  //Window
-  Config.HoldSize           := cbHoldSize.Checked;
-  Config.AlwaysOnTop        := cbWindowOnTop.Checked;
-  Config.HideTabSearch      := cbHideSearch.Checked;
-  Config.CustomTitleString  := edtCustomTitle.Text;
-  Config.UseCustomTitle     := cbCustomTitle.Checked;
-  //Startup
-  Config.StartWithWindows   := cbWindowsStartup.Checked;
-  Config.ShowPanelAtStartUp := cbShowPanelStartup.Checked;
-  Config.ShowMenuAtStartUp  := cbShowMenuStartup.Checked;
-  //Language
-  Config.LangID             := LangManager.LanguageIDs[cxLanguage.ItemIndex];
-  //Treeview
-  Config.TVAutoOpClCats     := cbAutoOpClCat.Checked;
-  //Treeview
-  Config.TVBackgroundPath   := edtBackground.Text;
-  Config.TVBackground       := cbBackground.Checked;
-  //Treeview Font
-  Config.TVFont             := FontDialog1.Font;
 end;
 
 end.

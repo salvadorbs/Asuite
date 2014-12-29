@@ -40,7 +40,7 @@ object frmImportList: TfrmImportList
     Height = 23
     Caption = '< Back'
     Enabled = False
-    TabOrder = 1
+    TabOrder = 2
     OnClick = btnBackClick
   end
   object btnNext: TButton
@@ -50,7 +50,7 @@ object frmImportList: TfrmImportList
     Height = 23
     Caption = 'Next >'
     Default = True
-    TabOrder = 2
+    TabOrder = 3
     OnClick = btnNextClick
   end
   object btnCancel: TButton
@@ -60,7 +60,7 @@ object frmImportList: TfrmImportList
     Height = 23
     Cancel = True
     Caption = 'Cancel'
-    TabOrder = 3
+    TabOrder = 4
     OnClick = btnCancelClick
   end
   object pnlHeader: TPanel
@@ -70,7 +70,7 @@ object frmImportList: TfrmImportList
     Height = 49
     Align = alTop
     BevelOuter = bvNone
-    TabOrder = 4
+    TabOrder = 0
     object lblTitle: TLabel
       Left = 16
       Top = 8
@@ -94,29 +94,32 @@ object frmImportList: TfrmImportList
     Top = 51
     Width = 287
     Height = 242
-    ActivePage = tsList
+    ActivePage = tsLaunchers
     Align = alTop
     Style = tsButtons
-    TabOrder = 0
+    TabOrder = 1
     object tsLaunchers: TTabSheet
       Caption = 'tsLaunchers'
       TabVisible = False
       OnShow = tsLaunchersShow
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object rgrpLauncher: TRadioGroup
         Left = 12
-        Top = 38
+        Top = 27
         Width = 253
-        Height = 136
+        Height = 179
         Caption = 'Launcher'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
         ItemIndex = 0
         Items.Strings = (
-          'ASuite 2.x'
+          'ASuite 2.0x / BSuite 1.x'
           'ASuite 1.x'
-          'winPenPack Launcher 1.x')
+          'winPenPack Launcher 1.x'
+          'PortableApps.com Platform x.x (WIP)')
+        ParentFont = False
         TabOrder = 0
       end
     end
@@ -135,7 +138,7 @@ object frmImportList: TfrmImportList
         Width = 253
         Height = 105
         Caption = 'Elements'
-        TabOrder = 0
+        TabOrder = 1
         object cbImportList: TCheckBox
           Left = 16
           Top = 24
@@ -165,9 +168,9 @@ object frmImportList: TfrmImportList
         Width = 253
         Height = 105
         Caption = 'Launcher File'
-        TabOrder = 1
+        TabOrder = 0
         object lblFile: TLabel
-          Left = 7
+          Left = 11
           Top = 24
           Width = 107
           Height = 13
@@ -175,23 +178,23 @@ object frmImportList: TfrmImportList
           Color = clBtnFace
           ParentColor = False
         end
-        object btnBrowse: TButton
-          Left = 164
-          Top = 67
-          Width = 73
-          Height = 22
-          Caption = 'Browse...'
-          TabOrder = 0
-          OnClick = btnBrowseClick
-        end
-        object edtPathList: TEdit
-          Left = 7
+        object edtPathList: TJvFilenameEdit
+          Left = 11
           Top = 40
           Width = 230
           Height = 21
-          TabOrder = 1
-          OnEnter = edtPathListEnter
-          OnExit = edtPathListEnter
+          OnAfterDialog = edtPathListAfterDialog
+          AddQuotes = False
+          Filter = 
+            'All list|*.xml;*.sqlite;*.bck;*.sqbck|BSuite 2.x List (*.sqlite,' +
+            ' *.sqbck)|*.sqlite;*.sqbck|BSuite 1.x List (*.xml, *.bck)|*.xml;' +
+            '*.bck|winPenPack 1.x List (*.xml)|*.xml|PStart 2.x List (*.xml)|' +
+            '*.xml'
+          DialogOptions = [ofHideReadOnly, ofEnableSizing]
+          TabOrder = 0
+          Text = ''
+          OnChange = edtPathListChange
+          OnExit = edtPathListExit
         end
       end
     end
@@ -232,12 +235,13 @@ object frmImportList: TfrmImportList
         Header.Font.Style = []
         Header.MainColumn = -1
         Header.Options = [hoColumnResize, hoDrag]
-        Images = ImagesDM.IcoImages
         ParentFont = False
+        ScrollBarOptions.ScrollBars = ssVertical
         TabOrder = 0
         TextMargin = 2
         TreeOptions.AutoOptions = [toAutoDropExpand, toAutoScrollOnExpand, toAutoTristateTracking]
         TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning]
+        TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowRoot, toShowTreeLines, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
         TreeOptions.SelectionOptions = [toFullRowSelect, toRightClickSelect]
         OnDrawText = vstListImpDrawText
         OnExpanding = vstListImpExpanding
@@ -331,15 +335,6 @@ object frmImportList: TfrmImportList
     Top = 8
     DOMVendorDesc = 'MSXML'
   end
-  object OpenDialog1: TOpenDialog
-    Filter = 
-      'All list|*.xml;*.sqlite;*.bck;*.sqbck|ASuite 2.x List (*.sqlite,' +
-      ' *.sqbck)|*.sqlite;*.sqbck|ASuite 1.x List (*.xml, *.bck)|*.xml;' +
-      '*.bck|winPenPack 1.x List (*.xml)|*.xml|PStart 2.x List (*.xml)|' +
-      '*.xml'
-    Left = 232
-    Top = 8
-  end
   object DKLanguageController1: TDKLanguageController
     IgnoreList.Strings = (
       '*.Filter'
@@ -353,7 +348,7 @@ object frmImportList: TfrmImportList
     Top = 8
     LangData = {
       0D0066726D496D706F72744C697374010100000001000000070043617074696F
-      6E0120000000040062766C310000040062766C320000070062746E4261636B01
+      6E011E000000040062766C310000040062766C320000070062746E4261636B01
       0100000002000000070043617074696F6E00070062746E4E6578740101000000
       03000000070043617074696F6E00090062746E43616E63656C01010000000400
       0000070043617074696F6E000900706E6C486561646572000008006C626C5469
@@ -364,17 +359,16 @@ object frmImportList: TfrmImportList
       0C006362496D706F72744C69737401010000000B000000070043617074696F6E
       0010006362496D706F727453657474696E677301010000000C00000007004361
       7074696F6E000600676246696C6501010000000D000000070043617074696F6E
-      0007006C626C46696C6501010000000E000000070043617074696F6E00090062
-      746E42726F77736501010000000F000000070043617074696F6E000B00656474
-      506174684C6973740000060074734C69737400000A007673744C697374496D70
-      00000C0062746E53656C656374416C6C01010000001200000007004361707469
-      6F6E000E0062746E446573656C656374416C6C01010000001300000007004361
-      7074696F6E000A00747350726F6772657373000008006C626C4974656D730101
-      00000015000000070043617074696F6E000700696D674C697374000007006C62
-      6C4C697374010100000016000000070043617074696F6E000B006C626C4C6175
-      6E63686572010100000017000000070043617074696F6E000B00696D67536574
-      74696E677300000B006C626C53657474696E6773010100000018000000070043
-      617074696F6E0008007062496D706F727400000C00584D4C446F63756D656E74
-      3100000B004F70656E4469616C6F67310000}
+      0007006C626C46696C6501010000000E000000070043617074696F6E00060074
+      734C69737400000A007673744C697374496D7000000C0062746E53656C656374
+      416C6C010100000012000000070043617074696F6E000E0062746E446573656C
+      656374416C6C010100000013000000070043617074696F6E000A00747350726F
+      6772657373000008006C626C4974656D73010100000015000000070043617074
+      696F6E000700696D674C697374000007006C626C4C6973740101000000160000
+      00070043617074696F6E000B006C626C4C61756E636865720101000000170000
+      00070043617074696F6E000B00696D6753657474696E677300000B006C626C53
+      657474696E6773010100000018000000070043617074696F6E0008007062496D
+      706F727400000C00584D4C446F63756D656E743100000B00656474506174684C
+      6973740000}
   end
 end

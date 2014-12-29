@@ -1,3 +1,22 @@
+{
+Copyright (C) 2006-2013 Matteo Salvi
+
+Website: http://www.salvadorsoftware.com/
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+}
+
 unit Frame.Properties.General.Software;
 
 interface
@@ -20,12 +39,8 @@ type
     edtPathExe: TEdit;
     lbPathExe: TLabel;
     DKLanguageController1: TDKLanguageController;
-    procedure edtPathExeExit(Sender: TObject);
-    procedure btnBrowseExeClick(Sender: TObject);
-    procedure btnBrowseWorkingDirClick(Sender: TObject);
   private
     { Private declarations }
-    procedure CheckPropertyPathExe(Edit: TEdit);
   strict protected
     function InternalLoadData: Boolean; override;
     function InternalSaveData: Boolean; override;
@@ -39,62 +54,21 @@ var
 implementation
 
 uses
-  Kernel.Consts, Utility.System, NodeDataTypes, Utility.FileFolder;
+  Kernel.Consts, Utility.System, NodeDataTypes.Files, Utility.FileFolder,
+  AppConfig.Main;
 
 {$R *.dfm}
-
-procedure TfrmSWGeneralPropertyPage.btnBrowseExeClick(Sender: TObject);
-begin
-  OpenDialog1.Filter     := DKLangConstW('msgFilterExe');
-  OpenDialog1.InitialDir := ExtractFileDir(RelativeToAbsolute(edtPathExe.Text));
-  if (OpenDialog1.Execute) then
-  begin
-    edtPathExe.Text := AbsoluteToRelative(OpenDialog1.FileName);
-    CheckPropertyPathExe(edtPathExe);
-  end;
-end;
-
-procedure TfrmSWGeneralPropertyPage.btnBrowseWorkingDirClick(Sender: TObject);
-var
-  PathTemp: string;
-begin
-  PathTemp := BrowseForFolder('', RelativeToAbsolute(edtWorkingDir.Text));
-  if (PathTemp <> '') then
-    edtWorkingDir.Text := AbsoluteToRelative(PathTemp);
-end;
-
-procedure TfrmSWGeneralPropertyPage.CheckPropertyPathExe(Edit: TEdit);
-begin
-  if not(FileFolderPageWebExists(Edit.Text)) then
-  begin
-    //File not found - Change font color with red
-    Edit.Font.Color := clRed;
-    Edit.Hint       := DKLangConstW('msgFileNotFound');
-  end
-  else begin
-    //File found - Change font color with clWindowText
-    Edit.Font.Color  := clWindowText;
-    Edit.Hint        := '';
-  end;
-end;
-
-procedure TfrmSWGeneralPropertyPage.edtPathExeExit(Sender: TObject);
-begin
-  if Sender is TEdit then
-    CheckPropertyPathExe(TEdit(Sender));
-end;
 
 function TfrmSWGeneralPropertyPage.InternalLoadData: Boolean;
 var
   FileNodeData: TvFileNodeData;
 begin
   Result := inherited;
-  lbInfo2.Caption := Format(lbInfo2.Caption, [SUITE_WORKING_PATH, SUITE_DRIVE]);
+  lbInfo2.Caption := Format(lbInfo2.Caption, [Config.Paths.SuitePathWorking, Config.Paths.SuiteDrive]);
   if Assigned(CurrentNodeData) then
   begin
     FileNodeData := TvFileNodeData(CurrentNodeData);
     edtPathExe.Text    := FileNodeData.PathExe;
-    CheckPropertyPathExe(edtPathExe);
     edtParameters.Text := FileNodeData.Parameters;
     edtWorkingDir.Text := FileNodeData.WorkingDir;
   end;

@@ -162,7 +162,6 @@ object frmScanFolder: TfrmScanFolder
         Height = 21
         Caption = 'Browse'
         TabOrder = 0
-        OnClick = btnBrowseClick
       end
       object edtFolderPath: TEdit
         Left = 8

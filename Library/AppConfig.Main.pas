@@ -17,13 +17,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 }
 
-unit Kernel.AppConfig;
+unit AppConfig.Main;
 
 interface
 
 uses
   Windows, SysUtils, Graphics, Forms, Controls, VirtualTrees, Kernel.Enumerations,
-  Vcl.Imaging.pngimage, System.UITypes, Classes, DKLang;
+  Vcl.Imaging.pngimage, System.UITypes, Classes, DKLang, AppConfig.Paths;
 
 type
 
@@ -65,14 +65,12 @@ type
     //Execution
     FActionOnExe        : TActionOnExecute;
     FRunSingleClick     : Boolean;
-    FHotKey             : Boolean;
     //Trayicon
     FTrayIcon           : Boolean;
     FTrayUseCustomIcon  : Boolean;
     FTrayCustomIconPath : string;
-    FActionClickLeft    : Integer;
-    FActionClickRight   : Integer;
-    FUseClassicMenu     : Boolean;
+    FActionClickLeft    : TTrayiconActionClick;
+    FActionClickRight   : TTrayiconActionClick;
     //Graphic Menu
     FGMTheme            : string;
     FGMFade             : Boolean;
@@ -84,20 +82,20 @@ type
     FGMBtnVideos        : string;
     FGMBtnExplore       : string;
     //HotKeys
-    FWindowHotKey       : Boolean;
-    FWindowHotKeyCode   : Integer;
-    FWindowHotKeyMod    : Integer;
-    FMenuHotKey         : Boolean;
-    FMenuHotKeyCode     : Integer;
-    FMenuHotKeyMod      : Integer;
+    FHotKey             : Boolean;
+    FWindowHotKey       : TShortcut;
+    FMenuHotKey         : TShortcut;
     //Misc
     FReadOnlyMode       : Boolean;
     FChanged            : Boolean;
-    FASuiteState        : TASuiteState;
+    FASuiteState        : TLauncherState;
     FScanFolderLastPath: string;
     FScanFolderSubFolders: boolean;
     FScanFolderFileTypes: TStringList;
     FScanFolderExcludeNames: TStringList;
+
+    FMainTree: TVirtualStringTree;
+    FPaths: TConfigPaths;
     procedure SetHoldSize(value: Boolean);
     procedure SetAlwaysOnTop(value: Boolean);
     procedure SetTrayIcon(value: Boolean);
@@ -118,20 +116,21 @@ type
     procedure SetGMBtnMusic(Value: string);
     procedure SetGMBtnPictures(Value: string);
     procedure SetGMBtnVideos(Value: string);
-    procedure SetMenuHotKeyCode(const Value: Integer);
-    procedure SetMenuHotKeyMod(const Value: Integer);
-    procedure SetWindowHotKeyCode(const Value: Integer);
-    procedure SetWindowHotKeyMod(const Value: Integer);
     procedure SetBackupNumber(const Value: Integer);
     procedure SetChanged(const Value: Boolean);
     procedure SetBackup(const Value: Boolean);
-    procedure SetWindowHotKey(const Value: Boolean);
-    procedure SetMenuHotKey(const Value: Boolean);
+    procedure SetMenuHotKey(const Value: TShortcut);
+    procedure SetWindowHotKey(const Value: TShortcut);
     procedure SetHotKey(const Value: Boolean);
+
+    function GetMainTree: TVirtualStringTree;
   public
     { public declarations }
     constructor Create; overload;
     destructor Destroy; override;
+
+    property Paths: TConfigPaths read FPaths write FPaths;
+
     //General
     property StartWithWindows: Boolean read FStartWithWindows write SetStartWithWindows;
     property ShowPanelAtStartUp: Boolean read FShowPanelAtStartUp write SetShowPanelAtStartUp;
@@ -171,9 +170,8 @@ type
     property TrayIcon: Boolean read FTrayIcon write SetTrayIcon;
     property TrayUseCustomIcon: Boolean read FTrayUseCustomIcon write SetTrayUseCustomIcon;
     property TrayCustomIconPath: String read FTrayCustomIconPath write FTrayCustomIconPath;
-    property ActionClickLeft: Integer read FActionClickLeft write FActionClickLeft;
-    property ActionClickRight: Integer read FActionClickRight write FActionClickRight;
-    property UseClassicMenu: Boolean read FUseClassicMenu write FUseClassicMenu;
+    property ActionClickLeft: TTrayiconActionClick read FActionClickLeft write FActionClickLeft;
+    property ActionClickRight: TTrayiconActionClick read FActionClickRight write FActionClickRight;
     //Graphic Menu
     property GMTheme: string read FGMTheme write SetGMTheme;
     property GMFade: Boolean read FGMFade write FGMFade;
@@ -186,20 +184,20 @@ type
     property GMBtnExplore: string read FGMBtnExplore write SetGMBtnExplore;
     //HotKeys
     property HotKey: Boolean read FHotKey write SetHotKey;
-    property WindowHotKey: Boolean read FWindowHotKey write SetWindowHotKey;
-    property WindowHotKeyCode: Integer read FWindowHotKeyCode write SetWindowHotKeyCode;
-    property WindowHotKeyMod: Integer read FWindowHotKeyMod write SetWindowHotKeyMod;
-    property MenuHotKey: Boolean read FMenuHotKey write SetMenuHotKey;
-    property MenuHotKeyCode: Integer read FMenuHotKeyCode write SetMenuHotKeyCode;
-    property MenuHotKeyMod: Integer read FMenuHotKeyMod write SetMenuHotKeyMod;
+    property WindowHotKey: TShortcut read FWindowHotKey write SetWindowHotKey;
+    property MenuHotKey: TShortcut read FMenuHotKey write SetMenuHotKey;
     // Misc
     property ReadOnlyMode: Boolean read FReadOnlyMode write FReadOnlyMode;
     property Changed: Boolean read FChanged write SetChanged;
-    property ASuiteState: TASuiteState read FASuiteState write FASuiteState;
+    property ASuiteState: TLauncherState read FASuiteState write FASuiteState;
     property ScanFolderLastPath: string read FScanFolderLastPath write FScanFolderLastPath;
     property ScanFolderSubFolders: boolean read FScanFolderSubFolders write FScanFolderSubFolders;
     property ScanFolderFileTypes: TStringList read FScanFolderFileTypes write FScanFolderFileTypes;
     property ScanFolderExcludeNames: TStringList read FScanFolderExcludeNames write FScanFolderExcludeNames;
+
+    property MainTree: TVirtualStringTree read GetMainTree write FMainTree;     
+    //Update theme paths
+    procedure UpdateGMTheme;
   end;
 
 var
@@ -213,8 +211,9 @@ uses
 
 constructor TConfiguration.Create;
 begin
+  FPaths := TConfigPaths.Create;
   //Find language files and register them in LangManager
-  LangManager.ScanForLangFiles(SUITE_LOCALE_PATH, '*.lng', False);
+  LangManager.ScanForLangFiles(FPaths.SuitePathLocale, '*.lng', False);
   //General
   FStartWithWindows   := False;
   FShowPanelAtStartUp := True;
@@ -258,9 +257,8 @@ begin
   FTrayIcon           := True;
   FTrayUseCustomIcon  := False;
   FTrayCustomIconPath := '';
-  FActionClickLeft    := 0;
-  FActionClickRight   := 2;
-  FUseClassicMenu     := False;
+  FActionClickLeft    := tcShowClassicMenu;
+  FActionClickRight   := tcShowGraphicMenu;
   //Graphic Menu
   FGMTheme            := 'Default';
   FGMFade             := True;
@@ -274,17 +272,13 @@ begin
   //Misc
   FReadOnlyMode       := False;
   FChanged            := False;
-  FASuiteState        := asStartUp;
+  FASuiteState        := lsStartUp;
   FHotKey             := True;
   //Hotkey
-  FWindowHotKey       := False;
-  FWindowHotKeyCode   := 0;
-  FWindowHotKeyMod    := 0;
-  FMenuHotKey         := False;
-  FMenuHotKeyCode     := 0;
-  FMenuHotKeyMod      := 0;
+  FWindowHotKey       := 0;
+  FMenuHotKey         := 0;
   //ScanFolder
-  FScanFolderLastPath   := SUITE_WORKING_PATH;
+  FScanFolderLastPath   := FPaths.SuitePathWorking;
   FScanFolderSubFolders := True;
   FScanFolderFileTypes  := TStringList.Create;
   FScanFolderFileTypes.Add(EXT_LNK);
@@ -299,6 +293,13 @@ begin
   FTVFont.Free;
   FScanFolderFileTypes.Free;
   FScanFolderExcludeNames.Free;
+  FPaths.Free;
+end;
+
+function TConfiguration.GetMainTree: TVirtualStringTree;
+begin
+  Assert(Assigned(FMainTree));
+  Result := FMainTree;
 end;
 
 procedure TConfiguration.SetHoldSize(value: boolean);
@@ -320,7 +321,7 @@ begin
   if (FHotKey <> Value) then
   begin
     FHotKey := Value;
-    HotKeyApp.RefreshRegs;
+    ListManager.HotKeyItemList.RefreshRegs;
   end;
 end;
 
@@ -356,7 +357,7 @@ end;
 procedure TConfiguration.SetTrayIcon(value: Boolean);
 begin
   FTrayIcon := value;
-  ClassicMenu.tiTrayMenu.Visible := FTrayIcon;
+  dmTrayMenu.tiTrayMenu.Visible := FTrayIcon;
   if (not(FShowPanelAtStartUp)) and (not(FTrayicon)) then
     FShowPanelAtStartUp := True;
 end;
@@ -366,17 +367,18 @@ var
   sPath: string;
 begin
   FTrayUseCustomIcon := value;
-  ClassicMenu.tiTrayMenu.Visible := False;
-  sPath := RelativeToAbsolute(FTrayCustomIconPath);
+  dmTrayMenu.tiTrayMenu.Visible := False;
+  sPath := FPaths.RelativeToAbsolute(FTrayCustomIconPath);
   if (FTrayUseCustomIcon) and (FileExists(sPath)) then
-    ClassicMenu.tiTrayMenu.Icon.LoadFromFile(sPath)
+    dmTrayMenu.tiTrayMenu.Icon.LoadFromFile(sPath)
   else begin
-    sPath := RelativeToAbsolute(SUITE_SMALLICONS_PATH + FILEICON_ASuite);
+    //TODO: Fix it
+//    sPath := FPaths.RelativeToAbsolute(FPaths.FSuitePathIconsPopupMenu + FILEICON_ASuite);
     if FileExists(sPath) then
-      ClassicMenu.tiTrayMenu.Icon.LoadFromFile(sPath);
+      dmTrayMenu.tiTrayMenu.Icon.LoadFromFile(sPath);
   end;
   //If you can't change trayicon's property visible, it will use old icon
-  ClassicMenu.tiTrayMenu.Visible := FTrayIcon;
+  dmTrayMenu.tiTrayMenu.Visible := FTrayIcon;
 end;
 
 procedure TConfiguration.SetUseCustomTitle(value: Boolean);
@@ -388,38 +390,36 @@ begin
     frmMain.Caption := APP_TITLE;
 end;
 
-procedure TConfiguration.SetWindowHotKey(const Value: Boolean);
+procedure TConfiguration.SetWindowHotKey(const Value: TShortcut);
 begin
-  if (Config.HotKey) then
+  if (FHotKey) then
   begin
     //Unregister hotkey (if actived)
-    UnregisterHotKey(frmMain.Handle, frmMain.Handle);
+    UnregisterHotKeyEx(frmMain.Handle);
     //Register hotkey
-    if (Config.WindowHotKey) then
+    if (Value <> 0) then
     begin
-      if Not(RegisterHotKey(frmMain.Handle, frmMain.Handle,
-                            GetHotKeyMod(FWindowHotKeyMod),
-                            GetHotKeyCode(FWindowHotKeyCode))) then
-        ShowMessage(DKLangConstW('msgErrRegHotkey'));
+      if Not(RegisterHotKeyEx(frmMain.Handle, Value)) then
+        ShowMessageEx(DKLangConstW('msgErrRegWindowHotkey'));
     end;
   end;
   FWindowHotKey := Value;
 end;
 
-procedure TConfiguration.SetWindowHotKeyCode(const Value: Integer);
+procedure TConfiguration.UpdateGMTheme;
 begin
-  if Value <> -1 then
-    FWindowHotKeyCode := Value
-  else
-    FWindowHotKeyCode := 0;
-end;
-
-procedure TConfiguration.SetWindowHotKeyMod(const Value: Integer);
-begin
-  if Value <> -1 then
-    FWindowHotKeyMod := Value
-  else
-    FWindowHotKeyMod := 0;
+  //TODO: Fix it
+  //Set Paths
+  FPaths.SuitePathCurrentTheme   := IncludeTrailingBackslash(FPaths.SuitePathMenuThemes + FGMTheme);
+  FPaths.SuitePathIconsPopupMenu := FPaths.SuitePathCurrentTheme + ICONS_POPUPMENU_DIR;
+  FPaths.SuitePathIconsTree      := FPaths.SuitePathCurrentTheme + ICONS_TREE_DIR;
+  FPaths.SuitePathIconsOptions   := FPaths.SuitePathCurrentTheme + ICONS_OPTIONS_DIR;
+  //Loading icons
+//  FASuiteIcons.LoadIcons;
+//  frmMain.LoadGlyphs;
+  //Refresh GraphicMenu
+  if Assigned(frmGraphicMenu) then
+    frmGraphicMenu.LoadTheme;
 end;
 
 procedure TConfiguration.SetTVAutoOpClCats(value: Boolean);
@@ -457,14 +457,14 @@ begin
   begin
     vstList.TreeOptions.PaintOptions := vstList.TreeOptions.PaintOptions - [toShowBackground];
     if (FTVBackground) and (FTVBackgroundPath <> '') and
-       (FileExists(RelativeToAbsolute(FTVBackgroundPath))) then
+       (FileExists(FPaths.RelativeToAbsolute(FTVBackgroundPath))) then
     begin
-      if LowerCase(ExtractFileExt(RelativeToAbsolute(FTVBackgroundPath))) <> '.bmp' then
+      if LowerCase(ExtractFileExt(FPaths.RelativeToAbsolute(FTVBackgroundPath))) <> '.bmp' then
       begin
         BackgroundBMP := TBitmap.Create;
         BackgroundPNG := TPngImage.Create;
         try
-          BackgroundPNG.LoadFromFile(RelativeToAbsolute(FTVBackgroundPath));
+          BackgroundPNG.LoadFromFile(FPaths.RelativeToAbsolute(FTVBackgroundPath));
           BackgroundBMP.Assign(BackgroundPNG);
           vstList.Background.Bitmap := BackgroundBMP;
         finally
@@ -473,7 +473,7 @@ begin
         end;
       end
       else
-        vstList.Background.LoadFromFile(RelativeToAbsolute(FTVBackgroundPath));
+        vstList.Background.LoadFromFile(FPaths.RelativeToAbsolute(FTVBackgroundPath));
       vstList.TreeOptions.PaintOptions := vstList.TreeOptions.PaintOptions + [toShowBackground];
     end
     else
@@ -558,19 +558,7 @@ begin
     FGMTheme := 'default'
   else
     FGMTheme := value;
-  //Set Paths
-  SUITE_CURRENTTHEME_PATH := IncludeTrailingBackslash(SUITE_MENUTHEMES_PATH + FGMTheme);
-  SUITE_SMALLICONS_PATH   := SUITE_CURRENTTHEME_PATH + SMALLICONS_DIR;
-  SUITE_LARGEICONS_PATH   := SUITE_CURRENTTHEME_PATH + LARGEICONS_DIR;
-  //Loading icons
-  ImagesDM.LoadASuiteIcons;
-  frmMain.LoadGlyphs;
-  //Refresh GraphicMenu
-  if Assigned(frmGraphicMenu) then
-  begin
-    frmGraphicMenu.Free;
-    Application.CreateForm(TfrmGraphicMenu, frmGraphicMenu);
-  end;
+  UpdateGMTheme;
 end;
 
 procedure TConfiguration.SetStartWithWindows(value: Boolean);
@@ -590,38 +578,9 @@ begin
     FLangID := 1033;
 end;
 
-procedure TConfiguration.SetMenuHotKey(const Value: Boolean);
+procedure TConfiguration.SetMenuHotKey(const Value: TShortcut);
 begin
-  if (Config.HotKey) then
-  begin
-    //Unregister hotkey
-    UnregisterHotKey(frmMain.Handle, frmMenuID);
-    //Register Menuhotkey
-    if (value) then
-    begin
-      if Not(RegisterHotKey(frmMain.Handle, frmMenuID,
-                            GetHotKeyMod(Config.MenuHotKeyMod),
-                            GetHotKeyCode(Config.MenuHotKeyCode))) then
-        ShowMessage(DKLangConstW('msgErrRegHotkey'));
-    end;
-  end;
-  FMenuHotKey := Value;
-end;
 
-procedure TConfiguration.SetMenuHotKeyCode(const Value: Integer);
-begin
-  if Value <> -1 then
-    FMenuHotKeyCode := Value
-  else
-    FMenuHotKeyCode := 0;
-end;
-
-procedure TConfiguration.SetMenuHotKeyMod(const Value: Integer);
-begin
-  if Value <> -1 then
-    FMenuHotKeyMod := Value
-  else
-    FMenuHotKeyMod := 0;
 end;
 
 end.

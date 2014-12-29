@@ -25,105 +25,138 @@ uses
   Forms, Controls, Classes, Dialogs, ActnList, Graphics, Windows, Messages;
 
 type
-  TASuiteForm = class(TForm)
+  TBaseMainForm = class(TForm)
   private
     FSessionEnding : Boolean;
-    FOldPoint      : TPoint;
     procedure WMQueryEndSession(var Message: TMessage); message WM_QUERYENDSESSION;
     procedure WMEndSession(var Msg : TWMEndSession); message WM_ENDSESSION;
     procedure WMExitSizeMove(var Message: TMessage) ; message WM_EXITSIZEMOVE;
     procedure WMSysCommand(var Message: TWMSysCommand); message WM_SYSCOMMAND;
     procedure WMHotKey(Var Msg : TWMHotKey); message WM_HOTKEY;
+  protected
+    procedure WndProc(var Msg: TMessage); override;
+    procedure CreateParams(var Params: TCreateParams); override;
   public
     constructor Create(AOwner : TComponent); override;
     destructor Destroy; override;
-    property SessionEnding: Boolean read FSessionEnding write FSessionEnding;
-    property OldPoint: TPoint read FOldPoint write FOldPoint;
-  published
 
+    procedure ShowMainForm(const Sender: TObject);
+    procedure HideMainForm;
+
+    property SessionEnding: Boolean read FSessionEnding write FSessionEnding;
   end;
 
 implementation
 
 uses
-  Utility.Treeview, Forms.Main, Kernel.AppConfig, NodeDataTypes, Kernel.Consts, DataModules.TrayMenu,
-  Kernel.Enumerations;
+  Utility.Treeview, Forms.Main, AppConfig.Main, NodeDataTypes.Custom, Kernel.Consts,
+  DataModules.TrayMenu, Kernel.Enumerations;
 
-constructor TASuiteForm.Create(AOwner: TComponent);
+constructor TBaseMainForm.Create(AOwner: TComponent);
 begin
   inherited;
-  Config.ASuiteState := asNormal;
+  Config.ASuiteState := lsNormal;
 end;
 
-destructor TASuiteForm.Destroy;
+procedure TBaseMainForm.CreateParams(var Params: TCreateParams);
 begin
   inherited;
 end;
 
-procedure TASuiteForm.WMQueryEndSession(var Message: TMessage);
-begin
-  FSessionEnding := True;
-  Message.Result := 1;
-end;
-
-procedure TASuiteForm.WMSysCommand(var Message: TWMSysCommand);
+destructor TBaseMainForm.Destroy;
 begin
   inherited;
-  if Message.cmdType = SC_MINIMIZE then
+end;
+
+procedure TBaseMainForm.ShowMainForm(const Sender: TObject);
+begin
+  //From CoolTrayicon source
+  if Application.MainForm <> nil then
   begin
+    // Restore the app, but don't automatically show its taskbar icon
+    // Show application's TASKBAR icon (not the tray icon)
+    ShowWindow(Application.Handle, SW_RESTORE);
+    Application.Restore;
+    // Show the form itself
+    if Application.MainForm.WindowState = wsMinimized then
+      Application.MainForm.WindowState := wsNormal;    // Override minimized state
+    Application.MainForm.Visible := True;
+    // Bring the main form (or its modal dialog) to the foreground
+    SetForegroundWindow(Application.Handle);
+  end;
+end;
+
+procedure TBaseMainForm.HideMainForm;
+begin
+  if Application.MainForm <> nil then
+  begin
+    // Hide the form itself (and thus any child windows)
+    Application.MainForm.Visible := False;
+    { Hide application's TASKBAR icon (not the tray icon). Do this AFTER
+        the main form is hidden, or any child windows will redisplay the
+        taskbar icon if they are visible. }
     if IsWindowVisible(Application.Handle) then
       ShowWindow(Application.Handle, SW_HIDE);
   end;
 end;
 
-procedure TASuiteForm.WMEndSession(var Msg : TWMEndSession);
+procedure TBaseMainForm.WMQueryEndSession(var Message: TMessage);
+begin
+  FSessionEnding := True;
+  Message.Result := 1;
+end;
+
+procedure TBaseMainForm.WMSysCommand(var Message: TWMSysCommand);
+begin
+  inherited;
+  if Message.cmdType = SC_MINIMIZE then
+    HideMainForm;
+end;
+
+procedure TBaseMainForm.WndProc(var Msg: TMessage);
+begin
+  inherited;
+end;
+
+procedure TBaseMainForm.WMEndSession(var Msg : TWMEndSession);
 begin
   //Close ASuite on Windows shutdown
   if Msg.EndSession = True then
   begin
-    Config.ASuiteState := asShutdown;
+    Config.ASuiteState := lsShutdown;
     Close;
   end;
 end;
 
-procedure TASuiteForm.WMExitSizeMove(var Message: TMessage);
+procedure TBaseMainForm.WMExitSizeMove(var Message: TMessage);
 begin
   Config.Changed := True;
-  RefreshList(frmMain.vstList);
+  RefreshList(nil);
 end;
 
-procedure TASuiteForm.WMHotKey(var Msg: TWMHotKey);
+procedure TBaseMainForm.WMHotKey(var Msg: TWMHotKey);
 var
   NodeData    : TvCustomRealNodeData;
-  ProcessInfo : TProcessInfo;
 begin
   if Config.HotKey then
   begin
     //Show frmMain or execute a software (or group)
-    if Msg.HotKey = Integer(frmMain.Handle) then
+    if Msg.HotKey = Integer(Self.Handle) then
     begin
-      if frmMain.Showing then
-         frmMain.HideMainForm
+      if Self.Showing then
+        HideMainForm
       else
-        frmMain.ShowMainForm(self);
+        ShowMainForm(self);
     end
     else begin
       if Msg.HotKey = frmMenuID then
-        ClassicMenu.ShowTrayiconMenu
+        dmTrayMenu.ShowGraphicMenu
       else begin
-        NodeData := HotKeyApp.IndexOfID(Msg.HotKey);
+        NodeData := ListManager.HotKeyItemList.IndexOfID(Msg.HotKey);
         if Assigned(NodeData) then
         begin
           if (NodeData.DataType <> vtdtSeparator) then
-          begin
-            ProcessInfo.RunMode := rmNormal;
-            ProcessInfo.RunFromCat := (NodeData.DataType = vtdtCategory);
-            if (NodeData.DataType in [vtdtFile,vtdtFolder]) then
-              TvFileNodeData(NodeData).Execute(frmMain.vstList, ProcessInfo)
-            else
-              if (NodeData.DataType = vtdtCategory) then
-                TvCategoryNodeData(NodeData).Execute(frmMain.vstList, ProcessInfo);
-          end;
+//            ExecuteItem(Config.MainTree, NodeData, rmNormal);
         end;
       end;
     end;

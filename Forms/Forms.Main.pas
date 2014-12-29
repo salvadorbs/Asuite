@@ -23,15 +23,16 @@ interface
 
 uses
   Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
-  ComCtrls, VirtualTrees, ActiveX, Kernel.Consts, NodeDataTypes, ulCommonClasses,
-  DataModules.Images, Kernel.BaseMainForm, StdCtrls, Buttons, System.UITypes, mORMotUILogin,
-  Kernel.Enumerations, Vcl.ExtCtrls, System.DateUtils, XMLDoc, DKLang;
+  ComCtrls, VirtualTrees, ActiveX, Kernel.Consts, DataModules.Images,
+  Kernel.BaseMainForm, StdCtrls, Buttons, System.UITypes, mORMotUILogin,
+  Kernel.Enumerations, Vcl.ExtCtrls, System.DateUtils, XMLDoc, DKLang, Lists.Manager,
+  Database.Manager;
 
 type
 
   { TfrmMain }
 
-  TfrmMain = class(TASuiteForm)
+  TfrmMain = class(TBaseMainForm)
     miCheckUpdates: TMenuItem;
     miStatistics: TMenuItem;
     MenuItem2: TMenuItem;
@@ -106,8 +107,6 @@ type
     procedure vstListDragOver(Sender: TBaseVirtualTree; Source: TObject;
       Shift: TShiftState; State: TDragState; Pt: TPoint; Mode: TDropMode;
       var Effect: Integer; var Accept: Boolean);
-    procedure miPropertyClick(Sender: TObject);
-    procedure DeleteSwCat(Sender: TObject);
     procedure AddFolder(Sender: TObject);
     procedure AddSoftware(Sender: TObject);
     procedure AddCategory(Sender: TObject);
@@ -125,7 +124,6 @@ type
     procedure RunDoubleClick(Sender: TObject);
     procedure RunSingleClick(Sender: TObject);
     procedure pmWindowPopup(Sender: TObject);
-    procedure miRunSelectedSwClick(Sender: TObject);
     procedure miAddSeparator2Click(Sender: TObject);
     procedure vstSearchGetImageIndex(Sender: TBaseVirtualTree;
       Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
@@ -163,47 +161,45 @@ type
     procedure vstListDragDrop(Sender: TBaseVirtualTree; Source: TObject;
       DataObject: IDataObject; Formats: TFormatArray; Shift: TShiftState;
       Pt: TPoint; var Effect: Integer; Mode: TDropMode);
-    procedure miRunAsClick(Sender: TObject);
-    procedure miRunAsAdminClick(Sender: TObject);
     procedure tmSchedulerTimer(Sender: TObject);
     procedure vstListEditing(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex; var Allowed: Boolean);
-    procedure FormActivate(Sender: TObject);
-    procedure miOpenFolderSwClick(Sender: TObject);
     procedure vstListDrawText(Sender: TBaseVirtualTree; TargetCanvas: TCanvas;
       Node: PVirtualNode; Column: TColumnIndex; const Text: string;
       const CellRect: TRect; var DefaultDraw: Boolean);
     procedure mniScanFolderClick(Sender: TObject);
+    procedure vstListGetNodeDataSize(Sender: TBaseVirtualTree;
+      var NodeDataSize: Integer);
+    procedure vstSearchGetNodeDataSize(Sender: TBaseVirtualTree;
+      var NodeDataSize: Integer);
   private
     { Private declarations }
     function  GetActiveTree: TBaseVirtualTree;
     procedure RunStartupProcess;
     procedure RunShutdownProcess;
-    procedure ExecuteSelectedNode(TreeView: TBaseVirtualTree;ProcessInfo: TProcessInfo);
     procedure LoadDataFromXML(FileName: string);
   public
     { Public declarations }
     procedure ShowMainForm(Sender: TObject);
     procedure HideMainForm;
-    procedure RunNormalSw(TreeView: TBaseVirtualTree);
-    procedure RunAs(TreeView: TBaseVirtualTree);
-    procedure RunAsAdmin(TreeView: TBaseVirtualTree);
-    procedure OpenFolder(TreeView: TBaseVirtualTree);
-    function  ShowItemProperty(TreeView: TBaseVirtualTree; Node: PVirtualNode = nil): Integer;
-    procedure DoSearchItem(TreeSearch: TBaseVirtualTree; Keyword: string;
-                           Callback: TVTGetNodeProc);
-    procedure LoadGlyphs;
+    procedure DoSearchItem(const TreeSearch: TBaseVirtualTree; const Keyword: string;
+                           const SearchType: TSearchType);
   end;
 
 var
   frmMain     : TfrmMain;
+  //TODO: Move this vars in appropriate place
+  ListManager : TListManager;
+  DBManager   : TDBManager;
 
 implementation
 
 uses
-  Forms.Options, Forms.About, ulCommonUtils, DataModules.TrayMenu, Forms.ImportList,
-  Kernel.AppConfig, Utility.Treeview, Database, Forms.GraphicMenu, Frame.Options.Stats,
-  Forms.PropertyItem, Forms.PropertySeparator, Forms.ScanFolder, Utility.XML;
+  TypInfo, Forms.Options, Forms.About, ulCommonUtils, Forms.ScanFolder,
+  DataModules.TrayMenu, Forms.ImportList, AppConfig.Main, Utility.XML,
+  Utility.TreeView, Database.List, Frame.Options.Stats, Forms.PropertyItem,
+  Forms.PropertySeparator, NodeDataTypes.Base, NodeDataTypes.Category,
+  NodeDataTypes.Files, NodeDataTypes.Custom, NodeDataTypes.Separator, Kernel.Types;
 
 {$R *.dfm}
 
@@ -215,44 +211,15 @@ end;
 
 procedure TfrmMain.btnedtSearchRightButtonClick(Sender: TObject);
 begin
-  DoSearchItem(vstSearch,edtSearch.Text,IterateSubtreeProcs.FindNode);
-end;
-
-procedure TfrmMain.DeleteSwCat(Sender: TObject);
-var
-  Nodes: TNodeArray;
-  I: Integer;
-begin
-  if (vstList.GetFirstSelected <> nil) and (MessageDlg((DKLangConstW('msgConfirm')),mtWarning, [mbYes,mbNo], 0) = mrYes) then
-  begin
-    //Run actions (ex. remove node from MRU list) before delete nodes
-    Nodes := vstList.GetSortedSelection(true);
-    //Begin transaction for remove data from sqlite database
-    if DBManager.Database.TransactionBegin(TSQLtbl_files,1) then
-    begin
-      try
-        //Remove each selected items from sqlite database
-        for I := High(Nodes) downto 0 do
-          vstList.IterateSubtree(Nodes[I],IterateSubtreeProcs.BeforeDeleteNode,nil,[],False);
-        //Commit database's updates
-        DBManager.Database.Commit(1);
-      except
-        //Or in case of error, rollback
-        DBManager.Database.RollBack(1);
-      end;
-    end;
-    //Delete nodes and refresh list
-    vstList.DeleteSelectedNodes;
-    RefreshList(vstList);
-  end;
+  DoSearchItem(vstSearch, edtSearch.Text, TSearchType(GetCheckedMenuItem(pmSearch).Tag));
 end;
 
 procedure TfrmMain.miSaveListClick(Sender: TObject);
 begin;
   if DBManager.SaveData(vstList) then
-    showmessage(DKLangConstW('msgSaveCompleted'))
+    ShowMessageEx(DKLangConstW('msgSaveCompleted'))
   else
-    showmessage(DKLangConstW('msgErrSave'),true);
+    ShowMessageEx(DKLangConstW('msgErrSave'),true);
 end;
 
 procedure TfrmMain.ChangeSearchTextHint(Sender: TObject);
@@ -262,7 +229,6 @@ begin
     //Set new placeholder and SearchType
     edtSearch.TextHint := StringReplace((Sender as TMenuItem).Caption, '&', '', []);
     (Sender as TMenuItem).Checked := True;
-    SearchType := TSearchType((Sender as TMenuItem).Tag);
   end;
 end;
 
@@ -301,19 +267,13 @@ begin
   //Check if user click on node or expand button (+/-)
   if (Sender is TBaseVirtualTree) then
     if Not(ClickOnButtonTree((Sender as TBaseVirtualTree))) then
-      RunNormalSw((Sender as TBaseVirtualTree));
+//      RunNormalSw((Sender as TBaseVirtualTree));
 end;
 
 procedure TfrmMain.miImportListClick(Sender: TObject);
 begin
-  try
-    Application.CreateForm(TfrmImportList, frmImportList);
-    frmImportList.FormStyle := Self.FormStyle;
-    frmImportList.ShowModal;
-  finally
-    frmImportList.Free;
-    RefreshList(vstList);
-  end;
+  TfrmImportList.Execute(Self);
+  RefreshList(GetActiveTree);
 end;
 
 procedure TfrmMain.miInfoASuiteClick(Sender: TObject);
@@ -323,68 +283,30 @@ begin
   frmAbout.show;
 end;
 
-procedure TfrmMain.miRunAsAdminClick(Sender: TObject);
-begin
-  RunAsAdmin(GetActiveTree);
-end;
-
-procedure TfrmMain.miRunAsClick(Sender: TObject);
-begin
-  RunAs(GetActiveTree);
-end;
-
-procedure TfrmMain.miRunSelectedSwClick(Sender: TObject);
-begin
-  RunNormalSw(GetActiveTree);
-end;
-
-procedure TfrmMain.miOpenFolderSwClick(Sender: TObject);
-begin
-  OpenFolder(GetActiveTree);
-end;
-
 procedure TfrmMain.miOptionsClick(Sender: TObject);
 begin
-  try
-    Application.CreateForm(TfrmOptions, frmOptions);
-    frmOptions.FormStyle := Self.FormStyle;
-    frmOptions.Execute();
-  finally
-    frmOptions.Free;
-  end;
+  TfrmOptions.Execute(Self);
 end;
 
 procedure TfrmMain.miStatisticsClick(Sender: TObject);
 begin
-  try
-    Application.CreateForm(TfrmOptions, frmOptions);
-    frmOptions.FormStyle := Self.FormStyle;
-    frmOptions.Execute(TfrmStatsOptionsPage);
-  finally
-    frmOptions.Free;
-  end;
+  TfrmOptions.Execute(Self, TfrmStatsOptionsPage);
 end;
 
 procedure TfrmMain.mniScanFolderClick(Sender: TObject);
 begin
-  try
-    Application.CreateForm(TfrmScanFolder, frmScanFolder);
-    frmScanFolder.FormStyle := Self.FormStyle;
-    frmScanFolder.ShowModal;
-  finally
-    frmScanFolder.Free;
-    RefreshList(vstList);
-  end;
+  TfrmScanFolder.Execute(Self);
+  RefreshList(GetActiveTree);
 end;
 
 procedure TfrmMain.miPaste2Click(Sender: TObject);
 var
-  NodeData : PBaseData;
+  NodeData: TvBaseNodeData;
 begin
-  NodeData := vstList.GetNodeData(vstList.FocusedNode);
+  NodeData := GetNodeItemData(vstList.FocusedNode, vstList);
   if Assigned(NodeData) then
   begin
-    if NodeData.Data.DataType = vtdtCategory then
+    if NodeData.DataType = vtdtCategory then
       vstList.DefaultPasteMode := amAddChildLast
     else
       vstList.DefaultPasteMode := amInsertAfter;
@@ -431,7 +353,6 @@ var
   NodeData : PBaseData;
   Point    : TPoint;
   HitInfo  : ThitInfo;
-  TreeView : TBaseVirtualTree;
 begin
   GetCursorPos(Point);
   Point    := vstList.ScreenToClient(Point);
@@ -447,8 +368,7 @@ begin
   if (Assigned(vstList.FocusedNode) and (pcList.ActivePageIndex = PG_LIST)) or
      (Assigned(vstSearch.FocusedNode) and (pcList.ActivePageIndex = PG_Search)) then
   begin
-    TreeView := GetActiveTree;
-    NodeData := GetNodeDataEx(TreeView.FocusedNode, TreeView, vstSearch, vstList);
+    NodeData := GetNodeDataEx(GetActiveTree.FocusedNode, GetActiveTree);
     miProperty2.Enabled     := True;
     miRunSelectedSw.Enabled := (NodeData.Data.DataType <> vtdtSeparator);
     miRunAs.Enabled         := (NodeData.Data.DataType <> vtdtSeparator);
@@ -468,25 +388,25 @@ end;
 procedure TfrmMain.vstSearchCompareNodes(Sender: TBaseVirtualTree; Node1,
   Node2: PVirtualNode; Column: TColumnIndex; var Result: Integer);
 var
-  Data1, Data2, CatData1, CatData2: PBaseData;
+  Data1, Data2, CatData1, CatData2: TvBaseNodeData;
   CatName1, CatName2 : String;
 begin
-  Data1 := GetNodeDataSearch(Node1,vstSearch,vstList);
-  Data2 := GetNodeDataSearch(Node2,vstSearch,vstList);
+  Data1 := GetNodeItemData(Node1, Sender);
+  Data2 := GetNodeItemData(Node2, Sender);
   if (Not Assigned(Data1)) or (Not Assigned(Data2)) then
     Result := 0
   else
     if Column = 0 then
-      Result := CompareText(Data1.Data.Name, Data2.Data.Name)
+      Result := CompareText(Data1.Name, Data2.Name)
     else begin
-      CatData1 := vstList.GetNodeData(Data1.Data.pNode.Parent);
-      CatData2 := vstList.GetNodeData(Data2.Data.pNode.Parent);
+      CatData1 := GetNodeItemData(Data1.pNode.Parent, Config.MainTree);
+      CatData2 := GetNodeItemData(Data2.pNode.Parent, Config.MainTree);
       if Assigned(CatData1) then
-        CatName1 := CatData1.Data.Name
+        CatName1 := CatData1.Name
       else
         CatName1 := '';
       if Assigned(CatData2) then
-        CatName2 := CatData2.Data.Name
+        CatName2 := CatData2.Name
       else
         CatName2 := '';
       Result  := CompareText(CatName1, CatName2)
@@ -499,28 +419,31 @@ procedure TfrmMain.vstSearchGetImageIndex(Sender: TBaseVirtualTree;
 var
   NodeData : TvBaseNodeData;
 begin
-  NodeData   := GetNodeDataSearch(Node,vstSearch,vstList).Data;
+  NodeData   := GetNodeDataEx(Node, Sender).Data;
   ImageIndex := NodeData.ImageIndex;
   if Column = 1 then
     ImageIndex := -1;
 end;
 
+procedure TfrmMain.vstSearchGetNodeDataSize(Sender: TBaseVirtualTree;
+  var NodeDataSize: Integer);
+begin
+  NodeDataSize := SizeOf(rTreeDataX);
+end;
+
 procedure TfrmMain.vstSearchGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
   Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
 var
-  NodeData, CatData : PBaseData;
+  NodeData : TvBaseNodeData;
 begin
-  NodeData := GetNodeDataSearch(Node,vstSearch,vstList);
-  if Column = 0 then
-    CellText   := NodeData.Data.Name;
-  if Column = 1 then
-    if (NodeData.Data.pNode.Parent <> vstList.RootNode) then
-    begin
-      CatData  := vstList.GetNodeData(NodeData.Data.pNode.Parent);
-      CellText := CatData.Data.Name;
-    end
-    else
-      CellText := '';
+  NodeData := GetNodeItemData(Node, Sender);
+  if Assigned(NodeData) then
+  begin
+    if Column = 0 then
+      CellText := NodeData.Name;
+    if Column = 1 then
+      CellText := GetNodeParentName(Sender, NodeData.pNode);
+  end;
 end;
 
 procedure TfrmMain.vstSearchHeaderClick(Sender: TVTHeader;
@@ -551,14 +474,6 @@ begin
   end;
 end;
 
-procedure TfrmMain.RunNormalSw(TreeView: TBaseVirtualTree);
-var
-  ProcessInfo: TProcessInfo;
-begin
-  ProcessInfo.RunMode := rmNormal;
-  ExecuteSelectedNode(TreeView,ProcessInfo);
-end;
-
 procedure TfrmMain.HideMainForm;
 begin
   if Application.MainForm <> nil then
@@ -573,121 +488,28 @@ begin
   end;
 end;
 
-procedure TfrmMain.OpenFolder(TreeView: TBaseVirtualTree);
+procedure TfrmMain.DoSearchItem(const TreeSearch: TBaseVirtualTree; const Keyword: string;
+                                const SearchType: TSearchType);
 var
-  ProcessInfo: TProcessInfo;
-begin
-  ProcessInfo.RunFromCat := False;
-  ProcessInfo.RunMode := rmOpenFolder;
-  ExecuteSelectedNode(TreeView, ProcessInfo);
-end;
-
-function TfrmMain.ShowItemProperty(TreeView: TBaseVirtualTree; Node: PVirtualNode): Integer;
-var
-  BaseNode: PBaseData;
-begin
-  Result := mrCancel;
-  if Assigned(Node) then
-    BaseNode := GetNodeDataEx(Node, TreeView, vstSearch, vstList)
-  else
-    BaseNode := GetNodeDataEx(TreeView.FocusedNode, TreeView, vstSearch, vstList);
-  if Assigned(BaseNode) then
-    begin
-      if BaseNode.Data.DataType in [vtdtFile, vtdtCategory, vtdtFolder] then
-      begin
-        try
-          Application.CreateForm(TfrmPropertyItem, frmPropertyItem);
-          frmPropertyItem.FormStyle := Self.FormStyle;
-          Result := frmPropertyItem.Execute(TvCustomRealNodeData((BaseNode).Data));
-        finally
-          frmPropertyItem.Free;
-        end;
-      end
-      else
-        Result := TfrmPropertySeparator.Edit(Self, BaseNode);
-    RefreshList(vstList);
-  end;
-end;
-
-procedure TfrmMain.DoSearchItem(TreeSearch: TBaseVirtualTree; Keyword: string;
-                                Callback: TVTGetNodeProc);
-var
-  NodeData: PBaseData;
+  LauncherSearch: TLauncherSearch;
 begin
   TreeSearch.Clear;
   if Length(Keyword) > 0 then
   begin
-    New(NodeData);
-    NodeData.Data := CreateNodeData(vtdtFile);
-    with TvFileNodeData(NodeData.Data) do
-    begin
-      case SearchType of
-        stName       : Name       := Keyword;
-        stPathExe    : PathExe    := Keyword;
-        stPathIcon   : PathIcon   := Keyword;
-        stWorkingDir : WorkingDir := Keyword;
-        stParameters : Parameters := Keyword;
-      end;
+    TreeSearch.BeginUpdate;
+    try
+      //Set record LauncherSearch for search
+      LauncherSearch.Tree       := TreeSearch;
+      LauncherSearch.Keyword    := LowerCase(Keyword);
+      LauncherSearch.SearchType := SearchType;
+      //Do search using LauncherSearch for parameters
+      Config.MainTree.IterateSubtree(nil, TIterateSubtreeProcs.FindNode, @LauncherSearch, [], True);
+    finally
+      TreeSearch.EndUpdate;
+      CheckVisibleNodePathExe(TreeSearch);
+      //TODO: Fix it
+//ImagesDM.GetChildNodesIcons(TreeSearch, TreeSearch.RootNode, isAny);
     end;
-    vstList.IterateSubtree(nil, CallBack, NodeData.Data, [], True);
-    FreeAndNil(NodeData.Data);
-    Dispose(NodeData);
-  end;
-end;
-
-procedure TfrmMain.RunAsAdmin(TreeView: TBaseVirtualTree);
-var
-  ProcessInfo: TProcessInfo;
-begin
-  ProcessInfo.RunMode := rmRunAsAdmin;
-  ExecuteSelectedNode(TreeView, ProcessInfo);
-end;
-
-procedure TfrmMain.RunAs(TreeView: TBaseVirtualTree);
-var
-  ProcessInfo: TProcessInfo;
-begin
-  ProcessInfo.RunMode := rmRunAs;
-  //Call login dialog for Windows username and password
-  if TLoginForm.Login(DKLangConstW('msgRunAsTitle'), DKLangConstW('msgInsertWinUserInfo'), ProcessInfo.UserName, ProcessInfo.Password, true, '') then
-  begin
-    if ProcessInfo.UserName <> '' then
-      ExecuteSelectedNode(TreeView, ProcessInfo)
-    else
-      ShowMessage(DKLangConstW('msgErrEmptyUserName'), true);
-  end;
-end;
-
-procedure TfrmMain.ExecuteSelectedNode(TreeView: TBaseVirtualTree;ProcessInfo: TProcessInfo);
-var
-  Node         : PVirtualNode;
-  BaseNodeData : TvBaseNodeData;
-begin
-  //First selected node
-  Node := TreeView.GetFirstSelected;
-  while Assigned(Node) do
-  begin
-    //Get Node data
-    BaseNodeData := PBaseData(GetNodeDataEx(Node, TreeView, vstSearch, vstList)).Data;
-    if Assigned(BaseNodeData) then
-    begin
-      //Execute action
-      if ProcessInfo.RunMode <> rmOpenFolder then
-      begin
-        ProcessInfo.RunFromCat := (BaseNodeData.DataType = vtdtCategory);
-        if (BaseNodeData.DataType in [vtdtFile,vtdtFolder]) then
-          TvFileNodeData(BaseNodeData).Execute(vstList, ProcessInfo)
-        else
-          if (BaseNodeData.DataType = vtdtCategory) then
-            TvCategoryNodeData(BaseNodeData).Execute(vstList, ProcessInfo);
-      end
-      else begin
-        if (BaseNodeData.DataType in [vtdtFile,vtdtFolder]) then
-          TvFileNodeData(BaseNodeData).OpenExtractedFolder;
-      end;
-    end;
-    //Next selected node
-    Node := TreeView.GetNextSelected(node);
   end;
 end;
 
@@ -695,38 +517,44 @@ procedure TfrmMain.vstListGetImageIndex(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
   var Ghosted: Boolean; var ImageIndex: Integer);
 var
-  NodeData : PvBaseNodeData;
+  NodeData: TvBaseNodeData;
 begin
-  NodeData   := Sender.GetNodeData(Node);
+  NodeData   := GetNodeItemData(Node, Sender);
   ImageIndex := NodeData.ImageIndex;
+end;
+
+procedure TfrmMain.vstListGetNodeDataSize(Sender: TBaseVirtualTree;
+  var NodeDataSize: Integer);
+begin
+  NodeDataSize := SizeOf(rBaseData);
 end;
 
 procedure TfrmMain.vstListGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
   Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
 var
-  NodeData : PBaseData;
+  NodeData : TvBaseNodeData;
 begin
-  NodeData := Sender.GetNodeData(Node);
+  NodeData := GetNodeItemData(Node, Sender);
   if Assigned(NodeData) then
   begin
-    if (NodeData.Data.DataType = vtdtSeparator) and (NodeData.Data.Name = '') then
+    if (NodeData.DataType = vtdtSeparator) and (NodeData.Name = '') then
       CellText := ' '
     else
-      CellText := StringReplace(NodeData.Data.Name, '&&', '&', [rfIgnoreCase,rfReplaceAll]);
+      CellText := StringReplace(NodeData.Name, '&&', '&', [rfIgnoreCase,rfReplaceAll]);
   end;
 end;
 
 procedure TfrmMain.vstListKeyPress(Sender: TObject; var Key: Char);
 begin
-  if (Sender is TBaseVirtualTree) then
-    if Ord(Key) = VK_RETURN then
-        RunNormalSw((Sender as TBaseVirtualTree));
+//  if (Sender is TBaseVirtualTree) then
+//    if Ord(Key) = VK_RETURN then
+//        RunNormalSw((Sender as TBaseVirtualTree));
 end;
 
 procedure TfrmMain.vstListLoadNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
   Stream: TStream);
 var
-  DataDest,DataSource: PBaseData;
+  DataDest, DataSource: PBaseData;
 begin
   //Create a new PBaseData as source
   New(DataSource);
@@ -741,10 +569,16 @@ begin
     vtdtFolder    : TvFileNodeData(DataDest.Data).Copy(DataSource.Data);
     vtdtSeparator : TvSeparatorNodeData(DataDest.Data).Copy(DataSource.Data);
   end;
+  //New node can't use same hotkey of old node
+  if DataDest.Data is TvCustomRealNodeData then
+  begin
+    TvCustomRealNodeData(DataDest.Data).ActiveHotkey := False;
+    TvCustomRealNodeData(DataDest.Data).Hotkey := 0;
+  end;
   //Set some personal record fields
   DataDest.Data.pNode := Node;
   //Icon
-  DataDest.Data.ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(DataDest.Data));
+//  DataDest.Data.ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(DataDest.Data));
   FreeMem(DataSource);
 end;
 
@@ -787,7 +621,7 @@ begin
   if (Sender is TBaseVirtualTree) then
     if Not(ClickOnButtonTree((Sender as TBaseVirtualTree))) then
       if (Config.RunSingleClick) then
-        RunNormalSw((Sender as TBaseVirtualTree));
+//        RunNormalSw((Sender as TBaseVirtualTree));
 end;
 
 procedure TfrmMain.vstListCompareNodes(Sender: TBaseVirtualTree; Node1,
@@ -816,55 +650,56 @@ procedure TfrmMain.vstListDragDrop(Sender: TBaseVirtualTree; Source: TObject;
   Pt: TPoint; var Effect: Integer; Mode: TDropMode);
 var
   I          : integer;
-  NodeData   : PBaseData;
+  NodeData   : TvBaseNodeData;
   AttachMode : TVTNodeAttachMode;
+  NodeCreated : Boolean;
 begin
-  Sender.BeginUpdate;
-  try
-    case Mode of
-      dmAbove  : AttachMode := amInsertBefore;
-      dmOnNode : AttachMode := amAddChildLast;
-      dmBelow  : AttachMode := amInsertAfter;
-    else
-      AttachMode := amNowhere;
-    end;
-    if Assigned(DataObject) then
-    begin
-      NodeData := Sender.GetNodeData(Sender.DropTargetNode);
+  NodeCreated := False;
+  case Mode of
+    dmAbove  : AttachMode := amInsertBefore;
+    dmOnNode : AttachMode := amAddChildLast;
+    dmBelow  : AttachMode := amInsertAfter;
+  else
+    AttachMode := amNowhere;
+  end;
+  if Assigned(DataObject) then
+  begin
+    Sender.BeginUpdate;
+    try
+      NodeData := GetNodeItemData(Sender.DropTargetNode, Sender);
       if Mode = dmOnNode then
       begin
         //Check if DropMode is in a vtdtCategory (so expand it, before drop item)
         //or another item type (change Mode and AttachMode for insert after new nodes)
-        if NodeData.Data.DataType <> vtdtCategory then
+        if NodeData.DataType <> vtdtCategory then
         begin
           Mode := dmBelow;
           AttachMode := amInsertAfter;
         end
         else
-          vstList.Expanded[Sender.DropTargetNode] := True;
+          Sender.Expanded[Sender.DropTargetNode] := True;
       end;
       try
-        for I := 0 to High(Formats) - 1 do
+        for I := 0 to High(Formats) do
         begin
           //Files
           if Formats[I] = CF_HDROP then
-            DragDropFiles(Sender,DataObject, AttachMode, Mode)
+            DragDropFiles(Sender, DataObject, AttachMode)
           else //VirtualTree Nodes
             if Formats[I] = CF_VIRTUALTREE then
               Sender.ProcessDrop(DataObject, Sender.DropTargetNode, Effect, AttachMode)
             else //Text
-              if Formats[I] = CF_TEXT then
-                DragDropText(Sender,DataObject, AttachMode, Mode);
+              if (Formats[I] = CF_UNICODETEXT) and Not(NodeCreated) then
+                NodeCreated := DragDropText(Sender, DataObject, AttachMode, Mode);
         end;
       except
         on E : Exception do
-          ShowMessageFmt(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message], true);
+          ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message], true);
       end;
-      vstList.Repaint;
-      RefreshList(vstList);
+    finally
+      RefreshList(Sender);
+      Sender.EndUpdate;
     end;
-  finally
-    Sender.EndUpdate;
   end;
 end;
 
@@ -878,15 +713,8 @@ end;
 procedure TfrmMain.vstListDrawText(Sender: TBaseVirtualTree;
   TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
   const Text: string; const CellRect: TRect; var DefaultDraw: Boolean);
-var
-  NodeData: TvBaseNodeData;
 begin
-  NodeData := PBaseData(Sender.GetNodeData(Node)).Data;
-  if NodeData.DataType = vtdtSeparator then
-  begin
-    ClassicMenu.DoDrawCaptionedSeparator(Sender,TargetCanvas,CellRect,NodeData.Name);
-    DefaultDraw := False;
-  end;
+  DrawSeparatorItem(Sender, Node, TargetCanvas, CellRect, DefaultDraw);
 end;
 
 procedure TfrmMain.vstListEditing(Sender: TBaseVirtualTree; Node: PVirtualNode;
@@ -904,8 +732,9 @@ var
   NodeData : TvBaseNodeData;
 begin
   NodeData := PBaseData(Sender.GetNodeData(Node)).Data;
-  if NodeData.DataType = vtdtCategory then
-    ImagesDM.GetChildNodesIcons(Sender, nil, Node);
+//  if NodeData.DataType = vtdtCategory then
+    //TODO: Fix it
+//ImagesDM.GetChildNodesIcons(Sender, nil, Node);
 end;
 
 procedure TfrmMain.vstListFreeNode(Sender: TBaseVirtualTree;
@@ -926,142 +755,87 @@ begin
   end;
 end;
 
-procedure TfrmMain.LoadGlyphs;
-begin
-  //Set IcoImages
-  //Set submenuimages to three MainMenu's subitems
-  miFile.SubMenuImages := ImagesDM.IcoImages;
-  miEdit.SubMenuImages := ImagesDM.IcoImages;
-  miHelp.SubMenuImages := ImagesDM.IcoImages;
-  vstList.Images       := ImagesDM.IcoImages;
-  vstSearch.Images     := ImagesDM.IcoImages;
-  pmSearch.Images      := ImagesDM.IcoImages;
-  pmWindow.Images      := ImagesDM.IcoImages;
-  //Set MainMenu's ImageIndexes
-  miSaveList1.ImageIndex   := IMAGE_INDEX_Save;
-  miOptions1.ImageIndex    := IMAGE_INDEX_Options;
-  miAddCat1.ImageIndex     := IMAGE_INDEX_AddCat;
-  miAddSw1.ImageIndex      := IMAGE_INDEX_AddFile;
-  miAddFolder1.ImageIndex  := IMAGE_INDEX_AddFolder;
-  miCut1.ImageIndex        := IMAGE_INDEX_Cut;
-  miCopy1.ImageIndex       := IMAGE_INDEX_Copy;
-  miPaste1.ImageIndex      := IMAGE_INDEX_Paste;
-  miDelete1.ImageIndex     := IMAGE_INDEX_Delete;
-  miProperty1.ImageIndex   := IMAGE_INDEX_Property;
-  miInfoASuite.ImageIndex  := IMAGE_INDEX_Help;
-
-  //Set PopUpMenu's ImageIndexes
-  miRunSelectedSw.ImageIndex := IMAGE_INDEX_Run;
-  miAddCat2.ImageIndex     := IMAGE_INDEX_AddCat;
-  miAddSw2.ImageIndex      := IMAGE_INDEX_AddFile;
-  miAddFolder2.ImageIndex  := IMAGE_INDEX_AddFolder;
-  miCut2.ImageIndex        := IMAGE_INDEX_Cut;
-  miCopy2.ImageIndex       := IMAGE_INDEX_Copy;
-  miPaste2.ImageIndex      := IMAGE_INDEX_Paste;
-  miDelete2.ImageIndex     := IMAGE_INDEX_Delete;
-  miProperty2.ImageIndex   := IMAGE_INDEX_Property;
-  //Set Search's ImageIndexes
-  ImagesDM.IcoImages.GetBitmap(IMAGE_INDEX_Search,sbtnSearch.Glyph);
-end;
-
 procedure TfrmMain.LoadDataFromXML(FileName: string);
 var
   XMLDoc: TXMLDocument;
 begin
   //Create XMLDoc
   XMLDoc := TXMLDocument.Create(Self);
-  XMLDoc.FileName := FileName;
-  XMLDoc.Active := True;
-  //Load list and settings
-  if (XMLDoc.DocumentElement.NodeName = 'ASuite') then
-  begin
-    LoadXMLSettings(XMLDoc);
-    XMLToTree(vstList, ImportOldListProcs.ASuite1NodeToTree, XMLDoc);
+  try
+    XMLDoc.FileName := FileName;
+    XMLDoc.Active := True;
+    //Load list and settings
+    if (XMLDoc.DocumentElement.NodeName = 'ASuite') then
+    begin
+      LoadXMLSettings(XMLDoc);
+      XMLToTree(Config.MainTree, TImportOldListProcs.ASuite1NodeToTree, XMLDoc);
+    end;
+    DeleteFile(FileName);
+    Config.Changed := True;
+  finally
+    XMLDoc.Free;
   end;
-  DeleteFile(FileName);
-  Config.Changed := True;
 end;
 
 procedure TfrmMain.RunStartupProcess;
 var
-  NodeData    : TvCustomRealNodeData;
-  ProcessInfo : TProcessInfo;
+  NodeData : TvCustomRealNodeData;
+  RunMode  : TRunMode;
   I : Integer;
 begin
   //Autorun - Execute software
   if (Config.Autorun) then
   begin
-    for I := 0 to StartupItemList.Count - 1 do
+    for I := 0 to ListManager.StartupItemList.Count - 1 do
     begin
-      NodeData := StartupItemList[I];
-      ProcessInfo.RunFromCat := (NodeData.DataType = vtdtCategory);
+      NodeData := ListManager.StartupItemList[I];
       //Set RunMode
+      RunMode := rmAutorun;
       if (NodeData.Autorun = atSingleInstance) then
-        ProcessInfo.RunMode := rmAutorunSingleInstance
-      else
-        if (NodeData.Autorun = atAlwaysOnStart) then
-          ProcessInfo.RunMode := rmAutorun;
+        RunMode := rmAutorunSingleInstance;
       //Start process
-      if NodeData.DataType in [vtdtFile,vtdtFolder] then
-        TvFileNodeData(NodeData).Execute(vstList, ProcessInfo)
-      else
-        if NodeData.DataType = vtdtCategory then
-          TvCategoryNodeData(NodeData).Execute(vstList, ProcessInfo);
+//      ExecuteItem(Config.MainTree, NodeData, RunMode);
     end;
   end;
 end;
 
 procedure TfrmMain.RunShutdownProcess;
 var
-  NodeData    : TvCustomRealNodeData;
-  ProcessInfo : TProcessInfo;
+  NodeData: TvCustomRealNodeData;
   I : Integer;
 begin
   //Autorun - Execute software
   if (Config.Autorun) then
   begin
-    for I := 0 to ShutdownItemList.Count - 1 do
+    for I := 0 to ListManager.ShutdownItemList.Count - 1 do
     begin
-      NodeData := ShutdownItemList[I];
-      ProcessInfo.RunFromCat := (NodeData.DataType = vtdtCategory);
-      ProcessInfo.RunMode := rmAutorun;
+      NodeData := ListManager.ShutdownItemList[I];
       //Start process
-      if NodeData.DataType in [vtdtFile,vtdtFolder] then
-        TvFileNodeData(NodeData).Execute(vstList, ProcessInfo)
-      else
-        if NodeData.DataType = vtdtCategory then
-          TvCategoryNodeData(NodeData).Execute(vstList, ProcessInfo);
+//      ExecuteItem(Config.MainTree, NodeData, rmAutorun);
     end;
   end;
 end;
 
-procedure TfrmMain.miPropertyClick(Sender: TObject);
-begin
-  ShowItemProperty(GetActiveTree);
-end;
-
 procedure TfrmMain.tmSchedulerTimer(Sender: TObject);
 var
-  NodeData    : TvCustomRealNodeData;
-  NowDateTime : TDateTime;
-  ProcessInfo : TProcessInfo;
-  I           : Integer;
-  schTime     : TDateTime;
+  NodeData : TvCustomRealNodeData;
+  I        : Integer;
+  schTime, NowDateTime: TDateTime;
 begin
-  if (Config.ASuiteState = asStartUp) or (Config.ASuiteState = asShutdown) then
+  if (Config.ASuiteState = lsStartUp) or (Config.ASuiteState = lsShutdown) then
     Exit;
   NowDateTime := RecodeMilliSecond(Now,0);
   schTime     := NowDateTime;
   //Check scheduler list to know which items to run
-  for I := 0 to SchedulerItemList.Count - 1 do
+  for I := 0 to ListManager.SchedulerItemList.Count - 1 do
   begin
-    if Assigned(SchedulerItemList[I]) then
+    if Assigned(ListManager.SchedulerItemList[I]) then
     begin
-      NodeData := SchedulerItemList[I];
+      NodeData := ListManager.SchedulerItemList[I];
       //Compare time and/or date based of scheduler mode
       case NodeData.SchMode of
         smDisabled: schTime := 0;
-        smOnce:     schTime := NodeData.SchDateTime;
+        smOnce: schTime := NodeData.SchDateTime;
         smHourly:
         begin
           //Run software every hour
@@ -1079,14 +853,8 @@ begin
       //If is its turn, run item
       if (CompareDateTime(NowDateTime, schTime) = 0) and (NodeData.SchMode <> smDisabled) then
       begin
-        ProcessInfo.RunFromCat := (NodeData.DataType = vtdtCategory);
-        ProcessInfo.RunMode := rmNormal;
         //Start process
-        if NodeData.DataType in [vtdtFile,vtdtFolder] then
-          TvFileNodeData(NodeData).Execute(vstList, ProcessInfo)
-        else
-          if NodeData.DataType = vtdtCategory then
-            TvCategoryNodeData(NodeData).Execute(vstList, ProcessInfo);
+//        ExecuteItem(Config.MainTree, NodeData, rmNormal);
       end;
     end;
   end;
@@ -1099,7 +867,7 @@ end;
 
 procedure TfrmMain.miExitClick(Sender: TObject);
 begin
-  Config.ASuiteState := asShutdown;
+  Config.ASuiteState := lsShutdown;
   Close;
 end;
 
@@ -1107,26 +875,19 @@ procedure TfrmMain.miExportListClick(Sender: TObject);
 begin
   if (SaveDialog1.Execute) then
   begin
-    RefreshList(vstList);
+    RefreshList(GetActiveTree);
     CopyFile(PChar(DBManager.DBFileName),PChar(SaveDialog1.FileName),false)
   end;
-  SetCurrentDir(SUITE_WORKING_PATH);
-end;
-
-procedure TfrmMain.FormActivate(Sender: TObject);
-begin
-  if IsFormOpen('frmGraphicMenu') then
-    frmGraphicMenu.CloseMenu;
 end;
 
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   RunShutdownProcess;
-  //Execute actions on asuite's shutdown (inside vstList)
-  vstList.IterateSubtree(nil, IterateSubtreeProcs.ActionsOnShutdown, nil, [], True);
+  //Execute actions on ASuite's shutdown (inside vstList)
+  Config.MainTree.IterateSubtree(nil, TIterateSubTreeProcs.ActionsOnShutdown, nil);
   //Hotkey
-  HotKeyApp.Clear;
-  RefreshList(vstList);
+  ListManager.HotKeyItemList.Clear;
+  RefreshList(nil);
 end;
 
 procedure TfrmMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -1134,7 +895,7 @@ begin
   if Not(Config.TrayIcon) then
     CanClose := True
   else
-    CanClose := ((Config.ASuiteState = asShutdown) or (SessionEnding));
+    CanClose := ((Config.ASuiteState = lsShutdown) or (SessionEnding));
   //If user close window (not ASuite), hide form and taskbar icon
   if not (CanClose) then
     HideMainForm;
@@ -1145,63 +906,48 @@ var
   UseXMLList : Boolean;
   sFilePath  : string;
 begin
-  Application.CreateForm(TImagesDM, ImagesDM);
-  Application.CreateForm(TClassicMenu, ClassicMenu);
+  //Set vstList as MainTree in Config
+  Config.MainTree := vstList;
+  Application.CreateForm(TdmImages, dmImages);
+  Application.CreateForm(TdmTrayMenu, dmTrayMenu);
   pcList.ActivePageIndex := PG_LIST;
-  //Create special list
-  MRUList := TMRUList.Create;
-  MFUList := TMFUList.Create;
-  //Create TNodeLists for autorun
-  StartupItemList   := TAutorunItemList.Create;
-  ShutdownItemList  := TAutorunItemList.Create;
-  SchedulerItemList := TNodeDataList.Create;
-  HotKeyApp := THotkeyList.Create;
-  //Set NodeDataSize for trees
-  vstList.NodeDataSize   := SizeOf(rBaseData);
-  vstSearch.NodeDataSize := SizeOf(rTreeDataX);
+  ListManager := TListManager.Create;
+  //TODO: Move this code in appropriate place
   //Read Only Mode
-  with Config do
+  Config.ReadOnlyMode := GetDriveType(PChar(Config.Paths.SuiteDrive)) = DRIVE_CDROM;
+  if (Config.ReadOnlyMode) then
   begin
-    ReadOnlyMode := GetDriveType(PChar(SUITE_DRIVE)) = DRIVE_CDROM;
-    if (ReadOnlyMode) then
-    begin
-      Cache  := False;
-      Backup := False;
-      MRU    := False;
-      miOptions1.Enabled  := False;
-      miSaveList1.Enabled := False;
-    end;
+    Config.Cache  := False;
+    Config.Backup := False;
+    Config.MRU    := False;
+    miOptions1.Enabled  := False;
+    miSaveList1.Enabled := False;
   end;
   //List & Options
-  if ExtractFileExt(SUITE_LIST_PATH) = EXT_XML then
+  if ExtractFileExt(Config.Paths.SuitePathList) = EXT_XML then
   begin
-    sFilePath := SUITE_LIST_PATH;
-    SUITE_LIST_PATH := ChangeFileExt(SUITE_LIST_PATH, EXT_SQL);
+    sFilePath := Config.Paths.SuitePathList;
+    Config.Paths.SuitePathList := ChangeFileExt(Config.Paths.SuiteFileName, EXT_SQL);
   end;
-  DBManager   := TDBManager.Create(SUITE_LIST_PATH);
+  DBManager := TDBManager.Create(Config.Paths.SuitePathList);
   //If exists old list format (xml), use it
   if sFilePath <> '' then
     LoadDataFromXML(sFilePath)
   else //Use new list format (sqlite db)
     DBManager.LoadData(vstList);
-  //Backup sqlite database
-  DBManager.DoBackupList;
   //Get rootnode's Icons
-  ImagesDM.GetChildNodesIcons(vstList, nil, vstList.RootNode);
+  //TODO: Fix it
+//ImagesDM.GetChildNodesIcons(vstList, nil, vstList.RootNode);
   RunStartupProcess;
+  RefreshList(nil);
   //Get placeholder for edtSearch
   edtSearch.TextHint := StringReplace(miSearchName.Caption, '&', '', []);
 end;
 
 procedure TfrmMain.FormDestroy(Sender: TObject);
 begin
-  //Fix memory leaks
-  FreeAndNil(MRUList);
-  FreeAndNil(MFUList);
-  FreeAndNil(StartupItemList);
-  FreeAndNil(ShutdownItemList);
-  FreeAndNil(SchedulerItemList);
-  FreeAndNil(HotKeyApp);
+  ListManager.Destroy;
+  DBManager.Destroy;
   Config.Destroy;
 end;
 

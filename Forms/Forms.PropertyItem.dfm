@@ -11,9 +11,11 @@ object frmPropertyItem: TfrmPropertyItem
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  KeyPreview = True
   OldCreateOrder = False
   Position = poMainFormCenter
   OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
   PixelsPerInch = 96
   TextHeight = 13
   object btnOk: TButton
@@ -41,7 +43,7 @@ object frmPropertyItem: TfrmPropertyItem
     Top = 8
     Width = 361
     Height = 280
-    TabOrder = 0
+    TabOrder = 1
   end
   object vstCategory: TVirtualStringTree
     Left = 8
@@ -55,9 +57,9 @@ object frmPropertyItem: TfrmPropertyItem
     Header.Font.Name = 'Tahoma'
     Header.Font.Style = []
     Header.MainColumn = -1
-    Images = ImagesDM.LargeIcoImages
-    TabOrder = 1
+    TabOrder = 0
     TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowRoot, toShowTreeLines, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
+    TreeOptions.SelectionOptions = [toFullRowSelect]
     OnAddToSelection = vstCategoryAddToSelection
     OnFreeNode = vstCategoryFreeNode
     OnGetText = vstCategoryGetText

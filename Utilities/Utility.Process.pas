@@ -23,7 +23,7 @@ interface
 
 uses
   Windows, SysUtils, Kernel.Enumerations, Forms.Main,
-  Kernel.AppConfig, TlHelp32;
+  AppConfig.Main, TlHelp32;
 
 { Processes, execution }
 procedure ActionOnExe(Action: TActionOnExecute);
@@ -61,7 +61,7 @@ begin
     aeRunAndClose:
     begin
       //Close application
-      Config.ASuiteState := asShutdown;
+      Config.ASuiteState := lsShutdown;
       frmMain.Close;
     end;
   end;

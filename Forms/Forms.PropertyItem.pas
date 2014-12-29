@@ -1,11 +1,30 @@
+{
+Copyright (C) 2006-2013 Matteo Salvi
+
+Website: http://www.salvadorsoftware.com/
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+}
+
 unit Forms.PropertyItem;
 
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, VirtualTrees, Vcl.ExtCtrls, Vcl.StdCtrls, Frame.BaseEntity,
-  NodeDataTypes, DKLang;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, VirtualTrees, Vcl.ExtCtrls,
+  Vcl.StdCtrls, Frame.BaseEntity, NodeDataTypes.Custom, DKLang;
 
 type
   TfrmPropertyItem = class(TForm)
@@ -27,6 +46,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     { Private declarations }
     procedure SaveNodeData(Sender: TBaseVirtualTree; Node: PVirtualNode;
@@ -37,7 +57,7 @@ type
     FListNodeData: TvCustomRealNodeData;
   public
     { Public declarations }
-    function Execute(ANodeData:TvCustomRealNodeData):Integer;
+    class function Execute(AOwner: TComponent; ANodeData:TvCustomRealNodeData): Integer;
   end;
 
 var
@@ -46,9 +66,9 @@ var
 implementation
 
 uses
-  Utility.Frame, Frame.Properties.Advanced, Kernel.Enumerations,
-  Frame.Properties.Behavior, Kernel.Consts, Frame.Properties.General.Category,
-  Frame.Properties.General.Software, Forms.Main, DataModules.Images;
+  Utility.Frame, Frame.Properties.Advanced, Kernel.Enumerations, DataModules.Images,
+  Frame.Properties.Behavior, Frame.Properties.General.Category, Frame.Properties.General.Software,
+  Kernel.Types, NodeDataTypes.Files;
 
 {$R *.dfm}
 
@@ -66,36 +86,52 @@ begin
   if Not Assigned(ResultNode) then
   begin
     FListNodeData.Changed := True;
-    //If changed, refresh cache icon
-    FListNodeData.ResetIcon;
-    FListNodeData.ImageIndex := ImagesDM.GetIconIndex(FListNodeData);
-    if frmMain.Visible then
-      frmMain.FocusControl(frmMain.vstList);
+    //Reset icon and get it again
+    //TODO: Fix it
+//    FListNodeData.ResetIcon(isAny);
+//    ImagesDM.GetNodeImageIndex(FListNodeData, isAny);
     ModalResult := mrOk;
   end;
 end;
 
-function TfrmPropertyItem.Execute(ANodeData: TvCustomRealNodeData): Integer;
+class function TfrmPropertyItem.Execute(AOwner: TComponent; ANodeData: TvCustomRealNodeData): Integer;
+var
+  frm: TfrmPropertyItem;
 begin
-  FListNodeData := ANodeData;
-  //General
-  if (ANodeData.DataType = vtdtFile) or (ANodeData.DataType = vtdtFolder) then
-    FFrameGeneral := AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmSWGeneralPropertyPage.Create(Self, ANodeData)))
-  else
-    if ANodeData.DataType = vtdtCategory then
-      FFrameGeneral := AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmCatGeneralPropertyPage.Create(Self, ANodeData)));
-  FFrameAdvanced := AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmAdvancedPropertyPage.Create(Self, ANodeData)));
-  AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmBehaviorPropertyPage.Create(Self, ANodeData)));
-  //Select node (automatically open frame using vst's AddToSelection event)
-  vstCategory.Selected[FFrameGeneral] := True;
-  vstCategory.FullExpand;
-  Result := ShowModal;
+  Result := mrCancel;
+  frm := TfrmPropertyItem.Create(nil);
+  try
+    frm.FListNodeData := ANodeData;
+    //General
+    if (ANodeData.DataType = vtdtFile) or (ANodeData.DataType = vtdtFolder) then
+      frm.FFrameGeneral := AddFrameNode(frm.vstCategory, nil, TPageFrameClass(TfrmSWGeneralPropertyPage.Create(frm, ANodeData)))
+    else
+      if ANodeData.DataType = vtdtCategory then
+        frm.FFrameGeneral := AddFrameNode(frm.vstCategory, nil, TPageFrameClass(TfrmCatGeneralPropertyPage.Create(frm, ANodeData)));
+    frm.FFrameAdvanced := AddFrameNode(frm.vstCategory, nil, TPageFrameClass(TfrmAdvancedPropertyPage.Create(frm, ANodeData)));
+    AddFrameNode(frm.vstCategory, nil, TPageFrameClass(TfrmBehaviorPropertyPage.Create(frm, ANodeData)));
+    //Select node (automatically open frame using vst's AddToSelection event)
+    frm.vstCategory.FocusedNode := frm.FFrameGeneral;
+    frm.vstCategory.Selected[frm.FFrameGeneral] := True;
+    frm.vstCategory.FullExpand;
+    Result := frm.ShowModal;
+  finally
+    frm.Free;
+  end;
 end;
 
 procedure TfrmPropertyItem.FormCreate(Sender: TObject);
 begin
   vstCategory.NodeDataSize := SizeOf(rFramesNodeData);
   vstCategory.Clear;
+end;
+
+procedure TfrmPropertyItem.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  case Ord(Key) of
+    VK_RETURN: btnOkClick(Sender);
+  end;
 end;
 
 procedure TfrmPropertyItem.SaveNodeData(Sender: TBaseVirtualTree;
@@ -137,9 +173,12 @@ procedure TfrmPropertyItem.vstCategoryGetImageIndex(Sender: TBaseVirtualTree;
 var
   NodeData : PFramesNodeData;
 begin
-  NodeData := Sender.GetNodeData(Node);
-  if Assigned(NodeData) then
-    ImageIndex := NodeData.ImageIndex;
+  if (Kind = ikNormal) or (Kind = ikSelected) then
+  begin
+    NodeData := Sender.GetNodeData(Node);
+    if Assigned(NodeData) then
+      ImageIndex := NodeData.ImageIndex;
+  end;
 end;
 
 procedure TfrmPropertyItem.vstCategoryGetText(Sender: TBaseVirtualTree;

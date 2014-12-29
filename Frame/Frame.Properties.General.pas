@@ -1,3 +1,22 @@
+{
+Copyright (C) 2006-2013 Matteo Salvi
+
+Website: http://www.salvadorsoftware.com/
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+}
+
 unit Frame.Properties.General;
 
 interface
@@ -14,10 +33,10 @@ type
     lbPathIcon: TLabel;
     edtPathIcon: TEdit;
     btnBrowseIcon: TButton;
-    procedure btnBrowseIconClick(Sender: TObject);
     procedure edtNameEnter(Sender: TObject);
   private
     { Private declarations }
+    function CheckPropertyName(Edit: TEdit): Boolean;
   strict protected
     function GetTitle: string; override;
     function GetImageIndex: Integer; override;
@@ -34,18 +53,22 @@ implementation
 
 uses
   Kernel.Consts, Utility.System, ulCommonUtils, Kernel.Enumerations,
-  NodeDataTypes;
+  NodeDataTypes.Files;
 
 {$R *.dfm}
 
 { TfrmGeneralPropertyPage }
 
-procedure TfrmBaseGeneralPropertyPage.btnBrowseIconClick(Sender: TObject);
+function TfrmBaseGeneralPropertyPage.CheckPropertyName(Edit: TEdit): Boolean;
 begin
-  OpenDialog1.Filter     := DKLangConstW('msgFilterIconExe');
-  OpenDialog1.InitialDir := ExtractFileDir(RelativeToAbsolute(edtPathIcon.Text));
-  if (OpenDialog1.Execute) then
-    edtPathIcon.Text := AbsoluteToRelative(OpenDialog1.FileName);
+  Result := True;
+  // Check if inserted name is empty, then
+  if (Trim(Edit.Text) = '') then
+  begin
+    ShowMessageEx(DKLangConstW('msgErrEmptyName'),true);
+    Edit.Color := clYellow;
+    Result := False;
+  end;
 end;
 
 procedure TfrmBaseGeneralPropertyPage.edtNameEnter(Sender: TObject);
@@ -55,7 +78,7 @@ end;
 
 function TfrmBaseGeneralPropertyPage.GetImageIndex: Integer;
 begin
-  Result := IMAGELARGE_INDEX_PropGeneral;
+//  Result := IMAGELARGE_INDEX_PropGeneral;
 end;
 
 function TfrmBaseGeneralPropertyPage.GetTitle: string;

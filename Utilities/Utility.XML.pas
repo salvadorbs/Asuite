@@ -12,15 +12,18 @@ type
   TImportListToTree = function(Tree: TVirtualStringTree;Node: IXMLNode;Parent: PVirtualNode): PVirtualNode of object;
 
   TImportOldListProcs = class //Class for IterateSubtree
-    function ASuite1NodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
+    class function ASuite1NodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
                                Parent: PVirtualNode): PVirtualNode;
-    function wppLauncherNodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
+    class function wppLauncherNodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
                                     Parent: PVirtualNode): PVirtualNode;
   end;
 
 procedure XMLToTree(Tree: TVirtualStringTree;CallBack: TImportListToTree;
                     XMLDoc: TXMLDocument);
 procedure LoadXMLSettings(XMLDoc: TXMLDocument);
+function XMLToShortcut(Node: IXMLNode; AFieldCode, AFieldMod: string): TShortcut;
+Function GetHotKeyCode(KeyCode: Integer): Integer;
+Function GetHotKeyMod(KeyMod: Integer): TShiftState;
 
 { Methods to get values }
 function GetStrPropertyXML(Node : IXMLNode;Name: String;Default: String): String;
@@ -30,8 +33,8 @@ function GetBoolPropertyXML(Node : IXMLNode;Name: String;Default: Boolean): Bool
 implementation
 
 uses
-  Forms.Main, NodeDataTypes, ulCommonUtils, Kernel.AppConfig,
-  Utility.Strings;
+  Forms.Main, NodeDataTypes.Custom, ulCommonUtils, AppConfig.Main, Kernel.Types,
+  Utility.Strings, Utility.Treeview, NodeDataTypes.Files, Menus;
 
 function GetStrPropertyXML(Node : IXMLNode;Name: String;Default: String): String;
 var
@@ -69,7 +72,7 @@ begin
       Result := Utility.Strings.StrToBool(PropertyNode.Text);
 end;
 
-function TImportOldListProcs.ASuite1NodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
+class function TImportOldListProcs.ASuite1NodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
                                           Parent: PVirtualNode): PVirtualNode;
 var
   NodeData : PBaseData;
@@ -92,7 +95,7 @@ begin
         if XMLNode.NodeName = 'Separator' then
           Result := Tree.AddChild(Parent, CreateNodeData(vtdtSeparator));
     //Add checkbox
-    if Config.ASuiteState = asImporting then
+    if Config.ASuiteState = lsImporting then
       Tree.CheckType[Result] := ctTriStateCheckBox;
     NodeData := Tree.GetNodeData(Result);
     NodeData.Data.pNode  := Result;
@@ -113,9 +116,7 @@ begin
       CustomRealNodeData.Autorun     := TAutorunType(GetIntPropertyXML(XMLNode, 'Autorun',0));
       CustomRealNodeData.AutorunPos  := GetIntPropertyXML (XMLNode, 'AutorunPosition',0);
       CustomRealNodeData.WindowState := GetIntPropertyXML (XMLNode, 'WindowState',0);
-      CustomRealNodeData.Hotkey      := GetBoolPropertyXML(XMLNode, 'HotKey',False);
-      CustomRealNodeData.HotkeyMod   := GetIntPropertyXML (XMLNode, 'HotKeyModifier',0);
-      CustomRealNodeData.HotkeyCode  := GetIntPropertyXML (XMLNode, 'HotKeyCode',0);
+      CustomRealNodeData.Hotkey      := XMLToShortcut(XMLNode, 'HotKeyCode', 'HotKeyModifier');
       //Check if it is a software, so get software properties
       if (CustomRealNodeData.DataType = vtdtFile) then
       begin
@@ -132,7 +133,19 @@ begin
   end;
 end;
 
-function TImportOldListProcs.wppLauncherNodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
+function XMLToShortcut(Node: IXMLNode; AFieldCode, AFieldMod: string): TShortcut;
+var
+  Key: Word;
+  ShiftState: TShiftState;
+begin
+  Result := 0;
+  Key := GetHotKeyCode(GetIntPropertyXML(Node, AFieldCode, -1));
+  ShiftState := GetHotKeyMod(GetIntPropertyXML(Node, AFieldMod, -1));
+  if (Key <> 0) and (ShiftState <> []) then
+    Result := ShortCut(Key, ShiftState);
+end;
+
+class function TImportOldListProcs.wppLauncherNodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
                                                Parent: PVirtualNode): PVirtualNode;
 var
   NodeData     : PBaseData;
@@ -243,15 +256,11 @@ begin
     frmMain.Width      := GetIntPropertyXML(Node,'ListFormWidth',frmMainWidth);
     frmMain.Height     := GetIntPropertyXML(Node,'ListFormHeight',frmMainHeight);
     //Hotkey
-    Config.HotKey         := GetBoolPropertyXML(Node, 'ActiveHotKey',true);
+    Config.HotKey      := GetBoolPropertyXML(Node, 'ActiveHotKey',true);
     //Window Hotkey
-    Config.WindowHotkeyMod  := GetIntPropertyXML(Node,'HotKeyModifier',-1);
-    Config.WindowHotkeyCode := GetIntPropertyXML(Node,'HotKeyCode',-1);
-    Config.WindowHotkey     := GetBoolPropertyXML(Node,'HotKey',false);
+    Config.WindowHotkey := XMLToShortcut(Node, 'HotKeyCode', 'HotKeyModifier');
     //Menu Hotkey
-    Config.MenuHotkeyMod  := GetIntPropertyXML(Node,'MenuHotKeyModifier',-1);
-    Config.MenuHotkeyCode := GetIntPropertyXML(Node,'MenuHotKeyCode',-1);
-    Config.MenuHotkey     := GetBoolPropertyXML(Node,'MenuHotKey',false);
+    Config.MenuHotKey   := XMLToShortcut(Node, 'MenuHotKeyCode', 'MenuHotKeyModifier');
     //frmMain position
     SetFormPosition(frmMain, GetIntPropertyXML(Node,'ListFormLeft',frmMain.Left),
                              GetIntPropertyXML(Node,'ListFormTop',frmMain.Top));
@@ -293,12 +302,81 @@ begin
     //Trayicon
     Config.TrayCustomIconPath := GetStrPropertyXML(Node, 'TrayIconPath','');
     Config.TrayIcon           := GetBoolPropertyXML(Node, 'ActiveTrayIcon',true);
-    Config.ActionClickLeft    := GetIntPropertyXML(Node, 'ActionClickLeft',0);
-    Config.ActionClickRight   := GetIntPropertyXML(Node, 'ActionClickRight',2);
+    Config.ActionClickLeft    := TTrayiconActionClick(GetIntPropertyXML(Node, 'ActionClickLeft',0));
+    Config.ActionClickRight   := TTrayiconActionClick(GetIntPropertyXML(Node, 'ActionClickRight',2));
     Config.UseCustomTitle     := GetBoolPropertyXML(Node, 'ClassicMenu',false);
     //Only default menu
     Config.GMFade         := GetBoolPropertyXML(Node, 'MenuFade',true);
     Config.GMPersonalPicture := GetStrPropertyXML(Node, 'MenuPersonalPicture','Default');
+  end;
+end;
+
+Function GetHotKeyCode(KeyCode: Integer) : Integer;
+begin
+  Result := -1;
+  case KeyCode of
+    0: Result := VkKeyScan('a');
+    1: Result := VkKeyScan('b');
+    2: Result := VkKeyScan('c');
+    3: Result := VkKeyScan('d');
+    4: Result := VkKeyScan('e');
+    5: Result := VkKeyScan('f');
+    6: Result := VkKeyScan('g');
+    7: Result := VkKeyScan('h');
+    8: Result := VkKeyScan('i');
+    9: Result := VkKeyScan('j');
+    10: Result := VkKeyScan('k');
+    11: Result := VkKeyScan('l');
+    12: Result := VkKeyScan('m');
+    13: Result := VkKeyScan('n');
+    14: Result := VkKeyScan('o');
+    15: Result := VkKeyScan('p');
+    16: Result := VkKeyScan('q');
+    17: Result := VkKeyScan('r');
+    18: Result := VkKeyScan('s');
+    19: Result := VkKeyScan('t');
+    20: Result := VkKeyScan('u');
+    21: Result := VkKeyScan('v');
+    22: Result := VkKeyScan('w');
+    23: Result := VkKeyScan('x');
+    24: Result := VkKeyScan('y');
+    25: Result := VkKeyScan('z');
+    26: Result := Vk_F1;
+    27: Result := Vk_F2;
+    28: Result := Vk_F3;
+    29: Result := Vk_F4;
+    30: Result := Vk_F5;
+    31: Result := Vk_F6;
+    32: Result := Vk_F7;
+    33: Result := Vk_F8;
+    34: Result := Vk_F9;
+    35: Result := Vk_F10;
+    36: Result := Vk_F11;
+    37: Result := Vk_F12;
+    38: Result := VkKeyScan('1');
+    39: Result := VkKeyScan('2');
+    40: Result := VkKeyScan('3');
+    41: Result := VkKeyScan('4');
+    42: Result := VkKeyScan('5');
+    43: Result := VkKeyScan('6');
+    44: Result := VkKeyScan('7');
+    45: Result := VkKeyScan('8');
+    46: Result := VkKeyScan('9');
+    47: Result := VkKeyScan('0');
+  end;
+end;
+
+Function GetHotKeyMod(KeyMod: Integer): TShiftState;
+begin
+  Result := [];
+  case KeyMod of
+    0:  Result := [ssAlt];
+    1:  Result := [ssCtrl];
+    2:  Result := [ssShift];
+    3:  Result := [ssCtrl, ssAlt];
+    4:  Result := [ssShift, ssAlt];
+    5:  Result := [ssShift, ssCtrl];
+    6:  Result := [ssShift, ssCtrl, ssAlt];
   end;
 end;
 

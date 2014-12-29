@@ -46,8 +46,9 @@ const
   CACHELARGE_DIR = 'cache\large\';
   MENUTHEMES_DIR = 'menuthemes\';
   ICONS_DIR      = 'icons\';
-  SMALLICONS_DIR = ICONS_DIR + '16x16\';
-  LARGEICONS_DIR = ICONS_DIR + '32x32\';
+  ICONS_POPUPMENU_DIR = ICONS_DIR + 'popupmenu\';
+  ICONS_OPTIONS_DIR   = ICONS_DIR + 'options\';
+  ICONS_TREE_DIR      = ICONS_DIR + 'tree\';
 
   // Caratteri speciali
   LF                = #10;              { line feed }
@@ -130,91 +131,6 @@ const
   FILELARGEICON_Behavior = '7.ico';
   FILELARGEICON_PropGeneral = '8.ico';
 
-var
-  //Paths
-  SUITE_FULLFILENAME : String;
-  SUITE_FILENAME     : String;
-  SUITE_DRIVE        : String;
-  SUITE_PATH         : String;
-  SUITE_WORKING_PATH : String;
-  SUITE_LOCALE_PATH  : String;
-  SUITE_CACHE_PATH   : String;
-  SUITE_CACHELARGE_PATH : String;
-  SUITE_BACKUP_PATH     : String;
-  SUITE_SMALLICONS_PATH : String;
-  SUITE_LARGEICONS_PATH : String;
-  SUITE_MENUTHEMES_PATH : String;
-  SUITE_CURRENTTHEME_PATH : String;
-
-  // Application's files
-  SUITE_LIST_PATH    : String;
-
-  //Menu small icons
-  IMAGE_INDEX_ASuite,       //ID = 0;
-  IMAGE_INDEX_Cat,          //ID = 1;
-  IMAGE_INDEX_Help,         //ID = 2;
-  IMAGE_INDEX_Options,      //ID = 3;
-  IMAGE_INDEX_AddCat,       //ID = 4;
-  IMAGE_INDEX_AddFile ,     //ID = 5;
-  IMAGE_INDEX_AddFolder,    //ID = 6;
-  IMAGE_INDEX_Delete,       //ID = 7;
-  IMAGE_INDEX_Property,     //ID = 8;
-  IMAGE_INDEX_Save,         //ID = 9;
-  IMAGE_INDEX_Folder,       //ID = 10;
-  IMAGE_INDEX_AddGroupFile, //ID = 11;
-  IMAGE_INDEX_GroupFile,    //ID = 12;
-  IMAGE_INDEX_NOTFOUND,     //ID = 13;
-  IMAGE_INDEX_Run,          //ID = 14;
-  IMAGE_INDEX_Cut,          //ID = 15;
-  IMAGE_INDEX_Copy,         //ID = 16;
-  IMAGE_INDEX_Paste ,       //ID = 17;
-  IMAGE_INDEX_Search,       //ID = 18;
-  IMAGE_INDEX_SearchType,   //ID = 19;
-  IMAGE_INDEX_Url,          //ID = 20;
-  IMAGE_INDEX_Accept,       //ID = 21;
-  IMAGE_INDEX_Cancel        //ID = 22;
-                            : Integer;
-
-  //Menu large icons
-  IMAGELARGE_INDEX_General,  //ID = 0;
-  IMAGELARGE_INDEX_Advanced, //ID = 1;
-  IMAGELARGE_INDEX_Items,    //ID = 2;
-  IMAGELARGE_INDEX_Hotkey,   //ID = 3;
-  IMAGELARGE_INDEX_Mouse,    //ID = 4;
-  IMAGELARGE_INDEX_Trayicon, //ID = 5;
-  IMAGELARGE_INDEX_Stats,    //ID = 6;
-  IMAGELARGE_INDEX_Behavior, //ID = 7;
-  IMAGELARGE_INDEX_PropGeneral //ID = 8;
-                            : Integer;
-
 implementation
-
-uses Utility.System;
-
-initialization
-  //TODO: Move this code in appropriate place
-  //Default paths
-  SUITE_FULLFILENAME        := Application.ExeName;
-  SUITE_FILENAME            := ExtractFileName(SUITE_FULLFILENAME);
-  SUITE_DRIVE               := LowerCase(ExtractFileDrive(SUITE_FULLFILENAME));
-  SUITE_PATH                := IncludeTrailingBackslash(ExtractFileDir(SUITE_FULLFILENAME));
-  if IsDriveRoot(SUITE_PATH)
-    then SUITE_WORKING_PATH := GetCorrectWorkingDir(SUITE_PATH)
-    else SUITE_WORKING_PATH := SUITE_PATH;
-  SUITE_WORKING_PATH        := LowerCase(SUITE_WORKING_PATH);
-  SUITE_LOCALE_PATH         := SUITE_WORKING_PATH + LOCALE_DIR;
-  SUITE_CACHE_PATH          := SUITE_WORKING_PATH + CACHE_DIR;
-  SUITE_CACHELARGE_PATH     := SUITE_WORKING_PATH + CACHELARGE_DIR;
-  SUITE_BACKUP_PATH         := SUITE_WORKING_PATH + BACKUP_DIR;
-  SUITE_MENUTHEMES_PATH     := SUITE_WORKING_PATH + MENUTHEMES_DIR;
-  //List
-  GetCmdLineSwitchValue(SUITE_LIST_PATH,'list');
-  if (SUITE_LIST_PATH = '') or not(FileExists(SUITE_LIST_PATH)) then
-  begin
-    //Check if xml list exists, else get sqlite list
-    SUITE_LIST_PATH := SUITE_WORKING_PATH + ChangeFileExt(SUITE_FILENAME, EXT_XML);
-    if not FileExists(SUITE_LIST_PATH) then
-      SUITE_LIST_PATH := SUITE_WORKING_PATH + ChangeFileExt(SUITE_FILENAME, EXT_SQL);
-  end;
 
 end.

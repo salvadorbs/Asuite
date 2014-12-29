@@ -1,10 +1,30 @@
+{
+Copyright (C) 2006-2013 Matteo Salvi
+
+Website: http://www.salvadorsoftware.com/
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+}
+
 unit Frame.Options.Stats;
 
 interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, DKLang, Frame.BaseEntity;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Frame.BaseEntity, Vcl.StdCtrls, DKLang,
+  Vcl.ExtCtrls, Registry;
 
 type
   TfrmStatsOptionsPage = class(TfrmBaseEntityPage)
@@ -30,8 +50,21 @@ type
     lbUser2: TLabel;
     lbNamePc2: TLabel;
     DKLanguageController1: TDKLanguageController;
+    lblBuild2: TLabel;
+    lblBuild: TLabel;
+    lblProcessor: TLabel;
+    lblProcessor2: TLabel;
+    lblRam: TLabel;
+    lblRam2: TLabel;
   private
     { Private declarations }
+    function GetProcessorName: string;
+    function GetTotalPhysMemory: Int64;
+    function BytesToGBStr(const Bytes: Int64; const DecimalPlaces: Byte;
+                          const SeparateThousands: Boolean): string;
+    function BytesToGB(const Bytes: Int64): Extended;
+    function FloatToFixed(const Value: Extended; const DecimalPlaces: Byte;
+                          const SeparateThousands: Boolean): string;
   strict protected
     function GetTitle: string; override;
     function GetImageIndex: Integer; override;
@@ -46,8 +79,10 @@ var
 
 implementation
 
+{$I ASuite.INC}
+
 uses
-  Forms.Main, ulCommonUtils, Utility.Treeview, Kernel.Consts;
+  PJSysInfo, ulCommonUtils, Utility.TreeView, AppConfig.Main, Kernel.Types;
 
 {$R *.dfm}
 
@@ -55,7 +90,25 @@ uses
 
 function TfrmStatsOptionsPage.GetImageIndex: Integer;
 begin
-  Result := IMAGELARGE_INDEX_Stats;
+//  Result := IMAGELARGE_INDEX_Stats;
+end;
+
+function TfrmStatsOptionsPage.GetProcessorName: string;var
+  Reg: Registry.TRegistry;
+begin
+  Result := '';
+  Reg := Registry.TRegistry.Create(Winapi.Windows.KEY_READ);
+  try
+    Reg.RootKey := Winapi.Windows.HKEY_LOCAL_MACHINE;
+    if not Reg.OpenKey(
+      'HARDWARE\DESCRIPTION\System\CentralProcessor\0\', False
+    ) then
+      Exit;
+    Result := StringReplace(Reg.ReadString('ProcessorNameString'), '    ', '', [rfReplaceAll]);
+    Reg.CloseKey;
+  finally
+    Reg.Free;
+  end;
 end;
 
 function TfrmStatsOptionsPage.GetTitle: string;
@@ -63,32 +116,67 @@ begin
   Result := DKLangConstW('msgStats');
 end;
 
+function TfrmStatsOptionsPage.GetTotalPhysMemory: Int64;var
+  MemoryEx: WinApi.Windows.TMemoryStatusEx;
+begin
+  begin
+    MemoryEx.dwLength := SizeOf(TMemoryStatusEx);
+    WinApi.Windows.GlobalMemoryStatusEx(MemoryEx);
+    Result := MemoryEx.ullTotalPhys;
+  end;
+end;
+
+function TfrmStatsOptionsPage.FloatToFixed(const Value: Extended; const DecimalPlaces: Byte;
+  const SeparateThousands: Boolean): string;
+const
+  // float format specifiers
+  cFmtSpec: array[Boolean] of Char = ('f', 'n');
+begin
+  Result := System.SysUtils.Format(
+    '%.*' + cFmtSpec[SeparateThousands], [DecimalPlaces, Value]
+  );
+end;
+
+function TfrmStatsOptionsPage.BytesToGB(const Bytes: Int64): Extended;
+const
+  cOneGB = 1024 * 1024 * 1024; // a gigabyte in bytes
+begin
+  Result := Bytes / cOneGB;
+end;
+
+function TfrmStatsOptionsPage.BytesToGBStr(const Bytes: Int64; const DecimalPlaces: Byte;
+  const SeparateThousands: Boolean): string;
+begin
+  Result := FloatToFixed(BytesToGB(Bytes), DecimalPlaces, SeparateThousands);
+end;
+
 function TfrmStatsOptionsPage.InternalLoadData: Boolean;
 var
   Drive: char;
+  ListStats: rListStats;
 begin
+  GetTotalPhysMemory;
   Result := inherited;
   //System
-  lbOs2.Caption := TOSVersion.Name + IfThen(TOSVersion.ServicePackMajor > 0, Format(' Service Pack (%d.%d)',
-                                           [TOSVersion.ServicePackMajor, TOSVersion.ServicePackMinor]), '');
-  lbNamePc2.Caption := GetEnvironmentVariable('ComputerName'); //GetComputerName;
+  lbOs2.Caption := TPJOSInfo.ProductName + ' ' + TPJOSInfo.Edition;
+  lblBuild2.Caption := Format('%d.%d.%d', [TPJOSInfo.MajorVersion, TPJOSInfo.MinorVersion, TPJOSInfo.BuildNumber]);
+  lblProcessor2.Caption := GetProcessorName;
+  lblRam2.Caption   := BytesToGBStr(GetTotalPhysMemory, 2, True) + ' GB';
+  lbNamePc2.Caption := GetEnvironmentVariable('ComputerName');
   lbUser2.Caption   := GetCurrentUserName;
   //Drive
-  Drive := StringReplace(ExtractFileDrive(ParamStr(0)), ':', '', [])[1];
+  Drive := Config.Paths.SuiteDrive[1];
   gbSupport.Caption := Format(gbSupport.Caption, [Drive]);
   lbSize2.Caption   := DiskSizeString(Drive, True);
   lbSpaceFree2.Caption := DiskFreeString(Drive, True);
   lbSpaceUsed2.Caption := DiskUsedString(Drive, True);
   //Launcher
-  with ListStats do
-  begin
-    SwCount  := 0;
-    CatCount := 0;
-    frmMain.vstList.IterateSubtree(nil, IterateSubtreeProcs.UpdateListItemCount, nil);
-    lbSoftware2.Caption := IntToStr(SwCount);
-    lbCat2.Caption      := IntToStr(CatCount);
-    lbTotal2.Caption    := IntToStr(SwCount + CatCount);
-  end;
+  ListStats.SwCount  := 0;
+  ListStats.CatCount := 0;
+  Config.MainTree.IterateSubtree(nil, TIterateSubtreeProcs.UpdateListItemCount, @ListStats);
+  lbSoftware2.Caption := IntToStr(ListStats.SwCount);
+  lbCat2.Caption      := IntToStr(ListStats.CatCount);
+  lbTotal2.Caption    := IntToStr(ListStats.SwCount + ListStats.CatCount);
 end;
 
 end.

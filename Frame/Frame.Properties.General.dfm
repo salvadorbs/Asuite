@@ -1,5 +1,5 @@
 inherited frmBaseGeneralPropertyPage: TfrmBaseGeneralPropertyPage
-  object gbItem: TGroupBox [0]
+  object gbItem: TGroupBox
     Left = 3
     Top = 3
     Width = 354
@@ -49,7 +49,6 @@ inherited frmBaseGeneralPropertyPage: TfrmBaseGeneralPropertyPage
       Height = 21
       Caption = 'Browse'
       TabOrder = 2
-      OnClick = btnBrowseIconClick
     end
   end
 end

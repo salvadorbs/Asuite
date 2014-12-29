@@ -23,9 +23,9 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, Kernel.Consts,
-  XMLIntf, msxmldom, XMLDoc, Kernel.Enumerations, Database, DateUtils, xmldom,
-  DKLang;
+  Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, Kernel.Consts, xmldom,
+  XMLIntf, msxmldom, XMLDoc, Kernel.Enumerations, DateUtils, DKLang, JvExMask,
+  Vcl.Mask, JvToolEdit;
 
 type
   TfrmImportList = class(TForm)
@@ -40,8 +40,6 @@ type
     gbFile: TGroupBox;
     rgrpLauncher: TRadioGroup;
     lblFile: TLabel;
-    btnBrowse: TButton;
-    edtPathList: TEdit;
     tsList: TTabSheet;
     vstListImp: TVirtualStringTree;
     btnSelectAll: TButton;
@@ -52,7 +50,6 @@ type
     pnlHeader: TPanel;
     lblTitle: TLabel;
     XMLDocument1: TXMLDocument;
-    OpenDialog1: TOpenDialog;
     tsProgress: TTabSheet;
     pbImport: TProgressBar;
     lblItems: TLabel;
@@ -62,13 +59,13 @@ type
     imgSettings: TImage;
     lblSettings: TLabel;
     DKLanguageController1: TDKLanguageController;
+    edtPathList: TJvFilenameEdit;
     procedure btnDeselectAllClick(Sender: TObject);
     procedure btnSelectAllClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure vstListImpGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
   Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
     procedure FormCreate(Sender: TObject);
-    procedure btnBrowseClick(Sender: TObject);
     procedure vstListImpGetImageIndex(Sender: TBaseVirtualTree;
       Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
       var Ghosted: Boolean; var ImageIndex: Integer);
@@ -76,7 +73,7 @@ type
       var Allowed: Boolean);
     procedure btnBackClick(Sender: TObject);
     procedure btnNextClick(Sender: TObject);
-    procedure edtPathListEnter(Sender: TObject);
+    procedure edtPathListExit(Sender: TObject);
     procedure cbImportListClick(Sender: TObject);
     procedure tsLaunchersShow(Sender: TObject);
     procedure tsSettingsShow(Sender: TObject);
@@ -87,6 +84,9 @@ type
     procedure vstListImpDrawText(Sender: TBaseVirtualTree;
       TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
       const Text: string; const CellRect: TRect; var DefaultDraw: Boolean);
+    procedure edtPathListAfterDialog(Sender: TObject; var AName: string;
+      var AAction: Boolean);
+    procedure edtPathListChange(Sender: TObject);
   private
     { Private declarations }
     procedure ImportSettingsInASuite(XMLDoc: TXMLDocument);
@@ -98,6 +98,7 @@ type
     function InternalImportOptions(XMLDoc: TXMLDocument): Boolean;
   public
     { Public declarations }
+    class procedure Execute(AOwner: TComponent);
   end;
 
 var
@@ -108,8 +109,9 @@ implementation
 {$R *.dfm}
 
 uses
-  Forms.Main, NodeDataTypes, ulCommonUtils, Utility.Treeview, DataModules.Images,
-  Kernel.AppConfig, Utility.FileFolder, DataModules.TrayMenu, Utility.XML;
+  Forms.Main, NodeDataTypes.Custom, ulCommonUtils, Utility.TreeView,
+  DataModules.Images, AppConfig.Main, Utility.FileFolder, Utility.XML,
+  Database.Manager, Kernel.Types, NodeDataTypes.Base;
 
 procedure TfrmImportList.btnCancelClick(Sender: TObject);
 begin
@@ -120,18 +122,6 @@ procedure TfrmImportList.btnBackClick(Sender: TObject);
 begin
   pgcImport.SelectNextPage(false,false);
   btnBack.Enabled := pgcImport.ActivePageIndex <> 0;
-end;
-
-procedure TfrmImportList.btnBrowseClick(Sender: TObject);
-begin
-  vstListImp.Clear;
-  OpenDialog1.InitialDir := ExtractFileDir(edtPathList.text);
-  if (OpenDialog1.Execute) then
-  begin
-    edtPathList.text := OpenDialog1.FileName;
-    btnNext.Enabled  := True;
-  end;
-  SetCurrentDir(SUITE_WORKING_PATH);
 end;
 
 procedure TfrmImportList.btnSelectAllClick(Sender: TObject);
@@ -146,14 +136,26 @@ begin
 end;
 
 procedure TfrmImportList.ImportSettingsInASuite(XMLDoc: TXMLDocument);
+var
+  FileExt: string;
 begin
   //Import settings
   if (cbImportSettings.Checked) then
   begin
-    if InternalImportOptions(XMLDoc) then
-      ImagesDM.IcoImages.GetIcon(IMAGE_INDEX_Accept, imgSettings.Picture.Icon)
-    else
-      ImagesDM.IcoImages.GetIcon(IMAGE_INDEX_Cancel,imgList.Picture.Icon);
+    if Not(XMLDocument1.Active) then
+    begin
+      FileExt  := ExtractFileExt(edtPathList.Text);
+      //ASuite or ASuite or wppLauncher
+      if (FileExt = EXT_XML) or (FileExt = EXT_XMLBCK) then
+      begin
+        XMLDocument1.FileName := edtPathList.Text;
+        XMLDocument1.Active   := True;
+      end;
+    end;
+//    if InternalImportOptions(XMLDoc) then
+//      ImagesDM.IcoImages.GetIcon(Config.ASuiteIcons.PopupMenu.Accept, imgSettings.Picture.Icon)
+//    else
+//      ImagesDM.IcoImages.GetIcon(Config.ASuiteIcons.PopupMenu.Cancel,imgList.Picture.Icon);
   end;
 end;
 
@@ -164,15 +166,15 @@ begin
     //Set progressbar's max
     pbImport.Max := GetNumberNodeImp(vstListImp);
     try
-      if TreeImp2Tree(vstListImp,frmMain.vstList) then
-        ImagesDM.IcoImages.GetIcon(IMAGE_INDEX_Accept,imgList.Picture.Icon)
-      else
-        ImagesDM.IcoImages.GetIcon(IMAGE_INDEX_Cancel,imgList.Picture.Icon);
+//      if TreeImp2Tree(vstListImp, Config.MainTree) then
+//        ImagesDM.IcoImages.GetIcon(Config.ASuiteIcons.PopupMenu.Accept,imgList.Picture.Icon)
+//      else
+//        ImagesDM.IcoImages.GetIcon(Config.ASuiteIcons.PopupMenu.Cancel,imgList.Picture.Icon);
       lblItems.Caption := Format(DKLangConstW('msgItemsImported'),[pbImport.Max]);
     except
       on E : Exception do
       begin
-        ShowMessageFmt(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message],True);
+        ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message],True);
         lblItems.Caption := DKLangConstW('msgImportFailed');
       end;
     end;
@@ -186,9 +188,10 @@ var
   FileExt  : String;
 begin
   vstListImp.BeginUpdate;
+  vstListImp.Clear;
   FileName := LowerCase(ExtractFileName(FilePath));
   FileExt  := ExtractFileExt(FileName);
-  //ASuite or wppLauncher
+  //ASuite or ASuite or wppLauncher
   if (FileExt = EXT_XML) or (FileExt = EXT_XMLBCK) then
   begin
     XMLDocument1.FileName := FilePath;
@@ -196,10 +199,10 @@ begin
     //Identify launcher xml from first node
     //ASuite 1.x
     if (XMLDocument1.DocumentElement.NodeName = 'ASuite') then
-      XMLToTree(vstListImp,ImportOldListProcs.ASuite1NodeToTree,XMLDocument1)
+      XMLToTree(vstListImp,TImportOldListProcs.ASuite1NodeToTree,XMLDocument1)
     else //winPenPack Launcher 1.x
       if ChangeFileExt(FileName,'') = 'winpenpack' then
-        XMLToTree(vstListImp,ImportOldListProcs.wppLauncherNodeToTree,XMLDocument1);
+        XMLToTree(vstListImp,TImportOldListProcs.wppLauncherNodeToTree,XMLDocument1);
   end
   else //ASuite 2.x
     if (FileExt = EXT_SQL) or (FileExt = EXT_SQLBCK) then
@@ -209,7 +212,7 @@ begin
       DBImp.Destroy;
     end;
   vstListImp.EndUpdate;
-  ImagesDM.GetChildNodesIcons(Tree, nil, Tree.RootNode);
+//  ImagesDM.GetChildNodesIcons(Tree, Tree.RootNode, isSmall);
 end;
 
 procedure TfrmImportList.btnDeselectAllClick(Sender: TObject);
@@ -222,7 +225,10 @@ begin
   //If PageIndex is not last page, show next page
   if pgcImport.ActivePageIndex <> (pgcImport.PageCount - 1) then
   begin
-    pgcImport.SelectNextPage(true,false);
+    if (pgcImport.ActivePage = tsSettings) and Not (cbImportList.Checked) then
+      pgcImport.ActivePage := tsProgress
+    else
+      pgcImport.SelectNextPage(True, false);
     btnBack.Enabled := pgcImport.ActivePageIndex <> 0;
   end
   else //Else close import form
@@ -232,31 +238,24 @@ end;
 procedure TfrmImportList.FormCreate(Sender: TObject);
 begin
   vstListImp.NodeDataSize := SizeOf(rBaseData);
-  vstListImp.Images       := ImagesDM.IcoImages;
+//  vstListImp.Images       := ImagesDM.IcoImages;
   pgcImport.ActivePageIndex := 0;
   //Set imgList and imgSettings's icon
-  ImagesDM.IcoImages.GetBitmap(IMAGE_INDEX_Cancel,imgList.Picture.Bitmap);
-  ImagesDM.IcoImages.GetBitmap(IMAGE_INDEX_Cancel,imgSettings.Picture.Bitmap);
+//  ImagesDM.IcoImages.GetBitmap(Config.ASuiteIcons.PopupMenu.Cancel,imgList.Picture.Bitmap);
+//  ImagesDM.IcoImages.GetBitmap(Config.ASuiteIcons.PopupMenu.Cancel,imgSettings.Picture.Bitmap);
 end;
 
 procedure TfrmImportList.vstListImpDrawText(Sender: TBaseVirtualTree;
   TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
   const Text: string; const CellRect: TRect; var DefaultDraw: Boolean);
-var
-  NodeData: TvBaseNodeData;
 begin
-  NodeData := PBaseData(Sender.GetNodeData(Node)).Data;
-  if NodeData.DataType = vtdtSeparator then
-  begin
-    ClassicMenu.DoDrawCaptionedSeparator(Sender,TargetCanvas,CellRect,NodeData.Name);
-    DefaultDraw := False;
-  end;
+  DrawSeparatorItem(Sender, Node, TargetCanvas, CellRect, DefaultDraw);
 end;
 
 procedure TfrmImportList.vstListImpExpanding(Sender: TBaseVirtualTree;
   Node: PVirtualNode; var Allowed: Boolean);
 begin
-  ImagesDM.GetChildNodesIcons(Sender, nil, Node);
+//  ImagesDM.GetChildNodesIcons(Sender, Node, isSmall);
 end;
 
 procedure TfrmImportList.vstListImpFreeNode(Sender: TBaseVirtualTree;
@@ -272,12 +271,15 @@ procedure TfrmImportList.vstListImpGetImageIndex(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
   var Ghosted: Boolean; var ImageIndex: Integer);
 var
-  NodeData : PvBaseNodeData;
+  NodeData : TvBaseNodeData;
 begin
-  NodeData   := Sender.GetNodeData(Node);
-  ImageIndex := NodeData.ImageIndex;
-  if Column = 1 then
-    ImageIndex := -1;
+  if (Kind = ikNormal) or (Kind = ikSelected) then
+  begin
+    NodeData   := Sender.GetNodeData(Node);
+    ImageIndex := NodeData.ImageIndex;
+    if Column = 1 then
+      ImageIndex := -1;
+  end;
 end;
 
 procedure TfrmImportList.vstListImpGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
@@ -307,9 +309,34 @@ begin
   end;
 end;
 
-procedure TfrmImportList.edtPathListEnter(Sender: TObject);
+procedure TfrmImportList.edtPathListAfterDialog(Sender: TObject;
+  var AName: string; var AAction: Boolean);
 begin
-  btnNext.Enabled := ((Sender as TEdit).Text <> '') and FileExists((Sender as TEdit).Text);
+  btnNext.Enabled  := True;
+end;
+
+procedure TfrmImportList.edtPathListChange(Sender: TObject);
+begin
+  btnNext.Enabled  := edtPathList.Text <> '';
+end;
+
+procedure TfrmImportList.edtPathListExit(Sender: TObject);
+begin
+  Assert((Sender is TJvFilenameEdit), 'Sender is not TJvFilenameEdit!');
+
+  btnNext.Enabled := ((Sender as TJvFilenameEdit).Text <> '') and FileExists((Sender as TJvFilenameEdit).Text);
+end;
+
+class procedure TfrmImportList.Execute(AOwner: TComponent);
+var
+  frm: TfrmImportList;
+begin
+  frm := TfrmImportList.Create(AOwner);
+  try
+    frm.ShowModal;
+  finally
+    frm.Free;
+  end;
 end;
 
 function TfrmImportList.TreeImp2Tree(TreeImp, Tree: TVirtualStringTree): Boolean;
@@ -339,8 +366,8 @@ var
       NodeData.Data.Position := tn.Index;
       NodeData.Data.pNode    := tn;
       //Get icon item, only if tn is in first level
-      if (NodeData.Data.DataType <> vtdtSeparator) and (Tree.GetNodeLevel(tn) = 0) then
-        NodeData.Data.ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(NodeData.Data));;
+//      if (NodeData.Data.DataType <> vtdtSeparator) and (Tree.GetNodeLevel(tn) = 0) then
+//        ImagesDM.GetNodeImageIndex(TvCustomRealNodeData(NodeData.Data), isAny);
     end;
     tnImp := tnImp.FirstChild;
     while Assigned(tnImp) do
@@ -380,7 +407,7 @@ begin
     lblTitle.Caption := DKLangConstW('msgImportTitle3');
     btnNext.Caption  := DKLangConstW('msgImport');
     //Import list in temporary vst
-    Config.ASuiteState := asImporting;
+    Config.ASuiteState := lsImporting;
     PopulateTree(vstListImp, edtPathList.Text);
   end
   else //Else next page
@@ -389,14 +416,15 @@ end;
 
 procedure TfrmImportList.tsSettingsShow(Sender: TObject);
 begin
+  vstListImp.Clear;
   lblTitle.Caption := DKLangConstW('msgImportTitle2');
   btnNext.Enabled  := (edtPathList.Text <> '') and FileExists(edtPathList.Text);
   btnNext.Caption  := DKLangConstW('msgNext');
   //Change opendialog's filter depending on chosen launcher
   case rgrpLauncher.ItemIndex of
-    0: OpenDialog1.Filter:= Format(DKLangConstW('msgFilterASuite2'),   [EXT_SQL,EXT_SQLBCK,EXT_SQL,EXT_SQLBCK]);
-    1: OpenDialog1.Filter:= Format(DKLangConstW('msgFilterASuite1'),   [EXT_XML,EXT_XMLBCK,EXT_XML,EXT_XMLBCK]);
-    2: OpenDialog1.Filter:= Format(DKLangConstW('msgFilterWinPenPack'),[EXT_XML,EXT_XMLBCK,EXT_XML,EXT_XMLBCK]);
+    0: edtPathList.Filter:= Format(DKLangConstW('msgFilterASuite2'),   [EXT_SQL,EXT_SQLBCK,EXT_SQL,EXT_SQLBCK]);
+    1: edtPathList.Filter:= Format(DKLangConstW('msgFilterASuite1'),   [EXT_XML,EXT_XMLBCK,EXT_XML,EXT_XMLBCK]);
+    2: edtPathList.Filter:= Format(DKLangConstW('msgFilterWinPenPack'),[EXT_XML,EXT_XMLBCK,EXT_XML,EXT_XMLBCK]);
   end;
 end;
 
@@ -405,7 +433,7 @@ var
   NumberNode : Integer;
 begin
   NumberNode := 0;
-  Sender.IterateSubtree(nil, IterateSubTreeProcs.IncNumberNode, @NumberNode, [], True);
+  Sender.IterateSubtree(nil, TIterateSubTreeProcs.IncNumberNode, @NumberNode, [], True);
   Result := NumberNode;
 end;
 
@@ -414,7 +442,6 @@ var
   DBImp : TDBManager;
   ImportFileExt : String;
 begin
-  Result := False;
   try
     ImportFileExt := LowerCase(ExtractFileExt(edtPathList.Text));
     if (ImportFileExt = EXT_XML) or (ImportFileExt = EXT_XMLBCK) then
@@ -431,13 +458,13 @@ begin
     Result := True;
     //Config changed and focus vstList (so it repaint)
     Config.Changed := True;
-    frmMain.FocusControl(frmMain.vstList);
+    frmMain.FocusControl(Config.MainTree);
   end;
 end;
 
 procedure TfrmImportList.tsProgressShow(Sender: TObject);
 begin
-  Config.ASuiteState := asNormal;
+  Config.ASuiteState := lsNormal;
   btnBack.Enabled  := False;
   btnNext.Enabled  := False;
   try

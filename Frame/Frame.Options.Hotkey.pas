@@ -1,3 +1,22 @@
+{
+Copyright (C) 2006-2013 Matteo Salvi
+
+Website: http://www.salvadorsoftware.com/
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+}
+
 unit Frame.Options.Hotkey;
 
 interface
@@ -8,18 +27,7 @@ uses
 
 type
   TfrmHotkeyOptionsPage = class(TfrmBaseEntityPage)
-    gbHotkey: TGroupBox;
-    cxWindowHotKeyCode: TComboBox;
-    cxWindowHotKeyMod: TComboBox;
-    cbWindowHotKey: TCheckBox;
-    cbMenuHotKey: TCheckBox;
-    cxMenuHotKeyCode: TComboBox;
-    cxMenuHotKeyMod: TComboBox;
-    cbHotKey: TCheckBox;
     DKLanguageController1: TDKLanguageController;
-    procedure cbHotKeyClick(Sender: TObject);
-    procedure cbWindowHotKeyClick(Sender: TObject);
-    procedure cbMenuHotKeyClick(Sender: TObject);
   private
     { Private declarations }
   strict protected
@@ -36,34 +44,13 @@ var
 
 implementation
 
-uses
-  Kernel.AppConfig, Kernel.Consts;
-
 {$R *.dfm}
 
 { TfrmHotkeyOptionsPage }
 
-procedure TfrmHotkeyOptionsPage.cbHotKeyClick(Sender: TObject);
-begin
-  cbWindowHotKey.Enabled := cbHotKey.Checked;
-  cbMenuHotKey.Enabled   := cbHotKey.Checked;
-end;
-
-procedure TfrmHotkeyOptionsPage.cbMenuHotKeyClick(Sender: TObject);
-begin
-  cxMenuHotKeyMod.Enabled  := (cbMenuHotKey.Checked) And (cbHotKey.Checked);
-  cxMenuHotKeyCode.Enabled := (cbMenuHotKey.Checked) And (cbHotKey.Checked);
-end;
-
-procedure TfrmHotkeyOptionsPage.cbWindowHotKeyClick(Sender: TObject);
-begin
-  cxWindowHotKeyMod.Enabled  := (cbWindowHotKey.Checked) And (cbHotKey.Checked);
-  cxWindowHotKeyCode.Enabled := (cbWindowHotKey.Checked) And (cbHotKey.Checked);
-end;
-
 function TfrmHotkeyOptionsPage.GetImageIndex: Integer;
 begin
-  Result := IMAGELARGE_INDEX_Hotkey;
+//  Result := IMAGELARGE_INDEX_Hotkey;
 end;
 
 function TfrmHotkeyOptionsPage.GetTitle: string;
@@ -74,35 +61,11 @@ end;
 function TfrmHotkeyOptionsPage.InternalLoadData: Boolean;
 begin
   Result := inherited;
-  //Hot Keys
-  cbHotKey.Checked := Config.HotKey;
-  //Window's Hotkey
-  cbWindowHotKey.Checked       := Config.WindowHotKey;
-  cxWindowHotKeyMod.ItemIndex  := Config.WindowHotKeyMod;
-  cxWindowHotKeyCode.ItemIndex := Config.WindowHotKeyCode;
-  //Menu's  Hotkey
-  cbMenuHotKey.Checked         := Config.MenuHotkey;
-  cxMenuHotKeyMod.ItemIndex    := Config.MenuHotKeyMod;
-  cxMenuHotKeyCode.ItemIndex   := Config.MenuHotKeyCode;
-  //Enable/disable visual components
-  cbHotKeyClick(Self);
-  cbMenuHotKeyClick(Self);
-  cbWindowHotKeyClick(Self);
 end;
 
 function TfrmHotkeyOptionsPage.InternalSaveData: Boolean;
 begin
   Result := inherited;
-  //Hot Keys
-  Config.HotKey           := cbHotKey.Checked;
-  //Window's Hotkey
-  Config.WindowHotKeyCode := cxWindowHotKeyCode.ItemIndex;
-  Config.WindowHotKeyMod  := cxWindowHotKeyMod.ItemIndex;
-  Config.WindowHotKey     := cbWindowHotKey.Checked;
-  //Menu's Hotkey
-  Config.MenuHotKeyCode   := cxMenuHotKeyCode.ItemIndex;
-  Config.MenuHotKeyMod    := cxMenuHotKeyMod.ItemIndex;
-  Config.MenuHotKey       := cbMenuHotKey.Checked;
 end;
 
 end.

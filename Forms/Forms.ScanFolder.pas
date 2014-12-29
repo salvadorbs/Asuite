@@ -47,7 +47,6 @@ type
     cbSubfolders: TCheckBox;
     lbFolderPath: TLabel;
     DKLanguageController1: TDKLanguageController;
-    procedure btnBrowseClick(Sender: TObject);
     procedure btnScanClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
@@ -66,6 +65,7 @@ type
     procedure RunScanFolder(Tree: TBaseVirtualTree;TempPath: string; ChildNode: PVirtualNode);
   public
     { Public declarations }
+    class procedure Execute(AOwner: TComponent);
   end;
 
 var
@@ -74,23 +74,11 @@ var
 implementation
 
 uses
-  Forms.Main, ulCommonUtils, Kernel.Consts, Utility.FileFolder, NodeDataTypes, Kernel.AppConfig,
-  Kernel.Enumerations, Utility.Treeview, Utility.System;
+  ulCommonUtils, Utility.FileFolder, NodeDataTypes.Custom, AppConfig.Main,
+  Kernel.Enumerations, Utility.TreeView, Utility.System, Kernel.Types,
+  NodeDataTypes.Files, NodeDataTypes.Base, DataModules.Images;
 
 {$R *.dfm}
-
-procedure TfrmScanFolder.btnBrowseClick(Sender: TObject);
-var
-  TempPath : String;
-begin
-  if DirectoryExists(Text) then
-    TempPath := IncludeTrailingBackslash(BrowseForFolder('', Text))
-  else
-    TempPath := IncludeTrailingBackslash(BrowseForFolder('', SUITE_WORKING_PATH));
-
-  if (TempPath <> '\') then
-    edtFolderPath.Text := TempPath;
-end;
 
 procedure TfrmScanFolder.btnCancelClick(Sender: TObject);
 begin
@@ -142,16 +130,17 @@ var
   TempShortName, PathTemp, sFileExt : String;
   ProgressBar   : TProgressBar;
 begin
-  ChildNode     := nil;
-  ChildNodeData := nil;
+  //TODO: Rewrite this code
   ProgressBar   := TProgressBar(ProgressDialog.FindComponent('Progress'));
   if FindFirst(FolderPath + '*.*', faAnyFile, SearchRec) = 0 then
   begin
     repeat
+      ChildNode     := nil;
+      ChildNodeData := nil;
       TempShortName := LowerCase(SearchRec.Name);
       sFileExt := ExtractFileExt(TempShortName);
       //Absolute path->relative path
-      PathTemp := AbsoluteToRelative(FolderPath + SearchRec.Name);
+      PathTemp := Config.Paths.AbsoluteToRelative(FolderPath + SearchRec.Name);
       //Add node in vstlist
       if ((SearchRec.Name <> '.') and (SearchRec.Name <> '..')) and
          (((SearchRec.Attr and faDirectory) = (faDirectory)) or ((Config.ScanFolderFileTypes.IndexOf(sFileExt) <> -1))) then
@@ -163,7 +152,7 @@ begin
           if ((SearchRec.Attr and faDirectory) = (faDirectory)) and (Config.ScanFolderSubFolders) then
           begin
             ChildNode := Sender.AddChild(ParentNode, CreateNodeData(vtdtCategory));
-            ChildNodeData := TvCustomRealNodeData(PBaseData(Sender.GetNodeData(ChildNode)).Data);
+            ChildNodeData := TvCustomRealNodeData(GetNodeItemData(ChildNode, Sender));
             //Dialog
             ProgressBar.Position := ProgressBar.Position + 1;
             ProgressDialog.Update;
@@ -173,19 +162,34 @@ begin
             if (SearchRec.Attr <> faDirectory) and (Config.ScanFolderFileTypes.IndexOf(sFileExt) <> -1) then
             begin
               ChildNode := Sender.AddChild(ParentNode, CreateNodeData(vtdtFile));
-              ChildNodeData := TvCustomRealNodeData(PBaseData(Sender.GetNodeData(ChildNode)).Data);
+              ChildNodeData := TvCustomRealNodeData(GetNodeItemData(ChildNode, Sender));
               if Assigned(ChildNodeData) then
                 TvFileNodeData(ChildNodeData).PathExe := PathTemp;
             end;
-          ChildNodeData.pNode := ChildNode;
-          ChildNodeData.Name  := TempShortName;
-          if (ChildNode.ChildCount = 0) And (ChildNodeData.DataType = vtdtCategory) then
-            Sender.DeleteNode(ChildNode);
+          if Assigned(ChildNodeData) then
+          begin
+            ChildNodeData.pNode := ChildNode;
+            ChildNodeData.Name  := TempShortName;
+            if (ChildNode.ChildCount = 0) And (ChildNodeData.DataType = vtdtCategory) then
+              Sender.DeleteNode(ChildNode);
+          end;
         end;
       end;
     until FindNext(SearchRec) <> 0;
   end;
   FindClose(SearchRec);
+end;
+
+class procedure TfrmScanFolder.Execute(AOwner: TComponent);
+var
+  frm: TfrmScanFolder;
+begin
+  frm := TfrmScanFolder.Create(AOwner);
+  try
+    frm.ShowModal;
+  finally
+    frm.Free;
+  end;
 end;
 
 procedure TfrmScanFolder.RunScanFolder(Tree: TBaseVirtualTree;TempPath: string; ChildNode: PVirtualNode);
@@ -218,34 +222,38 @@ procedure TfrmScanFolder.btnScanClick(Sender: TObject);
 var
   ChildNode : PVirtualNode;
   ChildNodeData : TvBaseNodeData;
-  TempPath  : String;
+  TempPath, sName : String;
 begin
   if edtFolderPath.Text <> '' then
     TempPath := IncludeTrailingBackslash(edtFolderPath.Text);
-  //Save options
-  Config.ScanFolderLastPath   := TempPath;
-  Config.ScanFolderSubFolders := cbSubfolders.Checked;
-  PopulateStringList(lxTypes, Config.ScanFolderFileTypes);
-  PopulateStringList(lxExclude, Config.ScanFolderExcludeNames);
-  Config.Changed := True;
   //Check if user insert a valid path
-  if TempPath = '' then
+  if TempPath <> '' then
   begin
-    ShowMessage(DKLangConstW('msgErrEmptyPath'));
-    Exit;
-  end;
-  if Not(DirectoryExists(TempPath)) then
-  begin
-    ShowMessage(DKLangConstW('msgFolderNotFound'));
-    Exit;
-  end;
-  //Add parent node
-  ChildNode := AddNodeInVST(frmMain.vstList, frmMain.vstList.FocusedNode, vtdtCategory);
-  ChildNodeData       := PBaseData(frmMain.vstList.GetNodeData(ChildNode)).Data;
-  ChildNodeData.pNode := ChildNode;
-  ChildNodeData.Name  := ExtractDirectoryName(TempPath);
-  RunScanFolder(frmMain.vstList, TempPath, ChildNode);
-  frmMain.vstList.SortTree(0, sdAscending);
+    if (DirectoryExists(TempPath)) then
+    begin
+      //Add parent node
+      ChildNode := AddNodeInVST(Config.MainTree, Config.MainTree.GetFirstSelected, vtdtCategory);
+      ChildNodeData       := GetNodeItemData(ChildNode, Config.MainTree);
+      ChildNodeData.pNode := ChildNode;
+//      ImagesDM.GetNodeImageIndex(TvCustomRealNodeData(ChildNodeData), isAny);
+      //Extract directory name and use it as node name (else use TempPath as name)
+      sName := ExtractDirectoryName(TempPath);
+      if sName <> '' then
+        ChildNodeData.Name := sName
+      else
+        ChildNodeData.Name := TempPath;
+      RunScanFolder(Config.MainTree, TempPath, ChildNode);
+
+      {$IFNDEF USE_THREAD}
+//      Config.MainTree.SortTree(0, sdAscending);
+//      ImagesDM.GetChildNodesIcons(Config.MainTree, Config.MainTree.RootNode, True, isAny);
+      {$ENDIF}
+    end
+    else
+      ShowMessageEx(DKLangConstW('msgFolderNotFound'));
+  end
+  else
+    ShowMessageEx(DKLangConstW('msgErrEmptyPath'));
 end;
 
 procedure TfrmScanFolder.btnTypesAddClick(Sender: TObject);
@@ -278,7 +286,7 @@ begin
   if DirectoryExists(Config.ScanFolderLastPath) then
     edtFolderPath.Text := Config.ScanFolderLastPath
   else
-    edtFolderPath.Text := SUITE_WORKING_PATH;
+    edtFolderPath.Text := Config.Paths.SuitePathWorking;
   cbSubfolders.Checked   := Config.ScanFolderSubFolders;
   PopulateListBox(lxTypes, Config.ScanFolderFileTypes);
   PopulateListBox(lxExclude, Config.ScanFolderExcludeNames);

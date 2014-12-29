@@ -1,3 +1,22 @@
+{
+Copyright (C) 2006-2013 Matteo Salvi
+
+Website: http://www.salvadorsoftware.com/
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+}
+
 unit Forms.Options;
 
 interface
@@ -29,6 +48,7 @@ type
       var Ghosted: Boolean; var ImageIndex: Integer);
     procedure vstListCategoryAddToSelection(Sender: TBaseVirtualTree;
       Node: PVirtualNode);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     { Private declarations }
     procedure SaveOptions(Sender: TBaseVirtualTree; Node: PVirtualNode;
@@ -38,7 +58,7 @@ type
     FFrameGeneral, FFrameAdvanced: PVirtualNode;
   public
     { Public declarations }
-    function Execute(APage:TPageFrameClass = nil):Integer;
+    class function Execute(AOwner: TComponent; APage:TPageFrameClass = nil):Integer;
   end;
 
 var
@@ -48,8 +68,8 @@ implementation
 
 uses
   Frame.Options.General, Frame.Options.Advanced, Frame.Options.TrayIcon,
-  Frame.Options.Stats, Frame.Options.HotKey, Frame.Options.Items, Kernel.AppConfig,
-  Forms.Main, Kernel.Consts, NodeDataTypes, Utility.Frame;
+  Frame.Options.Stats, Frame.Options.Items, AppConfig.Main,
+  Forms.Main, Kernel.Types, Utility.Frame, Frame.Options.Hotkey;
 
 {$R *.dfm}
 
@@ -80,19 +100,26 @@ begin
   ModalResult := mrOk;
 end;
 
-function TfrmOptions.Execute(APage: TPageFrameClass): Integer;
+class function TfrmOptions.Execute(AOwner: TComponent; APage: TPageFrameClass): Integer;
 var
-  selNode :PVirtualNode;
+  selNode: PVirtualNode;
+  frm: TfrmOptions;
 begin
-  if not Assigned(APage) then
-    selNode := FFrameGeneral
-  else
-    selNode := GetNodeByFrameClass(vstListCategory, APage);
-  //Select node (automatically open frame using vst's AddToSelection event)
-  vstListCategory.FocusedNode := selNode;
-  vstListCategory.Selected[selNode] := True;
-  vstListCategory.FullExpand;
-  result := ShowModal;
+  Result := mrCancel;
+  frm := TfrmOptions.Create(AOwner);
+  try
+    if not Assigned(APage) then
+      selNode := frm.FFrameGeneral
+    else
+      selNode := GetNodeByFrameClass(frm.vstListCategory, APage);
+    //Select node (automatically open frame using vst's AddToSelection event)
+    frm.vstListCategory.FocusedNode := selNode;
+    frm.vstListCategory.Selected[selNode] := True;
+    frm.vstListCategory.FullExpand;
+    Result := frm.ShowModal;
+  finally
+    frm.Free;
+  end;
 end;
 
 procedure TfrmOptions.FormCreate(Sender: TObject);
@@ -109,6 +136,14 @@ begin
   AddFrameNode(vstListCategory, nil,TPageFrameClass(TfrmTrayiconOptionsPage.Create(Self)));
   //Stats
   AddFrameNode(vstListCategory, nil,TPageFrameClass(TfrmStatsOptionsPage.Create(Self)));
+end;
+
+procedure TfrmOptions.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  case Ord(Key) of
+    VK_RETURN: btnOkClick(Sender);
+  end;
 end;
 
 procedure TfrmOptions.vstListCategoryAddToSelection(Sender: TBaseVirtualTree;
@@ -140,9 +175,12 @@ procedure TfrmOptions.vstListCategoryGetImageIndex(Sender: TBaseVirtualTree;
 var
   NodeData : PFramesNodeData;
 begin
-  NodeData := Sender.GetNodeData(Node);
-  if Assigned(NodeData) then
-    ImageIndex := NodeData.ImageIndex;
+  if (Kind = ikNormal) or (Kind = ikSelected) then
+  begin
+    NodeData := Sender.GetNodeData(Node);
+    if Assigned(NodeData) then
+      ImageIndex := NodeData.ImageIndex;
+  end;
 end;
 
 procedure TfrmOptions.vstListCategoryGetText(Sender: TBaseVirtualTree;

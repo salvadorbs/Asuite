@@ -1,3 +1,22 @@
+{
+Copyright (C) 2006-2013 Matteo Salvi
+
+Website: http://www.salvadorsoftware.com/
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+}
+
 unit Frame.Properties.Advanced;
 
 interface
@@ -19,12 +38,8 @@ type
     cbHideSoftware: TCheckBox;
     cbDontInsertMRU: TCheckBox;
     cbDontInsertMFU: TCheckBox;
-    cbHotKey: TCheckBox;
-    cxHotkeyMod: TComboBox;
-    cxHotKeyCode: TComboBox;
     DKLanguageController1: TDKLanguageController;
     procedure cxSchedulerChange(Sender: TObject);
-    procedure cbHotKeyClick(Sender: TObject);
   private
     { Private declarations }
   strict protected
@@ -42,17 +57,12 @@ var
 implementation
 
 uses
-  Kernel.Consts, Kernel.Enumerations, NodeDataTypes;
+  Kernel.Consts, Kernel.Enumerations, NodeDataTypes.Files;
 
 {$R *.dfm}
 
 { TfrmAdvancedPropertyPage }
 
-procedure TfrmAdvancedPropertyPage.cbHotKeyClick(Sender: TObject);
-begin
-  cxHotkeyMod.Enabled  := cbHotKey.Checked;
-  cxHotKeyCode.Enabled := cbHotKey.Checked;
-end;
 
 procedure TfrmAdvancedPropertyPage.cxSchedulerChange(Sender: TObject);
 begin
@@ -63,7 +73,7 @@ end;
 
 function TfrmAdvancedPropertyPage.GetImageIndex: Integer;
 begin
-  Result := IMAGELARGE_INDEX_Advanced;
+//  Result := IMAGELARGE_INDEX_Advanced;
 end;
 
 function TfrmAdvancedPropertyPage.GetTitle: string;
@@ -81,11 +91,6 @@ begin
     dtpSchDate.Date        := CurrentNodeData.SchDateTime;
     dtpSchTime.Time        := CurrentNodeData.SchDateTime;
     cxSchedulerChange(Self);
-    //Hotkey
-    cbHotKey.Checked       := CurrentNodeData.Hotkey;
-    cxHotkeyMod.ItemIndex  := CurrentNodeData.HotkeyMod;
-    cxHotKeyCode.ItemIndex := CurrentNodeData.HotkeyCode;
-    cbHotKeyClick(Self);
     //Specific file settings
     cbHideSoftware.Checked := CurrentNodeData.HideFromMenu;
     if CurrentNodeData.DataType = vtdtFile then
@@ -112,10 +117,6 @@ begin
     //Scheduler
     CurrentNodeData.SchMode      := TSchedulerMode(cxScheduler.ItemIndex);
     CurrentNodeData.SchDateTime  := Int(dtpSchDate.Date) + Frac(dtpSchTime.Time);
-    //Hotkey
-    CurrentNodeData.HotkeyMod    := cxHotkeyMod.ItemIndex;
-    CurrentNodeData.HotkeyCode   := cxHotKeyCode.ItemIndex;
-    CurrentNodeData.Hotkey       := cbHotKey.Checked;
     //Specific file settings
     CurrentNodeData.HideFromMenu := cbHideSoftware.Checked;
     if CurrentNodeData.DataType = vtdtFile then

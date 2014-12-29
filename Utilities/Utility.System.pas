@@ -22,8 +22,8 @@ unit Utility.System;
 interface
 
 uses
-  Kernel.Consts, Windows, ShellApi, SysUtils, Classes, Registry,
-  ShlObj, ActiveX, ComObj, Forms, Dialogs, FileCtrl;
+  Kernel.Consts, Windows, ShellApi, SysUtils, Classes, Registry, StrUtils,
+  ShlObj, ActiveX, ComObj, Forms, Dialogs, FileCtrl, Vcl.StdCtrls, System.IOUtils;
 
 { Browse }
 function  BrowseCallbackProc(hwnd: HWND; uMsg: UINT; lParam, lpData: LPARAM): Integer; stdcall;
@@ -33,12 +33,13 @@ function HasDriveLetter(const Path: String): Boolean;
 function IsAbsolutePath(const Path: String): Boolean;
 function IsDirectory(const Path: String): Boolean;
 function IsDriveRoot(const Path: String): Boolean;
-function IsUrl(Path: String): Boolean;
-function FileFolderPageWebExists(Path: String): Boolean;
+function IsValidURLProtocol(const URL: string): Boolean;
+function IsPathExists(const Path: String): Boolean;
+function SHAutoComplete(hwndEdit: HWND; dwFlags: dWord): LongInt; stdcall; external 'shlwapi.dll';
+function AutoCompleteInEdit(Edit: TEdit): Boolean;
 
 { Relative & Absolute path }
-function AbsoluteToRelative(APath: String): string;
-function RelativeToAbsolute(APath: String): string;
+function ExpandEnvVars(const Str: string): string;
 
 { Registry }
 procedure SetASuiteAtWindowsStartup;
@@ -48,11 +49,26 @@ procedure DeleteASuiteAtWindowsStartup;
 procedure EjectDialog(Sender: TObject);
 function ExtractDirectoryName(const Filename: string): string;
 function GetCorrectWorkingDir(Default: string): string;
+function RegisterHotkeyEx(AId: Integer; AShortcut: TShortCut): Boolean;
+function UnRegisterHotkeyEx(AId: Integer): Boolean;
+function IsHotkeyAvailable(AId: Integer; AShortcut: TShortcut): Boolean;
+
+const
+  SHACF_AUTOAPPEND_FORCE_OFF  = $80000000; // Ignore the registry default and force the feature off. (Also know as AutoComplete)
+  SHACF_AUTOAPPEND_FORCE_ON   = $40000000; // Ignore the registry default and force the feature on. (Also know as AutoComplete)
+  SHACF_AUTOSUGGEST_FORCE_OFF = $20000000; // Ignore the registry default and force the feature off.
+  SHACF_AUTOSUGGEST_FORCE_ON  = $10000000; // Ignore the registry default and force the feature on.
+  SHACF_DEFAULT = $00000000;    // Currently (SHACF_FILESYSTEM | SHACF_URLALL)
+  SHACF_FILESYSTEM = $00000001; // This includes the File System as well as the rest of the shell (Desktop\My Computer\Control Panel\)
+  SHACF_URLHISTORY = $00000002; // URLs in the User's History
+  SHACF_URLMRU = $00000004;     // URLs in the User's Recently Used list.
+  SHACF_USETAB = $00000008;
+  SHACF_URLALL = (SHACF_URLHISTORY + SHACF_URLMRU);
 
 implementation
 
 uses
-  Utility.Strings, Forms.Main;
+  Utility.Strings, Forms.Main, AppConfig.Main, ulCommonUtils;
 
 function BrowseCallbackProc(hwnd: HWND; uMsg: UINT; lParam, lpData: LPARAM): Integer; stdcall;
 begin
@@ -110,62 +126,62 @@ begin
   Result := (Length(Path) = 3) and HasDriveLetter(Path) and (Path[3] = PathDelim);
 end;
 
-function IsUrl(Path: String): Boolean;
+function IsValidURLProtocol(const URL: string): Boolean;
+  {Checks if the given URL is valid per RFC1738. Returns True if valid and False
+  if not.}
+const
+  Protocols: array[1..11] of string = (
+    // Array of valid protocols - per RFC 1738
+    'ftp://', 'http://', 'gopher://', 'mailto:', 'news:', 'nntp://',
+    'telnet://', 'wais://', 'file://', 'prospero://', 'https://'
+  );
+var
+  I: Integer;   // loops thru known protocols
 begin
-  if (pos('http://',Path) = 1) or (pos('https://',Path) = 1) or
-     (pos('ftp://',Path) = 1) or (pos('www.',Path) = 1) or
-     (pos('%',Path) = 1) then
-    Result := True
-  else
-    Result := False;
+  // Scan array of protocols checking for a match with start of given URL
+  Result := False;
+  for I := Low(Protocols) to High(Protocols) do
+    if Pos(Protocols[I], SysUtils.LowerCase(URL)) = 1 then
+    begin
+      Result := True;
+      Exit;
+    end;
 end;
 
-function FileFolderPageWebExists(Path: String): Boolean;
+function IsPathExists(const Path: String): Boolean;
 var
   PathTemp : String;
 begin
-  PathTemp := RelativeToAbsolute(Path);
-  Result := ((FileExists(PathTemp)) or (SysUtils.DirectoryExists(PathTemp)) or
-             (IsUrl(PathTemp)));
-end;
-
-function AbsoluteToRelative(APath: String): string;
-var
-  TempPath: string;
-begin
-  TempPath := LowerCase(APath);
-  if (pos(ExcludeTrailingPathDelimiter(SUITE_WORKING_PATH),TempPath) <> 0) then
-    APath := StringReplace(APath, ExcludeTrailingPathDelimiter(SUITE_WORKING_PATH), CONST_PATH_ASUITE, [rfIgnoreCase,rfReplaceAll])
+  PathTemp := Config.Paths.RelativeToAbsolute(Path);
+  if TPath.IsUNCPath(PathTemp) then
+    Result := True
   else
-    if pos(SUITE_DRIVE,TempPath) <> 0 then
-      APath := StringReplace(APath, SUITE_DRIVE, CONST_PATH_DRIVE, [rfIgnoreCase,rfReplaceAll]);
-  Result := APath;
+    if IsValidURLProtocol(PathTemp) then
+      Result := True
+    else
+      Result := (FileExists(PathTemp)) or (SysUtils.DirectoryExists(PathTemp));
 end;
 
-function RelativeToAbsolute(APath: String): string;
-var
-  EnvVar: String;
+function AutoCompleteInEdit(Edit: TEdit): Boolean;
 begin
-  //CONST_PATH_ASuite = Launcher's path
-  APath := StringReplace(APath, CONST_PATH_ASUITE, SUITE_WORKING_PATH, [rfIgnoreCase,rfReplaceAll]);
-  //CONST_PATH_DRIVE = Launcher's Drive (ex. ASuite in H:\Software\asuite.exe, CONST_PATH_DRIVE is H: )
-  APath := StringReplace(APath, CONST_PATH_DRIVE, SUITE_DRIVE, [rfIgnoreCase,rfReplaceAll]);
-  //Remove double slash (\)
-  if Pos('\\', APath) <> 1 then
-    APath := StringReplace(APath, '\\', PathDelim, [rfReplaceAll]);
-  //Replace environment variable
-  if (pos('%',APath) <> 0) then
+  Result := (SHAutoComplete(Edit.Handle, SHACF_FILESYSTEM or SHACF_AUTOAPPEND_FORCE_ON) = 0);
+end;
+
+function ExpandEnvVars(const Str: string): string;
+var
+  BufSize: Integer; // size of expanded string
+begin
+  // Get required buffer size
+  BufSize := ExpandEnvironmentStrings(PChar(Str), nil, 0);
+  if BufSize > 0 then
   begin
-    EnvVar := APath;
-    Delete(EnvVar,1,pos('%',EnvVar));
-    EnvVar := Copy(EnvVar,1,pos('%',EnvVar) - 1);
-    APath := StringReplace(APath, '%' + EnvVar + '%', GetEnvironmentVariable(EnvVar), [rfIgnoreCase,rfReplaceAll]);
-  end;
-  //If APath exists, expand it in absolute path (to avoid the "..")
-  if (FileExists(APath) or SysUtils.DirectoryExists(APath)) and (Length(APath) <> 2) then
-    Result := ExpandFileName(APath)
+    // Read expanded string into result string
+    SetLength(Result, BufSize - 1);
+    ExpandEnvironmentStrings(PChar(Str), PChar(Result), BufSize);
+  end
   else
-    Result := APath;
+    // Trying to expand empty string
+    Result := '';
 end;
 
 procedure EjectDialog(Sender: TObject);
@@ -209,7 +225,7 @@ begin
   try
     with Registry do
     begin
-      RootKey := HKEY_LOCAL_MACHINE;
+      RootKey := HKEY_CURRENT_USER;
       if OpenKey('SOFTWARE\Microsoft\Windows\CurrentVersion\Run',False) then
         if Not(ValueExists(APP_NAME)) then
           WriteString(APP_NAME,(Application.ExeName));
@@ -227,7 +243,7 @@ begin
   try
     with Registry do
     begin
-      RootKey := HKEY_LOCAL_MACHINE;
+      RootKey := HKEY_CURRENT_USER;
       if OpenKey('SOFTWARE\Microsoft\Windows\CurrentVersion\Run',False) then
         DeleteValue(APP_NAME)
     end
@@ -241,9 +257,28 @@ var
   sPath: String;
 begin
   Result := Default;
-  sPath := IncludeTrailingBackslash(SUITE_PATH + sPath);
+  sPath := IncludeTrailingBackslash(Config.Paths.SuiteDrive + sPath);
   if SysUtils.DirectoryExists(sPath) then
     Result := sPath;
+end;
+
+function RegisterHotkeyEx(AId: Integer; AShortcut: TShortCut): Boolean;
+begin
+  Result := RegisterHotKey(frmMain.Handle, AId,
+                           GetHotKeyMod(AShortcut),
+                           GetHotKeyCode(AShortcut))
+end;
+
+function UnRegisterHotkeyEx(AId: Integer): Boolean;
+begin
+  Result := UnregisterHotKey(frmMain.Handle, AId);
+end;
+
+function IsHotkeyAvailable(AId: Integer; AShortcut: TShortcut): Boolean;
+begin
+  Result := RegisterHotkeyEx(AId, AShortcut);
+  if Result then
+    UnregisterHotKeyEx(AShortcut);
 end;
 
 end.

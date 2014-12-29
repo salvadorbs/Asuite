@@ -1,5 +1,5 @@
 {
-Copyright (C) 2006-2013 Matteo Salvi
+Copyright (C) 2006-2015 Matteo Salvi
 
 Website: http://www.salvadorsoftware.com/
 
@@ -22,76 +22,87 @@ unit Utility.TreeView;
 interface
 
 uses
-  Windows, SysUtils, ActiveX, VirtualTrees, Controls, ulCommonClasses, Kernel.Consts,
-  NodeDataTypes, Kernel.Enumerations, Classes, ShellApi, comobj, Utility.XML, DKLang;
+  Windows, SysUtils, ActiveX, VirtualTrees, Controls, Kernel.Consts, Graphics,
+  NodeDataTypes.Base, Kernel.Enumerations, Classes, ShellApi, comobj, DKLang,
+  Lists.Manager, Lists.Base, Kernel.Types, NodeDataTypes.Custom;
 
 { List, Menu, MRU }
 function  AddNodeInVST(Sender: TBaseVirtualTree;ParentNode: PVirtualNode;AType: TvTreeDataType): PVirtualNode;
-function  CreateListItem(Sender: TBaseVirtualTree;AType: TvTreeDataType): PBaseData;
+function  CreateListItem(Sender: TBaseVirtualTree;AType: TvTreeDataType): TvBaseNodeData;
+function  CreateNodeData(AType: TvTreeDataType): TvBaseNodeData;
 function  ClickOnButtonTree(Sender: TBaseVirtualTree): Boolean;
+function GetNodeParentName(const ASender: TBaseVirtualTree; const ANode: PVirtualNode): string;
+procedure RefreshList(const ATree: TBaseVirtualTree);
+function IsNodeExists(const ANode: PVirtualNode; const ATree: TBaseVirtualTree): Boolean;
+function ShowItemProperty(const AOwner: TComponent; const ATreeView: TBaseVirtualTree;
+                          const ANode: PVirtualNode; ANewNode: Boolean): Integer;
+
+{ Drag&Drop }
 procedure DragDropFiles(Sender: TBaseVirtualTree; DataObject: IDataObject;
-                        AttachMode: TVTNodeAttachMode; Mode: TDropMode);
+                        AttachMode: TVTNodeAttachMode);
 procedure GetDropFileProperty(Sender: TBaseVirtualTree; Node: pVirtualNode;
                        PathTemp: string);
-procedure DragDropText(Sender: TBaseVirtualTree;DataObject: IDataObject;
-                       AttachMode: TVTNodeAttachMode; Mode: TDropMode);
+function GetTextFromDataObject(DataObject: IDataObject): string;
+function DragDropText(Sender: TBaseVirtualTree;DataObject: IDataObject;
+                       AttachMode: TVTNodeAttachMode; Mode: TDropMode): Boolean;
+
+{ Get Data from Virtual TreeView }
 procedure GetFileListFromObj(const DataObj: IDataObject; FileList: TStringList);
-function  GetNodeDataEx(Node: PVirtualNode; TreeView, SearchTree, ListTree: TBaseVirtualTree): PBaseData;
-function  GetNodeDataSearch(NodeX: PVirtualNode; SearchTree, ListTree: TBaseVirtualTree): PBaseData;
-procedure RefreshList(Tree: TBaseVirtualTree);
+function  GetNodeDataEx(const ANode: PVirtualNode; const ATree: TBaseVirtualTree): PBaseData;
+//function  GetNodeDataSearch(const ANodeX: PVirtualNode; const ATree: TBaseVirtualTree): PBaseData;
+function GetNodeItemData(const ANode: PVirtualNode; const ATree: TBaseVirtualTree): TvBaseNodeData;
+function  GetListNodeFromSubTree(const ANodeX: PVirtualNode;const ATree: TBaseVirtualTree): PVirtualNode;
+
+{ Populate methods }
+procedure PopulateListTree(Tree: TVirtualStringTree);
+procedure PopulateSpecialTree(Tree: TVirtualStringTree;SList: TBaseItemsList;MaxItems: Integer);
+procedure PopulateVSTItemList(const ATree: TBaseVirtualTree;const ABaseItemsList: TBaseItemsList);
+
+{ Visual }
+procedure ChangeAllNodeHeight(const ASender: TBaseVirtualTree; const ANewNodeHeight: Integer);
+procedure ChangeTreeIconSize(const ASender: TVirtualStringTree; const ASmallIcon: Boolean);
+procedure CheckVisibleNodePathExe(const ASender: TBaseVirtualTree);
+procedure DrawSeparatorItem(const ASender: TBaseVirtualTree; const ANode: PVirtualNode;
+                            TargetCanvas: TCanvas; const CellRect: TRect; var DefaultDraw: Boolean);
 
 type
 
   { TIterateSubtreeProcs }
 
   TIterateSubtreeProcs = class //Class for IterateSubtree
-    procedure FindNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
-                       Data: Pointer; var Abort: Boolean);
-    procedure GMFindNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
-                       Data: Pointer; var Abort: Boolean);
-    procedure BeforeDeleteNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
+    class procedure BeforeDeleteNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
                                Data: Pointer; var Abort: Boolean);
-    procedure ActionsOnShutdown(Sender: TBaseVirtualTree; Node: PVirtualNode;
+    class procedure ActionsOnShutdown(Sender: TBaseVirtualTree; Node: PVirtualNode;
                                 Data: Pointer; var Abort: Boolean);
-    procedure IncNumberNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
+    class procedure AddNodeInTreeFromMainTree(Sender: TBaseVirtualTree; Node: PVirtualNode;
+                                        Data: Pointer; var Abort: Boolean);
+    class procedure FindNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
+                       Data: Pointer; var Abort: Boolean);
+    class procedure IncNumberNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
                             Data: Pointer; var Abort: Boolean);
-    procedure UpdateListItemCount(Sender: TBaseVirtualTree; Node: PVirtualNode;
+    class procedure UpdateListItemCount(Sender: TBaseVirtualTree; Node: PVirtualNode;
                                   Data: Pointer; var Abort: Boolean);
+    class procedure UpdateNodeHeight(Sender: TBaseVirtualTree; Node: PVirtualNode;
+                               Data: Pointer; var Abort: Boolean);
   end;
-
-
-  TListStats = record
-      SwCount      : Integer;
-      CatCount     : Integer;
-    end;
-
-var
-  MRUList : TMRUList;
-  MFUList : TMFUList;
-  SearchType : TSearchType;
-  IterateSubTreeProcs : TIterateSubtreeProcs;
-  ImportOldListProcs  : TImportOldListProcs;
-  StartupItemList,                        //Software in StartUp list
-  ShutdownItemList    : TAutorunItemList; //Software in Shutdown list
-  SchedulerItemList   : TNodeDataList;
-  HotKeyApp : THotkeyList;
-  ListStats : TListStats;     //Stats
 
 implementation
 
 uses
-  Menus, Utility.System, DataModules.Images, Forms.Main, Database, Utility.FileFolder,
-  Forms.GraphicMenu, Forms.PropertySeparator;
+  Utility.System, DataModules.Images, Forms.Main, AppConfig.Main, NodeDataTypes.Files,
+  Utility.FileFolder, Forms.PropertySeparator, DataModules.TrayMenu,
+  NodeDataTypes.Category, NodeDataTypes.Separator, ulCommonUtils,
+  Forms.PropertyItem;
 
 function AddNodeInVST(Sender: TBaseVirtualTree;ParentNode: PVirtualNode;AType: TvTreeDataType): PVirtualNode;
 var
-  NodeData: PBaseData;
+  NodeData: TvBaseNodeData;
 begin
   Result := nil;
   if Assigned(ParentNode) then
   begin
-    NodeData := Sender.GetNodeData(ParentNode);
-    case NodeData.Data.DataType of
+    NodeData := GetNodeItemData(ParentNode, Sender);
+    case NodeData.DataType of
       //if category then expand and add subnode
       vtdtCategory :
       begin
@@ -108,50 +119,65 @@ begin
     Result := Sender.AddChild(Sender.RootNode, CreateNodeData(AType));
 end;
 
-function CreateListItem(Sender: TBaseVirtualTree;AType: TvTreeDataType): PBaseData;
+function CreateListItem(Sender: TBaseVirtualTree;AType: TvTreeDataType): TvBaseNodeData;
 var
   CurrNode, ChildNode  : PVirtualNode;
-  NodeData             : PBaseData;
+  NodeData             : TvBaseNodeData;
   FolderPath, tempName : String;
 begin
-  Result     := nil;
   FolderPath := '';
-  CurrNode   := Sender.FocusedNode;
-  ChildNode  := AddNodeInVST(Sender, CurrNode, AType);
-  //Set ChildNode's pNode and name (temporary)
-  NodeData            := Sender.GetNodeData(ChildNode);
-  NodeData.Data.pNode := ChildNode;
-  NodeData.Data.Name := DKLangConstW('msgNoName') + IntToStr(Sender.TotalCount);
-  //Refresh List
-  RefreshList(frmMain.vstList);
-  //ShowPropertyItem
-  //Separator
-  if AType = vtdtSeparator then
-  begin
-    if (TfrmPropertySeparator.Edit(Sender, NodeData) <> mrOK) then
-      Sender.DeleteNode(ChildNode);
-  end //Other types
-  else begin
-    if AType = vtdtFolder then
+  Result     := nil;
+  NodeData   := nil;
+  try
+    CurrNode   := Sender.FocusedNode;
+    ChildNode  := AddNodeInVST(Sender, CurrNode, AType);
+    //Set ChildNode's pNode and name (temporary)
+    NodeData       := GetNodeItemData(ChildNode, Sender);
+    NodeData.pNode := ChildNode;
+    NodeData.Name  := DKLangConstW('msgNoName') + IntToStr(Sender.TotalCount);
+    //ShowPropertyItem
+    //Separator
+    if AType = vtdtSeparator then
     begin
-      FolderPath := BrowseForFolder('',SUITE_WORKING_PATH);
-      if FolderPath <> '' then
-      begin
-        tempName := ExtractDirectoryName(FolderPath + PathDelim);
-        if tempName <> '' then
-          NodeData.Data.Name := tempName;
-        TvFileNodeData(NodeData.Data).PathExe := AbsoluteToRelative(FolderPath + PathDelim);
-      end
-      else begin
+      if (TfrmPropertySeparator.Execute(Sender, NodeData) <> mrOK) then
         Sender.DeleteNode(ChildNode);
-        Exit;
+    end //Other types
+    else begin
+      if AType = vtdtFolder then
+      begin
+        FolderPath := BrowseForFolder(Config.Paths.SuitePathWorking);
+        if FolderPath <> '' then
+        begin
+          tempName := ExtractDirectoryName(FolderPath + PathDelim);
+          if tempName <> '' then
+            NodeData.Name := tempName;
+          TvFileNodeData(NodeData).PathExe := Config.Paths.AbsoluteToRelative(FolderPath + PathDelim);
+        end
+        else begin
+          Sender.DeleteNode(ChildNode);
+          Exit;
+        end;
       end;
+      if (ShowItemProperty(nil, Sender, ChildNode, True) <> mrOK) then
+        Sender.DeleteNode(ChildNode);
     end;
-    if (frmMain.ShowItemProperty(Sender, ChildNode) <> mrOK) then
-      Sender.DeleteNode(ChildNode);
+  finally
+    if Assigned(NodeData) then
+      Result := NodeData;
+    RefreshList(Sender);
   end;
-  if Assigned(NodeData) then
-    Result := NodeData;
+end;
+
+function CreateNodeData(AType: TvTreeDataType): TvBaseNodeData;
+begin
+  case AType of
+    vtdtCategory  : Result := TvCategoryNodeData.Create;
+    vtdtFile      : Result := TvFileNodeData.Create(vtdtFile);
+    vtdtFolder    : Result := TvFileNodeData.Create(vtdtFolder);
+    vtdtSeparator : Result := TvSeparatorNodeData.Create;
+  else
+    Result := nil;
+  end;
 end;
 
 function ClickOnButtonTree(Sender: TBaseVirtualTree): Boolean;
@@ -167,8 +193,216 @@ begin
     Result := True;
 end;
 
+procedure ChangeAllNodeHeight(const ASender: TBaseVirtualTree; const ANewNodeHeight: Integer);
+begin
+  ASender.IterateSubtree(nil, TIterateSubTreeProcs.UpdateNodeHeight, @ANewNodeHeight);
+end;
+
+procedure ChangeTreeIconSize(const ASender: TVirtualStringTree; const ASmallIcon: Boolean);
+begin
+  //Change default node height and imagelist based of IconSize
+  if ASmallIcon then
+  begin
+    ASender.DefaultNodeHeight := 18;
+    ASender.Images := dmImages.IcoImages;
+  end
+  else begin
+    ASender.DefaultNodeHeight := 36;
+    ASender.Images := dmImages.LargeIcoImages;
+  end;
+  ASender.ScrollBarOptions.VerticalIncrement := ASender.DefaultNodeHeight;
+end;
+
+procedure CheckVisibleNodePathExe(const ASender: TBaseVirtualTree);
+var
+  Node: PVirtualNode;
+  NodeData: TvBaseNodeData;
+begin
+  Node := ASender.GetFirstVisible;
+  while Assigned(Node) do
+  begin
+    //Get data and check if AbsoluteExe path exists
+    NodeData := GetNodeItemData(Node, ASender);
+//    if Assigned(NodeData) then
+//      if NodeData.DataType = vtdtFile then
+//        TvFileNodeData(NodeData).CheckPathExe;
+    //Next visible node
+    Node := ASender.GetNextVisible(Node);
+  end;
+end;
+
+procedure DrawSeparatorItem(const ASender: TBaseVirtualTree; const ANode: PVirtualNode;
+                            TargetCanvas: TCanvas; const CellRect: TRect; var DefaultDraw: Boolean);
+var
+  NodeData: TvBaseNodeData;
+begin
+  NodeData := GetNodeDataEx(ANode, ASender).Data;
+  if Assigned(NodeData) then
+  begin
+    if NodeData.DataType = vtdtSeparator then
+    begin
+      //Resize CellRect.Width, if necessary
+      if ASender.ClientWidth < CellRect.Width then
+        CellRect.Width := ASender.ClientWidth - 12;
+      //Draw captioned separator and disable Tree's Draw
+      dmTrayMenu.DoDrawCaptionedSeparator(ASender,TargetCanvas,CellRect,NodeData.Name);
+      DefaultDraw := False;
+    end;
+  end;
+end;
+
+function GetNodeParentName(const ASender: TBaseVirtualTree; const ANode: PVirtualNode): string;
+var
+  CatData: TvBaseNodeData;
+begin
+  Result := '';
+  if (ANode.Parent <> Config.MainTree.RootNode) then
+  begin
+    CatData := GetNodeItemData(ANode.Parent, Config.MainTree);
+    if Assigned(CatData) then
+      Result  := CatData.Name;
+  end
+  else
+    Result := '<Root>';
+end;
+
+procedure PopulateListTree(Tree: TVirtualStringTree);
+begin
+  Tree.Clear;
+  Tree.BeginUpdate;
+  try
+    //Populate and get icons from first level
+    Config.MainTree.IterateSubtree(nil, TIterateSubtreeProcs.AddNodeInTreeFromMainTree, @Tree);
+  finally
+    Tree.EndUpdate;
+    //Check nodes path
+    CheckVisibleNodePathExe(Tree);
+  end;
+end;
+
+procedure PopulateSpecialTree(Tree: TVirtualStringTree;
+  SList: TBaseItemsList; MaxItems: Integer);
+var
+  NewNodeData  : PTreeDataX;
+  NewNode      : PVirtualNode;
+  I, ItemCount : Integer;
+begin
+  Tree.Clear;
+  Tree.BeginUpdate;
+  try
+    //Change node height and imagelist
+    ChangeTreeIconSize(Tree, False);
+    //Set limit based on MaxItems or SList.Count
+    if MaxItems < SList.Count then
+      ItemCount := MaxItems
+    else
+      ItemCount := SList.Count;
+    for I := 0 to ItemCount - 1 do
+    begin
+      if Assigned(SList[I]) then
+      begin
+        //Create MenuItem
+        if Assigned(SList[I]) then
+        begin
+          NewNode     := Tree.AddChild(nil);
+          NewNodeData := Tree.GetNodeData(NewNode);
+          //References
+          NewNodeData.pNodeList := TvCustomRealNodeData(SList[I]).pNode;
+        end
+        else
+          SList.Delete(I);
+      end;
+    end;
+  finally
+    Tree.EndUpdate;
+    Tree.ValidateNode(Tree.RootNode, True);
+    //Check nodes path
+    //TODO: Fix it
+//ImagesDM.GetChildNodesIcons(Tree, Tree.RootNode, isAny);
+    CheckVisibleNodePathExe(Tree);
+  end;
+end;
+
+procedure PopulateVSTItemList(const ATree: TBaseVirtualTree;const ABaseItemsList: TBaseItemsList);
+var
+  I: Integer;
+  CurrentFileData : TvCustomRealNodeData;
+  NewNode         : PVirtualNode;
+  NewNodeData     : PTreeDataX;
+begin
+  ATree.BeginUpdate;
+  try
+    for I := 0 to ABaseItemsList.Count - 1 do
+    begin
+      CurrentFileData := ABaseItemsList[I];
+      if Assigned(CurrentFileData) then
+      begin
+        NewNode := ATree.AddChild(ATree.RootNode);
+        NewNodeData := ATree.GetNodeData(NewNode);
+        //Set pointers
+        NewNodeData.pNodeList := CurrentFileData.PNode;
+      end;
+    end;
+    //Check nodes path and get icons
+    CheckVisibleNodePathExe(ATree);
+    //TODO: Fix it
+//ImagesDM.GetChildNodesIcons(ATree, ATree.RootNode, isAny);
+    //Auto columns width
+    TVirtualStringTree(ATree).Header.AutoFitColumns;
+  finally
+    ATree.EndUpdate;
+  end;
+end;
+
+procedure RefreshList(const ATree: TBaseVirtualTree);
+begin
+  DBManager.SaveData(Config.MainTree, Config.ASuiteState = lsStartUp);
+  //Check paths of only visible nodes
+  if Assigned(ATree) then
+    CheckVisibleNodePathExe(ATree);
+end;
+
+function IsNodeExists(const ANode: PVirtualNode; const ATree: TBaseVirtualTree): Boolean;
+var
+  CurrentNode: PVirtualNode;
+begin
+  Result := False;
+  //Cycle while to find FNode in MainTree
+  CurrentNode := ATree.GetFirst;
+  while Assigned(CurrentNode) do
+  begin
+    //If CurrentNode is FNode, result true else continue cycle
+    if CurrentNode = ANode then
+      Exit(True);
+    CurrentNode := ATree.GetNext(CurrentNode);
+  end;
+end;
+
+function ShowItemProperty(const AOwner: TComponent; const ATreeView: TBaseVirtualTree;
+                          const ANode: PVirtualNode; ANewNode: Boolean): Integer;
+var
+  BaseNode: TvBaseNodeData;
+begin
+  Result := mrCancel;
+  if Assigned(ANode) then
+  begin
+    BaseNode := GetNodeItemData(ANode, ATreeView);
+    if Assigned(BaseNode) then
+    begin
+      if BaseNode.DataType <> vtdtSeparator then
+        Result := TfrmPropertyItem.Execute(AOwner, TvCustomRealNodeData(BaseNode))
+      else
+        Result := TfrmPropertySeparator.Execute(AOwner, BaseNode);
+      ATreeView.InvalidateNode(ANode);
+
+      if Not(ANewNode) then
+        RefreshList(ATreeView);
+    end;
+  end;
+end;
+
 procedure DragDropFiles(Sender: TBaseVirtualTree; DataObject: IDataObject;
-                        AttachMode: TVTNodeAttachMode; Mode: TDropMode);
+                        AttachMode: TVTNodeAttachMode);
 var
   FileNames : TStringList;
   I         : Integer;
@@ -182,7 +416,7 @@ begin
     begin
       //Add new node
       if Assigned(Sender.DropTargetNode) then
-        Node := Sender.InsertNode(Sender.DropTargetNode, AttachMode,TvFileNodeData.Create(vtdtFile))
+        Node := Sender.InsertNode(Sender.DropTargetNode, AttachMode, TvFileNodeData.Create(vtdtFile))
       else
         Node := Sender.AddChild(nil,TvFileNodeData.Create(vtdtFile));
       //Set node properties
@@ -198,34 +432,32 @@ var
   NodeData: PBaseData;
   FileNodeData: TvFileNodeData;
 begin
-  NodeData := PBaseData(Sender.GetNodeData(Node));
+  NodeData := GetNodeDataEx(Node, Sender);
   FileNodeData := TvFileNodeData(NodeData.Data);
   //Set some node record's variables
   FileNodeData.Name := ChangeFileExt(ExtractFileName(PathTemp), '');
   if LowerCase(ExtractFileExt(PathTemp)) = EXT_LNK then
   begin
     //Shortcut
-    FileNodeData.PathExe    := AbsoluteToRelative(GetShortcutTarget(PathTemp, sfPathExe));
-    FileNodeData.Parameters := AbsoluteToRelative(GetShortcutTarget(PathTemp, sfParameter));
-    FileNodeData.WorkingDir := AbsoluteToRelative(GetShortcutTarget(PathTemp, sfWorkingDir));
+    FileNodeData.PathExe    := Config.Paths.AbsoluteToRelative(GetShortcutTarget(PathTemp, sfPathExe));
+    FileNodeData.Parameters := Config.Paths.AbsoluteToRelative(GetShortcutTarget(PathTemp, sfParameter));
+    FileNodeData.WorkingDir := Config.Paths.AbsoluteToRelative(GetShortcutTarget(PathTemp, sfWorkingDir));
   end
   else //Normal file
-    FileNodeData.PathExe := AbsoluteToRelative(PathTemp);
+    FileNodeData.PathExe := Config.Paths.AbsoluteToRelative(PathTemp);
   //If it is a directory, use folder icon
   if DirectoryExists(FileNodeData.PathAbsoluteExe) then
-    FileNodeData.PathIcon := AbsoluteToRelative(SUITE_SMALLICONS_PATH + FILEICON_Folder);
+    FileNodeData.PathIcon := Config.Paths.AbsoluteToRelative(Config.Paths.SuitePathIconsTree + FILEICON_Folder);
   FileNodeData.DataType   := vtdtFile;
-  FileNodeData.ImageIndex := ImagesDM.GetIconIndex(FileNodeData);
+//  FileNodeData.CheckPathExe;
+//  ImagesDM.GetNodeImageIndex(FileNodeData, isAny);
   NodeData.Data.pNode     := Node;
 end;
 
-procedure DragDropText(Sender: TBaseVirtualTree;DataObject: IDataObject;
-                       AttachMode: TVTNodeAttachMode; Mode: TDropMode);
+function GetTextFromDataObject(DataObject: IDataObject): string;
 var
-  Node     : PVirtualNode;
-  NodeData : PBaseData;
-  Medium   : TStgMedium;
-  PText    : PAnsiChar;
+  Medium : TStgMedium;
+  PText  : PChar;
 
   function MakeFormatEtc(const Fmt: TClipFormat): TFormatEtc;
   begin
@@ -237,36 +469,49 @@ var
   end;
 
 begin
-  //Add node
-  if Assigned(Sender.DropTargetNode) then
-    Node := Sender.InsertNode(Sender.DropTargetNode, AttachMode, TvFileNodeData.Create(vtdtFile))
-  else
-    Node := Sender.AddChild(nil,TvFileNodeData.Create(vtdtFile));
-  NodeData := Sender.GetNodeData(Node);
-  //Set node properties
-  NodeData.Data.pNode := Node;
-  with TvFileNodeData(NodeData.Data) do
+  Result := '';
+  if DataObject.GetData(MakeFormatEtc(CF_UNICODETEXT), Medium) = S_OK then
   begin
-    DataType   := vtdtFile;
-    Name       := 'Link';
-    //Get text from DataObject
-    if DataObject.GetData(MakeFormatEtc(CF_TEXT), Medium) = S_OK then
-    begin
-      Assert(Medium.tymed = MakeFormatEtc(CF_TEXT).tymed);
+    Assert(Medium.tymed = MakeFormatEtc(CF_UNICODETEXT).tymed);
+    try
+      PText := GlobalLock(Medium.hGlobal);
       try
-        PText := GlobalLock(Medium.hGlobal);
-        try
-          PathExe := string(PText);
-        finally
-          GlobalUnlock(Medium.hGlobal);
-        end;
+        Result := string(PText);
       finally
-        ReleaseStgMedium(Medium);
+        GlobalUnlock(Medium.hGlobal);
       end;
+    finally
+      ReleaseStgMedium(Medium);
     end;
+  end;
+end;
+
+function DragDropText(Sender: TBaseVirtualTree;DataObject: IDataObject;
+                       AttachMode: TVTNodeAttachMode; Mode: TDropMode): Boolean;
+var
+  Node     : PVirtualNode;
+  NodeData : TvFileNodeData;
+  sPath    : string;
+begin
+  sPath  := GetTextFromDataObject(DataObject);
+  Result := sPath <> '';
+  if Result then
+  begin
+    //Add node
+    if Assigned(Sender.DropTargetNode) then
+      Node := Sender.InsertNode(Sender.DropTargetNode, AttachMode, TvFileNodeData.Create(vtdtFile))
+    else
+      Node := Sender.AddChild(nil,TvFileNodeData.Create(vtdtFile));
+    NodeData := TvFileNodeData(GetNodeItemData(Node, Sender));
+    //Set node properties
+    NodeData.pNode      := Node;
+    NodeData.DataType   := vtdtFile;
+    NodeData.Name       := 'Link';
+    //Get text from DataObject
+    NodeData.PathExe    := sPath;
     //Icon
-    PathIcon   := AbsoluteToRelative(SUITE_SMALLICONS_PATH + FILEICON_Url);
-    ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(NodeData.Data));
+    NodeData.PathIcon   := Config.Paths.AbsoluteToRelative(Config.Paths.SuitePathIconsTree + FILEICON_Url);
+//    ImagesDM.GetNodeImageIndex(NodeData, isAny);
   end;
 end;
 
@@ -307,161 +552,213 @@ begin
   end;
 end;
 
-function GetNodeDataEx(Node: PVirtualNode; TreeView, SearchTree, ListTree: TBaseVirtualTree): PBaseData;
+function GetNodeDataEx(const ANode: PVirtualNode; const ATree: TBaseVirtualTree): PBaseData;
+var
+  ListNode: PVirtualNode;
 begin
-  if (TreeView = ListTree) then //List Treeview
-    Result := TreeView.GetNodeData(Node)
-  else //Search Treeview
-    Result := GetNodeDataSearch(Node, SearchTree, ListTree);
+  //Check if ATree is MainTree (frmMain.vstList), to get nodedata from the right Tree
+  Result := nil;
+  if ATree <> Config.MainTree then
+  begin
+    //If node is from another Tree, we must find the mainnode from MainTree
+    ListNode := GetListNodeFromSubTree(ANode, ATree);
+    if Assigned(ListNode) then
+      Result := Config.MainTree.GetNodeData(ListNode);
+  end
+  else
+    Result := Config.MainTree.GetNodeData(ANode);
+
+//  Assert(Assigned(Result), 'Result is not assigned');
 end;
 
-function GetNodeDataSearch(NodeX: PVirtualNode; SearchTree, ListTree: TBaseVirtualTree): PBaseData;
+function GetNodeItemData(const ANode: PVirtualNode; const ATree: TBaseVirtualTree): TvBaseNodeData;
+var
+  BaseData: PBaseData;
+begin
+  Result := nil;
+  BaseData := GetNodeDataEx(ANode, ATree);
+  if Assigned(BaseData) then
+    Result := BaseData.Data;
+end;
+
+//function GetNodeDataSearch(const ANodeX: PVirtualNode; const ATree: TBaseVirtualTree): PBaseData;
+//var
+//  ListNode  : PVirtualNode;
+//begin
+//  Result := nil;
+//  ListNode := GetListNodeFromSubTree(ANodeX, ATree);
+//  if Assigned(ListNode) then
+//    Result := Config.MainTree.GetNodeData(ListNode);
+//end;
+
+function GetListNodeFromSubTree(const ANodeX: PVirtualNode;const ATree: TBaseVirtualTree): PVirtualNode;
 var
   NodeDataX : PTreeDataX;
 begin
   Result := nil;
-  NodeDataX := SearchTree.GetNodeData(NodeX);
+  NodeDataX := ATree.GetNodeData(ANodeX);
   if Assigned(NodeDataX) then
-    Result  := ListTree.GetNodeData(NodeDataX.pNodeList);
+    Result := NodeDataX.pNodeList;
 end;
 
-procedure RefreshList(Tree: TBaseVirtualTree);
-begin
-  DBManager.SaveData(Tree);
-end;
-
-//------------------------------------------------------------------------------
-
-procedure TIterateSubtreeProcs.FindNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
-                            Data: Pointer; var Abort: Boolean);
+class procedure TIterateSubtreeProcs.AddNodeInTreeFromMainTree(
+  Sender: TBaseVirtualTree; Node: PVirtualNode; Data: Pointer;
+  var Abort: Boolean);
 var
-  FilterData, CurrentFileData : TvFileNodeData;
-  FoundNodeData : PTreeDataX;
-  FoundNode     : PVirtualNode;
-  Found         : Boolean;
-begin
-  FilterData      := Data;
-  CurrentFileData := TvFileNodeData(PBaseData(Sender.GetNodeData(Node)).Data);
-  if (CurrentFileData.DataType in [vtdtFile,vtdtFolder]) then
+  NodeData, ParentNodeData : PBaseData;
+  NewNode     : PVirtualNode;
+  Tree: TVirtualStringTree;
+
+  function CreateData(ANode: PVirtualNode): rTreeDataX;
+  var
+    NodeData: rTreeDataX;
   begin
-    Found := False;
-    case SearchType of
-      stName       : Found := Pos(LowerCase(FilterData.Name),LowerCase(CurrentFileData.Name)) <> 0;
-      stPathExe    : Found := Pos(LowerCase(FilterData.PathExe),LowerCase(CurrentFileData.PathExe)) <> 0;
-      stPathIcon   : Found := Pos(LowerCase(FilterData.PathIcon),LowerCase(CurrentFileData.PathIcon)) <> 0;
-      stWorkingDir : Found := Pos(LowerCase(FilterData.WorkingDir),LowerCase(CurrentFileData.WorkingDir)) <> 0;
-      stParameters : Found := Pos(LowerCase(FilterData.Parameters),LowerCase(CurrentFileData.Parameters)) <> 0;
-    end;
-    if Found then
+    NodeData.pNodeList := ANode;
+    Result := NodeData;
+  end;
+
+begin
+  Tree := TVirtualStringTree(Data^);
+  if Assigned(Tree) then
+  begin
+    //Get nodadata from sender (it is frmMain.vstList)
+    NodeData := Sender.GetNodeData(Node);
+    if Assigned(Node) then
     begin
-      FoundNode               := frmMain.vstSearch.AddChild(nil);
-      FoundNodeData           := frmMain.vstSearch.GetNodeData(FoundNode);
-      //Get node's image, if it hasn't
-      if CurrentFileData.ImageIndex = -1 then
-        CurrentFileData.ImageIndex := ImagesDM.GetIconIndex(CurrentFileData);
-      FoundNodeData.pNodeList := Node;
+      //Add new child
+      if (Node.Parent <> Sender.RootNode) then
+      begin
+        ParentNodeData  := Sender.GetNodeData(Node.Parent);
+        NewNode         := Tree.AddChild(ParentNodeData.MenuNode, PTreeDataX(CreateData(Node)));
+      end
+      else
+        NewNode         := Tree.AddChild(nil, PTreeDataX(CreateData(Node)));
+      NodeData.MenuNode := NewNode;
+      if NodeData.Data.HideFromMenu then
+        Tree.IsVisible[NewNode] := False;
     end;
   end;
 end;
 
-procedure TIterateSubtreeProcs.GMFindNode(Sender: TBaseVirtualTree;
-  Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
-var
-  FilterData, CurrentFileData : TvFileNodeData;
-  FoundNodeData : PTreeDataX;
-  FoundNode     : PVirtualNode;
-  Found         : Boolean;
-begin
-  FilterData      := Data;
-  CurrentFileData := TvFileNodeData(PBaseData(Sender.GetNodeData(Node)).Data);
-  if (CurrentFileData.DataType in [vtdtFile,vtdtFolder]) then
-  begin
-    Found := False;
-    case SearchType of
-      stName       : Found := Pos(LowerCase(FilterData.Name),LowerCase(CurrentFileData.Name)) <> 0;
-      stPathExe    : Found := Pos(LowerCase(FilterData.PathExe),LowerCase(CurrentFileData.PathExe)) <> 0;
-      stPathIcon   : Found := Pos(LowerCase(FilterData.PathIcon),LowerCase(CurrentFileData.PathIcon)) <> 0;
-      stWorkingDir : Found := Pos(LowerCase(FilterData.WorkingDir),LowerCase(CurrentFileData.WorkingDir)) <> 0;
-      stParameters : Found := Pos(LowerCase(FilterData.Parameters),LowerCase(CurrentFileData.Parameters)) <> 0;
-    end;
-    if Found then
-    begin
-      FoundNode     := frmGraphicMenu.vstSearch.AddChild(nil);
-      FoundNodeData := frmGraphicMenu.vstSearch.GetNodeData(FoundNode);
-      //Get node's image, if it hasn't
-      if CurrentFileData.ImageLargeIndex = -1 then
-        CurrentFileData.ImageLargeIndex := ImagesDM.GetIconIndex(CurrentFileData, True);
-      FoundNodeData.pNodeList := Node;
-    end;
-  end;
-end;
-
-procedure TIterateSubtreeProcs.BeforeDeleteNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
+class procedure TIterateSubtreeProcs.BeforeDeleteNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
                            Data: Pointer; var Abort: Boolean);
 var
   NodeData : TvCustomRealNodeData;
 begin
-  NodeData := TvCustomRealNodeData(PBaseData(Sender.GetNodeData(Node)).Data);
+  NodeData := TvCustomRealNodeData(GetNodeItemData(Node, Sender));
   if (NodeData.DataType <> vtdtSeparator) then
   begin
-    //Delete cache icon
-    NodeData.DeleteCacheIcon;
     //Delete desktop's shortcut
     if NodeData is TvFileNodeData then
       TvFileNodeData(NodeData).DeleteShortcutFile;
     //Remove item from special lists
-    MRUList.Remove(NodeData);
-    MFUList.Remove(NodeData);
+    ListManager.MRUList.RemoveItem(NodeData);
+    ListManager.MFUList.RemoveItem(NodeData);
     //Remove item from hotkey list
-    if NodeData.Hotkey then
-      HotKeyApp.Remove(NodeData);
+    if NodeData.ActiveHotkey then
+      ListManager.HotKeyItemList.RemoveItem(NodeData);
     //Remove item from scheduler list
     if NodeData.SchMode <> smDisabled then
-      SchedulerItemList.Remove(NodeData);
+      ListManager.SchedulerItemList.RemoveItem(NodeData);
     if (NodeData.Autorun in [atAlwaysOnStart, atSingleInstance]) then
-      StartupItemList.Remove(NodeData);
+      ListManager.StartupItemList.RemoveItem(NodeData);
     if (NodeData.Autorun in [atAlwaysOnClose]) then
-      ShutdownItemList.Remove(NodeData);
+      ListManager.ShutdownItemList.RemoveItem(NodeData);
   end;
-  //Remove item from sqlite database
-  DBManager.DeleteItem(NodeData.ID);
 end;
 
-procedure TIterateSubtreeProcs.ActionsOnShutdown(Sender: TBaseVirtualTree; Node: PVirtualNode;
+class procedure TIterateSubtreeProcs.FindNode(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
+var
+  LauncherSearch  : ^TLauncherSearch;
+  CurrentFileData : TvFileNodeData;
+  SearchNodeData  : PTreeDataX;
+  SearchNode      : PVirtualNode;
+  Found           : Boolean;
+begin
+  LauncherSearch  := Data;
+  CurrentFileData := TvFileNodeData(GetNodeItemData(Node, Sender));
+  if Assigned(CurrentFileData) then
+    if (CurrentFileData.DataType in [vtdtFile,vtdtFolder]) then
+    begin
+      Found := False;
+      //Search Keyword in user specified field
+      case LauncherSearch.SearchType of
+        stName       : Found := Pos(LauncherSearch.Keyword,LowerCase(CurrentFileData.Name)) <> 0;
+        stPathExe    : Found := Pos(LauncherSearch.Keyword,LowerCase(CurrentFileData.PathExe)) <> 0;
+        stPathIcon   : Found := Pos(LauncherSearch.Keyword,LowerCase(CurrentFileData.PathIcon)) <> 0;
+        stWorkingDir : Found := Pos(LauncherSearch.Keyword,LowerCase(CurrentFileData.WorkingDir)) <> 0;
+        stParameters : Found := Pos(LauncherSearch.Keyword,LowerCase(CurrentFileData.Parameters)) <> 0;
+      end;
+      //If found, add new node in LauncherSearch.Tree
+      if Found then
+      begin
+        SearchNode     := LauncherSearch.Tree.AddChild(nil);
+        SearchNodeData := LauncherSearch.Tree.GetNodeData(SearchNode);
+        SearchNodeData.pNodeList := Node;
+      end;
+    end;
+end;
+
+class procedure TIterateSubtreeProcs.ActionsOnShutdown(Sender: TBaseVirtualTree; Node: PVirtualNode;
                            Data: Pointer; var Abort: Boolean);
 var
-  NodeData: PBaseData;
+  NodeData: TvBaseNodeData;
 begin
-  NodeData := Sender.GetNodeData(Node);
-  if NodeData.Data.DataType = vtdtFile then
+  NodeData := GetNodeItemData(Node, Sender);
+  if NodeData.DataType = vtdtFile then
   begin
     //Delete shortcut on shutdown
-    if TvFileNodeData(NodeData.Data).ShortcutDesktop then
-      DeleteShortcutOnDesktop(NodeData.Data.Name + EXT_LNK);
+    if TvFileNodeData(NodeData).ShortcutDesktop then
+      DeleteShortcutOnDesktop(NodeData.Name + EXT_LNK);
   end;
 end;
 
-procedure TIterateSubtreeProcs.IncNumberNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
+class procedure TIterateSubtreeProcs.IncNumberNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
                                              Data: Pointer; var Abort: Boolean);
 begin
   if (Node.CheckState = csCheckedNormal) or (Node.CheckState = csMixedNormal) then
     Inc(Integer(Data^));
 end;
 
-procedure TIterateSubtreeProcs.UpdateListItemCount(Sender: TBaseVirtualTree;
+class procedure TIterateSubtreeProcs.UpdateListItemCount(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
 var
-  NodeData :PBaseData;
+  NodeData  : TvBaseNodeData;
+  ListStats : PListStats;
 begin
+  ListStats := Data;
   if Assigned(Node) then
   begin
-    NodeData := frmMain.vstList.GetNodeData(Node);
+    NodeData := GetNodeItemData(Node, Config.MainTree);
     //Count Softwares and Categories
-    case NodeData^.Data.DataType of
+    case NodeData.DataType of
       vtdtCategory : Inc(ListStats.CatCount);
       vtdtFile, vtdtFolder : Inc(ListStats.SwCount);
       //vtdtSeparator
     end;
+  end;
+end;
+
+class procedure TIterateSubtreeProcs.UpdateNodeHeight(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
+var
+  NodeData: TvBaseNodeData;
+  SubNode: PVirtualNode;
+begin
+  //Get NodeData (need it because we must know DataType)
+  if Sender = Config.MainTree then
+    SubNode := Node
+  else //Else get right node from MainTree
+    SubNode := GetListNodeFromSubTree(Node, Sender);
+  NodeData  := GetNodeItemData(SubNode, Config.MainTree);
+  if Assigned(NodeData) then
+  begin
+    //Change node height
+    if NodeData.DataType = vtdtSeparator then
+      Sender.NodeHeight[Node] := 18
+    else
+      Sender.NodeHeight[Node] := Integer(Data^);
   end;
 end;
 

@@ -22,8 +22,8 @@ unit Forms.PropertySeparator;
 interface
 
 uses
-  SysUtils, Classes, Controls, Forms, Dialogs, NodeDataTypes, StdCtrls, ExtCtrls,
-  DKLang;
+  SysUtils, Classes, Controls, Forms, Dialogs, NodeDataTypes.Base, StdCtrls, ExtCtrls,
+  DKLang, Kernel.Types;
 
 type
   TfrmPropertySeparator = class(TForm)
@@ -39,7 +39,7 @@ type
     procedure SaveNodeData(AData: TvBaseNodeData);
   public
     { Public declarations }
-    class function Edit(AOwner: TComponent; NodeData: PBaseData): TModalResult;
+    class function Execute(AOwner: TComponent; NodeData: TvBaseNodeData): TModalResult;
   end;
 
 var
@@ -48,25 +48,25 @@ var
 implementation
 
 uses
-  Kernel.Consts, Forms.Main;
+  Forms.Main;
 
 {$R *.dfm}
 
-class function TfrmPropertySeparator.Edit(AOwner: TComponent; NodeData: PBaseData): TModalResult;
+class function TfrmPropertySeparator.Execute(AOwner: TComponent; NodeData: TvBaseNodeData): TModalResult;
+var
+  frm: TfrmPropertySeparator;
 begin
   Result := mrCancel;
-  if Assigned(NodeData) then
-    with TfrmPropertySeparator.Create(AOwner) do
-      try
-        LoadNodeData(NodeData.Data);
-        FormStyle := frmMain.FormStyle;
-        ShowModal;
-        if ModalResult = mrOK then
-          SaveNodeData(NodeData.Data);
-        Result := ModalResult;
-      finally
-        Free;
-      end;
+  frm := TfrmPropertySeparator.Create(AOwner);
+  try
+    frm.LoadNodeData(NodeData);
+    frm.ShowModal;
+    if frm.ModalResult = mrOK then
+      frm.SaveNodeData(NodeData);
+    Result := frm.ModalResult;
+  finally
+    frm.Free;
+  end;
 end;
 
 procedure TfrmPropertySeparator.LoadNodeData(AData: TvBaseNodeData);

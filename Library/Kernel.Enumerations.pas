@@ -1,5 +1,5 @@
 {
-Copyright (C) 2006-2013 Matteo Salvi
+Copyright (C) 2006-2015 Matteo Salvi
 
 Website: http://www.salvadorsoftware.com/
 
@@ -28,6 +28,13 @@ type
       atAlwaysOnStart,
       atSingleInstance, //atNoPrevInstances
       atAlwaysOnClose
+  );
+
+  TTrayiconActionClick = (
+      tcNone,
+      tcShowWindow,
+      tcShowGraphicMenu,
+      tcShowClassicMenu
   );
 
   //Run action on file execution
@@ -80,13 +87,57 @@ type
       smDaily = 3
   );
 
-  //ASuite State
-  TASuiteState = (
-      asStartUp,  //ASuite Startup Time
-      asShutdown, //ASuite Shutdown Time
-      asNormal,
-      asImporting
+  //Launcher State
+  TLauncherState = (
+      lsStartUp,  //Launcher Startup Time
+      lsShutdown, //Launcher Shutdown Time
+      lsNormal,
+      lsImporting
   );
+
+  TIconSize = (
+      isSmall, //Small Icon
+      isLarge, //Large Icon
+      isAny    //Small or Large Icon
+  );
+
+  TMousePosition = (
+      mpTopLeft,
+      mpLeft,
+      mpBottomLeft,
+      mpBottom,
+      mpBottomRight,
+      mpRight,
+      mpTopRight,
+      mpTop,
+      mpInside
+      );
+
+  TMouseTrigger = (
+      mtLeft,
+      mtMiddle,
+      mtRight,
+      mtWheelUp,
+      mtWheelDown,
+      mtMove,
+      mtNone
+      );
+
+  TSensorAction = (
+      saNone,
+      saShowMainForm,
+      saShowGraphicMenu,
+      saShowClassicMenu,
+      saRunItemX,
+      saShowCategory,
+      saShowFolder,
+      saShowDesktop
+      );
+
+  TSpecialListMode = (
+      lmMRU,
+      lmMFU
+      );
 
 implementation
 

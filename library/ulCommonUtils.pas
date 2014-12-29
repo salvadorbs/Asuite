@@ -23,13 +23,13 @@ interface
 
 uses
   Windows, SysUtils, Classes, Graphics, Forms, Dialogs, ComCtrls, Clipbrd,
-  Kernel.Consts, StdCtrls, ulCommonClasses, XMLIntf, System.UITypes, DKLang;
+  Kernel.Consts, StdCtrls, XMLIntf, System.UITypes, DKLang, Menus;
 
 { Converters }
 function RGBToHtml(iRGB: Cardinal): string;
 function ColorToHtml(Color:TColor): string;
 function HtmlToColor(Color: string): TColor;
-function StrToFont(const s: string): TFont;
+procedure StrToFont(const s: string; AFont: TFont);
 function FontToStr(Font: TFont): string;
 
 { Forms }
@@ -39,12 +39,13 @@ procedure SetFormPosition(Form: TForm;ListFormLeft, ListFormTop: Integer);
 
 { Misc }
 function CheckPropertyName(Edit: TEdit): Boolean;
+function  GetCheckedMenuItem(PopupMenu: TPopupMenu): TMenuItem;
 function  GetDateTime: String;
 function  GetFirstFreeIndex(ArrayString: Array of WideString): Integer;
 function  IfThen(AValue: Boolean; ATrue, AFalse: String): String;
 function  IsFormatInClipBoard(format: Word): Boolean;
-procedure ShowMessage(const Msg: string; Error: boolean=false);
-procedure ShowMessageFmt(const Msg: string; Params: array of const; Error: boolean=false);
+procedure ShowMessageEx(const Msg: string; Error: boolean=false);
+procedure ShowMessageFmtEx(const Msg: string; Params: array of const; Error: boolean=false);
 
 { Stats }
 function  GetCurrentUserName: string;
@@ -58,12 +59,11 @@ function  DiskUsedString(Drive: Char;Units: Boolean): string;
 function  DiskFreePercentual(Drive: Char): double;
 
 { Version }
-function  CompareVersionInfo(Version1, Version2: TVersionInfo): Integer;
 function  CompareInteger(int1, int2: Integer): Integer;
 
 { HotKey }
-function  GetHotKeyCode(KeyCode: Integer) : Integer;
-function  GetHotKeyMod(KeyMod: Integer) : Integer;
+function  GetHotKeyCode(AShortcut: TShortcut) : Word;
+function  GetHotKeyMod(AShortcut: TShortcut) : Integer;
 
 const
   MAX_PROFILE_PATH = 255;
@@ -91,23 +91,25 @@ begin
   Result := StringToColor('$' + Copy(Color, 6, 2) + Copy(Color, 4, 2) + Copy(Color, 2, 2));
 end;
 
-function StrToFont(const s: string): TFont;
+procedure StrToFont(const s: string; AFont: TFont);
 var
   Strs : TStringList;
 begin
-  Result := TFont.Create;
-  Strs := TStringList.Create;
-  try
-    Strs.Text := StringReplace(s, '|', #10, [rfReplaceAll]);
-    if Strs.Count = 4 then
-    begin
-      Result.Name  := Strs[0];
-      Result.Size  := StrToInt(Strs[1]);
-      Result.Color := HtmlToColor(Strs[2]);
-      Result.Style := TFontStyles(byte(StrToInt(Strs[3])));
+  if Assigned(AFont) then
+  begin
+    Strs  := TStringList.Create;
+    try
+      Strs.Text := StringReplace(s, '|', #10, [rfReplaceAll]);
+      if Strs.Count = 4 then
+      begin
+        AFont.Name  := Strs[0];
+        AFont.Size  := StrToInt(Strs[1]);
+        AFont.Color := HtmlToColor(Strs[2]);
+        AFont.Style := TFontStyles(byte(StrToInt(Strs[3])));
+      end;
+    finally
+      Strs.Free;
     end;
-  finally
-    Strs.Free;
   end;
 end;
 
@@ -180,10 +182,20 @@ begin
   // Check if inserted name is empty, then
   if (Trim(Edit.Text) = '') then
   begin
-    ShowMessage(DKLangConstW('msgErrEmptyName'),true);
+    ShowMessageEx(DKLangConstW('msgErrEmptyName'),true);
     Edit.Color := clYellow;
     Result := False;
   end;
+end;
+
+function GetCheckedMenuItem(PopupMenu: TPopupMenu): TMenuItem;
+var
+  I: Integer;
+begin
+  Result := nil;
+  for I := 0 to PopupMenu.Items.Count - 1 do
+    if PopupMenu.Items[I].Checked then
+      Result := PopupMenu.Items[I];
 end;
 
 function GetDateTime: String;
@@ -226,7 +238,7 @@ begin
   end;
 end;
 
-procedure ShowMessage(const Msg: string; Error: boolean=false);
+procedure ShowMessageEx(const Msg: string; Error: boolean=false);
 const
   IconError: array[boolean] of TTaskDialogIcon = (tiInformation, tiError);
 var
@@ -236,7 +248,7 @@ begin
   Task.Execute([cbOK],mrOk,[],IconError[Error]);
 end;
 
-procedure ShowMessageFmt(const Msg: string; Params: array of const; Error: boolean=false);
+procedure ShowMessageFmtEx(const Msg: string; Params: array of const; Error: boolean=false);
 const
   IconError: array[boolean] of TTaskDialogIcon = (tiInformation, tiError);
 var
@@ -368,37 +380,6 @@ begin
   Result := (Free) / (Size);
 end;
 
-function CompareVersionInfo(Version1, Version2: TVersionInfo): Integer;
-var
-  Major, Minor, Release, Build: Integer;
-begin
-  //Result
-  //1 = Version1 is latest
-  //0  = Same
-  //-1  = Version2 is latest
-  Result := 0;
-  if Assigned(Version1) and Assigned(Version2) then
-  begin
-    //Compare integer
-    Major   := CompareInteger(Version1.Major, Version2.Major);
-    Minor   := CompareInteger(Version1.Minor, Version2.Minor);
-    Release := CompareInteger(Version1.Release, Version2.Release);
-    Build   := CompareInteger(Version1.Build, Version2.Build);
-    //Get result
-    if Major <> 0 then
-      Result := Major
-    else
-      if Minor <> 0 then
-        Result := Minor
-      else
-        if Release <> 0 then
-          Result := Release
-        else
-          if Build <> 0 then
-            Result := Build;
-  end;
-end;
-
 function CompareInteger(int1, int2: Integer): Integer;
 begin
   //Result
@@ -414,82 +395,27 @@ begin
       Result := 0;
 end;
 
-Function GetHotKeyCode(KeyCode: Integer) : Integer;
+Function GetHotKeyCode(AShortcut: TShortcut): Word;
+var
+  Shift: TShiftState;
 begin
-  Result := -1;
-  case KeyCode of
-    0: Result := VkKeyScan('a');
-    1: Result := VkKeyScan('b');
-    2: Result := VkKeyScan('c');
-    3: Result := VkKeyScan('d');
-    4: Result := VkKeyScan('e');
-    5: Result := VkKeyScan('f');
-    6: Result := VkKeyScan('g');
-    7: Result := VkKeyScan('h');
-    8: Result := VkKeyScan('i');
-    9: Result := VkKeyScan('j');
-    10: Result := VkKeyScan('k');
-    11: Result := VkKeyScan('l');
-    12: Result := VkKeyScan('m');
-    13: Result := VkKeyScan('n');
-    14: Result := VkKeyScan('o');
-    15: Result := VkKeyScan('p');
-    16: Result := VkKeyScan('q');
-    17: Result := VkKeyScan('r');
-    18: Result := VkKeyScan('s');
-    19: Result := VkKeyScan('t');
-    20: Result := VkKeyScan('u');
-    21: Result := VkKeyScan('v');
-    22: Result := VkKeyScan('w');
-    23: Result := VkKeyScan('x');
-    24: Result := VkKeyScan('y');
-    25: Result := VkKeyScan('z');
-    26: Result := Vk_F1;
-    27: Result := Vk_F2;
-    28: Result := Vk_F3;
-    29: Result := Vk_F4;
-    30: Result := Vk_F5;
-    31: Result := Vk_F6;
-    32: Result := Vk_F7;
-    33: Result := Vk_F8;
-    34: Result := Vk_F9;
-    35: Result := Vk_F10;
-    36: Result := Vk_F11;
-    37: Result := Vk_F12;
-    38: Result := VkKeyScan('1');
-    39: Result := VkKeyScan('2');
-    40: Result := VkKeyScan('3');
-    41: Result := VkKeyScan('4');
-    42: Result := VkKeyScan('5');
-    43: Result := VkKeyScan('6');
-    44: Result := VkKeyScan('7');
-    45: Result := VkKeyScan('8');
-    46: Result := VkKeyScan('9');
-    47: Result := VkKeyScan('0');
-  end;
+  Result := 0;
+  ShortCutToKey(AShortcut, Result, Shift);
 end;
 
-Function GetHotKeyMod(KeyMod: Integer) : Integer;
+Function GetHotKeyMod(AShortcut: TShortcut): Integer;
+var
+  Shift: TShiftState;
+  Key: Word;
 begin
-  Result := -1;
-  case KeyMod of
-    0:  Result := MOD_ALT;
-    1:  Result := MOD_CONTROL;
-    2:  Result := MOD_SHIFT;
-    3:  Result := MOD_CONTROL or MOD_ALT;
-    4:  Result := MOD_SHIFT or MOD_ALT;
-    5:  Result := MOD_SHIFT or MOD_CONTROL;
-    6:  Result := MOD_SHIFT or MOD_CONTROL or MOD_ALT;
-   	7:  Result := MOD_WIN;
-    8:  Result := MOD_WIN or MOD_ALT;
-    9:  Result := MOD_WIN or MOD_CONTROL;
-    10: Result := MOD_WIN or MOD_SHIFT;
-    11: Result := MOD_WIN or MOD_CONTROL or MOD_ALT;
-    12: Result := MOD_WIN or MOD_SHIFT or MOD_ALT;
-    13: Result := MOD_WIN or MOD_SHIFT or MOD_CONTROL;
-    14: Result := MOD_WIN or MOD_SHIFT or MOD_CONTROL or MOD_ALT;
-  end;
+  Result := 0;
+  ShortCutToKey(AShortcut, Key, Shift);
+  if (ssShift in Shift) then
+  Result := Result or MOD_SHIFT;
+  if (ssAlt in Shift) then
+  Result := Result or MOD_ALT;
+  if (ssCtrl in Shift) then
+  Result := Result or MOD_CONTROL;
 end;
-
 
 end.

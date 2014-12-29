@@ -52,7 +52,6 @@ object frmMain: TfrmMain
     00008001000081FF000080010000800100008001000080010000FFFF0000}
   Menu = MainMenu
   OldCreateOrder = True
-  OnActivate = FormActivate
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -64,7 +63,7 @@ object frmMain: TfrmMain
     Top = 0
     Width = 184
     Height = 340
-    ActivePage = tbList
+    ActivePage = tbSearch
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -77,6 +76,10 @@ object frmMain: TfrmMain
     OnChange = pcListChange
     object tbList: TTabSheet
       Caption = 'List'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object vstList: TVirtualStringTree
         Left = 0
         Top = 0
@@ -124,6 +127,7 @@ object frmMain: TfrmMain
         OnGetText = vstListGetText
         OnPaintText = vstListPaintText
         OnGetImageIndex = vstListGetImageIndex
+        OnGetNodeDataSize = vstListGetNodeDataSize
         OnKeyPress = vstListKeyPress
         OnLoadNode = vstListLoadNode
         OnNewText = vstListNewText
@@ -133,10 +137,6 @@ object frmMain: TfrmMain
     end
     object tbSearch: TTabSheet
       Caption = 'Search'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object sbtnSearch: TSpeedButton
         Left = 152
         Top = 0
@@ -174,6 +174,7 @@ object frmMain: TfrmMain
         OnDblClick = RunDoubleClick
         OnGetText = vstSearchGetText
         OnGetImageIndex = vstSearchGetImageIndex
+        OnGetNodeDataSize = vstSearchGetNodeDataSize
         OnHeaderClick = vstSearchHeaderClick
         Columns = <
           item
@@ -191,14 +192,13 @@ object frmMain: TfrmMain
         Left = 0
         Top = 0
         Width = 149
-        Height = 23
+        Height = 21
         Align = alLeft
         Anchors = [akLeft, akTop, akRight]
         Constraints.MaxHeight = 21
         PopupMenu = pmSearch
         TabOrder = 1
         OnKeyPress = btnedtSearchKeyPress
-        ExplicitHeight = 21
       end
     end
   end
@@ -283,14 +283,12 @@ object frmMain: TfrmMain
       end
       object miDelete1: TMenuItem
         Caption = 'Delete'
-        OnClick = DeleteSwCat
       end
       object N8: TMenuItem
         Caption = '-'
       end
       object miProperty1: TMenuItem
         Caption = 'Properties'
-        OnClick = miPropertyClick
       end
     end
     object miHelp: TMenuItem
@@ -322,19 +320,15 @@ object frmMain: TfrmMain
     object miRunSelectedSw: TMenuItem
       Caption = 'Run'
       Default = True
-      OnClick = miRunSelectedSwClick
     end
     object miRunAs: TMenuItem
       Caption = 'Run as...'
-      OnClick = miRunAsClick
     end
     object miRunAsAdmin: TMenuItem
       Caption = 'Run as admin'
-      OnClick = miRunAsAdminClick
     end
     object miOpenFolderSw: TMenuItem
       Caption = 'Show application'#39's folder'
-      OnClick = miOpenFolderSwClick
     end
     object N9: TMenuItem
       Caption = '-'
@@ -385,7 +379,6 @@ object frmMain: TfrmMain
     object miDelete2: TMenuItem
       Caption = 'Delete'
       ShortCut = 46
-      OnClick = DeleteSwCat
     end
     object N6: TMenuItem
       Caption = '-'
@@ -393,7 +386,6 @@ object frmMain: TfrmMain
     object miProperty2: TMenuItem
       Caption = 'Properties'
       ShortCut = 116
-      OnClick = miPropertyClick
     end
   end
   object SaveDialog1: TSaveDialog

@@ -3,22 +3,24 @@ object frmOptions: TfrmOptions
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Options'
-  ClientHeight = 325
-  ClientWidth = 529
+  ClientHeight = 451
+  ClientWidth = 650
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  KeyPreview = True
   OldCreateOrder = False
   Position = poMainFormCenter
   OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
   PixelsPerInch = 96
   TextHeight = 13
   object btnOk: TButton
-    Left = 367
-    Top = 294
+    Left = 487
+    Top = 418
     Width = 75
     Height = 25
     Caption = 'Ok'
@@ -27,8 +29,8 @@ object frmOptions: TfrmOptions
     OnClick = btnOkClick
   end
   object btnCancel: TButton
-    Left = 446
-    Top = 294
+    Left = 566
+    Top = 418
     Width = 75
     Height = 25
     Caption = 'Cancel'
@@ -39,15 +41,15 @@ object frmOptions: TfrmOptions
   object pnlOptionsPage: TPanel
     Left = 191
     Top = 8
-    Width = 331
-    Height = 280
+    Width = 450
+    Height = 404
     TabOrder = 1
   end
   object vstListCategory: TVirtualStringTree
     Left = 8
     Top = 8
     Width = 177
-    Height = 280
+    Height = 404
     Header.AutoSizeIndex = 0
     Header.Font.Charset = DEFAULT_CHARSET
     Header.Font.Color = clWindowText
@@ -55,9 +57,10 @@ object frmOptions: TfrmOptions
     Header.Font.Name = 'Tahoma'
     Header.Font.Style = []
     Header.MainColumn = -1
-    Images = ImagesDM.LargeIcoImages
     TabOrder = 0
+    TreeOptions.MiscOptions = [toAcceptOLEDrop, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toFullRowDrag, toEditOnClick]
     TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowRoot, toShowTreeLines, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
+    TreeOptions.SelectionOptions = [toFullRowSelect]
     OnAddToSelection = vstListCategoryAddToSelection
     OnFreeNode = vstListCategoryFreeNode
     OnGetText = vstListCategoryGetText

@@ -1,51 +1,5 @@
 program ASuite;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 uses
   Forms,
   SysUtils,
@@ -59,15 +13,12 @@ uses
   Forms.PropertyItem in 'Forms\Forms.PropertyItem.pas' {frmPropertyItem},
   Forms.PropertySeparator in 'Forms\Forms.PropertySeparator.pas' {frmPropertySeparator},
   Forms.ScanFolder in 'Forms\Forms.ScanFolder.pas' {frmScanFolder},
-  DataModules.Images in 'DataModules\DataModules.Images.pas' {ImagesDM: TDataModule},
-  DataModules.TrayMenu in 'DataModules\DataModules.TrayMenu.pas' {ClassicMenu: TDataModule},
-  Database in 'Library\Database.pas',
-  Kernel.AppConfig in 'Library\Kernel.AppConfig.pas',
+  DataModules.Images in 'DataModules\DataModules.Images.pas' {dmImages: TDataModule},
+  DataModules.TrayMenu in 'DataModules\DataModules.TrayMenu.pas' {dmTrayMenu: TDataModule},
+  AppConfig.Main in 'Library\AppConfig.Main.pas',
   Kernel.BaseMainForm in 'Library\Kernel.BaseMainForm.pas',
   Kernel.Consts in 'Library\Kernel.Consts.pas',
   Kernel.Enumerations in 'Library\Kernel.Enumerations.pas',
-  NodeDataTypes in 'Library\NodeDataTypes.pas',
-  ulCommonClasses in 'Library\ulCommonClasses.pas',
   ulCommonUtils in 'Library\ulCommonUtils.pas',
   Utility.FileFolder in 'Utilities\Utility.FileFolder.pas',
   Utility.Strings in 'Utilities\Utility.Strings.pas',
@@ -88,7 +39,25 @@ uses
   Frame.Properties.General.Category in 'Frame\Frame.Properties.General.Category.pas' {frmCatGeneralPropertyPage: TFrame},
   Frame.Properties.General.Software in 'Frame\Frame.Properties.General.Software.pas' {frmSWGeneralPropertyPage: TFrame},
   Utility.Frame in 'Utilities\Utility.Frame.pas',
-  Utility.Process in 'Utilities\Utility.Process.pas';
+  Utility.Process in 'Utilities\Utility.Process.pas',
+  Database.Version in 'Library\Database.Version.pas',
+  Database.Options in 'Library\Database.Options.pas',
+  Database.List in 'Library\Database.List.pas',
+  Database.Manager in 'Library\Database.Manager.pas',
+  NodeDataTypes.Files in 'Library\NodeDataTypes.Files.pas',
+  NodeDataTypes.Separator in 'Library\NodeDataTypes.Separator.pas',
+  NodeDataTypes.Base in 'Library\NodeDataTypes.Base.pas',
+  NodeDataTypes.Category in 'Library\NodeDataTypes.Category.pas',
+  NodeDataTypes.Custom in 'Library\NodeDataTypes.Custom.pas',
+  Kernel.Types in 'Library\Kernel.Types.pas',
+  Lists.Base in 'Library\Lists.Base.pas',
+  Lists.Special in 'Library\Lists.Special.pas',
+  Lists.HotKey in 'Library\Lists.HotKey.pas',
+  Lists.Scheduler in 'Library\Lists.Scheduler.pas',
+  Lists.Manager in 'Library\Lists.Manager.pas',
+  Kernel.Singleton in 'Library\Kernel.Singleton.pas',
+  AppConfig.Paths in 'Library\AppConfig.Paths.pas',
+  Kernel.PopupMenu in 'Library\Kernel.PopupMenu.pas';
 
 //SQLite3 static library
 
@@ -113,18 +82,15 @@ begin
     {$ENDIF}
 
     Application.Initialize;
-    SetCurrentDir(SUITE_WORKING_PATH);
     Config    := TConfiguration.Create;
     Application.Title := APP_TITLE;
 
     Application.CreateForm(TfrmMain, frmMain);
   Application.CreateForm(TfrmGraphicMenu, frmGraphicMenu);
-  Application.CreateForm(TImagesDM, ImagesDM);
-  Application.CreateForm(TClassicMenu, ClassicMenu);
   //Show MainForm and/or TrayMenu
     Application.ShowMainForm := Config.ShowPanelAtStartUp;
     if (Config.ShowMenuAtStartUp) then
-      ClassicMenu.ShowTrayiconMenu;
+      dmTrayMenu.ShowGraphicMenu;
     Application.Run;
 
     {$IFDEF DEBUG}

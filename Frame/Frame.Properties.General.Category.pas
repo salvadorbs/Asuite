@@ -1,3 +1,22 @@
+{
+Copyright (C) 2006-2013 Matteo Salvi
+
+Website: http://www.salvadorsoftware.com/
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+}
+
 unit Frame.Properties.General.Category;
 
 interface
@@ -38,8 +57,8 @@ var
 implementation
 
 uses
-  Kernel.Consts, NodeDataTypes, DataModules.Images,
-  Kernel.Enumerations, Forms.Main, Utility.Treeview;
+  Kernel.Consts, NodeDataTypes.Custom, NodeDataTypes.Files, NodeDataTypes.Base,
+  DataModules.Images, Kernel.Types, Kernel.Enumerations, Forms.Main, Utility.Treeview;
 
 {$R *.dfm}
 
@@ -65,8 +84,6 @@ begin
     else
       vstCategoryItems.CheckState[NewNode] := csUncheckedNormal;
     NewNodeData := vstCategoryItems.GetNodeData(NewNode);
-    //Get imageindex
-    CurrentFileData.ImageIndex := ImagesDM.GetIconIndex(CurrentFileData);
     //Set pointers
     NewNodeData.pNodeList := Node;
   end;
@@ -78,7 +95,7 @@ var
 begin
   Result := inherited;
   vstCategoryItems.NodeDataSize := SizeOf(rTreeDataX);
-  vstCategoryItems.Images       := ImagesDM.IcoImages;
+  vstCategoryItems.Images       := dmImages.IcoImages;
   if Assigned(CurrentNodeData) then
   begin
     Node := CurrentNodeData.pNode;
@@ -99,7 +116,7 @@ procedure TfrmCatGeneralPropertyPage.SetCategoryItems(Sender: TBaseVirtualTree;
 var
   FileNodeData : TvFileNodeData;
 begin
-  FileNodeData := TvFileNodeData(GetNodeDataSearch(Node,vstCategoryItems,frmMain.vstList).Data);
+  FileNodeData := TvFileNodeData(GetNodeItemData(Node, Sender));
   FileNodeData.RunFromCategory := (Node.CheckState = csCheckedNormal);
   FileNodeData.Changed := True;
 end;
@@ -110,7 +127,7 @@ procedure TfrmCatGeneralPropertyPage.vstCategoryItemsGetImageIndex(
 var
   NodeData : TvBaseNodeData;
 begin
-  NodeData   := GetNodeDataSearch(Node,vstCategoryItems,frmMain.vstList).Data;
+  NodeData := GetNodeItemData(Node, Sender);
   if Assigned(NodeData) then
     ImageIndex := NodeData.ImageIndex;
 end;
@@ -121,7 +138,7 @@ procedure TfrmCatGeneralPropertyPage.vstCategoryItemsGetText(
 var
   NodeData : TvBaseNodeData;
 begin
-  NodeData := GetNodeDataSearch(Node,vstCategoryItems,frmMain.vstList).Data;
+  NodeData := GetNodeItemData(Node, Sender);
   if Assigned(NodeData) then
     CellText := NodeData.Name;
 end;

@@ -7,30 +7,30 @@ uses
   FileCtrl;
 
 { Browse }
-function  BrowseForFolder(const Caption, InitialDir: String): String;
+function  BrowseForFolder(const InitialDir: String; const Caption: String = ''): String;
 
 { Files }
-procedure DeleteFiles(PathDir, FileName: String);
-procedure DeleteOldBackups(MaxNumber: Integer);
+procedure DeleteFiles(const PathDir, FileName: String);
+procedure DeleteOldBackups(const MaxNumber: Integer);
 
 { Folders }                 
 procedure CheckBackupFolder;
 procedure CheckCacheFolders;
-function  GetNumberSubFolders(FolderPath: String): Integer;
+function  GetNumberSubFolders(const FolderPath: String): Integer;
 procedure RemoveCacheFolders;
 
 { Desktop shortcut }
-procedure CreateShortcutOnDesktop(FileName: String;TargetFilePath, Params, WorkingDir: String);
-procedure DeleteShortcutOnDesktop(FileName: String);
-function  GetShortcutTarget(LinkFileName:String;ShortcutType: TShortcutField):String;
-procedure RenameShortcutOnDesktop(OldFileName, FileName: String);
+procedure CreateShortcutOnDesktop(const FileName, TargetFilePath, Params, WorkingDir: String);
+procedure DeleteShortcutOnDesktop(const FileName: String);
+function  GetShortcutTarget(const LinkFileName:String;ShortcutType: TShortcutField):String;
+procedure RenameShortcutOnDesktop(const OldFileName, FileName: String);
 
 implementation
 
 uses
-  Utility.System;
+  Utility.System, AppConfig.Main;
 
-function BrowseForFolder(const Caption, InitialDir: String): String;
+function BrowseForFolder(const InitialDir: String; const Caption: String): String;
 var
   Path: string;
 begin
@@ -40,10 +40,9 @@ begin
   //Call Browse for folder dialog and get new path
   if SelectDirectory('','',Path) then
     Result := Path;
-  SetCurrentDir(SUITE_WORKING_PATH);
 end;
 
-procedure DeleteFiles(PathDir, FileName: String);
+procedure DeleteFiles(const PathDir, FileName: String);
 var
   Search : TSearchRec;
 begin
@@ -58,14 +57,14 @@ begin
   end;
 end;
 
-procedure DeleteOldBackups(MaxNumber: Integer);
+procedure DeleteOldBackups(const MaxNumber: Integer);
 var
   BackupList   : TStringList;
   BackupSearch : TSearchRec;
   I            : Integer;
 begin
   BackupList := TStringList.Create;
-  if FindFirst(SUITE_BACKUP_PATH + APP_NAME + '_*' + EXT_SQLBCK,faAnyFile,BackupSearch) = 0 then
+  if FindFirst(Config.Paths.SuitePathBackup + APP_NAME + '_*' + EXT_SQLBCK,faAnyFile,BackupSearch) = 0 then
   begin
     repeat
       BackupList.Add(BackupSearch.Name);
@@ -75,24 +74,24 @@ begin
   end;
   BackupList.Sort;
   for I := 1 to BackupList.Count - MaxNumber do
-    DeleteFile(SUITE_BACKUP_PATH + BackupList[I - 1]);
+    DeleteFile(Config.Paths.SuitePathBackup + BackupList[I - 1]);
   BackupList.Free;
-end; 
+end;
 
 procedure CheckBackupFolder;
 begin
   //Check if folder backup exists, else create it
-  SysUtils.ForceDirectories(SUITE_BACKUP_PATH);
+  SysUtils.ForceDirectories(Config.Paths.SuitePathBackup);
 end;         
 
 procedure CheckCacheFolders;
 begin
   //Check if folder cache exists, else create it
-  SysUtils.ForceDirectories(SUITE_CACHE_PATH);
-  SysUtils.ForceDirectories(SUITE_CACHELARGE_PATH);
+  SysUtils.ForceDirectories(Config.Paths.SuitePathCache);
+  SysUtils.ForceDirectories(Config.Paths.SuitePathCacheLarge);
 end;
 
-function GetNumberSubFolders(FolderPath: String): Integer;
+function GetNumberSubFolders(const FolderPath: String): Integer;
 var
   SearchRec: TSearchRec;
 begin
@@ -114,51 +113,50 @@ end;
 procedure RemoveCacheFolders;
 begin
   //Delete all file icon-cache and folder cache
-  if (SysUtils.DirectoryExists(SUITE_CACHE_PATH)) then
+  if (SysUtils.DirectoryExists(Config.Paths.SuitePathCache)) then
   begin
-    if (SysUtils.DirectoryExists(SUITE_CACHELARGE_PATH)) then
+    if (SysUtils.DirectoryExists(Config.Paths.SuitePathCacheLarge)) then
     begin
-      DeleteFiles(SUITE_CACHELARGE_PATH,'*.*');
-      RemoveDir(SUITE_CACHELARGE_PATH);
+      DeleteFiles(Config.Paths.SuitePathCacheLarge,'*.*');
+      RemoveDir(Config.Paths.SuitePathCacheLarge);
     end;
-    DeleteFiles(SUITE_CACHE_PATH,'*.*');
-    RemoveDir(SUITE_CACHE_PATH);
+    DeleteFiles(Config.Paths.SuitePathCache,'*.*');
+    RemoveDir(Config.Paths.SuitePathCache);
   end;
 end;
 
-procedure CreateShortcutOnDesktop(FileName: String;TargetFilePath, Params, WorkingDir: String);
+procedure CreateShortcutOnDesktop(const FileName, TargetFilePath, Params, WorkingDir: String);
 var
   IObject  : IUnknown;
   ISLink   : IShellLink;
   IPFile   : IPersistFile;
   PIDL     : PItemIDList;
   InFolder : array[0..MAX_PATH] of Char;
-  LinkName : String;
+  sPath    : String;
 begin
   //Relative path to Absolute path
-  if pos(':',TargetFilePath) = 0 then
-    TargetFilePath := SUITE_WORKING_PATH + TargetFilePath;
+  sPath := TargetFilePath;
+  if pos(':',sPath) = 0 then
+    sPath := Config.Paths.SuitePathWorking + sPath;
   //Create objects
   IObject := CreateComObject(CLSID_ShellLink);
   ISLink  := IObject as IShellLink;
   IPFile  := IObject as IPersistFile;
   //Create link
-  ISLink.SetPath(pChar(TargetFilePath));
+  ISLink.SetPath(pChar(sPath));
   ISLink.SetArguments(pChar(Params));
   if WorkingDir = '' then
-    ISLink.SetWorkingDirectory(pChar(ExtractFilePath(TargetFilePath)))
+    ISLink.SetWorkingDirectory(pChar(ExtractFilePath(sPath)))
   else
-    ISLink.SetWorkingDirectory(pChar(RelativeToAbsolute(WorkingDir)));
+    ISLink.SetWorkingDirectory(pChar(WorkingDir));
   //DesktopPath
   SHGetSpecialFolderLocation(0, CSIDL_DESKTOPDIRECTORY, PIDL);
   SHGetPathFromIDList(PIDL, InFolder);
   //Save link
-  FileName := PathDelim + FileName;
-  LinkName := PWChar(InFolder + FileName);
-  IPFile.Save(PWChar(LinkName), false);
+  IPFile.Save(PWChar(IncludeTrailingPathDelimiter(InFolder) + FileName), false);
 end;
 
-procedure DeleteShortcutOnDesktop(FileName: String);
+procedure DeleteShortcutOnDesktop(const FileName: String);
 var
   PIDL        : PItemIDList;
   DesktopPath : array[0..MAX_PATH] of Char;
@@ -166,13 +164,12 @@ var
 begin
   SHGetSpecialFolderLocation(0, CSIDL_DESKTOPDIRECTORY, PIDL);
   SHGetPathFromIDList(PIDL, DesktopPath);
-  FileName := PathDelim + FileName;
-  LinkName := PWChar(DesktopPath + FileName);
+  LinkName := PWChar(IncludeTrailingPathDelimiter(DesktopPath) + FileName);
   if (FileExists(LinkName)) then
     DeleteFile(LinkName);
 end;
 
-function GetShortcutTarget(LinkFileName:String;ShortcutType: TShortcutField):String;
+function GetShortcutTarget(const LinkFileName:String; ShortcutType: TShortcutField):String;
 var
   ISLink    : IShellLink;
   IPFile    : IPersistFile;
@@ -201,7 +198,7 @@ begin
     Result := LinkFileName;
 end;
 
-procedure RenameShortcutOnDesktop(OldFileName, FileName: String);
+procedure RenameShortcutOnDesktop(const OldFileName, FileName: String);
 var
   PIDL        : PItemIDList;
   DesktopPath : array[0..MAX_PATH] of Char;
