@@ -22,8 +22,7 @@ unit Utility.Process;
 interface
 
 uses
-  Windows, SysUtils, Kernel.Enumerations, Forms.Main,
-  AppConfig.Main, TlHelp32;
+  Windows, SysUtils, Kernel.Enumerations, Forms.Main, AppConfig.Main, TlHelp32;
 
 { Processes, execution }
 procedure ActionOnExe(Action: TActionOnExecute);

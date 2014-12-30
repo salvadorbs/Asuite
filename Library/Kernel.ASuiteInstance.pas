@@ -1,5 +1,5 @@
 {
-Copyright (C) 2006-2013 Matteo Salvi
+Copyright (C) 2006-2015 Matteo Salvi
 
 Website: http://www.salvadorsoftware.com/
 
@@ -17,39 +17,36 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 }
 
-unit DataModules.Images;
-
-{$I ASuite.inc}
+unit Kernel.ASuiteInstance;
 
 interface
 
 uses
-  SysUtils, Classes, Controls, Windows, Graphics, Dialogs,
-  ShellApi, CommCtrl, Vcl.ImgList;
+  Windows, USingleInst, Messages;
 
 type
-  TRGBArray = array[Word] of TRGBTriple;
-  pRGBArray = ^TRGBArray;
-
-  TResType = (rtBMP, rtPNG, rtICO);
-
-  TdmImages = class(TDataModule)
-    IcoImages: TImageList;
-    LargeIcoImages: TImageList;
-  private
-    { Private declarations }
-  public
-    { Public declarations }
+  TASuiteSingleInst = class(TSingleInst)
+  protected
+    function WdwClassName: string; override;
+    function WaterMark: DWORD; override;
   end;
-
-var
-  dmImages: TdmImages;
 
 implementation
 
+{ TASuiteSingleInst }
 
+function TASuiteSingleInst.WaterMark: DWORD;
+begin
+  Result := $DE1F1DAB;
+end;
 
-{$R *.dfm}
+function TASuiteSingleInst.WdwClassName: string;
+begin
+  Result := 'ASuite.SingleInstance.1' {$IFDEF DEBUG} + '.debug' {$ENDIF};
+end;
+
+initialization
+
+RegisterSingleInstClass(TASuiteSingleInst);
 
 end.
-

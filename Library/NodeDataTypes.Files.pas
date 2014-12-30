@@ -22,8 +22,8 @@ unit NodeDataTypes.Files;
 interface
 
 uses
-  VirtualTrees, SysUtils, Kernel.Enumerations, NodeDataTypes.Base, Kernel.Types,
-  NodeDataTypes.Custom, WinApi.Windows, WinApi.ShellApi, DKLang, DateUtils;
+  SysUtils, Kernel.Enumerations, NodeDataTypes.Base,
+  NodeDataTypes.Custom, WinApi.Windows, WinApi.ShellApi, DateUtils;
 
 type
   TvFileNodeData = class(TvCustomRealNodeData)
@@ -75,8 +75,8 @@ type
 implementation
 
 uses
-  AppConfig.Main, Lists.Manager, Forms.Main, Kernel.Consts, ulCommonUtils,
-  Utility.System, Utility.Process, DataModules.Images, Utility.FileFolder, Lists.Base;
+  AppConfig.Main, Lists.Manager, Forms.Main, Kernel.Consts,
+  Utility.FileFolder, Lists.Base;
 
 constructor TvFileNodeData.Create(AType: TvTreeDataType);
 begin

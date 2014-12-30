@@ -124,6 +124,8 @@ type
     procedure SetHotKey(const Value: Boolean);
 
     function GetMainTree: TVirtualStringTree;
+  protected
+    procedure HandleParam(const Param: string);
   public
     { public declarations }
     constructor Create; overload;
@@ -206,11 +208,16 @@ var
 implementation
 
 uses
-  Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, ulCommonUtils,
-  DataModules.Images, Forms.GraphicMenu, Utility.Treeview, Utility.FileFolder;
+  Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, Utility.Misc,
+  Forms.GraphicMenu, Utility.Treeview, Utility.FileFolder, USingleInst, NodeDataTypes.Files;
 
 constructor TConfiguration.Create;
+var
+  I: Integer;
 begin
+  SingleInst.OnProcessParam := HandleParam;
+  for I := 1 to ParamCount do
+    HandleParam(ParamStr(I));
   FPaths := TConfigPaths.Create;
   //Find language files and register them in LangManager
   LangManager.ScanForLangFiles(FPaths.SuitePathLocale, '*.lng', False);
@@ -302,6 +309,47 @@ begin
   Result := FMainTree;
 end;
 
+procedure TConfiguration.HandleParam(const Param: string);
+var
+  iCmdLine: Integer;
+  sName, sValue: string;
+  Node: PVirtualNode;
+
+  procedure ParseParam(s: string);
+  var
+    iSplit: Integer;
+  begin
+    if (s[1] in ['-', '/']) then
+    begin
+      Delete(s, 1, 1);
+      iSplit := Pos('=', s);
+      if iSplit <> 0 then
+      begin
+        sName := Copy(s, 1, iSplit - 1);
+        sValue := Copy(s, iSplit + 1, 666);
+      end;
+    end;
+  end;
+
+begin
+  ParseParam(Param);
+  if sName <> '' then
+  begin
+    if CompareText(sName, 'list') = 0 then
+      FPaths.SuitePathList := FPaths.RelativeToAbsolute(RemoveAllQuotes(sValue));
+    if CompareText(sName, 'additem') = 0 then
+    begin
+      if Assigned(DBManager) then
+      begin
+        //Add new node
+        Node := FMainTree.AddChild(nil, TvFileNodeData.Create(vtdtFile));
+        //Set node properties
+        GetDropFileProperty(FMainTree, Node, RemoveAllQuotes(sValue));
+      end;
+    end;
+  end;
+end;
+
 procedure TConfiguration.SetHoldSize(value: boolean);
 begin
   FHoldSize := value;
@@ -338,7 +386,7 @@ procedure TConfiguration.SetBackup(const Value: Boolean);
 begin
   FBackup := Value;
   if FBackup then
-    CheckBackupFolder;
+    FPaths.CheckBackupFolder;
 end;
 
 procedure TConfiguration.SetBackupNumber(const Value: Integer);
@@ -501,9 +549,9 @@ begin
   FCache := value;
   //If disabled, delete all file icon-cache and folders cache
   if Not(FCache) then
-    RemoveCacheFolders
+    FPaths.RemoveCacheFolders
   else //Else create folders cache
-    CheckCacheFolders;
+    FPaths.CheckCacheFolders;
 end;
 
 procedure TConfiguration.SetChanged(const Value: Boolean);

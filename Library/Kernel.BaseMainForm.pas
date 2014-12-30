@@ -50,7 +50,7 @@ implementation
 
 uses
   Utility.Treeview, Forms.Main, AppConfig.Main, NodeDataTypes.Custom, Kernel.Consts,
-  DataModules.TrayMenu, Kernel.Enumerations;
+  DataModules.TrayMenu, Kernel.Enumerations, USingleInst;
 
 constructor TBaseMainForm.Create(AOwner: TComponent);
 begin
@@ -61,6 +61,7 @@ end;
 procedure TBaseMainForm.CreateParams(var Params: TCreateParams);
 begin
   inherited;
+  SingleInst.CreateParams(Params);
 end;
 
 destructor TBaseMainForm.Destroy;
@@ -115,7 +116,8 @@ end;
 
 procedure TBaseMainForm.WndProc(var Msg: TMessage);
 begin
-  inherited;
+  if not SingleInst.HandleMessages(Self.Handle, Msg) then
+    inherited;
 end;
 
 procedure TBaseMainForm.WMEndSession(var Msg : TWMEndSession);

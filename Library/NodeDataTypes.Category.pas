@@ -23,8 +23,8 @@ interface
 
 uses
   VirtualTrees, Menus, SysUtils, Dialogs, DateUtils, Kernel.Enumerations,
-  Winapi.Windows, NodeDataTypes.Base, NodeDataTypes.Custom, Kernel.Types,
-  DKLang, UITypes;
+  Winapi.Windows, NodeDataTypes.Base, NodeDataTypes.Custom,
+  UITypes;
 
 type
   TvCategoryNodeData = class(TvCustomRealNodeData)
@@ -40,7 +40,7 @@ type
 implementation
 
 uses
-  Utility.Process, NodeDataTypes.Files, AppConfig.Main, Utility.TreeView;
+  NodeDataTypes.Files, Utility.TreeView;
 
 function TvCategoryNodeData.CheckRunnableSubItems(Tree: TBaseVirtualTree): Boolean;
 var
@@ -69,7 +69,6 @@ constructor TvCategoryNodeData.Create;
 begin
   inherited Create(vtdtCategory);
 //  FImageIndex := IMAGE_INDEX_Cat;
-  //TODO: Add big size icon
 end;
 
 end.

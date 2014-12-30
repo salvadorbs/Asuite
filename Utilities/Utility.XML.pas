@@ -33,8 +33,8 @@ function GetBoolPropertyXML(Node : IXMLNode;Name: String;Default: Boolean): Bool
 implementation
 
 uses
-  Forms.Main, NodeDataTypes.Custom, ulCommonUtils, AppConfig.Main, Kernel.Types,
-  Utility.Strings, Utility.Treeview, NodeDataTypes.Files, Menus;
+  Forms.Main, NodeDataTypes.Custom, Utility.Misc, AppConfig.Main, Kernel.Types,
+  Utility.Conversions, Utility.Treeview, NodeDataTypes.Files, Menus;
 
 function GetStrPropertyXML(Node : IXMLNode;Name: String;Default: String): String;
 var
@@ -69,7 +69,7 @@ begin
   //Check if PropertyNode exists
   if Assigned(PropertyNode) then
     if PropertyNode.Text <> '' then
-      Result := Utility.Strings.StrToBool(PropertyNode.Text);
+      Result := Utility.Conversions.StrToBool(PropertyNode.Text);
 end;
 
 class function TImportOldListProcs.ASuite1NodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;

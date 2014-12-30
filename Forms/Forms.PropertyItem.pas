@@ -66,9 +66,9 @@ var
 implementation
 
 uses
-  Utility.Frame, Frame.Properties.Advanced, Kernel.Enumerations, DataModules.Images,
+  Utility.Frame, Frame.Properties.Advanced, Kernel.Enumerations,
   Frame.Properties.Behavior, Frame.Properties.General.Category, Frame.Properties.General.Software,
-  Kernel.Types, NodeDataTypes.Files;
+  Kernel.Types;
 
 {$R *.dfm}
 

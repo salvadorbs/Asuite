@@ -6,18 +6,16 @@ uses
   Kernel.Consts, Windows, SysUtils, Classes, Kernel.Enumerations, ShlObj, ActiveX, ComObj,
   FileCtrl;
 
-{ Browse }
+{ Folders }
 function  BrowseForFolder(const InitialDir: String; const Caption: String = ''): String;
+function DirToPath(const Dir: string): string;
+function IsDirectory(const DirName: string): Boolean;
+function IsFlagSet(const Flags, Mask: Integer): Boolean;
 
 { Files }
-procedure DeleteFiles(const PathDir, FileName: String);
 procedure DeleteOldBackups(const MaxNumber: Integer);
-
-{ Folders }                 
-procedure CheckBackupFolder;
-procedure CheckCacheFolders;
-function  GetNumberSubFolders(const FolderPath: String): Integer;
-procedure RemoveCacheFolders;
+function DeleteFiles(const Dir, Wildcard: string): Integer;
+function ListFiles(const Dir, Wildcard: string; const List: Classes.TStrings): Boolean;
 
 { Desktop shortcut }
 procedure CreateShortcutOnDesktop(const FileName, TargetFilePath, Params, WorkingDir: String);
@@ -28,7 +26,7 @@ procedure RenameShortcutOnDesktop(const OldFileName, FileName: String);
 implementation
 
 uses
-  Utility.System, AppConfig.Main;
+  AppConfig.Main;
 
 function BrowseForFolder(const InitialDir: String; const Caption: String): String;
 var
@@ -42,87 +40,102 @@ begin
     Result := Path;
 end;
 
-procedure DeleteFiles(const PathDir, FileName: String);
-var
-  Search : TSearchRec;
+function DirToPath(const Dir: string): string;
 begin
-  //Delete file with FileName in folder PathDir (path relative)
-  if FindFirst(PathDir + FileName,faAnyFile,Search) = 0 then
-  begin
-    repeat
-      DeleteFile(PathDir + Search.Name);
-    until
-      FindNext(Search) <> 0;
-    FindClose(Search);
+  if (Dir <> '') and (Dir[Length(Dir)] <> '\') then
+    Result := Dir + '\'
+  else
+    Result := Dir;
+end;
+
+function IsDirectory(const DirName: string): Boolean;
+var
+  Attr: Integer;  // directory's file attributes
+begin
+  Attr := SysUtils.FileGetAttr(DirName);
+  Result := (Attr <> -1) and IsFlagSet(Attr, SysUtils.faDirectory);
+end;
+
+function IsFlagSet(const Flags, Mask: Integer): Boolean;
+begin
+  Result := Mask = (Flags and Mask);
+end;
+
+function DeleteFiles(const Dir, Wildcard: string): Integer;
+var
+  Files: Classes.TStringList; // stores files to be deleted
+  I: Integer;                 // loops thru files in folder
+  AFile: string;              // a file to be deleted
+  Path: string;               // path to directory
+  Attr: Integer;              // attributes of a file
+begin
+  Result := 0;
+  // Create list to stores files to be deleted
+  Files := Classes.TStringList.Create;
+  try
+    // List files per file spec into string list
+    if not ListFiles(Dir, Wildcard, Files) then
+      Exit;
+    // Get path of directory containing files
+    Path := DirToPath(Dir);
+    // Loop through all files
+    for I := 0 to Pred(Files.Count) do
+    begin
+      // Get name and attributes of file to be deleted
+      AFile := Path + Files[I];
+      Attr := SysUtils.FileGetAttr(AFile);
+      // Delete file if it is not a directory
+      if (Attr and SysUtils.faDirectory = 0) then
+      begin
+        if SysUtils.DeleteFile(AFile) then
+          // File deleted: count it
+          Inc(Result);
+      end;
+    end;
+  finally
+    // Tidy up
+    Files.Free;
+  end;
+end;
+
+function ListFiles(const Dir, Wildcard: string; const List: Classes.TStrings): Boolean;
+var
+  FileSpec: string;         // search file specification
+  SR: SysUtils.TSearchRec;  // file search result
+  Success: Integer;         // success code for FindXXX routines
+begin
+  Assert(Assigned(List));
+  // Check if true directory and exit if not
+  Result := IsDirectory(Dir);
+  if not Result then
+    Exit;
+  // Build file spec from directory and wildcard
+  FileSpec := DirToPath(Dir);
+  if Wildcard = '' then
+    FileSpec := FileSpec + '*.*'
+  else
+    FileSpec := FileSpec + Wildcard;
+  // Initialise search for matching files
+  Success := SysUtils.FindFirst(FileSpec, SysUtils.faAnyFile, SR);
+  try
+    // Loop for all files in directory
+    while Success = 0 do
+    begin
+      // only add true files or directories to list
+      if (SR.Name <> '.') and (SR.Name <> '..') then
+        List.Add(SR.Name);
+      // get next file
+      Success := SysUtils.FindNext(SR);
+    end;
+  finally
+    // Tidy up
+    SysUtils.FindClose(SR);
   end;
 end;
 
 procedure DeleteOldBackups(const MaxNumber: Integer);
-var
-  BackupList   : TStringList;
-  BackupSearch : TSearchRec;
-  I            : Integer;
 begin
-  BackupList := TStringList.Create;
-  if FindFirst(Config.Paths.SuitePathBackup + APP_NAME + '_*' + EXT_SQLBCK,faAnyFile,BackupSearch) = 0 then
-  begin
-    repeat
-      BackupList.Add(BackupSearch.Name);
-    until
-      FindNext(BackupSearch) <> 0;
-    FindClose(BackupSearch);
-  end;
-  BackupList.Sort;
-  for I := 1 to BackupList.Count - MaxNumber do
-    DeleteFile(Config.Paths.SuitePathBackup + BackupList[I - 1]);
-  BackupList.Free;
-end;
-
-procedure CheckBackupFolder;
-begin
-  //Check if folder backup exists, else create it
-  SysUtils.ForceDirectories(Config.Paths.SuitePathBackup);
-end;         
-
-procedure CheckCacheFolders;
-begin
-  //Check if folder cache exists, else create it
-  SysUtils.ForceDirectories(Config.Paths.SuitePathCache);
-  SysUtils.ForceDirectories(Config.Paths.SuitePathCacheLarge);
-end;
-
-function GetNumberSubFolders(const FolderPath: String): Integer;
-var
-  SearchRec: TSearchRec;
-begin
-  Result := 0;
-  //Count subfolders in FolderPath
-  if FindFirst(FolderPath + '*.*', faAnyFile, SearchRec) = 0 then
-  repeat
-    if ((SearchRec.Name <> '.') and (SearchRec.Name <> '..')) and
-       ((SearchRec.Attr and faDirectory) = (faDirectory)) then
-    begin
-      //Increment result
-      Inc(Result);
-      Result := Result + GetNumberSubFolders(IncludeTrailingBackslash(FolderPath + SearchRec.Name));
-    end;
-  until FindNext(SearchRec) <> 0;
-  FindClose(SearchRec);
-end;
-
-procedure RemoveCacheFolders;
-begin
-  //Delete all file icon-cache and folder cache
-  if (SysUtils.DirectoryExists(Config.Paths.SuitePathCache)) then
-  begin
-    if (SysUtils.DirectoryExists(Config.Paths.SuitePathCacheLarge)) then
-    begin
-      DeleteFiles(Config.Paths.SuitePathCacheLarge,'*.*');
-      RemoveDir(Config.Paths.SuitePathCacheLarge);
-    end;
-    DeleteFiles(Config.Paths.SuitePathCache,'*.*');
-    RemoveDir(Config.Paths.SuitePathCache);
-  end;
+  DeleteFiles(Config.Paths.SuitePathBackup, APP_NAME + '_*' + EXT_SQLBCK);
 end;
 
 procedure CreateShortcutOnDesktop(const FileName, TargetFilePath, Params, WorkingDir: String);

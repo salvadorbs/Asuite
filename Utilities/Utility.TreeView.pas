@@ -33,7 +33,6 @@ function  CreateNodeData(AType: TvTreeDataType): TvBaseNodeData;
 function  ClickOnButtonTree(Sender: TBaseVirtualTree): Boolean;
 function GetNodeParentName(const ASender: TBaseVirtualTree; const ANode: PVirtualNode): string;
 procedure RefreshList(const ATree: TBaseVirtualTree);
-function IsNodeExists(const ANode: PVirtualNode; const ATree: TBaseVirtualTree): Boolean;
 function ShowItemProperty(const AOwner: TComponent; const ATreeView: TBaseVirtualTree;
                           const ANode: PVirtualNode; ANewNode: Boolean): Integer;
 
@@ -49,7 +48,6 @@ function DragDropText(Sender: TBaseVirtualTree;DataObject: IDataObject;
 { Get Data from Virtual TreeView }
 procedure GetFileListFromObj(const DataObj: IDataObject; FileList: TStringList);
 function  GetNodeDataEx(const ANode: PVirtualNode; const ATree: TBaseVirtualTree): PBaseData;
-//function  GetNodeDataSearch(const ANodeX: PVirtualNode; const ATree: TBaseVirtualTree): PBaseData;
 function GetNodeItemData(const ANode: PVirtualNode; const ATree: TBaseVirtualTree): TvBaseNodeData;
 function  GetListNodeFromSubTree(const ANodeX: PVirtualNode;const ATree: TBaseVirtualTree): PVirtualNode;
 
@@ -91,7 +89,7 @@ implementation
 uses
   Utility.System, DataModules.Images, Forms.Main, AppConfig.Main, NodeDataTypes.Files,
   Utility.FileFolder, Forms.PropertySeparator, DataModules.TrayMenu,
-  NodeDataTypes.Category, NodeDataTypes.Separator, ulCommonUtils,
+  NodeDataTypes.Category, NodeDataTypes.Separator,
   Forms.PropertyItem;
 
 function AddNodeInVST(Sender: TBaseVirtualTree;ParentNode: PVirtualNode;AType: TvTreeDataType): PVirtualNode;
@@ -362,22 +360,6 @@ begin
     CheckVisibleNodePathExe(ATree);
 end;
 
-function IsNodeExists(const ANode: PVirtualNode; const ATree: TBaseVirtualTree): Boolean;
-var
-  CurrentNode: PVirtualNode;
-begin
-  Result := False;
-  //Cycle while to find FNode in MainTree
-  CurrentNode := ATree.GetFirst;
-  while Assigned(CurrentNode) do
-  begin
-    //If CurrentNode is FNode, result true else continue cycle
-    if CurrentNode = ANode then
-      Exit(True);
-    CurrentNode := ATree.GetNext(CurrentNode);
-  end;
-end;
-
 function ShowItemProperty(const AOwner: TComponent; const ATreeView: TBaseVirtualTree;
                           const ANode: PVirtualNode; ANewNode: Boolean): Integer;
 var
@@ -432,6 +414,7 @@ var
   NodeData: PBaseData;
   FileNodeData: TvFileNodeData;
 begin
+  //TODO: Rename this function and params
   NodeData := GetNodeDataEx(Node, Sender);
   FileNodeData := TvFileNodeData(NodeData.Data);
   //Set some node record's variables
@@ -580,16 +563,6 @@ begin
   if Assigned(BaseData) then
     Result := BaseData.Data;
 end;
-
-//function GetNodeDataSearch(const ANodeX: PVirtualNode; const ATree: TBaseVirtualTree): PBaseData;
-//var
-//  ListNode  : PVirtualNode;
-//begin
-//  Result := nil;
-//  ListNode := GetListNodeFromSubTree(ANodeX, ATree);
-//  if Assigned(ListNode) then
-//    Result := Config.MainTree.GetNodeData(ListNode);
-//end;
 
 function GetListNodeFromSubTree(const ANodeX: PVirtualNode;const ATree: TBaseVirtualTree): PVirtualNode;
 var

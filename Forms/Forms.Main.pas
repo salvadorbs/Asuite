@@ -24,7 +24,7 @@ interface
 uses
   Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
   ComCtrls, VirtualTrees, ActiveX, Kernel.Consts, DataModules.Images,
-  Kernel.BaseMainForm, StdCtrls, Buttons, System.UITypes, mORMotUILogin,
+  Kernel.BaseMainForm, StdCtrls, Buttons, System.UITypes,
   Kernel.Enumerations, Vcl.ExtCtrls, System.DateUtils, XMLDoc, DKLang, Lists.Manager,
   Database.Manager;
 
@@ -195,10 +195,9 @@ var
 implementation
 
 uses
-  TypInfo, Forms.Options, Forms.About, ulCommonUtils, Forms.ScanFolder,
+  TypInfo, Forms.Options, Forms.About, Utility.Misc, Forms.ScanFolder,
   DataModules.TrayMenu, Forms.ImportList, AppConfig.Main, Utility.XML,
-  Utility.TreeView, Database.List, Frame.Options.Stats, Forms.PropertyItem,
-  Forms.PropertySeparator, NodeDataTypes.Base, NodeDataTypes.Category,
+  Utility.TreeView, Frame.Options.Stats, NodeDataTypes.Base, NodeDataTypes.Category,
   NodeDataTypes.Files, NodeDataTypes.Custom, NodeDataTypes.Separator, Kernel.Types;
 
 {$R *.dfm}
@@ -560,7 +559,7 @@ begin
   New(DataSource);
   Stream.ReadBuffer(DataSource^,SizeOf(rBaseData));
   //Copy source's properties in DataDest
-  DataDest := Sender.GetNodeData(Node);
+  DataDest := GetNodeDataEx(Node, Sender);
   DataDest.Data := CreateNodeData(DataSource.Data.DataType);
   //Copy DataSource in DataDest
   case DataSource.Data.DataType of
@@ -585,11 +584,11 @@ end;
 procedure TfrmMain.vstListNewText(Sender: TBaseVirtualTree; Node: PVirtualNode;
   Column: TColumnIndex; NewText: string);
 var
-  NodeData : PBaseData;
+  NodeData : TvBaseNodeData;
 begin
-  NodeData := Sender.GetNodeData(Node);
+  NodeData := GetNodeItemData(Node, Sender);
   if Assigned(NodeData) then
-    NodeData.Data.Name := NewText;
+    NodeData.Name := NewText;
 end;
 
 procedure TfrmMain.vstListPaintText(Sender: TBaseVirtualTree;
@@ -611,7 +610,7 @@ procedure TfrmMain.vstListSaveNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
 var
   Data: PBaseData;
 begin
-  Data := Sender.GetNodeData(Node);
+  Data := GetNodeDataEx(Node, Sender);
   Stream.WriteBuffer(Data^,SizeOf(rBaseData));
 end;
 
@@ -627,22 +626,22 @@ end;
 procedure TfrmMain.vstListCompareNodes(Sender: TBaseVirtualTree; Node1,
   Node2: PVirtualNode; Column: TColumnIndex; var Result: Integer);
 var
-  Data1, Data2: PBaseData;
+  Data1, Data2: TvBaseNodeData;
 begin
-  Data1 := vstList.GetNodeData(Node1);
-  Data2 := vstList.GetNodeData(Node2);
+  Data1 := GetNodeItemData(Node1, Sender);
+  Data2 := GetNodeItemData(Node2, Sender);
   if (Not Assigned(Data1)) or (Not Assigned(Data2)) then
     Result := 0
   else
-    if (Data1.Data.DataType = vtdtCategory) <> (Data2.Data.DataType = vtdtCategory) then
+    if (Data1.DataType = vtdtCategory) <> (Data2.DataType = vtdtCategory) then
     begin
-      if Data1.Data.DataType = vtdtCategory then
+      if Data1.DataType = vtdtCategory then
         Result := -1
       else
         Result := 1
     end
     else
-      Result := CompareText(Data1.Data.Name, Data2.Data.Name);
+      Result := CompareText(Data1.Name, Data2.Name);
 end;
 
 procedure TfrmMain.vstListDragDrop(Sender: TBaseVirtualTree; Source: TObject;
@@ -720,10 +719,10 @@ end;
 procedure TfrmMain.vstListEditing(Sender: TBaseVirtualTree; Node: PVirtualNode;
   Column: TColumnIndex; var Allowed: Boolean);
 var
-  NodeData : PBaseData;
+  NodeData : TvBaseNodeData;
 begin
-  NodeData := Sender.GetNodeData(Node);
-  Allowed  := (NodeData.Data.DataType <> vtdtSeparator) and Not(Config.RunSingleClick);
+  NodeData := GetNodeItemData(Node, Sender);
+  Allowed  := (NodeData.DataType <> vtdtSeparator) and Not(Config.RunSingleClick);
 end;
 
 procedure TfrmMain.vstListExpanding(Sender: TBaseVirtualTree;
@@ -731,19 +730,19 @@ procedure TfrmMain.vstListExpanding(Sender: TBaseVirtualTree;
 var
   NodeData : TvBaseNodeData;
 begin
-  NodeData := PBaseData(Sender.GetNodeData(Node)).Data;
+  NodeData := GetNodeItemData(Node, Sender);
+  //TODO: Fix it
 //  if NodeData.DataType = vtdtCategory then
-    //TODO: Fix it
 //ImagesDM.GetChildNodesIcons(Sender, nil, Node);
 end;
 
 procedure TfrmMain.vstListFreeNode(Sender: TBaseVirtualTree;
   Node: PVirtualNode);
 var
-  NodeData : PBaseData;
+  NodeData : TvBaseNodeData;
 begin
-  NodeData := Sender.GetNodeData(Node);
-  FreeAndNil(NodeData.Data);
+  NodeData := GetNodeItemData(Node, Sender);
+  FreeAndNil(NodeData);
 end;
 
 function TfrmMain.GetActiveTree: TBaseVirtualTree;

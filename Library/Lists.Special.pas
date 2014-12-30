@@ -22,9 +22,9 @@ unit Lists.Special;
 interface
 
 uses
-  Classes, VirtualTrees, NodeDataTypes.Custom, Menus, SysUtils, Kernel.Types,
+  Classes, NodeDataTypes.Custom, Menus, SysUtils, Kernel.Types,
   Windows, Kernel.Enumerations, NodeDataTypes.Files, NodeDataTypes.Base,
-  DateUtils, Dialogs, DKLang, UITypes, Lists.Base;
+  DateUtils, Dialogs, UITypes, Lists.Base;
 
 type
   TMRUItemsComparer = class(TItemsComparer)
@@ -54,7 +54,7 @@ type
 implementation
 
 uses
-  ulCommonUtils;
+  Utility.Misc;
 
 function TSpecialItemsList.AddItem(AItem: TvCustomRealNodeData): Integer;
 var

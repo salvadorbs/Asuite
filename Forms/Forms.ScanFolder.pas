@@ -74,9 +74,8 @@ var
 implementation
 
 uses
-  ulCommonUtils, Utility.FileFolder, NodeDataTypes.Custom, AppConfig.Main,
-  Kernel.Enumerations, Utility.TreeView, Utility.System, Kernel.Types,
-  NodeDataTypes.Files, NodeDataTypes.Base, DataModules.Images;
+  Utility.Misc, NodeDataTypes.Custom, AppConfig.Main, Kernel.Enumerations,
+  Utility.TreeView, Utility.System, NodeDataTypes.Files, NodeDataTypes.Base;
 
 {$R *.dfm}
 
@@ -197,7 +196,7 @@ var
   Dialog: TForm;
 begin
   //Run scan
-  Dialog := CreateDialogProgressBar(DKLangConstW('msgScanningProgress'), GetNumberSubFolders(TempPath));
+  Dialog := CreateDialogProgressBar(DKLangConstW('msgScanningProgress'), Config.Paths.GetNumberSubFolders(TempPath));
   Tree.BeginUpdate;
   try
     DoScanFolder(Tree, TempPath, ChildNode, Dialog);

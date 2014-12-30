@@ -23,23 +23,13 @@ interface
 
 uses
   Kernel.Consts, Windows, ShellApi, SysUtils, Classes, Registry, StrUtils,
-  ShlObj, ActiveX, ComObj, Forms, Dialogs, FileCtrl, Vcl.StdCtrls, System.IOUtils;
-
-{ Browse }
-function  BrowseCallbackProc(hwnd: HWND; uMsg: UINT; lParam, lpData: LPARAM): Integer; stdcall;
+  ShlObj, ActiveX, ComObj, Forms, Dialogs, FileCtrl, System.IOUtils;
 
 { Check functions }
 function HasDriveLetter(const Path: String): Boolean;
-function IsAbsolutePath(const Path: String): Boolean;
-function IsDirectory(const Path: String): Boolean;
 function IsDriveRoot(const Path: String): Boolean;
 function IsValidURLProtocol(const URL: string): Boolean;
 function IsPathExists(const Path: String): Boolean;
-function SHAutoComplete(hwndEdit: HWND; dwFlags: dWord): LongInt; stdcall; external 'shlwapi.dll';
-function AutoCompleteInEdit(Edit: TEdit): Boolean;
-
-{ Relative & Absolute path }
-function ExpandEnvVars(const Str: string): string;
 
 { Registry }
 procedure SetASuiteAtWindowsStartup;
@@ -53,30 +43,10 @@ function RegisterHotkeyEx(AId: Integer; AShortcut: TShortCut): Boolean;
 function UnRegisterHotkeyEx(AId: Integer): Boolean;
 function IsHotkeyAvailable(AId: Integer; AShortcut: TShortcut): Boolean;
 
-const
-  SHACF_AUTOAPPEND_FORCE_OFF  = $80000000; // Ignore the registry default and force the feature off. (Also know as AutoComplete)
-  SHACF_AUTOAPPEND_FORCE_ON   = $40000000; // Ignore the registry default and force the feature on. (Also know as AutoComplete)
-  SHACF_AUTOSUGGEST_FORCE_OFF = $20000000; // Ignore the registry default and force the feature off.
-  SHACF_AUTOSUGGEST_FORCE_ON  = $10000000; // Ignore the registry default and force the feature on.
-  SHACF_DEFAULT = $00000000;    // Currently (SHACF_FILESYSTEM | SHACF_URLALL)
-  SHACF_FILESYSTEM = $00000001; // This includes the File System as well as the rest of the shell (Desktop\My Computer\Control Panel\)
-  SHACF_URLHISTORY = $00000002; // URLs in the User's History
-  SHACF_URLMRU = $00000004;     // URLs in the User's Recently Used list.
-  SHACF_USETAB = $00000008;
-  SHACF_URLALL = (SHACF_URLHISTORY + SHACF_URLMRU);
-
 implementation
 
 uses
-  Utility.Strings, Forms.Main, AppConfig.Main, ulCommonUtils;
-
-function BrowseCallbackProc(hwnd: HWND; uMsg: UINT; lParam, lpData: LPARAM): Integer; stdcall;
-begin
-  //Set initial directory
-  if uMsg = BFFM_INITIALIZED then
-    SendMessage(hwnd, BFFM_SETSELECTION, 1, lpData);
-  Result := 0;
-end;
+  Utility.Conversions, Forms.Main, AppConfig.Main, Utility.Misc;
 
 function HasDriveLetter(const Path: String): Boolean;
 var P: PChar;
@@ -90,35 +60,6 @@ begin
   if not CharInSet(P^, [':']) then
     Exit(False);
   Result := True;
-end;
-
-function IsAbsolutePath(const Path: String): Boolean;
-begin
-  if Path = '' then
-    Result := False
-  else if HasDriveLetter(Path) then
-    Result := True
-  else if CharInSet(PChar(Pointer(Path))^, ['\', '/']) then
-    Result := True else
-  Result := False;
-end;
-
-function IsDirectory(const Path: String): Boolean;
-var
-  L: Integer;
-  P: PChar;
-begin
-  L := Length(Path);
-  if L = 0 then
-    Result := False
-  else if (L = 2) and HasDriveLetter(Path) then
-    Result := True
-  else
-    begin
-      P := Pointer(Path);
-      Inc(P, L - 1);
-      Result := CharInSet(P^, SLASHES);
-    end;
 end;
 
 function IsDriveRoot(const Path: String): Boolean;
@@ -160,28 +101,6 @@ begin
       Result := True
     else
       Result := (FileExists(PathTemp)) or (SysUtils.DirectoryExists(PathTemp));
-end;
-
-function AutoCompleteInEdit(Edit: TEdit): Boolean;
-begin
-  Result := (SHAutoComplete(Edit.Handle, SHACF_FILESYSTEM or SHACF_AUTOAPPEND_FORCE_ON) = 0);
-end;
-
-function ExpandEnvVars(const Str: string): string;
-var
-  BufSize: Integer; // size of expanded string
-begin
-  // Get required buffer size
-  BufSize := ExpandEnvironmentStrings(PChar(Str), nil, 0);
-  if BufSize > 0 then
-  begin
-    // Read expanded string into result string
-    SetLength(Result, BufSize - 1);
-    ExpandEnvironmentStrings(PChar(Str), PChar(Result), BufSize);
-  end
-  else
-    // Trying to expand empty string
-    Result := '';
 end;
 
 procedure EjectDialog(Sender: TObject);

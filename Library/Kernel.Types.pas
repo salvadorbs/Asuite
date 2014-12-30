@@ -26,7 +26,8 @@ uses
   XMLIntf, Types, Menus, Kernel.Enumerations, Frame.BaseEntity;
 
 type
-  TImportListToTree = function(Tree: TVirtualStringTree;Node: IXMLNode;Parent: PVirtualNode): PVirtualNode of object;
+  TImportListToTree = function(Tree: TVirtualStringTree; Node: IXMLNode;
+                               Parent: PVirtualNode): PVirtualNode of object;
 
   TNodeDataItems  = TList<TvBaseNodeData>;
   TItemsComparer  = TComparer<TvBaseNodeData>;
@@ -42,7 +43,6 @@ type
   PBaseData = ^rBaseData;
 
   rTreeDataX = record
-    //TODO: Add DataType from pNodeList's Data
     pNodeList : PVirtualNode;
   end;
   PTreeDataX = ^rTreeDataX; //X = Search or TrayMenu
