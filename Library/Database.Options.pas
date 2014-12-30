@@ -22,7 +22,7 @@ unit Database.Options;
 interface
 
 uses
-  mORMot, mORMotSQLite3, SynCommons, Kernel.Enumerations, Classes,
+  mORMot, SynCommons, Kernel.Enumerations, Classes,
   SysUtils, Database.Manager, AppConfig.Main, Types;
 
 type
@@ -168,7 +168,7 @@ type
 implementation
 
 uses
-  DKLang, Forms.Main, ulCommonUtils;
+  DKLang, Utility.Conversions;
 
 class procedure TSQLtbl_options.Load(ADBManager: TDBManager; AConfig: TConfiguration);
 var

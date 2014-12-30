@@ -130,7 +130,7 @@ var
 implementation
 
 uses
-  Kernel.Consts, DataModules.Images, Forms.Main, AppConfig.Main, ulCommonUtils,
+  DataModules.Images, Forms.Main, AppConfig.Main,
   Utility.System, Forms.GraphicMenu, Kernel.Types, NodeDataTypes.Files,
   NodeDataTypes.Custom, NodeDataTypes.Base, Utility.TreeView;
 

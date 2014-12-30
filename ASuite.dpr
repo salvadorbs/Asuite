@@ -19,9 +19,7 @@ uses
   Kernel.BaseMainForm in 'Library\Kernel.BaseMainForm.pas',
   Kernel.Consts in 'Library\Kernel.Consts.pas',
   Kernel.Enumerations in 'Library\Kernel.Enumerations.pas',
-  ulCommonUtils in 'Library\ulCommonUtils.pas',
   Utility.FileFolder in 'Utilities\Utility.FileFolder.pas',
-  Utility.Strings in 'Utilities\Utility.Strings.pas',
   Utility.System in 'Utilities\Utility.System.pas',
   Utility.TreeView in 'Utilities\Utility.TreeView.pas',
   Utility.XML in 'Utilities\Utility.XML.pas',
@@ -57,7 +55,12 @@ uses
   Lists.Manager in 'Library\Lists.Manager.pas',
   Kernel.Singleton in 'Library\Kernel.Singleton.pas',
   AppConfig.Paths in 'Library\AppConfig.Paths.pas',
-  Kernel.PopupMenu in 'Library\Kernel.PopupMenu.pas';
+  Kernel.PopupMenu in 'Library\Kernel.PopupMenu.pas',
+  Utility.Conversions in 'Utilities\Utility.Conversions.pas',
+  Utility.Misc in 'Utilities\Utility.Misc.pas',
+  Kernel.ASuiteInstance in 'Library\Kernel.ASuiteInstance.pas',
+  Kernel.ShortcutGrabber in 'Library\Kernel.ShortcutGrabber.pas' {/SQLite3 static library},
+  USingleInst;
 
 //SQLite3 static library
 
@@ -71,12 +74,11 @@ var
 {$R *.dkl_const.res}
 
 begin
-  {$IFDEF DEBUG}
-  ReportMemoryLeaksOnShutdown := True;
-  {$ENDIF}
-  //TODO: Use another single instance solution (see Delphi Dabbler)
-//  if not CheckPrevious.RestoreIfRunning(Application.Handle, 1) then
+  if SingleInst.CanStartApp then
   begin
+    {$IFDEF DEBUG}
+    ReportMemoryLeaksOnShutdown := True;
+    {$ENDIF}
     {$IFDEF DEBUG}
     cTempo1 := GetTickCount;
     {$ENDIF}

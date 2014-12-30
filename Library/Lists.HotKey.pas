@@ -22,9 +22,9 @@ unit Lists.HotKey;
 interface
 
 uses
-  Classes, VirtualTrees, NodeDataTypes.Custom, Menus, SysUtils, Kernel.Types,
-  Windows, Kernel.Enumerations, NodeDataTypes.Files, NodeDataTypes.Base,
-  DateUtils, Dialogs, DKLang, UITypes, Lists.Base;
+  Classes, NodeDataTypes.Custom, Menus, SysUtils,
+  Windows, Kernel.Enumerations, NodeDataTypes.Base,
+  DateUtils, Dialogs, UITypes, Lists.Base;
 
 type
   THotkeyItemsList = class(TBaseItemsList)

@@ -57,7 +57,7 @@ var
 implementation
 
 uses
-  Kernel.Consts, Kernel.Enumerations, NodeDataTypes.Files;
+  Kernel.Enumerations, NodeDataTypes.Files;
 
 {$R *.dfm}
 

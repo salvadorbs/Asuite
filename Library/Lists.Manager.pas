@@ -22,7 +22,7 @@ unit Lists.Manager;
 interface
 
 uses
-  Classes, VirtualTrees, Menus, SysUtils, Kernel.Singleton, Lists.Special,
+  Classes, Menus, SysUtils, Kernel.Singleton, Lists.Special,
   Lists.Base, Lists.Scheduler, Lists.HotKey;
 
 type

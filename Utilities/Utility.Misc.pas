@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 }
 
-unit ulCommonUtils;
+unit Utility.Misc;
 
 interface
 
@@ -25,102 +25,37 @@ uses
   Windows, SysUtils, Classes, Graphics, Forms, Dialogs, ComCtrls, Clipbrd,
   Kernel.Consts, StdCtrls, XMLIntf, System.UITypes, DKLang, Menus;
 
-{ Converters }
-function RGBToHtml(iRGB: Cardinal): string;
-function ColorToHtml(Color:TColor): string;
-function HtmlToColor(Color: string): TColor;
-procedure StrToFont(const s: string; AFont: TFont);
-function FontToStr(Font: TFont): string;
-
 { Forms }
 function  CreateDialogProgressBar(DialogMsg: String;NumberFolders: Integer): TForm;
 function  IsFormOpen(const FormName : string): Boolean;
-procedure SetFormPosition(Form: TForm;ListFormLeft, ListFormTop: Integer);
+procedure SetFormPosition(Form: TForm; ListFormLeft, ListFormTop: Integer);
 
 { Misc }
 function CheckPropertyName(Edit: TEdit): Boolean;
 function  GetCheckedMenuItem(PopupMenu: TPopupMenu): TMenuItem;
-function  GetDateTime: String;
-function  GetFirstFreeIndex(ArrayString: Array of WideString): Integer;
-function  IfThen(AValue: Boolean; ATrue, AFalse: String): String;
 function  IsFormatInClipBoard(format: Word): Boolean;
+function RemoveQuotes(const S: string; const QuoteChar: Char): string;
+function RemoveAllQuotes(const S: string): string;
 procedure ShowMessageEx(const Msg: string; Error: boolean=false);
 procedure ShowMessageFmtEx(const Msg: string; Params: array of const; Error: boolean=false);
 
 { Stats }
-function  GetCurrentUserName: string;
-function  GetComputerName: string;
 function  DiskFloatToString(Number: double;Units: Boolean): string;
-//function  GetWindowsLanguage(TypeLocalInfo: LCTYPE): string;
-function  GetWindowsVersion: string;
 function  DiskFreeString(Drive: Char;Units: Boolean): string;
 function  DiskSizeString(Drive: Char;Units: Boolean): string;
 function  DiskUsedString(Drive: Char;Units: Boolean): string;
-function  DiskFreePercentual(Drive: Char): double;
 
-{ Version }
+{ Integer }
 function  CompareInteger(int1, int2: Integer): Integer;
 
 { HotKey }
 function  GetHotKeyCode(AShortcut: TShortcut) : Word;
 function  GetHotKeyMod(AShortcut: TShortcut) : Integer;
 
-const
-  MAX_PROFILE_PATH = 255;
-
 implementation
 
 uses
   Registry, SynTaskDialog;
-
-function RGBToHtml(iRGB: Cardinal): string;
-begin
-  Result:=Format('#%.2x%.2x%.2x',
-                 [Byte(iRGB),          //GetRValue(vRGB)
-                  Byte(iRGB shr 8),    //GetGValue(vRGB)
-                  Byte(iRGB shr 16)]); //GetBValue(vRGB)
-end;
-
-function ColorToHtml(Color:TColor): string;
-begin
-  Result := RGBToHtml(ColorToRGB(Color));
-end;
-
-function HtmlToColor(Color: string): TColor;
-begin
-  Result := StringToColor('$' + Copy(Color, 6, 2) + Copy(Color, 4, 2) + Copy(Color, 2, 2));
-end;
-
-procedure StrToFont(const s: string; AFont: TFont);
-var
-  Strs : TStringList;
-begin
-  if Assigned(AFont) then
-  begin
-    Strs  := TStringList.Create;
-    try
-      Strs.Text := StringReplace(s, '|', #10, [rfReplaceAll]);
-      if Strs.Count = 4 then
-      begin
-        AFont.Name  := Strs[0];
-        AFont.Size  := StrToInt(Strs[1]);
-        AFont.Color := HtmlToColor(Strs[2]);
-        AFont.Style := TFontStyles(byte(StrToInt(Strs[3])));
-      end;
-    finally
-      Strs.Free;
-    end;
-  end;
-end;
-
-function FontToStr(Font: TFont): string;
-var
-  sColor, sStyle : string;
-begin
-  sColor := ColorToHtml(Font.Color);
-  sStyle := IntToStr(byte(Font.Style));
-  result := Font.Name + '|' + IntToStr(Font.Size) + '|' + sColor + '|' + sStyle;
-end;
 
 function CreateDialogProgressBar(DialogMsg: String;NumberFolders: Integer): TForm;
 var
@@ -198,26 +133,6 @@ begin
       Result := PopupMenu.Items[I];
 end;
 
-function GetDateTime: String;
-begin
-  DateTimeToString(Result, 'yyyy-mm-dd-hh-mm-ss',now);
-end;
-
-function GetFirstFreeIndex(ArrayString: Array of WideString): Integer;
-begin
-  Result := 0;
-  while (ArrayString[Result] <> '') do
-    Inc(Result);
-end;
-
-function IfThen(AValue: Boolean; ATrue, AFalse: String): String;
-begin
-  if AValue then
-    Result := ATrue
-  else
-    Result := AFalse;
-end;
-
 function IsFormatInClipBoard(format: Word): Boolean;
 var
   buf : array [0..60] of Char;
@@ -236,6 +151,30 @@ begin
       Break;
     end;
   end;
+end;
+
+function RemoveQuotes(const S: string; const QuoteChar: Char): string;
+var
+  Len: Integer;
+begin
+  Result := S;
+
+  Len := Length(Result);
+
+  if (Len < 2) then Exit;                    //Quoted text must have at least 2 chars
+  if (Result[1] <> QuoteChar) then Exit;     //Text is not quoted
+  if (Result[Len] <> QuoteChar) then Exit;   //Text is not quoted
+
+  System.Delete(Result, Len, 1);
+  System.Delete(Result, 1, 1);
+
+  Result := StringReplace(Result, QuoteChar + QuoteChar, QuoteChar, [rfReplaceAll]);
+end;
+
+function RemoveAllQuotes(const S: string): string;
+begin
+  Result := RemoveQuotes(S, '''');
+  Result := RemoveQuotes(Result, '"');
 end;
 
 procedure ShowMessageEx(const Msg: string; Error: boolean=false);
@@ -259,63 +198,6 @@ begin
 end;
 
 { Stats }
-
-function GetCurrentUserName: string;
-const
-  cnMaxUserNameLen = 254;
-var
-  sUserName: string;
-  dwUserNameLen: DWORD;
-begin
-  dwUserNameLen := cnMaxUserNameLen - 1;
-  SetLength(sUserName, cnMaxUserNameLen);
-  GetUserName(PChar(sUserName), dwUserNameLen);
-  SetLength(sUserName, dwUserNameLen);
-  Result := sUserName;
-end;
-
-function GetComputerName: string;
-var
-  Buf: array[0..Windows.MAX_COMPUTERNAME_LENGTH] of Char; // for computer name
-  BufSize: Windows.DWORD;                                 // size of name buffer
-begin
-  BufSize := SizeOf(Buf);
-  if Windows.GetComputerName(Buf, BufSize) then
-    Result := Buf
-  else
-    Result := '';
-end;
-
-function GetWindowsVersion: string;
-var
-  VerInfo : TOsversionInfo;
-  PlatformId, ServicePack : string;
-  Reg     : TRegistry;
-begin
-  VerInfo.dwOSVersionInfoSize := SizeOf(VerInfo);
-  GetVersionEx(VerInfo);
-  Reg         := TRegistry.Create;
-  Reg.RootKey := HKEY_LOCAL_MACHINE;
-  case VerInfo.dwPlatformId of
-    VER_PLATFORM_WIN32_WINDOWS:
-      begin
-        //Windows 9x
-        Reg.OpenKey('\SOFTWARE\Microsoft\Windows\CurrentVersion', False);
-        PlatformId  := Reg.ReadString('ProductName');
-        ServicePack := Reg.ReadString('CSDVersion');
-      end;
-    VER_PLATFORM_WIN32_NT:
-      begin
-        //Windows NT (2000/XP/2003/Vista)
-        Reg.OpenKey('\SOFTWARE\Microsoft\Windows NT\CurrentVersion', False);
-//        PlatformId  := Reg.ReadString('ProductName');
-        PlatformId := StringReplace(Reg.ReadString('ProductName'),'Microsoft ','',[]);
-        ServicePack := StringReplace(Reg.ReadString('CSDVersion'),'Service Pack','SP',[]);
-      end;
-  end;
-  Reg.Free;
-  Result := PlatformId + IfThen(ServicePack <> '', ' (' + ServicePack + ')' , '');
-end;
 
 function DiskFloatToString(Number: Double;Units: Boolean): string;
 var
@@ -368,16 +250,6 @@ begin
   Free   := (DiskFree(Ord(Drive) - 64));
   Size   := (DiskSize(Ord(Drive) - 64));
   Result := DiskFloatToString(Size - Free,Units);
-end;
-
-function DiskFreePercentual(Drive: Char): double;
-var
-  Free : Double;
-  Size : Double;
-begin
-  Free   := (DiskFree(Ord(Drive) - 64));
-  Size   := (DiskSize(Ord(Drive) - 64));
-  Result := (Free) / (Size);
 end;
 
 function CompareInteger(int1, int2: Integer): Integer;

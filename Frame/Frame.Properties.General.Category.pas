@@ -57,7 +57,7 @@ var
 implementation
 
 uses
-  Kernel.Consts, NodeDataTypes.Custom, NodeDataTypes.Files, NodeDataTypes.Base,
+  NodeDataTypes.Custom, NodeDataTypes.Files, NodeDataTypes.Base,
   DataModules.Images, Kernel.Types, Kernel.Enumerations, Forms.Main, Utility.Treeview;
 
 {$R *.dfm}
@@ -71,7 +71,7 @@ var
   NewNode         : PVirtualNode;
   NewNodeData     : PTreeDataX;
 begin
-  CurrentFileData := TvCustomRealNodeData(PBaseData(Sender.GetNodeData(Node)).Data);
+  CurrentFileData := TvCustomRealNodeData(GetNodeItemData(Node, Sender));
   if (CurrentFileData.DataType in [vtdtFile,vtdtFolder]) and
      (Node.Parent = PVirtualNode(Data)) then
   begin

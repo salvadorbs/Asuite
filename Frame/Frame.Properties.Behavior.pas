@@ -54,7 +54,7 @@ var
 implementation
 
 uses
-  Kernel.Consts, Forms.PropertyItem, Kernel.Enumerations, Forms.Options, Frame.Options.Items;
+  Kernel.Enumerations, Forms.Options, Frame.Options.Items;
 
 {$R *.dfm}
 

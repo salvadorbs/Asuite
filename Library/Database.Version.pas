@@ -22,7 +22,7 @@ unit Database.Version;
 interface
 
 uses
-  mORMot, mORMotSQLite3, SynCommons, Database.Manager, AppConfig.Main;
+  mORMot, Database.Manager, AppConfig.Main;
 
 type
   TSQLtbl_version = class(TSQLRecord) //Table tbl_version
@@ -44,8 +44,7 @@ type
 
 implementation
 
-uses
-  ulCommonUtils;
+
 
 { TSQLtbl_version }
 

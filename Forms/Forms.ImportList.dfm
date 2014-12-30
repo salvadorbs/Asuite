@@ -102,6 +102,10 @@ object frmImportList: TfrmImportList
       Caption = 'tsLaunchers'
       TabVisible = False
       OnShow = tsLaunchersShow
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object rgrpLauncher: TRadioGroup
         Left = 12
         Top = 27

@@ -26,8 +26,7 @@ uses
   Dialogs, Classes, NodeDataTypes.Base;
 
 type
-  //TODO: Rename this class in TSQLtbl_list
-  TSQLtbl_files = class(TSQLRecord) //Table tbl_list
+  TSQLtbl_list = class(TSQLRecord) //Table tbl_list
   private
     Ftype             : Integer;
     Fparent           : Integer;
@@ -106,17 +105,17 @@ type
 implementation
 
 uses
-  Kernel.Enumerations, ulCommonUtils, Utility.TreeView, Forms.Main, NodeDataTypes.Custom,
-  Utility.System, NodeDataTypes.Files;
+  Kernel.Enumerations, Utility.Misc, Utility.TreeView, NodeDataTypes.Custom,
+  NodeDataTypes.Files;
 
 { TSQLtbl_files }
 
-class procedure TSQLtbl_files.InsertFileRecord(AData: TvBaseNodeData; ADatabase: TSQLRestServerDB;
+class procedure TSQLtbl_list.InsertFileRecord(AData: TvBaseNodeData; ADatabase: TSQLRestServerDB;
                                                AIndex, AParentID: Integer);
 var
-  SQLFilesData: TSQLtbl_files;
+  SQLFilesData: TSQLtbl_list;
 begin
-  SQLFilesData := TSQLtbl_files.Create;
+  SQLFilesData := TSQLtbl_list.Create;
   try
     SQLFilesData.LoadDataFromNode(AData, AIndex, AParentID);
   finally
@@ -133,16 +132,16 @@ begin
   end;
 end;
 
-class procedure TSQLtbl_files.LoadItemsByParentID(Tree: TBaseVirtualTree; ADatabase: TSQLRestServerDB;
+class procedure TSQLtbl_list.LoadItemsByParentID(Tree: TBaseVirtualTree; ADatabase: TSQLRestServerDB;
   ID: Integer; ParentNode: PVirtualNode; IsImport: Boolean);
 var
-  SQLFilesData : TSQLtbl_files;
+  SQLFilesData : TSQLtbl_list;
   nType    : TvTreeDataType;
   vData    : TvBaseNodeData;
   Node     : PVirtualNode;
 begin
   //Get files from DBTable and order them by parent, position
-  SQLFilesData := TSQLtbl_files.CreateAndFillPrepare(ADatabase,'parent=? ORDER BY parent, position',[ID]);
+  SQLFilesData := TSQLtbl_list.CreateAndFillPrepare(ADatabase,'parent=? ORDER BY parent, position',[ID]);
   try
     //Get files and its properties
     while SQLFilesData.FillOne do
@@ -197,7 +196,7 @@ begin
           end;
         end;
         if (nType = vtdtCategory) then
-          TSQLtbl_files.LoadItemsByParentID(Tree, ADatabase, vData.ID, Node, IsImport);
+          TSQLtbl_list.LoadItemsByParentID(Tree, ADatabase, vData.ID, Node, IsImport);
       end;
     end;
   finally
@@ -205,7 +204,7 @@ begin
   end;
 end;
 
-class procedure TSQLtbl_files.SaveItemsByParentID(Tree: TBaseVirtualTree; ADatabase: TSQLRestServerDB;
+class procedure TSQLtbl_list.SaveItemsByParentID(Tree: TBaseVirtualTree; ADatabase: TSQLRestServerDB;
   ANode: PVirtualNode; AParentID: Int64);
 var
   Node  : PVirtualNode;
@@ -218,13 +217,13 @@ begin
     try
       //Insert or update record
       if (vData.ID < 0) then
-        TSQLtbl_files.InsertFileRecord(vData, ADatabase, Node.Index, AParentID)
+        TSQLtbl_list.InsertFileRecord(vData, ADatabase, Node.Index, AParentID)
       else
         if ((vData.Changed) or (vData.Position <> Node.Index) or (vData.ParentID <> AParentID)) then
-          TSQLtbl_files.UpdateFileRecord(vData, ADatabase, Node.Index, AParentID);
+          TSQLtbl_list.UpdateFileRecord(vData, ADatabase, Node.Index, AParentID);
       //If type is category then process sub-nodes
       if (vData.DataType = vtdtCategory) then
-        TSQLtbl_files.SaveItemsByParentID(Tree, ADatabase, Node.FirstChild, vData.ID);
+        TSQLtbl_list.SaveItemsByParentID(Tree, ADatabase, Node.FirstChild, vData.ID);
     except
       on E : Exception do
         ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName, E.Message], True);
@@ -233,12 +232,12 @@ begin
   end;
 end;
 
-class procedure TSQLtbl_files.Load(ADBManager: TDBManager; ATree: TBaseVirtualTree; IsImport: Boolean);
+class procedure TSQLtbl_list.Load(ADBManager: TDBManager; ATree: TBaseVirtualTree; IsImport: Boolean);
 begin
-  TSQLtbl_files.LoadItemsByParentID(ATree, ADBManager.Database, 0, nil, false);
+  TSQLtbl_list.LoadItemsByParentID(ATree, ADBManager.Database, 0, nil, false);
 end;
 
-procedure TSQLtbl_files.LoadDataFromNode(AData: TvBaseNodeData; AIndex, AParentID: Integer);
+procedure TSQLtbl_list.LoadDataFromNode(AData: TvBaseNodeData; AIndex, AParentID: Integer);
 begin
   //Add base fields
   if Ftype <> Ord(AData.DataType) then
@@ -289,18 +288,18 @@ begin
   AData.Changed  := False;
 end;
 
-class procedure TSQLtbl_files.Save(ADBManager: TDBManager; ATree: TBaseVirtualTree);
+class procedure TSQLtbl_list.Save(ADBManager: TDBManager; ATree: TBaseVirtualTree);
 begin
-  TSQLtbl_files.SaveItemsByParentID(ATree, ADBManager.Database, ATree.GetFirst, 0);
+  TSQLtbl_list.SaveItemsByParentID(ATree, ADBManager.Database, ATree.GetFirst, 0);
 end;
 
-class procedure TSQLtbl_files.UpdateFileRecord(AData: TvBaseNodeData; ADatabase: TSQLRestServerDB;
+class procedure TSQLtbl_list.UpdateFileRecord(AData: TvBaseNodeData; ADatabase: TSQLRestServerDB;
                                                AIndex, AParentID: Integer);
 var
-  SQLFilesData : TSQLtbl_files;
+  SQLFilesData : TSQLtbl_list;
 begin
   //Select only file record by ID
-  SQLFilesData := TSQLtbl_files.CreateAndFillPrepare(ADatabase,'id=?',[AData.ID]);
+  SQLFilesData := TSQLtbl_list.CreateAndFillPrepare(ADatabase,'id=?',[AData.ID]);
   try
     if SQLFilesData.FillOne then
       SQLFilesData.LoadDataFromNode(AData, AIndex, AParentID);

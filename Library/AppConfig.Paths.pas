@@ -22,8 +22,7 @@ unit AppConfig.Paths;
 interface
 
 uses
-  Windows, SysUtils, Graphics, Forms, Controls, VirtualTrees, Kernel.Enumerations,
-  Vcl.Imaging.pngimage, System.UITypes, Classes, DKLang;
+  Windows, SysUtils, Graphics, Forms, Controls, Vcl.Imaging.pngimage, Classes;
 
 type
   TConfigPaths = class
@@ -50,6 +49,11 @@ type
     function RelativeToAbsolute(const APath: String): string;
     function ExpandEnvVars(const Str: string): string;
 
+    procedure CheckBackupFolder;
+    procedure CheckCacheFolders;
+    function  GetNumberSubFolders(const FolderPath: String): Integer;
+    procedure RemoveCacheFolders;
+
     property SuitePathList: String read FSuitePathList write FSuitePathList;
     property SuiteFullFileName: String read FSuiteFullFileName write FSuiteFullFileName;
     property SuiteFileName: String read FSuiteFileName write FSuiteFileName;
@@ -70,7 +74,7 @@ type
 implementation
 
 uses
-  Utility.System, Kernel.Consts;
+  Utility.System, Kernel.Consts, Utility.FileFolder;
 
 { TConfigPaths }
 
@@ -84,6 +88,19 @@ begin
   //Const $Drive
   sPath  := StringReplace(sPath, SUITEDRIVE, CONST_PATH_DRIVE, [rfIgnoreCase,rfReplaceAll]);
   Result := sPath;
+end;
+
+procedure TConfigPaths.CheckBackupFolder;
+begin
+  //Check if folder backup exists, else create it
+  SysUtils.ForceDirectories(FSuitePathBackup);
+end;
+
+procedure TConfigPaths.CheckCacheFolders;
+begin
+  //Check if folder cache exists, else create it
+  SysUtils.ForceDirectories(FSuitePathCache);
+  SysUtils.ForceDirectories(FSuitePathCacheLarge);
 end;
 
 constructor TConfigPaths.Create;
@@ -129,6 +146,25 @@ begin
     Result := '';
 end;
 
+function TConfigPaths.GetNumberSubFolders(const FolderPath: String): Integer;
+var
+  SearchRec: TSearchRec;
+begin
+  Result := 0;
+  //Count subfolders in FolderPath
+  if FindFirst(FolderPath + '*.*', faAnyFile, SearchRec) = 0 then
+  repeat
+    if ((SearchRec.Name <> '.') and (SearchRec.Name <> '..')) and
+       ((SearchRec.Attr and faDirectory) = (faDirectory)) then
+    begin
+      //Increment result
+      Inc(Result);
+      Result := Result + GetNumberSubFolders(IncludeTrailingBackslash(FolderPath + SearchRec.Name));
+    end;
+  until FindNext(SearchRec) <> 0;
+  FindClose(SearchRec);
+end;
+
 function TConfigPaths.RelativeToAbsolute(const APath: String): string;
 var
   sPath: string;
@@ -151,6 +187,21 @@ begin
       Result := ExpandFileName(sPath)
     else
       Result := sPath;
+  end;
+end;
+
+procedure TConfigPaths.RemoveCacheFolders;
+begin
+  //Delete all file icon-cache and folder cache
+  if (SysUtils.DirectoryExists(FSuitePathCache)) then
+  begin
+    if (SysUtils.DirectoryExists(FSuitePathCacheLarge)) then
+    begin
+      DeleteFiles(FSuitePathCacheLarge,'*.*');
+      RemoveDir(FSuitePathCacheLarge);
+    end;
+    DeleteFiles(FSuitePathCache,'*.*');
+    RemoveDir(FSuitePathCache);
   end;
 end;
 

@@ -33,7 +33,7 @@ type
     FSQLModel   : TSQLModel;
 
     procedure DoBackupList;
-    function  GetDateTime: String;
+    function  GetDateTimeAsString: String;
   public
     constructor Create(const DBFilePath: string);
     destructor Destroy; override;
@@ -55,14 +55,14 @@ type
 implementation
 
 uses
-  Kernel.Consts, AppConfig.Main, Utility.FileFolder, ulCommonUtils,
+  Kernel.Consts, AppConfig.Main, Utility.FileFolder, Utility.Misc,
   Database.Version, Database.Options, Database.List;
 
 constructor TDBManager.Create(const DBFilePath: String);
 begin
   FDBFileName := DBFilePath;
   //Load sqlite3 database and create missing tables
-  FSQLModel := TSQLModel.Create([TSQLtbl_version, TSQLtbl_files, TSQLtbl_options]);
+  FSQLModel := TSQLModel.Create([TSQLtbl_version, TSQLtbl_list, TSQLtbl_options]);
   FDatabase := TSQLRestServerDB.Create(FSQLModel,FDBFileName);
   fDatabase.CreateMissingTables(0);
 end;
@@ -70,7 +70,7 @@ end;
 procedure TDBManager.DeleteItem(aID: Integer);
 begin
   if (aID > 0) then
-    FDatabase.Delete(TSQLtbl_files,aID);
+    FDatabase.Delete(TSQLtbl_list,aID);
 end;
 
 destructor TDBManager.Destroy;
@@ -86,12 +86,12 @@ begin
   if (Config.Backup) then
   begin
     CopyFile(PChar(FDBFileName),
-             PChar(Format(Config.Paths.SuitePathBackup + BACKUP_FILE,[GetDateTime])),false);
+             PChar(Format(Config.Paths.SuitePathBackup + BACKUP_FILE,[GetDateTimeAsString])),false);
     DeleteOldBackups(Config.BackupNumber);
   end;
 end;
 
-function TDBManager.GetDateTime: String;
+function TDBManager.GetDateTimeAsString: String;
 begin
   DateTimeToString(Result, 'yyyy-mm-dd-hh-mm-ss',now);
 end;
@@ -99,7 +99,7 @@ end;
 procedure TDBManager.ImportData(Tree: TBaseVirtualTree);
 begin
   try
-    TSQLtbl_files.Load(Self, Tree, True);
+    TSQLtbl_list.Load(Self, Tree, True);
   except
     on E : Exception do
       ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message],True);
@@ -140,7 +140,7 @@ begin
       //Load Options
       TSQLtbl_options.Load(Self, Config);
       //Load list
-      TSQLtbl_files.Load(Self, Tree, False);
+      TSQLtbl_list.Load(Self, Tree, False);
     except
       on E : Exception do
         ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message],True);
@@ -161,9 +161,9 @@ begin
     //Save data and do backup
     try
       //Create and open Sqlite3Dataset
-      if FDatabase.TransactionBegin(TSQLtbl_files, 1) then
+      if FDatabase.TransactionBegin(TSQLtbl_list, 1) then
       begin
-        TSQLtbl_files.Save(Self, Tree);
+        TSQLtbl_list.Save(Self, Tree);
         //If settings is changed, insert it else (if it exists) update it
         if Config.Changed then
           TSQLtbl_options.Save(Self, Config);

@@ -25,7 +25,7 @@ uses
   Windows, Classes, Forms, StdCtrls, Buttons, ExtCtrls, ComCtrls, Messages,
 	ShellAPI, Controls, Graphics, Dialogs, SysUtils, VirtualTrees, AppEvnts,
   Vcl.Imaging.pngimage, cySkinButton, IniFiles, Lists.Manager, Vcl.Menus,
-  DKLang, Kernel.PopupMenu;
+  DKLang;
 
 type
   TGraphicMenuElement = (
@@ -232,9 +232,9 @@ implementation
 {$R *.dfm}
 
 uses
-  Forms.Main, Utility.System, Kernel.Consts, AppConfig.Main, ulCommonUtils,
-  Forms.About, DataModules.Images, NodeDataTypes.Base, Utility.TreeView,
-  Kernel.Enumerations, Kernel.Types, Forms.Options;
+  Forms.Main, Utility.System, Kernel.Consts, AppConfig.Main, Utility.Conversions,
+  Forms.About, NodeDataTypes.Base, Utility.TreeView, Kernel.Enumerations,
+  Kernel.Types, Forms.Options, Utility.Misc;
 
 procedure TfrmGraphicMenu.ApplicationEvents1Deactivate(Sender: TObject);
 begin
@@ -919,7 +919,7 @@ var
 begin
   if Assigned(vstList.FocusedNode) then
   begin
-    NodeData := GetNodeDataEx(vstList.FocusedNode, vstList).Data;
+    NodeData := GetNodeItemData(vstList.FocusedNode, vstList);
     miRunSelectedSw.Enabled := (NodeData.DataType <> vtdtSeparator);
     miRunAs.Enabled         := (NodeData.DataType <> vtdtSeparator);
     miRunAsAdmin.Enabled    := (NodeData.DataType <> vtdtSeparator);
@@ -1002,7 +1002,7 @@ procedure TfrmGraphicMenu.vstListAddToSelection(Sender: TBaseVirtualTree;
 var
   NodeData: TvBaseNodeData;
 begin
-  NodeData := GetNodeDataEx(Node, vstList).Data;
+  NodeData := GetNodeItemData(Node, vstList);
   if NodeData.DataType = vtdtSeparator then
     Sender.Selected[Node] := False;
 end;
@@ -1113,7 +1113,7 @@ var
 begin
   if (Kind = ikNormal) or (Kind = ikSelected) then
   begin
-    NodeData   := GetNodeDataEx(Node, vstList).Data;
+    NodeData   := GetNodeItemData(Node, vstList);
     if TVirtualStringTree(Sender).DefaultNodeHeight = 18 then
       ImageIndex := NodeData.ImageIndex
     else

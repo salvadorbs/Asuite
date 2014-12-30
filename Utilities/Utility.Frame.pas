@@ -22,7 +22,7 @@ unit Utility.Frame;
 interface
 
 uses
-  Windows, SysUtils, ActiveX, VirtualTrees, Controls, Kernel.Consts,
+  Windows, SysUtils, ActiveX, VirtualTrees, Controls,
   Classes, ShellApi, comobj, extctrls, Frame.BaseEntity;
 
 function AddFrameNode(Tree: TBaseVirtualTree; Parent: PVirtualNode;

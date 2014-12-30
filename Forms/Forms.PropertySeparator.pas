@@ -23,7 +23,7 @@ interface
 
 uses
   SysUtils, Classes, Controls, Forms, Dialogs, NodeDataTypes.Base, StdCtrls, ExtCtrls,
-  DKLang, Kernel.Types;
+  DKLang;
 
 type
   TfrmPropertySeparator = class(TForm)
@@ -47,8 +47,7 @@ var
 
 implementation
 
-uses
-  Forms.Main;
+
 
 {$R *.dfm}
 

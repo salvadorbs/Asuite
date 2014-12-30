@@ -24,7 +24,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Frame.BaseEntity, Vcl.StdCtrls, DKLang,
-  Vcl.ExtCtrls, Registry;
+  Registry;
 
 type
   TfrmStatsOptionsPage = class(TfrmBaseEntityPage)
@@ -58,7 +58,6 @@ type
     lblRam2: TLabel;
   private
     { Private declarations }
-    function GetProcessorName: string;
     function GetTotalPhysMemory: Int64;
     function BytesToGBStr(const Bytes: Int64; const DecimalPlaces: Byte;
                           const SeparateThousands: Boolean): string;
@@ -82,7 +81,7 @@ implementation
 {$I ASuite.INC}
 
 uses
-  PJSysInfo, ulCommonUtils, Utility.TreeView, AppConfig.Main, Kernel.Types;
+  PJSysInfo, Utility.Misc, Utility.TreeView, AppConfig.Main, Kernel.Types;
 
 {$R *.dfm}
 
@@ -91,24 +90,6 @@ uses
 function TfrmStatsOptionsPage.GetImageIndex: Integer;
 begin
 //  Result := IMAGELARGE_INDEX_Stats;
-end;
-
-function TfrmStatsOptionsPage.GetProcessorName: string;var
-  Reg: Registry.TRegistry;
-begin
-  Result := '';
-  Reg := Registry.TRegistry.Create(Winapi.Windows.KEY_READ);
-  try
-    Reg.RootKey := Winapi.Windows.HKEY_LOCAL_MACHINE;
-    if not Reg.OpenKey(
-      'HARDWARE\DESCRIPTION\System\CentralProcessor\0\', False
-    ) then
-      Exit;
-    Result := StringReplace(Reg.ReadString('ProcessorNameString'), '    ', '', [rfReplaceAll]);
-    Reg.CloseKey;
-  finally
-    Reg.Free;
-  end;
 end;
 
 function TfrmStatsOptionsPage.GetTitle: string;
@@ -160,10 +141,10 @@ begin
   //System
   lbOs2.Caption := TPJOSInfo.ProductName + ' ' + TPJOSInfo.Edition;
   lblBuild2.Caption := Format('%d.%d.%d', [TPJOSInfo.MajorVersion, TPJOSInfo.MinorVersion, TPJOSInfo.BuildNumber]);
-  lblProcessor2.Caption := GetProcessorName;
+  lblProcessor2.Caption := TPJComputerInfo.ProcessorName;
   lblRam2.Caption   := BytesToGBStr(GetTotalPhysMemory, 2, True) + ' GB';
-  lbNamePc2.Caption := GetEnvironmentVariable('ComputerName');
-  lbUser2.Caption   := GetCurrentUserName;
+  lbNamePc2.Caption := TPJComputerInfo.ComputerName;
+  lbUser2.Caption   := TPJComputerInfo.UserName;
   //Drive
   Drive := Config.Paths.SuiteDrive[1];
   gbSupport.Caption := Format(gbSupport.Caption, [Drive]);
