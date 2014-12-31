@@ -366,32 +366,32 @@ begin
   //Header
   CreateHeaderItems(Menu);
   //MFU
-  if (Config.MFU) and (ListManager.MFUList.Count > 0) then
+  if (Config.MFU) and (Config.ListManager.MFUList.Count > 0) then
   begin
     if Config.SubMenuMFU then
     begin
       CreateSeparator(Menu);
-      CreateSpecialList(Menu,ListManager.MFUList,Config.MFUNumber,DKLangConstW('msgLongMFU'));
+      CreateSpecialList(Menu, Config.ListManager.MFUList, Config.MFUNumber, DKLangConstW('msgLongMFU'));
     end
     else begin
       CreateSeparator(Menu,DKLangConstW('msgLongMFU'));
-      CreateSpecialList(Menu,ListManager.MFUList,Config.MFUNumber);
+      CreateSpecialList(Menu, Config.ListManager.MFUList, Config.MFUNumber);
     end;
   end;
   CreateSeparator(Menu,DKLangConstW('msgList'));
   //List
   Config.MainTree.IterateSubtree(nil, CreateListItems, nil);
   //MRU
-  if (Config.MRU) and (ListManager.MRUList.Count > 0) then
+  if (Config.MRU) and (Config.ListManager.MRUList.Count > 0) then
   begin
     if Config.SubMenuMRU then
     begin
       CreateSeparator(Menu);
-      CreateSpecialList(Menu,ListManager.MRUList,Config.MRUNumber,DKLangConstW('msgLongMRU'));
+      CreateSpecialList(Menu, Config.ListManager.MRUList, Config.MRUNumber, DKLangConstW('msgLongMRU'));
     end
     else begin
       CreateSeparator(Menu,DKLangConstW('msgLongMRU'));
-      CreateSpecialList(Menu,ListManager.MRUList,Config.MRUNumber,'');
+      CreateSpecialList(Menu, Config.ListManager.MRUList, Config.MRUNumber,'');
     end;
   end;
   CreateSeparator(Menu);

@@ -106,7 +106,7 @@ implementation
 
 uses
   Kernel.Enumerations, Utility.Misc, Utility.TreeView, NodeDataTypes.Custom,
-  NodeDataTypes.Files;
+  NodeDataTypes.Files, AppConfig.Main;
 
 { TSQLtbl_files }
 
@@ -123,10 +123,9 @@ begin
     AData.ID := ADatabase.Add(SQLFilesData,true);
 
     //If enabled, register item's hotkey with new ID
-    //TODO: Review this code
-//    if AData is TvCustomRealNodeData then
-//      if TvCustomRealNodeData(AData).ActiveHotkey then
-//        ListManager.HotKeyItemList.AddItem(TvCustomRealNodeData(AData));
+    if AData is TvCustomRealNodeData then
+      if TvCustomRealNodeData(AData).ActiveHotkey then
+        Config.ListManager.HotKeyItemList.AddItem(TvCustomRealNodeData(AData));
 
     SQLFilesData.Free;
   end;

@@ -947,12 +947,12 @@ end;
 
 procedure TfrmGraphicMenu.sknbtnMFUClick(Sender: TObject);
 begin
-  PopulateSpecialTree(vstList, ListManager.MFUList, Config.MFUNumber);
+  PopulateSpecialTree(vstList, Config.ListManager.MFUList, Config.MFUNumber);
 end;
 
 procedure TfrmGraphicMenu.sknbtnRecentsClick(Sender: TObject);
 begin
-  PopulateSpecialTree(vstList, ListManager.MRUList, Config.MRUNumber);
+  PopulateSpecialTree(vstList, Config.ListManager.MRUList, Config.MRUNumber);
 end;
 
 procedure TfrmGraphicMenu.OpenMenu;

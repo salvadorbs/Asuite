@@ -354,7 +354,7 @@ end;
 
 procedure RefreshList(const ATree: TBaseVirtualTree);
 begin
-  DBManager.SaveData(Config.MainTree, Config.ASuiteState = lsStartUp);
+  Config.DBManager.SaveData(Config.MainTree, Config.ASuiteState = lsStartUp);
   //Check paths of only visible nodes
   if Assigned(ATree) then
     CheckVisibleNodePathExe(ATree);
@@ -625,18 +625,18 @@ begin
     if NodeData is TvFileNodeData then
       TvFileNodeData(NodeData).DeleteShortcutFile;
     //Remove item from special lists
-    ListManager.MRUList.RemoveItem(NodeData);
-    ListManager.MFUList.RemoveItem(NodeData);
+    Config.ListManager.MRUList.RemoveItem(NodeData);
+    Config.ListManager.MFUList.RemoveItem(NodeData);
     //Remove item from hotkey list
     if NodeData.ActiveHotkey then
-      ListManager.HotKeyItemList.RemoveItem(NodeData);
+      Config.ListManager.HotKeyItemList.RemoveItem(NodeData);
     //Remove item from scheduler list
     if NodeData.SchMode <> smDisabled then
-      ListManager.SchedulerItemList.RemoveItem(NodeData);
+      Config.ListManager.SchedulerItemList.RemoveItem(NodeData);
     if (NodeData.Autorun in [atAlwaysOnStart, atSingleInstance]) then
-      ListManager.StartupItemList.RemoveItem(NodeData);
+      Config.ListManager.StartupItemList.RemoveItem(NodeData);
     if (NodeData.Autorun in [atAlwaysOnClose]) then
-      ListManager.ShutdownItemList.RemoveItem(NodeData);
+      Config.ListManager.ShutdownItemList.RemoveItem(NodeData);
   end;
 end;
 

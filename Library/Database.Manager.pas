@@ -35,11 +35,13 @@ type
     procedure DoBackupList;
     function  GetDateTimeAsString: String;
   public
-    constructor Create(const DBFilePath: string);
+    constructor Create;
     destructor Destroy; override;
 
     property DBFileName: string read FDBFileName write FDBFileName;
     property Database: TSQLRestServerDB read FDatabase;
+
+    procedure Setup(const ADBFilePath: string);
 
     procedure LoadData(Tree: TBaseVirtualTree);
     function  SaveData(Tree: TBaseVirtualTree; DoBackup: Boolean = True): Boolean;
@@ -58,13 +60,9 @@ uses
   Kernel.Consts, AppConfig.Main, Utility.FileFolder, Utility.Misc,
   Database.Version, Database.Options, Database.List;
 
-constructor TDBManager.Create(const DBFilePath: String);
+constructor TDBManager.Create;
 begin
-  FDBFileName := DBFilePath;
-  //Load sqlite3 database and create missing tables
   FSQLModel := TSQLModel.Create([TSQLtbl_version, TSQLtbl_list, TSQLtbl_options]);
-  FDatabase := TSQLRestServerDB.Create(FSQLModel,FDBFileName);
-  fDatabase.CreateMissingTables(0);
 end;
 
 procedure TDBManager.DeleteItem(aID: Integer);
@@ -183,6 +181,14 @@ begin
     if Result and DoBackup then
       DoBackupList;
   end;
+end;
+
+procedure TDBManager.Setup(const ADBFilePath: string);
+begin
+  FDBFileName := ADBFilePath;
+  //Load sqlite3 database and create missing tables
+  FDatabase := TSQLRestServerDB.Create(FSQLModel, FDBFileName);
+  fDatabase.CreateMissingTables(0);
 end;
 
 end.

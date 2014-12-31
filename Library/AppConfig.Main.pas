@@ -23,7 +23,8 @@ interface
 
 uses
   Windows, SysUtils, Graphics, Forms, Controls, VirtualTrees, Kernel.Enumerations,
-  Vcl.Imaging.pngimage, System.UITypes, Classes, DKLang, AppConfig.Paths;
+  Vcl.Imaging.pngimage, System.UITypes, Classes, DKLang, AppConfig.Paths,
+  Lists.Manager, Database.Manager;
 
 type
 
@@ -96,6 +97,8 @@ type
 
     FMainTree: TVirtualStringTree;
     FPaths: TConfigPaths;
+    FListManager : TListManager;
+    FDBManager : TDBManager;
     procedure SetHoldSize(value: Boolean);
     procedure SetAlwaysOnTop(value: Boolean);
     procedure SetTrayIcon(value: Boolean);
@@ -131,7 +134,10 @@ type
     constructor Create; overload;
     destructor Destroy; override;
 
+    property MainTree: TVirtualStringTree read GetMainTree write FMainTree;
     property Paths: TConfigPaths read FPaths write FPaths;
+    property ListManager: TListManager read FListManager write FListManager;
+    property DBManager: TDBManager read FDBManager write FDBManager;
 
     //General
     property StartWithWindows: Boolean read FStartWithWindows write SetStartWithWindows;
@@ -197,7 +203,6 @@ type
     property ScanFolderFileTypes: TStringList read FScanFolderFileTypes write FScanFolderFileTypes;
     property ScanFolderExcludeNames: TStringList read FScanFolderExcludeNames write FScanFolderExcludeNames;
 
-    property MainTree: TVirtualStringTree read GetMainTree write FMainTree;     
     //Update theme paths
     procedure UpdateGMTheme;
   end;
@@ -218,7 +223,10 @@ begin
   SingleInst.OnProcessParam := HandleParam;
   for I := 1 to ParamCount do
     HandleParam(ParamStr(I));
+  //Create some classes
   FPaths := TConfigPaths.Create;
+  FListManager := TListManager.Create;
+  FDBManager := TDBManager.Create();
   //Find language files and register them in LangManager
   LangManager.ScanForLangFiles(FPaths.SuitePathLocale, '*.lng', False);
   //General
@@ -301,6 +309,8 @@ begin
   FScanFolderFileTypes.Free;
   FScanFolderExcludeNames.Free;
   FPaths.Free;
+  FListManager.Destroy;
+  FDBManager.Destroy;
 end;
 
 function TConfiguration.GetMainTree: TVirtualStringTree;
@@ -339,7 +349,7 @@ begin
       FPaths.SuitePathList := FPaths.RelativeToAbsolute(RemoveAllQuotes(sValue));
     if CompareText(sName, 'additem') = 0 then
     begin
-      if Assigned(DBManager) then
+      if Assigned(FDBManager) then
       begin
         //Add new node
         Node := FMainTree.AddChild(nil, TvFileNodeData.Create(vtdtFile));

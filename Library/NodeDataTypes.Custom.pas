@@ -117,10 +117,10 @@ procedure TvCustomRealNodeData.SetActiveHotkey(const Value: Boolean);
 begin
   //Old value is true, remove it in HotKeyApp
   if (FActiveHotkey) then
-    ListManager.HotKeyItemList.RemoveItem(Self);
+    Config.ListManager.HotKeyItemList.RemoveItem(Self);
   //New value is true, add it in HotKeyApp
   if (value) then
-    ListManager.HotKeyItemList.AddItem(Self);
+    Config.ListManager.HotKeyItemList.AddItem(Self);
   FActiveHotkey := Value;
 end;
 
@@ -130,7 +130,7 @@ begin
   if (Config.ASuiteState <> lsImporting) then
     if Self is TvFileNodeData then
       if (FLastAccess > -1) and (not TvFileNodeData(Self).NoMRU) then
-        ListManager.MRUList.AddItem(Self);
+        Config.ListManager.MRUList.AddItem(Self);
 end;
 
 procedure TvCustomRealNodeData.SetSchDateTime(value: TDateTime);
@@ -153,9 +153,9 @@ begin
     if (FSchMode <> value) then
     begin
       if (FSchMode <> smDisabled) and (value = smDisabled) then
-        ListManager.SchedulerItemList.RemoveItem(Self);
+        Config.ListManager.SchedulerItemList.RemoveItem(Self);
       if (FSchMode = smDisabled) and (value <> smDisabled) then
-        ListManager.SchedulerItemList.AddItem(Self);
+        Config.ListManager.SchedulerItemList.AddItem(Self);
     end;
   FSchMode := value;
 end;
@@ -200,23 +200,23 @@ begin
     begin
       if (FAutorun in [atAlwaysOnStart, atSingleInstance, atNever]) and (value in [atAlwaysOnClose]) then
       begin
-        ListManager.StartupItemList.RemoveItem(Self);
-        ListManager.ShutdownItemList.InsertItem(Self.FAutorunPos, Self)
+        Config.ListManager.StartupItemList.RemoveItem(Self);
+        Config.ListManager.ShutdownItemList.InsertItem(Self.FAutorunPos, Self)
       end
       else
         if (FAutorun in [atAlwaysOnClose, atNever]) and (value in [atAlwaysOnStart, atSingleInstance]) then
         begin
-          ListManager.ShutdownItemList.RemoveItem(Self);
-          ListManager.StartupItemList.InsertItem(Self.FAutorunPos, Self);
+          Config.ListManager.ShutdownItemList.RemoveItem(Self);
+          Config.ListManager.StartupItemList.InsertItem(Self.FAutorunPos, Self);
         end;
     end
     else begin
       //If it is changed, RemoveItem from old list
       if (FAutorun in [atAlwaysOnStart, atSingleInstance]) and (value in [atNever]) then
-        ListManager.StartupItemList.RemoveItem(Self)
+        Config.ListManager.StartupItemList.RemoveItem(Self)
       else
         if (FAutorun in [atAlwaysOnClose]) and (value in [atNever]) then
-          ListManager.ShutdownItemList.RemoveItem(Self);
+          Config.ListManager.ShutdownItemList.RemoveItem(Self);
     end;
   end;
   //Set new value
