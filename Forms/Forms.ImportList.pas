@@ -63,14 +63,7 @@ type
     procedure btnDeselectAllClick(Sender: TObject);
     procedure btnSelectAllClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
-    procedure vstListImpGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
-  Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
     procedure FormCreate(Sender: TObject);
-    procedure vstListImpGetImageIndex(Sender: TBaseVirtualTree;
-      Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-      var Ghosted: Boolean; var ImageIndex: Integer);
-    procedure vstListImpExpanding(Sender: TBaseVirtualTree; Node: PVirtualNode;
-      var Allowed: Boolean);
     procedure btnBackClick(Sender: TObject);
     procedure btnNextClick(Sender: TObject);
     procedure edtPathListExit(Sender: TObject);
@@ -80,10 +73,6 @@ type
 
     procedure tsListShow(Sender: TObject);
     procedure tsProgressShow(Sender: TObject);
-    procedure vstListImpFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
-    procedure vstListImpDrawText(Sender: TBaseVirtualTree;
-      TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
-      const Text: string; const CellRect: TRect; var DefaultDraw: Boolean);
     procedure edtPathListAfterDialog(Sender: TObject; var AName: string;
       var AAction: Boolean);
     procedure edtPathListChange(Sender: TObject);
@@ -109,7 +98,7 @@ implementation
 {$R *.dfm}
 
 uses
-  Forms.Main, Utility.Misc, Utility.TreeView, AppConfig.Main,
+  Forms.Main, Utility.Misc, Utility.TreeView, AppConfig.Main, VirtualTree.Events,
   Utility.FileFolder, Utility.XML, Database.Manager, Kernel.Types, NodeDataTypes.Base;
 
 procedure TfrmImportList.btnCancelClick(Sender: TObject);
@@ -237,64 +226,11 @@ end;
 
 procedure TfrmImportList.FormCreate(Sender: TObject);
 begin
-  vstListImp.NodeDataSize := SizeOf(rBaseData);
-//  vstListImp.Images       := ImagesDM.IcoImages;
+  TVirtualTreeEvents.Create.SetupVSTImportList(vstListImp);
   pgcImport.ActivePageIndex := 0;
   //Set imgList and imgSettings's icon
 //  ImagesDM.IcoImages.GetBitmap(Config.ASuiteIcons.PopupMenu.Cancel,imgList.Picture.Bitmap);
 //  ImagesDM.IcoImages.GetBitmap(Config.ASuiteIcons.PopupMenu.Cancel,imgSettings.Picture.Bitmap);
-end;
-
-procedure TfrmImportList.vstListImpDrawText(Sender: TBaseVirtualTree;
-  TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
-  const Text: string; const CellRect: TRect; var DefaultDraw: Boolean);
-begin
-  DrawSeparatorItem(Sender, Node, TargetCanvas, CellRect, DefaultDraw);
-end;
-
-procedure TfrmImportList.vstListImpExpanding(Sender: TBaseVirtualTree;
-  Node: PVirtualNode; var Allowed: Boolean);
-begin
-//  ImagesDM.GetChildNodesIcons(Sender, Node, isSmall);
-end;
-
-procedure TfrmImportList.vstListImpFreeNode(Sender: TBaseVirtualTree;
-  Node: PVirtualNode);
-var
-  NodeData : PBaseData;
-begin
-  NodeData := Sender.GetNodeData(Node);
-  FreeAndNil(NodeData.Data);
-end;
-
-procedure TfrmImportList.vstListImpGetImageIndex(Sender: TBaseVirtualTree;
-  Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-  var Ghosted: Boolean; var ImageIndex: Integer);
-var
-  NodeData : TvBaseNodeData;
-begin
-  if (Kind = ikNormal) or (Kind = ikSelected) then
-  begin
-    NodeData   := Sender.GetNodeData(Node);
-    ImageIndex := NodeData.ImageIndex;
-    if Column = 1 then
-      ImageIndex := -1;
-  end;
-end;
-
-procedure TfrmImportList.vstListImpGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
-  Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
-var
-  NodeData : PBaseData;
-begin
-  NodeData := Sender.GetNodeData(Node);
-  if Assigned(NodeData) then
-  begin
-    if (NodeData.Data.DataType = vtdtSeparator) and (NodeData.Data.Name = '') then
-      CellText := ' '
-    else
-      CellText := StringReplace(NodeData.Data.Name, '&&', '&', [rfIgnoreCase,rfReplaceAll]);
-  end;
 end;
 
 procedure TfrmImportList.CheckAllItems(State: TCheckState);

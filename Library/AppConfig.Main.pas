@@ -591,13 +591,11 @@ procedure TConfiguration.SetTVFont(value: TFont);
 begin
   if FTVFont <> value then
   begin
-    with FTVFont do
-    begin
-      Name  := value.Name;
-      Style := value.Style;
-      Size  := value.Size;
-      Color := value.Color;
-    end;
+    FTVFont.Name  := value.Name;
+    FTVFont.Style := value.Style;
+    FTVFont.Size  := value.Size;
+    FTVFont.Color := value.Color;
+    FMainTree.Font.Assign(FTVFont);
   end;
 end;
 

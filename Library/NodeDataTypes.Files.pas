@@ -30,7 +30,7 @@ type
   private
     //Specific private variables and functions
     //Paths
-    FPathExe         : string; //User pathExe
+    FPathExe         : string; //User pathExe //TODO: Rename it as FPathFile
     //Advanced
     FParameters      : string;
     FWorkingDir      : string;
@@ -75,7 +75,7 @@ type
 implementation
 
 uses
-  AppConfig.Main, Lists.Manager, Forms.Main, Kernel.Consts, Utility.FileFolder,
+  AppConfig.Main, Lists.Manager, Kernel.Consts, Utility.FileFolder,
   Lists.Base;
 
 constructor TvFileNodeData.Create(AType: TvTreeDataType);
