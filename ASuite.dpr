@@ -59,8 +59,10 @@ uses
   Utility.Conversions in 'Utilities\Utility.Conversions.pas',
   Utility.Misc in 'Utilities\Utility.Misc.pas',
   Kernel.ASuiteInstance in 'Library\Kernel.ASuiteInstance.pas',
-  Kernel.ShortcutGrabber in 'Library\Kernel.ShortcutGrabber.pas' {/SQLite3 static library},
-  USingleInst;
+  Forms.ShortcutGrabber in 'Forms\Forms.ShortcutGrabber.pas' {/SQLite3 static library},
+  USingleInst,
+  VirtualTree.Events in 'Library\VirtualTree.Events.pas',
+  Forms.Dialog.BaseEntity in 'Forms\Forms.Dialog.BaseEntity.pas' {frmDialogBase};
 
 //SQLite3 static library
 
@@ -89,6 +91,7 @@ begin
 
     Application.CreateForm(TfrmMain, frmMain);
   Application.CreateForm(TfrmGraphicMenu, frmGraphicMenu);
+  Application.CreateForm(TfrmDialogBase, frmDialogBase);
   //Show MainForm and/or TrayMenu
     Application.ShowMainForm := Config.ShowPanelAtStartUp;
     if (Config.ShowMenuAtStartUp) then

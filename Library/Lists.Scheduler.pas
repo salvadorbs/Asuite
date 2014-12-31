@@ -35,7 +35,7 @@ type
 implementation
 
 uses
-  AppConfig.Main, Forms.Main;
+  AppConfig.Main;
 
 procedure TSchedulerItemsList.CheckMissedTasks;
 var
