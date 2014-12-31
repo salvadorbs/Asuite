@@ -20,6 +20,7 @@ type
 
 procedure XMLToTree(Tree: TVirtualStringTree;CallBack: TImportListToTree;
                     XMLDoc: TXMLDocument);
+procedure LoadDatabaseFromXML(FileName: string);
 procedure LoadXMLSettings(XMLDoc: TXMLDocument);
 function XMLToShortcut(Node: IXMLNode; AFieldCode, AFieldMod: string): TShortcut;
 Function GetHotKeyCode(KeyCode: Integer): Integer;
@@ -228,6 +229,28 @@ begin
     cXMLNode := cXMLNode.NextSibling;
   end;
   Tree.EndUpdate;
+end;
+
+procedure LoadDatabaseFromXML(FileName: string);
+var
+  XMLDoc: TXMLDocument;
+begin
+  //Create XMLDoc
+  XMLDoc := TXMLDocument.Create(nil);
+  try
+    XMLDoc.FileName := FileName;
+    XMLDoc.Active := True;
+    //Load list and settings
+    if (XMLDoc.DocumentElement.NodeName = 'ASuite') then
+    begin
+      LoadXMLSettings(XMLDoc);
+      XMLToTree(Config.MainTree, TImportOldListProcs.ASuite1NodeToTree, XMLDoc);
+    end;
+    DeleteFile(FileName);
+    Config.Changed := True;
+  finally
+    XMLDoc.Free;
+  end;
 end;
 
 procedure LoadXMLSettings(XMLDoc: TXMLDocument);

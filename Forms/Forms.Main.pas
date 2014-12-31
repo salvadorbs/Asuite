@@ -177,7 +177,6 @@ type
     function  GetActiveTree: TBaseVirtualTree;
     procedure RunStartupProcess;
     procedure RunShutdownProcess;
-    procedure LoadDataFromXML(FileName: string);
   public
     { Public declarations }
     procedure ShowMainForm(Sender: TObject);
@@ -212,7 +211,7 @@ end;
 
 procedure TfrmMain.miSaveListClick(Sender: TObject);
 begin;
-  if Config.DBManager.SaveData(vstList) then
+  if Config.SaveList(True) then
     ShowMessageEx(DKLangConstW('msgSaveCompleted'))
   else
     ShowMessageEx(DKLangConstW('msgErrSave'),true);
@@ -751,28 +750,6 @@ begin
   end;
 end;
 
-procedure TfrmMain.LoadDataFromXML(FileName: string);
-var
-  XMLDoc: TXMLDocument;
-begin
-  //Create XMLDoc
-  XMLDoc := TXMLDocument.Create(Self);
-  try
-    XMLDoc.FileName := FileName;
-    XMLDoc.Active := True;
-    //Load list and settings
-    if (XMLDoc.DocumentElement.NodeName = 'ASuite') then
-    begin
-      LoadXMLSettings(XMLDoc);
-      XMLToTree(Config.MainTree, TImportOldListProcs.ASuite1NodeToTree, XMLDoc);
-    end;
-    DeleteFile(FileName);
-    Config.Changed := True;
-  finally
-    XMLDoc.Free;
-  end;
-end;
-
 procedure TfrmMain.RunStartupProcess;
 var
   NodeData : TvCustomRealNodeData;
@@ -818,6 +795,7 @@ var
   I        : Integer;
   schTime, NowDateTime: TDateTime;
 begin
+  //TODO: Rewrite this code (see TSchedulerItemsList.CheckMissedTasks)
   if (Config.ASuiteState = lsStartUp) or (Config.ASuiteState = lsShutdown) then
     Exit;
   NowDateTime := RecodeMilliSecond(Now,0);
@@ -898,40 +876,20 @@ begin
 end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);
-var
-  UseXMLList : Boolean;
-  sFilePath  : string;
 begin
   //Set vstList as MainTree in Config
   Config.MainTree := vstList;
   Application.CreateForm(TdmImages, dmImages);
   Application.CreateForm(TdmTrayMenu, dmTrayMenu);
   pcList.ActivePageIndex := PG_LIST;
-  //TODO: Move this code in appropriate place
-  //Read Only Mode
-  Config.ReadOnlyMode := GetDriveType(PChar(Config.Paths.SuiteDrive)) = DRIVE_CDROM;
-  if (Config.ReadOnlyMode) then
+  //Check read only
+  if Config.CheckReadOnlyMode then
   begin
-    Config.Cache  := False;
-    Config.Backup := False;
-    Config.MRU    := False;
     miOptions1.Enabled  := False;
     miSaveList1.Enabled := False;
   end;
-  //List & Options
-  if ExtractFileExt(Config.Paths.SuitePathList) = EXT_XML then
-  begin
-    sFilePath := Config.Paths.SuitePathList;
-    Config.Paths.SuitePathList := ChangeFileExt(Config.Paths.SuiteFileName, EXT_SQL);
-  end;
-  if Assigned(Config.DBManager) then
-    Config.DBManager.Setup(Config.Paths.SuitePathList);
-  //If exists old list format (xml), use it
-  if sFilePath <> '' then
-    LoadDataFromXML(sFilePath)
-  else //Use new list format (sqlite db)
-    Config.DBManager.LoadData(vstList);
-  //Get rootnode's Icons
+  //Load Database and get icons (only first level of tree)
+  Config.LoadList;
   //TODO: Fix it
 //ImagesDM.GetChildNodesIcons(vstList, nil, vstList.RootNode);
   RunStartupProcess;

@@ -43,6 +43,7 @@ var
   NodeData: TvCustomRealNodeData;
   dtScheduler, dtNowDateTime, dtLastAccess: TDateTime;
 begin
+  //TODO: Rewrite this code (see TfrmMain.tmSchedulerTimer)
   dtNowDateTime := RecodeMilliSecond(Now,0);
   dtNowDateTime := RecodeSecond(dtNowDateTime, 0);
   dtScheduler   := 0;

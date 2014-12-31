@@ -23,7 +23,7 @@ interface
 
 uses
   Kernel.Consts, Windows, ShellApi, SysUtils, Classes, Registry, StrUtils,
-  ShlObj, ActiveX, ComObj, Forms, Dialogs, FileCtrl, System.IOUtils;
+  ShlObj, ActiveX, ComObj, Forms, Dialogs, System.IOUtils;
 
 { Check functions }
 function HasDriveLetter(const Path: String): Boolean;

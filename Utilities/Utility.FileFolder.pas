@@ -3,8 +3,8 @@ unit Utility.FileFolder;
 interface
 
 uses
-  Kernel.Consts, Windows, SysUtils, Classes, Kernel.Enumerations, ShlObj, ActiveX, ComObj,
-  FileCtrl;
+  Kernel.Consts, Windows, SysUtils, Classes, Kernel.Enumerations, ShlObj, ActiveX,
+  ComObj, FileCtrl;
 
 { Folders }
 function  BrowseForFolder(const InitialDir: String; const Caption: String = ''): String;
