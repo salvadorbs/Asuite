@@ -49,7 +49,7 @@ type
 implementation
 
 uses
-  Utility.Treeview, Forms.Main, AppConfig.Main, NodeDataTypes.Custom, Kernel.Consts,
+  Utility.Treeview, AppConfig.Main, NodeDataTypes.Custom, Kernel.Consts,
   DataModules.TrayMenu, Kernel.Enumerations, USingleInst;
 
 constructor TBaseMainForm.Create(AOwner: TComponent);

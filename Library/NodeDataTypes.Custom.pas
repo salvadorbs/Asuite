@@ -75,7 +75,7 @@ type
 implementation
 
 uses
-  AppConfig.Main, Lists.Manager, Forms.Main, Kernel.Consts,
+  AppConfig.Main, Lists.Manager, Kernel.Consts,
   Utility.TreeView, NodeDataTypes.Files;
 
 procedure TvCustomRealNodeData.Copy(source: TvBaseNodeData);
