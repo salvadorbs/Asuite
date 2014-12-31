@@ -203,8 +203,12 @@ type
     property ScanFolderFileTypes: TStringList read FScanFolderFileTypes write FScanFolderFileTypes;
     property ScanFolderExcludeNames: TStringList read FScanFolderExcludeNames write FScanFolderExcludeNames;
 
+    function CheckReadOnlyMode: Boolean;
     //Update theme paths
     procedure UpdateGMTheme;
+    //Database
+    procedure LoadList;
+    function SaveList(DoBackup: Boolean): Boolean;
   end;
 
 var
@@ -214,7 +218,20 @@ implementation
 
 uses
   Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, Utility.Misc,
-  Forms.GraphicMenu, Utility.Treeview, Utility.FileFolder, USingleInst, NodeDataTypes.Files;
+  Forms.GraphicMenu, Utility.Treeview, Utility.FileFolder, USingleInst,
+  NodeDataTypes.Files, Utility.XML;
+
+function TConfiguration.CheckReadOnlyMode: Boolean;
+begin
+  //Check if ASuite is running from a cd rom
+  Config.ReadOnlyMode := GetDriveType(PChar(Config.Paths.SuiteDrive)) = DRIVE_CDROM;
+  if (Config.ReadOnlyMode) then
+  begin
+    Config.Cache  := False;
+    Config.Backup := False;
+    Config.MRU    := False;
+  end;
+end;
 
 constructor TConfiguration.Create;
 var
@@ -360,6 +377,29 @@ begin
   end;
 end;
 
+procedure TConfiguration.LoadList;
+var
+  sFilePath  : string;
+begin
+  Assert(Assigned(FMainTree), 'FMainTree is not assigned!');
+  try
+    //List & Options
+    if ExtractFileExt(FPaths.SuitePathList) = EXT_XML then
+    begin
+      sFilePath := FPaths.SuitePathList;
+      FPaths.SuitePathList := ChangeFileExt(FPaths.SuiteFileName, EXT_SQL);
+    end;
+    if Assigned(FDBManager) then
+      FDBManager.Setup(FPaths.SuitePathList);
+  finally
+    //If exists old list format (xml), use it
+    if sFilePath <> '' then
+      LoadDatabaseFromXML(sFilePath)
+    else //Use new list format (sqlite db)
+      FDBManager.LoadData(FMainTree);
+  end;
+end;
+
 procedure TConfiguration.SetHoldSize(value: boolean);
 begin
   FHoldSize := value;
@@ -381,6 +421,13 @@ begin
     FHotKey := Value;
     ListManager.HotKeyItemList.RefreshRegs;
   end;
+end;
+
+function TConfiguration.SaveList(DoBackup: Boolean): Boolean;
+begin
+  Result := False;
+  if not FReadOnlyMode then
+    Result := FDBManager.SaveData(Config.MainTree, DoBackup);
 end;
 
 procedure TConfiguration.SetAlwaysOnTop(value: Boolean);

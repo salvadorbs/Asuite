@@ -354,7 +354,7 @@ end;
 
 procedure RefreshList(const ATree: TBaseVirtualTree);
 begin
-  Config.DBManager.SaveData(Config.MainTree, Config.ASuiteState = lsStartUp);
+  Config.SaveList(Config.ASuiteState = lsStartUp);
   //Check paths of only visible nodes
   if Assigned(ATree) then
     CheckVisibleNodePathExe(ATree);

@@ -104,17 +104,16 @@ begin
 end;
 
 constructor TConfigPaths.Create;
-var
-  I: Integer;
 begin
   //Default paths
   FSuiteFullFileName := Application.ExeName;
   FSuiteFileName     := ExtractFileName(FSuiteFullFileName);
   FSuiteDrive        := LowerCase(ExtractFileDrive(FSuiteFullFileName));
   FSuitePath         := IncludeTrailingBackslash(ExtractFileDir(FSuiteFullFileName));
-  if IsDriveRoot(FSuitePath)
-    then FSuitePathWorking := GetCorrectWorkingDir(FSuitePath)
-    else FSuitePathWorking := FSuitePath;
+  if IsDriveRoot(FSuitePath) then
+    FSuitePathWorking := GetCorrectWorkingDir(FSuitePath)
+  else
+    FSuitePathWorking := FSuitePath;
   SetCurrentDir(FSuitePathWorking);
   FSuitePathWorking        := LowerCase(FSuitePathWorking);
   FSuitePathLocale         := FSuitePathWorking + LOCALE_DIR;

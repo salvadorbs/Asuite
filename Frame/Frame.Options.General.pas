@@ -59,8 +59,6 @@ begin
 end;
 
 function TfrmGeneralOptionsPage.InternalLoadData: Boolean;
-var
-  I: Integer;
 begin
   Result := inherited;
 end;
