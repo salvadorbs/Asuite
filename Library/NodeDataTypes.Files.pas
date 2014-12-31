@@ -75,8 +75,8 @@ type
 implementation
 
 uses
-  AppConfig.Main, Lists.Manager, Forms.Main, Kernel.Consts,
-  Utility.FileFolder, Lists.Base;
+  AppConfig.Main, Lists.Manager, Forms.Main, Kernel.Consts, Utility.FileFolder,
+  Lists.Base;
 
 constructor TvFileNodeData.Create(AType: TvTreeDataType);
 begin
@@ -161,10 +161,10 @@ begin
   begin
     //If value is true, delete it from list
     if (value and (FNoMRU <> value)) then
-      ListManager.MRUList.RemoveItem(Self)
+      Config.ListManager.MRUList.RemoveItem(Self)
     else //else add it in list
       if (not value and (FNoMRU <> value)) and (LastAccess > -1) then
-        ListManager.MRUList.AddItem(Self);
+        Config.ListManager.MRUList.AddItem(Self);
   end;
   FNoMRU := value;
 end;
@@ -174,7 +174,7 @@ begin
   FClickCount := Value;
   if (Config.ASuiteState <> lsImporting) then
     if (FClickCount > 0) and (not TvFileNodeData(Self).FNoMFU) then
-      ListManager.MFUList.AddItem(Self);
+      Config.ListManager.MFUList.AddItem(Self);
 end;
 
 procedure TvFileNodeData.SetNoMFU(value:Boolean);
@@ -183,10 +183,10 @@ begin
   begin
     //If value is true, delete it from list
     if (value and (FNoMFU <> value)) then
-      ListManager.MFUList.RemoveItem(Self)
+      Config.ListManager.MFUList.RemoveItem(Self)
     else //else add it in list
       if (not value and (FNoMFU <> value)) and (FClickCount > 0) then
-        ListManager.MFUList.AddItem(Self);
+        Config.ListManager.MFUList.AddItem(Self);
   end;
   FNoMFU := value;
 end;

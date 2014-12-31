@@ -187,10 +187,7 @@ type
   end;
 
 var
-  frmMain     : TfrmMain;
-  //TODO: Move this vars in appropriate place
-  ListManager : TListManager;
-  DBManager   : TDBManager;
+  frmMain : TfrmMain;
 
 implementation
 
@@ -215,7 +212,7 @@ end;
 
 procedure TfrmMain.miSaveListClick(Sender: TObject);
 begin;
-  if DBManager.SaveData(vstList) then
+  if Config.DBManager.SaveData(vstList) then
     ShowMessageEx(DKLangConstW('msgSaveCompleted'))
   else
     ShowMessageEx(DKLangConstW('msgErrSave'),true);
@@ -785,9 +782,9 @@ begin
   //Autorun - Execute software
   if (Config.Autorun) then
   begin
-    for I := 0 to ListManager.StartupItemList.Count - 1 do
+    for I := 0 to Config.ListManager.StartupItemList.Count - 1 do
     begin
-      NodeData := ListManager.StartupItemList[I];
+      NodeData := Config.ListManager.StartupItemList[I];
       //Set RunMode
       RunMode := rmAutorun;
       if (NodeData.Autorun = atSingleInstance) then
@@ -806,9 +803,9 @@ begin
   //Autorun - Execute software
   if (Config.Autorun) then
   begin
-    for I := 0 to ListManager.ShutdownItemList.Count - 1 do
+    for I := 0 to Config.ListManager.ShutdownItemList.Count - 1 do
     begin
-      NodeData := ListManager.ShutdownItemList[I];
+      NodeData := Config.ListManager.ShutdownItemList[I];
       //Start process
 //      ExecuteItem(Config.MainTree, NodeData, rmAutorun);
     end;
@@ -826,11 +823,11 @@ begin
   NowDateTime := RecodeMilliSecond(Now,0);
   schTime     := NowDateTime;
   //Check scheduler list to know which items to run
-  for I := 0 to ListManager.SchedulerItemList.Count - 1 do
+  for I := 0 to Config.ListManager.SchedulerItemList.Count - 1 do
   begin
-    if Assigned(ListManager.SchedulerItemList[I]) then
+    if Assigned(Config.ListManager.SchedulerItemList[I]) then
     begin
-      NodeData := ListManager.SchedulerItemList[I];
+      NodeData := Config.ListManager.SchedulerItemList[I];
       //Compare time and/or date based of scheduler mode
       case NodeData.SchMode of
         smDisabled: schTime := 0;
@@ -875,7 +872,7 @@ begin
   if (SaveDialog1.Execute) then
   begin
     RefreshList(GetActiveTree);
-    CopyFile(PChar(DBManager.DBFileName),PChar(SaveDialog1.FileName),false)
+    CopyFile(PChar(Config.DBManager.DBFileName),PChar(SaveDialog1.FileName),false)
   end;
 end;
 
@@ -885,7 +882,7 @@ begin
   //Execute actions on ASuite's shutdown (inside vstList)
   Config.MainTree.IterateSubtree(nil, TIterateSubTreeProcs.ActionsOnShutdown, nil);
   //Hotkey
-  ListManager.HotKeyItemList.Clear;
+  Config.ListManager.HotKeyItemList.Clear;
   RefreshList(nil);
 end;
 
@@ -910,7 +907,6 @@ begin
   Application.CreateForm(TdmImages, dmImages);
   Application.CreateForm(TdmTrayMenu, dmTrayMenu);
   pcList.ActivePageIndex := PG_LIST;
-  ListManager := TListManager.Create;
   //TODO: Move this code in appropriate place
   //Read Only Mode
   Config.ReadOnlyMode := GetDriveType(PChar(Config.Paths.SuiteDrive)) = DRIVE_CDROM;
@@ -928,12 +924,13 @@ begin
     sFilePath := Config.Paths.SuitePathList;
     Config.Paths.SuitePathList := ChangeFileExt(Config.Paths.SuiteFileName, EXT_SQL);
   end;
-  DBManager := TDBManager.Create(Config.Paths.SuitePathList);
+  if Assigned(Config.DBManager) then
+    Config.DBManager.Setup(Config.Paths.SuitePathList);
   //If exists old list format (xml), use it
   if sFilePath <> '' then
     LoadDataFromXML(sFilePath)
   else //Use new list format (sqlite db)
-    DBManager.LoadData(vstList);
+    Config.DBManager.LoadData(vstList);
   //Get rootnode's Icons
   //TODO: Fix it
 //ImagesDM.GetChildNodesIcons(vstList, nil, vstList.RootNode);
@@ -945,8 +942,6 @@ end;
 
 procedure TfrmMain.FormDestroy(Sender: TObject);
 begin
-  ListManager.Destroy;
-  DBManager.Destroy;
   Config.Destroy;
 end;
 

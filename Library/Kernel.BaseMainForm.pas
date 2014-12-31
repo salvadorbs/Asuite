@@ -154,7 +154,7 @@ begin
       if Msg.HotKey = frmMenuID then
         dmTrayMenu.ShowGraphicMenu
       else begin
-        NodeData := ListManager.HotKeyItemList.IndexOfID(Msg.HotKey);
+        NodeData := Config.ListManager.HotKeyItemList.IndexOfID(Msg.HotKey);
         if Assigned(NodeData) then
         begin
           if (NodeData.DataType <> vtdtSeparator) then

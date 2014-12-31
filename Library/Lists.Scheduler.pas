@@ -50,7 +50,7 @@ begin
   begin
     for I := 0 to Self.Count - 1 do
     begin
-      NodeData := ListManager.SchedulerItemList[I];
+      NodeData := Config.ListManager.SchedulerItemList[I];
       dtLastAccess := UnixToDateTime(NodeData.LastAccess);
       case NodeData.SchMode of
         smDisabled: dtScheduler := 0;
