@@ -258,17 +258,6 @@ object frmGraphicMenu: TfrmGraphicMenu
     TreeOptions.MiscOptions = [toAcceptOLEDrop, toInitOnSave, toToggleOnDblClick, toWheelPanning, toVariableNodeHeight, toEditOnClick]
     TreeOptions.PaintOptions = [toHideFocusRect, toHotTrack, toPopupMode, toShowBackground, toShowDropmark, toThemeAware, toUseBlendedImages, toAlwaysHideSelection, toUseExplorerTheme]
     TreeOptions.SelectionOptions = [toDisableDrawSelection, toFullRowSelect, toRightClickSelect]
-    OnAddToSelection = vstListAddToSelection
-    OnClick = vstListClick
-    OnCompareNodes = vstListCompareNodes
-    OnDrawText = vstListDrawText
-    OnExpanded = vstListExpanded
-    OnExpanding = vstListExpanding
-    OnGetText = vstGetText
-    OnGetImageIndex = vstGetImageIndex
-    OnMeasureItem = vstListMeasureItem
-    OnResize = vstResize
-    OnScroll = vstScroll
     Columns = <>
   end
   object tmrFader: TTimer

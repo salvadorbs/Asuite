@@ -26,11 +26,13 @@ uses
   NodeDataTypes.Base, Kernel.Enumerations, Classes, ShellApi, comobj, DKLang,
   Lists.Manager, Lists.Base, Kernel.Types, NodeDataTypes.Custom;
 
+  //TODO: Put these methods in a class
+
 { List, Menu, MRU }
 function  AddNodeInVST(Sender: TBaseVirtualTree;ParentNode: PVirtualNode;AType: TvTreeDataType): PVirtualNode;
 function  CreateListItem(Sender: TBaseVirtualTree;AType: TvTreeDataType): TvBaseNodeData;
 function  CreateNodeData(AType: TvTreeDataType): TvBaseNodeData;
-function  ClickOnButtonTree(Sender: TBaseVirtualTree): Boolean;
+function  ClickOnButtonTree(Sender: TBaseVirtualTree; const HitInfo: THitInfo): Boolean;
 function GetNodeParentName(const ASender: TBaseVirtualTree; const ANode: PVirtualNode): string;
 procedure RefreshList(const ATree: TBaseVirtualTree);
 function ShowItemProperty(const AOwner: TComponent; const ATreeView: TBaseVirtualTree;
@@ -87,7 +89,7 @@ type
 implementation
 
 uses
-  Utility.System, DataModules.Images, Forms.Main, AppConfig.Main, NodeDataTypes.Files,
+  Utility.System, DataModules.Images, AppConfig.Main, NodeDataTypes.Files,
   Utility.FileFolder, Forms.PropertySeparator, DataModules.TrayMenu,
   NodeDataTypes.Category, NodeDataTypes.Separator,
   Forms.PropertyItem;
@@ -178,17 +180,9 @@ begin
   end;
 end;
 
-function ClickOnButtonTree(Sender: TBaseVirtualTree): Boolean;
-var
-  Point   : TPoint;
-  HitInfo : ThitInfo;
+function ClickOnButtonTree(Sender: TBaseVirtualTree; const HitInfo: THitInfo): Boolean;
 begin
-  Result   := false;
-  GetCursorPos(Point);
-  Point    := Sender.ScreenToClient(Point);
-  Sender.GetHitTestInfoAt(Point.X,Point.Y,true,HitInfo);
-  if hiOnItemButton in hitinfo.HitPositions then
-    Result := True;
+  Result := hiOnItemButton in HitInfo.HitPositions;
 end;
 
 procedure ChangeAllNodeHeight(const ASender: TBaseVirtualTree; const ANewNodeHeight: Integer);

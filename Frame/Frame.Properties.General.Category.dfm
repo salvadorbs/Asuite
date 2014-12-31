@@ -30,6 +30,7 @@ inherited frmCatGeneralPropertyPage: TfrmCatGeneralPropertyPage
       Header.Font.Name = 'Tahoma'
       Header.Font.Style = []
       Header.MainColumn = -1
+      Images = dmImages.IcoImages
       TabOrder = 0
       TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
       TreeOptions.PaintOptions = [toShowDropmark, toThemeAware, toUseBlendedImages]

@@ -140,7 +140,6 @@ procedure TdmTrayMenu.DataModuleCreate(Sender: TObject);
 begin
 //  tiTrayMenu.Hint   := Format('%s %s (%s)',[APP_NAME, Config.ASuiteVersion.ConvertToShortString,
 //                                          UpperCase(Config.SuiteDrive)]);
-  pmTrayicon.Images := dmImages.IcoImages;
 end;
 
 procedure TdmTrayMenu.tiTrayMenuDblClick(Sender: TObject);

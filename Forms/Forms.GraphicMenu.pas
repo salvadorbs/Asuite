@@ -104,42 +104,22 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure OpenRightButton(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure vstGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
-      Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
-    procedure vstListExpanding(Sender: TBaseVirtualTree; Node: PVirtualNode;
-      var Allowed: Boolean);
     procedure sknbtnListClick(Sender: TObject);
     procedure sknbtnRecentsClick(Sender: TObject);
     procedure sknbtnMFUClick(Sender: TObject);
     procedure sknbtnEjectClick(Sender: TObject);
     procedure sknbtnExitClick(Sender: TObject);
-    procedure vstGetImageIndex(Sender: TBaseVirtualTree; Node: PVirtualNode;
-      Kind: TVTImageKind; Column: TColumnIndex; var Ghosted: Boolean;
-      var ImageIndex: Integer);
     procedure imgPersonalPictureClick(Sender: TObject);
     procedure miProperty2Click(Sender: TObject);
     procedure btnSearchClick(Sender: TObject);
-    procedure vstListDrawText(Sender: TBaseVirtualTree; TargetCanvas: TCanvas;
-      Node: PVirtualNode; Column: TColumnIndex; const Text: string;
-      const CellRect: TRect; var DefaultDraw: Boolean);
-    procedure vstListAddToSelection(Sender: TBaseVirtualTree;
-      Node: PVirtualNode);
     procedure edtSearchChange(Sender: TObject);
-    procedure vstScroll(Sender: TBaseVirtualTree; DeltaX, DeltaY: Integer);
-    procedure vstResize(Sender: TObject);
     procedure FormDeactivate(Sender: TObject);
     procedure ApplicationEvents1Deactivate(Sender: TObject);
-    procedure vstListMeasureItem(Sender: TBaseVirtualTree;
-      TargetCanvas: TCanvas; Node: PVirtualNode; var NodeHeight: Integer);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure pmWindowPopup(Sender: TObject);
-    procedure vstListClick(Sender: TObject);
     procedure FormMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
-    procedure vstListExpanded(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
-    procedure vstListCompareNodes(Sender: TBaseVirtualTree; Node1,
-      Node2: PVirtualNode; Column: TColumnIndex; var Result: Integer);
     procedure tmrCheckItemsTimer(Sender: TObject);
     procedure FormHide(Sender: TObject);
 	private    
@@ -234,7 +214,7 @@ implementation
 uses
   Forms.Main, Utility.System, Kernel.Consts, AppConfig.Main, Utility.Conversions,
   Forms.About, NodeDataTypes.Base, Utility.TreeView, Kernel.Enumerations,
-  Kernel.Types, Forms.Options, Utility.Misc;
+  Kernel.Types, Forms.Options, Utility.Misc, VirtualTree.Events;
 
 procedure TfrmGraphicMenu.ApplicationEvents1Deactivate(Sender: TObject);
 begin
@@ -651,8 +631,7 @@ procedure TfrmGraphicMenu.FormCreate(Sender: TObject);
 begin
   FSearchIcon := -1;
   FCancelIcon := -1;
-  //NodeDataSize
-  vstList.NodeDataSize  := SizeOf(rTreeDataX);
+  TVirtualTreeEvents.Create.SetupVSTGraphicMenu(vstList, Self);
   //Load current theme
   LoadTheme;
 //  //Position
@@ -994,146 +973,6 @@ begin
       tmrFader.Enabled     := False;
       Self.Hide;
     end;
-  end;
-end;
-
-procedure TfrmGraphicMenu.vstListAddToSelection(Sender: TBaseVirtualTree;
-  Node: PVirtualNode);
-var
-  NodeData: TvBaseNodeData;
-begin
-  NodeData := GetNodeItemData(Node, vstList);
-  if NodeData.DataType = vtdtSeparator then
-    Sender.Selected[Node] := False;
-end;
-
-procedure TfrmGraphicMenu.vstListClick(Sender: TObject);
-var
-  NodeData : TvBaseNodeData;
-begin
-  if Assigned(vstList.FocusedNode) then
-  begin
-    NodeData := GetNodeItemData(vstList.FocusedNode, vstList);
-    if NodeData.DataType = vtdtCategory then
-    begin
-      vstList.Expanded[vstList.FocusedNode] := Not(vstList.Expanded[vstList.FocusedNode]);
-      Self.FocusControl(edtSearch);
-    end
-    else
-      if NodeData.DataType = vtdtFile then
-      begin
-        frmMain.RunDoubleClick(vstList);
-        CloseMenu;
-      end;
-  end;
-end;
-
-procedure TfrmGraphicMenu.vstListCompareNodes(Sender: TBaseVirtualTree; Node1,
-  Node2: PVirtualNode; Column: TColumnIndex; var Result: Integer);
-var
-  Data1, Data2: TvBaseNodeData;
-begin
-  Data1 := GetNodeItemData(Node1, Sender);
-  Data2 := GetNodeItemData(Node2, Sender);
-  if (Not Assigned(Data1)) or (Not Assigned(Data2)) then
-    Result := 0
-  else
-    Result := CompareText(Data1.Name, Data2.Name);
-end;
-
-procedure TfrmGraphicMenu.vstListDrawText(Sender: TBaseVirtualTree;
-  TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
-  const Text: string; const CellRect: TRect; var DefaultDraw: Boolean);
-begin
-  DrawSeparatorItem(Sender, Node, TargetCanvas, CellRect, DefaultDraw);
-end;
-
-procedure TfrmGraphicMenu.vstListExpanded(Sender: TBaseVirtualTree;
-  Node: PVirtualNode);
-begin
-  CheckVisibleNodePathExe(Sender);
-end;
-
-procedure TfrmGraphicMenu.vstListExpanding(Sender: TBaseVirtualTree;
-  Node: PVirtualNode; var Allowed: Boolean);
-var
-  NodeData: TvBaseNodeData;
-begin
-  NodeData := GetNodeItemData(Node, Sender);
-//  if NodeData.DataType = vtdtCategory then
-    //TODO: Fix it
-//ImagesDM.GetChildNodesIcons(Sender, Node, isAny);
-end;
-
-procedure TfrmGraphicMenu.vstListMeasureItem(Sender: TBaseVirtualTree;
-  TargetCanvas: TCanvas; Node: PVirtualNode; var NodeHeight: Integer);
-var
-  NodeData: TvBaseNodeData;
-begin
-  NodeData := GetNodeItemData(Node, Sender);
-  if Assigned(NodeData) then
-    if NodeData.DataType = vtdtSeparator then
-      NodeHeight := 18;
-end;
-
-procedure TfrmGraphicMenu.vstResize(Sender: TObject);
-var
-  DY: integer;
-begin
-  if Sender is TVirtualStringTree then
-  begin
-    DY := TVirtualStringTree(Sender).DefaultNodeHeight;
-    if TVirtualStringTree(Sender).DefaultNodeHeight = 36 then
-      TVirtualStringTree(Sender).BottomSpace := 1
-    else
-      TVirtualStringTree(Sender).BottomSpace := TVirtualStringTree(Sender).ClientHeight mod DY;
-    TVirtualStringTree(Sender).OffsetY := Round(TVirtualStringTree(Sender).OffsetY / DY) * DY;
-  end;
-end;
-
-procedure TfrmGraphicMenu.vstScroll(Sender: TBaseVirtualTree; DeltaX,
-  DeltaY: Integer);
-var
-  DY: integer;
-begin
-  if DeltaY <> 0 then
-  begin
-    DY := TVirtualStringTree(Sender).DefaultNodeHeight;
-    Sender.OffsetY := Round(Sender.OffsetY / DY) * DY;
-//    if DeltaY = -18 then
-//      Sender.OffsetY := Sender.OffsetY - 18;
-  end;
-end;
-
-procedure TfrmGraphicMenu.vstGetImageIndex(Sender: TBaseVirtualTree;
-  Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-  var Ghosted: Boolean; var ImageIndex: Integer);
-var
-  NodeData : TvBaseNodeData;
-begin
-  if (Kind = ikNormal) or (Kind = ikSelected) then
-  begin
-    NodeData   := GetNodeItemData(Node, vstList);
-    if TVirtualStringTree(Sender).DefaultNodeHeight = 18 then
-      ImageIndex := NodeData.ImageIndex
-    else
-      ImageIndex := NodeData.ImageLargeIndex;
-  end;
-end;
-
-procedure TfrmGraphicMenu.vstGetText(Sender: TBaseVirtualTree;
-  Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
-  var CellText: string);
-var
-  NodeData : TvBaseNodeData;
-begin
-  NodeData := GetNodeItemData(Node, vstList);
-  if Assigned(NodeData) then
-  begin
-    if (NodeData.DataType = vtdtSeparator) and (NodeData.Name = '') then
-      CellText := ' '
-    else
-      CellText := StringReplace(NodeData.Name, '&&', '&', [rfIgnoreCase,rfReplaceAll]);
   end;
 end;
 

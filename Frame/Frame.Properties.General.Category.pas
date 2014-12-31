@@ -94,13 +94,13 @@ var
   Node: PVirtualNode;
 begin
   Result := inherited;
+  //TODO: Use VirtualTree.Events
   vstCategoryItems.NodeDataSize := SizeOf(rTreeDataX);
-  vstCategoryItems.Images       := dmImages.IcoImages;
   if Assigned(CurrentNodeData) then
   begin
     Node := CurrentNodeData.pNode;
     //Get items list
-    frmMain.vstList.IterateSubtree(Node,GetCategoryItems,Pointer(Node));
+    frmMain.vstList.IterateSubtree(Node, GetCategoryItems, Pointer(Node));
   end;
 end;
 

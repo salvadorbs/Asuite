@@ -104,74 +104,29 @@ type
     procedure pcListChange(Sender: TObject);
     procedure miImportListClick(Sender: TObject);
     procedure miSaveListClick(Sender: TObject);
-    procedure vstListDragOver(Sender: TBaseVirtualTree; Source: TObject;
-      Shift: TShiftState; State: TDragState; Pt: TPoint; Mode: TDropMode;
-      var Effect: Integer; var Accept: Boolean);
     procedure AddFolder(Sender: TObject);
     procedure AddSoftware(Sender: TObject);
     procedure AddCategory(Sender: TObject);
-    procedure vstSearchGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
-  Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
-    procedure vstListGetImageIndex(Sender: TBaseVirtualTree;
-      Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-      var Ghosted: Boolean; var ImageIndex: Integer);
-    procedure vstListGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
-      Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure miExitClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-    procedure RunDoubleClick(Sender: TObject);
-    procedure RunSingleClick(Sender: TObject);
     procedure pmWindowPopup(Sender: TObject);
     procedure miAddSeparator2Click(Sender: TObject);
-    procedure vstSearchGetImageIndex(Sender: TBaseVirtualTree;
-      Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-      var Ghosted: Boolean; var ImageIndex: Integer);
-    procedure vstSearchCompareNodes(Sender: TBaseVirtualTree; Node1,
-      Node2: PVirtualNode; Column: TColumnIndex; var Result: Integer);
-    procedure vstListCompareNodes(Sender: TBaseVirtualTree; Node1,
-      Node2: PVirtualNode; Column: TColumnIndex; var Result: Integer);
     procedure miSortListClick(Sender: TObject);
     procedure miExportListClick(Sender: TObject);
-    procedure vstListPaintText(Sender: TBaseVirtualTree;
-      const TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
-      TextType: TVSTTextType);
     procedure FormDestroy(Sender: TObject);
     procedure miSortItemsClick(Sender: TObject);
-    procedure vstListKeyPress(Sender: TObject; var Key: Char);
     procedure miCopy2Click(Sender: TObject);
     procedure miPaste2Click(Sender: TObject);
     procedure miCut2Click(Sender: TObject);
-    procedure vstListSaveNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
-      Stream: TStream);
-    procedure vstListLoadNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
-      Stream: TStream);
     procedure miEditClick(Sender: TObject);
     procedure miInfoASuiteClick(Sender: TObject);
     procedure btnedtSearchRightButtonClick(Sender: TObject);
     procedure ChangeSearchTextHint(Sender: TObject);
-    procedure vstListFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
-    procedure vstListNewText(Sender: TBaseVirtualTree; Node: PVirtualNode;
-      Column: TColumnIndex; NewText: string);
     procedure btnedtSearchKeyPress(Sender: TObject; var Key: Char);
-    procedure vstListExpanding(Sender: TBaseVirtualTree; Node: PVirtualNode;
-      var Allowed: Boolean);
-    procedure vstSearchHeaderClick(Sender: TVTHeader; HitInfo: TVTHeaderHitInfo);
-    procedure vstListDragDrop(Sender: TBaseVirtualTree; Source: TObject;
-      DataObject: IDataObject; Formats: TFormatArray; Shift: TShiftState;
-      Pt: TPoint; var Effect: Integer; Mode: TDropMode);
     procedure tmSchedulerTimer(Sender: TObject);
-    procedure vstListEditing(Sender: TBaseVirtualTree; Node: PVirtualNode;
-      Column: TColumnIndex; var Allowed: Boolean);
-    procedure vstListDrawText(Sender: TBaseVirtualTree; TargetCanvas: TCanvas;
-      Node: PVirtualNode; Column: TColumnIndex; const Text: string;
-      const CellRect: TRect; var DefaultDraw: Boolean);
     procedure mniScanFolderClick(Sender: TObject);
-    procedure vstListGetNodeDataSize(Sender: TBaseVirtualTree;
-      var NodeDataSize: Integer);
-    procedure vstSearchGetNodeDataSize(Sender: TBaseVirtualTree;
-      var NodeDataSize: Integer);
   private
     { Private declarations }
     function  GetActiveTree: TBaseVirtualTree;
@@ -192,9 +147,10 @@ implementation
 
 uses
   TypInfo, Forms.Options, Forms.About, Utility.Misc, Forms.ScanFolder,
-  DataModules.TrayMenu, Forms.ImportList, AppConfig.Main, Utility.XML,
-  Utility.TreeView, Frame.Options.Stats, NodeDataTypes.Base, NodeDataTypes.Category,
-  NodeDataTypes.Files, NodeDataTypes.Custom, NodeDataTypes.Separator, Kernel.Types;
+  DataModules.TrayMenu, Forms.ImportList, AppConfig.Main,
+  Utility.TreeView, Frame.Options.Stats, NodeDataTypes.Base,
+  NodeDataTypes.Custom, Kernel.Types,
+  VirtualTree.Events;
 
 {$R *.dfm}
 
@@ -255,14 +211,6 @@ end;
 procedure TfrmMain.miCut2Click(Sender: TObject);
 begin
   vstList.CutToClipBoard;
-end;
-
-procedure TfrmMain.RunDoubleClick(Sender: TObject);
-begin
-  //Check if user click on node or expand button (+/-)
-  if (Sender is TBaseVirtualTree) then
-    if Not(ClickOnButtonTree((Sender as TBaseVirtualTree))) then
-//      RunNormalSw((Sender as TBaseVirtualTree));
 end;
 
 procedure TfrmMain.miImportListClick(Sender: TObject);
@@ -380,77 +328,6 @@ begin
   miPaste2.Enabled := IsFormatInClipBoard(CF_VIRTUALTREE);
 end;
 
-procedure TfrmMain.vstSearchCompareNodes(Sender: TBaseVirtualTree; Node1,
-  Node2: PVirtualNode; Column: TColumnIndex; var Result: Integer);
-var
-  Data1, Data2, CatData1, CatData2: TvBaseNodeData;
-  CatName1, CatName2 : String;
-begin
-  Data1 := GetNodeItemData(Node1, Sender);
-  Data2 := GetNodeItemData(Node2, Sender);
-  if (Not Assigned(Data1)) or (Not Assigned(Data2)) then
-    Result := 0
-  else
-    if Column = 0 then
-      Result := CompareText(Data1.Name, Data2.Name)
-    else begin
-      CatData1 := GetNodeItemData(Data1.pNode.Parent, Config.MainTree);
-      CatData2 := GetNodeItemData(Data2.pNode.Parent, Config.MainTree);
-      if Assigned(CatData1) then
-        CatName1 := CatData1.Name
-      else
-        CatName1 := '';
-      if Assigned(CatData2) then
-        CatName2 := CatData2.Name
-      else
-        CatName2 := '';
-      Result  := CompareText(CatName1, CatName2)
-    end;
-end;
-
-procedure TfrmMain.vstSearchGetImageIndex(Sender: TBaseVirtualTree;
-  Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-  var Ghosted: Boolean; var ImageIndex: Integer);
-var
-  NodeData : TvBaseNodeData;
-begin
-  NodeData   := GetNodeDataEx(Node, Sender).Data;
-  ImageIndex := NodeData.ImageIndex;
-  if Column = 1 then
-    ImageIndex := -1;
-end;
-
-procedure TfrmMain.vstSearchGetNodeDataSize(Sender: TBaseVirtualTree;
-  var NodeDataSize: Integer);
-begin
-  NodeDataSize := SizeOf(rTreeDataX);
-end;
-
-procedure TfrmMain.vstSearchGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
-  Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
-var
-  NodeData : TvBaseNodeData;
-begin
-  NodeData := GetNodeItemData(Node, Sender);
-  if Assigned(NodeData) then
-  begin
-    if Column = 0 then
-      CellText := NodeData.Name;
-    if Column = 1 then
-      CellText := GetNodeParentName(Sender, NodeData.pNode);
-  end;
-end;
-
-procedure TfrmMain.vstSearchHeaderClick(Sender: TVTHeader;
-  HitInfo: TVTHeaderHitInfo);
-begin
-  vstSearch.SortTree(HitInfo.Column,Sender.SortDirection,True);
-  if Sender.SortDirection = sdAscending then
-    Sender.SortDirection := sdDescending
-  else
-    Sender.SortDirection := sdAscending
-end;
-
 procedure TfrmMain.ShowMainForm(Sender: TObject);
 begin
   //From CoolTrayicon source
@@ -506,239 +383,6 @@ begin
 //ImagesDM.GetChildNodesIcons(TreeSearch, TreeSearch.RootNode, isAny);
     end;
   end;
-end;
-
-procedure TfrmMain.vstListGetImageIndex(Sender: TBaseVirtualTree;
-  Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-  var Ghosted: Boolean; var ImageIndex: Integer);
-var
-  NodeData: TvBaseNodeData;
-begin
-  NodeData   := GetNodeItemData(Node, Sender);
-  ImageIndex := NodeData.ImageIndex;
-end;
-
-procedure TfrmMain.vstListGetNodeDataSize(Sender: TBaseVirtualTree;
-  var NodeDataSize: Integer);
-begin
-  NodeDataSize := SizeOf(rBaseData);
-end;
-
-procedure TfrmMain.vstListGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
-  Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
-var
-  NodeData : TvBaseNodeData;
-begin
-  NodeData := GetNodeItemData(Node, Sender);
-  if Assigned(NodeData) then
-  begin
-    if (NodeData.DataType = vtdtSeparator) and (NodeData.Name = '') then
-      CellText := ' '
-    else
-      CellText := StringReplace(NodeData.Name, '&&', '&', [rfIgnoreCase,rfReplaceAll]);
-  end;
-end;
-
-procedure TfrmMain.vstListKeyPress(Sender: TObject; var Key: Char);
-begin
-//  if (Sender is TBaseVirtualTree) then
-//    if Ord(Key) = VK_RETURN then
-//        RunNormalSw((Sender as TBaseVirtualTree));
-end;
-
-procedure TfrmMain.vstListLoadNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
-  Stream: TStream);
-var
-  DataDest, DataSource: PBaseData;
-begin
-  //Create a new PBaseData as source
-  New(DataSource);
-  Stream.ReadBuffer(DataSource^,SizeOf(rBaseData));
-  //Copy source's properties in DataDest
-  DataDest := GetNodeDataEx(Node, Sender);
-  DataDest.Data := CreateNodeData(DataSource.Data.DataType);
-  //Copy DataSource in DataDest
-  case DataSource.Data.DataType of
-    vtdtCategory  : TvCategoryNodeData(DataDest.Data).Copy(DataSource.Data);
-    vtdtFile      : TvFileNodeData(DataDest.Data).Copy(DataSource.Data);
-    vtdtFolder    : TvFileNodeData(DataDest.Data).Copy(DataSource.Data);
-    vtdtSeparator : TvSeparatorNodeData(DataDest.Data).Copy(DataSource.Data);
-  end;
-  //New node can't use same hotkey of old node
-  if DataDest.Data is TvCustomRealNodeData then
-  begin
-    TvCustomRealNodeData(DataDest.Data).ActiveHotkey := False;
-    TvCustomRealNodeData(DataDest.Data).Hotkey := 0;
-  end;
-  //Set some personal record fields
-  DataDest.Data.pNode := Node;
-  //Icon
-//  DataDest.Data.ImageIndex := ImagesDM.GetIconIndex(TvCustomRealNodeData(DataDest.Data));
-  FreeMem(DataSource);
-end;
-
-procedure TfrmMain.vstListNewText(Sender: TBaseVirtualTree; Node: PVirtualNode;
-  Column: TColumnIndex; NewText: string);
-var
-  NodeData : TvBaseNodeData;
-begin
-  NodeData := GetNodeItemData(Node, Sender);
-  if Assigned(NodeData) then
-    NodeData.Name := NewText;
-end;
-
-procedure TfrmMain.vstListPaintText(Sender: TBaseVirtualTree;
-  const TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
-  TextType: TVSTTextType);
-begin
-  with TargetCanvas do
-  begin
-    Font.Name  := Config.TVFont.Name;
-    Font.Style := Config.TVFont.Style;
-    Font.Size  := Config.TVFont.Size;
-    if Not(Sender.Selected[Node]) then
-      Font.Color := Config.TVFont.Color;
-  end;
-end;
-
-procedure TfrmMain.vstListSaveNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
-  Stream: TStream);
-var
-  Data: PBaseData;
-begin
-  Data := GetNodeDataEx(Node, Sender);
-  Stream.WriteBuffer(Data^,SizeOf(rBaseData));
-end;
-
-procedure TfrmMain.RunSingleClick(Sender: TObject);
-begin
-  //Check if user click on node or expand button (+/-)
-  if (Sender is TBaseVirtualTree) then
-    if Not(ClickOnButtonTree((Sender as TBaseVirtualTree))) then
-      if (Config.RunSingleClick) then
-//        RunNormalSw((Sender as TBaseVirtualTree));
-end;
-
-procedure TfrmMain.vstListCompareNodes(Sender: TBaseVirtualTree; Node1,
-  Node2: PVirtualNode; Column: TColumnIndex; var Result: Integer);
-var
-  Data1, Data2: TvBaseNodeData;
-begin
-  Data1 := GetNodeItemData(Node1, Sender);
-  Data2 := GetNodeItemData(Node2, Sender);
-  if (Not Assigned(Data1)) or (Not Assigned(Data2)) then
-    Result := 0
-  else
-    if (Data1.DataType = vtdtCategory) <> (Data2.DataType = vtdtCategory) then
-    begin
-      if Data1.DataType = vtdtCategory then
-        Result := -1
-      else
-        Result := 1
-    end
-    else
-      Result := CompareText(Data1.Name, Data2.Name);
-end;
-
-procedure TfrmMain.vstListDragDrop(Sender: TBaseVirtualTree; Source: TObject;
-  DataObject: IDataObject; Formats: TFormatArray; Shift: TShiftState;
-  Pt: TPoint; var Effect: Integer; Mode: TDropMode);
-var
-  I          : integer;
-  NodeData   : TvBaseNodeData;
-  AttachMode : TVTNodeAttachMode;
-  NodeCreated : Boolean;
-begin
-  NodeCreated := False;
-  case Mode of
-    dmAbove  : AttachMode := amInsertBefore;
-    dmOnNode : AttachMode := amAddChildLast;
-    dmBelow  : AttachMode := amInsertAfter;
-  else
-    AttachMode := amNowhere;
-  end;
-  if Assigned(DataObject) then
-  begin
-    Sender.BeginUpdate;
-    try
-      NodeData := GetNodeItemData(Sender.DropTargetNode, Sender);
-      if Mode = dmOnNode then
-      begin
-        //Check if DropMode is in a vtdtCategory (so expand it, before drop item)
-        //or another item type (change Mode and AttachMode for insert after new nodes)
-        if NodeData.DataType <> vtdtCategory then
-        begin
-          Mode := dmBelow;
-          AttachMode := amInsertAfter;
-        end
-        else
-          Sender.Expanded[Sender.DropTargetNode] := True;
-      end;
-      try
-        for I := 0 to High(Formats) do
-        begin
-          //Files
-          if Formats[I] = CF_HDROP then
-            DragDropFiles(Sender, DataObject, AttachMode)
-          else //VirtualTree Nodes
-            if Formats[I] = CF_VIRTUALTREE then
-              Sender.ProcessDrop(DataObject, Sender.DropTargetNode, Effect, AttachMode)
-            else //Text
-              if (Formats[I] = CF_UNICODETEXT) and Not(NodeCreated) then
-                NodeCreated := DragDropText(Sender, DataObject, AttachMode, Mode);
-        end;
-      except
-        on E : Exception do
-          ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message], true);
-      end;
-    finally
-      RefreshList(Sender);
-      Sender.EndUpdate;
-    end;
-  end;
-end;
-
-procedure TfrmMain.vstListDragOver(Sender: TBaseVirtualTree; Source: TObject;
-  Shift: TShiftState; State: TDragState; Pt: TPoint; Mode: TDropMode;
-  var Effect: Integer; var Accept: Boolean);
-begin
-  accept := true;
-end;
-
-procedure TfrmMain.vstListDrawText(Sender: TBaseVirtualTree;
-  TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
-  const Text: string; const CellRect: TRect; var DefaultDraw: Boolean);
-begin
-  DrawSeparatorItem(Sender, Node, TargetCanvas, CellRect, DefaultDraw);
-end;
-
-procedure TfrmMain.vstListEditing(Sender: TBaseVirtualTree; Node: PVirtualNode;
-  Column: TColumnIndex; var Allowed: Boolean);
-var
-  NodeData : TvBaseNodeData;
-begin
-  NodeData := GetNodeItemData(Node, Sender);
-  Allowed  := (NodeData.DataType <> vtdtSeparator) and Not(Config.RunSingleClick);
-end;
-
-procedure TfrmMain.vstListExpanding(Sender: TBaseVirtualTree;
-  Node: PVirtualNode; var Allowed: Boolean);
-var
-  NodeData : TvBaseNodeData;
-begin
-  NodeData := GetNodeItemData(Node, Sender);
-  //TODO: Fix it
-//  if NodeData.DataType = vtdtCategory then
-//ImagesDM.GetChildNodesIcons(Sender, nil, Node);
-end;
-
-procedure TfrmMain.vstListFreeNode(Sender: TBaseVirtualTree;
-  Node: PVirtualNode);
-var
-  NodeData : TvBaseNodeData;
-begin
-  NodeData := GetNodeItemData(Node, Sender);
-  FreeAndNil(NodeData);
 end;
 
 function TfrmMain.GetActiveTree: TBaseVirtualTree;
@@ -876,12 +520,18 @@ begin
 end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);
+var
+  VSTEvents: TVirtualTreeEvents;
 begin
   //Set vstList as MainTree in Config
   Config.MainTree := vstList;
   Application.CreateForm(TdmImages, dmImages);
   Application.CreateForm(TdmTrayMenu, dmTrayMenu);
   pcList.ActivePageIndex := PG_LIST;
+  //Setup events in vsts
+  VSTEvents := TVirtualTreeEvents.Create;
+  VSTEvents.SetupVSTList(vstList);
+  VSTEvents.SetupVSTSearch(vstSearch);
   //Check read only
   if Config.CheckReadOnlyMode then
   begin

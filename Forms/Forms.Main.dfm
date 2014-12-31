@@ -3,8 +3,8 @@ object frmMain: TfrmMain
   Top = 208
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'ASuite'
-  ClientHeight = 340
-  ClientWidth = 184
+  ClientHeight = 386
+  ClientWidth = 201
   Color = clBtnFace
   Constraints.MinHeight = 370
   Constraints.MinWidth = 200
@@ -61,8 +61,8 @@ object frmMain: TfrmMain
   object pcList: TPageControl
     Left = 0
     Top = 0
-    Width = 184
-    Height = 340
+    Width = 201
+    Height = 386
     ActivePage = tbSearch
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
@@ -74,13 +74,17 @@ object frmMain: TfrmMain
     ParentFont = False
     TabOrder = 0
     OnChange = pcListChange
+    ExplicitWidth = 184
+    ExplicitHeight = 340
     object tbList: TTabSheet
       Caption = 'List'
+      ExplicitWidth = 176
+      ExplicitHeight = 312
       object vstList: TVirtualStringTree
         Left = 0
         Top = 0
-        Width = 176
-        Height = 312
+        Width = 193
+        Height = 358
         Align = alClient
         ClipboardFormats.Strings = (
           'Virtual Tree Data')
@@ -111,30 +115,17 @@ object frmMain: TfrmMain
         TreeOptions.PaintOptions = [toShowBackground, toShowButtons, toShowDropmark, toShowRoot, toShowTreeLines, toThemeAware, toUseBlendedImages]
         TreeOptions.SelectionOptions = [toFullRowSelect, toMultiSelect, toRightClickSelect]
         TreeOptions.StringOptions = [toAutoAcceptEditChange]
-        OnClick = RunSingleClick
-        OnCompareNodes = vstListCompareNodes
-        OnDblClick = RunDoubleClick
-        OnDragOver = vstListDragOver
-        OnDragDrop = vstListDragDrop
-        OnDrawText = vstListDrawText
-        OnEditing = vstListEditing
-        OnExpanding = vstListExpanding
-        OnFreeNode = vstListFreeNode
-        OnGetText = vstListGetText
-        OnPaintText = vstListPaintText
-        OnGetImageIndex = vstListGetImageIndex
-        OnGetNodeDataSize = vstListGetNodeDataSize
-        OnKeyPress = vstListKeyPress
-        OnLoadNode = vstListLoadNode
-        OnNewText = vstListNewText
-        OnSaveNode = vstListSaveNode
+        ExplicitWidth = 176
+        ExplicitHeight = 312
         Columns = <>
       end
     end
     object tbSearch: TTabSheet
       Caption = 'Search'
+      ExplicitWidth = 176
+      ExplicitHeight = 312
       object sbtnSearch: TSpeedButton
-        Left = 152
+        Left = 169
         Top = 0
         Width = 24
         Height = 23
@@ -146,8 +137,8 @@ object frmMain: TfrmMain
       object vstSearch: TVirtualStringTree
         Left = 0
         Top = 23
-        Width = 176
-        Height = 289
+        Width = 193
+        Height = 335
         Align = alBottom
         Anchors = [akLeft, akTop, akRight, akBottom]
         AnimationDuration = 0
@@ -157,7 +148,7 @@ object frmMain: TfrmMain
         Header.Font.Height = -11
         Header.Font.Name = 'Tahoma'
         Header.Font.Style = []
-        Header.Options = [hoColumnResize, hoDblClickResize, hoDrag, hoVisible]
+        Header.Options = [hoColumnResize, hoDblClickResize, hoDrag, hoVisible, hoHeaderClickAutoSort]
         HintMode = hmHint
         ParentShowHint = False
         PopupMenu = pmWindow
@@ -165,13 +156,8 @@ object frmMain: TfrmMain
         TabOrder = 0
         TreeOptions.PaintOptions = [toShowDropmark, toThemeAware, toUseBlendedImages]
         TreeOptions.SelectionOptions = [toFullRowSelect, toMultiSelect, toRightClickSelect]
-        OnClick = RunSingleClick
-        OnCompareNodes = vstSearchCompareNodes
-        OnDblClick = RunDoubleClick
-        OnGetText = vstSearchGetText
-        OnGetImageIndex = vstSearchGetImageIndex
-        OnGetNodeDataSize = vstSearchGetNodeDataSize
-        OnHeaderClick = vstSearchHeaderClick
+        ExplicitWidth = 176
+        ExplicitHeight = 289
         Columns = <
           item
             Position = 0
@@ -187,7 +173,7 @@ object frmMain: TfrmMain
       object edtSearch: TEdit
         Left = 0
         Top = 0
-        Width = 149
+        Width = 166
         Height = 21
         Align = alLeft
         Anchors = [akLeft, akTop, akRight]
@@ -195,6 +181,7 @@ object frmMain: TfrmMain
         PopupMenu = pmSearch
         TabOrder = 1
         OnKeyPress = btnedtSearchKeyPress
+        ExplicitWidth = 149
       end
     end
   end
