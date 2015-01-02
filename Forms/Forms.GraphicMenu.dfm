@@ -5,7 +5,7 @@ object frmGraphicMenu: TfrmGraphicMenu
   AlphaBlendValue = 0
   BorderIcons = []
   BorderStyle = bsNone
-  Caption = 'BSuite Menu'
+  Caption = 'ASuite Menu'
   ClientHeight = 573
   ClientWidth = 406
   Color = clBtnFace

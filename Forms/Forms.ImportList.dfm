@@ -115,7 +115,7 @@ object frmImportList: TfrmImportList
         Font.Style = []
         ItemIndex = 0
         Items.Strings = (
-          'ASuite 2.0x / BSuite 1.x'
+          'ASuite 2.0x / ASuite 1.x'
           'ASuite 1.x'
           'winPenPack Launcher 1.x'
           'PortableApps.com Platform x.x (WIP)')
@@ -182,8 +182,8 @@ object frmImportList: TfrmImportList
           OnAfterDialog = edtPathListAfterDialog
           AddQuotes = False
           Filter = 
-            'All list|*.xml;*.sqlite;*.bck;*.sqbck|BSuite 2.x List (*.sqlite,' +
-            ' *.sqbck)|*.sqlite;*.sqbck|BSuite 1.x List (*.xml, *.bck)|*.xml;' +
+            'All list|*.xml;*.sqlite;*.bck;*.sqbck|ASuite 2.x List (*.sqlite,' +
+            ' *.sqbck)|*.sqlite;*.sqbck|ASuite 1.x List (*.xml, *.bck)|*.xml;' +
             '*.bck|winPenPack 1.x List (*.xml)|*.xml|PStart 2.x List (*.xml)|' +
             '*.xml'
           DialogOptions = [ofHideReadOnly, ofEnableSizing]

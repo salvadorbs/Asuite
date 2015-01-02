@@ -48,8 +48,8 @@ var
 implementation
 
 uses
-  Frame.Properties.Advanced, Kernel.Enumerations, VirtualTree.Events,
-  Frame.Properties.Behavior, Frame.Properties.General.Category, Kernel.Types,
+  Frame.Properties.Advanced, Kernel.Enumerations,
+  Frame.Properties.Behavior, Frame.Properties.General.Category,
   Frame.Properties.General.Software;
 
 {$R *.dfm}

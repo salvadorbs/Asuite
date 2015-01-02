@@ -61,7 +61,7 @@ var
 implementation
 
 uses
-  Kernel.Enumerations, VirtualTree.Events, Kernel.Types;
+  VirtualTree.Events, Kernel.Types;
 
 {$R *.dfm}
 
