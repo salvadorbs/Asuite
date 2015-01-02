@@ -159,6 +159,7 @@ type
 var
 	frmGraphicMenu : TfrmGraphicMenu;
 
+  //TODO: Move these consts in GraphicMenu.Consts
 const
   //Theme.ini structure
   //Sections
@@ -704,6 +705,7 @@ begin
 //            else
 //              if (NodeData.DataType = vtdtCategory) and (ssCtrl in Shift) then
 //                frmMain.RunNormalSw(vstList);
+            //TODO: If node is a category, expand it
           end;
         end;
       end;
@@ -884,6 +886,7 @@ begin
       OpenFolder(Config.GMBtnExplore);
     if (Sender = sknbtnAbout) then
     begin
+      //TODO: Make a function (see mainform, also)
       if not IsFormOpen('frmAbout') then
         Application.CreateForm(TfrmAbout, frmAbout);
       frmAbout.Show;
@@ -977,6 +980,8 @@ begin
 end;
 
 { TVSTHelper }
+
+//TODO: Move this code in another unit (VirtualTree.VSTHelper)
 
 type
   THackOptions = Class(TCustomVirtualTreeOptions);

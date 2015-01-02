@@ -32,30 +32,30 @@ uses
 function  AddNodeInVST(Sender: TBaseVirtualTree;ParentNode: PVirtualNode;AType: TvTreeDataType): PVirtualNode;
 function  CreateListItem(Sender: TBaseVirtualTree;AType: TvTreeDataType): TvBaseNodeData;
 function  CreateNodeData(AType: TvTreeDataType): TvBaseNodeData;
-function  ClickOnButtonTree(Sender: TBaseVirtualTree; const HitInfo: THitInfo): Boolean;
-function GetNodeParentName(const ASender: TBaseVirtualTree; const ANode: PVirtualNode): string;
+function  ClickOnButtonTree(Sender: TBaseVirtualTree; const HitInfo: THitInfo): Boolean; //TODO: Move it
+function GetNodeParentName(const ASender: TBaseVirtualTree; const ANode: PVirtualNode): string; //TODO: Move it
 procedure RefreshList(const ATree: TBaseVirtualTree);
 function ShowItemProperty(const AOwner: TComponent; const ATreeView: TBaseVirtualTree;
                           const ANode: PVirtualNode; ANewNode: Boolean): Integer;
 
 { Drag&Drop }
 procedure DragDropFiles(Sender: TBaseVirtualTree; DataObject: IDataObject;
-                        AttachMode: TVTNodeAttachMode);
+                        AttachMode: TVTNodeAttachMode);  //TODO: Move it
 procedure GetDropFileProperty(Sender: TBaseVirtualTree; Node: pVirtualNode;
-                       PathTemp: string);
-function GetTextFromDataObject(DataObject: IDataObject): string;
+                       PathTemp: string); //TODO: Rename it
+function GetTextFromDataObject(DataObject: IDataObject): string; //TODO: Move it (see DragDropText)
 function DragDropText(Sender: TBaseVirtualTree;DataObject: IDataObject;
-                       AttachMode: TVTNodeAttachMode; Mode: TDropMode): Boolean;
+                       AttachMode: TVTNodeAttachMode; Mode: TDropMode): Boolean; //TODO: Move it
 
 { Get Data from Virtual TreeView }
-procedure GetFileListFromObj(const DataObj: IDataObject; FileList: TStringList);
+procedure GetFileListFromObj(const DataObj: IDataObject; FileList: TStringList); //TODO: Move it (see DragDropFiles)
 function  GetNodeDataEx(const ANode: PVirtualNode; const ATree: TBaseVirtualTree): PBaseData;
 function GetNodeItemData(const ANode: PVirtualNode; const ATree: TBaseVirtualTree): TvBaseNodeData;
 function  GetListNodeFromSubTree(const ANodeX: PVirtualNode;const ATree: TBaseVirtualTree): PVirtualNode;
 
 { Populate methods }
-procedure PopulateListTree(Tree: TVirtualStringTree);
-procedure PopulateSpecialTree(Tree: TVirtualStringTree;SList: TBaseItemsList;MaxItems: Integer);
+procedure PopulateListTree(Tree: TVirtualStringTree); //TODO: Move it
+procedure PopulateSpecialTree(Tree: TVirtualStringTree;SList: TBaseItemsList;MaxItems: Integer); //TODO: Move it
 procedure PopulateVSTItemList(const ATree: TBaseVirtualTree;const ABaseItemsList: TBaseItemsList);
 
 { Visual }
@@ -63,7 +63,7 @@ procedure ChangeAllNodeHeight(const ASender: TBaseVirtualTree; const ANewNodeHei
 procedure ChangeTreeIconSize(const ASender: TVirtualStringTree; const ASmallIcon: Boolean);
 procedure CheckVisibleNodePathExe(const ASender: TBaseVirtualTree);
 procedure DrawSeparatorItem(const ASender: TBaseVirtualTree; const ANode: PVirtualNode;
-                            TargetCanvas: TCanvas; const CellRect: TRect; var DefaultDraw: Boolean);
+                            TargetCanvas: TCanvas; const CellRect: TRect; var DefaultDraw: Boolean); //TODO: Move it
 
 type
 
