@@ -48,8 +48,8 @@ implementation
 
 uses
   Frame.Options.General, Frame.Options.Advanced, Frame.Options.TrayIcon,
-  Frame.Options.Stats, Frame.Options.Items, AppConfig.Main, VirtualTree.Events,
-  Forms.Main, Kernel.Types, Frame.Options.Hotkey;
+  Frame.Options.Stats, Frame.Options.Items, AppConfig.Main,
+  Forms.Main, Frame.Options.Hotkey;
 
 {$R *.dfm}
 

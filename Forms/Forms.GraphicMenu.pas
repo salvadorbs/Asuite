@@ -195,7 +195,7 @@ const
   INIFILE_KEY_FONTTREE     = 'font_tree';
   INIFILE_KEY_FONT         = 'font'; //Generic font key
   //Icons
-  INIFILE_KEY_ICONASUITE   = 'icon_ASuite';
+  INIFILE_KEY_ICONASUITE   = 'icon_asuite';
   INIFILE_KEY_ICONEXPLORE  = 'icon_explore';
   INIFILE_KEY_ICONDOCUMENT = 'icon_document';
   INIFILE_KEY_ICONMUSIC    = 'icon_music';
@@ -214,7 +214,7 @@ implementation
 uses
   Forms.Main, Utility.System, Kernel.Consts, AppConfig.Main, Utility.Conversions,
   Forms.About, NodeDataTypes.Base, Utility.TreeView, Kernel.Enumerations,
-  Kernel.Types, Forms.Options, Utility.Misc, VirtualTree.Events;
+  Forms.Options, Utility.Misc, VirtualTree.Events;
 
 procedure TfrmGraphicMenu.ApplicationEvents1Deactivate(Sender: TObject);
 begin
