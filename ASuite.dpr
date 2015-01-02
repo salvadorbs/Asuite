@@ -9,8 +9,6 @@ uses
   Forms.GraphicMenu in 'Forms\Forms.GraphicMenu.pas' {frmGraphicMenu},
   Forms.ImportList in 'Forms\Forms.ImportList.pas' {frmImportList},
   Forms.Main in 'Forms\Forms.Main.pas' {frmMain},
-  Forms.Options in 'Forms\Forms.Options.pas' {frmOptions},
-  Forms.PropertyItem in 'Forms\Forms.PropertyItem.pas' {frmPropertyItem},
   Forms.PropertySeparator in 'Forms\Forms.PropertySeparator.pas' {frmPropertySeparator},
   Forms.ScanFolder in 'Forms\Forms.ScanFolder.pas' {frmScanFolder},
   DataModules.Images in 'DataModules\DataModules.Images.pas' {dmImages: TDataModule},
@@ -36,7 +34,6 @@ uses
   Frame.Properties.Behavior in 'Frame\Frame.Properties.Behavior.pas' {frmBehaviorPropertyPage: TFrame},
   Frame.Properties.General.Category in 'Frame\Frame.Properties.General.Category.pas' {frmCatGeneralPropertyPage: TFrame},
   Frame.Properties.General.Software in 'Frame\Frame.Properties.General.Software.pas' {frmSWGeneralPropertyPage: TFrame},
-  Utility.Frame in 'Utilities\Utility.Frame.pas',
   Utility.Process in 'Utilities\Utility.Process.pas',
   Database.Version in 'Library\Database.Version.pas',
   Database.Options in 'Library\Database.Options.pas',
@@ -62,7 +59,9 @@ uses
   Forms.ShortcutGrabber in 'Forms\Forms.ShortcutGrabber.pas' {/SQLite3 static library},
   USingleInst,
   VirtualTree.Events in 'Library\VirtualTree.Events.pas',
-  Forms.Dialog.BaseEntity in 'Forms\Forms.Dialog.BaseEntity.pas' {frmDialogBase};
+  Forms.Dialog.BaseEntity in 'Forms\Forms.Dialog.BaseEntity.pas' {frmDialogBase},
+  Forms.Options in 'Forms\Forms.Options.pas' {frmOptions},
+  Forms.PropertyItem in 'Forms\Forms.PropertyItem.pas' {frmPropertyItem};
 
 //SQLite3 static library
 
@@ -91,7 +90,6 @@ begin
 
     Application.CreateForm(TfrmMain, frmMain);
   Application.CreateForm(TfrmGraphicMenu, frmGraphicMenu);
-  Application.CreateForm(TfrmDialogBase, frmDialogBase);
   //Show MainForm and/or TrayMenu
     Application.ShowMainForm := Config.ShowPanelAtStartUp;
     if (Config.ShowMenuAtStartUp) then

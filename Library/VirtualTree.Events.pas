@@ -1,22 +1,43 @@
+{
+Copyright (C) 2006-2015 Matteo Salvi
+
+Website: http://www.salvadorsoftware.com/
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+}
+
 unit VirtualTree.Events;
 
 interface
 
 uses
   Windows, SysUtils, Classes, Graphics, VirtualTrees, ActiveX, UITypes, DKLang,
-  Kernel.Singleton, Forms.GraphicMenu;
+  Kernel.Singleton, Forms.GraphicMenu, Forms.Dialog.BaseEntity;
 
 type
   TVirtualTreeEvents = class(TSingleton)
   private
     FGraphicMenu: TfrmGraphicMenu;
+    FDialogForm: TfrmDialogBase;
   public
     //Methods to set events in vsts
     procedure SetupVSTList(ATree: TVirtualStringTree);
     procedure SetupVSTSearch(ATree: TVirtualStringTree);
     procedure SetupVSTGraphicMenu(ATree: TVirtualStringTree; AGraphicMenu: TfrmGraphicMenu);
     procedure SetupVSTImportList(ATree: TVirtualStringTree);
-    procedure SetupVSTFrame(ATree: TVirtualStringTree);
+    procedure SetupVSTDialogFrame(ATree: TVirtualStringTree; ADialogForm: TfrmDialogBase);
+    procedure ResetDialogFrame;
 
     //Generic events
     procedure DoDragOver(Sender: TBaseVirtualTree; Source: TObject;
@@ -93,7 +114,7 @@ implementation
 uses
   Utility.Misc, AppConfig.Main, Utility.TreeView, NodeDataTypes.Base, NodeDataTypes.Category,
   NodeDataTypes.Files, NodeDataTypes.Custom, NodeDataTypes.Separator, Kernel.Types,
-  Kernel.Enumerations, Utility.Frame;
+  Kernel.Enumerations, Frame.BaseEntity, Controls;
 
 { TVirtualTreeEvents }
 
@@ -184,8 +205,11 @@ begin
   ATree.OnMeasureItem  := DoMeasureItem;
 end;
 
-procedure TVirtualTreeEvents.SetupVSTFrame(ATree: TVirtualStringTree);
+procedure TVirtualTreeEvents.SetupVSTDialogFrame(ATree: TVirtualStringTree; ADialogForm: TfrmDialogBase);
 begin
+  ATree.Clear;
+
+  FDialogForm := ADialogForm;
   ATree.OnAddToSelection  := DoAddToSelectionFrame;
   ATree.OnFreeNode        := DoFreeNodeFrame;
   ATree.OnGetNodeDataSize := DoGetNodeDataSizeFrame;
@@ -211,8 +235,20 @@ var
   NodeData : PFramesNodeData;
 begin
   NodeData := Sender.GetNodeData(Node);
-  if Assigned(NodeData) then
-    LoadPage(FCurrentPage, NodeData.Frame, pnlOptionsPage);
+  if Assigned(NodeData) and Assigned(FDialogForm) then
+  begin
+    if Assigned(FDialogForm.CurrentPage) then
+    begin
+      if FDialogForm.CurrentPage.ClassType = NodeData.Frame then
+        Exit
+      else
+       FDialogForm.CurrentPage.Visible := False;
+    end;
+    FDialogForm.CurrentPage := TfrmBaseEntityPage(NodeData.Frame);
+    FDialogForm.CurrentPage.Parent  := FDialogForm.pnlDialogPage;
+    FDialogForm.CurrentPage.Align   := alClient;
+    FDialogForm.CurrentPage.Visible := True;
+  end;
 end;
 
 procedure TVirtualTreeEvents.DoCompareNodesList(Sender: TBaseVirtualTree; Node1,
@@ -507,6 +543,11 @@ begin
     DY := TVirtualStringTree(Sender).DefaultNodeHeight;
     Sender.OffsetY := Round(Sender.OffsetY / DY) * DY;
   end;
+end;
+
+procedure TVirtualTreeEvents.ResetDialogFrame;
+begin
+  FDialogForm := nil;
 end;
 
 procedure TVirtualTreeEvents.DoCompareNodesSearch(Sender: TBaseVirtualTree; Node1,
