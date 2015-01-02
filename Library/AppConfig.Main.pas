@@ -224,13 +224,14 @@ uses
 function TConfiguration.CheckReadOnlyMode: Boolean;
 begin
   //Check if ASuite is running from a cd rom
-  Config.ReadOnlyMode := GetDriveType(PChar(Config.Paths.SuiteDrive)) = DRIVE_CDROM;
+  Result := GetDriveType(PChar(Config.Paths.SuiteDrive)) = DRIVE_CDROM;
   if (Config.ReadOnlyMode) then
   begin
     Config.Cache  := False;
     Config.Backup := False;
     Config.MRU    := False;
   end;
+  Config.ReadOnlyMode := Result;
 end;
 
 constructor TConfiguration.Create;
