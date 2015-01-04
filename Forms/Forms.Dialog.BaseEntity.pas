@@ -53,6 +53,8 @@ type
     constructor Create(AOwner: TComponent); override;
 
     property CurrentPage: TfrmBaseEntityPage read FCurrentPage write FCurrentPage;
+
+    procedure ChangePage(NewPage: TPageFrameClass);
   end;
 
 var
@@ -96,11 +98,23 @@ begin
   if Not Assigned(ResultNode) then
   begin
     if InternalSaveData then
-    begin
       ModalResult := mrOk;
-      TVirtualTreeEvents.Create.ResetDialogFrame;
-    end;
   end;
+end;
+
+procedure TfrmDialogBase.ChangePage(NewPage: TPageFrameClass);
+begin
+  if Assigned(FCurrentPage) then
+  begin
+    if FCurrentPage.ClassType = NewPage then
+      Exit
+    else
+     FCurrentPage.Visible := False;
+  end;
+  FCurrentPage := TfrmBaseEntityPage(NewPage);
+  FCurrentPage.Parent  := pnlDialogPage;
+  FCurrentPage.Align   := alClient;
+  FCurrentPage.Visible := True;
 end;
 
 constructor TfrmDialogBase.Create(AOwner: TComponent);
@@ -108,7 +122,7 @@ var
   selNode: PVirtualNode;
 begin
   inherited;
-  TVirtualTreeEvents.Create.SetupVSTDialogFrame(vstCategory, Self);
+  TVirtualTreeEvents.Create.SetupVSTDialogFrame(vstCategory);
   //Load frames
   Self.InternalLoadData;
   //Set default page

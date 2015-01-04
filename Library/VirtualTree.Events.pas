@@ -29,15 +29,13 @@ type
   TVirtualTreeEvents = class(TSingleton)
   private
     FGraphicMenu: TfrmGraphicMenu;
-    FDialogForm: TfrmDialogBase;
   public
     //Methods to set events in vsts
     procedure SetupVSTList(ATree: TVirtualStringTree);
     procedure SetupVSTSearch(ATree: TVirtualStringTree);
     procedure SetupVSTGraphicMenu(ATree: TVirtualStringTree; AGraphicMenu: TfrmGraphicMenu);
     procedure SetupVSTImportList(ATree: TVirtualStringTree);
-    procedure SetupVSTDialogFrame(ATree: TVirtualStringTree; ADialogForm: TfrmDialogBase);
-    procedure ResetDialogFrame;
+    procedure SetupVSTDialogFrame(ATree: TVirtualStringTree);
 
     //Generic events
     procedure DoDragOver(Sender: TBaseVirtualTree; Source: TObject;
@@ -205,11 +203,10 @@ begin
   ATree.OnMeasureItem  := DoMeasureItem;
 end;
 
-procedure TVirtualTreeEvents.SetupVSTDialogFrame(ATree: TVirtualStringTree; ADialogForm: TfrmDialogBase);
+procedure TVirtualTreeEvents.SetupVSTDialogFrame(ATree: TVirtualStringTree);
 begin
   ATree.Clear;
 
-  FDialogForm := ADialogForm;
   ATree.OnAddToSelection  := DoAddToSelectionFrame;
   ATree.OnFreeNode        := DoFreeNodeFrame;
   ATree.OnGetNodeDataSize := DoGetNodeDataSizeFrame;
@@ -232,23 +229,11 @@ end;
 procedure TVirtualTreeEvents.DoAddToSelectionFrame(Sender: TBaseVirtualTree;
   Node: PVirtualNode);
 var
-  NodeData : PFramesNodeData;
+  NodeData: PFramesNodeData;
 begin
   NodeData := Sender.GetNodeData(Node);
-  if Assigned(NodeData) and Assigned(FDialogForm) then
-  begin
-    if Assigned(FDialogForm.CurrentPage) then
-    begin
-      if FDialogForm.CurrentPage.ClassType = NodeData.Frame then
-        Exit
-      else
-       FDialogForm.CurrentPage.Visible := False;
-    end;
-    FDialogForm.CurrentPage := TfrmBaseEntityPage(NodeData.Frame);
-    FDialogForm.CurrentPage.Parent  := FDialogForm.pnlDialogPage;
-    FDialogForm.CurrentPage.Align   := alClient;
-    FDialogForm.CurrentPage.Visible := True;
-  end;
+  if Assigned(NodeData) and (Sender.Parent is TfrmDialogBase) then
+    TfrmDialogBase(Sender.Parent).ChangePage(NodeData.Frame);
 end;
 
 procedure TVirtualTreeEvents.DoCompareNodesList(Sender: TBaseVirtualTree; Node1,
@@ -543,11 +528,6 @@ begin
     DY := TVirtualStringTree(Sender).DefaultNodeHeight;
     Sender.OffsetY := Round(Sender.OffsetY / DY) * DY;
   end;
-end;
-
-procedure TVirtualTreeEvents.ResetDialogFrame;
-begin
-  FDialogForm := nil;
 end;
 
 procedure TVirtualTreeEvents.DoCompareNodesSearch(Sender: TBaseVirtualTree; Node1,
