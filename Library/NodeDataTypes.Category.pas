@@ -40,7 +40,7 @@ type
 implementation
 
 uses
-  NodeDataTypes.Files, Utility.TreeView;
+  NodeDataTypes.Files, VirtualTree.Methods;
 
 function TvCategoryNodeData.CheckRunnableSubItems(Tree: TBaseVirtualTree): Boolean;
 var
@@ -51,7 +51,7 @@ begin
   Node := Self.PNode.FirstChild;
   while Assigned(Node) do
   begin
-    CurrentNodeData := GetNodeItemData(Node, Tree);
+    CurrentNodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Tree);
     if (Assigned(CurrentNodeData)) and (CurrentNodeData.DataType in [vtdtFile,vtdtFolder]) then
     begin
       if (TvFileNodeData(CurrentNodeData).RunFromCategory) then

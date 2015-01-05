@@ -105,7 +105,7 @@ type
 implementation
 
 uses
-  Kernel.Enumerations, Utility.Misc, Utility.TreeView, NodeDataTypes.Custom,
+  Kernel.Enumerations, Utility.Misc, VirtualTree.Methods, NodeDataTypes.Custom,
   NodeDataTypes.Files, AppConfig.Main;
 
 { TSQLtbl_files }
@@ -146,9 +146,8 @@ begin
     while SQLFilesData.FillOne do
     begin
       nType := TvTreeDataType(SQLFilesData.itemtype);
-      Node  := Tree.AddChild(ParentNode, CreateNodeData(nType));
-      vData := GetNodeItemData(Node, Tree);
-      vData.pNode := Node;
+      Node := TVirtualTreeMethods.Create.AddChildNodeEx(Tree, ParentNode, amInsertAfter, nType, False);
+      vData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Tree);
       if IsImport then
         Tree.CheckType[Node] := ctTriStateCheckBox
       else
@@ -212,7 +211,7 @@ begin
   Node  := ANode;
   while (Node <> nil) do
   begin
-    vData := GetNodeItemData(Node, Tree);
+    vData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Tree);
     try
       //Insert or update record
       if (vData.ID < 0) then

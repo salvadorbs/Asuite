@@ -9,18 +9,25 @@ inherited frmOptions: TfrmOptions
   inherited btnOk: TButton
     Left = 488
     Top = 419
+    ExplicitLeft = 488
+    ExplicitTop = 419
   end
   inherited btnCancel: TButton
     Left = 567
     Top = 419
     OnClick = nil
+    ExplicitLeft = 567
+    ExplicitTop = 419
   end
   inherited pnlDialogPage: TPanel
     Width = 452
     Height = 405
+    ExplicitWidth = 452
+    ExplicitHeight = 405
   end
   inherited vstCategory: TVirtualStringTree
     Height = 405
+    ExplicitHeight = 405
   end
   object DKLanguageController1: TDKLanguageController
     Left = 8

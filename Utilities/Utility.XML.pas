@@ -35,7 +35,7 @@ implementation
 
 uses
   Forms.Main, NodeDataTypes.Custom, Utility.Misc, AppConfig.Main, Kernel.Types,
-  Utility.Conversions, Utility.Treeview, NodeDataTypes.Files, Menus;
+  Utility.Conversions, VirtualTree.Methods, NodeDataTypes.Files, Menus;
 
 function GetStrPropertyXML(Node : IXMLNode;Name: String;Default: String): String;
 var
@@ -88,18 +88,18 @@ begin
     //Create a new XMLNode
     //Get item type
     if (XMLNode.NodeName = 'Category') then
-      Result := Tree.AddChild(Parent, CreateNodeData(vtdtCategory))
+      Result := Tree.AddChild(Parent, TVirtualTreeMethods.Create.CreateNodeData(vtdtCategory))
     else
       if (XMLNode.NodeName = 'Software') then
-        Result := Tree.AddChild(Parent, CreateNodeData(vtdtFile))
+        Result := Tree.AddChild(Parent, TVirtualTreeMethods.Create.CreateNodeData(vtdtFile))
       else
         if XMLNode.NodeName = 'Separator' then
-          Result := Tree.AddChild(Parent, CreateNodeData(vtdtSeparator));
+          Result := Tree.AddChild(Parent, TVirtualTreeMethods.Create.CreateNodeData(vtdtSeparator));
     //Add checkbox
     if Config.ASuiteState = lsImporting then
       Tree.CheckType[Result] := ctTriStateCheckBox;
     NodeData := Tree.GetNodeData(Result);
-    NodeData.Data.pNode  := Result;
+    NodeData.Data.SetPointerNode(Result);
     CustomRealNodeData   := TvCustomRealNodeData(NodeData.Data);
     //Get base properties
     if (CustomRealNodeData.DataType <> vtdtSeparator) then
@@ -160,17 +160,17 @@ begin
     //Create a new XMLNode
     //Get item type
     if (XMLNode.NodeName = 'files') then
-      Result := tree.AddChild(Parent, CreateNodeData(vtdtCategory))
+      Result := tree.AddChild(Parent, TVirtualTreeMethods.Create.CreateNodeData(vtdtCategory))
     else
       if (XMLNode.NodeName = 'file') then
-        Result := tree.AddChild(Parent, CreateNodeData(vtdtFile))
+        Result := tree.AddChild(Parent, TVirtualTreeMethods.Create.CreateNodeData(vtdtFile))
       else
         if XMLNode.NodeName = 'separator' then
-          Result := Tree.AddChild(Parent, CreateNodeData(vtdtSeparator));
+          Result := Tree.AddChild(Parent, TVirtualTreeMethods.Create.CreateNodeData(vtdtSeparator));
     //Add checkbox
     Tree.CheckType[Result] := ctTriStateCheckBox;
     NodeData := Tree.GetNodeData(Result);
-    NodeData.Data.pNode := Result;
+    NodeData.Data.SetPointerNode(Result);
     CustomRealNodeData  := TvCustomRealNodeData(NodeData.Data);
     //Get base properties
     if CustomRealNodeData.DataType <> vtdtSeparator then
@@ -256,7 +256,6 @@ end;
 procedure LoadXMLSettings(XMLDoc: TXMLDocument);
 var
   Node, tvFontStyle : IXMLNode;
-  I      : Integer;
 begin
   if XMLDoc.Active then
   begin

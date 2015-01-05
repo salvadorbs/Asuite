@@ -57,6 +57,9 @@ type
   public
     //Base properties
     constructor Create(AType: TvTreeDataType); // virtual;
+
+    procedure SetPointerNode(APNode: PVirtualNode);
+
     property ID : Int64 read FID write FID;
     property ParentID : Int64 read FParentID write FParentID;
     property Position : Cardinal read FPosition write FPosition;
@@ -67,7 +70,7 @@ type
     property ImageIndex: Integer read FImageIndex write FImageIndex;
     property ImageLargeIndex: Integer read FImageLargeIndex write FImageLargeIndex;
     property ParentNode: PVirtualNode read GetParentNode;
-    property PNode: PVirtualNode read FPNode write FPNode;
+    property PNode: PVirtualNode read FPNode;
     property AddDate: TDateTime read GetAddDate write SetAddDate;
     property UnixAddDate: Int64 read GetUnixAddDate write SetUnixAddDate;
     property EditDate: TDateTime read GetEditDate write SetEditDate;
@@ -115,6 +118,11 @@ procedure TvBaseNodeData.SetName(Value: String);
 begin
   FName := StringReplace(Value, '&&', '&', [rfIgnoreCase,rfReplaceAll]);
   FName := StringReplace(FName, '&', '&&', [rfIgnoreCase,rfReplaceAll]);
+end;
+
+procedure TvBaseNodeData.SetPointerNode(APNode: PVirtualNode);
+begin
+  FPNode := APNode;
 end;
 
 function TvBaseNodeData.GetDataType: TvTreeDataType;

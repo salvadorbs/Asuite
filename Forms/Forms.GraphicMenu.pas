@@ -25,7 +25,7 @@ uses
   Windows, Classes, Forms, StdCtrls, Buttons, ExtCtrls, ComCtrls, Messages,
 	ShellAPI, Controls, Graphics, Dialogs, SysUtils, VirtualTrees, AppEvnts,
   Vcl.Imaging.pngimage, cySkinButton, IniFiles, Lists.Manager, Vcl.Menus,
-  DKLang;
+  DKLang, Lists.Base;
 
 type
   TGraphicMenuElement = (
@@ -149,6 +149,9 @@ type
     procedure DoClickOnTaskbar;
     procedure UpdateDriveStats;
     procedure CheckUserPicture;
+
+    procedure PopulateListTree(const ATree: TVirtualStringTree);
+    procedure PopulateSpecialTree(const ATree: TVirtualStringTree; AList: TBaseItemsList; MaxItems: Integer);
 	public
     { Public declarations }
     procedure OpenMenu;
@@ -214,8 +217,9 @@ implementation
 
 uses
   Forms.Main, Utility.System, Kernel.Consts, AppConfig.Main, Utility.Conversions,
-  Forms.About, NodeDataTypes.Base, Utility.TreeView, Kernel.Enumerations,
-  Forms.Options, Utility.Misc, VirtualTree.Events;
+  Forms.About, NodeDataTypes.Base, Kernel.Enumerations, Forms.Options,
+  Utility.Misc, VirtualTree.Events, VirtualTree.Methods, Kernel.Types,
+  NodeDataTypes.Custom;
 
 procedure TfrmGraphicMenu.ApplicationEvents1Deactivate(Sender: TObject);
 begin
@@ -235,7 +239,7 @@ begin
     edtSearch.RightButton.ImageIndex := FCancelIcon;
     //Do search
     //Change node height and imagelist
-    ChangeTreeIconSize(vstList, False);
+    TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, False);
     frmMain.DoSearchItem(vstList, edtSearch.Text, stName);
     vstList.SortTree(-1, sdAscending);
     //Get icons
@@ -249,7 +253,7 @@ begin
   else begin
     edtSearch.RightButton.ImageIndex := FSearchIcon;
     //Change node height and imagelist
-    ChangeTreeIconSize(vstList, True);
+    TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, True);
     PopulateListTree(vstList);
   end;
 end;
@@ -696,7 +700,7 @@ begin
         Key := 0;
         if Assigned(CurrentNode) then
         begin
-          NodeData := GetNodeItemData(CurrentNode, vstList);
+          NodeData := TVirtualTreeMethods.Create.GetNodeItemData(CurrentNode, vstList);
           if Assigned(NodeData) then
           begin
             //TODO: Fix it
@@ -744,7 +748,7 @@ begin
   edtSearch.Text := '';
   Self.FocusControl(edtSearch);
   //Change node height and imagelist
-  ChangeTreeIconSize(vstList, True);
+  TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, True);
   //Clear and populate virtualtree
   PopulateListTree(vstList);
   UpdateDriveStats;
@@ -857,7 +861,7 @@ end;
 
 procedure TfrmGraphicMenu.miProperty2Click(Sender: TObject);
 begin
-  ShowItemProperty(Self, vstList, vstList.FocusedNode, False);
+  TVirtualTreeMethods.Create.ShowItemProperty(Self, vstList, vstList.FocusedNode, False);
 end;
 
 procedure TfrmGraphicMenu.OpenRightButton(Sender: TObject);
@@ -901,11 +905,68 @@ var
 begin
   if Assigned(vstList.FocusedNode) then
   begin
-    NodeData := GetNodeItemData(vstList.FocusedNode, vstList);
+    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(vstList.FocusedNode, vstList);
     miRunSelectedSw.Enabled := (NodeData.DataType <> vtdtSeparator);
     miRunAs.Enabled         := (NodeData.DataType <> vtdtSeparator);
     miRunAsAdmin.Enabled    := (NodeData.DataType <> vtdtSeparator);
     miOpenFolderSw.Enabled  := (NodeData.DataType in [vtdtFile,vtdtFolder]);
+  end;
+end;
+
+procedure TfrmGraphicMenu.PopulateListTree(const ATree: TVirtualStringTree);
+begin
+  ATree.Clear;
+  ATree.BeginUpdate;
+  try
+    //Populate and get icons from first level
+    Config.MainTree.IterateSubtree(nil, TVirtualTreeMethods.Create.AddNodeInTreeFromMainTree, @ATree);
+  finally
+    ATree.EndUpdate;
+    //Check nodes path
+    TVirtualTreeMethods.Create.CheckVisibleNodePathExe(ATree);
+  end;
+end;
+
+procedure TfrmGraphicMenu.PopulateSpecialTree(const ATree: TVirtualStringTree;
+  AList: TBaseItemsList; MaxItems: Integer);
+var
+  NewNodeData  : PTreeDataX;
+  NewNode      : PVirtualNode;
+  I, ItemCount : Integer;
+begin
+  ATree.Clear;
+  ATree.BeginUpdate;
+  try
+    //Change node height and imagelist
+    TVirtualTreeMethods.Create.ChangeTreeIconSize(ATree, False);
+    //Set limit based on MaxItems or AList.Count
+    if MaxItems < AList.Count then
+      ItemCount := MaxItems
+    else
+      ItemCount := AList.Count;
+    for I := 0 to ItemCount - 1 do
+    begin
+      if Assigned(AList[I]) then
+      begin
+        //Create MenuItem
+        if Assigned(AList[I]) then
+        begin
+          NewNode     := ATree.AddChild(nil);
+          NewNodeData := ATree.GetNodeData(NewNode);
+          //References
+          NewNodeData.pNodeList := TvCustomRealNodeData(AList[I]).pNode;
+        end
+        else
+          AList.Delete(I);
+      end;
+    end;
+  finally
+    ATree.EndUpdate;
+    ATree.ValidateNode(ATree.RootNode, True);
+    //Check nodes path
+    //TODO: Fix it
+//ImagesDM.GetChildNodesIcons(ATree, ATree.RootNode, isAny);
+    TVirtualTreeMethods.Create.CheckVisibleNodePathExe(ATree);
   end;
 end;
 
@@ -922,7 +983,7 @@ end;
 procedure TfrmGraphicMenu.sknbtnListClick(Sender: TObject);
 begin
   //Change node height and imagelist
-  ChangeTreeIconSize(vstList, True);
+  TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, True);
   PopulateListTree(vstList);
   edtSearch.Text := '';
 end;
@@ -954,7 +1015,7 @@ end;
 procedure TfrmGraphicMenu.tmrCheckItemsTimer(Sender: TObject);
 begin
   if Config.ASuiteState = lsNormal then
-    CheckVisibleNodePathExe(vstList);
+    TVirtualTreeMethods.Create.CheckVisibleNodePathExe(vstList);
 end;
 
 procedure TfrmGraphicMenu.tmrFaderTimer(Sender: TObject);

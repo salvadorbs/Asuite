@@ -22,9 +22,8 @@ unit Lists.Base;
 interface
 
 uses
-  Classes, NodeDataTypes.Custom, Menus, SysUtils, Kernel.Types,
-  Windows, NodeDataTypes.Base,
-  DateUtils, Dialogs, UITypes;
+  Classes, NodeDataTypes.Custom, Menus, SysUtils, Kernel.Types, Windows,
+  NodeDataTypes.Base, DateUtils, Dialogs, UITypes;
 
 type
   TBaseItemsList = class

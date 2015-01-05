@@ -81,7 +81,7 @@ implementation
 {$I ASuite.INC}
 
 uses
-  PJSysInfo, Utility.Misc, Utility.TreeView, AppConfig.Main, Kernel.Types;
+  PJSysInfo, Utility.Misc, AppConfig.Main, Kernel.Types, VirtualTree.Methods;
 
 {$R *.dfm}
 
@@ -154,7 +154,7 @@ begin
   //Launcher
   ListStats.SwCount  := 0;
   ListStats.CatCount := 0;
-  Config.MainTree.IterateSubtree(nil, TIterateSubtreeProcs.UpdateListItemCount, @ListStats);
+  Config.MainTree.IterateSubtree(nil, TVirtualTreeMethods.Create.UpdateListItemCount, @ListStats);
   lbSoftware2.Caption := IntToStr(ListStats.SwCount);
   lbCat2.Caption      := IntToStr(ListStats.CatCount);
   lbTotal2.Caption    := IntToStr(ListStats.SwCount + ListStats.CatCount);

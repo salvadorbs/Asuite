@@ -58,7 +58,8 @@ implementation
 
 uses
   NodeDataTypes.Custom, NodeDataTypes.Files, NodeDataTypes.Base,
-  DataModules.Images, Kernel.Types, Kernel.Enumerations, Forms.Main, Utility.Treeview;
+  DataModules.Images, Kernel.Types, Kernel.Enumerations, Forms.Main,
+  VirtualTree.Methods;
 
 {$R *.dfm}
 
@@ -71,7 +72,7 @@ var
   NewNode         : PVirtualNode;
   NewNodeData     : PTreeDataX;
 begin
-  CurrentFileData := TvCustomRealNodeData(GetNodeItemData(Node, Sender));
+  CurrentFileData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender));
   if (CurrentFileData.DataType in [vtdtFile,vtdtFolder]) and
      (Node.Parent = PVirtualNode(Data)) then
   begin
@@ -116,7 +117,7 @@ procedure TfrmCatGeneralPropertyPage.SetCategoryItems(Sender: TBaseVirtualTree;
 var
   FileNodeData : TvFileNodeData;
 begin
-  FileNodeData := TvFileNodeData(GetNodeItemData(Node, Sender));
+  FileNodeData := TvFileNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender));
   FileNodeData.RunFromCategory := (Node.CheckState = csCheckedNormal);
   FileNodeData.Changed := True;
 end;
@@ -127,7 +128,7 @@ procedure TfrmCatGeneralPropertyPage.vstCategoryItemsGetImageIndex(
 var
   NodeData : TvBaseNodeData;
 begin
-  NodeData := GetNodeItemData(Node, Sender);
+  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
   if Assigned(NodeData) then
     ImageIndex := NodeData.ImageIndex;
 end;
@@ -138,7 +139,7 @@ procedure TfrmCatGeneralPropertyPage.vstCategoryItemsGetText(
 var
   NodeData : TvBaseNodeData;
 begin
-  NodeData := GetNodeItemData(Node, Sender);
+  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
   if Assigned(NodeData) then
     CellText := NodeData.Name;
 end;
