@@ -32,12 +32,6 @@ type
     vstCategoryItems: TVirtualStringTree;
     lblNote: TLabel;
     DKLanguageController1: TDKLanguageController;
-    procedure vstCategoryItemsGetImageIndex(Sender: TBaseVirtualTree;
-      Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-      var Ghosted: Boolean; var ImageIndex: Integer);
-    procedure vstCategoryItemsGetText(Sender: TBaseVirtualTree;
-      Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
-      var CellText: string);
   private
     { Private declarations }
     procedure GetCategoryItems(Sender: TBaseVirtualTree; Node: PVirtualNode;
@@ -59,7 +53,7 @@ implementation
 uses
   NodeDataTypes.Custom, NodeDataTypes.Files, NodeDataTypes.Base,
   DataModules.Images, Kernel.Types, Kernel.Enumerations, Forms.Main,
-  VirtualTree.Methods;
+  VirtualTree.Methods, VirtualTree.Events;
 
 {$R *.dfm}
 
@@ -95,8 +89,7 @@ var
   Node: PVirtualNode;
 begin
   Result := inherited;
-  //TODO: Use VirtualTree.Events
-  vstCategoryItems.NodeDataSize := SizeOf(rTreeDataX);
+  TVirtualTreeEvents.Create.SetupVSTSimple(vstCategoryItems);
   if Assigned(CurrentNodeData) then
   begin
     Node := CurrentNodeData.pNode;
@@ -120,28 +113,6 @@ begin
   FileNodeData := TvFileNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender));
   FileNodeData.RunFromCategory := (Node.CheckState = csCheckedNormal);
   FileNodeData.Changed := True;
-end;
-
-procedure TfrmCatGeneralPropertyPage.vstCategoryItemsGetImageIndex(
-  Sender: TBaseVirtualTree; Node: PVirtualNode; Kind: TVTImageKind;
-  Column: TColumnIndex; var Ghosted: Boolean; var ImageIndex: Integer);
-var
-  NodeData : TvBaseNodeData;
-begin
-  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
-  if Assigned(NodeData) then
-    ImageIndex := NodeData.ImageIndex;
-end;
-
-procedure TfrmCatGeneralPropertyPage.vstCategoryItemsGetText(
-  Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;
-  TextType: TVSTTextType; var CellText: string);
-var
-  NodeData : TvBaseNodeData;
-begin
-  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
-  if Assigned(NodeData) then
-    CellText := NodeData.Name;
 end;
 
 end.

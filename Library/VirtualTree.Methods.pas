@@ -23,7 +23,7 @@ interface
 
 uses
   Windows, SysUtils, Classes, Graphics, VirtualTrees, ActiveX, UITypes, DKLang,
-  Kernel.Singleton, Kernel.Enumerations, NodeDataTypes.Base, Kernel.Types;
+  Kernel.Singleton, Kernel.Enumerations, NodeDataTypes.Base, Kernel.Types, Lists.Base;
 
 type
   TVirtualTreeMethods = class(TSingleton)
@@ -71,6 +71,7 @@ type
     function ShowItemProperty(const AOwner: TComponent; const ATreeView: TBaseVirtualTree;
                               const ANode: PVirtualNode; ANewNode: Boolean): Integer;
     procedure RefreshList(const ATree: TBaseVirtualTree);
+    procedure PopulateVSTItemList(const ATree: TBaseVirtualTree; const ABaseItemsList: TBaseItemsList);
   end;
 
 implementation
@@ -161,7 +162,6 @@ var
   NodeData: TvFileNodeData;
   Node: PVirtualNode;
 begin
-  //TODO: Rename this function and params
   Node := AddChildNodeEx(ASender, AParentNode, AAttachMode, vtdtFile);
   NodeData := TvFileNodeData(GetNodeItemData(Node, ASender));
   //Set some node record's variables
@@ -448,6 +448,38 @@ procedure TVirtualTreeMethods.IncNumberNode(Sender: TBaseVirtualTree; Node: PVir
 begin
   if (Node.CheckState = csCheckedNormal) or (Node.CheckState = csMixedNormal) then
     Inc(Integer(Data^));
+end;
+
+procedure TVirtualTreeMethods.PopulateVSTItemList(const ATree: TBaseVirtualTree;
+  const ABaseItemsList: TBaseItemsList);
+var
+  I: Integer;
+  CurrentFileData : TvCustomRealNodeData;
+  NewNode         : PVirtualNode;
+  NewNodeData     : PTreeDataX;
+begin
+  ATree.BeginUpdate;
+  try
+    for I := 0 to ABaseItemsList.Count - 1 do
+    begin
+      CurrentFileData := ABaseItemsList[I];
+      if Assigned(CurrentFileData) then
+      begin
+        NewNode := ATree.AddChild(ATree.RootNode);
+        NewNodeData := ATree.GetNodeData(NewNode);
+        //Set pointers
+        NewNodeData.pNodeList := CurrentFileData.PNode;
+      end;
+    end;
+    //Check nodes path and get icons
+    TVirtualTreeMethods.Create.CheckVisibleNodePathExe(ATree);
+    //TODO: Fix it
+//ImagesDM.GetChildNodesIcons(ATree, ATree.RootNode, isAny);
+    //Auto columns width
+    TVirtualStringTree(ATree).Header.AutoFitColumns;
+  finally
+    ATree.EndUpdate;
+  end;
 end;
 
 procedure TVirtualTreeMethods.UpdateListItemCount(Sender: TBaseVirtualTree;

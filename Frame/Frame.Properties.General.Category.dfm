@@ -34,8 +34,6 @@ inherited frmCatGeneralPropertyPage: TfrmCatGeneralPropertyPage
       TabOrder = 0
       TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
       TreeOptions.PaintOptions = [toShowDropmark, toThemeAware, toUseBlendedImages]
-      OnGetText = vstCategoryItemsGetText
-      OnGetImageIndex = vstCategoryItemsGetImageIndex
       Columns = <>
     end
   end
