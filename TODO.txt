@@ -12,7 +12,7 @@
 [ ] Fix GetImageIndex in frames
 
 [x] Fix GetNodeItemData vs GetNodeDataEx
-[ ] Fix ShowItemProperty (in mainform and graphic menu)
+[x] Fix ShowItemProperty (in mainform and graphic menu)
 
 [ ] Mix functions RunStartupProcess and RunShutdownProcess (and move new function in appropriate place)
 
@@ -23,3 +23,5 @@
 [x] Make a function to get node images for virtualtrees
 
 [ ] Update year in license section of all units
+
+[ ] Use toUseExplorerTheme in all vst

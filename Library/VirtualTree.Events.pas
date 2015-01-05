@@ -145,14 +145,14 @@ end;
 procedure TVirtualTreeEvents.DoNodeSingleClickGM(Sender: TBaseVirtualTree;
   const HitInfo: THitInfo);
 var
-  NodeData : TvBaseNodeData;
+  NodeData: TvBaseNodeData;
 begin
-  if Assigned(Sender.FocusedNode) then
+  if Assigned(Sender.GetFirstSelected()) then
   begin
-    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Sender.FocusedNode, Sender);
+    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Sender.GetFirstSelected, Sender);
     if NodeData.DataType = vtdtCategory then
     begin
-      Sender.Expanded[Sender.FocusedNode] := Not(Sender.Expanded[Sender.FocusedNode]);
+      Sender.Expanded[Sender.GetFirstSelected] := Not(Sender.Expanded[Sender.GetFirstSelected]);
       FGraphicMenu.FocusControl(FGraphicMenu.edtSearch);
     end
     else
