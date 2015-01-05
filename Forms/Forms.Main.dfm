@@ -122,10 +122,6 @@ object frmMain: TfrmMain
     end
     object tbSearch: TTabSheet
       Caption = 'Search'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object sbtnSearch: TSpeedButton
         Left = 169
         Top = 0
@@ -174,14 +170,13 @@ object frmMain: TfrmMain
         Left = 0
         Top = 0
         Width = 166
-        Height = 23
+        Height = 21
         Align = alLeft
         Anchors = [akLeft, akTop, akRight]
         Constraints.MaxHeight = 21
         PopupMenu = pmSearch
         TabOrder = 1
         OnKeyPress = btnedtSearchKeyPress
-        ExplicitHeight = 21
       end
     end
   end
@@ -260,21 +255,26 @@ object frmMain: TfrmMain
       end
       object miCut1: TMenuItem
         Caption = 'Cut'
+        OnClick = miCutClick
       end
       object miCopy1: TMenuItem
         Caption = 'Copy'
+        OnClick = miCopyClick
       end
       object miPaste1: TMenuItem
         Caption = 'Paste'
+        OnClick = miPasteClick
       end
       object miDelete1: TMenuItem
         Caption = 'Delete'
+        OnClick = miDeleteClick
       end
       object N8: TMenuItem
         Caption = '-'
       end
       object miProperty1: TMenuItem
-        Caption = 'Properties'
+        Caption = 'Property'
+        OnClick = miPropertyClick
       end
     end
     object miHelp: TMenuItem
@@ -353,17 +353,17 @@ object frmMain: TfrmMain
     object miCut2: TMenuItem
       Caption = 'Cut'
       ShortCut = 16472
-      OnClick = miCut2Click
+      OnClick = miCutClick
     end
     object miCopy2: TMenuItem
       Caption = 'Copy'
       ShortCut = 16451
-      OnClick = miCopy2Click
+      OnClick = miCopyClick
     end
     object miPaste2: TMenuItem
       Caption = 'Paste'
       ShortCut = 16470
-      OnClick = miPaste2Click
+      OnClick = miPasteClick
     end
     object miDelete2: TMenuItem
       Caption = 'Delete'
@@ -373,7 +373,7 @@ object frmMain: TfrmMain
       Caption = '-'
     end
     object miProperty2: TMenuItem
-      Caption = 'Properties'
+      Caption = 'Property'
       ShortCut = 116
     end
   end

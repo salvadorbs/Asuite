@@ -59,19 +59,19 @@ type
       Selected: Boolean);
     procedure DoTrayIconButtonClick(ASender: TObject; ATrayiconAction: TTrayiconActionClick);
     procedure CheckChildItemsPath(ASender: TBaseVirtualTree; ANode: PVirtualNode);
-  public
-    { Public declarations }
-    procedure ShowPopupMenu(const APopupMenu: TPopupMenu);
-    procedure ShowClassicMenu;
-    procedure ShowGraphicMenu;
-    procedure DoDrawCaptionedSeparator(Sender: TObject; ACanvas: TCanvas; ARect: TRect;
-      ACaption: string = '');
-    procedure CreateSeparator(Menu: TPopupMenu;Text: String = '';ListMenuItem: TMenuItem = nil);
     procedure PopulateDirectory(Sender: TObject);
     procedure SearchAddDirectory(AMI: TMenuItem; FolderPath: string = '');
     procedure SearchAddFiles(AMI: TMenuItem; FolderPath: string = '');
     procedure AddSub(MI: TMenuItem);
     procedure GetItemsIcons(Sender: TObject);
+    procedure ShowPopupMenu(const APopupMenu: TPopupMenu);
+  public
+    { Public declarations }
+    procedure ShowClassicMenu;
+    procedure ShowGraphicMenu;
+    procedure DoDrawCaptionedSeparator(Sender: TObject; ACanvas: TCanvas; ARect: TRect;
+      ACaption: string = '');
+    procedure CreateSeparator(Menu: TPopupMenu;Text: String = '';ListMenuItem: TMenuItem = nil);
   end;
 
 type

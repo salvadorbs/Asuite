@@ -113,9 +113,9 @@ type
     procedure miExportListClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure miSortItemsClick(Sender: TObject);
-    procedure miCopy2Click(Sender: TObject);
-    procedure miPaste2Click(Sender: TObject);
-    procedure miCut2Click(Sender: TObject);
+    procedure miCopyClick(Sender: TObject);
+    procedure miPasteClick(Sender: TObject);
+    procedure miCutClick(Sender: TObject);
     procedure miEditClick(Sender: TObject);
     procedure miInfoASuiteClick(Sender: TObject);
     procedure btnedtSearchRightButtonClick(Sender: TObject);
@@ -124,6 +124,8 @@ type
     procedure tmSchedulerTimer(Sender: TObject);
     procedure mniScanFolderClick(Sender: TObject);
     procedure miAddItemClick(Sender: TObject);
+    procedure miDeleteClick(Sender: TObject);
+    procedure miPropertyClick(Sender: TObject);
   private
     { Private declarations }
     function  GetActiveTree: TBaseVirtualTree;
@@ -185,14 +187,19 @@ begin
   TVirtualTreeMethods.Create.AddChildNodeByGUI(vstList, vstList.FocusedNode, TvTreeDataType(TMenuItem(Sender).Tag));
 end;
 
-procedure TfrmMain.miCopy2Click(Sender: TObject);
+procedure TfrmMain.miCopyClick(Sender: TObject);
 begin
   vstList.CopyToClipBoard;
 end;
 
-procedure TfrmMain.miCut2Click(Sender: TObject);
+procedure TfrmMain.miCutClick(Sender: TObject);
 begin
   vstList.CutToClipBoard;
+end;
+
+procedure TfrmMain.miDeleteClick(Sender: TObject);
+begin
+//
 end;
 
 procedure TfrmMain.miImportListClick(Sender: TObject);
@@ -224,7 +231,7 @@ begin
   TVirtualTreeMethods.Create.RefreshList(GetActiveTree);
 end;
 
-procedure TfrmMain.miPaste2Click(Sender: TObject);
+procedure TfrmMain.miPasteClick(Sender: TObject);
 var
   NodeData: TvBaseNodeData;
 begin
@@ -241,6 +248,11 @@ begin
   vstList.PasteFromClipboard;
   vstList.Expanded[vstList.FocusedNode] := True;
   TVirtualTreeMethods.Create.RefreshList(vstList);
+end;
+
+procedure TfrmMain.miPropertyClick(Sender: TObject);
+begin
+//
 end;
 
 procedure TfrmMain.miSortItemsClick(Sender: TObject);
