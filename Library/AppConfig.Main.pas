@@ -212,14 +212,14 @@ type
   end;
 
 var
-  Config  : TConfiguration;
+  Config: TConfiguration;
 
 implementation
 
 uses
   Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, Utility.Misc,
   Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder, USingleInst,
-  Utility.XML;
+  Utility.XML, GraphicMenu.ThemeEngine;
 
 function TConfiguration.CheckReadOnlyMode: Boolean;
 begin
@@ -519,7 +519,7 @@ begin
 //  frmMain.LoadGlyphs;
   //Refresh GraphicMenu
   if Assigned(frmGraphicMenu) then
-    frmGraphicMenu.LoadTheme;
+    TThemeEngine.Create.LoadTheme;
 end;
 
 procedure TConfiguration.SetTVAutoOpClCats(value: Boolean);
