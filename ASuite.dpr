@@ -61,7 +61,10 @@ uses
   Forms.Dialog.BaseEntity in 'Forms\Forms.Dialog.BaseEntity.pas' {frmDialogBase},
   Forms.Options in 'Forms\Forms.Options.pas' {frmOptions},
   Forms.PropertyItem in 'Forms\Forms.PropertyItem.pas' {frmPropertyItem},
-  VirtualTree.Methods in 'Library\VirtualTree.Methods.pas';
+  VirtualTree.Methods in 'Library\VirtualTree.Methods.pas',
+  VirtualTree.Helper in 'Library\VirtualTree.Helper.pas',
+  GraphicMenu.ThemeEngine.Consts in 'Library\GraphicMenu.ThemeEngine.Consts.pas',
+  GraphicMenu.ThemeEngine in 'Library\GraphicMenu.ThemeEngine.pas';
 
 //SQLite3 static library
 
