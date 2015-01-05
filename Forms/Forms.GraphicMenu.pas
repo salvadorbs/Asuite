@@ -58,12 +58,12 @@ type
     imgBackground: TImage;
     imgDriveBackground: TImage;
     pmWindow: TPopupMenu;
-    miRunSelectedSw: TMenuItem;
-    miRunAs: TMenuItem;
-    miRunAsAdmin: TMenuItem;
-    miOpenFolderSw: TMenuItem;
+    mniRun: TMenuItem;
+    mniRunAs: TMenuItem;
+    mniRunAsAdmin: TMenuItem;
+    mniOpenFolderSw: TMenuItem;
     N6: TMenuItem;
-    miProperty2: TMenuItem;
+    mniProperty: TMenuItem;
     DKLanguageController1: TDKLanguageController;
     imgUserFrame: TImage;
     imgDragSpaceHidden: TImage;
@@ -80,7 +80,7 @@ type
     procedure sknbtnEjectClick(Sender: TObject);
     procedure sknbtnExitClick(Sender: TObject);
     procedure imgPersonalPictureClick(Sender: TObject);
-    procedure miProperty2Click(Sender: TObject);
+    procedure mniPropertyClick(Sender: TObject);
     procedure btnSearchClick(Sender: TObject);
     procedure edtSearchChange(Sender: TObject);
     procedure FormDeactivate(Sender: TObject);
@@ -378,9 +378,9 @@ begin
   end;
 end;
 
-procedure TfrmGraphicMenu.miProperty2Click(Sender: TObject);
+procedure TfrmGraphicMenu.mniPropertyClick(Sender: TObject);
 begin
-  TVirtualTreeMethods.Create.ShowItemProperty(Self, vstList, vstList.FocusedNode, False);
+  TVirtualTreeMethods.Create.ShowItemProperty(Self, vstList, vstList.GetFirstSelected);
 end;
 
 procedure TfrmGraphicMenu.OpenRightButton(Sender: TObject);
@@ -422,13 +422,13 @@ procedure TfrmGraphicMenu.pmWindowPopup(Sender: TObject);
 var
   NodeData : TvBaseNodeData;
 begin
-  if Assigned(vstList.FocusedNode) then
+  if Assigned(vstList.GetFirstSelected()) then
   begin
-    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(vstList.FocusedNode, vstList);
-    miRunSelectedSw.Enabled := (NodeData.DataType <> vtdtSeparator);
-    miRunAs.Enabled         := (NodeData.DataType <> vtdtSeparator);
-    miRunAsAdmin.Enabled    := (NodeData.DataType <> vtdtSeparator);
-    miOpenFolderSw.Enabled  := (NodeData.DataType in [vtdtFile,vtdtFolder]);
+    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(vstList.GetFirstSelected, vstList);
+    mniRun.Enabled := (NodeData.DataType <> vtdtSeparator);
+    mniRunAs.Enabled         := (NodeData.DataType <> vtdtSeparator);
+    mniRunAsAdmin.Enabled    := (NodeData.DataType <> vtdtSeparator);
+    mniOpenFolderSw.Enabled  := (NodeData.DataType in [vtdtFile, vtdtFolder]);
   end;
 end;
 

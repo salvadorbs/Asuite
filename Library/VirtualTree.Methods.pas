@@ -69,7 +69,7 @@ type
     //Misc
     function CreateNodeData(AType: TvTreeDataType): TvBaseNodeData;
     function ShowItemProperty(const AOwner: TComponent; const ATreeView: TBaseVirtualTree;
-                              const ANode: PVirtualNode; ANewNode: Boolean): Integer;
+                              const ANode: PVirtualNode; ANewNode: Boolean = False): Integer;
     procedure RefreshList(const ATree: TBaseVirtualTree);
     procedure PopulateVSTItemList(const ATree: TBaseVirtualTree; const ABaseItemsList: TBaseItemsList);
   end;

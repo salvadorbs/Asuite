@@ -26,7 +26,7 @@ uses
   ComCtrls, VirtualTrees, ActiveX, Kernel.Consts, DataModules.Images,
   Kernel.BaseMainForm, StdCtrls, Buttons, System.UITypes,
   Kernel.Enumerations, Vcl.ExtCtrls, System.DateUtils, XMLDoc, DKLang, Lists.Manager,
-  Database.Manager;
+  Database.Manager, System.Actions, Vcl.ActnList;
 
 type
 
@@ -52,41 +52,25 @@ type
     miExit1: TMenuItem;
     miInfoASuite: TMenuItem;
     miEdit: TMenuItem;
-    miAddCat1: TMenuItem;
-    miAddSw1: TMenuItem;
-    miDelete1: TMenuItem;
+    mniAddCat: TMenuItem;
+    mniAddSoftware: TMenuItem;
+    mniDelete: TMenuItem;
     N8: TMenuItem;
-    miProperty1: TMenuItem;
+    mniProperty: TMenuItem;
     pmWindow: TPopupMenu;
-    miAddCat2: TMenuItem;
-    miAddSw2: TMenuItem;
-    miDelete2: TMenuItem;
-    N6: TMenuItem;
-    miProperty2: TMenuItem;
-    miAddFolder2: TMenuItem;
-    miAddFolder1: TMenuItem;
+    mniAddFolder: TMenuItem;
     miSaveList1: TMenuItem;
-    miRunSelectedSw: TMenuItem;
-    miOpenFolderSw: TMenuItem;
-    N9: TMenuItem;
-    miAddSeparator2: TMenuItem;
-    miAddSeparator1: TMenuItem;
+    mniAddSeparator: TMenuItem;
     N3: TMenuItem;
-    miSortList: TMenuItem;
+    mniSortCatItems: TMenuItem;
     miExportList: TMenuItem;
     N4: TMenuItem;
     N1: TMenuItem;
     SaveDialog1: TSaveDialog;
-    miSortItems: TMenuItem;
-    N5: TMenuItem;
-    miCopy2: TMenuItem;
-    miCut2: TMenuItem;
-    miPaste2: TMenuItem;
-    N10: TMenuItem;
     miN11: TMenuItem;
-    miCut1: TMenuItem;
-    miCopy1: TMenuItem;
-    miPaste1: TMenuItem;
+    mniCut: TMenuItem;
+    mniCopy: TMenuItem;
+    mniPaste: TMenuItem;
     pmSearch: TPopupMenu;
     miSearchName: TMenuItem;
     miSearchExePath: TMenuItem;
@@ -94,43 +78,58 @@ type
     miSearchWorkingDirPath: TMenuItem;
     miSearchParameters: TMenuItem;
     edtSearch: TEdit;
-    miRunAs: TMenuItem;
-    miRunAsAdmin: TMenuItem;
     tmScheduler: TTimer;
     mniScanFolder: TMenuItem;
     DKLanguageController1: TDKLanguageController;
+    ActionList1: TActionList;
+    actRunItem: TAction;
+    actRunAsItem: TAction;
+    actRunAsAdminItem: TAction;
+    actOpenFolderItem: TAction;
+    actSortCatItems: TAction;
+    actAddCat: TAction;
+    actCut: TAction;
+    actCopy: TAction;
+    actPaste: TAction;
+    actDelete: TAction;
+    actProperty: TAction;
+    actAddSoftware: TAction;
+    actAddFolder: TAction;
+    actAddSeparator: TAction;
     procedure miOptionsClick(Sender: TObject);
     procedure miStatisticsClick(Sender: TObject);
-    procedure pcListChange(Sender: TObject);
     procedure miImportListClick(Sender: TObject);
     procedure miSaveListClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure miExitClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-    procedure pmWindowPopup(Sender: TObject);
-    procedure miSortListClick(Sender: TObject);
     procedure miExportListClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure miSortItemsClick(Sender: TObject);
-    procedure miCopyClick(Sender: TObject);
-    procedure miPasteClick(Sender: TObject);
-    procedure miCutClick(Sender: TObject);
-    procedure miEditClick(Sender: TObject);
     procedure miInfoASuiteClick(Sender: TObject);
     procedure btnedtSearchRightButtonClick(Sender: TObject);
     procedure ChangeSearchTextHint(Sender: TObject);
     procedure btnedtSearchKeyPress(Sender: TObject; var Key: Char);
     procedure tmSchedulerTimer(Sender: TObject);
     procedure mniScanFolderClick(Sender: TObject);
-    procedure miAddItemClick(Sender: TObject);
-    procedure miDeleteClick(Sender: TObject);
-    procedure miPropertyClick(Sender: TObject);
+    procedure actPasteUpdate(Sender: TObject);
+    procedure actRunItemUpdate(Sender: TObject);
+    procedure actSortCatItemsUpdate(Sender: TObject);
+    procedure actSortCatItemsExecute(Sender: TObject);
+    procedure actAddItem(Sender: TObject);
+    procedure actAddItemUpdate(Sender: TObject);
+    procedure actCutCopyDeleteUpdate(Sender: TObject);
+    procedure actCutExecute(Sender: TObject);
+    procedure actCopyExecute(Sender: TObject);
+    procedure actPropertyExecute(Sender: TObject);
+    procedure actPasteExecute(Sender: TObject);
+    procedure pcListChange(Sender: TObject);
   private
     { Private declarations }
     function  GetActiveTree: TBaseVirtualTree;
     procedure RunStartupProcess;
     procedure RunShutdownProcess;
+    procedure PopulatePopUpMenuFromAnother(APopupMenu: TPopupMenu; AParentMenuItem: TMenuItem);
   public
     { Public declarations }
     procedure ShowMainForm(Sender: TObject);
@@ -152,6 +151,123 @@ uses
   VirtualTree.Events;
 
 {$R *.dfm}
+
+procedure TfrmMain.actAddItemUpdate(Sender: TObject);
+begin
+  TAction(Sender).Visible := (GetActiveTree = vstList);
+end;
+
+procedure TfrmMain.actCopyExecute(Sender: TObject);
+begin
+  vstList.CopyToClipBoard;
+end;
+
+procedure TfrmMain.actCutCopyDeleteUpdate(Sender: TObject);
+var
+  Nodes: TNodeArray;
+begin
+  Nodes := GetActiveTree.GetSortedSelection(True);
+  TAction(Sender).Enabled := Length(Nodes) > 0;
+end;
+
+procedure TfrmMain.actCutExecute(Sender: TObject);
+begin
+  vstList.CutToClipBoard;
+end;
+
+procedure TfrmMain.actAddItem(Sender: TObject);
+begin
+  TVirtualTreeMethods.Create.AddChildNodeByGUI(vstList, vstList.GetFirstSelected,
+                                               TvTreeDataType(TAction(Sender).Tag));
+end;
+
+procedure TfrmMain.actPasteExecute(Sender: TObject);
+var
+  NodeData: TvBaseNodeData;
+  Tree: TVirtualStringTree;
+begin
+  Tree := TVirtualStringTree(GetActiveTree);
+  if Assigned(Tree) then
+  begin
+    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Tree.GetFirstSelected, Tree);
+    if Assigned(NodeData) then
+    begin
+      if NodeData.DataType = vtdtCategory then
+        Tree.DefaultPasteMode := amAddChildLast
+      else
+        Tree.DefaultPasteMode := amInsertAfter;
+      end
+    else
+      Tree.DefaultPasteMode := amAddChildLast;
+    Tree.PasteFromClipboard;
+    Tree.Expanded[Tree.GetFirstSelected] := True;
+    TVirtualTreeMethods.Create.RefreshList(Tree);
+  end;
+end;
+
+procedure TfrmMain.actPasteUpdate(Sender: TObject);
+begin
+  TAction(Sender).Enabled := IsFormatInClipBoard(CF_VIRTUALTREE) and (GetActiveTree = vstList);
+end;
+
+procedure TfrmMain.actPropertyExecute(Sender: TObject);
+begin
+  TVirtualTreeMethods.Create.ShowItemProperty(Self, GetActiveTree, GetActiveTree.GetFirstSelected);
+end;
+
+procedure TfrmMain.actRunItemUpdate(Sender: TObject);
+var
+  Nodes: TNodeArray;
+  NodeData: TvBaseNodeData;
+  I: Integer;
+begin
+  Nodes := GetActiveTree.GetSortedSelection(True);
+  TAction(Sender).Enabled := False;
+  if Length(Nodes) > 0 then
+  begin
+    for I := Low(Nodes) to High(Nodes) do
+    begin
+      NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Nodes[I], GetActiveTree);
+      if NodeData.DataType <> vtdtSeparator then
+        TAction(Sender).Enabled := True;
+    end;
+  end;
+end;
+
+procedure TfrmMain.actSortCatItemsExecute(Sender: TObject);
+var
+  Nodes: TNodeArray;
+  NodeData: TvBaseNodeData;
+  I: Integer;
+begin
+  Nodes := GetActiveTree.GetSortedSelection(True);
+  if Length(Nodes) > 0 then
+  begin
+    for I := Low(Nodes) to High(Nodes) do
+      vstList.Sort(Nodes[I], 0, sdAscending);
+  end;
+  TVirtualTreeMethods.Create.RefreshList(vstList);
+end;
+
+procedure TfrmMain.actSortCatItemsUpdate(Sender: TObject);
+var
+  Nodes: TNodeArray;
+  NodeData: TvBaseNodeData;
+  I: Integer;
+begin
+  Nodes := GetActiveTree.GetSortedSelection(True);
+  TAction(Sender).Visible := (GetActiveTree = vstList);
+  TAction(Sender).Enabled := False;
+  if (Length(Nodes) > 0) and (GetActiveTree = vstList) then
+  begin
+    for I := Low(Nodes) to High(Nodes) do
+    begin
+      NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Nodes[I], GetActiveTree);
+      if NodeData.DataType = vtdtCategory then
+        TAction(Sender).Enabled := True;
+    end;
+  end;
+end;
 
 procedure TfrmMain.btnedtSearchKeyPress(Sender: TObject; var Key: Char);
 begin
@@ -180,26 +296,6 @@ begin
     edtSearch.TextHint := StringReplace((Sender as TMenuItem).Caption, '&', '', []);
     (Sender as TMenuItem).Checked := True;
   end;
-end;
-
-procedure TfrmMain.miAddItemClick(Sender: TObject);
-begin
-  TVirtualTreeMethods.Create.AddChildNodeByGUI(vstList, vstList.FocusedNode, TvTreeDataType(TMenuItem(Sender).Tag));
-end;
-
-procedure TfrmMain.miCopyClick(Sender: TObject);
-begin
-  vstList.CopyToClipBoard;
-end;
-
-procedure TfrmMain.miCutClick(Sender: TObject);
-begin
-  vstList.CutToClipBoard;
-end;
-
-procedure TfrmMain.miDeleteClick(Sender: TObject);
-begin
-//
 end;
 
 procedure TfrmMain.miImportListClick(Sender: TObject);
@@ -231,95 +327,15 @@ begin
   TVirtualTreeMethods.Create.RefreshList(GetActiveTree);
 end;
 
-procedure TfrmMain.miPasteClick(Sender: TObject);
-var
-  NodeData: TvBaseNodeData;
-begin
-  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(vstList.FocusedNode, vstList);
-  if Assigned(NodeData) then
-  begin
-    if NodeData.DataType = vtdtCategory then
-      vstList.DefaultPasteMode := amAddChildLast
-    else
-      vstList.DefaultPasteMode := amInsertAfter;
-    end
-  else
-    vstList.DefaultPasteMode := amAddChildLast;
-  vstList.PasteFromClipboard;
-  vstList.Expanded[vstList.FocusedNode] := True;
-  TVirtualTreeMethods.Create.RefreshList(vstList);
-end;
-
-procedure TfrmMain.miPropertyClick(Sender: TObject);
-begin
-//
-end;
-
-procedure TfrmMain.miSortItemsClick(Sender: TObject);
-begin
-  vstList.Sort(vstList.GetFirstSelected,0,sdAscending,True);
-  TVirtualTreeMethods.Create.RefreshList(vstList);
-end;
-
-procedure TfrmMain.miSortListClick(Sender: TObject);
-begin
-  vstList.SortTree(0,sdAscending,True);
-  TVirtualTreeMethods.Create.RefreshList(vstList);
-end;
-
 procedure TfrmMain.pcListChange(Sender: TObject);
-var
-  ActiveTab : Boolean;
 begin
-  ActiveTab := pcList.ActivePageIndex = PG_LIST;
-  //Set property Visible for some components
-  miEdit.Visible          := ActiveTab;
-  miSortItems.Visible     := ActiveTab;
-  miAddCat2.Visible       := ActiveTab;
-  miAddSw2.Visible        := ActiveTab;
-  miAddFolder2.Visible    := ActiveTab;
-  miAddSeparator2.Visible := ActiveTab;
-  miDelete2.Visible       := ActiveTab;
-  miCut2.Visible          := ActiveTab;
-  miCopy2.Visible         := ActiveTab;
-  miPaste2.Visible        := ActiveTab;
-end;
-
-procedure TfrmMain.pmWindowPopup(Sender: TObject);
-var
-  NodeData : TvBaseNodeData;
-  Point    : TPoint;
-  HitInfo  : ThitInfo;
-begin
-  GetCursorPos(Point);
-  Point    := vstList.ScreenToClient(Point);
-  vstList.GetHitTestInfoAt(Point.X,Point.Y,true,HitInfo);
-  //If user clicks on empty area of vstList
-  if Not(hiOnItem in hitinfo.HitPositions) then
+  TVirtualTreeMethods.Create.CheckVisibleNodePathExe(GetActiveTree);
+  //Clear search when user click on tab search
+  if pcList.ActivePageIndex = PG_SEARCH then
   begin
-    //Set nil vstList.FocusedNode
-    vstList.Selected[vstList.FocusedNode] := False;
-    vstList.FocusedNode := nil;
+    vstSearch.Clear;
+    edtSearch.Text := '';
   end;
-  //Enable/disable item window menu
-  if (Assigned(vstList.FocusedNode) and (pcList.ActivePageIndex = PG_LIST)) or
-     (Assigned(vstSearch.FocusedNode) and (pcList.ActivePageIndex = PG_Search)) then
-  begin
-    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(GetActiveTree.FocusedNode, GetActiveTree);
-    miProperty2.Enabled     := True;
-    miRunSelectedSw.Enabled := (NodeData.DataType <> vtdtSeparator);
-    miRunAs.Enabled         := (NodeData.DataType <> vtdtSeparator);
-    miRunAsAdmin.Enabled    := (NodeData.DataType <> vtdtSeparator);
-    miOpenFolderSw.Enabled  := (NodeData.DataType in [vtdtFile,vtdtFolder]);
-  end
-  else begin
-    miRunSelectedSw.Enabled := False;
-    miRunAs.Enabled         := False;
-    miRunAsAdmin.Enabled    := False;
-    miOpenFolderSw.Enabled  := False;
-    miProperty2.Enabled     := False;
-  end;
-  miPaste2.Enabled := IsFormatInClipBoard(CF_VIRTUALTREE);
 end;
 
 procedure TfrmMain.ShowMainForm(Sender: TObject);
@@ -351,6 +367,26 @@ begin
         taskbar icon if they are visible. }
     if IsWindowVisible(Application.Handle) then
       ShowWindow(Application.Handle, SW_HIDE);
+  end;
+end;
+
+procedure TfrmMain.PopulatePopUpMenuFromAnother(APopupMenu: TPopupMenu; AParentMenuItem: TMenuItem);
+var
+  I: Integer;
+  MenuItem : TMenuItem;
+begin
+  APopupMenu.Items.Clear;
+
+  for I := 0 to AParentMenuItem.Count - 1 do
+  begin
+    //Create menuitem and set it
+    MenuItem         := TMenuItem.Create(APopupMenu);
+    if Assigned(AParentMenuItem.Items[I].Action) then
+      MenuItem.Action  := AParentMenuItem.Items[I].Action
+    else
+      MenuItem.Caption := '-';
+    //Add new menu item in APopupMenu
+    APopupMenu.Items.Add(MenuItem) ;
   end;
 end;
 
@@ -472,11 +508,6 @@ begin
   end;
 end;
 
-procedure TfrmMain.miEditClick(Sender: TObject);
-begin
-  miPaste1.Enabled := IsFormatInClipBoard(CF_VIRTUALTREE);
-end;
-
 procedure TfrmMain.miExitClick(Sender: TObject);
 begin
   Config.ASuiteState := lsShutdown;
@@ -540,6 +571,7 @@ begin
   TVirtualTreeMethods.Create.RefreshList(nil);
   //Get placeholder for edtSearch
   edtSearch.TextHint := StringReplace(miSearchName.Caption, '&', '', []);
+  PopulatePopUpMenuFromAnother(pmWindow, miEdit);
 end;
 
 procedure TfrmMain.FormDestroy(Sender: TObject);

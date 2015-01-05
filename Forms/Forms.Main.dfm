@@ -63,7 +63,7 @@ object frmMain: TfrmMain
     Top = 0
     Width = 201
     Height = 386
-    ActivePage = tbSearch
+    ActivePage = tbList
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -76,10 +76,6 @@ object frmMain: TfrmMain
     OnChange = pcListChange
     object tbList: TTabSheet
       Caption = 'List'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 176
-      ExplicitHeight = 312
       object vstList: TVirtualStringTree
         Left = 0
         Top = 0
@@ -112,11 +108,9 @@ object frmMain: TfrmMain
         TextMargin = 2
         TreeOptions.AutoOptions = [toAutoDropExpand, toAutoExpand, toAutoScroll, toAutoScrollOnExpand, toAutoTristateTracking]
         TreeOptions.MiscOptions = [toAcceptOLEDrop, toEditable, toFullRepaintOnResize, toToggleOnDblClick, toWheelPanning, toEditOnClick]
-        TreeOptions.PaintOptions = [toShowBackground, toShowButtons, toShowDropmark, toShowRoot, toShowTreeLines, toThemeAware, toUseBlendedImages]
+        TreeOptions.PaintOptions = [toHideFocusRect, toShowBackground, toShowButtons, toShowDropmark, toShowRoot, toShowTreeLines, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
         TreeOptions.SelectionOptions = [toFullRowSelect, toMultiSelect, toRightClickSelect]
         TreeOptions.StringOptions = [toAutoAcceptEditChange]
-        ExplicitWidth = 176
-        ExplicitHeight = 312
         Columns = <>
       end
     end
@@ -152,7 +146,7 @@ object frmMain: TfrmMain
         PopupMenu = pmWindow
         ShowHint = True
         TabOrder = 0
-        TreeOptions.PaintOptions = [toShowDropmark, toThemeAware, toUseBlendedImages]
+        TreeOptions.PaintOptions = [toHideFocusRect, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
         TreeOptions.SelectionOptions = [toFullRowSelect, toMultiSelect, toRightClickSelect]
         Columns = <
           item
@@ -223,58 +217,63 @@ object frmMain: TfrmMain
     end
     object miEdit: TMenuItem
       Caption = 'Edit'
-      OnClick = miEditClick
-      object miSortList: TMenuItem
-        Caption = 'Sort list'
-        OnClick = miSortListClick
+      object mniRunItem: TMenuItem
+        Action = actRunItem
+        Default = True
+      end
+      object mniRunAsItem: TMenuItem
+        Action = actRunAsItem
+      end
+      object mniRunAsAdminItem: TMenuItem
+        Action = actRunAsAdminItem
+      end
+      object mniOpenFolderItem: TMenuItem
+        Action = actOpenFolderItem
+      end
+      object N9: TMenuItem
+        Caption = '-'
+      end
+      object mniSortCatItems: TMenuItem
+        Action = actSortCatItems
       end
       object N3: TMenuItem
         Caption = '-'
       end
-      object miAddCat1: TMenuItem
-        Caption = 'Add category'
-        OnClick = miAddItemClick
+      object mniAddCat: TMenuItem
+        Action = actAddCat
       end
-      object miAddSw1: TMenuItem
+      object mniAddSoftware: TMenuItem
         Tag = 1
-        Caption = 'Add software'
-        OnClick = miAddItemClick
+        Action = actAddSoftware
       end
-      object miAddFolder1: TMenuItem
+      object mniAddFolder: TMenuItem
         Tag = 2
-        Caption = 'Add folder'
-        OnClick = miAddItemClick
+        Action = actAddFolder
       end
-      object miAddSeparator1: TMenuItem
+      object mniAddSeparator: TMenuItem
         Tag = 3
-        Caption = 'Add separator'
-        OnClick = miAddItemClick
+        Action = actAddSeparator
       end
       object miN11: TMenuItem
         Caption = '-'
       end
-      object miCut1: TMenuItem
-        Caption = 'Cut'
-        OnClick = miCutClick
+      object mniCut: TMenuItem
+        Action = actCut
       end
-      object miCopy1: TMenuItem
-        Caption = 'Copy'
-        OnClick = miCopyClick
+      object mniCopy: TMenuItem
+        Action = actCopy
       end
-      object miPaste1: TMenuItem
-        Caption = 'Paste'
-        OnClick = miPasteClick
+      object mniPaste: TMenuItem
+        Action = actPaste
       end
-      object miDelete1: TMenuItem
-        Caption = 'Delete'
-        OnClick = miDeleteClick
+      object mniDelete: TMenuItem
+        Action = actDelete
       end
       object N8: TMenuItem
         Caption = '-'
       end
-      object miProperty1: TMenuItem
-        Caption = 'Property'
-        OnClick = miPropertyClick
+      object mniProperty: TMenuItem
+        Action = actProperty
       end
     end
     object miHelp: TMenuItem
@@ -300,82 +299,8 @@ object frmMain: TfrmMain
     end
   end
   object pmWindow: TPopupMenu
-    OnPopup = pmWindowPopup
     Left = 80
     Top = 32
-    object miRunSelectedSw: TMenuItem
-      Caption = 'Run'
-      Default = True
-    end
-    object miRunAs: TMenuItem
-      Caption = 'Run as...'
-    end
-    object miRunAsAdmin: TMenuItem
-      Caption = 'Run as admin'
-    end
-    object miOpenFolderSw: TMenuItem
-      Caption = 'Show application'#39's folder'
-    end
-    object N9: TMenuItem
-      Caption = '-'
-    end
-    object miSortItems: TMenuItem
-      Caption = 'Sort category'#39's items'
-      OnClick = miSortItemsClick
-    end
-    object N5: TMenuItem
-      Caption = '-'
-    end
-    object miAddCat2: TMenuItem
-      Caption = 'Add category'
-      ShortCut = 114
-      OnClick = miAddItemClick
-    end
-    object miAddSw2: TMenuItem
-      Tag = 1
-      Caption = 'Add software'
-      ShortCut = 115
-      OnClick = miAddItemClick
-    end
-    object miAddFolder2: TMenuItem
-      Tag = 2
-      Caption = 'Add folder'
-      OnClick = miAddItemClick
-    end
-    object miAddSeparator2: TMenuItem
-      Tag = 3
-      Caption = 'Add separator'
-      OnClick = miAddItemClick
-    end
-    object N10: TMenuItem
-      Caption = '-'
-    end
-    object miCut2: TMenuItem
-      Caption = 'Cut'
-      ShortCut = 16472
-      OnClick = miCutClick
-    end
-    object miCopy2: TMenuItem
-      Caption = 'Copy'
-      ShortCut = 16451
-      OnClick = miCopyClick
-    end
-    object miPaste2: TMenuItem
-      Caption = 'Paste'
-      ShortCut = 16470
-      OnClick = miPasteClick
-    end
-    object miDelete2: TMenuItem
-      Caption = 'Delete'
-      ShortCut = 46
-    end
-    object N6: TMenuItem
-      Caption = '-'
-    end
-    object miProperty2: TMenuItem
-      Caption = 'Property'
-      ShortCut = 116
-    end
   end
   object SaveDialog1: TSaveDialog
     DefaultExt = '.xml'
@@ -431,7 +356,7 @@ object frmMain: TfrmMain
     Left = 16
     Top = 80
     LangData = {
-      070066726D4D61696E010100000001000000070043617074696F6E0141000000
+      070066726D4D61696E010100000001000000070043617074696F6E0143000000
       060070634C6973740000060074624C6973740101000000020000000700436170
       74696F6E0007007673744C697374000008007462536561726368010100000004
       000000070043617074696F6E000A007362746E53656172636800000900767374
@@ -444,43 +369,112 @@ object frmMain: TfrmMain
       070043617074696F6E000C006D694578706F72744C69737401010000000A0000
       00070043617074696F6E0002004E32000007006D69457869743101010000000B
       000000070043617074696F6E0006006D694564697401010000000C0000000700
-      43617074696F6E000A006D69536F72744C69737401010000000D000000070043
-      617074696F6E0002004E33000009006D694164644361743101010000000E0000
-      00070043617074696F6E0008006D6941646453773101010000000F0000000700
-      43617074696F6E000C006D69416464466F6C6465723101010000001000000007
-      0043617074696F6E000F006D69416464536570617261746F7231010100000011
-      000000070043617074696F6E0005006D694E3131000006006D69437574310101
-      00000012000000070043617074696F6E0007006D69436F707931010100000013
-      000000070043617074696F6E0008006D69506173746531010100000014000000
-      070043617074696F6E0009006D6944656C657465310101000000150000000700
-      43617074696F6E0002004E3800000B006D6950726F7065727479310101000000
-      16000000070043617074696F6E0006006D6948656C7001010000001700000007
-      0043617074696F6E000E006D69436865636B5570646174657301010000001800
-      0000070043617074696F6E0009004D656E754974656D3300000C006D69537461
-      74697374696373010100000019000000070043617074696F6E0009004D656E75
-      4974656D3200000C006D69496E666F41537569746501010000001A0000000700
-      43617074696F6E000800706D57696E646F7700000F006D6952756E53656C6563
-      746564537701010000001B000000070043617074696F6E0007006D6952756E41
-      7301010000001C000000070043617074696F6E000C006D6952756E417341646D
-      696E01010000001D000000070043617074696F6E000E006D694F70656E466F6C
-      646572537701010000001E000000070043617074696F6E0002004E3900000B00
-      6D69536F72744974656D7301010000001F000000070043617074696F6E000200
-      4E35000009006D6941646443617432010100000020000000070043617074696F
-      6E0008006D69416464537732010100000021000000070043617074696F6E000C
-      006D69416464466F6C64657232010100000022000000070043617074696F6E00
-      0F006D69416464536570617261746F7232010100000023000000070043617074
-      696F6E0003004E3130000006006D694375743201010000002400000007004361
-      7074696F6E0007006D69436F707932010100000025000000070043617074696F
-      6E0008006D69506173746532010100000026000000070043617074696F6E0009
-      006D6944656C65746532010100000027000000070043617074696F6E0002004E
-      3600000B006D6950726F70657274793201010000002800000007004361707469
-      6F6E000B00536176654469616C6F673100000800706D53656172636800000C00
-      6D695365617263684E616D6501010000002B000000070043617074696F6E000F
-      006D695365617263684578655061746801010000002C00000007004361707469
-      6F6E0010006D6953656172636849636F6E5061746801010000002D0000000700
-      43617074696F6E0016006D69536561726368576F726B696E6744697250617468
-      01010000002E000000070043617074696F6E0012006D69536561726368506172
-      616D657465727301010000002F000000070043617074696F6E000B00746D5363
-      686564756C65720000}
+      43617074696F6E000F006D6E69536F72744361744974656D73000002004E3300
+      0009006D6E6941646443617400000E006D6E69416464536F6674776172650000
+      0C006D6E69416464466F6C64657200000F006D6E69416464536570617261746F
+      72000005006D694E3131000006006D6E69437574000007006D6E69436F707900
+      0008006D6E695061737465000009006D6E6944656C657465000002004E380000
+      0B006D6E6950726F7065727479000006006D6948656C70010100000017000000
+      070043617074696F6E000E006D69436865636B55706461746573010100000018
+      000000070043617074696F6E0009004D656E754974656D3300000C006D695374
+      6174697374696373010100000019000000070043617074696F6E0009004D656E
+      754974656D3200000C006D69496E666F41537569746501010000001A00000007
+      0043617074696F6E000800706D57696E646F7700000B00536176654469616C6F
+      673100000800706D53656172636800000C006D695365617263684E616D650101
+      0000002B000000070043617074696F6E000F006D695365617263684578655061
+      746801010000002C000000070043617074696F6E0010006D6953656172636849
+      636F6E5061746801010000002D000000070043617074696F6E0016006D695365
+      61726368576F726B696E674469725061746801010000002E0000000700436170
+      74696F6E0012006D69536561726368506172616D657465727301010000002F00
+      0000070043617074696F6E000B00746D5363686564756C657200000B00416374
+      696F6E4C6973743100000A0061637452756E4974656D01010000003000000007
+      0043617074696F6E000C0061637452756E41734974656D010100000031000000
+      070043617074696F6E00110061637452756E417341646D696E4974656D010100
+      000032000000070043617074696F6E0011006163744F70656E466F6C64657249
+      74656D010100000033000000070043617074696F6E000F00616374536F727443
+      61744974656D73010100000034000000070043617074696F6E00090061637441
+      6464436174010100000037000000070043617074696F6E000600616374437574
+      010100000039000000070043617074696F6E000700616374436F707901010000
+      003A000000070043617074696F6E000800616374506173746501010000003B00
+      0000070043617074696F6E00090061637444656C65746501010000003C000000
+      070043617074696F6E000B0061637450726F706572747901010000003D000000
+      070043617074696F6E000E00616374416464536F66747761726501010000003E
+      000000070043617074696F6E000C00616374416464466F6C6465720101000000
+      3F000000070043617074696F6E000F00616374416464536570617261746F7201
+      0100000040000000070043617074696F6E000A006D6E6952756E4974656D0000
+      0C006D6E6952756E41734974656D000011006D6E6952756E417341646D696E49
+      74656D000011006D6E694F70656E466F6C6465724974656D000002004E390000}
+  end
+  object ActionList1: TActionList
+    Left = 132
+    Top = 192
+    object actRunItem: TAction
+      Caption = 'Run'
+      OnUpdate = actRunItemUpdate
+    end
+    object actRunAsItem: TAction
+      Caption = 'Run as...'
+      OnUpdate = actRunItemUpdate
+    end
+    object actRunAsAdminItem: TAction
+      Caption = 'Run as admin'
+      OnUpdate = actRunItemUpdate
+    end
+    object actOpenFolderItem: TAction
+      Caption = 'Show application'#39's folder'
+      OnUpdate = actRunItemUpdate
+    end
+    object actSortCatItems: TAction
+      Caption = 'Sort category'#39's items'
+      OnExecute = actSortCatItemsExecute
+      OnUpdate = actSortCatItemsUpdate
+    end
+    object actAddCat: TAction
+      Caption = 'Add category...'
+      OnExecute = actAddItem
+      OnUpdate = actAddItemUpdate
+    end
+    object actCut: TAction
+      Caption = 'Cut'
+      OnExecute = actCutExecute
+      OnUpdate = actCutCopyDeleteUpdate
+    end
+    object actCopy: TAction
+      Caption = 'Copy'
+      OnExecute = actCopyExecute
+      OnUpdate = actCutCopyDeleteUpdate
+    end
+    object actPaste: TAction
+      Caption = 'Paste'
+      OnExecute = actPasteExecute
+      OnUpdate = actPasteUpdate
+    end
+    object actDelete: TAction
+      Caption = 'Delete'
+      OnUpdate = actCutCopyDeleteUpdate
+    end
+    object actProperty: TAction
+      Caption = 'Property'
+      OnExecute = actPropertyExecute
+      OnUpdate = actCutCopyDeleteUpdate
+    end
+    object actAddSoftware: TAction
+      Tag = 1
+      Caption = 'Add software...'
+      OnExecute = actAddItem
+      OnUpdate = actAddItemUpdate
+    end
+    object actAddFolder: TAction
+      Tag = 2
+      Caption = 'Add folder...'
+      OnExecute = actAddItem
+      OnUpdate = actAddItemUpdate
+    end
+    object actAddSeparator: TAction
+      Tag = 3
+      Caption = 'Add separator...'
+      OnExecute = actAddItem
+      OnUpdate = actAddItemUpdate
+    end
   end
 end
