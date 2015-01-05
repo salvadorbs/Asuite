@@ -34,8 +34,6 @@ type
     function GetImageIndex: integer; virtual;
     function InternalLoadData: Boolean; virtual;
     function InternalSaveData: Boolean; virtual;
-
-//    procedure PopulateVSTItemList(const ATree: TBaseVirtualTree;const ABaseItemsList: TBaseItemsList);
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -47,8 +45,6 @@ type
 TPageFrameClass = class of TfrmBaseEntityPage;
 
 implementation
-
-
 
 {$R *.dfm}
 
@@ -79,38 +75,6 @@ function TfrmBaseEntityPage.InternalSaveData: Boolean;
 begin
   Result := True;
 end;
-
-//procedure TfrmBaseEntityPage.PopulateVSTItemList(const ATree: TBaseVirtualTree;
-//  const ABaseItemsList: TBaseItemsList);
-//var
-//  I: Integer;
-//  CurrentFileData : TvCustomRealNodeData;
-//  NewNode         : PVirtualNode;
-//  NewNodeData     : PTreeDataX;
-//begin
-//  ATree.BeginUpdate;
-//  try
-//    for I := 0 to ABaseItemsList.Count - 1 do
-//    begin
-//      CurrentFileData := ABaseItemsList[I];
-//      if Assigned(CurrentFileData) then
-//      begin
-//        NewNode := ATree.AddChild(ATree.RootNode);
-//        NewNodeData := ATree.GetNodeData(NewNode);
-//        //Set pointers
-//        NewNodeData.pNodeList := CurrentFileData.PNode;
-//      end;
-//    end;
-//    //Check nodes path and get icons
-//    CheckVisibleNodePathExe(ATree);
-//    //TODO: Fix it
-////ImagesDM.GetChildNodesIcons(ATree, ATree.RootNode, isAny);
-//    //Auto columns width
-//    TVirtualStringTree(ATree).Header.AutoFitColumns;
-//  finally
-//    ATree.EndUpdate;
-//  end;
-//end;
 
 function TfrmBaseEntityPage.SaveData: Boolean;
 begin

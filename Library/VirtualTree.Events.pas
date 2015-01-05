@@ -41,6 +41,7 @@ type
   public
     //Methods to set events in vsts
     procedure SetupVSTList(ATree: TVirtualStringTree);
+    procedure SetupVSTSimple(ATree: TVirtualStringTree);
     procedure SetupVSTSearch(ATree: TVirtualStringTree);
     procedure SetupVSTGraphicMenu(ATree: TVirtualStringTree; AGraphicMenu: TfrmGraphicMenu);
     procedure SetupVSTImportList(ATree: TVirtualStringTree);
@@ -234,6 +235,13 @@ begin
   ATree.OnGetImageIndex   := DoGetImageIndex;
   ATree.OnGetNodeDataSize := DoGetNodeDataSizeSearch;
   ATree.OnKeyPress        := DoKeyPress;
+end;
+
+procedure TVirtualTreeEvents.SetupVSTSimple(ATree: TVirtualStringTree);
+begin
+  ATree.OnGetText         := DoGetText;
+  ATree.OnGetImageIndex   := DoGetImageIndex;
+  ATree.OnGetNodeDataSize := DoGetNodeDataSizeSearch;
 end;
 
 function TVirtualTreeEvents.ClickOnButtonTree(Sender: TBaseVirtualTree;

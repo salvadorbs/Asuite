@@ -1042,7 +1042,7 @@ end;
 
 { TVSTHelper }
 
-//TODO: Move this code in another unit (VirtualTree.VSTHelper)
+//TODO: Move this code in another unit (VirtualTree.Helper)
 
 type
   THackOptions = Class(TCustomVirtualTreeOptions);
