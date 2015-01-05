@@ -75,7 +75,7 @@ implementation
 
 uses
   Utility.Misc, NodeDataTypes.Custom, AppConfig.Main, Kernel.Enumerations,
-  Utility.TreeView, Utility.System, NodeDataTypes.Files, NodeDataTypes.Base;
+  VirtualTree.Methods, Utility.System, NodeDataTypes.Files, NodeDataTypes.Base;
 
 {$R *.dfm}
 
@@ -129,7 +129,7 @@ var
   TempShortName, PathTemp, sFileExt : String;
   ProgressBar   : TProgressBar;
 begin
-  //TODO: Rewrite this code
+  //TODO: Rewrite this code (see AddChildNodeEx)
   ProgressBar   := TProgressBar(ProgressDialog.FindComponent('Progress'));
   if FindFirst(FolderPath + '*.*', faAnyFile, SearchRec) = 0 then
   begin
@@ -150,8 +150,8 @@ begin
         begin
           if ((SearchRec.Attr and faDirectory) = (faDirectory)) and (Config.ScanFolderSubFolders) then
           begin
-            ChildNode := Sender.AddChild(ParentNode, CreateNodeData(vtdtCategory));
-            ChildNodeData := TvCustomRealNodeData(GetNodeItemData(ChildNode, Sender));
+            ChildNode := Sender.AddChild(ParentNode, TVirtualTreeMethods.Create.CreateNodeData(vtdtCategory));
+            ChildNodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(ChildNode, Sender));
             //Dialog
             ProgressBar.Position := ProgressBar.Position + 1;
             ProgressDialog.Update;
@@ -160,14 +160,14 @@ begin
           else
             if (SearchRec.Attr <> faDirectory) and (Config.ScanFolderFileTypes.IndexOf(sFileExt) <> -1) then
             begin
-              ChildNode := Sender.AddChild(ParentNode, CreateNodeData(vtdtFile));
-              ChildNodeData := TvCustomRealNodeData(GetNodeItemData(ChildNode, Sender));
+              ChildNode := Sender.AddChild(ParentNode, TVirtualTreeMethods.Create.CreateNodeData(vtdtFile));
+              ChildNodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(ChildNode, Sender));
               if Assigned(ChildNodeData) then
                 TvFileNodeData(ChildNodeData).PathExe := PathTemp;
             end;
           if Assigned(ChildNodeData) then
           begin
-            ChildNodeData.pNode := ChildNode;
+            ChildNodeData.SetPointerNode(ChildNode);
             ChildNodeData.Name  := TempShortName;
             if (ChildNode.ChildCount = 0) And (ChildNodeData.DataType = vtdtCategory) then
               Sender.DeleteNode(ChildNode);
@@ -223,6 +223,7 @@ var
   ChildNodeData : TvBaseNodeData;
   TempPath, sName : String;
 begin
+  //TODO: Rewrite this code (see AddChildNodeEx and maybe use a thread)
   if edtFolderPath.Text <> '' then
     TempPath := IncludeTrailingBackslash(edtFolderPath.Text);
   //Check if user insert a valid path
@@ -231,9 +232,8 @@ begin
     if (DirectoryExists(TempPath)) then
     begin
       //Add parent node
-      ChildNode := AddNodeInVST(Config.MainTree, Config.MainTree.GetFirstSelected, vtdtCategory);
-      ChildNodeData       := GetNodeItemData(ChildNode, Config.MainTree);
-      ChildNodeData.pNode := ChildNode;
+      ChildNode := TVirtualTreeMethods.Create.AddChildNodeEx(Config.MainTree, Config.MainTree.GetFirstSelected, amInsertAfter, vtdtCategory);
+      ChildNodeData := TVirtualTreeMethods.Create.GetNodeItemData(ChildNode, Config.MainTree);
 //      ImagesDM.GetNodeImageIndex(TvCustomRealNodeData(ChildNodeData), isAny);
       //Extract directory name and use it as node name (else use TempPath as name)
       sName := ExtractDirectoryName(TempPath);

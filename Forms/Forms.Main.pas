@@ -104,15 +104,11 @@ type
     procedure pcListChange(Sender: TObject);
     procedure miImportListClick(Sender: TObject);
     procedure miSaveListClick(Sender: TObject);
-    procedure AddFolder(Sender: TObject);
-    procedure AddSoftware(Sender: TObject);
-    procedure AddCategory(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure miExitClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure pmWindowPopup(Sender: TObject);
-    procedure miAddSeparator2Click(Sender: TObject);
     procedure miSortListClick(Sender: TObject);
     procedure miExportListClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -127,6 +123,7 @@ type
     procedure btnedtSearchKeyPress(Sender: TObject; var Key: Char);
     procedure tmSchedulerTimer(Sender: TObject);
     procedure mniScanFolderClick(Sender: TObject);
+    procedure miAddItemClick(Sender: TObject);
   private
     { Private declarations }
     function  GetActiveTree: TBaseVirtualTree;
@@ -148,7 +145,7 @@ implementation
 uses
   TypInfo, Forms.Options, Forms.About, Utility.Misc, Forms.ScanFolder,
   DataModules.TrayMenu, Forms.ImportList, AppConfig.Main,
-  Utility.TreeView, Frame.Options.Stats, NodeDataTypes.Base,
+  VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base,
   NodeDataTypes.Custom, Kernel.Types,
   VirtualTree.Events;
 
@@ -183,24 +180,9 @@ begin
   end;
 end;
 
-procedure TfrmMain.AddCategory(Sender: TObject);
+procedure TfrmMain.miAddItemClick(Sender: TObject);
 begin
-  CreateListItem(vstList,vtdtCategory);
-end;
-
-procedure TfrmMain.AddFolder(Sender: TObject);
-begin
-  CreateListItem(vstList,vtdtFolder);
-end;
-
-procedure TfrmMain.AddSoftware(Sender: TObject);
-begin
-  CreateListItem(vstList,vtdtFile);
-end;
-
-procedure TfrmMain.miAddSeparator2Click(Sender: TObject);
-begin
-  CreateListItem(vstList,vtdtSeparator);
+  TVirtualTreeMethods.Create.AddChildNodeByGUI(vstList, vstList.FocusedNode, TvTreeDataType(TMenuItem(Sender).Tag));
 end;
 
 procedure TfrmMain.miCopy2Click(Sender: TObject);
@@ -216,7 +198,7 @@ end;
 procedure TfrmMain.miImportListClick(Sender: TObject);
 begin
   TfrmImportList.Execute(Self);
-  RefreshList(GetActiveTree);
+  TVirtualTreeMethods.Create.RefreshList(GetActiveTree);
 end;
 
 procedure TfrmMain.miInfoASuiteClick(Sender: TObject);
@@ -239,14 +221,14 @@ end;
 procedure TfrmMain.mniScanFolderClick(Sender: TObject);
 begin
   TfrmScanFolder.Execute(Self);
-  RefreshList(GetActiveTree);
+  TVirtualTreeMethods.Create.RefreshList(GetActiveTree);
 end;
 
 procedure TfrmMain.miPaste2Click(Sender: TObject);
 var
   NodeData: TvBaseNodeData;
 begin
-  NodeData := GetNodeItemData(vstList.FocusedNode, vstList);
+  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(vstList.FocusedNode, vstList);
   if Assigned(NodeData) then
   begin
     if NodeData.DataType = vtdtCategory then
@@ -258,19 +240,19 @@ begin
     vstList.DefaultPasteMode := amAddChildLast;
   vstList.PasteFromClipboard;
   vstList.Expanded[vstList.FocusedNode] := True;
-  RefreshList(vstList);
+  TVirtualTreeMethods.Create.RefreshList(vstList);
 end;
 
 procedure TfrmMain.miSortItemsClick(Sender: TObject);
 begin
   vstList.Sort(vstList.GetFirstSelected,0,sdAscending,True);
-  RefreshList(vstList);
+  TVirtualTreeMethods.Create.RefreshList(vstList);
 end;
 
 procedure TfrmMain.miSortListClick(Sender: TObject);
 begin
   vstList.SortTree(0,sdAscending,True);
-  RefreshList(vstList);
+  TVirtualTreeMethods.Create.RefreshList(vstList);
 end;
 
 procedure TfrmMain.pcListChange(Sender: TObject);
@@ -293,7 +275,7 @@ end;
 
 procedure TfrmMain.pmWindowPopup(Sender: TObject);
 var
-  NodeData : PBaseData;
+  NodeData : TvBaseNodeData;
   Point    : TPoint;
   HitInfo  : ThitInfo;
 begin
@@ -311,12 +293,12 @@ begin
   if (Assigned(vstList.FocusedNode) and (pcList.ActivePageIndex = PG_LIST)) or
      (Assigned(vstSearch.FocusedNode) and (pcList.ActivePageIndex = PG_Search)) then
   begin
-    NodeData := GetNodeDataEx(GetActiveTree.FocusedNode, GetActiveTree);
+    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(GetActiveTree.FocusedNode, GetActiveTree);
     miProperty2.Enabled     := True;
-    miRunSelectedSw.Enabled := (NodeData.Data.DataType <> vtdtSeparator);
-    miRunAs.Enabled         := (NodeData.Data.DataType <> vtdtSeparator);
-    miRunAsAdmin.Enabled    := (NodeData.Data.DataType <> vtdtSeparator);
-    miOpenFolderSw.Enabled  := (NodeData.Data.DataType in [vtdtFile,vtdtFolder]);
+    miRunSelectedSw.Enabled := (NodeData.DataType <> vtdtSeparator);
+    miRunAs.Enabled         := (NodeData.DataType <> vtdtSeparator);
+    miRunAsAdmin.Enabled    := (NodeData.DataType <> vtdtSeparator);
+    miOpenFolderSw.Enabled  := (NodeData.DataType in [vtdtFile,vtdtFolder]);
   end
   else begin
     miRunSelectedSw.Enabled := False;
@@ -375,10 +357,10 @@ begin
       LauncherSearch.Keyword    := LowerCase(Keyword);
       LauncherSearch.SearchType := SearchType;
       //Do search using LauncherSearch for parameters
-      Config.MainTree.IterateSubtree(nil, TIterateSubtreeProcs.FindNode, @LauncherSearch, [], True);
+      Config.MainTree.IterateSubtree(nil, TVirtualTreeMethods.Create.FindNode, @LauncherSearch, [], True);
     finally
       TreeSearch.EndUpdate;
-      CheckVisibleNodePathExe(TreeSearch);
+      TVirtualTreeMethods.Create.CheckVisibleNodePathExe(TreeSearch);
       //TODO: Fix it
 //ImagesDM.GetChildNodesIcons(TreeSearch, TreeSearch.RootNode, isAny);
     end;
@@ -493,7 +475,7 @@ procedure TfrmMain.miExportListClick(Sender: TObject);
 begin
   if (SaveDialog1.Execute) then
   begin
-    RefreshList(GetActiveTree);
+    TVirtualTreeMethods.Create.RefreshList(GetActiveTree);
     CopyFile(PChar(Config.DBManager.DBFileName),PChar(SaveDialog1.FileName),false)
   end;
 end;
@@ -502,10 +484,10 @@ procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   RunShutdownProcess;
   //Execute actions on ASuite's shutdown (inside vstList)
-  Config.MainTree.IterateSubtree(nil, TIterateSubTreeProcs.ActionsOnShutdown, nil);
+  Config.MainTree.IterateSubtree(nil, TVirtualTreeMethods.Create.ActionsOnShutdown, nil);
   //Hotkey
   Config.ListManager.HotKeyItemList.Clear;
-  RefreshList(nil);
+  TVirtualTreeMethods.Create.RefreshList(nil);
 end;
 
 procedure TfrmMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -543,7 +525,7 @@ begin
   //TODO: Fix it
 //ImagesDM.GetChildNodesIcons(vstList, nil, vstList.RootNode);
   RunStartupProcess;
-  RefreshList(nil);
+  TVirtualTreeMethods.Create.RefreshList(nil);
   //Get placeholder for edtSearch
   edtSearch.TextHint := StringReplace(miSearchName.Caption, '&', '', []);
 end;

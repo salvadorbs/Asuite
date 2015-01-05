@@ -102,6 +102,10 @@ object frmImportList: TfrmImportList
       Caption = 'tsLaunchers'
       TabVisible = False
       OnShow = tsLaunchersShow
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object rgrpLauncher: TRadioGroup
         Left = 12
         Top = 27
@@ -128,6 +132,10 @@ object frmImportList: TfrmImportList
       ImageIndex = 1
       TabVisible = False
       OnShow = tsSettingsShow
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object gbElements: TGroupBox
         Left = 12
         Top = 119
@@ -199,6 +207,10 @@ object frmImportList: TfrmImportList
       ImageIndex = 2
       TabVisible = False
       OnShow = tsListShow
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object vstListImp: TVirtualStringTree
         Left = 12
         Top = 3
@@ -262,6 +274,10 @@ object frmImportList: TfrmImportList
       ImageIndex = 3
       TabVisible = False
       OnShow = tsProgressShow
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lblItems: TLabel
         Left = 12
         Top = 120

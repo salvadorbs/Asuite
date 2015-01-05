@@ -78,8 +78,6 @@ begin
 end;
 
 function TfrmPropertyItem.InternalLoadData: Boolean;
-var
-  FFrameAdvanced: PVirtualNode;
 begin
   Assert(Assigned(FListNodeData), 'FListNodeData is not assigned!');
 
@@ -88,7 +86,7 @@ begin
   else
     if FListNodeData.DataType = vtdtCategory then
       FFrameGeneral := AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmCatGeneralPropertyPage.Create(Self, FListNodeData)));
-  FFrameAdvanced := AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmAdvancedPropertyPage.Create(Self, FListNodeData)));
+  AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmAdvancedPropertyPage.Create(Self, FListNodeData)));
   AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmBehaviorPropertyPage.Create(Self, FListNodeData)));
 end;
 

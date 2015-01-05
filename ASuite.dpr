@@ -19,7 +19,6 @@ uses
   Kernel.Enumerations in 'Library\Kernel.Enumerations.pas',
   Utility.FileFolder in 'Utilities\Utility.FileFolder.pas',
   Utility.System in 'Utilities\Utility.System.pas',
-  Utility.TreeView in 'Utilities\Utility.TreeView.pas',
   Utility.XML in 'Utilities\Utility.XML.pas',
   Frame.BaseEntity in 'Frame\Frame.BaseEntity.pas' {frmBaseEntityPage: TFrame},
   Frame.Properties.Base in 'Frame\Frame.Properties.Base.pas' {frmBasePropertyPage: TFrame},
@@ -61,7 +60,8 @@ uses
   VirtualTree.Events in 'Library\VirtualTree.Events.pas',
   Forms.Dialog.BaseEntity in 'Forms\Forms.Dialog.BaseEntity.pas' {frmDialogBase},
   Forms.Options in 'Forms\Forms.Options.pas' {frmOptions},
-  Forms.PropertyItem in 'Forms\Forms.PropertyItem.pas' {frmPropertyItem};
+  Forms.PropertyItem in 'Forms\Forms.PropertyItem.pas' {frmPropertyItem},
+  VirtualTree.Methods in 'Library\VirtualTree.Methods.pas';
 
 //SQLite3 static library
 

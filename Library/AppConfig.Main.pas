@@ -218,8 +218,8 @@ implementation
 
 uses
   Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, Utility.Misc,
-  Forms.GraphicMenu, Utility.Treeview, Utility.FileFolder, USingleInst,
-  NodeDataTypes.Files, Utility.XML;
+  Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder, USingleInst,
+  Utility.XML;
 
 function TConfiguration.CheckReadOnlyMode: Boolean;
 begin
@@ -339,9 +339,7 @@ end;
 
 procedure TConfiguration.HandleParam(const Param: string);
 var
-  iCmdLine: Integer;
   sName, sValue: string;
-  Node: PVirtualNode;
 
   procedure ParseParam(s: string);
   var
@@ -367,13 +365,9 @@ begin
       FPaths.SuitePathList := FPaths.RelativeToAbsolute(RemoveAllQuotes(sValue));
     if CompareText(sName, 'additem') = 0 then
     begin
+      //Add new node
       if Assigned(FDBManager) then
-      begin
-        //Add new node
-        Node := FMainTree.AddChild(nil, TvFileNodeData.Create(vtdtFile));
-        //Set node properties
-        GetDropFileProperty(FMainTree, Node, RemoveAllQuotes(sValue));
-      end;
+        TVirtualTreeMethods.Create.AddNodeByPathFile(FMainTree, nil, RemoveAllQuotes(sValue), amInsertAfter);
     end;
   end;
 end;
@@ -613,7 +607,7 @@ end;
 procedure TConfiguration.SetChanged(const Value: Boolean);
 begin
   FChanged := Value;
-  RefreshList(frmMain.vstList);
+  TVirtualTreeMethods.Create.RefreshList(frmMain.vstList);
 end;
 
 procedure TConfiguration.SetGMBtnDocuments(Value: string);
@@ -676,7 +670,7 @@ end;
 
 procedure TConfiguration.SetLangID(value: Word);
 begin
-  if (value <> -1) or (value <> 0) then
+  if (value <> 0) then
     FLangID := value
   else
     FLangID := 1033;

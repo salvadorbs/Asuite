@@ -98,7 +98,7 @@ implementation
 {$R *.dfm}
 
 uses
-  Forms.Main, Utility.Misc, Utility.TreeView, AppConfig.Main, VirtualTree.Events,
+  Forms.Main, Utility.Misc, AppConfig.Main, VirtualTree.Events, VirtualTree.Methods,
   Utility.FileFolder, Utility.XML, Database.Manager, Kernel.Types, NodeDataTypes.Base;
 
 procedure TfrmImportList.btnCancelClick(Sender: TObject);
@@ -292,7 +292,7 @@ var
       lblItems.Caption  := Format(DKLangConstW('msgProcessingItems'), [((pbImport.Position / pbImport.Max) * 100), pbImport.Max]);
       Self.Update;
       //Create new node in vstList
-      tn             := Tree.AddChild(tn, CreateNodeData(NodeDataImp.Data.DataType));
+      tn             := Tree.AddChild(tn, TVirtualTreeMethods.Create.CreateNodeData(NodeDataImp.Data.DataType));
       NodeData       := Tree.GetNodeData(tn);
       //Copy from NodeDataImp
       NodeData.Data.Copy(NodeDataImp.Data);
@@ -300,7 +300,7 @@ var
       RenameShortcutOnDesktop(NodeData.Data.Name + EXT_LNK,NodeDataImp.Data.Name + EXT_LNK);
       NodeData.Data.Name     := NodeDataImp.Data.Name;
       NodeData.Data.Position := tn.Index;
-      NodeData.Data.pNode    := tn;
+      NodeData.Data.SetPointerNode(tn);
       //Get icon item, only if tn is in first level
 //      if (NodeData.Data.DataType <> vtdtSeparator) and (Tree.GetNodeLevel(tn) = 0) then
 //        ImagesDM.GetNodeImageIndex(TvCustomRealNodeData(NodeData.Data), isAny);
@@ -369,7 +369,7 @@ var
   NumberNode : Integer;
 begin
   NumberNode := 0;
-  Sender.IterateSubtree(nil, TIterateSubTreeProcs.IncNumberNode, @NumberNode, [], True);
+  Sender.IterateSubtree(nil, TVirtualTreeMethods.Create.IncNumberNode, @NumberNode, [], True);
   Result := NumberNode;
 end;
 

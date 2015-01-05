@@ -75,8 +75,7 @@ type
 implementation
 
 uses
-  AppConfig.Main, Lists.Manager, Kernel.Consts,
-  Utility.TreeView, NodeDataTypes.Files;
+  AppConfig.Main, Lists.Manager, Kernel.Consts, VirtualTree.Methods, NodeDataTypes.Files;
 
 procedure TvCustomRealNodeData.Copy(source: TvBaseNodeData);
 var
@@ -166,7 +165,7 @@ begin
 
   LastAccess := DateTimeToUnix(Now);
   Self.Changed := True;
-  RefreshList(Tree);
+  TVirtualTreeMethods.Create.RefreshList(Tree);
   Result := True;
 end;
 

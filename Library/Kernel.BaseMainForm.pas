@@ -49,8 +49,8 @@ type
 implementation
 
 uses
-  Utility.Treeview, AppConfig.Main, NodeDataTypes.Custom, Kernel.Consts,
-  DataModules.TrayMenu, Kernel.Enumerations, USingleInst;
+  AppConfig.Main, NodeDataTypes.Custom, Kernel.Consts, DataModules.TrayMenu,
+  Kernel.Enumerations, USingleInst, VirtualTree.Methods;
 
 constructor TBaseMainForm.Create(AOwner: TComponent);
 begin
@@ -133,7 +133,7 @@ end;
 procedure TBaseMainForm.WMExitSizeMove(var Message: TMessage);
 begin
   Config.Changed := True;
-  RefreshList(nil);
+  TVirtualTreeMethods.Create.RefreshList(nil);
 end;
 
 procedure TBaseMainForm.WMHotKey(var Msg: TWMHotKey);

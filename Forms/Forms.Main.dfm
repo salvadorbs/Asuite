@@ -74,10 +74,10 @@ object frmMain: TfrmMain
     ParentFont = False
     TabOrder = 0
     OnChange = pcListChange
-    ExplicitWidth = 184
-    ExplicitHeight = 340
     object tbList: TTabSheet
       Caption = 'List'
+      ExplicitLeft = 0
+      ExplicitTop = 0
       ExplicitWidth = 176
       ExplicitHeight = 312
       object vstList: TVirtualStringTree
@@ -122,8 +122,10 @@ object frmMain: TfrmMain
     end
     object tbSearch: TTabSheet
       Caption = 'Search'
-      ExplicitWidth = 176
-      ExplicitHeight = 312
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object sbtnSearch: TSpeedButton
         Left = 169
         Top = 0
@@ -156,8 +158,6 @@ object frmMain: TfrmMain
         TabOrder = 0
         TreeOptions.PaintOptions = [toShowDropmark, toThemeAware, toUseBlendedImages]
         TreeOptions.SelectionOptions = [toFullRowSelect, toMultiSelect, toRightClickSelect]
-        ExplicitWidth = 176
-        ExplicitHeight = 289
         Columns = <
           item
             Position = 0
@@ -174,14 +174,14 @@ object frmMain: TfrmMain
         Left = 0
         Top = 0
         Width = 166
-        Height = 21
+        Height = 23
         Align = alLeft
         Anchors = [akLeft, akTop, akRight]
         Constraints.MaxHeight = 21
         PopupMenu = pmSearch
         TabOrder = 1
         OnKeyPress = btnedtSearchKeyPress
-        ExplicitWidth = 149
+        ExplicitHeight = 21
       end
     end
   end
@@ -238,19 +238,22 @@ object frmMain: TfrmMain
       end
       object miAddCat1: TMenuItem
         Caption = 'Add category'
-        OnClick = AddCategory
+        OnClick = miAddItemClick
       end
       object miAddSw1: TMenuItem
+        Tag = 1
         Caption = 'Add software'
-        OnClick = AddSoftware
+        OnClick = miAddItemClick
       end
       object miAddFolder1: TMenuItem
+        Tag = 2
         Caption = 'Add folder'
-        OnClick = AddFolder
+        OnClick = miAddItemClick
       end
       object miAddSeparator1: TMenuItem
+        Tag = 3
         Caption = 'Add separator'
-        OnClick = miAddSeparator2Click
+        OnClick = miAddItemClick
       end
       object miN11: TMenuItem
         Caption = '-'
@@ -326,20 +329,23 @@ object frmMain: TfrmMain
     object miAddCat2: TMenuItem
       Caption = 'Add category'
       ShortCut = 114
-      OnClick = AddCategory
+      OnClick = miAddItemClick
     end
     object miAddSw2: TMenuItem
+      Tag = 1
       Caption = 'Add software'
       ShortCut = 115
-      OnClick = AddSoftware
+      OnClick = miAddItemClick
     end
     object miAddFolder2: TMenuItem
+      Tag = 2
       Caption = 'Add folder'
-      OnClick = AddFolder
+      OnClick = miAddItemClick
     end
     object miAddSeparator2: TMenuItem
+      Tag = 3
       Caption = 'Add separator'
-      OnClick = miAddSeparator2Click
+      OnClick = miAddItemClick
     end
     object N10: TMenuItem
       Caption = '-'

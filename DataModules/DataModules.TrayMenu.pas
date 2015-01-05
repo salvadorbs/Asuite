@@ -130,9 +130,9 @@ var
 implementation
 
 uses
-  DataModules.Images, Forms.Main, AppConfig.Main,
+  DataModules.Images, Forms.Main, AppConfig.Main, VirtualTree.Methods,
   Utility.System, Forms.GraphicMenu, Kernel.Types, NodeDataTypes.Files,
-  NodeDataTypes.Custom, NodeDataTypes.Base, Utility.TreeView;
+  NodeDataTypes.Custom, NodeDataTypes.Base;
 
 {$R *.dfm}
 
@@ -286,13 +286,13 @@ var
 begin
   if Assigned(Node) then
   begin
-    NodeData := GetNodeDataEx(Node, Sender);
+    NodeData := TVirtualTreeMethods.Create.GetNodeDataEx(Node, Sender);
     ItemNodeData := NodeData.Data;
     //Create a menu item and add it in trayicon menu
     MenuItem := TASMenuItem.Create(Application.MainForm);
     if (Node.Parent <> Sender.RootNode) then
     begin
-      ParentNodeData := GetNodeDataEx(Node.Parent, Sender);
+      ParentNodeData := TVirtualTreeMethods.Create.GetNodeDataEx(Node.Parent, Sender);
       ParentNodeData.MenuItem.Add(MenuItem);
     end
     else
@@ -466,7 +466,7 @@ begin
   ChildNode := ASender.GetFirstChild(ANode);
   while Assigned(ChildNode) do
   begin
-    NodeData := GetNodeItemData(ChildNode, ASender);
+    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(ChildNode, ASender);
 //    if NodeData.DataType in [vtdtFile, vtdtFolder] then
 //      TvFileNodeData(NodeData).CheckPathExe;
 
