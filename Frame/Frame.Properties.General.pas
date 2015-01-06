@@ -23,7 +23,8 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, DKLang, Frame.Properties.Base;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, DKLang, Frame.Properties.Base,
+  Vcl.Mask, JvExMask, JvToolEdit;
 
 type
   TfrmBaseGeneralPropertyPage = class(TfrmBasePropertyPage)
@@ -31,8 +32,12 @@ type
     lbName: TLabel;
     edtName: TEdit;
     lbPathIcon: TLabel;
-    edtPathIcon: TEdit;
-    btnBrowseIcon: TButton;
+    edtPathIcon: TJvFilenameEdit;
+    procedure edtPathIconAfterDialog(Sender: TObject; var AName: string;
+      var AAction: Boolean);
+    procedure edtPathIconBeforeDialog(Sender: TObject; var AName: string;
+      var AAction: Boolean);
+    procedure edtPathIconExit(Sender: TObject);
     procedure edtNameEnter(Sender: TObject);
   private
     { Private declarations }
@@ -42,6 +47,8 @@ type
     function GetImageIndex: Integer; override;
     function InternalLoadData: Boolean; override;
     function InternalSaveData: Boolean; override;
+
+    function CheckPropertyPath(ASender: TJvFileDirEdit; APath: string = ''): Boolean;
   public
     { Public declarations }
   end;
@@ -52,7 +59,8 @@ var
 implementation
 
 uses
-  Utility.Misc, Kernel.Enumerations, NodeDataTypes.Files;
+  Utility.Misc, Kernel.Enumerations, NodeDataTypes.Files, AppConfig.Main,
+  Utility.System;
 
 {$R *.dfm}
 
@@ -70,9 +78,60 @@ begin
   end;
 end;
 
+function TfrmBaseGeneralPropertyPage.CheckPropertyPath(ASender: TJvFileDirEdit;
+  APath: string): Boolean;
+var
+  cColor : TColor;
+  sHint, sPath: string;
+begin
+  sPath := APath;
+  if APath = '' then
+    sPath := ASender.Text;
+  //Check path
+  Result := IsPathExists(sPath);
+  if Result then
+  begin
+    //File found - Change font color with default color (clWindowText)
+    cColor := clWindowText;
+    sHint  := '';
+  end
+  else begin
+    //File not found - Change font color with red
+    cColor := clRed;
+    sHint  := DKLangConstW('msgFileNotFound');
+  end;
+  //Change ASender's properties Color and Hint in based of vars cColor and sHint
+  ASender.Hint := sHint;
+  if (ASender is TJvFilenameEdit) then
+    TJvFilenameEdit(ASender).Font.Color := cColor
+  else
+    if (ASender is TJvDirectoryEdit) then
+      TJvDirectoryEdit(ASender).Font.Color := cColor;
+end;
+
 procedure TfrmBaseGeneralPropertyPage.edtNameEnter(Sender: TObject);
 begin
-  TEdit(Sender).Color := clWindow;
+  if Sender is TEdit then
+    TEdit(Sender).Color := clWindow;
+end;
+
+procedure TfrmBaseGeneralPropertyPage.edtPathIconAfterDialog(Sender: TObject;
+  var AName: string; var AAction: Boolean);
+begin
+  AName := Config.Paths.AbsoluteToRelative(AName);
+  CheckPropertyPath(edtPathIcon, AName);
+end;
+
+procedure TfrmBaseGeneralPropertyPage.edtPathIconBeforeDialog(Sender: TObject;
+  var AName: string; var AAction: Boolean);
+begin
+  edtPathIcon.Filter := DKLangConstW('msgFilterIconExe');
+  AName := Config.Paths.RelativeToAbsolute(AName);
+end;
+
+procedure TfrmBaseGeneralPropertyPage.edtPathIconExit(Sender: TObject);
+begin
+  CheckPropertyPath(edtPathIcon);
 end;
 
 function TfrmBaseGeneralPropertyPage.GetImageIndex: Integer;

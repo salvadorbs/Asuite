@@ -145,7 +145,7 @@ object frmMain: TfrmMain
         ParentShowHint = False
         PopupMenu = pmWindow
         ShowHint = True
-        TabOrder = 0
+        TabOrder = 1
         TreeOptions.PaintOptions = [toHideFocusRect, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
         TreeOptions.SelectionOptions = [toFullRowSelect, toMultiSelect, toRightClickSelect]
         Columns = <
@@ -169,7 +169,7 @@ object frmMain: TfrmMain
         Anchors = [akLeft, akTop, akRight]
         Constraints.MaxHeight = 21
         PopupMenu = pmSearch
-        TabOrder = 1
+        TabOrder = 0
         OnKeyPress = btnedtSearchKeyPress
       end
     end
@@ -219,7 +219,6 @@ object frmMain: TfrmMain
       Caption = 'Edit'
       object mniRunItem: TMenuItem
         Action = actRunItem
-        Default = True
       end
       object mniRunAsItem: TMenuItem
         Action = actRunAsItem
@@ -410,6 +409,7 @@ object frmMain: TfrmMain
     Top = 192
     object actRunItem: TAction
       Caption = 'Run'
+      ShortCut = 120
       OnUpdate = actRunItemUpdate
     end
     object actRunAsItem: TAction
@@ -431,36 +431,43 @@ object frmMain: TfrmMain
     end
     object actAddCat: TAction
       Caption = 'Add category...'
+      ShortCut = 114
       OnExecute = actAddItem
       OnUpdate = actAddItemUpdate
     end
     object actCut: TAction
       Caption = 'Cut'
+      ShortCut = 16472
       OnExecute = actCutExecute
       OnUpdate = actCutCopyDeleteUpdate
     end
     object actCopy: TAction
       Caption = 'Copy'
+      ShortCut = 16451
       OnExecute = actCopyExecute
       OnUpdate = actCutCopyDeleteUpdate
     end
     object actPaste: TAction
       Caption = 'Paste'
+      ShortCut = 16470
       OnExecute = actPasteExecute
       OnUpdate = actPasteUpdate
     end
     object actDelete: TAction
       Caption = 'Delete'
+      ShortCut = 46
       OnUpdate = actCutCopyDeleteUpdate
     end
     object actProperty: TAction
       Caption = 'Property'
+      ShortCut = 116
       OnExecute = actPropertyExecute
       OnUpdate = actCutCopyDeleteUpdate
     end
     object actAddSoftware: TAction
       Tag = 1
       Caption = 'Add software...'
+      ShortCut = 115
       OnExecute = actAddItem
       OnUpdate = actAddItemUpdate
     end

@@ -71,10 +71,10 @@ function IsValidURLProtocol(const URL: string): Boolean;
   {Checks if the given URL is valid per RFC1738. Returns True if valid and False
   if not.}
 const
-  Protocols: array[1..11] of string = (
+  Protocols: array[1..12] of string = (
     // Array of valid protocols - per RFC 1738
     'ftp://', 'http://', 'gopher://', 'mailto:', 'news:', 'nntp://',
-    'telnet://', 'wais://', 'file://', 'prospero://', 'https://'
+    'telnet://', 'wais://', 'file://', 'prospero://', 'https://', 'steam://'
   );
 var
   I: Integer;   // loops thru known protocols

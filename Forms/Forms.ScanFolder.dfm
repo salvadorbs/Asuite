@@ -23,7 +23,7 @@ object frmScanFolder: TfrmScanFolder
     Height = 25
     Caption = 'Scan'
     Default = True
-    TabOrder = 0
+    TabOrder = 1
     OnClick = btnScanClick
   end
   object btnCancel: TButton
@@ -32,7 +32,7 @@ object frmScanFolder: TfrmScanFolder
     Width = 75
     Height = 25
     Caption = 'Cancel'
-    TabOrder = 1
+    TabOrder = 2
     OnClick = btnCancelClick
   end
   object pnlScan: TPanel
@@ -40,7 +40,7 @@ object frmScanFolder: TfrmScanFolder
     Top = 8
     Width = 329
     Height = 209
-    TabOrder = 2
+    TabOrder = 0
     object grpFileTypes: TGroupBox
       Left = 8
       Top = 88
@@ -155,28 +155,29 @@ object frmScanFolder: TfrmScanFolder
         Height = 13
         Caption = 'Folder path'
       end
-      object btnBrowse: TButton
-        Left = 239
-        Top = 33
-        Width = 65
-        Height = 21
-        Caption = 'Browse'
-        TabOrder = 0
-      end
-      object edtFolderPath: TEdit
-        Left = 8
-        Top = 33
-        Width = 225
-        Height = 21
-        TabOrder = 1
-      end
       object cbSubfolders: TCheckBox
         Left = 8
         Top = 58
         Width = 177
         Height = 17
         Caption = 'Scan subfolders'
-        TabOrder = 2
+        TabOrder = 1
+      end
+      object edtFolderPath: TJvDirectoryEdit
+        Left = 8
+        Top = 33
+        Width = 297
+        Height = 21
+        DialogKind = dkWin32
+        DialogOptionsWin32 = [odStatusAvailable, odNewDialogStyle, odShareable]
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 0
+        Text = ''
       end
     end
   end
@@ -185,7 +186,7 @@ object frmScanFolder: TfrmScanFolder
     Top = 226
     LangData = {
       0D0066726D5363616E466F6C646572010100000001000000070043617074696F
-      6E0114000000090062746E43616E63656C010100000003000000070043617074
+      6E0113000000090062746E43616E63656C010100000003000000070043617074
       696F6E00070062746E5363616E010100000004000000070043617074696F6E00
       0700706E6C5363616E00000C0067727046696C65547970657301010000000500
       0000070043617074696F6E000F0062746E54797065735265706C616365010100
@@ -199,8 +200,7 @@ object frmScanFolder: TfrmScanFolder
       0000070043617074696F6E00100062746E4578636C75646544656C6574650101
       0000000C000000070043617074696F6E0007006772705061746801010000000D
       000000070043617074696F6E000C006C62466F6C646572506174680101000000
-      0E000000070043617074696F6E00090062746E42726F77736501010000000F00
-      0000070043617074696F6E000D00656474466F6C6465725061746800000C0063
-      62537562666F6C64657273010100000010000000070043617074696F6E00}
+      0E000000070043617074696F6E000C006362537562666F6C6465727301010000
+      0010000000070043617074696F6E000D00656474466F6C646572506174680000}
   end
 end

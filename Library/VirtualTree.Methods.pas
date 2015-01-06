@@ -173,8 +173,17 @@ begin
     NodeData.Parameters := Config.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfParameter));
     NodeData.WorkingDir := Config.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfWorkingDir));
   end
-  else //Normal file
-    NodeData.PathExe := Config.Paths.AbsoluteToRelative(APathFile);
+  else begin
+    if LowerCase(ExtractFileExt(APathFile)) = EXT_URL then
+    begin
+      //Shortcut
+      NodeData.PathExe    := Config.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfPathExe));
+      NodeData.Parameters := Config.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfParameter));
+      NodeData.WorkingDir := Config.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfWorkingDir));
+    end
+    else //Normal file
+      NodeData.PathExe := Config.Paths.AbsoluteToRelative(APathFile);
+  end;
   //If it is a directory, use folder icon
   if DirectoryExists(NodeData.PathAbsoluteExe) then
     NodeData.PathIcon := Config.Paths.AbsoluteToRelative(Config.Paths.SuitePathIconsTree + FILEICON_Folder);

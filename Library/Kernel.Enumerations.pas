@@ -66,7 +66,8 @@ type
   TShortcutField = (
       sfPathExe,
       sfParameter,
-      sfWorkingDir
+      sfWorkingDir,
+      sfPathIcon
   );
 
   //Run modes
