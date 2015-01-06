@@ -24,21 +24,31 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
-  DKLang, Frame.Properties.General;
+  DKLang, Frame.Properties.General, Vcl.Mask, JvExMask, JvToolEdit;
 
 type
   TfrmSWGeneralPropertyPage = class(TfrmBaseGeneralPropertyPage)
     grpSoftware: TGroupBox;
-    btnBrowseWorkingDir: TButton;
-    edtWorkingDir: TEdit;
     lbWorkingDir: TLabel;
-    btnBrowseExe: TButton;
     lbInfo2: TLabel;
     edtParameters: TEdit;
     lbParameters: TLabel;
-    edtPathExe: TEdit;
     lbPathExe: TLabel;
     DKLanguageController1: TDKLanguageController;
+    edtWorkingDir: TJvDirectoryEdit;
+    edtPathExe: TJvFilenameEdit;
+    btnExtractName: TButton;
+    procedure edtPathExeAfterDialog(Sender: TObject; var AName: string;
+      var AAction: Boolean);
+    procedure edtPathExeBeforeDialog(Sender: TObject; var AName: string;
+      var AAction: Boolean);
+    procedure edtPathExeChange(Sender: TObject);
+    procedure edtPathExeExit(Sender: TObject);
+    procedure btnExtractNameClick(Sender: TObject);
+    procedure edtWorkingDirAfterDialog(Sender: TObject; var AName: string;
+      var AAction: Boolean);
+    procedure edtWorkingDirBeforeDialog(Sender: TObject; var AName: string;
+      var AAction: Boolean);
   private
     { Private declarations }
   strict protected
@@ -54,10 +64,65 @@ var
 implementation
 
 uses
-  Kernel.Consts, NodeDataTypes.Files,
+  Kernel.Consts, NodeDataTypes.Files, PJVersionInfo,
   AppConfig.Main;
 
 {$R *.dfm}
+
+procedure TfrmSWGeneralPropertyPage.btnExtractNameClick(Sender: TObject);
+var
+  VersionInfo : TPJVersionInfo;
+  sPath : String;
+begin
+  VersionInfo := TPJVersionInfo.Create(Self);
+  try
+    sPath := Config.Paths.RelativeToAbsolute(edtPathExe.text);
+    if FileExists(sPath) then
+    begin
+      VersionInfo.FileName := sPath;
+      if (VersionInfo.ProductName <> '') then
+        edtName.Text := VersionInfo.ProductName;
+    end;
+  finally
+    VersionInfo.Free;
+  end;
+end;
+
+procedure TfrmSWGeneralPropertyPage.edtPathExeAfterDialog(Sender: TObject;
+  var AName: string; var AAction: Boolean);
+begin
+  AName := Config.Paths.AbsoluteToRelative(AName);
+end;
+
+procedure TfrmSWGeneralPropertyPage.edtPathExeBeforeDialog(Sender: TObject;
+  var AName: string; var AAction: Boolean);
+begin
+  edtPathExe.Filter := DKLangConstW('msgFilterExe');
+  AName := Config.Paths.RelativeToAbsolute(AName);
+end;
+
+procedure TfrmSWGeneralPropertyPage.edtPathExeChange(Sender: TObject);
+begin
+  btnExtractName.Enabled := CheckPropertyPath(edtPathExe);
+end;
+
+procedure TfrmSWGeneralPropertyPage.edtPathExeExit(Sender: TObject);
+begin
+  CheckPropertyPath(TJvFileDirEdit(Sender));
+end;
+
+procedure TfrmSWGeneralPropertyPage.edtWorkingDirAfterDialog(Sender: TObject;
+  var AName: string; var AAction: Boolean);
+begin
+  AName := Config.Paths.AbsoluteToRelative(AName);
+  CheckPropertyPath(edtWorkingDir, AName);
+end;
+
+procedure TfrmSWGeneralPropertyPage.edtWorkingDirBeforeDialog(Sender: TObject;
+  var AName: string; var AAction: Boolean);
+begin
+  AName := Config.Paths.RelativeToAbsolute(AName);
+end;
 
 function TfrmSWGeneralPropertyPage.InternalLoadData: Boolean;
 var

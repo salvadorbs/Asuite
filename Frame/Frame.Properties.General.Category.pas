@@ -24,7 +24,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, VirtualTrees, DKLang,
-  Frame.Properties.General;
+  Frame.Properties.General, Vcl.Mask, JvExMask, JvToolEdit;
 
 type
   TfrmCatGeneralPropertyPage = class(TfrmBaseGeneralPropertyPage)

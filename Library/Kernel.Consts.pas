@@ -58,6 +58,7 @@ const
   EXT_XMLBCK    = '.bck';
   EXT_ICO       = '.ico';
   EXT_LNK       = '.lnk';
+  EXT_URL       = '.url';
   EXT_EXE       = '.exe';
 
   //File

@@ -22,7 +22,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, DKLang;
+  Dialogs, StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, DKLang, Vcl.Mask,
+  JvExMask, JvToolEdit;
 
 type
   TfrmScanFolder = class(TForm)
@@ -42,11 +43,10 @@ type
     btnExcludeReplace: TButton;
     btnExcludeDelete: TButton;
     grpPath: TGroupBox;
-    btnBrowse: TButton;
-    edtFolderPath: TEdit;
     cbSubfolders: TCheckBox;
     lbFolderPath: TLabel;
     DKLanguageController1: TDKLanguageController;
+    edtFolderPath: TJvDirectoryEdit;
     procedure btnScanClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);

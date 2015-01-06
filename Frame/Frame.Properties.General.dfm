@@ -32,23 +32,24 @@ inherited frmBaseGeneralPropertyPage: TfrmBaseGeneralPropertyPage
       TabOrder = 0
       OnEnter = edtNameEnter
     end
-    object edtPathIcon: TEdit
+    object edtPathIcon: TJvFilenameEdit
       Left = 8
       Top = 58
-      Width = 267
+      Width = 338
       Height = 21
-      ParentShowHint = False
-      ShowHint = True
+      OnBeforeDialog = edtPathIconBeforeDialog
+      OnAfterDialog = edtPathIconAfterDialog
+      AddQuotes = False
+      DialogOptions = [ofHideReadOnly, ofEnableSizing]
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 1
-      Text = '$ASuite\'
-    end
-    object btnBrowseIcon: TButton
-      Left = 281
-      Top = 58
-      Width = 65
-      Height = 21
-      Caption = 'Browse'
-      TabOrder = 2
+      Text = '$BSuite\'
+      OnExit = edtPathIconExit
     end
   end
 end

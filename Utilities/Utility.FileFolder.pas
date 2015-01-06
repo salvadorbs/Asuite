@@ -20,13 +20,14 @@ function ListFiles(const Dir, Wildcard: string; const List: Classes.TStrings): B
 { Desktop shortcut }
 procedure CreateShortcutOnDesktop(const FileName, TargetFilePath, Params, WorkingDir: String);
 procedure DeleteShortcutOnDesktop(const FileName: String);
-function  GetShortcutTarget(const LinkFileName:String;ShortcutType: TShortcutField):String;
+function  GetShortcutTarget(const LinkFileName: String; ShortcutType: TShortcutField):String;
+function  GetUrlTarget(const AFileName: String; ShortcutType: TShortcutField): String;
 procedure RenameShortcutOnDesktop(const OldFileName, FileName: String);
 
 implementation
 
 uses
-  AppConfig.Main;
+  AppConfig.Main, IniFiles;
 
 function BrowseForFolder(const InitialDir: String; const Caption: String): String;
 var
@@ -209,6 +210,22 @@ begin
   end
   else
     Result := LinkFileName;
+end;
+
+function GetUrlTarget(const AFileName: String; ShortcutType: TShortcutField): String;
+var
+  IniFile: TIniFile;
+begin
+  IniFile := TIniFile.Create(AFileName);
+  try
+    case ShortcutType of
+      sfPathExe    : Result := IniFile.ReadString('InternetShortcut','URL', AFileName);
+      sfWorkingDir : Result := IniFile.ReadString('InternetShortcut','WorkingDirectory', '');
+      sfPathIcon   : Result := IniFile.ReadString('InternetShortcut','IconFile', '');
+    end;
+  finally
+    IniFile.Free;
+  end;
 end;
 
 procedure RenameShortcutOnDesktop(const OldFileName, FileName: String);
