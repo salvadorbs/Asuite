@@ -2173,10 +2173,10 @@ object frmAbout: TfrmAbout
     object lbASuiteVersion: TLabel
       Left = 14
       Top = 46
-      Width = 81
+      Width = 62
       Height = 13
       Anchors = []
-      Caption = 'Version %s %s'
+      Caption = 'Version %s'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clNavy
       Font.Height = -12

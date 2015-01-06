@@ -33,6 +33,7 @@ procedure SetFormPosition(Form: TForm; ListFormLeft, ListFormTop: Integer);
 { Misc }
 function CheckPropertyName(Edit: TEdit): Boolean;
 function  GetCheckedMenuItem(PopupMenu: TPopupMenu): TMenuItem;
+function GetASuiteVersion(ASimpleFormat: Boolean): string;
 function  IsFormatInClipBoard(format: Word): Boolean;
 function RemoveQuotes(const S: string; const QuoteChar: Char): string;
 function RemoveAllQuotes(const S: string): string;
@@ -55,7 +56,7 @@ function  GetHotKeyMod(AShortcut: TShortcut) : Integer;
 implementation
 
 uses
-  Registry, SynTaskDialog;
+  Registry, SynTaskDialog, PJVersionInfo, AppConfig.Main;
 
 function CreateDialogProgressBar(DialogMsg: String;NumberFolders: Integer): TForm;
 var
@@ -131,6 +132,33 @@ begin
   for I := 0 to PopupMenu.Items.Count - 1 do
     if PopupMenu.Items[I].Checked then
       Result := PopupMenu.Items[I];
+end;
+
+function GetASuiteVersion(ASimpleFormat: Boolean): string;
+var
+  VersionInfo: TPJVersionInfo;
+begin
+  VersionInfo := TPJVersionInfo.Create(nil);
+  try
+    VersionInfo.FileName := Config.Paths.SuiteFullFileName;
+    if ASimpleFormat then
+    begin
+      //Version format "Major.Minor Beta"
+      Result := Format('%d.%d', [VersionInfo.FileVersionNumber.V1,
+                                 VersionInfo.FileVersionNumber.V2]);
+    end
+    else begin
+      //Version format "Major.Minor.Revision.Build Beta"
+      Result := Format('%d.%d.%d.%d', [VersionInfo.FileVersionNumber.V1,
+                                       VersionInfo.FileVersionNumber.V2,
+                                       VersionInfo.FileVersionNumber.V3,
+                                       VersionInfo.FileVersionNumber.V4]);
+    end;
+    if VERSION_PRERELEASE <> '' then
+      Result := Result + ' ' + VERSION_PRERELEASE;
+  finally
+    VersionInfo.Free;
+  end;
 end;
 
 function IsFormatInClipBoard(format: Word): Boolean;

@@ -50,13 +50,13 @@ var
 implementation
 
 uses
-  Kernel.Consts;
+  Kernel.Consts, AppConfig.Main, Utility.Misc;
 
 {$R *.dfm}
 
 procedure TfrmAbout.FormCreate(Sender: TObject);
 begin
-  lbASuiteVersion.Caption := Format(lbASuiteVersion.Caption,[VERSION_COMPLETE,VERSION_PRERELEASE]);
+  lbASuiteVersion.Caption := Format(lbASuiteVersion.Caption, [GetASuiteVersion(False)]);
 end;
 
 end.

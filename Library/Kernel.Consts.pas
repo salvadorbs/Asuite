@@ -21,25 +21,13 @@ unit Kernel.Consts;
 
 interface
 
-uses
-  SysUtils, Forms;
-
 const
 
   // Application's informations
   APP_NAME  = 'ASuite';
   APP_TITLE = APP_NAME;
 
-  //TODO: Use a class for version (see TJPVersionInfo)
-  VERSION_MAJOR    = '2';
-  VERSION_MINOR    = '0';
-  VERSION_RELEASE  = '0';
-  VERSION_BUILD    = '1163';
-  VERSION_COMPLETE = VERSION_MAJOR   + '.' +
-                     VERSION_MINOR   + '.' +
-                     VERSION_RELEASE;
-  VERSION_PRERELEASE = 'Alpha 3'; //For Alpha and Beta version
-                                 //(VERSION_RELEASE + VERSION_PRERELEASE = Version)
+  VERSION_PRERELEASE = 'Beta'; //For Alpha and Beta version
 
   BACKUP_DIR     = 'backup\';
   CACHE_DIR      = 'cache\';

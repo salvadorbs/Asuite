@@ -2,7 +2,7 @@
 [ ] Fix MainForm and GM's position
 [x] Fix Kind = ikNormal in vstGetImageIndex
 [ ] Use TjvFileNameEdit in all path tedits
-[ ] Fix tiTrayMenu.Hint (version)
+[x] Fix tiTrayMenu.Hint (version)
 [ ] Fix execute function (RunNormalSw, RunAs, RunAsAdmin and OpenFolder) [ ] ExecuteItem [ ] CheckPathExe
 [ ] Fix TrayMenu functions (RunFromTrayMenu)
 [ ] Fix CheckPathExe

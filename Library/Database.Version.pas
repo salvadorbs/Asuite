@@ -22,7 +22,7 @@ unit Database.Version;
 interface
 
 uses
-  mORMot, Database.Manager, AppConfig.Main;
+  mORMot, Database.Manager, PJVersionInfo;
 
 type
   TSQLtbl_version = class(TSQLRecord) //Table tbl_version
@@ -31,9 +31,11 @@ type
     FMinor   : Integer;
     FRelease : Integer;
     FBuild   : Integer;
+
+    function ToVersionNumber: TPJVersionNumber;
   public
     class procedure Load(ADBManager: TDBManager);
-    class procedure Save(ADBManager: TDBManager; AConfig: TConfiguration);
+    class procedure Save(ADBManager: TDBManager);
   published
     //property FIELDNAME: TYPE read FFIELDNAME write FFIELDNAME;
     property Major   : Integer read FMajor write FMajor;
@@ -44,59 +46,69 @@ type
 
 implementation
 
-
+uses
+  AppConfig.Main;
 
 { TSQLtbl_version }
 
 class procedure TSQLtbl_version.Load(ADBManager: TDBManager);
 var
   SQLVersionData: TSQLtbl_version;
+  VersionNumber: TPJVersionNumber;
 begin
   if ADBManager.Database.TableHasRows(TSQLtbl_version) then
   begin
-    //Get sql data and get version info
+    //Get sql data
     SQLVersionData := TSQLtbl_version.CreateAndFillPrepare(ADBManager.Database,'');
     try
       SQLVersionData.FillOne;
-      //Create Result with db version info
-      //Review this code
-//      ADBManager.DBVersion := TVersionInfo.Create(SQLVersionData.Major,
-//                                    SQLVersionData.Minor,
-//                                    SQLVersionData.Release,
-//                                    SQLVersionData.Build);
+
+      ADBManager.DBVersion := SQLVersionData.ToVersionNumber;
     finally
       SQLVersionData.Free;
     end;
-  end
-  else begin
-    //Create Result with actual ASuite version info
-//    ADBManager.DBVersion := TVersionInfo.Create;
   end;
 end;
 
-class procedure TSQLtbl_version.Save(ADBManager: TDBManager; AConfig: TConfiguration);
+class procedure TSQLtbl_version.Save(ADBManager: TDBManager);
 var
   SQLVersionData: TSQLtbl_version;
+  VersionInfo: TPJVersionInfo;
+  IsDataExists: Boolean;
 begin
-  //If necessary, clear version table
-  if ADBManager.Database.TableHasRows(TSQLtbl_version) then
-  begin
-//    if CompareVersionInfo(ADBManager.DBVersion, AConfig.ASuiteVersion) <> 0 then
-//      ADBManager.ClearTable(TSQLtbl_version)
-//    else
-//      Exit;
-  end;
-  //Insert ASuite version info
-  SQLVersionData := TSQLtbl_version.Create;
+  VersionInfo := TPJVersionInfo.Create(nil);
   try
-//    SQLVersionData.Major   := AConfig.ASuiteVersion.Major;
-//    SQLVersionData.Minor   := AConfig.ASuiteVersion.Minor;
-//    SQLVersionData.Release := AConfig.ASuiteVersion.Release;
-//    SQLVersionData.Build   := AConfig.ASuiteVersion.Build;
-    ADBManager.Database.Add(SQLVersionData,true);
+    VersionInfo.FileName := Config.Paths.SuiteFullFileName;
+    //Select only file record by ID
+    SQLVersionData := TSQLtbl_version.CreateAndFillPrepare(ADBManager.Database, '');
+    try
+      IsDataExists := SQLVersionData.FillOne;
+
+      SQLVersionData.Major   := VersionInfo.FileVersionNumber.V1;
+      SQLVersionData.Minor   := VersionInfo.FileVersionNumber.V2;
+      SQLVersionData.Release := VersionInfo.FileVersionNumber.V3;
+      SQLVersionData.Build   := VersionInfo.FileVersionNumber.V4;
+
+      if IsDataExists then
+        ADBManager.Database.Update(SQLVersionData)
+      else
+        ADBManager.Database.Add(SQLVersionData, True);
+
+      ADBManager.DBVersion := SQLVersionData.ToVersionNumber;
+    finally
+      SQLVersionData.Free;
+    end;
   finally
-    SQLVersionData.Free;
+    VersionInfo.Free;
   end;
+end;
+
+function TSQLtbl_version.ToVersionNumber: TPJVersionNumber;
+begin
+  Result.V1 := Major;
+  Result.V2 := Minor;
+  Result.V3 := Release;
+  Result.V4 := Build;
 end;
 
 end.
