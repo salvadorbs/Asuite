@@ -467,6 +467,7 @@ begin
   while Assigned(ChildNode) do
   begin
     NodeData := TVirtualTreeMethods.Create.GetNodeItemData(ChildNode, ASender);
+    //TODO: Fix it
 //    if NodeData.DataType in [vtdtFile, vtdtFolder] then
 //      TvFileNodeData(NodeData).CheckPathExe;
 

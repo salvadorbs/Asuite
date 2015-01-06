@@ -2,19 +2,17 @@
 [ ] Fix MainForm and GM's position
 [x] Fix Kind = ikNormal in vstGetImageIndex
 [ ] Use TjvFileNameEdit in all path tedits
-[ ] Fix tiTrayMenu.Hint
+[ ] Fix tiTrayMenu.Hint (version)
 [ ] Fix execute function (RunNormalSw, RunAs, RunAsAdmin and OpenFolder) [ ] ExecuteItem [ ] CheckPathExe
 [ ] Fix TrayMenu functions (RunFromTrayMenu)
 [ ] Fix CheckPathExe
 [ ] Fix delete items in MainForm
 
-[ ] Fix hotkey in Properties
+[ ] Fix hotkey in Property
 [ ] Fix GetImageIndex in frames
 
 [x] Fix GetNodeItemData vs GetNodeDataEx
 [x] Fix ShowItemProperty (in mainform and graphic menu)
-
-[ ] Mix functions RunStartupProcess and RunShutdownProcess (and move new function in appropriate place)
 
 [ ] Load theme icons using ini files (ex. component_name = $asuite\icons\icon.ico)
 
@@ -24,4 +22,6 @@
 
 [ ] Update year in license section of all units
 
-[ ] Use toUseExplorerTheme in all vst
+[x] Use toUseExplorerTheme in all vst
+
+[ ] New About form (see CCleaner about)

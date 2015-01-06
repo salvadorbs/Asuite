@@ -30,8 +30,8 @@ const
   APP_NAME  = 'ASuite';
   APP_TITLE = APP_NAME;
 
-  //TODO: Use a class for version (see JsonToDelphiClass)
-  VERSION_MAJOR    = '2'; { TODO : Update version info with IDE macro }
+  //TODO: Use a class for version (see TJPVersionInfo)
+  VERSION_MAJOR    = '2';
   VERSION_MINOR    = '0';
   VERSION_RELEASE  = '0';
   VERSION_BUILD    = '1163';

@@ -22,7 +22,7 @@ unit Database.Options;
 interface
 
 uses
-  mORMot, SynCommons, Kernel.Enumerations, Classes,
+  mORMot, SynCommons, Kernel.Enumerations, Classes, Kernel.Types,
   SysUtils, Database.Manager, AppConfig.Main, Types;
 
 type
@@ -40,10 +40,7 @@ type
     //Main Form - Position and size
     FHoldSize           : Boolean;
     FAlwaysOnTop        : Boolean;
-    FListFormTop        : Integer;
-    FListFormLeft       : Integer;
-    FListFormWidth      : Integer;
-    FListFormHeight     : Integer;
+    FMainFormPosSize    : TRect;
     //Main Form - Treevew
     FTVBackground       : Boolean;
     FTVBackgroundPath   : RawUTF8;
@@ -75,15 +72,15 @@ type
     FActionClickRight   : TTrayiconActionClick;
     FUseClassicMenu     : Boolean;
     //Graphic Menu
-    FGMTheme            : string;
+    FGMTheme            : RawUTF8;
     FGMFade             : Boolean;
-    FGMPersonalPicture  : string;
+    FGMPersonalPicture  : RawUTF8;
     //Right buttons
-    FGMBtnDocuments     : string;
-    FGMBtnMusic         : string;
-    FGMBtnPictures      : string;
-    FGMBtnVideos        : string;
-    FGMBtnExplore       : string;
+//    FGMBtnDocuments     : RawUTF8;
+//    FGMBtnMusic         : RawUTF8;
+//    FGMBtnPictures      : RawUTF8;
+//    FGMBtnVideos        : RawUTF8;
+//    FGMBtnExplore       : RawUTF8;
     //HotKeys
     FHotKey             : Boolean;
     FWindowHotKey       : Word;
@@ -110,10 +107,7 @@ type
     // Main Form - Position and size
     property holdsize: Boolean read FHoldSize write FHoldSize;
     property alwaysontop: Boolean read FAlwaysOnTop write FAlwaysOnTop;
-    property listformtop: Integer read FListFormTop write FListFormTop;
-    property listformleft: Integer read FListFormLeft write FListFormLeft;
-    property listformwidth: Integer read FListFormWidth write FListFormWidth;
-    property listformheight: Integer read FListFormHeight write FListFormHeight;
+    property mainformpossize: TRect read FMainFormPosSize write FMainFormPosSize;
     // Main Form - Treevew
     property tvbackground: Boolean read FTVBackground write FTVBackground;
     property tvbackgroundpath: RawUTF8 read FTVBackgroundPath write FTVBackgroundPath;
@@ -145,15 +139,15 @@ type
     property actionclickright: TTrayiconActionClick read FActionClickRight write FActionClickRight;
     property useclassicmenu: Boolean read Fuseclassicmenu write Fuseclassicmenu;
     //Graphic Menu
-    property gmtheme: string read FGMTheme write FGMTheme;
+    property gmtheme: RawUTF8 read FGMTheme write FGMTheme;
     property gmfade: Boolean read FGMFade write FGMFade;
-    property gmpersonalpicture: string read FGMPersonalPicture write FGMPersonalPicture;
+    property gmpersonalpicture: RawUTF8 read FGMPersonalPicture write FGMPersonalPicture;
     //Right buttons
-    property gmbtndocuments: string read FGMBtnDocuments write FGMBtnDocuments;
-    property gmbtnpictures: string read FGMBtnPictures write FGMBtnPictures;
-    property gmbtnmusic: string read FGMBtnMusic write FGMBtnMusic;
-    property gmbtnvideos: string read FGMBtnVideos write FGMBtnVideos;
-    property gmbtnexplore: string read FGMBtnExplore write FGMBtnExplore;
+//    property gmbtndocuments: RawUTF8 read FGMBtnDocuments write FGMBtnDocuments;
+//    property gmbtnpictures: RawUTF8 read FGMBtnPictures write FGMBtnPictures;
+//    property gmbtnmusic: RawUTF8 read FGMBtnMusic write FGMBtnMusic;
+//    property gmbtnvideos: RawUTF8 read FGMBtnVideos write FGMBtnVideos;
+//    property gmbtnexplore: RawUTF8 read FGMBtnExplore write FGMBtnExplore;
     //Hot Keys
     property hotkey: Boolean read FHotKey write FHotKey;
     property windowhotkey: Word read FWindowHotKey write FWindowHotKey;
@@ -168,7 +162,7 @@ type
 implementation
 
 uses
-  DKLang, Utility.Conversions;
+  DKLang, Utility.Conversions, Forms.Main, Utility.Misc, Forms;
 
 class procedure TSQLtbl_options.Load(ADBManager: TDBManager; AConfig: TConfiguration);
 var
@@ -198,21 +192,25 @@ begin
       AConfig.HoldSize    := SQLOptionsData.holdsize;
       AConfig.AlwaysOnTop := SQLOptionsData.alwaysontop;
       //frmMain's size
-      //TODO: Review this code
-//      if Length(SQLOptionsData.mainformpossize) = 1 then
-//      begin
-//        frmMain.Width  := SQLOptionsData.mainformpossize[0].Width;
-//        frmMain.Height := SQLOptionsData.mainformpossize[0].Height;
-//        SetFormPosition(frmMain, SQLOptionsData.mainformpossize[0].Left, SQLOptionsData.mainformpossize[0].Top);
-//      end;
+      if Not SQLOptionsData.mainformpossize.IsEmpty then
+      begin
+        frmMain.Width  := SQLOptionsData.mainformpossize.Width;
+        frmMain.Height := SQLOptionsData.mainformpossize.Height;
+        SetFormPosition(frmMain, SQLOptionsData.mainformpossize.Left, SQLOptionsData.mainformpossize.Top);
+      end
+      else begin
+        frmMain.Top  := (Screen.WorkAreaHeight - frmMain.Height) div 2;
+        frmMain.Left := (Screen.WorkAreaWidth - frmMain.Width) div 2;
+        AConfig.Changed := True;
+      end;
 //      AConfig.MissedSchedulerTask := SQLOptionsData.missedschedulertask;
       //Main Form - Treevew
       AConfig.TVBackgroundPath   := UTF8ToString(SQLOptionsData.tvbackgroundpath);
       AConfig.TVBackground       := SQLOptionsData.tvbackground;
       AConfig.TVAutoOpClCats     := SQLOptionsData.tvautoopclcats;
       //Treeview Font
-//      StrToFont(UTF8ToString(SQLOptionsData.tvfont), AConfig.TVFont);
-//      AConfig.MainTree.Font.Assign(AConfig.TVFont);
+      StrToFont(UTF8ToString(SQLOptionsData.tvfont), AConfig.TVFont);
+      AConfig.MainTree.Font.Assign(AConfig.TVFont);
       //MRU
       AConfig.MRU            := SQLOptionsData.mru;
       AConfig.SubMenuMRU     := SQLOptionsData.submenumru;
@@ -259,7 +257,6 @@ class procedure TSQLtbl_options.Save(ADBManager: TDBManager; AConfig: TConfigura
 var
   SQLOptionsData   : TSQLtbl_options;
   rectMainForm     : TRect;
-  pointGraphicMenu : TPoint;
 begin
   //Clear options table
   if ADBManager.Database.TableHasRows(TSQLtbl_options) then
@@ -278,12 +275,11 @@ begin
     //main form - position and size
     SQLOptionsData.holdsize          := AConfig.HoldSize;
     SQLOptionsData.alwaysontop       := AConfig.AlwaysOnTop;
-    //TODO: Review this code
-//    rectMainForm.top    := frmMain.Top;
-//    rectMainForm.left   := frmMain.Left;
-//    rectMainForm.width  := frmMain.Width;
-//    rectMainForm.height := frmMain.Height;
-//    SQLOptionsData.DynArray('mainformpossize').Add(rectMainForm);
+    rectMainForm.top    := frmMain.Top;
+    rectMainForm.left   := frmMain.Left;
+    rectMainForm.width  := frmMain.Width;
+    rectMainForm.height := frmMain.Height;
+    SQLOptionsData.mainformpossize := rectMainForm;
 //    SQLOptionsData.missedschedulertask := AConfig.MissedSchedulerTask;
     //main form - treevew
     SQLOptionsData.tvbackground     := AConfig.TVBackground;
@@ -318,9 +314,6 @@ begin
     SQLOptionsData.gmtheme            := AConfig.GMTheme;
     SQLOptionsData.gmfade             := AConfig.GMFade;
     SQLOptionsData.gmpersonalpicture  := AConfig.GMPersonalPicture;
-//    pointGraphicMenu.Y := AConfig.GMPositionTop;
-//    pointGraphicMenu.X := AConfig.GMPositionLeft;
-//    SQLOptionsData.DynArray('gmposition').Add(pointGraphicMenu);
     //Hot Keys
     SQLOptionsData.HotKey             := AConfig.HotKey;
     SQLOptionsData.WindowHotKey       := AConfig.WindowHotKey;
