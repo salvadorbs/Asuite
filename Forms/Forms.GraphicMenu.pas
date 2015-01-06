@@ -233,33 +233,15 @@ begin
   //Set PopUpMenu's ImageIndexes
 //  miRunSelectedSw.ImageIndex := Config.ASuiteIcons.PopupMenu.Run;
 //  miProperty2.ImageIndex   := Config.ASuiteIcons.PopupMenu.Properties;
-//  //Position
-//  if Config.GMPositionTop <> -1 then
-//    Self.Top  := Config.GMPositionTop
-//  else
-//    Self.Top  := Screen.WorkAreaRect.Bottom - Height;
-//  if Config.GMPositionLeft <> -1 then
-//    Self.Left  := Config.GMPositionLeft
-//  else
-//    Self.Left  := Screen.WorkAreaRect.Right - Width;
+  //Position
+  Self.Top  := Screen.WorkAreaRect.Bottom - Height;
+  Self.Left := Screen.WorkAreaRect.Right - Width;
 end;
 
 procedure TfrmGraphicMenu.FormDeactivate(Sender: TObject);
 begin
   //if menu lost its focus, it hide
   CloseMenu;
-//  //Save position - TOP
-//  if Self.Top <> Config.GMPositionTop then
-//  begin
-//    Config.GMPositionTop := Self.Top;
-//    Config.Changed := True;
-//  end;
-//  //Save position - LEFT
-//  if Self.Left <> Config.GMPositionLeft then
-//  begin
-//    Config.GMPositionLeft := Self.Left;
-//    Config.Changed := True;
-//  end;
 end;
 
 procedure TfrmGraphicMenu.FormHide(Sender: TObject);
@@ -298,12 +280,16 @@ begin
           if Assigned(NodeData) then
           begin
             //TODO: Fix it
-//            if NodeData.DataType = vtdtFile then
-//              frmMain.RunNormalSw(vstList)
-//            else
-//              if (NodeData.DataType = vtdtCategory) and (ssCtrl in Shift) then
-//                frmMain.RunNormalSw(vstList);
-            //TODO: If node is a category, expand it
+            case NodeData.DataType of
+              vtdtCategory:
+                begin
+                  if (ssCtrl in Shift) then
+//                    frmMain.RunNormalSw(vstList)
+                  else
+                    vstList.Expanded[CurrentNode] := Not(vstList.Expanded[CurrentNode]);
+                end;
+//              vtdtFile: frmMain.RunNormalSw(vstList);
+            end;
           end;
         end;
       end;
@@ -409,7 +395,6 @@ begin
       OpenFolder(Config.GMBtnExplore);
     if (Sender = sknbtnAbout) then
     begin
-      //TODO: Make a function (see mainform, also)
       if not IsFormOpen('frmAbout') then
         Application.CreateForm(TfrmAbout, frmAbout);
       frmAbout.Show;

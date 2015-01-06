@@ -207,10 +207,6 @@ object frmImportList: TfrmImportList
       ImageIndex = 2
       TabVisible = False
       OnShow = tsListShow
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object vstListImp: TVirtualStringTree
         Left = 12
         Top = 3
@@ -246,7 +242,7 @@ object frmImportList: TfrmImportList
         TextMargin = 2
         TreeOptions.AutoOptions = [toAutoDropExpand, toAutoScrollOnExpand, toAutoTristateTracking]
         TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning]
-        TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowRoot, toShowTreeLines, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
+        TreeOptions.PaintOptions = [toHideFocusRect, toShowButtons, toShowDropmark, toShowRoot, toShowTreeLines, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
         TreeOptions.SelectionOptions = [toFullRowSelect, toRightClickSelect]
         Columns = <>
       end

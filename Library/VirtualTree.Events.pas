@@ -511,8 +511,15 @@ end;
 procedure TVirtualTreeEvents.DoPaintText(Sender: TBaseVirtualTree;
   const TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
   TextType: TVSTTextType);
+var
+  NodeData: TvBaseNodeData;
 begin
-  //TODO: Paint node color, if path exe doesn't exists
+  //Get data and check if AbsoluteExe path exists
+  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
+  if Assigned(NodeData) then
+    if NodeData.DataType = vtdtFile then
+      if Not(TvFileNodeData(NodeData).IsPathAbsoluteExeExists) then
+        TargetCanvas.Font.Color := clRed;
 end;
 
 procedure TVirtualTreeEvents.DoResizeGM(Sender: TObject);
