@@ -257,13 +257,12 @@ class procedure TSQLtbl_options.Save(ADBManager: TDBManager; AConfig: TConfigura
 var
   SQLOptionsData   : TSQLtbl_options;
   rectMainForm     : TRect;
+  IsDataExists: Boolean;
 begin
-  //Clear options table
-  if ADBManager.Database.TableHasRows(TSQLtbl_options) then
-    ADBManager.ClearTable(TSQLtbl_options);
   //Save ASuite options
-  SQLOptionsData := TSQLtbl_options.Create;
+  SQLOptionsData := TSQLtbl_options.CreateAndFillPrepare(ADBManager.Database, '');
   try
+    IsDataExists := SQLOptionsData.FillOne;
     //general
     SQLOptionsData.startwithwindows   := AConfig.StartWithWindows;
     SQLOptionsData.showpanelatstartup := AConfig.ShowPanelAtStartUp;
@@ -324,7 +323,10 @@ begin
     SQLOptionsData.scanfolderfiletypes    := StringToUTF8(AConfig.ScanFolderFileTypes.Text);
     SQLOptionsData.scanfolderexcludenames := StringToUTF8(AConfig.ScanFolderExcludeNames.Text);
 
-    ADBManager.Database.Add(SQLOptionsData,true);
+    if IsDataExists then
+      ADBManager.Database.Update(SQLOptionsData)
+    else
+      ADBManager.Database.Add(SQLOptionsData, True);
   finally
     Config.Changed := False;
     SQLOptionsData.Free;

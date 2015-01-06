@@ -22,13 +22,14 @@ unit Database.Manager;
 interface
 
 uses
-  Windows, SysUtils, Forms, Dialogs, VirtualTrees, DKLang,
+  Windows, SysUtils, Forms, Dialogs, VirtualTrees, DKLang, PJVersionInfo,
   Classes, mORMot, SynCommons, mORMotSQLite3, Vcl.Controls;
 
 type
   TDBManager = class
   private
     FDBFileName : string;
+    FDBVersion  : TPJVersionNumber;
     FDatabase   : TSQLRestServerDB;
     FSQLModel   : TSQLModel;
 
@@ -39,6 +40,7 @@ type
     destructor Destroy; override;
 
     property DBFileName: string read FDBFileName write FDBFileName;
+    property DBVersion: TPJVersionNumber read FDBVersion write FDBVersion;
     property Database: TSQLRestServerDB read FDatabase;
 
     procedure Setup(const ADBFilePath: string);
@@ -166,7 +168,7 @@ begin
         if Config.Changed then
           TSQLtbl_options.Save(Self, Config);
         //Save new version info
-        TSQLtbl_version.Save(Self, Config);
+        TSQLtbl_version.Save(Self);
         //Commit data in sqlite database
         FDatabase.Commit(1);
       end;

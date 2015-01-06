@@ -132,14 +132,15 @@ implementation
 uses
   DataModules.Images, Forms.Main, AppConfig.Main, VirtualTree.Methods,
   Utility.System, Forms.GraphicMenu, Kernel.Types, NodeDataTypes.Files,
-  NodeDataTypes.Custom, NodeDataTypes.Base;
+  NodeDataTypes.Custom, NodeDataTypes.Base, Kernel.Consts, Database.Manager,
+  Utility.Misc;
 
 {$R *.dfm}
 
 procedure TdmTrayMenu.DataModuleCreate(Sender: TObject);
 begin
-//  tiTrayMenu.Hint   := Format('%s %s (%s)',[APP_NAME, Config.ASuiteVersion.ConvertToShortString,
-//                                          UpperCase(Config.SuiteDrive)]);
+  tiTrayMenu.Hint := Format('%s %s (%s)',[APP_NAME, GetASuiteVersion(True),
+                                          UpperCase(Config.Paths.SuiteDrive)]);
 end;
 
 procedure TdmTrayMenu.tiTrayMenuDblClick(Sender: TObject);
