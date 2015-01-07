@@ -430,7 +430,7 @@ begin
     finally
       TreeSearch.EndUpdate;
       TVirtualTreeMethods.Create.CheckVisibleNodePathExe(TreeSearch);
-      //TODO: Fix it
+      //TODO: Fix it (dmImages)
 //ImagesDM.GetChildNodesIcons(TreeSearch, TreeSearch.RootNode, isAny);
     end;
   end;
@@ -586,7 +586,7 @@ begin
   end;
   //Load Database and get icons (only first level of tree)
   Config.LoadList;
-  //TODO: Fix it
+  //TODO: Fix it (dmImages)
 //ImagesDM.GetChildNodesIcons(vstList, nil, vstList.RootNode);
   RunStartupProcess;
   TVirtualTreeMethods.Create.RefreshList(nil);

@@ -1,16 +1,19 @@
+[ ] Added asuite icons
+
+[ ] Fix CheckPathExe (and rename it)
+[ ] Fix execute function (RunNormalSw, RunAs, RunAsAdmin and OpenFolder) [ ] ExecuteItem [ ] CheckPathExe
+[ ] Fix TrayMenu functions (RunFromTrayMenu)
+
 [ ] Fix all ImagesDM references
 [ ] Load theme icons using ini files (ex. component_name = $asuite\icons\icon.ico)
 [ ] Fix GetImageIndex in frames
 
-[ ] Fix execute function (RunNormalSw, RunAs, RunAsAdmin and OpenFolder) [ ] ExecuteItem [ ] CheckPathExe
-[ ] Fix TrayMenu functions (RunFromTrayMenu)
-[ ] Fix CheckPathExe
-
-[ ] Rename all DKLanguageController1 in DKLangController
+[ ] Rename all DKLanguageController1 in DKLangController (and check all forms)
 [ ] New About form (see CCleaner about)
 [ ] Rewrite scheduler
 [ ] Rewrite scanfolder
 [ ] Options
+[ ] ImportList
 
 [ ] Update year in license section of all units
 

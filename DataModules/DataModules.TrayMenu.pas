@@ -305,7 +305,7 @@ begin
       MenuItem.Caption    := ItemNodeData.Name;
       if (ItemNodeData.DataType = vtdtFile) then
       begin
-        //TODO: Fix it
+        //TODO: Fix it (CheckPathExe)
 //        MenuItem.OnClick  := RunFromTrayMenu;
 //        if Sender.GetNodeLevel(Node) = 0 then
 //          TvFileNodeData(ItemNodeData).CheckPathExe;
@@ -340,7 +340,7 @@ begin
   begin
     MenuItem := (Sender as TASMenuItem);
     CheckChildItemsPath(Config.MainTree, MenuItem.pNode);
-    //TODO: Fix it
+    //TODO: Fix it (dmImages)
 //ImagesDM.GetChildNodesIcons(Config.MainTree, MenuItem.pNode, isSmall, True);
     for I := 0 to MenuItem.Count - 1 do
     begin
@@ -468,7 +468,7 @@ begin
   while Assigned(ChildNode) do
   begin
     NodeData := TVirtualTreeMethods.Create.GetNodeItemData(ChildNode, ASender);
-    //TODO: Fix it
+    //TODO: Fix it (CheckPathExe)
 //    if NodeData.DataType in [vtdtFile, vtdtFolder] then
 //      TvFileNodeData(NodeData).CheckPathExe;
 
