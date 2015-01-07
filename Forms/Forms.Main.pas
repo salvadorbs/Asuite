@@ -124,6 +124,7 @@ type
     procedure actPropertyExecute(Sender: TObject);
     procedure actPasteExecute(Sender: TObject);
     procedure pcListChange(Sender: TObject);
+    procedure actDeleteExecute(Sender: TObject);
   private
     { Private declarations }
     function  GetActiveTree: TBaseVirtualTree;
@@ -173,6 +174,26 @@ end;
 procedure TfrmMain.actCutExecute(Sender: TObject);
 begin
   vstList.CutToClipBoard;
+end;
+
+procedure TfrmMain.actDeleteExecute(Sender: TObject);
+var
+  Nodes: TNodeArray;
+  I: Integer;
+  Tree: TBaseVirtualTree;
+begin
+  Tree := GetActiveTree;
+  if (Tree.GetFirstSelected <> nil) and (MessageDlg((DKLangConstW('msgConfirm')),mtWarning, [mbYes,mbNo], 0) = mrYes) then
+  begin
+    Nodes := Tree.GetSortedSelection(true);
+    //Delete items
+    if Config.DBManager.DeleteItems(Tree, Nodes) then
+    begin
+      //Delete nodes and refresh list
+      Tree.DeleteSelectedNodes;
+      TVirtualTreeMethods.Create.RefreshList(Tree);
+    end;
+  end;
 end;
 
 procedure TfrmMain.actAddItem(Sender: TObject);

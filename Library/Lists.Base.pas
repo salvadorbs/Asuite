@@ -36,9 +36,9 @@ type
     constructor Create;
     destructor Destroy; override;
 
-    function AddItem(AItem: TvCustomRealNodeData): Integer; virtual;
-    function InsertItem(AIndex: Integer; AItem: TvCustomRealNodeData): Integer; virtual;
-    function RemoveItem(AItem: TvCustomRealNodeData): Integer; virtual;
+    function AddItem(AItemData: TvCustomRealNodeData): Integer; virtual;
+    function InsertItem(AIndex: Integer; AItemData: TvCustomRealNodeData): Integer; virtual;
+    function RemoveItem(AItemData: TvCustomRealNodeData): Integer; virtual;
 
     procedure Delete(AIndex: Integer); virtual;
     function Count: Integer; virtual;
@@ -50,11 +50,11 @@ type
 
 implementation
 
-function TBaseItemsList.AddItem(AItem: TvCustomRealNodeData): Integer;
+function TBaseItemsList.AddItem(AItemData: TvCustomRealNodeData): Integer;
 begin
-  FItems.Remove(AItem);
+  FItems.Remove(AItemData);
 
-  Result := FItems.Add(AItem);
+  Result := FItems.Add(AItemData);
 end;
 
 procedure TBaseItemsList.Clear;
@@ -88,20 +88,20 @@ begin
   Result := TvCustomRealNodeData(FItems[Index]);
 end;
 
-function TBaseItemsList.InsertItem(AIndex: Integer; AItem: TvCustomRealNodeData): Integer;
+function TBaseItemsList.InsertItem(AIndex: Integer; AItemData: TvCustomRealNodeData): Integer;
 begin
-  FItems.Remove(AItem);
+  FItems.Remove(AItemData);
 
   Result := AIndex;
   if (Result > FItems.Count) then
     Result := FItems.Count;
 
-  FItems.Insert(Result, AItem);
+  FItems.Insert(Result, AItemData);
 end;
 
-function TBaseItemsList.RemoveItem(AItem: TvCustomRealNodeData): Integer;
+function TBaseItemsList.RemoveItem(AItemData: TvCustomRealNodeData): Integer;
 begin
-  Result := FItems.Remove(AItem);
+  Result := FItems.Remove(AItemData);
 end;
 
 procedure TBaseItemsList.SetItems(Index: Integer; const Value: TvCustomRealNodeData);

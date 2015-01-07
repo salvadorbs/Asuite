@@ -1,27 +1,29 @@
 [ ] Fix all ImagesDM references
+[ ] Load theme icons using ini files (ex. component_name = $asuite\icons\icon.ico)
+[ ] Fix GetImageIndex in frames
+
+[ ] Fix execute function (RunNormalSw, RunAs, RunAsAdmin and OpenFolder) [ ] ExecuteItem [ ] CheckPathExe
+[ ] Fix TrayMenu functions (RunFromTrayMenu)
+[ ] Fix CheckPathExe
+
+[ ] Rename all DKLanguageController1 in DKLangController
+[ ] New About form (see CCleaner about)
+[ ] Rewrite scheduler
+[ ] Rewrite scanfolder
+[ ] Options
+
+[ ] Update year in license section of all units
+
 [x] Fix MainForm and GM's position
 [x] Fix Kind = ikNormal in vstGetImageIndex
 [x] Use TjvFileNameEdit in all path tedits
 [x] Fix tiTrayMenu.Hint (version)
-[ ] Fix execute function (RunNormalSw, RunAs, RunAsAdmin and OpenFolder) [ ] ExecuteItem [ ] CheckPathExe
-[ ] Fix TrayMenu functions (RunFromTrayMenu)
-[ ] Fix CheckPathExe
-[ ] Fix delete items in MainForm
-
-[ ] Fix hotkey in Property
-[ ] Fix GetImageIndex in frames
+[x] Fix delete items in MainForm
+[x] Fix hotkey in Property
 
 [x] Fix GetNodeItemData vs GetNodeDataEx
 [x] Fix ShowItemProperty (in mainform and graphic menu)
 
-[ ] Load theme icons using ini files (ex. component_name = $asuite\icons\icon.ico)
-
-[ ] Rename all DKLanguageController1 in DKLangController
-
 [x] Make a function to get node images for virtualtrees
 
-[ ] Update year in license section of all units
-
 [x] Use toUseExplorerTheme in all vst
-
-[ ] New About form (see CCleaner about)

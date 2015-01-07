@@ -23,18 +23,20 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, DKLang, Frame.Properties.Base;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, DKLang, Frame.Properties.Base,
+  Vcl.ExtCtrls;
 
 type
   TfrmBehaviorPropertyPage = class(TfrmBasePropertyPage)
+    DKLanguageController1: TDKLanguageController;
     grpAutoExecute: TGroupBox;
-    grpWindowState: TGroupBox;
-    grpOnExecute: TGroupBox;
     cxAutoExecute: TComboBox;
     btnChangeOrder: TButton;
+    pnl1: TPanel;
+    grpOnExecute: TGroupBox;
     cxActionOnExe: TComboBox;
+    grpWindowState: TGroupBox;
     cxWindowState: TComboBox;
-    DKLanguageController1: TDKLanguageController;
     procedure cxAutoExecuteChange(Sender: TObject);
     procedure btnChangeOrderClick(Sender: TObject);
   private
