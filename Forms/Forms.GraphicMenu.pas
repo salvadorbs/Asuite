@@ -143,7 +143,7 @@ begin
     frmMain.DoSearchItem(vstList, edtSearch.Text, stName);
     vstList.SortTree(-1, sdAscending);
     //Get icons
-    //TODO: Fix it
+    //TODO: Fix it (dmImages)
 //    dmImages.GetChildNodesIcons(vstList, vstList.RootNode, isAny);
     //Set first node as HotNode
     Node := vstList.GetFirst;
@@ -279,7 +279,7 @@ begin
           NodeData := TVirtualTreeMethods.Create.GetNodeItemData(CurrentNode, vstList);
           if Assigned(NodeData) then
           begin
-            //TODO: Fix it
+            //TODO: Fix it (RunExe)
             case NodeData.DataType of
               vtdtCategory:
                 begin
@@ -468,7 +468,7 @@ begin
     ATree.EndUpdate;
     ATree.ValidateNode(ATree.RootNode, True);
     //Check nodes path
-    //TODO: Fix it
+    //TODO: Fix it (dmImages)
 //ImagesDM.GetChildNodesIcons(ATree, ATree.RootNode, isAny);
     TVirtualTreeMethods.Create.CheckVisibleNodePathExe(ATree);
   end;

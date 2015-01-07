@@ -371,7 +371,7 @@ var
   NodeData: TvBaseNodeData;
 begin
   NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
-  //TODO: Fix it
+  //TODO: Fix it (dmImages)
 //  if NodeData.DataType = vtdtCategory then
 //ImagesDM.GetChildNodesIcons(Sender, nil, Node);
 end;

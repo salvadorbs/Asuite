@@ -94,7 +94,7 @@ function TfrmPropertyItem.InternalSaveData: Boolean;
 begin
   FListNodeData.Changed := True;
   //Reset icon and get it again
-  //TODO: Fix it
+  //TODO: Fix it (dmImages)
 //  FListNodeData.ResetIcon(isAny);
 //  ImagesDM.GetNodeImageIndex(FListNodeData, isAny);
 end;

@@ -28,7 +28,7 @@ uses
 type
   TvCustomRealNodeData = class(TvBaseNodeData)
   private
-    FLastAccess : Int64;
+    FLastAccess  : Int64;
     FPathIcon    : String;
     FCacheID     : Integer;
     FCacheLargeID  : Integer;

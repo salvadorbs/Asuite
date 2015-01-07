@@ -472,7 +472,7 @@ begin
     end;
     //Check nodes path and get icons
     TVirtualTreeMethods.Create.CheckVisibleNodePathExe(ATree);
-    //TODO: Fix it
+    //TODO: Fix it (dmImages)
 //ImagesDM.GetChildNodesIcons(ATree, ATree.RootNode, isAny);
     //Auto columns width
     TVirtualStringTree(ATree).Header.AutoFitColumns;

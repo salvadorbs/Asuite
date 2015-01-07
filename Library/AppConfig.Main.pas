@@ -472,7 +472,7 @@ begin
   if (FTrayUseCustomIcon) and (FileExists(sPath)) then
     dmTrayMenu.tiTrayMenu.Icon.LoadFromFile(sPath)
   else begin
-    //TODO: Fix it
+    //TODO: Fix it (dmImages)
 //    sPath := FPaths.RelativeToAbsolute(FPaths.FSuitePathIconsPopupMenu + FILEICON_ASuite);
     if FileExists(sPath) then
       dmTrayMenu.tiTrayMenu.Icon.LoadFromFile(sPath);
@@ -508,7 +508,7 @@ end;
 
 procedure TConfiguration.UpdateGMTheme;
 begin
-  //TODO: Fix it
+  //TODO: Fix it (dmImages)
   //Set Paths
   FPaths.SuitePathCurrentTheme   := IncludeTrailingBackslash(FPaths.SuitePathMenuThemes + FGMTheme);
   FPaths.SuitePathIconsPopupMenu := FPaths.SuitePathCurrentTheme + ICONS_POPUPMENU_DIR;
