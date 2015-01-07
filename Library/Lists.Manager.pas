@@ -22,7 +22,7 @@ unit Lists.Manager;
 interface
 
 uses
-  Classes, Menus, SysUtils, Kernel.Singleton, Lists.Special,
+  Classes, Menus, SysUtils, Kernel.Singleton, Lists.Special, NodeDataTypes.Custom,
   Lists.Base, Lists.Scheduler, Lists.HotKey;
 
 type
@@ -37,6 +37,8 @@ type
   public
     procedure Initialize; override;
     procedure Finalize; override;
+
+    procedure RemoveItemFromLists(AItemData: TvCustomRealNodeData);
 
     property MRUList: TSpecialItemsList read FMRUList write FMRUList;
     property MFUList: TSpecialItemsList read FMFUList write FMFUList;
@@ -63,6 +65,24 @@ begin
   FShutdownItemList  := TBaseItemsList.Create;
   FSchedulerItemList := TSchedulerItemsList.Create;
   FHotKeyItemList    := THotkeyItemsList.Create;
+end;
+
+procedure TListManager.RemoveItemFromLists(AItemData: TvCustomRealNodeData);
+begin
+  //Remove item from special lists
+  FMRUList.RemoveItem(AItemData);
+  FMFUList.RemoveItem(AItemData);
+  //Remove item from hotkey list
+  if AItemData.ActiveHotkey then
+    FHotKeyItemList.RemoveItem(AItemData);
+  //Remove item from scheduler list
+  if AItemData.SchMode <> smDisabled then
+    FSchedulerItemList.RemoveItem(AItemData);
+  //Remove item from autorun lists
+  if (AItemData.Autorun in [atAlwaysOnStart, atSingleInstance]) then
+    FStartupItemList.RemoveItem(AItemData);
+  if (AItemData.Autorun in [atAlwaysOnClose]) then
+    FShutdownItemList.RemoveItem(AItemData);
 end;
 
 procedure TListManager.Finalize;

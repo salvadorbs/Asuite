@@ -389,20 +389,10 @@ begin
     //Delete desktop's shortcut
     if NodeData is TvFileNodeData then
       TvFileNodeData(NodeData).DeleteShortcutFile;
-    //Remove item from special lists
-    Config.ListManager.MRUList.RemoveItem(NodeData);
-    Config.ListManager.MFUList.RemoveItem(NodeData);
-    //Remove item from hotkey list
-    if NodeData.ActiveHotkey then
-      Config.ListManager.HotKeyItemList.RemoveItem(NodeData);
-    //Remove item from scheduler list
-    if NodeData.SchMode <> smDisabled then
-      Config.ListManager.SchedulerItemList.RemoveItem(NodeData);
-    if (NodeData.Autorun in [atAlwaysOnStart, atSingleInstance]) then
-      Config.ListManager.StartupItemList.RemoveItem(NodeData);
-    if (NodeData.Autorun in [atAlwaysOnClose]) then
-      Config.ListManager.ShutdownItemList.RemoveItem(NodeData);
+    Config.ListManager.RemoveItemFromLists(NodeData);
   end;
+  //Remove item from sqlite database
+  Config.DBManager.RemoveItem(NodeData.ID);
 end;
 
 procedure TVirtualTreeMethods.FindNode(Sender: TBaseVirtualTree;

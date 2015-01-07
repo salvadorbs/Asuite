@@ -116,6 +116,10 @@ object frmMain: TfrmMain
     end
     object tbSearch: TTabSheet
       Caption = 'Search'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object sbtnSearch: TSpeedButton
         Left = 169
         Top = 0
@@ -164,13 +168,14 @@ object frmMain: TfrmMain
         Left = 0
         Top = 0
         Width = 166
-        Height = 21
+        Height = 23
         Align = alLeft
         Anchors = [akLeft, akTop, akRight]
         Constraints.MaxHeight = 21
         PopupMenu = pmSearch
         TabOrder = 0
         OnKeyPress = btnedtSearchKeyPress
+        ExplicitHeight = 21
       end
     end
   end
@@ -456,6 +461,7 @@ object frmMain: TfrmMain
     object actDelete: TAction
       Caption = 'Delete'
       ShortCut = 46
+      OnExecute = actDeleteExecute
       OnUpdate = actCutCopyDeleteUpdate
     end
     object actProperty: TAction

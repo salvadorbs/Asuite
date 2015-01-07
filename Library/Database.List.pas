@@ -99,7 +99,7 @@ type
     property scheduler_datetime: TDateTime read Fscheduler_datetime write Fscheduler_datetime;
     property activehotkey: Boolean read FActiveHotkey write FActiveHotkey;
     property hotkey: Word read Fhotkey write Fhotkey;
-    property run_from_category: Boolean read Frun_from_category write Frun_from_category default True;
+    property run_from_category: Boolean read Frun_from_category write Frun_from_category;
   end;
 
 implementation
@@ -148,6 +148,7 @@ begin
       nType := TvTreeDataType(SQLFilesData.itemtype);
       Node := TVirtualTreeMethods.Create.AddChildNodeEx(Tree, ParentNode, amInsertAfter, nType, False);
       vData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Tree);
+      vData.SetPointerNode(Node);
       if IsImport then
         Tree.CheckType[Node] := ctTriStateCheckBox
       else
@@ -175,6 +176,7 @@ begin
           SchDateTime := SQLFilesData.scheduler_datetime;
           LastAccess  := SQLFilesData.lastAccess;
           Hotkey      := SQLFilesData.hotkey;
+          ActiveHotkey := SQLFilesData.activehotkey;
           WindowState := SQLFilesData.window_state;
           ActionOnExe := TActionOnExecute(SQLFilesData.onlaunch);
         end;
@@ -263,6 +265,7 @@ begin
       FlastAccess   := LastAccess;
       Fscheduler_mode := Ord(SchMode);
       Fscheduler_datetime := SchDateTime;
+      FActiveHotkey := ActiveHotkey;
       Fhotkey       := Hotkey;
     end;
     //Add file fields

@@ -45,14 +45,15 @@ type
 
     procedure Setup(const ADBFilePath: string);
 
-    procedure LoadData(Tree: TBaseVirtualTree);
-    function  SaveData(Tree: TBaseVirtualTree; DoBackup: Boolean = True): Boolean;
+    procedure LoadData(ATree: TBaseVirtualTree);
+    function  SaveData(ATree: TBaseVirtualTree; DoBackup: Boolean = True): Boolean;
 
-    procedure DeleteItem(aID: Integer);
+    procedure RemoveItem(aID: Integer);
+    function DeleteItems(ATree: TBaseVirtualTree; ANodes: TNodeArray): Boolean;
 
     procedure ClearTable(SQLRecordClass:TSQLRecordClass);
 
-    procedure ImportData(Tree: TBaseVirtualTree); //For frmImportList
+    procedure ImportData(ATree: TBaseVirtualTree); //For frmImportList
     procedure ImportOptions; //For frmImportList
   end;
 
@@ -60,17 +61,41 @@ implementation
 
 uses
   Kernel.Consts, AppConfig.Main, Utility.FileFolder, Utility.Misc,
-  Database.Version, Database.Options, Database.List;
+  Database.Version, Database.Options, Database.List, NodeDataTypes.Base,
+  VirtualTree.Methods;
 
 constructor TDBManager.Create;
 begin
   FSQLModel := TSQLModel.Create([TSQLtbl_version, TSQLtbl_list, TSQLtbl_options]);
 end;
 
-procedure TDBManager.DeleteItem(aID: Integer);
+procedure TDBManager.RemoveItem(aID: Integer);
 begin
   if (aID > 0) then
-    FDatabase.Delete(TSQLtbl_list,aID);
+    FDatabase.Delete(TSQLtbl_list, aID);
+end;
+
+function TDBManager.DeleteItems(ATree: TBaseVirtualTree; ANodes: TNodeArray): Boolean;
+var
+  I: Integer;
+begin
+  Result := FDatabase.TransactionBegin(TSQLtbl_list, 1);
+  //Begin transaction for remove data from sqlite database
+  if Result then
+  begin
+    try
+      //Run actions (ex. remove node from MRU list) before delete nodes and
+      //remove each selected items from sqlite database
+      for I := High(ANodes) downto 0 do
+        ATree.IterateSubtree(ANodes[I], TVirtualTreeMethods.Create.BeforeDeleteNode, nil, [], False);
+      //Commit database's updates
+      FDatabase.Commit(1);
+    except
+      //Or in case of error, rollback
+      FDatabase.RollBack(1);
+      Result := False;
+    end;
+  end;
 end;
 
 destructor TDBManager.Destroy;
@@ -96,10 +121,10 @@ begin
   DateTimeToString(Result, 'yyyy-mm-dd-hh-mm-ss',now);
 end;
 
-procedure TDBManager.ImportData(Tree: TBaseVirtualTree);
+procedure TDBManager.ImportData(ATree: TBaseVirtualTree);
 begin
   try
-    TSQLtbl_list.Load(Self, Tree, True);
+    TSQLtbl_list.Load(Self, ATree, True);
   except
     on E : Exception do
       ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message],True);
@@ -129,10 +154,10 @@ begin
   end;
 end;
 
-procedure TDBManager.LoadData(Tree: TBaseVirtualTree);
+procedure TDBManager.LoadData(ATree: TBaseVirtualTree);
 begin
   //List & Options
-  Tree.BeginUpdate;
+  ATree.BeginUpdate;
   try
     try
       //Load Database version
@@ -140,17 +165,17 @@ begin
       //Load Options
       TSQLtbl_options.Load(Self, Config);
       //Load list
-      TSQLtbl_list.Load(Self, Tree, False);
+      TSQLtbl_list.Load(Self, ATree, False);
     except
       on E : Exception do
         ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message],True);
     end;
   finally
-    Tree.EndUpdate;
+    ATree.EndUpdate;
   end;
 end;
 
-function TDBManager.SaveData(Tree: TBaseVirtualTree; DoBackup: Boolean): Boolean;
+function TDBManager.SaveData(ATree: TBaseVirtualTree; DoBackup: Boolean): Boolean;
 begin
   //If launcher is in ReadOnlyMode, exit from this function
   if (Config.ReadOnlyMode) then
@@ -163,7 +188,7 @@ begin
       //Create and open Sqlite3Dataset
       if FDatabase.TransactionBegin(TSQLtbl_list, 1) then
       begin
-        TSQLtbl_list.Save(Self, Tree);
+        TSQLtbl_list.Save(Self, ATree);
         //If settings is changed, insert it else (if it exists) update it
         if Config.Changed then
           TSQLtbl_options.Save(Self, Config);

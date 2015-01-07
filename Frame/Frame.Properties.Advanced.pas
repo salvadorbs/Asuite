@@ -39,7 +39,13 @@ type
     cbDontInsertMRU: TCheckBox;
     cbDontInsertMFU: TCheckBox;
     DKLanguageController1: TDKLanguageController;
+    hkHotkey: THotKey;
+    cbHotKey: TCheckBox;
     procedure cxSchedulerChange(Sender: TObject);
+    procedure cbHotKeyClick(Sender: TObject);
+    procedure hkHotkeyChange(Sender: TObject);
+    procedure hkHotkeyMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
   strict protected
@@ -57,12 +63,17 @@ var
 implementation
 
 uses
-  Kernel.Enumerations, NodeDataTypes.Files;
+  Kernel.Enumerations, NodeDataTypes.Files, Forms.ShortcutGrabber;
 
 {$R *.dfm}
 
 { TfrmAdvancedPropertyPage }
 
+
+procedure TfrmAdvancedPropertyPage.cbHotKeyClick(Sender: TObject);
+begin
+  hkHotkey.Enabled := cbHotKey.Checked;
+end;
 
 procedure TfrmAdvancedPropertyPage.cxSchedulerChange(Sender: TObject);
 begin
@@ -81,6 +92,18 @@ begin
   Result := DKLangConstW('msgAdvanced');
 end;
 
+procedure TfrmAdvancedPropertyPage.hkHotkeyChange(Sender: TObject);
+begin
+  if hkHotkey.Modifiers = [] then
+    hkHotkey.Modifiers := [hkAlt];
+end;
+
+procedure TfrmAdvancedPropertyPage.hkHotkeyMouseUp(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  hkHotkey.HotKey := TShorcutGrabber.Execute(Self);
+end;
+
 function TfrmAdvancedPropertyPage.InternalLoadData: Boolean;
 begin
   Result := inherited;
@@ -91,6 +114,10 @@ begin
     dtpSchDate.Date        := CurrentNodeData.SchDateTime;
     dtpSchTime.Time        := CurrentNodeData.SchDateTime;
     cxSchedulerChange(Self);
+    //Hotkey
+    cbHotKey.Checked       := CurrentNodeData.ActiveHotkey;
+    hkHotkey.HotKey        := CurrentNodeData.Hotkey;
+    cbHotKeyClick(Self);
     //Specific file settings
     cbHideSoftware.Checked := CurrentNodeData.HideFromMenu;
     if CurrentNodeData.DataType = vtdtFile then
@@ -117,6 +144,9 @@ begin
     //Scheduler
     CurrentNodeData.SchMode      := TSchedulerMode(cxScheduler.ItemIndex);
     CurrentNodeData.SchDateTime  := Int(dtpSchDate.Date) + Frac(dtpSchTime.Time);
+    //Hotkey
+    CurrentNodeData.Hotkey       := hkHotkey.HotKey;
+    CurrentNodeData.ActiveHotkey := cbHotKey.Checked;
     //Specific file settings
     CurrentNodeData.HideFromMenu := cbHideSoftware.Checked;
     if CurrentNodeData.DataType = vtdtFile then
