@@ -1,4 +1,5 @@
-[ ] Added asuite icons
+[x] Added asuite icons
+[ ] Load right icon (16px) in tray menu
 
 [ ] Fix CheckPathExe (and rename it)
 [ ] Fix execute function (RunNormalSw, RunAs, RunAsAdmin and OpenFolder) [ ] ExecuteItem [ ] CheckPathExe
