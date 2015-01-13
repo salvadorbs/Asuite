@@ -1,10 +1,9 @@
 object frmImportList: TfrmImportList
   Left = 749
   Top = 202
-  BorderIcons = [biSystemMenu, biMinimize]
-  BorderStyle = bsSingle
+  BorderStyle = bsDialog
   Caption = 'Import list'
-  ClientHeight = 332
+  ClientHeight = 330
   ClientWidth = 287
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
