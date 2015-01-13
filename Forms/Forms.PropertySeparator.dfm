@@ -1,9 +1,10 @@
 object frmPropertySeparator: TfrmPropertySeparator
   Left = 0
   Top = 0
+  BorderStyle = bsDialog
   Caption = 'Properties'
   ClientHeight = 103
-  ClientWidth = 280
+  ClientWidth = 284
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

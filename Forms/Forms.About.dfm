@@ -1,8 +1,7 @@
 object frmAbout: TfrmAbout
   Left = 420
   Top = 154
-  BorderIcons = [biSystemMenu]
-  BorderStyle = bsSingle
+  BorderStyle = bsDialog
   Caption = 'About Asuite'
   ClientHeight = 390
   ClientWidth = 390
