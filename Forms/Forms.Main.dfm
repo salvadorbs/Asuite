@@ -19,6 +19,8 @@ object frmMain: TfrmMain
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnHide = FormHide
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object pcList: TPageControl
@@ -79,10 +81,6 @@ object frmMain: TfrmMain
     end
     object tbSearch: TTabSheet
       Caption = 'Search'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object sbtnSearch: TSpeedButton
         Left = 169
         Top = 0
@@ -131,14 +129,13 @@ object frmMain: TfrmMain
         Left = 0
         Top = 0
         Width = 166
-        Height = 23
+        Height = 21
         Align = alLeft
         Anchors = [akLeft, akTop, akRight]
         Constraints.MaxHeight = 21
         PopupMenu = pmSearch
         TabOrder = 0
         OnKeyPress = btnedtSearchKeyPress
-        ExplicitHeight = 21
       end
     end
   end
@@ -323,7 +320,7 @@ object frmMain: TfrmMain
     Left = 16
     Top = 80
     LangData = {
-      070066726D4D61696E010100000001000000070043617074696F6E0143000000
+      070066726D4D61696E010100000001000000070043617074696F6E0144000000
       060070634C6973740000060074624C6973740101000000020000000700436170
       74696F6E0007007673744C697374000008007462536561726368010100000004
       000000070043617074696F6E000A007362746E53656172636800000900767374
@@ -370,7 +367,8 @@ object frmMain: TfrmMain
       3F000000070043617074696F6E000F00616374416464536570617261746F7201
       0100000040000000070043617074696F6E000A006D6E6952756E4974656D0000
       0C006D6E6952756E41734974656D000011006D6E6952756E417341646D696E49
-      74656D000011006D6E694F70656E466F6C6465724974656D000002004E390000}
+      74656D000011006D6E694F70656E466F6C6465724974656D000002004E390000
+      0D00746D72436865636B4974656D730000}
   end
   object ActionList1: TActionList
     Left = 132
@@ -452,5 +450,12 @@ object frmMain: TfrmMain
       OnExecute = actAddItem
       OnUpdate = actAddItemUpdate
     end
+  end
+  object tmrCheckItems: TTimer
+    Enabled = False
+    Interval = 5000
+    OnTimer = tmrCheckItemsTimer
+    Left = 144
+    Top = 80
   end
 end

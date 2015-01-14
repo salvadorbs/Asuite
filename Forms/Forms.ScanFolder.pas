@@ -163,7 +163,7 @@ begin
               ChildNode := Sender.AddChild(ParentNode, TVirtualTreeMethods.Create.CreateNodeData(vtdtFile));
               ChildNodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(ChildNode, Sender));
               if Assigned(ChildNodeData) then
-                TvFileNodeData(ChildNodeData).PathExe := PathTemp;
+                TvFileNodeData(ChildNodeData).PathFile := PathTemp;
             end;
           if Assigned(ChildNodeData) then
           begin

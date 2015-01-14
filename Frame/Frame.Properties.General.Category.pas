@@ -79,6 +79,7 @@ begin
     else
       vstCategoryItems.CheckState[NewNode] := csUncheckedNormal;
     NewNodeData := vstCategoryItems.GetNodeData(NewNode);
+    //TODO: Get item's imageindex
     //Set pointers
     NewNodeData.pNodeList := Node;
   end;

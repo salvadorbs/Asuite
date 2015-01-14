@@ -58,13 +58,13 @@ type
     procedure DrawCaptionedSeparator(Sender: TObject; ACanvas: TCanvas; ARect: TRect;
       Selected: Boolean);
     procedure DoTrayIconButtonClick(ASender: TObject; ATrayiconAction: TTrayiconActionClick);
-    procedure CheckChildItemsPath(ASender: TBaseVirtualTree; ANode: PVirtualNode);
     procedure PopulateDirectory(Sender: TObject);
     procedure SearchAddDirectory(AMI: TMenuItem; FolderPath: string = '');
     procedure SearchAddFiles(AMI: TMenuItem; FolderPath: string = '');
     procedure AddSub(MI: TMenuItem);
     procedure GetItemsIcons(Sender: TObject);
     procedure ShowPopupMenu(const APopupMenu: TPopupMenu);
+    procedure RunFromTrayMenu(Sender: TObject);
   public
     { Public declarations }
     procedure ShowClassicMenu;
@@ -305,10 +305,8 @@ begin
       MenuItem.Caption    := ItemNodeData.Name;
       if (ItemNodeData.DataType = vtdtFile) then
       begin
-        //TODO: Fix it (CheckPathExe)
-//        MenuItem.OnClick  := RunFromTrayMenu;
-//        if Sender.GetNodeLevel(Node) = 0 then
-//          TvFileNodeData(ItemNodeData).CheckPathExe;
+        MenuItem.OnClick  := RunFromTrayMenu;
+        //TODO: Get item's icon (only first level)
         //If it is a Directory, add in Trayicon Menu its subfolders and its subfiles
         if DirectoryExists(TvFileNodeData(ItemNodeData).PathAbsoluteExe) then
         begin
@@ -339,7 +337,6 @@ begin
   if (Sender is TASMenuItem) then
   begin
     MenuItem := (Sender as TASMenuItem);
-    CheckChildItemsPath(Config.MainTree, MenuItem.pNode);
     //TODO: Fix it (dmImages)
 //ImagesDM.GetChildNodesIcons(Config.MainTree, MenuItem.pNode, isSmall, True);
     for I := 0 to MenuItem.Count - 1 do
@@ -457,25 +454,6 @@ begin
 {$ENDIF}
 end;
 
-procedure TdmTrayMenu.CheckChildItemsPath(ASender: TBaseVirtualTree;
-  ANode: PVirtualNode);
-var
-  ChildNode : PVirtualNode;
-  NodeData  : TvBaseNodeData;
-begin
-  //Check path of ANode's child items
-  ChildNode := ASender.GetFirstChild(ANode);
-  while Assigned(ChildNode) do
-  begin
-    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(ChildNode, ASender);
-    //TODO: Fix it (CheckPathExe)
-//    if NodeData.DataType in [vtdtFile, vtdtFolder] then
-//      TvFileNodeData(NodeData).CheckPathExe;
-
-    ChildNode := ASender.GetNextSibling(ChildNode);
-  end;
-end;
-
 procedure TdmTrayMenu.CreateFooterItems(Menu: TPopupMenu);
 var
   I: Integer;
@@ -527,7 +505,7 @@ begin
 //        ImagesDM.GetNodeImageIndex(NodeData, isSmall);
         MenuItem.ImageIndex := NodeData.ImageIndex;
         MenuItem.Data       := NodeData;
-//        MenuItem.OnClick    := RunFromTrayMenu;
+        MenuItem.OnClick    := RunFromTrayMenu;
         PopupMenu.Add(MenuItem);
       end
       else
@@ -773,6 +751,19 @@ begin
       we don't see any items in the menu.. :) }
   MI.NewBottomLine;
   {$ENDIF}
+end;
+
+procedure TdmTrayMenu.RunFromTrayMenu(Sender: TObject);
+var
+  NodeData    : TvBaseNodeData;
+begin
+  //From menu
+  if (Sender is TASMenuItem) then
+  begin
+    NodeData := (Sender as TASMenuItem).Data;
+
+    //TODO: Run file
+  end;
 end;
 
 procedure TdmTrayMenu.OpenFile(Sender: TObject);

@@ -96,6 +96,7 @@ type
     actAddSoftware: TAction;
     actAddFolder: TAction;
     actAddSeparator: TAction;
+    tmrCheckItems: TTimer;
     procedure miOptionsClick(Sender: TObject);
     procedure miStatisticsClick(Sender: TObject);
     procedure miImportListClick(Sender: TObject);
@@ -125,6 +126,9 @@ type
     procedure actPasteExecute(Sender: TObject);
     procedure pcListChange(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
+    procedure tmrCheckItemsTimer(Sender: TObject);
+    procedure FormHide(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
     function  GetActiveTree: TBaseVirtualTree;
@@ -197,9 +201,16 @@ begin
 end;
 
 procedure TfrmMain.actAddItem(Sender: TObject);
+var
+  NodeData: TvBaseNodeData;
 begin
-  TVirtualTreeMethods.Create.AddChildNodeByGUI(vstList, vstList.GetFirstSelected,
-                                               TvTreeDataType(TAction(Sender).Tag));
+  NodeData := TVirtualTreeMethods.Create.AddChildNodeByGUI(vstList, vstList.GetFirstSelected,
+                                                           TvTreeDataType(TAction(Sender).Tag));
+  if Assigned(NodeData) then
+  begin
+    vstList.ClearSelection;
+    vstList.Selected[NodeData.PNode] := True;
+  end;
 end;
 
 procedure TfrmMain.actPasteExecute(Sender: TObject);
@@ -484,6 +495,12 @@ begin
   end;
 end;
 
+procedure TfrmMain.tmrCheckItemsTimer(Sender: TObject);
+begin
+  if Config.ASuiteState = lsNormal then
+    TVirtualTreeMethods.Create.CheckVisibleNodePathExe(GetActiveTree);
+end;
+
 procedure TfrmMain.tmSchedulerTimer(Sender: TObject);
 var
   NodeData : TvCustomRealNodeData;
@@ -598,6 +615,16 @@ end;
 procedure TfrmMain.FormDestroy(Sender: TObject);
 begin
   Config.Destroy;
+end;
+
+procedure TfrmMain.FormHide(Sender: TObject);
+begin
+  tmrCheckItems.Enabled := False;
+end;
+
+procedure TfrmMain.FormShow(Sender: TObject);
+begin
+  tmrCheckItems.Enabled := True;
 end;
 
 end.

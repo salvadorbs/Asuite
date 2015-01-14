@@ -202,7 +202,7 @@ begin
     //Get pathexe, parameters or working directory from shortcut
     IPFile.Load(WidePath, STGM_READ);
     case ShortcutType of
-     sfPathExe    : ISLink.GetPath(@info,MAX_PATH,wfs,SLGP_UNCPRIORITY);
+     sfPathFile   : ISLink.GetPath(@info,MAX_PATH,wfs,SLGP_UNCPRIORITY);
      sfParameter  : ISLink.GetArguments(@info,MAX_PATH);
      sfWorkingDir : ISLink.GetWorkingDirectory(@info,MAX_PATH);
     end;
@@ -219,7 +219,7 @@ begin
   IniFile := TIniFile.Create(AFileName);
   try
     case ShortcutType of
-      sfPathExe    : Result := IniFile.ReadString('InternetShortcut','URL', AFileName);
+      sfPathFile   : Result := IniFile.ReadString('InternetShortcut','URL', AFileName);
       sfWorkingDir : Result := IniFile.ReadString('InternetShortcut','WorkingDirectory', '');
       sfPathIcon   : Result := IniFile.ReadString('InternetShortcut','IconFile', '');
     end;

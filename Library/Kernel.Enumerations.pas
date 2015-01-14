@@ -56,7 +56,7 @@ type
   //Search types
   TSearchType = (
       stName,
-      stPathExe,
+      stPathFile,
       stPathIcon,
       stWorkingDir,
       stParameters
@@ -64,7 +64,7 @@ type
 
   //Shortcut fields
   TShortcutField = (
-      sfPathExe,
+      sfPathFile,
       sfParameter,
       sfWorkingDir,
       sfPathIcon

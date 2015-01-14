@@ -518,7 +518,7 @@ begin
   NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
   if Assigned(NodeData) then
     if NodeData.DataType = vtdtFile then
-      if Not(TvFileNodeData(NodeData).IsPathAbsoluteExeExists) then
+      if Not(TvFileNodeData(NodeData).IsPathFileExists) then
         TargetCanvas.Font.Color := clRed;
 end;
 

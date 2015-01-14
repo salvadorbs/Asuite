@@ -133,7 +133,7 @@ begin
   if Assigned(CurrentNodeData) then
   begin
     FileNodeData := TvFileNodeData(CurrentNodeData);
-    edtPathExe.Text    := FileNodeData.PathExe;
+    edtPathExe.Text    := FileNodeData.PathFile;
     edtParameters.Text := FileNodeData.Parameters;
     edtWorkingDir.Text := FileNodeData.WorkingDir;
   end;
@@ -148,9 +148,9 @@ begin
   begin
     FileNodeData := TvFileNodeData(CurrentNodeData);
     if (edtPathExe.Text <> '') then
-      FileNodeData.PathExe  := edtPathExe.Text
+      FileNodeData.PathFile  := edtPathExe.Text
     else
-      FileNodeData.PathExe  := CONST_PATH_DRIVE;
+      FileNodeData.PathFile  := CONST_PATH_DRIVE;
     FileNodeData.Parameters := edtParameters.Text;
     FileNodeData.WorkingDir := edtWorkingDir.Text;
   end;

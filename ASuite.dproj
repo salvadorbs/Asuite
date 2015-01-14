@@ -105,8 +105,8 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <Icon_MainIcon>ASuite_Icon.ico</Icon_MainIcon>
-        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1295;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
-        <VerInfo_Build>1295</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1302;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
+        <VerInfo_Build>1302</VerInfo_Build>
         <ILINK_MapFileType>DetailedSegments</ILINK_MapFileType>
         <MapFile>3</MapFile>
         <DCC_MapFile>3</DCC_MapFile>
@@ -166,6 +166,12 @@
                 <DeployFile LocalName="bin\ASuite.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>ASuite.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="ASuite.inc" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -611,6 +617,7 @@
         <DCCReference Include="Library\VirtualTree.Helper.pas"/>
         <DCCReference Include="Library\GraphicMenu.ThemeEngine.Consts.pas"/>
         <DCCReference Include="Library\GraphicMenu.ThemeEngine.pas"/>
+        <None Include="ASuite.inc"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
