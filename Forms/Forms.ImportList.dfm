@@ -93,7 +93,7 @@ object frmImportList: TfrmImportList
     Top = 51
     Width = 287
     Height = 242
-    ActivePage = tsList
+    ActivePage = tsLaunchers
     Align = alTop
     Style = tsButtons
     TabOrder = 1
@@ -101,10 +101,6 @@ object frmImportList: TfrmImportList
       Caption = 'tsLaunchers'
       TabVisible = False
       OnShow = tsLaunchersShow
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object rgrpLauncher: TRadioGroup
         Left = 12
         Top = 27
@@ -118,7 +114,7 @@ object frmImportList: TfrmImportList
         Font.Style = []
         ItemIndex = 0
         Items.Strings = (
-          'ASuite 2.0x / ASuite 1.x'
+          'ASuite 2.x'
           'ASuite 1.x'
           'winPenPack Launcher 1.x'
           'PortableApps.com Platform x.x (WIP)')
@@ -131,10 +127,6 @@ object frmImportList: TfrmImportList
       ImageIndex = 1
       TabVisible = False
       OnShow = tsSettingsShow
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object gbElements: TGroupBox
         Left = 12
         Top = 119
@@ -269,10 +261,6 @@ object frmImportList: TfrmImportList
       ImageIndex = 3
       TabVisible = False
       OnShow = tsProgressShow
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object lblItems: TLabel
         Left = 12
         Top = 120

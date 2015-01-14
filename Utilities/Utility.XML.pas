@@ -124,7 +124,7 @@ begin
         with TvFileNodeData(CustomRealNodeData) do
         begin
           NoMRU       := GetBoolPropertyXML(XMLNode, 'DontInsertMRU',false);
-          PathExe     := GetStrPropertyXML (XMLNode, 'PathExe', '');
+          PathFile    := GetStrPropertyXML (XMLNode, 'PathExe', '');
           Parameters  := GetStrPropertyXML (XMLNode, 'Parameters', '');
           WorkingDir  := GetStrPropertyXML (XMLNode, 'WorkingDir', '');
           ShortcutDesktop := GetBoolPropertyXML(XMLNode, 'ShortcutDesktop',false);
@@ -184,7 +184,7 @@ begin
         with TvFileNodeData(CustomRealNodeData) do
         begin
           NoMRU       := GetBoolPropertyXML(XMLNode, 'DontInsertMRU',false);
-          PathExe     := GetStrPropertyXML (XMLNode, 'path','');
+          PathFile    := GetStrPropertyXML (XMLNode, 'path','');
           Parameters  := GetStrPropertyXML (XMLNode, 'parameters','');
           WorkingDir  := GetStrPropertyXML (XMLNode, 'WorkingDir','');
           WindowState := GetIntPropertyXML (XMLNode, 'WindowState',0);

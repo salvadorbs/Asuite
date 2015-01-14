@@ -30,7 +30,7 @@ type
   private
     //Specific private variables and functions
     //Paths
-    FPathExe         : string; //User pathExe //TODO: Rename it as FPathFile
+    FPathFile         : string;
     //Advanced
     FParameters      : string;
     FWorkingDir      : string;
@@ -39,8 +39,8 @@ type
     FNoMRU           : Boolean;
     FNoMFU           : Boolean;
     FRunFromCategory : Boolean;
-    FIsPathAbsoluteExeExists: Boolean;
-    procedure SetPathExe(value:string);
+    FIsPathFileExists: Boolean;
+    procedure SetPathFile(value:string);
     procedure SetWorkingDir(value:string);
     procedure SetNoMRU(value:Boolean);
     procedure SetNoMFU(value:Boolean);
@@ -59,9 +59,9 @@ type
     property ClickCount: Integer read FClickCount write SetClickCount;
     property NoMRU: Boolean read FNoMRU write SetNoMRU;
     property NoMFU: Boolean read FNoMFU write SetNoMFU;
-    property PathExe: String read FPathExe write SetPathExe;
+    property PathFile: String read FPathFile write SetPathFile;
     property PathAbsoluteExe: String read GetPathAbsoluteExe;
-    property IsPathAbsoluteExeExists: Boolean read FIsPathAbsoluteExeExists;
+    property IsPathFileExists: Boolean read FIsPathFileExists;
     property Parameters: string read FParameters write FParameters;
     property WorkingDir: string read FWorkingDir write SetWorkingDir;
     property WorkingDirAbsolute: string read GetWorkingDirAbsolute;
@@ -69,6 +69,7 @@ type
     property RunFromCategory: Boolean read FRunFromCategory write FRunFromCategory;
 
     procedure DeleteShortcutFile;
+    procedure CheckPathFile;
   end;
   PvFileNodeData = ^TvFileNodeData;
 
@@ -76,7 +77,7 @@ implementation
 
 uses
   AppConfig.Main, Lists.Manager, Kernel.Consts, Utility.FileFolder,
-  Lists.Base;
+  Lists.Base, Utility.System;
 
 constructor TvFileNodeData.Create(AType: TvTreeDataType);
 begin
@@ -84,8 +85,8 @@ begin
   if AType = vtdtFolder then
     Self.PathIcon := Config.Paths.AbsoluteToRelative(Config.Paths.SuitePathIconsTree + FILEICON_Folder);
   //Paths
-  FPathExe         := '';
-  FIsPathAbsoluteExeExists := False;
+  FPathFile         := '';
+  FIsPathFileExists := False;
   //Advanced
   FParameters      := '';
   FWorkingDir      := '';
@@ -105,8 +106,8 @@ end;
 
 function TvFileNodeData.GetPathAbsoluteExe: String;
 begin
-  if FPathExe <> '' then
-    Result := Config.Paths.RelativeToAbsolute(FPathExe)
+  if FPathFile <> '' then
+    Result := Config.Paths.RelativeToAbsolute(FPathFile)
   else
     Result := '';
 end;
@@ -119,6 +120,19 @@ begin
     Result := '';
 end;
 
+procedure TvFileNodeData.CheckPathFile;
+var
+  bPathExists: Boolean;
+begin
+  bPathExists := IsPathExists(Self.PathAbsoluteExe);
+  if FIsPathFileExists <> bPathExists then
+  begin
+    FIsPathFileExists := bPathExists;
+    //Force MainTree repaint node
+    Config.MainTree.InvalidateNode(Self.PNode);
+  end;
+end;
+
 procedure TvFileNodeData.Copy(Source: TvBaseNodeData);
 var
   SourceNodeData: TvFileNodeData;
@@ -128,7 +142,7 @@ begin
   begin
     SourceNodeData   := TvFileNodeData(Source);
     //Copy from Source
-    SetPathExe(SourceNodeData.PathExe);
+    SetPathFile(SourceNodeData.PathFile);
     FParameters      := SourceNodeData.Parameters;
     FWorkingDir      := SourceNodeData.WorkingDir;
     FNoMRU           := SourceNodeData.FNoMRU;
@@ -145,9 +159,10 @@ begin
                          nil, nil, SW_NORMAL) > 32;
 end;
 
-procedure TvFileNodeData.SetPathExe(value:string);
+procedure TvFileNodeData.SetPathFile(value:string);
 begin
-  FPathExe := value;
+  FPathFile := value;
+  CheckPathFile;
 end;
 
 procedure TvFileNodeData.SetWorkingDir(value:string);

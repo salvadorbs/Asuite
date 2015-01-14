@@ -184,7 +184,7 @@ begin
         begin
           with TvFileNodeData(vData) do
           begin
-            PathExe          := UTF8ToString(SQLFilesData.path);
+            PathFile         := UTF8ToString(SQLFilesData.path);
             Parameters       := UTF8ToString(SQLFilesData.parameters);
             WorkingDir       := UTF8ToString(SQLFilesData.work_path);
             ShortcutDesktop  := SQLFilesData.dsk_shortcut;
@@ -192,7 +192,6 @@ begin
             NoMFU            := SQLFilesData.no_mfu;
             ClickCount       := SQLFilesData.clicks;
             RunFromCategory  := SQLFilesData.run_from_category;
-//            CheckPathExe(False);
           end;
         end;
         if (nType = vtdtCategory) then
@@ -273,7 +272,7 @@ begin
     begin
       with TvFileNodeData(AData) do
       begin
-        Fpath       := StringToUTF8(PathExe);
+        Fpath       := StringToUTF8(PathFile);
         Fwork_path  := StringToUTF8(WorkingDir);
         Fparameters := StringToUTF8(Parameters);
         Fdsk_shortcut := ShortcutDesktop;

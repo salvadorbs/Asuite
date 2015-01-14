@@ -108,7 +108,7 @@ begin
         sName := ExtractDirectoryName(FolderPath + PathDelim);
         if sName <> '' then
           NodeData.Name := sName;
-        TvFileNodeData(NodeData).PathExe := Config.Paths.AbsoluteToRelative(FolderPath + PathDelim);
+        TvFileNodeData(NodeData).PathFile := Config.Paths.AbsoluteToRelative(FolderPath + PathDelim);
       end
       else begin
         ASender.DeleteNode(ChildNode);
@@ -169,7 +169,7 @@ begin
   if LowerCase(ExtractFileExt(APathFile)) = EXT_LNK then
   begin
     //Shortcut
-    NodeData.PathExe    := Config.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfPathExe));
+    NodeData.PathFile   := Config.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfPathFile));
     NodeData.Parameters := Config.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfParameter));
     NodeData.WorkingDir := Config.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfWorkingDir));
   end
@@ -177,17 +177,16 @@ begin
     if LowerCase(ExtractFileExt(APathFile)) = EXT_URL then
     begin
       //Shortcut
-      NodeData.PathExe    := Config.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfPathExe));
+      NodeData.PathFile   := Config.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfPathFile));
       NodeData.Parameters := Config.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfParameter));
       NodeData.WorkingDir := Config.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfWorkingDir));
     end
     else //Normal file
-      NodeData.PathExe := Config.Paths.AbsoluteToRelative(APathFile);
+      NodeData.PathFile := Config.Paths.AbsoluteToRelative(APathFile);
   end;
   //If it is a directory, use folder icon
   if DirectoryExists(NodeData.PathAbsoluteExe) then
     NodeData.PathIcon := Config.Paths.AbsoluteToRelative(Config.Paths.SuitePathIconsTree + FILEICON_Folder);
-//  NodeData.CheckPathExe;
 //  ImagesDM.GetNodeImageIndex(NodeData, isAny);
 end;
 
@@ -205,7 +204,7 @@ begin
     Node := AddChildNodeEx(ASender, AParentNode, AAttachMode, vtdtFile);
     NodeData := TvFileNodeData(GetNodeItemData(Node, ASender));
     NodeData.Name     := 'Link';
-    NodeData.PathExe  := AText;
+    NodeData.PathFile := AText;
     NodeData.PathIcon := Config.Paths.AbsoluteToRelative(Config.Paths.SuitePathIconsTree + FILEICON_Url);
 //    ImagesDM.GetNodeImageIndex(NodeData, isAny);
   end;
@@ -244,9 +243,11 @@ begin
   begin
     //Get data and check if AbsoluteExe path exists
     NodeData := GetNodeItemData(Node, ASender);
-//    if Assigned(NodeData) then
-//      if NodeData.DataType = vtdtFile then
-//        TvFileNodeData(NodeData).CheckPathExe;
+
+    if Assigned(NodeData) then
+      if NodeData.DataType = vtdtFile then
+        TvFileNodeData(NodeData).CheckPathFile;
+
     //Next visible node
     Node := ASender.GetNextVisible(Node);
   end;
@@ -413,7 +414,7 @@ begin
       //Search Keyword in user specified field
       case LauncherSearch.SearchType of
         stName       : Found := Pos(LauncherSearch.Keyword,LowerCase(CurrentFileData.Name)) <> 0;
-        stPathExe    : Found := Pos(LauncherSearch.Keyword,LowerCase(CurrentFileData.PathExe)) <> 0;
+        stPathFile   : Found := Pos(LauncherSearch.Keyword,LowerCase(CurrentFileData.PathFile)) <> 0;
         stPathIcon   : Found := Pos(LauncherSearch.Keyword,LowerCase(CurrentFileData.PathIcon)) <> 0;
         stWorkingDir : Found := Pos(LauncherSearch.Keyword,LowerCase(CurrentFileData.WorkingDir)) <> 0;
         stParameters : Found := Pos(LauncherSearch.Keyword,LowerCase(CurrentFileData.Parameters)) <> 0;
