@@ -1,11 +1,11 @@
 [x] Added asuite icons
 
 [x] Fix CheckPathExe
-[ ] Fix execute function (RunNormalSw, RunAs, RunAsAdmin and OpenFolder) [ ] ExecuteItem [ ] CheckPathExe
+[ ] Fix execute function (RunNormalSw, RunAs, RunAsAdmin and OpenFolder) [ ] ExecuteItem
 [ ] Fix TrayMenu functions (RunFromTrayMenu)
 
 [ ] Fix all ImagesDM references
-[ ] Load theme icons using ini files (ex. component_name = $asuite\icons\icon.ico)
+[ ] Load theme icons in automatic mode (maybe find and load all icons from proper folders)
 [ ] Load right icon (16px) in tray menu
 [ ] Fix GetImageIndex in frames
 
