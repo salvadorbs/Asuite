@@ -1,5 +1,5 @@
 {
-Copyright (C) 2006-2013 Matteo Salvi
+Copyright (C) 2006-2015 Matteo Salvi
 
 Website: http://www.salvadorsoftware.com/
 

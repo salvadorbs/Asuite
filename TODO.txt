@@ -1,12 +1,12 @@
 [x] Added asuite icons
-[ ] Load right icon (16px) in tray menu
 
-[ ] Fix CheckPathExe (and rename it)
+[x] Fix CheckPathExe
 [ ] Fix execute function (RunNormalSw, RunAs, RunAsAdmin and OpenFolder) [ ] ExecuteItem [ ] CheckPathExe
 [ ] Fix TrayMenu functions (RunFromTrayMenu)
 
 [ ] Fix all ImagesDM references
 [ ] Load theme icons using ini files (ex. component_name = $asuite\icons\icon.ico)
+[ ] Load right icon (16px) in tray menu
 [ ] Fix GetImageIndex in frames
 
 [ ] Rename all DKLanguageController1 in DKLangController (and check all forms)
@@ -16,7 +16,7 @@
 [ ] Options
 [ ] ImportList
 
-[ ] Update year in license section of all units
+[x] Update year in license section of all units
 
 [x] Fix MainForm and GM's position
 [x] Fix Kind = ikNormal in vstGetImageIndex
