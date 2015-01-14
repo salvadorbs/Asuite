@@ -90,8 +90,8 @@ inherited frmBehaviorPropertyPage: TfrmBehaviorPropertyPage
         Items.Strings = (
           'Default (options)'
           'Just run file'
-          'Run and hide BSuite'
-          'Run and close BSuite')
+          'Run and hide ASuite'
+          'Run and close ASuite')
       end
     end
     object grpWindowState: TGroupBox

@@ -48,7 +48,7 @@ inherited frmBaseGeneralPropertyPage: TfrmBaseGeneralPropertyPage
       Font.Style = []
       ParentFont = False
       TabOrder = 1
-      Text = '$BSuite\'
+      Text = '$ASuite\'
       OnExit = edtPathIconExit
     end
   end

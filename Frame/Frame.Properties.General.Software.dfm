@@ -96,7 +96,7 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Font.Style = []
       ParentFont = False
       TabOrder = 1
-      Text = '$BSuite\'
+      Text = '$ASuite\'
       OnExit = edtPathExeExit
     end
     object edtPathExe: TJvFilenameEdit
@@ -115,7 +115,7 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Font.Style = []
       ParentFont = False
       TabOrder = 0
-      Text = '$BSuite\'
+      Text = '$ASuite\'
       OnChange = edtPathExeChange
       OnExit = edtPathExeExit
     end
