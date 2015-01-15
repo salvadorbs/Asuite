@@ -67,6 +67,12 @@ type
   end;
   PListStats = ^rListStats;
 
+  TUserData = record
+    UserName : string;
+    Password : string;
+  end;
+  PUserData = ^TUserData;
+
 implementation
 
 end.

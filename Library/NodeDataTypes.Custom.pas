@@ -23,7 +23,7 @@ interface
 
 uses
   VirtualTrees, SysUtils, Kernel.Enumerations, NodeDataTypes.Base,
-  DateUtils, Menus, Classes;
+  DateUtils, Menus, Classes, Kernel.Types;
 
 type
   TvCustomRealNodeData = class(TvBaseNodeData)
@@ -51,7 +51,7 @@ type
     procedure AfterExecute(ADoActionOnExe: Boolean); virtual;
 
     function InternalExecute(ARunFromCategory: Boolean): boolean; virtual; abstract;
-    function InternalExecuteAsUser(ARunFromCategory: Boolean; AUsername, APassword: string): boolean; virtual; abstract;
+    function InternalExecuteAsUser(ARunFromCategory: Boolean; AUserData: TUserData): boolean; virtual; abstract;
     function InternalExecuteAsAdmin(ARunFromCategory: Boolean): boolean; virtual; abstract;
   public
     constructor Create(AType: TvTreeDataType);
@@ -59,7 +59,7 @@ type
 
     function Execute(ADoActionOnExe: Boolean; ARunFromCategory: Boolean): boolean;
     function ExecuteAsUser(ADoActionOnExe: Boolean; ARunFromCategory: Boolean;
-      AUsername, APassword: string): boolean;
+      AUserData: TUserData): boolean;
     function ExecuteAsAdmin(ADoActionOnExe: Boolean; ARunFromCategory: Boolean): boolean;
 
     property PathIcon: string read FPathIcon write SetPathIcon;
@@ -83,7 +83,7 @@ implementation
 
 uses
   AppConfig.Main, Lists.Manager, Kernel.Consts, VirtualTree.Methods, NodeDataTypes.Files,
-  Utility.Misc, DKLang;
+  Utility.Misc, DKLang, Utility.Process;
 
 procedure TvCustomRealNodeData.Copy(source: TvBaseNodeData);
 var
@@ -159,6 +159,10 @@ end;
 
 procedure TvCustomRealNodeData.AfterExecute(ADoActionOnExe: Boolean);
 begin
+  //Run action after execution
+  if ADoActionOnExe then
+    RunActionOnExe(Self.ActionOnExe);
+  //Save changes
   Self.Changed := True;
   TVirtualTreeMethods.Create.RefreshList(Config.MainTree);
 end;
@@ -194,7 +198,7 @@ begin
       AfterExecute(ADoActionOnExe)
     else begin
       //Show error message
-      RaiseLastOSError;
+      ShowMessageEx(SysErrorMessage(GetLastError), True);
     end;
   end;
 end;
@@ -209,22 +213,22 @@ begin
       AfterExecute(ADoActionOnExe)
     else begin
       //Show error message
-      RaiseLastOSError;
+      ShowMessageEx(SysErrorMessage(GetLastError), True);
     end;
   end;
 end;
 
 function TvCustomRealNodeData.ExecuteAsUser(ADoActionOnExe: Boolean;
-  ARunFromCategory: Boolean; AUsername, APassword: string): boolean;
+  ARunFromCategory: Boolean; AUserData: TUserData): boolean;
 begin
   try
-    Result := InternalExecuteAsUser(ARunFromCategory, AUsername, APassword);
+    Result := InternalExecuteAsUser(ARunFromCategory, AUserData);
   finally
     if Result then
       AfterExecute(ADoActionOnExe)
     else begin
       //Show error message
-      RaiseLastOSError;
+      ShowMessageEx(SysErrorMessage(GetLastError), True);
     end;
   end;
 end;

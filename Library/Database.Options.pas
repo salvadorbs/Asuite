@@ -64,6 +64,7 @@ type
     //Execution
     FActionOnExe        : TActionOnExecute;
     FRunSingleClick     : Boolean;
+    Fconfirmmessagecat  : Boolean;
     //Trayicon
     FTrayIcon           : Boolean;
     FTrayUseCustomIcon  : Boolean;
@@ -131,6 +132,7 @@ type
     // Execution
     property actiononexe: TActionOnExecute read FActionOnExe write FActionOnExe;
     property runsingleclick: Boolean read FRunSingleClick write FRunSingleClick;
+    property confirmmessagecat: Boolean read Fconfirmmessagecat write Fconfirmmessagecat;
     // Trayicon
     property trayicon: Boolean read FTrayIcon write FTrayIcon;
     property trayusecustomicon: Boolean read FTrayUseCustomIcon write FTrayUseCustomIcon;
@@ -229,6 +231,7 @@ begin
       //Execution
       AConfig.ActionOnExe    := SQLOptionsData.actiononexe;
       AConfig.RunSingleClick := SQLOptionsData.runsingleclick;
+      AConfig.ConfirmRunCat  := SQLOptionsData.confirmmessagecat;
       //Trayicon
       AConfig.TrayIcon           := SQLOptionsData.trayicon;
       AConfig.TrayCustomIconPath := UTF8ToString(SQLOptionsData.traycustomiconpath);
@@ -303,6 +306,7 @@ begin
     //execution
     SQLOptionsData.actiononexe    := AConfig.ActionOnExe;
     SQLOptionsData.runsingleclick := AConfig.RunSingleClick;
+    SQLOptionsData.confirmmessagecat := AConfig.ConfirmRunCat;
     //trayicon
     SQLOptionsData.trayicon := AConfig.TrayIcon;
     SQLOptionsData.trayusecustomicon  := AConfig.TrayUseCustomIcon;

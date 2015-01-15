@@ -23,7 +23,7 @@ interface
 
 uses
   VirtualTrees, Menus, SysUtils, Dialogs, DateUtils, Kernel.Enumerations,
-  Winapi.Windows, NodeDataTypes.Base, NodeDataTypes.Custom,
+  Winapi.Windows, NodeDataTypes.Base, NodeDataTypes.Custom, Kernel.Types,
   UITypes;
 
 type
@@ -31,6 +31,18 @@ type
   private
     //Specific private variables and functions
     function CheckRunnableSubItems(Tree: TBaseVirtualTree): Boolean;
+    function ConfirmRunCategory: Boolean;
+
+    procedure CallBackExecuteNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
+                                  Data: Pointer; var Abort: Boolean);
+    procedure CallBackExecuteNodeAsUser(Sender: TBaseVirtualTree; Node: PVirtualNode;
+                                        Data: Pointer; var Abort: Boolean);
+    procedure CallBackExecuteNodeAsAdmin(Sender: TBaseVirtualTree; Node: PVirtualNode;
+                                         Data: Pointer; var Abort: Boolean);
+  protected
+    function InternalExecute(ARunFromCategory: Boolean): boolean; override;
+    function InternalExecuteAsUser(ARunFromCategory: Boolean; AUserData: TUserData): boolean; override;
+    function InternalExecuteAsAdmin(ARunFromCategory: Boolean): boolean; override;
   public
     //Specific properties
     constructor Create; overload;
@@ -40,21 +52,63 @@ type
 implementation
 
 uses
-  NodeDataTypes.Files, VirtualTree.Methods;
+  NodeDataTypes.Files, VirtualTree.Methods, AppConfig.Main, DKLang;
+
+procedure TvCategoryNodeData.CallBackExecuteNode(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
+var
+  NodeData: TvBaseNodeData;
+begin
+  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
+  if (Assigned(NodeData)) and (NodeData.DataType in [vtdtFile,vtdtFolder]) then
+  begin
+    if TvFileNodeData(NodeData).RunFromCategory then
+      TvFileNodeData(NodeData).Execute(False, True);
+  end;
+end;
+
+procedure TvCategoryNodeData.CallBackExecuteNodeAsAdmin(
+  Sender: TBaseVirtualTree; Node: PVirtualNode; Data: Pointer;
+  var Abort: Boolean);
+var
+  NodeData: TvBaseNodeData;
+begin
+  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
+  if (Assigned(NodeData)) and (NodeData.DataType in [vtdtFile,vtdtFolder]) then
+  begin
+    if TvFileNodeData(NodeData).RunFromCategory then
+      TvFileNodeData(NodeData).ExecuteAsAdmin(False, True);
+  end;
+end;
+
+procedure TvCategoryNodeData.CallBackExecuteNodeAsUser(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
+var
+  NodeData: TvBaseNodeData;
+  UserData: pUserData;
+begin
+  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
+  UserData := Data;
+  if (Assigned(NodeData)) and (NodeData.DataType in [vtdtFile,vtdtFolder]) then
+  begin
+    if TvFileNodeData(NodeData).RunFromCategory then
+      TvFileNodeData(NodeData).ExecuteAsUser(False, True, UserData^);
+  end;
+end;
 
 function TvCategoryNodeData.CheckRunnableSubItems(Tree: TBaseVirtualTree): Boolean;
 var
-  Node: PVirtualNode;
-  CurrentNodeData: TvBaseNodeData;
+  Node : PVirtualNode;
+  ChildNodeData : TvBaseNodeData;
 begin
   Result := False;
   Node := Self.PNode.FirstChild;
   while Assigned(Node) do
   begin
-    CurrentNodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Tree);
-    if (Assigned(CurrentNodeData)) and (CurrentNodeData.DataType in [vtdtFile,vtdtFolder]) then
+    ChildNodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Tree);
+    if (Assigned(ChildNodeData)) and (ChildNodeData.DataType in [vtdtFile,vtdtFolder]) then
     begin
-      if (TvFileNodeData(CurrentNodeData).RunFromCategory) then
+      if (TvFileNodeData(ChildNodeData).RunFromCategory) then
       begin
         Result := True;
         Break;
@@ -69,6 +123,47 @@ constructor TvCategoryNodeData.Create;
 begin
   inherited Create(vtdtCategory);
 //  FImageIndex := IMAGE_INDEX_Cat;
+end;
+
+function TvCategoryNodeData.ConfirmRunCategory: Boolean;
+begin
+  Result := False;
+  if (Config.ConfirmRunCat) then
+  begin
+    if CheckRunnableSubItems(Config.MainTree) then
+      Result := (MessageDlg(Format(DKLangConstW('msgConfirmRunCat'), [Self.Name]), mtWarning, [mbYes, mbNo], 0) = mrYes);
+  end
+  else
+    Result := True;
+end;
+
+function TvCategoryNodeData.InternalExecute(ARunFromCategory: Boolean): boolean;
+var
+  Node : PVirtualNode;
+  ChildNodeData : TvBaseNodeData;
+begin
+  Result := ConfirmRunCategory;
+
+  if Result then
+    Config.MainTree.IterateSubtree(Self.PNode, CallBackExecuteNode, nil);
+end;
+
+function TvCategoryNodeData.InternalExecuteAsAdmin(
+  ARunFromCategory: Boolean): boolean;
+begin
+  Result := ConfirmRunCategory;
+
+  if Result then
+    Config.MainTree.IterateSubtree(Self.PNode, CallBackExecuteNodeAsAdmin, nil);
+end;
+
+function TvCategoryNodeData.InternalExecuteAsUser(ARunFromCategory: Boolean;
+  AUserData: TUserData): boolean;
+begin
+  Result := ConfirmRunCategory;
+
+  if Result then
+    Config.MainTree.IterateSubtree(Self.PNode, CallBackExecuteNodeAsUser, @AUserData);
 end;
 
 end.
