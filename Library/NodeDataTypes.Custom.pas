@@ -28,7 +28,6 @@ uses
 type
   TvCustomRealNodeData = class(TvBaseNodeData)
   private
-    FLastAccess  : Int64;
     FPathIcon    : String;
     FCacheID     : Integer;
     FCacheLargeID  : Integer;
@@ -48,13 +47,21 @@ type
     function GetPathCacheIcon: string;
     function GetPathCacheLargeIcon: string;
     function GetPathAbsoluteIcon: String;
-    procedure SetLastAccess(const Value: Int64);
-  public
-    constructor Create(AType: TvTreeDataType); // virtual;
-    procedure Copy(source:TvBaseNodeData); override;
-    function Execute(Tree: TBaseVirtualTree): boolean; virtual;
+  protected
+    procedure AfterExecute(ADoActionOnExe: Boolean); virtual;
 
-    property LastAccess: Int64 read FLastAccess write SetLastAccess;
+    function InternalExecute(ARunFromCategory: Boolean): boolean; virtual; abstract;
+    function InternalExecuteAsUser(ARunFromCategory: Boolean; AUsername, APassword: string): boolean; virtual; abstract;
+    function InternalExecuteAsAdmin(ARunFromCategory: Boolean): boolean; virtual; abstract;
+  public
+    constructor Create(AType: TvTreeDataType);
+    procedure Copy(source:TvBaseNodeData); override;
+
+    function Execute(ADoActionOnExe: Boolean; ARunFromCategory: Boolean): boolean;
+    function ExecuteAsUser(ADoActionOnExe: Boolean; ARunFromCategory: Boolean;
+      AUsername, APassword: string): boolean;
+    function ExecuteAsAdmin(ADoActionOnExe: Boolean; ARunFromCategory: Boolean): boolean;
+
     property PathIcon: string read FPathIcon write SetPathIcon;
     property PathAbsoluteIcon: String read GetPathAbsoluteIcon;
     property CacheID: Integer read FCacheID write FCacheID;
@@ -75,7 +82,8 @@ type
 implementation
 
 uses
-  AppConfig.Main, Lists.Manager, Kernel.Consts, VirtualTree.Methods, NodeDataTypes.Files;
+  AppConfig.Main, Lists.Manager, Kernel.Consts, VirtualTree.Methods, NodeDataTypes.Files,
+  Utility.Misc, DKLang;
 
 procedure TvCustomRealNodeData.Copy(source: TvBaseNodeData);
 var
@@ -100,7 +108,6 @@ end;
 constructor TvCustomRealNodeData.Create(AType: TvTreeDataType);
 begin
   inherited;
-  FLastAccess  := -1;
   FPathIcon    := '';
   FSchMode     := smDisabled;
   FSchDateTime := Now;
@@ -121,15 +128,6 @@ begin
   if (value) then
     Config.ListManager.HotKeyItemList.AddItem(Self);
   FActiveHotkey := Value;
-end;
-
-procedure TvCustomRealNodeData.SetLastAccess(const Value: Int64);
-begin
-  FLastAccess := Value;
-  if (Config.ASuiteState <> lsImporting) then
-    if Self is TvFileNodeData then
-      if (FLastAccess > -1) and (not TvFileNodeData(Self).NoMRU) then
-        Config.ListManager.MRUList.AddItem(Self);
 end;
 
 procedure TvCustomRealNodeData.SetSchDateTime(value: TDateTime);
@@ -159,14 +157,10 @@ begin
   FSchMode := value;
 end;
 
-function TvCustomRealNodeData.Execute(Tree: TBaseVirtualTree): boolean;
+procedure TvCustomRealNodeData.AfterExecute(ADoActionOnExe: Boolean);
 begin
-  Assert(Assigned(Tree), 'Tree is not assigned!');
-
-  LastAccess := DateTimeToUnix(Now);
   Self.Changed := True;
-  TVirtualTreeMethods.Create.RefreshList(Tree);
-  Result := True;
+  TVirtualTreeMethods.Create.RefreshList(Config.MainTree);
 end;
 
 function TvCustomRealNodeData.GetPathAbsoluteIcon: String;
@@ -188,6 +182,51 @@ begin
     Result := Config.Paths.SuitePathCacheLarge + IntToStr(FCacheLargeID) + EXT_ICO
   else
     Result := '';
+end;
+
+function TvCustomRealNodeData.Execute(ADoActionOnExe: Boolean;
+  ARunFromCategory: Boolean): boolean;
+begin
+  try
+    Result := InternalExecute(ARunFromCategory);
+  finally
+    if Result then
+      AfterExecute(ADoActionOnExe)
+    else begin
+      //Show error message
+      RaiseLastOSError;
+    end;
+  end;
+end;
+
+function TvCustomRealNodeData.ExecuteAsAdmin(ADoActionOnExe: Boolean;
+  ARunFromCategory: Boolean): boolean;
+begin
+  try
+    Result := InternalExecuteAsAdmin(ARunFromCategory);
+  finally
+    if Result then
+      AfterExecute(ADoActionOnExe)
+    else begin
+      //Show error message
+      RaiseLastOSError;
+    end;
+  end;
+end;
+
+function TvCustomRealNodeData.ExecuteAsUser(ADoActionOnExe: Boolean;
+  ARunFromCategory: Boolean; AUsername, APassword: string): boolean;
+begin
+  try
+    Result := InternalExecuteAsUser(ARunFromCategory, AUsername, APassword);
+  finally
+    if Result then
+      AfterExecute(ADoActionOnExe)
+    else begin
+      //Show error message
+      RaiseLastOSError;
+    end;
+  end;
 end;
 
 procedure TvCustomRealNodeData.SetAutorun(value:TAutorunType);

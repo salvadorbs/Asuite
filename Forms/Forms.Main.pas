@@ -129,6 +129,7 @@ type
     procedure tmrCheckItemsTimer(Sender: TObject);
     procedure FormHide(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure actRunItemExecute(Sender: TObject);
   private
     { Private declarations }
     function  GetActiveTree: TBaseVirtualTree;
@@ -150,9 +151,9 @@ implementation
 
 uses
   TypInfo, Forms.Options, Forms.About, Utility.Misc, Forms.ScanFolder,
-  DataModules.TrayMenu, Forms.ImportList, AppConfig.Main,
+  DataModules.TrayMenu, Forms.ImportList, AppConfig.Main, Utility.System,
   VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base,
-  NodeDataTypes.Custom, Kernel.Types,
+  NodeDataTypes.Custom, Kernel.Types, NodeDataTypes.Files, mORMotUILogin,
   VirtualTree.Events;
 
 {$R *.dfm}
@@ -198,6 +199,50 @@ begin
       TVirtualTreeMethods.Create.RefreshList(Tree);
     end;
   end;
+end;
+
+procedure TfrmMain.actRunItemExecute(Sender: TObject);
+var
+  Nodes: TNodeArray;
+  NodeData: TvCustomRealNodeData;
+  I: Integer;
+  sUserName, sPassword: string;
+begin
+  Nodes := GetActiveTree.GetSortedSelection(True);
+  if Length(Nodes) > 0 then
+  begin
+    for I := Low(Nodes) to High(Nodes) do
+    begin
+      NodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Nodes[I], GetActiveTree));
+      if Not(NodeData.DataType = vtdtSeparator) then
+      begin
+        case TAction(Sender).Tag of
+          //Normal execute
+          0: NodeData.Execute(True, False);
+          //Execute as user
+          1:
+            begin
+              if TLoginForm.Login(DKLangConstW('msgRunAsTitle'), DKLangConstW('msgInsertWinUserInfo'), sUserName, sPassword, True, '') then
+              begin
+                if sUserName <> '' then
+                  NodeData.ExecuteAsUser(True, False, sUserName, sPassword)
+                else
+                  ShowMessageEx(DKLangConstW('msgErrEmptyUserName'), true);
+              end;
+            end;
+          //Execute as Admin
+          2: NodeData.ExecuteAsAdmin(True, False);
+          //Explore path
+          3:
+            begin
+              if (NodeData.DataType = vtdtFile) then
+                TvFileNodeData(NodeData).ExplorePath;
+            end;
+        end;
+      end;
+    end;
+  end;
+  TVirtualTreeMethods.Create.RefreshList(vstList);
 end;
 
 procedure TfrmMain.actAddItem(Sender: TObject);
@@ -260,8 +305,20 @@ begin
     for I := Low(Nodes) to High(Nodes) do
     begin
       NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Nodes[I], GetActiveTree);
+
       if NodeData.DataType <> vtdtSeparator then
         TAction(Sender).Enabled := True;
+
+      if (TAction(Sender).Tag = 3) then
+      begin
+        if NodeData.DataType = vtdtFile then
+        begin
+          if IsValidURLProtocol(TvFileNodeData(NodeData).PathAbsoluteFile) then
+            TAction(Sender).Enabled := False
+        end
+        else
+          TAction(Sender).Enabled := False;
+      end;
     end;
   end;
 end;
@@ -269,7 +326,6 @@ end;
 procedure TfrmMain.actSortCatItemsExecute(Sender: TObject);
 var
   Nodes: TNodeArray;
-  NodeData: TvBaseNodeData;
   I: Integer;
 begin
   Nodes := GetActiveTree.GetSortedSelection(True);
@@ -459,7 +515,6 @@ end;
 procedure TfrmMain.RunStartupProcess;
 var
   NodeData : TvCustomRealNodeData;
-  RunMode  : TRunMode;
   I : Integer;
 begin
   //Autorun - Execute software
@@ -469,11 +524,10 @@ begin
     begin
       NodeData := Config.ListManager.StartupItemList[I];
       //Set RunMode
-      RunMode := rmAutorun;
-      if (NodeData.Autorun = atSingleInstance) then
-        RunMode := rmAutorunSingleInstance;
-      //Start process
-//      ExecuteItem(Config.MainTree, NodeData, RunMode);
+      //TODO: RUN!
+//      //Start process
+//      if (NodeData.Autorun = atSingleInstance) and (IsProcessExists(ExtractFileName(Self.PathAbsoluteExe))) then
+//        ExecuteItem(Config.MainTree, NodeData, RunMode);
     end;
   end;
 end;

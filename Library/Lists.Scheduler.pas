@@ -35,7 +35,7 @@ type
 implementation
 
 uses
-  AppConfig.Main;
+  AppConfig.Main, NodeDataTypes.Files;
 
 procedure TSchedulerItemsList.CheckMissedTasks;
 var
@@ -52,7 +52,8 @@ begin
     for I := 0 to Self.Count - 1 do
     begin
       NodeData := Config.ListManager.SchedulerItemList[I];
-      dtLastAccess := UnixToDateTime(NodeData.LastAccess);
+      if NodeData.DataType = vtdtFile then
+        dtLastAccess := UnixToDateTime(TvFileNodeData(NodeData).LastAccess);
       case NodeData.SchMode of
         smDisabled: dtScheduler := 0;
         smOnce:

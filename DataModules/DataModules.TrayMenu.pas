@@ -308,10 +308,10 @@ begin
         MenuItem.OnClick  := RunFromTrayMenu;
         //TODO: Get item's icon (only first level)
         //If it is a Directory, add in Trayicon Menu its subfolders and its subfiles
-        if DirectoryExists(TvFileNodeData(ItemNodeData).PathAbsoluteExe) then
+        if DirectoryExists(TvFileNodeData(ItemNodeData).PathAbsoluteFile) then
         begin
           MenuItem.OnClick := populateDirectory;
-          MenuItem.Path    := (TvFileNodeData(ItemNodeData)).PathAbsoluteExe;
+          MenuItem.Path    := (TvFileNodeData(ItemNodeData)).PathAbsoluteFile;
           AddSub(MenuItem);
         end;
       end

@@ -81,6 +81,10 @@ object frmMain: TfrmMain
     end
     object tbSearch: TTabSheet
       Caption = 'Search'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object sbtnSearch: TSpeedButton
         Left = 169
         Top = 0
@@ -129,13 +133,14 @@ object frmMain: TfrmMain
         Left = 0
         Top = 0
         Width = 166
-        Height = 21
+        Height = 23
         Align = alLeft
         Anchors = [akLeft, akTop, akRight]
         Constraints.MaxHeight = 21
         PopupMenu = pmSearch
         TabOrder = 0
         OnKeyPress = btnedtSearchKeyPress
+        ExplicitHeight = 21
       end
     end
   end
@@ -184,6 +189,7 @@ object frmMain: TfrmMain
       Caption = 'Edit'
       object mniRunItem: TMenuItem
         Action = actRunItem
+        Default = True
       end
       object mniRunAsItem: TMenuItem
         Action = actRunAsItem
@@ -376,18 +382,25 @@ object frmMain: TfrmMain
     object actRunItem: TAction
       Caption = 'Run'
       ShortCut = 120
+      OnExecute = actRunItemExecute
       OnUpdate = actRunItemUpdate
     end
     object actRunAsItem: TAction
+      Tag = 1
       Caption = 'Run as...'
+      OnExecute = actRunItemExecute
       OnUpdate = actRunItemUpdate
     end
     object actRunAsAdminItem: TAction
+      Tag = 2
       Caption = 'Run as admin'
+      OnExecute = actRunItemExecute
       OnUpdate = actRunItemUpdate
     end
     object actOpenFolderItem: TAction
+      Tag = 3
       Caption = 'Show application'#39's folder'
+      OnExecute = actRunItemExecute
       OnUpdate = actRunItemUpdate
     end
     object actSortCatItems: TAction

@@ -185,7 +185,7 @@ begin
       NodeData.PathFile := Config.Paths.AbsoluteToRelative(APathFile);
   end;
   //If it is a directory, use folder icon
-  if DirectoryExists(NodeData.PathAbsoluteExe) then
+  if DirectoryExists(NodeData.PathAbsoluteFile) then
     NodeData.PathIcon := Config.Paths.AbsoluteToRelative(Config.Paths.SuitePathIconsTree + FILEICON_Folder);
 //  ImagesDM.GetNodeImageIndex(NodeData, isAny);
 end;
