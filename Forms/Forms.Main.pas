@@ -206,7 +206,7 @@ var
   Nodes: TNodeArray;
   NodeData: TvCustomRealNodeData;
   I: Integer;
-  sUserName, sPassword: string;
+  UserData: TUserData;
 begin
   Nodes := GetActiveTree.GetSortedSelection(True);
   if Length(Nodes) > 0 then
@@ -222,10 +222,10 @@ begin
           //Execute as user
           1:
             begin
-              if TLoginForm.Login(DKLangConstW('msgRunAsTitle'), DKLangConstW('msgInsertWinUserInfo'), sUserName, sPassword, True, '') then
+              if TLoginForm.Login(DKLangConstW('msgRunAsTitle'), DKLangConstW('msgInsertWinUserInfo'), UserData.UserName, UserData.Password, True, '') then
               begin
-                if sUserName <> '' then
-                  NodeData.ExecuteAsUser(True, False, sUserName, sPassword)
+                if UserData.UserName <> '' then
+                  NodeData.ExecuteAsUser(True, False, UserData)
                 else
                   ShowMessageEx(DKLangConstW('msgErrEmptyUserName'), true);
               end;

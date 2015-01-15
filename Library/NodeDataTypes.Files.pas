@@ -22,7 +22,7 @@ unit NodeDataTypes.Files;
 interface
 
 uses
-  SysUtils, Kernel.Enumerations, NodeDataTypes.Base,
+  SysUtils, Kernel.Enumerations, NodeDataTypes.Base, Kernel.Types,
   NodeDataTypes.Custom, WinApi.Windows, WinApi.ShellApi, DateUtils;
 
 type
@@ -55,7 +55,7 @@ type
   protected
     procedure AfterExecute(ADoActionOnExe: Boolean); override;
     function InternalExecute(ARunFromCategory: Boolean): boolean; override;
-    function InternalExecuteAsUser(ARunFromCategory: Boolean; AUsername, APassword: string): boolean; override;
+    function InternalExecuteAsUser(ARunFromCategory: Boolean; AUserData: TUserData): boolean; override;
     function InternalExecuteAsAdmin(ARunFromCategory: Boolean): boolean; override;
   public
     //Specific properties
@@ -159,7 +159,7 @@ begin
   Result := ShellExecuteEx(@ShellExecuteInfo);
 end;
 
-function TvFileNodeData.InternalExecuteAsUser(ARunFromCategory: Boolean; AUsername, APassword: string): boolean;
+function TvFileNodeData.InternalExecuteAsUser(ARunFromCategory: Boolean; AUserData: TUserData): boolean;
 var
   StartupInfo : TStartupInfoW;
   ProcInfo    : TProcessInformation;
@@ -169,8 +169,8 @@ begin
   StartupInfo.cb := sizeof(TStartupInfoW);
   StartupInfo.wShowWindow := WindowState;
   //Run process as Windows another user
-  Result := CreateProcessWithLogonW(PWideChar(AUsername), nil,
-                                    PWideChar(APassword),
+  Result := CreateProcessWithLogonW(PWideChar(AUserData.UserName), nil,
+                                    PWideChar(AUserData.Password),
                                     LOGON_WITH_PROFILE,
                                     PWideChar(PathAbsoluteFile), nil,
                                     CREATE_UNICODE_ENVIRONMENT, nil,
@@ -192,9 +192,6 @@ begin
   //MRU
   SetLastAccess(DateTimeToUnix(Now));
   Config.ListManager.MRUList.Sort;
-  //Run action after execution
-  if ADoActionOnExe then
-    RunActionOnExe(Self.ActionOnExe);
   inherited;
 end;
 
@@ -219,12 +216,11 @@ begin
   //Window state
   if ARunFromCategory then
   begin
-    Assert(PNode.Parent = Config.MainTree.RootNode, 'Parent''s item = Main tree root node (run from category mode)');
+    Assert(PNode.Parent <> Config.MainTree.RootNode, 'Parent''s item = Main tree root node (run from category mode)');
 
     ParentNodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(PNode.Parent, Config.MainTree));
     //Override child item's FWindowState
-    case Self.WindowState of
-      0: Result := -1;
+    case ParentNodeData.WindowState of
       1: Result := SW_SHOWDEFAULT;
       2: Result := SW_SHOWMINNOACTIVE;
       3: Result := SW_SHOWMAXIMIZED;
@@ -235,8 +231,6 @@ begin
     case Self.WindowState of
       1: Result := SW_SHOWMINNOACTIVE;
       2: Result := SW_SHOWMAXIMIZED;
-    else
-      Result := SW_SHOWDEFAULT;
     end;
   end;
 end;

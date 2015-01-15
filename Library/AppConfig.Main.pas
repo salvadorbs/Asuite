@@ -66,6 +66,7 @@ type
     //Execution
     FActionOnExe        : TActionOnExecute;
     FRunSingleClick     : Boolean;
+    FConfirmRunCat      : Boolean;
     //Trayicon
     FTrayIcon           : Boolean;
     FTrayUseCustomIcon  : Boolean;
@@ -174,6 +175,7 @@ type
     // Execution
     property ActionOnExe: TActionOnExecute read FActionOnExe write FActionOnExe;
     property RunSingleClick: Boolean read FRunSingleClick write FRunSingleClick;
+    property ConfirmRunCat: Boolean read FConfirmRunCat write FConfirmRunCat;
     // Trayicon
     property TrayIcon: Boolean read FTrayIcon write SetTrayIcon;
     property TrayUseCustomIcon: Boolean read FTrayUseCustomIcon write SetTrayUseCustomIcon;
@@ -286,6 +288,7 @@ begin
   //Execution
   FActionOnExe        := aeDefault;
   FRunSingleClick     := False;
+  FConfirmRunCat      := True;
   //Trayicon
   FTrayIcon           := True;
   FTrayUseCustomIcon  := False;
