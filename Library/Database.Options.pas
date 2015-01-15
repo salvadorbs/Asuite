@@ -22,7 +22,7 @@ unit Database.Options;
 interface
 
 uses
-  mORMot, SynCommons, Kernel.Enumerations, Classes, Kernel.Types,
+  mORMot, SynCommons, Kernel.Enumerations, Classes,
   SysUtils, Database.Manager, AppConfig.Main, Types;
 
 type

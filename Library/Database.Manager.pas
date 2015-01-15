@@ -61,7 +61,7 @@ implementation
 
 uses
   Kernel.Consts, AppConfig.Main, Utility.FileFolder, Utility.Misc,
-  Database.Version, Database.Options, Database.List, NodeDataTypes.Base,
+  Database.Version, Database.Options, Database.List,
   VirtualTree.Methods;
 
 constructor TDBManager.Create;

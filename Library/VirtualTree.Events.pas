@@ -131,7 +131,7 @@ procedure TVirtualTreeEvents.DoNodeDblClick(Sender: TBaseVirtualTree; const HitI
 begin
   //Check if user click on node or expand button (+/-)
   if Not(ClickOnButtonTree(Sender, HitInfo)) then
-//    RunNormalSw(Sender);
+    TVirtualTreeMethods.Create.ExecuteSelectedNodes(Sender, rmNormal, False);
 end;
 
 procedure TVirtualTreeEvents.DoNodeSingleClick(Sender: TBaseVirtualTree; const HitInfo: THitInfo);
@@ -139,7 +139,7 @@ begin
   //Check if user click on node or expand button (+/-)
   if Not(ClickOnButtonTree(Sender, HitInfo)) then
     if (Config.RunSingleClick) then
-//      RunNormalSw(Sender);
+      TVirtualTreeMethods.Create.ExecuteSelectedNodes(Sender, rmNormal, False)
 end;
 
 procedure TVirtualTreeEvents.DoNodeSingleClickGM(Sender: TBaseVirtualTree;
@@ -158,7 +158,7 @@ begin
     else
       if NodeData.DataType = vtdtFile then
       begin
-        DoNodeSingleClick(Sender, HitInfo);
+        DoNodeDblClick(Sender, HitInfo);
         FGraphicMenu.CloseMenu;
       end;
   end;
@@ -450,9 +450,9 @@ end;
 
 procedure TVirtualTreeEvents.DoKeyPress(Sender: TObject; var Key: Char);
 begin
-//  if (Sender is TBaseVirtualTree) then
-//    if Ord(Key) = VK_RETURN then
-//        RunNormalSw((Sender as TBaseVirtualTree));
+  if (Sender is TBaseVirtualTree) then
+    if Ord(Key) = VK_RETURN then
+      TVirtualTreeMethods.Create.ExecuteSelectedNodes((Sender as TBaseVirtualTree), rmNormal, False)
 end;
 
 procedure TVirtualTreeEvents.DoMeasureItem(Sender: TBaseVirtualTree;

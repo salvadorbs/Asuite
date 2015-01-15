@@ -50,14 +50,14 @@ type
   protected
     procedure AfterExecute(ADoActionOnExe: Boolean); virtual;
 
-    function InternalExecute(ARunFromCategory: Boolean): boolean; virtual; abstract;
+    function InternalExecute(ARunFromCategory: Boolean; ACheckSingleInstance: Boolean): boolean; virtual; abstract;
     function InternalExecuteAsUser(ARunFromCategory: Boolean; AUserData: TUserData): boolean; virtual; abstract;
     function InternalExecuteAsAdmin(ARunFromCategory: Boolean): boolean; virtual; abstract;
   public
     constructor Create(AType: TvTreeDataType);
     procedure Copy(source:TvBaseNodeData); override;
 
-    function Execute(ADoActionOnExe: Boolean; ARunFromCategory: Boolean): boolean;
+    function Execute(ADoActionOnExe: Boolean; ARunFromCategory: Boolean; ACheckSingleInstance: Boolean): boolean;
     function ExecuteAsUser(ADoActionOnExe: Boolean; ARunFromCategory: Boolean;
       AUserData: TUserData): boolean;
     function ExecuteAsAdmin(ADoActionOnExe: Boolean; ARunFromCategory: Boolean): boolean;
@@ -82,8 +82,8 @@ type
 implementation
 
 uses
-  AppConfig.Main, Lists.Manager, Kernel.Consts, VirtualTree.Methods, NodeDataTypes.Files,
-  Utility.Misc, DKLang, Utility.Process;
+  AppConfig.Main, Lists.Manager, Kernel.Consts, VirtualTree.Methods,
+  DKLang, Utility.Process;
 
 procedure TvCustomRealNodeData.Copy(source: TvBaseNodeData);
 var
@@ -189,17 +189,13 @@ begin
 end;
 
 function TvCustomRealNodeData.Execute(ADoActionOnExe: Boolean;
-  ARunFromCategory: Boolean): boolean;
+  ARunFromCategory: Boolean; ACheckSingleInstance: Boolean): boolean;
 begin
   try
-    Result := InternalExecute(ARunFromCategory);
+    Result := InternalExecute(ARunFromCategory, ACheckSingleInstance);
   finally
     if Result then
       AfterExecute(ADoActionOnExe)
-    else begin
-      //Show error message
-      ShowMessageEx(SysErrorMessage(GetLastError), True);
-    end;
   end;
 end;
 
@@ -211,10 +207,6 @@ begin
   finally
     if Result then
       AfterExecute(ADoActionOnExe)
-    else begin
-      //Show error message
-      ShowMessageEx(SysErrorMessage(GetLastError), True);
-    end;
   end;
 end;
 
@@ -226,10 +218,6 @@ begin
   finally
     if Result then
       AfterExecute(ADoActionOnExe)
-    else begin
-      //Show error message
-      ShowMessageEx(SysErrorMessage(GetLastError), True);
-    end;
   end;
 end;
 

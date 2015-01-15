@@ -50,7 +50,7 @@ var
 implementation
 
 uses
-  Kernel.Consts, AppConfig.Main, Utility.Misc;
+  Utility.Misc;
 
 {$R *.dfm}
 

@@ -54,7 +54,7 @@ type
     function GetWindowState(ARunFromCategory: Boolean): Integer;
   protected
     procedure AfterExecute(ADoActionOnExe: Boolean); override;
-    function InternalExecute(ARunFromCategory: Boolean): boolean; override;
+    function InternalExecute(ARunFromCategory: Boolean; ACheckSingleInstance: Boolean): boolean; override;
     function InternalExecuteAsUser(ARunFromCategory: Boolean; AUserData: TUserData): boolean; override;
     function InternalExecuteAsAdmin(ARunFromCategory: Boolean): boolean; override;
   public
@@ -87,7 +87,7 @@ implementation
 
 uses
   AppConfig.Main, Lists.Manager, Kernel.Consts, Utility.FileFolder, Lists.Special,
-  Lists.Base, Utility.System, Utility.Process, VirtualTree.Methods;
+  Lists.Base, Utility.System, Utility.Process, VirtualTree.Methods, Utility.Misc;
 
 constructor TvFileNodeData.Create(AType: TvTreeDataType);
 begin
@@ -131,13 +131,22 @@ begin
     Result := '';
 end;
 
-function TvFileNodeData.InternalExecute(ARunFromCategory: Boolean): boolean;
+function TvFileNodeData.InternalExecute(ARunFromCategory: Boolean; ACheckSingleInstance: Boolean): boolean;
 begin
   Result := False;
+
+  //If ACheckSingleInstance, we must check if process exists, and if yes, exit
+  if (ACheckSingleInstance) and (Autorun = atSingleInstance) then
+    if (IsProcessExists(ExtractFileName(Self.PathAbsoluteFile))) then
+      Exit;
+
   //Execute
   Result := ShellExecute(GetDesktopWindow, nil, PChar(PathAbsoluteFile),
                          PChar(Config.Paths.RelativeToAbsolute(FParameters)),
                          PChar(GetWorkingDir), GetWindowState(ARunFromCategory)) > 32;
+  //Error message
+  if not Result then
+    ShowMessageEx(SysErrorMessage(GetLastError), True);
 end;
 
 function TvFileNodeData.InternalExecuteAsAdmin(ARunFromCategory: Boolean): boolean;
@@ -157,6 +166,9 @@ begin
   ShellExecuteInfo.nShow := GetWindowState(ARunFromCategory);
   //Run process
   Result := ShellExecuteEx(@ShellExecuteInfo);
+
+  if not Result then
+    ShowMessageEx(SysErrorMessage(GetLastError), True);
 end;
 
 function TvFileNodeData.InternalExecuteAsUser(ARunFromCategory: Boolean; AUserData: TUserData): boolean;
@@ -182,6 +194,8 @@ begin
     CloseHandle(ProcInfo.hProcess);
     CloseHandle(ProcInfo.hThread);
   end
+  else
+    ShowMessageEx(SysErrorMessage(GetLastError), True);
 end;
 
 procedure TvFileNodeData.AfterExecute(ADoActionOnExe: Boolean);
