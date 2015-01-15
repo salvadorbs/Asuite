@@ -70,17 +70,7 @@ type
       sfPathIcon
   );
 
-  //Run modes
-  TRunMode = (
-      rmNormal,
-      rmRunAs,
-      rmRunAsAdmin,
-      rmAutorun,
-      rmAutorunSingleInstance,
-      rmOpenFolder
-  );
-
-  //Run modes
+  //Scheduler modes
   TSchedulerMode = (
       smDisabled = 0,
       smOnce = 1,
@@ -102,43 +92,10 @@ type
       isAny    //Small or Large Icon
   );
 
-  TMousePosition = (
-      mpTopLeft,
-      mpLeft,
-      mpBottomLeft,
-      mpBottom,
-      mpBottomRight,
-      mpRight,
-      mpTopRight,
-      mpTop,
-      mpInside
-      );
-
-  TMouseTrigger = (
-      mtLeft,
-      mtMiddle,
-      mtRight,
-      mtWheelUp,
-      mtWheelDown,
-      mtMove,
-      mtNone
-      );
-
-  TSensorAction = (
-      saNone,
-      saShowMainForm,
-      saShowGraphicMenu,
-      saShowClassicMenu,
-      saRunItemX,
-      saShowCategory,
-      saShowFolder,
-      saShowDesktop
-      );
-
   TSpecialListMode = (
       lmMRU,
       lmMFU
-      );
+  );
 
 implementation
 

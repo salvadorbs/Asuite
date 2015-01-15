@@ -174,7 +174,6 @@ begin
           Autorun     := TAutorunType(SQLFilesData.autorun);
           SchMode     := TSchedulerMode(SQLFilesData.scheduler_mode);
           SchDateTime := SQLFilesData.scheduler_datetime;
-          LastAccess  := SQLFilesData.lastAccess;
           Hotkey      := SQLFilesData.hotkey;
           ActiveHotkey := SQLFilesData.activehotkey;
           WindowState := SQLFilesData.window_state;
@@ -190,6 +189,7 @@ begin
             ShortcutDesktop  := SQLFilesData.dsk_shortcut;
             NoMRU            := SQLFilesData.no_mru;
             NoMFU            := SQLFilesData.no_mfu;
+            LastAccess       := SQLFilesData.lastAccess;
             ClickCount       := SQLFilesData.clicks;
             RunFromCategory  := SQLFilesData.run_from_category;
           end;
@@ -261,7 +261,6 @@ begin
       Fautorun      := Ord(Autorun);
       Fautorun_position := AutorunPos;
       Fonlaunch     := Ord(ActionOnExe);
-      FlastAccess   := LastAccess;
       Fscheduler_mode := Ord(SchMode);
       Fscheduler_datetime := SchDateTime;
       FActiveHotkey := ActiveHotkey;
@@ -278,6 +277,7 @@ begin
         Fdsk_shortcut := ShortcutDesktop;
         Fno_mru     := NoMRU;
         Fno_mfu     := NoMFU;
+        FlastAccess := LastAccess;
         Fclicks     := ClickCount;
         Frun_from_category := RunFromCategory;
       end;

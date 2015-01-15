@@ -35,6 +35,7 @@ type
     FParameters      : string;
     FWorkingDir      : string;
     FShortcutDesktop : Boolean;
+    FLastAccess      : Int64;
     FClickCount      : Integer;
     FNoMRU           : Boolean;
     FNoMFU           : Boolean;
@@ -45,9 +46,17 @@ type
     procedure SetNoMRU(value:Boolean);
     procedure SetNoMFU(value:Boolean);
     procedure SetShortcutDesktop(value:Boolean);
-    function GetPathAbsoluteExe: String;
+    function GetPathAbsoluteFile: String;
     function GetWorkingDirAbsolute: string;
     procedure SetClickCount(const Value: Integer);
+    procedure SetLastAccess(const Value: Int64);
+    function GetWorkingDir(): string;
+    function GetWindowState(ARunFromCategory: Boolean): Integer;
+  protected
+    procedure AfterExecute(ADoActionOnExe: Boolean); override;
+    function InternalExecute(ARunFromCategory: Boolean): boolean; override;
+    function InternalExecuteAsUser(ARunFromCategory: Boolean; AUsername, APassword: string): boolean; override;
+    function InternalExecuteAsAdmin(ARunFromCategory: Boolean): boolean; override;
   public
     //Specific properties
     constructor Create(AType: TvTreeDataType); overload;
@@ -57,10 +66,11 @@ type
     function ExplorePath: Boolean;
 
     property ClickCount: Integer read FClickCount write SetClickCount;
+    property LastAccess: Int64 read FLastAccess write SetLastAccess;
     property NoMRU: Boolean read FNoMRU write SetNoMRU;
     property NoMFU: Boolean read FNoMFU write SetNoMFU;
     property PathFile: String read FPathFile write SetPathFile;
-    property PathAbsoluteExe: String read GetPathAbsoluteExe;
+    property PathAbsoluteFile: String read GetPathAbsoluteFile;
     property IsPathFileExists: Boolean read FIsPathFileExists;
     property Parameters: string read FParameters write FParameters;
     property WorkingDir: string read FWorkingDir write SetWorkingDir;
@@ -76,8 +86,8 @@ type
 implementation
 
 uses
-  AppConfig.Main, Lists.Manager, Kernel.Consts, Utility.FileFolder,
-  Lists.Base, Utility.System;
+  AppConfig.Main, Lists.Manager, Kernel.Consts, Utility.FileFolder, Lists.Special,
+  Lists.Base, Utility.System, Utility.Process, VirtualTree.Methods;
 
 constructor TvFileNodeData.Create(AType: TvTreeDataType);
 begin
@@ -92,6 +102,7 @@ begin
   FWorkingDir      := '';
   FNoMRU           := False;
   FNoMFU           := False;
+  FLastAccess      := -1;
   FClickCount      := 0;
   FShortcutDesktop := False;
   //Misc
@@ -104,7 +115,7 @@ begin
     DeleteShortcutOnDesktop(Self.Name + EXT_LNK);
 end;
 
-function TvFileNodeData.GetPathAbsoluteExe: String;
+function TvFileNodeData.GetPathAbsoluteFile: String;
 begin
   if FPathFile <> '' then
     Result := Config.Paths.RelativeToAbsolute(FPathFile)
@@ -120,17 +131,128 @@ begin
     Result := '';
 end;
 
+function TvFileNodeData.InternalExecute(ARunFromCategory: Boolean): boolean;
+begin
+  Result := False;
+  //Execute
+  Result := ShellExecute(GetDesktopWindow, nil, PChar(PathAbsoluteFile),
+                         PChar(Config.Paths.RelativeToAbsolute(FParameters)),
+                         PChar(GetWorkingDir), GetWindowState(ARunFromCategory)) > 32;
+end;
+
+function TvFileNodeData.InternalExecuteAsAdmin(ARunFromCategory: Boolean): boolean;
+var
+  ShellExecuteInfo: TShellExecuteInfo;
+begin
+  ZeroMemory(@ShellExecuteInfo, SizeOf(ShellExecuteInfo));
+  ShellExecuteInfo.cbSize := SizeOf(TShellExecuteInfo);
+  ShellExecuteInfo.Wnd    := GetDesktopWindow;
+  ShellExecuteInfo.fMask  := SEE_MASK_FLAG_DDEWAIT or SEE_MASK_FLAG_NO_UI;
+  ShellExecuteInfo.lpVerb := PChar('runas');
+  //Set process's path, working dir, parameters and window state
+  ShellExecuteInfo.lpFile := PChar(PathAbsoluteFile);
+  ShellExecuteInfo.lpDirectory := PChar(GetWorkingDir);
+  if FParameters <> '' then
+    ShellExecuteInfo.lpParameters := PChar(Config.Paths.RelativeToAbsolute(FParameters));
+  ShellExecuteInfo.nShow := GetWindowState(ARunFromCategory);
+  //Run process
+  Result := ShellExecuteEx(@ShellExecuteInfo);
+end;
+
+function TvFileNodeData.InternalExecuteAsUser(ARunFromCategory: Boolean; AUsername, APassword: string): boolean;
+var
+  StartupInfo : TStartupInfoW;
+  ProcInfo    : TProcessInformation;
+begin
+  FillMemory(@StartupInfo, sizeof(StartupInfo), 0);
+  FillMemory(@ProcInfo, sizeof(ProcInfo), 0);
+  StartupInfo.cb := sizeof(TStartupInfoW);
+  StartupInfo.wShowWindow := WindowState;
+  //Run process as Windows another user
+  Result := CreateProcessWithLogonW(PWideChar(AUsername), nil,
+                                    PWideChar(APassword),
+                                    LOGON_WITH_PROFILE,
+                                    PWideChar(PathAbsoluteFile), nil,
+                                    CREATE_UNICODE_ENVIRONMENT, nil,
+                                    PWideChar(GetWorkingDir),
+                                    StartupInfo, ProcInfo);
+  //Close handles
+  if Result then
+  begin
+    CloseHandle(ProcInfo.hProcess);
+    CloseHandle(ProcInfo.hThread);
+  end
+end;
+
+procedure TvFileNodeData.AfterExecute(ADoActionOnExe: Boolean);
+begin
+  //MFU
+  SetClickCount(FClickCount + 1);
+  Config.ListManager.MFUList.Sort;
+  //MRU
+  SetLastAccess(DateTimeToUnix(Now));
+  Config.ListManager.MRUList.Sort;
+  //Run action after execution
+  if ADoActionOnExe then
+    RunActionOnExe(Self.ActionOnExe);
+  inherited;
+end;
+
 procedure TvFileNodeData.CheckPathFile;
 var
   bPathExists: Boolean;
 begin
-  bPathExists := IsPathExists(Self.PathAbsoluteExe);
+  bPathExists := IsPathExists(Self.PathAbsoluteFile);
   if FIsPathFileExists <> bPathExists then
   begin
     FIsPathFileExists := bPathExists;
     //Force MainTree repaint node
     Config.MainTree.InvalidateNode(Self.PNode);
   end;
+end;
+
+function TvFileNodeData.GetWindowState(ARunFromCategory: Boolean): Integer;
+var
+  ParentNodeData: TvCustomRealNodeData;
+begin
+  Result := SW_SHOWDEFAULT;
+  //Window state
+  if ARunFromCategory then
+  begin
+    Assert(PNode.Parent = Config.MainTree.RootNode, 'Parent''s item = Main tree root node (run from category mode)');
+
+    ParentNodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(PNode.Parent, Config.MainTree));
+    //Override child item's FWindowState
+    case Self.WindowState of
+      0: Result := -1;
+      1: Result := SW_SHOWDEFAULT;
+      2: Result := SW_SHOWMINNOACTIVE;
+      3: Result := SW_SHOWMAXIMIZED;
+    end;
+  end
+  else
+  begin
+    case Self.WindowState of
+      1: Result := SW_SHOWMINNOACTIVE;
+      2: Result := SW_SHOWMAXIMIZED;
+    else
+      Result := SW_SHOWDEFAULT;
+    end;
+  end;
+end;
+
+function TvFileNodeData.GetWorkingDir(): string;
+begin
+  //Working directory
+  if FWorkingDir = '' then
+  begin
+    if IsDirectory(Self.PathAbsoluteFile) then
+      Result := Self.PathAbsoluteFile
+    else
+      Result := ExtractFileDir(Self.PathAbsoluteFile);
+  end
+  else
+    Result := Self.WorkingDirAbsolute;
 end;
 
 procedure TvFileNodeData.Copy(Source: TvBaseNodeData);
@@ -154,9 +276,11 @@ end;
 
 function TvFileNodeData.ExplorePath: Boolean;
 begin
-  Result := ShellExecute(GetDesktopWindow, 'open',
-                         PChar(ExtractFileDir(Self.PathAbsoluteExe)),
-                         nil, nil, SW_NORMAL) > 32;
+  Result := False;
+  if Not(IsValidURLProtocol(Self.PathAbsoluteFile)) then
+    Result := ShellExecute(GetDesktopWindow, 'open',
+                           PChar(ExtractFileDir(Self.PathAbsoluteFile)),
+                           nil, nil, SW_NORMAL) > 32;
 end;
 
 procedure TvFileNodeData.SetPathFile(value:string);
@@ -188,8 +312,16 @@ procedure TvFileNodeData.SetClickCount(const Value: Integer);
 begin
   FClickCount := Value;
   if (Config.ASuiteState <> lsImporting) then
-    if (FClickCount > 0) and (not TvFileNodeData(Self).FNoMFU) then
+    if (FClickCount > 0) and (not Self.FNoMFU) then
       Config.ListManager.MFUList.AddItem(Self);
+end;
+
+procedure TvFileNodeData.SetLastAccess(const Value: Int64);
+begin
+  FLastAccess := Value;
+  if (Config.ASuiteState <> lsImporting) then
+    if (FLastAccess > -1) and (not Self.NoMRU) then
+      Config.ListManager.MRUList.AddItem(Self);
 end;
 
 procedure TvFileNodeData.SetNoMFU(value:Boolean);
@@ -212,7 +344,7 @@ begin
   begin
     //If value is true, create shortcut in desktop
     if (value and (FShortcutDesktop <> value)) then
-      CreateShortcutOnDesktop(Name + EXT_LNK, Self.PathAbsoluteExe, FParameters, Self.WorkingDirAbsolute)
+      CreateShortcutOnDesktop(Name + EXT_LNK, Self.PathAbsoluteFile, FParameters, Self.WorkingDirAbsolute)
     else //else delete it from desktop
       if (not value and (FShortcutDesktop <> value)) then
         DeleteShortcutOnDesktop(Self.Name + EXT_LNK);
