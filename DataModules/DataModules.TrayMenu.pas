@@ -761,8 +761,8 @@ begin
   if (Sender is TASMenuItem) then
   begin
     NodeData := (Sender as TASMenuItem).Data;
-
-    //TODO: Run file
+    if Assigned(NodeData) then
+      TvFileNodeData(NodeData).Execute(True, False)
   end;
 end;
 
