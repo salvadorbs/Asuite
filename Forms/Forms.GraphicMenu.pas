@@ -92,6 +92,7 @@ type
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure tmrCheckItemsTimer(Sender: TObject);
     procedure FormHide(Sender: TObject);
+    procedure mniRunClick(Sender: TObject);
 	private    
     { Private declarations }
     FOpening    : Boolean;
@@ -279,16 +280,15 @@ begin
           NodeData := TVirtualTreeMethods.Create.GetNodeItemData(CurrentNode, vstList);
           if Assigned(NodeData) then
           begin
-            //TODO: Fix it (RunExe)
             case NodeData.DataType of
               vtdtCategory:
                 begin
                   if (ssCtrl in Shift) then
-//                    frmMain.RunNormalSw(vstList)
+                    TVirtualTreeMethods.Create.ExecuteNode(vstList, CurrentNode, rmNormal, False)
                   else
                     vstList.Expanded[CurrentNode] := Not(vstList.Expanded[CurrentNode]);
                 end;
-//              vtdtFile: frmMain.RunNormalSw(vstList);
+              vtdtFile: TVirtualTreeMethods.Create.ExecuteNode(vstList, CurrentNode, rmNormal, False);
             end;
           end;
         end;
@@ -367,6 +367,12 @@ end;
 procedure TfrmGraphicMenu.mniPropertyClick(Sender: TObject);
 begin
   TVirtualTreeMethods.Create.ShowItemProperty(Self, vstList, vstList.GetFirstSelected);
+end;
+
+procedure TfrmGraphicMenu.mniRunClick(Sender: TObject);
+begin
+  TVirtualTreeMethods.Create.ExecuteSelectedNodes((Sender as TBaseVirtualTree),
+                                                  TRunMode(TMenuItem(Sender).Tag), False);
 end;
 
 procedure TfrmGraphicMenu.OpenRightButton(Sender: TObject);

@@ -40,7 +40,7 @@ type
     procedure CallBackExecuteNodeAsAdmin(Sender: TBaseVirtualTree; Node: PVirtualNode;
                                          Data: Pointer; var Abort: Boolean);
   protected
-    function InternalExecute(ARunFromCategory: Boolean): boolean; override;
+    function InternalExecute(ARunFromCategory: Boolean; ASingleInstance: Boolean): boolean; override;
     function InternalExecuteAsUser(ARunFromCategory: Boolean; AUserData: TUserData): boolean; override;
     function InternalExecuteAsAdmin(ARunFromCategory: Boolean): boolean; override;
   public
@@ -58,12 +58,14 @@ procedure TvCategoryNodeData.CallBackExecuteNode(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
 var
   NodeData: TvBaseNodeData;
+  SingleInstance: PBoolean;
 begin
+  SingleInstance := Data;
   NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
   if (Assigned(NodeData)) and (NodeData.DataType in [vtdtFile,vtdtFolder]) then
   begin
     if TvFileNodeData(NodeData).RunFromCategory then
-      TvFileNodeData(NodeData).Execute(False, True);
+      TvFileNodeData(NodeData).Execute(False, True, Boolean(SingleInstance));
   end;
 end;
 
@@ -137,7 +139,7 @@ begin
     Result := True;
 end;
 
-function TvCategoryNodeData.InternalExecute(ARunFromCategory: Boolean): boolean;
+function TvCategoryNodeData.InternalExecute(ARunFromCategory: Boolean; ASingleInstance: Boolean): boolean;
 var
   Node : PVirtualNode;
   ChildNodeData : TvBaseNodeData;
@@ -145,7 +147,7 @@ begin
   Result := ConfirmRunCategory;
 
   if Result then
-    Config.MainTree.IterateSubtree(Self.PNode, CallBackExecuteNode, nil);
+    Config.MainTree.IterateSubtree(Self.PNode, CallBackExecuteNode, @ASingleInstance);
 end;
 
 function TvCategoryNodeData.InternalExecuteAsAdmin(

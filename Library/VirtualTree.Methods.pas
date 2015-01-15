@@ -67,6 +67,10 @@ type
                                Data: Pointer; var Abort: Boolean);
 
     //Misc
+    procedure ExecuteSelectedNodes(ASender: TBaseVirtualTree; ARunMode: TRunMode;
+                                   ACheckSingleInstance: Boolean);
+    procedure ExecuteNode(ASender: TBaseVirtualTree; ANode: PVirtualNode; ARunMode: TRunMode;
+                          ACheckSingleInstance: Boolean);
     function CreateNodeData(AType: TvTreeDataType): TvBaseNodeData;
     function ShowItemProperty(const AOwner: TComponent; const ATreeView: TBaseVirtualTree;
                               const ANode: PVirtualNode; ANewNode: Boolean = False): Integer;
@@ -78,7 +82,7 @@ implementation
 
 uses
   Utility.System, DataModules.Images, AppConfig.Main, NodeDataTypes.Files,
-  Utility.FileFolder, Forms.PropertySeparator,
+  Utility.FileFolder, Forms.PropertySeparator, mORMotUILogin, Utility.Misc,
   NodeDataTypes.Category, NodeDataTypes.Separator, Forms.PropertyItem,
   NodeDataTypes.Custom, Kernel.Consts;
 
@@ -264,6 +268,55 @@ begin
   else
     Result := nil;
   end;
+end;
+
+procedure TVirtualTreeMethods.ExecuteNode(ASender: TBaseVirtualTree; ANode: PVirtualNode;
+  ARunMode: TRunMode; ACheckSingleInstance: Boolean);
+var
+  NodeData: TvCustomRealNodeData;
+  UserData: TUserData;
+begin
+  NodeData := TvCustomRealNodeData(GetNodeItemData(ANode, ASender));
+  if Not(NodeData.DataType = vtdtSeparator) then
+  begin
+    case ARunMode of
+      //Normal execute
+      rmNormal: NodeData.Execute(True, NodeData.DataType = vtdtCategory, ACheckSingleInstance);
+      //Execute as user
+      rmAsUser:
+        begin
+          if TLoginForm.Login(DKLangConstW('msgRunAsTitle'), DKLangConstW('msgInsertWinUserInfo'), UserData.UserName, UserData.Password, True, '') then
+          begin
+            if UserData.UserName <> '' then
+              NodeData.ExecuteAsUser(True, NodeData.DataType = vtdtCategory, UserData)
+            else
+              ShowMessageEx(DKLangConstW('msgErrEmptyUserName'), true);
+          end;
+        end;
+      //Execute as Admin
+      rmAsAdmin: NodeData.ExecuteAsAdmin(True, NodeData.DataType = vtdtCategory);
+      //Explore path
+      rmExplorePath:
+        begin
+          if (NodeData.DataType = vtdtFile) then
+            TvFileNodeData(NodeData).ExplorePath;
+        end;
+    end;
+  end;
+end;
+
+procedure TVirtualTreeMethods.ExecuteSelectedNodes(ASender: TBaseVirtualTree; ARunMode: TRunMode;
+  ACheckSingleInstance: Boolean);
+var
+  Nodes: TNodeArray;
+  I: Integer;
+begin
+  //Get selected nodes and run them one by one
+  Nodes := ASender.GetSortedSelection(True);
+  for I := Low(Nodes) to High(Nodes) do
+    ExecuteNode(ASender, Nodes[I], ARunMode, ACheckSingleInstance);
+
+  RefreshList(ASender);
 end;
 
 function TVirtualTreeMethods.GetListNodeFromSubTree(const ANodeX: PVirtualNode;

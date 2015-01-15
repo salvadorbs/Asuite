@@ -23,7 +23,7 @@ interface
 
 uses
   Classes, Menus, SysUtils, Kernel.Singleton, Lists.Special, NodeDataTypes.Custom,
-  Lists.Base, Lists.Scheduler, Lists.HotKey;
+  Lists.Base, Lists.Scheduler, Lists.HotKey, Kernel.Enumerations;
 
 type
   TListManager = class(TSingleton)
@@ -39,6 +39,7 @@ type
     procedure Finalize; override;
 
     procedure RemoveItemFromLists(AItemData: TvCustomRealNodeData);
+    procedure ExecuteAutorunList(AutorunListMode: TAutorunListMode);
 
     property MRUList: TSpecialItemsList read FMRUList write FMRUList;
     property MFUList: TSpecialItemsList read FMFUList write FMFUList;
@@ -51,7 +52,7 @@ type
 implementation
 
 uses
-  Windows, Kernel.Enumerations;
+  Windows, AppConfig.Main, VirtualTree.Methods;
 
 { TLauncherLists }
 
@@ -83,6 +84,28 @@ begin
     FStartupItemList.RemoveItem(AItemData);
   if (AItemData.Autorun in [atAlwaysOnClose]) then
     FShutdownItemList.RemoveItem(AItemData);
+end;
+
+procedure TListManager.ExecuteAutorunList(AutorunListMode: TAutorunListMode);
+var
+  List : TBaseItemsList;
+  I    : Integer;
+  NodeData: TvCustomRealNodeData;
+begin
+  List := nil;
+  if (Config.Autorun) then
+  begin
+    case AutorunListMode of
+      amStartup  : List := FStartupItemList;
+      amShutdown : List := FShutdownItemList;
+    end;
+
+    if Assigned(List) then
+    begin
+      for I := 0 to List.Count - 1 do
+        TVirtualTreeMethods.Create.ExecuteNode(Config.MainTree, List[I].pNode, rmNormal, True);
+    end;
+  end;
 end;
 
 procedure TListManager.Finalize;

@@ -133,8 +133,6 @@ type
   private
     { Private declarations }
     function  GetActiveTree: TBaseVirtualTree;
-    procedure RunStartupProcess;
-    procedure RunShutdownProcess;
     procedure PopulatePopUpMenuFromAnother(APopupMenu: TPopupMenu; AParentMenuItem: TMenuItem);
   public
     { Public declarations }
@@ -153,8 +151,7 @@ uses
   TypInfo, Forms.Options, Forms.About, Utility.Misc, Forms.ScanFolder,
   DataModules.TrayMenu, Forms.ImportList, AppConfig.Main, Utility.System,
   VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base,
-  NodeDataTypes.Custom, Kernel.Types, NodeDataTypes.Files, mORMotUILogin,
-  VirtualTree.Events;
+  NodeDataTypes.Custom, Kernel.Types, NodeDataTypes.Files, VirtualTree.Events;
 
 {$R *.dfm}
 
@@ -202,47 +199,8 @@ begin
 end;
 
 procedure TfrmMain.actRunItemExecute(Sender: TObject);
-var
-  Nodes: TNodeArray;
-  NodeData: TvCustomRealNodeData;
-  I: Integer;
-  UserData: TUserData;
 begin
-  Nodes := GetActiveTree.GetSortedSelection(True);
-  if Length(Nodes) > 0 then
-  begin
-    for I := Low(Nodes) to High(Nodes) do
-    begin
-      NodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Nodes[I], GetActiveTree));
-      if Not(NodeData.DataType = vtdtSeparator) then
-      begin
-        case TAction(Sender).Tag of
-          //Normal execute
-          0: NodeData.Execute(True, False);
-          //Execute as user
-          1:
-            begin
-              if TLoginForm.Login(DKLangConstW('msgRunAsTitle'), DKLangConstW('msgInsertWinUserInfo'), UserData.UserName, UserData.Password, True, '') then
-              begin
-                if UserData.UserName <> '' then
-                  NodeData.ExecuteAsUser(True, False, UserData)
-                else
-                  ShowMessageEx(DKLangConstW('msgErrEmptyUserName'), true);
-              end;
-            end;
-          //Execute as Admin
-          2: NodeData.ExecuteAsAdmin(True, False);
-          //Explore path
-          3:
-            begin
-              if (NodeData.DataType = vtdtFile) then
-                TvFileNodeData(NodeData).ExplorePath;
-            end;
-        end;
-      end;
-    end;
-  end;
-  TVirtualTreeMethods.Create.RefreshList(vstList);
+  TVirtualTreeMethods.Create.ExecuteSelectedNodes(GetActiveTree, TRunMode(TAction(Sender).Tag), False);
 end;
 
 procedure TfrmMain.actAddItem(Sender: TObject);
@@ -512,43 +470,6 @@ begin
   end;
 end;
 
-procedure TfrmMain.RunStartupProcess;
-var
-  NodeData : TvCustomRealNodeData;
-  I : Integer;
-begin
-  //Autorun - Execute software
-  if (Config.Autorun) then
-  begin
-    for I := 0 to Config.ListManager.StartupItemList.Count - 1 do
-    begin
-      NodeData := Config.ListManager.StartupItemList[I];
-      //Set RunMode
-      //TODO: RUN!
-//      //Start process
-//      if (NodeData.Autorun = atSingleInstance) and (IsProcessExists(ExtractFileName(Self.PathAbsoluteExe))) then
-//        ExecuteItem(Config.MainTree, NodeData, RunMode);
-    end;
-  end;
-end;
-
-procedure TfrmMain.RunShutdownProcess;
-var
-  NodeData: TvCustomRealNodeData;
-  I : Integer;
-begin
-  //Autorun - Execute software
-  if (Config.Autorun) then
-  begin
-    for I := 0 to Config.ListManager.ShutdownItemList.Count - 1 do
-    begin
-      NodeData := Config.ListManager.ShutdownItemList[I];
-      //Start process
-//      ExecuteItem(Config.MainTree, NodeData, rmAutorun);
-    end;
-  end;
-end;
-
 procedure TfrmMain.tmrCheckItemsTimer(Sender: TObject);
 begin
   if Config.ASuiteState = lsNormal then
@@ -617,7 +538,7 @@ end;
 
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  RunShutdownProcess;
+  Config.ListManager.ExecuteAutorunList(amShutdown);
   //Execute actions on ASuite's shutdown (inside vstList)
   Config.MainTree.IterateSubtree(nil, TVirtualTreeMethods.Create.ActionsOnShutdown, nil);
   //Hotkey
@@ -659,7 +580,7 @@ begin
   Config.LoadList;
   //TODO: Fix it (dmImages)
 //ImagesDM.GetChildNodesIcons(vstList, nil, vstList.RootNode);
-  RunStartupProcess;
+  Config.ListManager.ExecuteAutorunList(amStartup);
   TVirtualTreeMethods.Create.RefreshList(nil);
   //Get placeholder for edtSearch
   edtSearch.TextHint := StringReplace(miSearchName.Caption, '&', '', []);

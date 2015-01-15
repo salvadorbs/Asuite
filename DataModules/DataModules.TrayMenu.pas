@@ -132,7 +132,7 @@ implementation
 uses
   DataModules.Images, Forms.Main, AppConfig.Main, VirtualTree.Methods,
   Utility.System, Forms.GraphicMenu, Kernel.Types, NodeDataTypes.Files,
-  NodeDataTypes.Custom, NodeDataTypes.Base, Kernel.Consts, Database.Manager,
+  NodeDataTypes.Custom, NodeDataTypes.Base, Kernel.Consts,
   Utility.Misc;
 
 {$R *.dfm}
@@ -505,6 +505,7 @@ begin
 //        ImagesDM.GetNodeImageIndex(NodeData, isSmall);
         MenuItem.ImageIndex := NodeData.ImageIndex;
         MenuItem.Data       := NodeData;
+        MenuItem.pNode      := NodeData.PNode;
         MenuItem.OnClick    := RunFromTrayMenu;
         PopupMenu.Add(MenuItem);
       end
@@ -754,16 +755,8 @@ begin
 end;
 
 procedure TdmTrayMenu.RunFromTrayMenu(Sender: TObject);
-var
-  NodeData    : TvBaseNodeData;
 begin
-  //From menu
-  if (Sender is TASMenuItem) then
-  begin
-    NodeData := (Sender as TASMenuItem).Data;
-    if Assigned(NodeData) then
-      TvFileNodeData(NodeData).Execute(True, False)
-  end;
+  TVirtualTreeMethods.Create.ExecuteNode(Config.MainTree, TASMenuItem(Sender).pNode, rmNormal, False);
 end;
 
 procedure TdmTrayMenu.OpenFile(Sender: TObject);

@@ -97,6 +97,18 @@ type
       lmMFU
   );
 
+  TAutorunListMode = (
+      amStartup,
+      amShutdown
+  );
+
+  TRunMode = (
+      rmNormal,
+      rmAsUser,
+      rmAsAdmin,
+      rmExplorePath
+  );
+
 implementation
 
 end.

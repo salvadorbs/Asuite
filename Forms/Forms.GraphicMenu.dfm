@@ -282,15 +282,22 @@ object frmGraphicMenu: TfrmGraphicMenu
     object mniRun: TMenuItem
       Caption = 'Run'
       Default = True
+      OnClick = mniRunClick
     end
     object mniRunAs: TMenuItem
+      Tag = 1
       Caption = 'Run as...'
+      OnClick = mniRunClick
     end
     object mniRunAsAdmin: TMenuItem
+      Tag = 2
       Caption = 'Run as admin'
+      OnClick = mniRunClick
     end
     object mniOpenFolderSw: TMenuItem
+      Tag = 3
       Caption = 'Show application'#39's folder'
+      OnClick = mniRunClick
     end
     object N6: TMenuItem
       Caption = '-'
