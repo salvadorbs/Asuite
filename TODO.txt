@@ -2,7 +2,7 @@
 
 [x] Fix CheckPathExe
 [ ] Fix execute function (RunNormalSw, RunAs, RunAsAdmin and OpenFolder) [ ] ExecuteItem
-[ ] Fix TrayMenu functions (RunFromTrayMenu)
+[x] Fix TrayMenu functions (RunFromTrayMenu)
 
 [ ] Fix all ImagesDM references
 [ ] Load theme icons in automatic mode (maybe find and load all icons from proper folders)
