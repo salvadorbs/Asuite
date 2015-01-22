@@ -81,7 +81,7 @@ type
 implementation
 
 uses
-  Utility.System, DataModules.Images, AppConfig.Main, NodeDataTypes.Files,
+  Utility.System, DataModules.Icons, AppConfig.Main, NodeDataTypes.Files,
   Utility.FileFolder, Forms.PropertySeparator, mORMotUILogin, Utility.Misc,
   NodeDataTypes.Category, NodeDataTypes.Separator, Forms.PropertyItem,
   NodeDataTypes.Custom, Kernel.Consts;
@@ -188,9 +188,10 @@ begin
     else //Normal file
       NodeData.PathFile := Config.Paths.AbsoluteToRelative(APathFile);
   end;
+  //TODO: Fix it (dmImages)
   //If it is a directory, use folder icon
-  if DirectoryExists(NodeData.PathAbsoluteFile) then
-    NodeData.PathIcon := Config.Paths.AbsoluteToRelative(Config.Paths.SuitePathIconsTree + FILEICON_Folder);
+//  if DirectoryExists(NodeData.PathAbsoluteFile) then
+//    NodeData.PathIcon := Config.Paths.AbsoluteToRelative(Config.Paths.SuitePathIconsTree + FILEICON_Folder);
 //  ImagesDM.GetNodeImageIndex(NodeData, isAny);
 end;
 
@@ -209,7 +210,8 @@ begin
     NodeData := TvFileNodeData(GetNodeItemData(Node, ASender));
     NodeData.Name     := 'Link';
     NodeData.PathFile := AText;
-    NodeData.PathIcon := Config.Paths.AbsoluteToRelative(Config.Paths.SuitePathIconsTree + FILEICON_Url);
+    //TODO: Fix it (SuitePathIconsTree)
+//    NodeData.PathIcon := Config.Paths.AbsoluteToRelative(Config.Paths.SuitePathIconsTree + FILEICON_Url);
 //    ImagesDM.GetNodeImageIndex(NodeData, isAny);
   end;
 end;
@@ -227,11 +229,11 @@ begin
   if ASmallIcon then
   begin
     ASender.DefaultNodeHeight := 18;
-    ASender.Images := dmImages.IcoImages;
+    ASender.Images := dmImages.ilSmallIcons;
   end
   else begin
     ASender.DefaultNodeHeight := 36;
-    ASender.Images := dmImages.LargeIcoImages;
+    ASender.Images := dmImages.ilLargeIcons;
   end;
   ASender.ScrollBarOptions.VerticalIncrement := ASender.DefaultNodeHeight;
 end;

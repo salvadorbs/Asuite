@@ -24,7 +24,7 @@ interface
 uses
   Windows, SysUtils, Graphics, Forms, Controls, VirtualTrees, Kernel.Enumerations,
   Vcl.Imaging.pngimage, System.UITypes, Classes, DKLang, AppConfig.Paths,
-  Lists.Manager, Database.Manager;
+  Lists.Manager, Database.Manager, Icons.Manager;
 
 type
 
@@ -100,6 +100,7 @@ type
     FPaths: TConfigPaths;
     FListManager : TListManager;
     FDBManager : TDBManager;
+    FIconsManager: TIconsManager;
     procedure SetHoldSize(value: Boolean);
     procedure SetAlwaysOnTop(value: Boolean);
     procedure SetTrayIcon(value: Boolean);
@@ -136,9 +137,10 @@ type
     destructor Destroy; override;
 
     property MainTree: TVirtualStringTree read GetMainTree write FMainTree;
-    property Paths: TConfigPaths read FPaths write FPaths;
-    property ListManager: TListManager read FListManager write FListManager;
-    property DBManager: TDBManager read FDBManager write FDBManager;
+    property Paths: TConfigPaths read FPaths;
+    property ListManager: TListManager read FListManager;
+    property DBManager: TDBManager read FDBManager;
+    property IconsManager: TIconsManager read FIconsManager;
 
     //General
     property StartWithWindows: Boolean read FStartWithWindows write SetStartWithWindows;
@@ -245,10 +247,12 @@ begin
     HandleParam(ParamStr(I));
   //Create some classes
   FPaths := TConfigPaths.Create;
-  FListManager := TListManager.Create;
-  FDBManager := TDBManager.Create();
+  FListManager  := TListManager.Create;
+  FDBManager    := TDBManager.Create;
+  FIconsManager := TIconsManager.Create;
   //Find language files and register them in LangManager
   LangManager.ScanForLangFiles(FPaths.SuitePathLocale, '*.lng', False);
+  LangManager.LanguageID := 1040;
   //General
   FStartWithWindows   := False;
   FShowPanelAtStartUp := True;
@@ -332,6 +336,7 @@ begin
   FPaths.Free;
   FListManager.Destroy;
   FDBManager.Destroy;
+  FIconsManager.Destroy;
 end;
 
 function TConfiguration.GetMainTree: TVirtualStringTree;
@@ -475,8 +480,7 @@ begin
   if (FTrayUseCustomIcon) and (FileExists(sPath)) then
     dmTrayMenu.tiTrayMenu.Icon.LoadFromFile(sPath)
   else begin
-    //TODO: Fix it (dmImages)
-//    sPath := FPaths.RelativeToAbsolute(FPaths.FSuitePathIconsPopupMenu + FILEICON_ASuite);
+    sPath := FPaths.RelativeToAbsolute(FPaths.SuitePathCurrentTheme + ICONS_DIR + 'asuite' + EXT_ICO);
     if FileExists(sPath) then
       dmTrayMenu.tiTrayMenu.Icon.LoadFromFile(sPath);
   end;
@@ -511,15 +515,11 @@ end;
 
 procedure TConfiguration.UpdateGMTheme;
 begin
-  //TODO: Fix it (dmImages)
   //Set Paths
-  FPaths.SuitePathCurrentTheme   := IncludeTrailingBackslash(FPaths.SuitePathMenuThemes + FGMTheme);
-  FPaths.SuitePathIconsPopupMenu := FPaths.SuitePathCurrentTheme + ICONS_POPUPMENU_DIR;
-  FPaths.SuitePathIconsTree      := FPaths.SuitePathCurrentTheme + ICONS_TREE_DIR;
-  FPaths.SuitePathIconsOptions   := FPaths.SuitePathCurrentTheme + ICONS_OPTIONS_DIR;
+  FPaths.SuitePathCurrentTheme := IncludeTrailingBackslash(FPaths.SuitePathMenuThemes + FGMTheme);
+  FIconsManager.PathTheme      := FPaths.SuitePathCurrentTheme;
   //Loading icons
-//  FASuiteIcons.LoadIcons;
-//  frmMain.LoadGlyphs;
+  frmMain.SetAllIcons;
   //Refresh GraphicMenu
   if Assigned(frmGraphicMenu) then
     TThemeEngine.Create.LoadTheme;

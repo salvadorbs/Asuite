@@ -11,7 +11,7 @@ uses
   Forms.Main in 'Forms\Forms.Main.pas' {frmMain},
   Forms.PropertySeparator in 'Forms\Forms.PropertySeparator.pas' {frmPropertySeparator},
   Forms.ScanFolder in 'Forms\Forms.ScanFolder.pas' {frmScanFolder},
-  DataModules.Images in 'DataModules\DataModules.Images.pas' {dmImages: TDataModule},
+  DataModules.Icons in 'DataModules\DataModules.Icons.pas' {dmImages: TDataModule},
   DataModules.TrayMenu in 'DataModules\DataModules.TrayMenu.pas' {dmTrayMenu: TDataModule},
   AppConfig.Main in 'Library\AppConfig.Main.pas',
   Kernel.BaseMainForm in 'Library\Kernel.BaseMainForm.pas',
@@ -64,7 +64,10 @@ uses
   VirtualTree.Methods in 'Library\VirtualTree.Methods.pas',
   VirtualTree.Helper in 'Library\VirtualTree.Helper.pas',
   GraphicMenu.ThemeEngine.Consts in 'Library\GraphicMenu.ThemeEngine.Consts.pas',
-  GraphicMenu.ThemeEngine in 'Library\GraphicMenu.ThemeEngine.pas';
+  GraphicMenu.ThemeEngine in 'Library\GraphicMenu.ThemeEngine.pas',
+  Icons.Application in 'Library\Icons.Application.pas',
+  Icons.Manager in 'Library\Icons.Manager.pas',
+  Icons.Base in 'Library\Icons.Base.pas';
 
 //SQLite3 static library
 

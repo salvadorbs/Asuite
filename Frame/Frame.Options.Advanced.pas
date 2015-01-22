@@ -45,7 +45,8 @@ var
 
 implementation
 
-
+uses
+  AppConfig.Main;
 
 {$R *.dfm}
 
@@ -53,7 +54,7 @@ implementation
 
 function TfrmAdvancedOptionsPage.GetImageIndex: Integer;
 begin
-//  Result := IMAGELARGE_INDEX_Advanced;
+  Result := Config.IconsManager.GetLargeIconIndex('advanced');
 end;
 
 function TfrmAdvancedOptionsPage.GetTitle: string;

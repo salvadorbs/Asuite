@@ -63,7 +63,7 @@ var
 implementation
 
 uses
-  Kernel.Enumerations, NodeDataTypes.Files, Forms.ShortcutGrabber;
+  Kernel.Enumerations, NodeDataTypes.Files, Forms.ShortcutGrabber, AppConfig.Main;
 
 {$R *.dfm}
 
@@ -84,7 +84,7 @@ end;
 
 function TfrmAdvancedPropertyPage.GetImageIndex: Integer;
 begin
-//  Result := IMAGELARGE_INDEX_Advanced;
+  Result := Config.IconsManager.GetLargeIconIndex('advanced');
 end;
 
 function TfrmAdvancedPropertyPage.GetTitle: string;

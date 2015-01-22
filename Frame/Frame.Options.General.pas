@@ -44,13 +44,16 @@ var
 
 implementation
 
+uses
+  AppConfig.Main;
+
 {$R *.dfm}
 
 { TfrmGeneralOptionsPage }
 
 function TfrmGeneralOptionsPage.GetImageIndex: Integer;
 begin
-//  Result := IMAGELARGE_INDEX_General;
+  Result := Config.IconsManager.GetLargeIconIndex('general');
 end;
 
 function TfrmGeneralOptionsPage.GetTitle: string;

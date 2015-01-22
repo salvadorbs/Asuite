@@ -37,9 +37,6 @@ type
     FSuitePathCache      : String;
     FSuitePathCacheLarge : String;
     FSuitePathBackup     : String;
-    FSuitePathIconsPopupMenu : String;
-    FSuitePathIconsTree      : String;
-    FSuitePathIconsOptions   : String;
     FSuitePathMenuThemes     : String;
     FSuitePathCurrentTheme   : String;
   public
@@ -64,9 +61,6 @@ type
     property SuitePathCache: String read FSuitePathCache write FSuitePathCache;
     property SuitePathCacheLarge: String read FSuitePathCacheLarge write FSuitePathCacheLarge;
     property SuitePathBackup: String read FSuitePathBackup write FSuitePathBackup;
-    property SuitePathIconsPopupMenu : String read FSuitePathIconsPopupMenu write FSuitePathIconsPopupMenu;
-    property SuitePathIconsTree: String read FSuitePathIconsTree write FSuitePathIconsTree;
-    property SuitePathIconsOptions: String read FSuitePathIconsOptions write FSuitePathIconsOptions;
     property SuitePathMenuThemes: String read FSuitePathMenuThemes write FSuitePathMenuThemes;
     property SuitePathCurrentTheme: String read FSuitePathCurrentTheme write FSuitePathCurrentTheme;
   end;

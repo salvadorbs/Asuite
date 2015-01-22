@@ -56,7 +56,7 @@ var
 implementation
 
 uses
-  Kernel.Enumerations, Forms.Options, Frame.Options.Items;
+  Kernel.Enumerations, Forms.Options, Frame.Options.Items, AppConfig.Main;
 
 {$R *.dfm}
 
@@ -74,7 +74,7 @@ end;
 
 function TfrmBehaviorPropertyPage.GetImageIndex: Integer;
 begin
-//  Result := IMAGELARGE_INDEX_Behavior;
+  Result := Config.IconsManager.GetLargeIconIndex('behavior');
 end;
 
 function TfrmBehaviorPropertyPage.GetTitle: string;

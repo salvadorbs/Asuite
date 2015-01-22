@@ -33,11 +33,8 @@ const
   CACHE_DIR      = 'cache\';
   LOCALE_DIR     = 'locale\';
   CACHELARGE_DIR = 'cache\large\';
-  MENUTHEMES_DIR = 'menuthemes\';
+  MENUTHEMES_DIR = 'themes\';
   ICONS_DIR      = 'icons\';
-  ICONS_POPUPMENU_DIR = ICONS_DIR + 'popupmenu\';
-  ICONS_OPTIONS_DIR   = ICONS_DIR + 'options\';
-  ICONS_TREE_DIR      = ICONS_DIR + 'tree\';
 
   // Caratteri speciali
   LF                = #10;              { line feed }
@@ -87,39 +84,6 @@ const
 
   //Parameters' variables: constant placeholders
   CONST_PARAM_PENDRV = '%pendrive%';
-
-  //ASuite filename icons
-  FILEICON_ASuite     = '0.ico';
-  FILEICON_Cat        = '1.ico';
-  FILEICON_Help       = '2.ico';
-  FILEICON_Options    = '3.ico';
-  FILEICON_AddCat     = '4.ico';
-  FILEICON_AddFile    = '5.ico';
-  FILEICON_AddFolder  = '6.ico';
-  FILEICON_Delete     = '7.ico';
-  FILEICON_Property   = '8.ico';
-  FILEICON_Save       = '9.ico';
-  FILEICON_Folder     = '10.ico';
-  FILEICON_NOTFOUND   = '13.ico';
-  FILEICON_Run        = '14.ico';
-  FILEICON_Cut        = '15.ico';
-  FILEICON_Copy       = '16.ico';
-  FILEICON_Paste      = '17.ico';
-  FILEICON_Search     = '18.ico';
-  FILEICON_SearchType = '19.ico';
-  FILEICON_Url        = '20.ico';
-  FILEICON_Accept     = '21.ico';
-  FILEICON_Cancel     = '22.ico';
-
-  FILELARGEICON_General  = '0.ico';
-  FILELARGEICON_Advanced = '1.ico';
-  FILELARGEICON_Items    = '2.ico';
-  FILELARGEICON_Hotkey   = '3.ico';
-  FILELARGEICON_Mouse    = '4.ico';
-  FILELARGEICON_Trayicon = '5.ico';
-  FILELARGEICON_Stats    = '6.ico';
-  FILELARGEICON_Behavior = '7.ico';
-  FILELARGEICON_PropGeneral = '8.ico';
 
 implementation
 

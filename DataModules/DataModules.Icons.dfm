@@ -1,14 +1,15 @@
 object dmImages: TdmImages
   OldCreateOrder = False
+  OnCreate = DataModuleCreate
   Height = 120
   Width = 201
-  object IcoImages: TImageList
+  object ilSmallIcons: TImageList
     ColorDepth = cd32Bit
     DrawingStyle = dsTransparent
     Left = 36
     Top = 16
   end
-  object LargeIcoImages: TImageList
+  object ilLargeIcons: TImageList
     ColorDepth = cd32Bit
     DrawingStyle = dsTransparent
     Height = 32

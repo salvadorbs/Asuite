@@ -23,7 +23,7 @@ interface
 
 uses
   Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
-  ComCtrls, VirtualTrees, ActiveX, Kernel.Consts, DataModules.Images,
+  ComCtrls, VirtualTrees, ActiveX, Kernel.Consts, DataModules.Icons,
   Kernel.BaseMainForm, StdCtrls, Buttons, System.UITypes,
   Kernel.Enumerations, Vcl.ExtCtrls, System.DateUtils, XMLDoc, DKLang, Lists.Manager,
   Database.Manager, System.Actions, Vcl.ActnList;
@@ -140,6 +140,7 @@ type
     procedure HideMainForm;
     procedure DoSearchItem(const TreeSearch: TBaseVirtualTree; const Keyword: string;
                            const SearchType: TSearchType);
+    procedure SetAllIcons;
   end;
 
 var
@@ -382,6 +383,36 @@ begin
     vstSearch.Clear;
     edtSearch.Text := '';
   end;
+end;
+
+procedure TfrmMain.SetAllIcons;
+begin
+  //Set IcoImages
+  //Set submenuimages to three MainMenu's subitems
+  miFile.SubMenuImages := dmImages.ilSmallIcons;
+  miEdit.SubMenuImages := dmImages.ilSmallIcons;
+  miHelp.SubMenuImages := dmImages.ilSmallIcons;
+  pmSearch.Images      := dmImages.ilSmallIcons;
+  pmWindow.Images      := dmImages.ilSmallIcons;
+  pcList.Images        := dmImages.ilSmallIcons;
+  //Set pcList tabs' ImageIndexes
+  tbList.ImageIndex    := Config.IconsManager.GetSmallIconIndex('tree_list');
+  tbSearch.ImageIndex  := Config.IconsManager.GetSmallIconIndex('search');
+  //Set MainMenu's ImageIndexes
+  miSaveList1.ImageIndex   := Config.IconsManager.GetSmallIconIndex('save');
+  miOptions1.ImageIndex    := Config.IconsManager.GetSmallIconIndex('options');
+  actAddCat.ImageIndex     := Config.IconsManager.GetSmallIconIndex('add_category');
+  actAddSoftware.ImageIndex := Config.IconsManager.GetSmallIconIndex('add_software');
+  actAddFolder.ImageIndex  := Config.IconsManager.GetSmallIconIndex('add_folder');
+  actCut.ImageIndex        := Config.IconsManager.GetSmallIconIndex('cut');
+  actCopy.ImageIndex       := Config.IconsManager.GetSmallIconIndex('copy');
+  actPaste.ImageIndex      := Config.IconsManager.GetSmallIconIndex('paste');
+  actDelete.ImageIndex     := Config.IconsManager.GetSmallIconIndex('delete');
+  actProperty.ImageIndex   := Config.IconsManager.GetSmallIconIndex('property');
+  miInfoASuite.ImageIndex  := Config.IconsManager.GetSmallIconIndex('help');
+  actRunItem.ImageIndex    := Config.IconsManager.GetSmallIconIndex('run');
+  //Set Search's ImageIndexes
+  dmImages.ilSmallIcons.GetBitmap(Config.IconsManager.GetSmallIconIndex('search'), sbtnSearch.Glyph);
 end;
 
 procedure TfrmMain.ShowMainForm(Sender: TObject);

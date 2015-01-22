@@ -5,9 +5,9 @@
 [x] Fix TrayMenu functions (RunFromTrayMenu)
 
 [ ] Fix all ImagesDM references
-[ ] Load theme icons in automatic mode (maybe find and load all icons from proper folders)
-[ ] Load right icon (16px) in tray menu
-[ ] Fix GetImageIndex in frames
+[x] Load theme icons in automatic mode (maybe find and load all icons from proper folders)
+[x] Load right icon (16px) in tray menu
+[x] Fix GetImageIndex in frames
 
 [ ] Rename all DKLanguageController1 in DKLangController (and check all forms)
 [ ] New About form (see CCleaner about)
@@ -15,6 +15,9 @@
 [ ] Rewrite scanfolder
 [ ] Options
 [ ] ImportList
+[ ] Add consts for relative paths %foldericon% and %urlicon%
+
+[ ] Update batch and install files
 
 [x] Update year in license section of all units
 

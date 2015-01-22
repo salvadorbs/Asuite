@@ -17,39 +17,23 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 }
 
-unit DataModules.Images;
-
-{$I ASuite.inc}
+unit Icons.Application;
 
 interface
 
 uses
-  SysUtils, Classes, Controls, Windows, Graphics, Dialogs,
-  ShellApi, CommCtrl, Vcl.ImgList;
+  SysUtils, Classes, Icons.Base;
 
 type
-  TRGBArray = array[Word] of TRGBTriple;
-  pRGBArray = ^TRGBArray;
-
-  TResType = (rtBMP, rtPNG, rtICO);
-
-  TdmImages = class(TDataModule)
-    IcoImages: TImageList;
-    LargeIcoImages: TImageList;
+  TApplicationIcon = class(TBaseIcon)
   private
-    { Private declarations }
+    { private declarations }
   public
-    { Public declarations }
+    { public declarations }
   end;
-
-var
-  dmImages: TdmImages;
 
 implementation
 
-
-
-{$R *.dfm}
+{ TApplicationIcon }
 
 end.
-
