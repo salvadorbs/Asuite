@@ -1,0 +1,134 @@
+{
+Copyright (C) 2006-2015 Matteo Salvi
+
+Website: http://www.salvadorsoftware.com/
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+}
+
+unit Icons.Manager;
+
+interface
+
+uses
+  SysUtils, Classes, Controls, IniFiles, Forms, Icons.Base, Generics.Collections,
+  IOUtils, Kernel.Consts, Kernel.Enumerations;
+
+type
+  TBaseIcons = class(TObjectDictionary<string, TBaseIcon>);
+
+  TIconsManager = class
+  private
+    { private declarations }
+    FPathTheme: string;
+    FItems: TBaseIcons;
+    FSmallImages: TImageList;  //Size 16p
+    FLargeImages: TImageList;  //Size 32p
+    function GetPathTheme: string;
+
+    procedure LoadAllIcons;
+    function GetIconIndex(AName: string; AIconSize: TIconSize): Integer;
+    procedure SetPathTheme(const Value: string);
+  public
+    { public declarations }
+    constructor Create;
+    destructor Destroy; override;
+
+    function GetSmallIconIndex(AName: string): Integer;
+    function GetLargeIconIndex(AName: string): Integer;
+
+    property PathTheme: string read GetPathTheme write SetPathTheme;
+  end;
+
+implementation
+
+uses
+  AppConfig.Main;
+
+{ TIconsManager }
+
+constructor TIconsManager.Create;
+begin
+  FItems := TBaseIcons.Create([doOwnsValues]);
+end;
+
+destructor TIconsManager.Destroy;
+begin
+  FItems.Free;
+  inherited;
+end;
+
+function TIconsManager.GetIconIndex(AName: string; AIconSize: TIconSize): Integer;
+var
+  Icon: TBaseIcon;
+begin
+  Result := -1;
+  Icon := FItems.Items[AName];
+  if Assigned(Icon) then
+  begin
+    case AIconSize of
+      isSmall : Result := Icon.SmallImageIndex;
+      isLarge : Result := Icon.LargeImageIndex;
+    end;
+  end;
+end;
+
+function TIconsManager.GetLargeIconIndex(AName: string): Integer;
+begin
+  Result := GetIconIndex(AName, isLarge);
+end;
+
+function TIconsManager.GetPathTheme: string;
+begin
+  if FPathTheme <> '' then
+    Result := FPathTheme
+  else
+    Result := Config.Paths.SuitePathCurrentTheme;
+end;
+
+function TIconsManager.GetSmallIconIndex(AName: string): Integer;
+begin
+  Result := GetIconIndex(AName, isSmall);
+end;
+
+procedure TIconsManager.LoadAllIcons;
+var
+  Icon: TBaseIcon;
+  sPath: string;
+begin
+  FItems.Clear;
+  //Load all icons in FPathTheme + ICONS_DIR
+  if TDirectory.Exists(FPathTheme + ICONS_DIR) then
+  begin
+    for sPath in TDirectory.GetFiles(FPathTheme + ICONS_DIR, '*' + EXT_ICO) do
+    begin
+      //Create TBaseIcon, load icon and add it in FItems
+      Icon := TBaseIcon.Create(sPath);
+      try
+        Icon.Load(isSmall);
+        Icon.Load(isLarge);
+      finally
+        FItems.Add(Icon.Name, Icon);
+      end;
+    end;
+  end;
+end;
+
+procedure TIconsManager.SetPathTheme(const Value: string);
+begin
+  FPathTheme := value;
+  LoadAllIcons;
+end;
+
+end.

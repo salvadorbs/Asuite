@@ -88,8 +88,7 @@ type
 
   TIconSize = (
       isSmall, //Small Icon
-      isLarge, //Large Icon
-      isAny    //Small or Large Icon
+      isLarge  //Large Icon
   );
 
   TSpecialListMode = (

@@ -44,13 +44,16 @@ var
 
 implementation
 
+uses
+  AppConfig.Main;
+
 {$R *.dfm}
 
 { TfrmTrayiconOptionsPage }
 
 function TfrmTrayiconOptionsPage.GetImageIndex: Integer;
 begin
-//  Result := IMAGELARGE_INDEX_Trayicon;
+  Result := Config.IconsManager.GetLargeIconIndex('trayicon');
 end;
 
 function TfrmTrayiconOptionsPage.GetTitle: string;

@@ -130,7 +130,7 @@ var
 implementation
 
 uses
-  DataModules.Images, Forms.Main, AppConfig.Main, VirtualTree.Methods,
+  DataModules.Icons, Forms.Main, AppConfig.Main, VirtualTree.Methods,
   Utility.System, Forms.GraphicMenu, Kernel.Types, NodeDataTypes.Files,
   NodeDataTypes.Custom, NodeDataTypes.Base, Kernel.Consts,
   Utility.Misc;
@@ -411,14 +411,14 @@ begin
       0:
         begin
           MenuItem.Caption := DKLangConstW('msgShowASuite');
-//          MenuItem.ImageIndex := Config.ASuiteIcons.TreeSmall.MainForm;
+          MenuItem.ImageIndex := Config.IconsManager.GetSmallIconIndex('asuite');
           MenuItem.OnClick := ShowMainForm;
           MenuItem.Default := true;
         end;
       1:
         begin
           MenuItem.Caption := DKLangConstW('msgOpenOptions');
-//          MenuItem.ImageIndex := Config.ASuiteIcons.PopupMenu.Options;
+          MenuItem.ImageIndex := Config.IconsManager.GetSmallIconIndex('options');
           MenuItem.OnClick := frmMain.miOptionsClick;
           MenuItem.Enabled := Not(Config.ReadOnlyMode);
         end;

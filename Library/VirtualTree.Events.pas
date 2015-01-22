@@ -123,7 +123,7 @@ uses
   Utility.Misc, AppConfig.Main, NodeDataTypes.Base, NodeDataTypes.Category,
   NodeDataTypes.Files, NodeDataTypes.Custom, NodeDataTypes.Separator, Kernel.Types,
   Kernel.Enumerations, Frame.BaseEntity, Controls, VirtualTree.Methods, DataModules.TrayMenu,
-  ShellApi, comobj;
+  ShellApi, comobj, DataModules.Icons;
 
 { TVirtualTreeEvents }
 
@@ -217,6 +217,7 @@ end;
 procedure TVirtualTreeEvents.SetupVSTDialogFrame(ATree: TVirtualStringTree);
 begin
   ATree.Clear;
+  ATree.Images := dmImages.ilLargeIcons;
 
   ATree.OnAddToSelection  := DoAddToSelectionFrame;
   ATree.OnFreeNode        := DoFreeNodeFrame;

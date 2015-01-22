@@ -45,13 +45,16 @@ var
 
 implementation
 
+uses
+  AppConfig.Main;
+
 {$R *.dfm}
 
 { TfrmItemsOptionsPage }
 
 function TfrmItemsOptionsPage.GetImageIndex: Integer;
 begin
-//  Result := IMAGELARGE_INDEX_Items;
+  Result := Config.IconsManager.GetLargeIconIndex('items');
 end;
 
 function TfrmItemsOptionsPage.GetTitle: string;

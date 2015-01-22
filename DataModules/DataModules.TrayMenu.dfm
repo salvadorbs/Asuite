@@ -11,7 +11,7 @@ object dmTrayMenu: TdmTrayMenu
     Top = 16
   end
   object pmTrayicon: TPopupMenu
-    Images = dmImages.IcoImages
+    Images = dmImages.ilSmallIcons
     Left = 16
     Top = 16
   end

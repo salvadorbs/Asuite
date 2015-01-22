@@ -80,15 +80,15 @@ var
   FFrameAdvanced: PVirtualNode;
 begin
   //General
-  FFrameGeneral  := AddFrameNode(vstCategory, nil,TPageFrameClass(TfrmGeneralOptionsPage.Create(Self)));
+  FFrameGeneral  := AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmGeneralOptionsPage.Create(Self)));
   //Advanced
-  FFrameAdvanced := AddFrameNode(vstCategory, nil,TPageFrameClass(TfrmAdvancedOptionsPage.Create(Self)));
-  AddFrameNode(vstCategory, FFrameAdvanced,TPageFrameClass(TfrmItemsOptionsPage.Create(Self)));
-  AddFrameNode(vstCategory, FFrameAdvanced,TPageFrameClass(TfrmHotkeyOptionsPage.Create(Self)));
+  FFrameAdvanced := AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmAdvancedOptionsPage.Create(Self)));
+  AddFrameNode(vstCategory, FFrameAdvanced, TPageFrameClass(TfrmItemsOptionsPage.Create(Self)));
+  AddFrameNode(vstCategory, FFrameAdvanced, TPageFrameClass(TfrmHotkeyOptionsPage.Create(Self)));
   //TrayIcon
-  AddFrameNode(vstCategory, nil,TPageFrameClass(TfrmTrayiconOptionsPage.Create(Self)));
+  AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmTrayiconOptionsPage.Create(Self)));
   //Stats
-  AddFrameNode(vstCategory, nil,TPageFrameClass(TfrmStatsOptionsPage.Create(Self)));
+  AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmStatsOptionsPage.Create(Self)));
 end;
 
 function TfrmOptions.InternalSaveData: Boolean;

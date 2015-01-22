@@ -52,7 +52,7 @@ implementation
 
 uses
   NodeDataTypes.Custom, NodeDataTypes.Files, NodeDataTypes.Base,
-  DataModules.Images, Kernel.Types, Kernel.Enumerations, Forms.Main,
+  DataModules.Icons, Kernel.Types, Kernel.Enumerations, Forms.Main,
   VirtualTree.Methods, VirtualTree.Events;
 
 {$R *.dfm}

@@ -92,8 +92,9 @@ uses
 constructor TvFileNodeData.Create(AType: TvTreeDataType);
 begin
   inherited Create(vtdtFile);
-  if AType = vtdtFolder then
-    Self.PathIcon := Config.Paths.AbsoluteToRelative(Config.Paths.SuitePathIconsTree + FILEICON_Folder);
+  //ToDo: Fix it (SuitePathIconsTree)
+//  if AType = vtdtFolder then
+//    Self.PathIcon := Config.Paths.AbsoluteToRelative(Config.Paths.SuitePathIconsTree + FILEICON_Folder);
   //Paths
   FPathFile         := '';
   FIsPathFileExists := False;

@@ -44,13 +44,16 @@ var
 
 implementation
 
+uses
+  AppConfig.Main;
+
 {$R *.dfm}
 
 { TfrmHotkeyOptionsPage }
 
 function TfrmHotkeyOptionsPage.GetImageIndex: Integer;
 begin
-//  Result := IMAGELARGE_INDEX_Hotkey;
+  Result := Config.IconsManager.GetLargeIconIndex('hotkey');
 end;
 
 function TfrmHotkeyOptionsPage.GetTitle: string;
