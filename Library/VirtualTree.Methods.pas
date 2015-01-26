@@ -192,7 +192,6 @@ begin
   //If it is a directory, use folder icon
 //  if DirectoryExists(NodeData.PathAbsoluteFile) then
 //    NodeData.PathIcon := Config.Paths.AbsoluteToRelative(Config.Paths.SuitePathIconsTree + FILEICON_Folder);
-//  ImagesDM.GetNodeImageIndex(NodeData, isAny);
 end;
 
 function TVirtualTreeMethods.AddNodeByText(const ASender: TBaseVirtualTree;
@@ -212,7 +211,6 @@ begin
     NodeData.PathFile := AText;
     //TODO: Fix it (SuitePathIconsTree)
 //    NodeData.PathIcon := Config.Paths.AbsoluteToRelative(Config.Paths.SuitePathIconsTree + FILEICON_Url);
-//    ImagesDM.GetNodeImageIndex(NodeData, isAny);
   end;
 end;
 
@@ -528,8 +526,6 @@ begin
     end;
     //Check nodes path and get icons
     TVirtualTreeMethods.Create.CheckVisibleNodePathExe(ATree);
-    //TODO: Fix it (dmImages)
-//ImagesDM.GetChildNodesIcons(ATree, ATree.RootNode, isAny);
     //Auto columns width
     TVirtualStringTree(ATree).Header.AutoFitColumns;
   finally

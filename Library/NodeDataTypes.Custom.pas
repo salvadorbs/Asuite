@@ -29,23 +29,18 @@ type
   TvCustomRealNodeData = class(TvBaseNodeData)
   private
     FPathIcon    : String;
-    FCacheID     : Integer;
-    FCacheLargeID  : Integer;
     FWindowState : Integer;
     FActionOnExe : TActionOnExecute;
     FAutorun     : TAutorunType;
     FAutorunPos  : Integer; //Position for ASuiteStartUpApp and ASuiteShutdownApp
     FSchMode     : TSchedulerMode; //0 Disabled, 1 Once, 2 Hourly, 3 Daily, 4 Weekly
     FSchDateTime : TDateTime;
-    FActiveHotkey  : Boolean;
-    FHotkey        : TShortcut;
-    procedure SetPathIcon(value:string);
+    FActiveHotkey : Boolean;
+    FHotkey       : TShortcut;
     procedure SetAutorun(value: TAutorunType);
     procedure SetSchMode(value: TSchedulerMode);
     procedure SetSchDateTime(value: TDateTime);
     procedure SetActiveHotkey(const Value: Boolean);
-    function GetPathCacheIcon: string;
-    function GetPathCacheLargeIcon: string;
     function GetPathAbsoluteIcon: String;
   protected
     procedure AfterExecute(ADoActionOnExe: Boolean); virtual;
@@ -62,12 +57,8 @@ type
       AUserData: TUserData): boolean;
     function ExecuteAsAdmin(ADoActionOnExe: Boolean; ARunFromCategory: Boolean): boolean;
 
-    property PathIcon: string read FPathIcon write SetPathIcon;
+    property PathIcon: string read FPathIcon write FPathIcon;
     property PathAbsoluteIcon: String read GetPathAbsoluteIcon;
-    property CacheID: Integer read FCacheID write FCacheID;
-    property CacheLargeID: Integer read FCacheLargeID write FCacheLargeID;
-    property PathCacheIcon: string read GetPathCacheIcon;
-    property PathCacheLargeIcon: string read GetPathCacheLargeIcon;
     property WindowState: Integer read FWindowState write FWindowState;
     property ActionOnExe: TActionOnExecute read FActionOnExe write FActionOnExe;
     property Autorun: TAutorunType read FAutorun write SetAutorun;
@@ -94,7 +85,7 @@ begin
   begin
     SourceNodeData := TvCustomRealNodeData(source);
     //Copy from source
-    SetPathIcon(SourceNodeData.PathIcon);
+    FPathIcon     := SourceNodeData.PathIcon;
     FWindowState  := SourceNodeData.WindowState;
     FActionOnExe  := SourceNodeData.ActionOnExe;
     FHotkey       := SourceNodeData.Hotkey;
@@ -139,11 +130,6 @@ begin
     FSchDateTime := Now;
 end;
 
-procedure TvCustomRealNodeData.SetPathIcon(value:string);
-begin
-  FPathIcon := value;
-end;
-
 procedure TvCustomRealNodeData.SetSchMode(value: TSchedulerMode);
 begin
   if (Config.ASuiteState <> lsImporting) then
@@ -170,22 +156,6 @@ end;
 function TvCustomRealNodeData.GetPathAbsoluteIcon: String;
 begin
   Result := Config.Paths.RelativeToAbsolute(FPathIcon);
-end;
-
-function TvCustomRealNodeData.GetPathCacheIcon: string;
-begin
-  if FCacheID <> -1 then
-    Result := Config.Paths.SuitePathCache + IntToStr(FCacheID) + EXT_ICO
-  else
-    Result := '';
-end;
-
-function TvCustomRealNodeData.GetPathCacheLargeIcon: string;
-begin
-  if FCacheLargeID <> -1 then
-    Result := Config.Paths.SuitePathCacheLarge + IntToStr(FCacheLargeID) + EXT_ICO
-  else
-    Result := '';
 end;
 
 function TvCustomRealNodeData.Execute(ADoActionOnExe: Boolean;

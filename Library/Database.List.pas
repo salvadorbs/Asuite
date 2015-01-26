@@ -44,8 +44,6 @@ type
     Fhide_from_menu   : Boolean;
     Fdsk_shortcut     : Boolean;
     Ficon             : RawUTF8;
-    Fcacheicon_id     : Integer;
-    Fcachelargeicon_id : Integer;
     Fonlaunch         : Byte;
     Fwindow_state     : Integer;
     Fautorun          : Byte;
@@ -89,8 +87,6 @@ type
     property hide_from_menu: Boolean read Fhide_from_menu write Fhide_from_menu;
     property dsk_shortcut: Boolean read Fdsk_shortcut write Fdsk_shortcut;
     property icon_path: RawUTF8 read Ficon write Ficon;
-    property cacheicon_id: Integer read Fcacheicon_id write Fcacheicon_id;
-    property cachelargeicon_id: Integer read Fcachelargeicon_id write Fcachelargeicon_id;
     property onlaunch: Byte read Fonlaunch write Fonlaunch;
     property window_state: Integer read Fwindow_state write Fwindow_state;
     property autorun: Byte read Fautorun write Fautorun;
@@ -140,23 +136,17 @@ var
   Node     : PVirtualNode;
 begin
   //Get files from DBTable and order them by parent, position
-  SQLFilesData := TSQLtbl_list.CreateAndFillPrepare(ADatabase,'parent=? ORDER BY parent, position',[ID]);
+  SQLFilesData := TSQLtbl_list.CreateAndFillPrepare(ADatabase, 'parent=? ORDER BY parent, position',[ID]);
   try
     //Get files and its properties
     while SQLFilesData.FillOne do
     begin
       nType := TvTreeDataType(SQLFilesData.itemtype);
-      Node := TVirtualTreeMethods.Create.AddChildNodeEx(Tree, ParentNode, amInsertAfter, nType, False);
+      Node  := TVirtualTreeMethods.Create.AddChildNodeEx(Tree, ParentNode, amInsertAfter, nType, False);
       vData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Tree);
       vData.SetPointerNode(Node);
       if IsImport then
-        Tree.CheckType[Node] := ctTriStateCheckBox
-      else
-        if (nType <> vtdtSeparator) then
-        begin
-          TvCustomRealNodeData(vData).CacheID  := SQLFilesData.cacheicon_id;
-          TvCustomRealNodeData(vData).CacheLargeID  := SQLFilesData.cachelargeicon_id;
-        end;
+        Tree.CheckType[Node] := ctTriStateCheckBox;
       // generic fields
       vData.Name          := UTF8ToString(SQLFilesData.title);
       vData.id            := SQLFilesData.ID;
@@ -254,8 +244,6 @@ begin
     //Add category and file fields
     with TvCustomRealNodeData(AData) do
     begin
-      Fcacheicon_id  := CacheID;
-      Fcachelargeicon_id  := CacheLargeID;
       Ficon         := StringToUTF8(PathIcon);
       Fwindow_state := WindowState;
       Fautorun      := Ord(Autorun);
