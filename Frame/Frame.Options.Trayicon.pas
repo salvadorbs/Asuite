@@ -53,7 +53,7 @@ uses
 
 function TfrmTrayiconOptionsPage.GetImageIndex: Integer;
 begin
-  Result := Config.IconsManager.GetLargeIconIndex('trayicon');
+  Result := Config.IconsManager.GetIconIndex('trayicon');
 end;
 
 function TfrmTrayiconOptionsPage.GetTitle: string;

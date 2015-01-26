@@ -396,23 +396,23 @@ begin
   pmWindow.Images      := dmImages.ilSmallIcons;
   pcList.Images        := dmImages.ilSmallIcons;
   //Set pcList tabs' ImageIndexes
-  tbList.ImageIndex    := Config.IconsManager.GetSmallIconIndex('tree_list');
-  tbSearch.ImageIndex  := Config.IconsManager.GetSmallIconIndex('search');
+  tbList.ImageIndex    := Config.IconsManager.GetIconIndex('tree_list');
+  tbSearch.ImageIndex  := Config.IconsManager.GetIconIndex('search');
   //Set MainMenu's ImageIndexes
-  miSaveList1.ImageIndex   := Config.IconsManager.GetSmallIconIndex('save');
-  miOptions1.ImageIndex    := Config.IconsManager.GetSmallIconIndex('options');
-  actAddCat.ImageIndex     := Config.IconsManager.GetSmallIconIndex('add_category');
-  actAddSoftware.ImageIndex := Config.IconsManager.GetSmallIconIndex('add_software');
-  actAddFolder.ImageIndex  := Config.IconsManager.GetSmallIconIndex('add_folder');
-  actCut.ImageIndex        := Config.IconsManager.GetSmallIconIndex('cut');
-  actCopy.ImageIndex       := Config.IconsManager.GetSmallIconIndex('copy');
-  actPaste.ImageIndex      := Config.IconsManager.GetSmallIconIndex('paste');
-  actDelete.ImageIndex     := Config.IconsManager.GetSmallIconIndex('delete');
-  actProperty.ImageIndex   := Config.IconsManager.GetSmallIconIndex('property');
-  miInfoASuite.ImageIndex  := Config.IconsManager.GetSmallIconIndex('help');
-  actRunItem.ImageIndex    := Config.IconsManager.GetSmallIconIndex('run');
+  miSaveList1.ImageIndex   := Config.IconsManager.GetIconIndex('save');
+  miOptions1.ImageIndex    := Config.IconsManager.GetIconIndex('options');
+  actAddCat.ImageIndex     := Config.IconsManager.GetIconIndex('add_category');
+  actAddSoftware.ImageIndex := Config.IconsManager.GetIconIndex('add_software');
+  actAddFolder.ImageIndex  := Config.IconsManager.GetIconIndex('add_folder');
+  actCut.ImageIndex        := Config.IconsManager.GetIconIndex('cut');
+  actCopy.ImageIndex       := Config.IconsManager.GetIconIndex('copy');
+  actPaste.ImageIndex      := Config.IconsManager.GetIconIndex('paste');
+  actDelete.ImageIndex     := Config.IconsManager.GetIconIndex('delete');
+  actProperty.ImageIndex   := Config.IconsManager.GetIconIndex('property');
+  miInfoASuite.ImageIndex  := Config.IconsManager.GetIconIndex('help');
+  actRunItem.ImageIndex    := Config.IconsManager.GetIconIndex('run');
   //Set Search's ImageIndexes
-  dmImages.ilSmallIcons.GetBitmap(Config.IconsManager.GetSmallIconIndex('search'), sbtnSearch.Glyph);
+  dmImages.ilSmallIcons.GetBitmap(Config.IconsManager.GetIconIndex('search'), sbtnSearch.Glyph);
 end;
 
 procedure TfrmMain.ShowMainForm(Sender: TObject);
@@ -486,8 +486,6 @@ begin
     finally
       TreeSearch.EndUpdate;
       TVirtualTreeMethods.Create.CheckVisibleNodePathExe(TreeSearch);
-      //TODO: Fix it (dmImages)
-//ImagesDM.GetChildNodesIcons(TreeSearch, TreeSearch.RootNode, isAny);
     end;
   end;
 end;
@@ -609,8 +607,6 @@ begin
   end;
   //Load Database and get icons (only first level of tree)
   Config.LoadList;
-  //TODO: Fix it (dmImages)
-//ImagesDM.GetChildNodesIcons(vstList, nil, vstList.RootNode);
   Config.ListManager.ExecuteAutorunList(amStartup);
   TVirtualTreeMethods.Create.RefreshList(nil);
   //Get placeholder for edtSearch

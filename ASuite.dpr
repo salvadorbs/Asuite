@@ -65,9 +65,10 @@ uses
   VirtualTree.Helper in 'Library\VirtualTree.Helper.pas',
   GraphicMenu.ThemeEngine.Consts in 'Library\GraphicMenu.ThemeEngine.Consts.pas',
   GraphicMenu.ThemeEngine in 'Library\GraphicMenu.ThemeEngine.pas',
-  Icons.Application in 'Library\Icons.Application.pas',
+  Icons.Node in 'Library\Icons.Node.pas',
   Icons.Manager in 'Library\Icons.Manager.pas',
-  Icons.Base in 'Library\Icons.Base.pas';
+  Icons.Base in 'Library\Icons.Base.pas',
+  Icons.Application in 'Library\Icons.Application.pas';
 
 //SQLite3 static library
 

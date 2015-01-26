@@ -53,7 +53,7 @@ uses
 
 function TfrmHotkeyOptionsPage.GetImageIndex: Integer;
 begin
-  Result := Config.IconsManager.GetLargeIconIndex('hotkey');
+  Result := Config.IconsManager.GetIconIndex('hotkey');
 end;
 
 function TfrmHotkeyOptionsPage.GetTitle: string;

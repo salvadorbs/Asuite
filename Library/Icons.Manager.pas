@@ -22,31 +22,29 @@ unit Icons.Manager;
 interface
 
 uses
-  SysUtils, Classes, Controls, IniFiles, Forms, Icons.Base, Generics.Collections,
+  SysUtils, Classes, Controls, IniFiles, Forms, Icons.Application, Generics.Collections,
   IOUtils, Kernel.Consts, Kernel.Enumerations;
 
 type
-  TBaseIcons = class(TObjectDictionary<string, TBaseIcon>);
+  TBaseIcons = class(TObjectDictionary<string, TApplicationIcon>);
 
   TIconsManager = class
   private
     { private declarations }
     FPathTheme: string;
     FItems: TBaseIcons;
-    FSmallImages: TImageList;  //Size 16p
-    FLargeImages: TImageList;  //Size 32p
+    FSmallImages: TImageList; //Size 16p
+    FLargeImages: TImageList; //Size 32p
     function GetPathTheme: string;
 
     procedure LoadAllIcons;
-    function GetIconIndex(AName: string; AIconSize: TIconSize): Integer;
     procedure SetPathTheme(const Value: string);
   public
     { public declarations }
     constructor Create;
     destructor Destroy; override;
 
-    function GetSmallIconIndex(AName: string): Integer;
-    function GetLargeIconIndex(AName: string): Integer;
+    function GetIconIndex(AName: string): Integer;
 
     property PathTheme: string read GetPathTheme write SetPathTheme;
   end;
@@ -69,24 +67,14 @@ begin
   inherited;
 end;
 
-function TIconsManager.GetIconIndex(AName: string; AIconSize: TIconSize): Integer;
+function TIconsManager.GetIconIndex(AName: string): Integer;
 var
-  Icon: TBaseIcon;
+  Icon: TApplicationIcon;
 begin
   Result := -1;
   Icon := FItems.Items[AName];
   if Assigned(Icon) then
-  begin
-    case AIconSize of
-      isSmall : Result := Icon.SmallImageIndex;
-      isLarge : Result := Icon.LargeImageIndex;
-    end;
-  end;
-end;
-
-function TIconsManager.GetLargeIconIndex(AName: string): Integer;
-begin
-  Result := GetIconIndex(AName, isLarge);
+    Result := Icon.ImageIndex;
 end;
 
 function TIconsManager.GetPathTheme: string;
@@ -97,14 +85,9 @@ begin
     Result := Config.Paths.SuitePathCurrentTheme;
 end;
 
-function TIconsManager.GetSmallIconIndex(AName: string): Integer;
-begin
-  Result := GetIconIndex(AName, isSmall);
-end;
-
 procedure TIconsManager.LoadAllIcons;
 var
-  Icon: TBaseIcon;
+  Icon: TApplicationIcon;
   sPath: string;
 begin
   FItems.Clear;
@@ -114,10 +97,9 @@ begin
     for sPath in TDirectory.GetFiles(FPathTheme + ICONS_DIR, '*' + EXT_ICO) do
     begin
       //Create TBaseIcon, load icon and add it in FItems
-      Icon := TBaseIcon.Create(sPath);
+      Icon := TApplicationIcon.Create(sPath);
       try
-        Icon.Load(isSmall);
-        Icon.Load(isLarge);
+//        Icon.Load;
       finally
         FItems.Add(Icon.Name, Icon);
       end;

@@ -53,7 +53,7 @@ uses
 
 function TfrmGeneralOptionsPage.GetImageIndex: Integer;
 begin
-  Result := Config.IconsManager.GetLargeIconIndex('general');
+  Result := Config.IconsManager.GetIconIndex('general');
 end;
 
 function TfrmGeneralOptionsPage.GetTitle: string;
