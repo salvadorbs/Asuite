@@ -16,6 +16,7 @@
 [ ] Options
 [ ] ImportList
 [ ] Add consts for relative paths %foldericon% and %urlicon%
+[ ] Check updates
 
 [ ] Update batch and install files
 

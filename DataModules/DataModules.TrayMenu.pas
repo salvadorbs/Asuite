@@ -319,7 +319,7 @@ begin
         if ItemNodeData.DataType = vtdtCategory then
           MenuItem.OnClick := GetItemsIcons;
       end;
-      MenuItem.ImageIndex := ItemNodeData.ImageIndex;
+      MenuItem.ImageIndex := ItemNodeData.Icon.ImageIndex;
     end;
     MenuItem.Data    := ItemNodeData;
     MenuItem.pNode   := ItemNodeData.pNode;
@@ -337,12 +337,10 @@ begin
   if (Sender is TASMenuItem) then
   begin
     MenuItem := (Sender as TASMenuItem);
-    //TODO: Fix it (dmImages)
-//ImagesDM.GetChildNodesIcons(Config.MainTree, MenuItem.pNode, isSmall, True);
     for I := 0 to MenuItem.Count - 1 do
     begin
       if MenuItem.Items[I].ImageIndex = -1 then
-        MenuItem.Items[I].ImageIndex := (MenuItem.Items[I] as TASMenuItem).Data.ImageIndex;
+        MenuItem.Items[I].ImageIndex := (MenuItem.Items[I] as TASMenuItem).Data.Icon.ImageIndex;
     end;
   end;
 end;
@@ -411,14 +409,14 @@ begin
       0:
         begin
           MenuItem.Caption := DKLangConstW('msgShowASuite');
-          MenuItem.ImageIndex := Config.IconsManager.GetSmallIconIndex('asuite');
+          MenuItem.ImageIndex := Config.IconsManager.GetIconIndex('asuite');
           MenuItem.OnClick := ShowMainForm;
           MenuItem.Default := true;
         end;
       1:
         begin
           MenuItem.Caption := DKLangConstW('msgOpenOptions');
-          MenuItem.ImageIndex := Config.IconsManager.GetSmallIconIndex('options');
+          MenuItem.ImageIndex := Config.IconsManager.GetIconIndex('options');
           MenuItem.OnClick := frmMain.miOptionsClick;
           MenuItem.Enabled := Not(Config.ReadOnlyMode);
         end;
@@ -503,7 +501,7 @@ begin
         //Set some properties
         MenuItem.Caption    := NodeData.Name;
 //        ImagesDM.GetNodeImageIndex(NodeData, isSmall);
-        MenuItem.ImageIndex := NodeData.ImageIndex;
+        MenuItem.ImageIndex := NodeData.Icon.ImageIndex;
         MenuItem.Data       := NodeData;
         MenuItem.pNode      := NodeData.PNode;
         MenuItem.OnClick    := RunFromTrayMenu;

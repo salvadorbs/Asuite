@@ -22,7 +22,7 @@ unit NodeDataTypes.Base;
 interface
 
 uses
-  VirtualTrees, SysUtils, DateUtils, Kernel.Enumerations, DKLang;
+  VirtualTrees, SysUtils, DateUtils, Kernel.Enumerations, DKLang, Icons.Base;
 
 type
   TvBaseNodeData = class
@@ -33,9 +33,8 @@ type
     FPosition    : Cardinal;
     FChanged     : boolean;
     FName        : String;
+    FIcon        : TBaseIcon;
     FDataType    : TvTreeDataType;
-    FImageIndex  : Integer;
-    FImageLargeIndex : Integer;
     FPNode       : PVirtualNode; //Self PVirtualNode
     FAddDate     : Int64;
     FEditDate    : Int64;
@@ -57,18 +56,18 @@ type
   public
     //Base properties
     constructor Create(AType: TvTreeDataType); // virtual;
+    destructor Destroy; override;
 
     procedure SetPointerNode(APNode: PVirtualNode);
+    procedure Copy(source:TvBaseNodeData); virtual;
 
     property ID : Int64 read FID write FID;
     property ParentID : Int64 read FParentID write FParentID;
     property Position : Cardinal read FPosition write FPosition;
     property Changed: boolean read FChanged write SetChanged;
-    procedure Copy(source:TvBaseNodeData); virtual;
     property Name: string read GetName write SetName;
+    property Icon: TBaseIcon read FIcon;
     property DataType: TvTreeDataType read GetDataType write SetDataType;
-    property ImageIndex: Integer read FImageIndex write FImageIndex;
-    property ImageLargeIndex: Integer read FImageLargeIndex write FImageLargeIndex;
     property ParentNode: PVirtualNode read GetParentNode;
     property PNode: PVirtualNode read FPNode;
     property AddDate: TDateTime read GetAddDate write SetAddDate;
@@ -81,25 +80,31 @@ type
 
 implementation
 
+uses
+  Icons.Node;
+
 constructor TvBaseNodeData.Create(AType: TvTreeDataType);
 begin
   FID          := -1;
   FParentID    := -1;
   FName        := '';
-  FImageIndex  := -1;
-  FImageLargeIndex := -1;
   FDataType    := AType;
   FPNode       := nil;
   FHideFromMenu := False;
   FAddDate     := DateTimeToUnix(Now);
   FEditDate    := FAddDate;
+  FIcon        := TBaseIcon(TNodeIcon.Create(Self));
+end;
+
+destructor TvBaseNodeData.Destroy;
+begin
+  FIcon.Free;
+  inherited;
 end;
 
 procedure TvBaseNodeData.Copy(source:TvBaseNodeData);
 begin
   FName       := DKLangConstW('msgCopy') + source.Name;
-  FImageIndex := -1;
-  FImageLargeIndex := -1;
   FDataType   := source.DataType;
   FHideFromMenu := source.HideFromMenu;
 end;

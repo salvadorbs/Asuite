@@ -243,11 +243,6 @@ begin
       else
         ChildNodeData.Name := TempPath;
       RunScanFolder(Config.MainTree, TempPath, ChildNode);
-
-      {$IFNDEF USE_THREAD}
-//      Config.MainTree.SortTree(0, sdAscending);
-//      ImagesDM.GetChildNodesIcons(Config.MainTree, Config.MainTree.RootNode, True, isAny);
-      {$ENDIF}
     end
     else
       ShowMessageEx(DKLangConstW('msgFolderNotFound'));

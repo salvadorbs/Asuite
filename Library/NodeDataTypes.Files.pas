@@ -147,7 +147,7 @@ begin
                          PChar(GetWorkingDir), GetWindowState(ARunFromCategory)) > 32;
   //Error message
   if not Result then
-    ShowMessageEx(SysErrorMessage(GetLastError), True);
+    ShowMessageEx(Format('%s [%s]', [SysErrorMessage(GetLastError), Self.Name]), True);
 end;
 
 function TvFileNodeData.InternalExecuteAsAdmin(ARunFromCategory: Boolean): boolean;
@@ -218,8 +218,7 @@ begin
   if FIsPathFileExists <> bPathExists then
   begin
     FIsPathFileExists := bPathExists;
-    //Force MainTree repaint node
-    Config.MainTree.InvalidateNode(Self.PNode);
+    Icon.ResetIcon;
   end;
 end;
 

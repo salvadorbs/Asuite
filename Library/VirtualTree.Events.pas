@@ -372,9 +372,6 @@ var
   NodeData: TvBaseNodeData;
 begin
   NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
-  //TODO: Fix it (dmImages)
-//  if NodeData.DataType = vtdtCategory then
-//ImagesDM.GetChildNodesIcons(Sender, nil, Node);
 end;
 
 procedure TVirtualTreeEvents.DoFreeNode(Sender: TBaseVirtualTree;
@@ -720,14 +717,9 @@ var
 begin
   if (Kind = ikNormal) or (Kind = ikSelected) then
   begin
-    NodeData   := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
-    if Column = 0 then
-    begin
-      if TVirtualStringTree(Sender).DefaultNodeHeight = 18 then
-        ImageIndex := NodeData.ImageIndex
-      else
-        ImageIndex := NodeData.ImageLargeIndex;
-    end
+    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
+    if (Column = 0) or (Column = -1) then
+      ImageIndex := NodeData.Icon.ImageIndex
     else
       ImageIndex := -1;
   end;
