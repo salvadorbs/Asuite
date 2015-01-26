@@ -41,10 +41,6 @@ object frmMain: TfrmMain
     OnChange = pcListChange
     object tbList: TTabSheet
       Caption = 'List'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object vstList: TVirtualStringTree
         Left = 0
         Top = 0
@@ -69,6 +65,7 @@ object frmMain: TfrmMain
         Header.MainColumn = -1
         Header.Options = [hoColumnResize, hoDrag]
         HintMode = hmHint
+        Images = dmImages.ilSmallIcons
         ParentFont = False
         ParentShowHint = False
         PopupMenu = pmWindow

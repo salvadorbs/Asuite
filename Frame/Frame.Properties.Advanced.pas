@@ -84,7 +84,7 @@ end;
 
 function TfrmAdvancedPropertyPage.GetImageIndex: Integer;
 begin
-  Result := Config.IconsManager.GetLargeIconIndex('advanced');
+  Result := Config.IconsManager.GetIconIndex('advanced');
 end;
 
 function TfrmAdvancedPropertyPage.GetTitle: string;

@@ -54,7 +54,7 @@ uses
 
 function TfrmAdvancedOptionsPage.GetImageIndex: Integer;
 begin
-  Result := Config.IconsManager.GetLargeIconIndex('advanced');
+  Result := Config.IconsManager.GetIconIndex('advanced');
 end;
 
 function TfrmAdvancedOptionsPage.GetTitle: string;

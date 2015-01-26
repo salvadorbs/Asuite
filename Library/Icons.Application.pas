@@ -22,18 +22,44 @@ unit Icons.Application;
 interface
 
 uses
-  SysUtils, Classes, Icons.Base;
+  SysUtils, Classes, Icons.Base, Kernel.Enumerations;
 
 type
   TApplicationIcon = class(TBaseIcon)
   private
-    { private declarations }
+    FPathFile: string;
+    function GetName: string;
   public
-    { public declarations }
+    constructor Create(APathFile: string);
+
+    function LoadIcon: Integer; override;
+
+    property Name: string read GetName;
+    property PathFile: string read FPathFile write FPathFile;
   end;
 
 implementation
 
-{ TApplicationIcon }
+constructor TApplicationIcon.Create(APathFile: string);
+begin
+  inherited Create;
+  FPathFile := APathFile;
+end;
+
+function TApplicationIcon.GetName: string;
+begin
+  Result := '';
+  if FPathFile <> '' then
+  begin
+    Result := ExtractFileName(FPathFile);
+    Result := ChangeFileExt(Result, '');
+  end;
+end;
+
+function TApplicationIcon.LoadIcon: Integer;
+begin
+  if FileExists(FPathFile) then
+    Result := InternalGetImageIndex(FPathFile);
+end;
 
 end.

@@ -27,68 +27,50 @@ uses
 type
   TBaseIcon = class
   private
-    FPath: string;
-    FSmallImageIndex: Integer; //Size 16p
-    FLargeImageIndex: Integer; //Size 32p
+    function GetImageIndex: Integer;
+  protected
+    FImageIndex: Integer;
 
-    function GetImageIndex(const APath: string; const ASmallIcon: Boolean = True): Integer;
-    function GetName: string;
+    function InternalGetImageIndex(const APathFile: string): Integer;
   public
-    constructor Create(APath: string);
+    constructor Create;
 
-    procedure Load(AIconSize: TIconSize); virtual;
+    function LoadIcon: Integer; virtual; abstract;
+    procedure ResetIcon; virtual;
 
-    property Name: string read GetName;
-    property Path: string read FPath write FPath;
-    property SmallImageIndex: Integer read FSmallImageIndex;
-    property LargeImageIndex: Integer read FLargeImageIndex;
+    property ImageIndex: Integer read GetImageIndex;
   end;
 
 implementation
 
 { TBaseIcon }
 
-constructor TBaseIcon.Create(APath: string);
+constructor TBaseIcon.Create;
 begin
-  FPath := APath;
+  FImageIndex := -1;
 end;
 
-function TBaseIcon.GetImageIndex(const APath: string;
-  const ASmallIcon: Boolean): Integer;
+function TBaseIcon.GetImageIndex: Integer;
+begin
+  if FImageIndex = -1 then
+    Result := LoadIcon;
+end;
+
+function TBaseIcon.InternalGetImageIndex(const APathFile: string): Integer;
 var
   FileInfo: TSHFileInfo;
   Flags: Integer;
 begin
   Result := -1;
-  //Small icon
-  if ASmallIcon then
-    Flags := SHGFI_SYSICONINDEX or SHGFI_SMALLICON
-  else //Else large icon
-    Flags := SHGFI_SYSICONINDEX or SHGFI_LARGEICON;
+  Flags := SHGFI_SYSICONINDEX or SHGFI_ICON;
   //Get index
-  if SHGetFileInfo(PChar(APath), 0, FileInfo, SizeOf(TSHFileInfo), Flags) <> 0 then
+  if SHGetFileInfo(PChar(APathFile), 0, FileInfo, SizeOf(TSHFileInfo), Flags) <> 0 then
     Result := FileInfo.iIcon;
 end;
 
-function TBaseIcon.GetName: string;
+procedure TBaseIcon.ResetIcon;
 begin
-  if FPath <> '' then
-  begin
-    Result := ExtractFileName(FPath);
-    Result := ChangeFileExt(Result, '');
-  end;
-end;
-
-procedure TBaseIcon.Load(AIconSize: TIconSize);
-begin
-  if FileExists(FPath) then
-  begin
-    //Get imageindex based of AIconSize
-    case AIconSize of
-      isSmall: FSmallImageIndex := GetImageIndex(FPath);
-      isLarge: FLargeImageIndex := GetImageIndex(FPath, False);
-    end;
-  end;
+  FImageIndex := -1;
 end;
 
 end.

@@ -136,7 +136,7 @@ end;
 
 function TfrmBaseGeneralPropertyPage.GetImageIndex: Integer;
 begin
-  Result := Config.IconsManager.GetLargeIconIndex('property_general');
+  Result := Config.IconsManager.GetIconIndex('property_general');
 end;
 
 function TfrmBaseGeneralPropertyPage.GetTitle: string;

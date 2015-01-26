@@ -74,7 +74,7 @@ end;
 
 function TfrmBehaviorPropertyPage.GetImageIndex: Integer;
 begin
-  Result := Config.IconsManager.GetLargeIconIndex('behavior');
+  Result := Config.IconsManager.GetIconIndex('behavior');
 end;
 
 function TfrmBehaviorPropertyPage.GetTitle: string;

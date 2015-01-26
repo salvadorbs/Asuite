@@ -89,7 +89,7 @@ uses
 
 function TfrmStatsOptionsPage.GetImageIndex: Integer;
 begin
-  Result := Config.IconsManager.GetLargeIconIndex('stats');
+  Result := Config.IconsManager.GetIconIndex('stats');
 end;
 
 function TfrmStatsOptionsPage.GetTitle: string;
