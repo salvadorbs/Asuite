@@ -23,7 +23,7 @@ interface
 
 uses
   SysUtils, Classes, Icons.Base, NodeDataTypes.Base, Kernel.Enumerations,
-  NodeDataTypes.Custom, Graphics, Controls, KIcon;
+  NodeDataTypes.Custom, Graphics, Controls, KIcon, CommCtrl, Windows;
 
 type
   TNodeIcon = class(TBaseIcon)
@@ -66,16 +66,25 @@ end;
 
 procedure TNodeIcon.ExtractAndAddIcon(AImageList: TImageList; AImageIndex: Integer; AIcon: TKIcon);
 var
-  Bmp: TBitmap;
+  KIcon: TKIcon;
+  hIcon: Windows.HICON;
 begin
   Assert(Assigned(AIcon), 'Icon is not assigned!');
 
-  Bmp := TBitmap.Create;
+  KIcon := TKIcon.Create;
   try
-    AImageList.GetBitmap(AImageIndex, Bmp);
-    AIcon.Add(MakeHandles(Bmp.Handle, Bmp.MaskHandle));
+    //Bug: TBitmap doesn't support alpha format
+    //Workaround: Get HIcon from ImageList and load it in a TKIcon
+    hIcon := ImageList_GetIcon(AImageList.Handle, AImageIndex, ILD_NORMAL);
+    if hIcon <> 0 then
+    begin
+      KIcon.LoadFromHandle(hIcon);
+      //Add extracted icon in AIcon
+      if KIcon.IconCount > 0 then
+        AIcon.Add(KIcon.Handles[0]);
+    end;
   finally
-    Bmp.Free;
+    KIcon.Free;
   end;
 end;
 
