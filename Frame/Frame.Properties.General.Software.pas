@@ -43,12 +43,12 @@ type
     procedure edtPathExeBeforeDialog(Sender: TObject; var AName: string;
       var AAction: Boolean);
     procedure edtPathExeChange(Sender: TObject);
-    procedure edtPathExeExit(Sender: TObject);
     procedure btnExtractNameClick(Sender: TObject);
     procedure edtWorkingDirAfterDialog(Sender: TObject; var AName: string;
       var AAction: Boolean);
     procedure edtWorkingDirBeforeDialog(Sender: TObject; var AName: string;
       var AAction: Boolean);
+    procedure edtWorkingDirChange(Sender: TObject);
   private
     { Private declarations }
   strict protected
@@ -64,8 +64,7 @@ var
 implementation
 
 uses
-  Kernel.Consts, NodeDataTypes.Files, PJVersionInfo,
-  AppConfig.Main;
+  Kernel.Consts, NodeDataTypes.Files, PJVersionInfo, AppConfig.Main;
 
 {$R *.dfm}
 
@@ -106,11 +105,6 @@ begin
   btnExtractName.Enabled := CheckPropertyPath(edtPathExe);
 end;
 
-procedure TfrmSWGeneralPropertyPage.edtPathExeExit(Sender: TObject);
-begin
-  CheckPropertyPath(TJvFileDirEdit(Sender));
-end;
-
 procedure TfrmSWGeneralPropertyPage.edtWorkingDirAfterDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
@@ -122,6 +116,11 @@ procedure TfrmSWGeneralPropertyPage.edtWorkingDirBeforeDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
   AName := Config.Paths.RelativeToAbsolute(AName);
+end;
+
+procedure TfrmSWGeneralPropertyPage.edtWorkingDirChange(Sender: TObject);
+begin
+  CheckPropertyPath(edtWorkingDir);
 end;
 
 function TfrmSWGeneralPropertyPage.InternalLoadData: Boolean;

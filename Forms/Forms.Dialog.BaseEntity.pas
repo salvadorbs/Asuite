@@ -99,7 +99,9 @@ begin
   begin
     if InternalSaveData then
       ModalResult := mrOk;
-  end;
+  end
+  else
+    ModalResult := mrNone;
 end;
 
 procedure TfrmDialogBase.ChangePage(NewPage: TPageFrameClass);

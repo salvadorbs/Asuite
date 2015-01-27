@@ -24,7 +24,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, VirtualTrees, DKLang,
-  Frame.Properties.General, Vcl.Mask, JvExMask, JvToolEdit;
+  Frame.Properties.General, Vcl.Mask, JvExMask, JvToolEdit, DataModules.Icons;
 
 type
   TfrmCatGeneralPropertyPage = class(TfrmBaseGeneralPropertyPage)
@@ -52,7 +52,7 @@ implementation
 
 uses
   NodeDataTypes.Custom, NodeDataTypes.Files, NodeDataTypes.Base,
-  DataModules.Icons, Kernel.Types, Kernel.Enumerations, Forms.Main,
+  Kernel.Types, Kernel.Enumerations, Forms.Main,
   VirtualTree.Methods, VirtualTree.Events;
 
 {$R *.dfm}
@@ -79,7 +79,6 @@ begin
     else
       vstCategoryItems.CheckState[NewNode] := csUncheckedNormal;
     NewNodeData := vstCategoryItems.GetNodeData(NewNode);
-    //TODO: Get item's imageindex
     //Set pointers
     NewNodeData.pNodeList := Node;
   end;
