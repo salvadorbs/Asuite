@@ -5,7 +5,7 @@
 [x] Fix TrayMenu functions (RunFromTrayMenu)
 
 [ ] Fix all ImagesDM references
-[ ] Fix alpha format in cache icons
+[x] Fix alpha format in cache icons (vedi asuite-lazarus - GetSimpleIconIndex http://stackoverflow.com/questions/21145025/shgetfileinfo-produces-icon-with-black-background/21146842#21146842)
 [x] Load theme icons in automatic mode (maybe find and load all icons from proper folders)
 [x] Load right icon (16px) in tray menu
 [x] Fix GetImageIndex in frames
