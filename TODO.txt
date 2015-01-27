@@ -4,7 +4,7 @@
 [x] Fix execute function (RunNormalSw, RunAs, RunAsAdmin and OpenFolder) [x] ExecuteItem
 [x] Fix TrayMenu functions (RunFromTrayMenu)
 
-[ ] Fix all ImagesDM references
+[x] Fix all ImagesDM references
 [x] Fix alpha format in cache icons (vedi asuite-lazarus - GetSimpleIconIndex http://stackoverflow.com/questions/21145025/shgetfileinfo-produces-icon-with-black-background/21146842#21146842)
 [x] Load theme icons in automatic mode (maybe find and load all icons from proper folders)
 [x] Load right icon (16px) in tray menu
@@ -16,7 +16,7 @@
 [ ] Rewrite scanfolder
 [ ] Options
 [ ] ImportList
-[ ] Add consts for relative paths %foldericon% and %urlicon%
+[x] Add consts for relative paths %foldericon% and %urlicon%
 [ ] Check updates
 
 [ ] Update batch and install files

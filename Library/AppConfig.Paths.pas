@@ -75,6 +75,10 @@ var
   sPath: string;
 begin
   sPath := APath;
+  //Const %FolderIcon%
+  sPath  := StringReplace(sPath, FSuitePathCurrentTheme + ICONS_DIR + FILEICON_Folder + EXT_ICO, CONST_PATH_FOLDERICON, [rfIgnoreCase,rfReplaceAll]);
+  //Const %UrlIcon%
+  sPath  := StringReplace(sPath, FSuitePathCurrentTheme + ICONS_DIR + FILEICON_Url + EXT_ICO, CONST_PATH_URLICON, [rfIgnoreCase,rfReplaceAll]);
   //Const $ASuite
   sPath  := StringReplace(sPath, ExcludeTrailingPathDelimiter(SuitePathWorking), CONST_PATH_ASuite, [rfIgnoreCase,rfReplaceAll]);
   //Const $Drive
@@ -162,6 +166,12 @@ begin
   if APath <> '' then
   begin
     sPath := APath;
+    //CONST_PATH_FOLDERICON = Folder Icon's path
+    sPath := StringReplace(sPath, CONST_PATH_FOLDERICON, FSuitePathCurrentTheme +
+                           ICONS_DIR + FILEICON_Folder + EXT_ICO, [rfIgnoreCase,rfReplaceAll]);
+    //CONST_PATH_URLICON = Url Icon's path
+    sPath := StringReplace(sPath, CONST_PATH_URLICON, FSuitePathCurrentTheme +
+                           ICONS_DIR + FILEICON_Url + EXT_ICO, [rfIgnoreCase,rfReplaceAll]);
     //CONST_PATH_ASuite = Launcher's path
     sPath := StringReplace(sPath, CONST_PATH_ASuite, SuitePathWorking, [rfIgnoreCase,rfReplaceAll]);
     //CONST_PATH_DRIVE = Launcher's Drive (ex. ASuite in H:\Software\ASuite.exe, CONST_PATH_DRIVE is H: )

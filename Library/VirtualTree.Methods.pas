@@ -182,16 +182,18 @@ begin
     begin
       //Shortcut
       NodeData.PathFile   := Config.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfPathFile));
+      NodeData.PathIcon   := Config.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfPathIcon));
+      if NodeData.PathIcon = '' then
+        NodeData.PathIcon := CONST_PATH_URLICON;
       NodeData.Parameters := Config.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfParameter));
       NodeData.WorkingDir := Config.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfWorkingDir));
     end
     else //Normal file
       NodeData.PathFile := Config.Paths.AbsoluteToRelative(APathFile);
   end;
-  //TODO: Fix it (dmImages)
   //If it is a directory, use folder icon
-//  if DirectoryExists(NodeData.PathAbsoluteFile) then
-//    NodeData.PathIcon := Config.Paths.AbsoluteToRelative(Config.Paths.SuitePathIconsTree + FILEICON_Folder);
+  if DirectoryExists(NodeData.PathAbsoluteFile) then
+    NodeData.PathIcon := CONST_PATH_FOLDERICON;
 end;
 
 function TVirtualTreeMethods.AddNodeByText(const ASender: TBaseVirtualTree;
@@ -209,8 +211,7 @@ begin
     NodeData := TvFileNodeData(GetNodeItemData(Node, ASender));
     NodeData.Name     := 'Link';
     NodeData.PathFile := AText;
-    //TODO: Fix it (SuitePathIconsTree)
-//    NodeData.PathIcon := Config.Paths.AbsoluteToRelative(Config.Paths.SuitePathIconsTree + FILEICON_Url);
+    NodeData.PathIcon := CONST_PATH_URLICON;
   end;
 end;
 

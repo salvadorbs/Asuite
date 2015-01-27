@@ -53,7 +53,8 @@ end;
 function TBaseIcon.GetImageIndex: Integer;
 begin
   if FImageIndex = -1 then
-    Result := LoadIcon;
+    FImageIndex := LoadIcon;
+  Result := FImageIndex;
 end;
 
 function TBaseIcon.InternalGetImageIndex(const APathFile: string): Integer;

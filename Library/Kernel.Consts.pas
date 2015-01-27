@@ -80,9 +80,12 @@ const
   //ASuite placeholders for path
   CONST_PATH_ASUITE  = '$asuite';
   CONST_PATH_DRIVE   = '$drive';
+  CONST_PATH_FOLDERICON = '%foldericon%';
+  CONST_PATH_URLICON = '%urlicon%';
 
-  //Parameters' variables: constant placeholders
-  CONST_PARAM_PENDRV = '%pendrive%';
+  //BSuite filename icons
+  FILEICON_Folder     = 'folder';
+  FILEICON_Url        = 'page_url';
 
 implementation
 
