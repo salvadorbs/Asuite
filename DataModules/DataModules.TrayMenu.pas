@@ -306,7 +306,6 @@ begin
       if (ItemNodeData.DataType = vtdtFile) then
       begin
         MenuItem.OnClick  := RunFromTrayMenu;
-        //TODO: Get item's icon (only first level)
         //If it is a Directory, add in Trayicon Menu its subfolders and its subfiles
         if DirectoryExists(TvFileNodeData(ItemNodeData).PathAbsoluteFile) then
         begin
