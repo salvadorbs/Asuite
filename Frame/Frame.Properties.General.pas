@@ -39,6 +39,7 @@ type
       var AAction: Boolean);
     procedure edtPathIconExit(Sender: TObject);
     procedure edtNameEnter(Sender: TObject);
+    procedure edtPathIconChange(Sender: TObject);
   private
     { Private declarations }
     function CheckPropertyName(Edit: TEdit): Boolean;
@@ -127,6 +128,11 @@ procedure TfrmBaseGeneralPropertyPage.edtPathIconBeforeDialog(Sender: TObject;
 begin
   edtPathIcon.Filter := DKLangConstW('msgFilterIconExe');
   AName := Config.Paths.RelativeToAbsolute(AName);
+end;
+
+procedure TfrmBaseGeneralPropertyPage.edtPathIconChange(Sender: TObject);
+begin
+  CheckPropertyPath(edtPathIcon);
 end;
 
 procedure TfrmBaseGeneralPropertyPage.edtPathIconExit(Sender: TObject);

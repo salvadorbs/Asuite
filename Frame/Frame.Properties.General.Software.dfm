@@ -97,7 +97,7 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       ParentFont = False
       TabOrder = 1
       Text = '$ASuite\'
-      OnExit = edtPathExeExit
+      OnChange = edtWorkingDirChange
     end
     object edtPathExe: TJvFilenameEdit
       Left = 8
@@ -117,7 +117,6 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       TabOrder = 0
       Text = '$ASuite\'
       OnChange = edtPathExeChange
-      OnExit = edtPathExeExit
     end
   end
   object DKLanguageController1: TDKLanguageController

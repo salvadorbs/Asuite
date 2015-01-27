@@ -49,6 +49,7 @@ inherited frmBaseGeneralPropertyPage: TfrmBaseGeneralPropertyPage
       ParentFont = False
       TabOrder = 1
       Text = '$ASuite\'
+      OnChange = edtPathIconChange
       OnExit = edtPathIconExit
     end
   end
