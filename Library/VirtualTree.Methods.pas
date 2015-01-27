@@ -84,7 +84,7 @@ uses
   Utility.System, DataModules.Icons, AppConfig.Main, NodeDataTypes.Files,
   Utility.FileFolder, Forms.PropertySeparator, mORMotUILogin, Utility.Misc,
   NodeDataTypes.Category, NodeDataTypes.Separator, Forms.PropertyItem,
-  NodeDataTypes.Custom, Kernel.Consts;
+  NodeDataTypes.Custom, Kernel.Consts, Icons.Node;
 
 { TVirtualTreeMethods }
 
@@ -445,6 +445,8 @@ begin
       TvFileNodeData(NodeData).DeleteShortcutFile;
     Config.ListManager.RemoveItemFromLists(NodeData);
   end;
+  //Delete and reset cache icon
+  TNodeIcon(NodeData.Icon).ResetCacheIcon;
   //Remove item from sqlite database
   Config.DBManager.RemoveItem(NodeData.ID);
 end;

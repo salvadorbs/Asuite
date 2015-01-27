@@ -43,7 +43,8 @@ type
     Fno_mfu           : Boolean;
     Fhide_from_menu   : Boolean;
     Fdsk_shortcut     : Boolean;
-    Ficon             : RawUTF8;
+    Ficon_path        : RawUTF8;
+    Fcache_icon_crc   : Integer;
     Fonlaunch         : Byte;
     Fwindow_state     : Integer;
     Fautorun          : Byte;
@@ -86,7 +87,8 @@ type
     property no_mfu: Boolean read Fno_mfu write Fno_mfu;
     property hide_from_menu: Boolean read Fhide_from_menu write Fhide_from_menu;
     property dsk_shortcut: Boolean read Fdsk_shortcut write Fdsk_shortcut;
-    property icon_path: RawUTF8 read Ficon write Ficon;
+    property icon_path: RawUTF8 read Ficon_path write Ficon_path;
+    property cache_icon_crc: Integer read Fcache_icon_crc write Fcache_icon_crc;
     property onlaunch: Byte read Fonlaunch write Fonlaunch;
     property window_state: Integer read Fwindow_state write Fwindow_state;
     property autorun: Byte read Fautorun write Fautorun;
@@ -102,7 +104,7 @@ implementation
 
 uses
   Kernel.Enumerations, Utility.Misc, VirtualTree.Methods, NodeDataTypes.Custom,
-  NodeDataTypes.Files, AppConfig.Main;
+  NodeDataTypes.Files, AppConfig.Main, Icons.Node;
 
 { TSQLtbl_files }
 
@@ -160,6 +162,7 @@ begin
         with TvCustomRealNodeData(vData) do
         begin
           PathIcon    := UTF8ToString(SQLFilesData.icon_path);
+          TNodeIcon(Icon).SetCacheCRC(SQLFilesData.cache_icon_crc);
           AutorunPos  := SQLFilesData.autorun_position;
           Autorun     := TAutorunType(SQLFilesData.autorun);
           SchMode     := TSchedulerMode(SQLFilesData.scheduler_mode);
@@ -244,15 +247,16 @@ begin
     //Add category and file fields
     with TvCustomRealNodeData(AData) do
     begin
-      Ficon         := StringToUTF8(PathIcon);
-      Fwindow_state := WindowState;
-      Fautorun      := Ord(Autorun);
+      Ficon_path      := StringToUTF8(PathIcon);
+      Fcache_icon_crc := TNodeIcon(Icon).CacheIconCRC;
+      Fwindow_state   := WindowState;
+      Fautorun        := Ord(Autorun);
       Fautorun_position := AutorunPos;
-      Fonlaunch     := Ord(ActionOnExe);
+      Fonlaunch       := Ord(ActionOnExe);
       Fscheduler_mode := Ord(SchMode);
       Fscheduler_datetime := SchDateTime;
-      FActiveHotkey := ActiveHotkey;
-      Fhotkey       := Hotkey;
+      FActiveHotkey   := ActiveHotkey;
+      Fhotkey         := Hotkey;
     end;
     //Add file fields
     if (AData.DataType = vtdtFile) then

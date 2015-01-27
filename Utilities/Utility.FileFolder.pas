@@ -16,6 +16,7 @@ function IsFlagSet(const Flags, Mask: Integer): Boolean;
 procedure DeleteOldBackups(const MaxNumber: Integer);
 function DeleteFiles(const Dir, Wildcard: string): Integer;
 function ListFiles(const Dir, Wildcard: string; const List: Classes.TStrings): Boolean;
+function GetFileCRC32(const FileName: String): Integer;
 
 { Desktop shortcut }
 procedure CreateShortcutOnDesktop(const FileName, TargetFilePath, Params, WorkingDir: String);
@@ -27,7 +28,7 @@ procedure RenameShortcutOnDesktop(const OldFileName, FileName: String);
 implementation
 
 uses
-  AppConfig.Main, IniFiles;
+  AppConfig.Main, IniFiles, FCRC32;
 
 function BrowseForFolder(const InitialDir: String; const Caption: String): String;
 var
@@ -132,6 +133,16 @@ begin
     // Tidy up
     SysUtils.FindClose(SR);
   end;
+end;
+
+function GetFileCRC32(const FileName: String): Integer;
+var
+  ErrCode: Word;
+  Buffer: Array[1..65521] of byte;
+begin
+  Result := 0;
+  if FileName <> '' then
+    FCRC32File(FileName, Result, Buffer, SizeOf(Buffer), ErrCode);
 end;
 
 procedure DeleteOldBackups(const MaxNumber: Integer);

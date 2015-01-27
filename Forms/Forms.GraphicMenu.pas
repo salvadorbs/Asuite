@@ -143,9 +143,6 @@ begin
     TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, False);
     frmMain.DoSearchItem(vstList, edtSearch.Text, stName);
     vstList.SortTree(-1, sdAscending);
-    //Get icons
-    //TODO: Fix it (dmImages)
-//    dmImages.GetChildNodesIcons(vstList, vstList.RootNode, isAny);
     //Set first node as HotNode
     Node := vstList.GetFirst;
     if Assigned(Node) then
@@ -474,8 +471,6 @@ begin
     ATree.EndUpdate;
     ATree.ValidateNode(ATree.RootNode, True);
     //Check nodes path
-    //TODO: Fix it (dmImages)
-//ImagesDM.GetChildNodesIcons(ATree, ATree.RootNode, isAny);
     TVirtualTreeMethods.Create.CheckVisibleNodePathExe(ATree);
   end;
 end;

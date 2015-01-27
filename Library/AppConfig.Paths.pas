@@ -35,7 +35,6 @@ type
     FSuitePathWorking    : String;
     FSuitePathLocale     : String;
     FSuitePathCache      : String;
-    FSuitePathCacheLarge : String;
     FSuitePathBackup     : String;
     FSuitePathMenuThemes     : String;
     FSuitePathCurrentTheme   : String;
@@ -59,7 +58,6 @@ type
     property SuitePathWorking: String read FSuitePathWorking write FSuitePathWorking;
     property SuitePathLocale: String read FSuitePathLocale write FSuitePathLocale;
     property SuitePathCache: String read FSuitePathCache write FSuitePathCache;
-    property SuitePathCacheLarge: String read FSuitePathCacheLarge write FSuitePathCacheLarge;
     property SuitePathBackup: String read FSuitePathBackup write FSuitePathBackup;
     property SuitePathMenuThemes: String read FSuitePathMenuThemes write FSuitePathMenuThemes;
     property SuitePathCurrentTheme: String read FSuitePathCurrentTheme write FSuitePathCurrentTheme;
@@ -94,7 +92,6 @@ procedure TConfigPaths.CheckCacheFolders;
 begin
   //Check if folder cache exists, else create it
   SysUtils.ForceDirectories(FSuitePathCache);
-  SysUtils.ForceDirectories(FSuitePathCacheLarge);
 end;
 
 constructor TConfigPaths.Create;
@@ -112,7 +109,6 @@ begin
   FSuitePathWorking        := LowerCase(FSuitePathWorking);
   FSuitePathLocale         := FSuitePathWorking + LOCALE_DIR;
   FSuitePathCache          := FSuitePathWorking + CACHE_DIR;
-  FSuitePathCacheLarge     := FSuitePathWorking + CACHELARGE_DIR;
   FSuitePathBackup         := FSuitePathWorking + BACKUP_DIR;
   FSuitePathMenuThemes     := FSuitePathWorking + MENUTHEMES_DIR;
   //List
@@ -188,11 +184,6 @@ begin
   //Delete all file icon-cache and folder cache
   if (SysUtils.DirectoryExists(FSuitePathCache)) then
   begin
-    if (SysUtils.DirectoryExists(FSuitePathCacheLarge)) then
-    begin
-      DeleteFiles(FSuitePathCacheLarge,'*.*');
-      RemoveDir(FSuitePathCacheLarge);
-    end;
     DeleteFiles(FSuitePathCache,'*.*');
     RemoveDir(FSuitePathCache);
   end;
