@@ -11,7 +11,7 @@
 [x] Fix GetImageIndex in frames
 
 [ ] Rename all DKLanguageController1 in DKLangController (and check all forms)
-[ ] New About form (see CCleaner about)
+[x] New About form (see CCleaner about)
 [ ] Rewrite scheduler
 [ ] Rewrite scanfolder
 [ ] Options
