@@ -1,6 +1,7 @@
-VirtualTree (included in ASuite Source, folder 3p) https://code.google.com/p/virtual-treeview/
-mORMot (included in ASuite Source, folder 3p) http://synopse.info/fossil/wiki?name=SQLite3+Framework
-DKLang (included in ASuite Source, folder 3p) https://github.com/salvadorbs/dklang
-CheckPrevious (included in ASuite Source, folder 3p)
-Notifications (included in ASuite Source, folder 3p)
-cyComponents6 (included in ASuite Source, folder 3p) http://sourceforge.net/projects/tcycomponents/
+VirtualTree https://code.google.com/p/virtual-treeview/
+mORMot http://synopse.info/fossil/wiki?name=SQLite3+Framework
+DKLang http://yktoo.com/en/software/dklang
+cyComponents6 http://sourceforge.net/projects/tcycomponents/
+JCL + JVCL https://github.com/project-jedi
+TPJVersionInfo http://www.delphidabbler.com/software?id=verinfo
+System Information Unit http://www.delphidabbler.com/software/sysinfo?mid=3.2

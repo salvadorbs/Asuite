@@ -17,9 +17,36 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 }
 
-//------------------------------------------------------------------------------
-// Build options for ASuite
-//------------------------------------------------------------------------------
+unit Kernel.ASuiteInstance;
 
-//Enable hack for a faster popupmenu
-{$DEFINE FASTHACK}
+interface
+
+uses
+  Windows, USingleInst, Messages;
+
+type
+  TASuiteSingleInst = class(TSingleInst)
+  protected
+    function WdwClassName: string; override;
+    function WaterMark: DWORD; override;
+  end;
+
+implementation
+
+{ TASuiteSingleInst }
+
+function TASuiteSingleInst.WaterMark: DWORD;
+begin
+  Result := $DE1F1DAB;
+end;
+
+function TASuiteSingleInst.WdwClassName: string;
+begin
+  Result := 'ASuite.SingleInstance.1' {$IFDEF DEBUG} + '.debug' {$ENDIF};
+end;
+
+initialization
+
+RegisterSingleInstClass(TASuiteSingleInst);
+
+end.
