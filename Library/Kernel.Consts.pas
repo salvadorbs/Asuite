@@ -83,7 +83,7 @@ const
   CONST_PATH_FOLDERICON = '%foldericon%';
   CONST_PATH_URLICON = '%urlicon%';
 
-  //BSuite filename icons
+  //ASuite filename icons
   FILEICON_Folder     = 'folder';
   FILEICON_Url        = 'page_url';
 
