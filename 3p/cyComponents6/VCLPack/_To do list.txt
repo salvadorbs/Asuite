@@ -1,4 +1,0 @@
-Use TImageList on :
-- TcySkinButton
-- tcyAdvLed
-- tcyDBAdvLed

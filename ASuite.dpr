@@ -4,49 +4,71 @@ uses
   Forms,
   SysUtils,
   Windows,
-  ulCommonUtils in 'library\ulCommonUtils.pas',
-  ulCommonClasses in 'library\ulCommonClasses.pas',
-  AppConfig in 'AppConfig.pas',
-  ulAppConfig in 'library\ulAppConfig.pas',
-  Main in 'Main.pas' {frmMain},
-  About in 'About.pas' {frmAbout},
-  CheckPrevious in '3p\CheckPrevious.pas',
-  ulNodeDataTypes in 'library\ulNodeDataTypes.pas',
-  ulEnumerations in 'library\ulEnumerations.pas',
-  ulSysUtils in 'library\ulSysUtils.pas',
-  ulStringUtils in 'library\ulStringUtils.pas',
-  udImages in 'udImages.pas' {ImagesDM: TDataModule},
-  ulDatabase in 'library\ulDatabase.pas',
-  udClassicMenu in 'udClassicMenu.pas' {ClassicMenu: TDataModule},
-  ulExeUtils in 'library\ulExeUtils.pas',
-  ImportList in 'ImportList.pas' {frmImportList},
-  Sensor in 'Sensor.pas' {frmSensor},
-  ASuiteForm in 'library\ASuiteForm.pas',
-  ulTreeView in 'library\ulTreeView.pas',
   SynSQLite3Static,
-  GraphicMenu in 'GraphicMenu.pas' {frmGraphicMenu},
-  notifications in '3p\notifications.pas' {frmNotification},
-  ulFileFolder in 'library\ulFileFolder.pas',
-  Options in 'Options.pas' {frmOptions},
-  BaseEntityPage in 'frame\BaseEntityPage.pas' {frmBaseEntityPage: TFrame},
-  GeneralOptionsPage in 'frame\GeneralOptionsPage.pas' {frmGeneralOptionsPage: TFrame},
-  AdvancedOptionsPage in 'frame\AdvancedOptionsPage.pas' {frmAdvancedOptionsPage: TFrame},
-  TrayIconOptionsPage in 'frame\TrayIconOptionsPage.pas' {frmTrayiconOptionsPage: TFrame},
-  HotkeyOptionsPage in 'frame\HotkeyOptionsPage.pas' {frmHotkeyOptionsPage: TFrame},
-  StatsOptionsPage in 'frame\StatsOptionsPage.pas' {frmStatsOptionsPage: TFrame},
-  ItemsOptionsPage in 'frame\ItemsOptionsPage.pas' {frmItemsOptionsPage: TFrame},
-  SensorsOptionsPage in 'frame\SensorsOptionsPage.pas' {frmSensorsOptionsPage: TFrame},
-  PropertyItem in 'PropertyItem.pas' {frmPropertyItem},
-  ulFrameUtils in 'library\ulFrameUtils.pas',
-  AdvancedPropertyPage in 'frame\AdvancedPropertyPage.pas' {frmAdvancedPropertyPage: TFrame},
-  BehaviorPropertyPage in 'frame\BehaviorPropertyPage.pas' {frmBehaviorPropertyPage: TFrame},
-  BaseGeneralPropertyPage in 'frame\BaseGeneralPropertyPage.pas' {frmBaseGeneralPropertyPage: TFrame},
-  SWGeneralPropertyPage in 'frame\SWGeneralPropertyPage.pas' {frmSWGeneralPropertyPage: TFrame},
-  CatGeneralPropertyPage in 'frame\CatGeneralPropertyPage.pas' {frmCatGeneralPropertyPage: TFrame},
-  PropertySeparator in 'PropertySeparator.pas' {frmPropertySeparator},
-  BasePropertyPage in 'frame\BasePropertyPage.pas' {frmBasePropertyPage: TFrame},
-  ScanFolder in 'ScanFolder.pas' {frmScanFolder},
-  ulXMLUtils in 'library\ulXMLUtils.pas';
+  Forms.About in 'Forms\Forms.About.pas' {frmAbout},
+  Forms.GraphicMenu in 'Forms\Forms.GraphicMenu.pas' {frmGraphicMenu},
+  Forms.ImportList in 'Forms\Forms.ImportList.pas' {frmImportList},
+  Forms.Main in 'Forms\Forms.Main.pas' {frmMain},
+  Forms.PropertySeparator in 'Forms\Forms.PropertySeparator.pas' {frmPropertySeparator},
+  Forms.ScanFolder in 'Forms\Forms.ScanFolder.pas' {frmScanFolder},
+  DataModules.Icons in 'DataModules\DataModules.Icons.pas' {dmImages: TDataModule},
+  DataModules.TrayMenu in 'DataModules\DataModules.TrayMenu.pas' {dmTrayMenu: TDataModule},
+  AppConfig.Main in 'Library\AppConfig.Main.pas',
+  Kernel.BaseMainForm in 'Library\Kernel.BaseMainForm.pas',
+  Kernel.Consts in 'Library\Kernel.Consts.pas',
+  Kernel.Enumerations in 'Library\Kernel.Enumerations.pas',
+  Utility.FileFolder in 'Utilities\Utility.FileFolder.pas',
+  Utility.System in 'Utilities\Utility.System.pas',
+  Utility.XML in 'Utilities\Utility.XML.pas',
+  Frame.BaseEntity in 'Frame\Frame.BaseEntity.pas' {frmBaseEntityPage: TFrame},
+  Frame.Properties.Base in 'Frame\Frame.Properties.Base.pas' {frmBasePropertyPage: TFrame},
+  Frame.Properties.General in 'Frame\Frame.Properties.General.pas' {frmBaseGeneralPropertyPage: TFrame},
+  Frame.Options.Advanced in 'Frame\Frame.Options.Advanced.pas' {frmAdvancedOptionsPage: TFrame},
+  Frame.Options.General in 'Frame\Frame.Options.General.pas' {frmGeneralOptionsPage: TFrame},
+  Frame.Options.Hotkey in 'Frame\Frame.Options.Hotkey.pas' {frmHotkeyOptionsPage: TFrame},
+  Frame.Options.Items in 'Frame\Frame.Options.Items.pas' {frmItemsOptionsPage: TFrame},
+  Frame.Options.Stats in 'Frame\Frame.Options.Stats.pas' {frmStatsOptionsPage: TFrame},
+  Frame.Options.Trayicon in 'Frame\Frame.Options.Trayicon.pas' {frmTrayiconOptionsPage: TFrame},
+  Frame.Properties.Advanced in 'Frame\Frame.Properties.Advanced.pas' {frmAdvancedPropertyPage: TFrame},
+  Frame.Properties.Behavior in 'Frame\Frame.Properties.Behavior.pas' {frmBehaviorPropertyPage: TFrame},
+  Frame.Properties.General.Category in 'Frame\Frame.Properties.General.Category.pas' {frmCatGeneralPropertyPage: TFrame},
+  Frame.Properties.General.Software in 'Frame\Frame.Properties.General.Software.pas' {frmSWGeneralPropertyPage: TFrame},
+  Utility.Process in 'Utilities\Utility.Process.pas',
+  Database.Version in 'Library\Database.Version.pas',
+  Database.Options in 'Library\Database.Options.pas',
+  Database.List in 'Library\Database.List.pas',
+  Database.Manager in 'Library\Database.Manager.pas',
+  NodeDataTypes.Files in 'Library\NodeDataTypes.Files.pas',
+  NodeDataTypes.Separator in 'Library\NodeDataTypes.Separator.pas',
+  NodeDataTypes.Base in 'Library\NodeDataTypes.Base.pas',
+  NodeDataTypes.Category in 'Library\NodeDataTypes.Category.pas',
+  NodeDataTypes.Custom in 'Library\NodeDataTypes.Custom.pas',
+  Kernel.Types in 'Library\Kernel.Types.pas',
+  Lists.Base in 'Library\Lists.Base.pas',
+  Lists.Special in 'Library\Lists.Special.pas',
+  Lists.HotKey in 'Library\Lists.HotKey.pas',
+  Lists.Scheduler in 'Library\Lists.Scheduler.pas',
+  Lists.Manager in 'Library\Lists.Manager.pas',
+  Kernel.Singleton in 'Library\Kernel.Singleton.pas',
+  AppConfig.Paths in 'Library\AppConfig.Paths.pas',
+  Kernel.PopupMenu in 'Library\Kernel.PopupMenu.pas',
+  Utility.Conversions in 'Utilities\Utility.Conversions.pas',
+  Utility.Misc in 'Utilities\Utility.Misc.pas',
+  Kernel.ASuiteInstance in 'Library\Kernel.ASuiteInstance.pas',
+  Forms.ShortcutGrabber in 'Forms\Forms.ShortcutGrabber.pas' {/SQLite3 static library},
+  USingleInst,
+  VirtualTree.Events in 'Library\VirtualTree.Events.pas',
+  Forms.Dialog.BaseEntity in 'Forms\Forms.Dialog.BaseEntity.pas' {frmDialogBase},
+  Forms.Options in 'Forms\Forms.Options.pas' {frmOptions},
+  Forms.PropertyItem in 'Forms\Forms.PropertyItem.pas' {frmPropertyItem},
+  VirtualTree.Methods in 'Library\VirtualTree.Methods.pas',
+  VirtualTree.Helper in 'Library\VirtualTree.Helper.pas',
+  GraphicMenu.ThemeEngine.Consts in 'Library\GraphicMenu.ThemeEngine.Consts.pas',
+  GraphicMenu.ThemeEngine in 'Library\GraphicMenu.ThemeEngine.pas',
+  Icons.Node in 'Library\Icons.Node.pas',
+  Icons.Manager in 'Library\Icons.Manager.pas',
+  Icons.Base in 'Library\Icons.Base.pas',
+  Icons.Application in 'Library\Icons.Application.pas';
 
 //SQLite3 static library
 
@@ -60,17 +82,16 @@ var
 {$R *.dkl_const.res}
 
 begin
-  {$IFDEF DEBUG}
-  ReportMemoryLeaksOnShutdown := True;
-  {$ENDIF}
-  if not CheckPrevious.RestoreIfRunning(Application.Handle, 1) then
+  if SingleInst.CanStartApp then
   begin
+    {$IFDEF DEBUG}
+    ReportMemoryLeaksOnShutdown := True;
+    {$ENDIF}
     {$IFDEF DEBUG}
     cTempo1 := GetTickCount;
     {$ENDIF}
 
     Application.Initialize;
-    SetCurrentDir(SUITE_WORKING_PATH);
     Config    := TConfiguration.Create;
     Application.Title := APP_TITLE;
 
@@ -79,8 +100,7 @@ begin
   //Show MainForm and/or TrayMenu
     Application.ShowMainForm := Config.ShowPanelAtStartUp;
     if (Config.ShowMenuAtStartUp) then
-      ClassicMenu.ShowTrayiconMenu;
-    TfrmNotification.Execute(Format('%s %s', [APP_NAME, VERSION_COMPLETE]),'');
+      dmTrayMenu.ShowGraphicMenu;
     Application.Run;
 
     {$IFDEF DEBUG}

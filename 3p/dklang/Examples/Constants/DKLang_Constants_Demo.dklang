@@ -1,9 +1,0 @@
-﻿[fMain]
-Caption=00000001,Sample Form
-bTest.Caption=00000003,Test
-lSampleMessage.Caption=00000004,This is a sample message.
-
-[$CONSTANTS]
-SMessageCaption=Message
-STestMessage=This is a test message!
-

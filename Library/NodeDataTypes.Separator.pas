@@ -17,9 +17,27 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 }
 
-//------------------------------------------------------------------------------
-// Build options for ASuite
-//------------------------------------------------------------------------------
+unit NodeDataTypes.Separator;
 
-//Enable hack for a faster popupmenu
-{$DEFINE FASTHACK}
+interface
+
+uses
+  Kernel.Enumerations, NodeDataTypes.Base;
+
+type
+  TvSeparatorNodeData = class(TvBaseNodeData)
+  public
+    //Specific properties
+    constructor Create; overload;
+  end;
+  PvSeparatorNodeData = ^TvSeparatorNodeData;
+
+implementation
+
+constructor TvSeparatorNodeData.Create;
+begin
+  inherited Create(vtdtSeparator);
+  Name := '';
+end;
+
+end.

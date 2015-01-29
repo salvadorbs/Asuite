@@ -1,0 +1,38 @@
+[x] Added asuite icons
+
+[x] Fix CheckPathExe
+[x] Fix execute function (RunNormalSw, RunAs, RunAsAdmin and OpenFolder) [x] ExecuteItem
+[x] Fix TrayMenu functions (RunFromTrayMenu)
+
+[x] Fix all ImagesDM references
+[x] Fix alpha format in cache icons (vedi asuite-lazarus - GetSimpleIconIndex http://stackoverflow.com/questions/21145025/shgetfileinfo-produces-icon-with-black-background/21146842#21146842)
+[x] Load theme icons in automatic mode (maybe find and load all icons from proper folders)
+[x] Load right icon (16px) in tray menu
+[x] Fix GetImageIndex in frames
+
+[ ] Rename all DKLanguageController1 in DKLangController (and check all forms)
+[x] New About form (see CCleaner about)
+[ ] Rewrite scheduler
+[ ] Rewrite scanfolder
+[ ] Options
+[ ] ImportList
+[x] Add consts for relative paths %foldericon% and %urlicon%
+[ ] Check updates
+
+[ ] Update batch and install files
+
+[x] Update year in license section of all units
+
+[x] Fix MainForm and GM's position
+[x] Fix Kind = ikNormal in vstGetImageIndex
+[x] Use TjvFileNameEdit in all path tedits
+[x] Fix tiTrayMenu.Hint (version)
+[x] Fix delete items in MainForm
+[x] Fix hotkey in Property
+
+[x] Fix GetNodeItemData vs GetNodeDataEx
+[x] Fix ShowItemProperty (in mainform and graphic menu)
+
+[x] Make a function to get node images for virtualtrees
+
+[x] Use toUseExplorerTheme in all vst
