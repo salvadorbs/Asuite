@@ -23,11 +23,24 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DKLang, Frame.BaseEntity;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DKLang, Frame.BaseEntity, Vcl.StdCtrls,
+  Vcl.Mask, JvExMask, JvToolEdit;
 
 type
   TfrmGeneralOptionsPage = class(TfrmBaseEntityPage)
     DKLanguageController1: TDKLanguageController;
+    gbStartup: TGroupBox;
+    cbWindowsStartup: TCheckBox;
+    cbShowPanelStartup: TCheckBox;
+    cbShowMenuStartup: TCheckBox;
+    chkMissedSchedulerTask: TCheckBox;
+    grpLanguage: TGroupBox;
+    cxLanguage: TComboBox;
+    gbExecution: TGroupBox;
+    lbActionOnExe: TLabel;
+    cbRunSingleClick: TCheckBox;
+    cxActionOnExe: TComboBox;
+    chkConfirmMessageCat: TCheckBox;
   private
     { Private declarations }
   strict protected
@@ -45,7 +58,7 @@ var
 implementation
 
 uses
-  AppConfig.Main;
+  AppConfig.Main, Kernel.Enumerations;
 
 {$R *.dfm}
 
@@ -62,13 +75,42 @@ begin
 end;
 
 function TfrmGeneralOptionsPage.InternalLoadData: Boolean;
+var
+  I: Integer;
 begin
   Result := inherited;
+  //Startup
+  cbWindowsStartup.Checked   := Config.StartWithWindows;
+  cbShowPanelStartup.Checked := Config.ShowPanelAtStartUp;
+  cbShowMenuStartup.Checked  := Config.ShowGraphicMenuAtStartUp;
+  chkMissedSchedulerTask.Checked := Config.MissedSchedulerTask;
+  //Language
+  for I := 0 to LangManager.LanguageCount - 1 do
+  begin
+    cxLanguage.Items.Add(LangManager.LanguageNativeNames[I]);
+    if LangManager.LanguageIDs[I] = Config.LangID then
+      cxLanguage.ItemIndex  := I;
+  end;
+  //Execution options
+  cxActionOnExe.ItemIndex   := Ord(Config.ActionOnExe);
+  cbRunSingleClick.Checked  := Config.RunSingleClick;
+  chkConfirmMessageCat.Checked := Config.ConfirmRunCat;
 end;
 
 function TfrmGeneralOptionsPage.InternalSaveData: Boolean;
 begin
   Result := inherited;
+  //Startup
+  Config.StartWithWindows    := cbWindowsStartup.Checked;
+  Config.ShowPanelAtStartUp  := cbShowPanelStartup.Checked;
+  Config.ShowGraphicMenuAtStartUp := cbShowMenuStartup.Checked;
+  Config.MissedSchedulerTask := chkMissedSchedulerTask.Checked;
+  //Language
+  Config.LangID := LangManager.LanguageIDs[cxLanguage.ItemIndex];
+  //Execution options
+  Config.ActionOnExe    := TActionOnExecute(cxActionOnExe.ItemIndex);
+  Config.RunSingleClick := cbRunSingleClick.Checked;
+  Config.ConfirmRunCat  := chkConfirmMessageCat.Checked;
 end;
 
 end.

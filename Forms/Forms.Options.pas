@@ -48,8 +48,8 @@ implementation
 
 uses
   Frame.Options.General, Frame.Options.Advanced, Frame.Options.TrayIcon,
-  Frame.Options.Stats, Frame.Options.Items, AppConfig.Main,
-  Forms.Main, Frame.Options.Hotkey;
+  Frame.Options.Stats, Frame.Options.Autorun, AppConfig.Main,
+  Forms.Main, Frame.Options.Hotkey, Frame.Options.MainWindow;
 
 {$R *.dfm}
 
@@ -81,9 +81,10 @@ var
 begin
   //General
   FFrameGeneral  := AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmGeneralOptionsPage.Create(Self)));
+  AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmMainWindowOptionsPage.Create(Self)));
   //Advanced
   FFrameAdvanced := AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmAdvancedOptionsPage.Create(Self)));
-  AddFrameNode(vstCategory, FFrameAdvanced, TPageFrameClass(TfrmItemsOptionsPage.Create(Self)));
+  AddFrameNode(vstCategory, FFrameAdvanced, TPageFrameClass(TfrmAutorunOptionsPage.Create(Self)));
   AddFrameNode(vstCategory, FFrameAdvanced, TPageFrameClass(TfrmHotkeyOptionsPage.Create(Self)));
   //TrayIcon
   AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmTrayiconOptionsPage.Create(Self)));

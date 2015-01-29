@@ -48,6 +48,7 @@ type
     lbFolderPath: TLabel;
     DKLanguageController1: TDKLanguageController;
     edtFolderPath: TJvDirectoryEdit;
+    cbFlat: TCheckBox;
     procedure btnScanClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);

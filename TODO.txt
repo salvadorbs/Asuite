@@ -14,7 +14,7 @@
 [x] New About form (see CCleaner about)
 [ ] Rewrite scheduler
 [ ] Rewrite scanfolder
-[ ] Options
+[x] Options
 [ ] ImportList
 [x] Add consts for relative paths %foldericon% and %urlicon%
 [ ] Check updates

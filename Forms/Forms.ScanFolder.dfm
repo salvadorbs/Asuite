@@ -3,8 +3,8 @@ object frmScanFolder: TfrmScanFolder
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Scan folder'
-  ClientHeight = 254
-  ClientWidth = 347
+  ClientHeight = 271
+  ClientWidth = 346
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,8 +17,8 @@ object frmScanFolder: TfrmScanFolder
   PixelsPerInch = 96
   TextHeight = 13
   object btnScan: TButton
-    Left = 181
-    Top = 223
+    Left = 183
+    Top = 239
     Width = 75
     Height = 25
     Caption = 'Scan'
@@ -27,8 +27,8 @@ object frmScanFolder: TfrmScanFolder
     OnClick = btnScanClick
   end
   object btnCancel: TButton
-    Left = 262
-    Top = 223
+    Left = 264
+    Top = 239
     Width = 75
     Height = 25
     Caption = 'Cancel'
@@ -39,11 +39,11 @@ object frmScanFolder: TfrmScanFolder
     Left = 8
     Top = 8
     Width = 329
-    Height = 209
+    Height = 225
     TabOrder = 0
     object grpFileTypes: TGroupBox
       Left = 8
-      Top = 88
+      Top = 104
       Width = 154
       Height = 114
       Caption = 'File Types'
@@ -93,7 +93,7 @@ object frmScanFolder: TfrmScanFolder
     end
     object grpExclude: TGroupBox
       Left = 168
-      Top = 88
+      Top = 104
       Width = 154
       Height = 114
       Caption = 'Exclude file or folder'
@@ -145,7 +145,7 @@ object frmScanFolder: TfrmScanFolder
       Left = 8
       Top = 0
       Width = 314
-      Height = 84
+      Height = 98
       Caption = 'General settings'
       TabOrder = 0
       object lbFolderPath: TLabel
@@ -158,7 +158,7 @@ object frmScanFolder: TfrmScanFolder
       object cbSubfolders: TCheckBox
         Left = 8
         Top = 58
-        Width = 177
+        Width = 289
         Height = 17
         Caption = 'Scan subfolders'
         TabOrder = 1
@@ -179,6 +179,21 @@ object frmScanFolder: TfrmScanFolder
         TabOrder = 0
         Text = ''
       end
+      object cbFlat: TCheckBox
+        Left = 8
+        Top = 78
+        Width = 288
+        Height = 17
+        Caption = 'Flat structure'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 2
+        Visible = False
+      end
     end
   end
   object DKLanguageController1: TDKLanguageController
@@ -186,7 +201,7 @@ object frmScanFolder: TfrmScanFolder
     Top = 226
     LangData = {
       0D0066726D5363616E466F6C646572010100000001000000070043617074696F
-      6E0113000000090062746E43616E63656C010100000003000000070043617074
+      6E0114000000090062746E43616E63656C010100000003000000070043617074
       696F6E00070062746E5363616E010100000004000000070043617074696F6E00
       0700706E6C5363616E00000C0067727046696C65547970657301010000000500
       0000070043617074696F6E000F0062746E54797065735265706C616365010100
@@ -201,6 +216,7 @@ object frmScanFolder: TfrmScanFolder
       0000000C000000070043617074696F6E0007006772705061746801010000000D
       000000070043617074696F6E000C006C62466F6C646572506174680101000000
       0E000000070043617074696F6E000C006362537562666F6C6465727301010000
-      0010000000070043617074696F6E000D00656474466F6C646572506174680000}
+      0010000000070043617074696F6E000D00656474466F6C646572506174680000
+      06006362466C6174010100000011000000070043617074696F6E00}
   end
 end

@@ -266,7 +266,7 @@ begin
     //General
     Config.StartWithWindows   := GetBoolPropertyXML(Node, 'StartOnWindowsStartup', false);
     Config.ShowPanelAtStartUp := GetBoolPropertyXML(Node, 'StartUpShowPanel', true);
-    Config.ShowMenuAtStartUp  := GetBoolPropertyXML(Node, 'StartUpShowMenu', false);
+    Config.ShowGraphicMenuAtStartUp := GetBoolPropertyXML(Node, 'StartUpShowMenu', false);
     //Main Form
     Config.CustomTitleString := GetStrPropertyXML(Node, 'CustomTitleString', APP_TITLE);
     Config.UseCustomTitle    := GetBoolPropertyXML(Node, 'CustomTitle', false);
@@ -315,7 +315,8 @@ begin
     Config.Backup         := GetBoolPropertyXML(Node, 'ActiveBackup',true);
     Config.BackupNumber   := GetIntPropertyXML(Node, 'BackupNumber',5);
     //Other functions
-    Config.Autorun        := GetBoolPropertyXML(Node, 'ActiveAutorun',true);
+    Config.AutorunStartup  := GetBoolPropertyXML(Node, 'ActiveAutorun',true);
+    Config.AutorunShutdown := GetBoolPropertyXML(Node, 'ActiveAutorun',true);
     Config.Cache          := GetBoolPropertyXML(Node, 'ActiveCache',true);
     Config.Scheduler      := GetBoolPropertyXML(Node, 'ActiveScheduler',true);
     //Execution

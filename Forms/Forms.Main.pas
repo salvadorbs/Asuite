@@ -376,13 +376,13 @@ end;
 
 procedure TfrmMain.pcListChange(Sender: TObject);
 begin
-  TVirtualTreeMethods.Create.CheckVisibleNodePathExe(GetActiveTree);
   //Clear search when user click on tab search
   if pcList.ActivePageIndex = PG_SEARCH then
   begin
     vstSearch.Clear;
     edtSearch.Text := '';
   end;
+  TVirtualTreeMethods.Create.CheckVisibleNodePathExe(GetActiveTree);
 end;
 
 procedure TfrmMain.SetAllIcons;

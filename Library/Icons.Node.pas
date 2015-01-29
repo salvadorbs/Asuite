@@ -103,7 +103,7 @@ begin
   sTempPath := '';
   Result   := -1;
   //Get cache icon path
-  if (Config.ASuiteState <> lsImporting) and (Config.Cache) then
+  if (Config.Cache) then
   begin
     //Check CRC, if it fails reset cache icon
     if (CacheIconCRC = GetFileCRC32(PathCacheIcon)) then
@@ -172,7 +172,7 @@ procedure TNodeIcon.SaveCacheIcon(const APath: string;
 var
   Icon: TKIcon;
 begin
-  if (Config.ASuiteState <> lsImporting) and (Config.Cache) and (AImageIndex <> -1) then
+  if (Config.Cache) and (AImageIndex <> -1) then
   begin
     if (FNodeData.ID <> -1) and (LowerCase(ExtractFileExt(APath)) <>  EXT_ICO) then
     begin

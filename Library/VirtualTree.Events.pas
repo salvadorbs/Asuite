@@ -23,7 +23,7 @@ interface
 
 uses
   Windows, SysUtils, Classes, Graphics, VirtualTrees, ActiveX, UITypes, DKLang,
-  Kernel.Singleton, Forms.GraphicMenu, Forms.Dialog.BaseEntity;
+  Kernel.Singleton, Forms.GraphicMenu, Forms.Dialog.BaseEntity, Menus;
 
 type
   TVirtualTreeEvents = class(TSingleton)
@@ -46,6 +46,8 @@ type
     procedure SetupVSTGraphicMenu(ATree: TVirtualStringTree; AGraphicMenu: TfrmGraphicMenu);
     procedure SetupVSTImportList(ATree: TVirtualStringTree);
     procedure SetupVSTDialogFrame(ATree: TVirtualStringTree);
+    procedure SetupVSTHotkey(ATree: TVirtualStringTree);
+    procedure SetupVSTAutorun(ATree: TVirtualStringTree);
 
     //Generic events
     procedure DoDragOver(Sender: TBaseVirtualTree; Source: TObject;
@@ -115,6 +117,19 @@ type
       Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
     procedure DoAddToSelectionFrame(Sender: TBaseVirtualTree;
       Node: PVirtualNode);
+
+    //Hotkey events
+    procedure DoCompareNodesHotkey(Sender: TBaseVirtualTree; Node1,
+      Node2: PVirtualNode; Column: TColumnIndex; var Result: Integer);
+    procedure DoGetTextHotkey(Sender: TBaseVirtualTree; Node: PVirtualNode;
+      Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+    procedure DoGetImageIndexHotkey(Sender: TBaseVirtualTree;
+      Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
+      var Ghosted: Boolean; var ImageIndex: Integer);
+
+    //Autorun events
+    procedure DoGetTextAutorun(Sender: TBaseVirtualTree; Node: PVirtualNode;
+      Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
   end;
 
 implementation
@@ -181,6 +196,15 @@ begin
   ATree.OnScroll        := DoScrollGM;
 end;
 
+procedure TVirtualTreeEvents.SetupVSTHotkey(ATree: TVirtualStringTree);
+begin
+  ATree.Images := dmImages.ilLargeIcons;
+  ATree.OnGetNodeDataSize := DoGetNodeDataSizeSearch;
+  ATree.OnCompareNodes    := DoCompareNodesHotkey;
+  ATree.OnGetText         := DoGetTextHotkey;
+  ATree.OnGetImageIndex   := DoGetImageIndexHotkey;
+end;
+
 procedure TVirtualTreeEvents.SetupVSTImportList(ATree: TVirtualStringTree);
 begin
   ATree.OnDrawText  := DoDrawText;
@@ -212,6 +236,14 @@ begin
   ATree.OnNewText      := DoNewText;
   ATree.OnSaveNode     := DoSaveNode;
   ATree.OnMeasureItem  := DoMeasureItem;
+end;
+
+procedure TVirtualTreeEvents.SetupVSTAutorun(ATree: TVirtualStringTree);
+begin
+  ATree.Images := dmImages.ilLargeIcons;
+  ATree.OnGetNodeDataSize := DoGetNodeDataSizeSearch;
+  ATree.OnGetText         := DoGetTextAutorun;
+  ATree.OnGetImageIndex   := DoGetImageIndexHotkey;
 end;
 
 procedure TVirtualTreeEvents.SetupVSTDialogFrame(ATree: TVirtualStringTree);
@@ -259,6 +291,33 @@ begin
   NodeData := Sender.GetNodeData(Node);
   if Assigned(NodeData) and (Sender.Parent is TfrmDialogBase) then
     TfrmDialogBase(Sender.Parent).ChangePage(NodeData.Frame);
+end;
+
+procedure TVirtualTreeEvents.DoCompareNodesHotkey(Sender: TBaseVirtualTree;
+  Node1, Node2: PVirtualNode; Column: TColumnIndex; var Result: Integer);
+var
+  Data1, Data2: TvCustomRealNodeData;
+begin
+  Data1 := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node1, Sender));
+  Data2 := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node2, Sender));
+  if (Not Assigned(Data1)) or (Not Assigned(Data2)) then
+    Result := 0
+  else
+    case Column of
+      0: Result := CompareText(Data1.Name, Data2.Name);
+      1:
+      begin
+        if (Data1.DataType) <> (Data2.DataType) then
+        begin
+          if Data1.DataType = vtdtCategory then
+            Result := -1
+          else
+            Result := 1
+        end;
+      end;
+      2: Result := CompareText(GetNodeParentName(Sender, Data1.pNode), GetNodeParentName(Sender, Data2.pNode));
+      3: Result := CompareText(ShortCutToText(Data1.Hotkey), ShortCutToText(Data2.Hotkey));
+    end;
 end;
 
 procedure TVirtualTreeEvents.DoCompareNodesList(Sender: TBaseVirtualTree; Node1,
@@ -427,6 +486,28 @@ begin
   end;
 end;
 
+procedure TVirtualTreeEvents.DoGetTextAutorun(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
+  var CellText: string);
+var
+  NodeData : TvCustomRealNodeData;
+begin
+  CellText := '';
+  NodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender));
+  if Assigned(NodeData) then
+  begin
+    case Column of
+      0: CellText := NodeData.Name;
+      2: CellText := GetNodeParentName(Sender, NodeData.pNode);
+      3:
+      begin
+        if NodeData.DataType = vtdtFile then
+          CellText := TvFileNodeData(NodeData).PathFile;
+      end;
+    end;
+  end;
+end;
+
 procedure TVirtualTreeEvents.DoGetTextFrame(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
   var CellText: string);
@@ -438,6 +519,24 @@ begin
   if Assigned(NodeData) then
     if NodeData.Title <> '' then
       CellText := NodeData.Title;
+end;
+
+procedure TVirtualTreeEvents.DoGetTextHotkey(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
+  var CellText: string);
+var
+  NodeData : TvCustomRealNodeData;
+begin
+  CellText := '';
+  NodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender));
+  if Assigned(NodeData) then
+  begin
+    case Column of
+      0: CellText := NodeData.Name;
+      2: CellText := GetNodeParentName(Sender, NodeData.pNode);
+      3: CellText := ShortCutToText(NodeData.Hotkey)
+    end;
+  end;
 end;
 
 procedure TVirtualTreeEvents.DoInitNodeFrame(Sender: TBaseVirtualTree;
@@ -736,6 +835,31 @@ begin
     NodeData := Sender.GetNodeData(Node);
     if Assigned(NodeData) then
       ImageIndex := NodeData.ImageIndex;
+  end;
+end;
+
+procedure TVirtualTreeEvents.DoGetImageIndexHotkey(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
+  var Ghosted: Boolean; var ImageIndex: Integer);
+var
+  NodeData: TvBaseNodeData;
+begin
+  if (Kind = ikNormal) or (Kind = ikSelected) then
+  begin
+    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
+    if Assigned(NodeData) then
+    begin
+      case Column of
+        0: ImageIndex := NodeData.Icon.ImageIndex;
+        1:
+        begin
+          if NodeData.DataType = vtdtCategory then
+            ImageIndex := Config.IconsManager.GetIconIndex('category')
+          else
+            ImageIndex := Config.IconsManager.GetIconIndex('file');
+        end;
+      end;
+    end;
   end;
 end;
 
