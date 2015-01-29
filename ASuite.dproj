@@ -104,8 +104,8 @@
         <DCC_HppOutput>dcu</DCC_HppOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1346;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
-        <VerInfo_Build>1346</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1360;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
+        <VerInfo_Build>1360</VerInfo_Build>
         <ILINK_MapFileType>DetailedSegments</ILINK_MapFileType>
         <MapFile>3</MapFile>
         <DCC_MapFile>3</DCC_MapFile>
@@ -538,8 +538,8 @@
             <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
-        <DCCReference Include="Frame\Frame.Options.Items.pas">
-            <Form>frmItemsOptionsPage</Form>
+        <DCCReference Include="Frame\Frame.Options.Autorun.pas">
+            <Form>frmAutorunOptionsPage</Form>
             <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
@@ -619,6 +619,11 @@
         <DCCReference Include="Library\Icons.Manager.pas"/>
         <DCCReference Include="Library\Icons.Base.pas"/>
         <DCCReference Include="Library\Icons.Application.pas"/>
+        <DCCReference Include="Frame\Frame.Options.MainWindow.pas">
+            <Form>frmMainWindowOptionsPage</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
         <None Include="ASuite.inc"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>

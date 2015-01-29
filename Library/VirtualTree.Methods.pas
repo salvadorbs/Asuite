@@ -561,6 +561,7 @@ var
   NodeData: TvBaseNodeData;
   SubNode: PVirtualNode;
 begin
+  //TODO: Check this code
   //Get NodeData (need it because we must know DataType)
   if Sender = Config.MainTree then
     SubNode := Node

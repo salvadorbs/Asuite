@@ -34,7 +34,7 @@ type
     //General
     FStartWithWindows   : Boolean;
     FShowPanelAtStartUp : Boolean;
-    FShowMenuAtStartUp  : Boolean;
+    FShowGraphicMenuAtStartUp  : Boolean;
     //Main Form
     FLangID             : Word;
     FUseCustomTitle     : Boolean;
@@ -48,6 +48,7 @@ type
     FTVBackgroundPath   : string;
     FTVAutoOpClCats     : Boolean; //Automatic Opening/closing categories
     FTVFont             : TFont;
+    FTVSmallIconSize    : Boolean;
     //MRU
     FMRU                : Boolean;
     FSubMenuMRU         : Boolean;
@@ -60,7 +61,8 @@ type
     FBackup             : Boolean;
     FBackupNumber       : Integer;
     //Other functions
-    FAutorun            : Boolean;
+    FAutorunStartup     : Boolean;
+    FAutorunShutdown    : Boolean;
     FCache              : Boolean;
     FScheduler          : Boolean;
     //Execution
@@ -77,6 +79,11 @@ type
     FGMTheme            : string;
     FGMFade             : Boolean;
     FGMPersonalPicture  : string;
+    FGMPositionTop      : Integer;
+    FGMPositionLeft     : Integer;
+    FGMSmallIconSize    : Boolean;
+    FGMAutomaticHideMenu : Boolean;
+    FGMShowUserPicture   : Boolean;
     //Right buttons
     FGMBtnDocuments     : string;
     FGMBtnMusic         : string;
@@ -88,12 +95,15 @@ type
     FWindowHotKey       : TShortcut;
     FMenuHotKey         : TShortcut;
     //Misc
-    FReadOnlyMode       : Boolean;
-    FChanged            : Boolean;
-    FASuiteState        : TLauncherState;
-    FScanFolderLastPath: string;
-    FScanFolderSubFolders: boolean;
-    FScanFolderFileTypes: TStringList;
+    FReadOnlyMode         : Boolean;
+    FChanged              : Boolean;
+    FASuiteState          : TLauncherState;
+    FMissedSchedulerTask  : Boolean;
+    FAutoExpansionFolder  : Boolean;
+    FActionClickMiddle    : TTrayiconActionClick;
+    FScanFolderLastPath   : string;
+    FScanFolderSubFolders : boolean;
+    FScanFolderFileTypes  : TStringList;
     FScanFolderExcludeNames: TStringList;
 
     FMainTree: TVirtualStringTree;
@@ -127,6 +137,7 @@ type
     procedure SetMenuHotKey(const Value: TShortcut);
     procedure SetWindowHotKey(const Value: TShortcut);
     procedure SetHotKey(const Value: Boolean);
+    procedure SetTVSmallIconSize(const Value: Boolean);
 
     function GetMainTree: TVirtualStringTree;
   protected
@@ -145,7 +156,8 @@ type
     //General
     property StartWithWindows: Boolean read FStartWithWindows write SetStartWithWindows;
     property ShowPanelAtStartUp: Boolean read FShowPanelAtStartUp write SetShowPanelAtStartUp;
-    property ShowMenuAtStartUp: Boolean read FShowMenuAtStartUp write FShowMenuAtStartUp;
+    property ShowGraphicMenuAtStartUp: Boolean read FShowGraphicMenuAtStartUp write FShowGraphicMenuAtStartUp;
+    property MissedSchedulerTask: Boolean read FMissedSchedulerTask write FMissedSchedulerTask;
     // Main Form
     property LangID: Word read FLangID write SetLangID;
     property UseCustomTitle: Boolean read FUseCustomTitle write SetUseCustomTitle;
@@ -156,6 +168,7 @@ type
     property AlwaysOnTop: Boolean read FAlwaysOnTop write SetAlwaysOnTop;
     // Main Form - Treevew
     property TVBackground: Boolean read FTVBackground write SetTVBackground;
+    property TVSmallIconSize: Boolean read FTVSmallIconSize write SetTVSmallIconSize;
     property TVBackgroundPath: String read FTVBackgroundPath write FTVBackgroundPath;
     property TVAutoOpClCats: Boolean read FTVAutoOpClCats write SetTVAutoOpClCats;
     property TVFont: TFont read FTVFont write SetTVFont;
@@ -171,7 +184,8 @@ type
     property Backup: Boolean read FBackup write SetBackup;
     property BackupNumber: Integer read FBackupNumber write SetBackupNumber;
     // Other functions
-    property Autorun: Boolean read FAutorun write FAutorun;
+    property AutorunStartup: Boolean read FAutorunStartup write FAutorunStartup;
+    property AutorunShutdown: Boolean read FAutorunShutdown write FAutorunShutdown;
     property Cache: Boolean read FCache write SetCache;
     property Scheduler: Boolean read FScheduler write SetScheduler;
     // Execution
@@ -183,11 +197,18 @@ type
     property TrayUseCustomIcon: Boolean read FTrayUseCustomIcon write SetTrayUseCustomIcon;
     property TrayCustomIconPath: String read FTrayCustomIconPath write FTrayCustomIconPath;
     property ActionClickLeft: TTrayiconActionClick read FActionClickLeft write FActionClickLeft;
+    property ActionClickMiddle: TTrayiconActionClick read FActionClickMiddle write FActionClickMiddle;
     property ActionClickRight: TTrayiconActionClick read FActionClickRight write FActionClickRight;
+    property AutoExpansionFolder: Boolean read FAutoExpansionFolder write FAutoExpansionFolder;
     //Graphic Menu
     property GMTheme: string read FGMTheme write SetGMTheme;
     property GMFade: Boolean read FGMFade write FGMFade;
+    property GMSmallIconSize: Boolean read FGMSmallIconSize write FGMSmallIconSize;
     property GMPersonalPicture: string read FGMPersonalPicture write FGMPersonalPicture;
+    property GMPositionTop: Integer read FGMPositionTop write FGMPositionTop;
+    property GMPositionLeft: Integer read FGMPositionLeft write FGMPositionLeft;
+    property GMAutomaticHideMenu: Boolean read FGMAutomaticHideMenu write FGMAutomaticHideMenu;
+    property GMShowUserPicture: Boolean read FGMShowUserPicture write FGMShowUserPicture;
     //Right buttons
     property GMBtnDocuments: string read FGMBtnDocuments write SetGMBtnDocuments;
     property GMBtnPictures: string read FGMBtnPictures write SetGMBtnPictures;
@@ -256,7 +277,8 @@ begin
   //General
   FStartWithWindows   := False;
   FShowPanelAtStartUp := True;
-  FShowMenuAtStartUp  := False;
+  FShowGraphicMenuAtStartUp  := False;
+  FMissedSchedulerTask := True;
   //Main Form
   FLangID             := 1033; //1033 = English (United States)
   FUseCustomTitle     := False;
@@ -268,6 +290,7 @@ begin
   //Main Form - Treevew
   FTVBackground       := False;
   FTVBackgroundPath   := '';
+  FTVSmallIconSize    := True;
   FTVAutoOpClCats     := True;
   //Treeview Font
   FTVFont             := TFont.Create;
@@ -286,7 +309,8 @@ begin
   FBackup             := True;
   FBackupNumber       := 5;
   //Other functions
-  FAutorun            := True;
+  FAutorunStartup     := True;
+  FAutorunShutdown    := True;
   FCache              := True;
   FScheduler          := True;
   //Execution
@@ -298,11 +322,17 @@ begin
   FTrayUseCustomIcon  := False;
   FTrayCustomIconPath := '';
   FActionClickLeft    := tcShowClassicMenu;
+  FActionClickMiddle  := tcNone;
   FActionClickRight   := tcShowGraphicMenu;
+  FAutoExpansionFolder := True;
   //Graphic Menu
   FGMTheme            := 'Default';
   FGMFade             := True;
   FGMPersonalPicture  := 'PersonalPicture.jpg';
+  FGMPositionTop      := -1;
+  FGMPositionLeft     := -1;
+  FGMAutomaticHideMenu := True;
+  FGMShowUserPicture   := True;
   //Right buttons
   FGMBtnDocuments     := '%USERPROFILE%\Documents';
   FGMBtnPictures      := '%USERPROFILE%\Pictures';
@@ -594,6 +624,28 @@ begin
     FTVFont.Size  := value.Size;
     FTVFont.Color := value.Color;
     FMainTree.Font.Assign(FTVFont);
+  end;
+end;
+
+procedure TConfiguration.SetTVSmallIconSize(const Value: Boolean);
+var
+  MainTree: TVirtualStringTree;
+begin
+  if Assigned(frmMain) then
+  begin
+    MainTree := frmMain.vstList;
+    //If new value is different than old value, full collapse Tree and get icons
+    if FTVSmallIconSize <> Value then
+    begin
+      FTVSmallIconSize := Value;
+      //Change node height and imagelist
+      TVirtualTreeMethods.Create.ChangeTreeIconSize(MainTree, FTVSmallIconSize);
+      if MainTree.HasChildren[MainTree.RootNode] then
+      begin
+        MainTree.FullCollapse;
+        TVirtualTreeMethods.Create.ChangeAllNodeHeight(MainTree, MainTree.DefaultNodeHeight);
+      end;
+    end;
   end;
 end;
 

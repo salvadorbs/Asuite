@@ -26,7 +26,7 @@ uses
   Frame.Options.Advanced in 'Frame\Frame.Options.Advanced.pas' {frmAdvancedOptionsPage: TFrame},
   Frame.Options.General in 'Frame\Frame.Options.General.pas' {frmGeneralOptionsPage: TFrame},
   Frame.Options.Hotkey in 'Frame\Frame.Options.Hotkey.pas' {frmHotkeyOptionsPage: TFrame},
-  Frame.Options.Items in 'Frame\Frame.Options.Items.pas' {frmItemsOptionsPage: TFrame},
+  Frame.Options.Autorun in 'Frame\Frame.Options.Autorun.pas' {frmAutorunOptionsPage: TFrame},
   Frame.Options.Stats in 'Frame\Frame.Options.Stats.pas' {frmStatsOptionsPage: TFrame},
   Frame.Options.Trayicon in 'Frame\Frame.Options.Trayicon.pas' {frmTrayiconOptionsPage: TFrame},
   Frame.Properties.Advanced in 'Frame\Frame.Properties.Advanced.pas' {frmAdvancedPropertyPage: TFrame},
@@ -68,7 +68,8 @@ uses
   Icons.Node in 'Library\Icons.Node.pas',
   Icons.Manager in 'Library\Icons.Manager.pas',
   Icons.Base in 'Library\Icons.Base.pas',
-  Icons.Application in 'Library\Icons.Application.pas';
+  Icons.Application in 'Library\Icons.Application.pas',
+  Frame.Options.MainWindow in 'Frame\Frame.Options.MainWindow.pas' {frmMainWindowOptionsPage: TFrame};
 
 //SQLite3 static library
 
@@ -99,7 +100,7 @@ begin
   Application.CreateForm(TfrmGraphicMenu, frmGraphicMenu);
   //Show MainForm and/or TrayMenu
     Application.ShowMainForm := Config.ShowPanelAtStartUp;
-    if (Config.ShowMenuAtStartUp) then
+    if (Config.ShowGraphicMenuAtStartUp) then
       dmTrayMenu.ShowGraphicMenu;
     Application.Run;
 

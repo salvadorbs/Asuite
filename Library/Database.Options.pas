@@ -22,7 +22,7 @@ unit Database.Options;
 interface
 
 uses
-  mORMot, SynCommons, Kernel.Enumerations, Classes,
+  mORMot, SynCommons, Kernel.Enumerations, Classes, Kernel.Types,
   SysUtils, Database.Manager, AppConfig.Main, Types;
 
 type
@@ -32,6 +32,7 @@ type
     FStartWithWindows   : Boolean;
     FShowPanelAtStartUp : Boolean;
     FShowMenuAtStartUp  : Boolean;
+    FMissedSchedulerTask: Boolean;
     //Main Form
     FLangID             : Word;
     FUseCustomTitle     : Boolean;
@@ -40,12 +41,13 @@ type
     //Main Form - Position and size
     FHoldSize           : Boolean;
     FAlwaysOnTop        : Boolean;
-    FMainFormPosSize    : TRect;
+    FMainFormPosSize    : TArrayRect;
     //Main Form - Treevew
     FTVBackground       : Boolean;
     FTVBackgroundPath   : RawUTF8;
     FTVAutoOpClCats     : Boolean; //Automatic Opening/closing categories
     FTVFont             : RawUTF8;
+    FTVSmallIconSize    : Boolean;
     //MRU
     FMRU                : Boolean;
     FSubMenuMRU         : Boolean;
@@ -58,7 +60,8 @@ type
     FBackup             : Boolean;
     FBackupNumber       : Integer;
     //Other functions
-    FAutorun            : Boolean;
+    FAutorunStartup     : Boolean;
+    FAutorunShutdown    : Boolean;
     FCache              : Boolean;
     FScheduler          : Boolean;
     //Execution
@@ -70,12 +73,17 @@ type
     FTrayUseCustomIcon  : Boolean;
     FTrayCustomIconPath : RawUTF8;
     FActionClickLeft    : TTrayiconActionClick;
+    Factionclickmiddle  : TTrayiconActionClick;
     FActionClickRight   : TTrayiconActionClick;
-    FUseClassicMenu     : Boolean;
+    FAutoExpansionFolder: Boolean;
     //Graphic Menu
     FGMTheme            : RawUTF8;
     FGMFade             : Boolean;
     FGMPersonalPicture  : RawUTF8;
+    FGMPosition         : TArrayPoint;
+    FGMAutoHideMenu     : Boolean;
+    FGMShowUserPicture  : Boolean;
+ 		FGMSmallIconSize    : boolean;
     //Right buttons
 //    FGMBtnDocuments     : RawUTF8;
 //    FGMBtnMusic         : RawUTF8;
@@ -100,6 +108,7 @@ type
     property startwithwindows: Boolean read FStartWithWindows write FStartWithWindows;
     property showpanelatstartup: Boolean read FShowPanelAtStartUp write FShowPanelAtStartUp;
     property showmenuatstartup: Boolean read FShowMenuAtStartUp write FShowMenuAtStartUp;
+    property missedschedulertask: Boolean read Fmissedschedulertask write Fmissedschedulertask;
     // Main Form
     property langid: Word read FLangID write FLangID;
     property usecustomtitle: Boolean read FUseCustomTitle write FUseCustomTitle;
@@ -108,12 +117,13 @@ type
     // Main Form - Position and size
     property holdsize: Boolean read FHoldSize write FHoldSize;
     property alwaysontop: Boolean read FAlwaysOnTop write FAlwaysOnTop;
-    property mainformpossize: TRect read FMainFormPosSize write FMainFormPosSize;
+    property mainformpossize: TArrayRect read FMainFormPosSize write FMainFormPosSize;
     // Main Form - Treevew
     property tvbackground: Boolean read FTVBackground write FTVBackground;
     property tvbackgroundpath: RawUTF8 read FTVBackgroundPath write FTVBackgroundPath;
     property tvautoopclcats: Boolean read FTVAutoOpClCats write FTVAutoOpClCats;
     property tvfont: RawUTF8 read FTVFont write FTVFont;
+    property tvsmalliconsize: Boolean read Ftvsmalliconsize write Ftvsmalliconsize;
     // MRU
     property mru: Boolean read FMRU write FMRU;
     property submenumru: Boolean read FSubMenuMRU write FSubMenuMRU;
@@ -126,7 +136,8 @@ type
     property backup: Boolean read FBackup write FBackup;
     property backupnumber: Integer read FBackupNumber write FBackupNumber;
     // Other functions
-    property autorun: Boolean read FAutorun write FAutorun;
+    property autorunstartup: Boolean read FAutorunStartup write FAutorunStartup;
+    property autorunshutdown: Boolean read FAutorunShutdown write FAutorunShutdown;
     property cache: Boolean read FCache write FCache;
     property scheduler: Boolean read FScheduler write FScheduler;
     // Execution
@@ -138,12 +149,17 @@ type
     property trayusecustomicon: Boolean read FTrayUseCustomIcon write FTrayUseCustomIcon;
     property traycustomiconpath: RawUTF8 read FTrayCustomIconPath write FTrayCustomIconPath;
     property actionclickleft: TTrayiconActionClick read FActionClickLeft write FActionClickLeft;
+    property actionclickmiddle: TTrayiconActionClick read Factionclickmiddle write Factionclickmiddle;
     property actionclickright: TTrayiconActionClick read FActionClickRight write FActionClickRight;
-    property useclassicmenu: Boolean read Fuseclassicmenu write Fuseclassicmenu;
+    property autoexpansionfolder: Boolean read Fautoexpansionfolder write Fautoexpansionfolder;
     //Graphic Menu
     property gmtheme: RawUTF8 read FGMTheme write FGMTheme;
     property gmfade: Boolean read FGMFade write FGMFade;
     property gmpersonalpicture: RawUTF8 read FGMPersonalPicture write FGMPersonalPicture;
+    property gmsmalliconsize: boolean read Fgmsmalliconsize write Fgmsmalliconsize;
+    property gmposition: TArrayPoint read Fgmposition write Fgmposition;
+    property gmautohidemenu: Boolean read Fgmautohidemenu write Fgmautohidemenu;
+    property gmshowuserpicture: Boolean read Fgmshowuserpicture write Fgmshowuserpicture;
     //Right buttons
 //    property gmbtndocuments: RawUTF8 read FGMBtnDocuments write FGMBtnDocuments;
 //    property gmbtnpictures: RawUTF8 read FGMBtnPictures write FGMBtnPictures;
@@ -184,6 +200,7 @@ begin
       //General
       AConfig.StartWithWindows   := SQLOptionsData.startwithwindows;
       AConfig.ShowPanelAtStartUp := SQLOptionsData.showpanelatstartup;
+      AConfig.ShowGraphicMenuAtStartUp := SQLOptionsData.showmenuatstartup;
       //Main Form
       AConfig.LangID             := SQLOptionsData.langid;
       LangManager.LanguageID     := AConfig.LangID;
@@ -194,21 +211,18 @@ begin
       AConfig.HoldSize    := SQLOptionsData.holdsize;
       AConfig.AlwaysOnTop := SQLOptionsData.alwaysontop;
       //frmMain's size
-      if Not SQLOptionsData.mainformpossize.IsEmpty then
+      if Length(SQLOptionsData.mainformpossize) = 1 then
       begin
-        frmMain.Width  := SQLOptionsData.mainformpossize.Width;
-        frmMain.Height := SQLOptionsData.mainformpossize.Height;
-        SetFormPosition(frmMain, SQLOptionsData.mainformpossize.Left, SQLOptionsData.mainformpossize.Top);
-      end
-      else begin
-        frmMain.Top  := (Screen.WorkAreaHeight - frmMain.Height) div 2;
-        frmMain.Left := (Screen.WorkAreaWidth - frmMain.Width) div 2;
-        AConfig.Changed := True;
+        frmMain.Width  := SQLOptionsData.mainformpossize[0].Width;
+        frmMain.Height := SQLOptionsData.mainformpossize[0].Height;
+        SetFormPosition(frmMain, SQLOptionsData.mainformpossize[0].Left,
+                        SQLOptionsData.mainformpossize[0].Top);
       end;
-//      AConfig.MissedSchedulerTask := SQLOptionsData.missedschedulertask;
+      AConfig.MissedSchedulerTask := SQLOptionsData.missedschedulertask;
       //Main Form - Treevew
       AConfig.TVBackgroundPath   := UTF8ToString(SQLOptionsData.tvbackgroundpath);
       AConfig.TVBackground       := SQLOptionsData.tvbackground;
+      AConfig.TVSmallIconSize    := SQLOptionsData.tvsmalliconsize;
       AConfig.TVAutoOpClCats     := SQLOptionsData.tvautoopclcats;
       //Treeview Font
       StrToFont(UTF8ToString(SQLOptionsData.tvfont), AConfig.TVFont);
@@ -225,7 +239,8 @@ begin
       AConfig.Backup         := SQLOptionsData.backup;
       AConfig.BackupNumber   := SQLOptionsData.backupnumber;
       //Other functions
-      AConfig.Autorun        := SQLOptionsData.autorun;
+      AConfig.AutorunStartup  := SQLOptionsData.autorunstartup;
+      AConfig.AutorunShutdown := SQLOptionsData.autorunshutdown;
       AConfig.Cache          := SQLOptionsData.cache;
       AConfig.Scheduler      := SQLOptionsData.scheduler;
       //Execution
@@ -237,10 +252,20 @@ begin
       AConfig.TrayCustomIconPath := UTF8ToString(SQLOptionsData.traycustomiconpath);
       AConfig.TrayUseCustomIcon  := SQLOptionsData.trayusecustomicon;
       AConfig.ActionClickLeft    := SQLOptionsData.actionclickleft;
+      AConfig.ActionClickMiddle  := SQLOptionsData.actionclickmiddle;
       AConfig.ActionClickRight   := SQLOptionsData.actionclickright;
       //Graphic Menu
       AConfig.GMFade             := SQLOptionsData.gmfade;
+      AConfig.GMSmallIconSize    := SQLOptionsData.gmsmalliconsize;
       AConfig.GMPersonalPicture  := SQLOptionsData.gmpersonalpicture;
+      if Length(SQLOptionsData.gmposition) = 1 then
+ 			begin
+        AConfig.GMPositionTop := SQLOptionsData.gmposition[0].Y;
+        AConfig.GMPositionLeft := SQLOptionsData.gmposition[0].X;
+ 			end;
+ 			AConfig.GMShowUserPicture := SQLOptionsData.gmshowuserpicture;
+ 			AConfig.GMAutomaticHideMenu := SQLOptionsData.gmautohidemenu;
+ 			AConfig.AutoExpansionFolder := SQLOptionsData.autoexpansionfolder;
       //Hot Keys
       AConfig.HotKey             := SQLOptionsData.HotKey;
       AConfig.WindowHotKey       := SQLOptionsData.WindowHotKey;
@@ -258,9 +283,10 @@ end;
 
 class procedure TSQLtbl_options.Save(ADBManager: TDBManager; AConfig: TConfiguration);
 var
-  SQLOptionsData   : TSQLtbl_options;
-  rectMainForm     : TRect;
-  IsDataExists: Boolean;
+  SQLOptionsData : TSQLtbl_options;
+  rectMainForm   : TRect;
+  IsDataExists   : Boolean;
+  pointGraphicMenu : TPoint;
 begin
   //Save ASuite options
   SQLOptionsData := TSQLtbl_options.CreateAndFillPrepare(ADBManager.Database, '');
@@ -269,6 +295,7 @@ begin
     //general
     SQLOptionsData.startwithwindows   := AConfig.StartWithWindows;
     SQLOptionsData.showpanelatstartup := AConfig.ShowPanelAtStartUp;
+    SQLOptionsData.showmenuatstartup  := AConfig.ShowGraphicMenuAtStartUp;
     //main form
     SQLOptionsData.langid            := AConfig.LangID;
     SQLOptionsData.usecustomtitle    := AConfig.UseCustomTitle;
@@ -281,11 +308,12 @@ begin
     rectMainForm.left   := frmMain.Left;
     rectMainForm.width  := frmMain.Width;
     rectMainForm.height := frmMain.Height;
-    SQLOptionsData.mainformpossize := rectMainForm;
-//    SQLOptionsData.missedschedulertask := AConfig.MissedSchedulerTask;
+    SQLOptionsData.DynArray('mainformpossize').Add(rectMainForm);
+    SQLOptionsData.missedschedulertask := AConfig.MissedSchedulerTask;
     //main form - treevew
     SQLOptionsData.tvbackground     := AConfig.TVBackground;
     SQLOptionsData.tvbackgroundpath := StringToUTF8(AConfig.TVBackgroundPath);
+    SQLOptionsData.tvsmalliconsize  := AConfig.TVSmallIconSize;
     SQLOptionsData.tvautoopclcats   := AConfig.TVAutoOpClCats;
     SQLOptionsData.tvfont           := StringToUTF8(FontToStr(AConfig.TVFont));
     //mru
@@ -300,7 +328,8 @@ begin
     SQLOptionsData.backup       := AConfig.Backup;
     SQLOptionsData.backupnumber := AConfig.BackupNumber;
     //other functions
-    SQLOptionsData.autorun      := AConfig.Autorun;
+    SQLOptionsData.autorunstartup  := AConfig.AutorunStartup;
+    SQLOptionsData.autorunshutdown := AConfig.AutorunShutdown;
     SQLOptionsData.cache        := AConfig.Cache;
     SQLOptionsData.scheduler    := AConfig.Scheduler;
     //execution
@@ -312,11 +341,19 @@ begin
     SQLOptionsData.trayusecustomicon  := AConfig.TrayUseCustomIcon;
     SQLOptionsData.traycustomiconpath := StringToUTF8(AConfig.TrayCustomIconPath);
     SQLOptionsData.actionclickleft    := AConfig.ActionClickLeft;
+    SQLOptionsData.actionclickmiddle  := AConfig.ActionClickMiddle;
     SQLOptionsData.actionclickright   := AConfig.ActionClickRight;
     //Graphic Menu
     SQLOptionsData.gmtheme            := AConfig.GMTheme;
     SQLOptionsData.gmfade             := AConfig.GMFade;
+    SQLOptionsData.gmsmalliconsize    := AConfig.GMSmallIconSize;
     SQLOptionsData.gmpersonalpicture  := AConfig.GMPersonalPicture;
+    pointGraphicMenu.Y := AConfig.GMPositionTop;
+    pointGraphicMenu.X := AConfig.GMPositionLeft;
+    SQLOptionsData.DynArray('gmposition').Add(pointGraphicMenu);
+    SQLOptionsData.gmshowuserpicture := AConfig.GMShowUserPicture;
+    SQLOptionsData.gmautohidemenu := AConfig.GMAutomaticHideMenu;
+    SQLOptionsData.autoexpansionfolder := AConfig.AutoExpansionFolder;
     //Hot Keys
     SQLOptionsData.HotKey             := AConfig.HotKey;
     SQLOptionsData.WindowHotKey       := AConfig.WindowHotKey;

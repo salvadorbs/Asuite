@@ -28,13 +28,14 @@ object frmMain: TfrmMain
     Top = 0
     Width = 201
     Height = 386
-    ActivePage = tbList
+    ActivePage = tbSearch
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Shell Dlg 2'
     Font.Style = []
+    Images = dmImages.ilSmallIcons
     MultiLine = True
     ParentFont = False
     TabOrder = 0
@@ -82,10 +83,6 @@ object frmMain: TfrmMain
     end
     object tbSearch: TTabSheet
       Caption = 'Search'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object sbtnSearch: TSpeedButton
         Left = 169
         Top = 0
@@ -112,6 +109,7 @@ object frmMain: TfrmMain
         Header.Font.Style = []
         Header.Options = [hoColumnResize, hoDblClickResize, hoDrag, hoVisible, hoHeaderClickAutoSort]
         HintMode = hmHint
+        Images = dmImages.ilSmallIcons
         ParentShowHint = False
         PopupMenu = pmWindow
         ShowHint = True
@@ -134,14 +132,13 @@ object frmMain: TfrmMain
         Left = 0
         Top = 0
         Width = 166
-        Height = 23
+        Height = 21
         Align = alLeft
         Anchors = [akLeft, akTop, akRight]
         Constraints.MaxHeight = 21
         PopupMenu = pmSearch
         TabOrder = 0
         OnKeyPress = btnedtSearchKeyPress
-        ExplicitHeight = 21
       end
     end
   end

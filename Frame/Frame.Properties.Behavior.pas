@@ -56,7 +56,7 @@ var
 implementation
 
 uses
-  Kernel.Enumerations, Forms.Options, Frame.Options.Items, AppConfig.Main;
+  Kernel.Enumerations, Forms.Options, Frame.Options.Autorun, AppConfig.Main;
 
 {$R *.dfm}
 
@@ -64,7 +64,8 @@ uses
 
 procedure TfrmBehaviorPropertyPage.btnChangeOrderClick(Sender: TObject);
 begin
-  TfrmOptions.Execute(Self.Parent, TfrmItemsOptionsPage);
+  CurrentNodeData.Autorun := TAutorunType(cxAutoExecute.ItemIndex);
+  TfrmOptions.Execute(Self.Parent, TfrmAutorunOptionsPage);
 end;
 
 procedure TfrmBehaviorPropertyPage.cxAutoExecuteChange(Sender: TObject);

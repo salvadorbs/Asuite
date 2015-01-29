@@ -306,12 +306,17 @@ begin
       if (ItemNodeData.DataType = vtdtFile) then
       begin
         MenuItem.OnClick  := RunFromTrayMenu;
+        if Sender.GetNodeLevel(Node) = 0 then
+          TvFileNodeData(ItemNodeData).CheckPathFile;
         //If it is a Directory, add in Trayicon Menu its subfolders and its subfiles
-        if DirectoryExists(TvFileNodeData(ItemNodeData).PathAbsoluteFile) then
+        if Config.AutoExpansionFolder then
         begin
-          MenuItem.OnClick := populateDirectory;
-          MenuItem.Path    := (TvFileNodeData(ItemNodeData)).PathAbsoluteFile;
-          AddSub(MenuItem);
+          if DirectoryExists(TvFileNodeData(ItemNodeData).PathAbsoluteFile) then
+          begin
+            MenuItem.OnClick := populateDirectory;
+            MenuItem.Path    := (TvFileNodeData(ItemNodeData)).PathAbsoluteFile;
+            AddSub(MenuItem);
+          end;
         end;
       end
       else begin

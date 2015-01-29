@@ -23,11 +23,39 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DKLang, Frame.BaseEntity;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DKLang, Frame.BaseEntity, Vcl.StdCtrls,
+  Vcl.Mask, JvExMask, JvToolEdit;
 
 type
   TfrmTrayiconOptionsPage = class(TfrmBaseEntityPage)
     DKLanguageController1: TDKLanguageController;
+    gbTrayicon: TGroupBox;
+    lbTrayLeftClick: TLabel;
+    lbTrayRightClick: TLabel;
+    lblMiddleClick: TLabel;
+    cxLeftClick: TComboBox;
+    cbTrayicon: TCheckBox;
+    cxRightClick: TComboBox;
+    cbTrayCustomIcon: TCheckBox;
+    edtCustomIcon: TJvFilenameEdit;
+    cxMiddleClick: TComboBox;
+    grpClassicMenu: TGroupBox;
+    cbSubMenuMFU: TCheckBox;
+    cbSubMenuMRU: TCheckBox;
+    chkAutoExpansion: TCheckBox;
+    grpGraphicMenu: TGroupBox;
+    lbMenuTheme: TLabel;
+    cxTheme: TComboBox;
+    cbMenuFade: TCheckBox;
+    cbSmallIcon: TCheckBox;
+    chkAutomaticHideMenu: TCheckBox;
+    chkUserPicture: TCheckBox;
+    procedure cbTrayiconClick(Sender: TObject);
+    procedure cbTrayCustomIconClick(Sender: TObject);
+    procedure edtCustomIconAfterDialog(Sender: TObject; var AName: string;
+      var AAction: Boolean);
+    procedure edtCustomIconBeforeDialog(Sender: TObject; var AName: string;
+      var AAction: Boolean);
   private
     { Private declarations }
   strict protected
@@ -45,11 +73,36 @@ var
 implementation
 
 uses
-  AppConfig.Main;
+  AppConfig.Main, Kernel.Enumerations;
 
 {$R *.dfm}
 
 { TfrmTrayiconOptionsPage }
+
+procedure TfrmTrayiconOptionsPage.cbTrayCustomIconClick(Sender: TObject);
+begin
+  edtCustomIcon.Enabled := cbTrayCustomIcon.Checked;
+end;
+
+procedure TfrmTrayiconOptionsPage.cbTrayiconClick(Sender: TObject);
+begin
+  cbTrayCustomIcon.Enabled := cbTrayicon.Checked;
+  cxLeftClick.Enabled      := cbTrayicon.Checked;
+  cxRightClick.Enabled     := cbTrayicon.Checked;
+end;
+
+procedure TfrmTrayiconOptionsPage.edtCustomIconAfterDialog(Sender: TObject;
+  var AName: string; var AAction: Boolean);
+begin
+  AName := Config.Paths.AbsoluteToRelative(AName);
+end;
+
+procedure TfrmTrayiconOptionsPage.edtCustomIconBeforeDialog(Sender: TObject;
+  var AName: string; var AAction: Boolean);
+begin
+  AName := Config.Paths.RelativeToAbsolute(AName);
+  edtCustomIcon.Filter := DKLangConstW('msgFilterIcon');
+end;
 
 function TfrmTrayiconOptionsPage.GetImageIndex: Integer;
 begin
@@ -62,13 +115,62 @@ begin
 end;
 
 function TfrmTrayiconOptionsPage.InternalLoadData: Boolean;
+var
+  searchResult : TSearchRec;
 begin
   Result := inherited;
+  //Trayicon
+  cbTrayicon.Checked        := Config.TrayIcon;
+  cbTrayCustomIcon.Checked  := Config.TrayUseCustomIcon;
+  edtCustomIcon.Text        := Config.TrayCustomIconPath;
+  cxLeftClick.ItemIndex     := Ord(Config.ActionClickLeft);
+  cxMiddleClick.ItemIndex   := Ord(Config.ActionClickMiddle);
+  cxRightClick.ItemIndex    := Ord(Config.ActionClickRight);
+  //Graphic Menu
+  cbMenuFade.Checked  := Config.GMFade;
+  cbSmallIcon.Checked := Config.GMSmallIconSize;
+  chkAutomaticHideMenu.Checked := Config.GMAutomaticHideMenu;
+  chkUserPicture.Checked := Config.GMShowUserPicture;
+  //Get GM theme list
+  if FindFirst(Config.Paths.SuitePathMenuThemes + '*.*', faDirectory, searchResult) = 0 then
+  begin
+    repeat
+      if ((searchResult.Name <> '.') and (searchResult.Name <> '..')) and
+         ((searchResult.Attr and faDirectory) = (faDirectory)) then
+        cxTheme.AddItem(SearchResult.Name,Self);
+    until FindNext(searchResult) <> 0;
+    FindClose(searchResult);
+  end;
+  cxTheme.ItemIndex  := cxTheme.Items.IndexOf(Config.GMTheme);
+  //ClassicMenu
+  cbSubMenuMRU.Checked := Config.SubMenuMRU;
+  cbSubMenuMFU.Checked := Config.SubMenuMFU;
+  chkAutoExpansion.Checked := Config.AutoExpansionFolder;
+  //Enable/disable visual components
+  cbTrayiconClick(Self);
+  cbTrayCustomIconClick(Self);
 end;
 
 function TfrmTrayiconOptionsPage.InternalSaveData: Boolean;
 begin
   Result := inherited;
+  //Trayicon
+  Config.TrayIcon           := cbTrayicon.Checked;
+  Config.TrayCustomIconPath := edtCustomIcon.Text;
+  Config.TrayUseCustomIcon  := cbTrayCustomIcon.Checked;
+  Config.ActionClickLeft    := TTrayiconActionClick(cxLeftClick.ItemIndex);
+  Config.ActionClickMiddle  := TTrayiconActionClick(cxMiddleClick.ItemIndex);
+  Config.ActionClickRight   := TTrayiconActionClick(cxRightClick.ItemIndex);
+  //Graphic Menu
+  Config.GMTheme         := cxTheme.Items[cxTheme.ItemIndex];
+  Config.GMFade          := cbMenuFade.Checked;
+  Config.GMSmallIconSize := cbSmallIcon.Checked;
+  Config.GMAutomaticHideMenu := chkAutomaticHideMenu.Checked;
+  Config.GMShowUserPicture := chkUserPicture.Checked;
+  //Submenu
+  Config.AutoExpansionFolder := chkAutoExpansion.Checked;
+  Config.SubMenuMRU := cbSubMenuMRU.Checked;
+  Config.SubMenuMFU := cbSubMenuMFU.Checked;
 end;
 
 end.

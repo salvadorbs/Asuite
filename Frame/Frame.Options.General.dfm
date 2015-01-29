@@ -1,9 +1,204 @@
 inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
+  object gbStartup: TGroupBox
+    AlignWithMargins = True
+    Left = 3
+    Top = 3
+    Width = 439
+    Height = 101
+    Margins.Bottom = 0
+    Align = alTop
+    Caption = 'Startup'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 0
+    object cbWindowsStartup: TCheckBox
+      Left = 8
+      Top = 18
+      Width = 420
+      Height = 19
+      Caption = 'Start ASuite on Windows system startup'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 0
+    end
+    object cbShowPanelStartup: TCheckBox
+      Left = 8
+      Top = 56
+      Width = 420
+      Height = 19
+      Caption = 'Show window on ASuite startup'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 2
+    end
+    object cbShowMenuStartup: TCheckBox
+      Left = 8
+      Top = 75
+      Width = 420
+      Height = 19
+      Caption = 'Show graphic menu on ASuite startup'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 3
+    end
+    object chkMissedSchedulerTask: TCheckBox
+      Left = 8
+      Top = 37
+      Width = 420
+      Height = 19
+      Caption = 'Check missed scheduler task at ASuite startup'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 1
+    end
+  end
+  object grpLanguage: TGroupBox
+    AlignWithMargins = True
+    Left = 3
+    Top = 212
+    Width = 174
+    Height = 47
+    Margins.Bottom = 0
+    Caption = 'Language'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 2
+    object cxLanguage: TComboBox
+      Left = 10
+      Top = 17
+      Width = 158
+      Height = 21
+      Style = csDropDownList
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 0
+    end
+  end
+  object gbExecution: TGroupBox
+    AlignWithMargins = True
+    Left = 3
+    Top = 107
+    Width = 439
+    Height = 102
+    Margins.Bottom = 0
+    Align = alTop
+    Caption = 'Execution'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 1
+    object lbActionOnExe: TLabel
+      Left = 8
+      Top = 61
+      Width = 64
+      Height = 13
+      Caption = 'On execution'
+      Color = clBtnFace
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentColor = False
+      ParentFont = False
+    end
+    object cbRunSingleClick: TCheckBox
+      Left = 8
+      Top = 18
+      Width = 420
+      Height = 19
+      Caption = 'Execute with single click'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 0
+    end
+    object cxActionOnExe: TComboBox
+      Left = 8
+      Top = 74
+      Width = 169
+      Height = 21
+      Style = csDropDownList
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 2
+      Items.Strings = (
+        'Just run file'
+        'Run and hide ASuite'
+        'Run and close ASuite')
+    end
+    object chkConfirmMessageCat: TCheckBox
+      Left = 8
+      Top = 36
+      Width = 420
+      Height = 19
+      Caption = 'Ask to confirm before run a category'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 1
+    end
+  end
   object DKLanguageController1: TDKLanguageController
     IgnoreList.Strings = (
       '*.Text')
-    Left = 8
-    Top = 240
-    LangData = {150066726D47656E6572616C4F7074696F6E73506167650000}
+    Left = 368
+    Top = 344
+    LangData = {
+      150066726D47656E6572616C4F7074696F6E735061676500010C000000090067
+      6253746172747570010100000005000000070043617074696F6E001000636257
+      696E646F777353746172747570010100000006000000070043617074696F6E00
+      1200636253686F7750616E656C53746172747570010100000007000000070043
+      617074696F6E001100636253686F774D656E7553746172747570010100000008
+      000000070043617074696F6E00160063686B4D69737365645363686564756C65
+      725461736B010100000009000000070043617074696F6E000B006772704C616E
+      6775616765010100000011000000070043617074696F6E000A0063784C616E67
+      7561676500000B006762457865637574696F6E01010000001200000007004361
+      7074696F6E000D006C62416374696F6E4F6E4578650101000000130000000700
+      43617074696F6E001000636252756E53696E676C65436C69636B010100000014
+      000000070043617074696F6E000D006378416374696F6E4F6E45786501010000
+      001500000005004974656D7300140063686B436F6E6669726D4D657373616765
+      436174010100000016000000070043617074696F6E00}
   end
 end

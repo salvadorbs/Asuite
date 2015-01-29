@@ -93,11 +93,19 @@ var
   NodeData: TvCustomRealNodeData;
 begin
   List := nil;
-  if (Config.Autorun) then
+  if (Config.AutorunStartup) or (Config.AutorunShutdown) then
   begin
     case AutorunListMode of
-      amStartup  : List := FStartupItemList;
-      amShutdown : List := FShutdownItemList;
+      amStartup:
+        begin
+          if Config.AutorunStartup then
+            List := FStartupItemList;
+        end;
+      amShutdown:
+        begin
+          if Config.AutorunShutdown then
+            List := FShutdownItemList;
+        end;
     end;
 
     if Assigned(List) then

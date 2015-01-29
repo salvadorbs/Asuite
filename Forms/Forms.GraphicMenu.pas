@@ -151,7 +151,7 @@ begin
   else begin
     edtSearch.RightButton.ImageIndex := TThemeEngine.Create.SearchIcon;
     //Change node height and imagelist
-    TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, True);
+    TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, Config.GMSmallIconSize);
     PopulateListTree(vstList);
   end;
 end;
@@ -325,7 +325,7 @@ begin
   edtSearch.Text := '';
   Self.FocusControl(edtSearch);
   //Change node height and imagelist
-  TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, True);
+  TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, Config.GMSmallIconSize);
   //Clear and populate virtualtree
   PopulateListTree(vstList);
   UpdateDriveStats;
@@ -488,7 +488,7 @@ end;
 procedure TfrmGraphicMenu.sknbtnListClick(Sender: TObject);
 begin
   //Change node height and imagelist
-  TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, True);
+  TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, Config.GMSmallIconSize);
   PopulateListTree(vstList);
   edtSearch.Text := '';
 end;
