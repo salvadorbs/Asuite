@@ -57,6 +57,11 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       Align = alBottom
       DefaultNodeHeight = 32
       DragOperations = []
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
       Header.AutoSizeIndex = 0
       Header.Font.Charset = DEFAULT_CHARSET
       Header.Font.Color = clWindowText
@@ -64,12 +69,11 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       Header.Font.Name = 'Tahoma'
       Header.Font.Style = []
       Header.Options = [hoColumnResize, hoVisible]
+      ParentFont = False
       TabOrder = 1
       TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
       TreeOptions.PaintOptions = [toPopupMode, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
       TreeOptions.SelectionOptions = [toFullRowSelect]
-      ExplicitLeft = 3
-      ExplicitWidth = 308
       Columns = <
         item
           MinWidth = 50
@@ -140,7 +144,6 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 1
-    ExplicitTop = 205
     DesignSize = (
       439
       200)
@@ -181,6 +184,11 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       Align = alBottom
       DefaultNodeHeight = 32
       DragOperations = []
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
       Header.AutoSizeIndex = 0
       Header.Font.Charset = DEFAULT_CHARSET
       Header.Font.Color = clWindowText
@@ -188,11 +196,11 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       Header.Font.Name = 'Tahoma'
       Header.Font.Style = []
       Header.Options = [hoColumnResize, hoVisible]
+      ParentFont = False
       TabOrder = 1
       TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
       TreeOptions.PaintOptions = [toPopupMode, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
       TreeOptions.SelectionOptions = [toFullRowSelect]
-      ExplicitWidth = 429
       Columns = <
         item
           MinWidth = 50

@@ -628,23 +628,17 @@ begin
 end;
 
 procedure TConfiguration.SetTVSmallIconSize(const Value: Boolean);
-var
-  MainTree: TVirtualStringTree;
 begin
-  if Assigned(frmMain) then
+  //If new value is different than old value, full collapse Tree and get icons
+  if FTVSmallIconSize <> Value then
   begin
-    MainTree := frmMain.vstList;
-    //If new value is different than old value, full collapse Tree and get icons
-    if FTVSmallIconSize <> Value then
+    FTVSmallIconSize := Value;
+    //Change node height and imagelist
+    TVirtualTreeMethods.Create.ChangeTreeIconSize(FMainTree, FTVSmallIconSize);
+    if FMainTree.HasChildren[FMainTree.RootNode] then
     begin
-      FTVSmallIconSize := Value;
-      //Change node height and imagelist
-      TVirtualTreeMethods.Create.ChangeTreeIconSize(MainTree, FTVSmallIconSize);
-      if MainTree.HasChildren[MainTree.RootNode] then
-      begin
-        MainTree.FullCollapse;
-        TVirtualTreeMethods.Create.ChangeAllNodeHeight(MainTree, MainTree.DefaultNodeHeight);
-      end;
+      FMainTree.FullCollapse;
+      TVirtualTreeMethods.Create.ChangeAllNodeHeight(FMainTree, FMainTree.DefaultNodeHeight);
     end;
   end;
 end;
@@ -733,7 +727,18 @@ end;
 
 procedure TConfiguration.SetMenuHotKey(const Value: TShortcut);
 begin
-
+  if (Config.HotKey) then
+  begin
+    //Unregister hotkey
+    UnregisterHotKeyEx(frmMenuID);
+    //Register Menuhotkey
+    if (Value <> 0) then
+    begin
+      if Not(RegisterHotKeyEx(frmMenuID, Value)) then
+        ShowMessageEx(DKLangConstW('msgErrRegGMHotkey'));
+    end;
+  end;
+  FMenuHotKey := Value;
 end;
 
 end.

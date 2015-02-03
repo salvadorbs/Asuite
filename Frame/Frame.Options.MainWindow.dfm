@@ -50,7 +50,7 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       Top = 16
       Width = 295
       Height = 19
-      Caption = 'Automatic Opening/Closing Categories'
+      Caption = 'Automatic opening/closing categories'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11

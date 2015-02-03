@@ -19,6 +19,18 @@
 [x] Add consts for relative paths %foldericon% and %urlicon%
 [ ] Check updates
 
+[x] Autoselect property name in Add item
+[ ] Confirm Property Item with hotkey Enter
+[x] Sort all list in popupmenu Edit
+[ ] New option: Open or not category after dragged an item in it
+[x] Options->autorun VST->all bold (visual bug)
+[ ] Button apply in frmDialogBase
+[ ] Thread to get all icons in ASuite startup
+[x] Visual bug: separator after resize main window
+[x] Visual bug: separator in big icon mode
+[x] Bug: hotkey doesn't work
+[ ] Check all compiler warnings
+
 [ ] Update batch and install files
 
 [x] Update year in license section of all units

@@ -97,6 +97,8 @@ type
     actAddFolder: TAction;
     actAddSeparator: TAction;
     tmrCheckItems: TTimer;
+    actSortList: TAction;
+    mniSortList: TMenuItem;
     procedure miOptionsClick(Sender: TObject);
     procedure miStatisticsClick(Sender: TObject);
     procedure miImportListClick(Sender: TObject);
@@ -130,6 +132,9 @@ type
     procedure FormHide(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure actRunItemExecute(Sender: TObject);
+    procedure actSortListUpdate(Sender: TObject);
+    procedure actSortListExecute(Sender: TObject);
+    procedure FormResize(Sender: TObject);
   private
     { Private declarations }
     function  GetActiveTree: TBaseVirtualTree;
@@ -314,6 +319,23 @@ begin
         TAction(Sender).Enabled := True;
     end;
   end;
+end;
+
+procedure TfrmMain.actSortListExecute(Sender: TObject);
+var
+  I: Integer;
+begin
+  vstList.SortTree(-1, sdAscending);
+
+  TVirtualTreeMethods.Create.RefreshList(vstList);
+end;
+
+procedure TfrmMain.actSortListUpdate(Sender: TObject);
+var
+  I: Integer;
+begin
+  TAction(Sender).Visible := (GetActiveTree = vstList);
+  TAction(Sender).Enabled := (vstList.HasChildren[vstList.RootNode]) and (GetActiveTree = vstList);
 end;
 
 procedure TfrmMain.btnedtSearchKeyPress(Sender: TObject; var Key: Char);
@@ -544,7 +566,9 @@ begin
       if (CompareDateTime(NowDateTime, schTime) = 0) and (NodeData.SchMode <> smDisabled) then
       begin
         //Start process
-//        ExecuteItem(Config.MainTree, NodeData, rmNormal);
+        NodeData.Execute(True, NodeData.DataType = vtdtCategory, False);
+
+        TVirtualTreeMethods.Create.RefreshList(nil);
       end;
     end;
   end;
@@ -622,6 +646,11 @@ end;
 procedure TfrmMain.FormHide(Sender: TObject);
 begin
   tmrCheckItems.Enabled := False;
+end;
+
+procedure TfrmMain.FormResize(Sender: TObject);
+begin
+  GetActiveTree.Refresh;
 end;
 
 procedure TfrmMain.FormShow(Sender: TObject);

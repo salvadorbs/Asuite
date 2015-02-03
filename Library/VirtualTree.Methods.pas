@@ -121,7 +121,10 @@ begin
     end;
     //ShowPropertyItem
     if (ShowItemProperty(nil, ASender, ChildNode, True) <> mrOK) then
+    begin
       ASender.DeleteNode(ChildNode);
+      NodeData   := nil;
+    end;
   finally
     if Assigned(NodeData) then
       Result := NodeData;
@@ -144,6 +147,7 @@ begin
       if ParentData.DataType = vtdtCategory then
       begin
         Result := ASender.AddChild(AParentNode, CreateNodeData(AType));
+        //TODO: New option Open or not category after dragged an item in it
         if ADoExpand then
           ASender.Expanded[AParentNode] := True;
       end
