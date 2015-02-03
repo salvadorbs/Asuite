@@ -25,7 +25,7 @@
 [ ] New option: Open or not category after dragged an item in it
 [x] Options->autorun VST->all bold (visual bug)
 [ ] Button apply in frmDialogBase
-[ ] Thread to get all icons in ASuite startup
+[x] Thread to get all icons in ASuite startup
 [x] Visual bug: separator after resize main window
 [x] Visual bug: separator in big icon mode
 [x] Bug: hotkey doesn't work

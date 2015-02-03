@@ -301,9 +301,6 @@ var
       NodeData.Data.Name     := NodeDataImp.Data.Name;
       NodeData.Data.Position := tn.Index;
       NodeData.Data.SetPointerNode(tn);
-      //Get icon item, only if tn is in first level
-//      if (NodeData.Data.DataType <> vtdtSeparator) and (Tree.GetNodeLevel(tn) = 0) then
-//        ImagesDM.GetNodeImageIndex(TvCustomRealNodeData(NodeData.Data), isAny);
     end;
     tnImp := tnImp.FirstChild;
     while Assigned(tnImp) do

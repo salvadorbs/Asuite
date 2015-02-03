@@ -157,7 +157,10 @@ begin
             //Dialog
             ProgressBar.Position := ProgressBar.Position + 1;
             ProgressDialog.Update;
-            DoScanFolder(Sender, IncludeTrailingBackslash(FolderPath + SearchRec.Name), ChildNode, ProgressDialog);
+            if cbFlat.Checked then
+              DoScanFolder(Sender, IncludeTrailingBackslash(FolderPath + SearchRec.Name), ParentNode, ProgressDialog)
+            else
+              DoScanFolder(Sender, IncludeTrailingBackslash(FolderPath + SearchRec.Name), ChildNode, ProgressDialog);
           end
           else
             if (SearchRec.Attr <> faDirectory) and (Config.ScanFolderFileTypes.IndexOf(sFileExt) <> -1) then
@@ -236,7 +239,6 @@ begin
       //Add parent node
       ChildNode := TVirtualTreeMethods.Create.AddChildNodeEx(Config.MainTree, Config.MainTree.GetFirstSelected, amInsertAfter, vtdtCategory);
       ChildNodeData := TVirtualTreeMethods.Create.GetNodeItemData(ChildNode, Config.MainTree);
-//      ImagesDM.GetNodeImageIndex(TvCustomRealNodeData(ChildNodeData), isAny);
       //Extract directory name and use it as node name (else use TempPath as name)
       sName := ExtractDirectoryName(TempPath);
       if sName <> '' then

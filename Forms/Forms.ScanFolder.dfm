@@ -192,7 +192,6 @@ object frmScanFolder: TfrmScanFolder
         Font.Style = []
         ParentFont = False
         TabOrder = 2
-        Visible = False
       end
     end
   end
