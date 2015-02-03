@@ -46,7 +46,7 @@ object frmDialogBase: TfrmDialogBase
     Width = 361
     Height = 280
     Anchors = [akLeft, akTop, akRight, akBottom]
-    TabOrder = 1
+    TabOrder = 0
   end
   object vstCategory: TVirtualStringTree
     Left = 8
@@ -61,7 +61,7 @@ object frmDialogBase: TfrmDialogBase
     Header.Font.Name = 'Tahoma'
     Header.Font.Style = []
     Header.MainColumn = -1
-    TabOrder = 0
+    TabOrder = 1
     TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowRoot, toShowTreeLines, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
     TreeOptions.SelectionOptions = [toFullRowSelect]
     Columns = <>

@@ -96,7 +96,6 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 1
-    ExplicitHeight = 277
     object vstItems: TVirtualStringTree
       AlignWithMargins = True
       Left = 10
@@ -124,13 +123,11 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       Header.Options = [hoColumnResize, hoDblClickResize, hoDrag, hoVisible, hoHeaderClickAutoSort]
       Images = dmImages.ilSmallIcons
       ParentFont = False
+      PopupMenu = pmHotkey
       TabOrder = 0
       TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
       TreeOptions.PaintOptions = [toPopupMode, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
       TreeOptions.SelectionOptions = [toFullRowSelect, toRightClickSelect]
-      ExplicitLeft = 8
-      ExplicitTop = 22
-      ExplicitHeight = 248
       Columns = <
         item
           MinWidth = 50

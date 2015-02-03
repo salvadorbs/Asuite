@@ -370,6 +370,7 @@ begin
         if NodeData.DataType <> vtdtCategory then
           AttachMode := amInsertAfter
         else
+          //TODO: New option Open or not category after dragged an item in it
           Sender.Expanded[Sender.DropTargetNode] := True;
       end;
       try

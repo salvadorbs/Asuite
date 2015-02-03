@@ -158,7 +158,9 @@ begin
         if Assigned(NodeData) then
         begin
           if (NodeData.DataType <> vtdtSeparator) then
-//            ExecuteItem(Config.MainTree, NodeData, rmNormal);
+            NodeData.Execute(True, NodeData.DataType = vtdtCategory, False);
+
+          TVirtualTreeMethods.Create.RefreshList(nil);
         end;
       end;
     end;
