@@ -54,7 +54,6 @@ uses
 class procedure TSQLtbl_version.Load(ADBManager: TDBManager);
 var
   SQLVersionData: TSQLtbl_version;
-  VersionNumber: TPJVersionNumber;
 begin
   if ADBManager.Database.TableHasRows(TSQLtbl_version) then
   begin

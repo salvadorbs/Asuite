@@ -161,6 +161,7 @@ end;
 function TvCustomRealNodeData.Execute(ADoActionOnExe: Boolean;
   ARunFromCategory: Boolean; ACheckSingleInstance: Boolean): boolean;
 begin
+  Result := False;
   try
     Result := InternalExecute(ARunFromCategory, ACheckSingleInstance);
   finally
@@ -172,6 +173,7 @@ end;
 function TvCustomRealNodeData.ExecuteAsAdmin(ADoActionOnExe: Boolean;
   ARunFromCategory: Boolean): boolean;
 begin
+  Result := False;
   try
     Result := InternalExecuteAsAdmin(ARunFromCategory);
   finally
@@ -183,6 +185,7 @@ end;
 function TvCustomRealNodeData.ExecuteAsUser(ADoActionOnExe: Boolean;
   ARunFromCategory: Boolean; AUserData: TUserData): boolean;
 begin
+  Result := False;
   try
     Result := InternalExecuteAsUser(ARunFromCategory, AUserData);
   finally

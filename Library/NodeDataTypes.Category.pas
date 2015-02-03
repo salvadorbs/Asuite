@@ -140,9 +140,6 @@ begin
 end;
 
 function TvCategoryNodeData.InternalExecute(ARunFromCategory: Boolean; ASingleInstance: Boolean): boolean;
-var
-  Node : PVirtualNode;
-  ChildNodeData : TvBaseNodeData;
 begin
   Result := ConfirmRunCategory;
 

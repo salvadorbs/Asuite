@@ -187,7 +187,6 @@ end;
 procedure TfrmMain.actDeleteExecute(Sender: TObject);
 var
   Nodes: TNodeArray;
-  I: Integer;
   Tree: TBaseVirtualTree;
 begin
   Tree := GetActiveTree;
@@ -322,8 +321,6 @@ begin
 end;
 
 procedure TfrmMain.actSortListExecute(Sender: TObject);
-var
-  I: Integer;
 begin
   vstList.SortTree(-1, sdAscending);
 
@@ -331,8 +328,6 @@ begin
 end;
 
 procedure TfrmMain.actSortListUpdate(Sender: TObject);
-var
-  I: Integer;
 begin
   TAction(Sender).Visible := (GetActiveTree = vstList);
   TAction(Sender).Enabled := (vstList.HasChildren[vstList.RootNode]) and (GetActiveTree = vstList);

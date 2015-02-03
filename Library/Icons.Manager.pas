@@ -33,8 +33,6 @@ type
     { private declarations }
     FPathTheme: string;
     FItems: TBaseIcons;
-    FSmallImages: TImageList; //Size 16p
-    FLargeImages: TImageList; //Size 32p
     function GetPathTheme: string;
 
     procedure LoadAllIcons;

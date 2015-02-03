@@ -37,7 +37,7 @@ type
     function InternalSaveData: Boolean; override;
   public
     { Public declarations }
-    constructor Create(AOwner: TComponent; ANodeData: TvCustomRealNodeData);
+    constructor Create(AOwner: TComponent; ANodeData: TvCustomRealNodeData); overload;
 
     class function Execute(AOwner: TComponent; ANodeData: TvCustomRealNodeData): Integer;
   end;
@@ -81,6 +81,8 @@ function TfrmPropertyItem.InternalLoadData: Boolean;
 begin
   Assert(Assigned(FListNodeData), 'FListNodeData is not assigned!');
 
+  Result := True;
+
   if (FListNodeData.DataType = vtdtFile) or (FListNodeData.DataType = vtdtFolder) then
     FFrameGeneral := AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmSWGeneralPropertyPage.Create(Self, FListNodeData)))
   else
@@ -92,6 +94,8 @@ end;
 
 function TfrmPropertyItem.InternalSaveData: Boolean;
 begin
+  Result := True;
+
   FListNodeData.Changed := True;
   //Reset icon and get it again
   FListNodeData.Icon.ResetIcon;

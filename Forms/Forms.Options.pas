@@ -36,7 +36,7 @@ type
     function InternalSaveData: Boolean; override;
   public
     { Public declarations }
-    constructor Create(AOwner: TComponent; APage: TPageFrameClass);
+    constructor Create(AOwner: TComponent; APage: TPageFrameClass); overload;
 
     class function Execute(AOwner: TComponent; APage: TPageFrameClass = nil): Integer;
   end;
@@ -79,6 +79,7 @@ function TfrmOptions.InternalLoadData: Boolean;
 var
   FFrameAdvanced: PVirtualNode;
 begin
+  Result := True;
   //General
   FFrameGeneral  := AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmGeneralOptionsPage.Create(Self)));
   AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmMainWindowOptionsPage.Create(Self)));
@@ -94,6 +95,7 @@ end;
 
 function TfrmOptions.InternalSaveData: Boolean;
 begin
+  Result := True;
   Config.Changed := True;
   if frmMain.Visible then
     frmMain.FocusControl(frmMain.vstList);
