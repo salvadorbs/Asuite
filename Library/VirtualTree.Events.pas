@@ -590,8 +590,7 @@ begin
   end;
   //Set some personal record fields
   DataDest.Data.SetPointerNode(Node);
-  //Icon
-//  ImagesDM.GetNodeImageIndex(TvCustomRealNodeData(DataDest.Data), isAny);
+
   FreeMem(DataSource);
 end;
 

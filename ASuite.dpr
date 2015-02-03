@@ -69,7 +69,8 @@ uses
   Icons.Manager in 'Library\Icons.Manager.pas',
   Icons.Base in 'Library\Icons.Base.pas',
   Icons.Application in 'Library\Icons.Application.pas',
-  Frame.Options.MainWindow in 'Frame\Frame.Options.MainWindow.pas' {frmMainWindowOptionsPage: TFrame};
+  Frame.Options.MainWindow in 'Frame\Frame.Options.MainWindow.pas' {frmMainWindowOptionsPage: TFrame},
+  Icons.Thread in 'Library\Icons.Thread.pas';
 
 //SQLite3 static library
 

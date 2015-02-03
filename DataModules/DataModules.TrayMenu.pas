@@ -504,7 +504,6 @@ begin
         MenuItem := TASMenuItem.Create(Application.MainForm);
         //Set some properties
         MenuItem.Caption    := NodeData.Name;
-//        ImagesDM.GetNodeImageIndex(NodeData, isSmall);
         MenuItem.ImageIndex := NodeData.Icon.ImageIndex;
         MenuItem.Data       := NodeData;
         MenuItem.pNode      := NodeData.PNode;
