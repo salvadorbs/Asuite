@@ -90,7 +90,6 @@ procedure TListManager.ExecuteAutorunList(AutorunListMode: TAutorunListMode);
 var
   List : TBaseItemsList;
   I    : Integer;
-  NodeData: TvCustomRealNodeData;
 begin
   List := nil;
   if (Config.AutorunStartup) or (Config.AutorunShutdown) then

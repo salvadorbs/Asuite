@@ -41,7 +41,7 @@ procedure TSchedulerItemsList.CheckMissedTasks;
 var
   I: Integer;
   NodeData: TvCustomRealNodeData;
-  dtScheduler, dtNowDateTime, dtLastAccess: TDateTime;
+  dtScheduler, dtNowDateTime: TDateTime;
 begin
   //TODO: Rewrite this code (see TfrmMain.tmSchedulerTimer)
   dtNowDateTime := RecodeMilliSecond(Now,0);
@@ -53,7 +53,7 @@ begin
     begin
       NodeData := Config.ListManager.SchedulerItemList[I];
       if NodeData.DataType = vtdtFile then
-        dtLastAccess := UnixToDateTime(TvFileNodeData(NodeData).LastAccess);
+        UnixToDateTime(TvFileNodeData(NodeData).LastAccess);
       case NodeData.SchMode of
         smDisabled: dtScheduler := 0;
         smOnce:

@@ -58,6 +58,7 @@ end;
 
 function TApplicationIcon.LoadIcon: Integer;
 begin
+  Result := -1;
   if FileExists(FPathFile) then
     Result := InternalGetImageIndex(FPathFile);
 end;

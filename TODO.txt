@@ -29,7 +29,7 @@
 [x] Visual bug: separator after resize main window
 [x] Visual bug: separator in big icon mode
 [x] Bug: hotkey doesn't work
-[ ] Check all compiler warnings
+[x] Check all compiler warnings
 
 [ ] Update batch and install files
 

@@ -68,8 +68,6 @@ type
     procedure DoFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure DoNewText(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex; NewText: string);
-    procedure DoExpanding(Sender: TBaseVirtualTree; Node: PVirtualNode;
-      var Allowed: Boolean);
     procedure DoDragDrop(Sender: TBaseVirtualTree; Source: TObject;
       DataObject: IDataObject; Formats: TFormatArray; Shift: TShiftState;
       Pt: TPoint; var Effect: Integer; Mode: TDropMode);
@@ -187,7 +185,6 @@ begin
   ATree.OnCompareNodes  := DoCompareNodesList;
   ATree.OnDrawText      := DoDrawText;
   ATree.OnExpanded      := DoExpanded;
-  ATree.OnExpanding     := DoExpanding;
   ATree.OnGetNodeDataSize := DoGetNodeDataSizeSearch;
   ATree.OnGetText       := DoGetText;
   ATree.OnGetImageIndex := DoGetImageIndex;
@@ -208,7 +205,6 @@ end;
 procedure TVirtualTreeEvents.SetupVSTImportList(ATree: TVirtualStringTree);
 begin
   ATree.OnDrawText  := DoDrawText;
-  ATree.OnExpanding := DoExpanding;
   ATree.OnFreeNode  := DoFreeNode;
   ATree.OnGetNodeDataSize := DoGetNodeDataSizeList;
   ATree.OnGetText   := DoGetText;
@@ -225,7 +221,6 @@ begin
   ATree.OnDrawText     := DoDrawText;
   ATree.OnEditing      := DoEditing;
   ATree.OnExpanded     := DoExpanded;
-  ATree.OnExpanding    := DoExpanding;
   ATree.OnFreeNode     := DoFreeNode;
   ATree.OnGetText      := DoGetText;
   ATree.OnPaintText    := DoPaintText;
@@ -424,14 +419,6 @@ procedure TVirtualTreeEvents.DoExpanded(Sender: TBaseVirtualTree;
   Node: PVirtualNode);
 begin
   TVirtualTreeMethods.Create.CheckVisibleNodePathExe(Sender);
-end;
-
-procedure TVirtualTreeEvents.DoExpanding(Sender: TBaseVirtualTree;
-  Node: PVirtualNode; var Allowed: Boolean);
-var
-  NodeData: TvBaseNodeData;
-begin
-  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
 end;
 
 procedure TVirtualTreeEvents.DoFreeNode(Sender: TBaseVirtualTree;
