@@ -99,7 +99,8 @@ implementation
 
 uses
   Forms.Main, Utility.Misc, AppConfig.Main, VirtualTree.Events, VirtualTree.Methods,
-  Utility.FileFolder, Utility.XML, Database.Manager, Kernel.Types, NodeDataTypes.Base;
+  Utility.FileFolder, Utility.XML, Database.Manager, Kernel.Types, NodeDataTypes.Base,
+  DataModules.Icons;
 
 procedure TfrmImportList.btnCancelClick(Sender: TObject);
 begin
@@ -140,10 +141,10 @@ begin
         XMLDocument1.Active   := True;
       end;
     end;
-//    if InternalImportOptions(XMLDoc) then
-//      ImagesDM.IcoImages.GetIcon(Config.ASuiteIcons.PopupMenu.Accept, imgSettings.Picture.Icon)
-//    else
-//      ImagesDM.IcoImages.GetIcon(Config.ASuiteIcons.PopupMenu.Cancel,imgList.Picture.Icon);
+    if InternalImportOptions(XMLDoc) then
+      dmImages.ilSmallIcons.GetIcon(Config.IconsManager.GetIconIndex('accept'), imgSettings.Picture.Icon)
+    else
+      dmImages.ilSmallIcons.GetIcon(Config.IconsManager.GetIconIndex('denied'), imgList.Picture.Icon);
   end;
 end;
 
@@ -154,10 +155,10 @@ begin
     //Set progressbar's max
     pbImport.Max := GetNumberNodeImp(vstListImp);
     try
-//      if TreeImp2Tree(vstListImp, Config.MainTree) then
-//        ImagesDM.IcoImages.GetIcon(Config.ASuiteIcons.PopupMenu.Accept,imgList.Picture.Icon)
-//      else
-//        ImagesDM.IcoImages.GetIcon(Config.ASuiteIcons.PopupMenu.Cancel,imgList.Picture.Icon);
+      if TreeImp2Tree(vstListImp, Config.MainTree) then
+        dmImages.ilSmallIcons.GetIcon(Config.IconsManager.GetIconIndex('accept'), imgList.Picture.Icon)
+      else
+        dmImages.ilSmallIcons.GetIcon(Config.IconsManager.GetIconIndex('denied'), imgList.Picture.Icon);
       lblItems.Caption := Format(DKLangConstW('msgItemsImported'),[pbImport.Max]);
     except
       on E : Exception do
@@ -201,7 +202,6 @@ begin
       DBImp.Destroy;
     end;
   vstListImp.EndUpdate;
-//  ImagesDM.GetChildNodesIcons(Tree, Tree.RootNode, isSmall);
 end;
 
 procedure TfrmImportList.btnDeselectAllClick(Sender: TObject);
@@ -229,8 +229,8 @@ begin
   TVirtualTreeEvents.Create.SetupVSTImportList(vstListImp);
   pgcImport.ActivePageIndex := 0;
   //Set imgList and imgSettings's icon
-//  ImagesDM.IcoImages.GetBitmap(Config.ASuiteIcons.PopupMenu.Cancel,imgList.Picture.Bitmap);
-//  ImagesDM.IcoImages.GetBitmap(Config.ASuiteIcons.PopupMenu.Cancel,imgSettings.Picture.Bitmap);
+  dmImages.ilSmallIcons.GetBitmap(Config.IconsManager.GetIconIndex('denied'), imgList.Picture.Bitmap);
+  dmImages.ilSmallIcons.GetBitmap(Config.IconsManager.GetIconIndex('denied'), imgSettings.Picture.Bitmap);
 end;
 
 procedure TfrmImportList.CheckAllItems(State: TCheckState);

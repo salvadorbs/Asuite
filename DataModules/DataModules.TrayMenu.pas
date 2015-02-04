@@ -201,7 +201,7 @@ begin
         //Create new menuitem and add base properties
         NMI             := TASMenuItem.Create(AMI);
         NMI.Path        := sPath + SR.Name + PathDelim;
-//        NMI.ImageIndex  := ImagesDM.GetSimpleIconIndex(Config.SuitePathIconsTree + FILEICON_Folder, True); // folder image
+        NMI.ImageIndex  := Config.IconsManager.GetPathIconIndex(CONST_PATH_FOLDERICON); // folder image
         //Set AutoHotkeys to maManual, speed up popup menu
         NMI.AutoHotkeys := maManual;
         //Add item in traymenu
@@ -248,7 +248,7 @@ begin
       NMI             := TASMenuItem.Create(AMI);
       NMI.Caption     := SR.Name;
       NMI.Path        := sPath + SR.Name;
-//      NMI.ImageIndex  := ImagesDM.GetSimpleIconIndex(sPath + SR.Name, True);
+      NMI.ImageIndex  := Config.IconsManager.GetPathIconIndex(sPath + SR.Name);
       //Set AutoHotkeys to maManual, speed up popup menu
       NMI.AutoHotkeys := maManual;
       NMI.OnClick     := OpenFile;

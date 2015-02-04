@@ -228,6 +228,7 @@ object frmGraphicMenu: TfrmGraphicMenu
     Top = 510
     Width = 240
     Height = 21
+    Images = dmImages.ilSmallIcons
     PopupMenu = frmMain.pmSearch
     RightButton.Visible = True
     TabOrder = 1

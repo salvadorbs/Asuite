@@ -15,12 +15,12 @@
 [ ] Rewrite scheduler
 [ ] Rewrite scanfolder
 [x] Options
-[ ] ImportList
+[ ] Rewrite ImportList
 [x] Add consts for relative paths %foldericon% and %urlicon%
 [ ] Check updates
 
 [x] Autoselect property name in Add item
-[ ] Confirm Property Item with hotkey Enter
+[ ] Confirm Property Item with hotkey Enter and Esc
 [x] Sort all list in popupmenu Edit
 [ ] New option: Open or not category after dragged an item in it
 [x] Options->autorun VST->all bold (visual bug)
