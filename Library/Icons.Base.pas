@@ -22,11 +22,13 @@ unit Icons.Base;
 interface
 
 uses
-  SysUtils, Classes, Controls, ShellApi, Kernel.Enumerations;
+  SysUtils, Classes, Controls, ShellApi, Kernel.Enumerations, SyncObjs;
 
 type
   TBaseIcon = class
   private
+    FLock: TCriticalSection;
+
     function GetImageIndex: Integer;
   protected
     FImageIndex: Integer;
@@ -34,6 +36,7 @@ type
     function InternalGetImageIndex(const APathFile: string): Integer;
   public
     constructor Create;
+    destructor Destroy; override;
 
     function LoadIcon: Integer; virtual; abstract;
     procedure ResetIcon; virtual;
@@ -48,13 +51,25 @@ implementation
 constructor TBaseIcon.Create;
 begin
   FImageIndex := -1;
+  FLock := TCriticalSection.Create;
+end;
+
+destructor TBaseIcon.Destroy;
+begin
+  FLock.Free;
+  inherited;
 end;
 
 function TBaseIcon.GetImageIndex: Integer;
 begin
-  if FImageIndex = -1 then
-    FImageIndex := LoadIcon;
-  Result := FImageIndex;
+  FLock.Acquire;
+  try
+    if FImageIndex = -1 then
+      FImageIndex := LoadIcon;
+    Result := FImageIndex;
+  finally
+    FLock.Release;
+  end;
 end;
 
 function TBaseIcon.InternalGetImageIndex(const APathFile: string): Integer;

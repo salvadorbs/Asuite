@@ -103,7 +103,7 @@ object frmMain: TfrmMain
         Left = 0
         Top = 24
         Width = 193
-        Height = 334
+        Height = 333
         Align = alBottom
         Anchors = [akLeft, akTop, akRight, akBottom]
         AnimationDuration = 0
@@ -122,6 +122,7 @@ object frmMain: TfrmMain
         TabOrder = 1
         TreeOptions.PaintOptions = [toHideFocusRect, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
         TreeOptions.SelectionOptions = [toFullRowSelect, toMultiSelect, toRightClickSelect]
+        ExplicitHeight = 334
         Columns = <
           item
             Position = 0

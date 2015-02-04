@@ -156,7 +156,7 @@ implementation
 uses
   TypInfo, Forms.Options, Forms.About, Utility.Misc, Forms.ScanFolder,
   DataModules.TrayMenu, Forms.ImportList, AppConfig.Main, Utility.System,
-  VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base, Icons.Thread,
+  VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base,
   NodeDataTypes.Custom, Kernel.Types, NodeDataTypes.Files, VirtualTree.Events;
 
 {$R *.dfm}
@@ -608,7 +608,6 @@ end;
 procedure TfrmMain.FormCreate(Sender: TObject);
 var
   VSTEvents: TVirtualTreeEvents;
-  IconThread: TTreeIconsThread;
 begin
   //Set vstList as MainTree in Config
   Config.MainTree := vstList;
@@ -632,12 +631,8 @@ begin
   //Get placeholder for edtSearch
   edtSearch.TextHint := StringReplace(miSearchName.Caption, '&', '', []);
   PopulatePopUpMenuFromAnother(pmWindow, miEdit);
-
-  IconThread := TTreeIconsThread.Create(vstList);
-  try
-    IconThread.Start;
-  finally
-  end;
+  //Start thread to get all icons
+  TVirtualTreeMethods.Create.GetAllIcons(vstList);
 end;
 
 procedure TfrmMain.FormDestroy(Sender: TObject);

@@ -46,6 +46,7 @@ type
     function GetListNodeFromSubTree(const ANodeX: PVirtualNode;const ATree: TBaseVirtualTree): PVirtualNode;
 
     //Visual
+    procedure GetAllIcons(const ASender: TBaseVirtualTree);
     procedure ChangeAllNodeHeight(const ASender: TBaseVirtualTree; const ANewNodeHeight: Integer);
     procedure ChangeTreeIconSize(const ASender: TVirtualStringTree; const ASmallIcon: Boolean);
     procedure CheckVisibleNodePathExe(const ASender: TBaseVirtualTree);
@@ -83,7 +84,7 @@ implementation
 uses
   Utility.System, DataModules.Icons, AppConfig.Main, NodeDataTypes.Files,
   Utility.FileFolder, Forms.PropertySeparator, mORMotUILogin, Utility.Misc,
-  NodeDataTypes.Category, NodeDataTypes.Separator, Forms.PropertyItem,
+  NodeDataTypes.Category, NodeDataTypes.Separator, Forms.PropertyItem, Icons.Thread,
   NodeDataTypes.Custom, Kernel.Consts, Icons.Node;
 
 { TVirtualTreeMethods }
@@ -322,6 +323,17 @@ begin
     ExecuteNode(ASender, Nodes[I], ARunMode, ACheckSingleInstance);
 
   RefreshList(ASender);
+end;
+
+procedure TVirtualTreeMethods.GetAllIcons(const ASender: TBaseVirtualTree);
+var
+  IconThread: TTreeIconsThread;
+begin
+  IconThread := TTreeIconsThread.Create(ASender);
+  try
+    IconThread.Start;
+  finally
+  end;
 end;
 
 function TVirtualTreeMethods.GetListNodeFromSubTree(const ANodeX: PVirtualNode;
