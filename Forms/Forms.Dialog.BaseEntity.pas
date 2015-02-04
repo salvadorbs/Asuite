@@ -32,8 +32,11 @@ type
     btnCancel: TButton;
     pnlDialogPage: TPanel;
     vstCategory: TVirtualStringTree;
+    btnApply: TButton;
     procedure btnOkClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure btnApplyClick(Sender: TObject);
   private
     { Private declarations }
     procedure SaveNodeData(Sender: TBaseVirtualTree; Node: PVirtualNode;
@@ -82,6 +85,13 @@ begin
     NodeData.Title := TfrmBaseEntityPage(FramePage).Title;
     NodeData.ImageIndex := TfrmBaseEntityPage(FramePage).ImageIndex;
   end;
+end;
+
+procedure TfrmDialogBase.btnApplyClick(Sender: TObject);
+begin
+  //If IterateSubtree returns a value, something is wrong
+  if Not Assigned(vstCategory.IterateSubtree(nil, SaveNodeData, nil)) then
+    InternalSaveData;
 end;
 
 procedure TfrmDialogBase.btnCancelClick(Sender: TObject);
@@ -136,6 +146,17 @@ begin
   Self.vstCategory.FocusedNode := selNode;
   Self.vstCategory.Selected[selNode] := True;
   Self.vstCategory.FullExpand;
+
+  Self.pnlDialogPage.TabOrder := 0;
+end;
+
+procedure TfrmDialogBase.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Ord(Key) = VK_RETURN then
+    btnOkClick(Sender)
+  else
+    if Ord(Key) = VK_ESCAPE then
+      btnCancelClick(Sender);
 end;
 
 function TfrmDialogBase.GetNodeByFrameClass(Tree: TBaseVirtualTree;

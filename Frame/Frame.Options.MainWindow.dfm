@@ -4,7 +4,7 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
     Left = 3
     Top = 126
     Width = 439
-    Height = 103
+    Height = 155
     Margins.Bottom = 0
     Align = alTop
     Caption = 'Treeview'
@@ -17,7 +17,7 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
     TabOrder = 1
     object cbBackground: TCheckBox
       Left = 8
-      Top = 52
+      Top = 71
       Width = 295
       Height = 19
       Caption = 'Active custom background'
@@ -31,8 +31,8 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       OnClick = cbBackgroundClick
     end
     object btnFontSettings: TButton
-      Left = 309
-      Top = 27
+      Left = 157
+      Top = 121
       Width = 121
       Height = 25
       Caption = 'Font settings...'
@@ -42,7 +42,7 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
-      TabOrder = 1
+      TabOrder = 5
       OnClick = btnFontSettingsClick
     end
     object cbAutoOpClCat: TCheckBox
@@ -61,7 +61,7 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
     end
     object cbSmallIcon: TCheckBox
       Left = 8
-      Top = 35
+      Top = 54
       Width = 295
       Height = 17
       Caption = 'Small icon size in main window'
@@ -75,7 +75,7 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
     end
     object edtBackground: TJvFilenameEdit
       Left = 8
-      Top = 71
+      Top = 94
       Width = 422
       Height = 21
       OnBeforeDialog = edtBackgroundBeforeDialog
@@ -93,6 +93,20 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       ParentFont = False
       TabOrder = 4
       Text = '$ASuite\'
+    end
+    object cbAutoOpDragDrop: TCheckBox
+      Left = 8
+      Top = 35
+      Width = 295
+      Height = 19
+      Caption = 'Automatic opening category, after drag&drop an item in it'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 1
     end
   end
   object gbWindow: TGroupBox
@@ -187,9 +201,9 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
     IgnoreList.Strings = (
       '*.Text')
     Left = 344
-    Top = 256
+    Top = 296
     LangData = {
-      180066726D4D61696E57696E646F774F7074696F6E735061676500010D000000
+      180066726D4D61696E57696E646F774F7074696F6E735061676500010E000000
       0A0067625472656556696577010100000001000000070043617074696F6E000C
       0063624261636B67726F756E64010100000002000000070043617074696F6E00
       0F0062746E466F6E7453657474696E6773010100000003000000070043617074
@@ -201,7 +215,8 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       7A65010100000008000000070043617074696F6E000C00636248696465536561
       726368010100000009000000070043617074696F6E000E00656474437573746F
       6D5469746C6500000D006362437573746F6D5469746C6501010000000A000000
-      070043617074696F6E000B00466F6E744469616C6F67310000}
+      070043617074696F6E000B00466F6E744469616C6F6731000010006362417574
+      6F4F704472616744726F7001010000000B000000070043617074696F6E00}
   end
   object FontDialog1: TFontDialog
     Font.Charset = DEFAULT_CHARSET
@@ -210,6 +225,6 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
     Font.Name = 'Tahoma'
     Font.Style = []
     Left = 246
-    Top = 254
+    Top = 294
   end
 end

@@ -20,11 +20,11 @@
 [ ] Check updates
 
 [x] Autoselect property name in Add item
-[ ] Confirm Property Item with hotkey Enter and Esc
+[x] Confirm Property Item with hotkey Enter and Esc
 [x] Sort all list in popupmenu Edit
-[ ] New option: Open or not category after dragged an item in it
+[x] New option: Open or not category after dragged an item in it
 [x] Options->autorun VST->all bold (visual bug)
-[ ] Button apply in frmDialogBase
+[x] Button apply in frmDialogBase
 [x] Thread to get all icons in ASuite startup
 [x] Visual bug: separator after resize main window
 [x] Visual bug: separator in big icon mode
