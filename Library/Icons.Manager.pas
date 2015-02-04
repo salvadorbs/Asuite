@@ -23,7 +23,7 @@ interface
 
 uses
   SysUtils, Classes, Controls, IniFiles, Forms, Icons.Application, Generics.Collections,
-  IOUtils, Kernel.Consts, Kernel.Enumerations;
+  IOUtils, Kernel.Consts, Kernel.Enumerations, ShellApi;
 
 type
   TBaseIcons = class(TObjectDictionary<string, TApplicationIcon>);
@@ -43,6 +43,7 @@ type
     destructor Destroy; override;
 
     function GetIconIndex(AName: string): Integer;
+    function GetPathIconIndex(APathIcon: string): Integer;
 
     property PathTheme: string read GetPathTheme write SetPathTheme;
   end;
@@ -73,6 +74,18 @@ begin
   Icon := FItems.Items[AName];
   if Assigned(Icon) then
     Result := Icon.ImageIndex;
+end;
+
+function TIconsManager.GetPathIconIndex(APathIcon: string): Integer;
+var
+  FileInfo: TSHFileInfo;
+  Flags: Integer;
+begin
+  Result := -1;
+  Flags := SHGFI_SYSICONINDEX or SHGFI_ICON;
+  //Get index
+  if SHGetFileInfo(PChar(Config.Paths.RelativeToAbsolute(APathIcon)), 0, FileInfo, SizeOf(TSHFileInfo), Flags) <> 0 then
+    Result := FileInfo.iIcon;
 end;
 
 function TIconsManager.GetPathTheme: string;

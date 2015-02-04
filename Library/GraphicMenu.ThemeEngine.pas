@@ -448,11 +448,11 @@ begin
       DrawButton(IniFile, FGraphicMenu.sknbtnExit, gmbExit);
       //Search
       sTempPath := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(INIFILE_SECTION_SEARCH, INIFILE_KEY_ICONSEARCH, '');
-//      if FileExists(sTempPath) then
-//        FSearchIcon := ImagesDM.GetSimpleIconIndex(sTempPath, True);
+      if FileExists(sTempPath) then
+        FSearchIcon := Config.IconsManager.GetPathIconIndex(sTempPath);
       sTempPath := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(INIFILE_SECTION_SEARCH, INIFILE_KEY_ICONCANCEL, '');
-//      if FileExists(sTempPath) then
-//        FCancelIcon := ImagesDM.GetSimpleIconIndex(sTempPath, True);
+      if FileExists(sTempPath) then
+        FCancelIcon := Config.IconsManager.GetPathIconIndex(sTempPath);
       FGraphicMenu.edtSearch.RightButton.ImageIndex := FSearchIcon;
       //Hard Disk
       DrawHardDiskSpace(IniFile, FGraphicMenu.imgDriveBackground, FGraphicMenu.imgDriveSpace);
