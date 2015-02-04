@@ -148,8 +148,7 @@ begin
       if ParentData.DataType = vtdtCategory then
       begin
         Result := ASender.AddChild(AParentNode, CreateNodeData(AType));
-        //TODO: New option Open or not category after dragged an item in it
-        if ADoExpand then
+        if Config.TVAutoOpCatsDrag and ADoExpand then
           ASender.Expanded[AParentNode] := True;
       end
       else

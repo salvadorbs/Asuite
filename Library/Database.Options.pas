@@ -46,6 +46,7 @@ type
     FTVBackground       : Boolean;
     FTVBackgroundPath   : RawUTF8;
     FTVAutoOpClCats     : Boolean; //Automatic Opening/closing categories
+    FTVAutoOpCatsDrag   : Boolean;
     FTVFont             : RawUTF8;
     FTVSmallIconSize    : Boolean;
     //MRU
@@ -99,6 +100,7 @@ type
     Fscanfoldersubfolders   : Boolean;
     Fscanfolderfiletypes    : RawUTF8;
     Fscanfolderexcludenames : RawUTF8;
+    FFTVAutoOpCatsDrag: Boolean;
   public
     class procedure Load(ADBManager: TDBManager; AConfig: TConfiguration);
     class procedure Save(ADBManager: TDBManager; AConfig: TConfiguration);
@@ -122,6 +124,7 @@ type
     property tvbackground: Boolean read FTVBackground write FTVBackground;
     property tvbackgroundpath: RawUTF8 read FTVBackgroundPath write FTVBackgroundPath;
     property tvautoopclcats: Boolean read FTVAutoOpClCats write FTVAutoOpClCats;
+    property tvautoopcatsdrag: Boolean read FFTVAutoOpCatsDrag write FFTVAutoOpCatsDrag;
     property tvfont: RawUTF8 read FTVFont write FTVFont;
     property tvsmalliconsize: Boolean read Ftvsmalliconsize write Ftvsmalliconsize;
     // MRU
@@ -224,6 +227,7 @@ begin
       AConfig.TVBackground       := SQLOptionsData.tvbackground;
       AConfig.TVSmallIconSize    := SQLOptionsData.tvsmalliconsize;
       AConfig.TVAutoOpClCats     := SQLOptionsData.tvautoopclcats;
+      AConfig.TVAutoOpCatsDrag   := SQLOptionsData.tvautoopcatsdrag;
       //Treeview Font
       StrToFont(UTF8ToString(SQLOptionsData.tvfont), AConfig.TVFont);
       AConfig.MainTree.Font.Assign(AConfig.TVFont);
@@ -315,6 +319,7 @@ begin
     SQLOptionsData.tvbackgroundpath := StringToUTF8(AConfig.TVBackgroundPath);
     SQLOptionsData.tvsmalliconsize  := AConfig.TVSmallIconSize;
     SQLOptionsData.tvautoopclcats   := AConfig.TVAutoOpClCats;
+    SQLOptionsData.tvautoopcatsdrag := AConfig.TVAutoOpCatsDrag;
     SQLOptionsData.tvfont           := StringToUTF8(FontToStr(AConfig.TVFont));
     //mru
     SQLOptionsData.mru          := AConfig.MRU;

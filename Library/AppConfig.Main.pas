@@ -47,6 +47,7 @@ type
     FTVBackground       : Boolean;
     FTVBackgroundPath   : string;
     FTVAutoOpClCats     : Boolean; //Automatic Opening/closing categories
+    FTVAutoOpCatsDrag   : Boolean;
     FTVFont             : TFont;
     FTVSmallIconSize    : Boolean;
     //MRU
@@ -171,6 +172,7 @@ type
     property TVSmallIconSize: Boolean read FTVSmallIconSize write SetTVSmallIconSize;
     property TVBackgroundPath: String read FTVBackgroundPath write FTVBackgroundPath;
     property TVAutoOpClCats: Boolean read FTVAutoOpClCats write SetTVAutoOpClCats;
+    property TVAutoOpCatsDrag: Boolean read FTVAutoOpCatsDrag write FTVAutoOpCatsDrag;
     property TVFont: TFont read FTVFont write SetTVFont;
     // MRU
     property MRU: Boolean read FMRU write FMRU;
@@ -292,6 +294,7 @@ begin
   FTVBackgroundPath   := '';
   FTVSmallIconSize    := True;
   FTVAutoOpClCats     := True;
+  FTVAutoOpCatsDrag   := True;
   //Treeview Font
   FTVFont             := TFont.Create;
   FTVFont.Name        := 'MS Sans Serif';
@@ -559,9 +562,9 @@ procedure TConfiguration.SetTVAutoOpClCats(value: Boolean);
 begin
   FTVAutoOpClCats := value;
   if FTVAutoOpClCats then
-    frmMain.vstList.TreeOptions.AutoOptions := frmMain.vstList.TreeOptions.AutoOptions + [toAutoExpand]
+    FMainTree.TreeOptions.AutoOptions := FMainTree.TreeOptions.AutoOptions + [toAutoExpand]
   else
-    frmMain.vstList.TreeOptions.AutoOptions := frmMain.vstList.TreeOptions.AutoOptions - [toAutoExpand];
+    FMainTree.TreeOptions.AutoOptions := FMainTree.TreeOptions.AutoOptions - [toAutoExpand];
 end;
 
 procedure TConfiguration.SetHideTabSearch(value: Boolean);
@@ -586,33 +589,30 @@ var
   BackgroundPNG : TPngImage;
 begin
   FTVBackground := value;
-  with frmMain do
+  FMainTree.TreeOptions.PaintOptions := FMainTree.TreeOptions.PaintOptions - [toShowBackground];
+  if (FTVBackground) and (FTVBackgroundPath <> '') and
+     (FileExists(FPaths.RelativeToAbsolute(FTVBackgroundPath))) then
   begin
-    vstList.TreeOptions.PaintOptions := vstList.TreeOptions.PaintOptions - [toShowBackground];
-    if (FTVBackground) and (FTVBackgroundPath <> '') and
-       (FileExists(FPaths.RelativeToAbsolute(FTVBackgroundPath))) then
+    if LowerCase(ExtractFileExt(FPaths.RelativeToAbsolute(FTVBackgroundPath))) <> '.bmp' then
     begin
-      if LowerCase(ExtractFileExt(FPaths.RelativeToAbsolute(FTVBackgroundPath))) <> '.bmp' then
-      begin
-        BackgroundBMP := TBitmap.Create;
-        BackgroundPNG := TPngImage.Create;
-        try
-          BackgroundPNG.LoadFromFile(FPaths.RelativeToAbsolute(FTVBackgroundPath));
-          BackgroundBMP.Assign(BackgroundPNG);
-          vstList.Background.Bitmap := BackgroundBMP;
-        finally
-          BackgroundBMP.Free;
-          BackgroundPNG.Free;
-        end;
-      end
-      else
-        vstList.Background.LoadFromFile(FPaths.RelativeToAbsolute(FTVBackgroundPath));
-      vstList.TreeOptions.PaintOptions := vstList.TreeOptions.PaintOptions + [toShowBackground];
+      BackgroundBMP := TBitmap.Create;
+      BackgroundPNG := TPngImage.Create;
+      try
+        BackgroundPNG.LoadFromFile(FPaths.RelativeToAbsolute(FTVBackgroundPath));
+        BackgroundBMP.Assign(BackgroundPNG);
+        FMainTree.Background.Bitmap := BackgroundBMP;
+      finally
+        BackgroundBMP.Free;
+        BackgroundPNG.Free;
+      end;
     end
     else
-      vstList.TreeOptions.PaintOptions := vstList.TreeOptions.PaintOptions - [toShowBackground];
-    vstList.Update;
-  end;
+      FMainTree.Background.LoadFromFile(FPaths.RelativeToAbsolute(FTVBackgroundPath));
+    FMainTree.TreeOptions.PaintOptions := FMainTree.TreeOptions.PaintOptions + [toShowBackground];
+  end
+  else
+    FMainTree.TreeOptions.PaintOptions := FMainTree.TreeOptions.PaintOptions - [toShowBackground];
+  FMainTree.Update;
 end;
 
 procedure TConfiguration.SetTVFont(value: TFont);
@@ -656,7 +656,7 @@ end;
 procedure TConfiguration.SetChanged(const Value: Boolean);
 begin
   FChanged := Value;
-  TVirtualTreeMethods.Create.RefreshList(frmMain.vstList);
+  TVirtualTreeMethods.Create.RefreshList(FMainTree);
 end;
 
 procedure TConfiguration.SetGMBtnDocuments(Value: string);

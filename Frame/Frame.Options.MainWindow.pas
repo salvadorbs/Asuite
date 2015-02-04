@@ -42,6 +42,7 @@ type
     edtCustomTitle: TEdit;
     cbCustomTitle: TCheckBox;
     FontDialog1: TFontDialog;
+    cbAutoOpDragDrop: TCheckBox;
     procedure cbCustomTitleClick(Sender: TObject);
     procedure cbBackgroundClick(Sender: TObject);
     procedure btnFontSettingsClick(Sender: TObject);
@@ -122,6 +123,7 @@ begin
   edtCustomTitle.Enabled     := Config.UseCustomTitle;
   //Treeview
   cbAutoOpClCat.Checked := Config.TVAutoOpClCats;
+  cbAutoOpDragDrop.Checked := Config.TVAutoOpCatsDrag;
   cbSmallIcon.Checked   := Config.TVSmallIconSize;
   cbBackground.Checked  := Config.TVBackground;
   edtBackground.Text    := Config.TVBackgroundPath;
@@ -149,6 +151,7 @@ begin
   Config.UseCustomTitle     := cbCustomTitle.Checked;
   //Treeview
   Config.TVAutoOpClCats     := cbAutoOpClCat.Checked;
+  Config.TVAutoOpCatsDrag   := cbAutoOpDragDrop.Checked;
   Config.TVSmallIconSize    := cbSmallIcon.Checked;
   //Treeview
   Config.TVBackgroundPath   := edtBackground.Text;

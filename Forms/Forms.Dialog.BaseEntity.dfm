@@ -11,15 +11,17 @@ object frmDialogBase: TfrmDialogBase
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  KeyPreview = True
   OldCreateOrder = False
   Position = poMainFormCenter
+  OnKeyPress = FormKeyPress
   DesignSize = (
     559
     325)
   PixelsPerInch = 96
   TextHeight = 13
   object btnOk: TButton
-    Left = 398
+    Left = 315
     Top = 294
     Width = 75
     Height = 25
@@ -30,7 +32,7 @@ object frmDialogBase: TfrmDialogBase
     OnClick = btnOkClick
   end
   object btnCancel: TButton
-    Left = 477
+    Left = 396
     Top = 294
     Width = 75
     Height = 25
@@ -46,7 +48,7 @@ object frmDialogBase: TfrmDialogBase
     Width = 361
     Height = 280
     Anchors = [akLeft, akTop, akRight, akBottom]
-    TabOrder = 0
+    TabOrder = 1
   end
   object vstCategory: TVirtualStringTree
     Left = 8
@@ -61,9 +63,19 @@ object frmDialogBase: TfrmDialogBase
     Header.Font.Name = 'Tahoma'
     Header.Font.Style = []
     Header.MainColumn = -1
-    TabOrder = 1
+    TabOrder = 0
     TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowRoot, toShowTreeLines, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
     TreeOptions.SelectionOptions = [toFullRowSelect]
     Columns = <>
+  end
+  object btnApply: TButton
+    Left = 477
+    Top = 294
+    Width = 75
+    Height = 25
+    Anchors = [akRight, akBottom]
+    Caption = 'Apply'
+    TabOrder = 4
+    OnClick = btnApplyClick
   end
 end
