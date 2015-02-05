@@ -5,3 +5,4 @@ cyComponents6 http://sourceforge.net/projects/tcycomponents/
 JCL + JVCL https://github.com/project-jedi
 TPJVersionInfo http://www.delphidabbler.com/software?id=verinfo
 System Information Unit http://www.delphidabbler.com/software/sysinfo?mid=3.2
+TKControls http://www.tkweb.eu/en/delphicomp/
