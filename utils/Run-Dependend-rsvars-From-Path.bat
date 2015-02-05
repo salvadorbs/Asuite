@@ -28,7 +28,7 @@
 ::  type %rsVars%
   call %rsVars%
   :: init only for msbuild or fixTargets:
-  for %%v in (F fixTargets B msbuild) do if /I !%bdsTarget%!==!%%v! goto :performInit
+  for %%v in (F fixTargets B R msbuild) do if /I !%bdsTarget%!==!%%v! goto :performInit
   goto :skipInit
 :performInit
   :: Delphi 2007 has environment variables setup differently
@@ -40,7 +40,7 @@
 :skipInit
 ::  path
   call :do pushd %~dp0
-  call :do call Dependencies Set
+::  call :do call Dependencies Set
   call :do popd
   if !%2!==!! goto :bdsEnd
   if not exist %bdsExe% goto :noBdsExe
