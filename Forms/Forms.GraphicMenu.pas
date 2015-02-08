@@ -232,14 +232,28 @@ begin
 //  miRunSelectedSw.ImageIndex := Config.ASuiteIcons.PopupMenu.Run;
 //  miProperty2.ImageIndex   := Config.ASuiteIcons.PopupMenu.Properties;
   //Position
-  Self.Top  := Screen.WorkAreaRect.Bottom - Height;
-  Self.Left := Screen.WorkAreaRect.Right - Width;
+  if Config.GMPositionTop <> -1 then
+    Self.Top  := Config.GMPositionTop
+  else
+    Self.Top  := Screen.WorkAreaRect.Bottom - Height;
+  if Config.GMPositionLeft <> -1 then
+    Self.Left  := Config.GMPositionLeft
+  else
+    Self.Left  := Screen.WorkAreaRect.Right - Width;;
 end;
 
 procedure TfrmGraphicMenu.FormDeactivate(Sender: TObject);
 begin
   //if menu lost its focus, it hide
   CloseMenu;
+  //Save position
+  if (Self.Top <> Config.GMPositionTop) or (Self.Left <> Config.GMPositionLeft) then
+  begin
+    Config.GMPositionTop  := Self.Top;
+    Config.GMPositionLeft := Self.Left;
+
+    Config.Changed := True;
+  end;
 end;
 
 procedure TfrmGraphicMenu.FormHide(Sender: TObject);
@@ -368,8 +382,7 @@ end;
 
 procedure TfrmGraphicMenu.mniRunClick(Sender: TObject);
 begin
-  TVirtualTreeMethods.Create.ExecuteSelectedNodes((Sender as TBaseVirtualTree),
-                                                  TRunMode(TMenuItem(Sender).Tag), False);
+  TVirtualTreeMethods.Create.ExecuteSelectedNodes(vstList, TRunMode(TMenuItem(Sender).Tag), False);
 end;
 
 procedure TfrmGraphicMenu.OpenRightButton(Sender: TObject);
