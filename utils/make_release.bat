@@ -1,27 +1,59 @@
-set OLDDIR=%CD%
+@echo off
 
-pushd %temp%\
+if [%1]==[help] GOTO :help else GOTO :SetVars
 
-git.exe clone https://github.com/salvadorbs/Asuite.git
+:SetVars
+  set OLDDIR=%CD%
+  set UPXPath=%1
+  set StripRelocPath=%2
+  set GitTag=%3
+  goto :Run
 
-cd asuite
+:Run
+  pushd %temp%\
+  if [%GitTag%]==[] goto :GitLastCommit
+  if not [%GitTag%]==[] goto :GitTag
 
-rd /s /q .git
+:RemoveGitFolder
+  cd asuite
+  rd /s /q .git
+  goto :CompressSource
 
-"%programfiles%\7-zip\7z.exe" a -tzip %OLDDIR%\asuitesrc.zip
-"%programfiles%\7-zip\7z.exe" a -t7z %OLDDIR%\asuitesrc.7z
+:CompressSource
+  "%programfiles%\7-zip\7z.exe" a -tzip %OLDDIR%\asuitesrc.zip
+  "%programfiles%\7-zip\7z.exe" a -t7z %OLDDIR%\asuitesrc.7z
+  goto :Build
 
-call "%OLDDIR%\..\build_release_asuite.bat"
+:Build
+  call "%OLDDIR%\..\build_release_asuite.bat"
+  cd utils
+  %StripRelocPath% /B ..\bin\asuite.exe
+  %UPXPath% --best ..\bin\asuite.exe
+  goto :CompressRelease
 
-cd bin
+:CompressRelease
+  cd ..\bin
+  "%programfiles%\7-zip\7z.exe" a -tzip %OLDDIR%\asuite.zip
+  "%programfiles%\7-zip\7z.exe" a -t7z %OLDDIR%\asuite.7z
+  goto :RemoveAll
 
-"%programfiles%\7-zip\7z.exe" a -tzip %OLDDIR%\asuite.zip
-"%programfiles%\7-zip\7z.exe" a -t7z %OLDDIR%\asuite.7z
+:RemoveAll
+  cd ..\..
+  rd /s /q asuite
+  goto :eof
 
-pause
+:GitLastCommit
+  git.exe clone --depth 1 https://github.com/salvadorbs/Asuite.git
+  goto :RemoveGitFolder
 
-cd ..
+:GitTag
+  git.exe clone -b %GitTag% --depth 1 https://github.com/salvadorbs/Asuite.git
+  goto :RemoveGitFolder
 
-rd /s /q asuite
-
-pause
+:help
+  echo Syntax:
+  echo     %0 UPX StripReloc [Tag]
+  echo.
+  echo     where 'UPX' is the path to upx.exe,
+  echo     `StripReloc` is the path to stripreloc.exe
+  echo     and optional 'Tag' is a tag git
