@@ -18,6 +18,11 @@
 [ ] Rewrite ImportList
 [x] Add consts for relative paths %foldericon% and %urlicon%
 [ ] Check updates
+[ ] GM Position (fixed to an monitor edge, based of mouse cursor or custom)
+
+[x] Bug: MF save position
+[x] Bug: Execute as admin from GM
+[x] Bug: Unexpected single click when user open popupmenu in GM
 
 [x] Autoselect property name in Add item
 [x] Confirm Property Item with hotkey Enter and Esc

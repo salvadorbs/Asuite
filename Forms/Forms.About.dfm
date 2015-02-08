@@ -12,7 +12,7 @@ object frmAbout: TfrmAbout
   Font.Name = 'MS Shell Dlg 2'
   Font.Style = []
   OldCreateOrder = False
-  Position = poMainFormCenter
+  Position = poOwnerFormCenter
   ScreenSnap = True
   OnCreate = FormCreate
   PixelsPerInch = 96
@@ -31,7 +31,6 @@ object frmAbout: TfrmAbout
     Color = clBtnFace
     ParentColor = False
     TabOrder = 0
-    ExplicitWidth = 391
     object imgLicense: TImage
       Left = 157
       Top = 111

@@ -100,7 +100,7 @@ type
     procedure DoResizeGM(Sender: TObject);
     procedure DoScrollGM(Sender: TBaseVirtualTree; DeltaX,
       DeltaY: Integer);
-    procedure DoNodeSingleClickGM(Sender: TBaseVirtualTree; const HitInfo: THitInfo);
+    procedure DoSingleClickGM(Sender: TObject);
 
     //Frame events
     procedure DoGetNodeDataSizeFrame(Sender: TBaseVirtualTree;
@@ -155,23 +155,28 @@ begin
       TVirtualTreeMethods.Create.ExecuteSelectedNodes(Sender, rmNormal, False)
 end;
 
-procedure TVirtualTreeEvents.DoNodeSingleClickGM(Sender: TBaseVirtualTree;
-  const HitInfo: THitInfo);
+procedure TVirtualTreeEvents.DoSingleClickGM(Sender: TObject);
 var
-  NodeData: TvBaseNodeData;
+  Tree     : TBaseVirtualTree;
+  NodeData : TvBaseNodeData;
+  Point    : TPoint;
+  HitInfo  : ThitInfo;
 begin
-  if Assigned(Sender.GetFirstSelected()) then
+  Tree  := TBaseVirtualTree(Sender);
+  Point := Tree.ScreenToClient(Mouse.CursorPos);
+  Tree.GetHitTestInfoAt(Point.X, Point.Y, True, HitInfo);
+  if Assigned(HitInfo.HitNode) then
   begin
-    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Sender.GetFirstSelected, Sender);
+    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Tree.GetFirstSelected, Tree);
     if NodeData.DataType = vtdtCategory then
     begin
-      Sender.Expanded[Sender.GetFirstSelected] := Not(Sender.Expanded[Sender.GetFirstSelected]);
+      Tree.Expanded[Tree.GetFirstSelected] := Not(Tree.Expanded[Tree.GetFirstSelected]);
       FGraphicMenu.FocusControl(FGraphicMenu.edtSearch);
     end
     else
       if NodeData.DataType = vtdtFile then
       begin
-        DoNodeDblClick(Sender, HitInfo);
+        DoNodeDblClick(Tree, HitInfo);
         FGraphicMenu.CloseMenu;
       end;
   end;
@@ -181,7 +186,7 @@ procedure TVirtualTreeEvents.SetupVSTGraphicMenu(ATree: TVirtualStringTree; AGra
 begin
   FGraphicMenu := AGraphicMenu;
 
-  ATree.OnNodeClick     := DoNodeSingleClickGM;
+  ATree.OnClick         := DoSingleClickGM;
   ATree.OnCompareNodes  := DoCompareNodesList;
   ATree.OnDrawText      := DoDrawText;
   ATree.OnExpanded      := DoExpanded;

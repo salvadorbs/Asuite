@@ -220,7 +220,9 @@ begin
         frmMain.Height := SQLOptionsData.mainformpossize[0].Height;
         SetFormPosition(frmMain, SQLOptionsData.mainformpossize[0].Left,
                         SQLOptionsData.mainformpossize[0].Top);
-      end;
+      end
+      else
+        frmMain.Position := poScreenCenter;
       AConfig.MissedSchedulerTask := SQLOptionsData.missedschedulertask;
       //Main Form - Treevew
       AConfig.TVBackgroundPath   := UTF8ToString(SQLOptionsData.tvbackgroundpath);
@@ -308,6 +310,7 @@ begin
     //main form - position and size
     SQLOptionsData.holdsize          := AConfig.HoldSize;
     SQLOptionsData.alwaysontop       := AConfig.AlwaysOnTop;
+    SQLOptionsData.DynArray('mainformpossize').Clear;
     rectMainForm.top    := frmMain.Top;
     rectMainForm.left   := frmMain.Left;
     rectMainForm.width  := frmMain.Width;
@@ -353,6 +356,7 @@ begin
     SQLOptionsData.gmfade             := AConfig.GMFade;
     SQLOptionsData.gmsmalliconsize    := AConfig.GMSmallIconSize;
     SQLOptionsData.gmpersonalpicture  := AConfig.GMPersonalPicture;
+    SQLOptionsData.DynArray('gmposition').Clear;
     pointGraphicMenu.Y := AConfig.GMPositionTop;
     pointGraphicMenu.X := AConfig.GMPositionLeft;
     SQLOptionsData.DynArray('gmposition').Add(pointGraphicMenu);
