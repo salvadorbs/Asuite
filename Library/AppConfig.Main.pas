@@ -246,7 +246,7 @@ implementation
 uses
   Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, Utility.Misc,
   Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder, USingleInst,
-  Utility.XML, GraphicMenu.ThemeEngine;
+  Utility.XML, GraphicMenu.ThemeEngine, Kernel.Scheduler;
 
 function TConfiguration.CheckReadOnlyMode: Boolean;
 begin
@@ -265,6 +265,7 @@ constructor TConfiguration.Create;
 var
   I: Integer;
 begin
+  TScheduler.Create;
   SingleInst.OnProcessParam := HandleParam;
   for I := 1 to ParamCount do
     HandleParam(ParamStr(I));
@@ -492,7 +493,7 @@ end;
 procedure TConfiguration.SetScheduler(value: Boolean);
 begin
   FScheduler := value;
-  frmMain.tmScheduler.Enabled := FScheduler;
+  TScheduler.Create.Timer.Enabled := FScheduler;
 end;
 
 procedure TConfiguration.SetTrayIcon(value: Boolean);

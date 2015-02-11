@@ -78,7 +78,6 @@ type
     miSearchWorkingDirPath: TMenuItem;
     miSearchParameters: TMenuItem;
     edtSearch: TEdit;
-    tmScheduler: TTimer;
     mniScanFolder: TMenuItem;
     DKLanguageController1: TDKLanguageController;
     ActionList1: TActionList;
@@ -113,7 +112,6 @@ type
     procedure btnedtSearchRightButtonClick(Sender: TObject);
     procedure ChangeSearchTextHint(Sender: TObject);
     procedure btnedtSearchKeyPress(Sender: TObject; var Key: Char);
-    procedure tmSchedulerTimer(Sender: TObject);
     procedure mniScanFolderClick(Sender: TObject);
     procedure actPasteUpdate(Sender: TObject);
     procedure actRunItemUpdate(Sender: TObject);
@@ -156,7 +154,7 @@ implementation
 uses
   TypInfo, Forms.Options, Forms.About, Utility.Misc, Forms.ScanFolder,
   DataModules.TrayMenu, Forms.ImportList, AppConfig.Main, Utility.System,
-  VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base,
+  VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base, Kernel.Scheduler,
   NodeDataTypes.Custom, Kernel.Types, NodeDataTypes.Files, VirtualTree.Events;
 
 {$R *.dfm}
@@ -522,53 +520,6 @@ begin
     TVirtualTreeMethods.Create.CheckVisibleNodePathExe(GetActiveTree);
 end;
 
-procedure TfrmMain.tmSchedulerTimer(Sender: TObject);
-var
-  NodeData : TvCustomRealNodeData;
-  I        : Integer;
-  schTime, NowDateTime: TDateTime;
-begin
-  //TODO: Rewrite this code (see TSchedulerItemsList.CheckMissedTasks)
-  if (Config.ASuiteState = lsStartUp) or (Config.ASuiteState = lsShutdown) then
-    Exit;
-  NowDateTime := RecodeMilliSecond(Now,0);
-  schTime     := NowDateTime;
-  //Check scheduler list to know which items to run
-  for I := 0 to Config.ListManager.SchedulerItemList.Count - 1 do
-  begin
-    if Assigned(Config.ListManager.SchedulerItemList[I]) then
-    begin
-      NodeData := Config.ListManager.SchedulerItemList[I];
-      //Compare time and/or date based of scheduler mode
-      case NodeData.SchMode of
-        smDisabled: schTime := 0;
-        smOnce: schTime := NodeData.SchDateTime;
-        smHourly:
-        begin
-          //Run software every hour
-          schTime := RecodeMinute(NowDateTime,0);
-          schTime := RecodeSecond(schTime,0);
-        end;
-        smDaily:
-        begin
-          //Run software every day (user choose time, hour and minute)
-          schTime := RecodeYear(NodeData.SchDateTime, YearOf(NowDateTime));
-          schTime := RecodeMonth(schTime, MonthOf(NowDateTime));
-          schTime := RecodeDay(schTime, DayOf(NowDateTime));
-        end;
-      end;
-      //If is its turn, run item
-      if (CompareDateTime(NowDateTime, schTime) = 0) and (NodeData.SchMode <> smDisabled) then
-      begin
-        //Start process
-        NodeData.Execute(True, NodeData.DataType = vtdtCategory, False);
-
-        TVirtualTreeMethods.Create.RefreshList(nil);
-      end;
-    end;
-  end;
-end;
-
 procedure TfrmMain.miExitClick(Sender: TObject);
 begin
   Config.ASuiteState := lsShutdown;
@@ -628,6 +579,8 @@ begin
   Config.LoadList;
   Config.ListManager.ExecuteAutorunList(amStartup);
   TVirtualTreeMethods.Create.RefreshList(nil);
+  //Check missed scheduler tasks
+  TScheduler.Create.CheckMissedTasks;
   //Get placeholder for edtSearch
   edtSearch.TextHint := StringReplace(miSearchName.Caption, '&', '', []);
   PopulatePopUpMenuFromAnother(pmWindow, miEdit);

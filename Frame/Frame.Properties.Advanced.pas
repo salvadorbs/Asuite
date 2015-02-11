@@ -24,7 +24,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Frame.Properties.Base, Vcl.ComCtrls,
-  Vcl.StdCtrls, DKLang;
+  Vcl.StdCtrls, DKLang, DateUtils;
 
 type
   TfrmAdvancedPropertyPage = class(TfrmBasePropertyPage)
@@ -144,6 +144,7 @@ begin
     //Scheduler
     CurrentNodeData.SchMode      := TSchedulerMode(cxScheduler.ItemIndex);
     CurrentNodeData.SchDateTime  := Int(dtpSchDate.Date) + Frac(dtpSchTime.Time);
+    CurrentNodeData.SchDateTime  := RecodeSecond(CurrentNodeData.SchDateTime, 0);
     //Hotkey
     CurrentNodeData.Hotkey       := hkHotkey.HotKey;
     CurrentNodeData.ActiveHotkey := cbHotKey.Checked;

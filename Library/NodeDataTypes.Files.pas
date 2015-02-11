@@ -35,7 +35,6 @@ type
     FParameters      : string;
     FWorkingDir      : string;
     FShortcutDesktop : Boolean;
-    FLastAccess      : Int64;
     FClickCount      : Integer;
     FNoMRU           : Boolean;
     FNoMFU           : Boolean;
@@ -49,11 +48,12 @@ type
     function GetPathAbsoluteFile: String;
     function GetWorkingDirAbsolute: string;
     procedure SetClickCount(const Value: Integer);
-    procedure SetLastAccess(const Value: Int64);
     function GetWorkingDir(): string;
     function GetWindowState(ARunFromCategory: Boolean): Integer;
   protected
+    procedure SetLastAccess(const Value: Int64); override;
     procedure AfterExecute(ADoActionOnExe: Boolean); override;
+
     function InternalExecute(ARunFromCategory: Boolean; ACheckSingleInstance: Boolean): boolean; override;
     function InternalExecuteAsUser(ARunFromCategory: Boolean; AUserData: TUserData): boolean; override;
     function InternalExecuteAsAdmin(ARunFromCategory: Boolean): boolean; override;
@@ -66,7 +66,6 @@ type
     function ExplorePath: Boolean;
 
     property ClickCount: Integer read FClickCount write SetClickCount;
-    property LastAccess: Int64 read FLastAccess write SetLastAccess;
     property NoMRU: Boolean read FNoMRU write SetNoMRU;
     property NoMFU: Boolean read FNoMFU write SetNoMFU;
     property PathFile: String read FPathFile write SetPathFile;
@@ -102,7 +101,6 @@ begin
   FWorkingDir      := '';
   FNoMRU           := False;
   FNoMFU           := False;
-  FLastAccess      := -1;
   FClickCount      := 0;
   FShortcutDesktop := False;
   //Misc
@@ -326,9 +324,9 @@ end;
 
 procedure TvFileNodeData.SetLastAccess(const Value: Int64);
 begin
-  FLastAccess := Value;
+  inherited;
   if (Config.ASuiteState <> lsImporting) then
-    if (FLastAccess > -1) and (not Self.NoMRU) then
+    if (Self.LastAccess > -1) and (not FNoMRU) then
       Config.ListManager.MRUList.AddItem(Self);
 end;
 

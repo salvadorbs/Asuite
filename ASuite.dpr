@@ -47,7 +47,6 @@ uses
   Lists.Base in 'Library\Lists.Base.pas',
   Lists.Special in 'Library\Lists.Special.pas',
   Lists.HotKey in 'Library\Lists.HotKey.pas',
-  Lists.Scheduler in 'Library\Lists.Scheduler.pas',
   Lists.Manager in 'Library\Lists.Manager.pas',
   Kernel.Singleton in 'Library\Kernel.Singleton.pas',
   AppConfig.Paths in 'Library\AppConfig.Paths.pas',
@@ -70,7 +69,8 @@ uses
   Icons.Base in 'Library\Icons.Base.pas',
   Icons.Application in 'Library\Icons.Application.pas',
   Frame.Options.MainWindow in 'Frame\Frame.Options.MainWindow.pas' {frmMainWindowOptionsPage: TFrame},
-  Icons.Thread in 'Library\Icons.Thread.pas';
+  Icons.Thread in 'Library\Icons.Thread.pas',
+  Kernel.Scheduler in 'Library\Kernel.Scheduler.pas';
 
 //SQLite3 static library
 

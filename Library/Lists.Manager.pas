@@ -23,7 +23,7 @@ interface
 
 uses
   Classes, Menus, SysUtils, Kernel.Singleton, Lists.Special, NodeDataTypes.Custom,
-  Lists.Base, Lists.Scheduler, Lists.HotKey, Kernel.Enumerations;
+  Lists.Base, Lists.HotKey, Kernel.Enumerations;
 
 type
   TListManager = class(TSingleton)
@@ -32,7 +32,7 @@ type
     FMFUList : TSpecialItemsList;
     FStartupItemList   : TBaseItemsList; //Software in StartUp list
     FShutdownItemList  : TBaseItemsList; //Software in Shutdown list
-    FSchedulerItemList : TSchedulerItemsList;
+    FSchedulerItemList : TBaseItemsList;
     FHotKeyItemList    : THotkeyItemsList;
   public
     procedure Initialize; override;
@@ -45,7 +45,7 @@ type
     property MFUList: TSpecialItemsList read FMFUList write FMFUList;
     property StartupItemList: TBaseItemsList read FStartupItemList write FStartupItemList;
     property ShutdownItemList: TBaseItemsList read FShutdownItemList write FShutdownItemList;
-    property SchedulerItemList: TSchedulerItemsList read FSchedulerItemList write FSchedulerItemList;
+    property SchedulerItemList: TBaseItemsList read FSchedulerItemList write FSchedulerItemList;
     property HotKeyItemList: THotkeyItemsList read FHotKeyItemList write FHotKeyItemList;
   end;
 
@@ -64,7 +64,7 @@ begin
   //Create TNodeLists for autorun
   FStartupItemList   := TBaseItemsList.Create;
   FShutdownItemList  := TBaseItemsList.Create;
-  FSchedulerItemList := TSchedulerItemsList.Create;
+  FSchedulerItemList := TBaseItemsList.Create;
   FHotKeyItemList    := THotkeyItemsList.Create;
 end;
 

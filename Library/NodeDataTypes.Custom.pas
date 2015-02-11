@@ -36,13 +36,16 @@ type
     FSchMode     : TSchedulerMode; //0 Disabled, 1 Once, 2 Hourly, 3 Daily, 4 Weekly
     FSchDateTime : TDateTime;
     FActiveHotkey : Boolean;
-    FHotkey       : TShortcut;
+    FHotkey      : TShortcut;
+    FLastAccess  : Int64;
+
     procedure SetAutorun(value: TAutorunType);
     procedure SetSchMode(value: TSchedulerMode);
     procedure SetSchDateTime(value: TDateTime);
     procedure SetActiveHotkey(const Value: Boolean);
     function GetPathAbsoluteIcon: String;
   protected
+    procedure SetLastAccess(const Value: Int64); virtual;
     procedure AfterExecute(ADoActionOnExe: Boolean); virtual;
 
     function InternalExecute(ARunFromCategory: Boolean; ACheckSingleInstance: Boolean): boolean; virtual; abstract;
@@ -57,6 +60,7 @@ type
       AUserData: TUserData): boolean;
     function ExecuteAsAdmin(ADoActionOnExe: Boolean; ARunFromCategory: Boolean): boolean;
 
+    property LastAccess: Int64 read FLastAccess write SetLastAccess;
     property PathIcon: string read FPathIcon write FPathIcon;
     property PathAbsoluteIcon: String read GetPathAbsoluteIcon;
     property WindowState: Integer read FWindowState write FWindowState;
@@ -108,6 +112,7 @@ begin
   FActionOnExe := aeDefault;
   FAutorun     := atNever;
   FAutorunPos  := 0;
+  FLastAccess  := -1;
 end;
 
 procedure TvCustomRealNodeData.SetActiveHotkey(const Value: Boolean);
@@ -224,6 +229,11 @@ begin
   end;
   //Set new value
   FAutorun := value;
+end;
+
+procedure TvCustomRealNodeData.SetLastAccess(const Value: Int64);
+begin
+  FLastAccess := Value;
 end;
 
 end.
