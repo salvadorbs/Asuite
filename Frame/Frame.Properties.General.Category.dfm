@@ -1,5 +1,16 @@
 inherited frmCatGeneralPropertyPage: TfrmCatGeneralPropertyPage
   inherited gbItem: TGroupBox
+    Font.Style = [fsBold]
+    ParentFont = False
+    inherited lbName: TLabel
+      ParentFont = False
+    end
+    inherited lbPathIcon: TLabel
+      ParentFont = False
+    end
+    inherited edtName: TEdit
+      ParentFont = False
+    end
     inherited edtPathIcon: TJvFilenameEdit
       OnBeforeDialog = nil
       OnAfterDialog = nil
@@ -12,6 +23,12 @@ inherited frmCatGeneralPropertyPage: TfrmCatGeneralPropertyPage
     Width = 354
     Height = 182
     Caption = 'Software in this category'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
     TabOrder = 1
     object lblNote: TLabel
       Left = 8
@@ -22,6 +39,12 @@ inherited frmCatGeneralPropertyPage: TfrmCatGeneralPropertyPage
         'Note: In this list you can find all software items of this categ' +
         'ory (only first level). Uncheck items who you don'#39't want to star' +
         't, when run this category.'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       WordWrap = True
     end
     object vstCategoryItems: TVirtualStringTree
@@ -30,6 +53,11 @@ inherited frmCatGeneralPropertyPage: TfrmCatGeneralPropertyPage
       Width = 338
       Height = 114
       DragOperations = []
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
       Header.AutoSizeIndex = 0
       Header.Font.Charset = DEFAULT_CHARSET
       Header.Font.Color = clWindowText
@@ -38,9 +66,10 @@ inherited frmCatGeneralPropertyPage: TfrmCatGeneralPropertyPage
       Header.Font.Style = []
       Header.MainColumn = -1
       Images = dmImages.ilSmallIcons
+      ParentFont = False
       TabOrder = 0
       TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
-      TreeOptions.PaintOptions = [toShowDropmark, toThemeAware, toUseBlendedImages]
+      TreeOptions.PaintOptions = [toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
       Columns = <>
     end
   end

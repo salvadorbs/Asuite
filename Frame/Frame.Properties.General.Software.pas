@@ -79,8 +79,8 @@ begin
     if FileExists(sPath) then
     begin
       VersionInfo.FileName := sPath;
-      if (VersionInfo.ProductName <> '') then
-        edtName.Text := VersionInfo.ProductName;
+      if (VersionInfo.FileDescription <> '') then
+        edtName.Text := VersionInfo.FileDescription;
     end;
   finally
     VersionInfo.Free;

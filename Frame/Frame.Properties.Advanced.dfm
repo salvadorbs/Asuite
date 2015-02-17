@@ -5,6 +5,12 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
     Width = 344
     Height = 19
     Caption = 'Create shortcut on desktop when ASuite is running'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
     TabOrder = 3
   end
   object grpScheduler: TGroupBox
@@ -13,6 +19,12 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
     Width = 150
     Height = 105
     Caption = 'Scheduler'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
     TabOrder = 0
     object cxScheduler: TComboBox
       Left = 10
@@ -20,6 +32,12 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       Width = 129
       Height = 21
       Style = csDropDownList
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 0
       OnChange = cxSchedulerChange
       Items.Strings = (
@@ -35,6 +53,12 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       Height = 21
       Date = 39092.942071932870000000
       Time = 39092.942071932870000000
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 1
     end
     object dtpSchTime: TDateTimePicker
@@ -46,7 +70,13 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       Format = 'HH:mm'
       Time = 39092.942361111110000000
       DateMode = dmUpDown
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
       Kind = dtkTime
+      ParentFont = False
       TabOrder = 2
     end
   end
@@ -56,6 +86,12 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
     Width = 198
     Height = 76
     Caption = 'Hotkey'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
     TabOrder = 1
     object hkHotkey: THotKey
       Left = 10
@@ -90,6 +126,12 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
     Width = 354
     Height = 81
     Caption = 'Menu'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
     TabOrder = 2
     object cbHideSoftware: TCheckBox
       Left = 8
@@ -97,6 +139,12 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       Width = 307
       Height = 19
       Caption = 'Hide this software from menu'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 0
     end
     object cbDontInsertMRU: TCheckBox
@@ -105,6 +153,12 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       Width = 307
       Height = 19
       Caption = 'Don'#39't insert this software in recents (MRU)'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 1
     end
     object cbDontInsertMFU: TCheckBox
@@ -113,6 +167,12 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       Width = 307
       Height = 19
       Caption = 'Don'#39't insert this software in MFU'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 2
     end
   end

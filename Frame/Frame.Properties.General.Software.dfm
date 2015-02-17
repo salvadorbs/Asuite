@@ -1,7 +1,16 @@
 inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
   inherited gbItem: TGroupBox
+    Font.Style = [fsBold]
+    ParentFont = False
+    inherited lbName: TLabel
+      ParentFont = False
+    end
+    inherited lbPathIcon: TLabel
+      ParentFont = False
+    end
     inherited edtName: TEdit
       Width = 161
+      ParentFont = False
       ExplicitWidth = 161
     end
     inherited edtPathIcon: TJvFilenameEdit
@@ -32,6 +41,12 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
     Width = 354
     Height = 184
     Caption = 'Path'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
     TabOrder = 1
     object lbWorkingDir: TLabel
       Left = 8
@@ -40,11 +55,17 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Height = 13
       Caption = 'Custom working directory (optional)'
       Color = clBtnFace
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
       ParentColor = False
+      ParentFont = False
     end
     object lbInfo2: TLabel
       Left = 8
-      Top = 125
+      Top = 124
       Width = 338
       Height = 52
       AutoSize = False
@@ -53,7 +74,13 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
         ' relative path:'#13#10'- $asuite = ASuite folder path ( %s )'#13#10'- $drive' +
         ' = drive path ( %s )'
       Color = clBtnFace
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
       ParentColor = False
+      ParentFont = False
       WordWrap = True
     end
     object lbParameters: TLabel
@@ -63,7 +90,13 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Height = 13
       Caption = 'Parameters (optional)'
       Color = clBtnFace
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
       ParentColor = False
+      ParentFont = False
     end
     object lbPathExe: TLabel
       Left = 8
@@ -72,13 +105,25 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Height = 13
       Caption = 'Executable/folder/web page path'
       Color = clBtnFace
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
       ParentColor = False
+      ParentFont = False
     end
     object edtParameters: TEdit
       Left = 8
       Top = 98
       Width = 267
       Height = 21
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 2
     end
     object edtWorkingDir: TJvDirectoryEdit
