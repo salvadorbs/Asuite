@@ -24,47 +24,49 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, DKLang, Vcl.Mask,
-  JvExMask, JvToolEdit;
+  JvExMask, JvToolEdit, VirtualExplorerTree, MPShellUtilities, MPCommonObjects,
+  EasyListview, ShellApi, Vcl.ImgList;
 
 type
   TfrmScanFolder = class(TForm)
     btnScan: TButton;
     btnCancel: TButton;
-    pnlScan: TPanel;
+    pnlFilters: TPanel;
+    DKLanguageController1: TDKLanguageController;
+    vstShell: TVirtualExplorerTree;
     grpFileTypes: TGroupBox;
-    btnTypesReplace: TButton;
     btnTypesDelete: TButton;
-    lxTypes: TListBox;
     btnTypesAdd: TButton;
     edtTypes: TEdit;
     grpExclude: TGroupBox;
-    lxExclude: TListBox;
     edtExclude: TEdit;
     btnExcludeAdd: TButton;
-    btnExcludeReplace: TButton;
     btnExcludeDelete: TButton;
-    grpPath: TGroupBox;
-    cbSubfolders: TCheckBox;
-    lbFolderPath: TLabel;
-    DKLanguageController1: TDKLanguageController;
-    edtFolderPath: TJvDirectoryEdit;
-    cbFlat: TCheckBox;
-    procedure btnScanClick(Sender: TObject);
+    vstTypes: TVirtualStringTree;
+    vstExclude: TVirtualStringTree;
+    ilExtIcons: TImageList;
+    grpGeneralSettings: TGroupBox;
+    chkFlat: TCheckBox;
+    chkExtractName: TCheckBox;
+    procedure vstShellEnumFolder(Sender: TCustomVirtualExplorerTree;
+      Namespace: TNamespace; var AllowAsChild: Boolean);
+    procedure vstShellInitNode(Sender: TBaseVirtualTree; ParentNode,
+      Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+    procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure btnCancelClick(Sender: TObject);
-    procedure btnTypesAddClick(Sender: TObject);
-    procedure btnTypesReplaceClick(Sender: TObject);
-    procedure btnTypesDeleteClick(Sender: TObject);
-    procedure btnExcludeAddClick(Sender: TObject);
-    procedure btnExcludeReplaceClick(Sender: TObject);
-    procedure btnExcludeDeleteClick(Sender: TObject);
+    procedure vstGetNodeDataSize(Sender: TBaseVirtualTree;
+      var NodeDataSize: Integer);
+    procedure vstGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
+      Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+    procedure vstGetImageIndex(Sender: TBaseVirtualTree;
+      Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
+      var Ghosted: Boolean; var ImageIndex: Integer);
   private
     { Private declarations }
-    procedure PopulateStringList(ListBox: TListBox; StringList: TStringList);
-    procedure PopulateListBox(ListBox: TListBox; StringList: TStringList);
-    procedure DoScanFolder(Sender: TBaseVirtualTree;FolderPath: string;
-                           ParentNode: PVirtualNode;ProgressDialog: TForm);
-    procedure RunScanFolder(Tree: TBaseVirtualTree;TempPath: string; ChildNode: PVirtualNode);
+    procedure BuildTree;
+    procedure PopulateStringList(AListView: TVirtualStringTree; AStringList: TStringList);
+    procedure PopulateListView(AListView: TVirtualStringTree; AStringList: TStringList);
+    function GetExtImage(AExtension: string): Integer;
   public
     { Public declarations }
     class procedure Execute(AOwner: TComponent);
@@ -76,112 +78,25 @@ var
 implementation
 
 uses
-  Utility.Misc, NodeDataTypes.Custom, AppConfig.Main, Kernel.Enumerations,
+  Utility.Misc, NodeDataTypes.Custom, AppConfig.Main, Kernel.Enumerations, Kernel.Types,
   VirtualTree.Methods, Utility.System, NodeDataTypes.Files, NodeDataTypes.Base;
 
 {$R *.dfm}
 
-procedure TfrmScanFolder.btnCancelClick(Sender: TObject);
+procedure TfrmScanFolder.BuildTree;
+var
+  MyComputer: PVirtualNode;
 begin
-  Close;
-end;
-
-procedure TfrmScanFolder.btnExcludeAddClick(Sender: TObject);
-begin
-  lxExclude.Items.Add(LowerCase(edtExclude.Text));
-  edtExclude.Clear;
-end;
-
-procedure TfrmScanFolder.btnExcludeDeleteClick(Sender: TObject);
-begin
-  if (lxExclude.ItemIndex <> -1) then
-  begin
-    lxExclude.Items.Delete(lxExclude.ItemIndex);
-    lxExclude.ItemIndex := -1;
+  vstShell.BeginUpdate;
+  try
+    vstShell.Active := False;
+    vstShell.Active := True;
+    MyComputer := vstShell.FindNodeByPIDL(DrivesFolder.AbsolutePIDL);
+    if MyComputer <> nil then
+      vstShell.Expanded[MyComputer] := True;
+  finally
+    vstShell.EndUpdate;
   end;
-end;
-
-procedure TfrmScanFolder.PopulateListBox(ListBox: TListBox;
-  StringList: TStringList);
-var
-  I: Integer;
-begin
-  ListBox.Clear;
-  for I := 0 to StringList.Count - 1 do
-    if StringList[I] <> '' then
-      ListBox.Items.Add(LowerCase(StringList[I]));
-end;
-
-procedure TfrmScanFolder.PopulateStringList(ListBox: TListBox; StringList: TStringList);
-var
-  I: Integer;
-begin
-  StringList.Clear;
-  for I := 0 to ListBox.Count - 1 do
-    StringList.Add(LowerCase(ListBox.Items[I]));
-end;
-
-procedure TfrmScanFolder.DoScanFolder(Sender: TBaseVirtualTree;
-  FolderPath: string; ParentNode: PVirtualNode;
-  ProgressDialog: TForm);
-var
-  SearchRec     : TSearchRec;
-  ChildNode     : PVirtualNode;
-  ChildNodeData : TvCustomRealNodeData;
-  TempShortName, PathTemp, sFileExt : String;
-  ProgressBar   : TProgressBar;
-begin
-  //TODO: Rewrite this code (see AddChildNodeEx)
-  ProgressBar   := TProgressBar(ProgressDialog.FindComponent('Progress'));
-  if FindFirst(FolderPath + '*.*', faAnyFile, SearchRec) = 0 then
-  begin
-    repeat
-      ChildNode     := nil;
-      ChildNodeData := nil;
-      TempShortName := LowerCase(SearchRec.Name);
-      sFileExt := ExtractFileExt(TempShortName);
-      //Absolute path->relative path
-      PathTemp := Config.Paths.AbsoluteToRelative(FolderPath + SearchRec.Name);
-      //Add node in vstlist
-      if ((SearchRec.Name <> '.') and (SearchRec.Name <> '..')) and
-         (((SearchRec.Attr and faDirectory) = (faDirectory)) or ((Config.ScanFolderFileTypes.IndexOf(sFileExt) <> -1))) then
-      begin
-        //Extract file name without extension (.ext)
-        TempShortName := ChangeFileExt(TempShortName,'');
-        if (Config.ScanFolderExcludeNames.IndexOf(TempShortName) = -1) then
-        begin
-          if ((SearchRec.Attr and faDirectory) = (faDirectory)) and (Config.ScanFolderSubFolders) then
-          begin
-            ChildNode := Sender.AddChild(ParentNode, TVirtualTreeMethods.Create.CreateNodeData(vtdtCategory));
-            ChildNodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(ChildNode, Sender));
-            //Dialog
-            ProgressBar.Position := ProgressBar.Position + 1;
-            ProgressDialog.Update;
-            if cbFlat.Checked then
-              DoScanFolder(Sender, IncludeTrailingBackslash(FolderPath + SearchRec.Name), ParentNode, ProgressDialog)
-            else
-              DoScanFolder(Sender, IncludeTrailingBackslash(FolderPath + SearchRec.Name), ChildNode, ProgressDialog);
-          end
-          else
-            if (SearchRec.Attr <> faDirectory) and (Config.ScanFolderFileTypes.IndexOf(sFileExt) <> -1) then
-            begin
-              ChildNode := Sender.AddChild(ParentNode, TVirtualTreeMethods.Create.CreateNodeData(vtdtFile));
-              ChildNodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(ChildNode, Sender));
-              if Assigned(ChildNodeData) then
-                TvFileNodeData(ChildNodeData).PathFile := PathTemp;
-            end;
-          if Assigned(ChildNodeData) then
-          begin
-            ChildNodeData.SetPointerNode(ChildNode);
-            ChildNodeData.Name  := TempShortName;
-            if (ChildNode.ChildCount = 0) And (ChildNodeData.DataType = vtdtCategory) then
-              Sender.DeleteNode(ChildNode);
-          end;
-        end;
-      end;
-    until FindNext(SearchRec) <> 0;
-  end;
-  FindClose(SearchRec);
 end;
 
 class procedure TfrmScanFolder.Execute(AOwner: TComponent);
@@ -196,98 +111,110 @@ begin
   end;
 end;
 
-procedure TfrmScanFolder.RunScanFolder(Tree: TBaseVirtualTree;TempPath: string; ChildNode: PVirtualNode);
-var
-  Dialog: TForm;
-begin
-  //Run scan
-  Dialog := CreateDialogProgressBar(DKLangConstW('msgScanningProgress'), Config.Paths.GetNumberSubFolders(TempPath));
-  Tree.BeginUpdate;
-  try
-    DoScanFolder(Tree, TempPath, ChildNode, Dialog);
-  finally
-    Tree.EndUpdate;
-    Dialog.Free;
-    Self.Close;
-  end;
-end;
-
-procedure TfrmScanFolder.btnExcludeReplaceClick(Sender: TObject);
-begin
-  if (lxExclude.ItemIndex <> -1) and (lxExclude.Count > 0)  then
-  begin
-    lxExclude.Items.Delete(lxExclude.ItemIndex);
-    lxExclude.Items.Insert(lxExclude.ItemIndex,LowerCase(edtExclude.Text));
-    lxExclude.ItemIndex := -1;
-  end;
-end;
-
-procedure TfrmScanFolder.btnScanClick(Sender: TObject);
-var
-  ChildNode : PVirtualNode;
-  ChildNodeData : TvBaseNodeData;
-  TempPath, sName : String;
-begin
-  //TODO: Rewrite this code (see AddChildNodeEx and maybe use a thread)
-  if edtFolderPath.Text <> '' then
-    TempPath := IncludeTrailingBackslash(edtFolderPath.Text);
-  //Check if user insert a valid path
-  if TempPath <> '' then
-  begin
-    if (DirectoryExists(TempPath)) then
-    begin
-      //Add parent node
-      ChildNode := TVirtualTreeMethods.Create.AddChildNodeEx(Config.MainTree, Config.MainTree.GetFirstSelected, amInsertAfter, vtdtCategory);
-      ChildNodeData := TVirtualTreeMethods.Create.GetNodeItemData(ChildNode, Config.MainTree);
-      //Extract directory name and use it as node name (else use TempPath as name)
-      sName := ExtractDirectoryName(TempPath);
-      if sName <> '' then
-        ChildNodeData.Name := sName
-      else
-        ChildNodeData.Name := TempPath;
-      RunScanFolder(Config.MainTree, TempPath, ChildNode);
-    end
-    else
-      ShowMessageEx(DKLangConstW('msgFolderNotFound'));
-  end
-  else
-    ShowMessageEx(DKLangConstW('msgErrEmptyPath'));
-end;
-
-procedure TfrmScanFolder.btnTypesAddClick(Sender: TObject);
-begin
-  lxTypes.Items.Add(LowerCase(edtTypes.Text));
-  edtTypes.Clear;
-end;
-
-procedure TfrmScanFolder.btnTypesDeleteClick(Sender: TObject);
-begin
-  if (lxTypes.ItemIndex <> -1) then
-  begin
-    lxTypes.Items.Delete(lxTypes.ItemIndex);
-    lxTypes.ItemIndex := -1;
-  end;
-end;
-
-procedure TfrmScanFolder.btnTypesReplaceClick(Sender: TObject);
-begin
-  if (lxTypes.ItemIndex <> -1) and (lxTypes.Count > 0)  then
-  begin
-    lxTypes.Items.Delete(lxTypes.ItemIndex);
-    lxTypes.Items.Insert(lxTypes.ItemIndex,LowerCase(edtTypes.Text));
-    lxTypes.ItemIndex := -1;
-  end;
-end;
-
 procedure TfrmScanFolder.FormCreate(Sender: TObject);
 begin
-  if DirectoryExists(Config.ScanFolderLastPath) then
-    edtFolderPath.Text := Config.ScanFolderLastPath
-  else
-    edtFolderPath.Text := Config.Paths.SuitePathWorking;
-  cbSubfolders.Checked   := Config.ScanFolderSubFolders;
-  PopulateListBox(lxTypes, Config.ScanFolderFileTypes);
-  PopulateListBox(lxExclude, Config.ScanFolderExcludeNames);
+  //TODO: Load checkboxes states
+  PopulateListView(vstTypes, Config.ScanFolderFileTypes);
+  PopulateListView(vstExclude, Config.ScanFolderExcludeNames);
+end;
+
+procedure TfrmScanFolder.FormShow(Sender: TObject);
+begin
+  BuildTree;
+end;
+
+function TfrmScanFolder.GetExtImage(AExtension: string): Integer;
+var
+  FileInfo: TSHFileInfo;
+  Flags: Integer;
+  Icon: TIcon;
+begin
+  Result := -1;
+  Flags := -1;
+  Icon := TIcon.Create;
+  try
+    Flags := SHGFI_ICON or SHGFI_SMALLICON or
+             SHGFI_USEFILEATTRIBUTES;
+    //Get index
+    if SHGetFileInfo(PChar(AExtension), 0, FileInfo, SizeOf(TSHFileInfo), Flags) <> 0 then
+    begin
+      Icon.Handle := FileInfo.hIcon;
+      Result := ilExtIcons.AddIcon(Icon);
+    end;
+  finally
+    Icon.Free;
+  end;
+end;
+
+procedure TfrmScanFolder.PopulateListView(AListView: TVirtualStringTree; AStringList: TStringList);
+var
+  I: Integer;
+  Node: PVirtualNode;
+  NodeData: pScanFolderData;
+begin
+  AListView.BeginUpdate;
+  try
+    AListView.Clear;
+    for I := 0 to AStringList.Count - 1 do
+    begin
+      Node := AListView.AddChild(nil);
+      NodeData := AListView.GetNodeData(Node);
+      NodeData.Text       := AStringList[I];
+      NodeData.ImageIndex := GetExtImage(AStringList[I]);
+    end;
+  finally
+    AListView.EndUpdate();
+  end;
+end;
+
+procedure TfrmScanFolder.PopulateStringList(AListView: TVirtualStringTree; AStringList: TStringList);
+var
+  I: Integer;
+begin
+//  AStringList.Clear;
+//  for I := 0 to AListView.Count - 1 do
+//    AStringList.Add(LowerCase(AListView.Items[I].Caption));
+end;
+
+procedure TfrmScanFolder.vstShellEnumFolder(
+  Sender: TCustomVirtualExplorerTree; Namespace: TNamespace;
+  var AllowAsChild: Boolean);
+begin
+  AllowAsChild := (NameSpace.FileSystem or NameSpace.IsMyComputer) and Not(Namespace.Stream);
+end;
+
+procedure TfrmScanFolder.vstShellInitNode(Sender: TBaseVirtualTree;
+  ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+begin
+   Node.CheckType := ctTriStateCheckBox;
+end;
+
+procedure TfrmScanFolder.vstGetImageIndex(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
+  var Ghosted: Boolean; var ImageIndex: Integer);
+var
+  NodeData: pScanFolderData;
+begin
+  NodeData := Sender.GetNodeData(Node);
+  if Assigned(NodeData) then
+    ImageIndex := NodeData.ImageIndex;
+end;
+
+procedure TfrmScanFolder.vstGetText(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
+  var CellText: string);
+var
+  NodeData: pScanFolderData;
+begin
+  NodeData := Sender.GetNodeData(Node);
+  if Assigned(NodeData) then
+    CellText := NodeData.Text;
+end;
+
+procedure TfrmScanFolder.vstGetNodeDataSize(Sender: TBaseVirtualTree;
+  var NodeDataSize: Integer);
+begin
+  NodeDataSize := SizeOf(rScanFolderData);
 end;
 
 end.

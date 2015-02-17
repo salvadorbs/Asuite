@@ -23,7 +23,7 @@ interface
 
 uses
   Generics.Collections, NodeDataTypes.Base, VirtualTrees, Generics.Defaults,
-  XMLIntf, Types, Menus, Kernel.Enumerations, Frame.BaseEntity;
+  XMLIntf, Types, Menus, Kernel.Enumerations, Frame.BaseEntity, Windows;
 
 type
   TImportListToTree = function(Tree: TVirtualStringTree; Node: IXMLNode;
@@ -54,6 +54,13 @@ type
     ImageIndex: Integer;
   end;
   PFramesNodeData = ^rFramesNodeData;
+
+  //Record for ScanFolder's vst
+  rScanFolderData = record
+    Text: string;
+    ImageIndex: Integer;
+  end;
+  PScanFolderData = ^rScanFolderData;
 
   TLauncherSearch = record
     Tree       : TBaseVirtualTree;
