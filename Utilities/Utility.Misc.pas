@@ -26,7 +26,6 @@ uses
   Kernel.Consts, StdCtrls, XMLIntf, System.UITypes, DKLang, Menus;
 
 { Forms }
-function  CreateDialogProgressBar(DialogMsg: String;NumberFolders: Integer): TForm;
 function  IsFormOpen(const FormName : string): Boolean;
 procedure SetFormPosition(Form: TForm; ListFormLeft, ListFormTop: Integer);
 
@@ -57,29 +56,6 @@ implementation
 
 uses
   Registry, SynTaskDialog, PJVersionInfo, AppConfig.Main;
-
-function CreateDialogProgressBar(DialogMsg: String;NumberFolders: Integer): TForm;
-var
-  ProgressBar : TProgressBar;
-begin
-  //Create Dialog and ProgressBar (in Dialog)
-  Result      := CreateMessageDialog(DialogMsg, mtInformation, []) ;
-  ProgressBar := TProgressBar.Create(Result) ;
-  Result.Caption := DialogMsg;
-  Result.Height  := 100;
-  //Set some progressbar's property
-  with ProgressBar do
-  begin
-    Name  := 'Progress';
-    Parent := Result;
-    Max   := NumberFolders;
-    Step  := 1;
-    Top   := 50;
-    Left  := 8;
-    Width := Result.ClientWidth - 16;
-  end;
-  Result.Show;
-end;
 
 function IsFormOpen(const FormName : string): Boolean;
 var

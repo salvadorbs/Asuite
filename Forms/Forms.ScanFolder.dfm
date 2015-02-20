@@ -14,7 +14,6 @@ object frmScanFolder: TfrmScanFolder
   OldCreateOrder = False
   Position = poMainFormCenter
   OnCreate = FormCreate
-  OnShow = FormShow
   DesignSize = (
     579
     266)
@@ -29,7 +28,7 @@ object frmScanFolder: TfrmScanFolder
     Caption = 'Scan'
     Default = True
     TabOrder = 2
-    ExplicitTop = 311
+    OnClick = btnScanClick
   end
   object btnCancel: TButton
     Left = 496
@@ -39,7 +38,7 @@ object frmScanFolder: TfrmScanFolder
     Anchors = [akRight, akBottom]
     Caption = 'Cancel'
     TabOrder = 3
-    ExplicitTop = 311
+    OnClick = btnCancelClick
   end
   object pnlFilters: TPanel
     Left = 207
@@ -48,7 +47,6 @@ object frmScanFolder: TfrmScanFolder
     Height = 220
     Anchors = [akTop, akRight, akBottom]
     TabOrder = 1
-    ExplicitHeight = 297
     object grpFileTypes: TGroupBox
       Left = 8
       Top = 87
@@ -64,10 +62,11 @@ object frmScanFolder: TfrmScanFolder
       TabOrder = 1
       object btnTypesDelete: TButton
         Left = 103
-        Top = 80
+        Top = 72
         Width = 58
         Height = 17
         Caption = 'Delete'
+        Enabled = False
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
@@ -75,13 +74,15 @@ object frmScanFolder: TfrmScanFolder
         Font.Style = []
         ParentFont = False
         TabOrder = 3
+        OnClick = btnTypesDeleteClick
       end
       object btnTypesAdd: TButton
         Left = 103
-        Top = 57
+        Top = 49
         Width = 58
         Height = 17
         Caption = 'Add'
+        Enabled = False
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
@@ -89,10 +90,11 @@ object frmScanFolder: TfrmScanFolder
         Font.Style = []
         ParentFont = False
         TabOrder = 2
+        OnClick = btnTypesAddClick
       end
       object edtTypes: TEdit
         Left = 103
-        Top = 30
+        Top = 22
         Width = 58
         Height = 21
         Font.Charset = DEFAULT_CHARSET
@@ -102,6 +104,7 @@ object frmScanFolder: TfrmScanFolder
         Font.Style = []
         ParentFont = False
         TabOrder = 1
+        OnChange = edtTypesChange
       end
       object vstTypes: TVirtualStringTree
         Left = 9
@@ -125,9 +128,12 @@ object frmScanFolder: TfrmScanFolder
         TabOrder = 0
         TreeOptions.PaintOptions = [toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
         TreeOptions.SelectionOptions = [toFullRowSelect]
+        OnAddToSelection = vstTypesAddToSelection
+        OnFreeNode = vstFreeNode
         OnGetText = vstGetText
         OnGetImageIndex = vstGetImageIndex
         OnGetNodeDataSize = vstGetNodeDataSize
+        OnRemoveFromSelection = vstTypesRemoveFromSelection
         Columns = <>
       end
     end
@@ -146,7 +152,7 @@ object frmScanFolder: TfrmScanFolder
       TabOrder = 2
       object edtExclude: TEdit
         Left = 103
-        Top = 30
+        Top = 22
         Width = 58
         Height = 21
         Font.Charset = DEFAULT_CHARSET
@@ -156,13 +162,15 @@ object frmScanFolder: TfrmScanFolder
         Font.Style = []
         ParentFont = False
         TabOrder = 1
+        OnChange = edtExcludeChange
       end
       object btnExcludeAdd: TButton
         Left = 103
-        Top = 57
+        Top = 49
         Width = 58
         Height = 17
         Caption = 'Add'
+        Enabled = False
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
@@ -170,13 +178,15 @@ object frmScanFolder: TfrmScanFolder
         Font.Style = []
         ParentFont = False
         TabOrder = 2
+        OnClick = btnExcludeAddClick
       end
       object btnExcludeDelete: TButton
         Left = 103
-        Top = 80
+        Top = 72
         Width = 58
         Height = 17
         Caption = 'Delete'
+        Enabled = False
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
@@ -184,6 +194,7 @@ object frmScanFolder: TfrmScanFolder
         Font.Style = []
         ParentFont = False
         TabOrder = 3
+        OnClick = btnExcludeDeleteClick
       end
       object vstExclude: TVirtualStringTree
         Left = 9
@@ -207,8 +218,11 @@ object frmScanFolder: TfrmScanFolder
         TabOrder = 0
         TreeOptions.PaintOptions = [toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
         TreeOptions.SelectionOptions = [toFullRowSelect]
+        OnAddToSelection = vstExcludeAddToSelection
+        OnFreeNode = vstFreeNode
         OnGetText = vstGetText
         OnGetNodeDataSize = vstGetNodeDataSize
+        OnRemoveFromSelection = vstExcludeRemoveFromSelection
         Columns = <>
       end
     end
@@ -294,7 +308,6 @@ object frmScanFolder: TfrmScanFolder
     TreeOptions.VETImageOptions = [toImages, toThreadedImages]
     OnEnumFolder = vstShellEnumFolder
     OnInitNode = vstShellInitNode
-    ExplicitHeight = 297
     Columns = <>
   end
   object DKLanguageController1: TDKLanguageController
