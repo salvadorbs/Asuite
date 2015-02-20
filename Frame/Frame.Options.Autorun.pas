@@ -70,8 +70,8 @@ var
 implementation
 
 uses
-  NodeDataTypes.Custom, AppConfig.Main, Forms.Main, DataModules.Icons,
-  VirtualTree.Methods, Kernel.Types, NodeDataTypes.Files, NodeDataTypes.Base,
+  NodeDataTypes.Custom, AppConfig.Main, DataModules.Icons,
+  VirtualTree.Methods, NodeDataTypes.Base,
   System.UITypes, Kernel.Enumerations, VirtualTree.Events;
 
 {$R *.dfm}

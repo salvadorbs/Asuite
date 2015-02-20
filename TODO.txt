@@ -12,13 +12,14 @@
 
 [ ] Rename all DKLanguageController1 in DKLangController (and check all forms)
 [x] New About form (see CCleaner about)
-[ ] Rewrite scheduler
+[x] Rewrite scheduler
 [ ] Rewrite scanfolder
 [x] Options
 [ ] Rewrite ImportList
 [x] Add consts for relative paths %foldericon% and %urlicon%
 [ ] Check updates
 [ ] GM Position (fixed to an monitor edge, based of mouse cursor or custom)
+[ ] Bug: Support %programfiles%
 
 [x] Bug: MF save position
 [x] Bug: Execute as admin from GM

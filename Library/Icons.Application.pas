@@ -22,7 +22,7 @@ unit Icons.Application;
 interface
 
 uses
-  SysUtils, Classes, Icons.Base, Kernel.Enumerations;
+  SysUtils, Classes, Icons.Base;
 
 type
   TApplicationIcon = class(TBaseIcon)

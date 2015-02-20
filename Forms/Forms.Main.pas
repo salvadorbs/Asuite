@@ -25,7 +25,7 @@ uses
   Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
   ComCtrls, VirtualTrees, ActiveX, Kernel.Consts, DataModules.Icons,
   Kernel.BaseMainForm, StdCtrls, Buttons, System.UITypes,
-  Kernel.Enumerations, Vcl.ExtCtrls, System.DateUtils, XMLDoc, DKLang, Lists.Manager,
+  Kernel.Enumerations, Vcl.ExtCtrls, XMLDoc, DKLang, Lists.Manager,
   Database.Manager, System.Actions, Vcl.ActnList;
 
 type
@@ -155,7 +155,7 @@ uses
   TypInfo, Forms.Options, Forms.About, Utility.Misc, Forms.ScanFolder,
   DataModules.TrayMenu, Forms.ImportList, AppConfig.Main, Utility.System,
   VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base, Kernel.Scheduler,
-  NodeDataTypes.Custom, Kernel.Types, NodeDataTypes.Files, VirtualTree.Events;
+  Kernel.Types, NodeDataTypes.Files, VirtualTree.Events;
 
 {$R *.dfm}
 

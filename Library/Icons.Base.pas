@@ -22,7 +22,7 @@ unit Icons.Base;
 interface
 
 uses
-  SysUtils, Classes, Controls, ShellApi, Kernel.Enumerations, SyncObjs;
+  SysUtils, Classes, Controls, ShellApi, SyncObjs;
 
 type
   TBaseIcon = class

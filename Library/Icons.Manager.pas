@@ -23,7 +23,7 @@ interface
 
 uses
   SysUtils, Classes, Controls, IniFiles, Forms, Icons.Application, Generics.Collections,
-  IOUtils, Kernel.Consts, Kernel.Enumerations, ShellApi;
+  IOUtils, Kernel.Consts, ShellApi;
 
 type
   TBaseIcons = class(TObjectDictionary<string, TApplicationIcon>);

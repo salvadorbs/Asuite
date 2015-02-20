@@ -22,7 +22,7 @@ unit Icons.Thread;
 interface
 
 uses
-  Classes, VirtualTrees, Kernel.Enumerations;
+  Classes, VirtualTrees;
 
 type
   TTreeIconsThread = class(TThread)

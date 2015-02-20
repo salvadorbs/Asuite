@@ -77,7 +77,7 @@ type
 implementation
 
 uses
-  AppConfig.Main, Lists.Manager, Kernel.Consts, VirtualTree.Methods,
+  AppConfig.Main, Lists.Manager, VirtualTree.Methods,
   DKLang, Utility.Process;
 
 procedure TvCustomRealNodeData.Copy(source: TvBaseNodeData);

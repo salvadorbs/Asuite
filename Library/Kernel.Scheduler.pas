@@ -44,7 +44,7 @@ type
 implementation
 
 uses
-  AppConfig.Main, Kernel.Enumerations, VirtualTree.Methods;
+  AppConfig.Main, Kernel.Enumerations;
 
 { TScheduler }
 
