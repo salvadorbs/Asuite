@@ -125,6 +125,8 @@ end;
 function TScannerFolder.GetName: string;
 begin
   Result := ExtractFileName(FPath);
+  if Result = '' then
+    Result := ExtractFileDrive(FPath);
 end;
 
 procedure TScannerFolder.Remove(Item: TScannerFolder);

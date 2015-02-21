@@ -64,27 +64,14 @@ var
 implementation
 
 uses
-  Kernel.Consts, NodeDataTypes.Files, PJVersionInfo, AppConfig.Main;
+  Kernel.Consts, NodeDataTypes.Files, PJVersionInfo, AppConfig.Main,
+  Utility.FileFolder;
 
 {$R *.dfm}
 
 procedure TfrmSWGeneralPropertyPage.btnExtractNameClick(Sender: TObject);
-var
-  VersionInfo : TPJVersionInfo;
-  sPath : String;
 begin
-  VersionInfo := TPJVersionInfo.Create(Self);
-  try
-    sPath := Config.Paths.RelativeToAbsolute(edtPathExe.text);
-    if FileExists(sPath) then
-    begin
-      VersionInfo.FileName := sPath;
-      if (VersionInfo.FileDescription <> '') then
-        edtName.Text := VersionInfo.FileDescription;
-    end;
-  finally
-    VersionInfo.Free;
-  end;
+  edtName.Text := ExtractFileNameEx(edtPathExe.text);
 end;
 
 procedure TfrmSWGeneralPropertyPage.edtPathExeAfterDialog(Sender: TObject;

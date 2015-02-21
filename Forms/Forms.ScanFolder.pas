@@ -196,9 +196,9 @@ var
 begin
   if AIsExtension then
   begin
-    //Add *., if user forget it
-    if pos('*.', AText) = 0 then
-      AText := '*.' + AText;
+    //Add ., if user forget it
+    if AText[1] <> '.' then
+      AText := '.' + AText;
   end;
   //Add item in ListView
   Node := AListView.AddChild(nil);
@@ -209,7 +209,7 @@ end;
 
 procedure TfrmScanFolder.FormCreate(Sender: TObject);
 begin
-  //TODO: Load checkboxes states
+  //TODO: Load and save options
   PopulateVSTListView(vstTypes, Config.ScanFolderFileTypes, True);
   PopulateVSTListView(vstExclude, Config.ScanFolderExcludeNames, False);
 end;
@@ -226,7 +226,7 @@ begin
   try
     Flags := SHGFI_ICON or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES;
     //Get index
-    if SHGetFileInfo(PChar(AExtension), 0, FileInfo, SizeOf(TSHFileInfo), Flags) <> 0 then
+    if SHGetFileInfo(PChar('*' + AExtension), 0, FileInfo, SizeOf(TSHFileInfo), Flags) <> 0 then
     begin
       Icon.Handle := FileInfo.hIcon;
       Result := ilExtIcons.AddIcon(Icon);

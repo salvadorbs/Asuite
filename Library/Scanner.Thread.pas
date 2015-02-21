@@ -23,7 +23,8 @@ interface
 
 uses
   Messages, SysUtils, Classes, VirtualTrees, Forms, Scanner.Folder, ComCtrls, StdCtrls,
-  DKLang, Dialogs, VirtualExplorerTree, MPCommonUtilities, MPShellUtilities;
+  DKLang, Dialogs, VirtualExplorerTree, MPCommonUtilities, MPShellUtilities,
+  NodeDataTypes.Base, IOUtils, StrUtils;
 
 type
   TScanThread = class(TThread)
@@ -41,6 +42,10 @@ type
       function CreateDialogProgressBar(DialogMsg: String): TForm;
       procedure DoDialogCancelClick(Sender: TObject);
       function GetAllCheckedFolders(ASender: TVirtualExplorerTree): TScannerFolder;
+      procedure CheckEmptyCategory(ANode: PVirtualNode; ANodeData: TvBaseNodeData);
+      procedure ScanFolder(AFolder: TScannerFolder; AParentNode: PVirtualNode); overload;
+      procedure ScanFolder(AFolderPath: string; AParentNode: PVirtualNode; AOnlyFiles: Boolean); overload;
+      function FindMatchText(Strings: TStrings; const Str: string): Integer;
     protected
       procedure Execute; override;
     public
@@ -59,7 +64,8 @@ type
 implementation
 
 uses
-  NodeDataTypes.Base, VirtualTree.Methods, AppConfig.Main, Kernel.Enumerations;
+  VirtualTree.Methods, AppConfig.Main, Kernel.Enumerations, Utility.FileFolder,
+  NodeDataTypes.Files;
 
 { TScanThread }
 
@@ -133,32 +139,42 @@ begin
   Self.Cancel;
 end;
 
-procedure TScanThread.Execute;
+procedure TScanThread.CheckEmptyCategory(ANode: PVirtualNode; ANodeData: TvBaseNodeData);
+begin
+  //Check category. If haven't child, remove it
+  if (ANode.ChildCount = 0) and (ANodeData.DataType = vtdtCategory) then
+    FTree.DeleteNode(ANode);
+end;
 
-  procedure ScanFolder(AFolder: TScannerFolder; AParentNode: PVirtualNode);
-  var
-    Node, ParentNode: PVirtualNode;
-    NodeData: TvBaseNodeData;
-    I: Integer;
+procedure TScanThread.ScanFolder(AFolder: TScannerFolder; AParentNode: PVirtualNode);
+var
+  Node, ParentNode: PVirtualNode;
+  NodeData: TvBaseNodeData;
+  I: Integer;
+  sFileExt, sPath: String;
+begin
+  if FCancel then
+    Exit;
+
+  for I := 0 to AFolder.Count - 1 do
   begin
-    for I := 0 to AFolder.Count - 1 do
-    begin
-      if FFlat then
-        AParentNode := FParentNode;
+    if FFlat then
+      AParentNode := FParentNode;
 
-      Node := TVirtualTreeMethods.Create.AddChildNodeEx(Config.MainTree, AParentNode, amInsertAfter, vtdtCategory);
-      NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Config.MainTree);
-      NodeData.Name := AFolder[I].Name;
+    Node := TVirtualTreeMethods.Create.AddChildNodeEx(Config.MainTree, AParentNode, amInsertAfter, vtdtCategory, False);
+    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Config.MainTree);
+    NodeData.Name := AFolder[I].Name;
 
-      //TODO: Process files and folders
-
+    if AFolder[I].Count = 0 then
+      ScanFolder(AFolder[I].Path, Node, AFolder[I].CheckType = fctMixed)
+    else
       ScanFolder(AFolder[I], Node);
 
-      //Check category. If haven't child, remove it
-      if (Node.ChildCount = 0) And (NodeData.DataType = vtdtCategory) then
-        FTree.DeleteNode(Node);
-    end;
+    CheckEmptyCategory(Node, NodeData);
   end;
+end;
+
+procedure TScanThread.Execute;
 begin
   inherited;
   FTree.BeginUpdate;
@@ -169,6 +185,15 @@ begin
     TVirtualTreeMethods.Create.GetAllIcons(Config.MainTree);
     FTree.EndUpdate;
   end;
+end;
+
+function TScanThread.FindMatchText(Strings: TStrings;
+  const Str: string): Integer;
+begin
+  for Result := 0 to Strings.Count-1 do
+    if ContainsText(Str, Strings[Result]) then
+      exit;
+  Result := -1;
 end;
 
 function TScanThread.GetAllCheckedFolders(
@@ -200,14 +225,7 @@ function TScanThread.GetAllCheckedFolders(
       end;
       //Add in FolderList
       if CheckType <> fctUnchecked then
-      begin
-        if Assigned(CheckedFolderList) then
-          CheckedFolderList := CheckedFolderList.AddItem(Str, CheckType)
-        else begin
-          Result := TScannerFolder.Create(str, CheckType);
-          CheckedFolderList := Result;
-        end;
-      end;
+        CheckedFolderList := CheckedFolderList.AddItem(Str, CheckType)
     end;
 
     if Assigned(S.ChildNodeList) and (CheckType <> fctChecked) then
@@ -218,9 +236,56 @@ function TScanThread.GetAllCheckedFolders(
   end;
 
 begin
-  Result := nil;
+  Result := TScannerFolder.Create('', fctUnChecked);
   //Add mixed checked folders
   RecurseStorage(ASender.Storage, Result);
+end;
+
+procedure TScanThread.ScanFolder(AFolderPath: string;
+  AParentNode: PVirtualNode; AOnlyFiles: Boolean);
+var
+  Node: PVirtualNode;
+  NodeData: TvBaseNodeData;
+  sFileExt, sShortName, sPath: String;
+begin
+  if FCancel then
+    Exit;
+  //Flat structure
+  if FFlat then
+    AParentNode := FParentNode;
+  if Not AOnlyFiles then
+  begin
+    //Folders
+    for sPath in TDirectory.GetDirectories(AFolderPath) do
+    begin
+      Node := TVirtualTreeMethods.Create.AddChildNodeEx(Config.MainTree, AParentNode, amInsertAfter, vtdtCategory, False);
+      NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Config.MainTree);
+      NodeData.Name := ExtractFileName(sPath);
+
+      ScanFolder(sPath, Node, False);
+
+      CheckEmptyCategory(Node, NodeData);
+    end;
+  end;
+  //Files
+  for sPath in TDirectory.GetFiles(AFolderPath) do
+  begin
+    sFileExt := ExtractFileExt(sPath);
+    sShortName := ExtractFileName(sPath);
+
+    if (Config.ScanFolderFileTypes.IndexOf(sFileExt) <> -1) and (FindMatchText(Config.ScanFolderExcludeNames, sShortName) = -1) then
+    begin
+      Node := TVirtualTreeMethods.Create.AddChildNodeEx(Config.MainTree, AParentNode, amInsertAfter, vtdtFile, False);
+      NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Config.MainTree);
+      //Name
+      if FAutoExtractName then
+        NodeData.Name := ExtractFileNameEx(sPath)
+      else
+        NodeData.Name := sShortName;
+      //Path
+      TvFileNodeData(NodeData).PathFile := sPath;
+    end;
+  end;
 end;
 
 procedure TScanThread.UpdateGUI;

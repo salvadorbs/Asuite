@@ -4,7 +4,7 @@ interface
 
 uses
   Kernel.Consts, Windows, SysUtils, Classes, Kernel.Enumerations, ShlObj, ActiveX,
-  ComObj, FileCtrl;
+  ComObj, FileCtrl, PJVersionInfo;
 
 { Folders }
 function  BrowseForFolder(const InitialDir: String; const Caption: String = ''): String;
@@ -17,6 +17,7 @@ procedure DeleteOldBackups(const MaxNumber: Integer);
 function DeleteFiles(const Dir, Wildcard: string): Integer;
 function ListFiles(const Dir, Wildcard: string; const List: Classes.TStrings): Boolean;
 function GetFileCRC32(const FileName: String): Integer;
+function ExtractFileNameEx(const AFileName: String): string;
 
 { Desktop shortcut }
 procedure CreateShortcutOnDesktop(const FileName, TargetFilePath, Params, WorkingDir: String);
@@ -143,6 +144,26 @@ begin
   Result := 0;
   if FileName <> '' then
     FCRC32File(FileName, Result, Buffer, SizeOf(Buffer), ErrCode);
+end;
+
+function ExtractFileNameEx(const AFileName: String): string;
+var
+  VersionInfo : TPJVersionInfo;
+  sPath : String;
+begin
+  sPath := Config.Paths.RelativeToAbsolute(AFileName);
+  Result := ExtractFileName(sPath);
+  VersionInfo := TPJVersionInfo.Create(nil);
+  try
+    if FileExists(sPath) then
+    begin
+      VersionInfo.FileName := sPath;
+      if (VersionInfo.FileDescription <> '') then
+        Result := VersionInfo.FileDescription;
+    end;
+  finally
+    VersionInfo.Free;
+  end;
 end;
 
 procedure DeleteOldBackups(const MaxNumber: Integer);
