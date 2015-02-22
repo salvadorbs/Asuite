@@ -106,10 +106,9 @@ begin
   begin
     Name  := 'Progress';
     Parent := Result;
-    Max   := FScannerFolder.Count;
-    Step  := 1;
     Top   := 50;
     Left  := 8;
+    Style := pbstMarquee;
     Width := Result.ClientWidth - 16;
   end;
   //Button Cancel
@@ -250,12 +249,14 @@ var
 begin
   if FCancel then
     Exit;
+
   //Flat structure
   if FFlat then
     AParentNode := FParentNode;
+
+  //Folders
   if Not AOnlyFiles then
   begin
-    //Folders
     for sPath in TDirectory.GetDirectories(AFolderPath) do
     begin
       Node := TVirtualTreeMethods.Create.AddChildNodeEx(Config.MainTree, AParentNode, amInsertAfter, vtdtCategory, False);
@@ -267,6 +268,7 @@ begin
       CheckEmptyCategory(Node, NodeData);
     end;
   end;
+
   //Files
   for sPath in TDirectory.GetFiles(AFolderPath) do
   begin

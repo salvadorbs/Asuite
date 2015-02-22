@@ -187,17 +187,22 @@ var
   Nodes: TNodeArray;
   Tree: TBaseVirtualTree;
 begin
-  Tree := GetActiveTree;
-  if (Tree.GetFirstSelected <> nil) and (MessageDlg((DKLangConstW('msgConfirm')),mtWarning, [mbYes,mbNo], 0) = mrYes) then
-  begin
-    Nodes := Tree.GetSortedSelection(true);
-    //Delete items
-    if Config.DBManager.DeleteItems(Tree, Nodes) then
+  Config.ASuiteState := lsDeleting;
+  try
+    Tree := GetActiveTree;
+    if (Tree.GetFirstSelected <> nil) and (MessageDlg((DKLangConstW('msgConfirm')),mtWarning, [mbYes,mbNo], 0) = mrYes) then
     begin
-      //Delete nodes and refresh list
-      Tree.DeleteSelectedNodes;
-      TVirtualTreeMethods.Create.RefreshList(Tree);
+      Nodes := Tree.GetSortedSelection(true);
+      //Delete items
+      if Config.DBManager.DeleteItems(Tree, Nodes) then
+      begin
+        //Delete nodes and refresh list
+        Tree.DeleteSelectedNodes;
+        TVirtualTreeMethods.Create.RefreshList(Tree);
+      end;
     end;
+  finally
+    Config.ASuiteState := lsNormal;
   end;
 end;
 

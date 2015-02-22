@@ -136,7 +136,7 @@ var
   ListNodeData : TvBaseNodeData;
 begin
   //Add parent node named as Form's caption
-  ListNode := TVirtualTreeMethods.Create.AddChildNodeEx(Config.MainTree, Config.MainTree.GetFirstSelected, amInsertAfter, vtdtCategory);
+  ListNode := TVirtualTreeMethods.Create.AddChildNodeEx(Config.MainTree, nil, amInsertAfter, vtdtCategory);
   ListNodeData := TVirtualTreeMethods.Create.GetNodeItemData(ListNode, Config.MainTree);
   ListNodeData.Name := Self.Caption;
   //Create and start Scanner thread
@@ -217,16 +217,13 @@ end;
 function TfrmScanFolder.GetExtImage(AExtension: string): Integer;
 var
   FileInfo: TSHFileInfo;
-  Flags: Integer;
   Icon: TIcon;
 begin
   Result := -1;
-  Flags := -1;
   Icon := TIcon.Create;
   try
-    Flags := SHGFI_ICON or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES;
     //Get index
-    if SHGetFileInfo(PChar('*' + AExtension), 0, FileInfo, SizeOf(TSHFileInfo), Flags) <> 0 then
+    if SHGetFileInfo(PChar('*' + AExtension), 0, FileInfo, SizeOf(TSHFileInfo), SHGFI_ICON or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES) <> 0 then
     begin
       Icon.Handle := FileInfo.hIcon;
       Result := ilExtIcons.AddIcon(Icon);

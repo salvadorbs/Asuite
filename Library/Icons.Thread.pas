@@ -38,7 +38,7 @@ type
 implementation
 
 uses
-  VirtualTree.Methods, NodeDataTypes.Base;
+  VirtualTree.Methods, NodeDataTypes.Base, AppConfig.Main, Kernel.Enumerations;
 
 { TTreeIconsThread }
 
@@ -61,9 +61,14 @@ procedure TTreeIconsThread.GetImageIndex(Sender: TBaseVirtualTree;
 var
   NodeData: TvBaseNodeData;
 begin
-  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
-  if Assigned(NodeData) then
-    NodeData.Icon.ImageIndex;
+  if Config.ASuiteState = lsNormal then
+  begin
+    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
+    if Assigned(NodeData) then
+      NodeData.Icon.ImageIndex;
+  end
+  else
+    Abort := True;
 end;
 
 end.

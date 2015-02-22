@@ -83,7 +83,8 @@ type
       lsStartUp,  //Launcher Startup Time
       lsShutdown, //Launcher Shutdown Time
       lsNormal,
-      lsImporting
+      lsImporting,
+      lsDeleting
   );
 
   TIconSize = (

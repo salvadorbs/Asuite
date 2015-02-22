@@ -159,7 +159,10 @@ begin
     begin
       VersionInfo.FileName := sPath;
       if (VersionInfo.FileDescription <> '') then
-        Result := VersionInfo.FileDescription;
+        Result := VersionInfo.FileDescription
+      else
+        if (VersionInfo.ProductName <> '') then
+          Result := VersionInfo.ProductName;
     end;
   finally
     VersionInfo.Free;
