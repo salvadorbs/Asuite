@@ -7,6 +7,7 @@ if [%1]==[help] GOTO :help else GOTO :SetVars
   set UPXPath=%1
   set StripRelocPath=%2
   set GitTag=%3
+  set Map2Mab=%4
   goto :Run
 
 :Run
@@ -27,6 +28,7 @@ if [%1]==[help] GOTO :help else GOTO :SetVars
 :Build
   call "%OLDDIR%\..\build_release_asuite.bat"
   cd utils
+  %Map2Mab% ..\bin\asuite.exe
   %StripRelocPath% /B ..\bin\asuite.exe
   %UPXPath% --best ..\bin\asuite.exe
   goto :CompressRelease

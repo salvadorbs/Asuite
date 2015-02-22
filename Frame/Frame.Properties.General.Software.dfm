@@ -3,13 +3,9 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
     Font.Style = [fsBold]
     ParentFont = False
     inherited lbName: TLabel
-      Width = 32
-      Font.Style = [fsBold]
       ParentFont = False
     end
     inherited lbPathIcon: TLabel
-      Width = 157
-      Font.Style = [fsBold]
       ParentFont = False
     end
     inherited edtName: TEdit
