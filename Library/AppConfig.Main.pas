@@ -102,8 +102,8 @@ type
     FMissedSchedulerTask  : Boolean;
     FAutoExpansionFolder  : Boolean;
     FActionClickMiddle    : TTrayiconActionClick;
-    FScanFolderLastPath   : string;
-    FScanFolderSubFolders : boolean;
+    FScanFolderFlatStructure   : boolean;
+    FScanFolderAutoExtractName : boolean;
     FScanFolderFileTypes  : TStringList;
     FScanFolderExcludeNames: TStringList;
 
@@ -225,8 +225,8 @@ type
     property ReadOnlyMode: Boolean read FReadOnlyMode write FReadOnlyMode;
     property Changed: Boolean read FChanged write SetChanged;
     property ASuiteState: TLauncherState read FASuiteState write FASuiteState;
-    property ScanFolderLastPath: string read FScanFolderLastPath write FScanFolderLastPath;
-    property ScanFolderSubFolders: boolean read FScanFolderSubFolders write FScanFolderSubFolders;
+    property ScanFolderFlatStructure: boolean read FScanFolderFlatStructure write FScanFolderFlatStructure;
+    property ScanFolderAutoExtractName: boolean read FScanFolderAutoExtractName write FScanFolderAutoExtractName;
     property ScanFolderFileTypes: TStringList read FScanFolderFileTypes write FScanFolderFileTypes;
     property ScanFolderExcludeNames: TStringList read FScanFolderExcludeNames write FScanFolderExcludeNames;
 
@@ -352,8 +352,8 @@ begin
   FWindowHotKey       := 0;
   FMenuHotKey         := 0;
   //ScanFolder
-  FScanFolderLastPath   := FPaths.SuitePathWorking;
-  FScanFolderSubFolders := True;
+  FScanFolderFlatStructure   := False;
+  FScanFolderAutoExtractName := True;
   FScanFolderFileTypes  := TStringList.Create;
   FScanFolderFileTypes.Add(EXT_LNK);
   FScanFolderFileTypes.Add(EXT_EXE);

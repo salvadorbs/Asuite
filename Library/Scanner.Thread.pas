@@ -28,37 +28,35 @@ uses
 
 type
   TScanThread = class(TThread)
-    private
-      FCancel : Boolean;
-      FTree   : TBaseVirtualTree;
-      FDialog : TForm;
-      FScannerFolder : TScannerFolder;
-      FParentNode : PVirtualNode;
-      //Settings
-      FAutoExtractName: Boolean;
-      FFlat: Boolean;
-    FShellTree: TVirtualExplorerTree;
+  private
+    FCancel : Boolean;
+    FTree   : TBaseVirtualTree;
+    FDialog : TForm;
+    FScannerFolder : TScannerFolder;
+    FParentNode : PVirtualNode;
+    //Settings
+    FAutoExtractName: Boolean;
+    FFlat: Boolean;
 
-      function CreateDialogProgressBar(DialogMsg: String): TForm;
-      procedure DoDialogCancelClick(Sender: TObject);
-      function GetAllCheckedFolders(ASender: TVirtualExplorerTree): TScannerFolder;
-      procedure CheckEmptyCategory(ANode: PVirtualNode; ANodeData: TvBaseNodeData);
-      procedure ScanFolder(AFolder: TScannerFolder; AParentNode: PVirtualNode); overload;
-      procedure ScanFolder(AFolderPath: string; AParentNode: PVirtualNode; AOnlyFiles: Boolean); overload;
-      function FindMatchText(Strings: TStrings; const Str: string): Integer;
-    protected
-      procedure Execute; override;
-    public
-      property ParentNode: PVirtualNode read FParentNode write FParentNode;
-      property Flat: Boolean read FFlat write FFlat;
-      property AutoExtractName: Boolean read FAutoExtractName write FAutoExtractName;
+    function CreateDialogProgressBar(DialogMsg: String): TForm;
+    procedure DoDialogCancelClick(Sender: TObject);
+    procedure CheckEmptyCategory(ANode: PVirtualNode; ANodeData: TvBaseNodeData);
+    procedure ScanFolder(AFolder: TScannerFolder; AParentNode: PVirtualNode); overload;
+    procedure ScanFolder(AFolderPath: string; AParentNode: PVirtualNode; AOnlyFiles: Boolean); overload;
+    function FindMatchText(Strings: TStrings; const Str: string): Integer;
+  protected
+    procedure Execute; override;
+  public
+    property ParentNode: PVirtualNode read FParentNode write FParentNode;
+    property Flat: Boolean read FFlat write FFlat;
+    property AutoExtractName: Boolean read FAutoExtractName write FAutoExtractName;
 
-      procedure CloseAndFreeDialog;
-      procedure UpdateGUI;
-      procedure Cancel;
+    procedure CloseAndFreeDialog;
+    procedure UpdateGUI;
+    procedure Cancel;
 
-      constructor Create(CreateSuspended: Boolean; ATree: TBaseVirtualTree; AShellTree: TVirtualExplorerTree); overload;
-      destructor Destroy; override;
+    constructor Create(CreateSuspended: Boolean; ATree: TBaseVirtualTree; AFolder: TScannerFolder); overload;
+    destructor Destroy; override;
   end;
 
 implementation
@@ -80,14 +78,13 @@ begin
   FDialog.Free;
 end;
 
-constructor TScanThread.Create(CreateSuspended: Boolean; ATree: TBaseVirtualTree; AShellTree: TVirtualExplorerTree);
+constructor TScanThread.Create(CreateSuspended: Boolean; ATree: TBaseVirtualTree; AFolder: TScannerFolder);
 begin
   inherited Create(CreateSuspended);
   FreeOnTerminate := True;
   FCancel         := False;
   FTree           := ATree;
-  FShellTree      := AShellTree;
-  FScannerFolder  := GetAllCheckedFolders(AShellTree);
+  FScannerFolder  := AFolder;
   FDialog         := CreateDialogProgressBar(DKLangConstW('msgScanningProgress'));
 end;
 
@@ -129,7 +126,6 @@ end;
 
 destructor TScanThread.Destroy;
 begin
-  FreeAndNil(FScannerFolder);
   inherited;
 end;
 
@@ -176,13 +172,16 @@ end;
 procedure TScanThread.Execute;
 begin
   inherited;
-  FTree.BeginUpdate;
-  try
-    if NOT FCancel then
-      ScanFolder(FScannerFolder, FParentNode);
-  finally
-    TVirtualTreeMethods.Create.GetAllIcons(Config.MainTree);
-    FTree.EndUpdate;
+  if FScannerFolder.Count > 0 then
+  begin
+    FTree.BeginUpdate;
+    try
+      if NOT FCancel then
+        ScanFolder(FScannerFolder, FParentNode);
+    finally
+      TVirtualTreeMethods.Create.GetAllIcons(Config.MainTree);
+      FTree.EndUpdate;
+    end;
   end;
 end;
 
@@ -193,51 +192,6 @@ begin
     if ContainsText(Str, Strings[Result]) then
       exit;
   Result := -1;
-end;
-
-function TScanThread.GetAllCheckedFolders(
-  ASender: TVirtualExplorerTree): TScannerFolder;
-
-  procedure RecurseStorage(S: TNodeStorage; CheckedFolderList: TScannerFolder);
-  var
-    NS: TNamespace;
-    i: integer;
-    Str: string;
-    CheckType: TCheckType;
-  begin
-    NS := TNamespace.Create(S.AbsolutePIDL, nil);
-    NS.FreePIDLOnDestroy := False;
-    // Need to do this to get the real path to special folders
-    Str := NS.NameForParsing;
-    { The items must - be in the file system, a valid file or directory, have a }
-    { full check     }
-    if NS.FileSystem and (FileExistsW(Str) or WideDirectoryExists(Str) or WideIsDrive(Str)) then
-    begin
-      //Get proper check
-      case S.Storage.Check.CheckState of
-        csUncheckedNormal,
-        csUncheckedPressed: CheckType := fctUnchecked;
-        csCheckedNormal,
-        csCheckedPressed: CheckType := fctChecked;
-        csMixedNormal,
-        csMixedPressed: CheckType := fctMixed;
-      end;
-      //Add in FolderList
-      if CheckType <> fctUnchecked then
-        CheckedFolderList := CheckedFolderList.AddItem(Str, CheckType)
-    end;
-
-    if Assigned(S.ChildNodeList) and (CheckType <> fctChecked) then
-      for i := 0 to S.ChildNodeList.Count - 1 do
-        RecurseStorage(S.ChildNodeList[i], CheckedFolderList);
-
-    NS.Free;
-  end;
-
-begin
-  Result := TScannerFolder.Create('', fctUnChecked);
-  //Add mixed checked folders
-  RecurseStorage(ASender.Storage, Result);
 end;
 
 procedure TScanThread.ScanFolder(AFolderPath: string;

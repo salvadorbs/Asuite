@@ -26,7 +26,7 @@ uses
   Dialogs, StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, DKLang,
   JvExMask, JvToolEdit, VirtualExplorerTree, MPShellUtilities, MPCommonObjects,
   EasyListview, ShellApi, Vcl.ImgList, Generics.Collections, MPCommonUtilities,
-  Generics.Defaults, Scanner.Thread;
+  Generics.Defaults, Scanner.Thread, Scanner.Folder;
 
 type
   TfrmScanFolder = class(TForm)
@@ -81,6 +81,7 @@ type
   private
     { Private declarations }
     FScanThread: TScanThread;
+    FScannerFolder: TScannerFolder;
     procedure PopulateStringList(AListView: TVirtualStringTree; AStringList: TStringList);
     procedure PopulateVSTListView(AListView: TVirtualStringTree; AStringList: TStringList; AIsExtension: Boolean);
     function GetExtImage(AExtension: string): Integer;
@@ -88,7 +89,10 @@ type
 
     procedure thTerminate(Sender: TObject);
 
-    procedure DoScanThread(ATree: TVirtualStringTree; AParentNode: PVirtualNode);
+    procedure LoadSettings;
+    procedure SaveSettings;
+    procedure DoScanThread(ATree: TVirtualStringTree; AParentNode: PVirtualNode; AFolder: TScannerFolder);
+    function GetAllCheckedFolders(ASender: TVirtualExplorerTree): TScannerFolder;
   public
     { Public declarations }
     class procedure Execute(AOwner: TComponent);
@@ -100,7 +104,8 @@ var
 implementation
 
 uses
-  AppConfig.Main, Kernel.Enumerations, Kernel.Types, VirtualTree.Methods, NodeDataTypes.Base;
+  AppConfig.Main, Kernel.Enumerations, Kernel.Types, VirtualTree.Methods,
+  NodeDataTypes.Base, Utility.Misc;
 
 {$R *.dfm}
 
@@ -135,12 +140,26 @@ var
   ListNode: PVirtualNode;
   ListNodeData : TvBaseNodeData;
 begin
-  //Add parent node named as Form's caption
-  ListNode := TVirtualTreeMethods.Create.AddChildNodeEx(Config.MainTree, nil, amInsertAfter, vtdtCategory);
-  ListNodeData := TVirtualTreeMethods.Create.GetNodeItemData(ListNode, Config.MainTree);
-  ListNodeData.Name := Self.Caption;
-  //Create and start Scanner thread
-  DoScanThread(Config.MainTree, ListNode);
+  //Check if user add at least one file extension
+  if vstTypes.HasChildren[vstTypes.RootNode] then
+  begin
+    SaveSettings;
+    //Get checked folders from vstShell
+    FScannerFolder := GetAllCheckedFolders(vstShell);
+    if FScannerFolder.Count > 0 then
+    begin
+      //Add parent node named as Form's caption
+      ListNode := TVirtualTreeMethods.Create.AddChildNodeEx(Config.MainTree, nil, amInsertAfter, vtdtCategory);
+      ListNodeData := TVirtualTreeMethods.Create.GetNodeItemData(ListNode, Config.MainTree);
+      ListNodeData.Name := Self.Caption;
+      //Create and start Scanner thread
+      DoScanThread(Config.MainTree, ListNode, FScannerFolder);
+    end
+    else
+      ShowMessageEx(DKLangConstW('msgErrScanFolderEmptyPath'), True);
+  end
+  else
+    ShowMessageEx(DKLangConstW('msgErrScanFolderMissingTypes'), True);
 end;
 
 procedure TfrmScanFolder.btnTypesAddClick(Sender: TObject);
@@ -209,9 +228,52 @@ end;
 
 procedure TfrmScanFolder.FormCreate(Sender: TObject);
 begin
-  //TODO: Load and save options
-  PopulateVSTListView(vstTypes, Config.ScanFolderFileTypes, True);
-  PopulateVSTListView(vstExclude, Config.ScanFolderExcludeNames, False);
+  LoadSettings;
+end;
+
+function TfrmScanFolder.GetAllCheckedFolders(
+  ASender: TVirtualExplorerTree): TScannerFolder;
+
+  procedure RecurseStorage(S: TNodeStorage; CheckedFolderList: TScannerFolder);
+  var
+    NS: TNamespace;
+    i: integer;
+    Str: string;
+    CheckType: TCheckType;
+  begin
+    NS := TNamespace.Create(S.AbsolutePIDL, nil);
+    NS.FreePIDLOnDestroy := False;
+    // Need to do this to get the real path to special folders
+    Str := NS.NameForParsing;
+    { The items must - be in the file system, a valid file or directory, have a }
+    { full check     }
+    if NS.FileSystem and (FileExistsW(Str) or WideDirectoryExists(Str) or WideIsDrive(Str)) then
+    begin
+      //Get proper check
+      case S.Storage.Check.CheckState of
+        csUncheckedNormal,
+        csUncheckedPressed: CheckType := fctUnchecked;
+        csCheckedNormal,
+        csCheckedPressed: CheckType := fctChecked;
+        csMixedNormal,
+        csMixedPressed: CheckType := fctMixed;
+      end;
+      //Add in FolderList
+      if CheckType <> fctUnchecked then
+        CheckedFolderList := CheckedFolderList.AddItem(Str, CheckType)
+    end;
+
+    if Assigned(S.ChildNodeList) and (CheckType <> fctChecked) then
+      for i := 0 to S.ChildNodeList.Count - 1 do
+        RecurseStorage(S.ChildNodeList[i], CheckedFolderList);
+
+    NS.Free;
+  end;
+
+begin
+  Result := TScannerFolder.Create('', fctUnChecked);
+  //Add mixed checked folders
+  RecurseStorage(ASender.Storage, Result);
 end;
 
 function TfrmScanFolder.GetExtImage(AExtension: string): Integer;
@@ -233,6 +295,14 @@ begin
   end;
 end;
 
+procedure TfrmScanFolder.LoadSettings;
+begin
+  chkFlat.Checked := Config.ScanFolderFlatStructure;
+  chkExtractName.Checked := Config.ScanFolderAutoExtractName;
+  PopulateVSTListView(vstTypes, Config.ScanFolderFileTypes, True);
+  PopulateVSTListView(vstExclude, Config.ScanFolderExcludeNames, False);
+end;
+
 procedure TfrmScanFolder.PopulateVSTListView(AListView: TVirtualStringTree; AStringList: TStringList; AIsExtension: Boolean);
 var
   I: Integer;
@@ -247,10 +317,19 @@ begin
   end;
 end;
 
-procedure TfrmScanFolder.DoScanThread(ATree: TVirtualStringTree;
-  AParentNode: PVirtualNode);
+procedure TfrmScanFolder.SaveSettings;
 begin
-  FScanThread := TScanThread.Create(True, ATree, vstShell);
+  Config.ScanFolderFlatStructure   := chkFlat.Checked;
+  Config.ScanFolderAutoExtractName := chkExtractName.Checked;
+  PopulateStringList(vstTypes, Config.ScanFolderFileTypes);
+  PopulateStringList(vstExclude, Config.ScanFolderExcludeNames);
+  Config.Changed := True;
+end;
+
+procedure TfrmScanFolder.DoScanThread(ATree: TVirtualStringTree;
+  AParentNode: PVirtualNode; AFolder: TScannerFolder);
+begin
+  FScanThread := TScanThread.Create(True, ATree, AFolder);
   FScanThread.ParentNode      := AParentNode;
   FScanThread.Flat            := chkFlat.Checked;
   FScanThread.AutoExtractName := chkExtractName.Checked;
@@ -260,6 +339,13 @@ end;
 
 procedure TfrmScanFolder.thTerminate(Sender: TObject);
 begin
+  FreeAndNil(FScannerFolder);
+  //Select and expanded ScanFolder node
+  Config.MainTree.ClearSelection;
+  Config.MainTree.Selected[FScanThread.ParentNode] := True;
+  Config.MainTree.Expanded[FScanThread.ParentNode] := True;
+  Config.MainTree.FocusedNode := FScanThread.ParentNode;
+  //Close Dialog and frmScanFolder
   FScanThread.CloseAndFreeDialog;
   Close;
 end;

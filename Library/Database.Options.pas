@@ -96,8 +96,8 @@ type
     FWindowHotKey       : Word;
     FMenuHotKey         : Word;
     //ScanFolder
-    Fscanfolderlastpath : RawUTF8;
-    Fscanfoldersubfolders   : Boolean;
+    Fscanfolderflatstructure   : boolean;
+    Fscanfolderautoextractname : boolean;
     Fscanfolderfiletypes    : RawUTF8;
     Fscanfolderexcludenames : RawUTF8;
     FFTVAutoOpCatsDrag: Boolean;
@@ -174,8 +174,8 @@ type
     property windowhotkey: Word read FWindowHotKey write FWindowHotKey;
     property menuhotkey: Word read FMenuHotKey write FMenuHotKey;
     //Scan Folder
-    property scanfolderlastpath: RawUTF8 read Fscanfolderlastpath write Fscanfolderlastpath;
-    property scanfoldersubfolders: Boolean read Fscanfoldersubfolders write Fscanfoldersubfolders;
+    property scanfolderflatstructure: boolean read Fscanfolderflatstructure write Fscanfolderflatstructure;
+    property scanfolderautoextractname: boolean read Fscanfolderautoextractname write Fscanfolderautoextractname;
     property scanfolderfiletypes: RawUTF8 read Fscanfolderfiletypes write Fscanfolderfiletypes;
     property scanfolderexcludenames: RawUTF8 read Fscanfolderexcludenames write Fscanfolderexcludenames;
   end;
@@ -277,8 +277,8 @@ begin
       AConfig.WindowHotKey       := SQLOptionsData.WindowHotKey;
       AConfig.MenuHotKey         := SQLOptionsData.MenuHotKey;
       //Scan Folder
-      AConfig.ScanFolderLastPath   := UTF8ToString(SQLOptionsData.scanfolderlastpath);
-      AConfig.ScanFolderSubFolders := SQLOptionsData.scanfoldersubfolders;
+      AConfig.ScanFolderFlatStructure     := SQLOptionsData.scanfolderflatstructure;
+      AConfig.ScanFolderAutoExtractName   := SQLOptionsData.scanfolderautoextractname;
       AConfig.ScanFolderFileTypes.Text    := UTF8ToString(SQLOptionsData.scanfolderfiletypes);
       AConfig.ScanFolderExcludeNames.Text := UTF8ToString(SQLOptionsData.scanfolderexcludenames);
     end
@@ -360,16 +360,16 @@ begin
     pointGraphicMenu.Y := AConfig.GMPositionTop;
     pointGraphicMenu.X := AConfig.GMPositionLeft;
     SQLOptionsData.DynArray('gmposition').Add(pointGraphicMenu);
-    SQLOptionsData.gmshowuserpicture := AConfig.GMShowUserPicture;
-    SQLOptionsData.gmautohidemenu := AConfig.GMAutomaticHideMenu;
+    SQLOptionsData.gmshowuserpicture   := AConfig.GMShowUserPicture;
+    SQLOptionsData.gmautohidemenu      := AConfig.GMAutomaticHideMenu;
     SQLOptionsData.autoexpansionfolder := AConfig.AutoExpansionFolder;
     //Hot Keys
-    SQLOptionsData.HotKey             := AConfig.HotKey;
-    SQLOptionsData.WindowHotKey       := AConfig.WindowHotKey;
-    SQLOptionsData.MenuHotKey         := AConfig.MenuHotKey;
+    SQLOptionsData.HotKey       := AConfig.HotKey;
+    SQLOptionsData.WindowHotKey := AConfig.WindowHotKey;
+    SQLOptionsData.MenuHotKey   := AConfig.MenuHotKey;
     //Scan Folder
-    SQLOptionsData.scanfolderlastpath     := StringToUTF8(AConfig.ScanFolderLastPath);
-    SQLOptionsData.scanfoldersubfolders   := AConfig.ScanFolderSubFolders;
+    SQLOptionsData.scanfolderflatstructure   := AConfig.ScanFolderFlatStructure;
+    SQLOptionsData.scanfolderautoextractname := AConfig.ScanFolderAutoExtractName;
     SQLOptionsData.scanfolderfiletypes    := StringToUTF8(AConfig.ScanFolderFileTypes.Text);
     SQLOptionsData.scanfolderexcludenames := StringToUTF8(AConfig.ScanFolderExcludeNames.Text);
 

@@ -105,8 +105,8 @@
         <DCC_HppOutput>dcu</DCC_HppOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1386;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
-        <VerInfo_Build>1386</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1387;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
+        <VerInfo_Build>1387</VerInfo_Build>
         <ILINK_MapFileType>DetailedSegments</ILINK_MapFileType>
         <MapFile>3</MapFile>
         <DCC_MapFile>3</DCC_MapFile>
