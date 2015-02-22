@@ -22,7 +22,7 @@ unit Scanner.Folder;
 interface
 
 uses
-  Classes, SysUtils, Generics.Collections, VirtualTrees;
+  Classes, SysUtils, Generics.Collections;
 
 type
   TCheckType = (fctUnchecked, fctChecked, fctMixed);

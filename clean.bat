@@ -27,4 +27,4 @@ del /S /Q *.stat
 del /S /Q *.tci
 del /S /Q *.tmp
 del /S /Q log.txt
-del /S /Q *.exe
+del /S /Q asuite.exe

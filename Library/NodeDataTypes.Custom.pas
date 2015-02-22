@@ -22,7 +22,7 @@ unit NodeDataTypes.Custom;
 interface
 
 uses
-  VirtualTrees, SysUtils, Kernel.Enumerations, NodeDataTypes.Base,
+  SysUtils, Kernel.Enumerations, NodeDataTypes.Base,
   DateUtils, Menus, Classes, Kernel.Types;
 
 type
@@ -78,7 +78,7 @@ implementation
 
 uses
   AppConfig.Main, Lists.Manager, VirtualTree.Methods,
-  DKLang, Utility.Process;
+  Utility.Process;
 
 procedure TvCustomRealNodeData.Copy(source: TvBaseNodeData);
 var

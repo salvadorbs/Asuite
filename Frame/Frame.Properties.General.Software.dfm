@@ -6,19 +6,16 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Width = 32
       Font.Style = [fsBold]
       ParentFont = False
-      ExplicitWidth = 32
     end
     inherited lbPathIcon: TLabel
       Width = 157
       Font.Style = [fsBold]
       ParentFont = False
-      ExplicitWidth = 157
     end
     inherited edtName: TEdit
       Width = 161
       Font.Style = [fsBold]
       ParentFont = False
-      ExplicitWidth = 161
     end
     inherited edtPathIcon: TJvFilenameEdit
       OnBeforeDialog = nil

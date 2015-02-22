@@ -24,9 +24,9 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, DKLang,
-  JvExMask, JvToolEdit, VirtualExplorerTree, MPShellUtilities, MPCommonObjects,
-  EasyListview, ShellApi, Vcl.ImgList, Generics.Collections, MPCommonUtilities,
-  Generics.Defaults, Scanner.Thread, Scanner.Folder;
+  VirtualExplorerTree, MPShellUtilities,
+  ShellApi, Vcl.ImgList, MPCommonUtilities,
+  Scanner.Thread, Scanner.Folder;
 
 type
   TfrmScanFolder = class(TForm)

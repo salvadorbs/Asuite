@@ -23,7 +23,7 @@ interface
 
 uses
   Messages, SysUtils, Classes, VirtualTrees, Forms, Scanner.Folder, ComCtrls, StdCtrls,
-  DKLang, Dialogs, VirtualExplorerTree, MPCommonUtilities, MPShellUtilities,
+  DKLang, Dialogs,
   NodeDataTypes.Base, IOUtils, StrUtils;
 
 type

@@ -64,7 +64,7 @@ var
 implementation
 
 uses
-  Kernel.Consts, NodeDataTypes.Files, PJVersionInfo, AppConfig.Main,
+  Kernel.Consts, NodeDataTypes.Files, AppConfig.Main,
   Utility.FileFolder;
 
 {$R *.dfm}
