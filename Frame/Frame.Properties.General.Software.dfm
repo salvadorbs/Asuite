@@ -1,17 +1,7 @@
 inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
   inherited gbItem: TGroupBox
-    Font.Style = [fsBold]
-    ParentFont = False
-    inherited lbName: TLabel
-      ParentFont = False
-    end
-    inherited lbPathIcon: TLabel
-      ParentFont = False
-    end
     inherited edtName: TEdit
       Width = 161
-      Font.Style = [fsBold]
-      ParentFont = False
     end
     inherited edtPathIcon: TJvFilenameEdit
       OnBeforeDialog = nil

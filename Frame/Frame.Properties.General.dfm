@@ -5,6 +5,12 @@ inherited frmBaseGeneralPropertyPage: TfrmBaseGeneralPropertyPage
     Width = 354
     Height = 86
     Caption = 'Item'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
     TabOrder = 0
     object lbName: TLabel
       Left = 8
@@ -13,7 +19,13 @@ inherited frmBaseGeneralPropertyPage: TfrmBaseGeneralPropertyPage
       Height = 13
       Caption = 'Name'
       Color = clBtnFace
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
       ParentColor = False
+      ParentFont = False
     end
     object lbPathIcon: TLabel
       Left = 8
@@ -22,13 +34,25 @@ inherited frmBaseGeneralPropertyPage: TfrmBaseGeneralPropertyPage
       Height = 13
       Caption = 'Custom icon path (optional)'
       Color = clBtnFace
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
       ParentColor = False
+      ParentFont = False
     end
     object edtName: TEdit
       Left = 8
       Top = 24
       Width = 145
       Height = 21
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 0
       OnEnter = edtNameEnter
     end
