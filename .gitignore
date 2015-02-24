@@ -13,7 +13,7 @@ debug.txt
 *.exe
 *.compiled
 *.map
-*.dll
+#*.dll
 *.dcu
 
 #lazarus
