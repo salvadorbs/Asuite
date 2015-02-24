@@ -7,7 +7,7 @@
 :bds
   :: now %1 has been verified; verify %2
   if !%2!==!! goto :bdsBegin
-  for %%v in (F fixTargets B msbuild R D C S RS Delphi CBuilder RadStudio) do if /I !%2!==!%%v! goto :bdsBegin
+  for %%v in (F fixTargets B msbuild R D C S RS Delphi CBuilder RadStudio win32 win64) do if /I !%2!==!%%v! goto :bdsBegin
   echo Unknown BDS Target "%2"
   goto :help
 
@@ -47,7 +47,7 @@
   goto :bdsExe
 :bdsExe
   :: cannot pass %* as there is no way to get rid of %1 and %2, see http://stackoverflow.com/questions/9363080/how-to-make-shift-work-with-in-batch-files
-  call :%2 %3
+  call :%2 %3 %4
   goto :bdsEnd
 :missingTarget
   echo missing one or more of "%requiredTargets%" in "%targetDirectory%"
@@ -65,12 +65,13 @@
 :B
 :msbuild
   :: check if the project exists
-  call :do %msBuildExe% /target:build /p:DCC_BuildAllUnits=true /p:config=Debug %1 /l:FileLogger,Microsoft.Build.Engine;logfile="log.txt"
+  call :do %msBuildExe% /p:Platform=%2 /target:build /p:DCC_BuildAllUnits=true /p:config=Debug %1 /l:FileLogger,Microsoft.Build.Engine;logfile="log.txt"
   goto :eof
 
 :R
   :: check if the project exists
-  call :do %msBuildExe% /target:build /p:DCC_BuildAllUnits=true /p:config=Release %1 /l:FileLogger,Microsoft.Build.Engine;logfile="log.txt"
+  echo %Platform%
+  call :do %msBuildExe% /p:Platform=%2 /target:build /p:DCC_BuildAllUnits=true /p:config=Release %1 /l:FileLogger,Microsoft.Build.Engine;logfile="log64.txt"
   goto :eof
 
 :: TODO add options for build Config 3, build Platform 4, search paths 5, conditional defines 6.

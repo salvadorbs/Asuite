@@ -23,6 +23,7 @@ del /S /Q *.mes
 del /S /Q *.mps
 del /S /Q *.mpt
 del /S /Q *.prf
+del /S /Q *.rsm
 del /S /Q *.stat
 del /S /Q *.tci
 del /S /Q *.tmp
