@@ -136,7 +136,7 @@ type
   private
     { Private declarations }
     function  GetActiveTree: TBaseVirtualTree;
-    procedure PopulatePopUpMenuFromAnother(APopupMenu: TPopupMenu; AParentMenuItem: TMenuItem);
+    procedure PopulatePopUpMenuFromAnother(APopupMenu: TMenuItem; AParentMenuItem: TMenuItem);
   public
     { Public declarations }
     procedure ShowMainForm(Sender: TObject);
@@ -467,23 +467,23 @@ begin
   end;
 end;
 
-procedure TfrmMain.PopulatePopUpMenuFromAnother(APopupMenu: TPopupMenu; AParentMenuItem: TMenuItem);
+procedure TfrmMain.PopulatePopUpMenuFromAnother(APopupMenu: TMenuItem; AParentMenuItem: TMenuItem);
 var
   I: Integer;
   MenuItem : TMenuItem;
 begin
-  APopupMenu.Items.Clear;
+  APopupMenu.Clear;
 
   for I := 0 to AParentMenuItem.Count - 1 do
   begin
     //Create menuitem and set it
-    MenuItem         := TMenuItem.Create(APopupMenu);
+    MenuItem := TMenuItem.Create(APopupMenu);
     if Assigned(AParentMenuItem.Items[I].Action) then
-      MenuItem.Action  := AParentMenuItem.Items[I].Action
+      MenuItem.Action := AParentMenuItem.Items[I].Action
     else
       MenuItem.Caption := '-';
     //Add new menu item in APopupMenu
-    APopupMenu.Items.Add(MenuItem) ;
+    APopupMenu.Add(MenuItem) ;
   end;
 end;
 
@@ -588,7 +588,7 @@ begin
   TScheduler.Create.CheckMissedTasks;
   //Get placeholder for edtSearch
   edtSearch.TextHint := StringReplace(miSearchName.Caption, '&', '', []);
-  PopulatePopUpMenuFromAnother(pmWindow, miEdit);
+  PopulatePopUpMenuFromAnother(miEdit, pmWindow.Items);
   //Start thread to get all icons
   TVirtualTreeMethods.Create.GetAllIcons(vstList);
 end;

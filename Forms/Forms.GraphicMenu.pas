@@ -376,12 +376,8 @@ begin
 end;
 
 procedure TfrmGraphicMenu.mniPropertyClick(Sender: TObject);
-var
-  Node: PVirtualNode;
 begin
-  Node := vstList.GetFirstSelected;
-  CloseMenu;
-  TVirtualTreeMethods.Create.ShowItemProperty(Self, vstList, Node);
+  TVirtualTreeMethods.Create.ShowItemProperty(Self, vstList, vstList.GetFirstSelected);
 end;
 
 procedure TfrmGraphicMenu.mniRunClick(Sender: TObject);

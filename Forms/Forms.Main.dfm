@@ -88,16 +88,16 @@ object frmMain: TfrmMain
         Left = 169
         Top = 0
         Width = 24
-        Height = 25
+        Height = 26
         Align = alRight
         Anchors = []
         OnClick = btnedtSearchRightButtonClick
       end
       object vstSearch: TVirtualStringTree
         Left = 0
-        Top = 25
+        Top = 26
         Width = 193
-        Height = 332
+        Height = 331
         Align = alBottom
         Anchors = [akLeft, akTop, akRight, akBottom]
         AnimationDuration = 0
@@ -185,67 +185,6 @@ object frmMain: TfrmMain
     end
     object miEdit: TMenuItem
       Caption = 'Edit'
-      object mniRunItem: TMenuItem
-        Action = actRunItem
-        Default = True
-      end
-      object mniRunAsItem: TMenuItem
-        Action = actRunAsItem
-      end
-      object mniRunAsAdminItem: TMenuItem
-        Action = actRunAsAdminItem
-      end
-      object mniOpenFolderItem: TMenuItem
-        Action = actOpenFolderItem
-      end
-      object N9: TMenuItem
-        Caption = '-'
-      end
-      object mniSortCatItems: TMenuItem
-        Action = actSortCatItems
-      end
-      object mniSortList: TMenuItem
-        Action = actSortList
-      end
-      object N3: TMenuItem
-        Caption = '-'
-      end
-      object mniAddCat: TMenuItem
-        Action = actAddCat
-      end
-      object mniAddSoftware: TMenuItem
-        Tag = 1
-        Action = actAddSoftware
-      end
-      object mniAddFolder: TMenuItem
-        Tag = 2
-        Action = actAddFolder
-      end
-      object mniAddSeparator: TMenuItem
-        Tag = 3
-        Action = actAddSeparator
-      end
-      object miN11: TMenuItem
-        Caption = '-'
-      end
-      object mniCut: TMenuItem
-        Action = actCut
-      end
-      object mniCopy: TMenuItem
-        Action = actCopy
-      end
-      object mniPaste: TMenuItem
-        Action = actPaste
-      end
-      object mniDelete: TMenuItem
-        Action = actDelete
-      end
-      object N8: TMenuItem
-        Caption = '-'
-      end
-      object mniProperty: TMenuItem
-        Action = actProperty
-      end
     end
     object miHelp: TMenuItem
       Caption = 'Help'
@@ -272,6 +211,75 @@ object frmMain: TfrmMain
   object pmWindow: TPopupMenu
     Left = 80
     Top = 32
+    object mniRunItem: TMenuItem
+      Action = actRunItem
+      Default = True
+      ShortCut = 120
+    end
+    object mniRunAsItem: TMenuItem
+      Action = actRunAsItem
+    end
+    object mniRunAsAdminItem: TMenuItem
+      Action = actRunAsAdminItem
+    end
+    object mniOpenFolderItem: TMenuItem
+      Action = actOpenFolderItem
+    end
+    object N9: TMenuItem
+      Caption = '-'
+    end
+    object mniSortCatItems: TMenuItem
+      Action = actSortCatItems
+    end
+    object mniSortList: TMenuItem
+      Action = actSortList
+    end
+    object N3: TMenuItem
+      Caption = '-'
+    end
+    object mniAddCat: TMenuItem
+      Action = actAddCat
+      ShortCut = 114
+    end
+    object mniAddSoftware: TMenuItem
+      Tag = 1
+      Action = actAddSoftware
+      ShortCut = 115
+    end
+    object mniAddFolder: TMenuItem
+      Tag = 2
+      Action = actAddFolder
+    end
+    object mniAddSeparator: TMenuItem
+      Tag = 3
+      Action = actAddSeparator
+    end
+    object miN11: TMenuItem
+      Caption = '-'
+    end
+    object mniCut: TMenuItem
+      Action = actCut
+      ShortCut = 16472
+    end
+    object mniCopy: TMenuItem
+      Action = actCopy
+      ShortCut = 16451
+    end
+    object mniPaste: TMenuItem
+      Action = actPaste
+      ShortCut = 16470
+    end
+    object mniDelete: TMenuItem
+      Action = actDelete
+      ShortCut = 46
+    end
+    object N8: TMenuItem
+      Caption = '-'
+    end
+    object mniProperty: TMenuItem
+      Action = actProperty
+      ShortCut = 116
+    end
   end
   object SaveDialog1: TSaveDialog
     DefaultExt = '.xml'
@@ -377,7 +385,6 @@ object frmMain: TfrmMain
     Top = 192
     object actRunItem: TAction
       Caption = 'Run'
-      ShortCut = 120
       OnExecute = actRunItemExecute
       OnUpdate = actRunItemUpdate
     end
@@ -406,44 +413,37 @@ object frmMain: TfrmMain
     end
     object actAddCat: TAction
       Caption = 'Add category...'
-      ShortCut = 114
       OnExecute = actAddItem
       OnUpdate = actAddItemUpdate
     end
     object actCut: TAction
       Caption = 'Cut'
-      ShortCut = 16472
       OnExecute = actCutExecute
       OnUpdate = actCutCopyDeleteUpdate
     end
     object actCopy: TAction
       Caption = 'Copy'
-      ShortCut = 16451
       OnExecute = actCopyExecute
       OnUpdate = actCutCopyDeleteUpdate
     end
     object actPaste: TAction
       Caption = 'Paste'
-      ShortCut = 16470
       OnExecute = actPasteExecute
       OnUpdate = actPasteUpdate
     end
     object actDelete: TAction
       Caption = 'Delete'
-      ShortCut = 46
       OnExecute = actDeleteExecute
       OnUpdate = actCutCopyDeleteUpdate
     end
     object actProperty: TAction
       Caption = 'Property'
-      ShortCut = 116
       OnExecute = actPropertyExecute
       OnUpdate = actCutCopyDeleteUpdate
     end
     object actAddSoftware: TAction
       Tag = 1
       Caption = 'Add software...'
-      ShortCut = 115
       OnExecute = actAddItem
       OnUpdate = actAddItemUpdate
     end
