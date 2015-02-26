@@ -40,6 +40,7 @@ type
     cbRunSingleClick: TCheckBox;
     cxActionOnExe: TComboBox;
     chkConfirmMessageCat: TCheckBox;
+    chkAutoCloseProcess: TCheckBox;
   private
     { Private declarations }
   strict protected
@@ -94,6 +95,7 @@ begin
   cxActionOnExe.ItemIndex   := Ord(Config.ActionOnExe);
   cbRunSingleClick.Checked  := Config.RunSingleClick;
   chkConfirmMessageCat.Checked := Config.ConfirmRunCat;
+  chkAutoCloseProcess.Checked  := Config.AutoCloseProcess;
 end;
 
 function TfrmGeneralOptionsPage.InternalSaveData: Boolean;
@@ -110,6 +112,7 @@ begin
   Config.ActionOnExe    := TActionOnExecute(cxActionOnExe.ItemIndex);
   Config.RunSingleClick := cbRunSingleClick.Checked;
   Config.ConfirmRunCat  := chkConfirmMessageCat.Checked;
+  Config.AutoCloseProcess := chkAutoCloseProcess.Checked;
 end;
 
 end.

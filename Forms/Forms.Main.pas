@@ -155,7 +155,7 @@ uses
   TypInfo, Forms.Options, Forms.About, Utility.Misc, Forms.ScanFolder,
   DataModules.TrayMenu, Forms.ImportList, AppConfig.Main, Utility.System,
   VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base, Kernel.Scheduler,
-  Kernel.Types, NodeDataTypes.Files, VirtualTree.Events;
+  Kernel.Types, NodeDataTypes.Files, VirtualTree.Events, Utility.Process;
 
 {$R *.dfm}
 
@@ -542,6 +542,9 @@ end;
 
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  //Close all process opened by ASuite
+  if Config.AutoCloseProcess then
+    CloseProcessOpenByASuite;
   Config.ListManager.ExecuteAutorunList(amShutdown);
   //Execute actions on ASuite's shutdown (inside vstList)
   Config.MainTree.IterateSubtree(nil, TVirtualTreeMethods.Create.ActionsOnShutdown, nil);

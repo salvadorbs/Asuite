@@ -27,6 +27,7 @@ uses
 { Processes, execution }
 procedure ActionOnExe(Action: TActionOnExecute);
 function  IsProcessExists(exeFileName: string): Boolean;
+procedure CloseProcessOpenByASuite;
 procedure RunActionOnExe(Action: TActionOnExecute);
 
 { Windows Api }
@@ -87,6 +88,34 @@ begin
       while (Process32Next(hSnapShot, ProcInfo)) do
         if (UpperCase(ExtractFileName(ProcInfo.szExeFile)) = ExeFileName) then
           Result := True;
+    end;
+  end;
+  FileClose(hSnapShot);
+end;
+
+procedure CloseProcessOpenByASuite;
+var
+  hSnapShot, hProcess : THandle;
+  ProcInfo  : TProcessEntry32;
+  ContinueLoop: Boolean;
+begin
+  hSnapShot   := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+  //Check processes
+  if (hSnapShot <> THandle(-1)) then
+  begin
+    ProcInfo.dwSize := SizeOf(ProcInfo);
+    ContinueLoop := Process32First(hSnapshot, ProcInfo);
+    while ContinueLoop do
+    begin
+      //Close process with ParentID same as ASuite PID
+      if ProcInfo.th32ParentProcessID = GetCurrentProcessId then
+      begin
+        hProcess := OpenProcess(PROCESS_TERMINATE, False, ProcInfo.th32ProcessID);
+        TerminateProcess(hProcess, 0);
+        CloseHandle(hProcess);
+      end;
+
+      ContinueLoop := Process32Next(hSnapShot, ProcInfo);
     end;
   end;
   FileClose(hSnapShot);

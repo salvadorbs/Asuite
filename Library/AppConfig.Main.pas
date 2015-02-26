@@ -70,6 +70,7 @@ type
     FActionOnExe        : TActionOnExecute;
     FRunSingleClick     : Boolean;
     FConfirmRunCat      : Boolean;
+    FAutoCloseProcess   : Boolean;
     //Trayicon
     FTrayIcon           : Boolean;
     FTrayUseCustomIcon  : Boolean;
@@ -194,6 +195,7 @@ type
     property ActionOnExe: TActionOnExecute read FActionOnExe write FActionOnExe;
     property RunSingleClick: Boolean read FRunSingleClick write FRunSingleClick;
     property ConfirmRunCat: Boolean read FConfirmRunCat write FConfirmRunCat;
+    property AutoCloseProcess: Boolean read FAutoCloseProcess write FAutoCloseProcess;
     // Trayicon
     property TrayIcon: Boolean read FTrayIcon write SetTrayIcon;
     property TrayUseCustomIcon: Boolean read FTrayUseCustomIcon write SetTrayUseCustomIcon;
@@ -304,11 +306,11 @@ begin
   //MRU
   FMRU                := True;
   FSubMenuMRU         := False;
-  FMRUNumber          := 5;
+  FMRUNumber          := 11;
   //MFU
   FMFU                := True;
   FSubMenuMFU         := True;
-  FMFUNumber          := 5;
+  FMFUNumber          := 11;
   //Backup
   FBackup             := True;
   FBackupNumber       := 5;
@@ -321,6 +323,7 @@ begin
   FActionOnExe        := aeDefault;
   FRunSingleClick     := False;
   FConfirmRunCat      := True;
+  FAutoCloseProcess   := False;
   //Trayicon
   FTrayIcon           := True;
   FTrayUseCustomIcon  := False;
