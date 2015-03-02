@@ -72,20 +72,23 @@ uses
   Icons.Thread in 'Library\Icons.Thread.pas',
   Kernel.Scheduler in 'Library\Kernel.Scheduler.pas',
   Scanner.Thread in 'Library\Scanner.Thread.pas',
-  Scanner.Folder in 'Library\Scanner.Folder.pas';
+  Scanner.Folder in 'Library\Scanner.Folder.pas',
+  Kernel.Logger in 'Library\Kernel.Logger.pas';
 
 //SQLite3 static library
 
-{$IFDEF DEBUG}
 var
+{$IFDEF DEBUG}
   cTempo1,cTempo2 : Cardinal;
   myTextFile   : TextFile;
 {$ENDIF}
+  FLogger: TASuiteLogger;
 
 {$R *.res}
 {$R *.dkl_const.res}
 
 begin
+  FLogger := TASuiteLogger.Create;
   if SingleInst.CanStartApp then
   begin
     {$IFDEF DEBUG}
@@ -95,6 +98,7 @@ begin
     cTempo1 := GetTickCount;
     {$ENDIF}
 
+    TASuiteLogger.Info('Initialize application');
     Application.Initialize;
     Config    := TConfiguration.Create;
     Application.Title := APP_TITLE;
@@ -119,4 +123,5 @@ begin
     CloseFile(myTextFile);
     {$ENDIF}
   end;
+  FLogger.Free;
 end.

@@ -117,8 +117,8 @@
         <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_MajorVer>1</VerInfo_MajorVer>
-        <VerInfo_Build>4</VerInfo_Build>
-        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.4;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Build>5</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.5;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
@@ -132,8 +132,8 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <Icon_MainIcon>ASuite_Icon.ico</Icon_MainIcon>
-        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1393;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
-        <VerInfo_Build>1393</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1406;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
+        <VerInfo_Build>1406</VerInfo_Build>
         <ILINK_MapFileType>DetailedSegments</ILINK_MapFileType>
         <MapFile>3</MapFile>
         <DCC_MapFile>3</DCC_MapFile>
@@ -678,6 +678,7 @@
         <DCCReference Include="Library\Kernel.Scheduler.pas"/>
         <DCCReference Include="Library\Scanner.Thread.pas"/>
         <DCCReference Include="Library\Scanner.Folder.pas"/>
+        <DCCReference Include="Library\Kernel.Logger.pas"/>
         <None Include="ASuite.inc"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>
