@@ -191,8 +191,6 @@ class procedure TSQLtbl_options.Load(ADBManager: TDBManager; AConfig: TConfigura
 var
   SQLOptionsData : TSQLtbl_options;
 begin
-  TASuiteLogger.Enter(Load, Self);
-
   //If tbl_Options is empty, save default options in it
   if Not(ADBManager.Database.TableHasRows(TSQLtbl_options)) then
   begin
