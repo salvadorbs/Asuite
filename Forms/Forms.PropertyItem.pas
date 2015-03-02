@@ -48,7 +48,7 @@ var
 implementation
 
 uses
-  Frame.Properties.Advanced, Kernel.Enumerations,
+  Frame.Properties.Advanced, Kernel.Enumerations, Kernel.Logger,
   Frame.Properties.Behavior, Frame.Properties.General.Category,
   Frame.Properties.General.Software;
 
@@ -68,6 +68,8 @@ class function TfrmPropertyItem.Execute(AOwner: TComponent;
 var
   frm: TfrmPropertyItem;
 begin
+  TASuiteLogger.Info('Opening form Property Item (%s)', [ANodeData.Name]);
+
   Result := mrCancel;
   frm := TfrmPropertyItem.Create(AOwner, ANodeData);
   try

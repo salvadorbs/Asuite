@@ -41,10 +41,14 @@ type
 
 implementation
 
+uses
+  Kernel.Logger;
+
 { TShorcutGrabber }
 
 constructor TShorcutGrabber.Create(AOwner: TComponent);
 begin
+
   FGrabForm := TForm.Create(AOwner);
   FGrabForm.BorderStyle := bsToolWindow;
   FGrabForm.KeyPreview  := true;
@@ -77,9 +81,13 @@ class function TShorcutGrabber.Execute(AOwner: TComponent): TShortcut;
 var
   Grabber: TShorcutGrabber;
 begin
+  TASuiteLogger.Info('Opening form Shortcut Grabber', []);
+
   Grabber := TShorcutGrabber.Create(AOwner);
   try
     Result := Grabber.FHotkey;
+
+    TASuiteLogger.Info('User selected hotkey "%s"', [ShortCutToText(Result)]);
   finally
     Grabber.Free;
   end;

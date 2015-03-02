@@ -61,8 +61,8 @@ implementation
 
 uses
   Kernel.Consts, AppConfig.Main, Utility.FileFolder, Utility.Misc,
-  Database.Version, Database.Options, Database.List,
-  VirtualTree.Methods;
+  Database.Version, Database.Options, Database.List, Kernel.Logger,
+  VirtualTree.Methods, SynLog;
 
 constructor TDBManager.Create;
 begin
@@ -79,6 +79,7 @@ function TDBManager.DeleteItems(ATree: TBaseVirtualTree; ANodes: TNodeArray): Bo
 var
   I: Integer;
 begin
+  TASuiteLogger.Enter('DeleteItems', Self);
   Result := FDatabase.TransactionBegin(TSQLtbl_list, 1);
   //Begin transaction for remove data from sqlite database
   if Result then
@@ -123,6 +124,8 @@ end;
 
 procedure TDBManager.ImportData(ATree: TBaseVirtualTree);
 begin
+  TASuiteLogger.Enter('ImportData', Self);
+  TASuiteLogger.Info('Import list from SQLite Database %s', [Self.FDBFileName]);
   try
     TSQLtbl_list.Load(Self, ATree, True);
   except
@@ -133,6 +136,8 @@ end;
 
 procedure TDBManager.ImportOptions;
 begin
+  TASuiteLogger.Enter('ImportOptions', Self);
+  TASuiteLogger.Info('Import options from SQLite Database %s', [Self.FDBFileName]);
   try
     TSQLtbl_options.Load(Self, Config);
   except
@@ -156,6 +161,8 @@ end;
 
 procedure TDBManager.LoadData(ATree: TBaseVirtualTree);
 begin
+  TASuiteLogger.Enter('LoadData', Self);
+  TASuiteLogger.Info('Found SQLite Database - Loading it', []);
   //List & Options
   ATree.BeginUpdate;
   try
@@ -177,6 +184,8 @@ end;
 
 function TDBManager.SaveData(ATree: TBaseVirtualTree; DoBackup: Boolean): Boolean;
 begin
+  TASuiteLogger.Enter('SaveData', Self);
+  TASuiteLogger.Info('Saving ASuite SQLite Database', []);
   //If launcher is in ReadOnlyMode, exit from this function
   if (Config.ReadOnlyMode) then
     Exit(True);
@@ -199,7 +208,7 @@ begin
       end;
     except
       on E : Exception do begin
-        ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message],True);
+        ShowMessageFmtEx(DKLangConstW('msgErrGeneric'), [E.ClassName,E.Message], True);
         FDatabase.Rollback(1);
       end;
     end;

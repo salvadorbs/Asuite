@@ -86,7 +86,8 @@ implementation
 
 uses
   AppConfig.Main, Lists.Manager, Kernel.Consts, Utility.FileFolder, Lists.Special,
-  Lists.Base, Utility.System, Utility.Process, VirtualTree.Methods, Utility.Misc;
+  Lists.Base, Utility.System, Utility.Process, VirtualTree.Methods, Utility.Misc,
+  Kernel.Logger;
 
 constructor TvFileNodeData.Create(AType: TvTreeDataType);
 begin

@@ -35,7 +35,8 @@ implementation
 
 uses
   Forms.Main, NodeDataTypes.Custom, Utility.Misc, AppConfig.Main, Kernel.Types,
-  Utility.Conversions, VirtualTree.Methods, NodeDataTypes.Files, Menus;
+  Utility.Conversions, VirtualTree.Methods, NodeDataTypes.Files, Menus,
+  Kernel.Logger;
 
 function GetStrPropertyXML(Node : IXMLNode;Name: String;Default: String): String;
 var
@@ -235,6 +236,7 @@ procedure LoadDatabaseFromXML(FileName: string);
 var
   XMLDoc: TXMLDocument;
 begin
+  TASuiteLogger.Info('Load XML List', []);
   //Create XMLDoc
   XMLDoc := TXMLDocument.Create(nil);
   try

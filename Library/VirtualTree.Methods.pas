@@ -23,7 +23,8 @@ interface
 
 uses
   Windows, SysUtils, Classes, Graphics, VirtualTrees, ActiveX, UITypes, DKLang,
-  Kernel.Singleton, Kernel.Enumerations, NodeDataTypes.Base, Kernel.Types, Lists.Base;
+  Kernel.Singleton, Kernel.Enumerations, NodeDataTypes.Base, Kernel.Types, Lists.Base,
+  SynLog;
 
 type
   TVirtualTreeMethods = class(TSingleton)
@@ -85,7 +86,7 @@ uses
   Utility.System, DataModules.Icons, AppConfig.Main, NodeDataTypes.Files,
   Utility.FileFolder, Forms.PropertySeparator, mORMotUILogin, Utility.Misc,
   NodeDataTypes.Category, NodeDataTypes.Separator, Forms.PropertyItem, Icons.Thread,
-  NodeDataTypes.Custom, Kernel.Consts, Icons.Node;
+  NodeDataTypes.Custom, Kernel.Consts, Icons.Node, Kernel.Logger;
 
 { TVirtualTreeMethods }
 
@@ -170,6 +171,8 @@ var
   NodeData: TvFileNodeData;
   Node: PVirtualNode;
 begin
+  TASuiteLogger.Info('Add node by File Path (%s)', [QuotedStr(APathFile)]);
+
   Node := AddChildNodeEx(ASender, AParentNode, AAttachMode, vtdtFile);
   NodeData := TvFileNodeData(GetNodeItemData(Node, ASender));
   //Set some node record's variables
@@ -210,6 +213,7 @@ begin
   Result := AText <> '';
   if Result then
   begin
+    TASuiteLogger.Info('Add node by text (%s)', [QuotedStr(AText)]);
     //Add node and set node properties
     Node := AddChildNodeEx(ASender, AParentNode, AAttachMode, vtdtFile);
     NodeData := TvFileNodeData(GetNodeItemData(Node, ASender));
@@ -328,6 +332,7 @@ procedure TVirtualTreeMethods.GetAllIcons(const ASender: TBaseVirtualTree);
 var
   IconThread: TTreeIconsThread;
 begin
+  TASuiteLogger.Info('Start thread to get all icons', []);
   IconThread := TTreeIconsThread.Create(ASender);
   try
     IconThread.Start;
@@ -379,6 +384,7 @@ end;
 
 procedure TVirtualTreeMethods.RefreshList(const ATree: TBaseVirtualTree);
 begin
+  TASuiteLogger.Info('Refresh List', []);
   Config.SaveList(Config.ASuiteState = lsStartUp);
   //Check paths of only visible nodes
   if Assigned(ATree) then
@@ -454,17 +460,21 @@ var
   NodeData : TvCustomRealNodeData;
 begin
   NodeData := TvCustomRealNodeData(GetNodeItemData(Node, Sender));
-  if (NodeData.DataType <> vtdtSeparator) then
+  if Assigned(NodeData) then
   begin
-    //Delete desktop's shortcut
-    if NodeData is TvFileNodeData then
-      TvFileNodeData(NodeData).DeleteShortcutFile;
-    Config.ListManager.RemoveItemFromLists(NodeData);
+    TASuiteLogger.Info('Deleting node "%s"', [NodeData.Name]);
+    if (NodeData.DataType <> vtdtSeparator) then
+    begin
+      //Delete desktop's shortcut
+      if NodeData is TvFileNodeData then
+        TvFileNodeData(NodeData).DeleteShortcutFile;
+      Config.ListManager.RemoveItemFromLists(NodeData);
+    end;
+    //Delete and reset cache icon
+    TNodeIcon(NodeData.Icon).ResetCacheIcon;
+    //Remove item from sqlite database
+    Config.DBManager.RemoveItem(NodeData.ID);
   end;
-  //Delete and reset cache icon
-  TNodeIcon(NodeData.Icon).ResetCacheIcon;
-  //Remove item from sqlite database
-  Config.DBManager.RemoveItem(NodeData.ID);
 end;
 
 procedure TVirtualTreeMethods.FindNode(Sender: TBaseVirtualTree;
@@ -510,7 +520,10 @@ begin
   begin
     //Delete shortcut on shutdown
     if TvFileNodeData(NodeData).ShortcutDesktop then
+    begin
+      TASuiteLogger.Info('Delete %s desktop shortcut', [NodeData.Name]);
       DeleteShortcutOnDesktop(NodeData.Name + EXT_LNK);
+    end;
   end;
 end;
 

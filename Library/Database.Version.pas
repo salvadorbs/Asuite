@@ -22,7 +22,7 @@ unit Database.Version;
 interface
 
 uses
-  mORMot, Database.Manager, PJVersionInfo;
+  mORMot, Database.Manager, PJVersionInfo, SynLog, SysUtils;
 
 type
   TSQLtbl_version = class(TSQLRecord) //Table tbl_version
@@ -47,7 +47,7 @@ type
 implementation
 
 uses
-  AppConfig.Main;
+  AppConfig.Main, Kernel.Logger, Utility.Misc;
 
 { TSQLtbl_version }
 
@@ -63,6 +63,7 @@ begin
       SQLVersionData.FillOne;
 
       ADBManager.DBVersion := SQLVersionData.ToVersionNumber;
+      TASuiteLogger.Info('Load Database Version (%s)', [GetASuiteVersion(False)]);
     finally
       SQLVersionData.Free;
     end;
@@ -75,6 +76,7 @@ var
   VersionInfo: TPJVersionInfo;
   IsDataExists: Boolean;
 begin
+  TASuiteLogger.Info('Saving ASuite Version', []);
   VersionInfo := TPJVersionInfo.Create(nil);
   try
     VersionInfo.FileName := Config.Paths.SuiteFullFileName;

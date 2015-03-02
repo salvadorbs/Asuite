@@ -51,7 +51,7 @@ type
 implementation
 
 uses
-  AppConfig.Main;
+  AppConfig.Main, Kernel.Logger;
 
 { TIconsManager }
 
@@ -101,6 +101,9 @@ var
   Icon: TApplicationIcon;
   sPath: string;
 begin
+  TASuiteLogger.Enter('LoadAllIcons', Self);
+  TASuiteLogger.Info('Search and load all icons in folder "%s"', [FPathTheme + ICONS_DIR]);
+
   FItems.Clear;
   //Load all icons in FPathTheme + ICONS_DIR
   if TDirectory.Exists(FPathTheme + ICONS_DIR) then

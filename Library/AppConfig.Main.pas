@@ -24,7 +24,7 @@ interface
 uses
   Windows, SysUtils, Graphics, Forms, Controls, VirtualTrees, Kernel.Enumerations,
   Vcl.Imaging.pngimage, System.UITypes, Classes, DKLang, AppConfig.Paths,
-  Lists.Manager, Database.Manager, Icons.Manager;
+  Lists.Manager, Database.Manager, Icons.Manager, Kernel.Logger;
 
 type
 
@@ -277,6 +277,7 @@ begin
   FDBManager    := TDBManager.Create;
   FIconsManager := TIconsManager.Create;
   //Find language files and register them in LangManager
+  TASuiteLogger.Info('Scanning for language files', []);
   LangManager.ScanForLangFiles(FPaths.SuitePathLocale, '*.lng', False);
   LangManager.LanguageID := 1040;
   //General
@@ -403,6 +404,7 @@ var
   end;
 
 begin
+  TASuiteLogger.Info('Received parameter "%s"', [Param]);
   ParseParam(Param);
   if sName <> '' then
   begin
@@ -421,6 +423,7 @@ procedure TConfiguration.LoadList;
 var
   sFilePath  : string;
 begin
+  TASuiteLogger.Info('Finding ASuite SQLite Database', []);
   Assert(Assigned(FMainTree), 'FMainTree is not assigned!');
   try
     //List & Options
@@ -552,6 +555,7 @@ end;
 
 procedure TConfiguration.UpdateGMTheme;
 begin
+  TASuiteLogger.Info('Change Current Theme path to "%s"', [FPaths.SuitePathMenuThemes + FGMTheme]);
   //Set Paths
   FPaths.SuitePathCurrentTheme := IncludeTrailingBackslash(FPaths.SuitePathMenuThemes + FGMTheme);
   FIconsManager.PathTheme      := FPaths.SuitePathCurrentTheme;

@@ -23,7 +23,7 @@ interface
 
 uses
   mORMot, mORMotSQLite3, SynCommons, Database.Manager, VirtualTrees, DKLang, SysUtils,
-  Dialogs, Classes, NodeDataTypes.Base;
+  Dialogs, Classes, NodeDataTypes.Base, SynLog;
 
 type
   TSQLtbl_list = class(TSQLRecord) //Table tbl_list
@@ -104,7 +104,7 @@ implementation
 
 uses
   Kernel.Enumerations, Utility.Misc, VirtualTree.Methods, NodeDataTypes.Custom,
-  NodeDataTypes.Files, AppConfig.Main, Icons.Node;
+  NodeDataTypes.Files, AppConfig.Main, Icons.Node, Kernel.Logger;
 
 { TSQLtbl_files }
 
@@ -226,6 +226,11 @@ end;
 
 class procedure TSQLtbl_list.Load(ADBManager: TDBManager; ATree: TBaseVirtualTree; IsImport: Boolean);
 begin
+  if IsImport then
+    TASuiteLogger.Info('Load ASuite List from Database in VirtualTree (Import mode)', [])
+  else
+    TASuiteLogger.Info('Load ASuite List from Database in VirtualTree', []);
+
   TSQLtbl_list.LoadItemsByParentID(ATree, ADBManager.Database, 0, nil, false);
 end;
 
@@ -282,6 +287,7 @@ end;
 
 class procedure TSQLtbl_list.Save(ADBManager: TDBManager; ATree: TBaseVirtualTree);
 begin
+  TASuiteLogger.Info('Saving ASuite List', []);
   TSQLtbl_list.SaveItemsByParentID(ATree, ADBManager.Database, ATree.GetFirst, 0);
 end;
 

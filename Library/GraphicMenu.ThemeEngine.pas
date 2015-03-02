@@ -96,7 +96,7 @@ implementation
 
 uses
   Kernel.Consts, AppConfig.Main, Utility.Conversions, Utility.Misc,
-  GraphicMenu.ThemeEngine.Consts;
+  GraphicMenu.ThemeEngine.Consts, Kernel.Logger;
 
 { TThemeEngineMethods }
 
@@ -407,10 +407,12 @@ var
   strFont: string;
 begin
   Assert(Assigned(FGraphicMenu), 'FGraphicMenu is not assigned!');
+  TASuiteLogger.Enter('LoadTheme', Self);
 
   //Load theme
   if FileExists(Config.Paths.SuitePathCurrentTheme + THEME_INI) then
   begin
+    TASuiteLogger.Info('Found theme.ini - Loading it', []);
     IniFile := TIniFile.Create(Config.Paths.SuitePathCurrentTheme + THEME_INI);
     try
       //IniFile Section General

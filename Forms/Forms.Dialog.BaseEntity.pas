@@ -66,7 +66,7 @@ var
 implementation
 
 uses
-  VirtualTree.Events, Kernel.Types;
+  VirtualTree.Events, Kernel.Types, Kernel.Logger;
 
 {$R *.dfm}
 
@@ -185,11 +185,13 @@ end;
 
 function TfrmDialogBase.InternalLoadData: Boolean;
 begin
+  TASuiteLogger.Enter('InternalLoadData', Self);
   Result := True;
 end;
 
 function TfrmDialogBase.InternalSaveData: Boolean;
 begin
+  TASuiteLogger.Enter('InternalSaveData', Self);
   Result := True;
 end;
 

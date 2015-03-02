@@ -47,7 +47,8 @@ var
 
 implementation
 
-
+uses
+  Kernel.Logger;
 
 {$R *.dfm}
 
@@ -55,6 +56,8 @@ class function TfrmPropertySeparator.Execute(AOwner: TComponent; NodeData: TvBas
 var
   frm: TfrmPropertySeparator;
 begin
+  TASuiteLogger.Info('Opening form Property Separator', []);
+
   Result := mrCancel;
   frm := TfrmPropertySeparator.Create(AOwner);
   try

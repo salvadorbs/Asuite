@@ -29,10 +29,10 @@ type
   public
     constructor Create;
 
-    class procedure Info(const AText: string; ASynLog: ISynLog = nil);
-    class procedure Debug(const AText: string; ASynLog: ISynLog = nil);
-    class procedure Error(const AText: string; ASynLog: ISynLog = nil);
-    class procedure LastError(const AText: string; ASynLog: ISynLog = nil);
+    class procedure Info(const AText: string; AParams: Array of const);
+    class procedure Debug(const AText: string; AParams: Array of const);
+    class procedure Error(const AText: string; AParams: Array of const);
+    class procedure LastError(const AText: string; AParams: Array of const);
 
     class function Enter(const AMethodName: PUTF8Char; AInstance: TObject): ISynLog;
   end;
@@ -51,12 +51,9 @@ begin
   end;
 end;
 
-class procedure TASuiteLogger.Debug(const AText: string; ASynLog: ISynLog);
+class procedure TASuiteLogger.Debug(const AText: string; AParams: Array of const);
 begin
-  if Assigned(ASynLog) then
-    ASynLog.Log(sllDebug, AText)
-  else
-    TSynLog.Add.Log(sllDebug, AText);
+  TSynLog.Add.Log(sllDebug, Format(AText, AParams));
 end;
 
 class function TASuiteLogger.Enter(const AMethodName: PUTF8Char; AInstance: TObject): ISynLog;
@@ -64,28 +61,19 @@ begin
   Result := TSynLog.Enter(AInstance, AMethodName);
 end;
 
-class procedure TASuiteLogger.Error(const AText: string; ASynLog: ISynLog);
+class procedure TASuiteLogger.Error(const AText: string; AParams: Array of const);
 begin
-  if Assigned(ASynLog) then
-    ASynLog.Log(sllError, AText)
-  else
-    TSynLog.Add.Log(sllError, AText);
+  TSynLog.Add.Log(sllError, Format(AText, AParams));
 end;
 
-class procedure TASuiteLogger.Info(const AText: string; ASynLog: ISynLog);
+class procedure TASuiteLogger.Info(const AText: string; AParams: Array of const);
 begin
-  if Assigned(ASynLog) then
-    ASynLog.Log(sllInfo, AText)
-  else
-    TSynLog.Add.Log(sllInfo, AText);
+  TSynLog.Add.Log(sllInfo, Format(AText, AParams));
 end;
 
-class procedure TASuiteLogger.LastError(const AText: string; ASynLog: ISynLog);
+class procedure TASuiteLogger.LastError(const AText: string; AParams: Array of const);
 begin
-  if Assigned(ASynLog) then
-    ASynLog.Log(sllLastError, AText)
-  else
-    TSynLog.Add.Log(sllLastError, AText);
+  TSynLog.Add.Log(sllLastError, Format(AText, AParams));
 end;
 
 end.

@@ -46,6 +46,9 @@ TPageFrameClass = class of TfrmBaseEntityPage;
 
 implementation
 
+uses
+  Kernel.Logger;
+
 {$R *.dfm}
 
 { TfrmBaseEntityPage }
@@ -68,11 +71,13 @@ end;
 
 function TfrmBaseEntityPage.InternalLoadData: Boolean;
 begin
+  TASuiteLogger.Enter('InternalLoadData', Self);
   Result := True;
 end;
 
 function TfrmBaseEntityPage.InternalSaveData: Boolean;
 begin
+  TASuiteLogger.Enter('InternalSaveData', Self);
   Result := True;
 end;
 

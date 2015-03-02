@@ -77,7 +77,7 @@ type
 implementation
 
 uses
-  AppConfig.Main, Lists.Manager, VirtualTree.Methods,
+  AppConfig.Main, Lists.Manager, VirtualTree.Methods, Kernel.Logger,
   Utility.Process;
 
 procedure TvCustomRealNodeData.Copy(source: TvBaseNodeData);
@@ -155,7 +155,6 @@ begin
     RunActionOnExe(Self.ActionOnExe);
   //Save changes
   Self.Changed := True;
-  TVirtualTreeMethods.Create.RefreshList(Config.MainTree);
 end;
 
 function TvCustomRealNodeData.GetPathAbsoluteIcon: String;
@@ -166,6 +165,7 @@ end;
 function TvCustomRealNodeData.Execute(ADoActionOnExe: Boolean;
   ARunFromCategory: Boolean; ACheckSingleInstance: Boolean): boolean;
 begin
+  TASuiteLogger.Info('Execute Node (%s)', [Self.Name]);
   Result := False;
   try
     Result := InternalExecute(ARunFromCategory, ACheckSingleInstance);
@@ -178,6 +178,7 @@ end;
 function TvCustomRealNodeData.ExecuteAsAdmin(ADoActionOnExe: Boolean;
   ARunFromCategory: Boolean): boolean;
 begin
+  TASuiteLogger.Info('Execute Node (%s) as Admin', [Self.Name]);
   Result := False;
   try
     Result := InternalExecuteAsAdmin(ARunFromCategory);
@@ -190,6 +191,7 @@ end;
 function TvCustomRealNodeData.ExecuteAsUser(ADoActionOnExe: Boolean;
   ARunFromCategory: Boolean; AUserData: TUserData): boolean;
 begin
+  TASuiteLogger.Info('Execute Node (%s) as user', [Self.Name]);
   Result := False;
   try
     Result := InternalExecuteAsUser(ARunFromCategory, AUserData);

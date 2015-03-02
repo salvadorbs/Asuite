@@ -132,7 +132,7 @@ implementation
 uses
   DataModules.Icons, Forms.Main, AppConfig.Main, VirtualTree.Methods,
   Utility.System, Forms.GraphicMenu, Kernel.Types, NodeDataTypes.Files,
-  NodeDataTypes.Custom, NodeDataTypes.Base, Kernel.Consts,
+  NodeDataTypes.Custom, NodeDataTypes.Base, Kernel.Consts, Kernel.Logger,
   Utility.Misc;
 
 {$R *.dfm}
@@ -168,6 +168,7 @@ procedure TdmTrayMenu.ShowPopupMenu(const APopupMenu: TPopupMenu);
 var
   CursorPoint: TPoint;
 begin
+  TASuiteLogger.Enter('ShowPopupMenu', Self);
   //Get Mouse coordinates
   GetCursorPos(CursorPoint);
   SetForegroundWindow(Application.Handle);
@@ -264,6 +265,7 @@ end;
 
 procedure TdmTrayMenu.ShowClassicMenu;
 begin
+  TASuiteLogger.Enter('ShowClassicMenu', Self);
   //Populate classic menu at runtime
   UpdateClassicMenu(pmTrayicon);
   //Show classic menu
@@ -360,6 +362,8 @@ end;
 
 procedure TdmTrayMenu.UpdateClassicMenu(Menu: TPopUpMenu);
 begin
+  TASuiteLogger.Enter('UpdateClassicMenu', Self);
+
   Menu.Items.Clear;
   //Create MenuItems's TrayMenu
   //Header
@@ -730,8 +734,9 @@ end;
 procedure TdmTrayMenu.PopulateDirectory(Sender: TObject);
 var
   MI: TASMenuItem;
-
 begin
+  TASuiteLogger.Enter('PopulateDirectory', Self);
+
   MI := TASMenuItem(Sender);
   try
     {$IFDEF FASTHACK}

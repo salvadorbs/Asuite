@@ -136,7 +136,7 @@ uses
   Utility.Misc, AppConfig.Main, NodeDataTypes.Base, NodeDataTypes.Category,
   NodeDataTypes.Files, NodeDataTypes.Custom, NodeDataTypes.Separator, Kernel.Types,
   Kernel.Enumerations, Frame.BaseEntity, Controls, VirtualTree.Methods, DataModules.TrayMenu,
-  ShellApi, comobj, DataModules.Icons;
+  ShellApi, comobj, DataModules.Icons, Kernel.Logger, SynLog;
 
 { TVirtualTreeEvents }
 
@@ -350,6 +350,7 @@ var
   AttachMode : TVTNodeAttachMode;
   NodeCreated : Boolean;
 begin
+  TASuiteLogger.Enter('DoDragDrop', Self);
   NodeCreated := False;
   case Mode of
     dmAbove  : AttachMode := amInsertBefore;
@@ -362,9 +363,9 @@ begin
   begin
     Sender.BeginUpdate;
     try
-      NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Sender.DropTargetNode, Sender);
-      if Mode = dmOnNode then
+      if (Mode = dmOnNode) and Assigned(Sender.DropTargetNode) then
       begin
+        NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Sender.DropTargetNode, Sender);
         //Check if DropMode is in a vtdtCategory (so expand it, before drop item)
         //or another item type (change Mode and AttachMode for insert after new nodes)
         if NodeData.DataType <> vtdtCategory then
@@ -381,14 +382,17 @@ begin
             DragDropFiles(Sender, DataObject, AttachMode)
           else //VirtualTree Nodes
             if Formats[I] = CF_VIRTUALTREE then
-              Sender.ProcessDrop(DataObject, Sender.DropTargetNode, Effect, AttachMode)
+            begin
+              TASuiteLogger.Info('Moves VirtualTree nodes', []);
+              Sender.ProcessDrop(DataObject, Sender.DropTargetNode, Effect, AttachMode);
+            end
             else //Text
               if (Formats[I] = CF_UNICODETEXT) and Not(NodeCreated) then
                 NodeCreated := TVirtualTreeMethods.Create.AddNodeByText(Sender, Sender.DropTargetNode, GetTextFromDataObject(DataObject), AttachMode);
         end;
       except
         on E : Exception do
-          ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message], true);
+          ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message], True);
       end;
     finally
       TVirtualTreeMethods.Create.RefreshList(Sender);
@@ -653,9 +657,10 @@ var
   FileNames : TStringList;
   I         : Integer;
 begin
+  TASuiteLogger.Info('Drag&Drop files in ASuite', []);
   FileNames := TStringList.Create;
   try
-    GetFileListFromDataObject(ADataObject,FileNames);
+    GetFileListFromDataObject(ADataObject, FileNames);
     //Iterate file list to add nodes
     for I := 0 to FileNames.Count - 1 do
       TVirtualTreeMethods.Create.AddNodeByPathFile(ASender, ASender.DropTargetNode, FileNames[I], AttachMode);

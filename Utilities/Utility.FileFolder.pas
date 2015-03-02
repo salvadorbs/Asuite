@@ -170,8 +170,24 @@ begin
 end;
 
 procedure DeleteOldBackups(const MaxNumber: Integer);
+var
+  BackupList   : TStringList;
+  BackupSearch : TSearchRec;
+  I            : Integer;
 begin
-  DeleteFiles(Config.Paths.SuitePathBackup, APP_NAME + '_*' + EXT_SQLBCK);
+  BackupList := TStringList.Create;
+  if FindFirst(Config.Paths.SuitePathBackup + APP_NAME + '_*' + EXT_SQLBCK, faAnyFile, BackupSearch) = 0 then
+  begin
+    repeat
+      BackupList.Add(BackupSearch.Name);
+    until
+      FindNext(BackupSearch) <> 0;
+    FindClose(BackupSearch);
+  end;
+  BackupList.Sort;
+  for I := 1 to BackupList.Count - MaxNumber do
+    DeleteFile(Config.Paths.SuitePathBackup + BackupList[I - 1]);
+  BackupList.Free;
 end;
 
 procedure CreateShortcutOnDesktop(const FileName, TargetFilePath, Params, WorkingDir: String);

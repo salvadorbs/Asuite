@@ -63,7 +63,7 @@ implementation
 
 uses
   VirtualTree.Methods, AppConfig.Main, Kernel.Enumerations, Utility.FileFolder,
-  NodeDataTypes.Files;
+  NodeDataTypes.Files, Kernel.Logger;
 
 { TScanThread }
 
@@ -171,6 +171,7 @@ end;
 
 procedure TScanThread.Execute;
 begin
+  TASuiteLogger.Enter('Execute', Self);
   inherited;
   if FScannerFolder.Count > 0 then
   begin

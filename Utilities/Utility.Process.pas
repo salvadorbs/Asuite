@@ -22,7 +22,8 @@ unit Utility.Process;
 interface
 
 uses
-  Windows, SysUtils, Kernel.Enumerations, Forms.Main, AppConfig.Main, TlHelp32;
+  Windows, SysUtils, Kernel.Enumerations, Forms.Main, AppConfig.Main, TlHelp32,
+  SynLog;
 
 { Processes, execution }
 procedure ActionOnExe(Action: TActionOnExecute);
@@ -49,6 +50,9 @@ const
   LOGON_WITH_PROFILE = $00000001;
 
 implementation
+
+uses
+  Kernel.Logger;
 
 procedure ActionOnExe(Action: TActionOnExecute);
 begin
@@ -99,6 +103,7 @@ var
   ProcInfo  : TProcessEntry32;
   ContinueLoop: Boolean;
 begin
+  TASuiteLogger.Info('Close processes opened by ASuite', []);
   hSnapShot   := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
   //Check processes
   if (hSnapShot <> THandle(-1)) then

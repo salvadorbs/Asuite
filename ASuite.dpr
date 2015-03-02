@@ -98,7 +98,7 @@ begin
     cTempo1 := GetTickCount;
     {$ENDIF}
 
-    TASuiteLogger.Info('Initialize application');
+    TASuiteLogger.Info('Initialize application', []);
     Application.Initialize;
     Config    := TConfiguration.Create;
     Application.Title := APP_TITLE;

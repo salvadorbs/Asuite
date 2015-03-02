@@ -2,8 +2,6 @@ inherited frmOptions: TfrmOptions
   Caption = 'Options'
   ClientHeight = 450
   ClientWidth = 650
-  ExplicitWidth = 656
-  ExplicitHeight = 479
   PixelsPerInch = 96
   TextHeight = 13
   inherited btnOk: TButton

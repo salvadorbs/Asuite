@@ -48,7 +48,7 @@ implementation
 
 uses
   Frame.Options.General, Frame.Options.Advanced, Frame.Options.TrayIcon,
-  Frame.Options.Stats, Frame.Options.Autorun, AppConfig.Main,
+  Frame.Options.Stats, Frame.Options.Autorun, AppConfig.Main, Kernel.Logger,
   Forms.Main, Frame.Options.Hotkey, Frame.Options.MainWindow;
 
 {$R *.dfm}
@@ -66,6 +66,8 @@ class function TfrmOptions.Execute(AOwner: TComponent;
 var
   frm: TfrmOptions;
 begin
+  TASuiteLogger.Info('Opening form Options', []);
+
   Result := mrCancel;
   frm := TfrmOptions.Create(AOwner, APage);
   try

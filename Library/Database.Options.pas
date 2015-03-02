@@ -22,7 +22,7 @@ unit Database.Options;
 interface
 
 uses
-  mORMot, SynCommons, Kernel.Enumerations, Classes, Kernel.Types,
+  mORMot, SynCommons, Kernel.Enumerations, Classes, Kernel.Types, SynLog,
   SysUtils, Database.Manager, AppConfig.Main, Types;
 
 type
@@ -185,21 +185,28 @@ type
 implementation
 
 uses
-  DKLang, Utility.Conversions, Forms.Main, Utility.Misc, Forms;
+  DKLang, Utility.Conversions, Forms.Main, Utility.Misc, Forms, Kernel.Logger;
 
 class procedure TSQLtbl_options.Load(ADBManager: TDBManager; AConfig: TConfiguration);
 var
   SQLOptionsData : TSQLtbl_options;
 begin
+  TASuiteLogger.Enter(Load, Self);
+
   //If tbl_Options is empty, save default options in it
   if Not(ADBManager.Database.TableHasRows(TSQLtbl_options)) then
+  begin
+    TASuiteLogger.Info('ASuite Options not found', []);
     Self.Save(ADBManager, AConfig);
+  end;
   //Create and fillprepare SQLOptionsData
   SQLOptionsData := TSQLtbl_options.CreateAndFillPrepare(ADBManager.Database, '');
   try
     //Get values settings from table tbl_options
     if (SQLOptionsData.FillOne) then
     begin
+      TASuiteLogger.Info('Load ASuite Options', []);
+
       //Get GMTheme before everything (so ASuite know where icons folder)
       AConfig.GMTheme            := SQLOptionsData.gmtheme;
       //General
@@ -297,6 +304,7 @@ var
   IsDataExists   : Boolean;
   pointGraphicMenu : TPoint;
 begin
+  TASuiteLogger.Info('Saving ASuite Options', []);
   //Save ASuite options
   SQLOptionsData := TSQLtbl_options.CreateAndFillPrepare(ADBManager.Database, '');
   try

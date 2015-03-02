@@ -23,7 +23,7 @@ interface
 
 uses
   Classes, Menus, SysUtils, Kernel.Singleton, Lists.Special, NodeDataTypes.Custom,
-  Lists.Base, Lists.HotKey, Kernel.Enumerations;
+  Lists.Base, Lists.HotKey, Kernel.Enumerations, SynLog;
 
 type
   TListManager = class(TSingleton)
@@ -52,7 +52,7 @@ type
 implementation
 
 uses
-  Windows, AppConfig.Main, VirtualTree.Methods;
+  Windows, AppConfig.Main, VirtualTree.Methods, Kernel.Logger;
 
 { TLauncherLists }
 
@@ -91,6 +91,11 @@ var
   List : TBaseItemsList;
   I    : Integer;
 begin
+  TASuiteLogger.Enter('ExecuteAutorunList', Self);
+  case AutorunListMode of
+    amStartup: TASuiteLogger.Info('Execute Autorun List (Startup)', []);
+    amShutdown: TASuiteLogger.Info('Execute Autorun List (Shutdown)', []);
+  end;
   List := nil;
   if (Config.AutorunStartup) or (Config.AutorunShutdown) then
   begin

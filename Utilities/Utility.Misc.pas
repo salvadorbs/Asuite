@@ -55,7 +55,7 @@ function  GetHotKeyMod(AShortcut: TShortcut) : Integer;
 implementation
 
 uses
-  Registry, SynTaskDialog, PJVersionInfo, AppConfig.Main;
+  Registry, SynTaskDialog, PJVersionInfo, AppConfig.Main, Kernel.Logger;
 
 function IsFormOpen(const FormName : string): Boolean;
 var
@@ -199,6 +199,9 @@ var
 begin
   Task.Content := Format(Msg, Params);
   Task.Execute([cbOK],mrOk,[],IconError[Error]);
+
+  if Error then
+    TASuiteLogger.Error(Msg, Params);
 end;
 
 { Stats }

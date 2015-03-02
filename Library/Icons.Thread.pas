@@ -38,7 +38,8 @@ type
 implementation
 
 uses
-  VirtualTree.Methods, NodeDataTypes.Base, AppConfig.Main, Kernel.Enumerations;
+  VirtualTree.Methods, NodeDataTypes.Base, AppConfig.Main, Kernel.Enumerations,
+  Kernel.Logger;
 
 { TTreeIconsThread }
 
@@ -53,7 +54,8 @@ end;
 
 procedure TTreeIconsThread.Execute;
 begin
-  FSenderTree.IterateSubtree(nil, GetImageIndex, nil)
+  TASuiteLogger.Enter('Execute', Self);
+  FSenderTree.IterateSubtree(nil, GetImageIndex, nil);
 end;
 
 procedure TTreeIconsThread.GetImageIndex(Sender: TBaseVirtualTree;

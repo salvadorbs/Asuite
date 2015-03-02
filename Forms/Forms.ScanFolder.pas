@@ -24,8 +24,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, DKLang,
-  VirtualExplorerTree, MPShellUtilities,
-  ShellApi, Vcl.ImgList, MPCommonUtilities,
+  VirtualExplorerTree, MPShellUtilities, ShellApi, Vcl.ImgList, MPCommonUtilities,
   Scanner.Thread, Scanner.Folder;
 
 type
@@ -105,7 +104,7 @@ implementation
 
 uses
   AppConfig.Main, Kernel.Enumerations, Kernel.Types, VirtualTree.Methods,
-  NodeDataTypes.Base, Utility.Misc;
+  NodeDataTypes.Base, Utility.Misc, Kernel.Logger;
 
 {$R *.dfm}
 
@@ -153,6 +152,7 @@ begin
       ListNodeData := TVirtualTreeMethods.Create.GetNodeItemData(ListNode, Config.MainTree);
       ListNodeData.Name := Self.Caption;
       //Create and start Scanner thread
+      TASuiteLogger.Info('Start scanning folders to search files', []);
       DoScanThread(Config.MainTree, ListNode, FScannerFolder);
     end
     else
@@ -200,6 +200,8 @@ class procedure TfrmScanFolder.Execute(AOwner: TComponent);
 var
   frm: TfrmScanFolder;
 begin
+  TASuiteLogger.Info('Opening form ScanFolder', []);
+
   frm := TfrmScanFolder.Create(AOwner);
   try
     frm.ShowModal;
@@ -319,6 +321,8 @@ end;
 
 procedure TfrmScanFolder.SaveSettings;
 begin
+  TASuiteLogger.Info('Save ScanFolder settings in TConfig', []);
+
   Config.ScanFolderFlatStructure   := chkFlat.Checked;
   Config.ScanFolderAutoExtractName := chkExtractName.Checked;
   PopulateStringList(vstTypes, Config.ScanFolderFileTypes);
@@ -352,7 +356,6 @@ end;
 
 procedure TfrmScanFolder.PopulateStringList(AListView: TVirtualStringTree; AStringList: TStringList);
 var
-  I: Integer;
   Node: PVirtualNode;
   NodeData: pScanFolderData;
 begin

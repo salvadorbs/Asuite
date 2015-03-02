@@ -155,7 +155,8 @@ uses
   TypInfo, Forms.Options, Forms.About, Utility.Misc, Forms.ScanFolder,
   DataModules.TrayMenu, Forms.ImportList, AppConfig.Main, Utility.System,
   VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base, Kernel.Scheduler,
-  Kernel.Types, NodeDataTypes.Files, VirtualTree.Events, Utility.Process;
+  Kernel.Types, NodeDataTypes.Files, VirtualTree.Events, Utility.Process,
+  Kernel.Logger, SynLog;
 
 {$R *.dfm}
 
@@ -166,6 +167,7 @@ end;
 
 procedure TfrmMain.actCopyExecute(Sender: TObject);
 begin
+  TASuiteLogger.Info('Copy nodes into clipboard', []);
   vstList.CopyToClipBoard;
 end;
 
@@ -173,12 +175,17 @@ procedure TfrmMain.actCutCopyDeleteUpdate(Sender: TObject);
 var
   Nodes: TNodeArray;
 begin
-  Nodes := GetActiveTree.GetSortedSelection(True);
-  TAction(Sender).Enabled := Length(Nodes) > 0;
+  TAction(Sender).Enabled := False;
+  if not(tsEditing in GetActiveTree.TreeStates) then
+  begin
+    Nodes := GetActiveTree.GetSortedSelection(True);
+    TAction(Sender).Enabled := Length(Nodes) > 0;
+  end;
 end;
 
 procedure TfrmMain.actCutExecute(Sender: TObject);
 begin
+  TASuiteLogger.Info('Cut nodes into clipboard', []);
   vstList.CutToClipBoard;
 end;
 
@@ -187,10 +194,11 @@ var
   Nodes: TNodeArray;
   Tree: TBaseVirtualTree;
 begin
+  TASuiteLogger.Enter('actDeleteExecute', Self);
   Config.ASuiteState := lsDeleting;
   try
     Tree := GetActiveTree;
-    if (Tree.GetFirstSelected <> nil) and (MessageDlg((DKLangConstW('msgConfirm')),mtWarning, [mbYes,mbNo], 0) = mrYes) then
+    if (Tree.GetFirstSelected <> nil) and (MessageDlg((DKLangConstW('msgConfirm')), mtWarning, [mbYes,mbNo], 0) = mrYes) then
     begin
       Nodes := Tree.GetSortedSelection(true);
       //Delete items
@@ -229,6 +237,7 @@ var
   NodeData: TvBaseNodeData;
   Tree: TVirtualStringTree;
 begin
+  TASuiteLogger.Info('Paste clipboard content in ASuite', []);
   Tree := TVirtualStringTree(GetActiveTree);
   if Assigned(Tree) then
   begin
@@ -542,6 +551,7 @@ end;
 
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  TASuiteLogger.Enter('FormClose', Self);
   //Close all process opened by ASuite
   if Config.AutoCloseProcess then
     CloseProcessOpenByASuite;
@@ -568,6 +578,7 @@ procedure TfrmMain.FormCreate(Sender: TObject);
 var
   VSTEvents: TVirtualTreeEvents;
 begin
+  TASuiteLogger.Enter('FormCreate', Self);
   //Set vstList as MainTree in Config
   Config.MainTree := vstList;
   Application.CreateForm(TdmImages, dmImages);
@@ -586,9 +597,9 @@ begin
   //Load Database and get icons (only first level of tree)
   Config.LoadList;
   Config.ListManager.ExecuteAutorunList(amStartup);
-  TVirtualTreeMethods.Create.RefreshList(nil);
   //Check missed scheduler tasks
   TScheduler.Create.CheckMissedTasks;
+  TVirtualTreeMethods.Create.RefreshList(nil);
   //Get placeholder for edtSearch
   edtSearch.TextHint := StringReplace(miSearchName.Caption, '&', '', []);
   PopulatePopUpMenuFromAnother(miEdit, pmWindow.Items);
