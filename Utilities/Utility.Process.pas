@@ -113,7 +113,7 @@ begin
     while ContinueLoop do
     begin
       //Close process with ParentID same as ASuite PID
-      if ProcInfo.th32ParentProcessID = GetCurrentProcessId then
+      if (ProcInfo.th32ParentProcessID = GetCurrentProcessId) and (ProcInfo.szExeFile <> LowerCase('Rundll32.exe')) then
       begin
         hProcess := OpenProcess(PROCESS_TERMINATE, False, ProcInfo.th32ProcessID);
         TerminateProcess(hProcess, 0);

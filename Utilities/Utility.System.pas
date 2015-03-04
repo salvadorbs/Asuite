@@ -46,7 +46,7 @@ function IsHotkeyAvailable(AId: Integer; AShortcut: TShortcut): Boolean;
 implementation
 
 uses
-  Utility.Conversions, Forms.Main, AppConfig.Main, Utility.Misc;
+  Utility.Conversions, Forms.Main, AppConfig.Main, Utility.Misc, Kernel.Logger;
 
 function HasDriveLetter(const Path: String): Boolean;
 var P: PChar;
@@ -106,15 +106,20 @@ end;
 procedure EjectDialog(Sender: TObject);
 var
   WindowsPath : string;
+  bShellExecute: Boolean;
 begin
   //Call "Safe Remove hardware" Dialog
   WindowsPath := GetEnvironmentVariable('WinDir');
   if FileExists(PChar(WindowsPath + '\System32\Rundll32.exe')) then
   begin
-    ShellExecute(0,'open',
-                 PChar(WindowsPath + '\System32\Rundll32.exe'),
-                 PChar('Shell32,Control_RunDLL hotplug.dll'),
-                 PChar(WindowsPath + '\System32'),SW_SHOWNORMAL);
+    TASuiteLogger.Info('Call Eject Dialog', []);
+    bShellExecute := ShellExecute(0,'open',
+                     PChar(WindowsPath + '\System32\Rundll32.exe'),
+                     PChar('Shell32,Control_RunDLL hotplug.dll'),
+                     PChar(WindowsPath + '\System32'),SW_SHOWNORMAL);
+    //Error message
+    if not bShellExecute then
+      ShowMessageEx(Format('%s [%s]', [SysErrorMessage(GetLastError), 'Rundll32']), True);
   end;
   //Close ASuite
   frmMain.miExitClick(Sender);
