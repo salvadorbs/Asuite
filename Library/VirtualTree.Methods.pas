@@ -332,7 +332,6 @@ procedure TVirtualTreeMethods.GetAllIcons(const ASender: TBaseVirtualTree);
 var
   IconThread: TTreeIconsThread;
 begin
-  TASuiteLogger.Info('Start thread to get all icons', []);
   IconThread := TTreeIconsThread.Create(ASender);
   try
     IconThread.Start;

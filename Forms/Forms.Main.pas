@@ -133,6 +133,7 @@ type
     procedure actSortListUpdate(Sender: TObject);
     procedure actSortListExecute(Sender: TObject);
     procedure FormResize(Sender: TObject);
+    procedure miCheckUpdatesClick(Sender: TObject);
   private
     { Private declarations }
     function  GetActiveTree: TBaseVirtualTree;
@@ -156,7 +157,7 @@ uses
   DataModules.TrayMenu, Forms.ImportList, AppConfig.Main, Utility.System,
   VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base, Kernel.Scheduler,
   Kernel.Types, NodeDataTypes.Files, VirtualTree.Events, Utility.Process,
-  Kernel.Logger, SynLog;
+  Kernel.Logger, SynLog, Kernel.CheckUpdates;
 
 {$R *.dfm}
 
@@ -532,6 +533,11 @@ procedure TfrmMain.tmrCheckItemsTimer(Sender: TObject);
 begin
   if Config.ASuiteState = lsNormal then
     TVirtualTreeMethods.Create.CheckVisibleNodePathExe(GetActiveTree);
+end;
+
+procedure TfrmMain.miCheckUpdatesClick(Sender: TObject);
+begin
+  TCheckUpdatesThread.Create;
 end;
 
 procedure TfrmMain.miExitClick(Sender: TObject);

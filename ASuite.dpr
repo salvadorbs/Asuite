@@ -73,7 +73,8 @@ uses
   Kernel.Scheduler in 'Library\Kernel.Scheduler.pas',
   Scanner.Thread in 'Library\Scanner.Thread.pas',
   Scanner.Folder in 'Library\Scanner.Folder.pas',
-  Kernel.Logger in 'Library\Kernel.Logger.pas';
+  Kernel.Logger in 'Library\Kernel.Logger.pas',
+  Kernel.CheckUpdates in 'Library\Kernel.CheckUpdates.pas';
 
 //SQLite3 static library
 

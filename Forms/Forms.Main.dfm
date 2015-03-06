@@ -190,6 +190,7 @@ object frmMain: TfrmMain
       Caption = 'Help'
       object miCheckUpdates: TMenuItem
         Caption = 'Check updates'
+        OnClick = miCheckUpdatesClick
       end
       object MenuItem3: TMenuItem
         Caption = '-'

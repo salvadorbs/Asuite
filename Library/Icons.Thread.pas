@@ -46,6 +46,7 @@ uses
 constructor TTreeIconsThread.Create(ASenderTree: TBaseVirtualTree);
 begin
   inherited Create(True);
+  TASuiteLogger.Info('Start thread to get all icons', []);
   //Init thread with base properties
   FSenderTree := ASenderTree;
 

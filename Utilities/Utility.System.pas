@@ -116,7 +116,7 @@ begin
     bShellExecute := ShellExecute(0,'open',
                      PChar(WindowsPath + '\System32\Rundll32.exe'),
                      PChar('Shell32,Control_RunDLL hotplug.dll'),
-                     PChar(WindowsPath + '\System32'),SW_SHOWNORMAL);
+                     PChar(WindowsPath + '\System32'),SW_SHOWNORMAL) > 32;
     //Error message
     if not bShellExecute then
       ShowMessageEx(Format('%s [%s]', [SysErrorMessage(GetLastError), 'Rundll32']), True);
