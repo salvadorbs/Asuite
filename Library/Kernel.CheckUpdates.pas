@@ -30,6 +30,7 @@ uses
 type
   TCheckUpdatesThread = Class(TThread)
   private
+    FSilentMode: Boolean;
     procedure DownloadUpdateFile(AFileStream: TMemoryStream);
     procedure HttpWorkBegin(ASender: TObject; AWorkMode: TWorkMode; AWorkCountMax: int64);
     procedure HttpWorkEnd(ASender: TObject; AWorkMode: TWorkMode);
@@ -38,7 +39,7 @@ type
   protected
     Procedure Execute; Override;
   public
-    Constructor Create; overload;
+    Constructor Create(ASilentMode: Boolean); overload;
   End;
 
 const
@@ -56,11 +57,12 @@ uses
 
 { TCheckUpdatesThread }
 
-constructor TCheckUpdatesThread.Create;
+constructor TCheckUpdatesThread.Create(ASilentMode: Boolean);
 begin
   TASuiteLogger.Info('Start thread to check latest ASuite Version', []);
   Inherited Create(False);
 
+  FSilentMode := ASilentMode;
   FreeOnTerminate := True;
 end;
 
@@ -145,7 +147,8 @@ begin
       end
       else begin
         TASuiteLogger.Info('No new version available', []);
-        ShowMessageEx(DKLangConstW('msgNoAvailableVersion'));
+        if Not (FSilentMode) then
+          ShowMessageEx(DKLangConstW('msgNoAvailableVersion'));
       end;
     finally
       IniFile.Free;

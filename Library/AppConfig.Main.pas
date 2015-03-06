@@ -35,6 +35,7 @@ type
     FStartWithWindows   : Boolean;
     FShowPanelAtStartUp : Boolean;
     FShowGraphicMenuAtStartUp  : Boolean;
+    FCheckUpdatesStartup: Boolean;
     //Main Form
     FLangID             : Word;
     FUseCustomTitle     : Boolean;
@@ -158,6 +159,7 @@ type
     //General
     property StartWithWindows: Boolean read FStartWithWindows write SetStartWithWindows;
     property ShowPanelAtStartUp: Boolean read FShowPanelAtStartUp write SetShowPanelAtStartUp;
+    property CheckUpdatesStartup: Boolean read FCheckUpdatesStartup write FCheckUpdatesStartup;
     property ShowGraphicMenuAtStartUp: Boolean read FShowGraphicMenuAtStartUp write FShowGraphicMenuAtStartUp;
     property MissedSchedulerTask: Boolean read FMissedSchedulerTask write FMissedSchedulerTask;
     // Main Form
@@ -284,6 +286,7 @@ begin
   FStartWithWindows   := False;
   FShowPanelAtStartUp := True;
   FShowGraphicMenuAtStartUp  := False;
+  FCheckUpdatesStartup := True;
   FMissedSchedulerTask := True;
   //Main Form
   FLangID             := 1033; //1033 = English (United States)

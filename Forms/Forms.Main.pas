@@ -537,7 +537,7 @@ end;
 
 procedure TfrmMain.miCheckUpdatesClick(Sender: TObject);
 begin
-  TCheckUpdatesThread.Create;
+  TCheckUpdatesThread.Create(False);
 end;
 
 procedure TfrmMain.miExitClick(Sender: TObject);
@@ -551,7 +551,7 @@ begin
   if (SaveDialog1.Execute) then
   begin
     TVirtualTreeMethods.Create.RefreshList(GetActiveTree);
-    CopyFile(PChar(Config.DBManager.DBFileName),PChar(SaveDialog1.FileName),false)
+    CopyFile(PChar(Config.DBManager.DBFileName), PChar(SaveDialog1.FileName), False);
   end;
 end;
 
@@ -609,8 +609,10 @@ begin
   //Get placeholder for edtSearch
   edtSearch.TextHint := StringReplace(miSearchName.Caption, '&', '', []);
   PopulatePopUpMenuFromAnother(miEdit, pmWindow.Items);
-  //Start thread to get all icons
+  //Start threads
   TVirtualTreeMethods.Create.GetAllIcons(vstList);
+  if Config.CheckUpdatesStartup then
+    TCheckUpdatesThread.Create(True);
 end;
 
 procedure TfrmMain.FormDestroy(Sender: TObject);
