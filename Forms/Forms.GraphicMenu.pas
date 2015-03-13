@@ -117,7 +117,7 @@ implementation
 {$R *.dfm}
 
 uses
-  Forms.Main, Utility.System, Kernel.Consts, AppConfig.Main,
+  Forms.Main, Utility.System, Kernel.Consts, AppConfig.Main, DataModules.Icons,
   Forms.About, NodeDataTypes.Base, Kernel.Enumerations, Forms.Options,
   Utility.Misc, VirtualTree.Events, VirtualTree.Methods, Kernel.Types,
   NodeDataTypes.Custom, VirtualTree.Helper, GraphicMenu.ThemeEngine;
@@ -173,12 +173,14 @@ var
   sTempPath: string;
 begin
   //User Picture
-  if (Config.GMPersonalPicture = 'PersonalPicture.jpg') and (not FileExists(Config.GMPersonalPicture)) then
+  if (Config.GMPersonalPicture = 'PersonalPicture.png') and (not FileExists(Config.GMPersonalPicture)) then
     sTempPath := Config.Paths.SuitePathCurrentTheme + Config.GMPersonalPicture
-  else
+  else begin
     sTempPath := Config.Paths.RelativeToAbsolute(Config.GMPersonalPicture);
-  if FileExists(sTempPath) then
-    imgPersonalPicture.Picture.LoadFromFile(sTempPath);
+    if Not FileExists(sTempPath) then
+      sTempPath := Config.Paths.SuitePathCurrentTheme + 'PersonalPicture.png';
+  end;
+  imgPersonalPicture.Picture.LoadFromFile(sTempPath);
   imgPersonalPicture.Visible := (FileExists(sTempPath));
   imgUserFrame.Visible := (FileExists(sTempPath));
 end;
@@ -193,7 +195,7 @@ begin
   Drive := Config.Paths.SuiteDrive[1];
   dblDriveSize := DiskSize(Ord(Drive) - 64);
   dblDriveUsed := dblDriveSize - DiskFree(Ord(Drive) - 64);
-  imgDriveSpace.Width := Round(dblDriveUsed / dblDriveSize * 131);
+  imgDriveSpace.Width := Round(dblDriveUsed / dblDriveSize * (imgDriveBackground.Width - 4));
   lblDriveSpace.Caption := Format(DKLangConstW('msgGMHardDiskSpace'), [DiskFreeString(Drive, True), DiskSizeString(Drive, True)]);
 end;
 
@@ -222,15 +224,14 @@ end;
 
 procedure TfrmGraphicMenu.FormCreate(Sender: TObject);
 begin
-  sknbtnRecents.Enabled := Config.MRU;
-  sknbtnMFU.Enabled := Config.MFU;
   TVirtualTreeEvents.Create.SetupVSTGraphicMenu(vstList, Self);
   //Load graphics
   TThemeEngine.Create.SetupThemeEngine(Self);
   TThemeEngine.Create.LoadTheme;
   //Set PopUpMenu's ImageIndexes
-//  miRunSelectedSw.ImageIndex := Config.ASuiteIcons.PopupMenu.Run;
-//  miProperty2.ImageIndex   := Config.ASuiteIcons.PopupMenu.Properties;
+  pmWindow.Images := dmImages.ilSmallIcons;
+  mniRun.ImageIndex := Config.IconsManager.GetIconIndex('run');
+  mniProperty.ImageIndex := Config.IconsManager.GetIconIndex('property');
   //Position
   if Config.GMPositionTop <> -1 then
     Self.Top  := Config.GMPositionTop
@@ -335,6 +336,7 @@ end;
 procedure TfrmGraphicMenu.FormShow(Sender: TObject);
 begin
   CheckUserPicture;
+  sknbtnList.Down := True;
   //Clear edtSearch and focus it
   edtSearch.Text := '';
   Self.FocusControl(edtSearch);
@@ -343,6 +345,9 @@ begin
   //Clear and populate virtualtree
   PopulateListTree(vstList);
   UpdateDriveStats;
+  //Enable or disable tabs
+  sknbtnRecents.Visible := Config.MRU;
+  sknbtnMFU.Visible := Config.MFU;
   //Timer
   tmrCheckItems.Enabled := True;
 end;

@@ -339,7 +339,7 @@ begin
   //Graphic Menu
   FGMTheme            := 'Default';
   FGMFade             := True;
-  FGMPersonalPicture  := 'PersonalPicture.jpg';
+  FGMPersonalPicture  := 'PersonalPicture.png';
   FGMPositionTop      := -1;
   FGMPositionLeft     := -1;
   FGMAutomaticHideMenu := True;

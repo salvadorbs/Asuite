@@ -152,16 +152,26 @@ procedure TThemeEngine.DrawButton(IniFile: TIniFile;
 var
   PNGImage_Normal, PNGImage_Hover, PNGImage_Clicked: TPngImage;
   Image_Normal, Image_Hover, Image_Clicked, IniFile_Section: string;
+
+  function IsTabElement(ButtonType: TGraphicMenuElement): Boolean;
+  begin
+    Result := ButtonType in [gmbList, gmbMRU, gmbMFU];
+  end;
+
 begin
   PNGImage_Normal  := TPngImage.Create;
   PNGImage_Hover   := TPngImage.Create;
   PNGImage_Clicked := TPngImage.Create;
   try
     IniFile_Section := GetIniFileSection(ButtonType);
+
     //Get images path
     Image_Normal  := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(IniFile_Section, INIFILE_KEY_IMAGENORMAL, '');
     Image_Hover   := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(IniFile_Section, INIFILE_KEY_IMAGEHOVER, '');
-    Image_Clicked := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(IniFile_Section, INIFILE_KEY_IMAGECLICKED, '');
+    if IsTabElement(ButtonType) then
+      Image_Clicked := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(IniFile_Section, INIFILE_KEY_IMAGESELECTED, '')
+    else
+      Image_Clicked := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(IniFile_Section, INIFILE_KEY_IMAGECLICKED, '');
     //Load png button states
     //Normal state
     if FileExists(Image_Normal) then
@@ -186,7 +196,7 @@ begin
       DrawIconAndTextInPNGImage(IniFile,bsClicked,PNGImage_Clicked,ButtonType);
     end
     else
-      if ButtonType in [gmbList, gmbMRU, gmbMFU] then
+      if IsTabElement(ButtonType) then
       begin
         if Button.Enabled then
           DrawTextInPNGImage(IniFile,bsNormal,PNGImage_Normal,ButtonType,False)
@@ -201,7 +211,12 @@ begin
     if Assigned(PNGImage_Hover) then
       Button.PicMouseOver.Assign(PNGImage_Hover);
     if Assigned(PNGImage_Clicked) then
-      Button.PicMouseDown.Assign(PNGImage_Clicked);
+    begin
+      if IsTabElement(ButtonType) then
+        Button.PicDown.Assign(PNGImage_Clicked)
+      else
+        Button.PicMouseDown.Assign(PNGImage_Clicked);
+    end;
   finally
     PNGImage_Normal.Free;
     PNGImage_Hover.Free;
@@ -250,6 +265,7 @@ procedure TThemeEngine.DrawIconInPNGImage(IniFile: TIniFile;
 var
   Icon : TIcon;
   IconPath, IniFile_Section : string;
+  iSpace: Integer;
 begin
   if Not Assigned(PNGImage) then
     Exit;
@@ -261,9 +277,10 @@ begin
     if FileExists(Config.Paths.SuitePathCurrentTheme + IconPath) then
     begin
       Icon.LoadFromFile(Config.Paths.SuitePathCurrentTheme + IconPath);
+      iSpace := (PNGImage.Height - Icon.Height) div 2;
       PNGImage.Canvas.Lock;
       try
-        PNGImage.Canvas.Draw(5, 3, Icon);
+        PNGImage.Canvas.Draw(5, iSpace, Icon);
       finally
         PNGImage.Canvas.Unlock;
       end;

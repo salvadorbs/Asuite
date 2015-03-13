@@ -29,7 +29,7 @@ object frmMain: TfrmMain
     Top = 0
     Width = 201
     Height = 386
-    ActivePage = tbList
+    ActivePage = tbSearch
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -85,19 +85,23 @@ object frmMain: TfrmMain
     object tbSearch: TTabSheet
       Caption = 'Search'
       object sbtnSearch: TSpeedButton
+        AlignWithMargins = True
         Left = 169
         Top = 0
         Width = 24
-        Height = 26
+        Height = 21
+        Margins.Left = 0
+        Margins.Top = 0
+        Margins.Right = 0
         Align = alRight
         Anchors = []
         OnClick = btnedtSearchRightButtonClick
       end
       object vstSearch: TVirtualStringTree
         Left = 0
-        Top = 26
+        Top = 24
         Width = 193
-        Height = 331
+        Height = 333
         Align = alBottom
         Anchors = [akLeft, akTop, akRight, akBottom]
         AnimationDuration = 0

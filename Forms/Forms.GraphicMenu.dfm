@@ -6,7 +6,7 @@ object frmGraphicMenu: TfrmGraphicMenu
   BorderIcons = []
   BorderStyle = bsNone
   Caption = 'ASuite Menu'
-  ClientHeight = 573
+  ClientHeight = 530
   ClientWidth = 406
   Color = clBtnFace
   TransparentColor = True
@@ -34,137 +34,141 @@ object frmGraphicMenu: TfrmGraphicMenu
     Left = 0
     Top = 0
     Width = 406
-    Height = 573
+    Height = 530
     Align = alClient
   end
   object imgDivider2: TImage
-    Left = 269
-    Top = 345
-    Width = 120
+    Left = 271
+    Top = 332
+    Width = 128
     Height = 2
   end
   object imgLogo: TImage
     Left = 15
     Top = 9
-    Width = 160
+    Width = 200
     Height = 50
     Cursor = crSizeAll
     OnMouseDown = imgLogoMouseDown
   end
   object imgDivider1: TImage
-    Left = 269
-    Top = 157
-    Width = 120
+    Left = 271
+    Top = 144
+    Width = 128
     Height = 2
   end
   object sknbtnASuite: TcySkinButton
-    Left = 269
-    Top = 85
-    Width = 120
+    Left = 271
+    Top = 72
+    Width = 128
     Height = 30
     OnClick = OpenRightButton
   end
   object sknbtnOptions: TcySkinButton
-    Left = 269
-    Top = 121
-    Width = 120
+    Left = 271
+    Top = 108
+    Width = 128
     Height = 30
     OnClick = OpenRightButton
   end
   object sknbtnDocuments: TcySkinButton
-    Left = 269
-    Top = 165
-    Width = 120
+    Left = 271
+    Top = 152
+    Width = 128
     Height = 30
     OnClick = OpenRightButton
   end
   object sknbtnPictures: TcySkinButton
-    Left = 269
-    Top = 201
-    Width = 120
+    Left = 271
+    Top = 188
+    Width = 128
     Height = 30
     OnClick = OpenRightButton
   end
   object sknbtnAbout: TcySkinButton
-    Left = 269
-    Top = 353
-    Width = 120
+    Left = 271
+    Top = 340
+    Width = 128
     Height = 30
     OnClick = OpenRightButton
   end
   object sknbtnExplore: TcySkinButton
-    Left = 269
-    Top = 309
-    Width = 120
+    Left = 271
+    Top = 296
+    Width = 128
     Height = 30
     OnClick = OpenRightButton
   end
   object sknbtnVideos: TcySkinButton
-    Left = 269
-    Top = 273
-    Width = 120
+    Left = 271
+    Top = 260
+    Width = 128
     Height = 30
     OnClick = OpenRightButton
   end
   object sknbtnMusic: TcySkinButton
-    Left = 269
-    Top = 237
-    Width = 120
+    Left = 271
+    Top = 224
+    Width = 128
     Height = 30
     OnClick = OpenRightButton
   end
   object sknbtnList: TcySkinButton
     Left = 15
-    Top = 79
+    Top = 72
     Width = 78
     Height = 20
     OnClick = sknbtnListClick
+    GroupIndex = 1
+    Down = True
   end
   object sknbtnRecents: TcySkinButton
     Left = 96
-    Top = 79
+    Top = 72
     Width = 78
     Height = 20
     OnClick = sknbtnRecentsClick
+    GroupIndex = 1
   end
   object sknbtnMFU: TcySkinButton
     Left = 177
-    Top = 79
+    Top = 72
     Width = 78
     Height = 20
     OnClick = sknbtnMFUClick
+    GroupIndex = 1
   end
   object sknbtnEject: TcySkinButton
-    Left = 263
-    Top = 544
-    Width = 68
+    Left = 271
+    Top = 501
+    Width = 60
     Height = 22
     OnClick = sknbtnEjectClick
   end
   object sknbtnExit: TcySkinButton
-    Left = 331
-    Top = 544
-    Width = 68
+    Left = 339
+    Top = 501
+    Width = 60
     Height = 22
     OnClick = sknbtnExitClick
   end
   object imgDriveBackground: TImage
-    Left = 10
-    Top = 544
-    Width = 247
+    Left = 8
+    Top = 501
+    Width = 256
     Height = 22
     Stretch = True
   end
   object imgDriveSpace: TImage
-    Left = 14
-    Top = 544
-    Width = 236
+    Left = 10
+    Top = 501
+    Width = 252
     Height = 22
     Stretch = True
   end
   object lblDriveSpace: TLabel
-    Left = 80
-    Top = 546
+    Left = 79
+    Top = 502
     Width = 176
     Height = 19
     Alignment = taCenter
@@ -182,8 +186,8 @@ object frmGraphicMenu: TfrmGraphicMenu
     Layout = tlCenter
   end
   object lblDriveName: TLabel
-    Left = 15
-    Top = 546
+    Left = 14
+    Top = 502
     Width = 113
     Height = 19
     AutoSize = False
@@ -198,23 +202,6 @@ object frmGraphicMenu: TfrmGraphicMenu
     Transparent = True
     Layout = tlCenter
   end
-  object imgPersonalPicture: TImage
-    Left = 345
-    Top = 10
-    Width = 48
-    Height = 48
-    Cursor = crHandPoint
-    Stretch = True
-    OnClick = imgPersonalPictureClick
-  end
-  object imgUserFrame: TImage
-    Left = 337
-    Top = 2
-    Width = 64
-    Height = 64
-    Cursor = crHandPoint
-    OnClick = imgPersonalPictureClick
-  end
   object imgDragSpaceHidden: TImage
     Left = 0
     Top = 0
@@ -223,9 +210,26 @@ object frmGraphicMenu: TfrmGraphicMenu
     Cursor = crSizeAll
     OnMouseDown = imgLogoMouseDown
   end
+  object imgUserFrame: TImage
+    Left = 341
+    Top = 9
+    Width = 56
+    Height = 56
+    Cursor = crHandPoint
+    OnClick = imgPersonalPictureClick
+  end
+  object imgPersonalPicture: TImage
+    Left = 345
+    Top = 13
+    Width = 48
+    Height = 48
+    Cursor = crHandPoint
+    Stretch = True
+    OnClick = imgPersonalPictureClick
+  end
   object edtSearch: TButtonedEdit
     Left = 15
-    Top = 510
+    Top = 467
     Width = 240
     Height = 21
     Images = dmImages.ilSmallIcons
@@ -237,9 +241,9 @@ object frmGraphicMenu: TfrmGraphicMenu
   end
   object vstList: TVirtualStringTree
     Left = 15
-    Top = 105
+    Top = 97
     Width = 240
-    Height = 396
+    Height = 361
     BorderStyle = bsNone
     Header.AutoSizeIndex = 0
     Header.Font.Charset = DEFAULT_CHARSET
