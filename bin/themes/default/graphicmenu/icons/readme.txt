@@ -1,0 +1,1 @@
+Icons in 24*24 - Used in Graphic Menu
