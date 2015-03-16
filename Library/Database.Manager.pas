@@ -125,7 +125,6 @@ end;
 procedure TDBManager.ImportData(ATree: TBaseVirtualTree);
 begin
   TASuiteLogger.Enter('ImportData', Self);
-  TASuiteLogger.Info('Import list from SQLite Database %s', [Self.FDBFileName]);
   try
     TSQLtbl_list.Load(Self, ATree, True);
   except

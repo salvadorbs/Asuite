@@ -357,15 +357,20 @@ var
 begin
   //Check if ATree is MainTree (frmMain.vstList), to get nodedata from the right Tree
   Result := nil;
-  if ATree <> Config.MainTree then
+  if (ATree <> Config.MainTree) and (ATree <> Config.ImportTree) then
   begin
     //If node is from another Tree, we must find the mainnode from MainTree
     ListNode := GetListNodeFromSubTree(ANode, ATree);
     if Assigned(ListNode) then
       Result := Config.MainTree.GetNodeData(ListNode);
   end
-  else
-    Result := Config.MainTree.GetNodeData(ANode);
+  else begin
+    if ATree = Config.MainTree then
+      Result := Config.MainTree.GetNodeData(ANode)
+    else
+      if ATree = Config.ImportTree then
+        Result := Config.ImportTree.GetNodeData(ANode);
+  end;
 
 //  Assert(Assigned(Result), 'Result is not assigned');
 end;

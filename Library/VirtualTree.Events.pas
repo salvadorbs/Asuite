@@ -201,6 +201,7 @@ end;
 procedure TVirtualTreeEvents.SetupVSTHotkey(ATree: TVirtualStringTree);
 begin
   ATree.Images := dmImages.ilLargeIcons;
+
   ATree.OnGetNodeDataSize := DoGetNodeDataSizeSearch;
   ATree.OnCompareNodes    := DoCompareNodesHotkey;
   ATree.OnGetText         := DoGetTextHotkey;
@@ -209,6 +210,8 @@ end;
 
 procedure TVirtualTreeEvents.SetupVSTImportList(ATree: TVirtualStringTree);
 begin
+  ATree.Images := dmImages.ilSmallIcons;
+
   ATree.OnDrawText  := DoDrawText;
   ATree.OnFreeNode  := DoFreeNode;
   ATree.OnGetNodeDataSize := DoGetNodeDataSizeList;
@@ -436,7 +439,8 @@ var
   NodeData : TvBaseNodeData;
 begin
   NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
-  FreeAndNil(NodeData);
+  if Assigned(NodeData) then
+    FreeAndNil(NodeData);
 end;
 
 procedure TVirtualTreeEvents.DoFreeNodeFrame(Sender: TBaseVirtualTree;

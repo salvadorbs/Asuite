@@ -109,6 +109,13 @@ type
       rmExplorePath
   );
 
+  TListType = (
+      ltASuite1,
+      ltASuite2,
+      ltwppLauncher1,
+      ltPStart1
+  );
+
 implementation
 
 end.

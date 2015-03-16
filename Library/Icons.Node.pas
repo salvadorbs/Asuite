@@ -103,7 +103,7 @@ begin
   sTempPath := '';
   Result   := -1;
   //Get cache icon path
-  if (Config.Cache) then
+  if (Config.Cache) and (Config.ASuiteState <> lsImporting) then
   begin
     //Check CRC, if it fails reset cache icon
     if (CacheIconCRC = GetFileCRC32(PathCacheIcon)) then
@@ -127,7 +127,8 @@ begin
     if IsPathExists(sTempPath) then
       Result := InternalGetImageIndex(sTempPath);
     //Save icon cache
-    SaveCacheIcon(sTempPath, Result);
+    if (Config.ASuiteState <> lsImporting) then
+      SaveCacheIcon(sTempPath, Result);
   end;
   //If it is a category, get directly cat icon
   if (FNodeData.DataType = vtdtCategory) and (Result = -1) then

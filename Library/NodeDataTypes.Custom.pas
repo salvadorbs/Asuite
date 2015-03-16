@@ -117,12 +117,15 @@ end;
 
 procedure TvCustomRealNodeData.SetActiveHotkey(const Value: Boolean);
 begin
-  //Old value is true, remove it in HotKeyApp
-  if (FActiveHotkey) then
-    Config.ListManager.HotKeyItemList.RemoveItem(Self);
-  //New value is true, add it in HotKeyApp
-  if (value) then
-    Config.ListManager.HotKeyItemList.AddItem(Self);
+  if (Config.ASuiteState <> lsImporting) then
+  begin
+    //Old value is true, remove it in HotKeyApp
+    if (FActiveHotkey) then
+      Config.ListManager.HotKeyItemList.RemoveItem(Self);
+    //New value is true, add it in HotKeyApp
+    if (value) then
+      Config.ListManager.HotKeyItemList.AddItem(Self);
+  end;
   FActiveHotkey := Value;
 end;
 

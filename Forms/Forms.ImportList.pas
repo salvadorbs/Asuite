@@ -32,13 +32,8 @@ type
     bvl1: TBevel;
     bvl2: TBevel;
     pgcImport: TPageControl;
-    tsLaunchers: TTabSheet;
-    tsSettings: TTabSheet;
-    gbElements: TGroupBox;
-    cbImportList: TCheckBox;
-    cbImportSettings: TCheckBox;
+    tsAskFileList: TTabSheet;
     gbFile: TGroupBox;
-    rgrpLauncher: TRadioGroup;
     lblFile: TLabel;
     tsList: TTabSheet;
     vstListImp: TVirtualStringTree;
@@ -50,41 +45,25 @@ type
     pnlHeader: TPanel;
     lblTitle: TLabel;
     XMLDocument1: TXMLDocument;
-    tsProgress: TTabSheet;
-    pbImport: TProgressBar;
-    lblItems: TLabel;
-    imgList: TImage;
-    lblList: TLabel;
-    lblLauncher: TLabel;
-    imgSettings: TImage;
-    lblSettings: TLabel;
     DKLanguageController1: TDKLanguageController;
     edtPathList: TJvFilenameEdit;
     procedure btnDeselectAllClick(Sender: TObject);
     procedure btnSelectAllClick(Sender: TObject);
-    procedure btnCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnBackClick(Sender: TObject);
     procedure btnNextClick(Sender: TObject);
-    procedure edtPathListExit(Sender: TObject);
-    procedure cbImportListClick(Sender: TObject);
-    procedure tsLaunchersShow(Sender: TObject);
-    procedure tsSettingsShow(Sender: TObject);
+    procedure tsAskFileListShow(Sender: TObject);
 
     procedure tsListShow(Sender: TObject);
-    procedure tsProgressShow(Sender: TObject);
-    procedure edtPathListAfterDialog(Sender: TObject; var AName: string;
-      var AAction: Boolean);
     procedure edtPathListChange(Sender: TObject);
+    procedure vstListImpChecked(Sender: TBaseVirtualTree; Node: PVirtualNode);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
-    procedure ImportSettingsInASuite(XMLDoc: TXMLDocument);
-    procedure ImportListInASuite;
-    function  TreeImp2Tree(TreeImp, Tree: TVirtualStringTree): Boolean;
     function  GetNumberNodeImp(Sender: TBaseVirtualTree): Integer;
-    procedure PopulateTree(Tree: TVirtualStringTree;FilePath: String);
     procedure CheckAllItems(State: TCheckState);
-    function InternalImportOptions(XMLDoc: TXMLDocument): Boolean;
+    procedure PopulateTree(Tree: TVirtualStringTree; FilePath: String);
+    function  TreeImpToTree(TreeImp, Tree: TVirtualStringTree): Boolean;
   public
     { Public declarations }
     class procedure Execute(AOwner: TComponent);
@@ -100,12 +79,7 @@ implementation
 uses
   Forms.Main, Utility.Misc, AppConfig.Main, VirtualTree.Events, VirtualTree.Methods,
   Utility.FileFolder, Utility.XML, Database.Manager, Kernel.Types, NodeDataTypes.Base,
-  DataModules.Icons;
-
-procedure TfrmImportList.btnCancelClick(Sender: TObject);
-begin
-  Close;
-end;
+  DataModules.Icons, Kernel.Logger;
 
 procedure TfrmImportList.btnBackClick(Sender: TObject);
 begin
@@ -118,92 +92,6 @@ begin
   CheckAllItems(csCheckedNormal);
 end;
 
-procedure TfrmImportList.cbImportListClick(Sender: TObject);
-begin
-  btnNext.Enabled := ((cbImportList.Checked) or (cbImportSettings.Checked)) and
-                     ((edtPathList.Text <> '') and FileExists(edtPathList.Text));
-end;
-
-procedure TfrmImportList.ImportSettingsInASuite(XMLDoc: TXMLDocument);
-var
-  FileExt: string;
-begin
-  //Import settings
-  if (cbImportSettings.Checked) then
-  begin
-    if Not(XMLDocument1.Active) then
-    begin
-      FileExt  := ExtractFileExt(edtPathList.Text);
-      //ASuite or ASuite or wppLauncher
-      if (FileExt = EXT_XML) or (FileExt = EXT_XMLBCK) then
-      begin
-        XMLDocument1.FileName := edtPathList.Text;
-        XMLDocument1.Active   := True;
-      end;
-    end;
-    if InternalImportOptions(XMLDoc) then
-      dmImages.ilSmallIcons.GetIcon(Config.IconsManager.GetIconIndex('accept'), imgSettings.Picture.Icon)
-    else
-      dmImages.ilSmallIcons.GetIcon(Config.IconsManager.GetIconIndex('denied'), imgList.Picture.Icon);
-  end;
-end;
-
-procedure TfrmImportList.ImportListInASuite;
-begin
-  if (cbImportList.Checked) then
-  begin
-    //Set progressbar's max
-    pbImport.Max := GetNumberNodeImp(vstListImp);
-    try
-      if TreeImp2Tree(vstListImp, Config.MainTree) then
-        dmImages.ilSmallIcons.GetIcon(Config.IconsManager.GetIconIndex('accept'), imgList.Picture.Icon)
-      else
-        dmImages.ilSmallIcons.GetIcon(Config.IconsManager.GetIconIndex('denied'), imgList.Picture.Icon);
-      lblItems.Caption := Format(DKLangConstW('msgItemsImported'),[pbImport.Max]);
-    except
-      on E : Exception do
-      begin
-        ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message],True);
-        lblItems.Caption := DKLangConstW('msgImportFailed');
-      end;
-    end;
-  end;
-end;
-
-procedure TfrmImportList.PopulateTree(Tree: TVirtualStringTree;FilePath: String);
-var
-  DBImp : TDBManager;
-  FileName : String;
-  FileExt  : String;
-begin
-  vstListImp.BeginUpdate;
-  vstListImp.Clear;
-  FileName := LowerCase(ExtractFileName(FilePath));
-  FileExt  := ExtractFileExt(FileName);
-  //ASuite or ASuite or wppLauncher
-  if (FileExt = EXT_XML) or (FileExt = EXT_XMLBCK) then
-  begin
-    XMLDocument1.FileName := FilePath;
-    XMLDocument1.Active   := True;
-    //Identify launcher xml from first node
-    //ASuite 1.x
-    if (XMLDocument1.DocumentElement.NodeName = 'ASuite') then
-      XMLToTree(vstListImp,TImportOldListProcs.ASuite1NodeToTree,XMLDocument1)
-    else //winPenPack Launcher 1.x
-      if ChangeFileExt(FileName,'') = 'winpenpack' then
-        XMLToTree(vstListImp,TImportOldListProcs.wppLauncherNodeToTree,XMLDocument1);
-  end
-  else //ASuite 2.x
-    if (FileExt = EXT_SQL) or (FileExt = EXT_SQLBCK) then
-    begin
-      DBImp := TDBManager.Create();
-      DBImp.Setup(FilePath);
-      DBImp.ImportData(Tree);
-      DBImp.Destroy;
-    end;
-  vstListImp.EndUpdate;
-end;
-
 procedure TfrmImportList.btnDeselectAllClick(Sender: TObject);
 begin
   CheckAllItems(csUncheckedNormal);
@@ -214,93 +102,177 @@ begin
   //If PageIndex is not last page, show next page
   if pgcImport.ActivePageIndex <> (pgcImport.PageCount - 1) then
   begin
-    if (pgcImport.ActivePage = tsSettings) and Not (cbImportList.Checked) then
-      pgcImport.ActivePage := tsProgress
-    else
-      pgcImport.SelectNextPage(True, false);
+    pgcImport.SelectNextPage(True, false);
     btnBack.Enabled := pgcImport.ActivePageIndex <> 0;
   end
   else //Else close import form
-    Close;
+    ModalResult := mrOk;
 end;
 
 procedure TfrmImportList.FormCreate(Sender: TObject);
 begin
+  Config.ASuiteState := lsImporting;
   TVirtualTreeEvents.Create.SetupVSTImportList(vstListImp);
   pgcImport.ActivePageIndex := 0;
-  //Set imgList and imgSettings's icon
-  dmImages.ilSmallIcons.GetBitmap(Config.IconsManager.GetIconIndex('denied'), imgList.Picture.Bitmap);
-  dmImages.ilSmallIcons.GetBitmap(Config.IconsManager.GetIconIndex('denied'), imgSettings.Picture.Bitmap);
+end;
+
+procedure TfrmImportList.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Config.ASuiteState := lsNormal;
+  if (ModalResult = mrOk) and (vstListImp.HasChildren[vstListImp.RootNode]) then
+  begin
+    try
+      if TreeImpToTree(vstListImp, Config.MainTree) then
+      begin
+        ShowMessageFmtEx(DKLangConstW('msgItemsImported'), [GetNumberNodeImp(vstListImp)]);
+        TASuiteLogger.Info(DKLangConstW('msgItemsImported'), [GetNumberNodeImp(vstListImp)]);
+      end;
+      TVirtualTreeMethods.Create.GetAllIcons(Config.MainTree);
+    except
+      on E : Exception do
+      begin
+        ShowMessageEx(DKLangConstW('msgImportFailed'), True);
+        TASuiteLogger.Error(DKLangConstW('msgErrGeneric'), [E.ClassName,E.Message]);
+      end;
+    end;
+  end;
 end;
 
 procedure TfrmImportList.CheckAllItems(State: TCheckState);
 var
-  tnImp: PVirtualNode;
+  Node: PVirtualNode;
 begin
-  tnImp := vstListImp.GetFirst;
-  while Assigned(tnImp) do
+  Node := vstListImp.GetFirst;
+  while Assigned(Node) do
   begin
-    vstListImp.CheckState[tnImp] := State;
-    tnImp := tnImp.NextSibling;
+    vstListImp.CheckState[Node] := State;
+    Node := Node.NextSibling;
   end;
-end;
-
-procedure TfrmImportList.edtPathListAfterDialog(Sender: TObject;
-  var AName: string; var AAction: Boolean);
-begin
-  btnNext.Enabled  := True;
 end;
 
 procedure TfrmImportList.edtPathListChange(Sender: TObject);
 begin
-  btnNext.Enabled  := edtPathList.Text <> '';
-end;
-
-procedure TfrmImportList.edtPathListExit(Sender: TObject);
-begin
-  Assert((Sender is TJvFilenameEdit), 'Sender is not TJvFilenameEdit!');
-
-  btnNext.Enabled := ((Sender as TJvFilenameEdit).Text <> '') and FileExists((Sender as TJvFilenameEdit).Text);
+  btnNext.Enabled := (edtPathList.Text <> '') and FileExists(edtPathList.Text);
 end;
 
 class procedure TfrmImportList.Execute(AOwner: TComponent);
-var
-  frm: TfrmImportList;
 begin
-  frm := TfrmImportList.Create(AOwner);
+  TASuiteLogger.Info('Opening form ImportList', []);
+
+  frmImportList := TfrmImportList.Create(AOwner);
   try
-    frm.ShowModal;
+    frmImportList.ShowModal;
+    frmImportList.vstListImp.Clear;
   finally
-    frm.Free;
+    FreeAndNil(frmImportList);
   end;
 end;
 
-function TfrmImportList.TreeImp2Tree(TreeImp, Tree: TVirtualStringTree): Boolean;
+procedure TfrmImportList.tsListShow(Sender: TObject);
+begin
+  lblTitle.Caption := DKLangConstW('msgImportTitle3');
+  btnNext.Caption  := DKLangConstW('msgImport');
+  btnNext.Enabled  := vstListImp.CheckedCount > 0;
+  //Import list in temporary vst
+  try
+    PopulateTree(vstListImp, edtPathList.Text);
+  finally
+    TVirtualTreeMethods.Create.GetAllIcons(vstListImp);
+  end;
+end;
+
+procedure TfrmImportList.vstListImpChecked(Sender: TBaseVirtualTree;
+  Node: PVirtualNode);
+begin
+  btnNext.Enabled := Sender.CheckedCount > 0;
+end;
+
+procedure TfrmImportList.tsAskFileListShow(Sender: TObject);
+begin
+  vstListImp.Clear;
+  lblTitle.Caption := DKLangConstW('msgImportTitle2');
+  btnNext.Enabled  := (edtPathList.Text <> '') and FileExists(edtPathList.Text);
+  btnNext.Caption  := DKLangConstW('msgNext');
+end;
+
+function TfrmImportList.GetNumberNodeImp(Sender: TBaseVirtualTree): Integer;
+var
+  NumberNode : Integer;
+begin
+  NumberNode := 0;
+  Sender.IterateSubtree(nil, TVirtualTreeMethods.Create.IncNumberNode, @NumberNode, [], True);
+  Result := NumberNode;
+end;
+
+procedure TfrmImportList.PopulateTree(Tree: TVirtualStringTree;
+  FilePath: String);
+var
+  DBImp : TDBManager;
+  FileName : String;
+  FileExt  : String;
+begin
+  TASuiteLogger.Enter('PopulateTree', Self);
+  vstListImp.BeginUpdate;
+  try
+    vstListImp.Clear;
+    FileName := LowerCase(ExtractFileName(FilePath));
+    FileExt  := ExtractFileExt(FileName);
+    //ASuite or wppLauncher
+    if (FileExt = EXT_XML) or (FileExt = EXT_XMLBCK) then
+    begin
+      XMLDocument1.FileName := FilePath;
+      XMLDocument1.Active   := True;
+      //Identify launcher xml from first node
+      //ASuite 1.x
+      if XMLDocument1.DocumentElement.NodeName = 'ASuite' then
+        XMLToTree(vstListImp, ltASuite1, XMLDocument1)
+      else //winPenPack Launcher 1.x
+        if ChangeFileExt(FileName,'') = 'winpenpack' then
+          XMLToTree(vstListImp, ltwppLauncher1, XMLDocument1)
+        else //PStart 1.x
+          if XMLDocument1.DocumentElement.NodeName = 'start' then
+            XMLToTree(vstListImp, ltPStart1, XMLDocument1);
+    end
+    else //BSuite 2.x
+      if (FileExt = EXT_SQL) or (FileExt = EXT_SQLBCK) then
+      begin
+        TASuiteLogger.Info('Found ASuite 2.x List (%s)', [FilePath]);
+        DBImp := TDBManager.Create();
+        try
+          DBImp.Setup(FilePath);
+          DBImp.ImportData(Tree);
+        finally
+          DBImp.Destroy;
+        end;
+      end;
+  finally
+    vstListImp.EndUpdate;
+  end;
+end;
+
+function TfrmImportList.TreeImpToTree(TreeImp,
+  Tree: TVirtualStringTree): Boolean;
 var
   tnImp : PVirtualNode;
+
   procedure ProcessTreeItem(tn, tnImp: PVirtualNode);
   var
-    NodeData, NodeDataImp : PBaseData;
+    NodeData, NodeDataImp : TvBaseNodeData;
   begin
     if (tnImp = nil) then Exit;
-    NodeDataImp := TreeImp.GetNodeData(tnImp);
+    NodeDataImp := TVirtualTreeMethods.Create.GetNodeItemData(tnImp, TreeImp);
     //Import checked item in main list
     if (tnImp.CheckState = csCheckedNormal) or (tnImp.CheckState = csMixedNormal) then
     begin
-      //Update progress bar
-      pbImport.Position := pbImport.Position + 1;
-      lblItems.Caption  := Format(DKLangConstW('msgProcessingItems'), [((pbImport.Position / pbImport.Max) * 100), pbImport.Max]);
-      Self.Update;
       //Create new node in vstList
-      tn             := Tree.AddChild(tn, TVirtualTreeMethods.Create.CreateNodeData(NodeDataImp.Data.DataType));
-      NodeData       := Tree.GetNodeData(tn);
+      tn             := TVirtualTreeMethods.Create.AddChildNodeEx(Tree, tn, amInsertAfter, NodeDataImp.DataType, False);
+      NodeData       := TVirtualTreeMethods.Create.GetNodeItemData(tn, Tree);
       //Copy from NodeDataImp
-      NodeData.Data.Copy(NodeDataImp.Data);
+      NodeData.Copy(NodeDataImp);
       //Set some properties
-      RenameShortcutOnDesktop(NodeData.Data.Name + EXT_LNK,NodeDataImp.Data.Name + EXT_LNK);
-      NodeData.Data.Name     := NodeDataImp.Data.Name;
-      NodeData.Data.Position := tn.Index;
-      NodeData.Data.SetPointerNode(tn);
+      RenameShortcutOnDesktop(NodeData.Name + EXT_LNK, NodeDataImp.Name + EXT_LNK);
+      NodeData.Name     := NodeDataImp.Name;
+      NodeData.Position := tn.Index;
     end;
     tnImp := tnImp.FirstChild;
     while Assigned(tnImp) do
@@ -309,6 +281,7 @@ var
       tnImp := tnImp.NextSibling;
     end;
   end;
+
 begin
   Tree.BeginUpdate;
   Result := True;
@@ -323,104 +296,6 @@ begin
     Result := False;
   end;
   Tree.EndUpdate;
-end;
-
-procedure TfrmImportList.tsLaunchersShow(Sender: TObject);
-begin
-  lblTitle.Caption := DKLangConstW('msgImportTitle1');
-  btnNext.Caption  := DKLangConstW('msgNext');
-  btnNext.Enabled  := True;
-end;
-
-procedure TfrmImportList.tsListShow(Sender: TObject);
-begin
-  //If cbImportList is checked, import selected list in VirtualTree
-  if (cbImportList.Checked) then
-  begin
-    lblTitle.Caption := DKLangConstW('msgImportTitle3');
-    btnNext.Caption  := DKLangConstW('msgImport');
-    //Import list in temporary vst
-    Config.ASuiteState := lsImporting;
-    PopulateTree(vstListImp, edtPathList.Text);
-  end
-  else //Else next page
-    pgcImport.SelectNextPage(true,false)
-end;
-
-procedure TfrmImportList.tsSettingsShow(Sender: TObject);
-begin
-  vstListImp.Clear;
-  lblTitle.Caption := DKLangConstW('msgImportTitle2');
-  btnNext.Enabled  := (edtPathList.Text <> '') and FileExists(edtPathList.Text);
-  btnNext.Caption  := DKLangConstW('msgNext');
-  //Change opendialog's filter depending on chosen launcher
-  case rgrpLauncher.ItemIndex of
-    0: edtPathList.Filter:= Format(DKLangConstW('msgFilterASuite2'),   [EXT_SQL,EXT_SQLBCK,EXT_SQL,EXT_SQLBCK]);
-    1: edtPathList.Filter:= Format(DKLangConstW('msgFilterASuite1'),   [EXT_XML,EXT_XMLBCK,EXT_XML,EXT_XMLBCK]);
-    2: edtPathList.Filter:= Format(DKLangConstW('msgFilterWinPenPack'),[EXT_XML,EXT_XMLBCK,EXT_XML,EXT_XMLBCK]);
-  end;
-end;
-
-function TfrmImportList.GetNumberNodeImp(Sender: TBaseVirtualTree): Integer;
-var
-  NumberNode : Integer;
-begin
-  NumberNode := 0;
-  Sender.IterateSubtree(nil, TVirtualTreeMethods.Create.IncNumberNode, @NumberNode, [], True);
-  Result := NumberNode;
-end;
-
-function TfrmImportList.InternalImportOptions(XMLDoc: TXMLDocument): Boolean;
-var
-  DBImp : TDBManager;
-  ImportFileExt : String;
-begin
-  try
-    ImportFileExt := LowerCase(ExtractFileExt(edtPathList.Text));
-    if (ImportFileExt = EXT_XML) or (ImportFileExt = EXT_XMLBCK) then
-      LoadXMLSettings(XMLDoc)
-    else
-      if (ImportFileExt = EXT_SQL) or (ImportFileExt = EXT_SQLBCK)then
-      begin
-        //ASuite 2.x
-        DBImp := TDBManager.Create();
-        DBImp.Setup(edtPathList.Text);
-        DBImp.ImportOptions;
-        DBImp.Destroy;
-      end;
-  finally
-    Result := True;
-    //Config changed and focus vstList (so it repaint)
-    Config.Changed := True;
-    frmMain.FocusControl(Config.MainTree);
-  end;
-end;
-
-procedure TfrmImportList.tsProgressShow(Sender: TObject);
-begin
-  Config.ASuiteState := lsNormal;
-  btnBack.Enabled  := False;
-  btnNext.Enabled  := False;
-  try
-    lblTitle.Caption := DKLangConstW('msgImportProgress');
-    //Which launcher?
-    case rgrpLauncher.ItemIndex of
-      0,1: lblLauncher.Caption := Format(lblLauncher.Caption,['ASuite']);
-      2:   lblLauncher.Caption := Format(lblLauncher.Caption,['winPenPack Launcher']);
-    end;
-    //Set some label and progress bar visibile
-    lblList.Enabled  := cbImportList.Checked;
-    lblItems.Visible := cbImportList.Checked;
-    pbImport.Visible := cbImportList.Checked;
-    lblSettings.Enabled := cbImportSettings.Checked;
-    //Import list
-    ImportListInASuite;
-    ImportSettingsInASuite(XMLDocument1);
-  finally
-    btnNext.Enabled  := True;
-    btnNext.Caption  := DKLangConstW('msgClose');
-    Self.Show;
-  end;
 end;
 
 end.

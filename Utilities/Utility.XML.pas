@@ -11,14 +11,16 @@ uses
 type
   TImportListToTree = function(Tree: TVirtualStringTree;Node: IXMLNode;Parent: PVirtualNode): PVirtualNode of object;
 
-  TImportOldListProcs = class //Class for IterateSubtree
+  TImportOldListProcs = class
     class function ASuite1NodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
-                               Parent: PVirtualNode): PVirtualNode;
+                                 Parent: PVirtualNode): PVirtualNode;
     class function wppLauncherNodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
-                                    Parent: PVirtualNode): PVirtualNode;
+                                     Parent: PVirtualNode): PVirtualNode;
+    class function PStartNodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
+                                Parent: PVirtualNode): PVirtualNode;
   end;
 
-procedure XMLToTree(Tree: TVirtualStringTree;CallBack: TImportListToTree;
+procedure XMLToTree(Tree: TVirtualStringTree;ListType: TListType;
                     XMLDoc: TXMLDocument);
 procedure LoadDatabaseFromXML(FileName: string);
 procedure LoadXMLSettings(XMLDoc: TXMLDocument);
@@ -27,9 +29,9 @@ Function GetHotKeyCode(KeyCode: Integer): Integer;
 Function GetHotKeyMod(KeyMod: Integer): TShiftState;
 
 { Methods to get values }
-function GetStrPropertyXML(Node : IXMLNode;Name: String;Default: String): String;
-function GetIntPropertyXML(Node : IXMLNode;Name: String;Default: Integer): Integer;
-function GetBoolPropertyXML(Node : IXMLNode;Name: String;Default: Boolean): Boolean;
+function GetStrPropertyXML(Node: IXMLNode; Name: String; Default: String): String;
+function GetIntPropertyXML(Node: IXMLNode; Name: String; Default: Integer): Integer;
+function GetBoolPropertyXML(Node: IXMLNode; Name: String; Default: Boolean): Boolean;
 
 implementation
 
@@ -147,6 +149,56 @@ begin
     Result := ShortCut(Key, ShiftState);
 end;
 
+class function TImportOldListProcs.PStartNodeToTree(Tree: TVirtualStringTree;
+  XMLNode: IXMLNode; Parent: PVirtualNode): PVirtualNode;
+var
+  NodeData     : PBaseData;
+  CustomRealNodeData : TvCustomRealNodeData;
+begin
+  Result := nil;
+  if ((XMLNode.HasAttribute('name')) or (XMLNode.NodeName = 'separator')) and
+     ((XMLNode.NodeName = 'file') or (XMLNode.NodeName = 'files') or
+      (XMLNode.NodeName = 'separator')) then
+  begin
+    //Create a new XMLNode
+    //Get item type
+    if (XMLNode.NodeName = 'files') then
+      Result := tree.AddChild(Parent, TVirtualTreeMethods.Create.CreateNodeData(vtdtCategory))
+    else
+      if (XMLNode.NodeName = 'file') then
+        Result := tree.AddChild(Parent, TVirtualTreeMethods.Create.CreateNodeData(vtdtFile))
+      else
+        if XMLNode.NodeName = 'separator' then
+          Result := Tree.AddChild(Parent, TVirtualTreeMethods.Create.CreateNodeData(vtdtSeparator));
+    //Add checkbox
+    Tree.CheckType[Result] := ctTriStateCheckBox;
+    NodeData := Tree.GetNodeData(Result);
+    NodeData.Data.SetPointerNode(Result);
+    CustomRealNodeData  := TvCustomRealNodeData(NodeData.Data);
+    //Get base properties
+    if CustomRealNodeData.DataType <> vtdtSeparator then
+    begin
+      CustomRealNodeData.Name     := String(XMLNode.Attributes['name']);
+      CustomRealNodeData.PathIcon := GetStrPropertyXML(XMLNode,'icon','');
+      //Check if it is a software, so get software properties
+      if (CustomRealNodeData.DataType = vtdtFile) then
+      begin
+        with TvFileNodeData(CustomRealNodeData) do
+        begin
+          NoMRU       := GetBoolPropertyXML(XMLNode, 'DontInsertMRU',false);
+          PathFile    := GetStrPropertyXML (XMLNode, 'path','');
+          Parameters  := GetStrPropertyXML (XMLNode, 'parameters','');
+          WorkingDir  := GetStrPropertyXML (XMLNode, 'directory','');
+          WindowState := GetIntPropertyXML (XMLNode, 'windowstate',0);
+          Autorun     := TAutorunType(GetIntPropertyXML(XMLNode, 'onstartup',0));
+          if Autorun = atNever then
+            Autorun := TAutorunType(GetIntPropertyXML(XMLNode, 'onexit',0));
+        end;
+      end;
+    end;
+  end;
+end;
+
 class function TImportOldListProcs.wppLauncherNodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
                                                Parent: PVirtualNode): PVirtualNode;
 var
@@ -199,18 +251,21 @@ begin
   end;
 end;
 
-procedure XMLToTree(Tree: TVirtualStringTree;CallBack: TImportListToTree;
+procedure XMLToTree(Tree: TVirtualStringTree; ListType: TListType;
   XMLDoc: TXMLDocument);
 var
   cXMLNode : IXMLNode;
+  AConvMethod: TImportListToTree;
 
   procedure ProcessNode(XMLNode : IXMLNode;TreeNode : PVirtualNode);
   var
     cNode : IXMLNode;
   begin
     if XMLNode = nil then Exit;
+
     //Import xml node in vstListImp
-    TreeNode := CallBack(Tree, XMLNode, TreeNode);
+    TreeNode := AConvMethod(Tree, XMLNode, TreeNode);
+
     //Next nodes
     cNode := XMLNode.ChildNodes.First;
     while Assigned(cNode) do
@@ -221,15 +276,37 @@ var
   end;
 
 begin
+  case ListType of
+    ltASuite1:
+    begin
+      TASuiteLogger.Info('Found ASuite 1.x List (%s)', [XMLDoc.FileName]);
+      AConvMethod := TImportOldListProcs.ASuite1NodeToTree;
+    end;
+    ltwppLauncher1:
+    begin
+      TASuiteLogger.Info('Found winPenPack Launcher 1.x List (%s)', [XMLDoc.FileName]);
+      AConvMethod := TImportOldListProcs.wppLauncherNodeToTree;
+    end;
+    ltPStart1:
+    begin
+      TASuiteLogger.Info('Found PStart 1.x List (%s)', [XMLDoc.FileName]);
+      AConvMethod := TImportOldListProcs.PStartNodeToTree;
+    end;
+  end;
+
   Tree.Clear;
   Tree.BeginUpdate;
-  cXMLNode := XMLDoc.DocumentElement.ChildNodes.First;
-  while Assigned(cXMLNode) do
-  begin
-    ProcessNode(cXMLNode,nil);
-    cXMLNode := cXMLNode.NextSibling;
+  try
+    cXMLNode := XMLDoc.DocumentElement.ChildNodes.First;
+
+    while Assigned(cXMLNode) do
+    begin
+      ProcessNode(cXMLNode,nil);
+      cXMLNode := cXMLNode.NextSibling;
+    end;
+  finally
+    Tree.EndUpdate;
   end;
-  Tree.EndUpdate;
 end;
 
 procedure LoadDatabaseFromXML(FileName: string);
@@ -246,7 +323,7 @@ begin
     if (XMLDoc.DocumentElement.NodeName = 'ASuite') then
     begin
       LoadXMLSettings(XMLDoc);
-      XMLToTree(Config.MainTree, TImportOldListProcs.ASuite1NodeToTree, XMLDoc);
+      XMLToTree(Config.MainTree, ltASuite1, XMLDoc);
     end;
     DeleteFile(FileName);
     Config.Changed := True;
@@ -261,7 +338,7 @@ var
 begin
   if XMLDoc.Active then
   begin
-    //ASuite 1.x - wppLauncher
+    //ASuite 1.x
     Node := XMLDoc.DocumentElement.ChildNodes['Option'];
     //Get GMTheme before everything (so ASuite know where icons folder)
     Config.GMTheme        := GetStrPropertyXML(Node, 'MenuTheme','Default');

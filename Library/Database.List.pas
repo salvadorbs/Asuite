@@ -146,7 +146,6 @@ begin
       nType := TvTreeDataType(SQLFilesData.itemtype);
       Node  := TVirtualTreeMethods.Create.AddChildNodeEx(Tree, ParentNode, amInsertAfter, nType, False);
       vData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Tree);
-      vData.SetPointerNode(Node);
       if IsImport then
         Tree.CheckType[Node] := ctTriStateCheckBox;
       // generic fields
@@ -231,7 +230,7 @@ begin
   else
     TASuiteLogger.Info('Load ASuite List from Database in VirtualTree', []);
 
-  TSQLtbl_list.LoadItemsByParentID(ATree, ADBManager.Database, 0, nil, false);
+  TSQLtbl_list.LoadItemsByParentID(ATree, ADBManager.Database, 0, nil, IsImport);
 end;
 
 procedure TSQLtbl_list.LoadDataFromNode(AData: TvBaseNodeData; AIndex, AParentID: Integer);

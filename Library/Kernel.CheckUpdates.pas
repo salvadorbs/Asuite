@@ -59,7 +59,6 @@ uses
 
 constructor TCheckUpdatesThread.Create(ASilentMode: Boolean);
 begin
-  TASuiteLogger.Info('Start thread to check latest ASuite Version', []);
   Inherited Create(False);
 
   FSilentMode := ASilentMode;

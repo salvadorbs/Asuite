@@ -143,6 +143,8 @@ type
     procedure SetTVSmallIconSize(const Value: Boolean);
 
     function GetMainTree: TVirtualStringTree;
+    function GetImportTree: TVirtualStringTree;
+    procedure GetASuiteState(const Value: TLauncherState);
   protected
     procedure HandleParam(const Param: string);
   public
@@ -151,6 +153,7 @@ type
     destructor Destroy; override;
 
     property MainTree: TVirtualStringTree read GetMainTree write FMainTree;
+    property ImportTree: TVirtualStringTree read GetImportTree;
     property Paths: TConfigPaths read FPaths;
     property ListManager: TListManager read FListManager;
     property DBManager: TDBManager read FDBManager;
@@ -228,7 +231,7 @@ type
     // Misc
     property ReadOnlyMode: Boolean read FReadOnlyMode write FReadOnlyMode;
     property Changed: Boolean read FChanged write SetChanged;
-    property ASuiteState: TLauncherState read FASuiteState write FASuiteState;
+    property ASuiteState: TLauncherState read FASuiteState write GetASuiteState;
     property ScanFolderFlatStructure: boolean read FScanFolderFlatStructure write FScanFolderFlatStructure;
     property ScanFolderAutoExtractName: boolean read FScanFolderAutoExtractName write FScanFolderAutoExtractName;
     property ScanFolderFileTypes: TStringList read FScanFolderFileTypes write FScanFolderFileTypes;
@@ -250,7 +253,8 @@ implementation
 uses
   Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, Utility.Misc,
   Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder, USingleInst,
-  Utility.XML, GraphicMenu.ThemeEngine, Kernel.Scheduler;
+  Utility.XML, GraphicMenu.ThemeEngine, Kernel.Scheduler, Forms.ImportList,
+  TypInfo;
 
 function TConfiguration.CheckReadOnlyMode: Boolean;
 begin
@@ -378,6 +382,22 @@ begin
   FListManager.Destroy;
   FDBManager.Destroy;
   FIconsManager.Destroy;
+end;
+
+procedure TConfiguration.GetASuiteState(const Value: TLauncherState);
+begin
+  TASuiteLogger.Info('Changed ASuite State (old value %s, new value %s)',
+    [GetEnumName(TypeInfo(TLauncherState), Ord(FASuiteState)),
+     GetEnumName(TypeInfo(TLauncherState), Ord(Value))]);
+
+  FASuiteState := Value;
+end;
+
+function TConfiguration.GetImportTree: TVirtualStringTree;
+begin
+  Result := nil;
+  if Assigned(frmImportList) then
+    Result := frmImportList.vstListImp;
 end;
 
 function TConfiguration.GetMainTree: TVirtualStringTree;
