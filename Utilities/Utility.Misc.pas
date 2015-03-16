@@ -189,6 +189,9 @@ var
 begin
   Task.Content := Msg;
   Task.Execute([cbOK],mrOk,[],IconError[Error]);
+
+  if Error then
+    TASuiteLogger.Error(Msg, []);
 end;
 
 procedure ShowMessageFmtEx(const Msg: string; Params: array of const; Error: boolean=false);

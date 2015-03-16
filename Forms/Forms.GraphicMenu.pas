@@ -361,6 +361,7 @@ begin
   begin
     ReleaseCapture;
     Perform(WM_SYSCOMMAND, SC_DRAGMOVE, 0);
+    Config.Changed := True;
   end;
 end;
 

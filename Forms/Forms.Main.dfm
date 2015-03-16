@@ -29,7 +29,7 @@ object frmMain: TfrmMain
     Top = 0
     Width = 201
     Height = 386
-    ActivePage = tbSearch
+    ActivePage = tbList
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -89,7 +89,7 @@ object frmMain: TfrmMain
         Left = 169
         Top = 0
         Width = 24
-        Height = 21
+        Height = 22
         Margins.Left = 0
         Margins.Top = 0
         Margins.Right = 0
@@ -99,9 +99,9 @@ object frmMain: TfrmMain
       end
       object vstSearch: TVirtualStringTree
         Left = 0
-        Top = 24
+        Top = 25
         Width = 193
-        Height = 333
+        Height = 332
         Align = alBottom
         Anchors = [akLeft, akTop, akRight, akBottom]
         AnimationDuration = 0

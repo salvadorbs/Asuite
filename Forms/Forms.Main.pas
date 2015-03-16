@@ -153,7 +153,7 @@ var
 implementation
 
 uses
-  TypInfo, Forms.Options, Forms.About, Utility.Misc, Forms.ScanFolder,
+  Forms.Options, Forms.About, Utility.Misc, Forms.ScanFolder,
   DataModules.TrayMenu, Forms.ImportList, AppConfig.Main, Utility.System,
   VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base, Kernel.Scheduler,
   Kernel.Types, NodeDataTypes.Files, VirtualTree.Events, Utility.Process,

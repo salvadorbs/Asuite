@@ -155,8 +155,10 @@ begin
       TASuiteLogger.Info('Start scanning folders to search files', []);
       DoScanThread(Config.MainTree, ListNode, FScannerFolder);
     end
-    else
+    else begin
       ShowMessageEx(DKLangConstW('msgErrScanFolderEmptyPath'), True);
+      FScannerFolder.Free;
+    end;
   end
   else
     ShowMessageEx(DKLangConstW('msgErrScanFolderMissingTypes'), True);
