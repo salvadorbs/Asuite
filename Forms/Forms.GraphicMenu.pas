@@ -103,6 +103,7 @@ type
 
     procedure PopulateListTree(const ATree: TVirtualStringTree);
     procedure PopulateSpecialTree(const ATree: TVirtualStringTree; AList: TBaseItemsList; MaxItems: Integer);
+    procedure SavePositionForm;
 	public
     { Public declarations }
     procedure OpenMenu;
@@ -166,6 +167,17 @@ begin
   //Fade in out
   FOpening := False;
   tmrFader.Enabled:= True;
+end;
+
+procedure TfrmGraphicMenu.SavePositionForm;
+begin
+  if (Self.Top <> Config.GMPositionTop) or (Self.Left <> Config.GMPositionLeft) then
+  begin
+    Config.GMPositionTop := Self.Top;
+    Config.GMPositionLeft := Self.Left;
+
+    Config.Changed := True;
+  end;
 end;
 
 procedure TfrmGraphicMenu.CheckUserPicture;
@@ -248,13 +260,7 @@ begin
   //if menu lost its focus, it hide
   CloseMenu;
   //Save position
-  if (Self.Top <> Config.GMPositionTop) or (Self.Left <> Config.GMPositionLeft) then
-  begin
-    Config.GMPositionTop  := Self.Top;
-    Config.GMPositionLeft := Self.Left;
-
-    Config.Changed := True;
-  end;
+  SavePositionForm;
 end;
 
 procedure TfrmGraphicMenu.FormHide(Sender: TObject);
@@ -361,7 +367,8 @@ begin
   begin
     ReleaseCapture;
     Perform(WM_SYSCOMMAND, SC_DRAGMOVE, 0);
-    Config.Changed := True;
+
+    SavePositionForm;
   end;
 end;
 
