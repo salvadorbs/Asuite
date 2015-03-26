@@ -24,7 +24,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.Buttons,
-  DKLang, Frame.BaseEntity, Vcl.StdCtrls, VirtualTrees, Lists.Base;
+  DKLang, Frame.BaseEntity, Vcl.StdCtrls, VirtualTrees, Lists.Base, Vcl.Menus;
 
 type
   TfrmAutorunOptionsPage = class(TfrmBaseEntityPage)
@@ -43,18 +43,30 @@ type
     btnShutdownDelete: TBitBtn;
     btnShutdownDown: TBitBtn;
     btnShutdownUp: TBitBtn;
+    pmAutorun: TPopupMenu;
+    mniRemoveAutorun: TMenuItem;
+    mniN1: TMenuItem;
+    mniProperties: TMenuItem;
     procedure btnStartupUpClick(Sender: TObject);
     procedure btnShutdownUpClick(Sender: TObject);
     procedure btnStartupDeleteClick(Sender: TObject);
     procedure btnShutdownDeleteClick(Sender: TObject);
     procedure btnStartupDownClick(Sender: TObject);
     procedure btnShutdownDownClick(Sender: TObject);
+    procedure mniPropertiesClick(Sender: TObject);
+    procedure vstGetPopupMenu(Sender: TBaseVirtualTree;
+      Node: PVirtualNode; Column: TColumnIndex; const P: TPoint;
+      var AskParent: Boolean; var PopupMenu: TPopupMenu);
+    procedure mniRemoveAutorunClick(Sender: TObject);
   private
     { Private declarations }
+    FActiveTree: TBaseVirtualTree;
     procedure MoveItemUp(const ATree: TBaseVirtualTree);
     procedure MoveItemDown(const ATree: TBaseVirtualTree);
     procedure RemoveItem(const ATree: TBaseVirtualTree);
     procedure SaveInAutorunItemList(const ATree: TBaseVirtualTree;const AutorunItemList: TBaseItemsList);
+    function  GetActiveTree: TBaseVirtualTree;
+    procedure LoadGlyphs;
   strict protected
     function GetTitle: string; override;
     function GetImageIndex: Integer; override;
@@ -108,6 +120,11 @@ begin
   MoveItemUp(vstStartupItems);
 end;
 
+function TfrmAutorunOptionsPage.GetActiveTree: TBaseVirtualTree;
+begin
+  Result := FActiveTree;
+end;
+
 function TfrmAutorunOptionsPage.GetImageIndex: Integer;
 begin
   Result := Config.IconsManager.GetIconIndex('autorun');
@@ -121,6 +138,7 @@ end;
 function TfrmAutorunOptionsPage.InternalLoadData: Boolean;
 begin
   Result := inherited;
+  FActiveTree := vstStartupItems;
   TVirtualTreeEvents.Create.SetupVSTAutorun(vstStartupItems);
   TVirtualTreeEvents.Create.SetupVSTAutorun(vstShutdownItems);
   //Startup
@@ -139,6 +157,8 @@ begin
   TVirtualTreeMethods.Create.PopulateVSTItemList(vstShutdownItems, Config.ListManager.ShutdownItemList);
   vstStartupItems.Header.AutoFitColumns;
   vstShutdownItems.Header.AutoFitColumns;
+
+  LoadGlyphs;
 end;
 
 function TfrmAutorunOptionsPage.InternalSaveData: Boolean;
@@ -150,6 +170,23 @@ begin
   //Save Startup and Shutdown lists
   SaveInAutorunItemList(vstStartupItems, Config.ListManager.StartupItemList);
   SaveInAutorunItemList(vstShutdownItems, Config.ListManager.ShutdownItemList);
+end;
+
+procedure TfrmAutorunOptionsPage.LoadGlyphs;
+begin
+  mniProperties.ImageIndex   := Config.IconsManager.GetIconIndex('property');
+end;
+
+procedure TfrmAutorunOptionsPage.mniPropertiesClick(Sender: TObject);
+begin
+  TVirtualTreeMethods.Create.ShowItemProperty(Self, GetActiveTree, GetActiveTree.FocusedNode);
+end;
+
+procedure TfrmAutorunOptionsPage.mniRemoveAutorunClick(Sender: TObject);
+begin
+  if (MessageDlg((DKLangConstW('msgConfirm')),mtWarning, [mbYes,mbNo], 0) = mrYes) then
+    if Assigned(GetActiveTree.FocusedNode) then
+      GetActiveTree.IsVisible[GetActiveTree.FocusedNode] := False;
 end;
 
 procedure TfrmAutorunOptionsPage.MoveItemUp(const ATree: TBaseVirtualTree);
@@ -194,6 +231,13 @@ begin
     end;
     Node := ATree.GetNext(Node);
   end;
+end;
+
+procedure TfrmAutorunOptionsPage.vstGetPopupMenu(
+  Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;
+  const P: TPoint; var AskParent: Boolean; var PopupMenu: TPopupMenu);
+begin
+  FActiveTree := Sender;
 end;
 
 end.

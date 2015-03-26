@@ -1,6 +1,5 @@
 inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
   Height = 405
-  ExplicitHeight = 405
   object grpStartupOrderItems: TGroupBox
     AlignWithMargins = True
     Left = 3
@@ -70,10 +69,12 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       Header.Font.Style = []
       Header.Options = [hoColumnResize, hoVisible]
       ParentFont = False
+      PopupMenu = pmAutorun
       TabOrder = 1
       TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
       TreeOptions.PaintOptions = [toPopupMode, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
       TreeOptions.SelectionOptions = [toFullRowSelect]
+      OnGetPopupMenu = vstGetPopupMenu
       Columns = <
         item
           MinWidth = 50
@@ -197,10 +198,12 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       Header.Font.Style = []
       Header.Options = [hoColumnResize, hoVisible]
       ParentFont = False
+      PopupMenu = pmAutorun
       TabOrder = 1
       TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
       TreeOptions.PaintOptions = [toPopupMode, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
       TreeOptions.SelectionOptions = [toFullRowSelect]
+      OnGetPopupMenu = vstGetPopupMenu
       Columns = <
         item
           MinWidth = 50
@@ -259,7 +262,7 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
     Left = 384
     Top = 24
     LangData = {
-      150066726D4175746F72756E4F7074696F6E735061676500010E000000140067
+      150066726D4175746F72756E4F7074696F6E7350616765000112000000140067
       7270537461727475704F726465724974656D7301010000000100000007004361
       7074696F6E00150067727053687574646F776E4F726465724974656D73010100
       000002000000070043617074696F6E000A0063686B5374617274757001010000
@@ -271,6 +274,25 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       746E5374617274757055700000100062746E5374617274757044656C65746500
       000E0062746E53746172747570446F776E0000110062746E53687574646F776E
       44656C65746500000F0062746E53687574646F776E446F776E00000D0062746E
-      53687574646F776E55700000}
+      53687574646F776E557000000900706D4175746F72756E000010006D6E695265
+      6D6F76654175746F72756E010100000007000000070043617074696F6E000500
+      6D6E694E3100000D006D6E6950726F7065727469657301010000000800000007
+      0043617074696F6E00}
+  end
+  object pmAutorun: TPopupMenu
+    Images = dmImages.ilSmallIcons
+    Left = 304
+    Top = 24
+    object mniRemoveAutorun: TMenuItem
+      Caption = 'Remove autorun'
+      OnClick = mniRemoveAutorunClick
+    end
+    object mniN1: TMenuItem
+      Caption = '-'
+    end
+    object mniProperties: TMenuItem
+      Caption = 'Properties'
+      OnClick = mniPropertiesClick
+    end
   end
 end
