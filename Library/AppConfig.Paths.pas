@@ -22,7 +22,8 @@ unit AppConfig.Paths;
 interface
 
 uses
-  Windows, SysUtils, Graphics, Forms, Controls, Vcl.Imaging.pngimage, Classes;
+  Windows, SysUtils, Graphics, Forms, Controls, Vcl.Imaging.pngimage, Classes,
+  ShlObj;
 
 type
   TConfigPaths = class
@@ -31,7 +32,7 @@ type
     FSuiteFullFileName   : String;
     FSuiteFileName       : String;
     FSuiteDrive          : String;
-    FSuitePath           : String;
+    FSuitePathData       : String;
     FSuitePathWorking    : String;
     FSuitePathLocale     : String;
     FSuitePathCache      : String;
@@ -54,7 +55,7 @@ type
     property SuiteFullFileName: String read FSuiteFullFileName write FSuiteFullFileName;
     property SuiteFileName: String read FSuiteFileName write FSuiteFileName;
     property SuiteDrive: String read FSuiteDrive write FSuiteDrive;
-    property SuitePath: String read FSuitePath write FSuitePath;
+    property SuitePathData: String read FSuitePathData write FSuitePathData;
     property SuitePathWorking: String read FSuitePathWorking write FSuitePathWorking;
     property SuitePathLocale: String read FSuitePathLocale write FSuitePathLocale;
     property SuitePathCache: String read FSuitePathCache write FSuitePathCache;
@@ -104,22 +105,24 @@ begin
   FSuiteFullFileName := Application.ExeName;
   FSuiteFileName     := ExtractFileName(FSuiteFullFileName);
   FSuiteDrive        := LowerCase(ExtractFileDrive(FSuiteFullFileName));
-  FSuitePath         := IncludeTrailingBackslash(ExtractFileDir(FSuiteFullFileName));
-  if IsDriveRoot(FSuitePath) then
-    FSuitePathWorking := GetCorrectWorkingDir(FSuitePath)
-  else
-    FSuitePathWorking := FSuitePath;
+  FSuitePathWorking  := ExtractFilePath(FSuiteFullFileName);
   SetCurrentDir(FSuitePathWorking);
-  FSuitePathWorking        := LowerCase(FSuitePathWorking);
-  FSuitePathLocale         := FSuitePathWorking + LOCALE_DIR;
-  FSuitePathCache          := FSuitePathWorking + CACHE_DIR;
-  FSuitePathBackup         := FSuitePathWorking + BACKUP_DIR;
-  FSuitePathMenuThemes     := FSuitePathWorking + MENUTHEMES_DIR;
+  if Not(IsDirectoryWriteable(FSuitePathWorking)) then
+  begin
+    FSuitePathData := IncludeTrailingBackslash(GetSpecialFolder(CSIDL_LOCAL_APPDATA) + APP_NAME);
+    SysUtils.ForceDirectories(FSuitePathData);
+  end
+  else
+    FSuitePathData := FSuitePathWorking;
+  FSuitePathLocale     := FSuitePathWorking + LOCALE_DIR;
+  FSuitePathCache      := FSuitePathData + CACHE_DIR;
+  FSuitePathBackup     := FSuitePathData + BACKUP_DIR;
+  FSuitePathMenuThemes := FSuitePathWorking + MENUTHEMES_DIR;
   //List
   //Check if xml list exists, else get sqlite list
-  FSuitePathList := FSuitePathWorking + 'asuite.xml';
+  FSuitePathList := FSuitePathData + 'asuite.xml';
   if not FileExists(FSuitePathList) then
-    FSuitePathList := FSuitePathWorking + ChangeFileExt(FSuiteFileName, EXT_SQL);
+    FSuitePathList := FSuitePathData + ChangeFileExt(FSuiteFileName, EXT_SQL);
 end;
 
 function TConfigPaths.ExpandEnvVars(const Str: string): string;

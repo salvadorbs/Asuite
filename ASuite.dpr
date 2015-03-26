@@ -83,13 +83,11 @@ var
   cTempo1,cTempo2 : Cardinal;
   myTextFile   : TextFile;
 {$ENDIF}
-  FLogger: TASuiteLogger;
 
 {$R *.res}
 {$R *.dkl_const.res}
 
 begin
-  FLogger := TASuiteLogger.Create;
   if SingleInst.CanStartApp then
   begin
     {$IFDEF DEBUG}
@@ -99,7 +97,6 @@ begin
     cTempo1 := GetTickCount;
     {$ENDIF}
 
-    TASuiteLogger.Info('Initialize application', []);
     Application.Initialize;
     Config    := TConfiguration.Create;
     Application.Title := APP_TITLE;
@@ -115,8 +112,8 @@ begin
     {$IFDEF DEBUG}
     //Timing startup
     cTempo2 := GetTickCount;
-    AssignFile(myTextFile, DEBUG_FILE);
-    if Not(FileExists(DEBUG_FILE)) then
+    AssignFile(myTextFile, Config.Paths.SuitePathData + DEBUG_FILE);
+    if Not(FileExists(Config.Paths.SuitePathData + DEBUG_FILE)) then
       ReWrite(myTextFile)
     else
       Append(myTextFile);
@@ -124,5 +121,4 @@ begin
     CloseFile(myTextFile);
     {$ENDIF}
   end;
-  FLogger.Free;
 end.

@@ -7,10 +7,12 @@ uses
   ComObj, FileCtrl, PJVersionInfo;
 
 { Folders }
+function GetSpecialFolder(const ASpecialFolderID: Integer): string;
 function  BrowseForFolder(const InitialDir: String; const Caption: String = ''): String;
 function DirToPath(const Dir: string): string;
 function IsDirectory(const DirName: string): Boolean;
 function IsFlagSet(const Flags, Mask: Integer): Boolean;
+function IsDirectoryWriteable(const AName: string): Boolean;
 
 { Files }
 procedure DeleteOldBackups(const MaxNumber: Integer);
@@ -30,6 +32,16 @@ implementation
 
 uses
   AppConfig.Main, IniFiles, FCRC32;
+
+function GetSpecialFolder(const ASpecialFolderID: Integer): string;
+var
+  vSFolder :  pItemIDList;
+  vSpecialPath : array[0..MAX_PATH] of Char;
+begin
+  SHGetSpecialFolderLocation(0, ASpecialFolderID, vSFolder);
+  SHGetPathFromIDList(vSFolder, vSpecialPath);
+  Result := IncludeTrailingBackslash(StrPas(vSpecialPath));
+end;
 
 function BrowseForFolder(const InitialDir: String; const Caption: String): String;
 var
@@ -62,6 +74,18 @@ end;
 function IsFlagSet(const Flags, Mask: Integer): Boolean;
 begin
   Result := Mask = (Flags and Mask);
+end;
+
+function IsDirectoryWriteable(const AName: string): Boolean;
+var
+  FileName: String;
+  H: THandle;
+begin
+  FileName := IncludeTrailingPathDelimiter(AName) + 'chk.tmp';
+  H := CreateFile(PChar(FileName), GENERIC_READ or GENERIC_WRITE, 0, nil,
+    CREATE_NEW, FILE_ATTRIBUTE_TEMPORARY or FILE_FLAG_DELETE_ON_CLOSE, 0);
+  Result := H <> INVALID_HANDLE_VALUE;
+  if Result then CloseHandle(H);
 end;
 
 function DeleteFiles(const Dir, Wildcard: string): Integer;
@@ -197,21 +221,16 @@ var
   IPFile   : IPersistFile;
   PIDL     : PItemIDList;
   InFolder : array[0..MAX_PATH] of Char;
-  sPath    : String;
 begin
-  //Relative path to Absolute path
-  sPath := TargetFilePath;
-  if pos(':',sPath) = 0 then
-    sPath := Config.Paths.SuitePathWorking + sPath;
   //Create objects
   IObject := CreateComObject(CLSID_ShellLink);
   ISLink  := IObject as IShellLink;
   IPFile  := IObject as IPersistFile;
   //Create link
-  ISLink.SetPath(pChar(sPath));
+  ISLink.SetPath(pChar(TargetFilePath));
   ISLink.SetArguments(pChar(Params));
   if WorkingDir = '' then
-    ISLink.SetWorkingDirectory(pChar(ExtractFilePath(sPath)))
+    ISLink.SetWorkingDirectory(pChar(ExtractFilePath(TargetFilePath)))
   else
     ISLink.SetWorkingDirectory(pChar(WorkingDir));
   //DesktopPath

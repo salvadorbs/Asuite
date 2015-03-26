@@ -27,7 +27,7 @@ uses
 type
   TASuiteLogger = Class
   public
-    constructor Create;
+    constructor Create(ADestinationPath: string);
 
     class procedure Info(const AText: string; AParams: Array of const);
     class procedure Debug(const AText: string; AParams: Array of const);
@@ -39,12 +39,16 @@ type
 
 implementation
 
+uses
+  AppConfig.Main;
+
 { TASuiteLogger }
 
-constructor TASuiteLogger.Create;
+constructor TASuiteLogger.Create(ADestinationPath: string);
 begin
   with TSynLog.Family do
   begin
+    DestinationPath := ADestinationPath;
     Level := LOG_VERBOSE;
     RotateFileCount := 1;
     RotateFileDailyAtHour := 0;

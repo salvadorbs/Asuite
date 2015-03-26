@@ -100,7 +100,7 @@ begin
     //Save file in disk
     if MemoryStream.Size <> 0 then
     begin
-      MemoryStream.SaveToFile(UPDATE_FILE);
+      MemoryStream.SaveToFile(Config.Paths.SuitePathData + UPDATE_FILE);
 
       ProcessUpdateFile;
     end;
@@ -127,9 +127,9 @@ var
   LatestVersion: TPJVersionNumber;
   VersionInfo: TPJVersionInfo;
 begin
-  if FileExists(Config.Paths.SuitePathWorking + UPDATE_FILE) then
+  if FileExists(Config.Paths.SuitePathData + UPDATE_FILE) then
   begin
-    IniFile := TIniFile.Create(Config.Paths.SuitePathWorking + UPDATE_FILE);
+    IniFile := TIniFile.Create(Config.Paths.SuitePathData + UPDATE_FILE);
     VersionInfo := TPJVersionInfo.Create(nil);
     try
       VersionInfo.FileName := Config.Paths.SuiteFullFileName;

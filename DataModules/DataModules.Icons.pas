@@ -57,8 +57,8 @@ uses
 procedure TdmImages.DataModuleCreate(Sender: TObject);
 begin
   //Use System ImageList
-  ilSmallIcons.Handle := SysImageListHandle(Config.Paths.SuitePathWorking, False);
-  ilLargeIcons.Handle := SysImageListHandle(Config.Paths.SuitePathWorking, True);
+  ilSmallIcons.Handle := SysImageListHandle(Config.Paths.SuitePathData, False);
+  ilLargeIcons.Handle := SysImageListHandle(Config.Paths.SuitePathData, True);
 end;
 
 procedure TdmImages.DrawIconInBitmap(const AGlyph: TBitmap;

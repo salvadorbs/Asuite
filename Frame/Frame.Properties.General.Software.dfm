@@ -61,8 +61,8 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       AutoSize = False
       Caption = 
         'Note: You can use these vars (included environment variables) in' +
-        ' relative path:'#13#10'- $asuite = ASuite folder path ( %s )'#13#10'- $drive' +
-        ' = drive path ( %s )'
+        ' relative path:'#13#10'- $asuite = ASuite folder path ("%s")'#13#10'- $drive' +
+        ' = drive path ("%s")'
       Color = clBtnFace
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText

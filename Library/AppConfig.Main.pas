@@ -114,6 +114,7 @@ type
     FListManager : TListManager;
     FDBManager : TDBManager;
     FIconsManager: TIconsManager;
+    FLogger: TASuiteLogger;
     procedure SetHoldSize(value: Boolean);
     procedure SetAlwaysOnTop(value: Boolean);
     procedure SetTrayIcon(value: Boolean);
@@ -278,7 +279,9 @@ begin
   for I := 1 to ParamCount do
     HandleParam(ParamStr(I));
   //Create some classes
-  FPaths := TConfigPaths.Create;
+  FPaths  := TConfigPaths.Create;
+  FLogger := TASuiteLogger.Create(FPaths.SuitePathData);
+  TASuiteLogger.Info('Start software', []);
   FListManager  := TListManager.Create;
   FDBManager    := TDBManager.Create;
   FIconsManager := TIconsManager.Create;
@@ -382,6 +385,7 @@ begin
   FListManager.Destroy;
   FDBManager.Destroy;
   FIconsManager.Destroy;
+  FLogger.Free;
 end;
 
 procedure TConfiguration.GetASuiteState(const Value: TLauncherState);
