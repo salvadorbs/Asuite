@@ -78,8 +78,8 @@ uses
 
 //SQLite3 static library
 
-var
 {$IFDEF DEBUG}
+var
   cTempo1,cTempo2 : Cardinal;
   myTextFile   : TextFile;
 {$ENDIF}
