@@ -544,9 +544,9 @@ object frmAbout: TfrmAbout
     object lblVersion: TLabel
       Left = 157
       Top = 37
-      Width = 14
+      Width = 54
       Height = 13
-      Caption = '%s'
+      Caption = '%s (%s bit)'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
