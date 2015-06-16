@@ -57,7 +57,7 @@ type
       Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
     procedure DoGetImageIndex(Sender: TBaseVirtualTree;
       Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-      var Ghosted: Boolean; var ImageIndex: Integer);
+      var Ghosted: Boolean; var ImageIndex: TImageIndex);
     procedure DoPaintText(Sender: TBaseVirtualTree;
       const TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
       TextType: TVSTTextType);
@@ -109,7 +109,7 @@ type
       Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
     procedure DoGetImageIndexFrame(Sender: TBaseVirtualTree;
       Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-      var Ghosted: Boolean; var ImageIndex: Integer);
+      var Ghosted: Boolean; var ImageIndex: TImageIndex);
     procedure DoFreeNodeFrame(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure DoInitNodeFrame(Sender: TBaseVirtualTree; ParentNode,
       Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
@@ -123,7 +123,7 @@ type
       Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
     procedure DoGetImageIndexHotkey(Sender: TBaseVirtualTree;
       Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-      var Ghosted: Boolean; var ImageIndex: Integer);
+      var Ghosted: Boolean; var ImageIndex: TImageIndex);
 
     //Autorun events
     procedure DoGetTextAutorun(Sender: TBaseVirtualTree; Node: PVirtualNode;
@@ -811,7 +811,7 @@ end;
 
 procedure TVirtualTreeEvents.DoGetImageIndex(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-  var Ghosted: Boolean; var ImageIndex: Integer);
+  var Ghosted: Boolean; var ImageIndex: TImageIndex);
 var
   NodeData: TvBaseNodeData;
 begin
@@ -827,7 +827,7 @@ end;
 
 procedure TVirtualTreeEvents.DoGetImageIndexFrame(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-  var Ghosted: Boolean; var ImageIndex: Integer);
+  var Ghosted: Boolean; var ImageIndex: TImageIndex);
 var
   NodeData : PFramesNodeData;
 begin
@@ -841,7 +841,7 @@ end;
 
 procedure TVirtualTreeEvents.DoGetImageIndexHotkey(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-  var Ghosted: Boolean; var ImageIndex: Integer);
+  var Ghosted: Boolean; var ImageIndex: TImageIndex);
 var
   NodeData: TvBaseNodeData;
 begin

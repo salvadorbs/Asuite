@@ -25,7 +25,7 @@ interface
 
 uses
   SysUtils, Classes, Controls, Windows, Graphics, Dialogs,
-  ShellApi, CommCtrl, Vcl.ImgList;
+  ShellApi, CommCtrl, Vcl.ImgList, System.ImageList;
 
 type
   TdmImages = class(TDataModule)
