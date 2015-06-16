@@ -1,5 +1,5 @@
 @echo off
-  for %%v in (L Latest 5 6 7 8 9 10 11 12 13 14 15) do if /I !%1!==!%%v! goto :bds
+  for %%v in (L Latest 5 6 7 8 9 10 11 12 13 14 15 16) do if /I !%1!==!%%v! goto :bds
   if /I !%1!==!! goto :help
   echo Unknown BDS version "%1"
   goto :help
@@ -173,11 +173,16 @@
   FOR /F "tokens=2*" %%P IN ('REG QUERY HKEY_CURRENT_USER\Software\Embarcadero\BDS\15.0 /v App 2^>NUL') DO call :do set bdsExe="%%Q"
   set bdsProduct=Studio XE7
   goto :eof
+:16
+  FOR /F "tokens=2*" %%P IN ('REG QUERY HKEY_CURRENT_USER\Software\Embarcadero\BDS\16.0 /v App 2^>NUL') DO call :do set bdsExe="%%Q"
+  set bdsProduct=Studio XE7
+  goto :eof
 
 :L
 :latest
   :: get %bdsExe% for youngest Delphi version
-  call :15
+  call :16
+  if [%bdsExe%]==[] call :15
   if [%bdsExe%]==[] call :14
   if [%bdsExe%]==[] call :13
   if [%bdsExe%]==[] call :12
@@ -285,6 +290,7 @@
   echo     13 - Appmethod 1.13
   echo     14 - Delphi XE6/Appnethod 1.14
   echo     15 - Delphi XE7/Appnethod 1.15
+  echo     16 - Delphi XE8
   echo      L - Latest/Youngest installed version of the above.
   echo.
   echo Supported BDS Targets:

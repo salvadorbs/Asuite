@@ -42,9 +42,9 @@ Source: "..\bin\sqlite3-64.dll"; DestDir: "{app}"; Check: Is64BitInstallMode;
 ; Place all x86 files here, first one should be marked 'solidbreak'
 Source: "..\bin\ASuite.exe"; DestDir: "{app}"; Check: not Is64BitInstallMode; Flags: solidbreak      
 ; Place all common files here, first one should be marked 'solidbreak'
-Source: "..\bin\docs\*"; DestDir: "{app}"; Flags: solidbreak recursesubdirs createallsubdirs
-Source: "..\bin\locale\*"; DestDir: "{app}"; Flags: recursesubdirs createallsubdirs
-Source: "..\bin\themes\*"; DestDir: "{app}"; Flags: recursesubdirs createallsubdirs
+Source: "..\bin\docs\*"; DestDir: "{app}\docs"; Flags: solidbreak recursesubdirs createallsubdirs
+Source: "..\bin\locale\*"; DestDir: "{app}\locale"; Flags: recursesubdirs createallsubdirs
+Source: "..\bin\themes\*"; DestDir: "{app}\themes"; Flags: recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Check: "not IsWin64";
