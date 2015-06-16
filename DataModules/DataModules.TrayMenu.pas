@@ -155,6 +155,7 @@ begin
     Exit;
   case Button of
     TMouseButton.mbLeft   : DoTrayIconButtonClick(Sender, Config.ActionClickLeft);
+    TMouseButton.mbMiddle : DoTrayIconButtonClick(Sender, Config.ActionClickMiddle);
     TMouseButton.mbRight  : DoTrayIconButtonClick(Sender, Config.ActionClickRight);
   end;
 end;
