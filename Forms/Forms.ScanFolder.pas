@@ -25,7 +25,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, DKLang,
   VirtualExplorerTree, MPShellUtilities, ShellApi, Vcl.ImgList, MPCommonUtilities,
-  Scanner.Thread, Scanner.Folder;
+  Scanner.Thread, Scanner.Folder, System.ImageList;
 
 type
   TfrmScanFolder = class(TForm)
@@ -59,7 +59,7 @@ type
       Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
     procedure vstGetImageIndex(Sender: TBaseVirtualTree;
       Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-      var Ghosted: Boolean; var ImageIndex: Integer);
+      var Ghosted: Boolean; var ImageIndex: TImageIndex);
     procedure btnTypesAddClick(Sender: TObject);
     procedure btnTypesDeleteClick(Sender: TObject);
     procedure btnExcludeDeleteClick(Sender: TObject);
@@ -232,6 +232,7 @@ end;
 
 procedure TfrmScanFolder.FormCreate(Sender: TObject);
 begin
+  vstShell.Active := True;
   LoadSettings;
 end;
 
@@ -422,13 +423,16 @@ end;
 
 procedure TfrmScanFolder.vstGetImageIndex(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-  var Ghosted: Boolean; var ImageIndex: Integer);
+  var Ghosted: Boolean; var ImageIndex: TImageIndex);
 var
   NodeData: pScanFolderData;
 begin
-  NodeData := Sender.GetNodeData(Node);
-  if Assigned(NodeData) then
-    ImageIndex := NodeData.ImageIndex;
+  if (Kind = ikNormal) or (Kind = ikSelected) then
+  begin
+    NodeData := Sender.GetNodeData(Node);
+    if Assigned(NodeData) then
+      ImageIndex := NodeData.ImageIndex;
+  end;
 end;
 
 procedure TfrmScanFolder.vstGetText(Sender: TBaseVirtualTree;

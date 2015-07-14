@@ -201,9 +201,16 @@ var
   Node: PVirtualNode;
   NodeData: TvBaseNodeData;
   sFileExt, sShortName, sPath: String;
+  Predicate: TDirectory.TFilterPredicate;
 begin
   if FCancel then
     Exit;
+
+  //Added Predicate for GetDirectories (avoid access denied when code open some folders, like "common files")
+  Predicate := function(const Path: string; const SearchRec: TSearchRec): Boolean
+                   begin
+                     Result := DirectoryExists(IncludeTrailingPathDelimiter(Path) + SearchRec.Name);
+                   end;
 
   //Flat structure
   if FFlat then
@@ -212,7 +219,7 @@ begin
   //Folders
   if Not AOnlyFiles then
   begin
-    for sPath in TDirectory.GetDirectories(AFolderPath) do
+    for sPath in TDirectory.GetDirectories(AFolderPath, Predicate) do
     begin
       Node := TVirtualTreeMethods.Create.AddChildNodeEx(Config.MainTree, AParentNode, amInsertAfter, vtdtCategory, False);
       NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Config.MainTree);

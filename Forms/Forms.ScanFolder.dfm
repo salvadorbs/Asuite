@@ -274,7 +274,7 @@ object frmScanFolder: TfrmScanFolder
     Top = 8
     Width = 193
     Height = 220
-    Active = True
+    Active = False
     Anchors = [akLeft, akTop, akRight, akBottom]
     ColumnDetails = cdUser
     ColumnMenuItemCount = 8
