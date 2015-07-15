@@ -28,10 +28,11 @@ type
   TTreeIconsThread = class(TThread)
   private
     FSenderTree : TBaseVirtualTree;
+    FParentNode : PVirtualNode;
     procedure GetImageIndex(Sender: TBaseVirtualTree; Node: PVirtualNode;
                             Data: Pointer; var Abort: Boolean);
   public
-    constructor Create(ASenderTree: TBaseVirtualTree);
+    constructor Create(ASenderTree: TBaseVirtualTree; AParentNode : PVirtualNode);
     procedure Execute; override;
   end;
 
@@ -43,12 +44,13 @@ uses
 
 { TTreeIconsThread }
 
-constructor TTreeIconsThread.Create(ASenderTree: TBaseVirtualTree);
+constructor TTreeIconsThread.Create(ASenderTree: TBaseVirtualTree; AParentNode : PVirtualNode);
 begin
   inherited Create(True);
   TASuiteLogger.Info('Start thread to get all icons', []);
   //Init thread with base properties
   FSenderTree := ASenderTree;
+  FParentNode := AParentNode;
 
   FreeOnTerminate := True;
 end;
@@ -56,7 +58,7 @@ end;
 procedure TTreeIconsThread.Execute;
 begin
   TASuiteLogger.Enter('Execute', Self);
-  FSenderTree.IterateSubtree(nil, GetImageIndex, nil);
+  FSenderTree.IterateSubtree(FParentNode, GetImageIndex, nil);
 end;
 
 procedure TTreeIconsThread.GetImageIndex(Sender: TBaseVirtualTree;

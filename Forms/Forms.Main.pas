@@ -610,7 +610,7 @@ begin
   edtSearch.TextHint := StringReplace(miSearchName.Caption, '&', '', []);
   PopulatePopUpMenuFromAnother(miEdit, pmWindow.Items);
   //Start threads
-  TVirtualTreeMethods.Create.GetAllIcons(vstList);
+  TVirtualTreeMethods.Create.GetAllIcons(vstList, nil);
   if Config.CheckUpdatesStartup then
     TCheckUpdatesThread.Create(True);
 end;

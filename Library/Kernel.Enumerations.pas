@@ -84,6 +84,7 @@ type
       lsShutdown, //Launcher Shutdown Time
       lsNormal,
       lsImporting,
+      lsScanning,
       lsDeleting
   );
 

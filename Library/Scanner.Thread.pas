@@ -81,6 +81,9 @@ end;
 constructor TScanThread.Create(CreateSuspended: Boolean; ATree: TBaseVirtualTree; AFolder: TScannerFolder);
 begin
   inherited Create(CreateSuspended);
+
+  Config.ASuiteState := lsScanning;
+
   FreeOnTerminate := True;
   FCancel         := False;
   FTree           := ATree;
@@ -126,6 +129,7 @@ end;
 
 destructor TScanThread.Destroy;
 begin
+  Config.ASuiteState := lsNormal;
   inherited;
 end;
 
@@ -146,7 +150,7 @@ var
   Node, ParentNode: PVirtualNode;
   NodeData: TvBaseNodeData;
   I: Integer;
-  sFileExt, sPath: String;
+  sFileExt: String;
 begin
   if FCancel then
     Exit;
@@ -180,7 +184,7 @@ begin
       if NOT FCancel then
         ScanFolder(FScannerFolder, FParentNode);
     finally
-      TVirtualTreeMethods.Create.GetAllIcons(Config.MainTree);
+      TVirtualTreeMethods.Create.GetAllIcons(Config.MainTree, nil);
       FTree.EndUpdate;
     end;
   end;

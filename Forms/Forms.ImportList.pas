@@ -127,7 +127,7 @@ begin
         ShowMessageFmtEx(DKLangConstW('msgItemsImported'), [GetNumberNodeImp(vstListImp)]);
         TASuiteLogger.Info(DKLangConstW('msgItemsImported'), [GetNumberNodeImp(vstListImp)]);
       end;
-      TVirtualTreeMethods.Create.GetAllIcons(Config.MainTree);
+      TVirtualTreeMethods.Create.GetAllIcons(Config.MainTree, nil);
     except
       on E : Exception do
       begin
@@ -177,7 +177,7 @@ begin
   try
     PopulateTree(vstListImp, edtPathList.Text);
   finally
-    TVirtualTreeMethods.Create.GetAllIcons(vstListImp);
+    TVirtualTreeMethods.Create.GetAllIcons(vstListImp, nil);
   end;
 end;
 

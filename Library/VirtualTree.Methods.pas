@@ -47,7 +47,7 @@ type
     function GetListNodeFromSubTree(const ANodeX: PVirtualNode;const ATree: TBaseVirtualTree): PVirtualNode;
 
     //Visual
-    procedure GetAllIcons(const ASender: TBaseVirtualTree);
+    procedure GetAllIcons(const ASender: TBaseVirtualTree; AParentNode : PVirtualNode);
     procedure ChangeAllNodeHeight(const ASender: TBaseVirtualTree; const ANewNodeHeight: Integer);
     procedure ChangeTreeIconSize(const ASender: TVirtualStringTree; const ASmallIcon: Boolean);
     procedure CheckVisibleNodePathExe(const ASender: TBaseVirtualTree);
@@ -328,11 +328,11 @@ begin
   RefreshList(ASender);
 end;
 
-procedure TVirtualTreeMethods.GetAllIcons(const ASender: TBaseVirtualTree);
+procedure TVirtualTreeMethods.GetAllIcons(const ASender: TBaseVirtualTree; AParentNode : PVirtualNode);
 var
   IconThread: TTreeIconsThread;
 begin
-  IconThread := TTreeIconsThread.Create(ASender);
+  IconThread := TTreeIconsThread.Create(ASender, AParentNode);
   try
     IconThread.Start;
   finally
