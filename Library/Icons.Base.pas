@@ -22,7 +22,7 @@ unit Icons.Base;
 interface
 
 uses
-  SysUtils, Classes, Controls, ShellApi, SyncObjs;
+  SysUtils, Classes, Controls, ShellApi, SyncObjs, Windows;
 
 type
   TBaseIcon = class
@@ -81,7 +81,10 @@ begin
   Flags := SHGFI_SYSICONINDEX or SHGFI_ICON;
   //Get index
   if SHGetFileInfo(PChar(APathFile), 0, FileInfo, SizeOf(TSHFileInfo), Flags) <> 0 then
+  begin
+    DestroyIcon(FileInfo.hIcon);
     Result := FileInfo.iIcon;
+  end;
 end;
 
 procedure TBaseIcon.ResetIcon;

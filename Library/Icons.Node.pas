@@ -79,6 +79,7 @@ begin
     if hIcon <> 0 then
     begin
       KIcon.LoadFromHandle(hIcon);
+      DestroyIcon(hIcon);
       //Add extracted icon in AIcon
       if KIcon.IconCount > 0 then
         AIcon.Add(KIcon.Handles[0]);
