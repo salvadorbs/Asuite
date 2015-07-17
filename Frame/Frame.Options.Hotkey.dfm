@@ -1,6 +1,5 @@
 inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
   Height = 405
-  ExplicitHeight = 405
   object gbHotkey: TGroupBox
     AlignWithMargins = True
     Left = 3
@@ -135,7 +134,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
           WideText = 'Name'
         end
         item
-          MaxWidth = 36
+          MaxWidth = 100
           MinWidth = 36
           Position = 1
           Width = 36

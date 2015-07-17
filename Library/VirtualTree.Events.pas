@@ -23,7 +23,7 @@ interface
 
 uses
   Windows, SysUtils, Classes, Graphics, VirtualTrees, ActiveX, UITypes, DKLang,
-  Kernel.Singleton, Forms.GraphicMenu, Forms.Dialog.BaseEntity, Menus;
+  Kernel.Singleton, Forms.GraphicMenu, Forms.Dialog.BaseEntity, Menus, Forms;
 
 type
   TVirtualTreeEvents = class(TSingleton)
@@ -111,8 +111,6 @@ type
       Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
       var Ghosted: Boolean; var ImageIndex: TImageIndex);
     procedure DoFreeNodeFrame(Sender: TBaseVirtualTree; Node: PVirtualNode);
-    procedure DoInitNodeFrame(Sender: TBaseVirtualTree; ParentNode,
-      Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
     procedure DoAddToSelectionFrame(Sender: TBaseVirtualTree;
       Node: PVirtualNode);
 
@@ -201,6 +199,7 @@ end;
 procedure TVirtualTreeEvents.SetupVSTHotkey(ATree: TVirtualStringTree);
 begin
   ATree.Images := dmImages.ilLargeIcons;
+  ATree.DefaultNodeHeight := Config.BigHeightNode;
 
   ATree.OnGetNodeDataSize := DoGetNodeDataSizeSearch;
   ATree.OnCompareNodes    := DoCompareNodesHotkey;
@@ -244,6 +243,8 @@ end;
 procedure TVirtualTreeEvents.SetupVSTAutorun(ATree: TVirtualStringTree);
 begin
   ATree.Images := dmImages.ilLargeIcons;
+  ATree.DefaultNodeHeight := Config.BigHeightNode;
+
   ATree.OnGetNodeDataSize := DoGetNodeDataSizeSearch;
   ATree.OnGetText         := DoGetTextAutorun;
   ATree.OnGetImageIndex   := DoGetImageIndexHotkey;
@@ -253,13 +254,13 @@ procedure TVirtualTreeEvents.SetupVSTDialogFrame(ATree: TVirtualStringTree);
 begin
   ATree.Clear;
   ATree.Images := dmImages.ilLargeIcons;
+  ATree.DefaultNodeHeight := Config.BigHeightNode;
 
   ATree.OnAddToSelection  := DoAddToSelectionFrame;
   ATree.OnFreeNode        := DoFreeNodeFrame;
   ATree.OnGetNodeDataSize := DoGetNodeDataSizeFrame;
   ATree.OnGetText         := DoGetTextFrame;
   ATree.OnGetImageIndex   := DoGetImageIndexFrame;
-  ATree.OnInitNode        := DoInitNodeFrame;
 end;
 
 procedure TVirtualTreeEvents.SetupVSTSearch(ATree: TVirtualStringTree);
@@ -430,7 +431,7 @@ end;
 procedure TVirtualTreeEvents.DoExpanded(Sender: TBaseVirtualTree;
   Node: PVirtualNode);
 begin
-  TVirtualTreeMethods.Create.CheckVisibleNodePathExe(Sender);
+//  TVirtualTreeMethods.Create.CheckVisibleNodePathExe(Sender);
 end;
 
 procedure TVirtualTreeEvents.DoFreeNode(Sender: TBaseVirtualTree;
@@ -540,12 +541,6 @@ begin
   end;
 end;
 
-procedure TVirtualTreeEvents.DoInitNodeFrame(Sender: TBaseVirtualTree;
-  ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
-begin
-  Node.NodeHeight := 36;
-end;
-
 procedure TVirtualTreeEvents.DoKeyPress(Sender: TObject; var Key: Char);
 begin
   if (Sender is TBaseVirtualTree) then
@@ -561,7 +556,7 @@ begin
   NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
   if Assigned(NodeData) then
     if NodeData.DataType = vtdtSeparator then
-      NodeHeight := 18;
+      NodeHeight := Config.SmallHeightNode;
 end;
 
 procedure TVirtualTreeEvents.DoLoadNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
@@ -626,7 +621,7 @@ begin
   if Sender is TVirtualStringTree then
   begin
     DY := TVirtualStringTree(Sender).DefaultNodeHeight;
-    if TVirtualStringTree(Sender).DefaultNodeHeight = 36 then
+    if TVirtualStringTree(Sender).DefaultNodeHeight = Config.BigHeightNode then
       TVirtualStringTree(Sender).BottomSpace := 1
     else
       TVirtualStringTree(Sender).BottomSpace := TVirtualStringTree(Sender).ClientHeight mod DY;

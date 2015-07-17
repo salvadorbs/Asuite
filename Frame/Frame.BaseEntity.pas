@@ -57,6 +57,7 @@ constructor TfrmBaseEntityPage.Create(AOwner: TComponent);
 begin
   inherited;
   Self.InternalLoadData;
+  ScaleBy(Screen.PixelsPerInch, 96);
 end;
 
 function TfrmBaseEntityPage.GetImageIndex: integer;

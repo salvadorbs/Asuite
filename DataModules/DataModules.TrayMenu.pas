@@ -549,7 +549,7 @@ begin
   TextSpace := 0;
   if (Sender is TMenuItem) then
   begin
-    CaptionLineItemHeight := 14;
+    CaptionLineItemHeight := Config.SmallHeightNode - 4;
     //Don't highlight menu item
     ACanvas.Brush.Color := clMenu;
     ACanvas.Font.Color  := clWindowText;
@@ -564,7 +564,7 @@ begin
     begin
       //Get Tree's Font
       ACanvas.Font.Assign(TBaseVirtualTree(Sender).Font);
-      CaptionLineItemHeight := 18;
+      CaptionLineItemHeight := Config.SmallHeightNode;
       if ACaption <> '' then
       begin
         LineCaption := Format(' %s ', [ACaption]);

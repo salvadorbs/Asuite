@@ -31,6 +31,8 @@ type
   { TConfiguration }
   TConfiguration = class
   private
+    FSmallHeightNode    : Integer;
+    FBigHeightNode      : Integer;
     //General
     FStartWithWindows   : Boolean;
     FShowPanelAtStartUp : Boolean;
@@ -160,6 +162,9 @@ type
     property DBManager: TDBManager read FDBManager;
     property IconsManager: TIconsManager read FIconsManager;
 
+    property SmallHeightNode: Integer read FSmallHeightNode;
+    property BigHeightNode: Integer read FBigHeightNode;
+
     //General
     property StartWithWindows: Boolean read FStartWithWindows write SetStartWithWindows;
     property ShowPanelAtStartUp: Boolean read FShowPanelAtStartUp write SetShowPanelAtStartUp;
@@ -275,6 +280,10 @@ var
   I: Integer;
 begin
   TScheduler.Create;
+  //Node height based of DPI
+  FSmallHeightNode := Round((Screen.PixelsPerInch / 96.0) * 18);
+  FBigHeightNode   := Round((Screen.PixelsPerInch / 96.0) * 36);
+  //Params
   SingleInst.OnProcessParam := HandleParam;
   for I := 1 to ParamCount do
     HandleParam(ParamStr(I));

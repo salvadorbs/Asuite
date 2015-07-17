@@ -82,7 +82,7 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
           WideText = 'Name'
         end
         item
-          MaxWidth = 36
+          MaxWidth = 100
           MinWidth = 36
           Position = 1
           Width = 36
@@ -211,7 +211,7 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
           WideText = 'Name'
         end
         item
-          MaxWidth = 36
+          MaxWidth = 100
           MinWidth = 36
           Position = 1
           Width = 36

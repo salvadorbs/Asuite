@@ -235,11 +235,11 @@ begin
   //Change default node height and imagelist based of IconSize
   if ASmallIcon then
   begin
-    ASender.DefaultNodeHeight := 18;
+    ASender.DefaultNodeHeight := Config.SmallHeightNode;
     ASender.Images := dmImages.ilSmallIcons;
   end
   else begin
-    ASender.DefaultNodeHeight := 36;
+    ASender.DefaultNodeHeight := Config.BigHeightNode;
     ASender.Images := dmImages.ilLargeIcons;
   end;
   ASender.ScrollBarOptions.VerticalIncrement := ASender.DefaultNodeHeight;
@@ -604,7 +604,7 @@ begin
   begin
     //Change node height
     if NodeData.DataType = vtdtSeparator then
-      Sender.NodeHeight[Node] := 18
+      Sender.NodeHeight[Node] := Config.SmallHeightNode
     else
       Sender.NodeHeight[Node] := Integer(Data^);
   end;
