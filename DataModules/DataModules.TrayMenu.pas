@@ -133,7 +133,7 @@ uses
   DataModules.Icons, Forms.Main, AppConfig.Main, VirtualTree.Methods,
   Utility.System, Forms.GraphicMenu, Kernel.Types, NodeDataTypes.Files,
   NodeDataTypes.Custom, NodeDataTypes.Base, Kernel.Consts, Kernel.Logger,
-  Utility.Misc;
+  Utility.Misc, Utility.FileFolder;
 
 {$R *.dfm}
 
@@ -297,10 +297,12 @@ begin
     if (Node.Parent <> Sender.RootNode) then
     begin
       ParentNodeData := TVirtualTreeMethods.Create.GetNodeDataEx(Node.Parent, Sender);
-      ParentNodeData.MenuItem.Add(MenuItem);
+      AddItem(ParentNodeData.MenuItem, MenuItem);
     end
     else
-      pmTrayicon.Items.Add(MenuItem);
+      AddItem(pmTrayicon.Items, MenuItem);
+    //Set AutoHotkeys to maManual, speed up popup menu
+    MenuItem.AutoHotkeys := maManual;
     //Set MenuItem properties
     if (ItemNodeData.DataType = vtdtSeparator) then
       CreateSeparator(pmTrayicon, ItemNodeData.Name,MenuItem)
@@ -314,7 +316,7 @@ begin
         //If it is a Directory, add in Trayicon Menu its subfolders and its subfiles
         if Config.AutoExpansionFolder then
         begin
-          if DirectoryExists(TvFileNodeData(ItemNodeData).PathAbsoluteFile) then
+          if IsDirectory(TvFileNodeData(ItemNodeData).PathAbsoluteFile) then
           begin
             MenuItem.OnClick := populateDirectory;
             MenuItem.Path    := (TvFileNodeData(ItemNodeData)).PathAbsoluteFile;
@@ -384,6 +386,7 @@ begin
   end;
   CreateSeparator(Menu,DKLangConstW('msgList'));
   //List
+  //TODO: Create one list level at time (see AutoExpansion behaviour)
   Config.MainTree.IterateSubtree(nil, CreateListItems, nil);
   //MRU
   if (Config.MRU) and (Config.ListManager.MRUList.Count > 0) then
