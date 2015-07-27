@@ -22,7 +22,7 @@ unit Kernel.ASuiteInstance;
 interface
 
 uses
-  Windows, USingleInst, Messages;
+  Windows, USingleInst, Messages, xxHash32, Forms, SysUtils;
 
 type
   TASuiteSingleInst = class(TSingleInst)
@@ -41,8 +41,12 @@ begin
 end;
 
 function TASuiteSingleInst.WdwClassName: string;
+var
+  str: string;
 begin
-  Result := 'ASuite.SingleInstance.1' {$IFDEF DEBUG} + '.debug' {$ENDIF};
+  str := Application.ExeName;
+  Result := 'ASuite.SingleInstance.' + IntToStr(TxxHash32.CalculateHash32(str[low(str)],
+            Length(str) * SizeOf(Char)));
 end;
 
 initialization
