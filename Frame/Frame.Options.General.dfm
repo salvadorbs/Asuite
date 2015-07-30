@@ -4,7 +4,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     Left = 3
     Top = 3
     Width = 439
-    Height = 119
+    Height = 110
     Margins.Bottom = 0
     Align = alTop
     Caption = 'Startup'
@@ -19,7 +19,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
       Left = 8
       Top = 18
       Width = 420
-      Height = 19
+      Height = 17
       Caption = 'Start ASuite on Windows system startup'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -31,9 +31,9 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     end
     object cbShowPanelStartup: TCheckBox
       Left = 8
-      Top = 56
+      Top = 52
       Width = 420
-      Height = 19
+      Height = 17
       Caption = 'Show window on ASuite startup'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -45,9 +45,9 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     end
     object cbShowMenuStartup: TCheckBox
       Left = 8
-      Top = 75
+      Top = 69
       Width = 420
-      Height = 19
+      Height = 17
       Caption = 'Show graphic menu on ASuite startup'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -59,9 +59,9 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     end
     object chkMissedSchedulerTask: TCheckBox
       Left = 8
-      Top = 37
+      Top = 35
       Width = 420
-      Height = 19
+      Height = 17
       Caption = 'Check missed scheduler task at ASuite startup'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -73,9 +73,9 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     end
     object chkCheckUpdatesStartup: TCheckBox
       Left = 8
-      Top = 94
+      Top = 86
       Width = 420
-      Height = 19
+      Height = 17
       Caption = 'Check for updates on ASuite startup'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -89,7 +89,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
   object grpLanguage: TGroupBox
     AlignWithMargins = True
     Left = 3
-    Top = 254
+    Top = 244
     Width = 174
     Height = 47
     Margins.Bottom = 0
@@ -102,7 +102,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     ParentFont = False
     TabOrder = 2
     object cxLanguage: TComboBox
-      Left = 10
+      Left = 8
       Top = 17
       Width = 158
       Height = 21
@@ -119,9 +119,9 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
   object gbExecution: TGroupBox
     AlignWithMargins = True
     Left = 3
-    Top = 125
+    Top = 116
     Width = 439
-    Height = 126
+    Height = 125
     Margins.Bottom = 0
     Align = alTop
     Caption = 'Execution'
@@ -134,7 +134,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     TabOrder = 1
     object lbActionOnExe: TLabel
       Left = 8
-      Top = 61
+      Top = 53
       Width = 64
       Height = 13
       Caption = 'On execution'
@@ -151,7 +151,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
       Left = 8
       Top = 18
       Width = 420
-      Height = 19
+      Height = 17
       Caption = 'Execute with single click in main window'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -163,7 +163,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     end
     object cxActionOnExe: TComboBox
       Left = 8
-      Top = 74
+      Top = 69
       Width = 169
       Height = 21
       Style = csDropDownList
@@ -183,7 +183,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
       Left = 8
       Top = 36
       Width = 420
-      Height = 19
+      Height = 17
       Caption = 'Ask to confirm before run a category'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -195,9 +195,9 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     end
     object chkAutoCloseProcess: TCheckBox
       Left = 8
-      Top = 101
+      Top = 96
       Width = 420
-      Height = 19
+      Height = 17
       Caption = 'Close all process opened by ASuite at launcher shutdown'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
