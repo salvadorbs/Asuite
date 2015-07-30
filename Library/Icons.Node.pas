@@ -23,7 +23,7 @@ interface
 
 uses
   SysUtils, Classes, Icons.Base, NodeDataTypes.Base, Kernel.Enumerations,
-  NodeDataTypes.Custom, Graphics, Controls, KIcon, CommCtrl, Windows;
+  NodeDataTypes.Custom, Graphics, Controls, KIcon, CommCtrl, Windows, System.IOUtils;
 
 type
   TNodeIcon = class(TBaseIcon)
@@ -98,7 +98,7 @@ end;
 
 function TNodeIcon.InternalLoadIcon: Integer;
 var
-  sTempPath: string;
+  sTempPath, sPathAbsoluteIcon: string;
 begin
   //Priority cache->icon->exe
   sTempPath := '';
@@ -116,8 +116,9 @@ begin
   if Not FileExists(sTempPath) then
   begin
     //Get custom icon path
-    if FileExists(TvCustomRealNodeData(FNodeData).PathAbsoluteIcon) then
-      sTempPath := TvCustomRealNodeData(FNodeData).PathAbsoluteIcon
+    sPathAbsoluteIcon := TvCustomRealNodeData(FNodeData).PathAbsoluteIcon;
+    if FileExists(sPathAbsoluteIcon) then
+      sTempPath := sPathAbsoluteIcon
     else //Else exe (if nodedata is a file item)
       if FNodeData.DataType = vtdtFile then
         sTempPath := TvFileNodeData(FNodeData).PathAbsoluteFile;
@@ -202,3 +203,4 @@ begin
 end;
 
 end.
+

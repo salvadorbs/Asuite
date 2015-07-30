@@ -78,7 +78,7 @@ var
   Flags: Integer;
 begin
   Result := -1;
-  Flags := SHGFI_SYSICONINDEX or SHGFI_ICON;
+  Flags := SHGFI_SYSICONINDEX or SHGFI_ICON or SHGFI_USEFILEATTRIBUTES;
   //Get index
   if SHGetFileInfo(PChar(APathFile), 0, FileInfo, SizeOf(TSHFileInfo), Flags) <> 0 then
   begin
