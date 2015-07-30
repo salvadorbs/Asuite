@@ -38,6 +38,7 @@ type
     FUseCustomTitle     : Boolean;
     FCustomTitleString  : RawUTF8;
     FHideTabSearch      : Boolean;
+    FSearchAsYouType    : Boolean;
     //Main Form - Position and size
     FHoldSize           : Boolean;
     FAlwaysOnTop        : Boolean;
@@ -119,6 +120,7 @@ type
     property usecustomtitle: Boolean read FUseCustomTitle write FUseCustomTitle;
     property customtitlestring : RawUTF8 read FCustomTitleString write FCustomTitleString;
     property hidetabsearch: Boolean read FHideTabSearch write FHideTabSearch;
+    property searchasyoutype: Boolean read FSearchAsYouType write FSearchAsYouType;
     // Main Form - Position and size
     property holdsize: Boolean read FHoldSize write FHoldSize;
     property alwaysontop: Boolean read FAlwaysOnTop write FAlwaysOnTop;
@@ -219,6 +221,7 @@ begin
       AConfig.CustomTitleString  := UTF8ToString(SQLOptionsData.customtitlestring);
       AConfig.UseCustomTitle     := SQLOptionsData.usecustomtitle;
       AConfig.HideTabSearch      := SQLOptionsData.hidetabsearch;
+      Aconfig.SearchAsYouType    := SQLOptionsData.searchasyoutype;
       //Main Form - Position and size
       AConfig.HoldSize    := SQLOptionsData.holdsize;
       AConfig.AlwaysOnTop := SQLOptionsData.alwaysontop;
@@ -319,6 +322,7 @@ begin
     SQLOptionsData.usecustomtitle    := AConfig.UseCustomTitle;
     SQLOptionsData.customtitlestring := StringToUTF8(AConfig.CustomTitleString);
     SQLOptionsData.hidetabsearch     := AConfig.HideTabSearch;
+    SQLOptionsData.searchasyoutype   := AConfig.SearchAsYouType;
     //main form - position and size
     SQLOptionsData.holdsize          := AConfig.HoldSize;
     SQLOptionsData.alwaysontop       := AConfig.AlwaysOnTop;

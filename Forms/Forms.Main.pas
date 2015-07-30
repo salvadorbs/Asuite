@@ -37,7 +37,6 @@ type
     miStatistics: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
-    sbtnSearch: TSpeedButton;
     vstList: TVirtualStringTree;
     pcList: TPageControl;
     tbList: TTabSheet;
@@ -77,7 +76,7 @@ type
     miSearchIconPath: TMenuItem;
     miSearchWorkingDirPath: TMenuItem;
     miSearchParameters: TMenuItem;
-    edtSearch: TEdit;
+    btnedtSearch: TButtonedEdit;
     mniScanFolder: TMenuItem;
     DKLanguageController1: TDKLanguageController;
     ActionList1: TActionList;
@@ -134,6 +133,7 @@ type
     procedure actSortListExecute(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure miCheckUpdatesClick(Sender: TObject);
+    procedure btnedtSearchChange(Sender: TObject);
   private
     { Private declarations }
     function  GetActiveTree: TBaseVirtualTree;
@@ -346,6 +346,19 @@ begin
   TAction(Sender).Enabled := (vstList.HasChildren[vstList.RootNode]) and (GetActiveTree = vstList);
 end;
 
+procedure TfrmMain.btnedtSearchChange(Sender: TObject);
+begin
+  if Config.SearchAsYouType then
+  begin
+    if btnedtSearch.Text <> '' then
+      btnedtSearch.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel')
+    else
+      btnedtSearch.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('search');
+
+    DoSearchItem(vstSearch, btnedtSearch.Text, TSearchType(GetCheckedMenuItem(pmSearch).Tag));
+  end;
+end;
+
 procedure TfrmMain.btnedtSearchKeyPress(Sender: TObject; var Key: Char);
 begin
   if Ord(Key) = VK_RETURN then
@@ -354,7 +367,10 @@ end;
 
 procedure TfrmMain.btnedtSearchRightButtonClick(Sender: TObject);
 begin
-  DoSearchItem(vstSearch, edtSearch.Text, TSearchType(GetCheckedMenuItem(pmSearch).Tag));
+  if Config.SearchAsYouType then
+    btnedtSearch.Text := ''
+  else
+    DoSearchItem(vstSearch, btnedtSearch.Text, TSearchType(GetCheckedMenuItem(pmSearch).Tag));
 end;
 
 procedure TfrmMain.miSaveListClick(Sender: TObject);
@@ -370,7 +386,7 @@ begin
   if (Sender is TMenuItem) then
   begin
     //Set new placeholder and SearchType
-    edtSearch.TextHint := StringReplace((Sender as TMenuItem).Caption, '&', '', []);
+    btnedtSearch.TextHint := StringReplace((Sender as TMenuItem).Caption, '&', '', []);
     (Sender as TMenuItem).Checked := True;
   end;
 end;
@@ -410,7 +426,7 @@ begin
   if pcList.ActivePageIndex = PG_SEARCH then
   begin
     vstSearch.Clear;
-    edtSearch.Text := '';
+    btnedtSearch.Text := '';
   end;
   TVirtualTreeMethods.Create.CheckVisibleNodePathExe(GetActiveTree);
 end;
@@ -425,6 +441,7 @@ begin
   pmSearch.Images      := dmImages.ilSmallIcons;
   pmWindow.Images      := dmImages.ilSmallIcons;
   pcList.Images        := dmImages.ilSmallIcons;
+  btnedtSearch.Images  := dmImages.ilSmallIcons;
   //Set pcList tabs' ImageIndexes
   tbList.ImageIndex    := Config.IconsManager.GetIconIndex('tree_list');
   tbSearch.ImageIndex  := Config.IconsManager.GetIconIndex('search');
@@ -442,7 +459,8 @@ begin
   miInfoASuite.ImageIndex  := Config.IconsManager.GetIconIndex('help');
   actRunItem.ImageIndex    := Config.IconsManager.GetIconIndex('run');
   //Set Search's ImageIndexes
-  dmImages.ilSmallIcons.GetBitmap(Config.IconsManager.GetIconIndex('search'), sbtnSearch.Glyph);
+  btnedtSearch.LeftButton.ImageIndex  := Config.IconsManager.GetIconIndex('search_type');
+  btnedtSearch.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('search');
 end;
 
 procedure TfrmMain.ShowMainForm(Sender: TObject);
@@ -607,7 +625,7 @@ begin
   TScheduler.Create.CheckMissedTasks;
   TVirtualTreeMethods.Create.RefreshList(nil);
   //Get placeholder for edtSearch
-  edtSearch.TextHint := StringReplace(miSearchName.Caption, '&', '', []);
+  btnedtSearch.TextHint := StringReplace(miSearchName.Caption, '&', '', []);
   PopulatePopUpMenuFromAnother(miEdit, pmWindow.Items);
   //Start threads
   TVirtualTreeMethods.Create.GetAllIcons(vstList, nil);

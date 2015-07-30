@@ -43,6 +43,7 @@ type
     cbCustomTitle: TCheckBox;
     FontDialog1: TFontDialog;
     cbAutoOpDragDrop: TCheckBox;
+    chkSearchAsYouType: TCheckBox;
     procedure cbCustomTitleClick(Sender: TObject);
     procedure cbBackgroundClick(Sender: TObject);
     procedure btnFontSettingsClick(Sender: TObject);
@@ -118,6 +119,7 @@ begin
   cbHoldSize.Checked         := Config.HoldSize;
   cbWindowOnTop.Checked      := Config.AlwaysOnTop;
   cbHideSearch.Checked       := Config.HideTabSearch;
+  chkSearchAsYouType.Checked := Config.SearchAsYouType;
   cbCustomTitle.Checked      := Config.UseCustomTitle;
   edtCustomTitle.Text        := Config.CustomTitleString;
   edtCustomTitle.Enabled     := Config.UseCustomTitle;
@@ -147,6 +149,7 @@ begin
   Config.HoldSize           := cbHoldSize.Checked;
   Config.AlwaysOnTop        := cbWindowOnTop.Checked;
   Config.HideTabSearch      := cbHideSearch.Checked;
+  Config.SearchAsYouType    := chkSearchAsYouType.Checked;
   Config.CustomTitleString  := edtCustomTitle.Text;
   Config.UseCustomTitle     := cbCustomTitle.Checked;
   //Treeview

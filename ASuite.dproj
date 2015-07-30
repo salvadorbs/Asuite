@@ -107,8 +107,8 @@
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <VerInfo_AutoIncVersion>false</VerInfo_AutoIncVersion>
         <DCC_AssertionsAtRuntime>false</DCC_AssertionsAtRuntime>
-        <VerInfo_Build>1423</VerInfo_Build>
-        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1423;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
+        <VerInfo_Build>1424</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1424;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
         <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_Optimize>true</DCC_Optimize>
@@ -117,8 +117,8 @@
         <VerInfo_AutoIncVersion>false</VerInfo_AutoIncVersion>
         <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <VerInfo_Build>1423</VerInfo_Build>
-        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileDescription=;FileVersion=2.0.0.1423;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
+        <VerInfo_Build>1424</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileDescription=;FileVersion=2.0.0.1424;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
@@ -132,8 +132,8 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <VerInfo_AutoIncVersion>false</VerInfo_AutoIncVersion>
-        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1423;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
-        <VerInfo_Build>1423</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileVersion=2.0.0.1424;InternalName=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
+        <VerInfo_Build>1424</VerInfo_Build>
         <ILINK_MapFileType>DetailedSegments</ILINK_MapFileType>
         <MapFile>3</MapFile>
         <DCC_MapFile>3</DCC_MapFile>
@@ -145,9 +145,9 @@
         <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
         <DCC_MapFile>3</DCC_MapFile>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileDescription=;FileVersion=2.0.0.1423;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=SalvadorSoftware;FileDescription=;FileVersion=2.0.0.1424;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=ASuite;ProductVersion=2.0;Comments=</VerInfo_Keys>
         <DCC_Define>DEBUG;EUREKALOG;EUREKALOG_VER7;$(DCC_Define)</DCC_Define>
-        <VerInfo_Build>1423</VerInfo_Build>
+        <VerInfo_Build>1424</VerInfo_Build>
     </PropertyGroup>
     <ProjectExtensions>
         <Borland.Personality>Delphi.Personality.12</Borland.Personality>
@@ -544,9 +544,9 @@
                 <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
             </Deployment>
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>

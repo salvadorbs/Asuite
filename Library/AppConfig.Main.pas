@@ -43,6 +43,7 @@ type
     FUseCustomTitle     : Boolean;
     FCustomTitleString  : string;
     FHideTabSearch      : Boolean;
+    FSearchAsYouType    : Boolean;
     //Main Form - Position and size
     FHoldSize           : Boolean;
     FAlwaysOnTop        : Boolean;
@@ -176,6 +177,7 @@ type
     property UseCustomTitle: Boolean read FUseCustomTitle write SetUseCustomTitle;
     property CustomTitleString : String read FCustomTitleString write FCustomTitleString;
     property HideTabSearch: Boolean read FHideTabSearch write SetHideTabSearch;
+    property SearchAsYouType: Boolean read FSearchAsYouType write FSearchAsYouType;
     // Main Form - Position and size
     property HoldSize: Boolean read FHoldSize write SetHoldSize;
     property AlwaysOnTop: Boolean read FAlwaysOnTop write SetAlwaysOnTop;
@@ -309,6 +311,7 @@ begin
   FUseCustomTitle     := False;
   FCustomTitleString  := APP_TITLE;
   FHideTabSearch      := False;
+  FSearchAsYouType    := True;
   //Main Form - Position and size
   FHoldSize           := False;
   FAlwaysOnTop        := False;
@@ -459,6 +462,7 @@ procedure TConfiguration.LoadList;
 var
   sFilePath  : string;
 begin
+  //TODO: Move this method in proper place
   TASuiteLogger.Info('Finding ASuite SQLite Database', []);
   Assert(Assigned(FMainTree), 'FMainTree is not assigned!');
   try
@@ -504,6 +508,7 @@ end;
 
 function TConfiguration.SaveList(DoBackup: Boolean): Boolean;
 begin
+  //TODO: Move this method in proper place
   Result := False;
   if not FReadOnlyMode then
     Result := FDBManager.SaveData(Config.MainTree, DoBackup);

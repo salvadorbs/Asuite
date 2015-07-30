@@ -2,7 +2,7 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
   object gbTreeView: TGroupBox
     AlignWithMargins = True
     Left = 3
-    Top = 126
+    Top = 148
     Width = 439
     Height = 155
     Margins.Bottom = 0
@@ -99,7 +99,7 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       Top = 35
       Width = 295
       Height = 19
-      Caption = 'Automatic opening category, after drag&drop an item in it'
+      Caption = 'Automatic opening category, after drag&&drop an item in it'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -114,7 +114,7 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
     Left = 3
     Top = 3
     Width = 439
-    Height = 120
+    Height = 142
     Margins.Bottom = 0
     Align = alTop
     Caption = 'General'
@@ -169,7 +169,7 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
     end
     object edtCustomTitle: TEdit
       Left = 18
-      Top = 93
+      Top = 110
       Width = 128
       Height = 21
       Font.Charset = DEFAULT_CHARSET
@@ -178,12 +178,12 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
-      TabOrder = 4
+      TabOrder = 5
       Text = 'ASuite'
     end
     object cbCustomTitle: TCheckBox
       Left = 8
-      Top = 70
+      Top = 87
       Width = 420
       Height = 17
       Caption = 'Custom main window title'
@@ -193,8 +193,22 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
-      TabOrder = 3
+      TabOrder = 4
       OnClick = cbCustomTitleClick
+    end
+    object chkSearchAsYouType: TCheckBox
+      Left = 8
+      Top = 70
+      Width = 420
+      Height = 17
+      Caption = 'Search as you type'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 3
     end
   end
   object DKLanguageController1: TDKLanguageController
@@ -203,7 +217,7 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
     Left = 344
     Top = 296
     LangData = {
-      180066726D4D61696E57696E646F774F7074696F6E735061676500010E000000
+      180066726D4D61696E57696E646F774F7074696F6E735061676500010F000000
       0A0067625472656556696577010100000001000000070043617074696F6E000C
       0063624261636B67726F756E64010100000002000000070043617074696F6E00
       0F0062746E466F6E7453657474696E6773010100000003000000070043617074
@@ -216,7 +230,9 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       726368010100000009000000070043617074696F6E000E00656474437573746F
       6D5469746C6500000D006362437573746F6D5469746C6501010000000A000000
       070043617074696F6E000B00466F6E744469616C6F6731000010006362417574
-      6F4F704472616744726F7001010000000B000000070043617074696F6E00}
+      6F4F704472616744726F7001010000000B000000070043617074696F6E001200
+      63686B5365617263684173596F755479706501010000000C0000000700436170
+      74696F6E00}
   end
   object FontDialog1: TFontDialog
     Font.Charset = DEFAULT_CHARSET
