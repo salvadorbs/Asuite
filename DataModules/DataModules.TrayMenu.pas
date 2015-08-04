@@ -42,8 +42,7 @@ type
     procedure OpenFile(Sender: TObject);
   private
     { Private declarations }
-    procedure CreateListItems(Sender: TBaseVirtualTree; Node: PVirtualNode;
-                                      Data: Pointer; var Abort: Boolean);
+    procedure CreateListItems(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure UpdateClassicMenu(Menu: TPopUpMenu);
     procedure CreateHeaderItems(Menu: TPopupMenu);
     procedure CreateFooterItems(Menu: TPopupMenu);
@@ -63,6 +62,7 @@ type
     procedure SearchAddFiles(AMI: TMenuItem; FolderPath: string = '');
     procedure AddSub(MI: TMenuItem);
     procedure GetItemsIcons(Sender: TObject);
+    procedure PopulateCategoryItems(Sender: TObject);
     procedure ShowPopupMenu(const APopupMenu: TPopupMenu);
     procedure RunFromTrayMenu(Sender: TObject);
   public
@@ -281,8 +281,7 @@ begin
     frmGraphicMenu.OpenMenu;
 end;
 
-procedure TdmTrayMenu.CreateListItems(Sender: TBaseVirtualTree; Node: PVirtualNode;
-                                       Data: Pointer; var Abort: Boolean);
+procedure TdmTrayMenu.CreateListItems(Sender: TBaseVirtualTree; Node: PVirtualNode);
 var
   MenuItem : TASMenuItem;
   ItemNodeData : TvBaseNodeData;
@@ -305,20 +304,20 @@ begin
     MenuItem.AutoHotkeys := maManual;
     //Set MenuItem properties
     if (ItemNodeData.DataType = vtdtSeparator) then
-      CreateSeparator(pmTrayicon, ItemNodeData.Name,MenuItem)
+      CreateSeparator(pmTrayicon, ItemNodeData.Name, MenuItem)
     else begin
       MenuItem.Caption    := ItemNodeData.Name;
+      MenuItem.ImageIndex := ItemNodeData.Icon.ImageIndex;
       if (ItemNodeData.DataType = vtdtFile) then
       begin
         MenuItem.OnClick  := RunFromTrayMenu;
-        if Sender.GetNodeLevel(Node) = 0 then
-          TvFileNodeData(ItemNodeData).CheckPathFile;
+        TvFileNodeData(ItemNodeData).CheckPathFile;
         //If it is a Directory, add in Trayicon Menu its subfolders and its subfiles
         if Config.AutoExpansionFolder then
         begin
           if IsDirectory(TvFileNodeData(ItemNodeData).PathAbsoluteFile) then
           begin
-            MenuItem.OnClick := populateDirectory;
+            MenuItem.OnClick := PopulateDirectory;
             MenuItem.Path    := (TvFileNodeData(ItemNodeData)).PathAbsoluteFile;
             AddSub(MenuItem);
           end;
@@ -326,9 +325,11 @@ begin
       end
       else begin
         if ItemNodeData.DataType = vtdtCategory then
-          MenuItem.OnClick := GetItemsIcons;
+        begin
+          MenuItem.OnClick := PopulateCategoryItems;      
+          AddSub(MenuItem);
+        end;
       end;
-      MenuItem.ImageIndex := ItemNodeData.Icon.ImageIndex;
     end;
     MenuItem.Data    := ItemNodeData;
     MenuItem.pNode   := ItemNodeData.pNode;
@@ -380,14 +381,13 @@ begin
       CreateSpecialList(Menu, Config.ListManager.MFUList, Config.MFUNumber, DKLangConstW('msgLongMFU'));
     end
     else begin
-      CreateSeparator(Menu,DKLangConstW('msgLongMFU'));
+      CreateSeparator(Menu, DKLangConstW('msgLongMFU'));
       CreateSpecialList(Menu, Config.ListManager.MFUList, Config.MFUNumber);
     end;
   end;
   CreateSeparator(Menu,DKLangConstW('msgList'));
   //List
-  //TODO: Create one list level at time (see AutoExpansion behaviour)
-  Config.MainTree.IterateSubtree(nil, CreateListItems, nil);
+  PopulateCategoryItems(nil);
   //MRU
   if (Config.MRU) and (Config.ListManager.MRUList.Count > 0) then
   begin
@@ -733,6 +733,47 @@ procedure TdmTrayMenu.MeasureCaptionedSeparator(Sender: TObject;
 begin
   //Change separator's height
   Height := 15; //CaptionLineItemHeight + 1;
+end;
+
+procedure TdmTrayMenu.PopulateCategoryItems(Sender: TObject);
+var
+  Node: PVirtualNode;
+begin
+  //Get first node
+  if Assigned(Sender) then
+  begin
+    Node := Config.MainTree.GetFirstChild(TASMenuItem(Sender).pNode);
+    {$IFDEF FASTHACK}
+    { allocate some space for the items TList. E.g. space for 4096 items should
+      be enough. }
+    TMenuItemPrivateHack(TASMenuItem(Sender)).FItems.Capacity := 4096;
+    {$ENDIF}
+    if TASMenuItem(Sender).Count > 0 then
+      TASMenuItem(Sender).Items[0].Visible := False;
+  end
+  else
+    Node := Config.MainTree.GetFirst;
+
+  try
+    //Iterate time (only child level)
+    while Assigned(Node) do
+    begin
+      CreateListItems(Config.MainTree, Node);
+
+      Node := Config.MainTree.GetNextSibling(Node);
+    end;
+  finally
+    if Assigned(Sender) then
+    begin
+      TASMenuItem(Sender).OnClick := nil;
+      {$IFDEF FASTHACK}
+        { because fast hack does not rebuild the handle, we use the autolinereduction
+          to do that. Add extract line here so it will rebuild the handle. Otherwise
+          we don't see any items in the menu.. :) }
+      TASMenuItem(Sender).NewBottomLine;
+      {$ENDIF}
+    end;
+  end;
 end;
 
 procedure TdmTrayMenu.PopulateDirectory(Sender: TObject);

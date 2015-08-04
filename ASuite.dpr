@@ -78,12 +78,6 @@ uses
 
 //SQLite3 static library
 
-{$IFDEF DEBUG}
-var
-  cTempo1,cTempo2 : Cardinal;
-  myTextFile   : TextFile;
-{$ENDIF}
-
 {$R *.res}
 {$R *.dkl_const.res}
 
@@ -92,9 +86,6 @@ begin
   begin
     {$IFDEF DEBUG}
     ReportMemoryLeaksOnShutdown := True;
-    {$ENDIF}
-    {$IFDEF DEBUG}
-    cTempo1 := GetTickCount;
     {$ENDIF}
 
     Application.Initialize;
@@ -108,17 +99,5 @@ begin
     if (Config.ShowGraphicMenuAtStartUp) then
       dmTrayMenu.ShowGraphicMenu;
     Application.Run;
-
-    {$IFDEF DEBUG}
-    //Timing startup
-    cTempo2 := GetTickCount;
-    AssignFile(myTextFile, Config.Paths.SuitePathData + DEBUG_FILE);
-    if Not(FileExists(Config.Paths.SuitePathData + DEBUG_FILE)) then
-      ReWrite(myTextFile)
-    else
-      Append(myTextFile);
-    WriteLn(myTextFile, DateTimeToStr(now) + ' = ' + IntToStr(cTempo2 - cTempo1));
-    CloseFile(myTextFile);
-    {$ENDIF}
   end;
 end.
