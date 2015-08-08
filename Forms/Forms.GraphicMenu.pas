@@ -95,9 +95,8 @@ type
     procedure mniRunClick(Sender: TObject);
 	private    
     { Private declarations }
-    FOpening    : Boolean;
+    FOpening : Boolean;
     procedure OpenFolder(FolderPath: string);
-    procedure DoClickOnTaskbar;
     procedure UpdateDriveStats;
     procedure CheckUserPicture;
 
@@ -209,18 +208,6 @@ begin
   dblDriveUsed := dblDriveSize - DiskFree(Ord(Drive) - 64);
   imgDriveSpace.Width := Round(dblDriveUsed / dblDriveSize * (imgDriveBackground.Width - 4));
   lblDriveSpace.Caption := Format(DKLangConstW('msgGMHardDiskSpace'), [DiskFreeString(Drive, True), DiskSizeString(Drive, True)]);
-end;
-
-procedure TfrmGraphicMenu.DoClickOnTaskbar;
-var
-  TrayHandle: THandle;
-begin
-  TrayHandle := FindWindow('Shell_TrayWnd', '');
-  TrayHandle := FindWindowEx(TrayHandle, 0, 'TrayNotifyWnd', nil);
-  TrayHandle := FindWindowEx(TrayHandle, 0, 'SysPager', nil);
-  TrayHandle := FindWindowEx(TrayHandle, 0, 'ToolbarWindow32', nil);
-  PostMessage(TrayHandle, WM_LBUTTONDOWN, MK_LBUTTON, 0);
-  PostMessage(TrayHandle, WM_LBUTTONUP, MK_LBUTTON, 0);
 end;
 
 procedure TfrmGraphicMenu.OpenFolder(FolderPath: string);
@@ -531,8 +518,6 @@ end;
 
 procedure TfrmGraphicMenu.OpenMenu;
 begin
-  //Workaround: Avoid to open windows' context menu too
-  DoClickOnTaskbar;
   //Fade in now
   FOpening := True;
   tmrFader.Enabled:= True;
