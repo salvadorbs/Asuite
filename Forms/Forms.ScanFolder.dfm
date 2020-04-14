@@ -304,7 +304,7 @@ object frmScanFolder: TfrmScanFolder
     TreeOptions.VETFolderOptions = [toFoldersExpandable, toForceHideRecycleBin, toThreadedExpandMark]
     TreeOptions.VETShellOptions = [toRightAlignSizeColumn]
     TreeOptions.VETSyncOptions = [toCollapseTargetFirst, toExpandTarget, toSelectTarget]
-    TreeOptions.VETMiscOptions = [toChangeNotifierThread, toVETReadOnly]
+    TreeOptions.VETMiscOptions = [toChangeNotifierThread, toNoRebuildIconListOnAssocChange, toVETReadOnly]
     TreeOptions.VETImageOptions = [toImages, toThreadedImages]
     OnEnumFolder = vstShellEnumFolder
     OnInitNode = vstShellInitNode
