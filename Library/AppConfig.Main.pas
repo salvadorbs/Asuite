@@ -381,8 +381,8 @@ begin
   FScanFolderFlatStructure   := False;
   FScanFolderAutoExtractName := True;
   FScanFolderFileTypes  := TStringList.Create;
-  FScanFolderFileTypes.Add(EXT_LNK);
-  FScanFolderFileTypes.Add(EXT_EXE);
+  FScanFolderFileTypes.Add(EXT_PATH_MASK + EXT_LNK);
+  FScanFolderFileTypes.Add(EXT_PATH_MASK + EXT_EXE);
   FScanFolderExcludeNames := TStringList.Create;
   FScanFolderExcludeNames.Add('uninstall');
 end;

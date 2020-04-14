@@ -71,8 +71,6 @@ uses
   Frame.Options.MainWindow in 'Frame\Frame.Options.MainWindow.pas' {frmMainWindowOptionsPage: TFrame},
   Icons.Thread in 'Library\Icons.Thread.pas',
   Kernel.Scheduler in 'Library\Kernel.Scheduler.pas',
-  Scanner.Thread in 'Library\Scanner.Thread.pas',
-  Scanner.Folder in 'Library\Scanner.Folder.pas',
   Kernel.Logger in 'Library\Kernel.Logger.pas',
   Kernel.CheckUpdates in 'Library\Kernel.CheckUpdates.pas';
 

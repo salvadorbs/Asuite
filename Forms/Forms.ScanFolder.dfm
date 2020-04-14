@@ -49,9 +49,9 @@ object frmScanFolder: TfrmScanFolder
     TabOrder = 1
     object grpFileTypes: TGroupBox
       Left = 8
-      Top = 87
+      Top = 63
       Width = 169
-      Height = 121
+      Height = 114
       Caption = 'File Types'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -139,10 +139,10 @@ object frmScanFolder: TfrmScanFolder
     end
     object grpExclude: TGroupBox
       Left = 183
-      Top = 87
+      Top = 63
       Width = 169
-      Height = 121
-      Caption = 'Exclude file or folder'
+      Height = 114
+      Caption = 'Exclude files'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -213,7 +213,6 @@ object frmScanFolder: TfrmScanFolder
         Header.Font.Name = 'Tahoma'
         Header.Font.Style = []
         Header.MainColumn = -1
-        Images = dmImages.ilSmallIcons
         ParentFont = False
         TabOrder = 0
         TreeOptions.PaintOptions = [toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
@@ -230,7 +229,7 @@ object frmScanFolder: TfrmScanFolder
       Left = 8
       Top = 7
       Width = 345
-      Height = 74
+      Height = 50
       Caption = 'General settings'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -239,23 +238,9 @@ object frmScanFolder: TfrmScanFolder
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 0
-      object chkFlat: TCheckBox
-        Left = 9
-        Top = 20
-        Width = 328
-        Height = 17
-        Caption = 'Flat structure'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 0
-      end
       object chkExtractName: TCheckBox
-        Left = 9
-        Top = 43
+        Left = 14
+        Top = 22
         Width = 328
         Height = 17
         Caption = 'Extract name automatically from executables (only *.exe)'
@@ -265,8 +250,16 @@ object frmScanFolder: TfrmScanFolder
         Font.Name = 'Tahoma'
         Font.Style = []
         ParentFont = False
-        TabOrder = 1
+        TabOrder = 0
       end
+    end
+    object pbScan: TProgressBar
+      Left = 17
+      Top = 183
+      Width = 337
+      Height = 25
+      Smooth = True
+      TabOrder = 3
     end
   end
   object vstShell: TVirtualExplorerTree
@@ -335,5 +328,13 @@ object frmScanFolder: TfrmScanFolder
     ColorDepth = cd32Bit
     Left = 511
     Top = 232
+  end
+  object vfsScan: TVirtualFileSearch
+    OnSearchEnd = vfsScanSearchEnd
+    SubFolders = True
+    ThreadPriority = tpLower
+    UpdateRate = 1000
+    Left = 280
+    Top = 136
   end
 end

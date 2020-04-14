@@ -210,8 +210,20 @@
                 <Platform value="Win64">True</Platform>
             </Platforms>
             <Deployment Version="3">
-                <DeployFile LocalName="ASuite.inc" Configuration="Debug" Class="ProjectFile"/>
                 <DeployFile LocalName="bin\ASuite.exe" Configuration="Debug" Class="ProjectOutput"/>
+                <DeployFile LocalName="ASuite.inc" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win64">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="bin\ASuite.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win64">
+                        <RemoteName>ASuite.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="ASuite.inc" Configuration="Debug" Class="ProjectFile"/>
                 <DeployClass Name="AdditionalDebugSymbols">
                     <Platform Name="OSX32">
                         <Operation>1</Operation>
@@ -1128,8 +1140,6 @@
         </DCCReference>
         <DCCReference Include="Library\Icons.Thread.pas"/>
         <DCCReference Include="Library\Kernel.Scheduler.pas"/>
-        <DCCReference Include="Library\Scanner.Thread.pas"/>
-        <DCCReference Include="Library\Scanner.Folder.pas"/>
         <DCCReference Include="Library\Kernel.Logger.pas"/>
         <DCCReference Include="Library\Kernel.CheckUpdates.pas"/>
         <None Include="ASuite.inc"/>

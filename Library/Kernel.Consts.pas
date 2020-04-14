@@ -57,6 +57,8 @@ const
   EXT_URL       = '.url';
   EXT_EXE       = '.exe';
 
+  EXT_PATH_MASK = '*';
+
   //File
   DEBUG_FILE    = 'Debug.txt';
   THEME_INI     = 'theme.ini';
