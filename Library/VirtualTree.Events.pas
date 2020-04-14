@@ -220,6 +220,8 @@ end;
 
 procedure TVirtualTreeEvents.SetupVSTList(ATree: TVirtualStringTree);
 begin
+  ATree.Images := dmImages.ilSmallIcons;
+
   ATree.OnNodeClick    := DoNodeSingleClick;
   ATree.OnCompareNodes := DoCompareNodesList;
   ATree.OnNodeDblClick := DoNodeDblClick;
@@ -265,6 +267,8 @@ end;
 
 procedure TVirtualTreeEvents.SetupVSTSearch(ATree: TVirtualStringTree);
 begin
+  ATree.Images := dmImages.ilSmallIcons;
+
   ATree.OnNodeClick       := DoNodeSingleClick;
   ATree.OnCompareNodes    := DoCompareNodesSearch;
   ATree.OnNodeDblClick    := DoNodeDblClick;
@@ -276,6 +280,8 @@ end;
 
 procedure TVirtualTreeEvents.SetupVSTSimple(ATree: TVirtualStringTree);
 begin
+  ATree.Images := dmImages.ilSmallIcons;
+
   ATree.OnGetText         := DoGetText;
   ATree.OnGetImageIndex   := DoGetImageIndex;
   ATree.OnGetNodeDataSize := DoGetNodeDataSizeSearch;

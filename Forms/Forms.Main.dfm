@@ -36,7 +36,6 @@ object frmMain: TfrmMain
     Font.Height = -11
     Font.Name = 'MS Shell Dlg 2'
     Font.Style = []
-    Images = dmImages.ilSmallIcons
     MultiLine = True
     ParentFont = False
     TabOrder = 0
@@ -67,7 +66,6 @@ object frmMain: TfrmMain
         Header.MainColumn = -1
         Header.Options = [hoColumnResize, hoDrag]
         HintMode = hmHint
-        Images = dmImages.ilSmallIcons
         ParentFont = False
         ParentShowHint = False
         PopupMenu = pmWindow
@@ -99,7 +97,6 @@ object frmMain: TfrmMain
         Header.Font.Style = []
         Header.Options = [hoColumnResize, hoDblClickResize, hoDrag, hoVisible, hoHeaderClickAutoSort]
         HintMode = hmHint
-        Images = dmImages.ilSmallIcons
         ParentShowHint = False
         PopupMenu = pmWindow
         ShowHint = True

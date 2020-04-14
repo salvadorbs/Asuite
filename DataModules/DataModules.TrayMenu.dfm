@@ -12,7 +12,6 @@ object dmTrayMenu: TdmTrayMenu
   end
   object pmTrayicon: TPopupMenu
     AutoHotkeys = maManual
-    Images = dmImages.ilSmallIcons
     Left = 16
     Top = 16
   end

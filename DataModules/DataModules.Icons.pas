@@ -29,16 +29,17 @@ uses
 
 type
   TdmImages = class(TDataModule)
-    ilSmallIcons: TImageList;
-    ilLargeIcons: TImageList;
-    procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }
-    function SysImageListHandle(const Path: string; const WantLargeIcons: Boolean): Windows.THandle;
     procedure DrawTransparentBitmap(DC: HDC; hBmp: HBITMAP; xStart: integer;
                                     yStart : integer; cTransparentColor : COLORREF);
+    function getIlSmallIcons: TImageList;
+    function getIlLargeIcons: TImageList;
   public
     { Public declarations }
+    property ilSmallIcons: TImageList read getIlSmallIcons;
+    property ilLargeIcons: TImageList read getIlLargeIcons;
+
     procedure DrawIconInBitmap(const AGlyph: TBitmap;const AImageIndex: Integer; ASmallIcon: Boolean = True);
   end;
 
@@ -48,18 +49,11 @@ var
 implementation
 
 uses
-  AppConfig.Main;
+  AppConfig.Main, MPCommonObjects;
 
 {$R *.dfm}
 
 { TdmImages }
-
-procedure TdmImages.DataModuleCreate(Sender: TObject);
-begin
-  //Use System ImageList
-  ilSmallIcons.Handle := SysImageListHandle(Config.Paths.SuitePathData, False);
-  ilLargeIcons.Handle := SysImageListHandle(Config.Paths.SuitePathData, True);
-end;
 
 procedure TdmImages.DrawIconInBitmap(const AGlyph: TBitmap;
   const AImageIndex: Integer; ASmallIcon: Boolean);
@@ -186,23 +180,15 @@ begin
    DeleteDC(hdcTemp);
 end;
 
-function TdmImages.SysImageListHandle(const Path: string;
-  const WantLargeIcons: Boolean): Windows.THandle;
-  {Returns a handle to the system image list for path Path.
-  WantLargeIcons determines if the image list is to contain large or small
-  icons.}
-var
-  FI: ShellAPI.TSHFileInfo; // required file info structure
-  Flags: Windows.UINT;      // flags used to request image list
+function TdmImages.getIlSmallIcons: TImageList;
 begin
-  Flags := ShellAPI.SHGFI_SYSICONINDEX or ShellAPI.SHGFI_ICON;
-  if WantLargeIcons then
-    Flags := Flags or ShellAPI.SHGFI_LARGEICON
-  else
-    Flags := Flags or ShellAPI.SHGFI_SMALLICON;
-  Result := ShellAPI.SHGetFileInfo(PChar(Path), 0, FI, SizeOf(FI), Flags);
+  result := MPCommonObjects.SmallSysImages;
+end; 
+
+function TdmImages.getIlLargeIcons: TImageList;
+begin
+  result := MPCommonObjects.LargeSysImages;
 end;
 
 end.
-
 

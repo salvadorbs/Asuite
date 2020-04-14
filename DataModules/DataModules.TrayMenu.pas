@@ -139,6 +139,7 @@ uses
 
 procedure TdmTrayMenu.DataModuleCreate(Sender: TObject);
 begin
+  pmTrayicon.Images := dmImages.ilSmallIcons;
   tiTrayMenu.Hint := Format('%s %s (%s)',[APP_NAME, GetASuiteVersion(True),
                                           UpperCase(Config.Paths.SuiteDrive)]);
 end;
