@@ -301,6 +301,7 @@ object frmScanFolder: TfrmScanFolder
     TreeOptions.VETImageOptions = [toImages, toThreadedImages]
     OnEnumFolder = vstShellEnumFolder
     OnInitNode = vstShellInitNode
+    OnPaintText = vstShellPaintText
     Columns = <>
   end
   object DKLanguageController1: TDKLanguageController

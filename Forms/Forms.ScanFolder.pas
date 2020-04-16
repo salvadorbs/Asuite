@@ -80,6 +80,9 @@ type
     procedure btnCancelClick(Sender: TObject);
     procedure vfsScanSearchEnd(Sender: TObject; Results: TCommonPIDLList);
     function FindMatchText(Strings: TStrings; const Str: string): Integer;
+    procedure vstShellPaintText(Sender: TBaseVirtualTree;
+      const TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
+      TextType: TVSTTextType);
   private
     { Private declarations }
     FStartTime: Cardinal;
@@ -104,7 +107,7 @@ implementation
 uses
   AppConfig.Main, Kernel.Enumerations, Kernel.Types, VirtualTree.Methods,
   NodeDataTypes.Base, Utility.Misc, Kernel.Logger, Kernel.Consts, Utility.FileFolder,
-  NodeDataTypes.Files;
+  NodeDataTypes.Files, Utility.System;
 
 {$R *.dfm}
 
@@ -334,6 +337,15 @@ procedure TfrmScanFolder.vstShellInitNode(Sender: TBaseVirtualTree;
   ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
 begin
    Node.CheckType := ctTriStateCheckBox;
+end;
+
+procedure TfrmScanFolder.vstShellPaintText(Sender: TBaseVirtualTree;
+  const TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
+  TextType: TVSTTextType);
+begin
+  //If windows is in dark mode, use white text
+  if DarkModeIsEnabled then
+    TargetCanvas.Font.Color := clWhite;
 end;
 
 procedure TfrmScanFolder.vstTypesAddToSelection(Sender: TBaseVirtualTree;

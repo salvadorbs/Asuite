@@ -72,7 +72,9 @@ uses
   Icons.Thread in 'Library\Icons.Thread.pas',
   Kernel.Scheduler in 'Library\Kernel.Scheduler.pas',
   Kernel.Logger in 'Library\Kernel.Logger.pas',
-  Kernel.CheckUpdates in 'Library\Kernel.CheckUpdates.pas';
+  Kernel.CheckUpdates in 'Library\Kernel.CheckUpdates.pas',
+  Vcl.Themes,
+  Vcl.Styles;
 
 //SQLite3 static library
 
@@ -88,7 +90,8 @@ begin
 
     Application.Initialize;
     Config    := TConfiguration.Create;
-    Application.Title := APP_TITLE;
+    TStyleManager.TrySetStyle('Windows10 SlateGray');
+  Application.Title := APP_TITLE;
 
     Application.CreateForm(TfrmMain, frmMain);
   Application.CreateForm(TfrmGraphicMenu, frmGraphicMenu);
