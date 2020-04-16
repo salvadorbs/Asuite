@@ -80,6 +80,7 @@ type
     procedure btnCancelClick(Sender: TObject);
     procedure vfsScanSearchEnd(Sender: TObject; Results: TCommonPIDLList);
     function FindMatchText(Strings: TStrings; const Str: string): Integer;
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   private
     { Private declarations }
     FStartTime: Cardinal;
@@ -104,22 +105,13 @@ implementation
 uses
   AppConfig.Main, Kernel.Enumerations, Kernel.Types, VirtualTree.Methods,
   NodeDataTypes.Base, Utility.Misc, Kernel.Logger, Kernel.Consts, Utility.FileFolder,
-  NodeDataTypes.Files;
+  NodeDataTypes.Files, VirtualFileSearch.Helper;
 
 {$R *.dfm}
 
 procedure TfrmScanFolder.btnCancelClick(Sender: TObject);
 begin
-  if Not(vfsScan.Finished) then
-  begin
-    if MessageDlg((DKLangConstW('msgCancelScanFolder')), mtWarning, [mbYes,mbNo], 0) = mrYes then
-    begin
-      vfsScan.Stop;
-      Close;
-    end;
-  end
-  else
-    Close;
+  Close;
 end;
 
 procedure TfrmScanFolder.btnExcludeAddClick(Sender: TObject);
@@ -248,6 +240,21 @@ begin
   NodeData := AListView.GetNodeData(Node);
   NodeData.Text := AText;
   NodeData.ImageIndex := GetExtImage(AText);
+end;
+
+procedure TfrmScanFolder.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+  CanClose := false;
+  if (vfsScan.IsRunning) then
+  begin
+    if MessageDlg((DKLangConstW('msgCancelScanFolder')), mtWarning, [mbYes,mbNo], 0) = mrYes then
+    begin
+      vfsScan.Stop;
+      CanClose := true;
+    end;
+  end
+  else
+    CanClose := true;
 end;
 
 procedure TfrmScanFolder.FormCreate(Sender: TObject);
