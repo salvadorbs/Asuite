@@ -262,7 +262,7 @@ uses
   Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, Utility.Misc,
   Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder, USingleInst,
   Utility.XML, GraphicMenu.ThemeEngine, Kernel.Scheduler, Forms.ImportList,
-  TypInfo;
+  TypInfo, SynTaskDialog;
 
 function TConfiguration.CheckReadOnlyMode: Boolean;
 begin
@@ -516,11 +516,16 @@ end;
 
 procedure TConfiguration.SetAlwaysOnTop(value: Boolean);
 begin
-  FAlwaysOnTop := value;
-  if FAlwaysOnTop then
-    frmMain.FormStyle := fsStayOnTop
-  else
-    frmMain.FormStyle := fsNormal;
+  if FAlwaysOnTop <> value then
+  begin
+    FAlwaysOnTop := value;
+    if FAlwaysOnTop then
+      frmMain.FormStyle := fsStayOnTop
+    else begin
+      ShowMessageEx(DKLangConstW('msgRestartAsuiteChanges'));
+      frmMain.FormStyle := fsNormal;
+    end;
+  end;
 end;
 
 procedure TConfiguration.SetBackup(const Value: Boolean);
