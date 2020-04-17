@@ -1,36 +1,47 @@
 @echo off
-  for %%v in (L Latest 5 6 7 8 9 10 11 12 13 14 15 16) do if /I !%1!==!%%v! goto :bds
+  for %%v in (L Latest 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20) do if /I !%1!==!%%v! goto :bds
   if /I !%1!==!! goto :help
   echo Unknown BDS version "%1"
   goto :help
-
+  
 :bds
   :: now %1 has been verified; verify %2
   if !%2!==!! goto :bdsBegin
-  for %%v in (F fixTargets B msbuild R D C S RS Delphi CBuilder RadStudio win32 win64) do if /I !%2!==!%%v! goto :bdsBegin
+  for %%v in (F fixTargets B msbuild BR msbuildRelease D C S RS Delphi CBuilder RadStudio rsvars) do if /I !%2!==!%%v! goto :bdsBegin
   echo Unknown BDS Target "%2"
   goto :help
 
 :bdsBegin
   echo Parameters: "%*"
   setlocal
+  set bdsExe=
+  set bdsProduct=
+  set bdsReg=
+  set bdsTarget=
+  set bdsVersion=
   call :%1
   set bdsBatch=%0
   set bdsVersion=%1
   set bdsTarget=%2
+  echo registry: %bdsReg%
   echo product: %bdsProduct%
+  echo edition: %bdsEdition%
   echo BDS EXE: %bdsExe%
+  echo parameters: %*
   if !!==!%bdsExe%! goto :noBdsExe
-  :: there is no rsvars.bat path in the registry, so get it from the bds.exe path:
+:: there is no rsvars.bat path in the registry, so get it from the bds.exe path:
   for %%p in (%bdsExe%) do set rsVars="%%~dpprsvars.bat" & set binDir="%%~dpp"
   echo rsvars: %rsVars%
   echo binDir: %binDir%
 ::  type %rsVars%
+  for %%v in (rsvars) do if /I !%bdsTarget%!==!%%v! goto :rsvars
   call %rsVars%
   :: init only for msbuild or fixTargets:
-  for %%v in (F fixTargets B R msbuild) do if /I !%bdsTarget%!==!%%v! goto :performInit
+  for %%v in (F fixTargets B msbuild BR msbuildRelease) do if /I !%bdsTarget%!==!%%v! goto :performInit
   goto :skipInit
 :performInit
+  :: Delphi < 2007 have no msbuild support
+  if /I %bdsVersion% LEQ 5 goto :noMsBuildSupport
   :: Delphi 2007 has environment variables setup differently
   if not %bdsVersion%==5 call :initDelphiUnicode
   if %bdsVersion%==5 call :initDelphi2007
@@ -40,14 +51,14 @@
 :skipInit
 ::  path
   call :do pushd %~dp0
-::  call :do call Dependencies Set
+  call :do call Dependencies Set
   call :do popd
   if !%2!==!! goto :bdsEnd
   if not exist %bdsExe% goto :noBdsExe
   goto :bdsExe
 :bdsExe
   :: cannot pass %* as there is no way to get rid of %1 and %2, see http://stackoverflow.com/questions/9363080/how-to-make-shift-work-with-in-batch-files
-  call :%2 %3 %4
+  call :%2 %3 %4 %5 %6 %7 %8 %9
   goto :bdsEnd
 :missingTarget
   echo missing one or more of "%requiredTargets%" in "%targetDirectory%"
@@ -58,20 +69,27 @@
 :noBdsExe
   echo bds.exe does not exist
   goto :bdsEnd
+:noMsBuildSupport
+  echo BDS %bdsVersion%.0 (%bdsProduct%) does not have msbuild support
+  goto :bdsEnd
 :bdsEnd
   endlocal
   goto :eof
-
+  
+:rsvars
+  endlocal && call %rsvars%
+  goto :eof
+  
 :B
 :msbuild
   :: check if the project exists
-  call :do %msBuildExe% /p:Platform=%2 /target:build /p:DCC_BuildAllUnits=true /p:config=Debug %1 /l:FileLogger,Microsoft.Build.Engine;logfile="log.txt"
+  call :do %msBuildExe% /target:build /p:DCC_BuildAllUnits=true /p:config=Debug %*
   goto :eof
 
-:R
-  :: check if the project exists
-  echo %Platform%
-  call :do %msBuildExe% /p:Platform=%2 /target:build /p:DCC_BuildAllUnits=true /p:config=Release %1 /l:FileLogger,Microsoft.Build.Engine;logfile="log64.txt"
+:BR
+:msbuildRelease
+  :: TODO check if the project exists
+  call :do %msBuildExe% /target:build /p:DCC_BuildAllUnits=true /p:config=Release %*
   goto :eof
 
 :: TODO add options for build Config 3, build Platform 4, search paths 5, conditional defines 6.
@@ -89,20 +107,20 @@
 :D
 :Delphi
   call :FixEditorLineEndsTtr
-  call :do start "%bdsProduct%" %bdsExe% -pDelphi
+  call :do start "%bdsProduct%" %bdsExe% -pDelphi %*
   goto :eof
 
 :C
 :CBuilder
   call :FixEditorLineEndsTtr
-  call :do start "%bdsProduct%" %bdsExe% -pCBuilder
+  call :do start "%bdsProduct%" %bdsExe% -pCBuilder %*
   goto :eof
 
 :S
 :RS
 :RadStudio
   call :FixEditorLineEndsTtr
-  call :do start "%bdsProduct%" %bdsExe%
+  call :do start "%bdsProduct%" %bdsExe% %*
   goto :eof
 
 :FixEditorLineEndsTtr
@@ -120,25 +138,36 @@
   )
   goto :eof
 
-:getBdsExe
-  :: HKCU
-  FOR /F "tokens=2*" %%P IN ('REG QUERY HKEY_CURRENT_USER\Software\%1 /v App 2^>NUL') DO call :do set bdsExe="%%Q"
-  :: HKLM x86
-  if [%bdsExe%]==[] FOR /F "tokens=2*" %%P IN ('REG QUERY HKEY_LOCAL_MACHINE\SOFTWARE\%1 /v App 2^>NUL') DO call :do set bdsExe="%%Q"
-  :: HKLM x64
-  if [%bdsExe%]==[] FOR /F "tokens=2*" %%P IN ('REG QUERY HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\%1 /v App 2^>NUL') DO call :do set bdsExe="%%Q"
+:getBdsExeAndReg
+  if not [%bdsExe%]==[] goto :eof
+  for /F "tokens=2*" %%P in ('REG QUERY %1\%2 /v App 2^>NUL') do set bdsExe="%%Q"
+  if not [%bdsExe%]==[] set bdsReg=%1\%2
+  for /F "tokens=2*" %%P in ('REG QUERY %1\%2 /v Edition 2^>NUL') do set bdsEdition="%%Q"
   goto :eof
 
+:getBdsExe
+  :: HKCU
+  call :getBdsExeAndReg HKEY_CURRENT_USER\Software %1
+  :: HKLM x86
+  call :getBdsExeAndReg HKEY_LOCAL_MACHINE\SOFTWARE %1
+  :: HKLM x64
+  call :getBdsExeAndReg HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node %1
+  goto :eof
+
+:4
+  call :getBdsExe Borland\BDS\4.0
+  set bdsProduct=RAD Studio 2006
+  goto :eof
 :5
   call :getBdsExe Borland\BDS\5.0
   set bdsProduct=RAD Studio 2007
   goto :eof
 :6
-  call :getBdsExe Embarcadero\BDS\6.0
+  call :getBdsExe CodeGear\BDS\6.0
   set bdsProduct=RAD Studio 2009
   goto :eof
 :7
-  call :getBdsExe Embarcadero\BDS\7.0
+  call :getBdsExe CodeGear\BDS\7.0
   set bdsProduct=RAD Studio 2010
   goto :eof
 :8
@@ -170,18 +199,38 @@
   set bdsProduct=RAD Studio XE6
   goto :eof
 :15
-  FOR /F "tokens=2*" %%P IN ('REG QUERY HKEY_CURRENT_USER\Software\Embarcadero\BDS\15.0 /v App 2^>NUL') DO call :do set bdsExe="%%Q"
-  set bdsProduct=Studio XE7
+  call :getBdsExe Embarcadero\BDS\15.0
+  set bdsProduct=RAD Studio XE7
   goto :eof
 :16
-  FOR /F "tokens=2*" %%P IN ('REG QUERY HKEY_CURRENT_USER\Software\Embarcadero\BDS\16.0 /v App 2^>NUL') DO call :do set bdsExe="%%Q"
-  set bdsProduct=Studio XE7
+  call :getBdsExe Embarcadero\BDS\16.0
+  set bdsProduct=RAD Studio XE8
+  goto :eof
+:17
+  call :getBdsExe Embarcadero\BDS\17.0
+  set bdsProduct=RAD Studio 10 Seattle
+  goto :eof
+:18
+  call :getBdsExe Embarcadero\BDS\18.0
+  set bdsProduct=RAD Studio 10.1 Berlin
+  goto :eof
+:19
+  call :getBdsExe Embarcadero\BDS\19.0
+  set bdsProduct=RAD Studio 10.2 Tokyo
+  goto :eof
+:20
+  call :getBdsExe Embarcadero\BDS\20.0
+  set bdsProduct=RAD Studio 10.3 Tokyo
   goto :eof
 
 :L
 :latest
   :: get %bdsExe% for youngest Delphi version
-  call :16
+  call :20
+  if [%bdsExe%]==[] call :19
+  if [%bdsExe%]==[] call :18
+  if [%bdsExe%]==[] call :17
+  if [%bdsExe%]==[] call :16
   if [%bdsExe%]==[] call :15
   if [%bdsExe%]==[] call :14
   if [%bdsExe%]==[] call :13
@@ -193,6 +242,7 @@
   if [%bdsExe%]==[] call :7
   if [%bdsExe%]==[] call :6
   if [%bdsExe%]==[] call :5
+  if [%bdsExe%]==[] call :4
   goto :eof
 
 :initDelphi2007
@@ -218,12 +268,16 @@
   :: remove double quote from %binDir% at begin and end, so not %binDir:"=% but %binDir:"=% but %binDir:~1,-1%
   :: also remove trailing backslash.
   set targetDirectory=%binDir:~1,-2%
-  set sourceDirectory=%binDir%
+  set sourceDirectory=your installation DVD
   set msBuildExe=%FrameworkDir%\msbuild.exe
   :: Defaults, then exception
   set requiredTargets=CodeGear.Common.Targets CodeGear.Cpp.Targets CodeGear.Delphi.Targets CodeGear.Deployment.Targets CodeGear.Group.Targets CodeGear.Profiles.Targets
+  :: BDS 9 and up add CodeGear.Deployment.Target
+  if %bdsVersion%==7 set requiredTargets=CodeGear.Common.Targets CodeGear.Cpp.Targets CodeGear.Delphi.Targets CodeGear.Group.Targets
   if %bdsVersion%==8 set requiredTargets=CodeGear.Common.Targets CodeGear.Cpp.Targets CodeGear.Delphi.Targets CodeGear.Group.Targets
-  if %bdsVersion%==13 set requiredTargets=CodeGear.Common.Targets CodeGear.Cpp.Targets CodeGear.Delphi.Targets CodeGear.Deployment.Targets CodeGear.Group.Targets CodeGear.Profiles.Targets
+  :: Enterprise and Architect have CodeGear.Idl.Targets
+  if [%bdsEdition%]==[Architect]  set requiredTargets=%requiredTargets% CodeGear.Idl.Targets
+  if [%bdsEdition%]==[Enterprise] set requiredTargets=%requiredTargets% CodeGear.Idl.Targets
   call :assertRequiredTargets
   goto :eof
 
@@ -236,7 +290,8 @@
 
 :missingRequiredTarget
   :: first check if we are in "fixing" mode, running as Administrator and can fix the issue.
-  if [%sourceDirectory%]==[your installation DVD] goto :cantFixMissingRequiredTarget
+  :: if strings can contain spaces, then always compare using double quotes, not using []: https://superuser.com/questions/958047/batch-file-error-because-of-space-in-input-string
+  if "%sourceDirectory%"=="your installation DVD" goto :cantFixMissingRequiredTarget
   if %bdsTarget%==F goto :tryFixMissingRequiredTarget
   if %bdsTarget%==fixTargets goto :tryFixMissingRequiredTarget
 :cantFixMissingRequiredTarget
@@ -245,7 +300,7 @@
   echo You can usually copy it as Administrator from %sourceDirectory% using:
   echo %bdsBatch% %bdsVersion% fixTargets
   goto :eof
-
+  
 :tryFixMissingRequiredTarget
   call :isAdmin
   if %errorlevel% == 0 (
@@ -256,7 +311,7 @@
     echo Error: not running as administrator, so cannot fix missing Targets file %*
     goto :cantFixMissingRequiredTarget
   )
-
+  
 :isAdmin
   ::sfc 2>&1 | find /i "/SCANNOW" >nul
   setlocal enabledelayedexpansion
@@ -279,6 +334,7 @@
   echo     and `Target` is the BDS Target to optionally run after `rsvars.bat` has been run.
   echo.
   echo Supported BDS versions:
+  echo      4 - Delphi 2006 (does not support msbuild)
   echo      5 - Delphi 2007
   echo      6 - Delphi 2009
   echo      7 - Delphi 2010
@@ -290,24 +346,29 @@
   echo     13 - Appmethod 1.13
   echo     14 - Delphi XE6/Appnethod 1.14
   echo     15 - Delphi XE7/Appnethod 1.15
-  echo     16 - Delphi XE8
+  echo     16 - Delphi XE8/Appnethod 1.16
+  echo     17 - Delphi 10 Seattle/Appnethod 1.17
+  echo     18 - Delphi 10.1 Berlin
+  echo     19 - Delphi 10.2 Tokyo
+  echo     20 - Delphi 10.3 Tokyo
   echo      L - Latest/Youngest installed version of the above.
   echo.
   echo Supported BDS Targets:
-  echo     D          - Delphi
-  echo     C          - C++ Builder
-  echo     S          - RAD Studio/Appmethod
-  echo     RS         - RAD Studio/Appmethod
-  echo     Delphi     - Delphi
-  echo     CBuilder   - C++ Builder
-  echo     RadStudio  - RAD Studio/Appmethod
-  echo     B          - msbuild build project in Debug mode
-  echo     msbuild    - msbuild build project in Debug mode
-  echo     R          - msbuild build project in Release mode
-  echo     F          - fix missing *.Targets files (requires UAC Administrator token)
-  echo     fixTargets - fix missing *.Targets files (requires UAC Administrator token)
+  echo     D              - Delphi
+  echo     C              - C++ Builder
+  echo     S              - RAD Studio/Appmethod
+  echo     RS             - RAD Studio/Appmethod
+  echo     Delphi         - Delphi
+  echo     CBuilder       - C++ Builder
+  echo     RadStudio      - RAD Studio/Appmethod
+  echo     B              - msbuild build project in Debug mode
+  echo     msbuild        - msbuild build project in Debug mode
+  echo     BR             - msbuild build project in Release mode
+  echo     msbuildRelease - msbuild build project in Release mode
+  echo     F              - fix missing *.Targets files (requires UAC Administrator token)
+  echo     fixTargets     - fix missing *.Targets files (requires UAC Administrator token)
+  echo     rsvars     - runs rsvars.bat and updates the environment variables from it
   echo.
   echo Some Targets (like B) support extra parameters.
   echo     B          - .dproj or .groupproj file
   echo     msbuild    - .dproj or .groupproj file
-
