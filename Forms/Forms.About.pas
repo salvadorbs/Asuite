@@ -62,7 +62,7 @@ uses
 procedure TfrmAbout.FormCreate(Sender: TObject);
 begin
   lblAppName.Caption := Format(lblAppName.Caption, [APP_NAME]);
-  lblVersion.Caption := Format(lblVersion.Caption, [GetASuiteVersion(False), {$IFDEF Win32}'32'{$ELSE}'64'{$ENDIF}]);
+  lblVersion.Caption := Format(lblVersion.Caption, [GetASuiteVersion(True), {$IFDEF Win32}'32'{$ELSE}'64'{$ENDIF}]);
 end;
 
 procedure TfrmAbout.imgDonateClick(Sender: TObject);

@@ -3,12 +3,9 @@
 if [%1]==[help] GOTO :help else GOTO :SetVars
 
 :SetVars
+  call set_paths.bat
   set OLDDIR=%CD%
-  set UPXPath=%1
-  set StripRelocPath=%2
-  set Map2Mab=%3
-  set ISCompiler=%4
-  set GitTag=%5
+  set GitTag=%1
   goto :Run
 
 :Run
@@ -22,35 +19,32 @@ if [%1]==[help] GOTO :help else GOTO :SetVars
   goto :CompressSource
 
 :CompressSource
-  "%programfiles%\7-zip\7z.exe" a -tzip %OLDDIR%\asuitesrc.zip
-  "%programfiles%\7-zip\7z.exe" a -t7z %OLDDIR%\asuitesrc.7z
+  %c7z% a -tzip %OLDDIR%\asuitesrc.zip
+  %c7z% a -t7z %OLDDIR%\asuitesrc.7z
   goto :Build64
 
 :Build
   call "%OLDDIR%\..\build_release_asuite.bat"
   %Map2Mab% bin\asuite.exe
-  %StripRelocPath% /B bin\asuite.exe
-  %UPXPath% --best bin\asuite.exe
   goto :CompressRelease
 
 :Build64
   call "%OLDDIR%\..\build_release64_asuite.bat"
   ren "bin\asuite.exe" "asuite_x64.exe"
   %Map2Mab% bin\asuite_x64.exe
-  %UPXPath% --best bin\asuite_x64.exe
   goto :Build
 
 :CompressRelease
   cd bin
-  "%programfiles%\7-zip\7z.exe" a -tzip %OLDDIR%\asuite.zip * -x!sqlite3-64.dll -x!asuite_x64.exe
-  "%programfiles%\7-zip\7z.exe" a -t7z %OLDDIR%\asuite.7z * -x!sqlite3-64.dll -x!asuite_x64.exe
+  %c7z% a -tzip %OLDDIR%\asuite.zip * -x!asuite_x64.exe
+  %c7z% a -t7z %OLDDIR%\asuite.7z * -x!asuite_x64.exe
   cd ..
   goto :CompressRelease64
 
 :CompressRelease64
   cd bin
-  "%programfiles%\7-zip\7z.exe" a -tzip %OLDDIR%\asuite_x64.zip -x!asuite.exe
-  "%programfiles%\7-zip\7z.exe" a -t7z %OLDDIR%\asuite_x64.7z -x!asuite.exe
+  %c7z% a -tzip %OLDDIR%\asuite_x64.zip -x!asuite.exe
+  %c7z% a -t7z %OLDDIR%\asuite_x64.7z -x!asuite.exe
   cd ..
   goto :CompileSetup
 
@@ -75,8 +69,9 @@ if [%1]==[help] GOTO :help else GOTO :SetVars
 
 :help
   echo Syntax:
-  echo     %0 UPX StripReloc [Tag]
+  echo     %0 [Tag]
   echo.
-  echo     where 'UPX' is the path to upx.exe,
-  echo     `StripReloc` is the path to stripreloc.exe
-  echo     and optional 'Tag' is a tag git
+  echo     where optional 'Tag' is a tag git 
+  echo
+  echo     P.S.: Remember to change set_paths.bat
+  echo     before run this batch
