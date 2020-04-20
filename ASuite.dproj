@@ -1143,7 +1143,6 @@
         <DCCReference Include="Library\Icons.Thread.pas"/>
         <DCCReference Include="Library\Kernel.Scheduler.pas"/>
         <DCCReference Include="Library\Kernel.Logger.pas"/>
-        <DCCReference Include="Library\Kernel.CheckUpdates.pas"/>
         <DCCReference Include="Library\VirtualFileSearch.Helper.pas"/>
         <None Include="ASuite.inc"/>
         <BuildConfiguration Include="Debug">

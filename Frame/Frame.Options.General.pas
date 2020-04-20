@@ -41,7 +41,6 @@ type
     cxActionOnExe: TComboBox;
     chkConfirmMessageCat: TCheckBox;
     chkAutoCloseProcess: TCheckBox;
-    chkCheckUpdatesStartup: TCheckBox;
   private
     { Private declarations }
   strict protected
@@ -85,7 +84,6 @@ begin
   cbShowPanelStartup.Checked := Config.ShowPanelAtStartUp;
   cbShowMenuStartup.Checked  := Config.ShowGraphicMenuAtStartUp;
   chkMissedSchedulerTask.Checked := Config.MissedSchedulerTask;
-  chkCheckUpdatesStartup.Checked := Config.CheckUpdatesStartup;
   //Language
   for I := 0 to LangManager.LanguageCount - 1 do
   begin
@@ -108,7 +106,6 @@ begin
   Config.ShowPanelAtStartUp  := cbShowPanelStartup.Checked;
   Config.ShowGraphicMenuAtStartUp := cbShowMenuStartup.Checked;
   Config.MissedSchedulerTask := chkMissedSchedulerTask.Checked;
-  Config.CheckUpdatesStartup := chkCheckUpdatesStartup.Checked;
   //Language
   Config.LangID := LangManager.LanguageIDs[cxLanguage.ItemIndex];
   //Execution options

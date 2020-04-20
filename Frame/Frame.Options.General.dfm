@@ -4,7 +4,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     Left = 3
     Top = 3
     Width = 439
-    Height = 110
+    Height = 94
     Margins.Bottom = 0
     Align = alTop
     Caption = 'Startup'
@@ -71,25 +71,11 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
       ParentFont = False
       TabOrder = 1
     end
-    object chkCheckUpdatesStartup: TCheckBox
-      Left = 8
-      Top = 86
-      Width = 420
-      Height = 17
-      Caption = 'Check for updates on ASuite startup'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 4
-    end
   end
   object grpLanguage: TGroupBox
     AlignWithMargins = True
     Left = 3
-    Top = 244
+    Top = 228
     Width = 174
     Height = 47
     Margins.Bottom = 0
@@ -119,7 +105,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
   object gbExecution: TGroupBox
     AlignWithMargins = True
     Left = 3
-    Top = 116
+    Top = 100
     Width = 439
     Height = 125
     Margins.Bottom = 0
@@ -132,6 +118,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 1
+    ExplicitTop = 116
     object lbActionOnExe: TLabel
       Left = 8
       Top = 53
@@ -214,7 +201,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     Left = 368
     Top = 344
     LangData = {
-      150066726D47656E6572616C4F7074696F6E735061676500010E000000090067
+      150066726D47656E6572616C4F7074696F6E735061676500010D000000090067
       6253746172747570010100000005000000070043617074696F6E001000636257
       696E646F777353746172747570010100000006000000070043617074696F6E00
       1200636253686F7750616E656C53746172747570010100000007000000070043
@@ -228,8 +215,6 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
       000000070043617074696F6E000D006378416374696F6E4F6E45786501010000
       001500000005004974656D7300140063686B436F6E6669726D4D657373616765
       436174010100000016000000070043617074696F6E00130063686B4175746F43
-      6C6F736550726F63657373010100000017000000070043617074696F6E001600
-      63686B436865636B557064617465735374617274757001010000001800000007
-      0043617074696F6E00}
+      6C6F736550726F63657373010100000017000000070043617074696F6E00}
   end
 end
