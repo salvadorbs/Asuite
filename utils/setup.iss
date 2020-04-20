@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "ASuite"
-#define MyAppVersion "2.0 Beta"
+#define MyAppVersion "2.0"
 #define MyAppPublisher "SalvadorSoftware"
 #define MyAppURL "http://www.salvadorsoftware.com/asuite"
 #define MyAppExeName "ASuite.exe"
@@ -37,8 +37,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]          
 ; Place all x64 files here                                                                            
-Source: "..\bin\ASuite_x64.exe"; DestDir: "{app}"; Check: Is64BitInstallMode;                   
-Source: "..\bin\sqlite3-64.dll"; DestDir: "{app}"; Check: Is64BitInstallMode;          
+Source: "..\bin\ASuite_x64.exe"; DestDir: "{app}"; Check: Is64BitInstallMode;          
 ; Place all x86 files here, first one should be marked 'solidbreak'
 Source: "..\bin\ASuite.exe"; DestDir: "{app}"; Check: not Is64BitInstallMode; Flags: solidbreak      
 ; Place all common files here, first one should be marked 'solidbreak'
