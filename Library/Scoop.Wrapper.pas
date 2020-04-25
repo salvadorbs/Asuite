@@ -22,93 +22,218 @@ unit Scoop.Wrapper;
 interface
 
 uses
-  classes, PJPipe, PJConsoleApp, PJPipeFilters, PJFileHandle, SysUtils;
+  classes, PJPipe, PJConsoleApp, PJPipeFilters, PJFileHandle, SysUtils,
+  Scoop.Bucket, Scoop.App, System.StrUtils,
+  System.Generics.Defaults, System.Generics.Collections;
 
 const
   SCOOP_CMD = 'cmd.exe /c scoop';
+  SCOOP_ARGS_STATUS = ' status';
+  SCOOP_ARGS_APP_LIST = ' list';
+  SCOOP_ARGS_BUCKET_LIST = ' bucket list';
+  SCOOP_ARGS_BUCKET_KNOWN = ' bucket known';
+  SCOOP_ARGS_INSTALL = ' install';
+  SCOOP_ARGS_UNINSTALL = ' uninstall';
 
 type
 
   TScoopWrapper = class
   private
     { private declarations }
-    FApp: TPJConsoleApp;
+    FConsoleApp: TPJConsoleApp;
     FOutput: TStringList;
     FOutPipe: TPJPipe;
     FErrPipe: TPJPipe;
     FOutFilter: TPJAnsiSBCSPipeFilter;
 
+    FVersion: string;
+    FBuckets: TList<TScoopBucket>;
+    FBucketsKnown: TList<TScoopBucket>;
+    FApps: TScoopApps;
+
     procedure LineEndHandler(Sender: TObject; const Text: AnsiString);
     procedure WorkHandler(Sender: TObject);
     procedure CompleteHandler(Sender: TObject);
+    function InternalExecute(Args: string): boolean;
   protected
     { protected declarations }
   public
     { public declarations }
-    constructor Create(); virtual;
-    destructor Destroy(); 
+    constructor Create();
+    destructor Destroy(); override;
 
-    function IsExists(): boolean;
-    function GetScoopVersion(): string;
+    property Output: TStringList read FOutput;
+    property Buckets: TList<TScoopBucket> read FBuckets;
+    property BucketsKnown: TList<TScoopBucket> read FBucketsKnown;
+    property Apps: TScoopApps read FApps;
+
+    function IsScoopExists(): boolean;
     procedure Update();
-    procedure InstallApp();
-    procedure UninstallApp();
+    procedure InstallApp(AName: string);
+    procedure UninstallApp(AName: string);
     procedure Status();
-  published
-    { published declarations }
+    procedure AddBucket(AName: string);
+    procedure RemoveBucket(AName: string);
+
+    function ListBuckets(): TList<TScoopBucket>;
+    function ListBucketsKnown(): TList<TScoopBucket>;
+    function ListApps(): TScoopApps;
   end;
 
+const
+  STATUS_MSG_UPDATE = 'Updates are available for:';
+  STATUS_MSG_OUTDATED = 'These apps are outdated and on hold:';
+  STATUS_MSG_MISSMANIFEST = 'These app manifests have been removed:';
+  STATUS_MSG_FAILED = 'These apps failed to install:';
+  STATUS_MSG_MISSDEPENDECIES = 'Missing runtime dependencies:';
+
 implementation
+
+uses
+  System.RegularExpressions;
 
 { TScoopWrapper }
 
 constructor TScoopWrapper.Create();
 begin
   inherited;
-  FApp := TPJConsoleApp.Create; 
+  FConsoleApp := TPJConsoleApp.Create;
   FOutPipe := TPJPipe.Create;
-  FErrPipe := TPJPipe.Create; 
+  FErrPipe := TPJPipe.Create;
   FOutput := TStringList.Create;
   FOutFilter := TPJAnsiSBCSPipeFilter.Create(FOutPipe, True);
 
   FOutFilter.OnLineEnd := LineEndHandler;
 
-  FApp.MaxExecTime := INFINITE;
-  FApp.TimeSlice := 5;
-  FApp.Visible := True;
-  FApp.StdOut := FOutPipe.WriteHandle;
-  FApp.StdErr := FErrPipe.WriteHandle;
-  FApp.OnWork := WorkHandler;
-  FApp.OnComplete := CompleteHandler;
+  FConsoleApp.MaxExecTime := INFINITE;
+  FConsoleApp.TimeSlice := 5;
+  FConsoleApp.Visible := false;
+  FConsoleApp.StdOut := FOutPipe.WriteHandle;
+  FConsoleApp.StdErr := FErrPipe.WriteHandle;
+  FConsoleApp.OnWork := WorkHandler;
+  FConsoleApp.OnComplete := CompleteHandler;
+
+  FBuckets := TList<TScoopBucket>.Create();
+  FBucketsKnown := TList<TScoopBucket>.Create();
+  FApps := TScoopApps.Create();
 end;
 
 destructor TScoopWrapper.Destroy();
 begin
-  FApp.Free;   
+  FConsoleApp.Free;
   FOutPipe.Free;
   FErrPipe.Free;
   FreeAndNil(FOutFilter);
+
+  FBuckets.Free;
 end;
 
-function TScoopWrapper.GetScoopVersion: string;
-begin
-
-end;
-
-procedure TScoopWrapper.InstallApp;
-begin
-
-end;
-
-function TScoopWrapper.IsExists(): boolean;
+function TScoopWrapper.ListApps: TScoopApps;
 var
-  isExecuted: Boolean;
+  isExecuted: boolean;
+  I: Integer;
+  Bucket: TScoopBucket;
+  Regexp: TRegEx;
+  Match: TMatch;
 begin
   try
-    FOutput.Clear;
-    
-    isExecuted := FApp.Execute(SCOOP_CMD + ' --version');
-    Result := (isExecuted) and (FOutput.Count > 0);
+
+    FOutFilter.EOLMarker := #10;
+    isExecuted := Self.InternalExecute(SCOOP_ARGS_APP_LIST);
+    if (isExecuted) then
+    begin
+      FApps.Clear;
+
+      Regexp := TRegEx.Create('(\S+) (.+)');
+      for I := 1 to FOutput.Count - 1 do
+      begin
+        Match := Regexp.Match(FOutput[I]);
+
+        if (Match.Success) and (Match.Groups.Count > 1) then
+        begin
+          FApps.Add(TScoopApp.Create(Match.Groups[1].Value));
+        end;
+      end;
+    end;
+
+    Result := FApps;
+  except
+    raise;
+  end;
+end;
+
+function TScoopWrapper.ListBuckets(): TList<TScoopBucket>;
+var
+  isExecuted: boolean;
+  I: Integer;
+  Bucket: TScoopBucket;
+begin
+  try
+
+    FOutFilter.EOLMarker := #13#10;
+    isExecuted := Self.InternalExecute(SCOOP_ARGS_BUCKET_LIST);
+    if (isExecuted) then
+    begin
+      FBuckets.Clear;
+
+      for I := 0 to FOutput.Count - 1 do
+        FBuckets.Add(TScoopBucket.Create(FOutput[I]))
+    end;
+
+    Result := FBuckets;
+  except
+    raise;
+  end;
+end;
+
+function TScoopWrapper.ListBucketsKnown: TList<TScoopBucket>;
+var
+  isExecuted: boolean;
+  I: Integer;
+  Bucket: TScoopBucket;
+begin
+  try
+
+    FOutFilter.EOLMarker := #13#10;
+    if FBucketsKnown.Count = 0 then
+    begin
+      isExecuted := Self.InternalExecute(SCOOP_ARGS_BUCKET_KNOWN);
+      if (isExecuted) then
+      begin
+        FBucketsKnown.Clear;
+
+        for I := 0 to FOutput.Count - 1 do
+          FBucketsKnown.Add(TScoopBucket.Create(FOutput[I]))
+      end;
+    end;
+
+    Result := FBucketsKnown;
+  except
+    raise;
+  end;
+end;
+
+procedure TScoopWrapper.InstallApp(AName: string);
+begin
+  // TODO: Run scoop --install param and
+end;
+
+function TScoopWrapper.InternalExecute(Args: string): boolean;
+var
+  isExecuted: boolean;
+begin
+  FOutput.Clear;
+
+  isExecuted := FConsoleApp.Execute(SCOOP_CMD + Args);
+
+  Result := (isExecuted) and (FConsoleApp.ExitCode = 0) and (FOutput.Count > 0);
+end;
+
+function TScoopWrapper.IsScoopExists(): boolean;
+begin
+  try
+
+    Result := Self.InternalExecute('');
 
   except
     raise;
@@ -122,20 +247,75 @@ end;
 
 procedure TScoopWrapper.LineEndHandler(Sender: TObject; const Text: AnsiString);
 begin
-  FOutput.Add(Text);
-end;      
+  if Text <> '' then
+    FOutput.Add(Text);
+end;
 
-procedure TScoopWrapper.Status;
+procedure TScoopWrapper.RemoveBucket(AName: string);
 begin
 
 end;
 
-procedure TScoopWrapper.UninstallApp;
+procedure TScoopWrapper.Status;
+var
+  isExecuted: boolean;
+  I: Integer;
+  Bucket: TScoopBucket;
+  Regexp: TRegEx;
+  Match: TMatch;
+  RegisterLines: boolean;
+  found: integer;
+  test: array of string;
+begin
+  try
+
+    Self.ListApps;
+
+    FOutFilter.EOLMarker := #10;
+    isExecuted := Self.InternalExecute(SCOOP_ARGS_STATUS);
+    if (isExecuted) then
+    begin
+      RegisterLines := False;
+      Regexp := TRegEx.Create('(\S+). (.+) -> (.+)');
+      for I := 1 to FOutput.Count - 1 do
+      begin
+        test := [STATUS_MSG_UPDATE, STATUS_MSG_OUTDATED, STATUS_MSG_MISSMANIFEST, STATUS_MSG_FAILED, STATUS_MSG_MISSDEPENDECIES];
+        case IndexStr(FOutput[I], test) of
+          0: RegisterLines := True;
+          1..4: RegisterLines := False;
+        end;
+
+        if RegisterLines then
+        begin
+
+          Match := Regexp.Match(FOutput[I]);
+
+          if (Match.Success) and (Match.Groups.Count > 1) then
+          begin
+            found := FApps.Find(Match.Groups[1].Value);
+            FApps[found].Version := Match.Groups[2].Value;
+            FApps[found].LatestVersion := Match.Groups[3].Value;
+          end;
+        end;
+      end;
+    end;
+
+  except
+    raise;
+  end;
+end;
+
+procedure TScoopWrapper.UninstallApp(AName: string);
 begin
 
 end;
 
 procedure TScoopWrapper.Update;
+begin
+
+end;
+
+procedure TScoopWrapper.AddBucket(AName: string);
 begin
 
 end;
