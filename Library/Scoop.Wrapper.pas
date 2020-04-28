@@ -63,9 +63,9 @@ type
     destructor Destroy(); override;
 
     property Output: TStringList read FOutput;
-    property Buckets: TList<TScoopBucket> read FBuckets;
-    property BucketsKnown: TList<TScoopBucket> read FBucketsKnown;
-    property Apps: TScoopApps read FApps;
+    property Buckets: TScoopBuckets read FBuckets;
+    property BucketsKnown: TScoopBuckets read FBucketsKnown;
+    property Apps: TScoopApps read FAppsInstalled;
 
     function IsScoopExists(): boolean;
     procedure Update();
@@ -113,19 +113,21 @@ begin
   FConsoleApp.OnWork := WorkHandler;
   FConsoleApp.OnComplete := CompleteHandler;
 
-  FBuckets := TList<TScoopBucket>.Create();
-  FBucketsKnown := TList<TScoopBucket>.Create();
-  FApps := TScoopApps.Create();
+  FBuckets := TScoopBuckets.Create();
+  FBucketsKnown := TScoopBuckets.Create();
+  FAppsInstalled := TScoopApps.Create();
 end;
 
 destructor TScoopWrapper.Destroy();
 begin
   FConsoleApp.Free;
-  FOutPipe.Free;
+  FOutFilter.Free;
   FErrPipe.Free;
-  FreeAndNil(FOutFilter);
+  FOutput.Free;
 
+  FAppsInstalled.Free;
   FBuckets.Free;
+  FBucketsKnown.Free;
 end;
 
 function TScoopWrapper.ListApps: TScoopApps;
@@ -142,7 +144,7 @@ begin
     isExecuted := Self.InternalExecute(SCOOP_ARGS_APP_LIST);
     if (isExecuted) then
     begin
-      FApps.Clear;
+      FAppsInstalled.Clear;
 
       Regexp := TRegEx.Create('(\S+) (.+)');
       for I := 1 to FOutput.Count - 1 do
@@ -151,12 +153,12 @@ begin
 
         if (Match.Success) and (Match.Groups.Count > 1) then
         begin
-          FApps.Add(TScoopApp.Create(Match.Groups[1].Value));
+          FAppsInstalled.Add(TScoopApp.Create(Match.Groups[1].Value));
         end;
       end;
     end;
 
-    Result := FApps;
+    Result := FAppsInstalled;
   except
     raise;
   end;
@@ -218,6 +220,11 @@ begin
   // TODO: Run scoop --install param and
 end;
 
+function TScoopWrapper.InternalExecute: boolean;
+begin
+  Self.InternalExecute('');
+end;
+
 function TScoopWrapper.InternalExecute(Args: string): boolean;
 var
   isExecuted: boolean;
@@ -233,7 +240,7 @@ function TScoopWrapper.IsScoopExists(): boolean;
 begin
   try
 
-    Result := Self.InternalExecute('');
+    Result := Self.InternalExecute();
 
   except
     raise;

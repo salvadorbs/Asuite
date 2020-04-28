@@ -40,6 +40,7 @@ type
     property Name: string read FName;
   end;
 
+  TScoopBuckets = class(TObjectList<TScoopBucket>);
 implementation
 
 { TScoopBucket }

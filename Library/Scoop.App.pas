@@ -22,7 +22,7 @@ unit Scoop.App;
 interface
 
 uses
-  classes, SysUtils, System.Generics.Collections;
+  classes, SysUtils, System.Generics.Collections, MPcommonObjects;
 
 type
 
@@ -32,6 +32,8 @@ type
     FName: string;
     FVersion: string;
     FLatestVersion: string;
+    function GetPathManifest: string;
+    function GetPathDir: string;
   protected
     { protected declarations }
   public
@@ -42,15 +44,20 @@ type
     property Name: string read FName;
     property Version: string read FVersion write FVersion;
     property LatestVersion: string read FLatestVersion write FLatestVersion;
+    property PathDir: string read GetPathDir;
+    property PathManifest: string read GetPathManifest;
   end;
 
   //TODO: Move in another unit
-  TScoopApps = class(TList<TScoopApp>)
+  TScoopApps = class(TObjectList<TScoopApp>)
   public
     function Find(const AName: string): Integer;
   end;
 
 implementation
+
+uses
+  Path.Utils;
 
 { TScoopApp }
 
@@ -62,6 +69,18 @@ end;
 destructor TScoopApp.Destroy;
 begin
 
+end;
+
+function TScoopApp.GetPathDir: string;
+begin
+  //TODO: Use TPath.combine!
+  Result := IncludeTrailingPathDelimiter(ExpandEnvVars('%SCOOP%\apps\' + Self.Name));
+end;
+
+function TScoopApp.GetPathManifest: string;
+begin
+  //TODO: Use TPath.combine!
+  Result := IncludeTrailingPathDelimiter(Self.PathDir + 'current\manifest.json');
 end;
 
 { TScoopApps }
