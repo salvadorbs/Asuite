@@ -47,14 +47,15 @@ type
     FOutFilter: TPJAnsiSBCSPipeFilter;
 
     FVersion: string;
-    FBuckets: TList<TScoopBucket>;
-    FBucketsKnown: TList<TScoopBucket>;
-    FApps: TScoopApps;
+    FBuckets: TScoopBuckets;
+    FBucketsKnown: TScoopBuckets;
+    FAppsInstalled: TScoopApps;
 
     procedure LineEndHandler(Sender: TObject; const Text: AnsiString);
     procedure WorkHandler(Sender: TObject);
     procedure CompleteHandler(Sender: TObject);
-    function InternalExecute(Args: string): boolean;
+    function InternalExecute(Args: string): boolean; overload;
+    function InternalExecute(): boolean; overload;
   protected
     { protected declarations }
   public
@@ -86,6 +87,8 @@ const
   STATUS_MSG_MISSMANIFEST = 'These app manifests have been removed:';
   STATUS_MSG_FAILED = 'These apps failed to install:';
   STATUS_MSG_MISSDEPENDECIES = 'Missing runtime dependencies:';
+
+  arrScoopStatus: array of string = [STATUS_MSG_UPDATE, STATUS_MSG_OUTDATED, STATUS_MSG_MISSMANIFEST, STATUS_MSG_FAILED, STATUS_MSG_MISSDEPENDECIES];
 
 implementation
 
@@ -270,9 +273,8 @@ var
   Bucket: TScoopBucket;
   Regexp: TRegEx;
   Match: TMatch;
-  RegisterLines: boolean;
-  found: integer;
-  test: array of string;
+  TrackNextLines: boolean;
+  intApp: integer;
 begin
   try
 
@@ -282,26 +284,26 @@ begin
     isExecuted := Self.InternalExecute(SCOOP_ARGS_STATUS);
     if (isExecuted) then
     begin
-      RegisterLines := False;
+      TrackNextLines := False;
+      //Regexp for "appname: cur_version -> new_version"
       Regexp := TRegEx.Create('(\S+). (.+) -> (.+)');
+
+      //Get new app version
       for I := 1 to FOutput.Count - 1 do
       begin
-        test := [STATUS_MSG_UPDATE, STATUS_MSG_OUTDATED, STATUS_MSG_MISSMANIFEST, STATUS_MSG_FAILED, STATUS_MSG_MISSDEPENDECIES];
-        case IndexStr(FOutput[I], test) of
-          0: RegisterLines := True;
-          1..4: RegisterLines := False;
-        end;
+        //If current line is update status, we can track next lines
+        TrackNextLines := (IndexStr(FOutput[I], arrScoopStatus) = 0);
 
-        if RegisterLines then
+        if TrackNextLines then
         begin
 
           Match := Regexp.Match(FOutput[I]);
 
           if (Match.Success) and (Match.Groups.Count > 1) then
           begin
-            found := FApps.Find(Match.Groups[1].Value);
-            FApps[found].Version := Match.Groups[2].Value;
-            FApps[found].LatestVersion := Match.Groups[3].Value;
+            intApp := FAppsInstalled.Find(Match.Groups[1].Value);
+            FAppsInstalled[intApp].Version := Match.Groups[2].Value;
+            FAppsInstalled[intApp].LatestVersion := Match.Groups[3].Value;
           end;
         end;
       end;
@@ -314,12 +316,12 @@ end;
 
 procedure TScoopWrapper.UninstallApp(AName: string);
 begin
-
+  // TODO: Run scoop --uninstall param
 end;
 
 procedure TScoopWrapper.Update;
 begin
-
+  // TODO: Run scoop --update only scoop
 end;
 
 procedure TScoopWrapper.AddBucket(AName: string);
