@@ -22,25 +22,29 @@ unit Scoop.Bucket;
 interface
 
 uses
-  classes, SysUtils, MPcommonObjects, Scoop.App, VirtualFileSearch, Winapi.Windows,
-  System.Json, System.Generics.Collections;
+  classes, SysUtils, MPcommonObjects, Scoop.App, VirtualFileSearch,
+  Winapi.Windows,
+  System.Generics.Collections, variants, Vcl.Dialogs, JsonDataObjects;
 
 type
 
-  TOnEndSearchManifest = procedure(Sender: TObject; const Apps: TScoopApps) of object;
+  TOnEndSearchManifest = procedure(Sender: TObject; const Apps: TScoopApps)
+    of object;
 
   TScoopBucket = class
   private
     { private declarations }
     FName: string;
-    FApps: TScoopApps;   //TODO: Populate it
+    FApps: TScoopApps; // TODO: Populate it
     FVirtualFileSearch: TVirtualFileSearch;
     FExcludeJson: TStringList;
     FOnEndSearchManifest: TOnEndSearchManifest;
 
     function GetPath(): string;
-    procedure OnEndSearchAppsManifest(Sender: TObject; Results: TCommonPIDLList);
-    procedure OnSearchCompareManifest(Sender: TObject; const FilePath: string; FindFileData: TWIN32FindDataW; var UseFile: Boolean);
+    procedure OnEndSearchAppsManifest(Sender: TObject;
+      Results: TCommonPIDLList);
+    procedure OnSearchCompareManifest(Sender: TObject; const FilePath: string;
+      FindFileData: TWIN32FindDataW; var UseFile: Boolean);
     function FindMatchText(Strings: TStrings; const Str: string): Integer;
   protected
     { protected declarations }
@@ -53,7 +57,8 @@ type
 
     property Name: string read FName;
     property Path: string read GetPath;
-    property OnEndSearchManifest: TOnEndSearchManifest read FOnEndSearchManifest write FOnEndSearchManifest;
+    property OnEndSearchManifest: TOnEndSearchManifest read FOnEndSearchManifest
+      write FOnEndSearchManifest;
   end;
 
   TScoopBuckets = class(TObjectList<TScoopBucket>);
@@ -93,7 +98,7 @@ end;
 function TScoopBucket.FindMatchText(Strings: TStrings;
   const Str: string): Integer;
 begin
-  for Result := 0 to Strings.Count-1 do
+  for Result := 0 to Strings.Count - 1 do
     if ContainsText(Str, Strings[Result]) then
       exit;
   Result := -1;
@@ -108,38 +113,46 @@ end;
 
 function TScoopBucket.GetPath: string;
 begin
-  //TODO: Use TPath.combine!
-  Result := IncludeTrailingPathDelimiter(ExpandEnvVars('%SCOOP%\buckets\' + Self.Name));
+  // TODO: Use TPath.combine!
+  Result := IncludeTrailingPathDelimiter
+    (ExpandEnvVars('%SCOOP%\buckets\' + Self.Name));
+end;
+
+function IsEmptyOrNull(const Value: Variant): Boolean;
+begin
+  Result := VarIsClear(Value) or VarIsEmpty(Value) or VarIsNull(Value) or
+    (VarCompareValue(Value, Unassigned) = vrEqual);
+  if (not Result) and VarIsStr(Value) then
+    Result := Value = '';
 end;
 
 procedure TScoopBucket.OnEndSearchAppsManifest(Sender: TObject;
   Results: TCommonPIDLList);
 var
   I: Integer;
-  LData: TStringStream;
-  LJSONObject: TJSONObject;
-  JSONValue: TJSONValue;
+  Obj: TJsonObject;
+  App: TScoopApp;
 begin
   FApps.Clear;
   for I := 0 to Results.Count - 1 do
   begin
-    LData := TStringStream.Create();
-    LJSONObject:= TJSONObject.Create;
     try
-      LData.LoadFromFile(PIDLToPath(Results[I]));
-      JSONValue := LJSONObject.ParseJSONValue(LData.DataString);
+      Obj := TJsonObject.ParseFromFile(PIDLToPath(Results[I])) as TJsonObject;
 
-     // FApps.Add(TScoopApp.Create(JSONValue.GetValue<string>('version')));
+      if Assigned(Obj) and (Obj.IndexOf('version') <> -1) then
+      begin
+        App := TScoopApp.Create(ExtractFileName(PIDLToPath(Results[I])));
+        App.Version := Obj.S['version'];
+        FApps.Add(App);
+      end;
     finally
-      LData.Free;
-      LJSONObject.Free;
-      JSONValue.Free;
+      FreeAndNil(Obj);
     end;
 
   end;
 
   if Assigned(FOnEndSearchManifest) then
-   FOnEndSearchManifest(Self, FApps);
+    FOnEndSearchManifest(Self, FApps);
 end;
 
 procedure TScoopBucket.OnSearchCompareManifest(Sender: TObject;
