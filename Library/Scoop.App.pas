@@ -22,7 +22,8 @@ unit Scoop.App;
 interface
 
 uses
-  classes, SysUtils, System.Generics.Collections, MPcommonObjects;
+  classes, SysUtils, System.Generics.Collections, MPcommonObjects,
+  System.Generics.Defaults;
 
 type
 
@@ -30,9 +31,13 @@ type
   private
     { private declarations }
     FName: string;
-    FVersion: string;
+    FInstalledVersion: string;
     FLatestVersion: string;
+    FInstalled: Boolean;
+
+    function GetPathInstManifest: string;
     function GetPathManifest: string;
+    function GetPathInstall: string;
     function GetPathDir: string;
   protected
     { protected declarations }
@@ -42,16 +47,24 @@ type
     destructor Destroy(); override;
 
     property Name: string read FName;
-    property Version: string read FVersion write FVersion;
+    //TODO: Come lo gestiamo???? Version -> manifest interno dell'app, LatestVersion -> manifest del bucket?
+    property InstalledVersion: string read FInstalledVersion write FInstalledVersion;
     property LatestVersion: string read FLatestVersion write FLatestVersion;
-    property PathDir: string read GetPathDir;
+    property PathDir: string read GetPathDir; //TODO: E no! devo recuperarli dalla ricerca centrallizzata e non in automaticoo recuperarli dalla ricerca centrallizzata e non in automatico
+    property PathInstManifest: string read GetPathInstManifest;
     property PathManifest: string read GetPathManifest;
+    property PathInstall: string read GetPathInstall;
+    property Installed: Boolean read FInstalled write FInstalled;
   end;
 
   //TODO: Move in another unit
   TScoopApps = class(TObjectList<TScoopApp>)
   public
-    function Find(const AName: string): Integer;
+    constructor Create();
+
+    function SearchByName(const AName: string): TScoopApp;
+    function AddItem(const AName: string): TScoopApp;
+    procedure ClearInstalledApps();
   end;
 
 implementation
@@ -64,6 +77,7 @@ uses
 constructor TScoopApp.Create(AName: string);
 begin
   FName := AName;
+  FInstalled := False;
 end;
 
 destructor TScoopApp.Destroy;
@@ -74,23 +88,103 @@ end;
 function TScoopApp.GetPathDir: string;
 begin
   //TODO: Use TPath.combine!
-  Result := IncludeTrailingPathDelimiter(ExpandEnvVars('%SCOOP%\apps\' + Self.Name));
+  //TODO: Siamo proprio sicuri?
+  Result := '';
+  if FInstalled then
+    Result := IncludeTrailingPathDelimiter(ExpandEnvVars('%SCOOP%\apps\' + Self.Name));
+end;
+
+function TScoopApp.GetPathInstall: string;
+begin
+  //TODO: Use TPath.combine!
+  Result := '';
+  if FInstalled then
+    Result := IncludeTrailingPathDelimiter(Self.PathDir + 'current\install.json');
+end;
+
+function TScoopApp.GetPathInstManifest: string;
+begin
+  //TODO: Use TPath.combine!
+  Result := '';
+  if FInstalled then
+    Result := IncludeTrailingPathDelimiter(Self.PathDir + 'current\manifest.json');
 end;
 
 function TScoopApp.GetPathManifest: string;
 begin
   //TODO: Use TPath.combine!
-  Result := IncludeTrailingPathDelimiter(Self.PathDir + 'current\manifest.json');
+  //TODO: RICERCA
+  //Result := IncludeTrailingPathDelimiter(FBucket.Path + FName + '.json');
 end;
 
 { TScoopApps }
 
-function TScoopApps.Find(const AName: string): Integer;
+{function TScoopApps.AddApp(const App: TScoopApp): TScoopApp;
 begin
-  for Result := 0 to Count-1 do
-    if Self[Result].Name = AName then
-      exit;
-  Result := -1;
+  if not Self.Contains() then
+  begin
+
+  end;
+
+  App := FApps.SearchByName(Match.Groups[1].Value);
+
+  if not(Assigned(App)) then
+  begin
+    App := TScoopApp.Create(Match.Groups[1].Value);
+    FApps.Add(App);
+  end;
+end;  }
+
+function TScoopApps.AddItem(const AName: string): TScoopApp;
+var
+  App: TScoopApp;
+begin
+  //Avoid possible duplicates
+  App := SearchByName(AName);
+  if not(Assigned(App)) then
+  begin
+    App := TScoopApp.Create(AName);
+    Self.Add(App);
+  end;
+
+  Result := App;
+end;
+
+procedure TScoopApps.ClearInstalledApps;
+var
+  I: Integer;
+begin
+  for I := 0 to Self.Count - 1 do
+    Self[I].Installed := False;
+end;
+
+constructor TScoopApps.Create;
+var comparer : IComparer<TScoopApp>;
+    comparison : TComparison<TScoopApp>;
+begin
+    comparison := function(const l, r : TScoopApp): Integer
+                  begin
+                    Result := CompareStr(l.Name, r.Name);
+                  end;
+
+    comparer := TComparer<TScoopApp>.Construct(comparison);
+
+    inherited Create(comparer);
+end;
+
+function TScoopApps.SearchByName(const AName: string): TScoopApp;
+var
+  I: Integer;
+begin
+  Result := nil;
+  for I := 0 to Self.Count - 1 do
+  begin
+    if Self[I].Name = AName then
+    begin
+      Result := Self[I];
+      Exit;
+    end;
+  end;
 end;
 
 end.

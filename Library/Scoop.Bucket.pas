@@ -22,29 +22,31 @@ unit Scoop.Bucket;
 interface
 
 uses
-  classes, SysUtils, MPcommonObjects, Scoop.App, VirtualFileSearch,
-  Winapi.Windows,
-  System.Generics.Collections, variants, Vcl.Dialogs, JsonDataObjects;
+  classes, PJPipe, PJConsoleApp, PJPipeFilters, PJFileHandle, SysUtils,
+  Scoop.App, VirtualFileSearch, System.IOUtils,
+  System.Generics.Defaults, System.Generics.Collections, Winapi.Windows,
+  MPcommonObjects, JsonDataObjects, MPCommonUtilities;
 
 type
 
-  TOnEndSearchManifest = procedure(Sender: TObject; const Apps: TScoopApps)
+  TOnEndLoadingApps = procedure(Sender: TObject; const Apps: TScoopApps)
     of object;
 
   TScoopBucket = class
   private
     { private declarations }
     FName: string;
-    FApps: TScoopApps; // TODO: Populate it
     FVirtualFileSearch: TVirtualFileSearch;
     FExcludeJson: TStringList;
-    FOnEndSearchManifest: TOnEndSearchManifest;
+    FApps: TScoopApps;
+    FOnEndLoadingApps: TOnEndLoadingApps;
+
+    procedure OnSearchCompareManifest(Sender: TObject; const FilePath: string;
+      FindFileData: TWIN32FindDataW; var UseFile: boolean);
+    procedure OnEndSearchAppsManifest(Sender: TObject; //TODO: change name
+      Results: TCommonPIDLList);
 
     function GetPath(): string;
-    procedure OnEndSearchAppsManifest(Sender: TObject;
-      Results: TCommonPIDLList);
-    procedure OnSearchCompareManifest(Sender: TObject; const FilePath: string;
-      FindFileData: TWIN32FindDataW; var UseFile: Boolean);
     function FindMatchText(Strings: TStrings; const Str: string): Integer;
   protected
     { protected declarations }
@@ -53,15 +55,26 @@ type
     constructor Create(AName: string);
     destructor Destroy(); override;
 
-    procedure StartSearchAppsManifest();
-
     property Name: string read FName;
     property Path: string read GetPath;
-    property OnEndSearchManifest: TOnEndSearchManifest read FOnEndSearchManifest
-      write FOnEndSearchManifest;
+    property Apps: TScoopApps read FApps;
+
+    property OnEndLoadingApps: TOnEndLoadingApps read FOnEndLoadingApps
+      write FOnEndLoadingApps;
+
+    procedure ClearApps();
+    procedure LoadApps();
   end;
 
-  TScoopBuckets = class(TObjectList<TScoopBucket>);
+  TScoopBuckets = class(TObjectList<TScoopBucket>)
+  public
+    function AddApp(const AName: string; const ABucketName: string): TScoopApp;
+    function AddBucket(const AName: string): TScoopBucket;
+    function SearchAppByName(const AName: string): TScoopApp;
+    function SearchBucketByName(const AName: string): TScoopBucket;
+    procedure ClearApps();
+    procedure ClearInstalledApps();
+  end;
 
 implementation
 
@@ -70,28 +83,34 @@ uses
 
 { TScoopBucket }
 
+procedure TScoopBucket.ClearApps;
+begin
+  FApps.Clear;
+end;
+
 constructor TScoopBucket.Create(AName: string);
 begin
-  FApps := TScoopApps.Create;
-  FExcludeJson := TStringList.Create;
-  FExcludeJson.Add('.vscode');
+  Self.FName := AName;
 
   FVirtualFileSearch := TVirtualFileSearch.Create(nil);
   FVirtualFileSearch.ThreadPriority := tpIdle;
   FVirtualFileSearch.UpdateRate := 50;
   FVirtualFileSearch.SearchCriteriaFilename.Add('*.json');
   FVirtualFileSearch.CaseSensitive := false;
-  FVirtualFileSearch.SubFolders := true;
+  FVirtualFileSearch.SubFolders := True;
   FVirtualFileSearch.OnSearchEnd := OnEndSearchAppsManifest;
   FVirtualFileSearch.OnSearchCompare := OnSearchCompareManifest;
 
-  Self.FName := AName;
+  FApps := TScoopApps.Create;
+
+  FExcludeJson := TStringList.Create;
+  FExcludeJson.Add('.vscode');
 end;
 
 destructor TScoopBucket.Destroy;
 begin
-  FApps.Free;
   FVirtualFileSearch.Free;
+  FApps.Free;
   FExcludeJson.Free;
 end;
 
@@ -101,14 +120,8 @@ begin
   for Result := 0 to Strings.Count - 1 do
     if ContainsText(Str, Strings[Result]) then
       exit;
-  Result := -1;
-end;
 
-procedure TScoopBucket.StartSearchAppsManifest;
-begin
-  FVirtualFileSearch.SearchPaths.Clear;
-  FVirtualFileSearch.SearchPaths.Add(Self.Path);
-  FVirtualFileSearch.Run;
+  Result := -1;
 end;
 
 function TScoopBucket.GetPath: string;
@@ -118,12 +131,11 @@ begin
     (ExpandEnvVars('%SCOOP%\buckets\' + Self.Name));
 end;
 
-function IsEmptyOrNull(const Value: Variant): Boolean;
+procedure TScoopBucket.LoadApps;
 begin
-  Result := VarIsClear(Value) or VarIsEmpty(Value) or VarIsNull(Value) or
-    (VarCompareValue(Value, Unassigned) = vrEqual);
-  if (not Result) and VarIsStr(Value) then
-    Result := Value = '';
+  FVirtualFileSearch.SearchPaths.Clear;
+  FVirtualFileSearch.SearchPaths.Add(Self.Path);
+  FVirtualFileSearch.Run;
 end;
 
 procedure TScoopBucket.OnEndSearchAppsManifest(Sender: TObject;
@@ -133,7 +145,6 @@ var
   Obj: TJsonObject;
   App: TScoopApp;
 begin
-  FApps.Clear;
   for I := 0 to Results.Count - 1 do
   begin
     try
@@ -141,24 +152,96 @@ begin
 
       if Assigned(Obj) and (Obj.IndexOf('version') <> -1) then
       begin
-        App := TScoopApp.Create(ExtractFileName(PIDLToPath(Results[I])));
-        App.Version := Obj.S['version'];
-        FApps.Add(App);
+        App := FApps.AddItem(TPath.GetFileNameWithoutExtension(PIDLToPath(Results[I])));
+        App.LatestVersion := Obj.S['version'];
+
       end;
     finally
       FreeAndNil(Obj);
     end;
-
   end;
 
-  if Assigned(FOnEndSearchManifest) then
-    FOnEndSearchManifest(Self, FApps);
+  if Assigned(FOnEndLoadingApps) then
+    FOnEndLoadingApps(Self, FApps);
 end;
 
 procedure TScoopBucket.OnSearchCompareManifest(Sender: TObject;
-  const FilePath: string; FindFileData: TWIN32FindDataW; var UseFile: Boolean);
+  const FilePath: string; FindFileData: TWIN32FindDataW; var UseFile: boolean);
 begin
   UseFile := FindMatchText(FExcludeJson, FilePath) = -1;
+end;
+
+{ TScoopBuckets }
+
+function TScoopBuckets.AddApp(const AName: string; const ABucketName: string): TScoopApp;
+var
+  Bucket: TScoopBucket;
+begin
+  Result := nil;
+
+  Bucket := SearchBucketByName(ABucketName);
+  if Assigned(Bucket) then
+    Result := Bucket.Apps.AddItem(AName);
+end;
+
+function TScoopBuckets.AddBucket(const AName: string): TScoopBucket;
+var
+  Bucket: TScoopBucket;
+begin
+  //Avoid possible duplicates
+  Bucket := SearchBucketByName(AName);
+  if not(Assigned(Bucket)) then
+  begin
+    Bucket := TScoopBucket.Create(AName);
+    Self.Add(Bucket);
+  end;
+
+  Result := Bucket;
+end;
+
+procedure TScoopBuckets.ClearApps;
+var
+  I: Integer;
+begin
+  for I := 0 to Self.Count - 1 do
+    Self.Items[I].Apps.Clear;
+end;
+
+procedure TScoopBuckets.ClearInstalledApps;
+var
+  I: Integer;
+begin
+  for I := 0 to Self.Count - 1 do
+    Self.Items[I].Apps.ClearInstalledApps;
+end;
+
+function TScoopBuckets.SearchAppByName(const AName: string): TScoopApp;
+var
+  I: Integer;
+begin
+  Result := nil;
+
+  for I := 0 to Self.Count - 1 do
+  begin
+    Result := Self.Items[I].Apps.SearchByName(AName);
+    if Assigned(Result) then
+      Break;
+  end;
+end;
+
+function TScoopBuckets.SearchBucketByName(const AName: string): TScoopBucket;
+var
+  I: Integer;
+begin
+  Result := nil;
+  for I := 0 to Self.Count - 1 do
+  begin
+    if Self[I].Name = AName then
+    begin
+      Result := Self[I];
+      Exit;
+    end
+  end;
 end;
 
 end.

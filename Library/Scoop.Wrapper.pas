@@ -23,9 +23,11 @@ interface
 
 uses
   classes, PJPipe, PJConsoleApp, PJPipeFilters, PJFileHandle, SysUtils,
-  Scoop.Bucket, Scoop.App, System.StrUtils,
-  System.Generics.Defaults, System.Generics.Collections;
+  Scoop.Bucket, Scoop.App, System.StrUtils, VirtualFileSearch, System.IOUtils,
+  System.Generics.Defaults, System.Generics.Collections, Winapi.Windows,
+  MPcommonObjects, JsonDataObjects, MPCommonUtilities;
 
+//TODO: Move const in another unit
 const
   SCOOP_CMD = 'cmd.exe /c scoop';
   SCOOP_ARGS_STATUS = ' status';
@@ -37,6 +39,9 @@ const
 
 type
 
+  TOnEndLoadingBucketApps = procedure(Sender: TObject; const Apps: TScoopApps)
+    of object;
+
   TScoopWrapper = class
   private
     { private declarations }
@@ -45,17 +50,20 @@ type
     FOutPipe: TPJPipe;
     FErrPipe: TPJPipe;
     FOutFilter: TPJAnsiSBCSPipeFilter;
+    FOnEndLoadingBucketApps: TOnEndLoadingBucketApps;
 
     FVersion: string;
     FBuckets: TScoopBuckets;
     FBucketsKnown: TScoopBuckets;
-    FAppsInstalled: TScoopApps;
 
     procedure LineEndHandler(Sender: TObject; const Text: AnsiString);
     procedure WorkHandler(Sender: TObject);
     procedure CompleteHandler(Sender: TObject);
     function InternalExecute(Args: string): boolean; overload;
     function InternalExecute(): boolean; overload;
+    procedure OnEndLoadingBucketApps(Sender: TObject; const Apps: TScoopApps);
+
+    procedure LoadListAppsInstalled();
   protected
     { protected declarations }
   public
@@ -66,19 +74,20 @@ type
     property Output: TStringList read FOutput;
     property Buckets: TScoopBuckets read FBuckets;
     property BucketsKnown: TScoopBuckets read FBucketsKnown;
-    property Apps: TScoopApps read FAppsInstalled;
+    property OnEndLoadingApps: TOnEndLoadingBucketApps read FOnEndLoadingBucketApps
+      write FOnEndLoadingBucketApps;
 
     function IsScoopExists(): boolean;
-    procedure Update();
+    procedure DoUpdate();
     procedure InstallApp(AName: string);
     procedure UninstallApp(AName: string);
-    procedure Status();
+    procedure GetStatus();
     procedure AddBucket(AName: string);
     procedure RemoveBucket(AName: string);
 
-    function ListBuckets(): TList<TScoopBucket>;
-    function ListBucketsKnown(): TList<TScoopBucket>;
-    function ListApps(): TScoopApps;
+    function LoadListBuckets(): TList<TScoopBucket>;
+    function LoadListBucketsKnown(): TList<TScoopBucket>;
+    procedure LoadAllApps();
   end;
 
 const
@@ -88,12 +97,13 @@ const
   STATUS_MSG_FAILED = 'These apps failed to install:';
   STATUS_MSG_MISSDEPENDECIES = 'Missing runtime dependencies:';
 
-  arrScoopStatus: array of string = [STATUS_MSG_UPDATE, STATUS_MSG_OUTDATED, STATUS_MSG_MISSMANIFEST, STATUS_MSG_FAILED, STATUS_MSG_MISSDEPENDECIES];
+  arrScoopStatus: array of string = [STATUS_MSG_UPDATE, STATUS_MSG_OUTDATED,
+    STATUS_MSG_MISSMANIFEST, STATUS_MSG_FAILED, STATUS_MSG_MISSDEPENDECIES];
 
 implementation
 
 uses
-  System.RegularExpressions;
+  System.RegularExpressions, Path.Utils;
 
 { TScoopWrapper }
 
@@ -118,7 +128,6 @@ begin
 
   FBuckets := TScoopBuckets.Create();
   FBucketsKnown := TScoopBuckets.Create();
-  FAppsInstalled := TScoopApps.Create();
 end;
 
 destructor TScoopWrapper.Destroy();
@@ -128,46 +137,83 @@ begin
   FErrPipe.Free;
   FOutput.Free;
 
-  FAppsInstalled.Free;
   FBuckets.Free;
   FBucketsKnown.Free;
 end;
 
-function TScoopWrapper.ListApps: TScoopApps;
+procedure TScoopWrapper.LoadListAppsInstalled;
 var
   isExecuted: boolean;
   I: Integer;
   Bucket: TScoopBucket;
   Regexp: TRegEx;
   Match: TMatch;
+  App: TScoopApp;
+  Obj: TJsonObject;
+  AppName: string;
+  BucketName: string;
 begin
   try
+    FBuckets.ClearInstalledApps;
 
     FOutFilter.EOLMarker := #10;
     isExecuted := Self.InternalExecute(SCOOP_ARGS_APP_LIST);
     if (isExecuted) then
     begin
-      FAppsInstalled.Clear;
-
+      //TODO: Aggiungere commento che spieghi regexp
       Regexp := TRegEx.Create('(\S+) (.+)');
+
+      //Parse FOutput to find app name
       for I := 1 to FOutput.Count - 1 do
       begin
+        AppName := '';
+        BucketName := '';
         Match := Regexp.Match(FOutput[I]);
 
         if (Match.Success) and (Match.Groups.Count > 1) then
         begin
-          FAppsInstalled.Add(TScoopApp.Create(Match.Groups[1].Value));
+          //TODO: Extract this code
+          AppName := Match.Groups[1].Value;
+          Obj := TJsonObject.ParseFromFile(ExpandEnvVars('%SCOOP%\apps\' + AppName + '\current\install.json')) as TJsonObject;
+          try
+           BucketName := Obj.S['bucket'];
+          finally
+            Obj.Free;
+          end;
+
+          //TODO: Ricerca
+          App := FBuckets.AddApp(Match.Groups[1].Value, BucketName);
+
+          if Assigned(App) then
+          begin
+            App.Installed := True;
+
+            //TODO: Recupera la version da manifest.json
+            //TODO: Parse install.json per recuperare il bucket, url, architettura e qualche altra utile informazione
+          end;
         end;
       end;
     end;
 
-    Result := FAppsInstalled;
   except
     raise;
   end;
 end;
 
-function TScoopWrapper.ListBuckets(): TList<TScoopBucket>;
+procedure TScoopWrapper.LoadAllApps;
+var
+  I: Integer;
+begin
+  Self.LoadListBuckets;
+
+  Self.LoadListAppsInstalled;
+
+  //TODO: Move this code in TScoopBuckets
+  for I := 0 to FBuckets.Count - 1 do
+    FBuckets[I].LoadApps;
+end;
+
+function TScoopWrapper.LoadListBuckets(): TList<TScoopBucket>;
 var
   isExecuted: boolean;
   I: Integer;
@@ -182,7 +228,10 @@ begin
       FBuckets.Clear;
 
       for I := 0 to FOutput.Count - 1 do
-        FBuckets.Add(TScoopBucket.Create(FOutput[I]))
+      begin
+        Bucket := FBuckets.AddBucket(FOutput[I]);
+        Bucket.OnEndLoadingApps := OnEndLoadingBucketApps;
+      end;
     end;
 
     Result := FBuckets;
@@ -191,7 +240,7 @@ begin
   end;
 end;
 
-function TScoopWrapper.ListBucketsKnown: TList<TScoopBucket>;
+function TScoopWrapper.LoadListBucketsKnown: TList<TScoopBucket>;
 var
   isExecuted: boolean;
   I: Integer;
@@ -216,6 +265,13 @@ begin
   except
     raise;
   end;
+end;
+
+procedure TScoopWrapper.OnEndLoadingbucketApps(Sender: TObject;
+  const Apps: TScoopApps);
+begin
+  if Assigned(FOnEndLoadingBucketApps) then
+    FOnEndLoadingBucketApps(Sender, Apps);
 end;
 
 procedure TScoopWrapper.InstallApp(AName: string);
@@ -266,7 +322,7 @@ begin
 
 end;
 
-procedure TScoopWrapper.Status;
+procedure TScoopWrapper.GetStatus;
 var
   isExecuted: boolean;
   I: Integer;
@@ -274,24 +330,22 @@ var
   Regexp: TRegEx;
   Match: TMatch;
   TrackNextLines: boolean;
-  intApp: integer;
+  App: TScoopApp;
 begin
   try
-
-    Self.ListApps;
 
     FOutFilter.EOLMarker := #10;
     isExecuted := Self.InternalExecute(SCOOP_ARGS_STATUS);
     if (isExecuted) then
     begin
-      TrackNextLines := False;
-      //Regexp for "appname: cur_version -> new_version"
+      TrackNextLines := false;
+      // Regexp for "appname: cur_version -> new_version"
       Regexp := TRegEx.Create('(\S+). (.+) -> (.+)');
 
-      //Get new app version
+      // Get new app version
       for I := 1 to FOutput.Count - 1 do
       begin
-        //If current line is update status, we can track next lines
+        // If current line is update status, we can track next lines
         TrackNextLines := (IndexStr(FOutput[I], arrScoopStatus) = 0);
 
         if TrackNextLines then
@@ -301,9 +355,9 @@ begin
 
           if (Match.Success) and (Match.Groups.Count > 1) then
           begin
-            intApp := FAppsInstalled.Find(Match.Groups[1].Value);
-            FAppsInstalled[intApp].Version := Match.Groups[2].Value;
-            FAppsInstalled[intApp].LatestVersion := Match.Groups[3].Value;
+            App := FBuckets.SearchAppByName(Match.Groups[1].Value);
+            App.InstalledVersion := Match.Groups[2].Value;
+            App.LatestVersion := Match.Groups[3].Value;
           end;
         end;
       end;
@@ -319,7 +373,7 @@ begin
   // TODO: Run scoop --uninstall param
 end;
 
-procedure TScoopWrapper.Update;
+procedure TScoopWrapper.DoUpdate;
 begin
   // TODO: Run scoop --update only scoop
 end;
