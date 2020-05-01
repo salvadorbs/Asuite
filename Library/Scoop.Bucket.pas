@@ -43,7 +43,7 @@ type
 
     procedure OnSearchCompareManifest(Sender: TObject; const FilePath: string;
       FindFileData: TWIN32FindDataW; var UseFile: boolean);
-    procedure OnEndSearchAppsManifest(Sender: TObject; //TODO: change name
+    procedure OnEndSearchAppsManifest(Sender: TObject;
       Results: TCommonPIDLList);
 
     function GetPath(): string;
@@ -66,6 +66,7 @@ type
     procedure LoadApps();
   end;
 
+  //TODO: Move in another unit
   TScoopBuckets = class(TObjectList<TScoopBucket>)
   public
     function AddApp(const AName: string; const ABucketName: string): TScoopApp;
@@ -74,6 +75,7 @@ type
     function SearchBucketByName(const AName: string): TScoopBucket;
     procedure ClearApps();
     procedure ClearInstalledApps();
+    procedure LoadAllApps();
   end;
 
 implementation
@@ -126,9 +128,7 @@ end;
 
 function TScoopBucket.GetPath: string;
 begin
-  // TODO: Use TPath.combine!
-  Result := IncludeTrailingPathDelimiter
-    (ExpandEnvVars('%SCOOP%\buckets\' + Self.Name));
+  Result := TPath.Combine(ExpandEnvVars('%SCOOP%\buckets\'), Self.Name);
 end;
 
 procedure TScoopBucket.LoadApps;
@@ -148,12 +148,13 @@ begin
   for I := 0 to Results.Count - 1 do
   begin
     try
+      //TODO: Create a class-wrapper to parse manifest.json
       Obj := TJsonObject.ParseFromFile(PIDLToPath(Results[I])) as TJsonObject;
 
       if Assigned(Obj) and (Obj.IndexOf('version') <> -1) then
       begin
-        App := FApps.AddItem(TPath.GetFileNameWithoutExtension(PIDLToPath(Results[I])));
-        App.LatestVersion := Obj.S['version'];
+        App := FApps.AddItem(TPath.GetFileNameWithoutExtension(PIDLToPath(Results[I])), Self);
+        App.VersionLatest := Obj.S['version'];
 
       end;
     finally
@@ -181,7 +182,7 @@ begin
 
   Bucket := SearchBucketByName(ABucketName);
   if Assigned(Bucket) then
-    Result := Bucket.Apps.AddItem(AName);
+    Result := Bucket.Apps.AddItem(AName, Bucket);
 end;
 
 function TScoopBuckets.AddBucket(const AName: string): TScoopBucket;
@@ -213,6 +214,14 @@ var
 begin
   for I := 0 to Self.Count - 1 do
     Self.Items[I].Apps.ClearInstalledApps;
+end;
+
+procedure TScoopBuckets.LoadAllApps;
+var
+  I: Integer;
+begin
+  for I := 0 to Self.Count - 1 do
+    Self[I].LoadApps;
 end;
 
 function TScoopBuckets.SearchAppByName(const AName: string): TScoopApp;

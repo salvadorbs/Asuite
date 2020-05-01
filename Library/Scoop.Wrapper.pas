@@ -52,7 +52,6 @@ type
     FOutFilter: TPJAnsiSBCSPipeFilter;
     FOnEndLoadingBucketApps: TOnEndLoadingBucketApps;
 
-    FVersion: string;
     FBuckets: TScoopBuckets;
     FBucketsKnown: TScoopBuckets;
 
@@ -64,6 +63,8 @@ type
     procedure OnEndLoadingBucketApps(Sender: TObject; const Apps: TScoopApps);
 
     procedure LoadListAppsInstalled();
+    //TODO: Create a class-wrapper to parse install.json
+    function GetBucketNameFromInstallJson(AppName: string): string;
   protected
     { protected declarations }
   public
@@ -145,11 +146,9 @@ procedure TScoopWrapper.LoadListAppsInstalled;
 var
   isExecuted: boolean;
   I: Integer;
-  Bucket: TScoopBucket;
   Regexp: TRegEx;
   Match: TMatch;
   App: TScoopApp;
-  Obj: TJsonObject;
   AppName: string;
   BucketName: string;
 begin
@@ -160,8 +159,11 @@ begin
     isExecuted := Self.InternalExecute(SCOOP_ARGS_APP_LIST);
     if (isExecuted) then
     begin
-      //TODO: Aggiungere commento che spieghi regexp
-      Regexp := TRegEx.Create('(\S+) (.+)');
+      //Regexp to get info (name, version and bucket name) from query "Scoop list"
+      //We can have two types of output line:
+      //  App 9.0
+      //  AnotherApp 1.2.123 [bucket]
+      Regexp := TRegEx.Create('(\S+) (\S+)(?:\s\[(.*)\])?$');
 
       //Parse FOutput to find app name
       for I := 1 to FOutput.Count - 1 do
@@ -170,26 +172,27 @@ begin
         BucketName := '';
         Match := Regexp.Match(FOutput[I]);
 
+        //Get app info
         if (Match.Success) and (Match.Groups.Count > 1) then
         begin
-          //TODO: Extract this code
+          //Get app and bucket name
           AppName := Match.Groups[1].Value;
-          Obj := TJsonObject.ParseFromFile(ExpandEnvVars('%SCOOP%\apps\' + AppName + '\current\install.json')) as TJsonObject;
-          try
-           BucketName := Obj.S['bucket'];
-          finally
-            Obj.Free;
-          end;
 
-          //TODO: Ricerca
+          //If regexp found 3 groups, we have bucket name else it is bucket main's app
+          if Match.Groups.Count > 3 then
+            BucketName := Match.Groups[3].Value
+          else
+            BucketName := 'main';
+
           App := FBuckets.AddApp(Match.Groups[1].Value, BucketName);
 
           if Assigned(App) then
           begin
             App.Installed := True;
+            App.VersionInstalled := Match.Groups[2].Value;
 
-            //TODO: Recupera la version da manifest.json
-            //TODO: Parse install.json per recuperare il bucket, url, architettura e qualche altra utile informazione
+            //TODO: Parse app's manifest.json to get App.InstalledVersion
+            //TODO: Parse install.json to get other app info (arch?)
           end;
         end;
       end;
@@ -201,16 +204,32 @@ begin
 end;
 
 procedure TScoopWrapper.LoadAllApps;
-var
-  I: Integer;
 begin
+  //First get buckets from scoop executable
   Self.LoadListBuckets;
 
+  //After get only apps installed from scoop executable
   Self.LoadListAppsInstalled;
 
-  //TODO: Move this code in TScoopBuckets
-  for I := 0 to FBuckets.Count - 1 do
-    FBuckets[I].LoadApps;
+  //Now we can get other apps, searching using TScoopBuckets
+  FBuckets.LoadAllApps;
+end;
+
+function TScoopWrapper.GetBucketNameFromInstallJson(AppName: string): string;
+var
+  Obj: TJsonObject;
+  Path: string;
+begin
+  Path := ExpandEnvVars('%SCOOP%\apps\' + AppName + '\current\install.json');
+  if FileExists(Path) then
+  begin
+    Obj := TJsonObject.ParseFromFile(Path) as TJsonObject;
+    try
+      Result := Obj.S['bucket'];
+    finally
+      Obj.Free;
+    end;
+  end;
 end;
 
 function TScoopWrapper.LoadListBuckets(): TList<TScoopBucket>;
@@ -244,7 +263,6 @@ function TScoopWrapper.LoadListBucketsKnown: TList<TScoopBucket>;
 var
   isExecuted: boolean;
   I: Integer;
-  Bucket: TScoopBucket;
 begin
   try
 
@@ -281,7 +299,7 @@ end;
 
 function TScoopWrapper.InternalExecute: boolean;
 begin
-  Self.InternalExecute('');
+  Result := Self.InternalExecute('');
 end;
 
 function TScoopWrapper.InternalExecute(Args: string): boolean;
@@ -314,7 +332,7 @@ end;
 procedure TScoopWrapper.LineEndHandler(Sender: TObject; const Text: AnsiString);
 begin
   if Text <> '' then
-    FOutput.Add(Text);
+    FOutput.Add(string(Text));
 end;
 
 procedure TScoopWrapper.RemoveBucket(AName: string);
@@ -326,7 +344,6 @@ procedure TScoopWrapper.GetStatus;
 var
   isExecuted: boolean;
   I: Integer;
-  Bucket: TScoopBucket;
   Regexp: TRegEx;
   Match: TMatch;
   TrackNextLines: boolean;
@@ -338,7 +355,6 @@ begin
     isExecuted := Self.InternalExecute(SCOOP_ARGS_STATUS);
     if (isExecuted) then
     begin
-      TrackNextLines := false;
       // Regexp for "appname: cur_version -> new_version"
       Regexp := TRegEx.Create('(\S+). (.+) -> (.+)');
 
@@ -356,8 +372,8 @@ begin
           if (Match.Success) and (Match.Groups.Count > 1) then
           begin
             App := FBuckets.SearchAppByName(Match.Groups[1].Value);
-            App.InstalledVersion := Match.Groups[2].Value;
-            App.LatestVersion := Match.Groups[3].Value;
+            App.VersionInstalled := Match.Groups[2].Value;
+            App.VersionLatest := Match.Groups[3].Value;
           end;
         end;
       end;
