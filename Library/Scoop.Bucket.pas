@@ -22,8 +22,7 @@ unit Scoop.Bucket;
 interface
 
 uses
-  classes, PJPipe, PJConsoleApp, PJPipeFilters, PJFileHandle, SysUtils,
-  Scoop.App, VirtualFileSearch, System.IOUtils,
+  classes, SysUtils, Scoop.App, VirtualFileSearch, System.IOUtils, Scoop.List.Apps,
   System.Generics.Defaults, System.Generics.Collections, Winapi.Windows,
   MPcommonObjects, JsonDataObjects, MPCommonUtilities;
 
@@ -64,18 +63,6 @@ type
 
     procedure ClearApps();
     procedure LoadApps();
-  end;
-
-  //TODO: Move in another unit
-  TScoopBuckets = class(TObjectList<TScoopBucket>)
-  public
-    function AddApp(const AName: string; const ABucketName: string): TScoopApp;
-    function AddBucket(const AName: string): TScoopBucket;
-    function SearchAppByName(const AName: string): TScoopApp;
-    function SearchBucketByName(const AName: string): TScoopBucket;
-    procedure ClearApps();
-    procedure ClearInstalledApps();
-    procedure LoadAllApps();
   end;
 
 implementation
@@ -170,87 +157,6 @@ procedure TScoopBucket.OnSearchCompareManifest(Sender: TObject;
   const FilePath: string; FindFileData: TWIN32FindDataW; var UseFile: boolean);
 begin
   UseFile := FindMatchText(FExcludeJson, FilePath) = -1;
-end;
-
-{ TScoopBuckets }
-
-function TScoopBuckets.AddApp(const AName: string; const ABucketName: string): TScoopApp;
-var
-  Bucket: TScoopBucket;
-begin
-  Result := nil;
-
-  Bucket := SearchBucketByName(ABucketName);
-  if Assigned(Bucket) then
-    Result := Bucket.Apps.AddItem(AName, Bucket);
-end;
-
-function TScoopBuckets.AddBucket(const AName: string): TScoopBucket;
-var
-  Bucket: TScoopBucket;
-begin
-  //Avoid possible duplicates
-  Bucket := SearchBucketByName(AName);
-  if not(Assigned(Bucket)) then
-  begin
-    Bucket := TScoopBucket.Create(AName);
-    Self.Add(Bucket);
-  end;
-
-  Result := Bucket;
-end;
-
-procedure TScoopBuckets.ClearApps;
-var
-  I: Integer;
-begin
-  for I := 0 to Self.Count - 1 do
-    Self.Items[I].Apps.Clear;
-end;
-
-procedure TScoopBuckets.ClearInstalledApps;
-var
-  I: Integer;
-begin
-  for I := 0 to Self.Count - 1 do
-    Self.Items[I].Apps.ClearInstalledApps;
-end;
-
-procedure TScoopBuckets.LoadAllApps;
-var
-  I: Integer;
-begin
-  for I := 0 to Self.Count - 1 do
-    Self[I].LoadApps;
-end;
-
-function TScoopBuckets.SearchAppByName(const AName: string): TScoopApp;
-var
-  I: Integer;
-begin
-  Result := nil;
-
-  for I := 0 to Self.Count - 1 do
-  begin
-    Result := Self.Items[I].Apps.SearchByName(AName);
-    if Assigned(Result) then
-      Break;
-  end;
-end;
-
-function TScoopBuckets.SearchBucketByName(const AName: string): TScoopBucket;
-var
-  I: Integer;
-begin
-  Result := nil;
-  for I := 0 to Self.Count - 1 do
-  begin
-    if Self[I].Name = AName then
-    begin
-      Result := Self[I];
-      Exit;
-    end
-  end;
 end;
 
 end.

@@ -22,8 +22,7 @@ unit Scoop.App;
 interface
 
 uses
-  classes, SysUtils, System.Generics.Collections, MPcommonObjects,
-  System.Generics.Defaults;
+  classes, SysUtils, MPcommonObjects;
 
 type
 
@@ -59,16 +58,6 @@ type
     property Installed: Boolean read FInstalled write FInstalled;
   end;
 
-  //TODO: Move in another unit
-  TScoopApps = class(TObjectList<TScoopApp>)
-  public
-    constructor Create();
-
-    function SearchByName(const AName: string): TScoopApp;
-    function AddItem(const AName: string; ABucket: TObject): TScoopApp;
-    procedure ClearInstalledApps();
-  end;
-
 implementation
 
 uses
@@ -97,60 +86,6 @@ end;
 function TScoopApp.GetPathManifest: string;
 begin
   Result := TPath.Combine(TScoopBucket(FBucket).Path, FName + '.json');
-end;
-
-{ TScoopApps }
-
-function TScoopApps.AddItem(const AName: string; ABucket: TObject): TScoopApp;
-var
-  App: TScoopApp;
-begin
-  //Avoid possible duplicates
-  App := SearchByName(AName);
-  if not(Assigned(App)) then
-  begin
-    App := TScoopApp.Create(AName, ABucket);
-    Self.Add(App);
-  end;
-
-  Result := App;
-end;
-
-procedure TScoopApps.ClearInstalledApps;
-var
-  I: Integer;
-begin
-  for I := 0 to Self.Count - 1 do
-    Self[I].Installed := False;
-end;
-
-constructor TScoopApps.Create;
-var comparer : IComparer<TScoopApp>;
-    comparison : TComparison<TScoopApp>;
-begin
-    comparison := function(const l, r : TScoopApp): Integer
-                  begin
-                    Result := CompareStr(l.Name, r.Name);
-                  end;
-
-    comparer := TComparer<TScoopApp>.Construct(comparison);
-
-    inherited Create(comparer);
-end;
-
-function TScoopApps.SearchByName(const AName: string): TScoopApp;
-var
-  I: Integer;
-begin
-  Result := nil;
-  for I := 0 to Self.Count - 1 do
-  begin
-    if Self[I].Name = AName then
-    begin
-      Result := Self[I];
-      Exit;
-    end;
-  end;
 end;
 
 end.
