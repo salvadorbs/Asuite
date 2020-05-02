@@ -22,10 +22,11 @@ unit Scoop.Wrapper;
 interface
 
 uses
-  classes, PJPipe, PJConsoleApp, PJPipeFilters, PJFileHandle, SysUtils,
-  Scoop.Bucket, Scoop.App, System.StrUtils, VirtualFileSearch, System.IOUtils,
+  classes, PJPipe, PJConsoleApp, PJPipeFilters, SysUtils, Vcl.Forms,
+  Scoop.Bucket, Scoop.App, System.StrUtils,
   System.Generics.Defaults, System.Generics.Collections, Winapi.Windows,
-  MPcommonObjects, JsonDataObjects, MPCommonUtilities;
+  MPcommonObjects, JsonDataObjects, MPCommonUtilities, Scoop.List.Buckets,
+  Scoop.List.Apps;
 
 //TODO: Move const in another unit
 const
@@ -34,8 +35,11 @@ const
   SCOOP_ARGS_APP_LIST = ' list';
   SCOOP_ARGS_BUCKET_LIST = ' bucket list';
   SCOOP_ARGS_BUCKET_KNOWN = ' bucket known';
-  SCOOP_ARGS_INSTALL = ' install';
-  SCOOP_ARGS_UNINSTALL = ' uninstall';
+  SCOOP_ARGS_BUCKET_ADD = ' bucket add ';
+  SCOOP_ARGS_BUCKET_REMOVE = ' bucket rm ';
+  SCOOP_ARGS_INSTALL = ' install ';
+  SCOOP_ARGS_UNINSTALL = ' uninstall ';
+  SCOOP_ARGS_UPDATE = ' update ';
 
 type
 
@@ -51,6 +55,7 @@ type
     FErrPipe: TPJPipe;
     FOutFilter: TPJAnsiSBCSPipeFilter;
     FOnEndLoadingBucketApps: TOnEndLoadingBucketApps;
+    FOnOutputLineEnd: TPJAnsiTextReadEvent;
 
     FBuckets: TScoopBuckets;
     FBucketsKnown: TScoopBuckets;
@@ -58,7 +63,7 @@ type
     procedure LineEndHandler(Sender: TObject; const Text: AnsiString);
     procedure WorkHandler(Sender: TObject);
     procedure CompleteHandler(Sender: TObject);
-    function InternalExecute(Args: string): boolean; overload;
+    function InternalExecute(Args: string; OutputZero: boolean = False): boolean; overload;
     function InternalExecute(): boolean; overload;
     procedure OnEndLoadingBucketApps(Sender: TObject; const Apps: TScoopApps);
 
@@ -77,14 +82,16 @@ type
     property BucketsKnown: TScoopBuckets read FBucketsKnown;
     property OnEndLoadingApps: TOnEndLoadingBucketApps read FOnEndLoadingBucketApps
       write FOnEndLoadingBucketApps;
+    property OnOutputLineEnd: TPJAnsiTextReadEvent read FOnOutputLineEnd write FOnOutputLineEnd;
 
     function IsScoopExists(): boolean;
-    procedure DoUpdate();
-    procedure InstallApp(AName: string);
-    procedure UninstallApp(AName: string);
+    function UpdateScoop(): boolean;
+    function UpdateApp(AName: string): boolean;
+    function InstallApp(AName: string): Boolean;
+    function UninstallApp(AName: string): Boolean;
     procedure GetStatus();
-    procedure AddBucket(AName: string);
-    procedure RemoveBucket(AName: string);
+    function AddBucket(AName: string): Boolean;
+    function RemoveBucket(AName: string): Boolean;
 
     function LoadListBuckets(): TList<TScoopBucket>;
     function LoadListBucketsKnown(): TList<TScoopBucket>;
@@ -267,16 +274,14 @@ begin
   try
 
     FOutFilter.EOLMarker := #13#10;
-    if FBucketsKnown.Count = 0 then
-    begin
-      isExecuted := Self.InternalExecute(SCOOP_ARGS_BUCKET_KNOWN);
-      if (isExecuted) then
-      begin
-        FBucketsKnown.Clear;
 
-        for I := 0 to FOutput.Count - 1 do
-          FBucketsKnown.Add(TScoopBucket.Create(FOutput[I]))
-      end;
+    isExecuted := Self.InternalExecute(SCOOP_ARGS_BUCKET_KNOWN);
+    if (isExecuted) then
+    begin
+      FBucketsKnown.Clear;
+
+      for I := 0 to FOutput.Count - 1 do
+        FBucketsKnown.Add(TScoopBucket.Create(FOutput[I]))
     end;
 
     Result := FBucketsKnown;
@@ -292,9 +297,41 @@ begin
     FOnEndLoadingBucketApps(Sender, Apps);
 end;
 
-procedure TScoopWrapper.InstallApp(AName: string);
+function TScoopWrapper.InstallApp(AName: string): Boolean;
+var
+  isExecuted: boolean;
+  I: Integer;
+  Regexp: TRegEx;
+  Match: TMatch;
 begin
-  // TODO: Run scoop --install param and
+  Result := false;
+
+  FOutFilter.EOLMarker := #10;
+
+  try
+    isExecuted := Self.InternalExecute(SCOOP_ARGS_INSTALL + AName);
+    if (isExecuted) then
+    begin
+
+      //TODO: Check scoop updating, too?
+      //TODO: Manage warning error 'WARN  'appname' (x.y.z) is already installed.'
+      Regexp := TRegEx.Create('.* was installed successfully!');
+
+      for I := 1 to FOutput.Count - 1 do
+      begin
+
+        Match := Regexp.Match(FOutput[I]);
+
+        if (Match.Success) then
+        begin
+          Result := True;
+          break
+        end;
+      end;
+    end;
+  except
+    raise;
+  end;
 end;
 
 function TScoopWrapper.InternalExecute: boolean;
@@ -302,7 +339,7 @@ begin
   Result := Self.InternalExecute('');
 end;
 
-function TScoopWrapper.InternalExecute(Args: string): boolean;
+function TScoopWrapper.InternalExecute(Args: string; OutputZero: boolean = False): boolean;
 var
   isExecuted: boolean;
 begin
@@ -310,7 +347,7 @@ begin
 
   isExecuted := FConsoleApp.Execute(SCOOP_CMD + Args);
 
-  Result := (isExecuted) and (FConsoleApp.ExitCode = 0) and (FOutput.Count > 0);
+  Result := (isExecuted) and (FConsoleApp.ExitCode = 0) and (OutputZero or (FOutput.Count > 0));
 end;
 
 function TScoopWrapper.IsScoopExists(): boolean;
@@ -327,17 +364,58 @@ end;
 procedure TScoopWrapper.WorkHandler(Sender: TObject);
 begin
   FOutFilter.ReadPipe;
+
+  if Assigned(FOnOutputLineEnd) then
+    Application.ProcessMessages;
 end;
 
 procedure TScoopWrapper.LineEndHandler(Sender: TObject; const Text: AnsiString);
 begin
   if Text <> '' then
+  begin
     FOutput.Add(string(Text));
+
+    if Assigned(FOnOutputLineEnd) then
+      FOnOutputLineEnd(Sender, Text);
+  end;
 end;
 
-procedure TScoopWrapper.RemoveBucket(AName: string);
+function TScoopWrapper.RemoveBucket(AName: string): Boolean;
+var
+  isExecuted: boolean;
+  I: Integer;
+  Regexp: TRegEx;
+  Match: TMatch;
 begin
+  Result := False;
 
+  FOutFilter.EOLMarker := #10;
+
+  try
+    isExecuted := Self.InternalExecute(SCOOP_ARGS_BUCKET_REMOVE + AName, true);
+    if (isExecuted) then
+    begin
+
+      Regexp := TRegEx.Create('''.*'' bucket not found\.');
+
+      if FOutput.Count = 0 then
+        Result := True
+      else
+        for I := 1 to FOutput.Count - 1 do
+        begin
+
+          Match := Regexp.Match(FOutput[I]);
+
+          if (Match.Success) then
+          begin
+            Result := False;
+            break
+          end;
+        end;
+    end;
+  except
+    raise;
+  end;
 end;
 
 procedure TScoopWrapper.GetStatus;
@@ -384,19 +462,143 @@ begin
   end;
 end;
 
-procedure TScoopWrapper.UninstallApp(AName: string);
+function TScoopWrapper.UninstallApp(AName: string): Boolean;
+var
+  isExecuted: boolean;
+  I: Integer;
+  Regexp: TRegEx;
+  Match: TMatch;
 begin
-  // TODO: Run scoop --uninstall param
+  Result := false;
+
+  try
+    isExecuted := Self.InternalExecute(SCOOP_ARGS_UNINSTALL + AName);
+    if (isExecuted) then
+    begin
+      //TODO: Manage error 'ERROR 'appname' isn't installed.'
+
+      Regexp := TRegEx.Create('.* was uninstalled\.');
+
+      for I := 1 to FOutput.Count - 1 do
+      begin
+
+        Match := Regexp.Match(FOutput[I]);
+
+        if (Match.Success) then
+        begin
+          Result := True;
+          break
+        end;
+      end;
+    end;
+  except
+    raise;
+  end;
 end;
 
-procedure TScoopWrapper.DoUpdate;
+function TScoopWrapper.UpdateApp(AName: string): boolean;
+var
+  isExecuted: boolean;
+  I: Integer;
+  Regexp: TRegEx;
+  Match: TMatch;
 begin
-  // TODO: Run scoop --update only scoop
+  Result := false;
+
+  FOutFilter.EOLMarker := #10;
+
+  try
+    isExecuted := Self.InternalExecute(SCOOP_ARGS_UPDATE + AName);
+    if (isExecuted) then
+    begin
+
+      Regexp := TRegEx.Create('.* was installed successfully!');
+
+      for I := 1 to FOutput.Count - 1 do
+      begin
+
+        Match := Regexp.Match(FOutput[I]);
+
+        if (Match.Success) then
+        begin
+          Result := True;
+          break
+        end;
+      end;
+    end;
+  except
+    raise;
+  end;
 end;
 
-procedure TScoopWrapper.AddBucket(AName: string);
+function TScoopWrapper.UpdateScoop: boolean;
+var
+  isExecuted: boolean;
+  I: Integer;
+  Regexp: TRegEx;
+  Match: TMatch;
 begin
+  Result := false;
 
+  FOutFilter.EOLMarker := #10;
+
+  try
+    isExecuted := Self.InternalExecute(SCOOP_ARGS_UPDATE);
+    if (isExecuted) then
+    begin
+
+      Regexp := TRegEx.Create('Scoop was updated successfully!');
+
+      for I := 1 to FOutput.Count - 1 do
+      begin
+
+        Match := Regexp.Match(FOutput[I]);
+
+        if (Match.Success) then
+        begin
+          Result := True;
+          break
+        end;
+      end;
+    end;
+  except
+    raise;
+  end;
+end;
+
+function TScoopWrapper.AddBucket(AName: string): Boolean;
+var
+  isExecuted: boolean;
+  I: Integer;
+  Regexp: TRegEx;
+  Match: TMatch;
+begin
+  Result := false;
+
+  FOutFilter.EOLMarker := #10;
+
+  try
+    isExecuted := Self.InternalExecute(SCOOP_ARGS_BUCKET_ADD + AName);
+    if (isExecuted) then
+    begin
+
+      Regexp := TRegEx.Create('The .* bucket was added successfully\.');
+
+      for I := 1 to FOutput.Count - 1 do
+      begin
+
+        Match := Regexp.Match(FOutput[I]);
+
+        if (Match.Success) then
+        begin
+          Result := True;
+          break
+        end;
+      end;
+    end;
+  except
+    raise;
+  end;
 end;
 
 procedure TScoopWrapper.CompleteHandler(Sender: TObject);
