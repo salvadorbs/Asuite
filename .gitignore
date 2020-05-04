@@ -4,10 +4,13 @@ lib/
 tmp/
 backup/
 cache/
+3p/
 
 #asuite files
 *.sqlite
 debug.txt
+asuite*.7z
+asuite*.zip
 
 #compiled
 *.exe
@@ -15,6 +18,8 @@ debug.txt
 *.map
 #*.dll
 *.dcu
+*.mab
+*.rsm
 
 #lazarus
 *.lps
