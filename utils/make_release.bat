@@ -24,12 +24,12 @@ if [%1]==[help] GOTO :help else GOTO :SetVars
   goto :Build64
 
 :Build
-  call "%OLDDIR%\..\build_release_asuite.bat"
+  call "%OLDDIR%\build_release_asuite.bat"
   %Map2Mab% bin\asuite.exe
   goto :CompressRelease
 
 :Build64
-  call "%OLDDIR%\..\build_release64_asuite.bat"
+  call "%OLDDIR%\build_release64_asuite.bat"
   ren "bin\asuite.exe" "asuite_x64.exe"
   %Map2Mab% bin\asuite_x64.exe
   goto :Build

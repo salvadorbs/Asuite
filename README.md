@@ -8,10 +8,11 @@
 
 <h4 align="center">A simple open source portable launcher for Microsoft Windows</h4>
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 ![GitHub top language](https://img.shields.io/github/languages/top/salvadorbs/asuite)
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/salvadorbs/asuite)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/salvadorbs/asuite)](https://github.com/salvadorbs/asuite/releases)
+[![Github All Releases](https://img.shields.io/github/downloads/salvadorbs/asuite/total.svg)](https://github.com/salvadorbs/asuite/releases)
 ![GitHub](https://img.shields.io/github/license/salvadorbs/asuite)
 ![GitHub stars](https://img.shields.io/github/stars/salvadorbs/asuite)
 ![LOC](https://tokei.rs/b1/github/salvadorbs/asuite)
@@ -39,7 +40,7 @@
 * Create custom hotkeys for any list items or launcher itself
 * Internal cache icons (speed up launcher's startup)
 * Most Recently Used (MRU) and Most Frequently Used (MFU) in Trayicon Menus
-* Import list from PStart 2.*, wPPLauncher 1.* e ASuite 1.*
+* Import list from PStart 2.* , wPPLauncher 1.* e ASuite 1.*
 
 ## Download
 You can [download](https://github.com/salvadorbs/asuite/releases/tag/v2.0.0) the latest installable version of ASuite. If you prefer using command-line installer (APT style), you can use <a href="https://github.com/lukesampson/scoop#installation">Scoop</a>. To install ASuite using Scoop, you must add the bucket Extras:
