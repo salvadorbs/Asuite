@@ -67,7 +67,8 @@ const
   //Form
   frmMainWidth  = 190;
   frmMainHeight = 440;
-  frmMenuID     = 123456789;
+  frmGMenuID    = 123456789;
+  frmCMenuID    = 987654321;
 
   // PageControl Indexes
   PG_LIST       = 0;

@@ -98,7 +98,7 @@ type
     //HotKeys
     FHotKey             : Boolean;
     FWindowHotKey       : TShortcut;
-    FMenuHotKey         : TShortcut;
+    FGraphicMenuHotKey  : TShortcut;
     //Misc
     FReadOnlyMode         : Boolean;
     FChanged              : Boolean;
@@ -117,6 +117,7 @@ type
     FDBManager : TDBManager;
     FIconsManager: TIconsManager;
     FLogger: TASuiteLogger;
+    FClassicMenuHotkey: TShortCut;
     procedure SetHoldSize(value: Boolean);
     procedure SetAlwaysOnTop(value: Boolean);
     procedure SetTrayIcon(value: Boolean);
@@ -140,10 +141,11 @@ type
     procedure SetBackupNumber(const Value: Integer);
     procedure SetChanged(const Value: Boolean);
     procedure SetBackup(const Value: Boolean);
-    procedure SetMenuHotKey(const Value: TShortcut);
+    procedure SetGraphicMenuHotKey(const Value: TShortcut);
     procedure SetWindowHotKey(const Value: TShortcut);
     procedure SetHotKey(const Value: Boolean);
     procedure SetTVSmallIconSize(const Value: Boolean);
+    procedure SetClassicMenuHotkey(const Value: TShortCut);
 
     function GetMainTree: TVirtualStringTree;
     function GetImportTree: TVirtualStringTree;
@@ -233,7 +235,8 @@ type
     //HotKeys
     property HotKey: Boolean read FHotKey write SetHotKey;
     property WindowHotKey: TShortcut read FWindowHotKey write SetWindowHotKey;
-    property MenuHotKey: TShortcut read FMenuHotKey write SetMenuHotKey;
+    property GraphicMenuHotKey: TShortcut read FGraphicMenuHotKey write SetGraphicMenuHotKey;
+    property ClassicMenuHotkey: TShortCut read FClassicMenuHotkey write SetClassicMenuHotkey;
     // Misc
     property ReadOnlyMode: Boolean read FReadOnlyMode write FReadOnlyMode;
     property Changed: Boolean read FChanged write SetChanged;
@@ -373,7 +376,8 @@ begin
   FHotKey             := True;
   //Hotkey
   FWindowHotKey       := 0;
-  FMenuHotKey         := 0;
+  FGraphicMenuHotKey  := 0;
+  FClassicMenuHotkey  := 0;
   //ScanFolder
   FScanFolderFlatStructure   := False;
   FScanFolderAutoExtractName := True;
@@ -710,6 +714,22 @@ begin
   TVirtualTreeMethods.Create.RefreshList(FMainTree);
 end;
 
+procedure TConfiguration.SetClassicMenuHotkey(const Value: TShortCut);
+begin
+  if (Config.HotKey) then
+  begin
+    //Unregister hotkey
+    UnregisterHotKeyEx(frmCMenuID);
+    //Register Menuhotkey
+    if (Value <> 0) then
+    begin
+      if Not(RegisterHotKeyEx(frmCMenuID, Value)) then
+        ShowMessageEx(DKLangConstW('msgErrRegCMHotkey'));
+    end;
+  end;
+  FClassicMenuHotKey := Value;
+end;
+
 procedure TConfiguration.SetGMBtnDocuments(Value: string);
 begin
   if value = '' then
@@ -776,20 +796,20 @@ begin
     FLangID := 1033;
 end;
 
-procedure TConfiguration.SetMenuHotKey(const Value: TShortcut);
+procedure TConfiguration.SetGraphicMenuHotKey(const Value: TShortcut);
 begin
   if (Config.HotKey) then
   begin
     //Unregister hotkey
-    UnregisterHotKeyEx(frmMenuID);
+    UnregisterHotKeyEx(frmGMenuID);
     //Register Menuhotkey
     if (Value <> 0) then
     begin
-      if Not(RegisterHotKeyEx(frmMenuID, Value)) then
+      if Not(RegisterHotKeyEx(frmGMenuID, Value)) then
         ShowMessageEx(DKLangConstW('msgErrRegGMHotkey'));
     end;
   end;
-  FMenuHotKey := Value;
+  FGraphicMenuHotKey := Value;
 end;
 
 end.

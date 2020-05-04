@@ -103,6 +103,7 @@ type
     Fscanfolderfiletypes    : RawUTF8;
     Fscanfolderexcludenames : RawUTF8;
     FFTVAutoOpCatsDrag: Boolean;
+    FClassicMenuHotKey: Word;
   public
     class procedure Load(ADBManager: TDBManager; AConfig: TConfiguration);
     class procedure Save(ADBManager: TDBManager; AConfig: TConfiguration);
@@ -177,6 +178,7 @@ type
     property hotkey: Boolean read FHotKey write FHotKey;
     property windowhotkey: Word read FWindowHotKey write FWindowHotKey;
     property menuhotkey: Word read FMenuHotKey write FMenuHotKey;
+    property ClassicMenuHotKey: Word read FClassicMenuHotKey write FClassicMenuHotKey;
     //Scan Folder
     property scanfolderflatstructure: boolean read Fscanfolderflatstructure write Fscanfolderflatstructure;
     property scanfolderautoextractname: boolean read Fscanfolderautoextractname write Fscanfolderautoextractname;
@@ -286,7 +288,8 @@ begin
       //Hot Keys
       AConfig.HotKey             := SQLOptionsData.HotKey;
       AConfig.WindowHotKey       := SQLOptionsData.WindowHotKey;
-      AConfig.MenuHotKey         := SQLOptionsData.MenuHotKey;
+      AConfig.GraphicMenuHotKey  := SQLOptionsData.MenuHotKey;
+      AConfig.ClassicMenuHotKey  := SQLOptionsData.ClassicMenuHotKey;
       //Scan Folder
       AConfig.ScanFolderFlatStructure     := SQLOptionsData.scanfolderflatstructure;
       AConfig.ScanFolderAutoExtractName   := SQLOptionsData.scanfolderautoextractname;
@@ -380,7 +383,8 @@ begin
     //Hot Keys
     SQLOptionsData.HotKey       := AConfig.HotKey;
     SQLOptionsData.WindowHotKey := AConfig.WindowHotKey;
-    SQLOptionsData.MenuHotKey   := AConfig.MenuHotKey;
+    SQLOptionsData.MenuHotKey   := AConfig.GraphicMenuHotKey;
+    SQLOptionsData.ClassicMenuHotKey := AConfig.ClassicMenuHotKey;
     //Scan Folder
     SQLOptionsData.scanfolderflatstructure   := AConfig.ScanFolderFlatStructure;
     SQLOptionsData.scanfolderautoextractname := AConfig.ScanFolderAutoExtractName;

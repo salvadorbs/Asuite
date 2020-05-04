@@ -30,11 +30,11 @@ type
   TfrmHotkeyOptionsPage = class(TfrmBaseEntityPage)
     DKLanguageController1: TDKLanguageController;
     gbHotkey: TGroupBox;
-    Label1: TLabel;
-    Label2: TLabel;
+    lblHotkeyWindow: TLabel;
+    lblHotkeyGM: TLabel;
     cbHotKey: TCheckBox;
-    hkWindow: THotKey;
-    hkGraphicMenu: THotKey;
+    hkHotkeyWindow: THotKey;
+    hkHotkeyGM: THotKey;
     grpOrderSoftware: TGroupBox;
     vstItems: TVirtualStringTree;
     pmHotkey: TPopupMenu;
@@ -42,12 +42,10 @@ type
     mniRemoveHotkey: TMenuItem;
     mniN1: TMenuItem;
     mniProperties: TMenuItem;
+    lblHotkeyCM: TLabel;
+    hkHotkeyCM: THotKey;
     procedure cbHotKeyClick(Sender: TObject);
-    procedure hkWindowChange(Sender: TObject);
-    procedure hkGraphicMenuChange(Sender: TObject);
-    procedure hkWindowMouseUp(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
-    procedure hkGraphicMenuMouseUp(Sender: TObject; Button: TMouseButton;
+    procedure HotkeyMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure mniEditHotkeyClick(Sender: TObject);
     procedure mniRemoveHotkeyClick(Sender: TObject);
@@ -80,8 +78,8 @@ uses
 
 procedure TfrmHotkeyOptionsPage.cbHotKeyClick(Sender: TObject);
 begin
-  hkWindow.Enabled := cbHotKey.Checked;
-  hkGraphicMenu.Enabled := cbHotKey.Checked;
+  hkHotkeyWindow.Enabled := cbHotKey.Checked;
+  hkHotkeyGM.Enabled := cbHotKey.Checked;
 end;
 
 function TfrmHotkeyOptionsPage.GetImageIndex: Integer;
@@ -94,28 +92,11 @@ begin
   Result := DKLangConstW('msgHotkey');
 end;
 
-procedure TfrmHotkeyOptionsPage.hkGraphicMenuChange(Sender: TObject);
-begin
-  if hkGraphicMenu.Modifiers = [] then
-    hkGraphicMenu.Modifiers := [hkAlt];
-end;
-
-procedure TfrmHotkeyOptionsPage.hkGraphicMenuMouseUp(Sender: TObject;
+procedure TfrmHotkeyOptionsPage.HotkeyMouseUp(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
-  hkGraphicMenu.HotKey := TShorcutGrabber.Execute(Self);
-end;
-
-procedure TfrmHotkeyOptionsPage.hkWindowChange(Sender: TObject);
-begin
-  if hkWindow.Modifiers = [] then
-    hkWindow.Modifiers := [hkAlt];
-end;
-
-procedure TfrmHotkeyOptionsPage.hkWindowMouseUp(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-begin
-  hkWindow.HotKey := TShorcutGrabber.Execute(Self);
+  if Sender is THotKey then
+    THotKey(Sender).HotKey := TShorcutGrabber.Execute(Self);
 end;
 
 function TfrmHotkeyOptionsPage.InternalLoadData: Boolean;
@@ -124,8 +105,9 @@ begin
   TVirtualTreeEvents.Create.SetupVSTHotkey(vstItems);
   //Hot Keys
   cbHotKey.Checked := Config.HotKey;
-  hkWindow.HotKey  := Config.WindowHotKey;
-  hkGraphicMenu.HotKey := Config.MenuHotkey;
+  hkHotkeyWindow.HotKey  := Config.WindowHotKey;
+  hkHotkeyGM.HotKey := Config.GraphicMenuHotkey;
+  hkHotkeyCM.HotKey := Config.ClassicMenuHotkey;
   //Populate VST with HotKeyItemList's items
   TVirtualTreeMethods.Create.PopulateVSTItemList(vstItems, Config.ListManager.HotKeyItemList);
   vstItems.Header.AutoFitColumns;
@@ -139,8 +121,9 @@ begin
   Result := inherited;
   //Hot Keys
   Config.HotKey       := cbHotKey.Checked;
-  Config.WindowHotKey := hkWindow.HotKey;
-  Config.MenuHotKey   := hkGraphicMenu.HotKey;
+  Config.WindowHotKey := hkHotkeyWindow.HotKey;
+  Config.GraphicMenuHotkey   := hkHotkeyGM.HotKey;
+  Config.ClassicMenuHotkey   := hkHotkeyCM.HotKey;
   //Save vst items in HotKeyItemList
   SaveInHotkeyItemList(vstItems, Config.ListManager.HotKeyItemList);
 end;

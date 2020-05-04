@@ -51,8 +51,8 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       Top = 48
       Width = 129
       Height = 21
-      Date = 39092.942071932870000000
-      Time = 39092.942071932870000000
+      Date = 39092.000000000000000000
+      Time = 0.942071932870021500
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -66,9 +66,9 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       Top = 75
       Width = 129
       Height = 21
-      Date = 39092.942361111110000000
+      Date = 39092.000000000000000000
       Format = 'HH:mm'
-      Time = 39092.942361111110000000
+      Time = 0.942361111112404600
       DateMode = dmUpDown
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -101,7 +101,6 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       HotKey = 0
       Modifiers = []
       TabOrder = 1
-      OnChange = hkHotkeyChange
       OnMouseUp = hkHotkeyMouseUp
     end
     object cbHotKey: TCheckBox

@@ -43,7 +43,6 @@ type
     cbHotKey: TCheckBox;
     procedure cxSchedulerChange(Sender: TObject);
     procedure cbHotKeyClick(Sender: TObject);
-    procedure hkHotkeyChange(Sender: TObject);
     procedure hkHotkeyMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
   private
@@ -90,12 +89,6 @@ end;
 function TfrmAdvancedPropertyPage.GetTitle: string;
 begin
   Result := DKLangConstW('msgAdvanced');
-end;
-
-procedure TfrmAdvancedPropertyPage.hkHotkeyChange(Sender: TObject);
-begin
-  if hkHotkey.Modifiers = [] then
-    hkHotkey.Modifiers := [hkAlt];
 end;
 
 procedure TfrmAdvancedPropertyPage.hkHotkeyMouseUp(Sender: TObject;

@@ -361,7 +361,7 @@ begin
     //Window Hotkey
     Config.WindowHotkey := XMLToShortcut(Node, 'HotKeyCode', 'HotKeyModifier');
     //Menu Hotkey
-    Config.MenuHotKey   := XMLToShortcut(Node, 'MenuHotKeyCode', 'MenuHotKeyModifier');
+    Config.GraphicMenuHotKey := XMLToShortcut(Node, 'MenuHotKeyCode', 'MenuHotKeyModifier');
     //frmMain position
     SetFormPosition(frmMain, GetIntPropertyXML(Node,'ListFormLeft',frmMain.Left),
                              GetIntPropertyXML(Node,'ListFormTop',frmMain.Top));
