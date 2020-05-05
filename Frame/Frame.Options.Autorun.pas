@@ -23,8 +23,9 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.Buttons,
-  DKLang, Frame.BaseEntity, Vcl.StdCtrls, VirtualTrees, Lists.Base, Vcl.Menus;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.Buttons, kgraphics,
+  DKLang, Frame.BaseEntity, Vcl.StdCtrls, VirtualTrees, Lists.Base, Vcl.Menus,
+  kcontrols, kbuttons;
 
 type
   TfrmAutorunOptionsPage = class(TfrmBaseEntityPage)
@@ -37,12 +38,12 @@ type
     lblShutdownInfo: TLabel;
     vstStartupItems: TVirtualStringTree;
     vstShutdownItems: TVirtualStringTree;
-    btnStartupUp: TBitBtn;
-    btnStartupDelete: TBitBtn;
-    btnStartupDown: TBitBtn;
-    btnShutdownDelete: TBitBtn;
-    btnShutdownDown: TBitBtn;
-    btnShutdownUp: TBitBtn;
+    btnStartupUp: TKSpeedButton;
+    btnStartupDelete: TKSpeedButton;
+    btnStartupDown: TKSpeedButton;
+    btnShutdownDelete: TKSpeedButton;
+    btnShutdownDown: TKSpeedButton;
+    btnShutdownUp: TKSpeedButton;
     pmAutorun: TPopupMenu;
     mniRemoveAutorun: TMenuItem;
     mniN1: TMenuItem;
@@ -67,6 +68,7 @@ type
     procedure SaveInAutorunItemList(const ATree: TBaseVirtualTree;const AutorunItemList: TBaseItemsList);
     function  GetActiveTree: TBaseVirtualTree;
     procedure LoadGlyphs;
+    procedure ChangeButtonGlyph(AButton: TKSpeedButton; AImageKey: string);
   strict protected
     function GetTitle: string; override;
     function GetImageIndex: Integer; override;
@@ -142,13 +144,13 @@ begin
   TVirtualTreeEvents.Create.SetupVSTAutorun(vstStartupItems);
   TVirtualTreeEvents.Create.SetupVSTAutorun(vstShutdownItems);
   //Startup
-  dmImages.DrawIconInBitmap(btnStartupUp.Glyph, Config.IconsManager.GetIconIndex('arrow_up'));
-  dmImages.DrawIconInBitmap(btnStartupDelete.Glyph, Config.IconsManager.GetIconIndex('delete'));
-  dmImages.DrawIconInBitmap(btnStartupDown.Glyph, Config.IconsManager.GetIconIndex('arrow_down'));
+  ChangeButtonGlyph(btnStartupUp, 'arrow_up');
+  ChangeButtonGlyph(btnStartupDelete, 'delete');
+  ChangeButtonGlyph(btnStartupDown, 'arrow_down');
   //Shutdown
-  dmImages.DrawIconInBitmap(btnShutdownUp.Glyph, Config.IconsManager.GetIconIndex('arrow_up'));
-  dmImages.DrawIconInBitmap(btnShutdownDelete.Glyph, Config.IconsManager.GetIconIndex('delete'));
-  dmImages.DrawIconInBitmap(btnShutdownDown.Glyph, Config.IconsManager.GetIconIndex('arrow_down'));
+  ChangeButtonGlyph(btnShutdownUp, 'arrow_up');
+  ChangeButtonGlyph(btnShutdownDelete, 'delete');
+  ChangeButtonGlyph(btnShutdownDown, 'arrow_down');
   //Autorun
   chkStartup.Checked  := Config.AutorunStartup;
   chkShutdown.Checked := Config.AutorunShutdown;
@@ -170,6 +172,19 @@ begin
   //Save Startup and Shutdown lists
   SaveInAutorunItemList(vstStartupItems, Config.ListManager.StartupItemList);
   SaveInAutorunItemList(vstShutdownItems, Config.ListManager.ShutdownItemList);
+end;
+
+procedure TfrmAutorunOptionsPage.ChangeButtonGlyph(AButton: TKSpeedButton; AImageKey: string);
+var
+  ABMP: TKAlphaBitmap;
+begin
+  ABMP := TKAlphaBitmap.Create;
+  try
+    dmImages.GetAlphaBitmapFromImageList(ABMP, Config.IconsManager.GetIconIndex(AImageKey));
+    AButton.Glyph := ABMP;
+  finally
+    ABMP.Free;
+  end;
 end;
 
 procedure TfrmAutorunOptionsPage.LoadGlyphs;

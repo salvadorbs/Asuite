@@ -1,5 +1,6 @@
 inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
   Height = 405
+  ExplicitHeight = 405
   object grpStartupOrderItems: TGroupBox
     AlignWithMargins = True
     Left = 3
@@ -62,11 +63,6 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       Font.Name = 'Tahoma'
       Font.Style = []
       Header.AutoSizeIndex = 0
-      Header.Font.Charset = DEFAULT_CHARSET
-      Header.Font.Color = clWindowText
-      Header.Font.Height = -11
-      Header.Font.Name = 'Tahoma'
-      Header.Font.Style = []
       Header.Options = [hoColumnResize, hoVisible]
       ParentFont = False
       PopupMenu = pmAutorun
@@ -79,52 +75,70 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
         item
           MinWidth = 50
           Position = 0
-          WideText = 'Name'
+          Text = 'Name'
         end
         item
           MaxWidth = 100
           MinWidth = 36
           Position = 1
+          Text = 'Type'
           Width = 36
-          WideText = 'Type'
         end
         item
           MinWidth = 100
           Position = 2
+          Text = 'Category'
           Width = 100
-          WideText = 'Category'
         end
         item
           MinWidth = 100
           Position = 3
+          Text = 'Path executable'
           Width = 200
-          WideText = 'Path executable'
         end>
     end
-    object btnStartupUp: TBitBtn
+    object btnStartupUp: TKSpeedButton
       Left = 405
       Top = 88
       Width = 27
       Height = 25
       Anchors = [akTop]
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBtnText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 2
       OnClick = btnStartupUpClick
     end
-    object btnStartupDelete: TBitBtn
+    object btnStartupDelete: TKSpeedButton
       Left = 405
       Top = 119
       Width = 27
       Height = 25
       Anchors = [akTop]
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBtnText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 3
       OnClick = btnStartupDeleteClick
     end
-    object btnStartupDown: TBitBtn
+    object btnStartupDown: TKSpeedButton
       Left = 405
       Top = 150
       Width = 27
       Height = 25
       Anchors = [akTop]
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBtnText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 4
       OnClick = btnStartupDownClick
     end
@@ -191,11 +205,6 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       Font.Name = 'Tahoma'
       Font.Style = []
       Header.AutoSizeIndex = 0
-      Header.Font.Charset = DEFAULT_CHARSET
-      Header.Font.Color = clWindowText
-      Header.Font.Height = -11
-      Header.Font.Name = 'Tahoma'
-      Header.Font.Style = []
       Header.Options = [hoColumnResize, hoVisible]
       ParentFont = False
       PopupMenu = pmAutorun
@@ -208,52 +217,70 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
         item
           MinWidth = 50
           Position = 0
-          WideText = 'Name'
+          Text = 'Name'
         end
         item
           MaxWidth = 100
           MinWidth = 36
           Position = 1
+          Text = 'Type'
           Width = 36
-          WideText = 'Type'
         end
         item
           MinWidth = 100
           Position = 2
+          Text = 'Category'
           Width = 100
-          WideText = 'Category'
         end
         item
           MinWidth = 100
           Position = 3
+          Text = 'Path executable'
           Width = 200
-          WideText = 'Path executable'
         end>
     end
-    object btnShutdownDelete: TBitBtn
+    object btnShutdownDelete: TKSpeedButton
       Left = 405
       Top = 119
       Width = 27
       Height = 25
       Anchors = [akTop]
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBtnText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 3
       OnClick = btnShutdownDeleteClick
     end
-    object btnShutdownDown: TBitBtn
+    object btnShutdownDown: TKSpeedButton
       Left = 405
       Top = 150
       Width = 27
       Height = 25
       Anchors = [akTop]
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBtnText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 4
       OnClick = btnShutdownDownClick
     end
-    object btnShutdownUp: TBitBtn
+    object btnShutdownUp: TKSpeedButton
       Left = 405
       Top = 88
       Width = 27
       Height = 25
       Anchors = [akTop]
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBtnText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 2
       OnClick = btnShutdownUpClick
     end
@@ -280,7 +307,6 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       0043617074696F6E00}
   end
   object pmAutorun: TPopupMenu
-    Images = dmImages.ilSmallIcons
     Left = 304
     Top = 24
     object mniRemoveAutorun: TMenuItem
