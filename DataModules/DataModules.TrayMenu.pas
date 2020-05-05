@@ -27,7 +27,7 @@ uses
   Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   Menus, ExtCtrls, VirtualTrees, Lists.Manager, ShellApi, Vcl.ImgList,
   Winapi.Messages, DKLang, System.UITypes, Kernel.PopupMenu, Lists.Base,
-  Kernel.Enumerations;
+  Kernel.Enumerations, vcl.Themes, Vcl.SysStyles;
 
 type
   TdmTrayMenu = class(TDataModule)
@@ -555,8 +555,8 @@ begin
   begin
     CaptionLineItemHeight := Config.SmallHeightNode - 4;
     //Don't highlight menu item
-    ACanvas.Brush.Color := clMenu;
-    ACanvas.Font.Color  := clWindowText;
+    ACanvas.Brush.Style := bsClear;
+    ACanvas.Font.Color  := TStyleManager.ActiveStyle.GetSystemColor(clWindowText);
     if (Sender as TMenuItem).Hint <> '' then
     begin
       LineCaption := Format(' %s ', [(Sender as TMenuItem).Hint]);
