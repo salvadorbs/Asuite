@@ -102,8 +102,8 @@ type
     Fscanfolderautoextractname : boolean;
     Fscanfolderfiletypes    : RawUTF8;
     Fscanfolderexcludenames : RawUTF8;
-    FFTVAutoOpCatsDrag: Boolean;
     FClassicMenuHotKey: Word;
+    FTVDisableConfirmDelete: boolean;
   public
     class procedure Load(ADBManager: TDBManager; AConfig: TConfiguration);
     class procedure Save(ADBManager: TDBManager; AConfig: TConfiguration);
@@ -128,7 +128,8 @@ type
     property tvbackground: Boolean read FTVBackground write FTVBackground;
     property tvbackgroundpath: RawUTF8 read FTVBackgroundPath write FTVBackgroundPath;
     property tvautoopclcats: Boolean read FTVAutoOpClCats write FTVAutoOpClCats;
-    property tvautoopcatsdrag: Boolean read FFTVAutoOpCatsDrag write FFTVAutoOpCatsDrag;
+    property tvautoopcatsdrag: Boolean read FTVAutoOpCatsDrag write FTVAutoOpCatsDrag;
+    property tvdisableconfirmdelete: boolean read FTVDisableConfirmDelete write FTVDisableConfirmDelete;
     property tvfont: RawUTF8 read FTVFont write FTVFont;
     property tvsmalliconsize: Boolean read Ftvsmalliconsize write Ftvsmalliconsize;
     // MRU
@@ -242,6 +243,7 @@ begin
       AConfig.TVSmallIconSize    := SQLOptionsData.tvsmalliconsize;
       AConfig.TVAutoOpClCats     := SQLOptionsData.tvautoopclcats;
       AConfig.TVAutoOpCatsDrag   := SQLOptionsData.tvautoopcatsdrag;
+      AConfig.TVDisableConfirmDelete := SQLOptionsData.tvdisableconfirmdelete;
       //Treeview Font
       StrToFont(UTF8ToString(SQLOptionsData.tvfont), AConfig.TVFont);
       AConfig.MainTree.Font.Assign(AConfig.TVFont);
@@ -340,6 +342,7 @@ begin
     SQLOptionsData.tvautoopclcats   := AConfig.TVAutoOpClCats;
     SQLOptionsData.tvautoopcatsdrag := AConfig.TVAutoOpCatsDrag;
     SQLOptionsData.tvfont           := StringToUTF8(FontToStr(AConfig.TVFont));
+    SQLOptionsData.tvdisableconfirmdelete := AConfig.TVDisableConfirmDelete;
     //mru
     SQLOptionsData.mru          := AConfig.MRU;
     SQLOptionsData.submenumru   := AConfig.SubMenuMRU;

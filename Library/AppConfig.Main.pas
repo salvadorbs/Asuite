@@ -118,6 +118,7 @@ type
     FIconsManager: TIconsManager;
     FLogger: TASuiteLogger;
     FClassicMenuHotkey: TShortCut;
+    FTVDisableConfirmDelete: Boolean;
     procedure SetHoldSize(value: Boolean);
     procedure SetAlwaysOnTop(value: Boolean);
     procedure SetTrayIcon(value: Boolean);
@@ -187,6 +188,7 @@ type
     property TVBackgroundPath: String read FTVBackgroundPath write FTVBackgroundPath;
     property TVAutoOpClCats: Boolean read FTVAutoOpClCats write SetTVAutoOpClCats;
     property TVAutoOpCatsDrag: Boolean read FTVAutoOpCatsDrag write FTVAutoOpCatsDrag;
+    property TVDisableConfirmDelete: Boolean read FTVDisableConfirmDelete write FTVDisableConfirmDelete;
     property TVFont: TFont read FTVFont write SetTVFont;
     // MRU
     property MRU: Boolean read FMRU write FMRU;
@@ -321,6 +323,7 @@ begin
   FTVSmallIconSize    := True;
   FTVAutoOpClCats     := True;
   FTVAutoOpCatsDrag   := True;
+  TVDisableConfirmDelete := False;
   //Treeview Font
   FTVFont             := TFont.Create;
   FTVFont.Name        := 'MS Sans Serif';

@@ -196,7 +196,7 @@ begin
   Config.ASuiteState := lsDeleting;
   try
     Tree := GetActiveTree;
-    if (Tree.GetFirstSelected <> nil) and (MessageDlg((DKLangConstW('msgConfirm')), mtWarning, [mbYes,mbNo], 0) = mrYes) then
+    if (Tree.GetFirstSelected <> nil) and (Config.TVDisableConfirmDelete or (MessageDlg((DKLangConstW('msgConfirmDeleteItem')), mtWarning, [mbYes,mbNo], 0) = mrYes)) then
     begin
       Nodes := Tree.GetSortedSelection(true);
       //Delete items

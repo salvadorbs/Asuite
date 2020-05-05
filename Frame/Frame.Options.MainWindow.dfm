@@ -4,7 +4,7 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
     Left = 3
     Top = 148
     Width = 439
-    Height = 155
+    Height = 165
     Margins.Bottom = 0
     Align = alTop
     Caption = 'Treeview'
@@ -17,8 +17,8 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
     TabOrder = 1
     object cbBackground: TCheckBox
       Left = 8
-      Top = 71
-      Width = 295
+      Top = 84
+      Width = 420
       Height = 19
       Caption = 'Active custom background'
       Font.Charset = DEFAULT_CHARSET
@@ -27,12 +27,12 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
-      TabOrder = 3
+      TabOrder = 4
       OnClick = cbBackgroundClick
     end
     object btnFontSettings: TButton
-      Left = 157
-      Top = 121
+      Left = 152
+      Top = 134
       Width = 121
       Height = 25
       Caption = 'Font settings...'
@@ -42,13 +42,13 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
-      TabOrder = 5
+      TabOrder = 6
       OnClick = btnFontSettingsClick
     end
     object cbAutoOpClCat: TCheckBox
       Left = 8
       Top = 16
-      Width = 295
+      Width = 420
       Height = 19
       Caption = 'Automatic opening/closing categories'
       Font.Charset = DEFAULT_CHARSET
@@ -61,9 +61,9 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
     end
     object cbSmallIcon: TCheckBox
       Left = 8
-      Top = 54
-      Width = 295
-      Height = 17
+      Top = 67
+      Width = 420
+      Height = 19
       Caption = 'Small icon size in main window'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -71,11 +71,11 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
-      TabOrder = 2
+      TabOrder = 3
     end
     object edtBackground: TJvFilenameEdit
       Left = 8
-      Top = 94
+      Top = 107
       Width = 422
       Height = 21
       OnBeforeDialog = edtBackgroundBeforeDialog
@@ -91,13 +91,13 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       Font.Style = []
       ButtonWidth = 20
       ParentFont = False
-      TabOrder = 4
+      TabOrder = 5
       Text = '$ASuite\'
     end
     object cbAutoOpDragDrop: TCheckBox
       Left = 8
-      Top = 35
-      Width = 295
+      Top = 33
+      Width = 420
       Height = 19
       Caption = 'Automatic opening category, after drag&&drop an item in it'
       Font.Charset = DEFAULT_CHARSET
@@ -107,6 +107,20 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       Font.Style = []
       ParentFont = False
       TabOrder = 1
+    end
+    object cbDisableConfirmDelete: TCheckBox
+      Left = 8
+      Top = 50
+      Width = 420
+      Height = 19
+      Caption = 'Disable delete items confirmation dialog'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 2
     end
   end
   object gbWindow: TGroupBox
@@ -217,7 +231,7 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
     Left = 344
     Top = 296
     LangData = {
-      180066726D4D61696E57696E646F774F7074696F6E735061676500010F000000
+      180066726D4D61696E57696E646F774F7074696F6E7350616765000110000000
       0A0067625472656556696577010100000001000000070043617074696F6E000C
       0063624261636B67726F756E64010100000002000000070043617074696F6E00
       0F0062746E466F6E7453657474696E6773010100000003000000070043617074
@@ -232,7 +246,8 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       070043617074696F6E000B00466F6E744469616C6F6731000010006362417574
       6F4F704472616744726F7001010000000B000000070043617074696F6E001200
       63686B5365617263684173596F755479706501010000000C0000000700436170
-      74696F6E00}
+      74696F6E001600636244697361626C65436F6E6669726D44656C657465010100
+      00000D000000070043617074696F6E00}
   end
   object FontDialog1: TFontDialog
     Font.Charset = DEFAULT_CHARSET
