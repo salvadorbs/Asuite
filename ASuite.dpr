@@ -74,7 +74,15 @@ uses
   Kernel.Logger in 'Library\Kernel.Logger.pas',
   Kernel.CheckUpdates in 'Library\Kernel.CheckUpdates.pas',
   Vcl.Themes,
-  Vcl.Styles;
+  Vcl.Styles,
+  Vcl.Styles.Hooks,
+  Vcl.Styles.Utils.Menus, //Style Popup and Shell Menus (class #32768)
+  Vcl.Styles.Utils.Forms, //Style dialogs box (class #32770)
+  Vcl.Styles.Utils.StdCtrls, //Style buttons, static, and so on
+  Vcl.Styles.Utils.ComCtrls, //Style SysTreeView32, SysListView32
+  Vcl.Styles.Utils.ScreenTips, //Style the tooltips_class32 class
+  Vcl.Styles.Utils.SysControls,
+  Vcl.Styles.Utils.SysStyleHook;
 
 //SQLite3 static library
 
