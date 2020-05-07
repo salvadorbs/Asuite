@@ -36,6 +36,7 @@ procedure SetASuiteAtWindowsStartup;
 procedure DeleteASuiteAtWindowsStartup;
 
 { Misc }
+function DarkModeIsEnabled: boolean;
 procedure EjectDialog(Sender: TObject);
 function ExtractDirectoryName(const Filename: string): string;
 function GetCorrectWorkingDir(Default: string): string;
@@ -101,6 +102,30 @@ begin
       Result := True
     else
       Result := (FileExists(PathTemp)) or (SysUtils.DirectoryExists(PathTemp));
+end;
+
+function DarkModeIsEnabled: boolean;
+const
+  TheKey   = 'Software\Microsoft\Windows\CurrentVersion\Themes\Personalize\';
+  TheValue = 'AppsUseLightTheme';
+var
+  Reg: TRegistry;
+begin
+  Result := False;
+  Reg    := TRegistry.Create(KEY_READ);
+  try
+    Reg.RootKey := HKEY_CURRENT_USER;
+    if Reg.KeyExists(TheKey) then
+      if Reg.OpenKey(TheKey, False) then
+      try
+        if Reg.ValueExists(TheValue) then
+          Result := Reg.ReadInteger(TheValue) = 0;
+      finally
+        Reg.CloseKey;
+      end;
+  finally
+    Reg.Free;
+  end;
 end;
 
 procedure EjectDialog(Sender: TObject);

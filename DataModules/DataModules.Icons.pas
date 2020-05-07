@@ -24,8 +24,8 @@ unit DataModules.Icons;
 interface
 
 uses
-  SysUtils, Classes, Controls, Windows, Graphics, Dialogs,
-  ShellApi, CommCtrl, Vcl.ImgList, System.ImageList;
+  SysUtils, Classes, Controls, Windows, Graphics, Dialogs, vcl.Forms,
+  ShellApi, CommCtrl, Vcl.ImgList, System.ImageList, kgraphics, kicon;
 
 type
   TdmImages = class(TDataModule)
@@ -40,6 +40,7 @@ type
     property ilSmallIcons: TImageList read getIlSmallIcons;
     property ilLargeIcons: TImageList read getIlLargeIcons;
 
+    procedure GetAlphaBitmapFromImageList(ABMP: TKAlphaBitmap;const AImageIndex: Integer; ASmallIcon: Boolean = True);
     procedure DrawIconInBitmap(const AGlyph: TBitmap;const AImageIndex: Integer; ASmallIcon: Boolean = True);
   end;
 
@@ -75,6 +76,39 @@ begin
       DrawTransparentBitmap(AGlyph.Canvas.Handle, BMP.Handle, 0, 0, clWhite);
     finally
       BMP.Free;
+    end;
+  end;
+end;
+
+procedure TdmImages.GetAlphaBitmapFromImageList(ABMP: TKAlphaBitmap;
+  const AImageIndex: Integer; ASmallIcon: Boolean);
+var
+  KIcon: TKIcon;
+  hIcon: Windows.HICON;
+begin
+  if AImageIndex <> -1 then
+  begin
+    //Buttons' image
+    KIcon := TKIcon.Create;
+    try
+      //Get handle from imagelist
+      if ASmallIcon then
+        hIcon := ImageList_GetIcon(ilSmallIcons.Handle, AImageIndex, ILD_NORMAL)
+      else
+        hIcon := ImageList_GetIcon(ilLargeIcons.Handle, AImageIndex, ILD_NORMAL);
+
+      if hIcon <> 0 then
+      begin
+        //Load handle in TKIcon and copy it as TKAlphaBitmap (so we can't losing alpha)
+        KIcon.LoadFromHandle(hIcon);
+        KIcon.OptimalIcon := True;
+        KIcon.CopyToAlphaBitmap(KIcon.CurrentIndex, ABMP);
+
+        //Destroy handle, now useless
+        DestroyIcon(hIcon);
+      end;
+    finally
+      KIcon.Free;
     end;
   end;
 end;

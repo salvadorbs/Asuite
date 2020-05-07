@@ -34,10 +34,11 @@ function CheckPropertyName(Edit: TEdit): Boolean;
 function  GetCheckedMenuItem(PopupMenu: TPopupMenu): TMenuItem;
 function GetASuiteVersion(ASimpleFormat: Boolean): string;
 function  IsFormatInClipBoard(format: Word): Boolean;
+function IsLightColor(const AColor: TColor): Boolean;
 function RemoveQuotes(const S: string; const QuoteChar: Char): string;
 function RemoveAllQuotes(const S: string): string;
-procedure ShowMessageEx(const Msg: string; Error: boolean=false);
-procedure ShowMessageFmtEx(const Msg: string; Params: array of const; Error: boolean=false);
+procedure ShowMessageEx(const Msg: string; Error: boolean = False);
+procedure ShowMessageFmtEx(const Msg: string; Params: array of const; Error: boolean = False);
 
 { Stats }
 function  DiskFloatToString(Number: double;Units: Boolean): string;
@@ -55,7 +56,7 @@ function  GetHotKeyMod(AShortcut: TShortcut) : Integer;
 implementation
 
 uses
-  Registry, SynTaskDialog, PJVersionInfo, AppConfig.Main, Kernel.Logger;
+  Registry, PJVersionInfo, AppConfig.Main, Kernel.Logger;
 
 function IsFormOpen(const FormName : string): Boolean;
 var
@@ -157,6 +158,20 @@ begin
   end;
 end;
 
+function IsLightColor(const AColor: TColor): Boolean;
+var
+  r, g, b, yiq: integer;
+begin
+  r := GetRValue(AColor);
+  g := GetGValue(AColor);
+  b := GetBValue(AColor);
+  yiq := ((r*299)+(g*587)+(b*114)) div 1000;
+  if (yiq >= 128) then
+    result := True
+  else
+    result := False;
+end;
+
 function RemoveQuotes(const S: string; const QuoteChar: Char): string;
 var
   Len: Integer;
@@ -181,27 +196,16 @@ begin
   Result := RemoveQuotes(Result, '"');
 end;
 
-procedure ShowMessageEx(const Msg: string; Error: boolean=false);
-const
-  IconError: array[boolean] of TTaskDialogIcon = (tiInformation, tiError);
-var
-  Task: TTaskDialog;
+procedure ShowMessageEx(const Msg: string; Error: boolean = False);
 begin
-  Task.Content := Msg;
-  Task.Execute([cbOK],mrOk,[],IconError[Error]);
-
-  if Error then
-    TASuiteLogger.Error(Msg, []);
+  ShowMessageFmtEx(Msg, [], error);
 end;
 
-procedure ShowMessageFmtEx(const Msg: string; Params: array of const; Error: boolean=false);
+procedure ShowMessageFmtEx(const Msg: string; Params: array of const; Error: boolean = False);
 const
-  IconError: array[boolean] of TTaskDialogIcon = (tiInformation, tiError);
-var
-  Task: TTaskDialog;
+  DlgType: array[boolean] of TMsgDlgType = (mtInformation, mtError);
 begin
-  Task.Content := Format(Msg, Params);
-  Task.Execute([cbOK],mrOk,[],IconError[Error]);
+  MessageDlg(Format(Msg, Params), DlgType[Error], [mbOK], 0);
 
   if Error then
     TASuiteLogger.Error(Msg, Params);

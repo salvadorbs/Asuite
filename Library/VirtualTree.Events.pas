@@ -618,6 +618,7 @@ begin
     if NodeData.DataType = vtdtFile then
       if Not(TvFileNodeData(NodeData).IsPathFileExists) then
         TargetCanvas.Font.Color := clRed;
+  //TODO: change clred in case of black theme
 end;
 
 procedure TVirtualTreeEvents.DoResizeGM(Sender: TObject);

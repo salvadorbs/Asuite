@@ -72,12 +72,22 @@ uses
   Icons.Thread in 'Library\Icons.Thread.pas',
   Kernel.Scheduler in 'Library\Kernel.Scheduler.pas',
   Kernel.Logger in 'Library\Kernel.Logger.pas',
-  VirtualFileSearch.Helper in 'Library\VirtualFileSearch.Helper.pas';
+  VirtualFileSearch.Helper in 'Library\VirtualFileSearch.Helper.pas',
+  Vcl.Themes,
+  Vcl.Styles,
+  Vcl.Styles.Utils.Menus, //Style Popup and Shell Menus (class #32768)
+  Vcl.Styles.Utils.Forms, //Style dialogs box (class #32770)
+  Vcl.Styles.Utils.StdCtrls, //Style buttons, static, and so on
+  Vcl.Styles.Utils.ComCtrls, //Style SysTreeView32, SysListView32
+  Vcl.Styles.Utils.ScreenTips, //Style the tooltips_class32 class
+  Vcl.Styles.Utils.SysControls,
+  Vcl.Styles.Utils.SysStyleHook;
 
 //SQLite3 static library
 
 {$R *.res}
 {$R *.dkl_const.res}
+{$SetPEFlags 1} // IMAGE_FILE_RELOCS_STRIPPED
 
 begin
   if SingleInst.CanStartApp then
@@ -88,7 +98,7 @@ begin
 
     Application.Initialize;
     Config    := TConfiguration.Create;
-    Application.Title := APP_TITLE;
+  Application.Title := APP_TITLE;
 
     Application.CreateForm(TfrmMain, frmMain);
   Application.CreateForm(TfrmGraphicMenu, frmGraphicMenu);

@@ -208,6 +208,8 @@ begin
   dblDriveUsed := dblDriveSize - DiskFree(Ord(Drive) - 64);
   imgDriveSpace.Width := Round(dblDriveUsed / dblDriveSize * (imgDriveBackground.Width - 4));
   lblDriveSpace.Caption := Format(DKLangConstW('msgGMHardDiskSpace'), [DiskFreeString(Drive, True), DiskSizeString(Drive, True)]);
+
+  edtSearch.Images := dmImages.ilSmallIcons;
 end;
 
 procedure TfrmGraphicMenu.OpenFolder(FolderPath: string);

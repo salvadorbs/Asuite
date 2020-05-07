@@ -89,6 +89,7 @@ end;
 
 procedure TfrmDialogBase.btnApplyClick(Sender: TObject);
 begin
+  //TODO: Remove it and button apply (useless)
   //If IterateSubtree returns a value, something is wrong
   if Not Assigned(vstCategory.IterateSubtree(nil, SaveNodeData, nil)) then
     InternalSaveData;
@@ -100,12 +101,9 @@ begin
 end;
 
 procedure TfrmDialogBase.btnOkClick(Sender: TObject);
-var
-  ResultNode: PVirtualNode;
 begin
   //If IterateSubtree returns a value, something is wrong
-  ResultNode := vstCategory.IterateSubtree(nil, SaveNodeData, nil);
-  if Not Assigned(ResultNode) then
+  if Not Assigned(vstCategory.IterateSubtree(nil, SaveNodeData, nil)) then
   begin
     if InternalSaveData then
       ModalResult := mrOk;

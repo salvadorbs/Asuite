@@ -24,7 +24,7 @@ interface
 uses
   Windows, SysUtils, Graphics, Forms, Controls, VirtualTrees, Kernel.Enumerations,
   Vcl.Imaging.pngimage, System.UITypes, Classes, DKLang, AppConfig.Paths,
-  Lists.Manager, Database.Manager, Icons.Manager, Kernel.Logger;
+  Lists.Manager, Database.Manager, Icons.Manager, Kernel.Logger, Vcl.Themes;
 
 type
 
@@ -37,6 +37,7 @@ type
     FStartWithWindows   : Boolean;
     FShowPanelAtStartUp : Boolean;
     FShowGraphicMenuAtStartUp  : Boolean;
+    FASuiteTheme        : TASuiteTheme;
     //Main Form
     FLangID             : Word;
     FUseCustomTitle     : Boolean;
@@ -147,10 +148,12 @@ type
     procedure SetHotKey(const Value: Boolean);
     procedure SetTVSmallIconSize(const Value: Boolean);
     procedure SetClassicMenuHotkey(const Value: TShortCut);
+    procedure SetASuiteTheme(const Value: TASuiteTheme); 
 
     function GetMainTree: TVirtualStringTree;
     function GetImportTree: TVirtualStringTree;
-    procedure GetASuiteState(const Value: TLauncherState);
+    procedure SetASuiteState(const Value: TLauncherState);
+
   protected
     procedure HandleParam(const Param: string);
   public
@@ -173,6 +176,7 @@ type
     property ShowPanelAtStartUp: Boolean read FShowPanelAtStartUp write SetShowPanelAtStartUp;
     property ShowGraphicMenuAtStartUp: Boolean read FShowGraphicMenuAtStartUp write FShowGraphicMenuAtStartUp;
     property MissedSchedulerTask: Boolean read FMissedSchedulerTask write FMissedSchedulerTask;
+    property ASuiteTheme: TASuiteTheme read FASuiteTheme write SetASuiteTheme;
     // Main Form
     property LangID: Word read FLangID write SetLangID;
     property UseCustomTitle: Boolean read FUseCustomTitle write SetUseCustomTitle;
@@ -242,15 +246,19 @@ type
     // Misc
     property ReadOnlyMode: Boolean read FReadOnlyMode write FReadOnlyMode;
     property Changed: Boolean read FChanged write SetChanged;
-    property ASuiteState: TLauncherState read FASuiteState write GetASuiteState;
+    property ASuiteState: TLauncherState read FASuiteState write SetASuiteState;
     property ScanFolderFlatStructure: boolean read FScanFolderFlatStructure write FScanFolderFlatStructure;
     property ScanFolderAutoExtractName: boolean read FScanFolderAutoExtractName write FScanFolderAutoExtractName;
     property ScanFolderFileTypes: TStringList read FScanFolderFileTypes write FScanFolderFileTypes;
     property ScanFolderExcludeNames: TStringList read FScanFolderExcludeNames write FScanFolderExcludeNames;
 
     function CheckReadOnlyMode: Boolean;
+
+    procedure AfterUpdateConfig();
+    
     //Update theme paths
     procedure UpdateGMTheme;
+
     //Database
     procedure LoadList;
     function SaveList(DoBackup: Boolean): Boolean;
@@ -265,7 +273,24 @@ uses
   Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, Utility.Misc,
   Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder, USingleInst,
   Utility.XML, GraphicMenu.ThemeEngine, Kernel.Scheduler, Forms.ImportList,
-  TypInfo, SynTaskDialog;
+  TypInfo;
+
+procedure TConfiguration.AfterUpdateConfig;
+begin   
+  //ASuite theme (dark or light theme)                                                
+  case Config.ASuiteTheme of
+    atWindowsSystem: 
+    begin
+      if DarkModeIsEnabled then
+        TStyleManager.TrySetStyle('Windows10 SlateGray')
+      else                                                   
+         TStyleManager.TrySetStyle('Windows');
+    end;
+    atLight: TStyleManager.TrySetStyle('Windows');
+    atDark: TStyleManager.TrySetStyle('Windows10 SlateGray');
+  end; 
+  TVirtualTreeMethods.Create.UpdateItemColor(Config.MainTree);
+end;
 
 function TConfiguration.CheckReadOnlyMode: Boolean;
 begin
@@ -302,12 +327,13 @@ begin
   //Find language files and register them in LangManager
   TASuiteLogger.Info('Scanning for language files', []);
   LangManager.ScanForLangFiles(FPaths.SuitePathLocale, '*.lng', False);
-  LangManager.LanguageID := 1033;
+  LangManager.LanguageID := 1040;
   //General
   FStartWithWindows   := False;
   FShowPanelAtStartUp := True;
   FShowGraphicMenuAtStartUp  := False;
   FMissedSchedulerTask := True;
+  FASuiteTheme        := atWindowsSystem;
   //Main Form
   FLangID             := 1033; //1033 = English (United States)
   FUseCustomTitle     := False;
@@ -404,7 +430,7 @@ begin
   FLogger.Free;
 end;
 
-procedure TConfiguration.GetASuiteState(const Value: TLauncherState);
+procedure TConfiguration.SetASuiteState(const Value: TLauncherState);
 begin
   TASuiteLogger.Info('Changed ASuite State (old value %s, new value %s)',
     [GetEnumName(TypeInfo(TLauncherState), Ord(FASuiteState)),
@@ -532,6 +558,11 @@ begin
   end;
 end;
 
+procedure TConfiguration.SetASuiteTheme(const Value: TASuiteTheme);
+begin  
+  FASuiteTheme := Value;
+end;
+
 procedure TConfiguration.SetBackup(const Value: Boolean);
 begin
   FBackup := Value;
@@ -597,7 +628,7 @@ begin
     if (Value <> 0) then
     begin
       if Not(RegisterHotKeyEx(frmMain.Handle, Value)) then
-        ShowMessageEx(DKLangConstW('msgErrRegWindowHotkey'));
+        ShowMessageEx(DKLangConstW('msgErrRegWindowHotkey'), true);
     end;
   end;
   FWindowHotKey := Value;

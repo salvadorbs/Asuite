@@ -104,6 +104,7 @@ type
     Fscanfolderexcludenames : RawUTF8;
     FClassicMenuHotKey: Word;
     FTVDisableConfirmDelete: boolean;
+    FAsuiteTheme: TASuiteTheme;
   public
     class procedure Load(ADBManager: TDBManager; AConfig: TConfiguration);
     class procedure Save(ADBManager: TDBManager; AConfig: TConfiguration);
@@ -114,6 +115,7 @@ type
     property showpanelatstartup: Boolean read FShowPanelAtStartUp write FShowPanelAtStartUp;
     property showmenuatstartup: Boolean read FShowMenuAtStartUp write FShowMenuAtStartUp;
     property missedschedulertask: Boolean read Fmissedschedulertask write Fmissedschedulertask;
+    property asuitetheme: TASuiteTheme read FAsuiteTheme write FAsuiteTheme;
     // Main Form
     property langid: Word read FLangID write FLangID;
     property usecustomtitle: Boolean read FUseCustomTitle write FUseCustomTitle;
@@ -223,6 +225,7 @@ begin
       AConfig.UseCustomTitle     := SQLOptionsData.usecustomtitle;
       AConfig.HideTabSearch      := SQLOptionsData.hidetabsearch;
       Aconfig.SearchAsYouType    := SQLOptionsData.searchasyoutype;
+      AConfig.ASuiteTheme        := SQLOptionsData.asuitetheme;
       //Main Form - Position and size
       AConfig.HoldSize    := SQLOptionsData.holdsize;
       AConfig.AlwaysOnTop := SQLOptionsData.alwaysontop;
@@ -325,6 +328,7 @@ begin
     SQLOptionsData.customtitlestring := StringToUTF8(AConfig.CustomTitleString);
     SQLOptionsData.hidetabsearch     := AConfig.HideTabSearch;
     SQLOptionsData.searchasyoutype   := AConfig.SearchAsYouType;
+    SQLOptionsData.asuitetheme       := AConfig.ASuiteTheme;
     //main form - position and size
     SQLOptionsData.holdsize          := AConfig.HoldSize;
     SQLOptionsData.alwaysontop       := AConfig.AlwaysOnTop;

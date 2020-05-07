@@ -232,10 +232,10 @@ object frmGraphicMenu: TfrmGraphicMenu
     Top = 467
     Width = 240
     Height = 21
-    Images = dmImages.ilSmallIcons
     PopupMenu = frmMain.pmSearch
     RightButton.Visible = True
     TabOrder = 1
+    StyleElements = []
     OnChange = edtSearchChange
     OnRightButtonClick = btnSearchClick
   end
@@ -246,11 +246,6 @@ object frmGraphicMenu: TfrmGraphicMenu
     Height = 361
     BorderStyle = bsNone
     Header.AutoSizeIndex = 0
-    Header.Font.Charset = DEFAULT_CHARSET
-    Header.Font.Color = clWindowText
-    Header.Font.Height = -11
-    Header.Font.Name = 'Tahoma'
-    Header.Font.Style = []
     Header.MainColumn = -1
     Header.Options = [hoColumnResize, hoDrag]
     HintMode = hmHint
@@ -258,6 +253,7 @@ object frmGraphicMenu: TfrmGraphicMenu
     PopupMenu = pmWindow
     ScrollBarOptions.ScrollBars = ssVertical
     ShowHint = True
+    StyleElements = []
     TabOrder = 0
     TreeOptions.AutoOptions = [toAutoScrollOnExpand, toAutoTristateTracking, toAutoDeleteMovedNodes, toAutoChangeScale]
     TreeOptions.MiscOptions = [toAcceptOLEDrop, toInitOnSave, toToggleOnDblClick, toWheelPanning, toVariableNodeHeight, toEditOnClick]
