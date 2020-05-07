@@ -13,7 +13,6 @@ object frmScanFolder: TfrmScanFolder
   Font.Style = []
   OldCreateOrder = False
   Position = poMainFormCenter
-  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   DesignSize = (
     579

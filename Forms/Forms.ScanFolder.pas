@@ -23,7 +23,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, DKLang,
+  Dialogs, StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, DKLang, Vcl.Themes,
   VirtualExplorerTree, MPShellUtilities, ShellApi, Vcl.ImgList, MPCommonUtilities,
   System.ImageList, VirtualFileSearch, MPCommonObjects, StrUtils, SynTaskDialog;
 
@@ -254,6 +254,9 @@ procedure TfrmScanFolder.FormCreate(Sender: TObject);
 begin
   vstShell.Active := True;
   LoadSettings;
+
+  //Change vstShell text's color
+  vstShell.Font.Color := TStyleManager.ActiveStyle.GetSystemColor(clWindowText);
 end;
 
 function TfrmScanFolder.GetExtImage(AExtension: string): Integer;
