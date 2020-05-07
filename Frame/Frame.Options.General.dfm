@@ -208,13 +208,47 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
       TabOrder = 3
     end
   end
+  object grpTheme: TGroupBox
+    AlignWithMargins = True
+    Left = 183
+    Top = 244
+    Width = 174
+    Height = 47
+    Margins.Bottom = 0
+    Caption = 'Theme'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 3
+    object cbTheme: TComboBox
+      Left = 8
+      Top = 17
+      Width = 158
+      Height = 21
+      Style = csDropDownList
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 0
+      Items.Strings = (
+        'Windows settings'
+        'Light'
+        'Dark')
+    end
+  end
   object DKLanguageController1: TDKLanguageController
     IgnoreList.Strings = (
       '*.Text')
     Left = 368
     Top = 344
     LangData = {
-      150066726D47656E6572616C4F7074696F6E735061676500010E000000090067
+      150066726D47656E6572616C4F7074696F6E7350616765000110000000090067
       6253746172747570010100000005000000070043617074696F6E001000636257
       696E646F777353746172747570010100000006000000070043617074696F6E00
       1200636253686F7750616E656C53746172747570010100000007000000070043
@@ -230,6 +264,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
       436174010100000016000000070043617074696F6E00130063686B4175746F43
       6C6F736550726F63657373010100000017000000070043617074696F6E001600
       63686B436865636B557064617465735374617274757001010000001800000007
-      0043617074696F6E00}
+      0043617074696F6E0008006772705468656D6501010000001900000007004361
+      7074696F6E00070063625468656D6501010000001A00000005004974656D7300}
   end
 end

@@ -24,7 +24,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, DKLang, Frame.Properties.Base,
-  Vcl.Mask, JvExMask, JvToolEdit;
+  Vcl.Mask, JvExMask, JvToolEdit, Vcl.Styles, Vcl.Themes;
 
 type
   TfrmBaseGeneralPropertyPage = class(TfrmBasePropertyPage)
@@ -93,7 +93,7 @@ begin
   if Result then
   begin
     //File found - Change font color with default color (clWindowText)
-    cColor := clWindowText;
+    cColor := TStyleManager.ActiveStyle.GetSystemColor(clWindowText);
     sHint  := '';
   end
   else begin
