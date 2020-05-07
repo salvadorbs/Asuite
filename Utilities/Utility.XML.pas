@@ -415,6 +415,7 @@ end;
 
 Function GetHotKeyCode(KeyCode: Integer) : Integer;
 begin
+  //TODO: Rewrite this code
   Result := -1;
   case KeyCode of
     0: Result := VkKeyScan('a');

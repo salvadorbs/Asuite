@@ -103,7 +103,6 @@ type
     Fscanfolderfiletypes    : RawUTF8;
     Fscanfolderexcludenames : RawUTF8;
     FFTVAutoOpCatsDrag: Boolean;
-    Fcheckupdatesstartup: Boolean;
     FAsuiteTheme: TASuiteTheme;
   public
     class procedure Load(ADBManager: TDBManager; AConfig: TConfiguration);
@@ -115,7 +114,6 @@ type
     property showpanelatstartup: Boolean read FShowPanelAtStartUp write FShowPanelAtStartUp;
     property showmenuatstartup: Boolean read FShowMenuAtStartUp write FShowMenuAtStartUp;
     property missedschedulertask: Boolean read Fmissedschedulertask write Fmissedschedulertask;
-    property checkupdatesstartup: Boolean read Fcheckupdatesstartup write Fcheckupdatesstartup;
     property asuitetheme: TASuiteTheme read FAsuiteTheme write FAsuiteTheme;
     // Main Form
     property langid: Word read FLangID write FLangID;
@@ -239,7 +237,6 @@ begin
       else
         frmMain.Position := poScreenCenter;
       AConfig.MissedSchedulerTask := SQLOptionsData.missedschedulertask;
-      AConfig.CheckUpdatesStartup := SQLOptionsData.checkupdatesstartup;
       //Main Form - Treevew
       AConfig.TVBackgroundPath   := UTF8ToString(SQLOptionsData.tvbackgroundpath);
       AConfig.TVBackground       := SQLOptionsData.tvbackground;
@@ -337,7 +334,6 @@ begin
     rectMainForm.height := frmMain.Height;
     SQLOptionsData.DynArray('mainformpossize').Add(rectMainForm);
     SQLOptionsData.missedschedulertask := AConfig.MissedSchedulerTask;
-    SQLOptionsData.checkupdatesstartup := AConfig.CheckUpdatesStartup;
     //main form - treevew
     SQLOptionsData.tvbackground     := AConfig.TVBackground;
     SQLOptionsData.tvbackgroundpath := StringToUTF8(AConfig.TVBackgroundPath);

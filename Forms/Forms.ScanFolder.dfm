@@ -3,7 +3,7 @@ object frmScanFolder: TfrmScanFolder
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Scan folder'
-  ClientHeight = 266
+  ClientHeight = 256
   ClientWidth = 579
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -13,15 +13,16 @@ object frmScanFolder: TfrmScanFolder
   Font.Style = []
   OldCreateOrder = False
   Position = poMainFormCenter
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   DesignSize = (
     579
-    266)
+    256)
   PixelsPerInch = 96
   TextHeight = 13
   object btnScan: TButton
     Left = 415
-    Top = 234
+    Top = 224
     Width = 75
     Height = 25
     Anchors = [akRight, akBottom]
@@ -32,7 +33,7 @@ object frmScanFolder: TfrmScanFolder
   end
   object btnCancel: TButton
     Left = 496
-    Top = 234
+    Top = 223
     Width = 75
     Height = 25
     Anchors = [akRight, akBottom]
@@ -44,7 +45,7 @@ object frmScanFolder: TfrmScanFolder
     Left = 207
     Top = 8
     Width = 364
-    Height = 220
+    Height = 210
     Anchors = [akTop, akRight, akBottom]
     TabOrder = 1
     object grpFileTypes: TGroupBox
@@ -244,10 +245,10 @@ object frmScanFolder: TfrmScanFolder
       end
     end
     object pbScan: TProgressBar
-      Left = 17
+      Left = 8
       Top = 183
-      Width = 337
-      Height = 25
+      Width = 345
+      Height = 18
       Smooth = True
       TabOrder = 3
     end
@@ -256,7 +257,7 @@ object frmScanFolder: TfrmScanFolder
     Left = 8
     Top = 8
     Width = 193
-    Height = 220
+    Height = 210
     Active = False
     Anchors = [akLeft, akTop, akRight, akBottom]
     ColumnDetails = cdUser

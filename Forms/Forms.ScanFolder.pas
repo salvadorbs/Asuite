@@ -23,9 +23,9 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, DKLang, Vcl.Themes,
+  Dialogs, StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, DKLang,
   VirtualExplorerTree, MPShellUtilities, ShellApi, Vcl.ImgList, MPCommonUtilities,
-  System.ImageList, VirtualFileSearch, MPCommonObjects, StrUtils;
+  System.ImageList, VirtualFileSearch, MPCommonObjects, StrUtils, SynTaskDialog;
 
 type
   TfrmScanFolder = class(TForm)
@@ -104,7 +104,7 @@ implementation
 uses
   AppConfig.Main, Kernel.Enumerations, Kernel.Types, VirtualTree.Methods,
   NodeDataTypes.Base, Utility.Misc, Kernel.Logger, Kernel.Consts, Utility.FileFolder,
-  NodeDataTypes.Files, Utility.System;
+  NodeDataTypes.Files, VirtualFileSearch.Helper;
 
 {$R *.dfm}
 
@@ -254,9 +254,6 @@ procedure TfrmScanFolder.FormCreate(Sender: TObject);
 begin
   vstShell.Active := True;
   LoadSettings;
-
-  //Change vstShell text's color
-  vstShell.Font.Color := TStyleManager.ActiveStyle.GetSystemColor(clWindowText);
 end;
 
 function TfrmScanFolder.GetExtImage(AExtension: string): Integer;

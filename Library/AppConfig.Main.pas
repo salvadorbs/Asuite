@@ -37,7 +37,6 @@ type
     FStartWithWindows   : Boolean;
     FShowPanelAtStartUp : Boolean;
     FShowGraphicMenuAtStartUp  : Boolean;
-    FCheckUpdatesStartup: Boolean;
     FASuiteTheme        : TASuiteTheme;
     //Main Form
     FLangID             : Word;
@@ -145,14 +144,14 @@ type
     procedure SetMenuHotKey(const Value: TShortcut);
     procedure SetWindowHotKey(const Value: TShortcut);
     procedure SetHotKey(const Value: Boolean);
-    procedure SetTVSmallIconSize(const Value: Boolean);   
+    procedure SetTVSmallIconSize(const Value: Boolean);
     procedure SetASuiteTheme(const Value: TASuiteTheme); 
 
     function GetMainTree: TVirtualStringTree;
     function GetImportTree: TVirtualStringTree;
     procedure SetASuiteState(const Value: TLauncherState);
 
- protected
+  protected
     procedure HandleParam(const Param: string);
   public
     { public declarations }
@@ -172,7 +171,6 @@ type
     //General
     property StartWithWindows: Boolean read FStartWithWindows write SetStartWithWindows;
     property ShowPanelAtStartUp: Boolean read FShowPanelAtStartUp write SetShowPanelAtStartUp;
-    property CheckUpdatesStartup: Boolean read FCheckUpdatesStartup write FCheckUpdatesStartup;
     property ShowGraphicMenuAtStartUp: Boolean read FShowGraphicMenuAtStartUp write FShowGraphicMenuAtStartUp;
     property MissedSchedulerTask: Boolean read FMissedSchedulerTask write FMissedSchedulerTask;
     property ASuiteTheme: TASuiteTheme read FASuiteTheme write SetASuiteTheme;
@@ -329,7 +327,6 @@ begin
   FStartWithWindows   := False;
   FShowPanelAtStartUp := True;
   FShowGraphicMenuAtStartUp  := False;
-  FCheckUpdatesStartup := True;
   FMissedSchedulerTask := True;
   FASuiteTheme        := atWindowsSystem;
   //Main Form
@@ -542,11 +539,16 @@ end;
 
 procedure TConfiguration.SetAlwaysOnTop(value: Boolean);
 begin
-  FAlwaysOnTop := value;
-  if FAlwaysOnTop then
-    frmMain.FormStyle := fsStayOnTop
-  else
-    frmMain.FormStyle := fsNormal;
+  if FAlwaysOnTop <> value then
+  begin
+    FAlwaysOnTop := value;
+    if FAlwaysOnTop then
+      frmMain.FormStyle := fsStayOnTop
+    else begin
+      ShowMessageEx(DKLangConstW('msgRestartAsuiteChanges'));
+      frmMain.FormStyle := fsNormal;
+    end;
+  end;
 end;
 
 procedure TConfiguration.SetASuiteTheme(const Value: TASuiteTheme);
@@ -815,7 +817,7 @@ begin
     if (Value <> 0) then
     begin
       if Not(RegisterHotKeyEx(frmMenuID, Value)) then
-        ShowMessageEx(DKLangConstW('msgErrRegGMHotkey'), true);
+        ShowMessageEx(DKLangConstW('msgErrRegGMHotkey'));
     end;
   end;
   FMenuHotKey := Value;

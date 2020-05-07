@@ -72,7 +72,7 @@ uses
   Icons.Thread in 'Library\Icons.Thread.pas',
   Kernel.Scheduler in 'Library\Kernel.Scheduler.pas',
   Kernel.Logger in 'Library\Kernel.Logger.pas',
-  Kernel.CheckUpdates in 'Library\Kernel.CheckUpdates.pas',
+  VirtualFileSearch.Helper in 'Library\VirtualFileSearch.Helper.pas',
   Vcl.Themes,
   Vcl.Styles,
   Vcl.Styles.Utils.Menus, //Style Popup and Shell Menus (class #32768)

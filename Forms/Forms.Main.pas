@@ -33,10 +33,8 @@ type
   { TfrmMain }
 
   TfrmMain = class(TBaseMainForm)
-    miCheckUpdates: TMenuItem;
     miStatistics: TMenuItem;
     MenuItem2: TMenuItem;
-    MenuItem3: TMenuItem;
     vstList: TVirtualStringTree;
     pcList: TPageControl;
     tbList: TTabSheet;
@@ -132,7 +130,6 @@ type
     procedure actSortListUpdate(Sender: TObject);
     procedure actSortListExecute(Sender: TObject);
     procedure FormResize(Sender: TObject);
-    procedure miCheckUpdatesClick(Sender: TObject);
     procedure btnedtSearchChange(Sender: TObject);
   private
     { Private declarations }
@@ -157,7 +154,7 @@ uses
   DataModules.TrayMenu, Forms.ImportList, AppConfig.Main, Utility.System,
   VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base, Kernel.Scheduler,
   Kernel.Types, NodeDataTypes.Files, VirtualTree.Events, Utility.Process,
-  Kernel.Logger, SynLog, Kernel.CheckUpdates;
+  Kernel.Logger, SynLog;
 
 {$R *.dfm}
 
@@ -553,11 +550,6 @@ begin
     TVirtualTreeMethods.Create.CheckVisibleNodePathExe(GetActiveTree);
 end;
 
-procedure TfrmMain.miCheckUpdatesClick(Sender: TObject);
-begin
-  TCheckUpdatesThread.Create(False);
-end;
-
 procedure TfrmMain.miExitClick(Sender: TObject);
 begin
   Config.ASuiteState := lsShutdown;
@@ -629,8 +621,6 @@ begin
   PopulatePopUpMenuFromAnother(miEdit, pmWindow.Items);
   //Start threads
   TVirtualTreeMethods.Create.GetAllIcons(vstList, nil);
-  if Config.CheckUpdatesStartup then
-    TCheckUpdatesThread.Create(True);
 end;
 
 procedure TfrmMain.FormDestroy(Sender: TObject);
