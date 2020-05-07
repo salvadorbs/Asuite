@@ -23,9 +23,9 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, DKLang,
+  Dialogs, StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, DKLang, Vcl.Themes,
   VirtualExplorerTree, MPShellUtilities, ShellApi, Vcl.ImgList, MPCommonUtilities,
-  System.ImageList, VirtualFileSearch, MPCommonObjects, StrUtils, SynTaskDialog;
+  System.ImageList, VirtualFileSearch, MPCommonObjects, StrUtils;
 
 type
   TfrmScanFolder = class(TForm)
@@ -80,9 +80,6 @@ type
     procedure btnCancelClick(Sender: TObject);
     procedure vfsScanSearchEnd(Sender: TObject; Results: TCommonPIDLList);
     function FindMatchText(Strings: TStrings; const Str: string): Integer;
-    procedure vstShellPaintText(Sender: TBaseVirtualTree;
-      const TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
-      TextType: TVSTTextType);
   private
     { Private declarations }
     FStartTime: Cardinal;
@@ -257,6 +254,9 @@ procedure TfrmScanFolder.FormCreate(Sender: TObject);
 begin
   vstShell.Active := True;
   LoadSettings;
+
+  //Change vstShell text's color
+  vstShell.Font.Color := TStyleManager.ActiveStyle.GetSystemColor(clWindowText);
 end;
 
 function TfrmScanFolder.GetExtImage(AExtension: string): Integer;
@@ -337,15 +337,6 @@ procedure TfrmScanFolder.vstShellInitNode(Sender: TBaseVirtualTree;
   ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
 begin
    Node.CheckType := ctTriStateCheckBox;
-end;
-
-procedure TfrmScanFolder.vstShellPaintText(Sender: TBaseVirtualTree;
-  const TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
-  TextType: TVSTTextType);
-begin
-  //If windows is in dark mode, use white text
-  if DarkModeIsEnabled then
-    TargetCanvas.Font.Color := clWhite;
 end;
 
 procedure TfrmScanFolder.vstTypesAddToSelection(Sender: TBaseVirtualTree;

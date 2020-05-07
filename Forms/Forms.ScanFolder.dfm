@@ -117,11 +117,6 @@ object frmScanFolder: TfrmScanFolder
         Font.Name = 'Tahoma'
         Font.Style = []
         Header.AutoSizeIndex = 0
-        Header.Font.Charset = DEFAULT_CHARSET
-        Header.Font.Color = clWindowText
-        Header.Font.Height = -11
-        Header.Font.Name = 'Tahoma'
-        Header.Font.Style = []
         Header.MainColumn = -1
         Images = ilExtIcons
         ParentFont = False
@@ -207,11 +202,6 @@ object frmScanFolder: TfrmScanFolder
         Font.Name = 'Tahoma'
         Font.Style = []
         Header.AutoSizeIndex = 0
-        Header.Font.Charset = DEFAULT_CHARSET
-        Header.Font.Color = clWindowText
-        Header.Font.Height = -11
-        Header.Font.Name = 'Tahoma'
-        Header.Font.Style = []
         Header.MainColumn = -1
         ParentFont = False
         TabOrder = 0
@@ -278,11 +268,6 @@ object frmScanFolder: TfrmScanFolder
     FileSizeFormat = fsfExplorer
     FileSort = fsFileType
     Header.AutoSizeIndex = 0
-    Header.Font.Charset = DEFAULT_CHARSET
-    Header.Font.Color = clWindowText
-    Header.Font.Height = -11
-    Header.Font.Name = 'Tahoma'
-    Header.Font.Style = []
     Header.Height = 17
     Header.MainColumn = -1
     HintMode = hmHint
@@ -301,7 +286,6 @@ object frmScanFolder: TfrmScanFolder
     TreeOptions.VETImageOptions = [toImages, toThreadedImages]
     OnEnumFolder = vstShellEnumFolder
     OnInitNode = vstShellInitNode
-    OnPaintText = vstShellPaintText
     Columns = <>
   end
   object DKLanguageController1: TDKLanguageController
@@ -309,7 +293,7 @@ object frmScanFolder: TfrmScanFolder
     Top = 434
     LangData = {
       0D0066726D5363616E466F6C646572010100000001000000070043617074696F
-      6E0112000000090062746E43616E63656C010100000003000000070043617074
+      6E0113000000090062746E43616E63656C010100000003000000070043617074
       696F6E00070062746E5363616E010100000004000000070043617074696F6E00
       0A00706E6C46696C74657273000008007673745368656C6C00000C0067727046
       696C655479706573010100000005000000070043617074696F6E000E0062746E
@@ -321,9 +305,9 @@ object frmScanFolder: TfrmScanFolder
       636C75646544656C65746501010000000C000000070043617074696F6E000800
       767374547970657300000A007673744578636C75646500000A00696C45787449
       636F6E730000120067727047656E6572616C53657474696E677301010000000D
-      000000070043617074696F6E00070063686B466C617401010000000E00000007
-      0043617074696F6E000E0063686B457874726163744E616D6501010000000F00
-      0000070043617074696F6E00}
+      000000070043617074696F6E000E0063686B457874726163744E616D65010100
+      00000F000000070043617074696F6E00060070625363616E0000070076667353
+      63616E0000}
   end
   object ilExtIcons: TImageList
     ColorDepth = cd32Bit
