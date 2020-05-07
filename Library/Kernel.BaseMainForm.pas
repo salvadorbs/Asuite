@@ -56,6 +56,7 @@ constructor TBaseMainForm.Create(AOwner: TComponent);
 begin
   inherited;
   Config.ASuiteState := lsNormal;
+  UseLatestCommonDialogs := False;
 end;
 
 procedure TBaseMainForm.CreateParams(var Params: TCreateParams);

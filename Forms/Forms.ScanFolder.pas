@@ -23,7 +23,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, DKLang,
+  Dialogs, StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, DKLang, Vcl.Themes,
   VirtualExplorerTree, MPShellUtilities, ShellApi, Vcl.ImgList, MPCommonUtilities,
   System.ImageList, VirtualFileSearch, MPCommonObjects, StrUtils, SynTaskDialog;
 
@@ -80,7 +80,6 @@ type
     procedure btnCancelClick(Sender: TObject);
     procedure vfsScanSearchEnd(Sender: TObject; Results: TCommonPIDLList);
     function FindMatchText(Strings: TStrings; const Str: string): Integer;
-    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   private
     { Private declarations }
     FStartTime: Cardinal;
@@ -111,7 +110,16 @@ uses
 
 procedure TfrmScanFolder.btnCancelClick(Sender: TObject);
 begin
-  Close;
+  if Not(vfsScan.Finished) then
+  begin
+    if MessageDlg((DKLangConstW('msgCancelScanFolder')), mtWarning, [mbYes,mbNo], 0) = mrYes then
+    begin
+      vfsScan.Stop;
+      Close;
+    end;
+  end
+  else
+    Close;
 end;
 
 procedure TfrmScanFolder.btnExcludeAddClick(Sender: TObject);
@@ -242,25 +250,13 @@ begin
   NodeData.ImageIndex := GetExtImage(AText);
 end;
 
-procedure TfrmScanFolder.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-begin
-  CanClose := false;
-  if (vfsScan.IsRunning) then
-  begin
-    if MessageDlg((DKLangConstW('msgCancelScanFolder')), mtWarning, [mbYes,mbNo], 0) = mrYes then
-    begin
-      vfsScan.Stop;
-      CanClose := true;
-    end;
-  end
-  else
-    CanClose := true;
-end;
-
 procedure TfrmScanFolder.FormCreate(Sender: TObject);
 begin
   vstShell.Active := True;
   LoadSettings;
+
+  //Change vstShell text's color
+  vstShell.Font.Color := TStyleManager.ActiveStyle.GetSystemColor(clWindowText);
 end;
 
 function TfrmScanFolder.GetExtImage(AExtension: string): Integer;

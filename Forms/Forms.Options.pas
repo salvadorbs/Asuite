@@ -72,6 +72,8 @@ begin
   frm := TfrmOptions.Create(AOwner, APage);
   try
     Result := frm.ShowModal;
+
+    Config.AfterUpdateConfig;
   finally
     frm.Free;
   end;

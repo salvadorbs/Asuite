@@ -24,7 +24,7 @@ interface
 uses
   Windows, SysUtils, Classes, Graphics, VirtualTrees, ActiveX, UITypes, DKLang,
   Kernel.Singleton, Kernel.Enumerations, NodeDataTypes.Base, Kernel.Types, Lists.Base,
-  SynLog;
+  SynLog, Vcl.Themes;
 
 type
   TVirtualTreeMethods = class(TSingleton)
@@ -51,6 +51,7 @@ type
     procedure ChangeAllNodeHeight(const ASender: TBaseVirtualTree; const ANewNodeHeight: Integer);
     procedure ChangeTreeIconSize(const ASender: TVirtualStringTree; const ASmallIcon: Boolean);
     procedure CheckVisibleNodePathExe(const ASender: TBaseVirtualTree);
+    procedure UpdateItemColor(const ASender: TBaseVirtualTree);
 
     //Iterate methods
     procedure BeforeDeleteNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
@@ -566,6 +567,13 @@ begin
   finally
     ATree.EndUpdate;
   end;
+end;
+
+procedure TVirtualTreeMethods.UpdateItemColor(const ASender: TBaseVirtualTree);
+begin
+  //MainTree's color
+  if not(Config.TVBackground) and ((Config.TVFont.Color = clBlack) or (Config.TVFont.Color = clWindowText)) then
+    ASender.Font.Color := TStyleManager.ActiveStyle.GetSystemColor(clWindowText);
 end;
 
 procedure TVirtualTreeMethods.UpdateListItemCount(Sender: TBaseVirtualTree;

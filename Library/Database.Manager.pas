@@ -170,6 +170,7 @@ begin
       TSQLtbl_version.Load(Self);
       //Load Options
       TSQLtbl_options.Load(Self, Config);
+      Config.AfterUpdateConfig;
       //Load list
       TSQLtbl_list.Load(Self, ATree, False);
     except

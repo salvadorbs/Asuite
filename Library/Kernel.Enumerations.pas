@@ -117,6 +117,12 @@ type
       ltPStart1
   );
 
+  TASuiteTheme = (
+      atWindowsSystem,
+      atLight,
+      atDark
+  );
+
 implementation
 
 end.
