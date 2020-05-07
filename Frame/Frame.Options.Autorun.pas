@@ -220,8 +220,8 @@ end;
 
 procedure TfrmAutorunOptionsPage.RemoveItem(const ATree: TBaseVirtualTree);
 begin
-  if (MessageDlg((DKLangConstW('msgConfirm')),mtWarning, [mbYes,mbNo], 0) = mrYes) then
-    if Assigned(ATree.FocusedNode) then
+  if Assigned(ATree.FocusedNode) then
+    if (MessageDlg((DKLangConstW('msgConfirm')),mtWarning, [mbYes,mbNo], 0) = mrYes) then
       ATree.IsVisible[ATree.FocusedNode] := False;
 end;
 
