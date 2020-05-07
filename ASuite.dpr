@@ -75,7 +75,6 @@ uses
   Kernel.CheckUpdates in 'Library\Kernel.CheckUpdates.pas',
   Vcl.Themes,
   Vcl.Styles,
-  Vcl.Styles.Hooks,
   Vcl.Styles.Utils.Menus, //Style Popup and Shell Menus (class #32768)
   Vcl.Styles.Utils.Forms, //Style dialogs box (class #32770)
   Vcl.Styles.Utils.StdCtrls, //Style buttons, static, and so on
@@ -88,6 +87,7 @@ uses
 
 {$R *.res}
 {$R *.dkl_const.res}
+{$SetPEFlags 1} // IMAGE_FILE_RELOCS_STRIPPED
 
 begin
   if SingleInst.CanStartApp then
@@ -98,7 +98,6 @@ begin
 
     Application.Initialize;
     Config    := TConfiguration.Create;
-    TStyleManager.TrySetStyle('Windows10 SlateGray');
   Application.Title := APP_TITLE;
 
     Application.CreateForm(TfrmMain, frmMain);
