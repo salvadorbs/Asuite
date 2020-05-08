@@ -31,9 +31,10 @@ procedure SetFormPosition(Form: TForm; ListFormLeft, ListFormTop: Integer);
 
 { Misc }
 function CheckPropertyName(Edit: TEdit): Boolean;
-function  GetCheckedMenuItem(PopupMenu: TPopupMenu): TMenuItem;
+function ConvertHotkey(AOldValue: TShortcut): Cardinal;
+function GetCheckedMenuItem(PopupMenu: TPopupMenu): TMenuItem;
 function GetASuiteVersion(ASimpleFormat: Boolean): string;
-function  IsFormatInClipBoard(format: Word): Boolean;
+function IsFormatInClipBoard(format: Word): Boolean;
 function IsLightColor(const AColor: TColor): Boolean;
 function RemoveQuotes(const S: string; const QuoteChar: Char): string;
 function RemoveAllQuotes(const S: string): string;
@@ -56,7 +57,7 @@ function  GetHotKeyMod(AShortcut: TShortcut) : Integer;
 implementation
 
 uses
-  Registry, PJVersionInfo, AppConfig.Main, Kernel.Logger;
+  Registry, PJVersionInfo, AppConfig.Main, Kernel.Logger, HotkeyManager;
 
 function IsFormOpen(const FormName : string): Boolean;
 var
@@ -98,6 +99,22 @@ begin
     ShowMessageEx(DKLangConstW('msgErrEmptyName'),true);
     Edit.Color := clYellow;
     Result := False;
+  end;
+end;
+
+function ConvertHotkey(AOldValue: TShortcut): Cardinal;
+var
+  strHotkey: string;
+begin
+  Result := 0;
+
+  //Convert THotkey to Cardinal (HotkeyManager)
+  if AOldValue <> 0 then
+  begin
+    strHotkey := ShortCutToText(AOldValue);
+
+    if strHotkey <> '' then
+      Result := TextToHotKey(strHotkey, False);
   end;
 end;
 

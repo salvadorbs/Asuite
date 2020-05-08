@@ -57,15 +57,15 @@ type
 
     procedure LoadDataFromNode(AData: TvBaseNodeData; AIndex, AParentID: Integer);
 
-    class procedure LoadItemsByParentID(Tree: TBaseVirtualTree; ADatabase: TSQLRestServerDB;
+    class procedure LoadItemsByParentID(Tree: TBaseVirtualTree; ADBManager: TDBManager;
                                         ID: Integer; ParentNode: PVirtualNode;
                                         IsImport: Boolean = False);
-    class procedure SaveItemsByParentID(Tree:TBaseVirtualTree; ADatabase: TSQLRestServerDB;
+    class procedure SaveItemsByParentID(Tree:TBaseVirtualTree; ADBManager: TDBManager;
                                         ANode: PVirtualNode; AParentID: Int64);
 
-    class procedure UpdateFileRecord(AData: TvBaseNodeData; ADatabase: TSQLRestServerDB;
+    class procedure UpdateFileRecord(AData: TvBaseNodeData; ADBManager: TDBManager;
                                      AIndex, AParentID: Integer);
-    class procedure InsertFileRecord(AData: TvBaseNodeData; ADatabase: TSQLRestServerDB;
+    class procedure InsertFileRecord(AData: TvBaseNodeData; ADBManager: TDBManager;
                                      AIndex, AParentID: Integer);
   public
     class procedure Load(ADBManager: TDBManager; ATree: TBaseVirtualTree; IsImport: Boolean);
@@ -108,7 +108,7 @@ uses
 
 { TSQLtbl_files }
 
-class procedure TSQLtbl_list.InsertFileRecord(AData: TvBaseNodeData; ADatabase: TSQLRestServerDB;
+class procedure TSQLtbl_list.InsertFileRecord(AData: TvBaseNodeData; ADBManager: TDBManager;
                                                AIndex, AParentID: Integer);
 var
   SQLFilesData: TSQLtbl_list;
@@ -118,7 +118,7 @@ begin
     SQLFilesData.LoadDataFromNode(AData, AIndex, AParentID);
   finally
     //Set ID, ParentID and position
-    AData.ID := ADatabase.Add(SQLFilesData,true);
+    AData.ID := ADBManager.Database.Add(SQLFilesData,true);
 
     //If enabled, register item's hotkey with new ID
     if AData is TvCustomRealNodeData then
@@ -129,16 +129,16 @@ begin
   end;
 end;
 
-class procedure TSQLtbl_list.LoadItemsByParentID(Tree: TBaseVirtualTree; ADatabase: TSQLRestServerDB;
+class procedure TSQLtbl_list.LoadItemsByParentID(Tree: TBaseVirtualTree; ADBManager: TDBManager;
   ID: Integer; ParentNode: PVirtualNode; IsImport: Boolean);
 var
-  SQLFilesData : TSQLtbl_list;
+  SQLFilesData : TSQLtbl_list; //TODO: Change name to SQLItemsData
   nType    : TvTreeDataType;
   vData    : TvBaseNodeData;
   Node     : PVirtualNode;
 begin
   //Get files from DBTable and order them by parent, position
-  SQLFilesData := TSQLtbl_list.CreateAndFillPrepare(ADatabase, 'parent=? ORDER BY parent, position',[ID]);
+  SQLFilesData := TSQLtbl_list.CreateAndFillPrepare(ADBManager.Database, 'parent=? ORDER BY parent, position',[ID]);
   try
     //Get files and its properties
     while SQLFilesData.FillOne do
@@ -166,7 +166,10 @@ begin
           Autorun     := TAutorunType(SQLFilesData.autorun);
           SchMode     := TSchedulerMode(SQLFilesData.scheduler_mode);
           SchDateTime := SQLFilesData.scheduler_datetime;
-          Hotkey      := SQLFilesData.hotkey;
+          if (ADBManager.DBVersion.V1 = 2) and (ADBManager.DBVersion.V2 = 0) and (ADBManager.DBVersion.V3 = 0) then
+            Hotkey      := ConvertHotkey(SQLFilesData.hotkey)
+          else
+            Hotkey      := SQLFilesData.hotkey;
           ActiveHotkey := SQLFilesData.activehotkey;
           WindowState := SQLFilesData.window_state;
           ActionOnExe := TActionOnExecute(SQLFilesData.onlaunch);
@@ -187,7 +190,7 @@ begin
           end;
         end;
         if (nType = vtdtCategory) then
-          TSQLtbl_list.LoadItemsByParentID(Tree, ADatabase, vData.ID, Node, IsImport);
+          TSQLtbl_list.LoadItemsByParentID(Tree, ADBManager, vData.ID, Node, IsImport);
       end;
     end;
   finally
@@ -195,7 +198,7 @@ begin
   end;
 end;
 
-class procedure TSQLtbl_list.SaveItemsByParentID(Tree: TBaseVirtualTree; ADatabase: TSQLRestServerDB;
+class procedure TSQLtbl_list.SaveItemsByParentID(Tree: TBaseVirtualTree; ADBManager: TDBManager;
   ANode: PVirtualNode; AParentID: Int64);
 var
   Node  : PVirtualNode;
@@ -208,13 +211,13 @@ begin
     try
       //Insert or update record
       if (vData.ID < 0) then
-        TSQLtbl_list.InsertFileRecord(vData, ADatabase, Node.Index, AParentID)
+        TSQLtbl_list.InsertFileRecord(vData, ADBManager, Node.Index, AParentID)
       else
         if ((vData.Changed) or (vData.Position <> Node.Index) or (vData.ParentID <> AParentID)) then
-          TSQLtbl_list.UpdateFileRecord(vData, ADatabase, Node.Index, AParentID);
+          TSQLtbl_list.UpdateFileRecord(vData, ADBManager, Node.Index, AParentID);
       //If type is category then process sub-nodes
       if (vData.DataType = vtdtCategory) then
-        TSQLtbl_list.SaveItemsByParentID(Tree, ADatabase, Node.FirstChild, vData.ID);
+        TSQLtbl_list.SaveItemsByParentID(Tree, ADBManager, Node.FirstChild, vData.ID);
     except
       on E : Exception do
         ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName, E.Message], True);
@@ -230,7 +233,7 @@ begin
   else
     TASuiteLogger.Info('Load ASuite List from Database in VirtualTree', []);
 
-  TSQLtbl_list.LoadItemsByParentID(ATree, ADBManager.Database, 0, nil, IsImport);
+  TSQLtbl_list.LoadItemsByParentID(ATree, ADBManager, 0, nil, IsImport);
 end;
 
 procedure TSQLtbl_list.LoadDataFromNode(AData: TvBaseNodeData; AIndex, AParentID: Integer);
@@ -287,22 +290,22 @@ end;
 class procedure TSQLtbl_list.Save(ADBManager: TDBManager; ATree: TBaseVirtualTree);
 begin
   TASuiteLogger.Info('Saving ASuite List', []);
-  TSQLtbl_list.SaveItemsByParentID(ATree, ADBManager.Database, ATree.GetFirst, 0);
+  TSQLtbl_list.SaveItemsByParentID(ATree, ADBManager, ATree.GetFirst, 0);
 end;
 
-class procedure TSQLtbl_list.UpdateFileRecord(AData: TvBaseNodeData; ADatabase: TSQLRestServerDB;
+class procedure TSQLtbl_list.UpdateFileRecord(AData: TvBaseNodeData; ADBManager: TDBManager;
                                                AIndex, AParentID: Integer);
 var
   SQLFilesData : TSQLtbl_list;
 begin
   //Select only file record by ID
-  SQLFilesData := TSQLtbl_list.CreateAndFillPrepare(ADatabase,'id=?',[AData.ID]);
+  SQLFilesData := TSQLtbl_list.CreateAndFillPrepare(ADBManager.Database,'id=?',[AData.ID]);
   try
     if SQLFilesData.FillOne then
       SQLFilesData.LoadDataFromNode(AData, AIndex, AParentID);
   finally
     //Update data
-    ADatabase.Update(SQLFilesData);
+    ADBManager.Database.Update(SQLFilesData);
     SQLFilesData.Free;
   end;
 end;

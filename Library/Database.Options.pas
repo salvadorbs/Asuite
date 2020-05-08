@@ -181,7 +181,7 @@ type
     property hotkey: Boolean read FHotKey write FHotKey;
     property windowhotkey: Word read FWindowHotKey write FWindowHotKey;
     property menuhotkey: Word read FMenuHotKey write FMenuHotKey;
-    property ClassicMenuHotKey: Word read FClassicMenuHotKey write FClassicMenuHotKey;
+    property classicmenuhotkey: Word read FClassicMenuHotKey write FClassicMenuHotKey;
     //Scan Folder
     property scanfolderflatstructure: boolean read Fscanfolderflatstructure write Fscanfolderflatstructure;
     property scanfolderautoextractname: boolean read Fscanfolderautoextractname write Fscanfolderautoextractname;
@@ -292,9 +292,19 @@ begin
  			AConfig.AutoExpansionFolder := SQLOptionsData.autoexpansionfolder;
       //Hot Keys
       AConfig.HotKey             := SQLOptionsData.HotKey;
-      AConfig.WindowHotKey       := SQLOptionsData.WindowHotKey;
-      AConfig.GraphicMenuHotKey  := SQLOptionsData.MenuHotKey;
-      AConfig.ClassicMenuHotKey  := SQLOptionsData.ClassicMenuHotKey;
+      if (ADBManager.DBVersion.V1 = 2) and (ADBManager.DBVersion.V2 = 0) and (ADBManager.DBVersion.V3 = 0) then
+      begin
+        AConfig.WindowHotKey       := ConvertHotkey(SQLOptionsData.WindowHotKey);
+        AConfig.GraphicMenuHotKey  := ConvertHotkey(SQLOptionsData.MenuHotKey);
+        AConfig.ClassicMenuHotKey  := ConvertHotkey(SQLOptionsData.ClassicMenuHotKey);
+
+        AConfig.Changed := True;
+      end
+      else begin
+        AConfig.WindowHotKey       := SQLOptionsData.WindowHotKey;
+        AConfig.GraphicMenuHotKey  := SQLOptionsData.MenuHotKey;
+        AConfig.ClassicMenuHotKey  := SQLOptionsData.ClassicMenuHotKey;
+      end;
       //Scan Folder
       AConfig.ScanFolderFlatStructure     := SQLOptionsData.scanfolderflatstructure;
       AConfig.ScanFolderAutoExtractName   := SQLOptionsData.scanfolderautoextractname;
