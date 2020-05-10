@@ -213,7 +213,7 @@
                 <Platform value="Win64">True</Platform>
             </Platforms>
             <Deployment Version="3">
-                <DeployFile LocalName="ASuite.inc" Configuration="Debug" Class="ProjectFile"/>
+                <DeployFile LocalName="bin\ASuite.exe" Configuration="Debug" Class="ProjectOutput"/>
                 <DeployFile LocalName="ASuite.inc" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win64">
                         <RemoteDir>.\</RemoteDir>
@@ -226,7 +226,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="bin\ASuite.exe" Configuration="Debug" Class="ProjectOutput"/>
+                <DeployFile LocalName="ASuite.inc" Configuration="Debug" Class="ProjectFile"/>
                 <DeployClass Name="AdditionalDebugSymbols">
                     <Platform Name="OSX32">
                         <Operation>1</Operation>
@@ -1113,7 +1113,7 @@
         <DCCReference Include="Utilities\Utility.Misc.pas"/>
         <DCCReference Include="Library\Kernel.ASuiteInstance.pas"/>
         <DCCReference Include="Forms\Forms.ShortcutGrabber.pas">
-            <Form>/SQLite3 static library</Form>
+            <Form>frmShortcutGrabber</Form>
         </DCCReference>
         <DCCReference Include="Library\VirtualTree.Events.pas"/>
         <DCCReference Include="Forms\Forms.Dialog.BaseEntity.pas">

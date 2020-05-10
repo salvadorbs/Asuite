@@ -22,95 +22,107 @@ unit Forms.ShortcutGrabber;
 interface
 
 uses
-  Classes, Controls, StdCtrls, SysUtils, Forms, Menus, Windows;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, HotKeyManager, Menus,
+  Vcl.ComCtrls, cySkinButton, Vcl.Imaging.pngimage, Vcl.ExtCtrls;
 
 type
-  TShorcutGrabber = class
+  TfrmShortcutGrabber = class(TForm)
+    HotKey1: THotKey;
+    HotKeyManager1: THotKeyManager;
+    btnAlt: TcySkinButton;
+    btnWinKey: TcySkinButton;
+    btnShift: TcySkinButton;
+    btnCtrl: TcySkinButton;
+    Label1: TLabel;
+    pnlDialogPage: TPanel;
+    btnOk: TButton;
+    btnCancel: TButton;
+    procedure Button1Click(Sender: TObject);
+    function CheckModButtons(): Boolean;
   private
-    FGrabForm: TForm;
+    { Private declarations }
     FHotkey: TShortCut;
-    procedure OnGrabFormKeyDown(Sender: TObject; var AKey: Word; AShift: TShiftState);
   public
-    constructor Create(AOwner: TComponent);
-    destructor Destroy; override;
-
+    { Public declarations }
     property Hotkey: TShortCut read FHotkey;
 
     class function Execute(AOwner: TComponent): TShortcut;
   end;
+
+var
+  frmShortcutGrabber: TfrmShortcutGrabber;
 
 implementation
 
 uses
   Kernel.Logger;
 
-{ TShorcutGrabber }
+{$R *.dfm}
 
-constructor TShorcutGrabber.Create(AOwner: TComponent);
-begin
+{ TfrmShortcutGrabber }
 
-  FGrabForm := TForm.Create(AOwner);
-  FGrabForm.BorderStyle := bsToolWindow;
-  FGrabForm.KeyPreview  := true;
-  FGrabForm.Position    := poScreenCenter;
-  FGrabForm.OnKeyDown   := OnGrabFormKeyDown;
-  FGrabForm.Caption     := 'Press a hotkey...';
-  with TLabel.Create(AOwner) do begin
-    Caption   := 'Press a combination of keys...';
-    Align     := alClient;
-    Alignment := taCenter;
-    Layout    := tlCenter;
-    Parent    := FGrabForm;
-  end;
-  FGrabForm.Width    := 200;
-  FGrabForm.Height   := 100;
-  FGrabForm.AutoSize := true;
-  FGrabForm.ShowModal;
-  //Return focus to AOwner
-  if AOwner is TWinControl then
-    TWinControl(AOwner).SetFocus;
-end;
-
-destructor TShorcutGrabber.Destroy;
-begin
-  FreeAndNil(FGrabForm);
-  inherited;
-end;
-
-class function TShorcutGrabber.Execute(AOwner: TComponent): TShortcut;
+procedure TfrmShortcutGrabber.Button1Click(Sender: TObject);
 var
-  Grabber: TShorcutGrabber;
+  Modifiers: Word;
+  Key: Word;
+  nomod: TShiftState;
+  HotKeyVar: Cardinal;
+begin
+  if HotKey1.HotKey <> 0 then
+  begin
+    Modifiers := 0;
+
+    if CheckModButtons then
+    begin
+      if btnCtrl.Down then
+        Modifiers := Modifiers or MOD_CONTROL;
+
+      if btnShift.Down then
+        Modifiers := Modifiers or MOD_SHIFT;
+
+      if btnAlt.Down then
+        Modifiers := Modifiers or MOD_ALT;
+
+      if btnWinKey.Down then
+        Modifiers := Modifiers or MOD_WIN;
+
+      ShortCutToKey(HotKey1.HotKey, Key, nomod);
+
+      HotKeyVar := HotKeyManager.GetHotKey(Modifiers, Key);
+
+      if HotKeyManager.HotKeyAvailable(HotKeyVar) then
+        ShowMessage(HotKeyToText(HotKeyVar, false))
+      else
+        ShowMessage('Hotkey not available!');
+    end
+    else
+      ShowMessage('Forgot modifiers?');
+  end
+  else
+    ShowMessage('Forgot keys?');
+end;
+
+function TfrmShortcutGrabber.CheckModButtons: Boolean;
+begin
+  Result := (btnCtrl.Down) or (btnShift.Down) or (btnAlt.Down) or (btnWinKey.down);
+end;
+
+class function TfrmShortcutGrabber.Execute(AOwner: TComponent): TShortcut;
+var
+  frm: TfrmShortcutGrabber;
 begin
   TASuiteLogger.Info('Opening form Shortcut Grabber', []);
 
-  Grabber := TShorcutGrabber.Create(AOwner);
+  frm := TfrmShortcutGrabber.Create(AOwner);
   try
-    Result := Grabber.FHotkey;
+    frm.ShowModal;
+
+    Result := frm.FHotkey;
 
     TASuiteLogger.Info('User selected hotkey "%s"', [ShortCutToText(Result)]);
   finally
-    Grabber.Free;
-  end;
-end;
-
-procedure TShorcutGrabber.OnGrabFormKeyDown(Sender: TObject; var AKey: Word;
-  AShift: TShiftState);
-begin
-  if not (AKey in [VK_CONTROL, VK_LCONTROL, VK_RCONTROL,
-             VK_SHIFT, VK_LSHIFT, VK_RSHIFT,
-             VK_MENU, VK_LMENU, VK_RMENU,
-             VK_LWIN, VK_RWIN,
-             0, $FF])
-  then begin
-    if (AKey=VK_ESCAPE) and (AShift=[]) then
-      FHotkey := 0
-    else begin
-      if AShift <> [] then
-        FHotkey := ShortCut(AKey, AShift)
-      else
-        FHotkey := ShortCut(AKey, [ssAlt]);
-    end;
-    FGrabForm.ModalResult := mrOk;
+    frm.Free;
   end;
 end;
 
