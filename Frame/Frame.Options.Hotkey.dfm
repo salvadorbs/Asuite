@@ -18,7 +18,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     TabOrder = 0
     object lblHotkeyWindow: TLabel
       Left = 8
-      Top = 42
+      Top = 39
       Width = 181
       Height = 13
       Caption = 'Show window when hotkey is pressed'
@@ -44,8 +44,8 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     end
     object lblHotkeyCM: TLabel
       Left = 8
-      Top = 92
-      Width = 209
+      Top = 94
+      Width = 207
       Height = 13
       Caption = 'Show classic menu when hotkey is pressed'
       Font.Charset = DEFAULT_CHARSET
@@ -70,35 +70,45 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       TabOrder = 0
       OnClick = cbHotKeyClick
     end
-    object hkHotkeyWindow: THotKey
+    object edtHotkeyMF: TButtonedEdit
       Left = 248
-      Top = 39
+      Top = 37
       Width = 179
-      Height = 19
-      HotKey = 0
-      Modifiers = []
+      Height = 21
+      CharCase = ecUpperCase
+      LeftButton.Enabled = False
+      ReadOnly = True
+      RightButton.Visible = True
       TabOrder = 1
-      OnMouseUp = HotkeyMouseUp
+      OnChange = edtHotkeyChange
+      OnClick = edtHotkeyClick
+      OnRightButtonClick = edtHotkeyButtonClick
     end
-    object hkHotkeyGM: THotKey
+    object edtHotkeyGM: TButtonedEdit
       Left = 248
       Top = 64
       Width = 179
-      Height = 19
-      HotKey = 0
-      Modifiers = []
+      Height = 21
+      CharCase = ecUpperCase
+      LeftButton.Enabled = False
+      ReadOnly = True
+      RightButton.Visible = True
       TabOrder = 2
-      OnMouseUp = HotkeyMouseUp
+      OnChange = edtHotkeyChange
+      OnRightButtonClick = edtHotkeyButtonClick
     end
-    object hkHotkeyCM: THotKey
+    object edtHotkeyCM: TButtonedEdit
       Left = 248
-      Top = 89
+      Top = 91
       Width = 179
-      Height = 19
-      HotKey = 0
-      Modifiers = []
+      Height = 21
+      CharCase = ecUpperCase
+      LeftButton.Enabled = False
+      ReadOnly = True
+      RightButton.Visible = True
       TabOrder = 3
-      OnMouseUp = HotkeyMouseUp
+      OnChange = edtHotkeyChange
+      OnRightButtonClick = edtHotkeyButtonClick
     end
   end
   object grpOrderSoftware: TGroupBox
@@ -119,14 +129,10 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     TabOrder = 1
     object vstItems: TVirtualStringTree
       AlignWithMargins = True
-      Left = 10
-      Top = 20
-      Width = 417
-      Height = 244
-      Margins.Left = 8
-      Margins.Top = 5
-      Margins.Right = 10
-      Margins.Bottom = 7
+      Left = 5
+      Top = 18
+      Width = 429
+      Height = 250
       Align = alClient
       DefaultNodeHeight = 32
       DragOperations = []
@@ -143,6 +149,10 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
       TreeOptions.PaintOptions = [toPopupMode, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
       TreeOptions.SelectionOptions = [toFullRowSelect, toRightClickSelect]
+      ExplicitLeft = 8
+      ExplicitTop = 22
+      ExplicitWidth = 417
+      ExplicitHeight = 244
       Columns = <
         item
           MinWidth = 50
@@ -180,15 +190,15 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       486F746B6579010100000001000000070043617074696F6E000F006C626C486F
       746B657957696E646F77010100000002000000070043617074696F6E000B006C
       626C486F746B6579474D010100000003000000070043617074696F6E00080063
-      62486F744B6579010100000004000000070043617074696F6E000E00686B486F
-      746B657957696E646F7700000A00686B486F746B6579474D000010006772704F
+      62486F744B6579010100000004000000070043617074696F6E0010006772704F
       72646572536F667477617265010100000005000000070043617074696F6E0008
       007673744974656D7300000800706D486F746B657900000D006D6E6945646974
       486F746B6579010100000006000000070043617074696F6E000F006D6E695265
       6D6F7665486F746B6579010100000007000000070043617074696F6E0005006D
       6E694E3100000D006D6E6950726F706572746965730101000000080000000700
       43617074696F6E000B006C626C486F746B6579434D0101000000090000000700
-      43617074696F6E000A00686B486F746B6579434D0000}
+      43617074696F6E000B00656474486F746B65794D4600000B00656474486F746B
+      6579474D00000B00656474486F746B6579434D0000}
   end
   object pmHotkey: TPopupMenu
     Left = 264

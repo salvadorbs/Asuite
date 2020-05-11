@@ -24,7 +24,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DKLang, Frame.BaseEntity, VirtualTrees,
-  Vcl.ComCtrls, Vcl.StdCtrls, Lists.Base, Vcl.Menus;
+  Vcl.ComCtrls, Vcl.StdCtrls, Lists.Base, Vcl.Menus, Vcl.ExtCtrls;
 
 type
   TfrmHotkeyOptionsPage = class(TfrmBaseEntityPage)
@@ -33,8 +33,6 @@ type
     lblHotkeyWindow: TLabel;
     lblHotkeyGM: TLabel;
     cbHotKey: TCheckBox;
-    hkHotkeyWindow: THotKey;
-    hkHotkeyGM: THotKey;
     grpOrderSoftware: TGroupBox;
     vstItems: TVirtualStringTree;
     pmHotkey: TPopupMenu;
@@ -43,13 +41,17 @@ type
     mniN1: TMenuItem;
     mniProperties: TMenuItem;
     lblHotkeyCM: TLabel;
-    hkHotkeyCM: THotKey;
+    edtHotkeyMF: TButtonedEdit;
+    edtHotkeyGM: TButtonedEdit;
+    edtHotkeyCM: TButtonedEdit;
     procedure cbHotKeyClick(Sender: TObject);
-    procedure HotkeyMouseUp(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
     procedure mniEditHotkeyClick(Sender: TObject);
     procedure mniRemoveHotkeyClick(Sender: TObject);
     procedure mniPropertiesClick(Sender: TObject);
+    procedure edtHotkeyClick(Sender: TObject);
+    procedure edtHotkeyGMClick(Sender: TObject);
+    procedure edtHotkeyChange(Sender: TObject);
+    procedure edtHotkeyButtonClick(Sender: TObject);
   private
     { Private declarations }
     procedure LoadGlyphs;
@@ -70,7 +72,7 @@ implementation
 
 uses
   AppConfig.Main, VirtualTree.Events, VirtualTree.Methods, NodeDataTypes.Custom,
-  Forms.ShortcutGrabber;
+  Forms.ShortcutGrabber, HotkeyManager, DataModules.Icons;
 
 {$R *.dfm}
 
@@ -78,8 +80,32 @@ uses
 
 procedure TfrmHotkeyOptionsPage.cbHotKeyClick(Sender: TObject);
 begin
-  hkHotkeyWindow.Enabled := cbHotKey.Checked;
-  hkHotkeyGM.Enabled := cbHotKey.Checked;
+  edtHotkeyMF.Enabled := cbHotKey.Checked;
+  edtHotkeyGM.Enabled := cbHotKey.Checked;
+  edtHotkeyCM.Enabled := cbHotKey.Checked;
+end;
+
+procedure TfrmHotkeyOptionsPage.edtHotkeyClick(Sender: TObject);
+begin
+  if Sender is TButtonedEdit then
+    TButtonedEdit(Sender).Text := TfrmShortcutGrabber.Execute(Self);
+end;
+
+procedure TfrmHotkeyOptionsPage.edtHotkeyChange(Sender: TObject);
+begin
+  if edtHotkeyMF.Text <> '' then
+    edtHotkeyMF.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel')
+  else
+    edtHotkeyMF.RightButton.ImageIndex := -1;
+end;
+
+procedure TfrmHotkeyOptionsPage.edtHotkeyButtonClick(Sender: TObject);
+begin
+  if Sender is TButtonedEdit then
+  begin
+    TButtonedEdit(Sender).RightButton.ImageIndex := -1;
+    TButtonedEdit(Sender) := '';
+  end;
 end;
 
 function TfrmHotkeyOptionsPage.GetImageIndex: Integer;
@@ -92,28 +118,30 @@ begin
   Result := DKLangConstW('msgHotkey');
 end;
 
-procedure TfrmHotkeyOptionsPage.HotkeyMouseUp(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-begin
-  if Sender is THotKey then
-    THotKey(Sender).HotKey := TShorcutGrabber.Execute(Self);
-end;
-
 function TfrmHotkeyOptionsPage.InternalLoadData: Boolean;
 begin
   Result := inherited;
   TVirtualTreeEvents.Create.SetupVSTHotkey(vstItems);
+  edtHotkeyMF.Images := dmImages.ilSmallIcons;
+
   //Hot Keys
   cbHotKey.Checked := Config.HotKey;
-  hkHotkeyWindow.HotKey  := Config.WindowHotKey;
-  hkHotkeyGM.HotKey := Config.GraphicMenuHotkey;
-  hkHotkeyCM.HotKey := Config.ClassicMenuHotkey;
+  edtHotkeyMF.Text := HotKeyToText(Config.WindowHotKey, False);
+  edtHotkeyGM.Text := HotKeyToText(Config.GraphicMenuHotkey, False);
+  edtHotkeyCM.Text := HotKeyToText(Config.ClassicMenuHotkey, False);
+
   //Populate VST with HotKeyItemList's items
   TVirtualTreeMethods.Create.PopulateVSTItemList(vstItems, Config.ListManager.HotKeyItemList);
   vstItems.Header.AutoFitColumns;
+
   //Enable/disable visual components
   cbHotKeyClick(Self);
   LoadGlyphs;
+
+  //Hide caret in hotkey control
+  HideCaret(edtHotkeyMF.Handle);
+  HideCaret(edtHotkeyGM.Handle);
+  HideCaret(edtHotkeyCM.Handle);
 end;
 
 function TfrmHotkeyOptionsPage.InternalSaveData: Boolean;
@@ -121,9 +149,9 @@ begin
   Result := inherited;
   //Hot Keys
   Config.HotKey       := cbHotKey.Checked;
-  Config.WindowHotKey := hkHotkeyWindow.HotKey;
-  Config.GraphicMenuHotkey   := hkHotkeyGM.HotKey;
-  Config.ClassicMenuHotkey   := hkHotkeyCM.HotKey;
+  Config.WindowHotKey := TextToHotKey(edtHotkeyMF.Text, False);
+  Config.GraphicMenuHotkey := TextToHotKey(edtHotkeyGM.Text, False);
+  Config.ClassicMenuHotkey := TextToHotKey(edtHotkeyCM.Text, False);
   //Save vst items in HotKeyItemList
   SaveInHotkeyItemList(vstItems, Config.ListManager.HotKeyItemList);
 end;
