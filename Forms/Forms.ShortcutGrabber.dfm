@@ -25,8 +25,6 @@ object frmShortcutGrabber: TfrmShortcutGrabber
     Height = 142
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 0
-    ExplicitWidth = 370
-    ExplicitHeight = 132
     object btnAlt: TcySkinButton
       Left = 207
       Top = 16
@@ -1061,7 +1059,7 @@ object frmShortcutGrabber: TfrmShortcutGrabber
       Stretch = True
     end
     object btnWinKey: TcySkinButton
-      Left = 303
+      Left = 305
       Top = 16
       Width = 46
       Height = 48
@@ -1340,11 +1338,11 @@ object frmShortcutGrabber: TfrmShortcutGrabber
       GroupIndex = 4
       Stretch = True
     end
-    object Label1: TLabel
+    object lblInfo: TLabel
       Left = 15
       Top = 80
       Width = 228
-      Height = 18
+      Height = 13
       Caption = 'Select modifiers above, then enter desired key:'
     end
     object HotKey1: THotKey
@@ -1367,9 +1365,7 @@ object frmShortcutGrabber: TfrmShortcutGrabber
     Caption = 'Ok'
     ModalResult = 1
     TabOrder = 1
-    OnClick = Button1Click
-    ExplicitLeft = 222
-    ExplicitTop = 146
+    OnClick = btnOkClick
   end
   object btnCancel: TButton
     Left = 313
@@ -1380,8 +1376,7 @@ object frmShortcutGrabber: TfrmShortcutGrabber
     Caption = 'Cancel'
     ModalResult = 2
     TabOrder = 2
-    ExplicitLeft = 303
-    ExplicitTop = 146
+    OnClick = btnCancelClick
   end
   object HotKeyManager1: THotKeyManager
     Left = 248

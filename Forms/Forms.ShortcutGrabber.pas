@@ -34,20 +34,24 @@ type
     btnWinKey: TcySkinButton;
     btnShift: TcySkinButton;
     btnCtrl: TcySkinButton;
-    Label1: TLabel;
+    lblInfo: TLabel;
     pnlDialogPage: TPanel;
     btnOk: TButton;
     btnCancel: TButton;
-    procedure Button1Click(Sender: TObject);
+    procedure btnOkClick(Sender: TObject);
     function CheckModButtons(): Boolean;
+    procedure btnCancelClick(Sender: TObject);
   private
     { Private declarations }
-    FHotkey: TShortCut;
+    FHotkey: string;
+
+    function GetModifierFromGUI(): Word;
+    function GetKeyFromGUI(): Word;
   public
     { Public declarations }
-    property Hotkey: TShortCut read FHotkey;
+    property Hotkey: string read FHotkey;
 
-    class function Execute(AOwner: TComponent): TShortcut;
+    class function Execute(AOwner: TComponent): string;
   end;
 
 var
@@ -56,51 +60,47 @@ var
 implementation
 
 uses
-  Kernel.Logger;
+  Kernel.Logger, Utility.Misc, DKLang;
 
 {$R *.dfm}
 
 { TfrmShortcutGrabber }
 
-procedure TfrmShortcutGrabber.Button1Click(Sender: TObject);
+procedure TfrmShortcutGrabber.btnCancelClick(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TfrmShortcutGrabber.btnOkClick(Sender: TObject);
 var
-  Modifiers: Word;
-  Key: Word;
-  nomod: TShiftState;
+  Key, Modifiers: Word;
   HotKeyVar: Cardinal;
 begin
-  if HotKey1.HotKey <> 0 then
+  FHotkey := '';
+  Key := GetKeyFromGUI();
+  Modifiers := GetModifierFromGUI();
+
+  if Key <> 0 then
   begin
-    Modifiers := 0;
-
-    if CheckModButtons then
+    if Modifiers <> 0 then
     begin
-      if btnCtrl.Down then
-        Modifiers := Modifiers or MOD_CONTROL;
-
-      if btnShift.Down then
-        Modifiers := Modifiers or MOD_SHIFT;
-
-      if btnAlt.Down then
-        Modifiers := Modifiers or MOD_ALT;
-
-      if btnWinKey.Down then
-        Modifiers := Modifiers or MOD_WIN;
-
-      ShortCutToKey(HotKey1.HotKey, Key, nomod);
-
+      //Convert Key + Modifier in Cardinal
       HotKeyVar := HotKeyManager.GetHotKey(Modifiers, Key);
 
       if HotKeyManager.HotKeyAvailable(HotKeyVar) then
-        ShowMessage(HotKeyToText(HotKeyVar, false))
+      begin
+        FHotkey := HotKeyToText(HotKeyVar, false);
+
+        Close;
+      end
       else
-        ShowMessage('Hotkey not available!');
+        ShowMessageEx(DKLangConstW('msgHotkeyNotAvailable'), True);
     end
     else
-      ShowMessage('Forgot modifiers?');
+      ShowMessageEx(DKLangConstW('msgHotkeyNoMod'));
   end
   else
-    ShowMessage('Forgot keys?');
+    ShowMessageEx(DKLangConstW('msgHotkeyNoKey'));
 end;
 
 function TfrmShortcutGrabber.CheckModButtons: Boolean;
@@ -108,22 +108,47 @@ begin
   Result := (btnCtrl.Down) or (btnShift.Down) or (btnAlt.Down) or (btnWinKey.down);
 end;
 
-class function TfrmShortcutGrabber.Execute(AOwner: TComponent): TShortcut;
-var
-  frm: TfrmShortcutGrabber;
+class function TfrmShortcutGrabber.Execute(AOwner: TComponent): string;
 begin
   TASuiteLogger.Info('Opening form Shortcut Grabber', []);
 
-  frm := TfrmShortcutGrabber.Create(AOwner);
+  frmShortcutGrabber := TfrmShortcutGrabber.Create(AOwner);
   try
-    frm.ShowModal;
+    frmShortcutGrabber.ShowModal;
 
-    Result := frm.FHotkey;
+    Result := frmShortcutGrabber.FHotkey;
 
     TASuiteLogger.Info('User selected hotkey "%s"', [ShortCutToText(Result)]);
   finally
-    frm.Free;
+    FreeAndNil(frmShortcutGrabber);
   end;
+end;
+
+function TfrmShortcutGrabber.GetKeyFromGUI(): Word;
+var
+  Key: Word;
+  Modifier: TShiftState;
+begin
+  ShortCutToKey(HotKey1.HotKey, Key, Modifier);
+
+  Result := Key;
+end;
+
+function TfrmShortcutGrabber.GetModifierFromGUI(): Word;
+begin
+  Result := 0;
+
+  if btnCtrl.Down then
+    Result := Result or MOD_CONTROL;
+
+  if btnShift.Down then
+    Result := Result or MOD_SHIFT;
+
+  if btnAlt.Down then
+    Result := Result or MOD_ALT;
+
+  if btnWinKey.Down then
+    Result := Result or MOD_WIN;
 end;
 
 end.
