@@ -1347,13 +1347,13 @@ object frmShortcutGrabber: TfrmShortcutGrabber
       Height = 13
       Caption = 'Select modifiers above, then enter desired key:'
     end
-    object HotKey1: THotKey
+    object hkKeys: THotKey
       Left = 122
       Top = 101
       Width = 121
       Height = 19
       HotKey = 0
-      InvalidKeys = [hcNone, hcShift, hcCtrl, hcAlt, hcShiftCtrl, hcShiftAlt, hcCtrlAlt, hcShiftCtrlAlt]
+      InvalidKeys = [hcNone]
       Modifiers = []
       TabOrder = 0
     end

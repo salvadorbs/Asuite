@@ -90,7 +90,7 @@ var
 begin
   if Sender is TButtonedEdit then
   begin
-    strHotkey := TfrmShortcutGrabber.Execute(Self);
+    strHotkey := TfrmShortcutGrabber.Execute(Self, TButtonedEdit(Sender).Text);
     if (strHotkey <> '') then
       TButtonedEdit(Sender).Text := strHotkey;
   end;
@@ -178,7 +178,7 @@ begin
     NodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(vstItems.FocusedNode, vstItems));
     if Assigned(NodeData) then
     begin
-      ShortCut := TfrmShortcutGrabber.Execute(Self);
+      ShortCut := TfrmShortcutGrabber.Execute(Self, TButtonedEdit(Sender).Text);
       if (ShortCut <> '') then
       begin
         NodeData.Hotkey  := TextToHotKey(ShortCut, false);

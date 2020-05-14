@@ -166,7 +166,7 @@ var
 begin
   if Sender is TButtonedEdit then
   begin
-    strHotkey := TfrmShortcutGrabber.Execute(Self);
+    strHotkey := TfrmShortcutGrabber.Execute(Self, TButtonedEdit(Sender).Text);
     if (strHotkey <> '') then
       TButtonedEdit(Sender).Text := strHotkey;
   end;

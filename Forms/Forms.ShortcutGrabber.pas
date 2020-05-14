@@ -28,7 +28,7 @@ uses
 
 type
   TfrmShortcutGrabber = class(TForm)
-    HotKey1: THotKey;
+    hkKeys: THotKey;
     HotKeyManager1: THotKeyManager;
     btnAlt: TcySkinButton;
     btnWinKey: TcySkinButton;
@@ -43,6 +43,7 @@ type
     procedure btnCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure HotKey1Change(Sender: TObject);
   private
     { Private declarations }
     FHotkey: string;
@@ -50,11 +51,17 @@ type
 
     function GetModifierFromGUI(): Word;
     function GetKeyFromGUI(): Word;
+
+    procedure SetGUIKeyFromKey(AKey: Word);
+    procedure SetGUIModifierFromMod(AMod: Word);
+    procedure SetGUIModifierFromShiftState(AMod: TShiftState);
   public
     { Public declarations }
     property Hotkey: string read FHotkey;
 
-    class function Execute(AOwner: TComponent): string;
+    procedure SetGuiFromHotkey(AHotkey: string);
+
+    class function Execute(AOwner: TComponent; AHotkey: string): string;
   end;
 
 var
@@ -107,6 +114,9 @@ begin
   end
   else
     ShowMessageEx(DKLangConstW('msgHotkeyNoKey'));
+
+  if FHotkey = '' then
+    hkKeys.SetFocus;
 end;
 
 function TfrmShortcutGrabber.CheckModButtons: Boolean;
@@ -114,12 +124,14 @@ begin
   Result := (btnCtrl.Down) or (btnShift.Down) or (btnAlt.Down) or (btnWinKey.down);
 end;
 
-class function TfrmShortcutGrabber.Execute(AOwner: TComponent): string;
+class function TfrmShortcutGrabber.Execute(AOwner: TComponent; AHotkey: string): string;
 begin
   TASuiteLogger.Info('Opening form Shortcut Grabber', []);
 
   frmShortcutGrabber := TfrmShortcutGrabber.Create(AOwner);
   try
+    frmShortcutGrabber.SetGuiFromHotkey(AHotkey);
+
     if frmShortcutGrabber.ShowModal = mrOk then
       Result := frmShortcutGrabber.FHotkey;
 
@@ -146,7 +158,7 @@ var
   Key: Word;
   Modifier: TShiftState;
 begin
-  ShortCutToKey(HotKey1.HotKey, Key, Modifier);
+  ShortCutToKey(hkKeys.HotKey, Key, Modifier);
 
   Result := Key;
 end;
@@ -166,6 +178,70 @@ begin
 
   if btnWinKey.Down then
     Result := Result or MOD_WIN;
+end;
+
+procedure TfrmShortcutGrabber.HotKey1Change(Sender: TObject);
+var
+  Key: Word;
+  Modi: TShiftState;
+begin
+  //Separate key and mod from THotkey and set GUI properly
+  ShortCutToKey(hkKeys.HotKey, key, Modi);
+  SetGUIKeyFromKey(key);
+  SetGUIModifierFromShiftState(Modi);
+
+  //Change hotkey, reinsert only key
+  hkKeys.HotKey := ShortCut(key, []);
+end;
+
+procedure TfrmShortcutGrabber.SetGuiFromHotkey(AHotkey: string);
+var
+  Hotkey: Cardinal;
+  Modi, Key: Word;
+begin
+  //I need separate key from modifiers
+  Hotkey := TextToHotKey(AHotkey, false);
+  SeparateHotKey(Hotkey, Modi, Key);
+
+  //Set gui
+  SetGUIKeyFromKey(Key);
+  SetGUIModifierFromMod(Modi);
+end;
+
+procedure TfrmShortcutGrabber.SetGUIKeyFromKey(AKey: Word);
+begin
+  hkKeys.HotKey := ShortCut(AKey, []);
+end;
+
+procedure TfrmShortcutGrabber.SetGUIModifierFromMod(AMod: Word);
+begin
+  if (AMod and MOD_ALT) <> 0 then
+    btnAlt.Down := True;
+
+  if (AMod and MOD_CONTROL) <> 0 then
+    btnCtrl.Down := True;
+
+  if (AMod and MOD_SHIFT) <> 0 then
+    btnShift.Down := True;
+
+  if (AMod and MOD_WIN) <> 0 then
+    btnWinKey.Down := True;
+end;
+
+procedure TfrmShortcutGrabber.SetGUIModifierFromShiftState(AMod: TShiftState);
+begin
+  btnShift.Down := false;
+  btnAlt.Down   := false;
+  btnCtrl.Down  := false;
+
+  if (ssShift in AMod) then
+    btnShift.Down := True;
+
+  if (ssAlt in AMod) then
+    btnAlt.Down := True;
+
+  if (ssCtrl in AMod) then
+    btnCtrl.Down := True;
 end;
 
 end.
