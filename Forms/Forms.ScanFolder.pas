@@ -110,7 +110,7 @@ uses
 
 procedure TfrmScanFolder.btnCancelClick(Sender: TObject);
 begin
-  if Not(vfsScan.Finished) then
+  if (vfsScan.IsRunning) then
   begin
     if MessageDlg((DKLangConstW('msgCancelScanFolder')), mtWarning, [mbYes,mbNo], 0) = mrYes then
     begin
