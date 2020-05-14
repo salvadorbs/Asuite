@@ -139,7 +139,7 @@ begin
     CurrentNodeData.SchDateTime  := Int(dtpSchDate.Date) + Frac(dtpSchTime.Time);
     CurrentNodeData.SchDateTime  := RecodeSecond(CurrentNodeData.SchDateTime, 0);
     //Hotkey
-    CurrentNodeData.Hotkey       := TextToHotKey(hkHotkey.HotKey, False);
+    CurrentNodeData.Hotkey       := TextToHotKey(edtHotkey.Text, False);
     CurrentNodeData.ActiveHotkey := cbHotKey.Checked;
     //Specific file settings
     CurrentNodeData.HideFromMenu := cbHideSoftware.Checked;
@@ -161,9 +161,15 @@ begin
 end;
 
 procedure TfrmAdvancedPropertyPage.edtHotkeyClick(Sender: TObject);
+var
+  strHotkey: string;
 begin
   if Sender is TButtonedEdit then
-    TButtonedEdit(Sender).Text := TfrmShortcutGrabber.Execute(Self);
+  begin
+    strHotkey := TfrmShortcutGrabber.Execute(Self);
+    if (strHotkey <> '') then
+      TButtonedEdit(Sender).Text := strHotkey;
+  end;
 end;
 
 procedure TfrmAdvancedPropertyPage.edtHotkeyRightButtonClick(Sender: TObject);
@@ -171,7 +177,7 @@ begin
   if Sender is TButtonedEdit then
   begin
     TButtonedEdit(Sender).RightButton.ImageIndex := -1;
-    TButtonedEdit(Sender) := '';
+    TButtonedEdit(Sender).Text := '';
   end;
 end;
 

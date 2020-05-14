@@ -36,7 +36,7 @@ type
     FSchMode     : TSchedulerMode; //0 Disabled, 1 Once, 2 Hourly, 3 Daily, 4 Weekly
     FSchDateTime : TDateTime;
     FActiveHotkey : Boolean;
-    FHotkey      : TShortcut;
+    FHotkey      : Cardinal;
     FLastAccess  : Int64;
 
     procedure SetAutorun(value: TAutorunType);
@@ -70,7 +70,7 @@ type
     property SchMode: TSchedulerMode read FSchMode write SetSchMode;
     property SchDateTime: TDateTime read FSchDateTime write SetSchDateTime;
     property ActiveHotkey: Boolean read FActiveHotkey write SetActiveHotkey;
-    property Hotkey: TShortcut read FHotkey write FHotkey;
+    property Hotkey: Cardinal read FHotkey write FHotkey;
   end;
   PvCustomRealNodeData = ^TvCustomRealNodeData;
 

@@ -41,9 +41,12 @@ type
     procedure btnOkClick(Sender: TObject);
     function CheckModButtons(): Boolean;
     procedure btnCancelClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   private
     { Private declarations }
     FHotkey: string;
+    FCanClose: Boolean;
 
     function GetModifierFromGUI(): Word;
     function GetKeyFromGUI(): Word;
@@ -68,7 +71,7 @@ uses
 
 procedure TfrmShortcutGrabber.btnCancelClick(Sender: TObject);
 begin
-  Close;
+  FCanClose := True;
 end;
 
 procedure TfrmShortcutGrabber.btnOkClick(Sender: TObject);
@@ -76,7 +79,10 @@ var
   Key, Modifiers: Word;
   HotKeyVar: Cardinal;
 begin
+  FCanClose := False;
   FHotkey := '';
+
+  //Get keys and modifier from interface
   Key := GetKeyFromGUI();
   Modifiers := GetModifierFromGUI();
 
@@ -87,12 +93,12 @@ begin
       //Convert Key + Modifier in Cardinal
       HotKeyVar := HotKeyManager.GetHotKey(Modifiers, Key);
 
-      if HotKeyManager.HotKeyAvailable(HotKeyVar) then
-      begin
-        FHotkey := HotKeyToText(HotKeyVar, false);
+      //Is it available?
+      FCanClose := HotKeyManager.HotKeyAvailable(HotKeyVar);
 
-        Close;
-      end
+      //TODO: Controllare che non sia già preso da un altro hotkey in asuite!
+      if FCanClose then
+        FHotkey := HotKeyToText(HotKeyVar, false)
       else
         ShowMessageEx(DKLangConstW('msgHotkeyNotAvailable'), True);
     end
@@ -114,14 +120,25 @@ begin
 
   frmShortcutGrabber := TfrmShortcutGrabber.Create(AOwner);
   try
-    frmShortcutGrabber.ShowModal;
+    if frmShortcutGrabber.ShowModal = mrOk then
+      Result := frmShortcutGrabber.FHotkey;
 
-    Result := frmShortcutGrabber.FHotkey;
-
-    TASuiteLogger.Info('User selected hotkey "%s"', [ShortCutToText(Result)]);
+    TASuiteLogger.Info('User selected hotkey "%s"', [Result]);
   finally
     FreeAndNil(frmShortcutGrabber);
   end;
+end;
+
+procedure TfrmShortcutGrabber.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+begin
+  CanClose := FCanClose;
+end;
+
+procedure TfrmShortcutGrabber.FormCreate(Sender: TObject);
+begin
+  FCanClose := False;
+  FHotkey := '';
 end;
 
 function TfrmShortcutGrabber.GetKeyFromGUI(): Word;

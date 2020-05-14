@@ -49,9 +49,8 @@ type
     procedure mniRemoveHotkeyClick(Sender: TObject);
     procedure mniPropertiesClick(Sender: TObject);
     procedure edtHotkeyClick(Sender: TObject);
-    procedure edtHotkeyGMClick(Sender: TObject);
     procedure edtHotkeyChange(Sender: TObject);
-    procedure edtHotkeyButtonClick(Sender: TObject);
+    procedure edtHotkeyClear(Sender: TObject);
   private
     { Private declarations }
     procedure LoadGlyphs;
@@ -86,9 +85,15 @@ begin
 end;
 
 procedure TfrmHotkeyOptionsPage.edtHotkeyClick(Sender: TObject);
+var
+  strHotkey: string;
 begin
   if Sender is TButtonedEdit then
-    TButtonedEdit(Sender).Text := TfrmShortcutGrabber.Execute(Self);
+  begin
+    strHotkey := TfrmShortcutGrabber.Execute(Self);
+    if (strHotkey <> '') then
+      TButtonedEdit(Sender).Text := strHotkey;
+  end;
 end;
 
 procedure TfrmHotkeyOptionsPage.edtHotkeyChange(Sender: TObject);
@@ -99,12 +104,12 @@ begin
     edtHotkeyMF.RightButton.ImageIndex := -1;
 end;
 
-procedure TfrmHotkeyOptionsPage.edtHotkeyButtonClick(Sender: TObject);
+procedure TfrmHotkeyOptionsPage.edtHotkeyClear(Sender: TObject);
 begin
   if Sender is TButtonedEdit then
   begin
     TButtonedEdit(Sender).RightButton.ImageIndex := -1;
-    TButtonedEdit(Sender) := '';
+    TButtonedEdit(Sender).Text := '';
   end;
 end;
 
@@ -165,7 +170,7 @@ end;
 
 procedure TfrmHotkeyOptionsPage.mniEditHotkeyClick(Sender: TObject);
 var
-  ShortCut: TShortCut;
+  ShortCut: string;
   NodeData: TvCustomRealNodeData;
 begin
   if Assigned(vstItems.FocusedNode) then
@@ -173,10 +178,10 @@ begin
     NodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(vstItems.FocusedNode, vstItems));
     if Assigned(NodeData) then
     begin
-      ShortCut := TShorcutGrabber.Execute(Self);
-      if (ShortCut <> 0) then
+      ShortCut := TfrmShortcutGrabber.Execute(Self);
+      if (ShortCut <> '') then
       begin
-        NodeData.Hotkey  := ShortCut;
+        NodeData.Hotkey  := TextToHotKey(ShortCut, false);
         NodeData.ActiveHotkey := True;
         NodeData.Changed := True;
       end;

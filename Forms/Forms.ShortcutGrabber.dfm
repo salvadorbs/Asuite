@@ -13,6 +13,8 @@ object frmShortcutGrabber: TfrmShortcutGrabber
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
   DesignSize = (
     396
     189)
@@ -1363,6 +1365,7 @@ object frmShortcutGrabber: TfrmShortcutGrabber
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'Ok'
+    Default = True
     ModalResult = 1
     TabOrder = 1
     OnClick = btnOkClick

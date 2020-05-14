@@ -45,7 +45,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     object lblHotkeyCM: TLabel
       Left = 8
       Top = 94
-      Width = 207
+      Width = 204
       Height = 13
       Caption = 'Show classic menu when hotkey is pressed'
       Font.Charset = DEFAULT_CHARSET
@@ -82,7 +82,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       TabOrder = 1
       OnChange = edtHotkeyChange
       OnClick = edtHotkeyClick
-      OnRightButtonClick = edtHotkeyButtonClick
+      OnRightButtonClick = edtHotkeyClear
     end
     object edtHotkeyGM: TButtonedEdit
       Left = 248
@@ -95,7 +95,8 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       RightButton.Visible = True
       TabOrder = 2
       OnChange = edtHotkeyChange
-      OnRightButtonClick = edtHotkeyButtonClick
+      OnClick = edtHotkeyClick
+      OnRightButtonClick = edtHotkeyClear
     end
     object edtHotkeyCM: TButtonedEdit
       Left = 248
@@ -108,7 +109,8 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       RightButton.Visible = True
       TabOrder = 3
       OnChange = edtHotkeyChange
-      OnRightButtonClick = edtHotkeyButtonClick
+      OnClick = edtHotkeyClick
+      OnRightButtonClick = edtHotkeyClear
     end
   end
   object grpOrderSoftware: TGroupBox
@@ -149,10 +151,6 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
       TreeOptions.PaintOptions = [toPopupMode, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
       TreeOptions.SelectionOptions = [toFullRowSelect, toRightClickSelect]
-      ExplicitLeft = 8
-      ExplicitTop = 22
-      ExplicitWidth = 417
-      ExplicitHeight = 244
       Columns = <
         item
           MinWidth = 50
