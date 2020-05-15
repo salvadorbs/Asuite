@@ -43,7 +43,7 @@ type
     procedure btnCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-    procedure HotKey1Change(Sender: TObject);
+    procedure hkKeysChange(Sender: TObject);
   private
     { Private declarations }
     FHotkey: string;
@@ -180,7 +180,7 @@ begin
     Result := Result or MOD_WIN;
 end;
 
-procedure TfrmShortcutGrabber.HotKey1Change(Sender: TObject);
+procedure TfrmShortcutGrabber.hkKeysChange(Sender: TObject);
 var
   Key: Word;
   Modi: TShiftState;
@@ -230,18 +230,21 @@ end;
 
 procedure TfrmShortcutGrabber.SetGUIModifierFromShiftState(AMod: TShiftState);
 begin
-  btnShift.Down := false;
-  btnAlt.Down   := false;
-  btnCtrl.Down  := false;
+  if AMod <> [] then
+  begin
+    btnShift.Down := false;
+    btnAlt.Down   := false;
+    btnCtrl.Down  := false;
 
-  if (ssShift in AMod) then
-    btnShift.Down := True;
+    if (ssShift in AMod) then
+      btnShift.Down := True;
 
-  if (ssAlt in AMod) then
-    btnAlt.Down := True;
+    if (ssAlt in AMod) then
+      btnAlt.Down := True;
 
-  if (ssCtrl in AMod) then
-    btnCtrl.Down := True;
+    if (ssCtrl in AMod) then
+      btnCtrl.Down := True;
+  end;
 end;
 
 end.

@@ -97,20 +97,20 @@ begin
 end;
 
 procedure TfrmHotkeyOptionsPage.edtHotkeyChange(Sender: TObject);
+var
+  edtHotkey: TButtonedEdit;
 begin
-  if edtHotkeyMF.Text <> '' then
-    edtHotkeyMF.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel')
-  else
-    edtHotkeyMF.RightButton.ImageIndex := -1;
+  if Sender is TButtonedEdit then
+  begin
+    edtHotkey := TButtonedEdit(Sender);
+    edtHotkey.RightButton.Visible := edtHotkey.Text <> '';
+  end;
 end;
 
 procedure TfrmHotkeyOptionsPage.edtHotkeyClear(Sender: TObject);
 begin
   if Sender is TButtonedEdit then
-  begin
-    TButtonedEdit(Sender).RightButton.ImageIndex := -1;
     TButtonedEdit(Sender).Text := '';
-  end;
 end;
 
 function TfrmHotkeyOptionsPage.GetImageIndex: Integer;
@@ -127,7 +127,6 @@ function TfrmHotkeyOptionsPage.InternalLoadData: Boolean;
 begin
   Result := inherited;
   TVirtualTreeEvents.Create.SetupVSTHotkey(vstItems);
-  edtHotkeyMF.Images := dmImages.ilSmallIcons;
 
   //Hot Keys
   cbHotKey.Checked := Config.HotKey;
@@ -163,9 +162,17 @@ end;
 
 procedure TfrmHotkeyOptionsPage.LoadGlyphs;
 begin
+  edtHotkeyMF.Images := dmImages.ilSmallIcons;
+  edtHotkeyGM.Images := dmImages.ilSmallIcons;
+  edtHotkeyCM.Images := dmImages.ilSmallIcons;
+
   mniRemoveHotkey.ImageIndex := Config.IconsManager.GetIconIndex('keyboard_delete');
   mniEditHotkey.ImageIndex   := Config.IconsManager.GetIconIndex('keyboard_edit');
   mniProperties.ImageIndex   := Config.IconsManager.GetIconIndex('property');
+
+  edtHotkeyMF.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel');
+  edtHotkeyGM.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel');
+  edtHotkeyCM.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel');
 end;
 
 procedure TfrmHotkeyOptionsPage.mniEditHotkeyClick(Sender: TObject);

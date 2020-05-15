@@ -125,6 +125,8 @@ begin
   end;
 
   edtHotkey.Images := dmImages.ilSmallIcons;
+  edtHotkey.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel');
+
   //Hide caret in hotkey control
   HideCaret(edtHotkey.Handle);
 end;
@@ -153,11 +155,14 @@ begin
 end;
 
 procedure TfrmAdvancedPropertyPage.edtHotkeyChange(Sender: TObject);
+var
+  edtHotkey: TButtonedEdit;
 begin
-  if edtHotkey.Text <> '' then
-    edtHotkey.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel')
-  else
-    edtHotkey.RightButton.ImageIndex := -1;
+  if Sender is TButtonedEdit then
+  begin
+    edtHotkey := TButtonedEdit(Sender);
+    edtHotkey.RightButton.Visible := edtHotkey.Text <> '';
+  end;
 end;
 
 procedure TfrmAdvancedPropertyPage.edtHotkeyClick(Sender: TObject);
@@ -175,10 +180,7 @@ end;
 procedure TfrmAdvancedPropertyPage.edtHotkeyRightButtonClick(Sender: TObject);
 begin
   if Sender is TButtonedEdit then
-  begin
-    TButtonedEdit(Sender).RightButton.ImageIndex := -1;
     TButtonedEdit(Sender).Text := '';
-  end;
 end;
 
 end.

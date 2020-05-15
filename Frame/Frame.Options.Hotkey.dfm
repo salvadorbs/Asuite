@@ -78,7 +78,6 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       CharCase = ecUpperCase
       LeftButton.Enabled = False
       ReadOnly = True
-      RightButton.Visible = True
       TabOrder = 1
       OnChange = edtHotkeyChange
       OnClick = edtHotkeyClick
@@ -92,7 +91,6 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       CharCase = ecUpperCase
       LeftButton.Enabled = False
       ReadOnly = True
-      RightButton.Visible = True
       TabOrder = 2
       OnChange = edtHotkeyChange
       OnClick = edtHotkeyClick
@@ -106,7 +104,6 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       CharCase = ecUpperCase
       LeftButton.Enabled = False
       ReadOnly = True
-      RightButton.Visible = True
       TabOrder = 3
       OnChange = edtHotkeyChange
       OnClick = edtHotkeyClick

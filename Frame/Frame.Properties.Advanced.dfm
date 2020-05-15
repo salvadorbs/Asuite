@@ -116,7 +116,6 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       CharCase = ecUpperCase
       LeftButton.Enabled = False
       ReadOnly = True
-      RightButton.Visible = True
       TabOrder = 1
       OnChange = edtHotkeyChange
       OnClick = edtHotkeyClick

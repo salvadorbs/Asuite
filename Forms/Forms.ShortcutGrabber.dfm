@@ -1356,6 +1356,7 @@ object frmShortcutGrabber: TfrmShortcutGrabber
       InvalidKeys = [hcNone]
       Modifiers = []
       TabOrder = 0
+      OnChange = hkKeysChange
     end
   end
   object btnOk: TButton
