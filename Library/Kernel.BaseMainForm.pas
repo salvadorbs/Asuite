@@ -140,7 +140,6 @@ end;
 procedure TBaseMainForm.WMHotKey(var Msg: TWMHotKey);
 var
   NodeData: TvCustomRealNodeData;
-  intHandle: Integer;
 begin
   if Config.HotKey then
   begin

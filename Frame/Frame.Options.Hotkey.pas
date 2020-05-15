@@ -71,7 +71,7 @@ implementation
 
 uses
   AppConfig.Main, VirtualTree.Events, VirtualTree.Methods, NodeDataTypes.Custom,
-  Forms.ShortcutGrabber, HotkeyManager, DataModules.Icons;
+  Forms.ShortcutGrabber, HotkeyManager, DataModules.Icons, System.UITypes;
 
 {$R *.dfm}
 

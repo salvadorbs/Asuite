@@ -215,7 +215,6 @@ end;
 function RegisterHotkeyEx(AId: Integer; AShortcut: Cardinal): Boolean;
 var
   Modifiers, Key: Word;
-  Atom: Word;
 begin
   SeparateHotKey(AShortcut, Modifiers, Key);
   Result := RegisterHotKey(frmMain.Handle, AId, Modifiers, Key);
