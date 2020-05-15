@@ -55,6 +55,8 @@ type
     procedure SetGUIKeyFromKey(AKey: Word);
     procedure SetGUIModifierFromMod(AMod: Word);
     procedure SetGUIModifierFromShiftState(AMod: TShiftState);
+    procedure LoadPNGButtonState(APicture: TPicture; APathFile: string);
+    procedure LoadImages();
   public
     { Public declarations }
     property Hotkey: string read FHotkey;
@@ -70,7 +72,7 @@ var
 implementation
 
 uses
-  Kernel.Logger, Utility.Misc, DKLang;
+  Kernel.Logger, Utility.Misc, DKLang, AppConfig.Main, System.IOUtils, Kernel.Consts;
 
 {$R *.dfm}
 
@@ -151,6 +153,8 @@ procedure TfrmShortcutGrabber.FormCreate(Sender: TObject);
 begin
   FCanClose := False;
   FHotkey := '';
+
+  LoadImages();
 end;
 
 function TfrmShortcutGrabber.GetKeyFromGUI(): Word;
@@ -192,6 +196,46 @@ begin
 
   //Change hotkey, reinsert only key
   hkKeys.HotKey := ShortCut(key, []);
+end;
+
+procedure TfrmShortcutGrabber.LoadImages;
+begin
+  //Ctrl
+  LoadPNGButtonState(btnCtrl.PicNormal, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + CTRL_NORMAL_FILENAME);
+  LoadPNGButtonState(btnCtrl.PicMouseOver, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + CTRL_HOVER_FILENAME);
+  LoadPNGButtonState(btnCtrl.PicDown, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + CTRL_CLICKED_FILENAME);
+
+  //Shift
+  LoadPNGButtonState(btnShift.PicNormal, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + SHIFT_NORMAL_FILENAME);
+  LoadPNGButtonState(btnShift.PicMouseOver, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + SHIFT_HOVER_FILENAME);
+  LoadPNGButtonState(btnShift.PicDown, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + SHIFT_CLICKED_FILENAME);
+
+  //Alt
+  LoadPNGButtonState(btnAlt.PicNormal, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + ALT_NORMAL_FILENAME);
+  LoadPNGButtonState(btnAlt.PicMouseOver, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + ALT_HOVER_FILENAME);
+  LoadPNGButtonState(btnAlt.PicDown, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + ALT_CLICKED_FILENAME);
+
+  //WinKey
+  LoadPNGButtonState(btnWinKey.PicNormal, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + WINKEY_NORMAL_FILENAME);
+  LoadPNGButtonState(btnWinKey.PicMouseOver, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + WINKEY_HOVER_FILENAME);
+  LoadPNGButtonState(btnWinKey.PicDown, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + WINKEY_CLICKED_FILENAME);
+end;
+
+procedure TfrmShortcutGrabber.LoadPNGButtonState(APicture: TPicture; APathFile: string);
+var
+  PNGState: TPngImage;
+begin
+  if FileExists(APathFile) then
+    begin
+      PNGState := TPngImage.Create;
+    try
+      PNGState.LoadFromFile(APathFile);
+
+      APicture.Assign(PNGState);
+    finally
+      PNGState.Free;
+    end;
+  end;
 end;
 
 procedure TfrmShortcutGrabber.SetGuiFromHotkey(AHotkey: string);
