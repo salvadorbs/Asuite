@@ -42,13 +42,13 @@ function ExtractDirectoryName(const Filename: string): string;
 function GetCorrectWorkingDir(Default: string): string;
 function RegisterHotkeyEx(AId: Integer; AShortcut: Cardinal): Boolean;
 function UnRegisterHotkeyEx(AId: Integer): Boolean;
-function IsHotkeyAvailable(AId: Integer; AShortcut: Cardinal): Boolean;
+function IsHotkeyAvailable(AShortcut: Cardinal): Boolean;
 
 implementation
 
 uses
   Utility.Conversions, Forms.Main, AppConfig.Main, Utility.Misc, Kernel.Logger,
-  HotKeyManager;
+  HotKeyManager, VirtualTree.Methods;
 
 function HasDriveLetter(const Path: String): Boolean;
 var P: PChar;
@@ -225,9 +225,19 @@ begin
   Result := UnregisterHotKey(frmMain.Handle, AId);
 end;
 
-function IsHotkeyAvailable(AId: Integer; AShortcut: Cardinal): Boolean;
+function IsHotkeyAvailable(AShortcut: Cardinal): Boolean;
 begin
   Result := HotKeyAvailable(AShortcut);
+
+  //Find another item or config who has this hotkey
+  if Result then
+    Result := not Assigned(Config.MainTree.IterateSubtree(nil, TVirtualTreeMethods.Create.FindNode, @AShortcut, [], True));
+
+  if Result then
+  begin
+    Result := not ((Config.WindowHotKey = AShortcut) or (Config.GraphicMenuHotKey = AShortcut) or
+                   (Config.ClassicMenuHotkey = AShortcut));
+  end;
 end;
 
 end.

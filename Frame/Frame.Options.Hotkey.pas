@@ -92,7 +92,18 @@ begin
   begin
     strHotkey := TfrmShortcutGrabber.Execute(Self, TButtonedEdit(Sender).Text);
     if (strHotkey <> '') then
+    begin
       TButtonedEdit(Sender).Text := strHotkey;
+
+      if (Sender <> edtHotkeyMF) and (edtHotkeyMF.Text = strHotkey) then
+        edtHotkeyMF.Text := '';
+
+      if (Sender <> edtHotkeyGM) and (edtHotkeyGM.Text = strHotkey) then
+        edtHotkeyGM.Text := '';
+
+      if (Sender <> edtHotkeyCM) and (edtHotkeyCM.Text = strHotkey) then
+        edtHotkeyCM.Text := '';
+    end;
   end;
 end;
 

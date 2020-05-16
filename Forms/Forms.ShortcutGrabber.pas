@@ -72,7 +72,8 @@ var
 implementation
 
 uses
-  Kernel.Logger, Utility.Misc, DKLang, AppConfig.Main, System.IOUtils, Kernel.Consts;
+  Kernel.Logger, Utility.Misc, DKLang, AppConfig.Main, System.IOUtils, Kernel.Consts,
+  Utility.System;
 
 {$R *.dfm}
 
@@ -103,7 +104,7 @@ begin
       HotKeyVar := HotKeyManager.GetHotKey(Modifiers, Key);
 
       //Is it available?
-      FCanClose := HotKeyManager.HotKeyAvailable(HotKeyVar);
+      FCanClose := IsHotkeyAvailable(HotKeyVar);
 
       //TODO: Controllare che non sia già preso da un altro hotkey in asuite!
       if FCanClose then
@@ -135,7 +136,7 @@ begin
     frmShortcutGrabber.SetGuiFromHotkey(AHotkey);
 
     if frmShortcutGrabber.ShowModal = mrOk then
-      Result := frmShortcutGrabber.FHotkey;
+      Result := UpperCase(frmShortcutGrabber.FHotkey);
 
     TASuiteLogger.Info('User selected hotkey "%s"', [Result]);
   finally
