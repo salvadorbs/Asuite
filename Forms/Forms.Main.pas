@@ -26,7 +26,7 @@ uses
   ComCtrls, VirtualTrees, ActiveX, Kernel.Consts, DataModules.Icons,
   Kernel.BaseMainForm, StdCtrls, Buttons, System.UITypes,
   Kernel.Enumerations, Vcl.ExtCtrls, XMLDoc, DKLang, Lists.Manager,
-  Database.Manager, System.Actions, Vcl.ActnList;
+  Database.Manager, System.Actions, Vcl.ActnList, Vcl.Themes;
 
 type
 
@@ -426,6 +426,9 @@ begin
     btnedtSearch.Text := '';
   end;
   TVirtualTreeMethods.Create.CheckVisibleNodePathExe(GetActiveTree);
+
+  //Workaround TButtonedEdit search transparency icon
+  frmMain.btnedtSearch.Color := StyleServices.GetSystemColor(clWindow);
 end;
 
 procedure TfrmMain.SetAllIcons;

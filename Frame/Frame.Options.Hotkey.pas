@@ -24,7 +24,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DKLang, Frame.BaseEntity, VirtualTrees,
-  Vcl.ComCtrls, Vcl.StdCtrls, Lists.Base, Vcl.Menus, Vcl.ExtCtrls;
+  Vcl.ComCtrls, Vcl.StdCtrls, Lists.Base, Vcl.Menus, Vcl.ExtCtrls, Vcl.Themes;
 
 type
   TfrmHotkeyOptionsPage = class(TfrmBaseEntityPage)
@@ -157,6 +157,10 @@ begin
   HideCaret(edtHotkeyMF.Handle);
   HideCaret(edtHotkeyGM.Handle);
   HideCaret(edtHotkeyCM.Handle);
+
+  edtHotkeyMF.Color := StyleServices.GetSystemColor(edtHotkeyMF.Color);
+  edtHotkeyGM.Color := StyleServices.GetSystemColor(edtHotkeyGM.Color);
+  edtHotkeyCM.Color := StyleServices.GetSystemColor(edtHotkeyCM.Color);
 end;
 
 function TfrmHotkeyOptionsPage.InternalSaveData: Boolean;
