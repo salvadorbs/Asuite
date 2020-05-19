@@ -104,13 +104,13 @@ implementation
 uses
   AppConfig.Main, Kernel.Enumerations, Kernel.Types, VirtualTree.Methods,
   NodeDataTypes.Base, Utility.Misc, Kernel.Logger, Kernel.Consts, Utility.FileFolder,
-  NodeDataTypes.Files, VirtualFileSearch.Helper;
+  NodeDataTypes.Files, VirtualFileSearch.Helper, System.UITypes;
 
 {$R *.dfm}
 
 procedure TfrmScanFolder.btnCancelClick(Sender: TObject);
 begin
-  if Not(vfsScan.Finished) then
+  if (vfsScan.IsRunning) then
   begin
     if MessageDlg((DKLangConstW('msgCancelScanFolder')), mtWarning, [mbYes,mbNo], 0) = mrYes then
     begin
@@ -367,11 +367,13 @@ var
   I : Integer;
   ListNode: PVirtualNode;
   ListNodeData : TvBaseNodeData;
-  Node, ParentNode: PVirtualNode;
+  Node: PVirtualNode;
   NodeData: TvBaseNodeData;
   sFileExt, sShortName, sPath: String;
   IntNewNodes: Integer;
 begin
+  IntNewNodes := 0;
+
   TASuiteLogger.Info('Done scanning folders! Elapsed Search Time = %s ms. Found %d', [IntToStr(GetTickCount - FStartTime), Results.Count]);
   if Results.Count > 0 then
   begin
@@ -381,8 +383,6 @@ begin
       ListNode := TVirtualTreeMethods.Create.AddChildNodeEx(Config.MainTree, nil, amInsertAfter, vtdtCategory);
       ListNodeData := TVirtualTreeMethods.Create.GetNodeItemData(ListNode, Config.MainTree);
       ListNodeData.Name := Self.Caption;
-
-      IntNewNodes := 0;
       for I := 0 to Results.Count - 1 do
       begin
         sPath := PIDLToPath(Results[I]);
@@ -421,8 +421,11 @@ begin
 
   //Select and expanded ScanFolder node
   Config.MainTree.ClearSelection;
-  Config.MainTree.Selected[ListNode] := True;
-  Config.MainTree.FocusedNode := ListNode;
+  if Assigned(ListNode) then
+  begin
+    Config.MainTree.Selected[ListNode] := True;
+    Config.MainTree.FocusedNode := ListNode;
+  end;
 
   Close;
 end;

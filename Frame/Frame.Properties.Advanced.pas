@@ -24,7 +24,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Frame.Properties.Base, Vcl.ComCtrls,
-  Vcl.StdCtrls, DKLang, DateUtils;
+  Vcl.StdCtrls, DKLang, DateUtils, Vcl.ExtCtrls;
 
 type
   TfrmAdvancedPropertyPage = class(TfrmBasePropertyPage)
@@ -39,13 +39,13 @@ type
     cbDontInsertMRU: TCheckBox;
     cbDontInsertMFU: TCheckBox;
     DKLanguageController1: TDKLanguageController;
-    hkHotkey: THotKey;
     cbHotKey: TCheckBox;
+    edtHotkey: TButtonedEdit;
     procedure cxSchedulerChange(Sender: TObject);
     procedure cbHotKeyClick(Sender: TObject);
-    procedure hkHotkeyChange(Sender: TObject);
-    procedure hkHotkeyMouseUp(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
+    procedure edtHotkeyRightButtonClick(Sender: TObject);
+    procedure edtHotkeyChange(Sender: TObject);
+    procedure edtHotkeyClick(Sender: TObject);
   private
     { Private declarations }
   strict protected
@@ -63,7 +63,8 @@ var
 implementation
 
 uses
-  Kernel.Enumerations, NodeDataTypes.Files, Forms.ShortcutGrabber, AppConfig.Main;
+  Kernel.Enumerations, NodeDataTypes.Files, Forms.ShortcutGrabber, AppConfig.Main,
+  DataModules.Icons, HotKeyManager;
 
 {$R *.dfm}
 
@@ -72,7 +73,7 @@ uses
 
 procedure TfrmAdvancedPropertyPage.cbHotKeyClick(Sender: TObject);
 begin
-  hkHotkey.Enabled := cbHotKey.Checked;
+  edtHotkey.Enabled := cbHotKey.Checked;
 end;
 
 procedure TfrmAdvancedPropertyPage.cxSchedulerChange(Sender: TObject);
@@ -92,18 +93,6 @@ begin
   Result := DKLangConstW('msgAdvanced');
 end;
 
-procedure TfrmAdvancedPropertyPage.hkHotkeyChange(Sender: TObject);
-begin
-  if hkHotkey.Modifiers = [] then
-    hkHotkey.Modifiers := [hkAlt];
-end;
-
-procedure TfrmAdvancedPropertyPage.hkHotkeyMouseUp(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-begin
-  hkHotkey.HotKey := TShorcutGrabber.Execute(Self);
-end;
-
 function TfrmAdvancedPropertyPage.InternalLoadData: Boolean;
 begin
   Result := inherited;
@@ -116,7 +105,7 @@ begin
     cxSchedulerChange(Self);
     //Hotkey
     cbHotKey.Checked       := CurrentNodeData.ActiveHotkey;
-    hkHotkey.HotKey        := CurrentNodeData.Hotkey;
+    edtHotkey.Text         := HotKeyToText(CurrentNodeData.Hotkey, False);
     cbHotKeyClick(Self);
     //Specific file settings
     cbHideSoftware.Checked := CurrentNodeData.HideFromMenu;
@@ -134,6 +123,12 @@ begin
         cbShortcutDesktop.Enabled := False;
       end;
   end;
+
+  edtHotkey.Images := dmImages.ilSmallIcons;
+  edtHotkey.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel');
+
+  //Hide caret in hotkey control
+  HideCaret(edtHotkey.Handle);
 end;
 
 function TfrmAdvancedPropertyPage.InternalSaveData: Boolean;
@@ -146,7 +141,7 @@ begin
     CurrentNodeData.SchDateTime  := Int(dtpSchDate.Date) + Frac(dtpSchTime.Time);
     CurrentNodeData.SchDateTime  := RecodeSecond(CurrentNodeData.SchDateTime, 0);
     //Hotkey
-    CurrentNodeData.Hotkey       := hkHotkey.HotKey;
+    CurrentNodeData.Hotkey       := TextToHotKey(edtHotkey.Text, False);
     CurrentNodeData.ActiveHotkey := cbHotKey.Checked;
     //Specific file settings
     CurrentNodeData.HideFromMenu := cbHideSoftware.Checked;
@@ -157,6 +152,35 @@ begin
       TvFileNodeData(CurrentNodeData).ShortcutDesktop := cbShortcutDesktop.Checked;
     end;
   end;
+end;
+
+procedure TfrmAdvancedPropertyPage.edtHotkeyChange(Sender: TObject);
+var
+  edtHotkey: TButtonedEdit;
+begin
+  if Sender is TButtonedEdit then
+  begin
+    edtHotkey := TButtonedEdit(Sender);
+    edtHotkey.RightButton.Visible := edtHotkey.Text <> '';
+  end;
+end;
+
+procedure TfrmAdvancedPropertyPage.edtHotkeyClick(Sender: TObject);
+var
+  strHotkey: string;
+begin
+  if Sender is TButtonedEdit then
+  begin
+    strHotkey := TfrmShortcutGrabber.Execute(Self, TButtonedEdit(Sender).Text);
+    if (strHotkey <> '') then
+      TButtonedEdit(Sender).Text := strHotkey;
+  end;
+end;
+
+procedure TfrmAdvancedPropertyPage.edtHotkeyRightButtonClick(Sender: TObject);
+begin
+  if Sender is TButtonedEdit then
+    TButtonedEdit(Sender).Text := '';
 end;
 
 end.

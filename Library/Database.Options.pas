@@ -102,7 +102,8 @@ type
     Fscanfolderautoextractname : boolean;
     Fscanfolderfiletypes    : RawUTF8;
     Fscanfolderexcludenames : RawUTF8;
-    FFTVAutoOpCatsDrag: Boolean;
+    FClassicMenuHotKey: Word;
+    FTVDisableConfirmDelete: boolean;
     FAsuiteTheme: TASuiteTheme;
   public
     class procedure Load(ADBManager: TDBManager; AConfig: TConfiguration);
@@ -129,7 +130,8 @@ type
     property tvbackground: Boolean read FTVBackground write FTVBackground;
     property tvbackgroundpath: RawUTF8 read FTVBackgroundPath write FTVBackgroundPath;
     property tvautoopclcats: Boolean read FTVAutoOpClCats write FTVAutoOpClCats;
-    property tvautoopcatsdrag: Boolean read FFTVAutoOpCatsDrag write FFTVAutoOpCatsDrag;
+    property tvautoopcatsdrag: Boolean read FTVAutoOpCatsDrag write FTVAutoOpCatsDrag;
+    property tvdisableconfirmdelete: boolean read FTVDisableConfirmDelete write FTVDisableConfirmDelete;
     property tvfont: RawUTF8 read FTVFont write FTVFont;
     property tvsmalliconsize: Boolean read Ftvsmalliconsize write Ftvsmalliconsize;
     // MRU
@@ -179,6 +181,7 @@ type
     property hotkey: Boolean read FHotKey write FHotKey;
     property windowhotkey: Word read FWindowHotKey write FWindowHotKey;
     property menuhotkey: Word read FMenuHotKey write FMenuHotKey;
+    property classicmenuhotkey: Word read FClassicMenuHotKey write FClassicMenuHotKey;
     //Scan Folder
     property scanfolderflatstructure: boolean read Fscanfolderflatstructure write Fscanfolderflatstructure;
     property scanfolderautoextractname: boolean read Fscanfolderautoextractname write Fscanfolderautoextractname;
@@ -243,6 +246,7 @@ begin
       AConfig.TVSmallIconSize    := SQLOptionsData.tvsmalliconsize;
       AConfig.TVAutoOpClCats     := SQLOptionsData.tvautoopclcats;
       AConfig.TVAutoOpCatsDrag   := SQLOptionsData.tvautoopcatsdrag;
+      AConfig.TVDisableConfirmDelete := SQLOptionsData.tvdisableconfirmdelete;
       //Treeview Font
       StrToFont(UTF8ToString(SQLOptionsData.tvfont), AConfig.TVFont);
       AConfig.MainTree.Font.Assign(AConfig.TVFont);
@@ -288,8 +292,19 @@ begin
  			AConfig.AutoExpansionFolder := SQLOptionsData.autoexpansionfolder;
       //Hot Keys
       AConfig.HotKey             := SQLOptionsData.HotKey;
-      AConfig.WindowHotKey       := SQLOptionsData.WindowHotKey;
-      AConfig.MenuHotKey         := SQLOptionsData.MenuHotKey;
+      if (ADBManager.DBVersion.V1 = 2) and (ADBManager.DBVersion.V2 = 0) and (ADBManager.DBVersion.V3 = 0) then
+      begin
+        AConfig.WindowHotKey       := ConvertHotkey(SQLOptionsData.WindowHotKey);
+        AConfig.GraphicMenuHotKey  := ConvertHotkey(SQLOptionsData.MenuHotKey);
+        AConfig.ClassicMenuHotKey  := ConvertHotkey(SQLOptionsData.ClassicMenuHotKey);
+
+        AConfig.Changed := True;
+      end
+      else begin
+        AConfig.WindowHotKey       := SQLOptionsData.WindowHotKey;
+        AConfig.GraphicMenuHotKey  := SQLOptionsData.MenuHotKey;
+        AConfig.ClassicMenuHotKey  := SQLOptionsData.ClassicMenuHotKey;
+      end;
       //Scan Folder
       AConfig.ScanFolderFlatStructure     := SQLOptionsData.scanfolderflatstructure;
       AConfig.ScanFolderAutoExtractName   := SQLOptionsData.scanfolderautoextractname;
@@ -341,6 +356,7 @@ begin
     SQLOptionsData.tvautoopclcats   := AConfig.TVAutoOpClCats;
     SQLOptionsData.tvautoopcatsdrag := AConfig.TVAutoOpCatsDrag;
     SQLOptionsData.tvfont           := StringToUTF8(FontToStr(AConfig.TVFont));
+    SQLOptionsData.tvdisableconfirmdelete := AConfig.TVDisableConfirmDelete;
     //mru
     SQLOptionsData.mru          := AConfig.MRU;
     SQLOptionsData.submenumru   := AConfig.SubMenuMRU;
@@ -384,7 +400,8 @@ begin
     //Hot Keys
     SQLOptionsData.HotKey       := AConfig.HotKey;
     SQLOptionsData.WindowHotKey := AConfig.WindowHotKey;
-    SQLOptionsData.MenuHotKey   := AConfig.MenuHotKey;
+    SQLOptionsData.MenuHotKey   := AConfig.GraphicMenuHotKey;
+    SQLOptionsData.ClassicMenuHotKey := AConfig.ClassicMenuHotKey;
     //Scan Folder
     SQLOptionsData.scanfolderflatstructure   := AConfig.ScanFolderFlatStructure;
     SQLOptionsData.scanfolderautoextractname := AConfig.ScanFolderAutoExtractName;

@@ -63,19 +63,21 @@ end;
 
 class function TfrmOptions.Execute(AOwner: TComponent;
   APage: TPageFrameClass): Integer;
-var
-  frm: TfrmOptions;
 begin
   TASuiteLogger.Info('Opening form Options', []);
 
   Result := mrCancel;
-  frm := TfrmOptions.Create(AOwner, APage);
+
+  if Assigned(frmOptions) then
+    Exit;
+
+  frmOptions := TfrmOptions.Create(AOwner, APage);
   try
-    Result := frm.ShowModal;
+    Result := frmOptions.ShowModal;
 
     Config.AfterUpdateConfig;
   finally
-    frm.Free;
+    FreeAndNil(frmOptions);
   end;
 end;
 

@@ -1,11 +1,12 @@
 inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
   Height = 405
+  ExplicitHeight = 405
   object gbHotkey: TGroupBox
     AlignWithMargins = True
     Left = 3
     Top = 3
     Width = 439
-    Height = 94
+    Height = 118
     Align = alTop
     Caption = 'Hotkey'
     Font.Charset = DEFAULT_CHARSET
@@ -15,9 +16,9 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 0
-    object Label1: TLabel
+    object lblHotkeyWindow: TLabel
       Left = 8
-      Top = 42
+      Top = 39
       Width = 181
       Height = 13
       Caption = 'Show window when hotkey is pressed'
@@ -28,12 +29,25 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       Font.Style = []
       ParentFont = False
     end
-    object Label2: TLabel
+    object lblHotkeyGM: TLabel
       Left = 8
       Top = 67
       Width = 209
       Height = 13
       Caption = 'Show graphic menu when hotkey is pressed'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+    end
+    object lblHotkeyCM: TLabel
+      Left = 8
+      Top = 94
+      Width = 204
+      Height = 13
+      Caption = 'Show classic menu when hotkey is pressed'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -56,35 +70,52 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       TabOrder = 0
       OnClick = cbHotKeyClick
     end
-    object hkWindow: THotKey
+    object edtHotkeyMF: TButtonedEdit
       Left = 248
-      Top = 39
+      Top = 37
       Width = 179
-      Height = 19
-      HotKey = 0
-      Modifiers = []
+      Height = 21
+      CharCase = ecUpperCase
+      LeftButton.Enabled = False
+      ReadOnly = True
       TabOrder = 1
-      OnChange = hkWindowChange
-      OnMouseUp = hkWindowMouseUp
+      OnChange = edtHotkeyChange
+      OnClick = edtHotkeyClick
+      OnRightButtonClick = edtHotkeyClear
     end
-    object hkGraphicMenu: THotKey
+    object edtHotkeyGM: TButtonedEdit
       Left = 248
       Top = 64
       Width = 179
-      Height = 19
-      HotKey = 0
-      Modifiers = []
+      Height = 21
+      CharCase = ecUpperCase
+      LeftButton.Enabled = False
+      ReadOnly = True
       TabOrder = 2
-      OnChange = hkGraphicMenuChange
-      OnMouseUp = hkGraphicMenuMouseUp
+      OnChange = edtHotkeyChange
+      OnClick = edtHotkeyClick
+      OnRightButtonClick = edtHotkeyClear
+    end
+    object edtHotkeyCM: TButtonedEdit
+      Left = 248
+      Top = 91
+      Width = 179
+      Height = 21
+      CharCase = ecUpperCase
+      LeftButton.Enabled = False
+      ReadOnly = True
+      TabOrder = 3
+      OnChange = edtHotkeyChange
+      OnClick = edtHotkeyClick
+      OnRightButtonClick = edtHotkeyClear
     end
   end
   object grpOrderSoftware: TGroupBox
     AlignWithMargins = True
     Left = 3
-    Top = 103
+    Top = 127
     Width = 439
-    Height = 297
+    Height = 273
     Margins.Bottom = 5
     Align = alClient
     Caption = 'Hotkey list used'
@@ -97,14 +128,10 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     TabOrder = 1
     object vstItems: TVirtualStringTree
       AlignWithMargins = True
-      Left = 10
-      Top = 20
-      Width = 417
-      Height = 268
-      Margins.Left = 8
-      Margins.Top = 5
-      Margins.Right = 10
-      Margins.Bottom = 7
+      Left = 5
+      Top = 18
+      Width = 429
+      Height = 250
       Align = alClient
       DefaultNodeHeight = 32
       DragOperations = []
@@ -114,13 +141,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       Font.Name = 'Tahoma'
       Font.Style = []
       Header.AutoSizeIndex = 0
-      Header.Font.Charset = DEFAULT_CHARSET
-      Header.Font.Color = clWindowText
-      Header.Font.Height = -11
-      Header.Font.Name = 'Tahoma'
-      Header.Font.Style = []
       Header.Options = [hoColumnResize, hoDblClickResize, hoDrag, hoVisible, hoHeaderClickAutoSort]
-      Images = dmImages.ilSmallIcons
       ParentFont = False
       PopupMenu = pmHotkey
       TabOrder = 0
@@ -131,26 +152,26 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
         item
           MinWidth = 50
           Position = 0
-          WideText = 'Name'
+          Text = 'Name'
         end
         item
           MaxWidth = 100
           MinWidth = 36
           Position = 1
+          Text = 'Type'
           Width = 36
-          WideText = 'Type'
         end
         item
           MinWidth = 60
           Position = 2
+          Text = 'Category'
           Width = 100
-          WideText = 'Category'
         end
         item
           MinWidth = 100
           Position = 3
+          Text = 'Hotkey'
           Width = 200
-          WideText = 'Hotkey'
         end>
     end
   end
@@ -160,20 +181,21 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     Left = 8
     Top = 248
     LangData = {
-      140066726D486F746B65794F7074696F6E735061676500010D00000008006762
-      486F746B6579010100000001000000070043617074696F6E0006004C6162656C
-      31010100000002000000070043617074696F6E0006004C6162656C3201010000
-      0003000000070043617074696F6E0008006362486F744B657901010000000400
-      0000070043617074696F6E000800686B57696E646F7700000D00686B47726170
-      6869634D656E75000010006772704F72646572536F6674776172650101000000
-      05000000070043617074696F6E0008007673744974656D7300000800706D486F
-      746B657900000D006D6E6945646974486F746B65790101000000060000000700
-      43617074696F6E000F006D6E6952656D6F7665486F746B657901010000000700
-      0000070043617074696F6E0005006D6E694E3100000D006D6E6950726F706572
-      74696573010100000008000000070043617074696F6E00}
+      140066726D486F746B65794F7074696F6E735061676500010F00000008006762
+      486F746B6579010100000001000000070043617074696F6E000F006C626C486F
+      746B657957696E646F77010100000002000000070043617074696F6E000B006C
+      626C486F746B6579474D010100000003000000070043617074696F6E00080063
+      62486F744B6579010100000004000000070043617074696F6E0010006772704F
+      72646572536F667477617265010100000005000000070043617074696F6E0008
+      007673744974656D7300000800706D486F746B657900000D006D6E6945646974
+      486F746B6579010100000006000000070043617074696F6E000F006D6E695265
+      6D6F7665486F746B6579010100000007000000070043617074696F6E0005006D
+      6E694E3100000D006D6E6950726F706572746965730101000000080000000700
+      43617074696F6E000B006C626C486F746B6579434D0101000000090000000700
+      43617074696F6E000B00656474486F746B65794D4600000B00656474486F746B
+      6579474D00000B00656474486F746B6579434D0000}
   end
   object pmHotkey: TPopupMenu
-    Images = dmImages.ilSmallIcons
     Left = 264
     Top = 200
     object mniEditHotkey: TMenuItem

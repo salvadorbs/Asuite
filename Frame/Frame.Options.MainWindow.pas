@@ -44,6 +44,7 @@ type
     FontDialog1: TFontDialog;
     cbAutoOpDragDrop: TCheckBox;
     chkSearchAsYouType: TCheckBox;
+    cbDisableConfirmDelete: TCheckBox;
     procedure cbCustomTitleClick(Sender: TObject);
     procedure cbBackgroundClick(Sender: TObject);
     procedure btnFontSettingsClick(Sender: TObject);
@@ -126,6 +127,7 @@ begin
   //Treeview
   cbAutoOpClCat.Checked := Config.TVAutoOpClCats;
   cbAutoOpDragDrop.Checked := Config.TVAutoOpCatsDrag;
+  cbDisableConfirmDelete.Checked := Config.TVDisableConfirmDelete;
   cbSmallIcon.Checked   := Config.TVSmallIconSize;
   cbBackground.Checked  := Config.TVBackground;
   edtBackground.Text    := Config.TVBackgroundPath;
@@ -155,6 +157,7 @@ begin
   //Treeview
   Config.TVAutoOpClCats     := cbAutoOpClCat.Checked;
   Config.TVAutoOpCatsDrag   := cbAutoOpDragDrop.Checked;
+  Config.TVDisableConfirmDelete := cbDisableConfirmDelete.Checked;
   Config.TVSmallIconSize    := cbSmallIcon.Checked;
   //Treeview
   Config.TVBackgroundPath   := edtBackground.Text;

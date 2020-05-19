@@ -24,17 +24,15 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DKLang, Frame.BaseEntity, VirtualTrees,
-  Vcl.ComCtrls, Vcl.StdCtrls, Lists.Base, Vcl.Menus;
+  Vcl.ComCtrls, Vcl.StdCtrls, Lists.Base, Vcl.Menus, Vcl.ExtCtrls, Vcl.Themes;
 
 type
   TfrmHotkeyOptionsPage = class(TfrmBaseEntityPage)
     DKLanguageController1: TDKLanguageController;
     gbHotkey: TGroupBox;
-    Label1: TLabel;
-    Label2: TLabel;
+    lblHotkeyWindow: TLabel;
+    lblHotkeyGM: TLabel;
     cbHotKey: TCheckBox;
-    hkWindow: THotKey;
-    hkGraphicMenu: THotKey;
     grpOrderSoftware: TGroupBox;
     vstItems: TVirtualStringTree;
     pmHotkey: TPopupMenu;
@@ -42,16 +40,17 @@ type
     mniRemoveHotkey: TMenuItem;
     mniN1: TMenuItem;
     mniProperties: TMenuItem;
+    lblHotkeyCM: TLabel;
+    edtHotkeyMF: TButtonedEdit;
+    edtHotkeyGM: TButtonedEdit;
+    edtHotkeyCM: TButtonedEdit;
     procedure cbHotKeyClick(Sender: TObject);
-    procedure hkWindowChange(Sender: TObject);
-    procedure hkGraphicMenuChange(Sender: TObject);
-    procedure hkWindowMouseUp(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
-    procedure hkGraphicMenuMouseUp(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
     procedure mniEditHotkeyClick(Sender: TObject);
     procedure mniRemoveHotkeyClick(Sender: TObject);
     procedure mniPropertiesClick(Sender: TObject);
+    procedure edtHotkeyClick(Sender: TObject);
+    procedure edtHotkeyChange(Sender: TObject);
+    procedure edtHotkeyClear(Sender: TObject);
   private
     { Private declarations }
     procedure LoadGlyphs;
@@ -72,7 +71,7 @@ implementation
 
 uses
   AppConfig.Main, VirtualTree.Events, VirtualTree.Methods, NodeDataTypes.Custom,
-  Forms.ShortcutGrabber;
+  Forms.ShortcutGrabber, HotkeyManager, DataModules.Icons, System.UITypes;
 
 {$R *.dfm}
 
@@ -80,8 +79,49 @@ uses
 
 procedure TfrmHotkeyOptionsPage.cbHotKeyClick(Sender: TObject);
 begin
-  hkWindow.Enabled := cbHotKey.Checked;
-  hkGraphicMenu.Enabled := cbHotKey.Checked;
+  edtHotkeyMF.Enabled := cbHotKey.Checked;
+  edtHotkeyGM.Enabled := cbHotKey.Checked;
+  edtHotkeyCM.Enabled := cbHotKey.Checked;
+end;
+
+procedure TfrmHotkeyOptionsPage.edtHotkeyClick(Sender: TObject);
+var
+  strHotkey: string;
+begin
+  if Sender is TButtonedEdit then
+  begin
+    strHotkey := TfrmShortcutGrabber.Execute(Self, TButtonedEdit(Sender).Text);
+    if (strHotkey <> '') then
+    begin
+      TButtonedEdit(Sender).Text := strHotkey;
+
+      if (Sender <> edtHotkeyMF) and (edtHotkeyMF.Text = strHotkey) then
+        edtHotkeyMF.Text := '';
+
+      if (Sender <> edtHotkeyGM) and (edtHotkeyGM.Text = strHotkey) then
+        edtHotkeyGM.Text := '';
+
+      if (Sender <> edtHotkeyCM) and (edtHotkeyCM.Text = strHotkey) then
+        edtHotkeyCM.Text := '';
+    end;
+  end;
+end;
+
+procedure TfrmHotkeyOptionsPage.edtHotkeyChange(Sender: TObject);
+var
+  edtHotkey: TButtonedEdit;
+begin
+  if Sender is TButtonedEdit then
+  begin
+    edtHotkey := TButtonedEdit(Sender);
+    edtHotkey.RightButton.Visible := edtHotkey.Text <> '';
+  end;
+end;
+
+procedure TfrmHotkeyOptionsPage.edtHotkeyClear(Sender: TObject);
+begin
+  if Sender is TButtonedEdit then
+    TButtonedEdit(Sender).Text := '';
 end;
 
 function TfrmHotkeyOptionsPage.GetImageIndex: Integer;
@@ -94,44 +134,33 @@ begin
   Result := DKLangConstW('msgHotkey');
 end;
 
-procedure TfrmHotkeyOptionsPage.hkGraphicMenuChange(Sender: TObject);
-begin
-  if hkGraphicMenu.Modifiers = [] then
-    hkGraphicMenu.Modifiers := [hkAlt];
-end;
-
-procedure TfrmHotkeyOptionsPage.hkGraphicMenuMouseUp(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-begin
-  hkGraphicMenu.HotKey := TShorcutGrabber.Execute(Self);
-end;
-
-procedure TfrmHotkeyOptionsPage.hkWindowChange(Sender: TObject);
-begin
-  if hkWindow.Modifiers = [] then
-    hkWindow.Modifiers := [hkAlt];
-end;
-
-procedure TfrmHotkeyOptionsPage.hkWindowMouseUp(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-begin
-  hkWindow.HotKey := TShorcutGrabber.Execute(Self);
-end;
-
 function TfrmHotkeyOptionsPage.InternalLoadData: Boolean;
 begin
   Result := inherited;
   TVirtualTreeEvents.Create.SetupVSTHotkey(vstItems);
+
   //Hot Keys
   cbHotKey.Checked := Config.HotKey;
-  hkWindow.HotKey  := Config.WindowHotKey;
-  hkGraphicMenu.HotKey := Config.MenuHotkey;
+  edtHotkeyMF.Text := HotKeyToText(Config.WindowHotKey, False);
+  edtHotkeyGM.Text := HotKeyToText(Config.GraphicMenuHotkey, False);
+  edtHotkeyCM.Text := HotKeyToText(Config.ClassicMenuHotkey, False);
+
   //Populate VST with HotKeyItemList's items
   TVirtualTreeMethods.Create.PopulateVSTItemList(vstItems, Config.ListManager.HotKeyItemList);
   vstItems.Header.AutoFitColumns;
+
   //Enable/disable visual components
   cbHotKeyClick(Self);
   LoadGlyphs;
+
+  //Hide caret in hotkey control
+  HideCaret(edtHotkeyMF.Handle);
+  HideCaret(edtHotkeyGM.Handle);
+  HideCaret(edtHotkeyCM.Handle);
+
+  edtHotkeyMF.Color := StyleServices.GetSystemColor(edtHotkeyMF.Color);
+  edtHotkeyGM.Color := StyleServices.GetSystemColor(edtHotkeyGM.Color);
+  edtHotkeyCM.Color := StyleServices.GetSystemColor(edtHotkeyCM.Color);
 end;
 
 function TfrmHotkeyOptionsPage.InternalSaveData: Boolean;
@@ -139,22 +168,31 @@ begin
   Result := inherited;
   //Hot Keys
   Config.HotKey       := cbHotKey.Checked;
-  Config.WindowHotKey := hkWindow.HotKey;
-  Config.MenuHotKey   := hkGraphicMenu.HotKey;
+  Config.WindowHotKey := TextToHotKey(edtHotkeyMF.Text, False);
+  Config.GraphicMenuHotkey := TextToHotKey(edtHotkeyGM.Text, False);
+  Config.ClassicMenuHotkey := TextToHotKey(edtHotkeyCM.Text, False);
   //Save vst items in HotKeyItemList
   SaveInHotkeyItemList(vstItems, Config.ListManager.HotKeyItemList);
 end;
 
 procedure TfrmHotkeyOptionsPage.LoadGlyphs;
 begin
+  edtHotkeyMF.Images := dmImages.ilSmallIcons;
+  edtHotkeyGM.Images := dmImages.ilSmallIcons;
+  edtHotkeyCM.Images := dmImages.ilSmallIcons;
+
   mniRemoveHotkey.ImageIndex := Config.IconsManager.GetIconIndex('keyboard_delete');
   mniEditHotkey.ImageIndex   := Config.IconsManager.GetIconIndex('keyboard_edit');
   mniProperties.ImageIndex   := Config.IconsManager.GetIconIndex('property');
+
+  edtHotkeyMF.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel');
+  edtHotkeyGM.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel');
+  edtHotkeyCM.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel');
 end;
 
 procedure TfrmHotkeyOptionsPage.mniEditHotkeyClick(Sender: TObject);
 var
-  ShortCut: TShortCut;
+  ShortCut: string;
   NodeData: TvCustomRealNodeData;
 begin
   if Assigned(vstItems.FocusedNode) then
@@ -162,10 +200,10 @@ begin
     NodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(vstItems.FocusedNode, vstItems));
     if Assigned(NodeData) then
     begin
-      ShortCut := TShorcutGrabber.Execute(Self);
-      if (ShortCut <> 0) then
+      ShortCut := TfrmShortcutGrabber.Execute(Self, TButtonedEdit(Sender).Text);
+      if (ShortCut <> '') then
       begin
-        NodeData.Hotkey  := ShortCut;
+        NodeData.Hotkey  := TextToHotKey(ShortCut, false);
         NodeData.ActiveHotkey := True;
         NodeData.Changed := True;
       end;

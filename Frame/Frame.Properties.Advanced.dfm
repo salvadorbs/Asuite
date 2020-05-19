@@ -51,8 +51,8 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       Top = 48
       Width = 129
       Height = 21
-      Date = 39092.942071932870000000
-      Time = 39092.942071932870000000
+      Date = 39092.000000000000000000
+      Time = 0.942071932870021600
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -66,9 +66,9 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       Top = 75
       Width = 129
       Height = 21
-      Date = 39092.942361111110000000
+      Date = 39092.000000000000000000
       Format = 'HH:mm'
-      Time = 39092.942361111110000000
+      Time = 0.942361111112404600
       DateMode = dmUpDown
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -93,17 +93,6 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 1
-    object hkHotkey: THotKey
-      Left = 10
-      Top = 44
-      Width = 179
-      Height = 19
-      HotKey = 0
-      Modifiers = []
-      TabOrder = 1
-      OnChange = hkHotkeyChange
-      OnMouseUp = hkHotkeyMouseUp
-    end
     object cbHotKey: TCheckBox
       Left = 8
       Top = 21
@@ -118,6 +107,19 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       ParentFont = False
       TabOrder = 0
       OnClick = cbHotKeyClick
+    end
+    object edtHotkey: TButtonedEdit
+      Left = 8
+      Top = 44
+      Width = 187
+      Height = 21
+      CharCase = ecUpperCase
+      LeftButton.Enabled = False
+      ReadOnly = True
+      TabOrder = 1
+      OnChange = edtHotkeyChange
+      OnClick = edtHotkeyClick
+      OnRightButtonClick = edtHotkeyRightButtonClick
     end
   end
   object GroupBox1: TGroupBox
@@ -194,7 +196,7 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       48696465536F66747761726501010000000A000000070043617074696F6E000F
       006362446F6E74496E736572744D525501010000000B00000007004361707469
       6F6E000F006362446F6E74496E736572744D465501010000000C000000070043
-      617074696F6E000800686B486F746B6579000008006362486F744B6579010100
-      00000D000000070043617074696F6E00}
+      617074696F6E0008006362486F744B657901010000000D000000070043617074
+      696F6E000900656474486F746B65790000}
   end
 end

@@ -62,6 +62,8 @@ type
                                         Data: Pointer; var Abort: Boolean);
     procedure FindNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
                        Data: Pointer; var Abort: Boolean);
+    procedure FindHotkey(Sender: TBaseVirtualTree; Node: PVirtualNode;
+                       Data: Pointer; var Abort: Boolean);
     procedure IncNumberNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
                             Data: Pointer; var Abort: Boolean);
     procedure UpdateListItemCount(Sender: TBaseVirtualTree; Node: PVirtualNode;
@@ -479,6 +481,22 @@ begin
     TNodeIcon(NodeData.Icon).ResetCacheIcon;
     //Remove item from sqlite database
     Config.DBManager.RemoveItem(NodeData.ID);
+  end;
+end;
+
+procedure TVirtualTreeMethods.FindHotkey(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
+var
+  Hotkey: Cardinal;
+  CurrentNodeData : TvBaseNodeData;
+begin
+  Hotkey := Cardinal(Data);
+
+  CurrentNodeData := TvFileNodeData(GetNodeItemData(Node, Sender));
+  if Assigned(CurrentNodeData) and (CurrentNodeData.DataType <> vtdtSeparator) then
+  begin
+    if TvCustomRealNodeData(CurrentNodeData).Hotkey = Hotkey then
+      Abort := True;
   end;
 end;
 

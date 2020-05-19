@@ -139,34 +139,46 @@ end;
 
 procedure TBaseMainForm.WMHotKey(var Msg: TWMHotKey);
 var
-  NodeData    : TvCustomRealNodeData;
+  NodeData: TvCustomRealNodeData;
 begin
   if Config.HotKey then
   begin
-    //Show frmMain or execute a software (or group)
+    // Show frmMain
     if Msg.HotKey = Integer(Self.Handle) then
     begin
       if Self.Showing then
         HideMainForm
       else
-        ShowMainForm(self);
+        ShowMainForm(Self);
     end
-    else begin
-      if Msg.HotKey = frmMenuID then
-        dmTrayMenu.ShowGraphicMenu
-      else begin
-        NodeData := Config.ListManager.HotKeyItemList.IndexOfID(Msg.HotKey);
-        if Assigned(NodeData) then
+    else
+    begin
+      case Msg.HotKey of
+        // Show Graphic Menu
+        frmGMenuID:
+          begin
+            dmTrayMenu.ShowGraphicMenu;
+          end;
+        // Show Classic Menu
+        frmCMenuID:
+          begin
+            dmTrayMenu.ShowClassicMenu;
+          end;
+      else
         begin
-          if (NodeData.DataType <> vtdtSeparator) then
-            NodeData.Execute(True, NodeData.DataType = vtdtCategory, False);
+          // Execute item
+          NodeData := Config.ListManager.HotKeyItemList.IndexOfID(Msg.HotKey);
+          if Assigned(NodeData) then
+          begin
+            if (NodeData.DataType <> vtdtSeparator) then
+              NodeData.Execute(True, NodeData.DataType = vtdtCategory, False);
 
-          TVirtualTreeMethods.Create.RefreshList(nil);
+            TVirtualTreeMethods.Create.RefreshList(nil);
+          end;
         end;
       end;
     end;
   end;
-
 end;
 
 end.

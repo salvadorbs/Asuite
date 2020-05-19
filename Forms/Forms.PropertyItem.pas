@@ -70,7 +70,6 @@ var
 begin
   TASuiteLogger.Info('Opening form Property Item (%s)', [ANodeData.Name]);
 
-  Result := mrCancel;
   frm := TfrmPropertyItem.Create(AOwner, ANodeData);
   try
     Result := frm.ShowModal;

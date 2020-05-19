@@ -88,6 +88,7 @@ object frmMain: TfrmMain
         Width = 193
         Height = 332
         Align = alTop
+        Anchors = [akLeft, akTop, akRight, akBottom]
         AnimationDuration = 0
         Header.AutoSizeIndex = 0
         Header.Font.Charset = DEFAULT_CHARSET

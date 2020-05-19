@@ -22,95 +22,273 @@ unit Forms.ShortcutGrabber;
 interface
 
 uses
-  Classes, Controls, StdCtrls, SysUtils, Forms, Menus, Windows;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, HotKeyManager, Menus,
+  Vcl.ComCtrls, cySkinButton, Vcl.Imaging.pngimage, Vcl.ExtCtrls;
 
 type
-  TShorcutGrabber = class
+  TfrmShortcutGrabber = class(TForm)
+    hkKeys: THotKey;
+    HotKeyManager1: THotKeyManager;
+    btnAlt: TcySkinButton;
+    btnWinKey: TcySkinButton;
+    btnShift: TcySkinButton;
+    btnCtrl: TcySkinButton;
+    lblInfo: TLabel;
+    pnlDialogPage: TPanel;
+    btnOk: TButton;
+    btnCancel: TButton;
+    procedure btnOkClick(Sender: TObject);
+    function CheckModButtons(): Boolean;
+    procedure btnCancelClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure hkKeysChange(Sender: TObject);
   private
-    FGrabForm: TForm;
-    FHotkey: TShortCut;
-    procedure OnGrabFormKeyDown(Sender: TObject; var AKey: Word; AShift: TShiftState);
+    { Private declarations }
+    FHotkey: string;
+    FCanClose: Boolean;
+
+    function GetModifierFromGUI(): Word;
+    function GetKeyFromGUI(): Word;
+
+    procedure SetGUIKeyFromKey(AKey: Word);
+    procedure SetGUIModifierFromMod(AMod: Word);
+    procedure SetGUIModifierFromShiftState(AMod: TShiftState);
+    procedure LoadPNGButtonState(APicture: TPicture; APathFile: string);
+    procedure LoadImages();
   public
-    constructor Create(AOwner: TComponent);
-    destructor Destroy; override;
+    { Public declarations }
+    property Hotkey: string read FHotkey;
 
-    property Hotkey: TShortCut read FHotkey;
+    procedure SetGuiFromHotkey(AHotkey: string);
 
-    class function Execute(AOwner: TComponent): TShortcut;
+    class function Execute(AOwner: TComponent; AHotkey: string): string;
   end;
+
+var
+  frmShortcutGrabber: TfrmShortcutGrabber;
 
 implementation
 
 uses
-  Kernel.Logger;
+  Kernel.Logger, Utility.Misc, DKLang, AppConfig.Main, System.IOUtils, Kernel.Consts,
+  Utility.System;
 
-{ TShorcutGrabber }
+{$R *.dfm}
 
-constructor TShorcutGrabber.Create(AOwner: TComponent);
+{ TfrmShortcutGrabber }
+
+procedure TfrmShortcutGrabber.btnCancelClick(Sender: TObject);
 begin
-
-  FGrabForm := TForm.Create(AOwner);
-  FGrabForm.BorderStyle := bsToolWindow;
-  FGrabForm.KeyPreview  := true;
-  FGrabForm.Position    := poScreenCenter;
-  FGrabForm.OnKeyDown   := OnGrabFormKeyDown;
-  FGrabForm.Caption     := 'Press a hotkey...';
-  with TLabel.Create(AOwner) do begin
-    Caption   := 'Press a combination of keys...';
-    Align     := alClient;
-    Alignment := taCenter;
-    Layout    := tlCenter;
-    Parent    := FGrabForm;
-  end;
-  FGrabForm.Width    := 200;
-  FGrabForm.Height   := 100;
-  FGrabForm.AutoSize := true;
-  FGrabForm.ShowModal;
-  //Return focus to AOwner
-  if AOwner is TWinControl then
-    TWinControl(AOwner).SetFocus;
+  FCanClose := True;
 end;
 
-destructor TShorcutGrabber.Destroy;
-begin
-  FreeAndNil(FGrabForm);
-  inherited;
-end;
-
-class function TShorcutGrabber.Execute(AOwner: TComponent): TShortcut;
+procedure TfrmShortcutGrabber.btnOkClick(Sender: TObject);
 var
-  Grabber: TShorcutGrabber;
+  Key, Modifiers: Word;
+  HotKeyVar: Cardinal;
+begin
+  FCanClose := False;
+  FHotkey := '';
+
+  //Get keys and modifier from interface
+  Key := GetKeyFromGUI();
+  Modifiers := GetModifierFromGUI();
+
+  if Key <> 0 then
+  begin
+    if Modifiers <> 0 then
+    begin
+      //Convert Key + Modifier in Cardinal
+      HotKeyVar := HotKeyManager.GetHotKey(Modifiers, Key);
+
+      //Is it available?
+      FCanClose := IsHotkeyAvailable(HotKeyVar);
+
+      //TODO: Controllare che non sia già preso da un altro hotkey in asuite!
+      if FCanClose then
+        FHotkey := HotKeyToText(HotKeyVar, false)
+      else
+        ShowMessageEx(DKLangConstW('msgHotkeyNotAvailable'), True);
+    end
+    else
+      ShowMessageEx(DKLangConstW('msgHotkeyNoMod'));
+  end
+  else
+    ShowMessageEx(DKLangConstW('msgHotkeyNoKey'));
+
+  if FHotkey = '' then
+    hkKeys.SetFocus;
+end;
+
+function TfrmShortcutGrabber.CheckModButtons: Boolean;
+begin
+  Result := (btnCtrl.Down) or (btnShift.Down) or (btnAlt.Down) or (btnWinKey.down);
+end;
+
+class function TfrmShortcutGrabber.Execute(AOwner: TComponent; AHotkey: string): string;
 begin
   TASuiteLogger.Info('Opening form Shortcut Grabber', []);
 
-  Grabber := TShorcutGrabber.Create(AOwner);
+  frmShortcutGrabber := TfrmShortcutGrabber.Create(AOwner);
   try
-    Result := Grabber.FHotkey;
+    frmShortcutGrabber.SetGuiFromHotkey(AHotkey);
 
-    TASuiteLogger.Info('User selected hotkey "%s"', [ShortCutToText(Result)]);
+    if frmShortcutGrabber.ShowModal = mrOk then
+      Result := UpperCase(frmShortcutGrabber.FHotkey);
+
+    TASuiteLogger.Info('User selected hotkey "%s"', [Result]);
   finally
-    Grabber.Free;
+    FreeAndNil(frmShortcutGrabber);
   end;
 end;
 
-procedure TShorcutGrabber.OnGrabFormKeyDown(Sender: TObject; var AKey: Word;
-  AShift: TShiftState);
+procedure TfrmShortcutGrabber.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
 begin
-  if not (AKey in [VK_CONTROL, VK_LCONTROL, VK_RCONTROL,
-             VK_SHIFT, VK_LSHIFT, VK_RSHIFT,
-             VK_MENU, VK_LMENU, VK_RMENU,
-             VK_LWIN, VK_RWIN,
-             0, $FF])
-  then begin
-    if (AKey=VK_ESCAPE) and (AShift=[]) then
-      FHotkey := 0
-    else begin
-      if AShift <> [] then
-        FHotkey := ShortCut(AKey, AShift)
-      else
-        FHotkey := ShortCut(AKey, [ssAlt]);
+  CanClose := FCanClose;
+end;
+
+procedure TfrmShortcutGrabber.FormCreate(Sender: TObject);
+begin
+  FCanClose := False;
+  FHotkey := '';
+
+  LoadImages();
+end;
+
+function TfrmShortcutGrabber.GetKeyFromGUI(): Word;
+var
+  Key: Word;
+  Modifier: TShiftState;
+begin
+  ShortCutToKey(hkKeys.HotKey, Key, Modifier);
+
+  Result := Key;
+end;
+
+function TfrmShortcutGrabber.GetModifierFromGUI(): Word;
+begin
+  Result := 0;
+
+  if btnCtrl.Down then
+    Result := Result or MOD_CONTROL;
+
+  if btnShift.Down then
+    Result := Result or MOD_SHIFT;
+
+  if btnAlt.Down then
+    Result := Result or MOD_ALT;
+
+  if btnWinKey.Down then
+    Result := Result or MOD_WIN;
+end;
+
+procedure TfrmShortcutGrabber.hkKeysChange(Sender: TObject);
+var
+  Key: Word;
+  Modi: TShiftState;
+begin
+  //Separate key and mod from THotkey and set GUI properly
+  ShortCutToKey(hkKeys.HotKey, key, Modi);
+  SetGUIKeyFromKey(key);
+  SetGUIModifierFromShiftState(Modi);
+
+  //Change hotkey, reinsert only key
+  hkKeys.HotKey := ShortCut(key, []);
+end;
+
+procedure TfrmShortcutGrabber.LoadImages;
+begin
+  //Ctrl
+  LoadPNGButtonState(btnCtrl.PicNormal, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + CTRL_NORMAL_FILENAME);
+  LoadPNGButtonState(btnCtrl.PicMouseOver, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + CTRL_HOVER_FILENAME);
+  LoadPNGButtonState(btnCtrl.PicDown, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + CTRL_CLICKED_FILENAME);
+
+  //Shift
+  LoadPNGButtonState(btnShift.PicNormal, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + SHIFT_NORMAL_FILENAME);
+  LoadPNGButtonState(btnShift.PicMouseOver, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + SHIFT_HOVER_FILENAME);
+  LoadPNGButtonState(btnShift.PicDown, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + SHIFT_CLICKED_FILENAME);
+
+  //Alt
+  LoadPNGButtonState(btnAlt.PicNormal, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + ALT_NORMAL_FILENAME);
+  LoadPNGButtonState(btnAlt.PicMouseOver, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + ALT_HOVER_FILENAME);
+  LoadPNGButtonState(btnAlt.PicDown, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + ALT_CLICKED_FILENAME);
+
+  //WinKey
+  LoadPNGButtonState(btnWinKey.PicNormal, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + WINKEY_NORMAL_FILENAME);
+  LoadPNGButtonState(btnWinKey.PicMouseOver, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + WINKEY_HOVER_FILENAME);
+  LoadPNGButtonState(btnWinKey.PicDown, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + WINKEY_CLICKED_FILENAME);
+end;
+
+procedure TfrmShortcutGrabber.LoadPNGButtonState(APicture: TPicture; APathFile: string);
+var
+  PNGState: TPngImage;
+begin
+  if FileExists(APathFile) then
+    begin
+      PNGState := TPngImage.Create;
+    try
+      PNGState.LoadFromFile(APathFile);
+
+      APicture.Assign(PNGState);
+    finally
+      PNGState.Free;
     end;
-    FGrabForm.ModalResult := mrOk;
+  end;
+end;
+
+procedure TfrmShortcutGrabber.SetGuiFromHotkey(AHotkey: string);
+var
+  Hotkey: Cardinal;
+  Modi, Key: Word;
+begin
+  //I need separate key from modifiers
+  Hotkey := TextToHotKey(AHotkey, false);
+  SeparateHotKey(Hotkey, Modi, Key);
+
+  //Set gui
+  SetGUIKeyFromKey(Key);
+  SetGUIModifierFromMod(Modi);
+end;
+
+procedure TfrmShortcutGrabber.SetGUIKeyFromKey(AKey: Word);
+begin
+  hkKeys.HotKey := ShortCut(AKey, []);
+end;
+
+procedure TfrmShortcutGrabber.SetGUIModifierFromMod(AMod: Word);
+begin
+  if (AMod and MOD_ALT) <> 0 then
+    btnAlt.Down := True;
+
+  if (AMod and MOD_CONTROL) <> 0 then
+    btnCtrl.Down := True;
+
+  if (AMod and MOD_SHIFT) <> 0 then
+    btnShift.Down := True;
+
+  if (AMod and MOD_WIN) <> 0 then
+    btnWinKey.Down := True;
+end;
+
+procedure TfrmShortcutGrabber.SetGUIModifierFromShiftState(AMod: TShiftState);
+begin
+  if AMod <> [] then
+  begin
+    btnShift.Down := false;
+    btnAlt.Down   := false;
+    btnCtrl.Down  := false;
+
+    if (ssShift in AMod) then
+      btnShift.Down := True;
+
+    if (ssAlt in AMod) then
+      btnAlt.Down := True;
+
+    if (ssCtrl in AMod) then
+      btnCtrl.Down := True;
   end;
 end;
 

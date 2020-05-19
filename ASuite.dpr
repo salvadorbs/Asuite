@@ -54,7 +54,7 @@ uses
   Utility.Conversions in 'Utilities\Utility.Conversions.pas',
   Utility.Misc in 'Utilities\Utility.Misc.pas',
   Kernel.ASuiteInstance in 'Library\Kernel.ASuiteInstance.pas',
-  Forms.ShortcutGrabber in 'Forms\Forms.ShortcutGrabber.pas' {/SQLite3 static library},
+  Forms.ShortcutGrabber in 'Forms\Forms.ShortcutGrabber.pas' {frmShortcutGrabber},
   USingleInst,
   VirtualTree.Events in 'Library\VirtualTree.Events.pas',
   Forms.Dialog.BaseEntity in 'Forms\Forms.Dialog.BaseEntity.pas' {frmDialogBase},

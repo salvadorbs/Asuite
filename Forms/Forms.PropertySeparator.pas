@@ -58,7 +58,6 @@ var
 begin
   TASuiteLogger.Info('Opening form Property Separator', []);
 
-  Result := mrCancel;
   frm := TfrmPropertySeparator.Create(AOwner);
   try
     frm.LoadNodeData(NodeData);

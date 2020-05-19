@@ -34,6 +34,7 @@ const
   LOCALE_DIR     = 'locale\';
   MENUTHEMES_DIR = 'themes\';
   ICONS_DIR      = 'icons\';
+  BUTTONS_DIR    = 'buttons\';
 
   // Caratteri speciali
   LF                = #10;              { line feed }
@@ -67,7 +68,8 @@ const
   //Form
   frmMainWidth  = 190;
   frmMainHeight = 440;
-  frmMenuID     = 123456789;
+  frmGMenuID    = 123456789;
+  frmCMenuID    = 987654321;
 
   // PageControl Indexes
   PG_LIST       = 0;
@@ -88,6 +90,23 @@ const
   //ASuite filename icons
   FILEICON_Folder     = 'folder';
   FILEICON_Url        = 'page_url';
+
+  //Modifier buttons for TfrmShortcutGrabber
+  CTRL_NORMAL_FILENAME  = 'ctrl_normal.png';
+  CTRL_HOVER_FILENAME   = 'ctrl_hover.png';
+  CTRL_CLICKED_FILENAME = 'ctrl_clicked.png';
+
+  ALT_NORMAL_FILENAME  = 'alt_normal.png';
+  ALT_HOVER_FILENAME   = 'alt_hover.png';
+  ALT_CLICKED_FILENAME = 'alt_clicked.png';
+
+  SHIFT_NORMAL_FILENAME  = 'shift_normal.png';
+  SHIFT_HOVER_FILENAME   = 'shift_hover.png';
+  SHIFT_CLICKED_FILENAME = 'shift_clicked.png';
+
+  WINKEY_NORMAL_FILENAME  = 'winkey_normal.png';
+  WINKEY_HOVER_FILENAME   = 'winkey_hover.png';
+  WINKEY_CLICKED_FILENAME = 'winkey_clicked.png';
 
 implementation
 
