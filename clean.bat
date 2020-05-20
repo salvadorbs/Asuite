@@ -19,6 +19,7 @@ del /S /Q *.kof
 del /S /Q *.log
 del /S /Q *.mad
 del /S /Q *.map
+del /S /Q *.mab
 del /S /Q *.mes
 del /S /Q *.mps
 del /S /Q *.mpt
