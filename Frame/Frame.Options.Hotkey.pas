@@ -147,6 +147,7 @@ begin
 
   //Populate VST with HotKeyItemList's items
   TVirtualTreeMethods.Create.PopulateVSTItemList(vstItems, Config.ListManager.HotKeyItemList);
+  vstItems.SortTree(0, sdAscending);
   vstItems.Header.AutoFitColumns;
 
   //Enable/disable visual components
@@ -200,12 +201,21 @@ begin
     NodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(vstItems.FocusedNode, vstItems));
     if Assigned(NodeData) then
     begin
-      ShortCut := TfrmShortcutGrabber.Execute(Self, TButtonedEdit(Sender).Text);
+      ShortCut := TfrmShortcutGrabber.Execute(Self, HotKeyToText(NodeData.Hotkey, False));
       if (ShortCut <> '') then
       begin
         NodeData.Hotkey  := TextToHotKey(ShortCut, false);
         NodeData.ActiveHotkey := True;
         NodeData.Changed := True;
+
+        if (edtHotkeyMF.Text = ShortCut) then
+          edtHotkeyMF.Text := '';
+
+        if (edtHotkeyGM.Text = ShortCut) then
+          edtHotkeyGM.Text := '';
+
+        if (edtHotkeyCM.Text = ShortCut) then
+          edtHotkeyCM.Text := '';
       end;
     end;
   end;

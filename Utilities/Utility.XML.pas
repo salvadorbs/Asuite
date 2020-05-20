@@ -120,7 +120,7 @@ begin
       CustomRealNodeData.Autorun     := TAutorunType(GetIntPropertyXML(XMLNode, 'Autorun',0));
       CustomRealNodeData.AutorunPos  := GetIntPropertyXML (XMLNode, 'AutorunPosition',0);
       CustomRealNodeData.WindowState := GetIntPropertyXML (XMLNode, 'WindowState',0);
-      CustomRealNodeData.Hotkey      := XMLToShortcut(XMLNode, 'HotKeyCode', 'HotKeyModifier');
+      CustomRealNodeData.Hotkey      := ConvertHotkey(XMLToShortcut(XMLNode, 'HotKeyCode', 'HotKeyModifier'));
       //Check if it is a software, so get software properties
       if (CustomRealNodeData.DataType = vtdtFile) then
       begin
@@ -359,9 +359,9 @@ begin
     //Hotkey
     Config.HotKey      := GetBoolPropertyXML(Node, 'ActiveHotKey',true);
     //Window Hotkey
-    Config.WindowHotkey := XMLToShortcut(Node, 'HotKeyCode', 'HotKeyModifier');
+    Config.WindowHotkey := ConvertHotkey(XMLToShortcut(Node, 'HotKeyCode', 'HotKeyModifier'));
     //Menu Hotkey
-    Config.GraphicMenuHotKey := XMLToShortcut(Node, 'MenuHotKeyCode', 'MenuHotKeyModifier');
+    Config.GraphicMenuHotKey := ConvertHotkey(XMLToShortcut(Node, 'MenuHotKeyCode', 'MenuHotKeyModifier'));
     //frmMain position
     SetFormPosition(frmMain, GetIntPropertyXML(Node,'ListFormLeft',frmMain.Left),
                              GetIntPropertyXML(Node,'ListFormTop',frmMain.Top));

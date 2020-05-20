@@ -24,7 +24,7 @@ interface
 uses
   Windows, SysUtils, Graphics, Forms, Controls, VirtualTrees, Kernel.Enumerations,
   Vcl.Imaging.pngimage, System.UITypes, Classes, DKLang, AppConfig.Paths,
-  Lists.Manager, Database.Manager, Icons.Manager, Kernel.Logger, Vcl.Themes;
+  Lists.Manager, Database.Manager, Icons.Manager, Kernel.Logger, Vcl.Themes, Vcl.Dialogs;
 
 type
 
@@ -98,8 +98,9 @@ type
     FGMBtnExplore       : string;
     //HotKeys
     FHotKey             : Boolean;
-    FWindowHotKey       : TShortcut;
-    FGraphicMenuHotKey  : TShortcut;
+    FWindowHotKey       : Cardinal;
+    FGraphicMenuHotKey  : Cardinal;
+    FClassicMenuHotkey  : Cardinal;
     //Misc
     FReadOnlyMode         : Boolean;
     FChanged              : Boolean;
@@ -118,7 +119,6 @@ type
     FDBManager : TDBManager;
     FIconsManager: TIconsManager;
     FLogger: TASuiteLogger;
-    FClassicMenuHotkey: TShortCut;
     FTVDisableConfirmDelete: Boolean;
     procedure SetHoldSize(value: Boolean);
     procedure SetAlwaysOnTop(value: Boolean);
@@ -143,11 +143,11 @@ type
     procedure SetBackupNumber(const Value: Integer);
     procedure SetChanged(const Value: Boolean);
     procedure SetBackup(const Value: Boolean);
-    procedure SetGraphicMenuHotKey(const Value: TShortcut);
-    procedure SetWindowHotKey(const Value: TShortcut);
+    procedure SetGraphicMenuHotKey(const Value: Cardinal);
+    procedure SetWindowHotKey(const Value: Cardinal);
     procedure SetHotKey(const Value: Boolean);
     procedure SetTVSmallIconSize(const Value: Boolean);
-    procedure SetClassicMenuHotkey(const Value: TShortCut);
+    procedure SetClassicMenuHotkey(const Value: Cardinal);
     procedure SetASuiteTheme(const Value: TASuiteTheme); 
 
     function GetMainTree: TVirtualStringTree;
@@ -240,9 +240,9 @@ type
     property GMBtnExplore: string read FGMBtnExplore write SetGMBtnExplore;
     //HotKeys
     property HotKey: Boolean read FHotKey write SetHotKey;
-    property WindowHotKey: TShortcut read FWindowHotKey write SetWindowHotKey;
-    property GraphicMenuHotKey: TShortcut read FGraphicMenuHotKey write SetGraphicMenuHotKey;
-    property ClassicMenuHotkey: TShortCut read FClassicMenuHotkey write SetClassicMenuHotkey;
+    property WindowHotKey: Cardinal read FWindowHotKey write SetWindowHotKey;
+    property GraphicMenuHotKey: Cardinal read FGraphicMenuHotKey write SetGraphicMenuHotKey;
+    property ClassicMenuHotkey: Cardinal read FClassicMenuHotkey write SetClassicMenuHotkey;
     // Misc
     property ReadOnlyMode: Boolean read FReadOnlyMode write FReadOnlyMode;
     property Changed: Boolean read FChanged write SetChanged;
@@ -273,7 +273,7 @@ uses
   Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, Utility.Misc,
   Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder, USingleInst,
   Utility.XML, GraphicMenu.ThemeEngine, Kernel.Scheduler, Forms.ImportList,
-  TypInfo;
+  TypInfo, HotKeyManager;
 
 procedure TConfiguration.AfterUpdateConfig;
 begin   
@@ -618,7 +618,7 @@ begin
     frmMain.Caption := APP_TITLE;
 end;
 
-procedure TConfiguration.SetWindowHotKey(const Value: TShortcut);
+procedure TConfiguration.SetWindowHotKey(const Value: Cardinal);
 begin
   if (FHotKey) then
   begin
@@ -748,7 +748,7 @@ begin
   TVirtualTreeMethods.Create.RefreshList(FMainTree);
 end;
 
-procedure TConfiguration.SetClassicMenuHotkey(const Value: TShortCut);
+procedure TConfiguration.SetClassicMenuHotkey(const Value: Cardinal);
 begin
   if (Config.HotKey) then
   begin
@@ -830,7 +830,7 @@ begin
     FLangID := 1033;
 end;
 
-procedure TConfiguration.SetGraphicMenuHotKey(const Value: TShortcut);
+procedure TConfiguration.SetGraphicMenuHotKey(const Value: Cardinal);
 begin
   if (Config.HotKey) then
   begin

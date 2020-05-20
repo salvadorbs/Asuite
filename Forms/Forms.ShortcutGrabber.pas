@@ -88,9 +88,10 @@ procedure TfrmShortcutGrabber.btnOkClick(Sender: TObject);
 var
   Key, Modifiers: Word;
   HotKeyVar: Cardinal;
+  NewHotkey: string;
 begin
   FCanClose := False;
-  FHotkey := '';
+  NewHotkey := '';
 
   //Get keys and modifier from interface
   Key := GetKeyFromGUI();
@@ -102,15 +103,21 @@ begin
     begin
       //Convert Key + Modifier in Cardinal
       HotKeyVar := HotKeyManager.GetHotKey(Modifiers, Key);
+      NewHotkey := HotKeyToText(HotKeyVar, False);
 
-      //Is it available?
-      FCanClose := IsHotkeyAvailable(HotKeyVar);
+      //Check old and new hotkey. They must differs (user choose another hotkey)
+      if FHotkey <> NewHotkey then
+      begin
+        //Is it available?
+        FCanClose := IsHotkeyAvailable(HotKeyVar);
 
-      //TODO: Controllare che non sia già preso da un altro hotkey in asuite!
-      if FCanClose then
-        FHotkey := HotKeyToText(HotKeyVar, false)
+        if FCanClose then
+          FHotkey := NewHotkey
+        else
+          ShowMessageEx(DKLangConstW('msgHotkeyNotAvailable'), True);
+      end
       else
-        ShowMessageEx(DKLangConstW('msgHotkeyNotAvailable'), True);
+        FCanClose := True;
     end
     else
       ShowMessageEx(DKLangConstW('msgHotkeyNoMod'));
@@ -118,7 +125,7 @@ begin
   else
     ShowMessageEx(DKLangConstW('msgHotkeyNoKey'));
 
-  if FHotkey = '' then
+  if NewHotkey = '' then
     hkKeys.SetFocus;
 end;
 

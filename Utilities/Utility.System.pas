@@ -231,7 +231,7 @@ begin
 
   //Find another item or config who has this hotkey
   if Result then
-    Result := not Assigned(Config.MainTree.IterateSubtree(nil, TVirtualTreeMethods.Create.FindNode, @AShortcut, [], True));
+    Result := not Assigned(Config.MainTree.IterateSubtree(nil, TVirtualTreeMethods.Create.FindHotkey, @AShortcut, [], True));
 
   if Result then
   begin
