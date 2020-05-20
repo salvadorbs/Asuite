@@ -256,7 +256,8 @@ begin
   LoadSettings;
 
   //Change vstShell text's color
-  vstShell.Font.Color := TStyleManager.ActiveStyle.GetSystemColor(clWindowText);
+  vstShell.VETColors.FileTextColor := StyleServices.GetSystemColor(clWindowText);
+  vstShell.VETColors.FolderTextColor := StyleServices.GetSystemColor(clWindowText);
 end;
 
 function TfrmScanFolder.GetExtImage(AExtension: string): Integer;
