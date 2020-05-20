@@ -24,7 +24,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Frame.Properties.Base, Vcl.ComCtrls,
-  Vcl.StdCtrls, DKLang, DateUtils, Vcl.ExtCtrls;
+  Vcl.StdCtrls, DKLang, DateUtils, Vcl.ExtCtrls, Vcl.Themes;
 
 type
   TfrmAdvancedPropertyPage = class(TfrmBasePropertyPage)
@@ -129,6 +129,8 @@ begin
 
   //Hide caret in hotkey control
   HideCaret(edtHotkey.Handle);
+
+  edtHotkey.Color := StyleServices.GetSystemColor(edtHotkey.Color);
 end;
 
 function TfrmAdvancedPropertyPage.InternalSaveData: Boolean;
