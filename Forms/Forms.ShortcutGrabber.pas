@@ -106,7 +106,7 @@ begin
       NewHotkey := HotKeyToText(HotKeyVar, False);
 
       //Check old and new hotkey. They must differs (user choose another hotkey)
-      if FHotkey <> NewHotkey then
+      if FHotkey <> UpperCase(NewHotkey) then
       begin
         //Is it available?
         FCanClose := IsHotkeyAvailable(HotKeyVar);
@@ -141,6 +141,7 @@ begin
   frmShortcutGrabber := TfrmShortcutGrabber.Create(AOwner);
   try
     frmShortcutGrabber.SetGuiFromHotkey(AHotkey);
+    frmShortcutGrabber.FHotkey := AHotkey;
 
     if frmShortcutGrabber.ShowModal = mrOk then
       Result := UpperCase(frmShortcutGrabber.FHotkey);
