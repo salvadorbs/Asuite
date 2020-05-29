@@ -257,7 +257,8 @@ end;
 
 procedure TfrmMain.actPasteUpdate(Sender: TObject);
 begin
-  TAction(Sender).Enabled := IsFormatInClipBoard(CF_VIRTUALTREE) and (GetActiveTree = vstList);
+  if Assigned(Sender) then
+    TAction(Sender).Enabled := IsFormatInClipBoard(CF_VIRTUALTREE) and (GetActiveTree = vstList);
 end;
 
 procedure TfrmMain.actPropertyExecute(Sender: TObject);
