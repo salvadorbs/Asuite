@@ -19,16 +19,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Options.Advanced;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Frame.BaseEntity, VirtualTrees,
-  Vcl.ComCtrls, DKLang, Vcl.StdCtrls, Vcl.Samples.Spin, Vcl.ExtCtrls;
+  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, Frame.BaseEntity, VirtualTrees,
+  ComCtrls, StdCtrls, {Samples.Spin,} ExtCtrls, Spin;
 
 type
   TfrmAdvancedOptionsPage = class(TfrmBaseEntityPage)
-    DKLanguageController1: TDKLanguageController;
+    
     pnlLeft: TPanel;
     gbMFU: TGroupBox;
     lbMaxMFU: TLabel;
@@ -84,7 +86,7 @@ uses
   AppConfig.Main, Utility.FileFolder, Utility.Misc, Kernel.Consts, VirtualTree.Methods,
   NodeDataTypes.Files, NodeDataTypes.Custom, Kernel.Enumerations;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmAdvancedOptionsPage }
 

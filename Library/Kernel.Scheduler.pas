@@ -19,11 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Kernel.Scheduler;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Classes, Kernel.Singleton, ExtCtrls, System.UITypes, DateUtils, SysUtils,
-  Dialogs, DKLang, NodeDataTypes.Custom;
+  Classes, Kernel.Singleton, ExtCtrls, UITypes, DateUtils, SysUtils,
+  Dialogs, NodeDataTypes.Custom;
 
 type
   TScheduler = class(TSingleton)

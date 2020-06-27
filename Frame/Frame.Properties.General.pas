@@ -19,12 +19,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Properties.General;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, DKLang, Frame.Properties.Base,
-  Vcl.Mask, JvExMask, JvToolEdit, Vcl.Styles, Vcl.Themes;
+  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, StdCtrls, Frame.Properties.Base,
+  MaskEdit, {JvExMask, JvToolEdit, Styles,} Themes;
 
 type
   TfrmBaseGeneralPropertyPage = class(TfrmBasePropertyPage)
@@ -63,7 +65,7 @@ uses
   Utility.Misc, Kernel.Enumerations, NodeDataTypes.Files, AppConfig.Main,
   Utility.System;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmGeneralPropertyPage }
 

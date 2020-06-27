@@ -19,11 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Icons.Node;
 
+{$MODE Delphi}
+
 interface
 
 uses
   SysUtils, Classes, Icons.Base, NodeDataTypes.Base, Kernel.Enumerations,
-  NodeDataTypes.Custom, Graphics, Controls, KIcon, CommCtrl, Windows, System.IOUtils;
+  NodeDataTypes.Custom, Graphics, Controls, KIcon, CommCtrl, LCLIntf, LCLType, LMessages{, IOUtils};
 
 type
   TNodeIcon = class(TBaseIcon)

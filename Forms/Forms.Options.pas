@@ -19,16 +19,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.Options;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Forms.Dialog.BaseEntity, VirtualTrees,
-  Vcl.ExtCtrls, Vcl.StdCtrls, DKLang, Frame.BaseEntity;
+  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, Forms.Dialog.BaseEntity, VirtualTrees,
+  ExtCtrls, StdCtrls, Frame.BaseEntity;
 
 type
   TfrmOptions = class(TfrmDialogBase)
-    DKLanguageController1: TDKLanguageController;
+    
   private
     { Private declarations }
   strict protected
@@ -47,11 +49,11 @@ var
 implementation
 
 uses
-  Frame.Options.General, Frame.Options.Advanced, Frame.Options.TrayIcon,
+  Frame.Options.General, Frame.Options.Advanced, Frame.Options.Trayicon,
   Frame.Options.Stats, Frame.Options.Autorun, AppConfig.Main, Kernel.Logger,
   Forms.Main, Frame.Options.Hotkey, Frame.Options.MainWindow;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmOptions }
 

@@ -19,16 +19,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Properties.Behavior;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, DKLang, Frame.Properties.Base,
-  Vcl.ExtCtrls;
+  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, StdCtrls, Frame.Properties.Base,
+  ExtCtrls;
 
 type
   TfrmBehaviorPropertyPage = class(TfrmBasePropertyPage)
-    DKLanguageController1: TDKLanguageController;
+    
     grpAutoExecute: TGroupBox;
     cxAutoExecute: TComboBox;
     btnChangeOrder: TButton;
@@ -58,7 +60,7 @@ implementation
 uses
   Kernel.Enumerations, Forms.Options, Frame.Options.Autorun, AppConfig.Main;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmMenuPropertyPage }
 

@@ -19,10 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit NodeDataTypes.Base;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  VirtualTrees, SysUtils, DateUtils, Kernel.Enumerations, DKLang, Icons.Base;
+  VirtualTrees, SysUtils, DateUtils, Kernel.Enumerations, Icons.Base;
 
 type
   TvBaseNodeData = class

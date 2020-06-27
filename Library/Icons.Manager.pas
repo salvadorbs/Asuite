@@ -19,11 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Icons.Manager;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  SysUtils, Classes, Controls, IniFiles, Forms, Icons.Application, Generics.Collections,
-  IOUtils, Kernel.Consts, ShellApi, Windows;
+  SysUtils, Classes, Controls, IniFiles, Forms, Icons.Application, {Generics.Collections,
+  IOUtils,} Kernel.Consts, LCLIntf, LCLType, LMessages;
 
 type
   TBaseIcons = class(TObjectDictionary<string, TApplicationIcon>);

@@ -19,16 +19,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.PropertyItem;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Forms.Dialog.BaseEntity, VirtualTrees,
-  Vcl.ExtCtrls, Vcl.StdCtrls, DKLang, Frame.BaseEntity, NodeDataTypes.Custom;
+  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, Forms.Dialog.BaseEntity, VirtualTrees,
+  ExtCtrls, StdCtrls, Frame.BaseEntity, NodeDataTypes.Custom;
 
 type
   TfrmPropertyItem = class(TfrmDialogBase)
-    DKLanguageController1: TDKLanguageController;
+    
   private
     { Private declarations }
     FListNodeData: TvCustomRealNodeData;
@@ -52,7 +54,7 @@ uses
   Frame.Properties.Behavior, Frame.Properties.General.Category,
   Frame.Properties.General.Software;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmPropertyItem }
 

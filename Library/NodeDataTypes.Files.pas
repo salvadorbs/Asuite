@@ -19,11 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit NodeDataTypes.Files;
 
+{$MODE Delphi}
+
 interface
 
 uses
   SysUtils, Kernel.Enumerations, NodeDataTypes.Base, Kernel.Types,
-  NodeDataTypes.Custom, WinApi.Windows, WinApi.ShellApi, DateUtils;
+  NodeDataTypes.Custom, LCLIntf, LCLType, LMessages, DateUtils;
 
 type
   TvFileNodeData = class(TvCustomRealNodeData)
@@ -140,9 +142,7 @@ begin
       Exit;
 
   //Execute
-  Result := ShellExecute(GetDesktopWindow, nil, PChar(PathAbsoluteFile),
-                         PChar(Config.Paths.RelativeToAbsolute(FParameters)),
-                         PChar(GetWorkingDir), GetWindowState(ARunFromCategory)) > 32;
+  Result :=  OpenDocument(PChar(PathAbsoluteFile)) > 32;
   //Error message
   if not Result then
     ShowMessageEx(Format('%s [%s]', [SysErrorMessage(GetLastError), Self.Name]), True);
@@ -190,8 +190,8 @@ begin
   //Close handles
   if Result then
   begin
-    CloseHandle(ProcInfo.hProcess);
-    CloseHandle(ProcInfo.hThread);
+    FileClose(ProcInfo.hProcess);
+    FileClose(ProcInfo.hThread);
   end
   else
     ShowMessageEx(SysErrorMessage(GetLastError), True);
@@ -285,9 +285,7 @@ function TvFileNodeData.ExplorePath: Boolean;
 begin
   Result := False;
   if Not(IsValidURLProtocol(Self.PathAbsoluteFile)) then
-    Result := ShellExecute(GetDesktopWindow, 'open',
-                           PChar(ExtractFileDir(Self.PathAbsoluteFile)),
-                           nil, nil, SW_NORMAL) > 32;
+    Result :=  OpenDocument(PChar(ExtractFileDir(Self.PathAbsoluteFile))) > 32;
 end;
 
 procedure TvFileNodeData.SetPathFile(value:string);

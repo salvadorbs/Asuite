@@ -19,12 +19,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Properties.Advanced;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Frame.Properties.Base, Vcl.ComCtrls,
-  Vcl.StdCtrls, DKLang, DateUtils, Vcl.ExtCtrls, Vcl.Themes;
+  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, Frame.Properties.Base, ComCtrls,
+  StdCtrls, DateUtils, ExtCtrls, Themes, DateTimePicker;
 
 type
   TfrmAdvancedPropertyPage = class(TfrmBasePropertyPage)
@@ -38,7 +40,7 @@ type
     cbHideSoftware: TCheckBox;
     cbDontInsertMRU: TCheckBox;
     cbDontInsertMFU: TCheckBox;
-    DKLanguageController1: TDKLanguageController;
+    
     cbHotKey: TCheckBox;
     edtHotkey: TButtonedEdit;
     procedure cxSchedulerChange(Sender: TObject);
@@ -64,9 +66,9 @@ implementation
 
 uses
   Kernel.Enumerations, NodeDataTypes.Files, Forms.ShortcutGrabber, AppConfig.Main,
-  DataModules.Icons, HotKeyManager;
+  DataModules.Icons{, HotKeyManager};
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmAdvancedPropertyPage }
 

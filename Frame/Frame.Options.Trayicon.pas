@@ -19,16 +19,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Options.Trayicon;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DKLang, Frame.BaseEntity, Vcl.StdCtrls,
-  Vcl.Mask, JvExMask, JvToolEdit;
+  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, Frame.BaseEntity, StdCtrls,
+  MaskEdit, EditBtn{, JvExMask, JvToolEdit};
 
 type
   TfrmTrayiconOptionsPage = class(TfrmBaseEntityPage)
-    DKLanguageController1: TDKLanguageController;
+    
     gbTrayicon: TGroupBox;
     lbTrayLeftClick: TLabel;
     lbTrayRightClick: TLabel;
@@ -37,7 +39,7 @@ type
     cbTrayicon: TCheckBox;
     cxRightClick: TComboBox;
     cbTrayCustomIcon: TCheckBox;
-    edtCustomIcon: TJvFilenameEdit;
+    edtCustomIcon: TFileNameEdit;
     cxMiddleClick: TComboBox;
     grpClassicMenu: TGroupBox;
     cbSubMenuMFU: TCheckBox;
@@ -75,7 +77,7 @@ implementation
 uses
   AppConfig.Main, Kernel.Enumerations;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmTrayiconOptionsPage }
 

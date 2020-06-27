@@ -19,12 +19,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.ShortcutGrabber;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, HotKeyManager, Menus,
-  Vcl.ComCtrls, cySkinButton, Vcl.Imaging.pngimage, Vcl.ExtCtrls;
+  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, StdCtrls, {HotKeyManager,} Menus,
+  ComCtrls, cySkinButton, {Imaging.pngimage,} ExtCtrls;
 
 type
   TfrmShortcutGrabber = class(TForm)
@@ -72,10 +74,10 @@ var
 implementation
 
 uses
-  Kernel.Logger, Utility.Misc, DKLang, AppConfig.Main, System.IOUtils, Kernel.Consts,
+  Kernel.Logger, Utility.Misc, AppConfig.Main, {IOUtils,} Kernel.Consts,
   Utility.System;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmShortcutGrabber }
 

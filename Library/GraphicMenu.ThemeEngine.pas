@@ -19,11 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit GraphicMenu.ThemeEngine;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Classes, Kernel.Singleton, IniFiles, cySkinButton, Vcl.Imaging.PNGImage,
-  ExtCtrls, Windows, Graphics, SysUtils, DKLang, VirtualTrees, Controls,
+  Classes, Kernel.Singleton, IniFiles, cySkinButton, {Imaging.PNGImage,}
+  ExtCtrls, LCLIntf, LCLType, LMessages, Graphics, SysUtils, VirtualTrees, Controls,
   Forms.GraphicMenu;
 
 type

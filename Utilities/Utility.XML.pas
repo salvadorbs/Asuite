@@ -1,11 +1,13 @@
 unit Utility.XML;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, Kernel.Consts, System.UITypes,
-  XMLIntf, msxmldom, XMLDoc, Kernel.Enumerations, DateUtils, xmldom;
+  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, Kernel.Consts, UITypes,
+  {XMLIntf, msxmldom, XMLDoc,} Kernel.Enumerations, DateUtils{, xmldom};
 
 { Load list or settings from xml file }
 type

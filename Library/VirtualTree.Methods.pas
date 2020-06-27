@@ -19,12 +19,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit VirtualTree.Methods;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Windows, SysUtils, Classes, Graphics, VirtualTrees, ActiveX, UITypes, DKLang,
+  LCLIntf, LCLType, LMessages, SysUtils, Classes, Graphics, VirtualTrees, ActiveX, UITypes, DKLang,
   Kernel.Singleton, Kernel.Enumerations, NodeDataTypes.Base, Kernel.Types, Lists.Base,
-  SynLog, Vcl.Themes;
+  {SynLog,} Themes;
 
 type
   TVirtualTreeMethods = class(TSingleton)
@@ -87,7 +89,7 @@ implementation
 
 uses
   Utility.System, DataModules.Icons, AppConfig.Main, NodeDataTypes.Files,
-  Utility.FileFolder, Forms.PropertySeparator, mORMotUILogin, Utility.Misc,
+  Utility.FileFolder, Forms.PropertySeparator, {mORMotUILogin,} Utility.Misc,
   NodeDataTypes.Category, NodeDataTypes.Separator, Forms.PropertyItem, Icons.Thread,
   NodeDataTypes.Custom, Kernel.Consts, Icons.Node, Kernel.Logger;
 

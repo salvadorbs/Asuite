@@ -19,10 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Kernel.BaseMainForm;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Forms, Controls, Classes, Dialogs, ActnList, Graphics, Windows, Messages;
+  Forms, Controls, Classes, Dialogs, ActnList, Graphics, LCLIntf, LCLType, LMessages, Messages;
 
 type
   TBaseMainForm = class(TForm)
@@ -50,7 +52,7 @@ implementation
 
 uses
   AppConfig.Main, NodeDataTypes.Custom, Kernel.Consts, DataModules.TrayMenu,
-  Kernel.Enumerations, USingleInst, VirtualTree.Methods;
+  Kernel.Enumerations, {USingleInst,} VirtualTree.Methods;
 
 constructor TBaseMainForm.Create(AOwner: TComponent);
 begin

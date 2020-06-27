@@ -19,17 +19,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Options.Autorun;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.Buttons, kgraphics,
-  DKLang, Frame.BaseEntity, Vcl.StdCtrls, VirtualTrees, Lists.Base, Vcl.Menus,
+  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, ComCtrls, Buttons, kgraphics,
+  Frame.BaseEntity, StdCtrls, VirtualTrees, Lists.Base, Menus,
   kcontrols, kbuttons;
 
 type
   TfrmAutorunOptionsPage = class(TfrmBaseEntityPage)
-    DKLanguageController1: TDKLanguageController;
+    
     grpStartupOrderItems: TGroupBox;
     grpShutdownOrderItems: TGroupBox;
     chkStartup: TCheckBox;
@@ -86,9 +88,9 @@ implementation
 uses
   NodeDataTypes.Custom, AppConfig.Main, DataModules.Icons,
   VirtualTree.Methods, NodeDataTypes.Base,
-  System.UITypes, Kernel.Enumerations, VirtualTree.Events;
+  UITypes, Kernel.Enumerations, VirtualTree.Events;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmItemsOptionsPage }
 

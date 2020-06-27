@@ -1,9 +1,11 @@
 unit VirtualFileSearch.Helper;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Classes, SysUtils, VirtualTrees, VirtualFileSearch;
+  Classes, SysUtils, VirtualTrees{, VirtualFileSearch};
 
 type
   TVFSHelper = class helper for TVirtualFileSearch

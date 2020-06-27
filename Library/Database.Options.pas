@@ -19,10 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Database.Options;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  mORMot, SynCommons, Kernel.Enumerations, Classes, Kernel.Types, SynLog,
+  {mORMot, SynCommons,} Kernel.Enumerations, Classes, Kernel.Types, {SynLog,}
   SysUtils, Database.Manager, AppConfig.Main, Types;
 
 type
@@ -192,7 +194,7 @@ type
 implementation
 
 uses
-  DKLang, Utility.Conversions, Forms.Main, Utility.Misc, Forms, Kernel.Logger;
+  Utility.Conversions, Forms.Main, Utility.Misc, Forms, Kernel.Logger;
 
 class procedure TSQLtbl_options.Load(ADBManager: TDBManager; AConfig: TConfiguration);
 var

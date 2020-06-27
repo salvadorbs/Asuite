@@ -19,16 +19,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Options.Hotkey;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DKLang, Frame.BaseEntity, VirtualTrees,
-  Vcl.ComCtrls, Vcl.StdCtrls, Lists.Base, Vcl.Menus, Vcl.ExtCtrls, Vcl.Themes;
+  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, Frame.BaseEntity, VirtualTrees,
+  ComCtrls, StdCtrls, Lists.Base, Menus, ExtCtrls, Themes, EditBtn;
 
 type
   TfrmHotkeyOptionsPage = class(TfrmBaseEntityPage)
-    DKLanguageController1: TDKLanguageController;
+    
     gbHotkey: TGroupBox;
     lblHotkeyWindow: TLabel;
     lblHotkeyGM: TLabel;
@@ -41,9 +43,9 @@ type
     mniN1: TMenuItem;
     mniProperties: TMenuItem;
     lblHotkeyCM: TLabel;
-    edtHotkeyMF: TButtonedEdit;
-    edtHotkeyGM: TButtonedEdit;
-    edtHotkeyCM: TButtonedEdit;
+    edtHotkeyMF: TEditButton;
+    edtHotkeyGM: TEditButton;
+    edtHotkeyCM: TEditButton;
     procedure cbHotKeyClick(Sender: TObject);
     procedure mniEditHotkeyClick(Sender: TObject);
     procedure mniRemoveHotkeyClick(Sender: TObject);
@@ -71,9 +73,9 @@ implementation
 
 uses
   AppConfig.Main, VirtualTree.Events, VirtualTree.Methods, NodeDataTypes.Custom,
-  Forms.ShortcutGrabber, HotkeyManager, DataModules.Icons, System.UITypes;
+  Forms.ShortcutGrabber, {HotkeyManager,} DataModules.Icons, UITypes;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmHotkeyOptionsPage }
 

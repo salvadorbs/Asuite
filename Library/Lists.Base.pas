@@ -19,10 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Lists.Base;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Classes, NodeDataTypes.Custom, Menus, SysUtils, Kernel.Types, Windows,
+  Classes, NodeDataTypes.Custom, Menus, SysUtils, Kernel.Types, LCLIntf, LCLType, LMessages,
   NodeDataTypes.Base, DateUtils, Dialogs, UITypes;
 
 type

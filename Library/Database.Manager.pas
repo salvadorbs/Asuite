@@ -19,11 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Database.Manager;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Windows, SysUtils, Forms, Dialogs, VirtualTrees, DKLang, PJVersionInfo,
-  Classes, mORMot, SynCommons, mORMotSQLite3, Vcl.Controls;
+  LCLIntf, LCLType, LMessages, SysUtils, Forms, Dialogs, VirtualTrees, {PJVersionInfo,}
+  Classes, {mORMot, SynCommons, mORMotSQLite3,} Controls;
 
 type
   TDBManager = class
@@ -62,7 +64,7 @@ implementation
 uses
   Kernel.Consts, AppConfig.Main, Utility.FileFolder, Utility.Misc,
   Database.Version, Database.Options, Database.List, Kernel.Logger,
-  VirtualTree.Methods, SynLog;
+  VirtualTree.Methods{, SynLog};
 
 constructor TDBManager.Create;
 begin

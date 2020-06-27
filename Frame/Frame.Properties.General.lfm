@@ -13,8 +13,8 @@ inherited frmBaseGeneralPropertyPage: TfrmBaseGeneralPropertyPage
     ParentFont = False
     TabOrder = 0
     object lbName: TLabel
-      Left = 8
-      Top = 11
+      Left = 6
+      Top = 0
       Width = 27
       Height = 13
       Caption = 'Name'
@@ -28,8 +28,8 @@ inherited frmBaseGeneralPropertyPage: TfrmBaseGeneralPropertyPage
       ParentFont = False
     end
     object lbPathIcon: TLabel
-      Left = 8
-      Top = 45
+      Left = 6
+      Top = 31
       Width = 132
       Height = 13
       Caption = 'Custom icon path (optional)'
@@ -43,8 +43,8 @@ inherited frmBaseGeneralPropertyPage: TfrmBaseGeneralPropertyPage
       ParentFont = False
     end
     object edtName: TEdit
-      Left = 8
-      Top = 24
+      Left = 6
+      Top = 10
       Width = 145
       Height = 21
       Font.Charset = DEFAULT_CHARSET
@@ -57,8 +57,8 @@ inherited frmBaseGeneralPropertyPage: TfrmBaseGeneralPropertyPage
       OnEnter = edtNameEnter
     end
     object edtPathIcon: TJvFilenameEdit
-      Left = 8
-      Top = 58
+      Left = 6
+      Top = 44
       Width = 338
       Height = 21
       OnBeforeDialog = edtPathIconBeforeDialog

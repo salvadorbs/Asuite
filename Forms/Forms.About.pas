@@ -19,11 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.About;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Windows, SysUtils, Variants, Classes, Graphics, Controls, Forms, ShellApi,
-  Dialogs, StdCtrls, ExtCtrls, DKLang, Vcl.Imaging.pngimage, Vcl.Imaging.GIFImg;
+  LCLIntf, LCLType, LMessages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, ExtCtrls, ATLinkLabel{, Imaging.pngimage, Imaging.GIFImg};
 
 type
 
@@ -31,8 +33,8 @@ type
 
   TfrmAbout = class(TForm)
     GroupBox3: TGroupBox;
-    lnklblWebSite: TLinkLabel;
-    DKLanguageController1: TDKLanguageController;
+    lnklblWebSite: TATLabelLink;
+    
     imgLicense: TImage;
     imgDonate: TImage;
     lblAppName: TLabel;
@@ -57,7 +59,7 @@ implementation
 uses
   Utility.Misc, Kernel.Consts, AppConfig.Main;
 
-{$R *.dfm}
+{$R *.lfm}
 
 procedure TfrmAbout.FormCreate(Sender: TObject);
 begin
@@ -67,20 +69,17 @@ end;
 
 procedure TfrmAbout.imgDonateClick(Sender: TObject);
 begin
-  ShellExecute(handle, 'open', PChar('https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QYASG6DPAYSXW'),
-    nil, nil, SW_SHOWNORMAL);
+  OpenURL(PChar('https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QYASG6DPAYSXW'));
 end;
 
 procedure TfrmAbout.imgLicenseClick(Sender: TObject);
 begin
-  ShellExecute(handle, 'open', PChar(Config.Paths.SuitePathWorking + 'docs\license.txt'),
-    nil, nil, SW_SHOWNORMAL);
+   OpenDocument(PChar(Config.Paths.SuitePathWorking + 'docs\license.txt'));
 end;
 
 procedure TfrmAbout.lnklblWebSiteClick(Sender: TObject);
 begin
-  ShellExecute(handle, 'open', PChar('http://www.salvadorsoftware.com'),
-    nil, nil, SW_SHOWNORMAL);
+  OpenURL(PChar('http://www.salvadorsoftware.com'));
 end;
 
 end.

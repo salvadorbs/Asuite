@@ -19,13 +19,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.GraphicMenu;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Windows, Classes, Forms, StdCtrls, Buttons, ExtCtrls, ComCtrls, Messages,
-	ShellAPI, Controls, Graphics, Dialogs, SysUtils, VirtualTrees, AppEvnts,
-  Vcl.Imaging.pngimage, cySkinButton, IniFiles, Lists.Manager, Vcl.Menus,
-  DKLang, Lists.Base;
+  LCLIntf, LCLType, LMessages, Classes, Forms, StdCtrls, Buttons, ExtCtrls, ComCtrls, Messages,
+	Controls, Graphics, Dialogs, SysUtils, VirtualTrees, {AppEvnts,
+  Imaging.pngimage,} cySkinButton, IniFiles, Lists.Manager, Menus, EditBtn,
+  Lists.Base;
 
 type
 
@@ -40,7 +42,7 @@ type
     vstList: TVirtualStringTree;
     OpenDialog1: TOpenDialog;
     imgDivider1: TImage;
-    ApplicationEvents1: TApplicationEvents;
+    ApplicationEvents1: TApplicationProperties;
     sknbtnASuite: TcySkinButton;
     sknbtnOptions: TcySkinButton;
     sknbtnDocuments: TcySkinButton;
@@ -49,7 +51,7 @@ type
     sknbtnExplore: TcySkinButton;
     sknbtnVideos: TcySkinButton;
     sknbtnMusic: TcySkinButton;
-    edtSearch: TButtonedEdit;
+    edtSearch: TEditButton;
     sknbtnList: TcySkinButton;
     sknbtnRecents: TcySkinButton;
     sknbtnMFU: TcySkinButton;
@@ -64,7 +66,7 @@ type
     mniOpenFolderSw: TMenuItem;
     N6: TMenuItem;
     mniProperty: TMenuItem;
-    DKLanguageController1: TDKLanguageController;
+    
     imgUserFrame: TImage;
     imgDragSpaceHidden: TImage;
     tmrCheckItems: TTimer;
@@ -114,7 +116,7 @@ var
 
 implementation
 
-{$R *.dfm}
+{$R *.lfm}
 
 uses
   Forms.Main, Utility.System, Kernel.Consts, AppConfig.Main, DataModules.Icons,
@@ -218,7 +220,7 @@ var
   sPath: string;
 begin
   sPath := Config.Paths.RelativeToAbsolute(FolderPath);
-  ErrorCode := ShellExecute(GetDesktopWindow, 'open', PChar(sPath), PChar(''), PChar(sPath), SW_SHOWDEFAULT);
+  ErrorCode :=  OpenDocument(PChar(sPath));
   if ErrorCode <= 32 then
     ShowMessageFmtEx(DKLangConstW('msgErrGeneric'), ['', SysErrorMessage(ErrorCode)], True);
 end;

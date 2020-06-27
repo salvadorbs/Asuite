@@ -19,14 +19,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Kernel.Types;
 
+{$MODE Delphi}
+
 interface
 
 uses
   Generics.Collections, NodeDataTypes.Base, VirtualTrees, Generics.Defaults,
-  XMLIntf, Types, Menus, Kernel.Enumerations, Frame.BaseEntity, Windows;
+  Laz2_DOM, Types, Menus, Kernel.Enumerations, Frame.BaseEntity, LCLIntf, LCLType, LMessages;
 
 type
-  TImportListToTree = function(Tree: TVirtualStringTree; Node: IXMLNode;
+  TImportListToTree = function(Tree: TVirtualStringTree; Node: TDOMNode;
                                Parent: PVirtualNode): PVirtualNode of object;
 
   TNodeDataItems  = TList<TvBaseNodeData>;

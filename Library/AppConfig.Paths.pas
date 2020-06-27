@@ -19,10 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit AppConfig.Paths;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Windows, SysUtils, Graphics, Forms, Controls, Vcl.Imaging.pngimage, Classes,
+  LCLIntf, LCLType, LMessages, SysUtils, Graphics, Forms, Controls, {Imaging.pngimage,} Classes,
   ShlObj;
 
 type

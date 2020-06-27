@@ -19,10 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Database.Version;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  mORMot, Database.Manager, PJVersionInfo, SynLog, SysUtils;
+  {mORMot,} Database.Manager, {PJVersionInfo, SynLog,} SysUtils;
 
 type
   TSQLtbl_version = class(TSQLRecord) //Table tbl_version

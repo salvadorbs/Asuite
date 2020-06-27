@@ -1,10 +1,12 @@
 unit Utility.FileFolder;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Kernel.Consts, Windows, SysUtils, Classes, Kernel.Enumerations, ShlObj, ActiveX,
-  ComObj, FileCtrl, PJVersionInfo;
+  Kernel.Consts, LCLIntf, LCLType, LMessages, SysUtils, Classes, Kernel.Enumerations, ShlObj, ActiveX,
+  ComObj, FileCtrl{, PJVersionInfo};
 
 { Folders }
 function GetSpecialFolder(const ASpecialFolderID: Integer): string;
@@ -31,7 +33,7 @@ procedure RenameShortcutOnDesktop(const OldFileName, FileName: String);
 implementation
 
 uses
-  AppConfig.Main, IniFiles, FCRC32;
+  AppConfig.Main, IniFiles{, FCRC32};
 
 function GetSpecialFolder(const ASpecialFolderID: Integer): string;
 var
@@ -85,7 +87,7 @@ begin
   H := CreateFile(PChar(FileName), GENERIC_READ or GENERIC_WRITE, 0, nil,
     CREATE_NEW, FILE_ATTRIBUTE_TEMPORARY or FILE_FLAG_DELETE_ON_CLOSE, 0);
   Result := H <> INVALID_HANDLE_VALUE;
-  if Result then CloseHandle(H);
+  if Result then FileClose(H);
 end;
 
 function DeleteFiles(const Dir, Wildcard: string): Integer;

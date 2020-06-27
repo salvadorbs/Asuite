@@ -11,29 +11,21 @@ object frmAbout: TfrmAbout
   Font.Height = -11
   Font.Name = 'MS Shell Dlg 2'
   Font.Style = []
-  OldCreateOrder = False
   Position = poOwnerFormCenter
-  ScreenSnap = True
   OnCreate = FormCreate
   PixelsPerInch = 96
-  TextHeight = 13
   object GroupBox3: TGroupBox
-    AlignWithMargins = True
     Left = 5
     Top = 5
     Width = 372
     Height = 161
-    Margins.Left = 5
-    Margins.Top = 5
-    Margins.Right = 5
-    Margins.Bottom = 5
     Align = alClient
     Color = clBtnFace
     ParentColor = False
     TabOrder = 0
     object imgLicense: TImage
-      Left = 157
-      Top = 111
+      Left = 155
+      Top = 97
       Width = 87
       Height = 35
       Cursor = crHandPoint
@@ -439,8 +431,8 @@ object frmAbout: TfrmAbout
       OnClick = imgLicenseClick
     end
     object imgDonate: TImage
-      Left = 261
-      Top = 116
+      Left = 259
+      Top = 102
       Width = 92
       Height = 26
       Cursor = crHandPoint
@@ -529,8 +521,8 @@ object frmAbout: TfrmAbout
       OnClick = imgDonateClick
     end
     object lblAppName: TLabel
-      Left = 157
-      Top = 17
+      Left = 155
+      Top = 3
       Width = 17
       Height = 17
       Caption = '%s'
@@ -542,8 +534,8 @@ object frmAbout: TfrmAbout
       ParentFont = False
     end
     object lblVersion: TLabel
-      Left = 157
-      Top = 37
+      Left = 155
+      Top = 23
       Width = 54
       Height = 13
       Caption = '%s (%s bit)'
@@ -555,8 +547,8 @@ object frmAbout: TfrmAbout
       ParentFont = False
     end
     object lblCopyright: TLabel
-      Left = 157
-      Top = 53
+      Left = 155
+      Top = 39
       Width = 172
       Height = 13
       Caption = 'Copyright 2006-2015 Matteo Salvi'
@@ -568,8 +560,8 @@ object frmAbout: TfrmAbout
       ParentFont = False
     end
     object imgLogo: TImage
-      Left = 15
-      Top = 18
+      Left = 13
+      Top = 4
       Width = 128
       Height = 128
       Picture.Data = {
@@ -2689,32 +2681,15 @@ object frmAbout: TfrmAbout
         80000003FFFFFFFFFFFFFFFFFFFFFFFFFC000007FFFFFFFFFFFFFFFFFFFFFFFF
         FFF0007F}
     end
-    object lnklblWebSite: TLinkLabel
-      Left = 157
-      Top = 69
+    object lnklblWebSite: TATLabelLink
+      Left = 155
+      Top = 55
       Width = 185
       Height = 19
       Caption = 
         '<a href="http://www.salvadorsoftware.com">http://www.salvadorsof' +
         'tware.com</a>'
-      TabOrder = 0
-      UseVisualStyle = True
       OnClick = lnklblWebSiteClick
     end
-  end
-  object DKLanguageController1: TDKLanguageController
-    IgnoreList.Strings = (
-      'lbASuiteTitle.*'
-      'lnklblWebSite.*')
-    Left = 344
-    Top = 16
-    LangData = {
-      080066726D41626F7574010100000001000000070043617074696F6E01080000
-      00090047726F7570426F783300000D006C6E6B6C626C5765625369746500000A
-      00696D674C6963656E736500000900696D67446F6E61746500000A006C626C41
-      70704E616D65010100000002000000070043617074696F6E000A006C626C5665
-      7273696F6E010100000003000000070043617074696F6E000C006C626C436F70
-      797269676874010100000004000000070043617074696F6E000700696D674C6F
-      676F0000}
   end
 end

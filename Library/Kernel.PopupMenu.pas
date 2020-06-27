@@ -19,11 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Kernel.PopupMenu;
 
+{$MODE Delphi}
+
 interface
 
 uses
   Classes, SysUtils, Menus, VirtualTrees, NodeDataTypes.Base,
-  Windows, Messages;
+  LCLIntf, LCLType, LMessages, Messages;
 
 type
 

@@ -19,11 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Options.Stats;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Frame.BaseEntity, Vcl.StdCtrls, DKLang,
+  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, Frame.BaseEntity, StdCtrls, DKLang,
   Registry;
 
 type
@@ -49,7 +51,7 @@ type
     lbOs2: TLabel;
     lbUser2: TLabel;
     lbNamePc2: TLabel;
-    DKLanguageController1: TDKLanguageController;
+    
     lblBuild2: TLabel;
     lblBuild: TLabel;
     lblProcessor: TLabel;
@@ -83,7 +85,7 @@ implementation
 uses
   PJSysInfo, Utility.Misc, AppConfig.Main, Kernel.Types, VirtualTree.Methods;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmStatsOptionsPage }
 
@@ -98,11 +100,11 @@ begin
 end;
 
 function TfrmStatsOptionsPage.GetTotalPhysMemory: Int64;var
-  MemoryEx: WinApi.Windows.TMemoryStatusEx;
+  MemoryEx: Windows.TMemoryStatusEx;
 begin
   begin
     MemoryEx.dwLength := SizeOf(TMemoryStatusEx);
-    WinApi.Windows.GlobalMemoryStatusEx(MemoryEx);
+    Windows.GlobalMemoryStatusEx(MemoryEx);
     Result := MemoryEx.ullTotalPhys;
   end;
 end;
@@ -113,7 +115,7 @@ const
   // float format specifiers
   cFmtSpec: array[Boolean] of Char = ('f', 'n');
 begin
-  Result := System.SysUtils.Format(
+  Result := SysUtils.Format(
     '%.*' + cFmtSpec[SeparateThousands], [DecimalPlaces, Value]
   );
 end;

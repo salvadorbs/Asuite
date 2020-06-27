@@ -11,14 +11,9 @@ object frmScanFolder: TfrmScanFolder
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poMainFormCenter
   OnCreate = FormCreate
-  DesignSize = (
-    579
-    256)
   PixelsPerInch = 96
-  TextHeight = 13
   object btnScan: TButton
     Left = 415
     Top = 224
@@ -48,8 +43,8 @@ object frmScanFolder: TfrmScanFolder
     Anchors = [akTop, akRight, akBottom]
     TabOrder = 1
     object grpFileTypes: TGroupBox
-      Left = 8
-      Top = 63
+      Left = 6
+      Top = 61
       Width = 169
       Height = 114
       Caption = 'File Types'
@@ -61,8 +56,8 @@ object frmScanFolder: TfrmScanFolder
       ParentFont = False
       TabOrder = 1
       object btnTypesDelete: TButton
-        Left = 103
-        Top = 72
+        Left = 101
+        Top = 58
         Width = 58
         Height = 17
         Caption = 'Delete'
@@ -77,8 +72,8 @@ object frmScanFolder: TfrmScanFolder
         OnClick = btnTypesDeleteClick
       end
       object btnTypesAdd: TButton
-        Left = 103
-        Top = 49
+        Left = 101
+        Top = 35
         Width = 58
         Height = 17
         Caption = 'Add'
@@ -93,8 +88,8 @@ object frmScanFolder: TfrmScanFolder
         OnClick = btnTypesAddClick
       end
       object edtTypes: TEdit
-        Left = 103
-        Top = 22
+        Left = 101
+        Top = 8
         Width = 58
         Height = 21
         Font.Charset = DEFAULT_CHARSET
@@ -107,8 +102,8 @@ object frmScanFolder: TfrmScanFolder
         OnChange = edtTypesChange
       end
       object vstTypes: TVirtualStringTree
-        Left = 9
-        Top = 22
+        Left = 7
+        Top = 8
         Width = 88
         Height = 83
         Font.Charset = DEFAULT_CHARSET
@@ -129,12 +124,11 @@ object frmScanFolder: TfrmScanFolder
         OnGetImageIndex = vstGetImageIndex
         OnGetNodeDataSize = vstGetNodeDataSize
         OnRemoveFromSelection = vstTypesRemoveFromSelection
-        Columns = <>
       end
     end
     object grpExclude: TGroupBox
-      Left = 183
-      Top = 63
+      Left = 181
+      Top = 61
       Width = 169
       Height = 114
       Caption = 'Exclude files'
@@ -146,8 +140,8 @@ object frmScanFolder: TfrmScanFolder
       ParentFont = False
       TabOrder = 2
       object edtExclude: TEdit
-        Left = 103
-        Top = 22
+        Left = 101
+        Top = 8
         Width = 58
         Height = 21
         Font.Charset = DEFAULT_CHARSET
@@ -160,8 +154,8 @@ object frmScanFolder: TfrmScanFolder
         OnChange = edtExcludeChange
       end
       object btnExcludeAdd: TButton
-        Left = 103
-        Top = 49
+        Left = 101
+        Top = 35
         Width = 58
         Height = 17
         Caption = 'Add'
@@ -176,8 +170,8 @@ object frmScanFolder: TfrmScanFolder
         OnClick = btnExcludeAddClick
       end
       object btnExcludeDelete: TButton
-        Left = 103
-        Top = 72
+        Left = 101
+        Top = 58
         Width = 58
         Height = 17
         Caption = 'Delete'
@@ -192,8 +186,8 @@ object frmScanFolder: TfrmScanFolder
         OnClick = btnExcludeDeleteClick
       end
       object vstExclude: TVirtualStringTree
-        Left = 9
-        Top = 22
+        Left = 7
+        Top = 8
         Width = 88
         Height = 83
         Font.Charset = DEFAULT_CHARSET
@@ -212,12 +206,11 @@ object frmScanFolder: TfrmScanFolder
         OnGetText = vstGetText
         OnGetNodeDataSize = vstGetNodeDataSize
         OnRemoveFromSelection = vstExcludeRemoveFromSelection
-        Columns = <>
       end
     end
     object grpGeneralSettings: TGroupBox
-      Left = 8
-      Top = 7
+      Left = 6
+      Top = 5
       Width = 345
       Height = 50
       Caption = 'General settings'
@@ -229,8 +222,8 @@ object frmScanFolder: TfrmScanFolder
       ParentFont = False
       TabOrder = 0
       object chkExtractName: TCheckBox
-        Left = 14
-        Top = 22
+        Left = 12
+        Top = 8
         Width = 328
         Height = 17
         Caption = 'Extract name automatically from executables (only *.exe)'
@@ -244,8 +237,8 @@ object frmScanFolder: TfrmScanFolder
       end
     end
     object pbScan: TProgressBar
-      Left = 8
-      Top = 183
+      Left = 6
+      Top = 181
       Width = 345
       Height = 18
       Smooth = True
@@ -288,29 +281,7 @@ object frmScanFolder: TfrmScanFolder
     OnInitNode = vstShellInitNode
     Columns = <>
   end
-  object DKLanguageController1: TDKLanguageController
-    Left = 8
-    Top = 434
-    LangData = {
-      0D0066726D5363616E466F6C646572010100000001000000070043617074696F
-      6E0113000000090062746E43616E63656C010100000003000000070043617074
-      696F6E00070062746E5363616E010100000004000000070043617074696F6E00
-      0A00706E6C46696C74657273000008007673745368656C6C00000C0067727046
-      696C655479706573010100000005000000070043617074696F6E000E0062746E
-      547970657344656C657465010100000007000000070043617074696F6E000B00
-      62746E5479706573416464010100000008000000070043617074696F6E000800
-      656474547970657300000A006772704578636C75646501010000000900000007
-      0043617074696F6E000A006564744578636C75646500000D0062746E4578636C
-      75646541646401010000000A000000070043617074696F6E00100062746E4578
-      636C75646544656C65746501010000000C000000070043617074696F6E000800
-      767374547970657300000A007673744578636C75646500000A00696C45787449
-      636F6E730000120067727047656E6572616C53657474696E677301010000000D
-      000000070043617074696F6E000E0063686B457874726163744E616D65010100
-      00000F000000070043617074696F6E00060070625363616E0000070076667353
-      63616E0000}
-  end
   object ilExtIcons: TImageList
-    ColorDepth = cd32Bit
     Left = 511
     Top = 232
   end

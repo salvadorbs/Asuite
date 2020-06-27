@@ -19,22 +19,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Options.MainWindow;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Frame.BaseEntity, DKLang, Vcl.StdCtrls,
-  Vcl.Mask, JvExMask, JvToolEdit;
+  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, Frame.BaseEntity, StdCtrls,
+  MaskEdit, EditBtn{, JvExMask, JvToolEdit};
 
 type
   TfrmMainWindowOptionsPage = class(TfrmBaseEntityPage)
-    DKLanguageController1: TDKLanguageController;
+    
     gbTreeView: TGroupBox;
     cbBackground: TCheckBox;
     btnFontSettings: TButton;
     cbAutoOpClCat: TCheckBox;
     cbSmallIcon: TCheckBox;
-    edtBackground: TJvFilenameEdit;
+    edtBackground: TFileNameEdit;
     gbWindow: TGroupBox;
     cbWindowOnTop: TCheckBox;
     cbHoldSize: TCheckBox;
@@ -71,7 +73,7 @@ implementation
 uses
   AppConfig.Main;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmBaseEntityPage1 }
 

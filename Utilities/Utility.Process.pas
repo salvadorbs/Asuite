@@ -19,11 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Utility.Process;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Windows, SysUtils, Kernel.Enumerations, Forms.Main, AppConfig.Main, TlHelp32,
-  SynLog;
+  LCLIntf, LCLType, LMessages, SysUtils, Kernel.Enumerations, Forms.Main, AppConfig.Main{, TlHelp32,
+  SynLog};
 
 { Processes, execution }
 procedure ActionOnExe(Action: TActionOnExecute);
@@ -117,7 +119,7 @@ begin
       begin
         hProcess := OpenProcess(PROCESS_TERMINATE, False, ProcInfo.th32ProcessID);
         TerminateProcess(hProcess, 0);
-        CloseHandle(hProcess);
+        FileClose(hProcess);
       end;
 
       ContinueLoop := Process32Next(hSnapShot, ProcInfo);

@@ -19,14 +19,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.Main;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
+  LCLIntf, LCLType, LMessages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
   ComCtrls, VirtualTrees, ActiveX, Kernel.Consts, DataModules.Icons,
-  Kernel.BaseMainForm, StdCtrls, Buttons, System.UITypes,
-  Kernel.Enumerations, Vcl.ExtCtrls, XMLDoc, DKLang, Lists.Manager,
-  Database.Manager, System.Actions, Vcl.ActnList, Vcl.Themes;
+  Kernel.BaseMainForm, StdCtrls, Buttons, UITypes,
+  Kernel.Enumerations, ExtCtrls, {XMLDoc,} Lists.Manager,
+  Database.Manager, {Actions,} ActnList, Themes, EditBtn;
 
 type
 
@@ -35,6 +37,11 @@ type
   TfrmMain = class(TBaseMainForm)
     miStatistics: TMenuItem;
     MenuItem2: TMenuItem;
+    mniOpenFolderItem: TMenuItem;
+    mniRunAsAdminItem: TMenuItem;
+    mniRunAsItem: TMenuItem;
+    mniRunItem: TMenuItem;
+    N9: TMenuItem;
     vstList: TVirtualStringTree;
     pcList: TPageControl;
     tbList: TTabSheet;
@@ -74,9 +81,9 @@ type
     miSearchIconPath: TMenuItem;
     miSearchWorkingDirPath: TMenuItem;
     miSearchParameters: TMenuItem;
-    btnedtSearch: TButtonedEdit;
+    btnedtSearch: TEditButton;
     mniScanFolder: TMenuItem;
-    DKLanguageController1: TDKLanguageController;
+    
     ActionList1: TActionList;
     actRunItem: TAction;
     actRunAsItem: TAction;
@@ -154,9 +161,9 @@ uses
   DataModules.TrayMenu, Forms.ImportList, AppConfig.Main, Utility.System,
   VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base, Kernel.Scheduler,
   Kernel.Types, NodeDataTypes.Files, VirtualTree.Events, Utility.Process,
-  Kernel.Logger, SynLog;
+  Kernel.Logger{, SynLog};
 
-{$R *.dfm}
+{$R *.lfm}
 
 procedure TfrmMain.actAddItemUpdate(Sender: TObject);
 begin

@@ -19,15 +19,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit DataModules.TrayMenu;
 
+{$MODE Delphi}
+
 {$I ASuite.inc}
 
 interface
 
 uses
-  Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  Menus, ExtCtrls, VirtualTrees, Lists.Manager, ShellApi, Vcl.ImgList,
-  Winapi.Messages, DKLang, System.UITypes, Kernel.PopupMenu, Lists.Base,
-  Kernel.Enumerations, vcl.Themes, Vcl.SysStyles;
+  LCLIntf, LCLType, LMessages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Menus, ExtCtrls, VirtualTrees, Lists.Manager, ImgList,
+  Messages, UITypes, Kernel.PopupMenu, Lists.Base,
+  Kernel.Enumerations, Themes{, SysStyles};
 
 type
   TdmTrayMenu = class(TDataModule)
@@ -135,7 +137,7 @@ uses
   NodeDataTypes.Custom, NodeDataTypes.Base, Kernel.Consts, Kernel.Logger,
   Utility.Misc, Utility.FileFolder;
 
-{$R *.dfm}
+{$R *.lfm}
 
 procedure TdmTrayMenu.DataModuleCreate(Sender: TObject);
 begin
@@ -673,7 +675,7 @@ end;
 
 procedure TdmTrayMenu.EjectDialog(Sender: TObject);
 begin
-  Utility.System.EjectDialog(Sender);
+  Utility.EjectDialog(Sender);
 end;
 
 procedure TdmTrayMenu.CreateSeparator(Menu: TPopupMenu;Text: String;ListMenuItem: TMenuItem);
@@ -813,8 +815,7 @@ end;
 
 procedure TdmTrayMenu.OpenFile(Sender: TObject);
 begin
-  ShellExecute(GetDesktopWindow, nil, PChar(TASMenuItem(Sender).Path), nil,
-               PChar(ExtractFileDir(TASMenuItem(Sender).Path)), SW_SHOW);
+   OpenDocument(PChar(TASMenuItem(Sender).Path));
 end;
 
 end.

@@ -24,7 +24,7 @@ interface
 uses
   Windows, SysUtils, Forms, Dialogs, VirtualTrees, NodeDataTypes, Kernel.Enumerations,
   ulCommonClasses, Classes, mORMot, SynCommons, mORMotSQLite3, DKLang,
-  Vcl.Controls;
+  Controls;
 
 type
 

@@ -19,6 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.PropertySeparator;
 
+{$MODE Delphi}
+
 interface
 
 uses
@@ -32,7 +34,7 @@ type
     Panel1: TPanel;
     lbName: TLabel;
     edtName: TEdit;
-    DKLanguageController1: TDKLanguageController;
+    
   private
     { Private declarations }
     procedure LoadNodeData(AData: TvBaseNodeData);
@@ -50,7 +52,7 @@ implementation
 uses
   Kernel.Logger;
 
-{$R *.dfm}
+{$R *.lfm}
 
 class function TfrmPropertySeparator.Execute(AOwner: TComponent; NodeData: TvBaseNodeData): TModalResult;
 var

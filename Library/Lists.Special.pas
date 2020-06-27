@@ -19,22 +19,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Lists.Special;
 
+{$MODE Delphi}
+
 interface
 
 uses
   Classes, NodeDataTypes.Custom, Menus, SysUtils, Kernel.Types,
-  Windows, Kernel.Enumerations, NodeDataTypes.Files, NodeDataTypes.Base,
+  LCLIntf, LCLType, LMessages, Kernel.Enumerations, NodeDataTypes.Files, NodeDataTypes.Base,
   DateUtils, Dialogs, UITypes, Lists.Base;
 
 type
   TMRUItemsComparer = class(TItemsComparer)
   public
-    function Compare(const Left, Right: TvBaseNodeData): Integer; override;
+    function Compare(constref Left, Right: TvBaseNodeData): Integer; override;
   end;
 
   TMFUItemsComparer = class(TItemsComparer)
   public
-    function Compare(const Left, Right: TvBaseNodeData): Integer; override;
+    function Compare(constref Left, Right: TvBaseNodeData): Integer; override;
   end;
 
   TSpecialItemsList = class(TBaseItemsList)
@@ -113,7 +115,7 @@ begin
   FItems.Sort(FComparison);
 end;
 
-function TMRUItemsComparer.Compare(const Left, Right: TvBaseNodeData): Integer;
+function TMRUItemsComparer.Compare(constref Left, Right: TvBaseNodeData): Integer;
 begin
   Result := 0;
   if (Left.DataType in [vtdtFile, vtdtFolder]) and (Right.DataType in [vtdtFile, vtdtFolder]) then
@@ -123,7 +125,7 @@ begin
   end;
 end;
 
-function TMFUItemsComparer.Compare(const Left, Right: TvBaseNodeData): Integer;
+function TMFUItemsComparer.Compare(constref Left, Right: TvBaseNodeData): Integer;
 begin
   Result := 0;
   if (Left.DataType in [vtdtFile, vtdtFolder]) and (Right.DataType in [vtdtFile, vtdtFolder]) then

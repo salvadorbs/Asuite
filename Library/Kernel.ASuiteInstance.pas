@@ -19,10 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Kernel.ASuiteInstance;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Windows, USingleInst, Messages, xxHash32, Forms, SysUtils;
+  LCLIntf, LCLType, LMessages, {USingleInst,} Messages, {xxHash32,} Forms, SysUtils;
 
 type
   TASuiteSingleInst = class(TSingleInst)

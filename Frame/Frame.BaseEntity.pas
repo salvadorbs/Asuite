@@ -19,11 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.BaseEntity;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs;
+  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes,
+  Graphics, Controls, Forms, Dialogs;
 
 type
   TfrmBaseEntityPage = class(TFrame)
@@ -49,7 +51,7 @@ implementation
 uses
   Kernel.Logger;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmBaseEntityPage }
 

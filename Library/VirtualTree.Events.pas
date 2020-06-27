@@ -19,10 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit VirtualTree.Events;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Windows, SysUtils, Classes, Graphics, VirtualTrees, ActiveX, UITypes, DKLang,
+  LCLIntf, LCLType, LMessages, SysUtils, Classes, Graphics, VirtualTrees, ActiveX, UITypes, DKLang,
   Kernel.Singleton, Forms.GraphicMenu, Forms.Dialog.BaseEntity, Menus, Forms;
 
 type
@@ -134,7 +136,7 @@ uses
   Utility.Misc, AppConfig.Main, NodeDataTypes.Base, NodeDataTypes.Category,
   NodeDataTypes.Files, NodeDataTypes.Custom, NodeDataTypes.Separator, Kernel.Types,
   Kernel.Enumerations, Frame.BaseEntity, Controls, VirtualTree.Methods, DataModules.TrayMenu,
-  ShellApi, comobj, DataModules.Icons, Kernel.Logger, SynLog, HotkeyManager;
+  comobj, DataModules.Icons, Kernel.Logger{, SynLog, HotkeyManager};
 
 { TVirtualTreeEvents }
 

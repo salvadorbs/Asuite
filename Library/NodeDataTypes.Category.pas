@@ -19,11 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit NodeDataTypes.Category;
 
+{$MODE Delphi}
+
 interface
 
 uses
   VirtualTrees, Menus, SysUtils, Dialogs, DateUtils, Kernel.Enumerations,
-  Winapi.Windows, NodeDataTypes.Base, NodeDataTypes.Custom, Kernel.Types,
+  LCLIntf, LCLType, LMessages, NodeDataTypes.Base, NodeDataTypes.Custom, Kernel.Types,
   UITypes;
 
 type

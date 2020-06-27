@@ -19,11 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Utility.System;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Kernel.Consts, Windows, ShellApi, SysUtils, Classes, Registry, StrUtils,
-  ShlObj, ActiveX, ComObj, Forms, Dialogs, System.IOUtils;
+  Kernel.Consts, LCLIntf, LCLType, LMessages, SysUtils, Classes, Registry, StrUtils,
+  ShlObj, ActiveX, ComObj, Forms, Dialogs{, IOUtils};
 
 { Check functions }
 function HasDriveLetter(const Path: String): Boolean;
@@ -48,7 +50,7 @@ implementation
 
 uses
   Utility.Conversions, Forms.Main, AppConfig.Main, Utility.Misc, Kernel.Logger,
-  HotKeyManager, VirtualTree.Methods;
+  {HotKeyManager,} VirtualTree.Methods;
 
 function HasDriveLetter(const Path: String): Boolean;
 var P: PChar;
@@ -139,10 +141,7 @@ begin
   if FileExists(PChar(WindowsPath + '\System32\Rundll32.exe')) then
   begin
     TASuiteLogger.Info('Call Eject Dialog', []);
-    bShellExecute := ShellExecute(0,'open',
-                     PChar(WindowsPath + '\System32\Rundll32.exe'),
-                     PChar('Shell32,Control_RunDLL hotplug.dll'),
-                     PChar(WindowsPath + '\System32'),SW_SHOWNORMAL) > 32;
+    bShellExecute :=  OpenDocument(PChar(WindowsPath + '\System32\Rundll32.exe')) > 32;
     //Error message
     if not bShellExecute then
       ShowMessageEx(Format('%s [%s]', [SysErrorMessage(GetLastError), 'Rundll32']), True);

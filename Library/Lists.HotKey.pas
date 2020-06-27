@@ -19,11 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Lists.HotKey;
 
+{$MODE Delphi}
+
 interface
 
 uses
   Classes, NodeDataTypes.Custom, Menus, SysUtils,
-  Windows, Kernel.Enumerations, NodeDataTypes.Base,
+  LCLIntf, LCLType, LMessages, Kernel.Enumerations, NodeDataTypes.Base,
   DateUtils, Dialogs, UITypes, Lists.Base;
 
 type

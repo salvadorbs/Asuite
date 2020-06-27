@@ -12,14 +12,9 @@ object frmDialogBase: TfrmDialogBase
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   OnKeyPress = FormKeyPress
-  DesignSize = (
-    559
-    325)
   PixelsPerInch = 96
-  TextHeight = 13
   object btnOk: TButton
     Left = 315
     Top = 294
@@ -66,7 +61,6 @@ object frmDialogBase: TfrmDialogBase
     TabOrder = 0
     TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowRoot, toShowTreeLines, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
     TreeOptions.SelectionOptions = [toFullRowSelect]
-    Columns = <>
   end
   object btnApply: TButton
     Left = 477

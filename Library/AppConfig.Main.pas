@@ -19,12 +19,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit AppConfig.Main;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Windows, SysUtils, Graphics, Forms, Controls, VirtualTrees, Kernel.Enumerations,
-  Vcl.Imaging.pngimage, System.UITypes, Classes, DKLang, AppConfig.Paths,
-  Lists.Manager, Database.Manager, Icons.Manager, Kernel.Logger, Vcl.Themes, Vcl.Dialogs;
+  LCLIntf, LCLType, LMessages, SysUtils, Graphics, Forms, Controls, VirtualTrees, Kernel.Enumerations,
+  {Imaging.pngimage,} UITypes, Classes, AppConfig.Paths,
+  Lists.Manager, Database.Manager, Icons.Manager, Kernel.Logger, Themes, Dialogs;
 
 type
 
@@ -271,9 +273,9 @@ implementation
 
 uses
   Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, Utility.Misc,
-  Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder, USingleInst,
+  Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder, {USingleInst,}
   Utility.XML, GraphicMenu.ThemeEngine, Kernel.Scheduler, Forms.ImportList,
-  TypInfo, HotKeyManager;
+  TypInfo{, HotKeyManager};
 
 procedure TConfiguration.AfterUpdateConfig;
 begin   

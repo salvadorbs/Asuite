@@ -19,13 +19,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.ImportList;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, Kernel.Consts, xmldom,
-  XMLIntf, msxmldom, XMLDoc, Kernel.Enumerations, DateUtils, DKLang, JvExMask,
-  Vcl.Mask, JvToolEdit;
+  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, Kernel.Consts, {xmldom,
+  XMLIntf, msxmldom, XMLDoc,} Kernel.Enumerations, DateUtils, {JvExMask,}
+  MaskEdit, EditBtn{, JvToolEdit};
 
 type
   TfrmImportList = class(TForm)
@@ -45,8 +47,8 @@ type
     pnlHeader: TPanel;
     lblTitle: TLabel;
     XMLDocument1: TXMLDocument;
-    DKLanguageController1: TDKLanguageController;
-    edtPathList: TJvFilenameEdit;
+    
+    edtPathList: TFileNameEdit;
     procedure btnDeselectAllClick(Sender: TObject);
     procedure btnSelectAllClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -74,7 +76,7 @@ var
 
 implementation
 
-{$R *.dfm}
+{$R *.lfm}
 
 uses
   Forms.Main, Utility.Misc, AppConfig.Main, VirtualTree.Events, VirtualTree.Methods,

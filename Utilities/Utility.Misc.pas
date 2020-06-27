@@ -19,11 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Utility.Misc;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Windows, SysUtils, Classes, Graphics, Forms, Dialogs, ComCtrls, Clipbrd,
-  Kernel.Consts, StdCtrls, XMLIntf, System.UITypes, DKLang, Menus;
+  LCLIntf, LCLType, LMessages, SysUtils, Classes, Graphics, Forms, Dialogs, ComCtrls, Clipbrd,
+  Kernel.Consts, StdCtrls, {XMLIntf,} UITypes, Menus;
 
 { Forms }
 function  IsFormOpen(const FormName : string): Boolean;
@@ -57,7 +59,7 @@ function  GetHotKeyMod(AShortcut: TShortcut) : Integer;
 implementation
 
 uses
-  Registry, PJVersionInfo, AppConfig.Main, Kernel.Logger, HotkeyManager;
+  Registry, {PJVersionInfo,} AppConfig.Main, Kernel.Logger{, HotkeyManager};
 
 function IsFormOpen(const FormName : string): Boolean;
 var
@@ -201,8 +203,8 @@ begin
   if (Result[1] <> QuoteChar) then Exit;     //Text is not quoted
   if (Result[Len] <> QuoteChar) then Exit;   //Text is not quoted
 
-  System.Delete(Result, Len, 1);
-  System.Delete(Result, 1, 1);
+  Delete(Result, Len, 1);
+  Delete(Result, 1, 1);
 
   Result := StringReplace(Result, QuoteChar + QuoteChar, QuoteChar, [rfReplaceAll]);
 end;

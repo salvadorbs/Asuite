@@ -19,20 +19,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.ScanFolder;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, DKLang, Vcl.Themes,
-  VirtualExplorerTree, MPShellUtilities, ShellApi, Vcl.ImgList, MPCommonUtilities,
-  System.ImageList, VirtualFileSearch, MPCommonObjects, StrUtils, SynTaskDialog;
+  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, Themes,
+  {VirtualExplorerTree, MPShellUtilities,} ImgList, {MPCommonUtilities,
+  ImageList, VirtualFileSearch, MPCommonObjects,} StrUtils{, SynTaskDialog};
 
 type
   TfrmScanFolder = class(TForm)
     btnScan: TButton;
     btnCancel: TButton;
     pnlFilters: TPanel;
-    DKLanguageController1: TDKLanguageController;
+    
     vstShell: TVirtualExplorerTree;
     grpFileTypes: TGroupBox;
     btnTypesDelete: TButton;
@@ -104,9 +106,9 @@ implementation
 uses
   AppConfig.Main, Kernel.Enumerations, Kernel.Types, VirtualTree.Methods,
   NodeDataTypes.Base, Utility.Misc, Kernel.Logger, Kernel.Consts, Utility.FileFolder,
-  NodeDataTypes.Files, VirtualFileSearch.Helper, System.UITypes;
+  NodeDataTypes.Files, VirtualFileSearch.Helper, UITypes;
 
-{$R *.dfm}
+{$R *.lfm}
 
 procedure TfrmScanFolder.btnCancelClick(Sender: TObject);
 begin

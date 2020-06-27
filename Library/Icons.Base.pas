@@ -19,15 +19,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Icons.Base;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  SysUtils, Classes, Controls, ShellApi, SyncObjs, Windows;
+  SysUtils, Classes, Controls, SyncObjs, LCLIntf, LCLType, LMessages, ShellApi;
 
 type
   TBaseIcon = class
   private
-    FLock: TCriticalSection;
+    FLock: SyncObjs.TCriticalSection;
 
     function GetImageIndex: Integer;
   protected
@@ -51,7 +53,7 @@ implementation
 constructor TBaseIcon.Create;
 begin
   FImageIndex := -1;
-  FLock := TCriticalSection.Create;
+  FLock := SyncObjs.TCriticalSection.Create;
 end;
 
 destructor TBaseIcon.Destroy;

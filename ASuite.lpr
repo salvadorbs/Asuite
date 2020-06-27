@@ -1,10 +1,12 @@
 program ASuite;
 
+{$MODE Delphi}
+
 uses
   Forms,
   SysUtils,
-  Windows,
-  SynSQLite3Static,
+  LCLIntf, LCLType, LMessages, Interfaces,
+  {SynSQLite3Static,}
   Forms.About in 'Forms\Forms.About.pas' {frmAbout},
   Forms.GraphicMenu in 'Forms\Forms.GraphicMenu.pas' {frmGraphicMenu},
   Forms.ImportList in 'Forms\Forms.ImportList.pas' {frmImportList},
@@ -55,7 +57,7 @@ uses
   Utility.Misc in 'Utilities\Utility.Misc.pas',
   Kernel.ASuiteInstance in 'Library\Kernel.ASuiteInstance.pas',
   Forms.ShortcutGrabber in 'Forms\Forms.ShortcutGrabber.pas' {frmShortcutGrabber},
-  USingleInst,
+  {USingleInst,}
   VirtualTree.Events in 'Library\VirtualTree.Events.pas',
   Forms.Dialog.BaseEntity in 'Forms\Forms.Dialog.BaseEntity.pas' {frmDialogBase},
   Forms.Options in 'Forms\Forms.Options.pas' {frmOptions},
@@ -72,7 +74,7 @@ uses
   Icons.Thread in 'Library\Icons.Thread.pas',
   Kernel.Scheduler in 'Library\Kernel.Scheduler.pas',
   Kernel.Logger in 'Library\Kernel.Logger.pas',
-  VirtualFileSearch.Helper in 'Library\VirtualFileSearch.Helper.pas',
+  VirtualFileSearch.Helper in 'Library\VirtualFileSearch.Helper.pas'{,
   Vcl.Themes,
   Vcl.Styles,
   Vcl.Styles.Utils.Menus, //Style Popup and Shell Menus (class #32768)
@@ -81,7 +83,7 @@ uses
   Vcl.Styles.Utils.ComCtrls, //Style SysTreeView32, SysListView32
   Vcl.Styles.Utils.ScreenTips, //Style the tooltips_class32 class
   Vcl.Styles.Utils.SysControls,
-  Vcl.Styles.Utils.SysStyleHook;
+  Vcl.Styles.Utils.SysStyleHook};
 
 //SQLite3 static library
 

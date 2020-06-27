@@ -1,0 +1,7 @@
+inherited frmPropertyItem: TfrmPropertyItem
+  Caption = 'Property'
+  PixelsPerInch = 96
+  inherited btnCancel: TButton
+    OnClick = nil
+  end
+end

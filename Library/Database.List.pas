@@ -19,11 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Database.List;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  mORMot, mORMotSQLite3, SynCommons, Database.Manager, VirtualTrees, DKLang, SysUtils,
-  Dialogs, Classes, NodeDataTypes.Base, SynLog;
+  {mORMot, mORMotSQLite3, SynCommons,} Database.Manager, VirtualTrees, SysUtils,
+  Dialogs, Classes, NodeDataTypes.Base{, SynLog};
 
 type
   TSQLtbl_list = class(TSQLRecord) //Table tbl_list

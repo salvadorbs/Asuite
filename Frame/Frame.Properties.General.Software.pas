@@ -19,12 +19,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Properties.General.Software;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
-  DKLang, Frame.Properties.General, Vcl.Mask, JvExMask, JvToolEdit;
+  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, StdCtrls,
+  Frame.Properties.General, MaskEdit{, JvExMask, JvToolEdit};
 
 type
   TfrmSWGeneralPropertyPage = class(TfrmBaseGeneralPropertyPage)
@@ -34,7 +36,7 @@ type
     edtParameters: TEdit;
     lbParameters: TLabel;
     lbPathExe: TLabel;
-    DKLanguageController1: TDKLanguageController;
+    
     edtWorkingDir: TJvDirectoryEdit;
     edtPathExe: TJvFilenameEdit;
     btnExtractName: TButton;
@@ -67,7 +69,7 @@ uses
   Kernel.Consts, NodeDataTypes.Files, AppConfig.Main,
   Utility.FileFolder;
 
-{$R *.dfm}
+{$R *.lfm}
 
 procedure TfrmSWGeneralPropertyPage.btnExtractNameClick(Sender: TObject);
 begin

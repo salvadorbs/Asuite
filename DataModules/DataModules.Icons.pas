@@ -19,13 +19,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit DataModules.Icons;
 
+{$MODE Delphi}
+
 {$I ASuite.inc}
 
 interface
 
 uses
-  SysUtils, Classes, Controls, Windows, Graphics, Dialogs, vcl.Forms,
-  ShellApi, CommCtrl, Vcl.ImgList, System.ImageList, kgraphics, kicon;
+  SysUtils, Classes, Controls, LCLIntf, LCLType, LMessages, Graphics, Dialogs, Forms,
+  CommCtrl, ImgList, kgraphics, kicon;
 
 type
   TdmImages = class(TDataModule)
@@ -50,9 +52,9 @@ var
 implementation
 
 uses
-  AppConfig.Main, MPCommonObjects;
+  AppConfig.Main{, MPCommonObjects};
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TdmImages }
 

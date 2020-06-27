@@ -19,6 +19,8 @@
 
 unit VirtualTree.Helper;
 
+{$MODE Delphi}
+
 interface
 
 uses

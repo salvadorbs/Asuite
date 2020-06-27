@@ -11,15 +11,10 @@ object frmShortcutGrabber: TfrmShortcutGrabber
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poScreenCenter
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
-  DesignSize = (
-    396
-    189)
   PixelsPerInch = 96
-  TextHeight = 13
   object pnlDialogPage: TPanel
     Left = 8
     Top = 8
@@ -28,8 +23,8 @@ object frmShortcutGrabber: TfrmShortcutGrabber
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 0
     object btnAlt: TcySkinButton
-      Left = 207
-      Top = 16
+      Left = 205
+      Top = 14
       Width = 74
       Height = 48
       AllowAllUp = True
@@ -37,8 +32,8 @@ object frmShortcutGrabber: TfrmShortcutGrabber
       Stretch = True
     end
     object btnCtrl: TcySkinButton
-      Left = 15
-      Top = 16
+      Left = 13
+      Top = 14
       Width = 74
       Height = 48
       AllowAllUp = True
@@ -46,8 +41,8 @@ object frmShortcutGrabber: TfrmShortcutGrabber
       Stretch = True
     end
     object btnShift: TcySkinButton
-      Left = 111
-      Top = 16
+      Left = 109
+      Top = 14
       Width = 74
       Height = 48
       AllowAllUp = True
@@ -55,8 +50,8 @@ object frmShortcutGrabber: TfrmShortcutGrabber
       Stretch = True
     end
     object btnWinKey: TcySkinButton
-      Left = 305
-      Top = 16
+      Left = 303
+      Top = 14
       Width = 46
       Height = 48
       AllowAllUp = True
@@ -64,15 +59,15 @@ object frmShortcutGrabber: TfrmShortcutGrabber
       Stretch = True
     end
     object lblInfo: TLabel
-      Left = 15
-      Top = 80
+      Left = 13
+      Top = 78
       Width = 228
       Height = 13
       Caption = 'Select modifiers above, then enter desired key:'
     end
     object hkKeys: THotKey
-      Left = 122
-      Top = 101
+      Left = 120
+      Top = 99
       Width = 121
       Height = 19
       HotKey = 0

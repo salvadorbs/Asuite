@@ -19,15 +19,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Options.General;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DKLang, Frame.BaseEntity, Vcl.StdCtrls;
+  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, Frame.BaseEntity, StdCtrls;
 
 type
   TfrmGeneralOptionsPage = class(TfrmBaseEntityPage)
-    DKLanguageController1: TDKLanguageController;
+    
     gbStartup: TGroupBox;
     cbWindowsStartup: TCheckBox;
     cbShowPanelStartup: TCheckBox;
@@ -62,7 +64,7 @@ implementation
 uses
   AppConfig.Main, Kernel.Enumerations;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmGeneralOptionsPage }
 
