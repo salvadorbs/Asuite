@@ -25,10 +25,21 @@ interface
 
 uses
   LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, Frame.BaseEntity, StdCtrls, DKLang,
-  Registry;
+  Controls, Forms, Dialogs, Frame.BaseEntity, StdCtrls, Registry;
 
 type
+  TMemoryStatusEx = packed record
+     dwLength: DWORD;
+     dwMemoryLoad: DWORD;
+     ullTotalPhys: Int64;
+     ullAvailPhys: Int64;
+     ullTotalPageFile: Int64;
+     ullAvailPageFile: Int64;
+     ullTotalVirtual: Int64;
+     ullAvailVirtual: Int64;
+     ullAvailExtendedVirtual: Int64;
+   end;
+
   TfrmStatsOptionsPage = class(TfrmBaseEntityPage)
     gbASuite: TGroupBox;
     lbSoftware: TLabel;
@@ -83,11 +94,14 @@ implementation
 {$I ASuite.INC}
 
 uses
-  PJSysInfo, Utility.Misc, AppConfig.Main, Kernel.Types, VirtualTree.Methods;
+  Utility.Misc, AppConfig.Main, Kernel.Types, VirtualTree.Methods, Windows, PJSysInfo;
 
 {$R *.lfm}
 
 { TfrmStatsOptionsPage }
+
+function GlobalMemoryStatusEx(var lpBuffer : TMemoryStatusEx) : BOOL;  stdcall;
+  external 'kernel32.dll' name 'GlobalMemoryStatusEx';
 
 function TfrmStatsOptionsPage.GetImageIndex: Integer;
 begin
@@ -96,15 +110,15 @@ end;
 
 function TfrmStatsOptionsPage.GetTitle: string;
 begin
-  Result := DKLangConstW('msgStats');
+  //Result := DKLangConstW('msgStats');
 end;
 
 function TfrmStatsOptionsPage.GetTotalPhysMemory: Int64;var
-  MemoryEx: Windows.TMemoryStatusEx;
+  MemoryEx: TMemoryStatusEx;
 begin
   begin
     MemoryEx.dwLength := SizeOf(TMemoryStatusEx);
-    Windows.GlobalMemoryStatusEx(MemoryEx);
+    GlobalMemoryStatusEx(MemoryEx);
     Result := MemoryEx.ullTotalPhys;
   end;
 end;

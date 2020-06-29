@@ -54,7 +54,7 @@ type
 implementation
 
 uses
-  NodeDataTypes.Files, VirtualTree.Methods, AppConfig.Main, DKLang;
+  NodeDataTypes.Files, VirtualTree.Methods, AppConfig.Main;
 
 procedure TvCategoryNodeData.CallBackExecuteNode(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
@@ -135,7 +135,9 @@ begin
   if (Config.ConfirmRunCat) then
   begin
     if CheckRunnableSubItems(Config.MainTree) then
-      Result := (MessageDlg(Format(DKLangConstW('msgConfirmRunCat'), [Self.Name]), mtWarning, [mbYes, mbNo], 0) = mrYes);
+    begin
+      //Result := (MessageDlg(Format(DKLangConstW('msgConfirmRunCat'), [Self.Name]), mtWarning, [mbYes, mbNo], 0) = mrYes);
+    end;
   end
   else
     Result := True;

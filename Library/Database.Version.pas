@@ -24,7 +24,7 @@ unit Database.Version;
 interface
 
 uses
-  {mORMot,} Database.Manager, {PJVersionInfo, SynLog,} SysUtils;
+  mORMot, Database.Manager, PJVersionInfo, SynLog, SysUtils;
 
 type
   TSQLtbl_version = class(TSQLRecord) //Table tbl_version

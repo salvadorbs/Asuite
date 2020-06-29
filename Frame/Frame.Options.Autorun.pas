@@ -136,7 +136,7 @@ end;
 
 function TfrmAutorunOptionsPage.GetTitle: string;
 begin
-  Result := DKLangConstW('msgAutorun');
+  //Result := DKLangConstW('msgAutorun');
 end;
 
 function TfrmAutorunOptionsPage.InternalLoadData: Boolean;
@@ -201,9 +201,11 @@ end;
 
 procedure TfrmAutorunOptionsPage.mniRemoveAutorunClick(Sender: TObject);
 begin
+  {
   if (MessageDlg((DKLangConstW('msgConfirm')),mtWarning, [mbYes,mbNo], 0) = mrYes) then
     if Assigned(GetActiveTree.FocusedNode) then
       GetActiveTree.IsVisible[GetActiveTree.FocusedNode] := False;
+  }
 end;
 
 procedure TfrmAutorunOptionsPage.MoveItemUp(const ATree: TBaseVirtualTree);
@@ -222,9 +224,11 @@ end;
 
 procedure TfrmAutorunOptionsPage.RemoveItem(const ATree: TBaseVirtualTree);
 begin
+  {
   if Assigned(ATree.FocusedNode) then
     if (MessageDlg((DKLangConstW('msgConfirm')),mtWarning, [mbYes,mbNo], 0) = mrYes) then
       ATree.IsVisible[ATree.FocusedNode] := False;
+  }
 end;
 
 procedure TfrmAutorunOptionsPage.SaveInAutorunItemList(

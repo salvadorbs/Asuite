@@ -24,7 +24,7 @@ unit Database.Options;
 interface
 
 uses
-  {mORMot, SynCommons,} Kernel.Enumerations, Classes, Kernel.Types, {SynLog,}
+  mORMot, SynCommons, Kernel.Enumerations, Classes, Kernel.Types, SynLog,
   SysUtils, Database.Manager, AppConfig.Main, Types;
 
 type
@@ -222,7 +222,7 @@ begin
       AConfig.ShowGraphicMenuAtStartUp := SQLOptionsData.showmenuatstartup;
       //Main Form
       AConfig.LangID             := SQLOptionsData.langid;
-      LangManager.LanguageID     := AConfig.LangID;
+      //LangManager.LanguageID     := AConfig.LangID;
       AConfig.CustomTitleString  := UTF8ToString(SQLOptionsData.customtitlestring);
       AConfig.UseCustomTitle     := SQLOptionsData.usecustomtitle;
       AConfig.HideTabSearch      := SQLOptionsData.hidetabsearch;

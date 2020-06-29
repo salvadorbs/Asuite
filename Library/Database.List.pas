@@ -24,8 +24,8 @@ unit Database.List;
 interface
 
 uses
-  {mORMot, mORMotSQLite3, SynCommons,} Database.Manager, VirtualTrees, SysUtils,
-  Dialogs, Classes, NodeDataTypes.Base{, SynLog};
+  mORMot, mORMotSQLite3, SynCommons, Database.Manager, VirtualTrees, SysUtils,
+  Dialogs, Classes, NodeDataTypes.Base, SynLog;
 
 type
   TSQLtbl_list = class(TSQLRecord) //Table tbl_list
@@ -225,7 +225,9 @@ begin
         TSQLtbl_list.SaveItemsByParentID(Tree, ADBManager, Node.FirstChild, vData.ID);
     except
       on E : Exception do
-        ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName, E.Message], True);
+      begin
+        //ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName, E.Message], True);
+      end;
     end;
     Node := Node.NextSibling;
   end;

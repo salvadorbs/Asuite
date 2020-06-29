@@ -25,8 +25,8 @@ interface
 
 uses
   LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, StdCtrls, VirtualTrees, DKLang,
-  Frame.Properties.General, MaskEdit, {JvExMask, JvToolEdit,} DataModules.Icons;
+  Controls, Forms, Dialogs, StdCtrls, VirtualTrees, Frame.Properties.General,
+  MaskEdit, DataModules.Icons;
 
 type
   TfrmCatGeneralPropertyPage = class(TfrmBaseGeneralPropertyPage)

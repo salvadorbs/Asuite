@@ -24,9 +24,9 @@ unit VirtualTree.Methods;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, SysUtils, Classes, Graphics, VirtualTrees, ActiveX, UITypes, DKLang,
+  LCLIntf, LCLType, LMessages, SysUtils, Classes, Graphics, VirtualTrees, ActiveX, UITypes,
   Kernel.Singleton, Kernel.Enumerations, NodeDataTypes.Base, Kernel.Types, Lists.Base,
-  {SynLog,} Themes;
+  SynLog, Themes;
 
 type
   TVirtualTreeMethods = class(TSingleton)
@@ -89,7 +89,7 @@ implementation
 
 uses
   Utility.System, DataModules.Icons, AppConfig.Main, NodeDataTypes.Files,
-  Utility.FileFolder, Forms.PropertySeparator, {mORMotUILogin,} Utility.Misc,
+  Utility.FileFolder, Forms.PropertySeparator, Utility.Misc,
   NodeDataTypes.Category, NodeDataTypes.Separator, Forms.PropertyItem, Icons.Thread,
   NodeDataTypes.Custom, Kernel.Consts, Icons.Node, Kernel.Logger;
 
@@ -109,7 +109,7 @@ begin
     ChildNode  := AddChildNodeEx(ASender, AParentNode, amInsertAfter, AType);
     //Set ChildNode's pNode and name (temporary)
     NodeData       := GetNodeItemData(ChildNode, ASender);
-    NodeData.Name  := DKLangConstW('msgNoName') + IntToStr(ASender.TotalCount);
+    //NodeData.Name  := DKLangConstW('msgNoName') + IntToStr(ASender.TotalCount);
     //If AType is a vtdtFolder, asuite must ask to user the folder
     if AType = vtdtFolder then
     begin
@@ -299,6 +299,8 @@ begin
       //Execute as user
       rmAsUser:
         begin
+          {
+          //TODO lazarus
           if TLoginForm.Login(DKLangConstW('msgRunAsTitle'), DKLangConstW('msgInsertWinUserInfo'), UserData.UserName, UserData.Password, True, '') then
           begin
             if UserData.UserName <> '' then
@@ -306,6 +308,7 @@ begin
             else
               ShowMessageEx(DKLangConstW('msgErrEmptyUserName'), true);
           end;
+          }
         end;
       //Execute as Admin
       rmAsAdmin: NodeData.ExecuteAsAdmin(True, NodeData.DataType = vtdtCategory);
@@ -593,7 +596,7 @@ procedure TVirtualTreeMethods.UpdateItemColor(const ASender: TBaseVirtualTree);
 begin
   //MainTree's color
   if not(Config.TVBackground) and ((Config.TVFont.Color = clBlack) or (Config.TVFont.Color = clWindowText)) then
-    ASender.Font.Color := TStyleManager.ActiveStyle.GetSystemColor(clWindowText);
+    ASender.Font.Color := clWindowText;
 end;
 
 procedure TVirtualTreeMethods.UpdateListItemCount(Sender: TBaseVirtualTree;

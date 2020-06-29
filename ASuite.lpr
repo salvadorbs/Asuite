@@ -63,7 +63,6 @@ uses
   Forms.Options in 'Forms\Forms.Options.pas' {frmOptions},
   Forms.PropertyItem in 'Forms\Forms.PropertyItem.pas' {frmPropertyItem},
   VirtualTree.Methods in 'Library\VirtualTree.Methods.pas',
-  VirtualTree.Helper in 'Library\VirtualTree.Helper.pas',
   GraphicMenu.ThemeEngine.Consts in 'Library\GraphicMenu.ThemeEngine.Consts.pas',
   GraphicMenu.ThemeEngine in 'Library\GraphicMenu.ThemeEngine.pas',
   Icons.Node in 'Library\Icons.Node.pas',
@@ -73,17 +72,7 @@ uses
   Frame.Options.MainWindow in 'Frame\Frame.Options.MainWindow.pas' {frmMainWindowOptionsPage: TFrame},
   Icons.Thread in 'Library\Icons.Thread.pas',
   Kernel.Scheduler in 'Library\Kernel.Scheduler.pas',
-  Kernel.Logger in 'Library\Kernel.Logger.pas',
-  VirtualFileSearch.Helper in 'Library\VirtualFileSearch.Helper.pas'{,
-  Vcl.Themes,
-  Vcl.Styles,
-  Vcl.Styles.Utils.Menus, //Style Popup and Shell Menus (class #32768)
-  Vcl.Styles.Utils.Forms, //Style dialogs box (class #32770)
-  Vcl.Styles.Utils.StdCtrls, //Style buttons, static, and so on
-  Vcl.Styles.Utils.ComCtrls, //Style SysTreeView32, SysListView32
-  Vcl.Styles.Utils.ScreenTips, //Style the tooltips_class32 class
-  Vcl.Styles.Utils.SysControls,
-  Vcl.Styles.Utils.SysStyleHook};
+  Kernel.Logger in 'Library\Kernel.Logger.pas';
 
 //SQLite3 static library
 

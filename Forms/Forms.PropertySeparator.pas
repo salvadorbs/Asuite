@@ -19,13 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.PropertySeparator;
 
-{$MODE Delphi}
+{$MODE delphiunicode}
 
 interface
 
 uses
-  SysUtils, Classes, Controls, Forms, Dialogs, NodeDataTypes.Base, StdCtrls, ExtCtrls,
-  DKLang;
+  SysUtils, Classes, Controls, Forms, Dialogs, NodeDataTypes.Base, StdCtrls, ExtCtrls;
 
 type
   TfrmPropertySeparator = class(TForm)

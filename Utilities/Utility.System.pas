@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Utility.System;
 
-{$MODE Delphi}
+{$MODE DelphiUnicode}
 
 interface
 
@@ -50,7 +50,7 @@ implementation
 
 uses
   Utility.Conversions, Forms.Main, AppConfig.Main, Utility.Misc, Kernel.Logger,
-  {HotKeyManager,} VirtualTree.Methods;
+  VirtualTree.Methods, LazFileUtils, Windows, Utility.Hotkey;
 
 function HasDriveLetter(const Path: String): Boolean;
 var P: PChar;
@@ -98,7 +98,7 @@ var
   PathTemp : String;
 begin
   PathTemp := Config.Paths.RelativeToAbsolute(Path);
-  if TPath.IsUNCPath(PathTemp) then
+  if IsUNCPath(PathTemp) then
     Result := True
   else
     if IsValidURLProtocol(PathTemp) then
@@ -137,11 +137,11 @@ var
   bShellExecute: Boolean;
 begin
   //Call "Safe Remove hardware" Dialog
-  WindowsPath := GetEnvironmentVariable('WinDir');
+  WindowsPath := SysUtils.GetEnvironmentVariable('WinDir');
   if FileExists(PChar(WindowsPath + '\System32\Rundll32.exe')) then
   begin
     TASuiteLogger.Info('Call Eject Dialog', []);
-    bShellExecute :=  OpenDocument(PChar(WindowsPath + '\System32\Rundll32.exe')) > 32;
+    bShellExecute :=  OpenDocument(PChar(WindowsPath + '\System32\Rundll32.exe'));
     //Error message
     if not bShellExecute then
       ShowMessageEx(Format('%s [%s]', [SysErrorMessage(GetLastError), 'Rundll32']), True);

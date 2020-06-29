@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.GraphicMenu;
 
-{$MODE Delphi}
+{$MODE delphiunicode}
 
 interface
 
@@ -122,7 +122,7 @@ uses
   Forms.Main, Utility.System, Kernel.Consts, AppConfig.Main, DataModules.Icons,
   Forms.About, NodeDataTypes.Base, Kernel.Enumerations, Forms.Options,
   Utility.Misc, VirtualTree.Events, VirtualTree.Methods, Kernel.Types,
-  NodeDataTypes.Custom, VirtualTree.Helper, GraphicMenu.ThemeEngine;
+  NodeDataTypes.Custom, GraphicMenu.ThemeEngine;
 
 procedure TfrmGraphicMenu.ApplicationEvents1Deactivate(Sender: TObject);
 begin
@@ -139,7 +139,8 @@ begin
   vstList.Clear;
   if edtSearch.Text <> '' then
   begin
-    edtSearch.RightButton.ImageIndex := TThemeEngine.Create.CancelIcon;
+    //TODO lazarus
+    //edtSearch.RightButton.ImageIndex := TThemeEngine.Create.CancelIcon;
     //Do search
     //Change node height and imagelist
     TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, False);
@@ -147,11 +148,15 @@ begin
     vstList.SortTree(-1, sdAscending);
     //Set first node as HotNode
     Node := vstList.GetFirst;
+    //TODO lazarus
+    {
     if Assigned(Node) then
       vstList.SetCurrentHotNode(Node);
+    }
   end
   else begin
-    edtSearch.RightButton.ImageIndex := TThemeEngine.Create.SearchIcon;
+    //TODO lazarus
+    //edtSearch.RightButton.ImageIndex := TThemeEngine.Create.SearchIcon;
     //Change node height and imagelist
     TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, Config.GMSmallIconSize);
     PopulateListTree(vstList);
@@ -209,20 +214,22 @@ begin
   dblDriveSize := DiskSize(Ord(Drive) - 64);
   dblDriveUsed := dblDriveSize - DiskFree(Ord(Drive) - 64);
   imgDriveSpace.Width := Round(dblDriveUsed / dblDriveSize * (imgDriveBackground.Width - 4));
-  lblDriveSpace.Caption := Format(DKLangConstW('msgGMHardDiskSpace'), [DiskFreeString(Drive, True), DiskSizeString(Drive, True)]);
+  //lblDriveSpace.Caption := Format(DKLangConstW('msgGMHardDiskSpace'), [DiskFreeString(Drive, True), DiskSizeString(Drive, True)]);
 
   edtSearch.Images := dmImages.ilSmallIcons;
 end;
 
 procedure TfrmGraphicMenu.OpenFolder(FolderPath: string);
 var
-  ErrorCode: Integer;
+  ErrorCode: Boolean;
   sPath: string;
 begin
   sPath := Config.Paths.RelativeToAbsolute(FolderPath);
-  ErrorCode :=  OpenDocument(PChar(sPath));
-  if ErrorCode <= 32 then
-    ShowMessageFmtEx(DKLangConstW('msgErrGeneric'), ['', SysErrorMessage(ErrorCode)], True);
+  ErrorCode := OpenDocument(PChar(sPath));
+  if ErrorCode then
+  begin
+  //  ShowMessageFmtEx(DKLangConstW('msgErrGeneric'), ['', SysErrorMessage(GetLastError)], True);
+  end;
 end;
 
 procedure TfrmGraphicMenu.FormCreate(Sender: TObject);
@@ -313,8 +320,12 @@ begin
           vstList.Expanded[CurrentNode] := True;
       end;
   end;
+
+  //TODO lazarus: rewrite this without hack helper!!!
+  {
   if Assigned(CurrentNode) then
     vstList.SetCurrentHotNode(CurrentNode);
+  }
 end;
 
 procedure TfrmGraphicMenu.FormKeyPress(Sender: TObject; var Key: Char);
@@ -368,7 +379,7 @@ var
   TempString : string;
 begin
   TempString := '';
-  OpenDialog1.Filter     := DKLangConstW('msgFilterPicture');
+  //OpenDialog1.Filter     := DKLangConstW('msgFilterPicture');
   OpenDialog1.InitialDir := ExtractFileDir(Config.Paths.RelativeToAbsolute(Config.GMPersonalPicture));
   if OpenDialog1.Execute then
   begin

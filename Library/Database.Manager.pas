@@ -24,8 +24,8 @@ unit Database.Manager;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, SysUtils, Forms, Dialogs, VirtualTrees, {PJVersionInfo,}
-  Classes, {mORMot, SynCommons, mORMotSQLite3,} Controls;
+  LCLIntf, LCLType, LMessages, SysUtils, Forms, Dialogs, VirtualTrees, PJVersionInfo,
+  Classes, mORMot, SynCommons, mORMotSQLite3, Controls;
 
 type
   TDBManager = class
@@ -131,7 +131,9 @@ begin
     TSQLtbl_list.Load(Self, ATree, True);
   except
     on E : Exception do
-      ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message],True);
+    begin
+      //ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message],True);
+    end;
   end;
 end;
 
@@ -143,7 +145,9 @@ begin
     TSQLtbl_options.Load(Self, Config);
   except
     on E : Exception do
-      ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName, E.Message], True);
+    begin
+      //ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName, E.Message], True);
+    end;
   end;
 end;
 
@@ -177,7 +181,9 @@ begin
       TSQLtbl_list.Load(Self, ATree, False);
     except
       on E : Exception do
-        ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message],True);
+      begin
+        //ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message],True);
+      end;
     end;
   finally
     ATree.EndUpdate;
@@ -210,7 +216,7 @@ begin
       end;
     except
       on E : Exception do begin
-        ShowMessageFmtEx(DKLangConstW('msgErrGeneric'), [E.ClassName,E.Message], True);
+        //ShowMessageFmtEx(DKLangConstW('msgErrGeneric'), [E.ClassName,E.Message], True);
         FDatabase.Rollback(1);
       end;
     end;

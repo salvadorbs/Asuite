@@ -19,15 +19,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.ImportList;
 
-{$MODE Delphi}
+{$MODE delphiunicode}
 
 interface
 
 uses
   LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, Kernel.Consts, {xmldom,
-  XMLIntf, msxmldom, XMLDoc,} Kernel.Enumerations, DateUtils, {JvExMask,}
-  MaskEdit, EditBtn{, JvToolEdit};
+  Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, Kernel.Consts, DOM, XMLRead,
+  Kernel.Enumerations, DateUtils, MaskEdit, EditBtn;
 
 type
   TfrmImportList = class(TForm)
@@ -123,6 +122,7 @@ begin
   Config.ASuiteState := lsNormal;
   if (ModalResult = mrOk) and (vstListImp.HasChildren[vstListImp.RootNode]) then
   begin
+    {
     try
       if TreeImpToTree(vstListImp, Config.MainTree) then
       begin
@@ -137,6 +137,7 @@ begin
         TASuiteLogger.Error(DKLangConstW('msgErrGeneric'), [E.ClassName,E.Message]);
       end;
     end;
+    }
   end;
 end;
 
@@ -172,8 +173,8 @@ end;
 
 procedure TfrmImportList.tsListShow(Sender: TObject);
 begin
-  lblTitle.Caption := DKLangConstW('msgImportTitle3');
-  btnNext.Caption  := DKLangConstW('msgImport');
+  //lblTitle.Caption := DKLangConstW('msgImportTitle3');
+  //btnNext.Caption  := DKLangConstW('msgImport');
   btnNext.Enabled  := vstListImp.CheckedCount > 0;
   //Import list in temporary vst
   try
@@ -192,9 +193,9 @@ end;
 procedure TfrmImportList.tsAskFileListShow(Sender: TObject);
 begin
   vstListImp.Clear;
-  lblTitle.Caption := DKLangConstW('msgImportTitle2');
+  //lblTitle.Caption := DKLangConstW('msgImportTitle2');
   btnNext.Enabled  := (edtPathList.Text <> '') and FileExists(edtPathList.Text);
-  btnNext.Caption  := DKLangConstW('msgNext');
+  //btnNext.Caption  := DKLangConstW('msgNext');
 end;
 
 function TfrmImportList.GetNumberNodeImp(Sender: TBaseVirtualTree): Integer;
@@ -222,8 +223,7 @@ begin
     //ASuite or wppLauncher
     if (FileExt = EXT_XML) or (FileExt = EXT_XMLBCK) then
     begin
-      XMLDocument1.FileName := FilePath;
-      XMLDocument1.Active   := True;
+      ReadXMLFile(XMLDocument1, FilePath);
       //Identify launcher xml from first node
       //ASuite 1.x
       if XMLDocument1.DocumentElement.NodeName = 'ASuite' then

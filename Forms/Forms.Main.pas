@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.Main;
 
-{$MODE Delphi}
+{$MODE delphiunicode}
 
 interface
 
@@ -161,7 +161,7 @@ uses
   DataModules.TrayMenu, Forms.ImportList, AppConfig.Main, Utility.System,
   VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base, Kernel.Scheduler,
   Kernel.Types, NodeDataTypes.Files, VirtualTree.Events, Utility.Process,
-  Kernel.Logger{, SynLog};
+  Kernel.Logger, SynLog, FileUtil;
 
 {$R *.lfm}
 
@@ -203,7 +203,7 @@ begin
   Config.ASuiteState := lsDeleting;
   try
     Tree := GetActiveTree;
-    if (Tree.GetFirstSelected <> nil) and (Config.TVDisableConfirmDelete or (MessageDlg((DKLangConstW('msgConfirmDeleteItem')), mtWarning, [mbYes,mbNo], 0) = mrYes)) then
+    if (Tree.GetFirstSelected <> nil) and (Config.TVDisableConfirmDelete {or (MessageDlg((DKLangConstW('msgConfirmDeleteItem')), mtWarning, [mbYes,mbNo], 0) = mrYes)}) then
     begin
       Nodes := Tree.GetSortedSelection(true);
       //Delete items
@@ -354,10 +354,11 @@ procedure TfrmMain.btnedtSearchChange(Sender: TObject);
 begin
   if Config.SearchAsYouType then
   begin
-    if btnedtSearch.Text <> '' then
+    //TODO lazarus
+    {if btnedtSearch.Text <> '' then
       btnedtSearch.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel')
     else
-      btnedtSearch.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('search');
+      btnedtSearch.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('search');}
 
     DoSearchItem(vstSearch, btnedtSearch.Text, TSearchType(GetCheckedMenuItem(pmSearch).Tag));
   end;
@@ -379,10 +380,10 @@ end;
 
 procedure TfrmMain.miSaveListClick(Sender: TObject);
 begin;
-  if Config.SaveList(True) then
+  {if Config.SaveList(True) then
     ShowMessageEx(DKLangConstW('msgSaveCompleted'))
   else
-    ShowMessageEx(DKLangConstW('msgErrSave'),true);
+    ShowMessageEx(DKLangConstW('msgErrSave'),true);}
 end;
 
 procedure TfrmMain.ChangeSearchTextHint(Sender: TObject);
@@ -433,9 +434,6 @@ begin
     btnedtSearch.Text := '';
   end;
   TVirtualTreeMethods.Create.CheckVisibleNodePathExe(GetActiveTree);
-
-  //Workaround TButtonedEdit search transparency icon
-  frmMain.btnedtSearch.Color := StyleServices.GetSystemColor(clWindow);
 end;
 
 procedure TfrmMain.SetAllIcons;
@@ -466,8 +464,9 @@ begin
   miInfoASuite.ImageIndex  := Config.IconsManager.GetIconIndex('help');
   actRunItem.ImageIndex    := Config.IconsManager.GetIconIndex('run');
   //Set Search's ImageIndexes
-  btnedtSearch.LeftButton.ImageIndex  := Config.IconsManager.GetIconIndex('search_type');
-  btnedtSearch.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('search');
+  //TODO lazarus
+  //btnedtSearch.LeftButton.ImageIndex  := Config.IconsManager.GetIconIndex('search_type');
+  //btnedtSearch.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('search');
 end;
 
 procedure TfrmMain.ShowMainForm(Sender: TObject);

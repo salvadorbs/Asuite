@@ -6,7 +6,7 @@ interface
 
 uses
   Kernel.Consts, LCLIntf, LCLType, LMessages, SysUtils, Classes, Kernel.Enumerations, ShlObj, ActiveX,
-  ComObj, FileCtrl{, PJVersionInfo};
+  ComObj, FileCtrl, PJVersionInfo, FileUtil, ShellApi, Windows, Dialogs;
 
 { Folders }
 function GetSpecialFolder(const ASpecialFolderID: Integer): string;
@@ -33,7 +33,7 @@ procedure RenameShortcutOnDesktop(const OldFileName, FileName: String);
 implementation
 
 uses
-  AppConfig.Main, IniFiles{, FCRC32};
+  AppConfig.Main, IniFiles, FCRC32;
 
 function GetSpecialFolder(const ASpecialFolderID: Integer): string;
 var
@@ -207,12 +207,12 @@ begin
     repeat
       BackupList.Add(BackupSearch.Name);
     until
-      FindNext(BackupSearch) <> 0;
-    FindClose(BackupSearch);
+      SysUtils.FindNext(BackupSearch) <> 0;
+    SysUtils.FindClose(BackupSearch);
   end;
   BackupList.Sort;
   for I := 1 to BackupList.Count - MaxNumber do
-    DeleteFile(Config.Paths.SuitePathBackup + BackupList[I - 1]);
+    SysUtils.DeleteFile(Config.Paths.SuitePathBackup + BackupList[I - 1]);
   BackupList.Free;
 end;
 
@@ -252,7 +252,7 @@ begin
   SHGetPathFromIDList(PIDL, DesktopPath);
   LinkName := PWChar(IncludeTrailingPathDelimiter(DesktopPath) + FileName);
   if (FileExists(LinkName)) then
-    DeleteFile(LinkName);
+    SysUtils.DeleteFile(LinkName);
 end;
 
 function GetShortcutTarget(const LinkFileName:String; ShortcutType: TShortcutField):String;

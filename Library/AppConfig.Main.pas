@@ -273,24 +273,12 @@ implementation
 
 uses
   Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, Utility.Misc,
-  Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder, {USingleInst,}
+  Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder, Windows,
   Utility.XML, GraphicMenu.ThemeEngine, Kernel.Scheduler, Forms.ImportList,
-  TypInfo{, HotKeyManager};
+  TypInfo, Utility.HotKey;
 
 procedure TConfiguration.AfterUpdateConfig;
 begin   
-  //ASuite theme (dark or light theme)                                                
-  case Config.ASuiteTheme of
-    atWindowsSystem: 
-    begin
-      if DarkModeIsEnabled then
-        TStyleManager.TrySetStyle('Windows10 SlateGray')
-      else                                                   
-         TStyleManager.TrySetStyle('Windows');
-    end;
-    atLight: TStyleManager.TrySetStyle('Windows');
-    atDark: TStyleManager.TrySetStyle('Windows10 SlateGray');
-  end; 
   TVirtualTreeMethods.Create.UpdateItemColor(Config.MainTree);
 end;
 
@@ -316,7 +304,6 @@ begin
   FSmallHeightNode := Round((Screen.PixelsPerInch / 96.0) * 18);
   FBigHeightNode   := Round((Screen.PixelsPerInch / 96.0) * 36);
   //Params
-  SingleInst.OnProcessParam := HandleParam;
   for I := 1 to ParamCount do
     HandleParam(ParamStr(I));
   //Create some classes
@@ -328,8 +315,8 @@ begin
   FIconsManager := TIconsManager.Create;
   //Find language files and register them in LangManager
   TASuiteLogger.Info('Scanning for language files', []);
-  LangManager.ScanForLangFiles(FPaths.SuitePathLocale, '*.lng', False);
-  LangManager.LanguageID := 1040;
+  //LangManager.ScanForLangFiles(FPaths.SuitePathLocale, '*.lng', False);
+  //LangManager.LanguageID := 1040;
   //General
   FStartWithWindows   := False;
   FShowPanelAtStartUp := True;
@@ -554,7 +541,7 @@ begin
     if FAlwaysOnTop then
       frmMain.FormStyle := fsStayOnTop
     else begin
-      ShowMessageEx(DKLangConstW('msgRestartAsuiteChanges'));
+      //ShowMessageEx(DKLangConstW('msgRestartAsuiteChanges'));
       frmMain.FormStyle := fsNormal;
     end;
   end;
@@ -630,7 +617,9 @@ begin
     if (Value <> 0) then
     begin
       if Not(RegisterHotKeyEx(frmMain.Handle, Value)) then
-        ShowMessageEx(DKLangConstW('msgErrRegWindowHotkey'), true);
+      begin
+        //ShowMessageEx(DKLangConstW('msgErrRegWindowHotkey'), true);
+      end;
     end;
   end;
   FWindowHotKey := Value;
@@ -676,8 +665,8 @@ end;
 
 procedure TConfiguration.SetTVBackground(value: Boolean);
 var
-  BackgroundBMP : TBitmap;
-  BackgroundPNG : TPngImage;
+  BackgroundBMP : Graphics.TBitmap;
+  BackgroundPNG : TPortableNetworkGraphic;
 begin
   FTVBackground := value;
   FMainTree.TreeOptions.PaintOptions := FMainTree.TreeOptions.PaintOptions - [toShowBackground];
@@ -686,8 +675,8 @@ begin
   begin
     if LowerCase(ExtractFileExt(FPaths.RelativeToAbsolute(FTVBackgroundPath))) <> '.bmp' then
     begin
-      BackgroundBMP := TBitmap.Create;
-      BackgroundPNG := TPngImage.Create;
+      BackgroundBMP := Graphics.TBitmap.Create;
+      BackgroundPNG := TPortableNetworkGraphic.Create;
       try
         BackgroundPNG.LoadFromFile(FPaths.RelativeToAbsolute(FTVBackgroundPath));
         BackgroundBMP.Assign(BackgroundPNG);
@@ -760,7 +749,9 @@ begin
     if (Value <> 0) then
     begin
       if Not(RegisterHotKeyEx(frmCMenuID, Value)) then
-        ShowMessageEx(DKLangConstW('msgErrRegCMHotkey'));
+      begin
+        //ShowMessageEx(DKLangConstW('msgErrRegCMHotkey'));
+      end;
     end;
   end;
   FClassicMenuHotKey := Value;
@@ -842,7 +833,9 @@ begin
     if (Value <> 0) then
     begin
       if Not(RegisterHotKeyEx(frmGMenuID, Value)) then
-        ShowMessageEx(DKLangConstW('msgErrRegGMHotkey'));
+      begin
+        //ShowMessageEx(DKLangConstW('msgErrRegGMHotkey'));
+      end;
     end;
   end;
   FGraphicMenuHotKey := Value;

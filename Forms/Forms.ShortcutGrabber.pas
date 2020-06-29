@@ -19,19 +19,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.ShortcutGrabber;
 
-{$MODE Delphi}
+{$MODE delphiunicode}
 
 interface
 
 uses
   LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, StdCtrls, {HotKeyManager,} Menus,
-  ComCtrls, cySkinButton, {Imaging.pngimage,} ExtCtrls;
+  Controls, Forms, Dialogs, StdCtrls, Menus, ComCtrls, cySkinButton, ExtCtrls,
+  hotkey, Windows;
 
 type
   TfrmShortcutGrabber = class(TForm)
     hkKeys: THotKey;
-    HotKeyManager1: THotKeyManager;
     btnAlt: TcySkinButton;
     btnWinKey: TcySkinButton;
     btnShift: TcySkinButton;
@@ -74,8 +73,8 @@ var
 implementation
 
 uses
-  Kernel.Logger, Utility.Misc, AppConfig.Main, {IOUtils,} Kernel.Consts,
-  Utility.System;
+  Kernel.Logger, Utility.Misc, AppConfig.Main, Kernel.Consts,
+  Utility.System, Utility.Hotkey;
 
 {$R *.lfm}
 
@@ -104,7 +103,7 @@ begin
     if Modifiers <> 0 then
     begin
       //Convert Key + Modifier in Cardinal
-      HotKeyVar := HotKeyManager.GetHotKey(Modifiers, Key);
+      HotKeyVar := Utility.Hotkey.GetHotKey(Modifiers, Key);
       NewHotkey := HotKeyToText(HotKeyVar, False);
 
       //Check old and new hotkey. They must differs (user choose another hotkey)
@@ -115,17 +114,20 @@ begin
 
         if FCanClose then
           FHotkey := NewHotkey
-        else
-          ShowMessageEx(DKLangConstW('msgHotkeyNotAvailable'), True);
+        else begin
+          //ShowMessageEx(DKLangConstW('msgHotkeyNotAvailable'), True);
+        end;
       end
       else
         FCanClose := True;
     end
-    else
-      ShowMessageEx(DKLangConstW('msgHotkeyNoMod'));
+    else begin
+      //ShowMessageEx(DKLangConstW('msgHotkeyNoMod'));
+    end
   end
-  else
-    ShowMessageEx(DKLangConstW('msgHotkeyNoKey'));
+  else begin
+    //ShowMessageEx(DKLangConstW('msgHotkeyNoKey'));
+  end;
 
   if NewHotkey = '' then
     hkKeys.SetFocus;
@@ -234,11 +236,11 @@ end;
 
 procedure TfrmShortcutGrabber.LoadPNGButtonState(APicture: TPicture; APathFile: string);
 var
-  PNGState: TPngImage;
+  PNGState: TPortableNetworkGraphic;
 begin
   if FileExists(APathFile) then
     begin
-      PNGState := TPngImage.Create;
+      PNGState := TPortableNetworkGraphic.Create;
     try
       PNGState.LoadFromFile(APathFile);
 

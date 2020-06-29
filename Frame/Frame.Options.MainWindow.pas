@@ -101,7 +101,7 @@ end;
 procedure TfrmMainWindowOptionsPage.edtBackgroundBeforeDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
-  edtBackground.Filter := DKLangConstW('msgFilterBackground');
+  //edtBackground.Filter := DKLangConstW('msgFilterBackground');
   AName := Config.Paths.RelativeToAbsolute(AName);
 end;
 
@@ -112,7 +112,7 @@ end;
 
 function TfrmMainWindowOptionsPage.GetTitle: string;
 begin
-  Result := DKLangConstW('msgMainWindow');
+  //Result := DKLangConstW('msgMainWindow');
 end;
 
 function TfrmMainWindowOptionsPage.InternalLoadData: Boolean;

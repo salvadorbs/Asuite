@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, Frame.Properties.Base, ComCtrls,
+  Controls, Forms, Dialogs, Frame.Properties.Base, ComCtrls, EditBtn,
   StdCtrls, DateUtils, ExtCtrls, Themes, DateTimePicker;
 
 type
@@ -42,7 +42,7 @@ type
     cbDontInsertMFU: TCheckBox;
     
     cbHotKey: TCheckBox;
-    edtHotkey: TButtonedEdit;
+    edtHotkey: TEditButton;
     procedure cxSchedulerChange(Sender: TObject);
     procedure cbHotKeyClick(Sender: TObject);
     procedure edtHotkeyRightButtonClick(Sender: TObject);
@@ -66,12 +66,11 @@ implementation
 
 uses
   Kernel.Enumerations, NodeDataTypes.Files, Forms.ShortcutGrabber, AppConfig.Main,
-  DataModules.Icons{, HotKeyManager};
+  DataModules.Icons, Utility.Hotkey;
 
 {$R *.lfm}
 
 { TfrmAdvancedPropertyPage }
-
 
 procedure TfrmAdvancedPropertyPage.cbHotKeyClick(Sender: TObject);
 begin
@@ -92,7 +91,7 @@ end;
 
 function TfrmAdvancedPropertyPage.GetTitle: string;
 begin
-  Result := DKLangConstW('msgAdvanced');
+  //Result := DKLangConstW('msgAdvanced');
 end;
 
 function TfrmAdvancedPropertyPage.InternalLoadData: Boolean;
@@ -107,7 +106,7 @@ begin
     cxSchedulerChange(Self);
     //Hotkey
     cbHotKey.Checked       := CurrentNodeData.ActiveHotkey;
-    edtHotkey.Text         := HotKeyToText(CurrentNodeData.Hotkey, False);
+    edtHotkey.Text         := Utility.Hotkey.HotKeyToText(CurrentNodeData.Hotkey, False);
     cbHotKeyClick(Self);
     //Specific file settings
     cbHideSoftware.Checked := CurrentNodeData.HideFromMenu;
@@ -127,12 +126,12 @@ begin
   end;
 
   edtHotkey.Images := dmImages.ilSmallIcons;
-  edtHotkey.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel');
+
+  //TODO lazarus
+  //edtHotkey.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel');
 
   //Hide caret in hotkey control
   HideCaret(edtHotkey.Handle);
-
-  edtHotkey.Color := StyleServices.GetSystemColor(edtHotkey.Color);
 end;
 
 function TfrmAdvancedPropertyPage.InternalSaveData: Boolean;
@@ -145,7 +144,7 @@ begin
     CurrentNodeData.SchDateTime  := Int(dtpSchDate.Date) + Frac(dtpSchTime.Time);
     CurrentNodeData.SchDateTime  := RecodeSecond(CurrentNodeData.SchDateTime, 0);
     //Hotkey
-    CurrentNodeData.Hotkey       := TextToHotKey(edtHotkey.Text, False);
+    CurrentNodeData.Hotkey       := Utility.Hotkey.TextToHotKey(edtHotkey.Text, False);
     CurrentNodeData.ActiveHotkey := cbHotKey.Checked;
     //Specific file settings
     CurrentNodeData.HideFromMenu := cbHideSoftware.Checked;
@@ -160,12 +159,13 @@ end;
 
 procedure TfrmAdvancedPropertyPage.edtHotkeyChange(Sender: TObject);
 var
-  edtHotkey: TButtonedEdit;
+  edtHotkey: TEditButton;
 begin
-  if Sender is TButtonedEdit then
+  if Sender is TEditButton then
   begin
-    edtHotkey := TButtonedEdit(Sender);
-    edtHotkey.RightButton.Visible := edtHotkey.Text <> '';
+    edtHotkey := TEditButton(Sender);
+    //TODO lazarus
+    //edtHotkey.RightButton.Visible := edtHotkey.Text <> '';
   end;
 end;
 
@@ -173,18 +173,18 @@ procedure TfrmAdvancedPropertyPage.edtHotkeyClick(Sender: TObject);
 var
   strHotkey: string;
 begin
-  if Sender is TButtonedEdit then
+  if Sender is TEditButton then
   begin
-    strHotkey := TfrmShortcutGrabber.Execute(Self, TButtonedEdit(Sender).Text);
+    strHotkey := TfrmShortcutGrabber.Execute(Self, TEditButton(Sender).Text);
     if (strHotkey <> '') then
-      TButtonedEdit(Sender).Text := strHotkey;
+      TEditButton(Sender).Text := strHotkey;
   end;
 end;
 
 procedure TfrmAdvancedPropertyPage.edtHotkeyRightButtonClick(Sender: TObject);
 begin
-  if Sender is TButtonedEdit then
-    TButtonedEdit(Sender).Text := '';
+  if Sender is TEditButton then
+    TEditButton(Sender).Text := '';
 end;
 
 end.

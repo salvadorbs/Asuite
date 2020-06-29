@@ -27,6 +27,13 @@ uses
   Forms, Controls, Classes, Dialogs, ActnList, Graphics, LCLIntf, LCLType, LMessages, Messages;
 
 type
+  TWMHotKey = Packed Record
+   MSG   : Cardinal;
+   HotKey: PtrInt;
+   Unused: PtrInt;
+   Result: PtrInt;
+  End;
+
   TBaseMainForm = class(TForm)
   private
     FSessionEnding : Boolean;
@@ -52,19 +59,17 @@ implementation
 
 uses
   AppConfig.Main, NodeDataTypes.Custom, Kernel.Consts, DataModules.TrayMenu,
-  Kernel.Enumerations, {USingleInst,} VirtualTree.Methods;
+  Kernel.Enumerations, VirtualTree.Methods;
 
 constructor TBaseMainForm.Create(AOwner: TComponent);
 begin
   inherited;
   Config.ASuiteState := lsNormal;
-  UseLatestCommonDialogs := False;
 end;
 
 procedure TBaseMainForm.CreateParams(var Params: TCreateParams);
 begin
   inherited;
-  SingleInst.CreateParams(Params);
 end;
 
 destructor TBaseMainForm.Destroy;
@@ -119,8 +124,7 @@ end;
 
 procedure TBaseMainForm.WndProc(var Msg: TMessage);
 begin
-  if not SingleInst.HandleMessages(Self.Handle, Msg) then
-    inherited;
+  inherited;
 end;
 
 procedure TBaseMainForm.WMEndSession(var Msg : TWMEndSession);

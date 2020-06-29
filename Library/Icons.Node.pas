@@ -55,7 +55,7 @@ implementation
 
 uses
   Utility.System, AppConfig.Main, NodeDataTypes.Files, Kernel.Consts,
-  Utility.FileFolder, DataModules.Icons;
+  Utility.FileFolder, DataModules.Icons, Windows;
 
 { TNodeIcon }
 
@@ -77,7 +77,7 @@ begin
   try
     //Bug: TBitmap doesn't support alpha format
     //Workaround: Get HIcon from ImageList and load it in a TKIcon
-    hIcon := ImageList_GetIcon(AImageList.Handle, AImageIndex, ILD_NORMAL);
+    hIcon := ImageList_GetIcon(AImageList.ResolutionByIndex[0].Reference.Handle, AImageIndex, ILD_NORMAL);
     if hIcon <> 0 then
     begin
       KIcon.LoadFromHandle(hIcon);

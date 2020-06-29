@@ -103,7 +103,7 @@ procedure TfrmTrayiconOptionsPage.edtCustomIconBeforeDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
   AName := Config.Paths.RelativeToAbsolute(AName);
-  edtCustomIcon.Filter := DKLangConstW('msgFilterIcon');
+  //edtCustomIcon.Filter := DKLangConstW('msgFilterIcon');
 end;
 
 function TfrmTrayiconOptionsPage.GetImageIndex: Integer;
@@ -113,7 +113,7 @@ end;
 
 function TfrmTrayiconOptionsPage.GetTitle: string;
 begin
-  Result := DKLangConstW('msgTrayIcon');
+  //Result := DKLangConstW('msgTrayIcon');
 end;
 
 function TfrmTrayiconOptionsPage.InternalLoadData: Boolean;

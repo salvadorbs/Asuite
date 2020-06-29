@@ -82,7 +82,7 @@ end;
 
 function TfrmBehaviorPropertyPage.GetTitle: string;
 begin
-  Result := DKLangConstW('msgBehavior');
+  //Result := DKLangConstW('msgBehavior');
 end;
 
 function TfrmBehaviorPropertyPage.InternalLoadData: Boolean;
@@ -92,7 +92,9 @@ begin
   begin
     //Insert cat specific setting
     if CurrentNodeData.DataType = vtdtCategory then
-      cxWindowState.Items.Insert(0, DKLangConstW('msgDefaultItemSettings'));
+    begin
+      //cxWindowState.Items.Insert(0, DKLangConstW('msgDefaultItemSettings'));
+    end;
     cxActionOnExe.ItemIndex := Ord(CurrentNodeData.ActionOnExe);
     cxAutoExecute.ItemIndex := Ord(CurrentNodeData.Autorun);
     btnChangeOrder.Enabled  := (cxAutoExecute.ItemIndex <> 0);

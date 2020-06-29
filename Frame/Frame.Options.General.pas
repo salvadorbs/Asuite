@@ -75,7 +75,7 @@ end;
 
 function TfrmGeneralOptionsPage.GetTitle: string;
 begin
-  Result := DKLangConstW('msgGeneral');
+  //Result := DKLangConstW('msgGeneral');
 end;
 
 function TfrmGeneralOptionsPage.InternalLoadData: Boolean;
@@ -90,12 +90,14 @@ begin
   chkMissedSchedulerTask.Checked := Config.MissedSchedulerTask;
   cbTheme.ItemIndex          := Ord(Config.ASuiteTheme);
   //Language
+  //TODO lazarus
+  {
   for I := 0 to LangManager.LanguageCount - 1 do
   begin
     cxLanguage.Items.Add(LangManager.LanguageNativeNames[I]);
     if LangManager.LanguageIDs[I] = Config.LangID then
       cxLanguage.ItemIndex  := I;
-  end;
+  end;          }
   //Execution options
   cxActionOnExe.ItemIndex   := Ord(Config.ActionOnExe);
   cbRunSingleClick.Checked  := Config.RunSingleClick;
@@ -113,7 +115,8 @@ begin
   Config.MissedSchedulerTask := chkMissedSchedulerTask.Checked;
   Config.ASuiteTheme         := TASuiteTheme(cbTheme.ItemIndex);
   //Language
-  Config.LangID := LangManager.LanguageIDs[cxLanguage.ItemIndex];
+  //TODO lazarus
+  //Config.LangID := LangManager.LanguageIDs[cxLanguage.ItemIndex];
   //Execution options
   Config.ActionOnExe    := TActionOnExecute(cxActionOnExe.ItemIndex);
   Config.RunSingleClick := cbRunSingleClick.Checked;

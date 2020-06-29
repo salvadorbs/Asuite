@@ -25,8 +25,7 @@ interface
 
 uses
   LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, StdCtrls,
-  Frame.Properties.General, MaskEdit{, JvExMask, JvToolEdit};
+  Controls, Forms, Dialogs, StdCtrls, Frame.Properties.General, MaskEdit, EditBtn;
 
 type
   TfrmSWGeneralPropertyPage = class(TfrmBaseGeneralPropertyPage)
@@ -37,8 +36,8 @@ type
     lbParameters: TLabel;
     lbPathExe: TLabel;
     
-    edtWorkingDir: TJvDirectoryEdit;
-    edtPathExe: TJvFilenameEdit;
+    edtWorkingDir: TFileNameEdit;
+    edtPathExe: TDirectoryEdit;
     btnExtractName: TButton;
     procedure edtPathExeAfterDialog(Sender: TObject; var AName: string;
       var AAction: Boolean);
@@ -85,7 +84,7 @@ end;
 procedure TfrmSWGeneralPropertyPage.edtPathExeBeforeDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
-  edtPathExe.Filter := DKLangConstW('msgFilterExe');
+  //edtPathExe.Filter := DKLangConstW('msgFilterExe');
   AName := Config.Paths.RelativeToAbsolute(AName);
 end;
 

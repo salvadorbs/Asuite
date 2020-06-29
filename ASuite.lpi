@@ -26,34 +26,37 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
-    <RequiredPackages Count="9">
+    <RequiredPackages Count="10">
       <Item1>
-        <PackageName Value="mormot_cross"/>
+        <PackageName Value="THotKey"/>
       </Item1>
       <Item2>
-        <PackageName Value="mormot_base"/>
+        <PackageName Value="mormot_cross"/>
       </Item2>
       <Item3>
-        <PackageName Value="virtualtreeview_package"/>
+        <PackageName Value="mormot_base"/>
       </Item3>
       <Item4>
-        <PackageName Value="DateTimeCtrls"/>
+        <PackageName Value="virtualtreeview_package"/>
       </Item4>
       <Item5>
-        <PackageName Value="atflatcontrols_package"/>
+        <PackageName Value="DateTimeCtrls"/>
       </Item5>
       <Item6>
-        <PackageName Value="lclextensions_package"/>
+        <PackageName Value="atflatcontrols_package"/>
       </Item6>
       <Item7>
-        <PackageName Value="KControlsLaz"/>
+        <PackageName Value="lclextensions_package"/>
       </Item7>
       <Item8>
-        <PackageName Value="pl_cindy"/>
+        <PackageName Value="KControlsLaz"/>
       </Item8>
       <Item9>
-        <PackageName Value="LCL"/>
+        <PackageName Value="pl_cindy"/>
       </Item9>
+      <Item10>
+        <PackageName Value="LCL"/>
+      </Item10>
     </RequiredPackages>
     <Units Count="68">
       <Unit0>
@@ -93,7 +96,9 @@
       <Unit7>
         <Filename Value="DataModules\DataModules.Icons.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="dmImages"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="DataModule"/>
       </Unit7>
       <Unit8>
         <Filename Value="DataModules\DataModules.TrayMenu.pas"/>
@@ -306,52 +311,52 @@
         <IsPartOfProject Value="True"/>
       </Unit55>
       <Unit56>
-        <Filename Value="Library\VirtualTree.Helper.pas"/>
+        <Filename Value="Library\GraphicMenu.ThemeEngine.Consts.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit56>
       <Unit57>
-        <Filename Value="Library\GraphicMenu.ThemeEngine.Consts.pas"/>
+        <Filename Value="Library\GraphicMenu.ThemeEngine.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit57>
       <Unit58>
-        <Filename Value="Library\GraphicMenu.ThemeEngine.pas"/>
+        <Filename Value="Library\Icons.Node.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit58>
       <Unit59>
-        <Filename Value="Library\Icons.Node.pas"/>
+        <Filename Value="Library\Icons.Manager.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit59>
       <Unit60>
-        <Filename Value="Library\Icons.Manager.pas"/>
+        <Filename Value="Library\Icons.Base.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit60>
       <Unit61>
-        <Filename Value="Library\Icons.Base.pas"/>
+        <Filename Value="Library\Icons.Application.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit61>
       <Unit62>
-        <Filename Value="Library\Icons.Application.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit62>
-      <Unit63>
         <Filename Value="Frame\Frame.Options.MainWindow.pas"/>
         <IsPartOfProject Value="True"/>
         <HasResources Value="True"/>
+      </Unit62>
+      <Unit63>
+        <Filename Value="Library\Icons.Thread.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit63>
       <Unit64>
-        <Filename Value="Library\Icons.Thread.pas"/>
+        <Filename Value="Library\Kernel.Scheduler.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit64>
       <Unit65>
-        <Filename Value="Library\Kernel.Scheduler.pas"/>
+        <Filename Value="Library\Kernel.Logger.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit65>
       <Unit66>
-        <Filename Value="Library\Kernel.Logger.pas"/>
+        <Filename Value="3p\PJVersionInfo.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit66>
       <Unit67>
-        <Filename Value="Library\VirtualFileSearch.Helper.pas"/>
+        <Filename Value="Utilities\Utility.Hotkey.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit67>
     </Units>
@@ -361,7 +366,7 @@
     <PathDelim Value="\"/>
     <SearchPaths>
       <IncludeFiles Value="Forms;DataModules;Library;Utilities;Frame;$(ProjOutDir)"/>
-      <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame"/>
+      <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>

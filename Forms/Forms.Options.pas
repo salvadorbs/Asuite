@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.Options;
 
-{$MODE Delphi}
+{$MODE delphiunicode}
 
 interface
 
@@ -107,7 +107,8 @@ begin
   Config.Changed := True;
   if frmMain.Visible then
     frmMain.FocusControl(frmMain.vstList);
-  LangManager.LanguageID := Config.LangID;
+  //TODO lazarus
+  //LangManager.LanguageID := Config.LangID;
 end;
 
 end.

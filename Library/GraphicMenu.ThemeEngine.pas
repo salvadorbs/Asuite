@@ -24,9 +24,8 @@ unit GraphicMenu.ThemeEngine;
 interface
 
 uses
-  Classes, Kernel.Singleton, IniFiles, cySkinButton, {Imaging.PNGImage,}
-  ExtCtrls, LCLIntf, LCLType, LMessages, Graphics, SysUtils, VirtualTrees, Controls,
-  Forms.GraphicMenu;
+  Classes, Kernel.Singleton, IniFiles, cySkinButton, ExtCtrls, LCLIntf, LCLType,
+  LMessages, Graphics, SysUtils, VirtualTrees, Controls, Forms.GraphicMenu;
 
 type
   TGraphicMenuElement = (
@@ -67,14 +66,14 @@ type
     function GetIniFileSection(ElementType: TGraphicMenuElement): string;
 
     //Draw methods
-    procedure DrawEmptyButton(PNGImage: TPngImage; Button: TcySkinButton; imgBackground: TImage);
-    procedure DrawIconInPNGImage(IniFile: TIniFile;PNGImage: TPngImage;
+    procedure DrawEmptyButton(PNGImage: TPortableNetworkGraphic; Button: TcySkinButton; imgBackground: TImage);
+    procedure DrawIconInPNGImage(IniFile: TIniFile;PNGImage: TPortableNetworkGraphic;
                                  ButtonType: TGraphicMenuElement);
     procedure DrawTextInPNGImage(IniFile: TIniFile;ButtonState: TButtonState;
-                                 PNGImage: TPngImage;ButtonType: TGraphicMenuElement;
+                                 PNGImage: TPortableNetworkGraphic;ButtonType: TGraphicMenuElement;
                                  SpaceForIcon: Boolean = True);
     procedure DrawIconAndTextInPNGImage(IniFile: TIniFile; ButtonState: TButtonState;
-                                        PNGImage: TPngImage; ButtonType: TGraphicMenuElement);
+                                        PNGImage: TPortableNetworkGraphic; ButtonType: TGraphicMenuElement);
     procedure DrawButton(IniFile: TIniFile;Button: TcySkinButton;
                          ButtonType: TGraphicMenuElement);
     procedure DrawHardDiskSpace(IniFile: TIniFile; DriveBackGround, DriveSpace: TImage);
@@ -82,7 +81,7 @@ type
     //Misc
     function IsRightButton(ButtonType: TGraphicMenuElement): Boolean;
     procedure CopyImageInVst(Source:TImage; Tree: TVirtualStringTree);
-    procedure CopySelectedRectInBitmap(Source:TImage;Comp: TControl;bmp: TBitmap);
+    procedure CopySelectedRectInBitmap(Source:TImage;Comp: TControl;bmp: Graphics.TBitmap);
   public
     procedure Initialize; override;
 
@@ -98,16 +97,16 @@ implementation
 
 uses
   Kernel.Consts, AppConfig.Main, Utility.Conversions, Utility.Misc,
-  GraphicMenu.ThemeEngine.Consts, Kernel.Logger;
+  GraphicMenu.ThemeEngine.Consts, Kernel.Logger, Windows;
 
 { TThemeEngineMethods }
 
 procedure TThemeEngine.CopyImageInVst(Source: TImage;
   Tree: TVirtualStringTree);
 var
-  bmpTempImage : TBitmap;
+  bmpTempImage : Graphics.TBitmap;
 begin
-  bmpTempImage := TBitmap.Create;
+  bmpTempImage := Graphics.TBitmap.Create;
   try
     CopySelectedRectInBitmap(Source, Tree, bmpTempImage);
     Tree.Background.Bitmap := bmpTempImage;
@@ -117,14 +116,14 @@ begin
 end;
 
 procedure TThemeEngine.CopySelectedRectInBitmap(Source: TImage;
-  Comp: TControl; bmp: TBitmap);
+  Comp: TControl; bmp: Graphics.TBitmap);
 var
   RectSource, RectDest : TRect;
-  bmpTempBG : TBitmap;
+  bmpTempBG : Graphics.TBitmap;
 begin
   if Assigned(bmp) then
   begin
-    bmpTempBG    := TBitmap.Create;
+    bmpTempBG    := Graphics.TBitmap.Create;
     try
       bmp.Height := Comp.Height;
       bmp.Width  := Comp.Width;
@@ -152,7 +151,7 @@ end;
 procedure TThemeEngine.DrawButton(IniFile: TIniFile;
   Button: TcySkinButton; ButtonType: TGraphicMenuElement);
 var
-  PNGImage_Normal, PNGImage_Hover, PNGImage_Clicked: TPngImage;
+  PNGImage_Normal, PNGImage_Hover, PNGImage_Clicked: TPortableNetworkGraphic;
   Image_Normal, Image_Hover, Image_Clicked, IniFile_Section: string;
 
   function IsTabElement(ButtonType: TGraphicMenuElement): Boolean;
@@ -161,9 +160,9 @@ var
   end;
 
 begin
-  PNGImage_Normal  := TPngImage.Create;
-  PNGImage_Hover   := TPngImage.Create;
-  PNGImage_Clicked := TPngImage.Create;
+  PNGImage_Normal  := TPortableNetworkGraphic.Create;
+  PNGImage_Hover   := TPortableNetworkGraphic.Create;
+  PNGImage_Clicked := TPortableNetworkGraphic.Create;
   try
     IniFile_Section := GetIniFileSection(ButtonType);
 
@@ -226,12 +225,12 @@ begin
   end;
 end;
 
-procedure TThemeEngine.DrawEmptyButton(PNGImage: TPngImage;
+procedure TThemeEngine.DrawEmptyButton(PNGImage: TPortableNetworkGraphic;
   Button: TcySkinButton; imgBackground: TImage);
 var
-  bmp: TBitmap;
+  bmp: Graphics.TBitmap;
 begin
-  bmp := TBitmap.Create;
+  bmp := Graphics.TBitmap.Create;
   try
     CopySelectedRectInBitmap(imgBackground, Button, bmp);
     PNGImage.Assign(bmp);
@@ -255,7 +254,7 @@ begin
 end;
 
 procedure TThemeEngine.DrawIconAndTextInPNGImage(IniFile: TIniFile;
-  ButtonState: TButtonState; PNGImage: TPngImage;
+  ButtonState: TButtonState; PNGImage: TPortableNetworkGraphic;
   ButtonType: TGraphicMenuElement);
 begin
   DrawIconInPNGImage(IniFile, PNGImage, ButtonType);
@@ -263,7 +262,7 @@ begin
 end;
 
 procedure TThemeEngine.DrawIconInPNGImage(IniFile: TIniFile;
-  PNGImage: TPngImage; ButtonType: TGraphicMenuElement);
+  PNGImage: TPortableNetworkGraphic; ButtonType: TGraphicMenuElement);
 var
   Icon : TIcon;
   IconPath, IniFile_Section : string;
@@ -293,7 +292,7 @@ begin
 end;
 
 procedure TThemeEngine.DrawTextInPNGImage(IniFile: TIniFile;
-  ButtonState: TButtonState; PNGImage: TPngImage;
+  ButtonState: TButtonState; PNGImage: TPortableNetworkGraphic;
   ButtonType: TGraphicMenuElement; SpaceForIcon: Boolean);
 var
   TopText  : Integer;
@@ -338,7 +337,7 @@ begin
             OffsetRect(DrawRect, 0, (R.Bottom - DrawRect.Bottom) div 2)
           else
             DrawRect.Bottom := R.Bottom;
-          DrawTextEx(PNGImage.Canvas.Handle, PChar(Caption), -1, DrawRect, DrawFlags, nil);
+          Windows.DrawTextEx(PNGImage.Canvas.Handle, PChar(Caption), -1, DrawRect, DrawFlags, nil);
         end;
       finally
         PNGImage.Canvas.Unlock;
@@ -353,6 +352,7 @@ function TThemeEngine.GetButtonCaption(IniFile: TIniFile;
   ButtonType: TGraphicMenuElement): string;
 begin
   Result := '';
+  {
   case ButtonType of
     //Right buttons
     gmbASuite    : Result := Format(DKLangConstW('msgGMShow'), [APP_NAME]);
@@ -368,6 +368,7 @@ begin
     gmbMRU       : Result := DKLangConstW('msgLongMRU');
     gmbMFU       : Result := DKLangConstW('msgLongMFU');
   end;
+  }
 end;
 
 function TThemeEngine.GetButtonIconPath(IniFile: TIniFile;
@@ -474,10 +475,11 @@ begin
       sTempPath := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(INIFILE_SECTION_SEARCH, INIFILE_KEY_ICONCANCEL, '');
       if FileExists(sTempPath) then
         FCancelIcon := Config.IconsManager.GetPathIconIndex(sTempPath);
-      FGraphicMenu.edtSearch.RightButton.ImageIndex := FSearchIcon;
+      //TODO lazarus
+      //FGraphicMenu.edtSearch.RightButton.ImageIndex := FSearchIcon;
       //Hard Disk
       DrawHardDiskSpace(IniFile, FGraphicMenu.imgDriveBackground, FGraphicMenu.imgDriveSpace);
-      FGraphicMenu.lblDriveName.Caption := format(DKLangConstW('msgGMDriveName'), [UpperCase(Config.Paths.SuiteDrive)]);
+      //FGraphicMenu.lblDriveName.Caption := format(DKLangConstW('msgGMDriveName'), [UpperCase(Config.Paths.SuiteDrive)]);
       //Fonts
       strFont := IniFile.ReadString(INIFILE_SECTION_HARDDISK, INIFILE_KEY_FONT, '');
       StrToFont(strFont, FGraphicMenu.lblDriveName.Font);
@@ -490,8 +492,9 @@ begin
       IniFile.Free;
     end;
   end
-  else
-    ShowMessageFmtEx(DKLangConstW('msgErrNoThemeIni'), [Config.Paths.SuitePathCurrentTheme + THEME_INI], True);
+  else begin
+    //ShowMessageFmtEx(DKLangConstW('msgErrNoThemeIni'), [Config.Paths.SuitePathCurrentTheme + THEME_INI], True);
+  end;
 end;
 
 procedure TThemeEngine.SetupThemeEngine(AGraphicMenu: TfrmGraphicMenu);

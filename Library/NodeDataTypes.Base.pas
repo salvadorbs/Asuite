@@ -106,7 +106,7 @@ end;
 
 procedure TvBaseNodeData.Copy(source:TvBaseNodeData);
 begin
-  FName       := DKLangConstW('msgCopy') + source.Name;
+  //FName       := DKLangConstW('msgCopy') + source.Name;
   FDataType   := source.DataType;
   FHideFromMenu := source.HideFromMenu;
 end;

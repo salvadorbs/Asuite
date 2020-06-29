@@ -73,7 +73,7 @@ implementation
 
 uses
   AppConfig.Main, VirtualTree.Events, VirtualTree.Methods, NodeDataTypes.Custom,
-  Forms.ShortcutGrabber, {HotkeyManager,} DataModules.Icons, UITypes;
+  Forms.ShortcutGrabber, Utility.Hotkey, DataModules.Icons, UITypes;
 
 {$R *.lfm}
 
@@ -90,12 +90,12 @@ procedure TfrmHotkeyOptionsPage.edtHotkeyClick(Sender: TObject);
 var
   strHotkey: string;
 begin
-  if Sender is TButtonedEdit then
+  if Sender is TEditButton then
   begin
-    strHotkey := TfrmShortcutGrabber.Execute(Self, TButtonedEdit(Sender).Text);
+    strHotkey := TfrmShortcutGrabber.Execute(Self, TEditButton(Sender).Text);
     if (strHotkey <> '') then
     begin
-      TButtonedEdit(Sender).Text := strHotkey;
+      TEditButton(Sender).Text := strHotkey;
 
       if (Sender <> edtHotkeyMF) and (edtHotkeyMF.Text = strHotkey) then
         edtHotkeyMF.Text := '';
@@ -111,19 +111,20 @@ end;
 
 procedure TfrmHotkeyOptionsPage.edtHotkeyChange(Sender: TObject);
 var
-  edtHotkey: TButtonedEdit;
+  edtHotkey: TEditButton;
 begin
-  if Sender is TButtonedEdit then
+  if Sender is TEditButton then
   begin
-    edtHotkey := TButtonedEdit(Sender);
-    edtHotkey.RightButton.Visible := edtHotkey.Text <> '';
+    edtHotkey := TEditButton(Sender);
+    //TODO lazarus
+    //edtHotkey.RightButton.Visible := edtHotkey.Text <> '';
   end;
 end;
 
 procedure TfrmHotkeyOptionsPage.edtHotkeyClear(Sender: TObject);
 begin
-  if Sender is TButtonedEdit then
-    TButtonedEdit(Sender).Text := '';
+  if Sender is TEditButton then
+    TEditButton(Sender).Text := '';
 end;
 
 function TfrmHotkeyOptionsPage.GetImageIndex: Integer;
@@ -133,7 +134,7 @@ end;
 
 function TfrmHotkeyOptionsPage.GetTitle: string;
 begin
-  Result := DKLangConstW('msgHotkey');
+  //Result := DKLangConstW('msgHotkey');
 end;
 
 function TfrmHotkeyOptionsPage.InternalLoadData: Boolean;
@@ -149,7 +150,7 @@ begin
 
   //Populate VST with HotKeyItemList's items
   TVirtualTreeMethods.Create.PopulateVSTItemList(vstItems, Config.ListManager.HotKeyItemList);
-  vstItems.SortTree(0, sdAscending);
+  vstItems.SortTree(0, VirtualTrees.sdAscending);
   vstItems.Header.AutoFitColumns;
 
   //Enable/disable visual components
@@ -161,9 +162,9 @@ begin
   HideCaret(edtHotkeyGM.Handle);
   HideCaret(edtHotkeyCM.Handle);
 
-  edtHotkeyMF.Color := StyleServices.GetSystemColor(edtHotkeyMF.Color);
-  edtHotkeyGM.Color := StyleServices.GetSystemColor(edtHotkeyGM.Color);
-  edtHotkeyCM.Color := StyleServices.GetSystemColor(edtHotkeyCM.Color);
+  edtHotkeyMF.Color := edtHotkeyMF.Color;
+  edtHotkeyGM.Color := edtHotkeyGM.Color;
+  edtHotkeyCM.Color := edtHotkeyCM.Color;
 end;
 
 function TfrmHotkeyOptionsPage.InternalSaveData: Boolean;
@@ -188,9 +189,12 @@ begin
   mniEditHotkey.ImageIndex   := Config.IconsManager.GetIconIndex('keyboard_edit');
   mniProperties.ImageIndex   := Config.IconsManager.GetIconIndex('property');
 
+  //TODO lazarus
+  {
   edtHotkeyMF.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel');
   edtHotkeyGM.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel');
   edtHotkeyCM.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel');
+  }
 end;
 
 procedure TfrmHotkeyOptionsPage.mniEditHotkeyClick(Sender: TObject);
@@ -230,9 +234,11 @@ end;
 
 procedure TfrmHotkeyOptionsPage.mniRemoveHotkeyClick(Sender: TObject);
 begin
+  {
   if (MessageDlg((DKLangConstW('msgConfirm')),mtWarning, [mbYes,mbNo], 0) = mrYes) then
     if Assigned(vstItems.FocusedNode) then
       vstItems.IsVisible[vstItems.FocusedNode] := False;
+  }
 end;
 
 procedure TfrmHotkeyOptionsPage.SaveInHotkeyItemList(

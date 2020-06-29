@@ -19,15 +19,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.ScanFolder;
 
-{$MODE Delphi}
+{$MODE delphiunicode}
 
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, Themes,
-  {VirtualExplorerTree, MPShellUtilities,} ImgList, {MPCommonUtilities,
-  ImageList, VirtualFileSearch, MPCommonObjects,} StrUtils{, SynTaskDialog};
+  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, Themes,
+  ShellCtrls, ImgList, StrUtils, cySearchFiles;
 
 type
   TfrmScanFolder = class(TForm)
@@ -35,7 +34,7 @@ type
     btnCancel: TButton;
     pnlFilters: TPanel;
     
-    vstShell: TVirtualExplorerTree;
+    vstShell: TShellTreeView;
     grpFileTypes: TGroupBox;
     btnTypesDelete: TButton;
     btnTypesAdd: TButton;
@@ -48,13 +47,9 @@ type
     vstExclude: TVirtualStringTree;
     ilExtIcons: TImageList;
     grpGeneralSettings: TGroupBox;
-    vfsScan: TVirtualFileSearch;
+    vfsScan: TcySearchFiles;
     chkExtractName: TCheckBox;
     pbScan: TProgressBar;
-    procedure vstShellEnumFolder(Sender: TCustomVirtualExplorerTree;
-      Namespace: TNamespace; var AllowAsChild: Boolean);
-    procedure vstShellInitNode(Sender: TBaseVirtualTree; ParentNode,
-      Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
     procedure FormCreate(Sender: TObject);
     procedure vstGetNodeDataSize(Sender: TBaseVirtualTree;
       var NodeDataSize: Integer);
@@ -80,7 +75,8 @@ type
     procedure btnScanClick(Sender: TObject);
     procedure vstFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure btnCancelClick(Sender: TObject);
-    procedure vfsScanSearchEnd(Sender: TObject; Results: TCommonPIDLList);
+    //TODO lazarus
+    //procedure vfsScanSearchEnd(Sender: TObject; Results: TCommonPIDLList);
     function FindMatchText(Strings: TStrings; const Str: string): Integer;
   private
     { Private declarations }
@@ -104,14 +100,16 @@ var
 implementation
 
 uses
-  AppConfig.Main, Kernel.Enumerations, Kernel.Types, VirtualTree.Methods,
+  AppConfig.Main, Kernel.Enumerations, Kernel.Types, VirtualTree.Methods, ShellApi,
   NodeDataTypes.Base, Utility.Misc, Kernel.Logger, Kernel.Consts, Utility.FileFolder,
-  NodeDataTypes.Files, VirtualFileSearch.Helper, UITypes;
+  NodeDataTypes.Files, UITypes;
 
 {$R *.lfm}
 
 procedure TfrmScanFolder.btnCancelClick(Sender: TObject);
 begin
+  //TODO lazarus
+  {
   if (vfsScan.IsRunning) then
   begin
     if MessageDlg((DKLangConstW('msgCancelScanFolder')), mtWarning, [mbYes,mbNo], 0) = mrYes then
@@ -122,6 +120,7 @@ begin
   end
   else
     Close;
+  }
 end;
 
 procedure TfrmScanFolder.btnExcludeAddClick(Sender: TObject);
@@ -149,6 +148,8 @@ procedure TfrmScanFolder.btnScanClick(Sender: TObject);
 var
   listCriteria : TStringList;
 begin
+  //TODO lazarus
+  {
   //Check if user add at least one file extension
   TASuiteLogger.Info('Start scanning folders to search files', []);
   FStartTime := GetTickCount;
@@ -184,6 +185,7 @@ begin
   end
   else
     ShowMessageEx(DKLangConstW('msgErrScanFolderMissingTypes'), True);
+  }
 end;
 
 procedure TfrmScanFolder.btnTypesAddClick(Sender: TObject);
@@ -254,24 +256,19 @@ end;
 
 procedure TfrmScanFolder.FormCreate(Sender: TObject);
 begin
-  vstShell.Active := True;
   LoadSettings;
-
-  //Change vstShell text's color
-  vstShell.VETColors.FileTextColor := StyleServices.GetSystemColor(clWindowText);
-  vstShell.VETColors.FolderTextColor := StyleServices.GetSystemColor(clWindowText);
 end;
 
 function TfrmScanFolder.GetExtImage(AExtension: string): Integer;
 var
-  FileInfo: TSHFileInfo;
+  FileInfo: TSHFILEINFOW;
   Icon: TIcon;
 begin
   Result := -1;
   Icon := TIcon.Create;
   try
     //Get index
-    if SHGetFileInfo(PChar(AExtension), 0, FileInfo, SizeOf(TSHFileInfo), SHGFI_ICON or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES) <> 0 then
+    if SHGetFileInfoW(PChar(AExtension), 0, FileInfo, SizeOf(TSHFileInfo), SHGFI_ICON or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES) <> 0 then
     begin
       Icon.Handle := FileInfo.hIcon;
       Result := ilExtIcons.AddIcon(Icon);
@@ -329,19 +326,6 @@ begin
   end;
 end;
 
-procedure TfrmScanFolder.vstShellEnumFolder(
-  Sender: TCustomVirtualExplorerTree; Namespace: TNamespace;
-  var AllowAsChild: Boolean);
-begin
-  AllowAsChild := (NameSpace.FileSystem or NameSpace.IsMyComputer) and Not(Namespace.Stream);
-end;
-
-procedure TfrmScanFolder.vstShellInitNode(Sender: TBaseVirtualTree;
-  ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
-begin
-   Node.CheckType := ctTriStateCheckBox;
-end;
-
 procedure TfrmScanFolder.vstTypesAddToSelection(Sender: TBaseVirtualTree;
   Node: PVirtualNode);
 begin
@@ -364,7 +348,8 @@ begin
   btnTypesDelete.Enabled := False;
 end;
 
-procedure TfrmScanFolder.vfsScanSearchEnd(Sender: TObject;
+//TODO lazarus
+{procedure TfrmScanFolder.vfsScanSearchEnd(Sender: TObject;
   Results: TCommonPIDLList);
 var
   I : Integer;
@@ -432,6 +417,7 @@ begin
 
   Close;
 end;
+}
 
 function TfrmScanFolder.FindMatchText(Strings: TStrings;
   const Str: string): Integer;

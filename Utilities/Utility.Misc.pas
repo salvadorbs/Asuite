@@ -59,7 +59,8 @@ function  GetHotKeyMod(AShortcut: TShortcut) : Integer;
 implementation
 
 uses
-  Registry, {PJVersionInfo,} AppConfig.Main, Kernel.Logger{, HotkeyManager};
+  Registry, PJVersionInfo, AppConfig.Main, Kernel.Logger, Utility.Hotkey, LCLProc,
+  Windows;
 
 function IsFormOpen(const FormName : string): Boolean;
 var
@@ -98,7 +99,7 @@ begin
   // Check if inserted name is empty, then
   if (Trim(Edit.Text) = '') then
   begin
-    ShowMessageEx(DKLangConstW('msgErrEmptyName'),true);
+    //ShowMessageEx(DKLangConstW('msgErrEmptyName'),true);
     Edit.Color := clYellow;
     Result := False;
   end;
@@ -110,7 +111,7 @@ var
 begin
   Result := 0;
 
-  //Convert THotkey to Cardinal (HotkeyManager)
+  //Convert THotkey to Cardinal
   if AOldValue <> 0 then
   begin
     strHotkey := ShortCutToText(AOldValue);

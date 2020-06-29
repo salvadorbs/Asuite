@@ -24,32 +24,14 @@ unit Utility.Process;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, SysUtils, Kernel.Enumerations, Forms.Main, AppConfig.Main{, TlHelp32,
-  SynLog};
+  LCLIntf, LCLType, LMessages, SysUtils, Kernel.Enumerations, Forms.Main, AppConfig.Main,
+  SynLog, JwaWinBase, jwatlhelp32;
 
 { Processes, execution }
 procedure ActionOnExe(Action: TActionOnExecute);
 function  IsProcessExists(exeFileName: string): Boolean;
 procedure CloseProcessOpenByASuite;
 procedure RunActionOnExe(Action: TActionOnExecute);
-
-{ Windows Api }
-function CreateProcessWithLogonW(
-  Username          : PWideChar;
-  Domain            : PWideChar;
-  Password          : PWideChar;
-  LogonFlags        : DWORD;
-  ApplicationName   : PWideChar;
-  CommandLine       : LPWSTR;
-  CreationFlags     : DWORD;
-  Environment       : Pointer;
-  CurrentDirectory  : PWideChar;
-  const StartupInfo : TStartupInfoW;
-  var ProcessInfo   : TProcessInformation): BOOL; stdcall;
-  external 'advapi32.dll' name 'CreateProcessWithLogonW';
-
-const
-  LOGON_WITH_PROFILE = $00000001;
 
 implementation
 
@@ -104,6 +86,8 @@ var
   hSnapShot, hProcess : THandle;
   ProcInfo  : TProcessEntry32;
   ContinueLoop: Boolean;
+const
+  PROCESS_TERMINATE = $0001;
 begin
   TASuiteLogger.Info('Close processes opened by ASuite', []);
   hSnapShot   := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);

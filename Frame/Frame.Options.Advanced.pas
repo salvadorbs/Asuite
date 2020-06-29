@@ -121,7 +121,7 @@ begin
       cbClearCache.Checked := False;
     end;
   finally
-    ShowMessageEx(DKLangConstW('msgOperationCompleted'));
+    //ShowMessageEx(DKLangConstW('msgOperationCompleted'));
     //Save list
     TVirtualTreeMethods.Create.RefreshList(nil);
   end;
@@ -180,7 +180,7 @@ end;
 
 function TfrmAdvancedOptionsPage.GetTitle: string;
 begin
-  Result := DKLangConstW('msgAdvanced');
+  //Result := DKLangConstW('msgAdvanced');
 end;
 
 function TfrmAdvancedOptionsPage.InternalLoadData: Boolean;
