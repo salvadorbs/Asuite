@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit VirtualTree.Methods;
 
-{$MODE Delphi}
+{$MODE DelphiUnicode}
 
 interface
 
@@ -390,7 +390,7 @@ var
 begin
   Result := nil;
   BaseData := GetNodeDataEx(ANode, ATree);
-  if Assigned(BaseData) then
+  if Assigned(BaseData) and Assigned(BaseData.Data) then
     Result := BaseData.Data;
 end;
 

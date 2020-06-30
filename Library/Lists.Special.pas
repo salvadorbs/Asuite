@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Lists.Special;
 
-{$MODE Delphi}
+{$MODE DelphiUnicode}
 
 interface
 

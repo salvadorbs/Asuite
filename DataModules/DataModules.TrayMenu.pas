@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit DataModules.TrayMenu;
 
-{$MODE Delphi}
+{$MODE DelphiUnicode}
 
 {$I ASuite.inc}
 
@@ -31,6 +31,9 @@ uses
   Kernel.PopupMenu, Lists.Base, Kernel.Enumerations, Themes, LazMethodList;
 
 type
+
+  { TdmTrayMenu }
+
   TdmTrayMenu = class(TDataModule)
     tiTrayMenu: TTrayIcon;
     pmTrayicon: TPopupMenu;
@@ -56,7 +59,7 @@ type
                                MaxItems: Integer; SubMenuCaption: String = '');
     procedure AddItem(TargetItem, AMenuItem: TMenuItem);
     procedure DrawCaptionedSeparator(Sender: TObject; ACanvas: TCanvas;
-    ARect: TRect; AState: TOwnerDrawState);
+    ARect: TRect; AState: LCLType.TOwnerDrawState);
     procedure DoTrayIconButtonClick(ASender: TObject; ATrayiconAction: TTrayiconActionClick);
     procedure PopulateDirectory(Sender: TObject);
     procedure SearchAddDirectory(AMI: TMenuItem; FolderPath: string = '');
@@ -136,7 +139,7 @@ uses
   DataModules.Icons, Forms.Main, AppConfig.Main, VirtualTree.Methods,
   Utility.System, Forms.GraphicMenu, Kernel.Types, NodeDataTypes.Files,
   NodeDataTypes.Custom, NodeDataTypes.Base, Kernel.Consts, Kernel.Logger,
-  Utility.Misc, Utility.FileFolder;
+  Utility.Misc, Utility.FileFolder, Windows;
 
 {$R *.lfm}
 
@@ -228,7 +231,7 @@ begin
       Found := FindNext(SR) = 0;
     end;
   finally
-    FindClose(SR);
+    SysUtils.FindClose(SR);
   end;
 end;
 
@@ -262,7 +265,7 @@ begin
       Found := FindNext(SR) = 0;
     end;
   finally
-    FindClose(SR);
+    SysUtils.FindClose(SR);
   end;
 end;
 
@@ -525,7 +528,7 @@ begin
 end;
 
 procedure TdmTrayMenu.DrawCaptionedSeparator(Sender: TObject; ACanvas: TCanvas;
-    ARect: TRect; AState: TOwnerDrawState);
+    ARect: TRect; AState: LCLType.TOwnerDrawState);
 begin
   DoDrawCaptionedSeparator(Sender, ACanvas, ARect);
 end;
@@ -575,7 +578,7 @@ begin
         TextSpace   := 1;
       end;
     end;
-  DrawText(ACanvas.Handle, PChar(LineCaption), Length(LineCaption), TextArea, Flags or DT_CALCRECT);
+  DrawTextW(ACanvas.Handle, PChar(LineCaption), Length(LineCaption), TextArea, Flags or DT_CALCRECT);
   OffsetRect(TextArea, Round((RectWidth(LineArea) - RectWidth(TextArea)) / 2 - TextSpace), 0);
   Inc(ARect.Top, (CaptionLineItemHeight div 2) - 1);
   //Create first line
@@ -586,7 +589,7 @@ begin
   Inc(ARect.Top);
   Inc(ARect.Bottom);
   DrawFadeLine(ACanvas, TextArea, ARect, clBtnHighlight, FadeLineWidth, True);
-  DrawText(ACanvas.Handle, PChar(LineCaption), Length(LineCaption), TextArea, Flags);
+  DrawTextW(ACanvas.Handle, PChar(LineCaption), Length(LineCaption), TextArea, Flags);
 end;
 
 procedure TdmTrayMenu.DrawFadeLine(ACanvas: TCanvas; AClipRect, ALineRect: TRect; AColor: TColor; AFadeWidth: Integer; AClip: Boolean);

@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Icons.Thread;
 
-{$MODE Delphi}
+{$MODE DelphiUnicode}
 
 interface
 

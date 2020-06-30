@@ -71,10 +71,8 @@ object frmShortcutGrabber: TfrmShortcutGrabber
       Width = 121
       Height = 19
       HotKey = 0
-      InvalidKeys = [hcNone]
       Modifiers = []
       TabOrder = 0
-      OnChange = hkKeysChange
     end
   end
   object btnOk: TButton
@@ -99,9 +97,5 @@ object frmShortcutGrabber: TfrmShortcutGrabber
     ModalResult = 2
     TabOrder = 2
     OnClick = btnCancelClick
-  end
-  object HotKeyManager1: THotKeyManager
-    Left = 248
-    Top = 120
   end
 end

@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Utility.Misc;
 
-{$MODE Delphi}
+{$MODE DelphiUnicode}
 
 interface
 
@@ -169,7 +169,7 @@ begin
   for n := 0 to Clipboard.FormatCount - 1 do
   begin
     fmt := Clipboard.Formats[n];
-    GetClipboardFormatName(fmt, buf, Pred(SizeOf(buf)));
+    GetClipboardFormatNameW(fmt, buf, Pred(SizeOf(buf)));
     if fmt = format then
     begin
       Result := True;

@@ -107,18 +107,16 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       TabOrder = 0
       OnClick = cbHotKeyClick
     end
-    object edtHotkey: TButtonedEdit
+    object edtHotkey: TEditButton
       Left = 6
       Top = 30
       Width = 187
       Height = 21
       CharCase = ecUpperCase
-      LeftButton.Enabled = False
       ReadOnly = True
       TabOrder = 1
       OnChange = edtHotkeyChange
       OnClick = edtHotkeyClick
-      OnRightButtonClick = edtHotkeyRightButtonClick
     end
   end
   object GroupBox1: TGroupBox

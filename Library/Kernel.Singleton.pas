@@ -52,7 +52,7 @@
 
 unit Kernel.Singleton;
 
-{$MODE Delphi}
+{$MODE DelphiUnicode}
 
 interface
 

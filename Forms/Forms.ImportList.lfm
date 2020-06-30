@@ -1,61 +1,61 @@
 object frmImportList: TfrmImportList
   Left = 749
+  Height = 330
   Top = 202
+  Width = 287
   BorderStyle = bsDialog
   Caption = 'Import list'
   ClientHeight = 330
   ClientWidth = 287
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
-  Font.Style = []
-  Position = poMainFormCenter
   OnClose = FormClose
   OnCreate = FormCreate
-  PixelsPerInch = 96
+  Position = poMainFormCenter
+  LCLVersion = '2.1.0.0'
   object bvl1: TBevel
     Left = 0
+    Height = 2
     Top = 293
     Width = 287
-    Height = 2
     Align = alTop
     Shape = bsBottomLine
   end
   object bvl2: TBevel
     Left = 0
+    Height = 2
     Top = 49
     Width = 287
-    Height = 2
     Align = alTop
     Shape = bsBottomLine
   end
   object btnBack: TButton
     Left = 45
+    Height = 23
     Top = 301
     Width = 75
-    Height = 23
     Caption = '< Back'
     Enabled = False
-    TabOrder = 2
     OnClick = btnBackClick
+    TabOrder = 2
   end
   object btnNext: TButton
     Left = 123
+    Height = 23
     Top = 301
     Width = 75
-    Height = 23
     Caption = 'Next >'
     Default = True
-    TabOrder = 3
     OnClick = btnNextClick
+    TabOrder = 3
   end
   object btnCancel: TButton
     Left = 204
+    Height = 23
     Top = 301
     Width = 75
-    Height = 23
     Cancel = True
     Caption = 'Cancel'
     ModalResult = 2
@@ -63,50 +63,56 @@ object frmImportList: TfrmImportList
   end
   object pnlHeader: TPanel
     Left = 0
+    Height = 49
     Top = 0
     Width = 287
-    Height = 49
     Align = alTop
     BevelOuter = bvNone
+    ClientHeight = 49
+    ClientWidth = 287
     TabOrder = 0
     object lblTitle: TLabel
       Left = 14
+      Height = 30
       Top = 6
       Width = 257
-      Height = 30
       AutoSize = False
       Caption = 'Placeholder text'
       Color = clBtnFace
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentColor = False
       ParentFont = False
+      Transparent = False
       WordWrap = True
     end
   end
   object pgcImport: TPageControl
     Left = 0
+    Height = 242
     Top = 51
     Width = 287
-    Height = 242
     ActivePage = tsList
     Align = alTop
+    TabIndex = 1
     TabOrder = 1
     object tsAskFileList: TTabSheet
       Caption = 'tsAskFileList'
+      ClientHeight = 0
+      ClientWidth = 0
       ImageIndex = 1
-      TabVisible = False
       OnShow = tsAskFileListShow
+      TabVisible = False
       object gbFile: TGroupBox
         Left = 13
+        Height = 82
         Top = 75
         Width = 253
-        Height = 82
         Caption = 'File List'
-        Font.Charset = DEFAULT_CHARSET
+        ClientHeight = 82
+        ClientWidth = 253
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Tahoma'
@@ -115,65 +121,61 @@ object frmImportList: TfrmImportList
         TabOrder = 0
         object lblFile: TLabel
           Left = 9
+          Height = 13
           Top = 10
           Width = 107
-          Height = 13
           Caption = 'Launcher File location:'
           Color = clBtnFace
-          Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
           Font.Name = 'Tahoma'
-          Font.Style = []
           ParentColor = False
           ParentFont = False
+          Transparent = False
         end
         object edtPathList: TFileNameEdit
           Left = 9
+          Height = 21
           Top = 26
           Width = 230
-          Height = 21
-          Filter = 
-            'All list supported|*.xml;*.sqlite;*.bck;*.sqbck|ASuite 2.x List ' +
-            '(*.sqlite, *.sqbck)|*.sqlite;*.sqbck|ASuite 1.x List (*.xml, *.b' +
-            'ck)|*.xml;*.bck|winPenPack 1.x List (*.xml)|*.xml|PStart 2.x Lis' +
-            't (*.xml)|*.xml'
           DialogOptions = [ofHideReadOnly, ofEnableSizing]
-          Font.Charset = DEFAULT_CHARSET
+          Filter = 'All list supported|*.xml;*.sqlite;*.bck;*.sqbck|ASuite 2.x List (*.sqlite, *.sqbck)|*.sqlite;*.sqbck|ASuite 1.x List (*.xml, *.bck)|*.xml;*.bck|winPenPack 1.x List (*.xml)|*.xml|PStart 2.x List (*.xml)|*.xml'
+          FilterIndex = 0
+          HideDirectories = False
+          ButtonWidth = 23
+          NumGlyphs = 1
           Font.Color = clWindowText
           Font.Height = -11
           Font.Name = 'Tahoma'
-          Font.Style = []
+          MaxLength = 0
           ParentFont = False
           TabOrder = 0
-          Text = ''
           OnChange = edtPathListChange
         end
       end
     end
     object tsList: TTabSheet
       Caption = 'tsItems'
+      ClientHeight = 0
+      ClientWidth = 0
       ImageIndex = 2
-      TabVisible = False
       OnShow = tsListShow
+      TabVisible = False
       object vstListImp: TVirtualStringTree
         Left = 12
+        Height = 204
         Top = 3
         Width = 253
-        Height = 204
         AnimationDuration = 0
         DragMode = dmAutomatic
-        Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
-        Font.Style = []
         Header.AutoSizeIndex = 0
-        Header.Font.Charset = DEFAULT_CHARSET
+        Header.Columns = <>
         Header.Font.Color = clWindowText
         Header.Font.Height = -11
         Header.Font.Name = 'MS Shell Dlg 2'
-        Header.Font.Style = []
         Header.MainColumn = -1
         Header.Options = [hoColumnResize, hoDrag]
         ParentFont = False
@@ -188,27 +190,22 @@ object frmImportList: TfrmImportList
       end
       object btnSelectAll: TButton
         Left = 32
+        Height = 17
         Top = 213
         Width = 105
-        Height = 17
         Caption = 'Select all'
-        TabOrder = 1
         OnClick = btnSelectAllClick
+        TabOrder = 1
       end
       object btnDeselectAll: TButton
         Left = 143
+        Height = 17
         Top = 213
         Width = 105
-        Height = 17
         Caption = 'Deselect all'
-        TabOrder = 2
         OnClick = btnDeselectAllClick
+        TabOrder = 2
       end
     end
-  end
-  object XMLDocument1: TXMLDocument
-    Left = 192
-    Top = 8
-    DOMVendorDesc = 'MSXML'
   end
 end

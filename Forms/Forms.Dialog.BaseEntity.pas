@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.Dialog.BaseEntity;
 
-{$MODE delphiunicode}
+{$MODE DelphiUnicode}
 
 interface
 
@@ -84,8 +84,8 @@ begin
   if Assigned(NodeData) then
   begin
     NodeData.Frame := FramePage;
-    NodeData.Title := TfrmBaseEntityPage(FramePage).Title;
-    NodeData.ImageIndex := TfrmBaseEntityPage(FramePage).ImageIndex;
+    //NodeData.Title := TfrmBaseEntityPage(FramePage).Title;
+    //NodeData.ImageIndex := TfrmBaseEntityPage(FramePage).ImageIndex;
   end;
 end;
 

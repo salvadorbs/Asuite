@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit AppConfig.Main;
 
-{$MODE Delphi}
+{$MODE DelphiUnicode}
 
 interface
 
@@ -285,7 +285,7 @@ end;
 function TConfiguration.CheckReadOnlyMode: Boolean;
 begin
   //Check if ASuite is running from a cd rom
-  Result := GetDriveType(PChar(Config.Paths.SuiteDrive)) = DRIVE_CDROM;
+  Result := GetDriveTypeW(PChar(Config.Paths.SuiteDrive)) = DRIVE_CDROM;
   if (Config.ReadOnlyMode) then
   begin
     Config.Cache  := False;

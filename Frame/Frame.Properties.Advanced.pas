@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Properties.Advanced;
 
-{$MODE Delphi}
+{$MODE DelphiUnicode}
 
 interface
 
@@ -131,7 +131,7 @@ begin
   //edtHotkey.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel');
 
   //Hide caret in hotkey control
-  HideCaret(edtHotkey.Handle);
+  //HideCaret(edtHotkey.Handle);
 end;
 
 function TfrmAdvancedPropertyPage.InternalSaveData: Boolean;

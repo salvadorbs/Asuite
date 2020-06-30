@@ -1,7 +1,9 @@
 object dmTrayMenu: TdmTrayMenu
-  OldCreateOrder = False
   OnCreate = DataModuleCreate
+  OldCreateOrder = False
   Height = 150
+  HorizontalOffset = 0
+  VerticalOffset = 0
   Width = 215
   object tiTrayMenu: TTrayIcon
     Visible = True

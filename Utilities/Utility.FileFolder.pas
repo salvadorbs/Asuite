@@ -1,6 +1,6 @@
 unit Utility.FileFolder;
 
-{$MODE Delphi}
+{$MODE DelphiUnicode}
 
 interface
 
@@ -41,7 +41,7 @@ var
   vSpecialPath : array[0..MAX_PATH] of Char;
 begin
   SHGetSpecialFolderLocation(0, ASpecialFolderID, vSFolder);
-  SHGetPathFromIDList(vSFolder, vSpecialPath);
+  SHGetPathFromIDListW(vSFolder, vSpecialPath);
   Result := IncludeTrailingBackslash(StrPas(vSpecialPath));
 end;
 
@@ -53,8 +53,9 @@ begin
   //Get Path and delete \ in last char. Example c:\xyz\ to c:\xyz
   Path   := ExcludeTrailingPathDelimiter(InitialDir);
   //Call Browse for folder dialog and get new path
-  if SelectDirectory('','',Path) then
-    Result := Path;
+  //TODO lazarus (see TSelectDirectoryDialog)
+  //if Dialogs.SelectDirectory('','',Path) then
+  //  Result := Path;
 end;
 
 function DirToPath(const Dir: string): string;
@@ -84,7 +85,7 @@ var
   H: THandle;
 begin
   FileName := IncludeTrailingPathDelimiter(AName) + 'chk.tmp';
-  H := CreateFile(PChar(FileName), GENERIC_READ or GENERIC_WRITE, 0, nil,
+  H := CreateFileW(PChar(FileName), GENERIC_READ or GENERIC_WRITE, 0, nil,
     CREATE_NEW, FILE_ATTRIBUTE_TEMPORARY or FILE_FLAG_DELETE_ON_CLOSE, 0);
   Result := H <> INVALID_HANDLE_VALUE;
   if Result then FileClose(H);
@@ -219,14 +220,14 @@ end;
 procedure CreateShortcutOnDesktop(const FileName, TargetFilePath, Params, WorkingDir: String);
 var
   IObject  : IUnknown;
-  ISLink   : IShellLink;
+  ISLink   : IShellLinkW;
   IPFile   : IPersistFile;
   PIDL     : PItemIDList;
   InFolder : array[0..MAX_PATH] of Char;
 begin
   //Create objects
   IObject := CreateComObject(CLSID_ShellLink);
-  ISLink  := IObject as IShellLink;
+  ISLink  := IObject as IShellLinkW;
   IPFile  := IObject as IPersistFile;
   //Create link
   ISLink.SetPath(pChar(TargetFilePath));
@@ -237,7 +238,7 @@ begin
     ISLink.SetWorkingDirectory(pChar(WorkingDir));
   //DesktopPath
   SHGetSpecialFolderLocation(0, CSIDL_DESKTOPDIRECTORY, PIDL);
-  SHGetPathFromIDList(PIDL, InFolder);
+  SHGetPathFromIDListW(PIDL, InFolder);
   //Save link
   IPFile.Save(PWChar(IncludeTrailingPathDelimiter(InFolder) + FileName), false);
 end;
@@ -249,8 +250,8 @@ var
   LinkName    : String;
 begin
   SHGetSpecialFolderLocation(0, CSIDL_DESKTOPDIRECTORY, PIDL);
-  SHGetPathFromIDList(PIDL, DesktopPath);
-  LinkName := PWChar(IncludeTrailingPathDelimiter(DesktopPath) + FileName);
+  SHGetPathFromIDListW(PIDL, DesktopPath);
+  LinkName := PChar(IncludeTrailingPathDelimiter(DesktopPath) + FileName);
   if (FileExists(LinkName)) then
     SysUtils.DeleteFile(LinkName);
 end;
@@ -307,7 +308,7 @@ var
   sDesktopPath : string;
 begin
   SHGetSpecialFolderLocation(0, CSIDL_DESKTOPDIRECTORY, PIDL);
-  SHGetPathFromIDList(PIDL, DesktopPath);
+  SHGetPathFromIDListW(PIDL, DesktopPath);
   sDesktopPath := DesktopPath;
   RenameFile(sDesktopPath + PathDelim + OldFileName,sDesktopPath + PathDelim + FileName);
 end;

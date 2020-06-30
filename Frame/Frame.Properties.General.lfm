@@ -56,14 +56,11 @@ inherited frmBaseGeneralPropertyPage: TfrmBaseGeneralPropertyPage
       TabOrder = 0
       OnEnter = edtNameEnter
     end
-    object edtPathIcon: TJvFilenameEdit
+    object edtPathIcon: TFileNameEdit
       Left = 6
       Top = 44
       Width = 338
       Height = 21
-      OnBeforeDialog = edtPathIconBeforeDialog
-      OnAfterDialog = edtPathIconAfterDialog
-      AddQuotes = False
       DialogOptions = [ofHideReadOnly, ofEnableSizing]
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText

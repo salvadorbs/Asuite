@@ -1,6 +1,6 @@
 unit Utility.XML;
 
-{$MODE delphiunicode}
+{$MODE DelphiUnicode}
 
 interface
 

@@ -243,12 +243,14 @@ function TdmImages.getIlSmallIcons: TImageList;
 begin
   //TODO lazarus
   //Result := SysImageListHandle(Config.Paths.SuitePathData, False);
+  Result := nil;
 end; 
 
 function TdmImages.getIlLargeIcons: TImageList;
 begin           
   //TODO lazarus
-  //Result := SysImageListHandle(Config.Paths.SuitePathData, True);
+  //Result := SysImageListHandle(Config.Paths.SuitePathData, True); 
+  Result := nil;
 end;
 
 end.

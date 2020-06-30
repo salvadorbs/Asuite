@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.ImportList;
 
-{$MODE delphiunicode}
+{$MODE DelphiUnicode}
 
 interface
 
@@ -45,7 +45,6 @@ type
     btnCancel: TButton;
     pnlHeader: TPanel;
     lblTitle: TLabel;
-    XMLDocument1: TXMLDocument;
     
     edtPathList: TFileNameEdit;
     procedure btnDeselectAllClick(Sender: TObject);
@@ -213,9 +212,11 @@ var
   DBImp : TDBManager;
   FileName : String;
   FileExt  : String;
+  XMLDoc   : TXMLDocument;
 begin
   TASuiteLogger.Enter('PopulateTree', Self);
   vstListImp.BeginUpdate;
+  XMLDoc := TXMLDocument.Create;
   try
     vstListImp.Clear;
     FileName := LowerCase(ExtractFileName(FilePath));
@@ -223,17 +224,17 @@ begin
     //ASuite or wppLauncher
     if (FileExt = EXT_XML) or (FileExt = EXT_XMLBCK) then
     begin
-      ReadXMLFile(XMLDocument1, FilePath);
+      ReadXMLFile(XMLDoc, FilePath);
       //Identify launcher xml from first node
       //ASuite 1.x
-      if XMLDocument1.DocumentElement.NodeName = 'ASuite' then
-        XMLToTree(vstListImp, ltASuite1, XMLDocument1)
+      if XMLDoc.DocumentElement.NodeName = 'ASuite' then
+        XMLToTree(vstListImp, ltASuite1, XMLDoc)
       else //winPenPack Launcher 1.x
         if ChangeFileExt(FileName,'') = 'winpenpack' then
-          XMLToTree(vstListImp, ltwppLauncher1, XMLDocument1)
+          XMLToTree(vstListImp, ltwppLauncher1, XMLDoc)
         else //PStart 1.x
-          if XMLDocument1.DocumentElement.NodeName = 'start' then
-            XMLToTree(vstListImp, ltPStart1, XMLDocument1);
+          if XMLDoc.DocumentElement.NodeName = 'start' then
+            XMLToTree(vstListImp, ltPStart1, XMLDoc);
     end
     else //BSuite 2.x
       if (FileExt = EXT_SQL) or (FileExt = EXT_SQLBCK) then
@@ -249,6 +250,7 @@ begin
       end;
   finally
     vstListImp.EndUpdate;
+    XMLDoc.Free;
   end;
 end;
 

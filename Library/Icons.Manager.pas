@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Icons.Manager;
 
-{$MODE Delphi}
+{$MODE DelphiUnicode}
 
 interface
 
@@ -73,7 +73,11 @@ var
   Icon: TApplicationIcon;
 begin
   Result := -1;
-  Icon := FItems.Items[AName];
+
+  Icon := nil;
+  if FItems.ContainsKey(AName) then
+    Icon := FItems.Items[AName];
+
   if Assigned(Icon) then
     Result := Icon.ImageIndex;
 end;

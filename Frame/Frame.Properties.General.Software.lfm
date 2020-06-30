@@ -3,11 +3,8 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
     inherited edtName: TEdit
       Width = 161
     end
-    inherited edtPathIcon: TJvFilenameEdit
-      OnBeforeDialog = nil
-      OnAfterDialog = nil
+    inherited edtPathIcon: TFileNameEdit
       TabOrder = 2
-      OnExit = nil
     end
     object btnExtractName: TButton
       Left = 214
@@ -116,14 +113,11 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       ParentFont = False
       TabOrder = 2
     end
-    object edtWorkingDir: TJvDirectoryEdit
+    object edtWorkingDir: TDirectoryEdit
       Left = 6
       Top = 50
       Width = 338
       Height = 21
-      OnBeforeDialog = edtWorkingDirBeforeDialog
-      OnAfterDialog = edtWorkingDirAfterDialog
-      DialogKind = dkWin32
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -134,14 +128,11 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Text = '$ASuite\'
       OnChange = edtWorkingDirChange
     end
-    object edtPathExe: TJvFilenameEdit
+    object edtPathExe: TFileNameEdit
       Left = 6
       Top = 16
       Width = 338
       Height = 21
-      OnBeforeDialog = edtPathExeBeforeDialog
-      OnAfterDialog = edtPathExeAfterDialog
-      AddQuotes = False
       DialogOptions = [ofHideReadOnly, ofEnableSizing]
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText

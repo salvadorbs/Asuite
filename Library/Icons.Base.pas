@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Icons.Base;
 
-{$MODE Delphi}
+{$MODE DelphiUnicode}
 
 interface
 
@@ -76,13 +76,13 @@ end;
 
 function TBaseIcon.InternalGetImageIndex(const APathFile: string): Integer;
 var
-  FileInfo: TSHFileInfo;
+  FileInfo: TSHFileInfoW;
   Flags: Integer;
 begin
   Result := -1;
   Flags := SHGFI_SYSICONINDEX or SHGFI_ICON or SHGFI_USEFILEATTRIBUTES;
   //Get index
-  if SHGetFileInfo(PChar(APathFile), 0, FileInfo, SizeOf(TSHFileInfo), Flags) <> 0 then
+  if SHGetFileInfoW(PChar(APathFile), 0, FileInfo, SizeOf(TSHFileInfo), Flags) <> 0 then
   begin
     DestroyIcon(FileInfo.hIcon);
     Result := FileInfo.iIcon;

@@ -1,12 +1,12 @@
 program ASuite;
 
-{$MODE Delphi}
+{$MODE DelphiUnicode}
 
 uses
   Forms,
   SysUtils,
   LCLIntf, LCLType, LMessages, Interfaces,
-  {SynSQLite3Static,}
+  SynSQLite3Static,
   Forms.About in 'Forms\Forms.About.pas' {frmAbout},
   Forms.GraphicMenu in 'Forms\Forms.GraphicMenu.pas' {frmGraphicMenu},
   Forms.ImportList in 'Forms\Forms.ImportList.pas' {frmImportList},
@@ -55,9 +55,10 @@ uses
   Kernel.PopupMenu in 'Library\Kernel.PopupMenu.pas',
   Utility.Conversions in 'Utilities\Utility.Conversions.pas',
   Utility.Misc in 'Utilities\Utility.Misc.pas',
-  Kernel.ASuiteInstance in 'Library\Kernel.ASuiteInstance.pas',
   Forms.ShortcutGrabber in 'Forms\Forms.ShortcutGrabber.pas' {frmShortcutGrabber},
-  {USingleInst,}
+  UniqueInstanceRaw,
+  HlpXXHash32,
+  HlpHashFactory,
   VirtualTree.Events in 'Library\VirtualTree.Events.pas',
   Forms.Dialog.BaseEntity in 'Forms\Forms.Dialog.BaseEntity.pas' {frmDialogBase},
   Forms.Options in 'Forms\Forms.Options.pas' {frmOptions},
@@ -78,10 +79,15 @@ uses
 
 {$R *.res}
 {$R *.dkl_const.res}
-{$SetPEFlags 1} // IMAGE_FILE_RELOCS_STRIPPED
 
-begin
-  if SingleInst.CanStartApp then
+var
+  hash, identifier: string;
+
+begin            
+  hash := THashFactory.THash32.CreateXXHash32().ComputeString(Application.ExeName, TEncoding.UTF8).ToString();
+  identifier := 'ASuite.SingleInstance.' + hash;
+
+  if not(InstanceRunning(identifier, True)) then
   begin
     {$IFDEF DEBUG}
     ReportMemoryLeaksOnShutdown := True;

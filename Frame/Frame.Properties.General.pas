@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Properties.General;
 
-{$MODE Delphi}
+{$MODE DelphiUnicode}
 
 interface
 
@@ -150,6 +150,7 @@ end;
 function TfrmBaseGeneralPropertyPage.GetTitle: string;
 begin
   //Result := DKLangConstW('msgGeneral');
+  Result := '';
 end;
 
 function TfrmBaseGeneralPropertyPage.InternalLoadData: Boolean;

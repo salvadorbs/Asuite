@@ -1,54 +1,56 @@
 object frmScanFolder: TfrmScanFolder
   Left = 0
+  Height = 256
   Top = 0
+  Width = 579
   BorderStyle = bsDialog
   Caption = 'Scan folder'
   ClientHeight = 256
   ClientWidth = 579
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
-  Font.Style = []
-  Position = poMainFormCenter
   OnCreate = FormCreate
-  PixelsPerInch = 96
+  Position = poMainFormCenter
   object btnScan: TButton
     Left = 415
+    Height = 25
     Top = 224
     Width = 75
-    Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'Scan'
     Default = True
-    TabOrder = 2
     OnClick = btnScanClick
+    TabOrder = 2
   end
   object btnCancel: TButton
     Left = 496
+    Height = 25
     Top = 223
     Width = 75
-    Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'Cancel'
-    TabOrder = 3
     OnClick = btnCancelClick
+    TabOrder = 3
   end
   object pnlFilters: TPanel
     Left = 207
+    Height = 210
     Top = 8
     Width = 364
-    Height = 210
     Anchors = [akTop, akRight, akBottom]
+    ClientHeight = 210
+    ClientWidth = 364
     TabOrder = 1
     object grpFileTypes: TGroupBox
       Left = 6
+      Height = 114
       Top = 61
       Width = 169
-      Height = 114
       Caption = 'File Types'
-      Font.Charset = DEFAULT_CHARSET
+      ClientHeight = 96
+      ClientWidth = 165
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
@@ -57,61 +59,54 @@ object frmScanFolder: TfrmScanFolder
       TabOrder = 1
       object btnTypesDelete: TButton
         Left = 101
+        Height = 17
         Top = 58
         Width = 58
-        Height = 17
         Caption = 'Delete'
         Enabled = False
-        Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Tahoma'
-        Font.Style = []
+        OnClick = btnTypesDeleteClick
         ParentFont = False
         TabOrder = 3
-        OnClick = btnTypesDeleteClick
       end
       object btnTypesAdd: TButton
         Left = 101
+        Height = 17
         Top = 35
         Width = 58
-        Height = 17
         Caption = 'Add'
         Enabled = False
-        Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Tahoma'
-        Font.Style = []
+        OnClick = btnTypesAddClick
         ParentFont = False
         TabOrder = 2
-        OnClick = btnTypesAddClick
       end
       object edtTypes: TEdit
         Left = 101
+        Height = 21
         Top = 8
         Width = 58
-        Height = 21
-        Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Tahoma'
-        Font.Style = []
+        OnChange = edtTypesChange
         ParentFont = False
         TabOrder = 1
-        OnChange = edtTypesChange
       end
       object vstTypes: TVirtualStringTree
         Left = 7
+        Height = 83
         Top = 8
         Width = 88
-        Height = 83
-        Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Tahoma'
-        Font.Style = []
         Header.AutoSizeIndex = 0
+        Header.Columns = <>
         Header.MainColumn = -1
         Images = ilExtIcons
         ParentFont = False
@@ -128,11 +123,12 @@ object frmScanFolder: TfrmScanFolder
     end
     object grpExclude: TGroupBox
       Left = 181
+      Height = 114
       Top = 61
       Width = 169
-      Height = 114
       Caption = 'Exclude files'
-      Font.Charset = DEFAULT_CHARSET
+      ClientHeight = 96
+      ClientWidth = 165
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
@@ -141,61 +137,54 @@ object frmScanFolder: TfrmScanFolder
       TabOrder = 2
       object edtExclude: TEdit
         Left = 101
+        Height = 21
         Top = 8
         Width = 58
-        Height = 21
-        Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Tahoma'
-        Font.Style = []
+        OnChange = edtExcludeChange
         ParentFont = False
         TabOrder = 1
-        OnChange = edtExcludeChange
       end
       object btnExcludeAdd: TButton
         Left = 101
+        Height = 17
         Top = 35
         Width = 58
-        Height = 17
         Caption = 'Add'
         Enabled = False
-        Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Tahoma'
-        Font.Style = []
+        OnClick = btnExcludeAddClick
         ParentFont = False
         TabOrder = 2
-        OnClick = btnExcludeAddClick
       end
       object btnExcludeDelete: TButton
         Left = 101
+        Height = 17
         Top = 58
         Width = 58
-        Height = 17
         Caption = 'Delete'
         Enabled = False
-        Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Tahoma'
-        Font.Style = []
+        OnClick = btnExcludeDeleteClick
         ParentFont = False
         TabOrder = 3
-        OnClick = btnExcludeDeleteClick
       end
       object vstExclude: TVirtualStringTree
         Left = 7
+        Height = 83
         Top = 8
         Width = 88
-        Height = 83
-        Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Tahoma'
-        Font.Style = []
         Header.AutoSizeIndex = 0
+        Header.Columns = <>
         Header.MainColumn = -1
         ParentFont = False
         TabOrder = 0
@@ -210,11 +199,12 @@ object frmScanFolder: TfrmScanFolder
     end
     object grpGeneralSettings: TGroupBox
       Left = 6
+      Height = 50
       Top = 5
       Width = 345
-      Height = 50
       Caption = 'General settings'
-      Font.Charset = DEFAULT_CHARSET
+      ClientHeight = 32
+      ClientWidth = 341
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
@@ -223,74 +213,43 @@ object frmScanFolder: TfrmScanFolder
       TabOrder = 0
       object chkExtractName: TCheckBox
         Left = 12
+        Height = 19
         Top = 8
-        Width = 328
-        Height = 17
+        Width = 298
         Caption = 'Extract name automatically from executables (only *.exe)'
-        Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Tahoma'
-        Font.Style = []
         ParentFont = False
         TabOrder = 0
       end
     end
     object pbScan: TProgressBar
       Left = 6
+      Height = 18
       Top = 181
       Width = 345
-      Height = 18
       Smooth = True
       TabOrder = 3
     end
   end
-  object vstShell: TVirtualExplorerTree
+  object vstShell: TShellTreeView
     Left = 8
+    Height = 210
     Top = 8
     Width = 193
-    Height = 210
-    Active = False
-    Anchors = [akLeft, akTop, akRight, akBottom]
-    ColumnDetails = cdUser
-    ColumnMenuItemCount = 8
-    DefaultNodeHeight = 17
-    DragHeight = 250
-    DragWidth = 150
-    FileObjects = [foFolders, foEnableAsync]
-    FileSizeFormat = fsfExplorer
-    FileSort = fsFileType
-    Header.AutoSizeIndex = 0
-    Header.Height = 17
-    Header.MainColumn = -1
-    HintMode = hmHint
-    ParentColor = False
-    RootFolder = rfDrives
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    FileSortType = fstNone
     TabOrder = 0
-    TabStop = True
-    TreeOptions.AutoOptions = [toAutoDropExpand, toAutoScroll, toAutoTristateTracking]
-    TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toToggleOnDblClick]
-    TreeOptions.PaintOptions = [toShowButtons, toShowTreeLines, toThemeAware, toUseBlendedImages, toGhostedIfUnfocused, toUseExplorerTheme]
-    TreeOptions.SelectionOptions = [toRightClickSelect]
-    TreeOptions.VETFolderOptions = [toFoldersExpandable, toForceHideRecycleBin, toThreadedExpandMark]
-    TreeOptions.VETShellOptions = [toRightAlignSizeColumn]
-    TreeOptions.VETSyncOptions = [toCollapseTargetFirst, toExpandTarget, toSelectTarget]
-    TreeOptions.VETMiscOptions = [toChangeNotifierThread, toNoRebuildIconListOnAssocChange, toVETReadOnly]
-    TreeOptions.VETImageOptions = [toImages, toThreadedImages]
-    OnEnumFolder = vstShellEnumFolder
-    OnInitNode = vstShellInitNode
-    Columns = <>
+    ObjectTypes = [otFolders]
   end
   object ilExtIcons: TImageList
-    Left = 511
-    Top = 232
+    Left = 328
+    Top = 224
   end
-  object vfsScan: TVirtualFileSearch
-    OnSearchEnd = vfsScanSearchEnd
-    SubFolders = True
-    ThreadPriority = tpLower
-    UpdateRate = 1000
-    Left = 280
-    Top = 136
+  object vfsScan: TcySearchFiles
+    SubDirectories = True
+    Left = 288
+    Top = 224
   end
 end

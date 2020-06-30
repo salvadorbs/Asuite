@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Properties.General.Software;
 
-{$MODE Delphi}
+{$MODE DelphiUnicode}
 
 interface
 
@@ -36,8 +36,8 @@ type
     lbParameters: TLabel;
     lbPathExe: TLabel;
     
-    edtWorkingDir: TFileNameEdit;
-    edtPathExe: TDirectoryEdit;
+    edtWorkingDir: TDirectoryEdit;
+    edtPathExe: TFileNameEdit;
     btnExtractName: TButton;
     procedure edtPathExeAfterDialog(Sender: TObject; var AName: string;
       var AAction: Boolean);

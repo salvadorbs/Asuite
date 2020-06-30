@@ -1,7 +1,7 @@
 object dmImages: TdmImages
   OldCreateOrder = False
   Height = 120
-  HorizontalOffset = 0
-  VerticalOffset = 0
+  HorizontalOffset = 976
+  VerticalOffset = 378
   Width = 201
 end

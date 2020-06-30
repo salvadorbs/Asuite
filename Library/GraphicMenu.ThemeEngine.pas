@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit GraphicMenu.ThemeEngine;
 
-{$MODE Delphi}
+{$MODE DelphiUnicode}
 
 interface
 
@@ -331,13 +331,13 @@ begin
           DrawRect  := R;
           DrawFlags := DT_END_ELLIPSIS or DT_NOPREFIX or DT_WORDBREAK or
             DT_EDITCONTROL or DT_CENTER;
-          DrawText(PNGImage.Canvas.Handle, PChar(Caption), -1, DrawRect, DrawFlags or DT_CALCRECT);
+          DrawTextW(PNGImage.Canvas.Handle, PChar(Caption), -1, DrawRect, DrawFlags or DT_CALCRECT);
           DrawRect.Right := R.Right;
           if DrawRect.Bottom < R.Bottom then
             OffsetRect(DrawRect, 0, (R.Bottom - DrawRect.Bottom) div 2)
           else
             DrawRect.Bottom := R.Bottom;
-          Windows.DrawTextEx(PNGImage.Canvas.Handle, PChar(Caption), -1, DrawRect, DrawFlags, nil);
+          DrawTextExW(PNGImage.Canvas.Handle, PChar(Caption), -1, DrawRect, DrawFlags, nil);
         end;
       finally
         PNGImage.Canvas.Unlock;

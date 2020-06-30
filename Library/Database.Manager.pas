@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Database.Manager;
 
-{$MODE Delphi}
+{$MODE DelphiUnicode}
 
 interface
 
@@ -36,7 +36,7 @@ type
     FSQLModel   : TSQLModel;
 
     procedure DoBackupList;
-    function  GetDateTimeAsString: String;
+    function  GetDateTimeAsString: AnsiString;
   public
     constructor Create;
     destructor Destroy; override;
@@ -119,7 +119,7 @@ begin
   end;
 end;
 
-function TDBManager.GetDateTimeAsString: String;
+function TDBManager.GetDateTimeAsString: AnsiString;
 begin
   DateTimeToString(Result, 'yyyy-mm-dd-hh-mm-ss',now);
 end;

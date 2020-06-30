@@ -26,39 +26,45 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
-    <RequiredPackages Count="10">
+    <RequiredPackages Count="12">
       <Item1>
-        <PackageName Value="THotKey"/>
+        <PackageName Value="mormot_cross"/>
       </Item1>
       <Item2>
-        <PackageName Value="mormot_cross"/>
+        <PackageName Value="mormot_base"/>
       </Item2>
       <Item3>
-        <PackageName Value="mormot_base"/>
+        <PackageName Value="HashLib4PascalPackage"/>
       </Item3>
       <Item4>
-        <PackageName Value="virtualtreeview_package"/>
+        <PackageName Value="uniqueinstance_package"/>
       </Item4>
       <Item5>
-        <PackageName Value="DateTimeCtrls"/>
+        <PackageName Value="THotKey"/>
       </Item5>
       <Item6>
-        <PackageName Value="atflatcontrols_package"/>
+        <PackageName Value="virtualtreeview_package"/>
       </Item6>
       <Item7>
-        <PackageName Value="lclextensions_package"/>
+        <PackageName Value="DateTimeCtrls"/>
       </Item7>
       <Item8>
-        <PackageName Value="KControlsLaz"/>
+        <PackageName Value="atflatcontrols_package"/>
       </Item8>
       <Item9>
-        <PackageName Value="pl_cindy"/>
+        <PackageName Value="lclextensions_package"/>
       </Item9>
       <Item10>
-        <PackageName Value="LCL"/>
+        <PackageName Value="KControlsLaz"/>
       </Item10>
+      <Item11>
+        <PackageName Value="pl_cindy"/>
+      </Item11>
+      <Item12>
+        <PackageName Value="LCL"/>
+      </Item12>
     </RequiredPackages>
-    <Units Count="68">
+    <Units Count="67">
       <Unit0>
         <Filename Value="ASuite.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -66,32 +72,44 @@
       <Unit1>
         <Filename Value="Forms\Forms.About.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmAbout"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
       </Unit1>
       <Unit2>
         <Filename Value="Forms\Forms.GraphicMenu.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmGraphicMenu"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
       </Unit2>
       <Unit3>
         <Filename Value="Forms\Forms.ImportList.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmImportList"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
       </Unit3>
       <Unit4>
         <Filename Value="Forms\Forms.Main.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmMain"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
       </Unit4>
       <Unit5>
         <Filename Value="Forms\Forms.PropertySeparator.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmPropertySeparator"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
       </Unit5>
       <Unit6>
         <Filename Value="Forms\Forms.ScanFolder.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmScanFolder"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
       </Unit6>
       <Unit7>
         <Filename Value="DataModules\DataModules.Icons.pas"/>
@@ -103,7 +121,9 @@
       <Unit8>
         <Filename Value="DataModules\DataModules.TrayMenu.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="dmTrayMenu"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="DataModule"/>
       </Unit8>
       <Unit9>
         <Filename Value="Library\AppConfig.Main.pas"/>
@@ -136,67 +156,93 @@
       <Unit16>
         <Filename Value="Frame\Frame.BaseEntity.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmBaseEntityPage"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
       </Unit16>
       <Unit17>
         <Filename Value="Frame\Frame.Properties.Base.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmBasePropertyPage"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
       </Unit17>
       <Unit18>
         <Filename Value="Frame\Frame.Properties.General.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmBaseGeneralPropertyPage"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
       </Unit18>
       <Unit19>
         <Filename Value="Frame\Frame.Options.Advanced.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmAdvancedOptionsPage"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
       </Unit19>
       <Unit20>
         <Filename Value="Frame\Frame.Options.General.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmGeneralOptionsPage"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
       </Unit20>
       <Unit21>
         <Filename Value="Frame\Frame.Options.Hotkey.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmHotkeyOptionsPage"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
       </Unit21>
       <Unit22>
         <Filename Value="Frame\Frame.Options.Autorun.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmAutorunOptionsPage"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
       </Unit22>
       <Unit23>
         <Filename Value="Frame\Frame.Options.Stats.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmStatsOptionsPage"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
       </Unit23>
       <Unit24>
         <Filename Value="Frame\Frame.Options.Trayicon.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmTrayiconOptionsPage"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
       </Unit24>
       <Unit25>
         <Filename Value="Frame\Frame.Properties.Advanced.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmAdvancedPropertyPage"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
       </Unit25>
       <Unit26>
         <Filename Value="Frame\Frame.Properties.Behavior.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmBehaviorPropertyPage"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
       </Unit26>
       <Unit27>
         <Filename Value="Frame\Frame.Properties.General.Category.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmCatGeneralPropertyPage"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
       </Unit27>
       <Unit28>
         <Filename Value="Frame\Frame.Properties.General.Software.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmSWGeneralPropertyPage"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
       </Unit28>
       <Unit29>
         <Filename Value="Utilities\Utility.Process.pas"/>
@@ -279,86 +325,92 @@
         <IsPartOfProject Value="True"/>
       </Unit48>
       <Unit49>
-        <Filename Value="Library\Kernel.ASuiteInstance.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit49>
-      <Unit50>
         <Filename Value="Forms\Forms.ShortcutGrabber.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmShortcutGrabber"/>
         <HasResources Value="True"/>
-      </Unit50>
-      <Unit51>
+        <ResourceBaseClass Value="Form"/>
+      </Unit49>
+      <Unit50>
         <Filename Value="Library\VirtualTree.Events.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit51>
-      <Unit52>
+      </Unit50>
+      <Unit51>
         <Filename Value="Forms\Forms.Dialog.BaseEntity.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmDialogBase"/>
         <HasResources Value="True"/>
-      </Unit52>
-      <Unit53>
+        <ResourceBaseClass Value="Form"/>
+      </Unit51>
+      <Unit52>
         <Filename Value="Forms\Forms.Options.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmOptions"/>
         <HasResources Value="True"/>
-      </Unit53>
-      <Unit54>
+        <ResourceBaseClass Value="Form"/>
+      </Unit52>
+      <Unit53>
         <Filename Value="Forms\Forms.PropertyItem.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmPropertyItem"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit53>
+      <Unit54>
+        <Filename Value="Library\VirtualTree.Methods.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit54>
       <Unit55>
-        <Filename Value="Library\VirtualTree.Methods.pas"/>
+        <Filename Value="Library\GraphicMenu.ThemeEngine.Consts.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit55>
       <Unit56>
-        <Filename Value="Library\GraphicMenu.ThemeEngine.Consts.pas"/>
+        <Filename Value="Library\GraphicMenu.ThemeEngine.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit56>
       <Unit57>
-        <Filename Value="Library\GraphicMenu.ThemeEngine.pas"/>
+        <Filename Value="Library\Icons.Node.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit57>
       <Unit58>
-        <Filename Value="Library\Icons.Node.pas"/>
+        <Filename Value="Library\Icons.Manager.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit58>
       <Unit59>
-        <Filename Value="Library\Icons.Manager.pas"/>
+        <Filename Value="Library\Icons.Base.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit59>
       <Unit60>
-        <Filename Value="Library\Icons.Base.pas"/>
+        <Filename Value="Library\Icons.Application.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit60>
       <Unit61>
-        <Filename Value="Library\Icons.Application.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit61>
-      <Unit62>
         <Filename Value="Frame\Frame.Options.MainWindow.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmMainWindowOptionsPage"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit61>
+      <Unit62>
+        <Filename Value="Library\Icons.Thread.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit62>
       <Unit63>
-        <Filename Value="Library\Icons.Thread.pas"/>
+        <Filename Value="Library\Kernel.Scheduler.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit63>
       <Unit64>
-        <Filename Value="Library\Kernel.Scheduler.pas"/>
+        <Filename Value="Library\Kernel.Logger.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit64>
       <Unit65>
-        <Filename Value="Library\Kernel.Logger.pas"/>
+        <Filename Value="3p\PJVersionInfo.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit65>
       <Unit66>
-        <Filename Value="3p\PJVersionInfo.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit66>
-      <Unit67>
         <Filename Value="Utilities\Utility.Hotkey.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit67>
+      </Unit66>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
