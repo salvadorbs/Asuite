@@ -79,7 +79,7 @@ implementation
 uses
   Forms.Main, AppConfig.Main, VirtualTree.Events, VirtualTree.Methods,
   Utility.FileFolder, Utility.XML, Database.Manager, NodeDataTypes.Base,
-  Kernel.Logger;
+  Kernel.Logger, Kernel.ResourceStrings;
 
 procedure TfrmImportList.btnBackClick(Sender: TObject);
 begin
@@ -125,15 +125,15 @@ begin
     try
       if TreeImpToTree(vstListImp, Config.MainTree) then
       begin
-        ShowMessageFmtEx(DKLangConstW('msgItemsImported'), [GetNumberNodeImp(vstListImp)]);
-        TASuiteLogger.Info(DKLangConstW('msgItemsImported'), [GetNumberNodeImp(vstListImp)]);
+        ShowMessageFmtEx(msgItemsImported, [GetNumberNodeImp(vstListImp)]);
+        TASuiteLogger.Info(msgItemsImported, [GetNumberNodeImp(vstListImp)]);
       end;
       TVirtualTreeMethods.Create.GetAllIcons(Config.MainTree, nil);
     except
       on E : Exception do
       begin
-        ShowMessageEx(DKLangConstW('msgImportFailed'), True);
-        TASuiteLogger.Error(DKLangConstW('msgErrGeneric'), [E.ClassName,E.Message]);
+        ShowMessageEx(msgImportFailed, True);
+        TASuiteLogger.Error(msgErrGeneric, [E.ClassName,E.Message]);
       end;
     end;
     }
@@ -172,8 +172,8 @@ end;
 
 procedure TfrmImportList.tsListShow(Sender: TObject);
 begin
-  //lblTitle.Caption := DKLangConstW('msgImportTitle3');
-  //btnNext.Caption  := DKLangConstW('msgImport');
+  lblTitle.Caption := msgImportTitle3;
+  btnNext.Caption  := msgImport;
   btnNext.Enabled  := vstListImp.CheckedCount > 0;
   //Import list in temporary vst
   try
@@ -192,9 +192,9 @@ end;
 procedure TfrmImportList.tsAskFileListShow(Sender: TObject);
 begin
   vstListImp.Clear;
-  //lblTitle.Caption := DKLangConstW('msgImportTitle2');
+  lblTitle.Caption := msgImportTitle2;
   btnNext.Enabled  := (edtPathList.Text <> '') and FileExists(edtPathList.Text);
-  //btnNext.Caption  := DKLangConstW('msgNext');
+  btnNext.Caption  := msgNext;
 end;
 
 function TfrmImportList.GetNumberNodeImp(Sender: TBaseVirtualTree): Integer;

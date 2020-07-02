@@ -24,7 +24,7 @@ unit NodeDataTypes.Category;
 interface
 
 uses
-  VirtualTrees, SysUtils, Dialogs, Kernel.Enumerations,
+  VirtualTrees, SysUtils, Dialogs, Kernel.Enumerations, Controls,
   LCLIntf, NodeDataTypes.Base, NodeDataTypes.Custom, Kernel.Types;
 
 type
@@ -53,7 +53,7 @@ type
 implementation
 
 uses
-  NodeDataTypes.Files, VirtualTree.Methods, AppConfig.Main;
+  NodeDataTypes.Files, VirtualTree.Methods, AppConfig.Main, Kernel.ResourceStrings;
 
 procedure TvCategoryNodeData.CallBackExecuteNode(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
@@ -134,9 +134,7 @@ begin
   if (Config.ConfirmRunCat) then
   begin
     if CheckRunnableSubItems(Config.MainTree) then
-    begin
-      //Result := (MessageDlg(Format(DKLangConstW('msgConfirmRunCat'), [Self.Name]), mtWarning, [mbYes, mbNo], 0) = mrYes);
-    end;
+      Result := (MessageDlg(Format(msgConfirmRunCat, [Self.Name]), mtWarning, [mbYes, mbNo], 0) = mrYes);
   end
   else
     Result := True;

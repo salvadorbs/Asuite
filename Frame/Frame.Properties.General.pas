@@ -75,7 +75,7 @@ begin
   // Check if inserted name is empty, then
   if (Trim(Edit.Text) = '') then
   begin
-    //ShowMessageEx(DKLangConstW('msgErrEmptyName'),true);
+    ShowMessageEx(msgErrEmptyName,true);
     Edit.Color := clYellow;
     Result := False;
   end;
@@ -101,7 +101,7 @@ begin
   else begin
     //File not found - Change font color with red
     cColor := clRed;
-    //sHint  := DKLangConstW('msgFileNotFound');
+    sHint  := msgFileNotFound;
   end;
   //Change ASender's properties Color and Hint in based of vars cColor and sHint
   ASender.Hint := sHint;
@@ -128,7 +128,7 @@ end;
 procedure TfrmBaseGeneralPropertyPage.edtPathIconBeforeDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
-  //edtPathIcon.Filter := DKLangConstW('msgFilterIconExe');
+  edtPathIcon.Filter := msgFilterIconExe;
   AName := Config.Paths.RelativeToAbsolute(AName);
 end;
 
@@ -149,7 +149,7 @@ end;
 
 function TfrmBaseGeneralPropertyPage.GetTitle: string;
 begin
-  Result := 'msgGeneral';
+  Result := msgGeneral;
 end;
 
 function TfrmBaseGeneralPropertyPage.InternalLoadData: Boolean;

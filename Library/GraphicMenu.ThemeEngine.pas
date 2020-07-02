@@ -96,8 +96,8 @@ type
 implementation
 
 uses
-  Kernel.Consts, AppConfig.Main, Utility.Conversions,
-  GraphicMenu.ThemeEngine.Consts, Kernel.Logger, Windows;
+  Kernel.Consts, AppConfig.Main, Utility.Conversions, Kernel.ResourceStrings,
+  GraphicMenu.ThemeEngine.Consts, Kernel.Logger, Windows, Utility.Misc;
 
 { TThemeEngineMethods }
 
@@ -352,23 +352,22 @@ function TThemeEngine.GetButtonCaption(IniFile: TIniFile;
   ButtonType: TGraphicMenuElement): string;
 begin
   Result := '';
-  {
+
   case ButtonType of
     //Right buttons
-    gmbASuite    : Result := Format(DKLangConstW('msgGMShow'), [APP_NAME]);
-    gmbOptions   : Result := DKLangConstW('msgGMOptions');
-    gmbDocuments : Result := DKLangConstW('msgGMDocuments');
-    gmbMusic     : Result := DKLangConstW('msgGMMusic');
-    gmbPictures  : Result := DKLangConstW('msgGMPictures');
-    gmbVideos    : Result := DKLangConstW('msgGMVideos');
-    gmbExplore   : Result := DKLangConstW('msgGMExplore');
-    gmbAbout     : Result := DKLangConstW('msgGMAbout');
+    gmbASuite    : Result := Format(msgGMShow, [APP_NAME]);
+    gmbOptions   : Result := msgGMOptions;
+    gmbDocuments : Result := msgGMDocuments;
+    gmbMusic     : Result := msgGMMusic;
+    gmbPictures  : Result := msgGMPictures;
+    gmbVideos    : Result := msgGMVideos;
+    gmbExplore   : Result := msgGMExplore;
+    gmbAbout     : Result := msgGMAbout;
     //Tabs
-    gmbList      : Result := DKLangConstW('msgList');
-    gmbMRU       : Result := DKLangConstW('msgLongMRU');
-    gmbMFU       : Result := DKLangConstW('msgLongMFU');
+    gmbList      : Result := msgList;
+    gmbMRU       : Result := msgLongMRU;
+    gmbMFU       : Result := msgLongMFU;
   end;
-  }
 end;
 
 function TThemeEngine.GetButtonIconPath(IniFile: TIniFile;
@@ -479,7 +478,7 @@ begin
       //FGraphicMenu.edtSearch.RightButton.ImageIndex := FSearchIcon;
       //Hard Disk
       DrawHardDiskSpace(IniFile, FGraphicMenu.imgDriveBackground, FGraphicMenu.imgDriveSpace);
-      //FGraphicMenu.lblDriveName.Caption := format(DKLangConstW('msgGMDriveName'), [UpperCase(Config.Paths.SuiteDrive)]);
+      FGraphicMenu.lblDriveName.Caption := format(msgGMDriveName, [UpperCase(Config.Paths.SuiteDrive)]);
       //Fonts
       strFont := IniFile.ReadString(INIFILE_SECTION_HARDDISK, INIFILE_KEY_FONT, '');
       StrToFont(strFont, FGraphicMenu.lblDriveName.Font);
@@ -492,9 +491,8 @@ begin
       IniFile.Free;
     end;
   end
-  else begin
-    //ShowMessageFmtEx(DKLangConstW('msgErrNoThemeIni'), [Config.Paths.SuitePathCurrentTheme + THEME_INI], True);
-  end;
+  else
+    ShowMessageFmtEx(msgErrNoThemeIni, [Config.Paths.SuitePathCurrentTheme + THEME_INI], True);
 end;
 
 procedure TThemeEngine.SetupThemeEngine(AGraphicMenu: TfrmGraphicMenu);

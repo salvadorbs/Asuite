@@ -64,7 +64,7 @@ implementation
 uses
   Kernel.Consts, AppConfig.Main, Utility.FileFolder, Utility.Misc,
   Database.Version, Database.Options, Database.List, Kernel.Logger,
-  VirtualTree.Methods{, SynLog};
+  VirtualTree.Methods, SynLog, Kernel.ResourceStrings;
 
 constructor TDBManager.Create;
 begin
@@ -132,7 +132,7 @@ begin
   except
     on E : Exception do
     begin
-      //ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message],True);
+      ShowMessageFmtEx(msgErrGeneric,[E.ClassName,E.Message],True);
     end;
   end;
 end;
@@ -145,9 +145,7 @@ begin
     TSQLtbl_options.Load(Self, Config);
   except
     on E : Exception do
-    begin
-      //ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName, E.Message], True);
-    end;
+      ShowMessageFmtEx(msgErrGeneric,[E.ClassName, E.Message], True);
   end;
 end;
 
@@ -181,9 +179,7 @@ begin
       TSQLtbl_list.Load(Self, ATree, False);
     except
       on E : Exception do
-      begin
-        //ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message],True);
-      end;
+        ShowMessageFmtEx(msgErrGeneric,[E.ClassName,E.Message],True);
     end;
   finally
     ATree.EndUpdate;
@@ -216,7 +212,7 @@ begin
       end;
     except
       on E : Exception do begin
-        //ShowMessageFmtEx(DKLangConstW('msgErrGeneric'), [E.ClassName,E.Message], True);
+        ShowMessageFmtEx(msgErrGeneric, [E.ClassName,E.Message], True);
         FDatabase.Rollback(1);
       end;
     end;

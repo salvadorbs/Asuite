@@ -275,7 +275,7 @@ uses
   Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, Utility.Misc,
   Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder, Windows,
   Utility.XML, GraphicMenu.ThemeEngine, Kernel.Scheduler, Forms.ImportList,
-  TypInfo, Utility.HotKey;
+  TypInfo, Utility.HotKey, Kernel.ResourceStrings;
 
 procedure TConfiguration.AfterUpdateConfig;
 begin   
@@ -541,7 +541,7 @@ begin
     if FAlwaysOnTop then
       frmMain.FormStyle := fsStayOnTop
     else begin
-      //ShowMessageEx(DKLangConstW('msgRestartAsuiteChanges'));
+      ShowMessageEx(msgRestartAsuiteChanges);
       frmMain.FormStyle := fsNormal;
     end;
   end;
@@ -618,7 +618,7 @@ begin
     begin
       if Not(RegisterHotKeyEx(frmMain.Handle, Value)) then
       begin
-        //ShowMessageEx(DKLangConstW('msgErrRegWindowHotkey'), true);
+        ShowMessageEx(msgErrRegWindowHotkey, true);
       end;
     end;
   end;
@@ -749,9 +749,7 @@ begin
     if (Value <> 0) then
     begin
       if Not(RegisterHotKeyEx(frmCMenuID, Value)) then
-      begin
-        //ShowMessageEx(DKLangConstW('msgErrRegCMHotkey'));
-      end;
+        ShowMessageEx(msgErrRegCMHotkey);
     end;
   end;
   FClassicMenuHotKey := Value;
@@ -833,9 +831,7 @@ begin
     if (Value <> 0) then
     begin
       if Not(RegisterHotKeyEx(frmGMenuID, Value)) then
-      begin
-        //ShowMessageEx(DKLangConstW('msgErrRegGMHotkey'));
-      end;
+        ShowMessageEx(msgErrRegGMHotkey);
     end;
   end;
   FGraphicMenuHotKey := Value;

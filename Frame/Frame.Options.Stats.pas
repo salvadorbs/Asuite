@@ -93,7 +93,8 @@ implementation
 {$I ASuite.INC}
 
 uses
-  Utility.Misc, AppConfig.Main, Kernel.Types, VirtualTree.Methods, Windows, PJSysInfo;
+  Utility.Misc, AppConfig.Main, Kernel.Types, VirtualTree.Methods, Windows,
+  PJSysInfo, Kernel.ResourceStrings;
 
 {$R *.lfm}
 
@@ -109,7 +110,7 @@ end;
 
 function TfrmStatsOptionsPage.GetTitle: string;
 begin
-  //Result := DKLangConstW('msgStats');
+  Result := msgStats;
 end;
 
 function TfrmStatsOptionsPage.GetTotalPhysMemory: Int64;var

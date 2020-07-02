@@ -24,7 +24,7 @@ unit NodeDataTypes.Base;
 interface
 
 uses
-  VirtualTrees, SysUtils, DateUtils, Kernel.Enumerations, Icons.Base;
+  VirtualTrees, SysUtils, DateUtils, Kernel.Enumerations, Icons.Base, LazUTF8;
 
 type
   TvBaseNodeData = class
@@ -83,7 +83,7 @@ type
 implementation
 
 uses
-  Icons.Node;
+  Icons.Node, Kernel.ResourceStrings;
 
 constructor TvBaseNodeData.Create(AType: TvTreeDataType);
 begin
@@ -106,7 +106,7 @@ end;
 
 procedure TvBaseNodeData.Copy(source:TvBaseNodeData);
 begin
-  //FName       := DKLangConstW('msgCopy') + source.Name;
+  FName       := msgCopy + source.Name;
   FDataType   := source.DataType;
   FHideFromMenu := source.HideFromMenu;
 end;
@@ -123,7 +123,7 @@ end;
 
 procedure TvBaseNodeData.SetName(Value: String);
 begin
-  FName := StringReplace(Value, '&&', '&', [rfIgnoreCase,rfReplaceAll]);
+  FName := LazUTF8.UTF8StringReplace(Value, '&&', '&', [rfIgnoreCase,rfReplaceAll]);
   FName := StringReplace(FName, '&', '&&', [rfIgnoreCase,rfReplaceAll]);
 end;
 

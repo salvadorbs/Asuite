@@ -46,7 +46,7 @@ type
 implementation
 
 uses
-  AppConfig.Main, Kernel.Enumerations;
+  AppConfig.Main, Kernel.Enumerations, Kernel.ResourceStrings;
 
 { TScheduler }
 
@@ -70,8 +70,8 @@ begin
         if (CompareDateTime(GetSchedulerTime(NodeData, dtNowDateTime, True), dtLastAccess) = 1) and (NodeData.SchMode <> smDisabled) then
         begin
           //Start process
-          //if (MessageDlg(Format(DKLangConstW('msgMissedTask'), [NodeData.Name]), mtWarning, [mbYes, mbNo], 0) = mrYes) then
-          //  NodeData.Execute(True, NodeData.DataType = vtdtCategory, False);
+          if (MessageDlg(Format(msgMissedTask, [NodeData.Name]), mtWarning, [mbYes, mbNo], 0) = mrYes) then
+            NodeData.Execute(True, NodeData.DataType = vtdtCategory, False);
         end;
       end;
     end;

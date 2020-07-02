@@ -83,7 +83,8 @@ implementation
 
 uses
   AppConfig.Main, Utility.FileFolder, Kernel.Consts, VirtualTree.Methods,
-  NodeDataTypes.Files, NodeDataTypes.Custom, Kernel.Enumerations;
+  NodeDataTypes.Files, NodeDataTypes.Custom, Kernel.Enumerations, Kernel.ResourceStrings,
+  Utility.Misc;
 
 {$R *.lfm}
 
@@ -120,7 +121,7 @@ begin
       cbClearCache.Checked := False;
     end;
   finally
-    //ShowMessageEx(DKLangConstW('msgOperationCompleted'));
+    ShowMessageEx(msgOperationCompleted);
     //Save list
     TVirtualTreeMethods.Create.RefreshList(nil);
   end;
@@ -179,7 +180,7 @@ end;
 
 function TfrmAdvancedOptionsPage.GetTitle: string;
 begin
-  //Result := DKLangConstW('msgAdvanced');
+  Result := msgAdvanced;
 end;
 
 function TfrmAdvancedOptionsPage.InternalLoadData: Boolean;

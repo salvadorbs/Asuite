@@ -70,7 +70,7 @@ var
 implementation
 
 uses
-  AppConfig.Main;
+  AppConfig.Main, Kernel.ResourceStrings;
 
 {$R *.lfm}
 
@@ -100,7 +100,7 @@ end;
 procedure TfrmMainWindowOptionsPage.edtBackgroundBeforeDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
-  //edtBackground.Filter := DKLangConstW('msgFilterBackground');
+  edtBackground.Filter := msgFilterBackground;
   AName := Config.Paths.RelativeToAbsolute(AName);
 end;
 
@@ -111,7 +111,7 @@ end;
 
 function TfrmMainWindowOptionsPage.GetTitle: string;
 begin
-  //Result := DKLangConstW('msgMainWindow');
+  Result := msgMainWindow;
 end;
 
 function TfrmMainWindowOptionsPage.InternalLoadData: Boolean;

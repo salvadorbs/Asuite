@@ -111,7 +111,7 @@ type
   end;
 
 var
-	frmGraphicMenu : TfrmGraphicMenu;
+  frmGraphicMenu : TfrmGraphicMenu;
 
 implementation
 
@@ -121,7 +121,8 @@ uses
   Forms.Main, Utility.System, Kernel.Consts, AppConfig.Main, DataModules.Icons,
   Forms.About, NodeDataTypes.Base, Kernel.Enumerations, Forms.Options,
   Utility.Misc, VirtualTree.Events, VirtualTree.Methods, Kernel.Types,
-  NodeDataTypes.Custom, GraphicMenu.ThemeEngine;
+  NodeDataTypes.Custom, GraphicMenu.ThemeEngine, Kernel.ResourceStrings,
+  Windows;
 
 procedure TfrmGraphicMenu.ApplicationEvents1Deactivate(Sender: TObject);
 begin
@@ -213,7 +214,7 @@ begin
   dblDriveSize := DiskSize(Ord(Drive) - 64);
   dblDriveUsed := dblDriveSize - DiskFree(Ord(Drive) - 64);
   imgDriveSpace.Width := Round(dblDriveUsed / dblDriveSize * (imgDriveBackground.Width - 4));
-  //lblDriveSpace.Caption := Format(DKLangConstW('msgGMHardDiskSpace'), [DiskFreeString(Drive, True), DiskSizeString(Drive, True)]);
+  lblDriveSpace.Caption := Format(msgGMHardDiskSpace, [DiskFreeString(Drive, True), DiskSizeString(Drive, True)]);
 
   edtSearch.Images := dmImages.ilSmallIcons;
 end;
@@ -227,7 +228,7 @@ begin
   ErrorCode := OpenDocument(PChar(sPath));
   if ErrorCode then
   begin
-  //  ShowMessageFmtEx(DKLangConstW('msgErrGeneric'), ['', SysErrorMessage(GetLastError)], True);
+    ShowMessageFmtEx(msgErrGeneric, ['', SysErrorMessage(GetLastError)], True);
   end;
 end;
 
@@ -378,7 +379,7 @@ var
   TempString : string;
 begin
   TempString := '';
-  //OpenDialog1.Filter     := DKLangConstW('msgFilterPicture');
+  OpenDialog1.Filter     := msgFilterPicture;
   OpenDialog1.InitialDir := ExtractFileDir(Config.Paths.RelativeToAbsolute(Config.GMPersonalPicture));
   if OpenDialog1.Execute then
   begin

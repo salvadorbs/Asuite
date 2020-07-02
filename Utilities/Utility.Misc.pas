@@ -60,7 +60,7 @@ implementation
 
 uses
   PJVersionInfo, AppConfig.Main, Kernel.Logger, Utility.Hotkey, LCLProc,
-  Windows;
+  Windows, Kernel.ResourceStrings;
 
 function IsFormOpen(const FormName : string): Boolean;
 var
@@ -99,7 +99,7 @@ begin
   // Check if inserted name is empty, then
   if (Trim(Edit.Text) = '') then
   begin
-    //ShowMessageEx(DKLangConstW('msgErrEmptyName'),true);
+    ShowMessageEx(msgErrEmptyName,true);
     Edit.Color := clYellow;
     Result := False;
   end;

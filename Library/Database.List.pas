@@ -106,7 +106,7 @@ implementation
 
 uses
   Kernel.Enumerations, Utility.Misc, VirtualTree.Methods, NodeDataTypes.Custom,
-  NodeDataTypes.Files, AppConfig.Main, Icons.Node, Kernel.Logger;
+  NodeDataTypes.Files, AppConfig.Main, Icons.Node, Kernel.Logger, Kernel.ResourceStrings;
 
 { TSQLtbl_files }
 
@@ -225,9 +225,7 @@ begin
         TSQLtbl_list.SaveItemsByParentID(Tree, ADBManager, Node.FirstChild, vData.ID);
     except
       on E : Exception do
-      begin
-        //ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName, E.Message], True);
-      end;
+        ShowMessageFmtEx(msgErrGeneric,[E.ClassName, E.Message], True);
     end;
     Node := Node.NextSibling;
   end;

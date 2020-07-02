@@ -132,11 +132,11 @@ type
 implementation
 
 uses
-  AppConfig.Main, NodeDataTypes.Base, NodeDataTypes.Category,
+  AppConfig.Main, NodeDataTypes.Base, NodeDataTypes.Category, Kernel.ResourceStrings,
   NodeDataTypes.Files, NodeDataTypes.Custom, NodeDataTypes.Separator, Kernel.Types,
   Kernel.Enumerations, Frame.BaseEntity, VirtualTree.Methods, DataModules.TrayMenu,
   comobj, DataModules.Icons, Kernel.Logger, SynLog, Utility.Hotkey, ShellApi,
-  Windows;
+  Windows, Utility.Misc;
 
 { TVirtualTreeEvents }
 
@@ -403,7 +403,7 @@ begin
         end;
       except
         on E : Exception do
-          ;//ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message], True);
+          ShowMessageFmtEx(msgErrGeneric,[E.ClassName,E.Message], True);
       end;
     finally
       TVirtualTreeMethods.Create.RefreshList(Sender);

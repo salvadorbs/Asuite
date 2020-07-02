@@ -74,7 +74,7 @@ var
 implementation
 
 uses
-  AppConfig.Main, Kernel.Enumerations;
+  AppConfig.Main, Kernel.Enumerations, Kernel.ResourceStrings;
 
 {$R *.lfm}
 
@@ -102,7 +102,7 @@ procedure TfrmTrayiconOptionsPage.edtCustomIconBeforeDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
   AName := Config.Paths.RelativeToAbsolute(AName);
-  //edtCustomIcon.Filter := DKLangConstW('msgFilterIcon');
+  edtCustomIcon.Filter := msgFilterIcon;
 end;
 
 function TfrmTrayiconOptionsPage.GetImageIndex: Integer;
@@ -112,7 +112,7 @@ end;
 
 function TfrmTrayiconOptionsPage.GetTitle: string;
 begin
-  //Result := DKLangConstW('msgTrayIcon');
+  Result := msgTrayIcon;
 end;
 
 function TfrmTrayiconOptionsPage.InternalLoadData: Boolean;

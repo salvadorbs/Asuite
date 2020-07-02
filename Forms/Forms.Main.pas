@@ -24,9 +24,11 @@ unit Forms.Main;
 interface
 
 uses
-  LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
-  ComCtrls, VirtualTrees, Kernel.Consts, DataModules.Icons, Kernel.BaseMainForm,
-  StdCtrls, Kernel.Enumerations, ExtCtrls, ActnList, EditBtn, DefaultTranslator;
+  LCLIntf, LCLType, LMessages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
+  ComCtrls, VirtualTrees, ActiveX, Kernel.Consts, DataModules.Icons,
+  Kernel.BaseMainForm, StdCtrls, Buttons, UITypes,
+  Kernel.Enumerations, ExtCtrls, {XMLDoc,} Lists.Manager,
+  Database.Manager, {Actions,} ActnList, Themes, EditBtn;
 
 type
 
@@ -159,7 +161,7 @@ uses
   DataModules.TrayMenu, Forms.ImportList, AppConfig.Main, Utility.System,
   VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base, Kernel.Scheduler,
   Kernel.Types, NodeDataTypes.Files, VirtualTree.Events, Utility.Process,
-  Kernel.Logger, SynLog, FileUtil;
+  Kernel.Logger, SynLog, FileUtil, Kernel.ResourceStrings;
 
 {$R *.lfm}
 
@@ -201,7 +203,7 @@ begin
   Config.ASuiteState := lsDeleting;
   try
     Tree := GetActiveTree;
-    if (Tree.GetFirstSelected <> nil) and (Config.TVDisableConfirmDelete {or (MessageDlg((DKLangConstW('msgConfirmDeleteItem')), mtWarning, [mbYes,mbNo], 0) = mrYes)}) then
+    if (Tree.GetFirstSelected <> nil) and (Config.TVDisableConfirmDelete or (MessageDlg((msgConfirmDeleteItem), mtWarning, [mbYes,mbNo], 0) = mrYes)) then
     begin
       Nodes := Tree.GetSortedSelection(true);
       //Delete items
@@ -377,11 +379,11 @@ begin
 end;
 
 procedure TfrmMain.miSaveListClick(Sender: TObject);
-begin;
-  {if Config.SaveList(True) then
-    ShowMessageEx(DKLangConstW('msgSaveCompleted'))
+begin
+  if Config.SaveList(True) then
+    ShowMessageEx(msgSaveCompleted)
   else
-    ShowMessageEx(DKLangConstW('msgErrSave'),true);}
+    ShowMessageEx(msgErrSave,true);
 end;
 
 procedure TfrmMain.ChangeSearchTextHint(Sender: TObject);

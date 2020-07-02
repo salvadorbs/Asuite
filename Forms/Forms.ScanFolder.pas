@@ -110,7 +110,7 @@ begin
   {
   if (vfsScan.IsRunning) then
   begin
-    if MessageDlg((DKLangConstW('msgCancelScanFolder')), mtWarning, [mbYes,mbNo], 0) = mrYes then
+    if MessageDlg((msgCancelScanFolder), mtWarning, [mbYes,mbNo], 0) = mrYes then
     begin
       vfsScan.Stop;
       Close;
@@ -178,11 +178,11 @@ begin
       btnScan.Enabled := False;
     end
     else begin
-      ShowMessageEx(DKLangConstW('msgErrScanFolderEmptyPath'), True);
+      ShowMessageEx(msgErrScanFolderEmptyPath, True);
     end;
   end
   else
-    ShowMessageEx(DKLangConstW('msgErrScanFolderMissingTypes'), True);
+    ShowMessageEx(msgErrScanFolderMissingTypes, True);
   }
 end;
 
@@ -403,7 +403,7 @@ begin
 
   pbScan.Style := pbstNormal;
   pbScan.Position := pbScan.Max;
-  ShowMessageFmtEx(DKLangConstW('msgFoundNumFiles'), [Results.Count]);
+  ShowMessageFmtEx(msgFoundNumFiles, [Results.Count]);
 
   //Select and expanded ScanFolder node
   Config.MainTree.ClearSelection;

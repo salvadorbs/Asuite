@@ -83,7 +83,7 @@ begin
   if Assigned(NodeData) then
   begin
     NodeData.Frame := FramePage;
-    //NodeData.Title := TfrmBaseEntityPage(FramePage).Title;
+    NodeData.Title := TfrmBaseEntityPage(FramePage).Title;
     //NodeData.ImageIndex := TfrmBaseEntityPage(FramePage).ImageIndex;
   end;
 end;

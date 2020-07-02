@@ -74,7 +74,7 @@ implementation
 
 uses
   Kernel.Logger, Utility.Misc, AppConfig.Main, Kernel.Consts,
-  Utility.System, Utility.Hotkey;
+  Utility.System, Utility.Hotkey, Kernel.ResourceStrings;
 
 {$R *.lfm}
 
@@ -114,20 +114,17 @@ begin
 
         if FCanClose then
           FHotkey := NewHotkey
-        else begin
-          //ShowMessageEx(DKLangConstW('msgHotkeyNotAvailable'), True);
-        end;
+        else
+          ShowMessageEx(msgHotkeyNotAvailable, True);
       end
       else
         FCanClose := True;
     end
-    else begin
-      //ShowMessageEx(DKLangConstW('msgHotkeyNoMod'));
-    end
+    else
+      ShowMessageEx(msgHotkeyNoMod);
   end
-  else begin
-    //ShowMessageEx(DKLangConstW('msgHotkeyNoKey'));
-  end;
+  else
+    ShowMessageEx(msgHotkeyNoKey);
 
   if NewHotkey = '' then
     hkKeys.SetFocus;

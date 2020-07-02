@@ -65,7 +65,7 @@ implementation
 
 uses
   Kernel.Enumerations, NodeDataTypes.Files, Forms.ShortcutGrabber, AppConfig.Main,
-  DataModules.Icons, Utility.Hotkey;
+  DataModules.Icons, Utility.Hotkey, Kernel.ResourceStrings;
 
 {$R *.lfm}
 
@@ -90,7 +90,7 @@ end;
 
 function TfrmAdvancedPropertyPage.GetTitle: string;
 begin
-  //Result := DKLangConstW('msgAdvanced');
+  Result := msgAdvanced;
 end;
 
 function TfrmAdvancedPropertyPage.InternalLoadData: Boolean;

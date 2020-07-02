@@ -65,7 +65,7 @@ var
 implementation
 
 uses
-  Kernel.Consts, NodeDataTypes.Files, AppConfig.Main,
+  Kernel.Consts, NodeDataTypes.Files, AppConfig.Main, Kernel.ResourceStrings,
   Utility.FileFolder;
 
 {$R *.lfm}
@@ -84,7 +84,7 @@ end;
 procedure TfrmSWGeneralPropertyPage.edtPathExeBeforeDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
-  //edtPathExe.Filter := DKLangConstW('msgFilterExe');
+  edtPathExe.Filter := msgFilterExe;
   AName := Config.Paths.RelativeToAbsolute(AName);
 end;
 

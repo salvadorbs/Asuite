@@ -73,7 +73,8 @@ implementation
 
 uses
   AppConfig.Main, VirtualTree.Events, VirtualTree.Methods, NodeDataTypes.Custom,
-  Forms.ShortcutGrabber, Utility.Hotkey, DataModules.Icons, UITypes;
+  Forms.ShortcutGrabber, Utility.Hotkey, DataModules.Icons, UITypes,
+  Kernel.ResourceStrings;
 
 {$R *.lfm}
 
@@ -134,7 +135,7 @@ end;
 
 function TfrmHotkeyOptionsPage.GetTitle: string;
 begin
-  //Result := DKLangConstW('msgHotkey');
+  Result := msgHotkey;
 end;
 
 function TfrmHotkeyOptionsPage.InternalLoadData: Boolean;
@@ -234,11 +235,9 @@ end;
 
 procedure TfrmHotkeyOptionsPage.mniRemoveHotkeyClick(Sender: TObject);
 begin
-  {
-  if (MessageDlg((DKLangConstW('msgConfirm')),mtWarning, [mbYes,mbNo], 0) = mrYes) then
+  if (MessageDlg((msgConfirm),mtWarning, [mbYes,mbNo], 0) = mrYes) then
     if Assigned(vstItems.FocusedNode) then
       vstItems.IsVisible[vstItems.FocusedNode] := False;
-  }
 end;
 
 procedure TfrmHotkeyOptionsPage.SaveInHotkeyItemList(

@@ -56,7 +56,8 @@ var
 implementation
 
 uses
-  Kernel.Enumerations, Forms.Options, Frame.Options.Autorun, AppConfig.Main;
+  Kernel.Enumerations, Forms.Options, Frame.Options.Autorun, AppConfig.Main,
+  Kernel.ResourceStrings;
 
 {$R *.lfm}
 
@@ -80,7 +81,7 @@ end;
 
 function TfrmBehaviorPropertyPage.GetTitle: string;
 begin
-  //Result := DKLangConstW('msgBehavior');
+  Result := msgBehavior;
 end;
 
 function TfrmBehaviorPropertyPage.InternalLoadData: Boolean;
@@ -91,7 +92,7 @@ begin
     //Insert cat specific setting
     if CurrentNodeData.DataType = vtdtCategory then
     begin
-      //cxWindowState.Items.Insert(0, DKLangConstW('msgDefaultItemSettings'));
+      cxWindowState.Items.Insert(0, msgDefaultItemSettings);
     end;
     cxActionOnExe.ItemIndex := Ord(CurrentNodeData.ActionOnExe);
     cxAutoExecute.ItemIndex := Ord(CurrentNodeData.Autorun);

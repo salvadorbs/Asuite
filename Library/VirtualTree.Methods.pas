@@ -89,7 +89,7 @@ implementation
 
 uses
   Utility.System, DataModules.Icons, AppConfig.Main, NodeDataTypes.Files,
-  Utility.FileFolder, Forms.PropertySeparator,
+  Utility.FileFolder, Forms.PropertySeparator, Kernel.ResourceStrings,
   NodeDataTypes.Category, NodeDataTypes.Separator, Forms.PropertyItem, Icons.Thread,
   NodeDataTypes.Custom, Kernel.Consts, Icons.Node, Kernel.Logger;
 
@@ -109,7 +109,7 @@ begin
     ChildNode  := AddChildNodeEx(ASender, AParentNode, amInsertAfter, AType);
     //Set ChildNode's pNode and name (temporary)
     NodeData       := GetNodeItemData(ChildNode, ASender);
-    //NodeData.Name  := DKLangConstW('msgNoName') + IntToStr(ASender.TotalCount);
+    NodeData.Name  := msgNoName + IntToStr(ASender.TotalCount);
     //If AType is a vtdtFolder, asuite must ask to user the folder
     if AType = vtdtFolder then
     begin
@@ -301,12 +301,12 @@ begin
         begin
           {
           //TODO lazarus
-          if TLoginForm.Login(DKLangConstW('msgRunAsTitle'), DKLangConstW('msgInsertWinUserInfo'), UserData.UserName, UserData.Password, True, '') then
+          if TLoginForm.Login(msgRunAsTitle, msgInsertWinUserInfo, UserData.UserName, UserData.Password, True, '') then
           begin
             if UserData.UserName <> '' then
               NodeData.ExecuteAsUser(True, NodeData.DataType = vtdtCategory, UserData)
             else
-              ShowMessageEx(DKLangConstW('msgErrEmptyUserName'), true);
+              ShowMessageEx(msgErrEmptyUserName, true);
           end;
           }
         end;

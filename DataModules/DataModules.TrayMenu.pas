@@ -139,7 +139,7 @@ uses
   DataModules.Icons, Forms.Main, AppConfig.Main, VirtualTree.Methods,
   Utility.System, Forms.GraphicMenu, Kernel.Types, NodeDataTypes.Files,
   NodeDataTypes.Custom, NodeDataTypes.Base, Kernel.Consts, Kernel.Logger,
-  Utility.Misc, Utility.FileFolder, Windows;
+  Utility.Misc, Utility.FileFolder, Windows, Kernel.ResourceStrings;
 
 {$R *.lfm}
 
@@ -221,7 +221,7 @@ begin
           AddSub(NMI);
         end
         else begin
-          //NMI.Caption := DKLangConstW('msgCMOpenFolder');
+          NMI.Caption := msgCMOpenFolder;
           NMI.OnClick := OpenFile;
           //TODO: NewBottomLine ???
           //AMI.NewBottomLine;
@@ -381,14 +381,14 @@ begin
     if Config.SubMenuMFU then
     begin
       CreateSeparator(Menu);
-      //CreateSpecialList(Menu, Config.ListManager.MFUList, Config.MFUNumber, DKLangConstW('msgLongMFU'));
+      CreateSpecialList(Menu, Config.ListManager.MFUList, Config.MFUNumber, msgLongMFU);
     end
     else begin
-      //CreateSeparator(Menu, DKLangConstW('msgLongMFU'));
+      CreateSeparator(Menu, msgLongMFU);
       CreateSpecialList(Menu, Config.ListManager.MFUList, Config.MFUNumber);
     end;
   end;
-  //CreateSeparator(Menu,DKLangConstW('msgList'));
+  CreateSeparator(Menu,msgList);
   //List
   PopulateCategoryItems(nil);
   //MRU
@@ -397,10 +397,10 @@ begin
     if Config.SubMenuMRU then
     begin
       CreateSeparator(Menu);
-      //CreateSpecialList(Menu, Config.ListManager.MRUList, Config.MRUNumber, DKLangConstW('msgLongMRU'));
+      CreateSpecialList(Menu, Config.ListManager.MRUList, Config.MRUNumber, msgLongMRU);
     end
     else begin
-      //CreateSeparator(Menu,DKLangConstW('msgLongMRU'));
+      CreateSeparator(Menu,msgLongMRU);
       CreateSpecialList(Menu, Config.ListManager.MRUList, Config.MRUNumber,'');
     end;
   end;
@@ -423,14 +423,14 @@ begin
     case I of
       0:
         begin
-          //MenuItem.Caption := DKLangConstW('msgShowASuite');
+          MenuItem.Caption := msgShowASuite;
           MenuItem.ImageIndex := Config.IconsManager.GetIconIndex('asuite');
           MenuItem.OnClick := ShowMainForm;
           MenuItem.Default := true;
         end;
       1:
         begin
-          //MenuItem.Caption := DKLangConstW('msgOpenOptions');
+          MenuItem.Caption := msgOpenOptions;
           MenuItem.ImageIndex := Config.IconsManager.GetIconIndex('options');
           MenuItem.OnClick := frmMain.miOptionsClick;
           MenuItem.Enabled := Not(Config.ReadOnlyMode);
@@ -481,12 +481,12 @@ begin
     case I of
       0:
         begin
-          //MenuItem.Caption := DKLangConstW('msgEjectHardware');
+          MenuItem.Caption := msgEjectHardware;
           MenuItem.OnClick := EjectDialog;
         end;
       1:
         begin
-          //MenuItem.Caption := DKLangConstW('msgExit');
+          MenuItem.Caption := msgExit;
           MenuItem.OnClick := frmMain.miExitClick;
         end;
     end;
