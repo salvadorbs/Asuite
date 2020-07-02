@@ -24,9 +24,9 @@ unit Forms.PropertyItem;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, Forms.Dialog.BaseEntity, VirtualTrees,
-  ExtCtrls, StdCtrls, Frame.BaseEntity, NodeDataTypes.Custom;
+  SysUtils, Classes,
+  Controls, Forms, Dialogs, Forms.Dialog.BaseEntity,
+  StdCtrls, NodeDataTypes.Custom;
 
 type
   TfrmPropertyItem = class(TfrmDialogBase)

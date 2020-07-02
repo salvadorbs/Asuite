@@ -24,9 +24,9 @@ unit Forms.GraphicMenu;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, Classes, Forms, StdCtrls, Buttons, ExtCtrls, ComCtrls, Messages,
+  LCLIntf, LCLType, Classes, Forms, StdCtrls, ExtCtrls, ComCtrls, Messages,
 	Controls, Graphics, Dialogs, SysUtils, VirtualTrees, {AppEvnts,
-  Imaging.pngimage,} cySkinButton, IniFiles, Lists.Manager, Menus, EditBtn,
+  Imaging.pngimage,} cySkinButton, Menus, EditBtn,
   Lists.Base;
 
 type

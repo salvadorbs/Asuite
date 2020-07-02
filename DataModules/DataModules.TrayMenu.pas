@@ -26,9 +26,9 @@ unit DataModules.TrayMenu;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  Menus, ExtCtrls, VirtualTrees, Lists.Manager, ImgList, Messages, UITypes,
-  Kernel.PopupMenu, Lists.Base, Kernel.Enumerations, Themes, LazMethodList;
+  LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Menus, ExtCtrls, VirtualTrees, ImgList, Messages,
+  Kernel.PopupMenu, Lists.Base, Kernel.Enumerations, LazMethodList;
 
 type
 

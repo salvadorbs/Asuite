@@ -24,7 +24,7 @@ unit Utility.Hotkey;
 interface
 
 uses
-  Classes, SysUtils, Windows, Messages;
+  Classes, SysUtils, Windows;
 
 const
   // Windows 2000/XP multimedia keys (adapted from winuser.h and renamed to avoid potential conflicts)

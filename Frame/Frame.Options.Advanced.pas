@@ -24,9 +24,9 @@ unit Frame.Options.Advanced;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, Frame.BaseEntity, VirtualTrees,
-  ComCtrls, StdCtrls, {Samples.Spin,} ExtCtrls, Spin;
+  LCLIntf, SysUtils, Variants,
+  Controls, Dialogs, Frame.BaseEntity, VirtualTrees,
+  StdCtrls, {Samples.Spin,} ExtCtrls, Spin;
 
 type
   TfrmAdvancedOptionsPage = class(TfrmBaseEntityPage)
@@ -83,7 +83,7 @@ var
 implementation
 
 uses
-  AppConfig.Main, Utility.FileFolder, Utility.Misc, Kernel.Consts, VirtualTree.Methods,
+  AppConfig.Main, Utility.FileFolder, Kernel.Consts, VirtualTree.Methods,
   NodeDataTypes.Files, NodeDataTypes.Custom, Kernel.Enumerations;
 
 {$R *.lfm}

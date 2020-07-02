@@ -24,7 +24,7 @@ unit Utility.Misc;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, SysUtils, Classes, Graphics, Forms, Dialogs, ComCtrls, Clipbrd,
+  LCLIntf, LCLType, SysUtils, Classes, Graphics, Forms, Dialogs, ComCtrls, Clipbrd,
   Kernel.Consts, StdCtrls, {XMLIntf,} UITypes, Menus;
 
 { Forms }
@@ -59,7 +59,7 @@ function  GetHotKeyMod(AShortcut: TShortcut) : Integer;
 implementation
 
 uses
-  Registry, PJVersionInfo, AppConfig.Main, Kernel.Logger, Utility.Hotkey, LCLProc,
+  PJVersionInfo, AppConfig.Main, Kernel.Logger, Utility.Hotkey, LCLProc,
   Windows;
 
 function IsFormOpen(const FormName : string): Boolean;

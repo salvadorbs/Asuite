@@ -25,7 +25,7 @@ interface
 
 uses
   SysUtils, Kernel.Enumerations, NodeDataTypes.Base, Kernel.Types,
-  NodeDataTypes.Custom, LCLIntf, LCLType, LMessages, DateUtils;
+  NodeDataTypes.Custom, LCLIntf, LCLType, DateUtils;
 
 type
   TvFileNodeData = class(TvCustomRealNodeData)
@@ -87,9 +87,9 @@ type
 implementation
 
 uses
-  AppConfig.Main, Lists.Manager, Kernel.Consts, Utility.FileFolder, Lists.Special,
-  Lists.Base, Utility.System, Utility.Process, VirtualTree.Methods, Utility.Misc,
-  Kernel.Logger, Windows, JwaWindows, JwaWinBase, jwatlhelp32, ShellApi;
+  AppConfig.Main, Kernel.Consts, Utility.FileFolder,
+  Utility.System, Utility.Process, VirtualTree.Methods, Utility.Misc,
+  Windows, JwaWindows, JwaWinBase, ShellApi;
 
 constructor TvFileNodeData.Create(AType: TvTreeDataType);
 begin

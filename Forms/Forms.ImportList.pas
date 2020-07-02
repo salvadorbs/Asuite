@@ -24,9 +24,9 @@ unit Forms.ImportList;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  LCLIntf, SysUtils, Classes, Graphics, Controls, Forms,
   Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, Kernel.Consts, DOM, XMLRead,
-  Kernel.Enumerations, DateUtils, MaskEdit, EditBtn;
+  Kernel.Enumerations, EditBtn;
 
 type
   TfrmImportList = class(TForm)
@@ -77,9 +77,9 @@ implementation
 {$R *.lfm}
 
 uses
-  Forms.Main, Utility.Misc, AppConfig.Main, VirtualTree.Events, VirtualTree.Methods,
-  Utility.FileFolder, Utility.XML, Database.Manager, Kernel.Types, NodeDataTypes.Base,
-  DataModules.Icons, Kernel.Logger;
+  Forms.Main, AppConfig.Main, VirtualTree.Events, VirtualTree.Methods,
+  Utility.FileFolder, Utility.XML, Database.Manager, NodeDataTypes.Base,
+  Kernel.Logger;
 
 procedure TfrmImportList.btnBackClick(Sender: TObject);
 begin

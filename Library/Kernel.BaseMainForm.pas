@@ -24,7 +24,7 @@ unit Kernel.BaseMainForm;
 interface
 
 uses
-  Forms, Controls, Classes, Dialogs, ActnList, Graphics, LCLIntf, LCLType, LMessages, Messages;
+  Forms, Controls, Classes, Dialogs, Graphics, LCLIntf, LCLType, LMessages, Messages;
 
 type
   TWMHotKey = Packed Record

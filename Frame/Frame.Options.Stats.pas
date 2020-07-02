@@ -24,8 +24,8 @@ unit Frame.Options.Stats;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, Frame.BaseEntity, StdCtrls, Registry;
+  LCLIntf, LCLType, SysUtils, Variants, Classes,
+  Controls, Forms, Dialogs, Frame.BaseEntity, StdCtrls;
 
 type
   TMemoryStatusEx = packed record

@@ -5,9 +5,9 @@ unit Utility.XML;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, Kernel.Consts, UITypes,
-  DOM, XMLRead, Kernel.Enumerations, DateUtils;
+  LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, ComCtrls, VirtualTrees, Kernel.Consts,
+  DOM, XMLRead, Kernel.Enumerations;
 
 { Load list or settings from xml file }
 type

@@ -24,8 +24,8 @@ unit Frame.Options.General;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, Frame.BaseEntity, StdCtrls;
+  LCLIntf, SysUtils,
+  Dialogs, Frame.BaseEntity, StdCtrls;
 
 type
   TfrmGeneralOptionsPage = class(TfrmBaseEntityPage)

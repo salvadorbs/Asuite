@@ -24,8 +24,8 @@ unit Frame.Properties.General.Software;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, StdCtrls, Frame.Properties.General, MaskEdit, EditBtn;
+  SysUtils, Graphics,
+  Dialogs, StdCtrls, Frame.Properties.General, EditBtn;
 
 type
   TfrmSWGeneralPropertyPage = class(TfrmBaseGeneralPropertyPage)

@@ -24,9 +24,9 @@ unit Frame.Options.MainWindow;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, Frame.BaseEntity, StdCtrls,
-  MaskEdit, EditBtn{, JvExMask, JvToolEdit};
+  LCLIntf, SysUtils, Classes, Graphics,
+  Forms, Dialogs, Frame.BaseEntity, StdCtrls,
+  EditBtn{, JvExMask, JvToolEdit};
 
 type
   TfrmMainWindowOptionsPage = class(TfrmBaseEntityPage)

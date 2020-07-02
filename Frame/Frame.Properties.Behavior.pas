@@ -24,8 +24,8 @@ unit Frame.Properties.Behavior;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, StdCtrls, Frame.Properties.Base,
+  SysUtils,
+  Dialogs, StdCtrls, Frame.Properties.Base,
   ExtCtrls;
 
 type

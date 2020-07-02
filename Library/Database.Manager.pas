@@ -24,8 +24,8 @@ unit Database.Manager;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, SysUtils, Forms, Dialogs, VirtualTrees, PJVersionInfo,
-  Classes, mORMot, SynCommons, mORMotSQLite3, Controls;
+  LCLType, SysUtils, Dialogs, VirtualTrees, PJVersionInfo,
+  mORMot, SynCommons, mORMotSQLite3, Controls;
 
 type
   TDBManager = class

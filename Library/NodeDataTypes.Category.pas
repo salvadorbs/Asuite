@@ -24,9 +24,8 @@ unit NodeDataTypes.Category;
 interface
 
 uses
-  VirtualTrees, Menus, SysUtils, Dialogs, DateUtils, Kernel.Enumerations,
-  LCLIntf, LCLType, LMessages, NodeDataTypes.Base, NodeDataTypes.Custom, Kernel.Types,
-  UITypes;
+  VirtualTrees, SysUtils, Dialogs, Kernel.Enumerations,
+  LCLIntf, NodeDataTypes.Base, NodeDataTypes.Custom, Kernel.Types;
 
 type
   TvCategoryNodeData = class(TvCustomRealNodeData)

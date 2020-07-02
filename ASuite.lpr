@@ -1,6 +1,6 @@
 program ASuite;
 
-{$MODE DelphiUnicode}
+{$MODE Delphi}
 
 uses
   Forms,

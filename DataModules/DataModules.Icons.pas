@@ -26,8 +26,8 @@ unit DataModules.Icons;
 interface
 
 uses
-  SysUtils, Classes, Controls, LCLIntf, LCLType, LMessages, Graphics, Dialogs, Forms,
-  CommCtrl, ImgList, kgraphics, kicon, Windows;
+  SysUtils, Classes, Controls, LCLIntf, LCLType, Graphics, Dialogs,
+  CommCtrl, kgraphics, kicon, Windows;
 
 type
 
@@ -56,7 +56,7 @@ var
 implementation
 
 uses
-  AppConfig.Main, ShellApi;
+  ShellApi;
 
 {$R *.lfm}
 

@@ -24,9 +24,9 @@ unit Lists.Special;
 interface
 
 uses
-  Classes, NodeDataTypes.Custom, Menus, SysUtils, Kernel.Types,
-  LCLIntf, LCLType, LMessages, Kernel.Enumerations, NodeDataTypes.Files, NodeDataTypes.Base,
-  DateUtils, Dialogs, UITypes, Lists.Base;
+  NodeDataTypes.Custom, SysUtils, Kernel.Types,
+  LCLIntf, LCLType, Kernel.Enumerations, NodeDataTypes.Files, NodeDataTypes.Base,
+  Lists.Base;
 
 type
   TMRUItemsComparer = class(TItemsComparer)

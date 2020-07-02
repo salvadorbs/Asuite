@@ -25,7 +25,7 @@ interface
 
 uses
   Classes, Kernel.Singleton, IniFiles, cySkinButton, ExtCtrls, LCLIntf, LCLType,
-  LMessages, Graphics, SysUtils, VirtualTrees, Controls, Forms.GraphicMenu;
+  Graphics, SysUtils, VirtualTrees, Controls, Forms.GraphicMenu;
 
 type
   TGraphicMenuElement = (
@@ -96,7 +96,7 @@ type
 implementation
 
 uses
-  Kernel.Consts, AppConfig.Main, Utility.Conversions, Utility.Misc,
+  Kernel.Consts, AppConfig.Main, Utility.Conversions,
   GraphicMenu.ThemeEngine.Consts, Kernel.Logger, Windows;
 
 { TThemeEngineMethods }

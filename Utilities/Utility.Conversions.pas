@@ -24,8 +24,8 @@ unit Utility.Conversions;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, SysUtils, Classes, Graphics, Forms, Dialogs, ComCtrls, Clipbrd,
-  StdCtrls, UITypes;
+  LCLIntf, LCLType, SysUtils, Classes, Graphics, Forms, Dialogs, Clipbrd,
+  StdCtrls;
 
 { HTML }
 function RGBToHtml(iRGB: Cardinal): string;

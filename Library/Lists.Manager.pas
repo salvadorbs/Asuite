@@ -24,7 +24,7 @@ unit Lists.Manager;
 interface
 
 uses
-  Classes, Menus, SysUtils, Kernel.Singleton, Lists.Special, NodeDataTypes.Custom,
+  SysUtils, Kernel.Singleton, Lists.Special, NodeDataTypes.Custom,
   Lists.Base, Lists.HotKey, Kernel.Enumerations{, SynLog};
 
 type
@@ -54,7 +54,7 @@ type
 implementation
 
 uses
-  LCLIntf, LCLType, LMessages, AppConfig.Main, VirtualTree.Methods, Kernel.Logger;
+  LCLIntf, LCLType, AppConfig.Main, VirtualTree.Methods, Kernel.Logger;
 
 { TLauncherLists }
 

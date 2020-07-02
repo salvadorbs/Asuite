@@ -24,8 +24,8 @@ unit Utility.System;
 interface
 
 uses
-  Kernel.Consts, LCLIntf, LCLType, LMessages, SysUtils, Classes, Registry, StrUtils,
-  ShlObj, ActiveX, ComObj, Forms, Dialogs{, IOUtils};
+  Kernel.Consts, LCLIntf, LCLType, SysUtils, Classes, Registry, StrUtils,
+  ComObj, Forms, Dialogs{, IOUtils};
 
 { Check functions }
 function HasDriveLetter(const Path: String): Boolean;

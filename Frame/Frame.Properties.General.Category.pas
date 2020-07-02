@@ -24,9 +24,8 @@ unit Frame.Properties.General.Category;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, StdCtrls, VirtualTrees, Frame.Properties.General,
-  MaskEdit, DataModules.Icons;
+  LCLIntf, SysUtils,
+  Controls, Dialogs, StdCtrls, VirtualTrees, Frame.Properties.General;
 
 type
   TfrmCatGeneralPropertyPage = class(TfrmBaseGeneralPropertyPage)
@@ -53,7 +52,7 @@ var
 implementation
 
 uses
-  NodeDataTypes.Custom, NodeDataTypes.Files, NodeDataTypes.Base,
+  NodeDataTypes.Custom, NodeDataTypes.Files,
   Kernel.Types, Kernel.Enumerations, Forms.Main,
   VirtualTree.Methods, VirtualTree.Events;
 

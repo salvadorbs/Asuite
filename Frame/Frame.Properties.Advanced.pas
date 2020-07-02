@@ -24,9 +24,9 @@ unit Frame.Properties.Advanced;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, Frame.Properties.Base, ComCtrls, EditBtn,
-  StdCtrls, DateUtils, ExtCtrls, Themes, DateTimePicker;
+  LCLIntf, SysUtils, Classes,
+  Controls, Dialogs, Frame.Properties.Base, EditBtn,
+  StdCtrls, DateUtils, DateTimePicker;
 
 type
   TfrmAdvancedPropertyPage = class(TfrmBasePropertyPage)

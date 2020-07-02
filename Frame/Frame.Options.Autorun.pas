@@ -24,10 +24,10 @@ unit Frame.Options.Autorun;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, ComCtrls, Buttons, kgraphics,
+  LCLIntf, SysUtils, Classes,
+  Controls, Dialogs, kgraphics,
   Frame.BaseEntity, StdCtrls, VirtualTrees, Lists.Base, Menus,
-  kcontrols, kbuttons;
+  kbuttons;
 
 type
   TfrmAutorunOptionsPage = class(TfrmBaseEntityPage)
@@ -87,8 +87,8 @@ implementation
 
 uses
   NodeDataTypes.Custom, AppConfig.Main, DataModules.Icons,
-  VirtualTree.Methods, NodeDataTypes.Base,
-  UITypes, Kernel.Enumerations, VirtualTree.Events;
+  VirtualTree.Methods,
+  Kernel.Enumerations, VirtualTree.Events;
 
 {$R *.lfm}
 

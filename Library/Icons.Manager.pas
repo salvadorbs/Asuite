@@ -24,8 +24,8 @@ unit Icons.Manager;
 interface
 
 uses
-  SysUtils, Classes, Controls, IniFiles, Forms, Icons.Application, Generics.Collections,
-  Kernel.Consts, LCLIntf, LCLType, LMessages, ShellApi;
+  SysUtils, Classes, Controls, Forms, Icons.Application, Generics.Collections,
+  Kernel.Consts, LCLIntf, LCLType, ShellApi;
 
 type
   TBaseIcons = class(TObjectDictionary<string, TApplicationIcon>);

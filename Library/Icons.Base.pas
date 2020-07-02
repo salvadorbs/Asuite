@@ -24,7 +24,7 @@ unit Icons.Base;
 interface
 
 uses
-  SysUtils, Classes, Controls, SyncObjs, LCLIntf, LCLType, LMessages, ShellApi;
+  SysUtils, Controls, SyncObjs, LCLIntf, LCLType, ShellApi;
 
 type
   TBaseIcon = class

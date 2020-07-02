@@ -5,7 +5,7 @@ unit Utility.FileFolder;
 interface
 
 uses
-  Kernel.Consts, LCLIntf, LCLType, LMessages, SysUtils, Classes, Kernel.Enumerations, ShlObj, ActiveX,
+  Kernel.Consts, LCLIntf, LCLType, SysUtils, Classes, Kernel.Enumerations, ShlObj, ActiveX,
   ComObj, FileCtrl, PJVersionInfo, FileUtil, ShellApi, Windows, Dialogs;
 
 { Folders }

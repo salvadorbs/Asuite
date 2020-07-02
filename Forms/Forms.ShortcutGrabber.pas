@@ -24,7 +24,7 @@ unit Forms.ShortcutGrabber;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
+  LCLIntf, LCLType, SysUtils, Classes, Graphics,
   Controls, Forms, Dialogs, StdCtrls, Menus, ComCtrls, cySkinButton, ExtCtrls,
   hotkey, Windows;
 

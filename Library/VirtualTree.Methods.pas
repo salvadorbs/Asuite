@@ -24,9 +24,9 @@ unit VirtualTree.Methods;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, SysUtils, Classes, Graphics, VirtualTrees, ActiveX, UITypes,
+  LCLIntf, LCLType, SysUtils, Classes, Graphics, VirtualTrees, UITypes,
   Kernel.Singleton, Kernel.Enumerations, NodeDataTypes.Base, Kernel.Types, Lists.Base,
-  SynLog, Themes;
+  SynLog;
 
 type
   TVirtualTreeMethods = class(TSingleton)
@@ -89,7 +89,7 @@ implementation
 
 uses
   Utility.System, DataModules.Icons, AppConfig.Main, NodeDataTypes.Files,
-  Utility.FileFolder, Forms.PropertySeparator, Utility.Misc,
+  Utility.FileFolder, Forms.PropertySeparator,
   NodeDataTypes.Category, NodeDataTypes.Separator, Forms.PropertyItem, Icons.Thread,
   NodeDataTypes.Custom, Kernel.Consts, Icons.Node, Kernel.Logger;
 

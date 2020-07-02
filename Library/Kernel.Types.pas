@@ -25,7 +25,7 @@ interface
 
 uses
   Generics.Collections, NodeDataTypes.Base, VirtualTrees, Generics.Defaults,
-  Laz2_DOM, Types, Menus, Kernel.Enumerations, Frame.BaseEntity, LCLIntf, LCLType, LMessages;
+  Laz2_DOM, Types, Menus, Kernel.Enumerations, Frame.BaseEntity;
 
 type
   TImportListToTree = function(Tree: TVirtualStringTree; Node: TDOMNode;

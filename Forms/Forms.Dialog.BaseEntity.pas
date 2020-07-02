@@ -24,8 +24,8 @@ unit Forms.Dialog.BaseEntity;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes,
-  Graphics, Controls, Forms, Dialogs, ExtCtrls, ComCtrls,
+  LCLIntf, LCLType, SysUtils, Classes,
+  Controls, Forms, Dialogs, ExtCtrls, ComCtrls,
   StdCtrls, Frame.BaseEntity, VirtualTrees;
 
 type

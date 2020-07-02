@@ -24,8 +24,7 @@ unit Forms.About;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, ATLinkLabel{, Imaging.pngimage, Imaging.GIFImg};
+  LCLIntf, SysUtils, Forms, Dialogs, StdCtrls, ExtCtrls, ATLinkLabel;
 
 type
 

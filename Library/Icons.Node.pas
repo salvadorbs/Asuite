@@ -25,7 +25,7 @@ interface
 
 uses
   SysUtils, Classes, Icons.Base, NodeDataTypes.Base, Kernel.Enumerations,
-  NodeDataTypes.Custom, Graphics, Controls, KIcon, CommCtrl, LCLIntf, LCLType, LMessages{, IOUtils};
+  NodeDataTypes.Custom, Graphics, Controls, KIcon, CommCtrl, LCLIntf, LCLType;
 
 type
   TNodeIcon = class(TBaseIcon)

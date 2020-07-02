@@ -24,9 +24,9 @@ unit AppConfig.Main;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, SysUtils, Graphics, Forms, Controls, VirtualTrees, Kernel.Enumerations,
-  {Imaging.pngimage,} UITypes, Classes, AppConfig.Paths,
-  Lists.Manager, Database.Manager, Icons.Manager, Kernel.Logger, Themes, Dialogs;
+  LCLIntf, LCLType, SysUtils, Graphics, Forms, Controls, VirtualTrees, Kernel.Enumerations,
+  Classes, AppConfig.Paths,
+  Lists.Manager, Database.Manager, Icons.Manager, Kernel.Logger, Dialogs;
 
 type
 

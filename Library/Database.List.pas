@@ -24,7 +24,7 @@ unit Database.List;
 interface
 
 uses
-  mORMot, mORMotSQLite3, SynCommons, Database.Manager, VirtualTrees, SysUtils,
+  mORMot, SynCommons, Database.Manager, VirtualTrees, SysUtils,
   Dialogs, Classes, NodeDataTypes.Base, SynLog;
 
 type

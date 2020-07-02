@@ -24,8 +24,8 @@ unit Frame.Properties.Base;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, NodeDataTypes.Custom, Frame.BaseEntity;
+  SysUtils, Classes,
+  Controls, Dialogs, NodeDataTypes.Custom, Frame.BaseEntity;
 
 type
   TfrmBasePropertyPage = class(TfrmBaseEntityPage)

@@ -24,8 +24,8 @@ unit Forms.ScanFolder;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, Themes,
+  LCLIntf, LCLType, SysUtils, Classes, Graphics,
+  Controls, Forms, Dialogs, StdCtrls, ExtCtrls, VirtualTrees, ComCtrls,
   ShellCtrls, ImgList, StrUtils, cySearchFiles;
 
 type
@@ -100,9 +100,8 @@ var
 implementation
 
 uses
-  AppConfig.Main, Kernel.Enumerations, Kernel.Types, VirtualTree.Methods, ShellApi,
-  NodeDataTypes.Base, Utility.Misc, Kernel.Logger, Kernel.Consts, Utility.FileFolder,
-  NodeDataTypes.Files, UITypes;
+  AppConfig.Main, Kernel.Types, ShellApi,
+  Kernel.Logger, Kernel.Consts;
 
 {$R *.lfm}
 

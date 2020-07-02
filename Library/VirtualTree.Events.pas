@@ -24,7 +24,7 @@ unit VirtualTree.Events;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, SysUtils, Classes, Graphics, VirtualTrees, ActiveX, UITypes,
+  LCLIntf, LCLType, SysUtils, Classes, Graphics, VirtualTrees, ActiveX,
   Kernel.Singleton, Forms.GraphicMenu, Forms.Dialog.BaseEntity, Menus, Forms, Controls;
 
 type
@@ -132,7 +132,7 @@ type
 implementation
 
 uses
-  Utility.Misc, AppConfig.Main, NodeDataTypes.Base, NodeDataTypes.Category,
+  AppConfig.Main, NodeDataTypes.Base, NodeDataTypes.Category,
   NodeDataTypes.Files, NodeDataTypes.Custom, NodeDataTypes.Separator, Kernel.Types,
   Kernel.Enumerations, Frame.BaseEntity, VirtualTree.Methods, DataModules.TrayMenu,
   comobj, DataModules.Icons, Kernel.Logger, SynLog, Utility.Hotkey, ShellApi,
