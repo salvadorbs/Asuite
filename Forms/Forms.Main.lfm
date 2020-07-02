@@ -1,62 +1,60 @@
 object frmMain: TfrmMain
   Left = 611
-  Height = 482
+  Height = 386
   Top = 208
-  Width = 251
+  Width = 201
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'ASuite'
-  ClientHeight = 457
-  ClientWidth = 251
+  ClientHeight = 366
+  ClientWidth = 201
   Color = clBtnFace
-  Constraints.MinHeight = 462
-  Constraints.MinWidth = 250
-  DesignTimePPI = 120
+  Constraints.MinHeight = 370
+  Constraints.MinWidth = 200
   Font.Color = clWindowText
-  Font.Height = -14
+  Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Menu = MainMenu
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
-  OnDestroy = FormDestroy
   OnHide = FormHide
   OnResize = FormResize
   OnShow = FormShow
   LCLVersion = '2.1.0.0'
   object pcList: TPageControl
     Left = 0
-    Height = 457
+    Height = 366
     Top = 0
-    Width = 251
-    ActivePage = tbSearch
+    Width = 201
+    ActivePage = tbList
     Align = alClient
     Font.Color = clWindowText
-    Font.Height = -14
+    Font.Height = -11
     Font.Name = 'MS Shell Dlg 2'
     MultiLine = True
     ParentFont = False
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 0
     OnChange = pcListChange
     Options = [nboMultiLine]
     object tbList: TTabSheet
       Caption = 'List'
-      ClientHeight = 0
-      ClientWidth = 0
+      ClientHeight = 340
+      ClientWidth = 193
       Font.Color = clWindowText
-      Font.Height = -14
+      Font.Height = -11
       Font.Name = 'MS Shell Dlg 2'
       ParentFont = False
       object vstList: TVirtualStringTree
         Left = 0
-        Height = 357
+        Height = 340
         Top = 0
         Width = 193
         Align = alClient
         DragMode = dmAutomatic
         EditDelay = 500
         Font.Color = clWindowText
-        Font.Height = -14
+        Font.Height = -11
         Font.Name = 'MS Sans Serif'
         Header.AutoSizeIndex = 0
         Header.Columns = <>
@@ -81,22 +79,22 @@ object frmMain: TfrmMain
     end
     object tbSearch: TTabSheet
       Caption = 'Search'
-      ClientHeight = 427
-      ClientWidth = 243
+      ClientHeight = 340
+      ClientWidth = 193
       Font.Color = clWindowText
-      Font.Height = -14
+      Font.Height = -11
       Font.Name = 'MS Shell Dlg 2'
       ParentFont = False
       object vstSearch: TVirtualStringTree
         Left = 0
-        Height = 372
-        Top = 25
-        Width = 243
+        Height = 289
+        Top = 21
+        Width = 193
         Align = alTop
         Anchors = [akTop, akLeft, akRight, akBottom]
         AnimationDuration = 0
         Font.Color = clWindowText
-        Font.Height = -14
+        Font.Height = -11
         Font.Name = 'MS Shell Dlg 2'
         Header.AutoSizeIndex = 0
         Header.Columns = <>
@@ -116,13 +114,13 @@ object frmMain: TfrmMain
       end
       object btnedtSearch: TEditButton
         Left = 0
-        Height = 25
+        Height = 21
         Top = 0
-        Width = 243
+        Width = 193
         Align = alTop
-        ButtonWidth = 29
+        ButtonWidth = 23
         Font.Color = clWindowText
-        Font.Height = -14
+        Font.Height = -11
         Font.Name = 'MS Shell Dlg 2'
         MaxLength = 0
         NumGlyphs = 1
@@ -138,8 +136,8 @@ object frmMain: TfrmMain
     end
   end
   object MainMenu: TMainMenu
-    Left = 20
-    Top = 40
+    Left = 16
+    Top = 32
     object miFile: TMenuItem
       Caption = 'File'
       object miSaveList1: TMenuItem
@@ -198,8 +196,8 @@ object frmMain: TfrmMain
     end
   end
   object pmWindow: TPopupMenu
-    Left = 100
-    Top = 40
+    Left = 80
+    Top = 32
     object mniRunItem: TMenuItem
       Action = actRunItem
       Default = True
@@ -274,12 +272,12 @@ object frmMain: TfrmMain
     DefaultExt = '.xml'
     Filter = 'ASuite List File (*.sqlite)|*.sqlite|All files|*.*'
     Options = [ofOverwritePrompt, ofHideReadOnly, ofExtensionDifferent, ofEnableSizing]
-    Left = 140
-    Top = 40
+    Left = 112
+    Top = 32
   end
   object pmSearch: TPopupMenu
-    Left = 60
-    Top = 40
+    Left = 48
+    Top = 32
     object miSearchName: TMenuItem
       Caption = 'Name'
       Checked = True
@@ -312,8 +310,8 @@ object frmMain: TfrmMain
     end
   end
   object ActionList1: TActionList
-    Left = 165
-    Top = 240
+    Left = 132
+    Top = 192
     object actRunItem: TAction
       Caption = 'Run'
       OnExecute = actRunItemExecute
@@ -400,7 +398,7 @@ object frmMain: TfrmMain
     Enabled = False
     Interval = 5000
     OnTimer = tmrCheckItemsTimer
-    Left = 180
-    Top = 100
+    Left = 144
+    Top = 80
   end
 end

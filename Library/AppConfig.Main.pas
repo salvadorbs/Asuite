@@ -837,4 +837,7 @@ begin
   FGraphicMenuHotKey := Value;
 end;
 
+finalization
+  FreeAndNil(Config);
+
 end.

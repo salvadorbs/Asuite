@@ -111,7 +111,6 @@ type
     procedure miExitClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure miExportListClick(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
     procedure miInfoASuiteClick(Sender: TObject);
     procedure btnedtSearchRightButtonClick(Sender: TObject);
     procedure ChangeSearchTextHint(Sender: TObject);
@@ -630,11 +629,6 @@ begin
   PopulatePopUpMenuFromAnother(miEdit, pmWindow.Items);
   //Start threads
   TVirtualTreeMethods.Create.GetAllIcons(vstList, nil);
-end;
-
-procedure TfrmMain.FormDestroy(Sender: TObject);
-begin
-  Config.Destroy;
 end;
 
 procedure TfrmMain.FormHide(Sender: TObject);

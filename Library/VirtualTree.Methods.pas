@@ -363,6 +363,8 @@ function TVirtualTreeMethods.GetNodeDataEx(const ANode: PVirtualNode;
 var
   ListNode: PVirtualNode;
 begin
+  Assert(Assigned(Config));
+
   //Check if ATree is MainTree (frmMain.vstList), to get nodedata from the right Tree
   Result := nil;
   if (ATree <> Config.MainTree) and (ATree <> Config.ImportTree) then
