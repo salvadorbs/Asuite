@@ -75,10 +75,7 @@ uses
   Kernel.Scheduler in 'Library\Kernel.Scheduler.pas',
   Kernel.Logger in 'Library\Kernel.Logger.pas';
 
-//SQLite3 static library
-
 {$R *.res}
-{$R *.dkl_const.res}
 
 var
   hash, identifier: string;
@@ -90,7 +87,13 @@ begin
   if not(InstanceRunning(identifier, True)) then
   begin
     {$IFDEF DEBUG}
-    ReportMemoryLeaksOnShutdown := True;
+
+      globalSkipIfNoLeaks := true;
+
+      // Set up -gh output for the Leakview package:
+      if FileExists('heap.trc') then
+        DeleteFile('heap.trc');
+      SetHeapTraceOutput('heap.trc');
     {$ENDIF}
 
     Application.Initialize;
