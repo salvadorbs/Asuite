@@ -384,6 +384,9 @@ var
 var
   Modifiers, Key: Word;
 begin
+  if Text = '' then
+    Exit(0);
+
   Tokens := TStringList.Create;
   try
     ExtractStrings(['+'], [' '], PAnsiChar(Text), Tokens);

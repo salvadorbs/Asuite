@@ -458,10 +458,7 @@ var
 begin
   NodeData := Sender.GetNodeData(Node);
   if Assigned(NodeData) then
-  begin
-    TfrmBaseEntityPage(NodeData.Frame).Free;
     NodeData.Title := '';
-  end;
 end;
 
 procedure TVirtualTreeEvents.DoGetNodeDataSizeFrame(Sender: TBaseVirtualTree;
