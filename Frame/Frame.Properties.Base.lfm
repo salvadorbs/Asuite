@@ -1,3 +1,5 @@
 inherited frmBasePropertyPage: TfrmBasePropertyPage
   Width = 360
+  DesignLeft = 135
+  DesignTop = 16
 end

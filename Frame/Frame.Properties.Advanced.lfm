@@ -1,9 +1,13 @@
 inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
+  Width = 359
+  ClientWidth = 359
+  DesignLeft = 40
+  DesignTop = 55
   object cbShortcutDesktop: TCheckBox[0]
     Left = 13
-    Height = 23
+    Height = 19
     Top = 195
-    Width = 268
+    Width = 264
     Caption = 'Create shortcut on desktop when ASuite is running'
     Font.Color = clWindowText
     Font.Height = -11
@@ -49,7 +53,7 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       Left = 8
       Height = 21
       Top = 34
-      Width = 85
+      Width = 81
       CenturyFrom = 1941
       MaxDate = 2958465
       MinDate = -53780
@@ -74,7 +78,7 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       Left = 8
       Height = 21
       Top = 61
-      Width = 71
+      Width = 67
       CenturyFrom = 1941
       MaxDate = 2958465
       MinDate = -53780
@@ -112,9 +116,9 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
     TabOrder = 1
     object cbHotKey: TCheckBox
       Left = 6
-      Height = 23
+      Height = 19
       Top = 7
-      Width = 90
+      Width = 86
       Caption = 'Active hotkey'
       Font.Color = clWindowText
       Font.Height = -11
@@ -155,9 +159,9 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
     TabOrder = 2
     object cbHideSoftware: TCheckBox
       Left = 6
-      Height = 23
+      Height = 19
       Top = 4
-      Width = 165
+      Width = 161
       Caption = 'Hide this software from menu'
       Font.Color = clWindowText
       Font.Height = -11
@@ -167,9 +171,9 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
     end
     object cbDontInsertMRU: TCheckBox
       Left = 6
-      Height = 23
+      Height = 19
       Top = 23
-      Width = 228
+      Width = 224
       Caption = 'Don''t insert this software in recents (MRU)'
       Font.Color = clWindowText
       Font.Height = -11
@@ -179,9 +183,9 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
     end
     object cbDontInsertMFU: TCheckBox
       Left = 6
-      Height = 23
+      Height = 19
       Top = 42
-      Width = 180
+      Width = 176
       Caption = 'Don''t insert this software in MFU'
       Font.Color = clWindowText
       Font.Height = -11

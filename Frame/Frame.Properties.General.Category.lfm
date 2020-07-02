@@ -1,4 +1,6 @@
 inherited frmCatGeneralPropertyPage: TfrmCatGeneralPropertyPage
+  DesignLeft = 87
+  DesignTop = 43
   object grpSubItems: TGroupBox[1]
     Left = 3
     Height = 182

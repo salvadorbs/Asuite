@@ -1,4 +1,6 @@
 inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
+  DesignLeft = -1
+  DesignTop = 7
   inherited gbItem: TGroupBox
     inherited edtName: TEdit
       Width = 161

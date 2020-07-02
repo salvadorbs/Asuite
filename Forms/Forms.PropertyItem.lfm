@@ -1,4 +1,5 @@
 inherited frmPropertyItem: TfrmPropertyItem
+  Top = 11
   Caption = 'Property'
   inherited btnCancel: TButton
     OnClick = nil

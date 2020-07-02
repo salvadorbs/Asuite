@@ -1,13 +1,16 @@
 inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
+  Height = 359
+  ClientHeight = 359
+  DesignTop = 21
   object gbStartup: TGroupBox[0]
     Left = 0
     Height = 94
     Top = 0
-    Width = 556
+    Width = 445
     Align = alTop
     Caption = 'Startup'
     ClientHeight = 76
-    ClientWidth = 552
+    ClientWidth = 441
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -16,9 +19,9 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     TabOrder = 0
     object cbWindowsStartup: TCheckBox
       Left = 6
-      Height = 23
+      Height = 19
       Top = 4
-      Width = 218
+      Width = 214
       Caption = 'Start ASuite on Windows system startup'
       Font.Color = clWindowText
       Font.Height = -11
@@ -28,9 +31,9 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     end
     object cbShowPanelStartup: TCheckBox
       Left = 6
-      Height = 23
+      Height = 19
       Top = 38
-      Width = 176
+      Width = 172
       Caption = 'Show window on ASuite startup'
       Font.Color = clWindowText
       Font.Height = -11
@@ -40,9 +43,9 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     end
     object cbShowMenuStartup: TCheckBox
       Left = 6
-      Height = 23
+      Height = 19
       Top = 55
-      Width = 204
+      Width = 200
       Caption = 'Show graphic menu on ASuite startup'
       Font.Color = clWindowText
       Font.Height = -11
@@ -52,9 +55,9 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     end
     object chkMissedSchedulerTask: TCheckBox
       Left = 6
-      Height = 23
+      Height = 19
       Top = 21
-      Width = 245
+      Width = 241
       Caption = 'Check missed scheduler task at ASuite startup'
       Font.Color = clWindowText
       Font.Height = -11
@@ -95,11 +98,11 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     Left = 0
     Height = 125
     Top = 94
-    Width = 556
+    Width = 445
     Align = alTop
     Caption = 'Execution'
     ClientHeight = 107
-    ClientWidth = 552
+    ClientWidth = 441
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -122,9 +125,9 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     end
     object cbRunSingleClick: TCheckBox
       Left = 6
-      Height = 23
+      Height = 19
       Top = 4
-      Width = 213
+      Width = 209
       Caption = 'Execute with single click in main window'
       Font.Color = clWindowText
       Font.Height = -11
@@ -152,9 +155,9 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     end
     object chkConfirmMessageCat: TCheckBox
       Left = 6
-      Height = 23
+      Height = 19
       Top = 22
-      Width = 201
+      Width = 197
       Caption = 'Ask to confirm before run a category'
       Font.Color = clWindowText
       Font.Height = -11
@@ -164,9 +167,9 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     end
     object chkAutoCloseProcess: TCheckBox
       Left = 6
-      Height = 23
+      Height = 19
       Top = 82
-      Width = 298
+      Width = 294
       Caption = 'Close all process opened by ASuite at launcher shutdown'
       Font.Color = clWindowText
       Font.Height = -11

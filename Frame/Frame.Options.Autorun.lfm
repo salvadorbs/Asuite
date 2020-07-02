@@ -1,15 +1,17 @@
 inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
   Height = 405
   ClientHeight = 405
+  DesignLeft = 8
+  DesignTop = 41
   object grpStartupOrderItems: TGroupBox[0]
     Left = 0
     Height = 200
     Top = 0
-    Width = 556
+    Width = 445
     Align = alTop
     Caption = 'Startup'
     ClientHeight = 182
-    ClientWidth = 552
+    ClientWidth = 441
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -30,9 +32,9 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
     end
     object chkStartup: TCheckBox
       Left = 6
-      Height = 23
+      Height = 19
       Top = 6
-      Width = 135
+      Width = 131
       Caption = 'Enable startup autorun'
       Font.Color = clWindowText
       Font.Height = -11
@@ -44,7 +46,7 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       Left = 0
       Height = 136
       Top = 46
-      Width = 552
+      Width = 441
       Align = alBottom
       DefaultNodeHeight = 32
       DragOperations = []
@@ -64,7 +66,7 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       OnGetPopupMenu = vstGetPopupMenu
     end
     object btnStartupUp: TKSpeedButton
-      Left = 510
+      Left = 405
       Height = 25
       Top = 74
       Width = 27
@@ -77,7 +79,7 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       OnClick = btnStartupUpClick
     end
     object btnStartupDelete: TKSpeedButton
-      Left = 510
+      Left = 405
       Height = 25
       Top = 105
       Width = 27
@@ -90,7 +92,7 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       OnClick = btnStartupDeleteClick
     end
     object btnStartupDown: TKSpeedButton
-      Left = 510
+      Left = 405
       Height = 25
       Top = 136
       Width = 27
@@ -107,11 +109,11 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
     Left = 0
     Height = 200
     Top = 200
-    Width = 556
+    Width = 445
     Align = alTop
     Caption = 'Shutdown'
     ClientHeight = 182
-    ClientWidth = 552
+    ClientWidth = 441
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -132,9 +134,9 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
     end
     object chkShutdown: TCheckBox
       Left = 6
-      Height = 23
+      Height = 19
       Top = 6
-      Width = 147
+      Width = 143
       Caption = 'Enable shutdown autorun'
       Font.Color = clWindowText
       Font.Height = -11
@@ -146,7 +148,7 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       Left = 0
       Height = 136
       Top = 46
-      Width = 552
+      Width = 441
       Align = alBottom
       DefaultNodeHeight = 32
       DragOperations = []
@@ -166,7 +168,7 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       OnGetPopupMenu = vstGetPopupMenu
     end
     object btnShutdownDelete: TKSpeedButton
-      Left = 510
+      Left = 405
       Height = 25
       Top = 105
       Width = 27
@@ -179,7 +181,7 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       OnClick = btnShutdownDeleteClick
     end
     object btnShutdownDown: TKSpeedButton
-      Left = 510
+      Left = 405
       Height = 25
       Top = 136
       Width = 27
@@ -192,7 +194,7 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       OnClick = btnShutdownDownClick
     end
     object btnShutdownUp: TKSpeedButton
-      Left = 510
+      Left = 405
       Height = 25
       Top = 74
       Width = 27

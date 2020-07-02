@@ -1,30 +1,29 @@
 object frmDialogBase: TfrmDialogBase
-  Left = 0
-  Height = 406
-  Top = 0
-  Width = 699
+  Left = 32
+  Height = 325
+  Top = 36
+  Width = 559
   BorderStyle = bsDialog
   Caption = 'frmDialogBase'
-  ClientHeight = 406
-  ClientWidth = 699
+  ClientHeight = 325
+  ClientWidth = 559
   Color = clBtnFace
-  DesignTimePPI = 120
   Font.Color = clWindowText
-  Font.Height = -14
+  Font.Height = -11
   Font.Name = 'Tahoma'
   KeyPreview = True
   OnKeyPress = FormKeyPress
   Position = poMainFormCenter
   LCLVersion = '2.1.0.0'
   object btnOk: TButton
-    Left = 394
-    Height = 31
-    Top = 367
-    Width = 94
+    Left = 315
+    Height = 25
+    Top = 294
+    Width = 75
     Anchors = [akRight, akBottom]
     Caption = 'Ok'
     Font.Color = clWindowText
-    Font.Height = -14
+    Font.Height = -11
     Font.Name = 'Tahoma'
     ModalResult = 1
     OnClick = btnOkClick
@@ -32,14 +31,14 @@ object frmDialogBase: TfrmDialogBase
     TabOrder = 2
   end
   object btnCancel: TButton
-    Left = 495
-    Height = 31
-    Top = 367
-    Width = 94
+    Left = 396
+    Height = 25
+    Top = 294
+    Width = 75
     Anchors = [akRight, akBottom]
     Caption = 'Cancel'
     Font.Color = clWindowText
-    Font.Height = -14
+    Font.Height = -11
     Font.Name = 'Tahoma'
     ModalResult = 2
     OnClick = btnCancelClick
@@ -47,25 +46,25 @@ object frmDialogBase: TfrmDialogBase
     TabOrder = 3
   end
   object pnlDialogPage: TPanel
-    Left = 239
-    Height = 350
-    Top = 10
-    Width = 451
+    Left = 191
+    Height = 280
+    Top = 8
+    Width = 361
     Anchors = [akTop, akLeft, akRight, akBottom]
     Font.Color = clWindowText
-    Font.Height = -14
+    Font.Height = -11
     Font.Name = 'Tahoma'
     ParentFont = False
     TabOrder = 1
   end
   object vstCategory: TVirtualStringTree
-    Left = 10
-    Height = 350
-    Top = 10
-    Width = 221
+    Left = 8
+    Height = 280
+    Top = 8
+    Width = 177
     Anchors = [akTop, akLeft, akBottom]
     Font.Color = clWindowText
-    Font.Height = -14
+    Font.Height = -11
     Font.Name = 'Tahoma'
     Header.AutoSizeIndex = 0
     Header.Columns = <>
@@ -79,14 +78,14 @@ object frmDialogBase: TfrmDialogBase
     TreeOptions.SelectionOptions = [toFullRowSelect]
   end
   object btnApply: TButton
-    Left = 596
-    Height = 31
-    Top = 367
-    Width = 94
+    Left = 477
+    Height = 25
+    Top = 294
+    Width = 75
     Anchors = [akRight, akBottom]
     Caption = 'Apply'
     Font.Color = clWindowText
-    Font.Height = -14
+    Font.Height = -11
     Font.Name = 'Tahoma'
     OnClick = btnApplyClick
     ParentFont = False

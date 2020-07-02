@@ -1,13 +1,14 @@
 inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
+  DesignTop = 12
   object gbTrayicon: TGroupBox[0]
     Left = 0
     Height = 134
     Top = 0
-    Width = 556
+    Width = 445
     Align = alTop
     Caption = 'System Tray'
     ClientHeight = 116
-    ClientWidth = 552
+    ClientWidth = 441
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -77,9 +78,9 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
     end
     object cbTrayicon: TCheckBox
       Left = 6
-      Height = 23
+      Height = 19
       Top = 6
-      Width = 160
+      Width = 156
       Caption = 'Enable the System Tray icon'
       Font.Color = clWindowText
       Font.Height = -11
@@ -109,9 +110,9 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
     end
     object cbTrayCustomIcon: TCheckBox
       Left = 6
-      Height = 23
+      Height = 19
       Top = 25
-      Width = 105
+      Width = 101
       Caption = 'Custom tray icon'
       Font.Color = clWindowText
       Font.Height = -11
@@ -162,11 +163,11 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
     Left = 0
     Height = 83
     Top = 235
-    Width = 556
+    Width = 445
     Align = alTop
     Caption = 'Classic Menu'
     ClientHeight = 65
-    ClientWidth = 552
+    ClientWidth = 441
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -175,9 +176,9 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
     TabOrder = 2
     object cbSubMenuMFU: TCheckBox
       Left = 1
-      Height = 23
+      Height = 19
       Top = 4
-      Width = 205
+      Width = 201
       Caption = 'Most Used items on trayicon submenu'
       Font.Color = clWindowText
       Font.Height = -11
@@ -187,9 +188,9 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
     end
     object cbSubMenuMRU: TCheckBox
       Left = 1
-      Height = 23
+      Height = 19
       Top = 23
-      Width = 189
+      Width = 185
       Caption = 'Recent items on trayicon submenu'
       Font.Color = clWindowText
       Font.Height = -11
@@ -199,9 +200,9 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
     end
     object chkAutoExpansion: TCheckBox
       Left = 1
-      Height = 23
+      Height = 19
       Top = 42
-      Width = 159
+      Width = 155
       Caption = 'Active autoexpansion folder'
       Font.Color = clWindowText
       Font.Height = -11
@@ -214,11 +215,11 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
     Left = 0
     Height = 101
     Top = 134
-    Width = 556
+    Width = 445
     Align = alTop
     Caption = 'Graphic Menu'
     ClientHeight = 83
-    ClientWidth = 552
+    ClientWidth = 441
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -252,9 +253,9 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
     end
     object cbMenuFade: TCheckBox
       Left = 6
-      Height = 23
+      Height = 19
       Top = 3
-      Width = 113
+      Width = 109
       Caption = 'Enable fade effect'
       Font.Color = clWindowText
       Font.Height = -11
@@ -264,9 +265,9 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
     end
     object cbSmallIcon: TCheckBox
       Left = 6
-      Height = 23
+      Height = 19
       Top = 22
-      Width = 145
+      Width = 141
       Caption = 'Small TreeView''s icon size'
       Font.Color = clWindowText
       Font.Height = -11
@@ -276,9 +277,9 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
     end
     object chkAutomaticHideMenu: TCheckBox
       Left = 226
-      Height = 23
+      Height = 19
       Top = 22
-      Width = 100
+      Width = 96
       Caption = 'Auto-hide menu'
       Font.Color = clWindowText
       Font.Height = -11
@@ -288,9 +289,9 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
     end
     object chkUserPicture: TCheckBox
       Left = 226
-      Height = 23
+      Height = 19
       Top = 3
-      Width = 150
+      Width = 146
       Caption = 'Show user picture in menu'
       Font.Color = clWindowText
       Font.Height = -11

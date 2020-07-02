@@ -1,7 +1,7 @@
 object frmAbout: TfrmAbout
   Left = 420
   Height = 171
-  Top = 154
+  Top = 162
   Width = 382
   BorderStyle = bsDialog
   Caption = 'About Asuite'

@@ -1,4 +1,5 @@
 inherited frmOptions: TfrmOptions
+  Top = 8
   Caption = 'Options'
   inherited btnOk: TButton
     Left = 455

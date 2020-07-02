@@ -1,13 +1,15 @@
 inherited frmStatsOptionsPage: TfrmStatsOptionsPage
+  DesignLeft = 3
+  DesignTop = 10
   object gbASuite: TGroupBox[0]
     Left = 0
     Height = 83
     Top = 213
-    Width = 556
+    Width = 445
     Align = alTop
     Caption = 'ASuite'
     ClientHeight = 65
-    ClientWidth = 552
+    ClientWidth = 441
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
@@ -52,7 +54,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       ParentFont = False
     end
     object lbSoftware2: TLabel
-      Left = 334
+      Left = 223
       Height = 13
       Top = 10
       Width = 209
@@ -68,7 +70,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       ParentFont = False
     end
     object lbCat2: TLabel
-      Left = 334
+      Left = 223
       Height = 13
       Top = 26
       Width = 209
@@ -84,7 +86,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       ParentFont = False
     end
     object lbTotal2: TLabel
-      Left = 333
+      Left = 222
       Height = 13
       Top = 49
       Width = 209
@@ -105,11 +107,11 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     Left = 0
     Height = 79
     Top = 134
-    Width = 556
+    Width = 445
     Align = alTop
     Caption = 'Drive %S:'
     ClientHeight = 61
-    ClientWidth = 552
+    ClientWidth = 441
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
@@ -153,7 +155,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       ParentFont = False
     end
     object lbSpaceFree2: TLabel
-      Left = 334
+      Left = 223
       Height = 13
       Top = 26
       Width = 209
@@ -169,7 +171,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       ParentFont = False
     end
     object lbSize2: TLabel
-      Left = 334
+      Left = 223
       Height = 13
       Top = 10
       Width = 209
@@ -185,7 +187,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       ParentFont = False
     end
     object lbSpaceUsed2: TLabel
-      Left = 334
+      Left = 223
       Height = 13
       Top = 42
       Width = 209
@@ -205,11 +207,11 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     Left = 0
     Height = 134
     Top = 0
-    Width = 556
+    Width = 445
     Align = alTop
     Caption = 'System'
     ClientHeight = 116
-    ClientWidth = 552
+    ClientWidth = 441
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
@@ -254,7 +256,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       ParentFont = False
     end
     object lbOs2: TLabel
-      Left = 239
+      Left = 128
       Height = 13
       Top = 10
       Width = 304
@@ -270,7 +272,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       ParentFont = False
     end
     object lbUser2: TLabel
-      Left = 239
+      Left = 128
       Height = 13
       Top = 95
       Width = 304
@@ -286,7 +288,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       ParentFont = False
     end
     object lbNamePc2: TLabel
-      Left = 239
+      Left = 128
       Height = 13
       Top = 78
       Width = 304
@@ -302,7 +304,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       ParentFont = False
     end
     object lblBuild2: TLabel
-      Left = 263
+      Left = 152
       Height = 13
       Top = 27
       Width = 280
@@ -343,7 +345,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       ParentFont = False
     end
     object lblProcessor2: TLabel
-      Left = 239
+      Left = 128
       Height = 13
       Top = 44
       Width = 303
@@ -371,7 +373,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       ParentFont = False
     end
     object lblRam2: TLabel
-      Left = 333
+      Left = 222
       Height = 13
       Top = 61
       Width = 209

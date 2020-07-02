@@ -1,9 +1,10 @@
 object frmBaseEntityPage: TfrmBaseEntityPage
   Left = 0
-  Height = 475
+  Height = 380
   Top = 0
-  Width = 556
-  DesignTimePPI = 120
+  Width = 445
   ParentFont = False
   TabOrder = 0
+  DesignLeft = 11
+  DesignTop = 34
 end
