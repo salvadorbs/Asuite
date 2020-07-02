@@ -1,24 +1,12 @@
 inherited frmCatGeneralPropertyPage: TfrmCatGeneralPropertyPage
-  inherited gbItem: TGroupBox
-    Font.Style = [fsBold]
-    ParentFont = False
-    inherited lbName: TLabel
-      ParentFont = False
-    end
-    inherited lbPathIcon: TLabel
-      ParentFont = False
-    end
-    inherited edtName: TEdit
-      ParentFont = False
-    end
-  end
-  object grpSubItems: TGroupBox
+  object grpSubItems: TGroupBox[1]
     Left = 3
+    Height = 182
     Top = 95
     Width = 354
-    Height = 182
     Caption = 'Software in this category'
-    Font.Charset = DEFAULT_CHARSET
+    ClientHeight = 164
+    ClientWidth = 350
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -27,40 +15,32 @@ inherited frmCatGeneralPropertyPage: TfrmCatGeneralPropertyPage
     TabOrder = 1
     object lblNote: TLabel
       Left = 6
+      Height = 13
       Top = 122
-      Width = 335
-      Height = 39
-      Caption = 
-        'Note: In this list you can find all software items of this categ' +
-        'ory (only first level). Uncheck items who you don''t want to star' +
-        't, when run this category.'
-      Font.Charset = DEFAULT_CHARSET
+      Width = 716
+      Caption = 'Note: In this list you can find all software items of this category (only first level). Uncheck items who you don''t want to start, when run this category.'
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
+      ParentColor = False
       ParentFont = False
       WordWrap = True
     end
     object vstCategoryItems: TVirtualStringTree
       Left = 6
+      Height = 114
       Top = 2
       Width = 338
-      Height = 114
       DragOperations = []
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       Header.AutoSizeIndex = 0
-      Header.Font.Charset = DEFAULT_CHARSET
+      Header.Columns = <>
       Header.Font.Color = clWindowText
       Header.Font.Height = -11
       Header.Font.Name = 'Tahoma'
-      Header.Font.Style = []
       Header.MainColumn = -1
-      Images = dmImages.ilSmallIcons
       ParentFont = False
       TabOrder = 0
       TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]

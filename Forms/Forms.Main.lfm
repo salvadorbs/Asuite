@@ -1,18 +1,19 @@
 object frmMain: TfrmMain
   Left = 611
+  Height = 482
   Top = 208
+  Width = 251
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'ASuite'
-  ClientHeight = 386
-  ClientWidth = 201
+  ClientHeight = 457
+  ClientWidth = 251
   Color = clBtnFace
-  Constraints.MinHeight = 370
-  Constraints.MinWidth = 200
-  Font.Charset = DEFAULT_CHARSET
+  Constraints.MinHeight = 462
+  Constraints.MinWidth = 250
+  DesignTimePPI = 120
   Font.Color = clWindowText
-  Font.Height = -11
+  Font.Height = -14
   Font.Name = 'MS Sans Serif'
-  Font.Style = []
   Menu = MainMenu
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
@@ -21,44 +22,47 @@ object frmMain: TfrmMain
   OnHide = FormHide
   OnResize = FormResize
   OnShow = FormShow
-  PixelsPerInch = 96
+  LCLVersion = '2.1.0.0'
   object pcList: TPageControl
     Left = 0
+    Height = 457
     Top = 0
-    Width = 201
-    Height = 386
+    Width = 251
     ActivePage = tbSearch
     Align = alClient
-    Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
-    Font.Height = -11
+    Font.Height = -14
     Font.Name = 'MS Shell Dlg 2'
-    Font.Style = []
     MultiLine = True
     ParentFont = False
+    TabIndex = 1
     TabOrder = 0
     OnChange = pcListChange
+    Options = [nboMultiLine]
     object tbList: TTabSheet
       Caption = 'List'
+      ClientHeight = 0
+      ClientWidth = 0
+      Font.Color = clWindowText
+      Font.Height = -14
+      Font.Name = 'MS Shell Dlg 2'
+      ParentFont = False
       object vstList: TVirtualStringTree
         Left = 0
+        Height = 357
         Top = 0
         Width = 193
-        Height = 357
         Align = alClient
         DragMode = dmAutomatic
         EditDelay = 500
-        Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -11
+        Font.Height = -14
         Font.Name = 'MS Sans Serif'
-        Font.Style = []
         Header.AutoSizeIndex = 0
-        Header.Font.Charset = DEFAULT_CHARSET
+        Header.Columns = <>
         Header.Font.Color = clWindowText
         Header.Font.Height = -11
         Header.Font.Name = 'MS Shell Dlg 2'
-        Header.Font.Style = []
         Header.MainColumn = -1
         Header.Options = [hoColumnResize, hoDrag]
         HintMode = hmHint
@@ -77,22 +81,32 @@ object frmMain: TfrmMain
     end
     object tbSearch: TTabSheet
       Caption = 'Search'
+      ClientHeight = 427
+      ClientWidth = 243
+      Font.Color = clWindowText
+      Font.Height = -14
+      Font.Name = 'MS Shell Dlg 2'
+      ParentFont = False
       object vstSearch: TVirtualStringTree
         Left = 0
-        Top = 24
-        Width = 193
-        Height = 332
+        Height = 372
+        Top = 25
+        Width = 243
         Align = alTop
-        Anchors = [akLeft, akTop, akRight, akBottom]
+        Anchors = [akTop, akLeft, akRight, akBottom]
         AnimationDuration = 0
+        Font.Color = clWindowText
+        Font.Height = -14
+        Font.Name = 'MS Shell Dlg 2'
         Header.AutoSizeIndex = 0
-        Header.Font.Charset = DEFAULT_CHARSET
+        Header.Columns = <>
         Header.Font.Color = clWindowText
         Header.Font.Height = -11
         Header.Font.Name = 'Tahoma'
-        Header.Font.Style = []
+        Header.MainColumn = -1
         Header.Options = [hoColumnResize, hoDblClickResize, hoDrag, hoVisible, hoHeaderClickAutoSort]
         HintMode = hmHint
+        ParentFont = False
         ParentShowHint = False
         PopupMenu = pmWindow
         ShowHint = True
@@ -102,22 +116,30 @@ object frmMain: TfrmMain
       end
       object btnedtSearch: TEditButton
         Left = 0
+        Height = 25
         Top = 0
-        Width = 193
-        Height = 21
+        Width = 243
         Align = alTop
+        ButtonWidth = 29
+        Font.Color = clWindowText
+        Font.Height = -14
+        Font.Name = 'MS Shell Dlg 2'
+        MaxLength = 0
+        NumGlyphs = 1
+        OnChange = btnedtSearchChange
+        OnKeyPress = btnedtSearchKeyPress
+        ParentFont = False
         ParentShowHint = False
+        PasswordChar = #0
         ShowHint = True
         TabOrder = 0
         TextHint = 'Name'
-        OnChange = btnedtSearchChange
-        OnKeyPress = btnedtSearchKeyPress
       end
     end
   end
   object MainMenu: TMainMenu
-    Left = 16
-    Top = 32
+    Left = 20
+    Top = 40
     object miFile: TMenuItem
       Caption = 'File'
       object miSaveList1: TMenuItem
@@ -176,8 +198,8 @@ object frmMain: TfrmMain
     end
   end
   object pmWindow: TPopupMenu
-    Left = 80
-    Top = 32
+    Left = 100
+    Top = 40
     object mniRunItem: TMenuItem
       Action = actRunItem
       Default = True
@@ -252,12 +274,12 @@ object frmMain: TfrmMain
     DefaultExt = '.xml'
     Filter = 'ASuite List File (*.sqlite)|*.sqlite|All files|*.*'
     Options = [ofOverwritePrompt, ofHideReadOnly, ofExtensionDifferent, ofEnableSizing]
-    Left = 112
-    Top = 32
+    Left = 140
+    Top = 40
   end
   object pmSearch: TPopupMenu
-    Left = 48
-    Top = 32
+    Left = 60
+    Top = 40
     object miSearchName: TMenuItem
       Caption = 'Name'
       Checked = True
@@ -290,8 +312,8 @@ object frmMain: TfrmMain
     end
   end
   object ActionList1: TActionList
-    Left = 132
-    Top = 192
+    Left = 165
+    Top = 240
     object actRunItem: TAction
       Caption = 'Run'
       OnExecute = actRunItemExecute
@@ -378,7 +400,7 @@ object frmMain: TfrmMain
     Enabled = False
     Interval = 5000
     OnTimer = tmrCheckItemsTimer
-    Left = 144
-    Top = 80
+    Left = 180
+    Top = 100
   end
 end

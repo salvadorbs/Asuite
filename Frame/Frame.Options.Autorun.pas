@@ -24,10 +24,8 @@ unit Frame.Options.Autorun;
 interface
 
 uses
-  LCLIntf, SysUtils, Classes,
-  Controls, Dialogs, kgraphics,
-  Frame.BaseEntity, StdCtrls, VirtualTrees, Lists.Base, Menus,
-  kbuttons;
+  LCLIntf, SysUtils, Classes, Controls, Dialogs, kgraphics, Frame.BaseEntity,
+  StdCtrls, VirtualTrees, Lists.Base, Menus, kbuttons, DefaultTranslator;
 
 type
   TfrmAutorunOptionsPage = class(TfrmBaseEntityPage)

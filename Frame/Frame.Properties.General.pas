@@ -25,8 +25,8 @@ interface
 
 uses
   LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, StdCtrls, Frame.Properties.Base,
-  MaskEdit, Themes, EditBtn;
+  Controls, Forms, Dialogs, StdCtrls, Frame.Properties.Base, MaskEdit, Themes,
+  EditBtn, DefaultTranslator;
 
 type
   TfrmBaseGeneralPropertyPage = class(TfrmBasePropertyPage)
@@ -63,7 +63,7 @@ implementation
 
 uses
   Utility.Misc, Kernel.Enumerations, NodeDataTypes.Files, AppConfig.Main,
-  Utility.System;
+  Utility.System, Kernel.ResourceStrings;
 
 {$R *.lfm}
 
@@ -149,8 +149,7 @@ end;
 
 function TfrmBaseGeneralPropertyPage.GetTitle: string;
 begin
-  //Result := DKLangConstW('msgGeneral');
-  Result := '';
+  Result := 'msgGeneral';
 end;
 
 function TfrmBaseGeneralPropertyPage.InternalLoadData: Boolean;

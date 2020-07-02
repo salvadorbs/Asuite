@@ -9,7 +9,6 @@
         <MainUnitHasCreateFormStatements Value="False"/>
         <MainUnitHasTitleStatement Value="False"/>
         <MainUnitHasScaledStatement Value="False"/>
-        <AlwaysBuild Value="True"/>
         <CompatibilityMode Value="True"/>
       </Flags>
       <SessionStorage Value="InProjectDir"/>
@@ -32,7 +31,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="3"/>
-      <BuildNr Value="6"/>
+      <BuildNr Value="14"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
@@ -168,7 +167,7 @@
         <PackageName Value="LCL"/>
       </Item12>
     </RequiredPackages>
-    <Units Count="67">
+    <Units Count="68">
       <Unit0>
         <Filename Value="ASuite.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -515,6 +514,11 @@
         <Filename Value="Utilities\Utility.Hotkey.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit66>
+      <Unit67>
+        <Filename Value="Library\kernel.resourcestrings.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Kernel.ResourceStrings"/>
+      </Unit67>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

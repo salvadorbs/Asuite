@@ -24,9 +24,8 @@ unit Frame.Options.Trayicon;
 interface
 
 uses
-  LCLIntf, SysUtils, Classes, Graphics,
-  Forms, Dialogs, Frame.BaseEntity, StdCtrls,
-  EditBtn{, JvExMask, JvToolEdit};
+  LCLIntf, SysUtils, Classes, Graphics, Forms, Dialogs, Frame.BaseEntity, StdCtrls,
+  EditBtn, DefaultTranslator;
 
 type
   TfrmTrayiconOptionsPage = class(TfrmBaseEntityPage)

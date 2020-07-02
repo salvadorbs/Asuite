@@ -24,7 +24,7 @@ unit Forms.ImportList;
 interface
 
 uses
-  LCLIntf, SysUtils, Classes, Graphics, Controls, Forms,
+  LCLIntf, SysUtils, Classes, Graphics, Controls, Forms, DefaultTranslator,
   Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, Kernel.Consts, DOM, XMLRead,
   Kernel.Enumerations, EditBtn;
 

@@ -1,12 +1,13 @@
 inherited frmBehaviorPropertyPage: TfrmBehaviorPropertyPage
-  object grpAutoExecute: TGroupBox
-    Left = 3
-    Top = 3
-    Width = 354
+  object grpAutoExecute: TGroupBox[0]
+    Left = 0
     Height = 78
+    Top = 0
+    Width = 360
     Align = alTop
     Caption = 'Autorun'
-    Font.Charset = DEFAULT_CHARSET
+    ClientHeight = 60
+    ClientWidth = 356
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -15,56 +16,57 @@ inherited frmBehaviorPropertyPage: TfrmBehaviorPropertyPage
     TabOrder = 0
     object cxAutoExecute: TComboBox
       Left = 6
+      Height = 21
       Top = 3
       Width = 338
-      Height = 21
-      Style = csDropDownList
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 0
-      OnChange = cxAutoExecuteChange
+      ItemHeight = 13
       Items.Strings = (
         'Never'
         'Always on startup'
         'Startup, only if no previous instances are running'
-        'Always on shutdown')
+        'Always on shutdown'
+      )
+      OnChange = cxAutoExecuteChange
+      ParentFont = False
+      Style = csDropDownList
+      TabOrder = 0
     end
     object btnChangeOrder: TButton
       Left = 100
+      Height = 21
       Top = 30
       Width = 150
-      Height = 21
       Caption = 'Change autorun order'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
+      OnClick = btnChangeOrderClick
       ParentFont = False
       TabOrder = 1
-      OnClick = btnChangeOrderClick
     end
   end
-  object pnl1: TPanel
+  object pnl1: TPanel[1]
     Left = 0
-    Top = 84
-    Width = 360
     Height = 53
+    Top = 78
+    Width = 360
     Align = alTop
     BevelOuter = bvNone
+    ClientHeight = 53
+    ClientWidth = 360
     TabOrder = 1
     object grpOnExecute: TGroupBox
-      Left = 1
-      Top = 1
+      Left = 0
+      Height = 53
+      Top = 0
       Width = 173
-      Height = 47
       Align = alLeft
       Caption = 'On Execute'
-      Font.Charset = DEFAULT_CHARSET
+      ClientHeight = 35
+      ClientWidth = 169
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
@@ -73,32 +75,33 @@ inherited frmBehaviorPropertyPage: TfrmBehaviorPropertyPage
       TabOrder = 0
       object cxActionOnExe: TComboBox
         Left = 6
+        Height = 21
         Top = 5
         Width = 158
-        Height = 21
-        Style = csDropDownList
-        Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 0
+        ItemHeight = 13
         Items.Strings = (
           'Default (options)'
           'Just run file'
           'Run and hide ASuite'
-          'Run and close ASuite')
+          'Run and close ASuite'
+        )
+        ParentFont = False
+        Style = csDropDownList
+        TabOrder = 0
       end
     end
     object grpWindowState: TGroupBox
-      Left = 180
-      Top = 1
+      Left = 173
+      Height = 53
+      Top = 0
       Width = 175
-      Height = 47
       Align = alLeft
       Caption = 'Window State'
-      Font.Charset = DEFAULT_CHARSET
+      ClientHeight = 35
+      ClientWidth = 171
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
@@ -107,21 +110,21 @@ inherited frmBehaviorPropertyPage: TfrmBehaviorPropertyPage
       TabOrder = 1
       object cxWindowState: TComboBox
         Left = 6
+        Height = 21
         Top = 5
         Width = 158
-        Height = 21
-        Style = csDropDownList
-        Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 0
+        ItemHeight = 13
         Items.Strings = (
           'Normal'
           'Minimized'
-          'Maximized')
+          'Maximized'
+        )
+        ParentFont = False
+        Style = csDropDownList
+        TabOrder = 0
       end
     end
   end

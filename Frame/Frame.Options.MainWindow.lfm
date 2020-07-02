@@ -1,12 +1,13 @@
 inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
-  object gbTreeView: TGroupBox
-    Left = 3
-    Top = 148
-    Width = 439
+  object gbTreeView: TGroupBox[0]
+    Left = 0
     Height = 165
+    Top = 142
+    Width = 556
     Align = alTop
     Caption = 'Treeview'
-    Font.Charset = DEFAULT_CHARSET
+    ClientHeight = 147
+    ClientWidth = 552
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -15,116 +16,106 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
     TabOrder = 1
     object cbBackground: TCheckBox
       Left = 6
+      Height = 23
       Top = 70
-      Width = 420
-      Height = 19
+      Width = 150
       Caption = 'Active custom background'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
+      OnClick = cbBackgroundClick
       ParentFont = False
       TabOrder = 4
-      OnClick = cbBackgroundClick
     end
     object btnFontSettings: TButton
       Left = 150
+      Height = 25
       Top = 120
       Width = 121
-      Height = 25
       Caption = 'Font settings...'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
+      OnClick = btnFontSettingsClick
       ParentFont = False
       TabOrder = 6
-      OnClick = btnFontSettingsClick
     end
     object cbAutoOpClCat: TCheckBox
       Left = 6
+      Height = 23
       Top = 2
-      Width = 420
-      Height = 19
+      Width = 202
       Caption = 'Automatic opening/closing categories'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 0
     end
     object cbSmallIcon: TCheckBox
       Left = 6
+      Height = 23
       Top = 53
-      Width = 420
-      Height = 19
+      Width = 166
       Caption = 'Small icon size in main window'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 3
     end
     object edtBackground: TFileNameEdit
       Left = 6
+      Height = 21
       Top = 93
       Width = 422
-      Height = 21
-      Flat = False
       DialogOptions = [ofHideReadOnly, ofEnableSizing]
-      Font.Charset = DEFAULT_CHARSET
+      FilterIndex = 0
+      HideDirectories = False
+      ButtonWidth = 20
+      NumGlyphs = 1
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
-      ButtonWidth = 20
+      MaxLength = 0
       ParentFont = False
       TabOrder = 5
       Text = '$ASuite\'
     end
     object cbAutoOpDragDrop: TCheckBox
       Left = 6
+      Height = 23
       Top = 19
-      Width = 420
-      Height = 19
+      Width = 302
       Caption = 'Automatic opening category, after drag&&drop an item in it'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 1
     end
     object cbDisableConfirmDelete: TCheckBox
       Left = 6
+      Height = 23
       Top = 36
-      Width = 420
-      Height = 19
+      Width = 212
       Caption = 'Disable delete items confirmation dialog'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 2
     end
   end
-  object gbWindow: TGroupBox
-    Left = 3
-    Top = 3
-    Width = 439
+  object gbWindow: TGroupBox[1]
+    Left = 0
     Height = 142
+    Top = 0
+    Width = 556
     Align = alTop
     Caption = 'General'
-    Font.Charset = DEFAULT_CHARSET
+    ClientHeight = 124
+    ClientWidth = 552
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -133,96 +124,84 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
     TabOrder = 0
     object cbWindowOnTop: TCheckBox
       Left = 6
+      Height = 23
       Top = 22
-      Width = 420
-      Height = 17
+      Width = 155
       Caption = 'Main window always on top'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Shell Dlg 2'
-      Font.Style = []
       ParentFont = False
       TabOrder = 1
     end
     object cbHoldSize: TCheckBox
       Left = 6
+      Height = 23
       Top = 5
-      Width = 420
-      Height = 17
+      Width = 130
       Caption = 'Hold main window size'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 0
     end
     object cbHideSearch: TCheckBox
       Left = 6
+      Height = 23
       Top = 39
-      Width = 420
-      Height = 17
+      Width = 175
       Caption = 'Hide tab Search in main window'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 2
     end
     object edtCustomTitle: TEdit
       Left = 16
+      Height = 21
       Top = 96
       Width = 128
-      Height = 21
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 5
       Text = 'ASuite'
     end
     object cbCustomTitle: TCheckBox
       Left = 6
+      Height = 23
       Top = 73
-      Width = 420
-      Height = 17
+      Width = 145
       Caption = 'Custom main window title'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
+      OnClick = cbCustomTitleClick
       ParentFont = False
       TabOrder = 4
-      OnClick = cbCustomTitleClick
     end
     object chkSearchAsYouType: TCheckBox
       Left = 6
+      Height = 23
       Top = 56
-      Width = 420
-      Height = 17
+      Width = 117
       Caption = 'Search as you type'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 3
     end
   end
-  object FontDialog1: TFontDialog
-    Font.Charset = DEFAULT_CHARSET
+  object FontDialog1: TFontDialog[2]
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
-    Font.Style = []
+    MinFontSize = 0
+    MaxFontSize = 0
     Left = 246
     Top = 294
   end

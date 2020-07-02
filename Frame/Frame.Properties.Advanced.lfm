@@ -1,25 +1,24 @@
 inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
-  object cbShortcutDesktop: TCheckBox
+  object cbShortcutDesktop: TCheckBox[0]
     Left = 13
+    Height = 23
     Top = 195
-    Width = 344
-    Height = 19
+    Width = 268
     Caption = 'Create shortcut on desktop when ASuite is running'
-    Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
-    Font.Style = []
     ParentFont = False
     TabOrder = 3
   end
-  object grpScheduler: TGroupBox
+  object grpScheduler: TGroupBox[1]
     Left = 3
+    Height = 105
     Top = 3
     Width = 150
-    Height = 105
     Caption = 'Scheduler'
-    Font.Charset = DEFAULT_CHARSET
+    ClientHeight = 87
+    ClientWidth = 146
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -28,64 +27,83 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
     TabOrder = 0
     object cxScheduler: TComboBox
       Left = 8
+      Height = 21
       Top = 7
       Width = 129
-      Height = 21
-      Style = csDropDownList
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 0
-      OnChange = cxSchedulerChange
+      ItemHeight = 13
       Items.Strings = (
         'Disabled'
         'Once'
         'Hourly'
-        'Daily')
+        'Daily'
+      )
+      OnChange = cxSchedulerChange
+      ParentFont = False
+      Style = csDropDownList
+      TabOrder = 0
     end
     object dtpSchDate: TDateTimePicker
       Left = 8
-      Top = 34
-      Width = 129
       Height = 21
-      Date = 39092.000000000000000000
-      Time = 0.942071932870021600
-      Font.Charset = DEFAULT_CHARSET
+      Top = 34
+      Width = 85
+      CenturyFrom = 1941
+      MaxDate = 2958465
+      MinDate = -53780
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 1
+      TrailingSeparator = False
+      LeadingZeros = True
+      Kind = dtkDate
+      TimeFormat = tf24
+      TimeDisplay = tdHMS
+      DateMode = dmComboBox
+      Date = 39092
+      Time = 0.942071932870022
+      UseDefaultSeparators = True
+      HideDateTimeParts = []
+      MonthNames = 'Long'
     end
     object dtpSchTime: TDateTimePicker
       Left = 8
-      Top = 61
-      Width = 129
       Height = 21
-      Date = 39092.000000000000000000
-      Time = 0.942361111112404600
-      DateMode = dmUpDown
-      Font.Charset = DEFAULT_CHARSET
+      Top = 61
+      Width = 71
+      CenturyFrom = 1941
+      MaxDate = 2958465
+      MinDate = -53780
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
-      Kind = dtkTime
       ParentFont = False
       TabOrder = 2
+      TrailingSeparator = False
+      LeadingZeros = True
+      Kind = dtkTime
+      TimeFormat = tf24
+      TimeDisplay = tdHMS
+      DateMode = dmUpDown
+      Date = 39092
+      Time = 0.942361111112405
+      UseDefaultSeparators = True
+      HideDateTimeParts = []
+      MonthNames = 'Long'
     end
   end
-  object grpHotkey: TGroupBox
+  object grpHotkey: TGroupBox[2]
     Left = 159
+    Height = 76
     Top = 3
     Width = 198
-    Height = 76
     Caption = 'Hotkey'
-    Font.Charset = DEFAULT_CHARSET
+    ClientHeight = 58
+    ClientWidth = 194
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -94,38 +112,41 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
     TabOrder = 1
     object cbHotKey: TCheckBox
       Left = 6
+      Height = 23
       Top = 7
-      Width = 162
-      Height = 17
+      Width = 90
       Caption = 'Active hotkey'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
+      OnClick = cbHotKeyClick
       ParentFont = False
       TabOrder = 0
-      OnClick = cbHotKeyClick
     end
     object edtHotkey: TEditButton
       Left = 6
+      Height = 21
       Top = 30
       Width = 187
-      Height = 21
-      CharCase = ecUpperCase
-      ReadOnly = True
-      TabOrder = 1
+      ButtonWidth = 23
+      CharCase = ecUppercase
+      MaxLength = 0
+      NumGlyphs = 1
       OnChange = edtHotkeyChange
       OnClick = edtHotkeyClick
+      PasswordChar = #0
+      ReadOnly = True
+      TabOrder = 1
     end
   end
-  object GroupBox1: TGroupBox
+  object GroupBox1: TGroupBox[3]
     Left = 3
+    Height = 81
     Top = 108
     Width = 354
-    Height = 81
     Caption = 'Menu'
-    Font.Charset = DEFAULT_CHARSET
+    ClientHeight = 63
+    ClientWidth = 350
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -134,43 +155,37 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
     TabOrder = 2
     object cbHideSoftware: TCheckBox
       Left = 6
+      Height = 23
       Top = 4
-      Width = 307
-      Height = 19
+      Width = 165
       Caption = 'Hide this software from menu'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 0
     end
     object cbDontInsertMRU: TCheckBox
       Left = 6
+      Height = 23
       Top = 23
-      Width = 307
-      Height = 19
+      Width = 228
       Caption = 'Don''t insert this software in recents (MRU)'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 1
     end
     object cbDontInsertMFU: TCheckBox
       Left = 6
+      Height = 23
       Top = 42
-      Width = 307
-      Height = 19
+      Width = 180
       Caption = 'Don''t insert this software in MFU'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 2
     end

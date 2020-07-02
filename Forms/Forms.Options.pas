@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, Forms.Dialog.BaseEntity, VirtualTrees,
+  Controls, Forms, Dialogs, Forms.Dialog.BaseEntity, VirtualTrees, DefaultTranslator,
   ExtCtrls, StdCtrls, Frame.BaseEntity;
 
 type

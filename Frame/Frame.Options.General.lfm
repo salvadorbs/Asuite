@@ -1,12 +1,13 @@
 inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
-  object gbStartup: TGroupBox
-    Left = 3
-    Top = 3
-    Width = 439
+  object gbStartup: TGroupBox[0]
+    Left = 0
     Height = 94
+    Top = 0
+    Width = 556
     Align = alTop
     Caption = 'Startup'
-    Font.Charset = DEFAULT_CHARSET
+    ClientHeight = 76
+    ClientWidth = 552
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -15,68 +16,61 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     TabOrder = 0
     object cbWindowsStartup: TCheckBox
       Left = 6
+      Height = 23
       Top = 4
-      Width = 420
-      Height = 17
+      Width = 218
       Caption = 'Start ASuite on Windows system startup'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 0
     end
     object cbShowPanelStartup: TCheckBox
       Left = 6
+      Height = 23
       Top = 38
-      Width = 420
-      Height = 17
+      Width = 176
       Caption = 'Show window on ASuite startup'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 2
     end
     object cbShowMenuStartup: TCheckBox
       Left = 6
+      Height = 23
       Top = 55
-      Width = 420
-      Height = 17
+      Width = 204
       Caption = 'Show graphic menu on ASuite startup'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 3
     end
     object chkMissedSchedulerTask: TCheckBox
       Left = 6
+      Height = 23
       Top = 21
-      Width = 420
-      Height = 17
+      Width = 245
       Caption = 'Check missed scheduler task at ASuite startup'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 1
     end
   end
-  object grpLanguage: TGroupBox
+  object grpLanguage: TGroupBox[1]
     Left = 3
+    Height = 47
     Top = 228
     Width = 174
-    Height = 47
     Caption = 'Language'
-    Font.Charset = DEFAULT_CHARSET
+    ClientHeight = 29
+    ClientWidth = 170
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -85,27 +79,27 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     TabOrder = 2
     object cxLanguage: TComboBox
       Left = 6
+      Height = 21
       Top = 3
       Width = 158
-      Height = 21
-      Style = csDropDownList
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
+      ItemHeight = 13
       ParentFont = False
+      Style = csDropDownList
       TabOrder = 0
     end
   end
-  object gbExecution: TGroupBox
-    Left = 3
-    Top = 100
-    Width = 439
+  object gbExecution: TGroupBox[2]
+    Left = 0
     Height = 125
+    Top = 94
+    Width = 556
     Align = alTop
     Caption = 'Execution'
-    Font.Charset = DEFAULT_CHARSET
+    ClientHeight = 107
+    ClientWidth = 552
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -114,87 +108,81 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     TabOrder = 1
     object lbActionOnExe: TLabel
       Left = 6
+      Height = 13
       Top = 39
       Width = 64
-      Height = 13
       Caption = 'On execution'
       Color = clBtnFace
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentColor = False
       ParentFont = False
+      Transparent = False
     end
     object cbRunSingleClick: TCheckBox
       Left = 6
+      Height = 23
       Top = 4
-      Width = 420
-      Height = 17
+      Width = 213
       Caption = 'Execute with single click in main window'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 0
     end
     object cxActionOnExe: TComboBox
       Left = 6
+      Height = 21
       Top = 55
       Width = 169
-      Height = 21
-      Style = csDropDownList
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 2
+      ItemHeight = 13
       Items.Strings = (
         'Just run file'
         'Run and hide ASuite'
-        'Run and close ASuite')
+        'Run and close ASuite'
+      )
+      ParentFont = False
+      Style = csDropDownList
+      TabOrder = 2
     end
     object chkConfirmMessageCat: TCheckBox
       Left = 6
+      Height = 23
       Top = 22
-      Width = 420
-      Height = 17
+      Width = 201
       Caption = 'Ask to confirm before run a category'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 1
     end
     object chkAutoCloseProcess: TCheckBox
       Left = 6
+      Height = 23
       Top = 82
-      Width = 420
-      Height = 17
+      Width = 298
       Caption = 'Close all process opened by ASuite at launcher shutdown'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 3
     end
   end
-  object grpTheme: TGroupBox
+  object grpTheme: TGroupBox[3]
     Left = 183
+    Height = 47
     Top = 228
     Width = 174
-    Height = 47
     Caption = 'Theme'
-    Font.Charset = DEFAULT_CHARSET
+    ClientHeight = 29
+    ClientWidth = 170
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -203,21 +191,21 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     TabOrder = 3
     object cbTheme: TComboBox
       Left = 6
+      Height = 21
       Top = 3
       Width = 158
-      Height = 21
-      Style = csDropDownList
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 0
+      ItemHeight = 13
       Items.Strings = (
         'Windows settings'
         'Light'
-        'Dark')
+        'Dark'
+      )
+      ParentFont = False
+      Style = csDropDownList
+      TabOrder = 0
     end
   end
 end

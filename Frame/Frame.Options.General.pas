@@ -24,8 +24,7 @@ unit Frame.Options.General;
 interface
 
 uses
-  LCLIntf, SysUtils,
-  Dialogs, Frame.BaseEntity, StdCtrls;
+  LCLIntf, SysUtils, Dialogs, Frame.BaseEntity, StdCtrls, DefaultTranslator;
 
 type
   TfrmGeneralOptionsPage = class(TfrmBaseEntityPage)
@@ -62,7 +61,7 @@ var
 implementation
 
 uses
-  AppConfig.Main, Kernel.Enumerations;
+  AppConfig.Main, Kernel.Enumerations, Kernel.ResourceStrings;
 
 {$R *.lfm}
 
@@ -75,7 +74,7 @@ end;
 
 function TfrmGeneralOptionsPage.GetTitle: string;
 begin
-  //Result := DKLangConstW('msgGeneral');
+  Result := msgGeneral;
 end;
 
 function TfrmGeneralOptionsPage.InternalLoadData: Boolean;

@@ -1,13 +1,15 @@
 inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
   Height = 405
-  object gbHotkey: TGroupBox
-    Left = 3
-    Top = 3
-    Width = 439
+  ClientHeight = 405
+  object gbHotkey: TGroupBox[0]
+    Left = 0
     Height = 118
+    Top = 0
+    Width = 556
     Align = alTop
     Caption = 'Hotkey'
-    Font.Charset = DEFAULT_CHARSET
+    ClientHeight = 100
+    ClientWidth = 552
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -16,100 +18,108 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     TabOrder = 0
     object lblHotkeyWindow: TLabel
       Left = 6
+      Height = 13
       Top = 25
       Width = 181
-      Height = 13
       Caption = 'Show window when hotkey is pressed'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
+      ParentColor = False
       ParentFont = False
     end
     object lblHotkeyGM: TLabel
       Left = 6
+      Height = 13
       Top = 53
       Width = 209
-      Height = 13
       Caption = 'Show graphic menu when hotkey is pressed'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
+      ParentColor = False
       ParentFont = False
     end
     object lblHotkeyCM: TLabel
       Left = 6
+      Height = 13
       Top = 80
       Width = 204
-      Height = 13
       Caption = 'Show classic menu when hotkey is pressed'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
+      ParentColor = False
       ParentFont = False
     end
     object cbHotKey: TCheckBox
       Left = 6
+      Height = 23
       Top = 2
-      Width = 419
-      Height = 17
+      Width = 92
       Caption = 'Enable hotkey'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
+      OnClick = cbHotKeyClick
       ParentFont = False
       TabOrder = 0
-      OnClick = cbHotKeyClick
     end
     object edtHotkeyMF: TEditButton
       Left = 246
+      Height = 21
       Top = 23
       Width = 179
-      Height = 21
-      CharCase = ecUpperCase
-      ReadOnly = True
-      TabOrder = 1
+      ButtonWidth = 23
+      CharCase = ecUppercase
+      MaxLength = 0
+      NumGlyphs = 1
       OnChange = edtHotkeyChange
       OnClick = edtHotkeyClick
+      PasswordChar = #0
+      ReadOnly = True
+      TabOrder = 1
     end
     object edtHotkeyGM: TEditButton
       Left = 246
+      Height = 21
       Top = 50
       Width = 179
-      Height = 21
-      CharCase = ecUpperCase
-      ReadOnly = True
-      TabOrder = 2
+      ButtonWidth = 23
+      CharCase = ecUppercase
+      MaxLength = 0
+      NumGlyphs = 1
       OnChange = edtHotkeyChange
       OnClick = edtHotkeyClick
+      PasswordChar = #0
+      ReadOnly = True
+      TabOrder = 2
     end
     object edtHotkeyCM: TEditButton
       Left = 246
+      Height = 21
       Top = 77
       Width = 179
-      Height = 21
-      CharCase = ecUpperCase
-      ReadOnly = True
-      TabOrder = 3
+      ButtonWidth = 23
+      CharCase = ecUppercase
+      MaxLength = 0
+      NumGlyphs = 1
       OnChange = edtHotkeyChange
       OnClick = edtHotkeyClick
+      PasswordChar = #0
+      ReadOnly = True
+      TabOrder = 3
     end
   end
-  object grpOrderSoftware: TGroupBox
-    Left = 3
-    Top = 127
-    Width = 439
-    Height = 273
+  object grpOrderSoftware: TGroupBox[1]
+    Left = 0
+    Height = 287
+    Top = 118
+    Width = 556
     Align = alClient
     Caption = 'Hotkey list used'
-    Font.Charset = DEFAULT_CHARSET
+    ClientHeight = 269
+    ClientWidth = 552
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -117,19 +127,19 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     ParentFont = False
     TabOrder = 1
     object vstItems: TVirtualStringTree
-      Left = 3
-      Top = 4
-      Width = 429
-      Height = 250
+      Left = 0
+      Height = 269
+      Top = 0
+      Width = 552
       Align = alClient
       DefaultNodeHeight = 32
       DragOperations = []
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       Header.AutoSizeIndex = 0
+      Header.Columns = <>
+      Header.MainColumn = -1
       Header.Options = [hoColumnResize, hoDblClickResize, hoDrag, hoVisible, hoHeaderClickAutoSort]
       ParentFont = False
       PopupMenu = pmHotkey
@@ -139,7 +149,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       TreeOptions.SelectionOptions = [toFullRowSelect, toRightClickSelect]
     end
   end
-  object pmHotkey: TPopupMenu
+  object pmHotkey: TPopupMenu[2]
     Left = 264
     Top = 200
     object mniEditHotkey: TMenuItem

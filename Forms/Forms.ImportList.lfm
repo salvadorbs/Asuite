@@ -1,15 +1,16 @@
 object frmImportList: TfrmImportList
   Left = 749
-  Height = 330
+  Height = 412
   Top = 202
-  Width = 287
+  Width = 359
   BorderStyle = bsDialog
   Caption = 'Import list'
-  ClientHeight = 330
-  ClientWidth = 287
+  ClientHeight = 412
+  ClientWidth = 359
   Color = clBtnFace
+  DesignTimePPI = 120
   Font.Color = clWindowText
-  Font.Height = -11
+  Font.Height = -14
   Font.Name = 'Tahoma'
   OnClose = FormClose
   OnCreate = FormCreate
@@ -18,69 +19,85 @@ object frmImportList: TfrmImportList
   object bvl1: TBevel
     Left = 0
     Height = 2
-    Top = 293
-    Width = 287
+    Top = 365
+    Width = 359
     Align = alTop
     Shape = bsBottomLine
   end
   object bvl2: TBevel
     Left = 0
     Height = 2
-    Top = 49
-    Width = 287
+    Top = 61
+    Width = 359
     Align = alTop
     Shape = bsBottomLine
   end
   object btnBack: TButton
-    Left = 45
-    Height = 23
-    Top = 301
-    Width = 75
+    Left = 56
+    Height = 29
+    Top = 376
+    Width = 94
     Caption = '< Back'
     Enabled = False
+    Font.Color = clWindowText
+    Font.Height = -14
+    Font.Name = 'Tahoma'
     OnClick = btnBackClick
+    ParentFont = False
     TabOrder = 2
   end
   object btnNext: TButton
-    Left = 123
-    Height = 23
-    Top = 301
-    Width = 75
+    Left = 154
+    Height = 29
+    Top = 376
+    Width = 94
     Caption = 'Next >'
     Default = True
+    Font.Color = clWindowText
+    Font.Height = -14
+    Font.Name = 'Tahoma'
     OnClick = btnNextClick
+    ParentFont = False
     TabOrder = 3
   end
   object btnCancel: TButton
-    Left = 204
-    Height = 23
-    Top = 301
-    Width = 75
+    Left = 255
+    Height = 29
+    Top = 376
+    Width = 94
     Cancel = True
     Caption = 'Cancel'
+    Font.Color = clWindowText
+    Font.Height = -14
+    Font.Name = 'Tahoma'
     ModalResult = 2
+    ParentFont = False
     TabOrder = 4
   end
   object pnlHeader: TPanel
     Left = 0
-    Height = 49
+    Height = 61
     Top = 0
-    Width = 287
+    Width = 359
     Align = alTop
     BevelOuter = bvNone
-    ClientHeight = 49
-    ClientWidth = 287
+    ClientHeight = 61
+    ClientWidth = 359
+    Font.Color = clWindowText
+    Font.Height = -14
+    Font.Name = 'Tahoma'
+    ParentFont = False
     TabOrder = 0
     object lblTitle: TLabel
-      Left = 14
-      Height = 30
-      Top = 6
-      Width = 257
+      Left = 18
+      Height = 38
+      Top = 8
+      Width = 321
       AutoSize = False
       Caption = 'Placeholder text'
       Color = clBtnFace
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -14
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentColor = False
@@ -91,61 +108,69 @@ object frmImportList: TfrmImportList
   end
   object pgcImport: TPageControl
     Left = 0
-    Height = 242
-    Top = 51
-    Width = 287
+    Height = 302
+    Top = 63
+    Width = 359
     ActivePage = tsList
     Align = alTop
+    Font.Color = clWindowText
+    Font.Height = -14
+    Font.Name = 'Tahoma'
+    ParentFont = False
     TabIndex = 1
     TabOrder = 1
     object tsAskFileList: TTabSheet
       Caption = 'tsAskFileList'
       ClientHeight = 0
       ClientWidth = 0
+      Font.Color = clWindowText
+      Font.Height = -14
+      Font.Name = 'Tahoma'
       ImageIndex = 1
       OnShow = tsAskFileListShow
+      ParentFont = False
       TabVisible = False
       object gbFile: TGroupBox
-        Left = 13
-        Height = 82
-        Top = 75
-        Width = 253
+        Left = 16
+        Height = 102
+        Top = 94
+        Width = 316
         Caption = 'File List'
-        ClientHeight = 82
-        ClientWidth = 253
+        ClientHeight = 80
+        ClientWidth = 312
         Font.Color = clWindowText
-        Font.Height = -11
+        Font.Height = -14
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 0
         object lblFile: TLabel
-          Left = 9
+          Left = 11
           Height = 13
-          Top = 10
+          Top = 12
           Width = 107
           Caption = 'Launcher File location:'
           Color = clBtnFace
           Font.Color = clWindowText
-          Font.Height = -11
+          Font.Height = -14
           Font.Name = 'Tahoma'
           ParentColor = False
           ParentFont = False
           Transparent = False
         end
         object edtPathList: TFileNameEdit
-          Left = 9
+          Left = 11
           Height = 21
-          Top = 26
-          Width = 230
+          Top = 32
+          Width = 288
           DialogOptions = [ofHideReadOnly, ofEnableSizing]
           Filter = 'All list supported|*.xml;*.sqlite;*.bck;*.sqbck|ASuite 2.x List (*.sqlite, *.sqbck)|*.sqlite;*.sqbck|ASuite 1.x List (*.xml, *.bck)|*.xml;*.bck|winPenPack 1.x List (*.xml)|*.xml|PStart 2.x List (*.xml)|*.xml'
           FilterIndex = 0
           HideDirectories = False
-          ButtonWidth = 23
+          ButtonWidth = 29
           NumGlyphs = 1
           Font.Color = clWindowText
-          Font.Height = -11
+          Font.Height = -14
           Font.Name = 'Tahoma'
           MaxLength = 0
           ParentFont = False
@@ -156,20 +181,24 @@ object frmImportList: TfrmImportList
     end
     object tsList: TTabSheet
       Caption = 'tsItems'
-      ClientHeight = 0
-      ClientWidth = 0
+      ClientHeight = 272
+      ClientWidth = 351
+      Font.Color = clWindowText
+      Font.Height = -14
+      Font.Name = 'Tahoma'
       ImageIndex = 2
       OnShow = tsListShow
+      ParentFont = False
       TabVisible = False
       object vstListImp: TVirtualStringTree
-        Left = 12
-        Height = 204
-        Top = 3
-        Width = 253
+        Left = 15
+        Height = 255
+        Top = 4
+        Width = 316
         AnimationDuration = 0
         DragMode = dmAutomatic
         Font.Color = clWindowText
-        Font.Height = -11
+        Font.Height = -14
         Font.Name = 'MS Sans Serif'
         Header.AutoSizeIndex = 0
         Header.Columns = <>
@@ -189,21 +218,29 @@ object frmImportList: TfrmImportList
         OnChecked = vstListImpChecked
       end
       object btnSelectAll: TButton
-        Left = 32
-        Height = 17
-        Top = 213
-        Width = 105
+        Left = 40
+        Height = 21
+        Top = 266
+        Width = 131
         Caption = 'Select all'
+        Font.Color = clWindowText
+        Font.Height = -14
+        Font.Name = 'Tahoma'
         OnClick = btnSelectAllClick
+        ParentFont = False
         TabOrder = 1
       end
       object btnDeselectAll: TButton
-        Left = 143
-        Height = 17
-        Top = 213
-        Width = 105
+        Left = 179
+        Height = 21
+        Top = 266
+        Width = 131
         Caption = 'Deselect all'
+        Font.Color = clWindowText
+        Font.Height = -14
+        Font.Name = 'Tahoma'
         OnClick = btnDeselectAllClick
+        ParentFont = False
         TabOrder = 2
       end
     end

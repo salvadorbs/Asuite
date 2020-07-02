@@ -24,8 +24,8 @@ unit Frame.Properties.General.Software;
 interface
 
 uses
-  SysUtils, Graphics,
-  Dialogs, StdCtrls, Frame.Properties.General, EditBtn;
+  SysUtils, Graphics, Dialogs, StdCtrls, Frame.Properties.General, EditBtn,
+  DefaultTranslator;
 
 type
   TfrmSWGeneralPropertyPage = class(TfrmBaseGeneralPropertyPage)

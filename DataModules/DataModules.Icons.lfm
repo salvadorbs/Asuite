@@ -1,7 +1,8 @@
 object dmImages: TdmImages
   OldCreateOrder = False
-  Height = 120
-  HorizontalOffset = 976
-  VerticalOffset = 378
-  Width = 201
+  Height = 150
+  HorizontalOffset = 1220
+  VerticalOffset = 473
+  Width = 251
+  PPI = 120
 end

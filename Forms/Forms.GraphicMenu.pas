@@ -25,18 +25,17 @@ interface
 
 uses
   LCLIntf, LCLType, Classes, Forms, StdCtrls, ExtCtrls, ComCtrls, Messages,
-	Controls, Graphics, Dialogs, SysUtils, VirtualTrees, {AppEvnts,
-  Imaging.pngimage,} cySkinButton, Menus, EditBtn,
-  Lists.Base;
+  Controls, Graphics, Dialogs, SysUtils, VirtualTrees, cySkinButton, Menus, EditBtn,
+  Lists.Base, DefaultTranslator;
 
 type
 
-	TfrmGraphicMenu = class(TForm)
-  	imgDriveSpace: TImage;
-	  imgDivider2: TImage;
-  	lblDriveName: TLabel;
-  	lblDriveSpace: TLabel;
-   	tmrFader: TTimer;
+  TfrmGraphicMenu = class(TForm)
+    imgDriveSpace: TImage;
+    imgDivider2: TImage;
+    lblDriveName: TLabel;
+    lblDriveSpace: TLabel;
+    tmrFader: TTimer;
     imgLogo: TImage;
     imgPersonalPicture: TImage;
     vstList: TVirtualStringTree;

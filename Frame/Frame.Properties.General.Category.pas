@@ -24,8 +24,8 @@ unit Frame.Properties.General.Category;
 interface
 
 uses
-  LCLIntf, SysUtils,
-  Controls, Dialogs, StdCtrls, VirtualTrees, Frame.Properties.General;
+  LCLIntf, SysUtils, Controls, Dialogs, StdCtrls, VirtualTrees,
+  Frame.Properties.General, DefaultTranslator;
 
 type
   TfrmCatGeneralPropertyPage = class(TfrmBaseGeneralPropertyPage)

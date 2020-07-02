@@ -24,9 +24,8 @@ unit Forms.Dialog.BaseEntity;
 interface
 
 uses
-  LCLIntf, LCLType, SysUtils, Classes,
-  Controls, Forms, Dialogs, ExtCtrls, ComCtrls,
-  StdCtrls, Frame.BaseEntity, VirtualTrees;
+  LCLIntf, LCLType, SysUtils, Classes, Controls, Forms, Dialogs, ExtCtrls, ComCtrls,
+  StdCtrls, Frame.BaseEntity, VirtualTrees, DefaultTranslator;
 
 type
   TfrmDialogBase = class(TForm)

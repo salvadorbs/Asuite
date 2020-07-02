@@ -24,9 +24,8 @@ unit Forms.PropertyItem;
 interface
 
 uses
-  SysUtils, Classes,
-  Controls, Forms, Dialogs, Forms.Dialog.BaseEntity,
-  StdCtrls, NodeDataTypes.Custom;
+  SysUtils, Classes, Controls, Forms, Dialogs, Forms.Dialog.BaseEntity, StdCtrls,
+  NodeDataTypes.Custom, DefaultTranslator;
 
 type
   TfrmPropertyItem = class(TfrmDialogBase)

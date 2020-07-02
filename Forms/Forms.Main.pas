@@ -24,11 +24,9 @@ unit Forms.Main;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
-  ComCtrls, VirtualTrees, ActiveX, Kernel.Consts, DataModules.Icons,
-  Kernel.BaseMainForm, StdCtrls, Buttons, UITypes,
-  Kernel.Enumerations, ExtCtrls, {XMLDoc,} Lists.Manager,
-  Database.Manager, {Actions,} ActnList, Themes, EditBtn;
+  LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
+  ComCtrls, VirtualTrees, Kernel.Consts, DataModules.Icons, Kernel.BaseMainForm,
+  StdCtrls, Kernel.Enumerations, ExtCtrls, ActnList, EditBtn, DefaultTranslator;
 
 type
 

@@ -24,7 +24,7 @@ unit Forms.About;
 interface
 
 uses
-  LCLIntf, SysUtils, Forms, Dialogs, StdCtrls, ExtCtrls, ATLinkLabel;
+  LCLIntf, SysUtils, Forms, Dialogs, StdCtrls, ExtCtrls, ATLinkLabel, DefaultTranslator;
 
 type
 

@@ -26,8 +26,8 @@ unit DataModules.Icons;
 interface
 
 uses
-  SysUtils, Classes, Controls, LCLIntf, LCLType, Graphics, Dialogs,
-  CommCtrl, kgraphics, kicon, Windows;
+  SysUtils, Classes, Controls, LCLIntf, LCLType, Graphics, Dialogs, CommCtrl,
+  kgraphics, kicon, Windows, DefaultTranslator;
 
 type
 

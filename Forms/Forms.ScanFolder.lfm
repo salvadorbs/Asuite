@@ -1,109 +1,123 @@
 object frmScanFolder: TfrmScanFolder
   Left = 0
-  Height = 256
+  Height = 320
   Top = 0
-  Width = 579
+  Width = 724
   BorderStyle = bsDialog
   Caption = 'Scan folder'
-  ClientHeight = 256
-  ClientWidth = 579
+  ClientHeight = 320
+  ClientWidth = 724
   Color = clBtnFace
+  DesignTimePPI = 120
   Font.Color = clWindowText
-  Font.Height = -11
+  Font.Height = -14
   Font.Name = 'Tahoma'
   OnCreate = FormCreate
   Position = poMainFormCenter
+  LCLVersion = '2.1.0.0'
   object btnScan: TButton
-    Left = 415
-    Height = 25
-    Top = 224
-    Width = 75
+    Left = 519
+    Height = 31
+    Top = 280
+    Width = 94
     Anchors = [akRight, akBottom]
     Caption = 'Scan'
     Default = True
+    Font.Color = clWindowText
+    Font.Height = -14
+    Font.Name = 'Tahoma'
     OnClick = btnScanClick
+    ParentFont = False
     TabOrder = 2
   end
   object btnCancel: TButton
-    Left = 496
-    Height = 25
-    Top = 223
-    Width = 75
+    Left = 620
+    Height = 31
+    Top = 279
+    Width = 94
     Anchors = [akRight, akBottom]
     Caption = 'Cancel'
+    Font.Color = clWindowText
+    Font.Height = -14
+    Font.Name = 'Tahoma'
     OnClick = btnCancelClick
+    ParentFont = False
     TabOrder = 3
   end
   object pnlFilters: TPanel
-    Left = 207
-    Height = 210
-    Top = 8
-    Width = 364
+    Left = 259
+    Height = 262
+    Top = 10
+    Width = 455
     Anchors = [akTop, akRight, akBottom]
-    ClientHeight = 210
-    ClientWidth = 364
+    ClientHeight = 262
+    ClientWidth = 455
+    Font.Color = clWindowText
+    Font.Height = -14
+    Font.Name = 'Tahoma'
+    ParentFont = False
     TabOrder = 1
     object grpFileTypes: TGroupBox
-      Left = 6
-      Height = 114
-      Top = 61
-      Width = 169
+      Left = 8
+      Height = 142
+      Top = 76
+      Width = 211
       Caption = 'File Types'
-      ClientHeight = 96
-      ClientWidth = 165
+      ClientHeight = 120
+      ClientWidth = 207
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -14
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 1
       object btnTypesDelete: TButton
-        Left = 101
-        Height = 17
-        Top = 58
-        Width = 58
+        Left = 126
+        Height = 21
+        Top = 72
+        Width = 72
         Caption = 'Delete'
         Enabled = False
         Font.Color = clWindowText
-        Font.Height = -11
+        Font.Height = -14
         Font.Name = 'Tahoma'
         OnClick = btnTypesDeleteClick
         ParentFont = False
         TabOrder = 3
       end
       object btnTypesAdd: TButton
-        Left = 101
-        Height = 17
-        Top = 35
-        Width = 58
+        Left = 126
+        Height = 21
+        Top = 44
+        Width = 72
         Caption = 'Add'
         Enabled = False
         Font.Color = clWindowText
-        Font.Height = -11
+        Font.Height = -14
         Font.Name = 'Tahoma'
         OnClick = btnTypesAddClick
         ParentFont = False
         TabOrder = 2
       end
       object edtTypes: TEdit
-        Left = 101
-        Height = 21
-        Top = 8
-        Width = 58
+        Left = 126
+        Height = 25
+        Top = 10
+        Width = 72
         Font.Color = clWindowText
-        Font.Height = -11
+        Font.Height = -14
         Font.Name = 'Tahoma'
         OnChange = edtTypesChange
         ParentFont = False
         TabOrder = 1
       end
       object vstTypes: TVirtualStringTree
-        Left = 7
-        Height = 83
-        Top = 8
-        Width = 88
+        Left = 9
+        Height = 104
+        Top = 10
+        Width = 110
         Font.Color = clWindowText
-        Font.Height = -11
+        Font.Height = -14
         Font.Name = 'Tahoma'
         Header.AutoSizeIndex = 0
         Header.Columns = <>
@@ -122,66 +136,66 @@ object frmScanFolder: TfrmScanFolder
       end
     end
     object grpExclude: TGroupBox
-      Left = 181
-      Height = 114
-      Top = 61
-      Width = 169
+      Left = 226
+      Height = 142
+      Top = 76
+      Width = 211
       Caption = 'Exclude files'
-      ClientHeight = 96
-      ClientWidth = 165
+      ClientHeight = 120
+      ClientWidth = 207
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -14
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 2
       object edtExclude: TEdit
-        Left = 101
-        Height = 21
-        Top = 8
-        Width = 58
+        Left = 126
+        Height = 25
+        Top = 10
+        Width = 72
         Font.Color = clWindowText
-        Font.Height = -11
+        Font.Height = -14
         Font.Name = 'Tahoma'
         OnChange = edtExcludeChange
         ParentFont = False
         TabOrder = 1
       end
       object btnExcludeAdd: TButton
-        Left = 101
-        Height = 17
-        Top = 35
-        Width = 58
+        Left = 126
+        Height = 21
+        Top = 44
+        Width = 72
         Caption = 'Add'
         Enabled = False
         Font.Color = clWindowText
-        Font.Height = -11
+        Font.Height = -14
         Font.Name = 'Tahoma'
         OnClick = btnExcludeAddClick
         ParentFont = False
         TabOrder = 2
       end
       object btnExcludeDelete: TButton
-        Left = 101
-        Height = 17
-        Top = 58
-        Width = 58
+        Left = 126
+        Height = 21
+        Top = 72
+        Width = 72
         Caption = 'Delete'
         Enabled = False
         Font.Color = clWindowText
-        Font.Height = -11
+        Font.Height = -14
         Font.Name = 'Tahoma'
         OnClick = btnExcludeDeleteClick
         ParentFont = False
         TabOrder = 3
       end
       object vstExclude: TVirtualStringTree
-        Left = 7
-        Height = 83
-        Top = 8
-        Width = 88
+        Left = 9
+        Height = 104
+        Top = 10
+        Width = 110
         Font.Color = clWindowText
-        Font.Height = -11
+        Font.Height = -14
         Font.Name = 'Tahoma'
         Header.AutoSizeIndex = 0
         Header.Columns = <>
@@ -198,58 +212,66 @@ object frmScanFolder: TfrmScanFolder
       end
     end
     object grpGeneralSettings: TGroupBox
-      Left = 6
-      Height = 50
-      Top = 5
-      Width = 345
+      Left = 8
+      Height = 62
+      Top = 6
+      Width = 431
       Caption = 'General settings'
-      ClientHeight = 32
-      ClientWidth = 341
+      ClientHeight = 40
+      ClientWidth = 427
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -14
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 0
       object chkExtractName: TCheckBox
-        Left = 12
-        Height = 19
-        Top = 8
-        Width = 298
+        Left = 15
+        Height = 23
+        Top = 10
+        Width = 378
         Caption = 'Extract name automatically from executables (only *.exe)'
         Font.Color = clWindowText
-        Font.Height = -11
+        Font.Height = -14
         Font.Name = 'Tahoma'
         ParentFont = False
         TabOrder = 0
       end
     end
     object pbScan: TProgressBar
-      Left = 6
-      Height = 18
-      Top = 181
-      Width = 345
+      Left = 8
+      Height = 22
+      Top = 226
+      Width = 431
+      Font.Color = clWindowText
+      Font.Height = -14
+      Font.Name = 'Tahoma'
+      ParentFont = False
       Smooth = True
       TabOrder = 3
     end
   end
   object vstShell: TShellTreeView
-    Left = 8
-    Height = 210
-    Top = 8
-    Width = 193
+    Left = 10
+    Height = 262
+    Top = 10
+    Width = 242
     Anchors = [akTop, akLeft, akRight, akBottom]
+    Font.Color = clWindowText
+    Font.Height = -14
+    Font.Name = 'Tahoma'
     FileSortType = fstNone
+    ParentFont = False
     TabOrder = 0
     ObjectTypes = [otFolders]
   end
   object ilExtIcons: TImageList
-    Left = 328
-    Top = 224
+    Left = 410
+    Top = 280
   end
   object vfsScan: TcySearchFiles
     SubDirectories = True
-    Left = 288
-    Top = 224
+    Left = 360
+    Top = 280
   end
 end

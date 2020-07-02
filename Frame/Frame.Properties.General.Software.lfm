@@ -6,29 +6,28 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
     inherited edtPathIcon: TFileNameEdit
       TabOrder = 2
     end
-    object btnExtractName: TButton
+    object btnExtractName: TButton[4]
       Left = 214
+      Height = 21
       Top = 10
       Width = 130
-      Height = 21
       Caption = 'Extract name from exe'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
+      OnClick = btnExtractNameClick
       ParentFont = False
       TabOrder = 1
-      OnClick = btnExtractNameClick
     end
   end
-  object grpSoftware: TGroupBox
+  object grpSoftware: TGroupBox[1]
     Left = 3
+    Height = 184
     Top = 88
     Width = 354
-    Height = 184
     Caption = 'Path'
-    Font.Charset = DEFAULT_CHARSET
+    ClientHeight = 166
+    ClientWidth = 350
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -37,112 +36,109 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
     TabOrder = 1
     object lbWorkingDir: TLabel
       Left = 6
+      Height = 13
       Top = 37
       Width = 171
-      Height = 13
       Caption = 'Custom working directory (optional)'
       Color = clBtnFace
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentColor = False
       ParentFont = False
+      Transparent = False
     end
     object lbInfo2: TLabel
       Left = 6
+      Height = 52
       Top = 110
       Width = 338
-      Height = 52
       AutoSize = False
-      Caption = 
-        'Note: You can use these vars (included environment variables) in' +
-        ' relative path:'#13#10'- $asuite = ASuite folder path ("%s")'#13#10'- $drive' +
-        ' = drive path ("%s")'
+      Caption = 'Note: You can use these vars (included environment variables) in relative path:'#13#10'- $asuite = ASuite folder path ("%s")'#13#10'- $drive = drive path ("%s")'
       Color = clBtnFace
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentColor = False
       ParentFont = False
+      Transparent = False
       WordWrap = True
     end
     object lbParameters: TLabel
       Left = 6
+      Height = 13
       Top = 71
       Width = 104
-      Height = 13
       Caption = 'Parameters (optional)'
       Color = clBtnFace
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentColor = False
       ParentFont = False
+      Transparent = False
     end
     object lbPathExe: TLabel
       Left = 6
+      Height = 13
       Top = 3
       Width = 161
-      Height = 13
       Caption = 'Executable/folder/web page path'
       Color = clBtnFace
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentColor = False
       ParentFont = False
+      Transparent = False
     end
     object edtParameters: TEdit
       Left = 6
+      Height = 21
       Top = 84
       Width = 267
-      Height = 21
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 2
     end
     object edtWorkingDir: TDirectoryEdit
       Left = 6
+      Height = 21
       Top = 50
       Width = 338
-      Height = 21
-      Font.Charset = DEFAULT_CHARSET
+      Directory = '$ASuite\'
+      ShowHidden = False
+      ButtonWidth = 23
+      NumGlyphs = 1
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
+      MaxLength = 0
       ParentFont = False
       TabOrder = 1
-      Text = '$ASuite\'
       OnChange = edtWorkingDirChange
+      Text = '$ASuite\'
     end
     object edtPathExe: TFileNameEdit
       Left = 6
+      Height = 21
       Top = 16
       Width = 338
-      Height = 21
       DialogOptions = [ofHideReadOnly, ofEnableSizing]
-      Font.Charset = DEFAULT_CHARSET
+      FilterIndex = 0
+      HideDirectories = False
+      ButtonWidth = 23
+      NumGlyphs = 1
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
+      MaxLength = 0
       ParentFont = False
       TabOrder = 0
-      Text = '$ASuite\'
       OnChange = edtPathExeChange
+      Text = '$ASuite\'
     end
   end
 end

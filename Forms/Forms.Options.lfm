@@ -1,25 +1,22 @@
 inherited frmOptions: TfrmOptions
   Caption = 'Options'
-  ClientHeight = 450
-  ClientWidth = 650
-  PixelsPerInch = 96
   inherited btnOk: TButton
-    Left = 406
-    Top = 419
+    Left = 455
+    Top = 375
   end
   inherited btnCancel: TButton
-    Left = 487
-    Top = 419
+    Left = 536
+    Top = 375
   end
   inherited pnlDialogPage: TPanel
-    Width = 452
-    Height = 405
+    Height = 361
+    Width = 501
   end
   inherited vstCategory: TVirtualStringTree
-    Height = 405
+    Height = 361
   end
   inherited btnApply: TButton
-    Left = 568
-    Top = 419
+    Left = 617
+    Top = 375
   end
 end

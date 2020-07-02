@@ -24,7 +24,8 @@ unit Forms.PropertySeparator;
 interface
 
 uses
-  SysUtils, Classes, Controls, Forms, Dialogs, NodeDataTypes.Base, StdCtrls, ExtCtrls;
+  SysUtils, Classes, Controls, Forms, Dialogs, NodeDataTypes.Base, StdCtrls,
+  ExtCtrls, DefaultTranslator;
 
 type
   TfrmPropertySeparator = class(TForm)

@@ -24,8 +24,8 @@ unit Frame.Properties.Base;
 interface
 
 uses
-  SysUtils, Classes,
-  Controls, Dialogs, NodeDataTypes.Custom, Frame.BaseEntity;
+  SysUtils, Classes, Controls, Dialogs, NodeDataTypes.Custom, Frame.BaseEntity,
+  DefaultTranslator;
 
 type
   TfrmBasePropertyPage = class(TfrmBaseEntityPage)

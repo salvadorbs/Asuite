@@ -24,9 +24,9 @@ unit Forms.ShortcutGrabber;
 interface
 
 uses
-  LCLIntf, LCLType, SysUtils, Classes, Graphics,
-  Controls, Forms, Dialogs, StdCtrls, Menus, ComCtrls, cySkinButton, ExtCtrls,
-  hotkey, Windows;
+  LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, Menus, ComCtrls, cySkinButton, ExtCtrls, hotkey, Windows,
+  DefaultTranslator;
 
 type
   TfrmShortcutGrabber = class(TForm)

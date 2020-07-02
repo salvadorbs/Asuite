@@ -1,13 +1,15 @@
 inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
   Height = 405
-  object grpStartupOrderItems: TGroupBox
-    Left = 3
-    Top = 3
-    Width = 439
+  ClientHeight = 405
+  object grpStartupOrderItems: TGroupBox[0]
+    Left = 0
     Height = 200
+    Top = 0
+    Width = 556
     Align = alTop
     Caption = 'Startup'
-    Font.Charset = DEFAULT_CHARSET
+    ClientHeight = 182
+    ClientWidth = 552
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -16,45 +18,42 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
     TabOrder = 0
     object lblStartupInfo: TLabel
       Left = 6
+      Height = 13
       Top = 29
       Width = 193
-      Height = 13
       Caption = 'Order of startup autorun items in ASuite'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
+      ParentColor = False
       ParentFont = False
     end
     object chkStartup: TCheckBox
       Left = 6
+      Height = 23
       Top = 6
-      Width = 409
-      Height = 19
+      Width = 135
       Caption = 'Enable startup autorun'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 0
     end
     object vstStartupItems: TVirtualStringTree
-      Left = 3
-      Top = 45
-      Width = 394
+      Left = 0
       Height = 136
+      Top = 46
+      Width = 552
       Align = alBottom
       DefaultNodeHeight = 32
       DragOperations = []
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       Header.AutoSizeIndex = 0
+      Header.Columns = <>
+      Header.MainColumn = -1
       Header.Options = [hoColumnResize, hoVisible]
       ParentFont = False
       PopupMenu = pmAutorun
@@ -65,59 +64,54 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       OnGetPopupMenu = vstGetPopupMenu
     end
     object btnStartupUp: TKSpeedButton
-      Left = 403
+      Left = 510
+      Height = 25
       Top = 74
       Width = 27
-      Height = 25
       Anchors = [akTop]
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clBtnText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 2
       OnClick = btnStartupUpClick
     end
     object btnStartupDelete: TKSpeedButton
-      Left = 403
+      Left = 510
+      Height = 25
       Top = 105
       Width = 27
-      Height = 25
       Anchors = [akTop]
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clBtnText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 3
       OnClick = btnStartupDeleteClick
     end
     object btnStartupDown: TKSpeedButton
-      Left = 403
+      Left = 510
+      Height = 25
       Top = 136
       Width = 27
-      Height = 25
       Anchors = [akTop]
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clBtnText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 4
       OnClick = btnStartupDownClick
     end
   end
-  object grpShutdownOrderItems: TGroupBox
-    Left = 3
-    Top = 206
-    Width = 439
+  object grpShutdownOrderItems: TGroupBox[1]
+    Left = 0
     Height = 200
+    Top = 200
+    Width = 556
     Align = alTop
     Caption = 'Shutdown'
-    Font.Charset = DEFAULT_CHARSET
+    ClientHeight = 182
+    ClientWidth = 552
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -126,45 +120,42 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
     TabOrder = 1
     object lblShutdownInfo: TLabel
       Left = 6
+      Height = 13
       Top = 29
       Width = 205
-      Height = 13
       Caption = 'Order of shutdown autorun items in ASuite'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
+      ParentColor = False
       ParentFont = False
     end
     object chkShutdown: TCheckBox
       Left = 6
+      Height = 23
       Top = 6
-      Width = 409
-      Height = 19
+      Width = 147
       Caption = 'Enable shutdown autorun'
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 0
     end
     object vstShutdownItems: TVirtualStringTree
-      Left = 3
-      Top = 45
-      Width = 394
+      Left = 0
       Height = 136
+      Top = 46
+      Width = 552
       Align = alBottom
       DefaultNodeHeight = 32
       DragOperations = []
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       Header.AutoSizeIndex = 0
+      Header.Columns = <>
+      Header.MainColumn = -1
       Header.Options = [hoColumnResize, hoVisible]
       ParentFont = False
       PopupMenu = pmAutorun
@@ -175,52 +166,46 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       OnGetPopupMenu = vstGetPopupMenu
     end
     object btnShutdownDelete: TKSpeedButton
-      Left = 403
+      Left = 510
+      Height = 25
       Top = 105
       Width = 27
-      Height = 25
       Anchors = [akTop]
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clBtnText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 3
       OnClick = btnShutdownDeleteClick
     end
     object btnShutdownDown: TKSpeedButton
-      Left = 403
+      Left = 510
+      Height = 25
       Top = 136
       Width = 27
-      Height = 25
       Anchors = [akTop]
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clBtnText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 4
       OnClick = btnShutdownDownClick
     end
     object btnShutdownUp: TKSpeedButton
-      Left = 403
+      Left = 510
+      Height = 25
       Top = 74
       Width = 27
-      Height = 25
       Anchors = [akTop]
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clBtnText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentFont = False
       TabOrder = 2
       OnClick = btnShutdownUpClick
     end
   end
-  object pmAutorun: TPopupMenu
+  object pmAutorun: TPopupMenu[2]
     Left = 304
     Top = 24
     object mniRemoveAutorun: TMenuItem

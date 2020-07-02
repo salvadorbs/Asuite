@@ -24,8 +24,7 @@ unit Frame.BaseEntity;
 interface
 
 uses
-  SysUtils, Classes,
-  Controls, Forms, Dialogs;
+  SysUtils, Classes, Controls, Forms, Dialogs, DefaultTranslator;
 
 type
   TfrmBaseEntityPage = class(TFrame)

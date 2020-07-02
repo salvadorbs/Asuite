@@ -24,9 +24,8 @@ unit Frame.Options.Advanced;
 interface
 
 uses
-  LCLIntf, SysUtils, Variants,
-  Controls, Dialogs, Frame.BaseEntity, VirtualTrees,
-  StdCtrls, {Samples.Spin,} ExtCtrls, Spin;
+  LCLIntf, SysUtils, Variants, Controls, Dialogs, Frame.BaseEntity, VirtualTrees,
+  StdCtrls, ExtCtrls, Spin, DefaultTranslator;
 
 type
   TfrmAdvancedOptionsPage = class(TfrmBaseEntityPage)

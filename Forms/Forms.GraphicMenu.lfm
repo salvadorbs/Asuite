@@ -1,6 +1,8 @@
 object frmGraphicMenu: TfrmGraphicMenu
   Left = 1200
+  Height = 530
   Top = 394
+  Width = 406
   AlphaBlend = True
   AlphaBlendValue = 0
   BorderIcons = []
@@ -9,14 +11,11 @@ object frmGraphicMenu: TfrmGraphicMenu
   ClientHeight = 530
   ClientWidth = 406
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
+  DesignTimePPI = 120
   Font.Color = clWindowText
-  Font.Height = -11
+  Font.Height = -14
   Font.Name = 'Tahoma'
-  Font.Style = []
   KeyPreview = True
-  Position = poDesigned
-  Scaled = False
   OnCreate = FormCreate
   OnDeactivate = FormDeactivate
   OnHide = FormHide
@@ -24,220 +23,219 @@ object frmGraphicMenu: TfrmGraphicMenu
   OnKeyPress = FormKeyPress
   OnMouseWheel = FormMouseWheel
   OnShow = FormShow
-  PixelsPerInch = 96
+  LCLVersion = '2.1.0.0'
+  Scaled = False
   object imgBackground: TImage
     Left = 0
+    Height = 530
     Top = 0
     Width = 406
-    Height = 530
     Align = alClient
   end
   object imgDivider2: TImage
     Left = 271
+    Height = 2
     Top = 332
     Width = 128
-    Height = 2
   end
   object imgLogo: TImage
+    Cursor = crSizeAll
     Left = 15
+    Height = 50
     Top = 9
     Width = 200
-    Height = 50
-    Cursor = crSizeAll
     OnMouseDown = imgLogoMouseDown
   end
   object imgDivider1: TImage
     Left = 271
+    Height = 2
     Top = 144
     Width = 128
-    Height = 2
   end
   object sknbtnASuite: TcySkinButton
     Left = 271
+    Height = 30
     Top = 72
     Width = 128
-    Height = 30
     OnClick = OpenRightButton
   end
   object sknbtnOptions: TcySkinButton
     Left = 271
+    Height = 30
     Top = 108
     Width = 128
-    Height = 30
     OnClick = OpenRightButton
   end
   object sknbtnDocuments: TcySkinButton
     Left = 271
+    Height = 30
     Top = 152
     Width = 128
-    Height = 30
     OnClick = OpenRightButton
   end
   object sknbtnPictures: TcySkinButton
     Left = 271
+    Height = 30
     Top = 188
     Width = 128
-    Height = 30
     OnClick = OpenRightButton
   end
   object sknbtnAbout: TcySkinButton
     Left = 271
+    Height = 30
     Top = 340
     Width = 128
-    Height = 30
     OnClick = OpenRightButton
   end
   object sknbtnExplore: TcySkinButton
     Left = 271
+    Height = 30
     Top = 296
     Width = 128
-    Height = 30
     OnClick = OpenRightButton
   end
   object sknbtnVideos: TcySkinButton
     Left = 271
+    Height = 30
     Top = 260
     Width = 128
-    Height = 30
     OnClick = OpenRightButton
   end
   object sknbtnMusic: TcySkinButton
     Left = 271
+    Height = 30
     Top = 224
     Width = 128
-    Height = 30
     OnClick = OpenRightButton
   end
   object sknbtnList: TcySkinButton
     Left = 15
+    Height = 20
     Top = 72
     Width = 78
-    Height = 20
     OnClick = sknbtnListClick
     GroupIndex = 1
     Down = True
   end
   object sknbtnRecents: TcySkinButton
     Left = 96
+    Height = 20
     Top = 72
     Width = 78
-    Height = 20
     OnClick = sknbtnRecentsClick
     GroupIndex = 1
   end
   object sknbtnMFU: TcySkinButton
     Left = 177
+    Height = 20
     Top = 72
     Width = 78
-    Height = 20
     OnClick = sknbtnMFUClick
     GroupIndex = 1
   end
   object sknbtnEject: TcySkinButton
     Left = 271
+    Height = 22
     Top = 501
     Width = 60
-    Height = 22
     OnClick = sknbtnEjectClick
   end
   object sknbtnExit: TcySkinButton
     Left = 339
+    Height = 22
     Top = 501
     Width = 60
-    Height = 22
     OnClick = sknbtnExitClick
   end
   object imgDriveBackground: TImage
     Left = 8
+    Height = 22
     Top = 501
     Width = 256
-    Height = 22
     Stretch = True
   end
   object imgDriveSpace: TImage
     Left = 10
+    Height = 22
     Top = 501
     Width = 252
-    Height = 22
     Stretch = True
   end
   object lblDriveSpace: TLabel
     Left = 79
+    Height = 19
     Top = 502
     Width = 176
-    Height = 19
     Alignment = taCenter
     AutoSize = False
     Caption = '132Mb / 2Gb (6.6%)'
-    Color = clGray
-    Font.Charset = DEFAULT_CHARSET
     Font.Color = clWhite
     Font.Height = -9
     Font.Name = 'Tahoma'
-    Font.Style = []
+    Layout = tlCenter
     ParentColor = False
     ParentFont = False
-    Transparent = True
-    Layout = tlCenter
   end
   object lblDriveName: TLabel
     Left = 14
+    Height = 19
     Top = 502
     Width = 113
-    Height = 19
     AutoSize = False
-    BiDiMode = bdLeftToRight
-    Font.Charset = DEFAULT_CHARSET
     Font.Color = clWhite
     Font.Height = -9
     Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentBiDiMode = False
-    ParentFont = False
-    Transparent = True
     Layout = tlCenter
+    ParentBidiMode = False
+    ParentColor = False
+    ParentFont = False
   end
   object imgDragSpaceHidden: TImage
+    Cursor = crSizeAll
     Left = 0
+    Height = 68
     Top = 0
     Width = 406
-    Height = 68
-    Cursor = crSizeAll
     OnMouseDown = imgLogoMouseDown
   end
   object imgUserFrame: TImage
+    Cursor = crHandPoint
     Left = 341
+    Height = 56
     Top = 9
     Width = 56
-    Height = 56
-    Cursor = crHandPoint
     OnClick = imgPersonalPictureClick
   end
   object imgPersonalPicture: TImage
+    Cursor = crHandPoint
     Left = 345
+    Height = 48
     Top = 13
     Width = 48
-    Height = 48
-    Cursor = crHandPoint
-    Stretch = True
     OnClick = imgPersonalPictureClick
+    Stretch = True
   end
   object edtSearch: TEditButton
     Left = 15
+    Height = 25
     Top = 467
     Width = 240
-    Height = 21
+    ButtonWidth = 23
+    MaxLength = 0
+    NumGlyphs = 1
+    OnChange = edtSearchChange
+    PasswordChar = #0
     PopupMenu = frmMain.pmSearch
     TabOrder = 1
-    OnChange = edtSearchChange
   end
   object vstList: TVirtualStringTree
     Left = 15
+    Height = 361
     Top = 97
     Width = 240
-    Height = 361
     BorderStyle = bsNone
     Header.AutoSizeIndex = 0
+    Header.Columns = <>
     Header.MainColumn = -1
     Header.Options = [hoColumnResize, hoDrag]
     HintMode = hmHint

@@ -24,9 +24,9 @@ unit Forms.ScanFolder;
 interface
 
 uses
-  LCLIntf, LCLType, SysUtils, Classes, Graphics,
-  Controls, Forms, Dialogs, StdCtrls, ExtCtrls, VirtualTrees, ComCtrls,
-  ShellCtrls, ImgList, StrUtils, cySearchFiles;
+  LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, DefaultTranslator, ShellCtrls,
+  ImgList, StrUtils, cySearchFiles;
 
 type
   TfrmScanFolder = class(TForm)
@@ -100,8 +100,7 @@ var
 implementation
 
 uses
-  AppConfig.Main, Kernel.Types, ShellApi,
-  Kernel.Logger, Kernel.Consts;
+  AppConfig.Main, Kernel.Types, ShellApi, Kernel.Logger, Kernel.Consts;
 
 {$R *.lfm}
 
