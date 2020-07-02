@@ -52,7 +52,7 @@ type
   //Record for Options and Property form
   rFramesNodeData = record
     Title : string;
-    Frame : TPageFrameClass;
+    Frame : TfrmBaseEntityPage;
     ImageIndex: Integer;
   end;
   PFramesNodeData = ^rFramesNodeData;

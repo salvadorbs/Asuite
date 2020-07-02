@@ -52,14 +52,14 @@ type
     function InternalLoadData: Boolean; virtual;
     function InternalSaveData: Boolean; virtual;
     function AddFrameNode(Tree: TBaseVirtualTree; Parent: PVirtualNode;
-                          FramePage: TPageFrameClass): PVirtualNode;
+                          FramePage: TfrmBaseEntityPage): PVirtualNode;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
 
     property CurrentPage: TfrmBaseEntityPage read FCurrentPage write FCurrentPage;
 
-    procedure ChangePage(NewPage: TPageFrameClass);
+    procedure ChangePage(NewPage: TfrmBaseEntityPage);
   end;
 
 var
@@ -75,7 +75,7 @@ uses
 { TfrmDialogBase }
 
 function TfrmDialogBase.AddFrameNode(Tree: TBaseVirtualTree;
-  Parent: PVirtualNode; FramePage: TPageFrameClass): PVirtualNode;
+  Parent: PVirtualNode; FramePage: TfrmBaseEntityPage): PVirtualNode;
 var
   NodeData: PFramesNodeData;
 begin
@@ -114,11 +114,11 @@ begin
     ModalResult := mrNone;
 end;
 
-procedure TfrmDialogBase.ChangePage(NewPage: TPageFrameClass);
+procedure TfrmDialogBase.ChangePage(NewPage: TfrmBaseEntityPage);
 begin
   if Assigned(FCurrentPage) then
   begin
-    if FCurrentPage.ClassType = NewPage then
+    if FCurrentPage = NewPage then
       Exit
     else
      FCurrentPage.Visible := False;
@@ -173,7 +173,7 @@ begin
   begin
     NodeData := Tree.GetNodeData(Node);
 
-    if TfrmBaseEntityPage(NodeData.Frame).ClassName = AFramePage.ClassName then
+    if NodeData.Frame.ClassName = AFramePage.ClassName then
       Exit(Node);
 
     if Node.ChildCount > 0 then

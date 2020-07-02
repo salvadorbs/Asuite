@@ -87,12 +87,12 @@ begin
   Result := True;
 
   if (FListNodeData.DataType = vtdtFile) or (FListNodeData.DataType = vtdtFolder) then
-    FFrameGeneral := AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmSWGeneralPropertyPage.Create(Self, FListNodeData)))
+    FFrameGeneral := AddFrameNode(vstCategory, nil, TfrmSWGeneralPropertyPage.Create(Self, FListNodeData))
   else
     if FListNodeData.DataType = vtdtCategory then
-      FFrameGeneral := AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmCatGeneralPropertyPage.Create(Self, FListNodeData)));
-  AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmAdvancedPropertyPage.Create(Self, FListNodeData)));
-  AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmBehaviorPropertyPage.Create(Self, FListNodeData)));
+      FFrameGeneral := AddFrameNode(vstCategory, nil, TfrmCatGeneralPropertyPage.Create(Self, FListNodeData));
+  AddFrameNode(vstCategory, nil, TfrmAdvancedPropertyPage.Create(Self, FListNodeData));
+  AddFrameNode(vstCategory, nil, TfrmBehaviorPropertyPage.Create(Self, FListNodeData));
 end;
 
 function TfrmPropertyItem.InternalSaveData: Boolean;

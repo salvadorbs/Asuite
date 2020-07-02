@@ -1,11 +1,12 @@
 inherited frmBaseGeneralPropertyPage: TfrmBaseGeneralPropertyPage
-  object gbItem: TGroupBox
+  object gbItem: TGroupBox[0]
     Left = 3
+    Height = 86
     Top = 3
     Width = 354
-    Height = 86
     Caption = 'Item'
-    Font.Charset = DEFAULT_CHARSET
+    ClientHeight = 68
+    ClientWidth = 350
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -14,64 +15,63 @@ inherited frmBaseGeneralPropertyPage: TfrmBaseGeneralPropertyPage
     TabOrder = 0
     object lbName: TLabel
       Left = 6
+      Height = 13
       Top = 0
       Width = 27
-      Height = 13
       Caption = 'Name'
       Color = clBtnFace
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentColor = False
       ParentFont = False
+      Transparent = False
     end
     object lbPathIcon: TLabel
       Left = 6
+      Height = 13
       Top = 31
       Width = 132
-      Height = 13
       Caption = 'Custom icon path (optional)'
       Color = clBtnFace
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
       ParentColor = False
       ParentFont = False
+      Transparent = False
     end
     object edtName: TEdit
       Left = 6
+      Height = 21
       Top = 10
       Width = 145
-      Height = 21
-      Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
+      OnEnter = edtNameEnter
       ParentFont = False
       TabOrder = 0
-      OnEnter = edtNameEnter
     end
     object edtPathIcon: TFileNameEdit
       Left = 6
+      Height = 21
       Top = 44
       Width = 338
-      Height = 21
       DialogOptions = [ofHideReadOnly, ofEnableSizing]
-      Font.Charset = DEFAULT_CHARSET
+      FilterIndex = 0
+      HideDirectories = False
+      ButtonWidth = 23
+      NumGlyphs = 1
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
-      Font.Style = []
+      MaxLength = 0
       ParentFont = False
       TabOrder = 1
-      Text = '$ASuite\'
       OnChange = edtPathIconChange
       OnExit = edtPathIconExit
+      Text = '$ASuite\'
     end
   end
 end

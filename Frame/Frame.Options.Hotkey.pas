@@ -158,9 +158,9 @@ begin
   LoadGlyphs;
 
   //Hide caret in hotkey control
-  HideCaret(edtHotkeyMF.Handle);
-  HideCaret(edtHotkeyGM.Handle);
-  HideCaret(edtHotkeyCM.Handle);
+  //HideCaret(edtHotkeyMF.Handle);
+  //HideCaret(edtHotkeyGM.Handle);
+  //HideCaret(edtHotkeyCM.Handle);
 
   edtHotkeyMF.Color := edtHotkeyMF.Color;
   edtHotkeyGM.Color := edtHotkeyGM.Color;
