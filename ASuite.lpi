@@ -30,7 +30,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="3"/>
-      <BuildNr Value="45"/>
+      <BuildNr Value="92"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
@@ -141,43 +141,49 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
-    <RequiredPackages Count="12">
+    <RequiredPackages Count="14">
       <Item1>
-        <PackageName Value="mormot_cross"/>
+        <PackageName Value="bgracontrols"/>
       </Item1>
       <Item2>
-        <PackageName Value="mormot_base"/>
+        <PackageName Value="FCL"/>
       </Item2>
       <Item3>
-        <PackageName Value="HashLib4PascalPackage"/>
+        <PackageName Value="mormot_cross"/>
       </Item3>
       <Item4>
-        <PackageName Value="uniqueinstance_package"/>
+        <PackageName Value="mormot_base"/>
       </Item4>
       <Item5>
-        <PackageName Value="THotKey"/>
+        <PackageName Value="HashLib4PascalPackage"/>
       </Item5>
       <Item6>
-        <PackageName Value="virtualtreeview_package"/>
+        <PackageName Value="uniqueinstance_package"/>
       </Item6>
       <Item7>
-        <PackageName Value="DateTimeCtrls"/>
+        <PackageName Value="THotKey"/>
       </Item7>
       <Item8>
-        <PackageName Value="atflatcontrols_package"/>
+        <PackageName Value="virtualtreeview_package"/>
       </Item8>
       <Item9>
-        <PackageName Value="lclextensions_package"/>
+        <PackageName Value="DateTimeCtrls"/>
       </Item9>
       <Item10>
-        <PackageName Value="KControlsLaz"/>
+        <PackageName Value="atflatcontrols_package"/>
       </Item10>
       <Item11>
-        <PackageName Value="pl_cindy"/>
+        <PackageName Value="lclextensions_package"/>
       </Item11>
       <Item12>
-        <PackageName Value="LCL"/>
+        <PackageName Value="KControlsLaz"/>
       </Item12>
+      <Item13>
+        <PackageName Value="pl_cindy"/>
+      </Item13>
+      <Item14>
+        <PackageName Value="LCL"/>
+      </Item14>
     </RequiredPackages>
     <Units Count="68">
       <Unit0>

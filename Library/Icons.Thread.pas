@@ -72,10 +72,7 @@ begin
   begin
     NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
     if Assigned(NodeData) then
-    begin
-      //TODO lazarus
-      //NodeData.Icon.ImageIndex;
-    end;
+      NodeData.Icon.ImageIndex;
   end
   else
     Abort := True;

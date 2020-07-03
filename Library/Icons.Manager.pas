@@ -84,16 +84,13 @@ end;
 
 function TIconsManager.GetPathIconIndex(APathIcon: string): Integer;
 var
-  FileInfo: TSHFileInfoW;
-  Flags: Integer;
+  Icon: TApplicationIcon;
 begin
-  Result := -1;
-  Flags := SHGFI_SYSICONINDEX or SHGFI_ICON or SHGFI_USEFILEATTRIBUTES;
-  //Get index
-  if SHGetFileInfoW(PWideChar(Config.Paths.RelativeToAbsolute(APathIcon)), 0, FileInfo, SizeOf(TSHFileInfo), Flags) <> 0 then
-  begin
-    DestroyIcon(FileInfo.hIcon);
-    Result := FileInfo.iIcon;
+  Icon := TApplicationIcon.Create(APathIcon);
+  try
+    Result := Icon.LoadIcon;
+  finally
+    Icon.Free;
   end;
 end;
 
@@ -125,7 +122,7 @@ begin
         //Create TBaseIcon, load icon and add it in FItems
         Icon := TApplicationIcon.Create(sPath);
         try
-          //TODO: Why comment it!?
+          //Speed up asuite startup (it is doesn't necessary load now icon)
   //        Icon.Load;
         finally
           FItems.Add(Icon.Name, Icon);

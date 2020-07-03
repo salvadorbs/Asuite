@@ -109,7 +109,7 @@ begin
   if (Config.Cache) and (Config.ASuiteState <> lsImporting) then
   begin
     //Check CRC, if it fails reset cache icon
-    if (CacheIconCRC = GetFileCRC32(PathCacheIcon)) then
+    if (FileExists(PathCacheIcon)) and (CacheIconCRC = GetFileCRC32(PathCacheIcon)) then
       sTempPath := PathCacheIcon
     else
       ResetCacheIcon;
@@ -142,6 +142,9 @@ end;
 function TNodeIcon.LoadIcon: Integer;
 begin
   Result := -1;
+  if FNodeData.DataType = vtdtSeparator then
+    Exit;
+
   //Check file path and if it isn't found, get fileicon_error and exit
   if FNodeData.DataType = vtdtFile then
   begin

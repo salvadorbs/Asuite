@@ -27,27 +27,31 @@ interface
 
 uses
   SysUtils, Classes, Controls, LCLIntf, LCLType, Graphics, Dialogs, CommCtrl,
-  kgraphics, kicon, Windows, DefaultTranslator;
+  kgraphics, kicon, BGRAImageList, Windows, DefaultTranslator;
 
 type
 
   { TdmImages }
 
   TdmImages = class(TDataModule)
+    ilSmallIcons: TBGRAImageList;
+    ilLargeIcons: TBGRAImageList;
+    procedure DataModuleCreate(Sender: TObject);
   private
+    FSysImageListLarge: Windows.THANDLE;
+    FSysImageListSmall: Windows.THANDLE;
     { Private declarations }
     procedure DrawTransparentBitmap(DC: HDC; hBmp: HBITMAP; xStart: integer;
                                     yStart : integer; cTransparentColor : COLORREF);
     function SysImageListHandle(const Path: string; const WantLargeIcons: Boolean): Windows.THandle;
-    function getIlSmallIcons: TImageList;
-    function getIlLargeIcons: TImageList;
   public
-    { Public declarations }
-    property ilSmallIcons: TImageList read getIlSmallIcons;
-    property ilLargeIcons: TImageList read getIlLargeIcons;
+    property SysImageListSmall: Windows.THANDLE read FSysImageListSmall;
+    property SysImageListLarge: Windows.THANDLE read FSysImageListLarge;
 
     procedure GetAlphaBitmapFromImageList(ABMP: TKAlphaBitmap;const AImageIndex: Integer; ASmallIcon: Boolean = True);
     procedure DrawIconInBitmap(const AGlyph: Graphics.TBitmap;const AImageIndex: Integer; ASmallIcon: Boolean = True);
+
+    function AddIcon(ABMP: Graphics.TBitmap; const WantLargeIcons: Boolean): Integer;
   end;
 
 var
@@ -56,7 +60,7 @@ var
 implementation
 
 uses
-  ShellApi;
+  ShellApi, AppConfig.Main;
 
 {$R *.lfm}
 
@@ -83,6 +87,18 @@ begin
     finally
       BMP.Free;
     end;
+  end;
+end;
+
+function TdmImages.AddIcon(ABMP: Graphics.TBitmap; const WantLargeIcons: Boolean): Integer;
+begin
+  Result := -1;
+  if Assigned(ABMP) then
+  begin
+    if WantLargeIcons then
+      Result := ilLargeIcons.Add(ABMP, nil)
+    else                         
+      Result := ilSmallIcons.Add(ABMP, nil);
   end;
 end;
 
@@ -117,6 +133,12 @@ begin
       KIcon.Free;
     end;
   end;
+end;
+
+procedure TdmImages.DataModuleCreate(Sender: TObject);
+begin
+  FSysImageListLarge := SysImageListHandle(Config.Paths.SuitePathData, True);
+  FSysImageListSmall := SysImageListHandle(Config.Paths.SuitePathData, False);
 end;
 
 procedure TdmImages.DrawTransparentBitmap(DC: HDC; hBmp: HBITMAP;
@@ -237,20 +259,6 @@ begin
     Flags := Flags or ShellAPI.SHGFI_SMALLICON;
 
   Result := ShellAPI.SHGetFileInfo(PChar(Path), 0, FI, SizeOf(FI), Flags);
-end;
-
-function TdmImages.getIlSmallIcons: TImageList;
-begin
-  //TODO lazarus
-  //Result := SysImageListHandle(Config.Paths.SuitePathData, False);
-  Result := nil;
-end; 
-
-function TdmImages.getIlLargeIcons: TImageList;
-begin           
-  //TODO lazarus
-  //Result := SysImageListHandle(Config.Paths.SuitePathData, True); 
-  Result := nil;
 end;
 
 end.

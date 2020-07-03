@@ -84,7 +84,7 @@ begin
   begin
     NodeData.Frame := FramePage;
     NodeData.Title := TfrmBaseEntityPage(FramePage).Title;
-    //NodeData.ImageIndex := TfrmBaseEntityPage(FramePage).ImageIndex;
+    NodeData.ImageIndex := TfrmBaseEntityPage(FramePage).ImageIndex;
   end;
 end;
 

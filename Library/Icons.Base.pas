@@ -24,13 +24,17 @@ unit Icons.Base;
 interface
 
 uses
-  SysUtils, Controls, SyncObjs, LCLIntf, LCLType, ShellApi;
+  SysUtils, Controls, SyncObjs, LCLIntf, LCLType, ShellApi, CommCtrl;
 
 type
+
+  { TBaseIcon }
+
   TBaseIcon = class
   private
     FLock: SyncObjs.TCriticalSection;
 
+    function GetIconFromSysImageList(const APathFile: string; const AWantLargeIcon: Boolean): Integer;
     function GetImageIndex: Integer;
   protected
     FImageIndex: Integer;
@@ -47,6 +51,9 @@ type
   end;
 
 implementation
+
+uses
+   DataModules.Icons, kicon, Graphics;
 
 { TBaseIcon }
 
@@ -74,19 +81,71 @@ begin
   end;
 end;
 
-function TBaseIcon.InternalGetImageIndex(const APathFile: string): Integer;
-var
+function TBaseIcon.GetIconFromSysImageList(const APathFile: string;
+  const AWantLargeIcon: Boolean): Integer;
+var        
   FileInfo: TSHFileInfoW;
   Flags: Integer;
+  bmp: Graphics.TBitmap;
+  hIco: HICON;
+  FileIcon: kIcon.TIcon;
 begin
   Result := -1;
-  Flags := SHGFI_SYSICONINDEX or SHGFI_ICON or SHGFI_USEFILEATTRIBUTES;
-  //Get index
-  if SHGetFileInfoW(PChar(APathFile), 0, FileInfo, SizeOf(TSHFileInfo), Flags) <> 0 then
-  begin
+
+  Assert(Assigned(dmImages));
+          
+  if AWantLargeIcon then
+    Flags := SHGFI_SYSICONINDEX or SHGFI_LARGEICON or SHGFI_USEFILEATTRIBUTES
+  else
+    Flags := SHGFI_SYSICONINDEX or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES;
+
+  try
+    if SHGetFileInfoW(PChar(APathFile), 0, FileInfo, SizeOf(TSHFileInfo), Flags) <> 0 then
+    begin
+      //Get icon handle
+      if AWantLargeIcon then
+        hIco := ImageList_GetIcon(dmImages.SysImageListLarge, FileInfo.iIcon, ILD_NORMAL)
+      else
+        hIco := ImageList_GetIcon(dmImages.SysImageListSmall, FileInfo.iIcon, ILD_NORMAL);
+      //Check icon handle
+      if hIco <> 0 then
+      begin
+        //Use kIcon's TIcon - It supports alpha 32bpp
+        FileIcon := kIcon.TIcon.Create;
+        try
+          //Workaround: FileIcon lose Alpha, if it add directly in ImageList
+          //Load icon handle and copy to bitmap bmp
+          FileIcon.LoadFromHandle(hIco);
+          bmp    := Graphics.TBitmap.Create;
+          FileIcon.CopyToBitmap(0, bmp);
+          //Add in ASuite ImageList
+          Result := dmImages.AddIcon(bmp, AWantLargeIcon);
+        finally
+          FreeAndNil(FileIcon);
+          FreeAndNil(bmp);
+        end;
+      end;
+    end;
+  finally
     DestroyIcon(FileInfo.hIcon);
-    Result := FileInfo.iIcon;
   end;
+end;
+
+function TBaseIcon.InternalGetImageIndex(const APathFile: string): Integer;
+var
+  IndexLargeIcon: Integer;
+  IndexSmallIcon: Integer;
+begin
+  Result := -1;
+
+  //Get Large icon and insert it in ASuite ImageList
+  IndexLargeIcon := GetIconFromSysImageList(APathFile, True);
+  //Get Small icon and insert it in ASuite ImageList
+  IndexSmallIcon := GetIconFromSysImageList(APathFile, False);
+
+  Assert(IndexSmallIcon = IndexLargeIcon);
+
+  Result := IndexSmallIcon;
 end;
 
 procedure TBaseIcon.ResetIcon;
