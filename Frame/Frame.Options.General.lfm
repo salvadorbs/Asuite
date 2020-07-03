@@ -178,37 +178,4 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
       TabOrder = 3
     end
   end
-  object grpTheme: TGroupBox[3]
-    Left = 183
-    Height = 47
-    Top = 228
-    Width = 174
-    Caption = 'Theme'
-    ClientHeight = 29
-    ClientWidth = 170
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Tahoma'
-    Font.Style = [fsBold]
-    ParentFont = False
-    TabOrder = 3
-    object cbTheme: TComboBox
-      Left = 6
-      Height = 21
-      Top = 3
-      Width = 158
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      ItemHeight = 13
-      Items.Strings = (
-        'Windows settings'
-        'Light'
-        'Dark'
-      )
-      ParentFont = False
-      Style = csDropDownList
-      TabOrder = 0
-    end
-  end
 end

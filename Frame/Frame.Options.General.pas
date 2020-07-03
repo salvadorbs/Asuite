@@ -42,8 +42,6 @@ type
     cxActionOnExe: TComboBox;
     chkConfirmMessageCat: TCheckBox;
     chkAutoCloseProcess: TCheckBox;
-    grpTheme: TGroupBox;
-    cbTheme: TComboBox;
   private
     { Private declarations }
   strict protected
@@ -87,7 +85,6 @@ begin
   cbShowPanelStartup.Checked := Config.ShowPanelAtStartUp;
   cbShowMenuStartup.Checked  := Config.ShowGraphicMenuAtStartUp;
   chkMissedSchedulerTask.Checked := Config.MissedSchedulerTask;
-  cbTheme.ItemIndex          := Ord(Config.ASuiteTheme);
   //Language
   //TODO lazarus
   {
@@ -112,7 +109,6 @@ begin
   Config.ShowPanelAtStartUp  := cbShowPanelStartup.Checked;
   Config.ShowGraphicMenuAtStartUp := cbShowMenuStartup.Checked;
   Config.MissedSchedulerTask := chkMissedSchedulerTask.Checked;
-  Config.ASuiteTheme         := TASuiteTheme(cbTheme.ItemIndex);
   //Language
   //TODO lazarus
   //Config.LangID := LangManager.LanguageIDs[cxLanguage.ItemIndex];

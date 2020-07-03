@@ -39,7 +39,6 @@ type
     FStartWithWindows   : Boolean;
     FShowPanelAtStartUp : Boolean;
     FShowGraphicMenuAtStartUp  : Boolean;
-    FASuiteTheme        : TASuiteTheme;
     //Main Form
     FLangID             : Word;
     FUseCustomTitle     : Boolean;
@@ -150,7 +149,6 @@ type
     procedure SetHotKey(const Value: Boolean);
     procedure SetTVSmallIconSize(const Value: Boolean);
     procedure SetClassicMenuHotkey(const Value: Cardinal);
-    procedure SetASuiteTheme(const Value: TASuiteTheme); 
 
     function GetMainTree: TVirtualStringTree;
     function GetImportTree: TVirtualStringTree;
@@ -178,7 +176,6 @@ type
     property ShowPanelAtStartUp: Boolean read FShowPanelAtStartUp write SetShowPanelAtStartUp;
     property ShowGraphicMenuAtStartUp: Boolean read FShowGraphicMenuAtStartUp write FShowGraphicMenuAtStartUp;
     property MissedSchedulerTask: Boolean read FMissedSchedulerTask write FMissedSchedulerTask;
-    property ASuiteTheme: TASuiteTheme read FASuiteTheme write SetASuiteTheme;
     // Main Form
     property LangID: Word read FLangID write SetLangID;
     property UseCustomTitle: Boolean read FUseCustomTitle write SetUseCustomTitle;
@@ -322,7 +319,6 @@ begin
   FShowPanelAtStartUp := True;
   FShowGraphicMenuAtStartUp  := False;
   FMissedSchedulerTask := True;
-  FASuiteTheme        := atWindowsSystem;
   //Main Form
   FLangID             := 1033; //1033 = English (United States)
   FUseCustomTitle     := False;
@@ -545,11 +541,6 @@ begin
       frmMain.FormStyle := fsNormal;
     end;
   end;
-end;
-
-procedure TConfiguration.SetASuiteTheme(const Value: TASuiteTheme);
-begin  
-  FASuiteTheme := Value;
 end;
 
 procedure TConfiguration.SetBackup(const Value: Boolean);
