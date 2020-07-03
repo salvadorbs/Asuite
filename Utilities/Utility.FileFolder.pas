@@ -48,14 +48,19 @@ end;
 function BrowseForFolder(const InitialDir: String; const Caption: String): String;
 var
   Path: string;
+  Dialog: TSelectDirectoryDialog;
 begin
   Result := '';
   //Get Path and delete \ in last char. Example c:\xyz\ to c:\xyz
   Path   := ExcludeTrailingPathDelimiter(InitialDir);
   //Call Browse for folder dialog and get new path
-  //TODO lazarus (see TSelectDirectoryDialog)
-  //if Dialogs.SelectDirectory('','',Path) then
-  //  Result := Path;
+  Dialog := TSelectDirectoryDialog.Create(nil);
+  try
+    if Dialog.Execute then
+      Result := Path;
+  finally
+    Dialog.Free;
+  end;
 end;
 
 function DirToPath(const Dir: string): string;

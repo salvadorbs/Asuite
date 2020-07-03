@@ -22,4 +22,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //------------------------------------------------------------------------------
 
 //Enable hack for a faster popupmenu
-{$DEFINE FASTHACK}
+{.$DEFINE FASTHACK}

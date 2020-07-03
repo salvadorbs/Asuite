@@ -109,7 +109,7 @@ begin
     ChildNode  := AddChildNodeEx(ASender, AParentNode, amInsertAfter, AType);
     //Set ChildNode's pNode and name (temporary)
     NodeData       := GetNodeItemData(ChildNode, ASender);
-    NodeData.Name  := msgNoName + IntToStr(ASender.TotalCount);
+    NodeData.Name  := msgNoName + IntToStr(ASender.TotalCount + 1);
     //If AType is a vtdtFolder, asuite must ask to user the folder
     if AType = vtdtFolder then
     begin

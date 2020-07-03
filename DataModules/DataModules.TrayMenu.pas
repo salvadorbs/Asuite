@@ -62,8 +62,8 @@ type
     ARect: TRect; AState: LCLType.TOwnerDrawState);
     procedure DoTrayIconButtonClick(ASender: TObject; ATrayiconAction: TTrayiconActionClick);
     procedure PopulateDirectory(Sender: TObject);
-    procedure SearchAddDirectory(AMI: TMenuItem; FolderPath: string = '');
-    procedure SearchAddFiles(AMI: TMenuItem; FolderPath: string = '');
+    procedure SearchAddDirectory(AMI: TASMenuItem; FolderPath: string = '');
+    procedure SearchAddFiles(AMI: TASMenuItem; FolderPath: string = '');
     procedure AddSub(MI: TMenuItem);
     procedure GetItemsIcons(Sender: TObject);
     procedure PopulateCategoryItems(Sender: TObject);
@@ -188,7 +188,7 @@ begin
   PostMessage(Application.Handle, WM_NULL, 0, 0);
 end;
 
-procedure TdmTrayMenu.SearchAddDirectory(AMI: TMenuItem; FolderPath: string);
+procedure TdmTrayMenu.SearchAddDirectory(AMI: TASMenuItem; FolderPath: string);
 var
   SR    : TSearchRec;
   Found : Boolean;
@@ -210,7 +210,7 @@ begin
         //Create new menuitem and add base properties
         NMI             := TASMenuItem.Create(AMI);
         NMI.Path        := sPath + SR.Name + PathDelim;
-        NMI.ImageIndex  := Config.IconsManager.GetPathIconIndex(CONST_PATH_FOLDERICON); // folder image
+        NMI.ImageIndex  := Config.IconsManager.GetPathIconIndex(Config.Paths.RelativeToAbsolute(CONST_PATH_FOLDERICON)); // folder image
         //Add item in traymenu
         AddItem(AMI, NMI);
         //If it is not '.', expand folder else add OnClick event to open folder
@@ -223,8 +223,7 @@ begin
         else begin
           NMI.Caption := msgCMOpenFolder;
           NMI.OnClick := OpenFile;
-          //TODO: NewBottomLine ???
-          //AMI.NewBottomLine;
+          AMI.NewBottomLine;
         end;
       end;
       //Next folder
@@ -235,7 +234,7 @@ begin
   end;
 end;
 
-procedure TdmTrayMenu.SearchAddFiles(AMI: TMenuItem; FolderPath: string);
+procedure TdmTrayMenu.SearchAddFiles(AMI: TASMenuItem; FolderPath: string);
 var
   SR: TSearchRec;
   Found: Boolean;
@@ -248,9 +247,9 @@ begin
     sPath := FolderPath;
   Found := FindFirst(sPath + '*',faReadOnly + faArchive,SR) = 0;
   try
-    //TODO: NewBottomLine???
-    //if Found then
-    //  AMI.NewBottomLine;
+    if Found then
+      AMI.NewBottomLine;
+
     while Found do
     begin
       //Create new menuitem and add base properties
@@ -796,7 +795,12 @@ begin
     { first directories }
     SearchAddDirectory(MI);
     { then files }
-    SearchAddFiles(MI);
+    SearchAddFiles(MI);                ;
+
+    //A Folder empty will have 3 child items (folder empty, "Open this folder" and a separator)
+    //Change visibile property to false for last child (separator)
+    if (MI.Count = 3) and (MI.Items[MI.Count - 1].IsLine) then
+      MI.Items[MI.Count - 1].Visible := False;
   finally
     MI.OnClick := nil;
   end;
