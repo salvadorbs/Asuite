@@ -255,9 +255,11 @@ begin
       end
     else
       Tree.DefaultPasteMode := amAddChildLast;
-    Tree.PasteFromClipboard;
-    Tree.Expanded[Tree.GetFirstSelected] := True;
-    TVirtualTreeMethods.Create.RefreshList(Tree);
+    if Tree.PasteFromClipboard then
+    begin
+      Tree.Expanded[Tree.GetFirstSelected] := True;
+      TVirtualTreeMethods.Create.RefreshList(Tree);
+    end;
   end;
 end;
 

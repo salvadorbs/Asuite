@@ -51,6 +51,9 @@ object frmMain: TfrmMain
         Top = 0
         Width = 193
         Align = alClient
+        ClipboardFormats.Strings = (
+          'Virtual Tree Data'
+        )
         DragMode = dmAutomatic
         EditDelay = 500
         Font.Color = clWindowText
