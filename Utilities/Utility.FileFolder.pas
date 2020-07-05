@@ -261,26 +261,22 @@ begin
     SysUtils.DeleteFile(LinkName);
 end;
 
-function GetShortcutTarget(const LinkFileName:String; ShortcutType: TShortcutField):String;
+function GetShortcutTarget(const LinkFileName: String; ShortcutType: TShortcutField):String;
 var
-  ISLink    : IShellLink;
+  ISLink    : IShellLinkW;
   IPFile    : IPersistFile;
-  WidePath  : PWideChar;
+  WidePath  : PChar;
   Info      : Array[0..MAX_PATH] of Char;
-  wfs       : TWin32FindData;
+  wfs       : WIN32_FIND_DATAW;
 begin
-  CoCreateInstance(CLSID_ShellLink,nil,CLSCTX_INPROC_SERVER,IShellLink,ISLink);
+  CoCreateInstance(CLSID_ShellLink, nil, CLSCTX_INPROC_SERVER, IShellLinkW, ISLink);
   if ISLink.QueryInterface(IPersistFile, IPFile) = 0 then
   begin
-    {$IFDEF UNICODE}
-    WidePath := PWideChar(LinkFileName);
-    {$ELSE}
-    MultiByteToWideChar(CP_ACP,MB_PRECOMPOSED,PChar(LinkFileName),-1,@WidePath,MAX_PATH);
-    {$ENDIF}
+    WidePath := PChar(LinkFileName);
     //Get pathexe, parameters or working directory from shortcut
     IPFile.Load(WidePath, STGM_READ);
     case ShortcutType of
-     sfPathFile   : ISLink.GetPath(@info,MAX_PATH,wfs,SLGP_UNCPRIORITY);
+     sfPathFile   : ISLink.GetPath(@info,MAX_PATH,@wfs,SLGP_UNCPRIORITY);
      sfParameter  : ISLink.GetArguments(@info,MAX_PATH);
      sfWorkingDir : ISLink.GetWorkingDirectory(@info,MAX_PATH);
     end;
