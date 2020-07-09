@@ -25,16 +25,19 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, Menus, ComCtrls, cySkinButton, ExtCtrls, hotkey, Windows,
-  DefaultTranslator;
+  StdCtrls, Menus, ComCtrls, cySkinButton, BCImageButton, ExtCtrls, hotkey,
+  Windows, DefaultTranslator;
 
 type
+
+  { TfrmShortcutGrabber }
+
   TfrmShortcutGrabber = class(TForm)
+    btnAlt: TBCImageButton;
+    btnCtrl: TBCImageButton;
+    btnShift: TBCImageButton;
+    btnWinKey: TBCImageButton;
     hkKeys: THotKey;
-    btnAlt: TcySkinButton;
-    btnWinKey: TcySkinButton;
-    btnShift: TcySkinButton;
-    btnCtrl: TcySkinButton;
     lblInfo: TLabel;
     pnlDialogPage: TPanel;
     btnOk: TButton;
@@ -56,7 +59,7 @@ type
     procedure SetGUIKeyFromKey(AKey: Word);
     procedure SetGUIModifierFromMod(AMod: Word);
     procedure SetGUIModifierFromShiftState(AMod: TShiftState);
-    procedure LoadPNGButtonState(APicture: TPicture; APathFile: string);
+    procedure LoadPNGButtonState(AButton: TBCImageButton; APathFile: string);
     procedure LoadImages();
   public
     { Public declarations }
@@ -132,7 +135,7 @@ end;
 
 function TfrmShortcutGrabber.CheckModButtons: Boolean;
 begin
-  Result := (btnCtrl.Down) or (btnShift.Down) or (btnAlt.Down) or (btnWinKey.down);
+  Result := (btnCtrl.Pressed) or (btnShift.Pressed) or (btnAlt.Pressed) or (btnWinKey.Pressed);
 end;
 
 class function TfrmShortcutGrabber.Execute(AOwner: TComponent; AHotkey: string): string;
@@ -144,6 +147,7 @@ begin
     frmShortcutGrabber.SetGuiFromHotkey(AHotkey);
     frmShortcutGrabber.FHotkey := AHotkey;
 
+    Result := '';
     if frmShortcutGrabber.ShowModal = mrOk then
       Result := UpperCase(frmShortcutGrabber.FHotkey);
 
@@ -181,16 +185,16 @@ function TfrmShortcutGrabber.GetModifierFromGUI(): Word;
 begin
   Result := 0;
 
-  if btnCtrl.Down then
+  if btnCtrl.Pressed then
     Result := Result or MOD_CONTROL;
 
-  if btnShift.Down then
+  if btnShift.Pressed then
     Result := Result or MOD_SHIFT;
 
-  if btnAlt.Down then
+  if btnAlt.Pressed then
     Result := Result or MOD_ALT;
 
-  if btnWinKey.Down then
+  if btnWinKey.Pressed then
     Result := Result or MOD_WIN;
 end;
 
@@ -210,41 +214,18 @@ end;
 
 procedure TfrmShortcutGrabber.LoadImages;
 begin
-  //Ctrl
-  LoadPNGButtonState(btnCtrl.PicNormal, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + CTRL_NORMAL_FILENAME);
-  LoadPNGButtonState(btnCtrl.PicMouseOver, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + CTRL_HOVER_FILENAME);
-  LoadPNGButtonState(btnCtrl.PicDown, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + CTRL_CLICKED_FILENAME);
-
-  //Shift
-  LoadPNGButtonState(btnShift.PicNormal, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + SHIFT_NORMAL_FILENAME);
-  LoadPNGButtonState(btnShift.PicMouseOver, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + SHIFT_HOVER_FILENAME);
-  LoadPNGButtonState(btnShift.PicDown, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + SHIFT_CLICKED_FILENAME);
-
-  //Alt
-  LoadPNGButtonState(btnAlt.PicNormal, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + ALT_NORMAL_FILENAME);
-  LoadPNGButtonState(btnAlt.PicMouseOver, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + ALT_HOVER_FILENAME);
-  LoadPNGButtonState(btnAlt.PicDown, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + ALT_CLICKED_FILENAME);
-
-  //WinKey
-  LoadPNGButtonState(btnWinKey.PicNormal, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + WINKEY_NORMAL_FILENAME);
-  LoadPNGButtonState(btnWinKey.PicMouseOver, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + WINKEY_HOVER_FILENAME);
-  LoadPNGButtonState(btnWinKey.PicDown, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + WINKEY_CLICKED_FILENAME);
+  LoadPNGButtonState(btnAlt, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + FILENAME_ALT);
+  LoadPNGButtonState(btnCtrl, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + FILENAME_CTRL);
+  LoadPNGButtonState(btnShift, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + FILENAME_SHIFT);
+  LoadPNGButtonState(btnWinKey, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + FILENAME_WINKEY);
 end;
 
-procedure TfrmShortcutGrabber.LoadPNGButtonState(APicture: TPicture; APathFile: string);
-var
-  PNGState: TPortableNetworkGraphic;
+procedure TfrmShortcutGrabber.LoadPNGButtonState(AButton: TBCImageButton; APathFile: string);
 begin
   if FileExists(APathFile) then
-    begin
-      PNGState := TPortableNetworkGraphic.Create;
-    try
-      PNGState.LoadFromFile(APathFile);
-
-      APicture.Assign(PNGState);
-    finally
-      PNGState.Free;
-    end;
+  begin
+    AButton.BitmapFile := APathFile;
+    AButton.LoadFromBitmapFile;
   end;
 end;
 
@@ -270,34 +251,34 @@ end;
 procedure TfrmShortcutGrabber.SetGUIModifierFromMod(AMod: Word);
 begin
   if (AMod and MOD_ALT) <> 0 then
-    btnAlt.Down := True;
+    btnAlt.Pressed := True;
 
   if (AMod and MOD_CONTROL) <> 0 then
-    btnCtrl.Down := True;
+    btnCtrl.Pressed := True;
 
   if (AMod and MOD_SHIFT) <> 0 then
-    btnShift.Down := True;
+    btnShift.Pressed := True;
 
   if (AMod and MOD_WIN) <> 0 then
-    btnWinKey.Down := True;
+    btnWinKey.Pressed := True;
 end;
 
 procedure TfrmShortcutGrabber.SetGUIModifierFromShiftState(AMod: TShiftState);
 begin
   if AMod <> [] then
   begin
-    btnShift.Down := false;
-    btnAlt.Down   := false;
-    btnCtrl.Down  := false;
+    btnShift.Pressed := false;
+    btnAlt.Pressed   := false;
+    btnCtrl.Pressed  := false;
 
     if (ssShift in AMod) then
-      btnShift.Down := True;
+      btnShift.Pressed := True;
 
     if (ssAlt in AMod) then
-      btnAlt.Down := True;
+      btnAlt.Pressed := True;
 
     if (ssCtrl in AMod) then
-      btnCtrl.Down := True;
+      btnCtrl.Pressed := True;
   end;
 end;
 
