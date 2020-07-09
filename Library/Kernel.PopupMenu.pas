@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Kernel.PopupMenu;
 
-//TODO: Rename this unit with proper name (Kernel.ASMenuItem)
+//TODO: Rename this unit with proper name (Kernel.ASMenuItem or Kernel.Menus)
 
 {$MODE DelphiUnicode}
 

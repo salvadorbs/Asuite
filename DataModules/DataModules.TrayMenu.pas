@@ -279,10 +279,13 @@ end;
 
 procedure TdmTrayMenu.ShowGraphicMenu;
 begin
-  if frmGraphicMenu.Visible then
-    frmGraphicMenu.CloseMenu
-  else
-    frmGraphicMenu.OpenMenu;
+  if Assigned(frmGraphicMenu) then
+  begin
+    if frmGraphicMenu.Visible then
+      frmGraphicMenu.CloseMenu
+    else
+      frmGraphicMenu.OpenMenu;
+  end;
 end;
 
 procedure TdmTrayMenu.CreateListItems(Sender: TBaseVirtualTree; Node: PVirtualNode);

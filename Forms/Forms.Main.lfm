@@ -216,7 +216,7 @@ object frmMain: TfrmMain
       Action = actOpenFolderItem
     end
     object N9: TMenuItem
-      Caption = '-'
+      Action = actSepEdit
     end
     object mniSortCatItems: TMenuItem
       Action = actSortCatItems
@@ -245,7 +245,7 @@ object frmMain: TfrmMain
       Action = actAddSeparator
     end
     object miN11: TMenuItem
-      Caption = '-'
+      Action = actSepEdit
     end
     object mniCut: TMenuItem
       Action = actCut
@@ -395,6 +395,10 @@ object frmMain: TfrmMain
       Caption = 'Sort list'
       OnExecute = actSortListExecute
       OnUpdate = actSortListUpdate
+    end
+    object actSepEdit: TAction
+      Caption = '-'
+      OnUpdate = actSepEditUpdate
     end
   end
   object tmrCheckItems: TTimer

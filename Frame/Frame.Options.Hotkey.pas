@@ -94,7 +94,7 @@ begin
   if Sender is TEditButton then
   begin
     strHotkey := TfrmShortcutGrabber.Execute(Self, TEditButton(Sender).Text);
-    if (strHotkey <> '') then
+    if (strHotkey <> '') and (strHotkey <> TEditButton(Sender).Text) then
     begin
       TEditButton(Sender).Text := strHotkey;
 

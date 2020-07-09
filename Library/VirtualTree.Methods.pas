@@ -29,6 +29,7 @@ uses
   SynLog;
 
 type
+  //TODO: Transform in a normal class with class methods
   TVirtualTreeMethods = class(TSingleton)
   private
   public

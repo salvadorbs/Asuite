@@ -752,14 +752,19 @@ function TVirtualTreeEvents.GetTextFromDataObject(
   DataObject: IDataObject): string;
 var
   Medium : TStgMedium;
-  PText  : PChar;
+  PText  : PWideChar;
 
+  // fill the structure used to get the Unicode string
   function MakeFormatEtc(const Fmt: TClipFormat): TFormatEtc;
   begin
-    Result.cfFormat := Fmt;
+    Result.cfFormat := CF_UNICODETEXT;
+    // no specific target device
     Result.ptd := nil;
+    // normal content to render
     Result.dwAspect := DVASPECT_CONTENT;
+    // no specific page of multipage data
     Result.lindex := -1;
+    // pass the data via memory
     Result.tymed := TYMED_HGLOBAL;
   end;
 
@@ -771,7 +776,7 @@ begin
     try
       PText := GlobalLock(Medium.hGlobal);
       try
-        Result := string(PText);
+        Result := WideString(PText);
       finally
         GlobalUnlock(Medium.hGlobal);
       end;

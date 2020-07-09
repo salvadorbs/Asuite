@@ -35,6 +35,7 @@ type
   { TfrmMain }
 
   TfrmMain = class(TBaseMainForm)
+    actSepEdit: TAction;
     miStatistics: TMenuItem;
     MenuItem2: TMenuItem;
     mniOpenFolderItem: TMenuItem;
@@ -102,6 +103,7 @@ type
     tmrCheckItems: TTimer;
     actSortList: TAction;
     mniSortList: TMenuItem;
+    procedure actSepEditUpdate(Sender: TObject);
     procedure miOptionsClick(Sender: TObject);
     procedure miStatisticsClick(Sender: TObject);
     procedure miImportListClick(Sender: TObject);
@@ -413,6 +415,11 @@ end;
 procedure TfrmMain.miOptionsClick(Sender: TObject);
 begin
   TfrmOptions.Execute(Self);
+end;
+
+procedure TfrmMain.actSepEditUpdate(Sender: TObject);
+begin
+  TAction(Sender).Visible := (GetActiveTree = vstList);
 end;
 
 procedure TfrmMain.miStatisticsClick(Sender: TObject);
