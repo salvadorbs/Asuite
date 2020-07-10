@@ -25,7 +25,8 @@ interface
 
 uses
   Classes, Kernel.Singleton, IniFiles, cySkinButton, ExtCtrls, LCLIntf, LCLType,
-  Graphics, SysUtils, VirtualTrees, Controls, Forms.GraphicMenu;
+  Graphics, SysUtils, VirtualTrees, Controls, Forms.GraphicMenu, BGRABitmap,
+  BCImageButton;
 
 type
   TGraphicMenuElement = (
@@ -54,6 +55,8 @@ type
       bsDisabled
   );
 
+  { TThemeEngine }
+
   TThemeEngine = class(TSingleton)
   private
     FGraphicMenu: TfrmGraphicMenu;
@@ -66,15 +69,11 @@ type
     function GetIniFileSection(ElementType: TGraphicMenuElement): string;
 
     //Draw methods
-    procedure DrawEmptyButton(PNGImage: TPortableNetworkGraphic; Button: TcySkinButton; imgBackground: TImage);
-    procedure DrawIconInPNGImage(IniFile: TIniFile;PNGImage: TPortableNetworkGraphic;
+    procedure DrawEmptyButton(PNGImage: TBGRABitmap; Button: TBCImageButton; imgBackground: TImage);
+    procedure DrawIconInPNGImage(IniFile: TIniFile; PNGImage: TBGRABitmap;
                                  ButtonType: TGraphicMenuElement);
-    procedure DrawTextInPNGImage(IniFile: TIniFile;ButtonState: TButtonState;
-                                 PNGImage: TPortableNetworkGraphic;ButtonType: TGraphicMenuElement;
-                                 SpaceForIcon: Boolean = True);
-    procedure DrawIconAndTextInPNGImage(IniFile: TIniFile; ButtonState: TButtonState;
-                                        PNGImage: TPortableNetworkGraphic; ButtonType: TGraphicMenuElement);
-    procedure DrawButton(IniFile: TIniFile;Button: TcySkinButton;
+    procedure DrawTextInPNGImage(IniFile: TIniFile; PNGImage: TBGRABitmap; ButtonType: TGraphicMenuElement; SpaceForIcon: Boolean = True);
+    procedure DrawButton(IniFile: TIniFile;Button: TBCImageButton;
                          ButtonType: TGraphicMenuElement);
     procedure DrawHardDiskSpace(IniFile: TIniFile; DriveBackGround, DriveSpace: TImage);
 
@@ -97,7 +96,8 @@ implementation
 
 uses
   Kernel.Consts, AppConfig.Main, Utility.Conversions, Kernel.ResourceStrings,
-  GraphicMenu.ThemeEngine.Consts, Kernel.Logger, Windows, Utility.Misc;
+  GraphicMenu.ThemeEngine.Consts, Kernel.Logger, Windows, Utility.Misc,
+  BGRABitmapTypes, Types;
 
 { TThemeEngineMethods }
 
@@ -149,10 +149,10 @@ begin
 end;
 
 procedure TThemeEngine.DrawButton(IniFile: TIniFile;
-  Button: TcySkinButton; ButtonType: TGraphicMenuElement);
+  Button: TBCImageButton; ButtonType: TGraphicMenuElement);
 var
-  PNGImage_Normal, PNGImage_Hover, PNGImage_Clicked: TPortableNetworkGraphic;
-  Image_Normal, Image_Hover, Image_Clicked, IniFile_Section: string;
+  PNGButton: TBGRABitmap;
+  strButtonFile, IniFile_Section: string;
 
   function IsTabElement(ButtonType: TGraphicMenuElement): Boolean;
   begin
@@ -160,73 +160,31 @@ var
   end;
 
 begin
-  PNGImage_Normal  := TPortableNetworkGraphic.Create;
-  PNGImage_Hover   := TPortableNetworkGraphic.Create;
-  PNGImage_Clicked := TPortableNetworkGraphic.Create;
+  PNGButton := TBGRABitmap.Create;
   try
     IniFile_Section := GetIniFileSection(ButtonType);
 
     //Get images path
-    Image_Normal  := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(IniFile_Section, INIFILE_KEY_IMAGENORMAL, '');
-    Image_Hover   := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(IniFile_Section, INIFILE_KEY_IMAGEHOVER, '');
-    if IsTabElement(ButtonType) then
-      Image_Clicked := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(IniFile_Section, INIFILE_KEY_IMAGESELECTED, '')
-    else
-      Image_Clicked := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(IniFile_Section, INIFILE_KEY_IMAGECLICKED, '');
+    strButtonFile := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(IniFile_Section, INIFILE_KEY_IMAGEBUTTON, '');
+
     //Load png button states
     //Normal state
-    if FileExists(Image_Normal) then
-      PNGImage_Normal.LoadFromFile(Image_Normal)
+    if FileExists(strButtonFile) then
+      PNGButton.LoadFromFile(strButtonFile)
     else
-      DrawEmptyButton(PNGImage_Normal, Button, FGraphicMenu.imgBackground);
-    //Hover state
-    if FileExists(Image_Hover) then
-      PNGImage_Hover.LoadFromFile(Image_Hover)
-    else
-      DrawEmptyButton(PNGImage_Hover, Button, FGraphicMenu.imgBackground);
-    //Clicked state
-    if FileExists(Image_Clicked) then
-      PNGImage_Clicked.LoadFromFile(Image_Clicked)
-    else
-      DrawEmptyButton(PNGImage_Clicked, Button, FGraphicMenu.imgBackground);
+      DrawEmptyButton(PNGButton, Button, FGraphicMenu.imgBackground);
+
     //Draw caption and icon in PNGImage_*, if button is a RightButton
+    DrawTextInPNGImage(IniFile, PNGButton, ButtonType, IsRightButton(ButtonType));
     if IsRightButton(ButtonType) then
-    begin
-      DrawIconAndTextInPNGImage(IniFile,bsNormal,PNGImage_Normal,ButtonType);
-      DrawIconAndTextInPNGImage(IniFile,bsHover,PNGImage_Hover,ButtonType);
-      DrawIconAndTextInPNGImage(IniFile,bsClicked,PNGImage_Clicked,ButtonType);
-    end
-    else
-      if IsTabElement(ButtonType) then
-      begin
-        if Button.Enabled then
-          DrawTextInPNGImage(IniFile,bsNormal,PNGImage_Normal,ButtonType,False)
-        else
-          DrawTextInPNGImage(IniFile,bsDisabled,PNGImage_Normal,ButtonType,False);
-        DrawTextInPNGImage(IniFile,bsHover,PNGImage_Hover,ButtonType,False);
-        DrawTextInPNGImage(IniFile,bsClicked,PNGImage_Clicked,ButtonType,False);
-      end;
-    //Set Button's PicNormal, PicMouseOver and PicMouseDown
-    if Assigned(PNGImage_Normal) then
-      Button.PicNormal.Assign(PNGImage_Normal);
-    if Assigned(PNGImage_Hover) then
-      Button.PicMouseOver.Assign(PNGImage_Hover);
-    if Assigned(PNGImage_Clicked) then
-    begin
-      if IsTabElement(ButtonType) then
-        Button.PicDown.Assign(PNGImage_Clicked)
-      else
-        Button.PicMouseDown.Assign(PNGImage_Clicked);
-    end;
+      DrawIconInPNGImage(IniFile, PNGButton, ButtonType);
   finally
-    PNGImage_Normal.Free;
-    PNGImage_Hover.Free;
-    PNGImage_Clicked.Free;
+    Button.BitmapOptions.Bitmap := PNGButton;
   end;
 end;
 
-procedure TThemeEngine.DrawEmptyButton(PNGImage: TPortableNetworkGraphic;
-  Button: TcySkinButton; imgBackground: TImage);
+procedure TThemeEngine.DrawEmptyButton(PNGImage: TBGRABitmap;
+  Button: TBCImageButton; imgBackground: TImage);
 var
   bmp: Graphics.TBitmap;
 begin
@@ -253,23 +211,16 @@ begin
     DriveSpace.Picture.LoadFromFile(HDSpacePath);
 end;
 
-procedure TThemeEngine.DrawIconAndTextInPNGImage(IniFile: TIniFile;
-  ButtonState: TButtonState; PNGImage: TPortableNetworkGraphic;
-  ButtonType: TGraphicMenuElement);
-begin
-  DrawIconInPNGImage(IniFile, PNGImage, ButtonType);
-  DrawTextInPNGImage(IniFile, ButtonState, PNGImage, ButtonType);
-end;
-
 procedure TThemeEngine.DrawIconInPNGImage(IniFile: TIniFile;
-  PNGImage: TPortableNetworkGraphic; ButtonType: TGraphicMenuElement);
+  PNGImage: TBGRABitmap; ButtonType: TGraphicMenuElement);
 var
   Icon : TIcon;
   IconPath, IniFile_Section : string;
-  iSpace: Integer;
+  I, buttonHeight, iSpace: Integer;
 begin
   if Not Assigned(PNGImage) then
     Exit;
+
   Icon := TIcon.Create;
   try
     //Get and draw icon
@@ -278,10 +229,12 @@ begin
     if FileExists(Config.Paths.SuitePathCurrentTheme + IconPath) then
     begin
       Icon.LoadFromFile(Config.Paths.SuitePathCurrentTheme + IconPath);
-      iSpace := (PNGImage.Height - Icon.Height) div 2;
+      buttonHeight := (PNGImage.Height div 4);
+      iSpace := (buttonHeight - Icon.Height) div 2;
       PNGImage.Canvas.Lock;
       try
-        PNGImage.Canvas.Draw(5, iSpace, Icon);
+        for I := 0 to 3 do
+          PNGImage.Canvas.Draw(5, iSpace + (buttonHeight * I), Icon);
       finally
         PNGImage.Canvas.Unlock;
       end;
@@ -292,59 +245,79 @@ begin
 end;
 
 procedure TThemeEngine.DrawTextInPNGImage(IniFile: TIniFile;
-  ButtonState: TButtonState; PNGImage: TPortableNetworkGraphic;
-  ButtonType: TGraphicMenuElement; SpaceForIcon: Boolean);
+  PNGImage: TBGRABitmap; ButtonType: TGraphicMenuElement; SpaceForIcon: Boolean
+  );
 var
-  TopText  : Integer;
-  FontText : TFont;
+  TopText, ButtonHeight, I : Integer;
+  FontNormal, FontHover, FontClicked, FontDisabled : TFont;
   Caption, IniFile_Section : string;
   DrawRect, R: TRect;
   DrawFlags: Cardinal;
+  TextColor: TColor;
+
+  procedure AssignFont(APNGImage: TBGRABitmap; AFont: TFont);
+  begin
+    APNGImage.FontAntialias := True;
+
+    APNGImage.FontName := AFont.Name;
+    APNGImage.FontStyle := AFont.Style;
+    APNGImage.FontOrientation := AFont.Orientation;
+
+    case AFont.Quality of
+      fqNonAntialiased: APNGImage.FontQuality := fqSystem;
+      fqAntialiased: APNGImage.FontQuality := fqFineAntialiasing;
+      fqProof: APNGImage.FontQuality := fqFineClearTypeRGB;
+      fqDefault, fqDraft, fqCleartype, fqCleartypeNatural: APNGImage.FontQuality :=
+          fqSystemClearType;
+    end;
+
+    APNGImage.FontHeight := -AFont.Height;
+    TextColor := AFont.Color;
+  end;
+
 begin
   if Not Assigned(PNGImage) then
     Exit;
-  FontText := TFont.Create;
+
+  FontNormal := TFont.Create;
+  FontHover := TFont.Create;
+  FontClicked := TFont.Create;
   try
     IniFile_Section := GetIniFileSection(ButtonType);
     //Get font
-    case ButtonState of
-      bsNormal   : StrToFont(IniFile.ReadString(IniFile_Section, INIFILE_KEY_FONTNORMAL, ''), FontText);
-      bsHover    : StrToFont(IniFile.ReadString(IniFile_Section, INIFILE_KEY_FONTHOVER, ''), FontText);
-      bsClicked  : StrToFont(IniFile.ReadString(IniFile_Section, INIFILE_KEY_FONTCLICKED, ''), FontText);
-      bsDisabled : StrToFont(IniFile.ReadString(IniFile_Section, INIFILE_KEY_FONTDISABLED, ''), FontText);
-    end;
+    StrToFont(IniFile.ReadString(IniFile_Section, INIFILE_KEY_FONTNORMAL, 'Segoe UI|9|#000000|1'), FontNormal);
+    StrToFont(IniFile.ReadString(IniFile_Section, INIFILE_KEY_FONTHOVER, 'Segoe UI|9|#000000|1'), FontHover);
+    StrToFont(IniFile.ReadString(IniFile_Section, INIFILE_KEY_FONTCLICKED, 'Segoe UI|9|#000000|1'), FontClicked);
     //Get caption and draw it
-    Caption  := GetButtonCaption(IniFile, ButtonType);
+    Caption := GetButtonCaption(IniFile, ButtonType);
     if Caption <> '' then
     begin
       PNGImage.Canvas.Lock;
       try
-        if Assigned(FontText) then
-          PNGImage.Canvas.Font.Assign(FontText);
-        PNGImage.Canvas.Brush.Style := bsClear;
-        TopText := (PNGImage.Height - Abs(PNGImage.Canvas.Font.Height)) div 2;
-        if SpaceForIcon then
-          PNGImage.Canvas.TextOut(35, TopText - 2, Caption)
-        else begin
-          //Draw caption in center
-          SetRect(R, 0, 0, PNGImage.Width, PNGImage.Height);
-          DrawRect  := R;
-          DrawFlags := DT_END_ELLIPSIS or DT_NOPREFIX or DT_WORDBREAK or
-            DT_EDITCONTROL or DT_CENTER;
-          DrawTextW(PNGImage.Canvas.Handle, PChar(Caption), -1, DrawRect, DrawFlags or DT_CALCRECT);
-          DrawRect.Right := R.Right;
-          if DrawRect.Bottom < R.Bottom then
-            OffsetRect(DrawRect, 0, (R.Bottom - DrawRect.Bottom) div 2)
+        ButtonHeight := (PNGImage.Height div 4);
+        for I := 0 to 3 do
+        begin
+          case TButtonState(I) of
+            bsNormal: AssignFont(PNGImage, FontNormal);
+            bsHover: AssignFont(PNGImage, FontHover);
+            bsClicked: AssignFont(PNGImage, FontClicked);
+            bsDisabled: AssignFont(PNGImage, FontNormal);
+          end;
+
+          TopText := (ButtonHeight - Abs(PNGImage.Canvas.Font.Height)) div 2;
+          if SpaceForIcon then
+            PNGImage.TextRect(Rect(35, (ButtonHeight * I), PNGImage.Width, (ButtonHeight * (I + 1))), Caption, taLeftJustify, tlCenter, TextColor)
           else
-            DrawRect.Bottom := R.Bottom;
-          DrawTextExW(PNGImage.Canvas.Handle, PChar(Caption), -1, DrawRect, DrawFlags, nil);
+            PNGImage.TextRect(Rect(0, (ButtonHeight * I), PNGImage.Width, (ButtonHeight * (I + 1))), Caption, taCenter, tlCenter, TextColor)
         end;
       finally
         PNGImage.Canvas.Unlock;
       end;
     end;
   finally
-    FontText.Free;
+    FontNormal.Free;
+    FontHover.Free;
+    FontClicked.Free;
   end;
 end;
 

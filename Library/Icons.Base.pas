@@ -138,6 +138,8 @@ var
 begin
   Result := -1;
 
+  Assert(IndexSmallIcon = IndexLargeIcon);
+
   //Get Large icon and insert it in ASuite ImageList
   IndexLargeIcon := GetIconFromSysImageList(APathFile, True);
   //Get Small icon and insert it in ASuite ImageList

@@ -26,15 +26,30 @@ interface
 uses
   LCLIntf, LCLType, Classes, Forms, StdCtrls, ExtCtrls, ComCtrls, Messages,
   Controls, Graphics, Dialogs, SysUtils, VirtualTrees, cySkinButton, Menus, EditBtn,
-  Lists.Base, DefaultTranslator;
+  Lists.Base, BCImageButton, DefaultTranslator;
 
 type
+
+  { TfrmGraphicMenu }
 
   TfrmGraphicMenu = class(TForm)
     imgDriveSpace: TImage;
     imgDivider2: TImage;
     lblDriveName: TLabel;
     lblDriveSpace: TLabel;
+    sknbtnAbout: TBCImageButton;
+    sknbtnASuite: TBCImageButton;
+    sknbtnDocuments: TBCImageButton;
+    sknbtnEject: TBCImageButton;
+    sknbtnExit: TBCImageButton;
+    sknbtnExplore: TBCImageButton;
+    sknbtnList: TBCImageButton;
+    sknbtnMFU: TBCImageButton;
+    sknbtnMusic: TBCImageButton;
+    sknbtnOptions: TBCImageButton;
+    sknbtnPictures: TBCImageButton;
+    sknbtnRecents: TBCImageButton;
+    sknbtnVideos: TBCImageButton;
     tmrFader: TTimer;
     imgLogo: TImage;
     imgPersonalPicture: TImage;
@@ -42,20 +57,7 @@ type
     OpenDialog1: TOpenDialog;
     imgDivider1: TImage;
     ApplicationEvents1: TApplicationProperties;
-    sknbtnASuite: TcySkinButton;
-    sknbtnOptions: TcySkinButton;
-    sknbtnDocuments: TcySkinButton;
-    sknbtnPictures: TcySkinButton;
-    sknbtnAbout: TcySkinButton;
-    sknbtnExplore: TcySkinButton;
-    sknbtnVideos: TcySkinButton;
-    sknbtnMusic: TcySkinButton;
     edtSearch: TEditButton;
-    sknbtnList: TcySkinButton;
-    sknbtnRecents: TcySkinButton;
-    sknbtnMFU: TcySkinButton;
-    sknbtnEject: TcySkinButton;
-    sknbtnExit: TcySkinButton;
     imgBackground: TImage;
     imgDriveBackground: TImage;
     pmWindow: TPopupMenu;
@@ -344,7 +346,7 @@ end;
 procedure TfrmGraphicMenu.FormShow(Sender: TObject);
 begin
   CheckUserPicture;
-  sknbtnList.Down := True;
+  sknbtnList.Pressed := True;
   //Clear edtSearch and focus it
   edtSearch.Text := '';
   Self.FocusControl(edtSearch);
@@ -402,7 +404,7 @@ end;
 
 procedure TfrmGraphicMenu.OpenRightButton(Sender: TObject);
 begin
-  if (Sender is TcySkinButton) then
+  if (Sender is TBCImageButton) then
   begin
     //Close Graphic Menu
     frmGraphicMenu.CloseMenu;
@@ -519,16 +521,25 @@ begin
   TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, Config.GMSmallIconSize);
   PopulateListTree(vstList);
   edtSearch.Text := '';
+
+  sknbtnMFU.Pressed := False;
+  sknbtnRecents.Pressed := False;
 end;
 
 procedure TfrmGraphicMenu.sknbtnMFUClick(Sender: TObject);
 begin
   PopulateSpecialTree(vstList, Config.ListManager.MFUList, Config.MFUNumber);
+
+  sknbtnList.Pressed := False;
+  sknbtnRecents.Pressed := False;
 end;
 
 procedure TfrmGraphicMenu.sknbtnRecentsClick(Sender: TObject);
 begin
   PopulateSpecialTree(vstList, Config.ListManager.MRUList, Config.MRUNumber);
+
+  sknbtnList.Pressed := False;
+  sknbtnMFU.Pressed := False;
 end;
 
 procedure TfrmGraphicMenu.OpenMenu;

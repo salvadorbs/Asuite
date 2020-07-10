@@ -11,8 +11,9 @@ object frmGraphicMenu: TfrmGraphicMenu
   ClientHeight = 530
   ClientWidth = 406
   Color = clBtnFace
+  DesignTimePPI = 120
   Font.Color = clWindowText
-  Font.Height = -14
+  Font.Height = -23
   Font.Name = 'Tahoma'
   KeyPreview = True
   OnCreate = FormCreate
@@ -50,101 +51,6 @@ object frmGraphicMenu: TfrmGraphicMenu
     Height = 2
     Top = 144
     Width = 128
-  end
-  object sknbtnASuite: TcySkinButton
-    Left = 271
-    Height = 30
-    Top = 72
-    Width = 128
-    OnClick = OpenRightButton
-  end
-  object sknbtnOptions: TcySkinButton
-    Left = 271
-    Height = 30
-    Top = 108
-    Width = 128
-    OnClick = OpenRightButton
-  end
-  object sknbtnDocuments: TcySkinButton
-    Left = 271
-    Height = 30
-    Top = 152
-    Width = 128
-    OnClick = OpenRightButton
-  end
-  object sknbtnPictures: TcySkinButton
-    Left = 271
-    Height = 30
-    Top = 188
-    Width = 128
-    OnClick = OpenRightButton
-  end
-  object sknbtnAbout: TcySkinButton
-    Left = 271
-    Height = 30
-    Top = 340
-    Width = 128
-    OnClick = OpenRightButton
-  end
-  object sknbtnExplore: TcySkinButton
-    Left = 271
-    Height = 30
-    Top = 296
-    Width = 128
-    OnClick = OpenRightButton
-  end
-  object sknbtnVideos: TcySkinButton
-    Left = 271
-    Height = 30
-    Top = 260
-    Width = 128
-    OnClick = OpenRightButton
-  end
-  object sknbtnMusic: TcySkinButton
-    Left = 271
-    Height = 30
-    Top = 224
-    Width = 128
-    OnClick = OpenRightButton
-  end
-  object sknbtnList: TcySkinButton
-    Left = 15
-    Height = 20
-    Top = 72
-    Width = 78
-    OnClick = sknbtnListClick
-    GroupIndex = 1
-    Down = True
-  end
-  object sknbtnRecents: TcySkinButton
-    Left = 96
-    Height = 20
-    Top = 72
-    Width = 78
-    OnClick = sknbtnRecentsClick
-    GroupIndex = 1
-  end
-  object sknbtnMFU: TcySkinButton
-    Left = 177
-    Height = 20
-    Top = 72
-    Width = 78
-    OnClick = sknbtnMFUClick
-    GroupIndex = 1
-  end
-  object sknbtnEject: TcySkinButton
-    Left = 271
-    Height = 22
-    Top = 501
-    Width = 60
-    OnClick = sknbtnEjectClick
-  end
-  object sknbtnExit: TcySkinButton
-    Left = 339
-    Height = 22
-    Top = 501
-    Width = 60
-    OnClick = sknbtnExitClick
   end
   object imgDriveBackground: TImage
     Left = 8
@@ -216,7 +122,7 @@ object frmGraphicMenu: TfrmGraphicMenu
   end
   object edtSearch: TEditButton
     Left = 15
-    Height = 25
+    Height = 36
     Top = 467
     Width = 240
     ButtonWidth = 23
@@ -233,6 +139,7 @@ object frmGraphicMenu: TfrmGraphicMenu
     Top = 97
     Width = 240
     BorderStyle = bsNone
+    DefaultNodeHeight = 28
     Header.AutoSizeIndex = 0
     Header.Columns = <>
     Header.MainColumn = -1
@@ -247,6 +154,113 @@ object frmGraphicMenu: TfrmGraphicMenu
     TreeOptions.MiscOptions = [toAcceptOLEDrop, toInitOnSave, toToggleOnDblClick, toWheelPanning, toVariableNodeHeight, toEditOnClick]
     TreeOptions.PaintOptions = [toHideFocusRect, toHotTrack, toPopupMode, toShowBackground, toShowDropmark, toThemeAware, toUseBlendedImages, toAlwaysHideSelection, toUseExplorerTheme]
     TreeOptions.SelectionOptions = [toDisableDrawSelection, toFullRowSelect, toRightClickSelect]
+  end
+  object sknbtnASuite: TBCImageButton
+    Left = 271
+    Height = 30
+    Top = 72
+    Width = 128
+    BitmapOptions.Direction = sdVertical
+    OnClick = OpenRightButton
+  end
+  object sknbtnOptions: TBCImageButton
+    Left = 271
+    Height = 30
+    Top = 108
+    Width = 128
+    BitmapOptions.Direction = sdVertical
+    OnClick = OpenRightButton
+  end
+  object sknbtnDocuments: TBCImageButton
+    Left = 271
+    Height = 30
+    Top = 152
+    Width = 128
+    BitmapOptions.Direction = sdVertical
+    OnClick = OpenRightButton
+  end
+  object sknbtnPictures: TBCImageButton
+    Left = 271
+    Height = 30
+    Top = 188
+    Width = 128
+    BitmapOptions.Direction = sdVertical
+    OnClick = OpenRightButton
+  end
+  object sknbtnAbout: TBCImageButton
+    Left = 271
+    Height = 30
+    Top = 340
+    Width = 128
+    BitmapOptions.Direction = sdVertical
+    OnClick = OpenRightButton
+  end
+  object sknbtnExplore: TBCImageButton
+    Left = 271
+    Height = 30
+    Top = 296
+    Width = 128
+    BitmapOptions.Direction = sdVertical
+    OnClick = OpenRightButton
+  end
+  object sknbtnVideos: TBCImageButton
+    Left = 271
+    Height = 30
+    Top = 260
+    Width = 128
+    BitmapOptions.Direction = sdVertical
+    OnClick = OpenRightButton
+  end
+  object sknbtnMusic: TBCImageButton
+    Left = 271
+    Height = 30
+    Top = 224
+    Width = 128
+    BitmapOptions.Direction = sdVertical
+    OnClick = OpenRightButton
+  end
+  object sknbtnList: TBCImageButton
+    Left = 15
+    Height = 20
+    Top = 72
+    Width = 78
+    BitmapOptions.Direction = sdVertical
+    OnClick = sknbtnListClick
+    Toggle = True
+  end
+  object sknbtnRecents: TBCImageButton
+    Left = 96
+    Height = 20
+    Top = 72
+    Width = 78
+    BitmapOptions.Direction = sdVertical
+    OnClick = sknbtnRecentsClick
+    Toggle = True
+  end
+  object sknbtnMFU: TBCImageButton
+    Left = 177
+    Height = 20
+    Top = 72
+    Width = 78
+    BitmapOptions.Direction = sdVertical
+    OnClick = sknbtnMFUClick
+    Toggle = True
+  end
+  object sknbtnEject: TBCImageButton
+    Left = 271
+    Height = 22
+    Top = 501
+    Width = 60
+    BitmapOptions.Direction = sdVertical
+    OnClick = sknbtnEjectClick
+  end
+  object sknbtnExit: TBCImageButton
+    Left = 339
+    Height = 22
+    Top = 501
+    Width = 60
+    BitmapOptions.Direction = sdVertical
+    OnClick = sknbtnExitClick
   end
   object tmrFader: TTimer
     Interval = 20

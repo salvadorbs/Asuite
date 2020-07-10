@@ -43,11 +43,7 @@ const
   INIFILE_KEY_VERSION = 'version';
   INIFILE_KEY_URL     = 'url';
   //Images
-  INIFILE_KEY_IMAGENORMAL  = 'image_normal';
-  INIFILE_KEY_IMAGESELECTED  = 'image_selected';
-  INIFILE_KEY_IMAGEHOVER   = 'image_hover';
-  INIFILE_KEY_IMAGECLICKED = 'image_clicked';
-  INIFILE_KEY_IMAGEDISABLED = 'image_disabled';
+  INIFILE_KEY_IMAGEBUTTON  = 'image_button';
   INIFILE_KEY_IMAGEBACKGROUND = 'image_background';
   INIFILE_KEY_IMAGEUSERFRAME  = 'image_userframe';
   INIFILE_KEY_IMAGELOGO    = 'image_logo';
