@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, Menus, ComCtrls, cySkinButton, BCImageButton, ExtCtrls, hotkey,
+  StdCtrls, Menus, ComCtrls, BCImageButton, ExtCtrls, hotkey,
   Windows, DefaultTranslator;
 
 type

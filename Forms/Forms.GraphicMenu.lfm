@@ -13,7 +13,7 @@ object frmGraphicMenu: TfrmGraphicMenu
   Color = clBtnFace
   DesignTimePPI = 120
   Font.Color = clWindowText
-  Font.Height = -23
+  Font.Height = -29
   Font.Name = 'Tahoma'
   KeyPreview = True
   OnCreate = FormCreate
@@ -122,7 +122,7 @@ object frmGraphicMenu: TfrmGraphicMenu
   end
   object edtSearch: TEditButton
     Left = 15
-    Height = 36
+    Height = 43
     Top = 467
     Width = 240
     ButtonWidth = 23
@@ -139,7 +139,7 @@ object frmGraphicMenu: TfrmGraphicMenu
     Top = 97
     Width = 240
     BorderStyle = bsNone
-    DefaultNodeHeight = 28
+    DefaultNodeHeight = 35
     Header.AutoSizeIndex = 0
     Header.Columns = <>
     Header.MainColumn = -1

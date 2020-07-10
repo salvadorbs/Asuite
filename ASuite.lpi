@@ -30,7 +30,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="3"/>
-      <BuildNr Value="170"/>
+      <BuildNr Value="171"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
@@ -141,7 +141,7 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
-    <RequiredPackages Count="14">
+    <RequiredPackages Count="13">
       <Item1>
         <PackageName Value="bgracontrols"/>
       </Item1>
@@ -179,11 +179,8 @@
         <PackageName Value="KControlsLaz"/>
       </Item12>
       <Item13>
-        <PackageName Value="pl_cindy"/>
-      </Item13>
-      <Item14>
         <PackageName Value="LCL"/>
-      </Item14>
+      </Item13>
     </RequiredPackages>
     <Units Count="68">
       <Unit0>

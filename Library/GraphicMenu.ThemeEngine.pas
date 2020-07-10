@@ -24,7 +24,7 @@ unit GraphicMenu.ThemeEngine;
 interface
 
 uses
-  Classes, Kernel.Singleton, IniFiles, cySkinButton, ExtCtrls, LCLIntf, LCLType,
+  Classes, Kernel.Singleton, IniFiles, ExtCtrls, LCLIntf, LCLType,
   Graphics, SysUtils, VirtualTrees, Controls, Forms.GraphicMenu, BGRABitmap,
   BCImageButton;
 

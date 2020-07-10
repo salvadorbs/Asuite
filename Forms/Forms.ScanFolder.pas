@@ -26,7 +26,7 @@ interface
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, DefaultTranslator, ShellCtrls,
-  ImgList, StrUtils, cySearchFiles;
+  ImgList, StrUtils;
 
 type
   TfrmScanFolder = class(TForm)
@@ -47,7 +47,6 @@ type
     vstExclude: TVirtualStringTree;
     ilExtIcons: TImageList;
     grpGeneralSettings: TGroupBox;
-    vfsScan: TcySearchFiles;
     chkExtractName: TCheckBox;
     pbScan: TProgressBar;
     procedure FormCreate(Sender: TObject);
