@@ -1,7 +1,7 @@
 object frmGraphicMenu: TfrmGraphicMenu
-  Left = 1182
+  Left = 1184
   Height = 530
-  Top = 396
+  Top = 298
   Width = 406
   AlphaBlend = True
   AlphaBlendValue = 0
@@ -11,7 +11,6 @@ object frmGraphicMenu: TfrmGraphicMenu
   ClientHeight = 530
   ClientWidth = 406
   Color = clBtnFace
-  DesignTimePPI = 120
   Font.Color = clWindowText
   Font.Height = -29
   Font.Name = 'Tahoma'
