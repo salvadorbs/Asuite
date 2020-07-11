@@ -69,11 +69,11 @@ type
     function GetIniFileSection(ElementType: TGraphicMenuElement): string;
 
     //Draw methods
-    procedure DrawEmptyButton(PNGImage: TBGRABitmap; Button: TBCImageButton; imgBackground: TImage);
+    procedure DrawEmptyButton(PNGImage: TBGRABitmap; Button: TBCCustomImageButton; imgBackground: TImage);
     procedure DrawIconInPNGImage(IniFile: TIniFile; PNGImage: TBGRABitmap;
                                  ButtonType: TGraphicMenuElement);
     procedure DrawTextInPNGImage(IniFile: TIniFile; PNGImage: TBGRABitmap; ButtonType: TGraphicMenuElement; SpaceForIcon: Boolean = True);
-    procedure DrawButton(IniFile: TIniFile;Button: TBCImageButton;
+    procedure DrawButton(IniFile: TIniFile;Button: TBCCustomImageButton;
                          ButtonType: TGraphicMenuElement);
     procedure DrawHardDiskSpace(IniFile: TIniFile; DriveBackGround, DriveSpace: TImage);
 
@@ -149,7 +149,7 @@ begin
 end;
 
 procedure TThemeEngine.DrawButton(IniFile: TIniFile;
-  Button: TBCImageButton; ButtonType: TGraphicMenuElement);
+  Button: TBCCustomImageButton; ButtonType: TGraphicMenuElement);
 var
   PNGButton: TBGRABitmap;
   strButtonFile, IniFile_Section: string;
@@ -184,7 +184,7 @@ begin
 end;
 
 procedure TThemeEngine.DrawEmptyButton(PNGImage: TBGRABitmap;
-  Button: TBCImageButton; imgBackground: TImage);
+  Button: TBCCustomImageButton; imgBackground: TImage);
 var
   bmp: Graphics.TBitmap;
 begin

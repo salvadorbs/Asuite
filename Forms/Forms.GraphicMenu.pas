@@ -26,7 +26,7 @@ interface
 uses
   LCLIntf, LCLType, Classes, Forms, StdCtrls, ExtCtrls, ComCtrls, Messages,
   Controls, Graphics, Dialogs, SysUtils, VirtualTrees, Menus, EditBtn,
-  Lists.Base, BCImageButton, DefaultTranslator;
+  Lists.Base, BCImageTab, BCImageButton, DefaultTranslator;
 
 type
 
@@ -43,12 +43,12 @@ type
     sknbtnEject: TBCImageButton;
     sknbtnExit: TBCImageButton;
     sknbtnExplore: TBCImageButton;
-    sknbtnList: TBCImageButton;
-    sknbtnMFU: TBCImageButton;
+    sknbtnList: TBCImageTab;
+    sknbtnMFU: TBCImageTab;
     sknbtnMusic: TBCImageButton;
     sknbtnOptions: TBCImageButton;
     sknbtnPictures: TBCImageButton;
-    sknbtnRecents: TBCImageButton;
+    sknbtnRecents: TBCImageTab;
     sknbtnVideos: TBCImageButton;
     tmrFader: TTimer;
     imgLogo: TImage;
@@ -521,25 +521,16 @@ begin
   TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, Config.GMSmallIconSize);
   PopulateListTree(vstList);
   edtSearch.Text := '';
-
-  sknbtnMFU.Pressed := False;
-  sknbtnRecents.Pressed := False;
 end;
 
 procedure TfrmGraphicMenu.sknbtnMFUClick(Sender: TObject);
 begin
   PopulateSpecialTree(vstList, Config.ListManager.MFUList, Config.MFUNumber);
-
-  sknbtnList.Pressed := False;
-  sknbtnRecents.Pressed := False;
 end;
 
 procedure TfrmGraphicMenu.sknbtnRecentsClick(Sender: TObject);
 begin
   PopulateSpecialTree(vstList, Config.ListManager.MRUList, Config.MRUNumber);
-
-  sknbtnList.Pressed := False;
-  sknbtnMFU.Pressed := False;
 end;
 
 procedure TfrmGraphicMenu.OpenMenu;

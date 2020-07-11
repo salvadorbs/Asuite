@@ -218,33 +218,6 @@ object frmGraphicMenu: TfrmGraphicMenu
     BitmapOptions.Direction = sdVertical
     OnClick = OpenRightButton
   end
-  object sknbtnList: TBCImageButton
-    Left = 15
-    Height = 20
-    Top = 72
-    Width = 78
-    BitmapOptions.Direction = sdVertical
-    OnClick = sknbtnListClick
-    Toggle = True
-  end
-  object sknbtnRecents: TBCImageButton
-    Left = 96
-    Height = 20
-    Top = 72
-    Width = 78
-    BitmapOptions.Direction = sdVertical
-    OnClick = sknbtnRecentsClick
-    Toggle = True
-  end
-  object sknbtnMFU: TBCImageButton
-    Left = 177
-    Height = 20
-    Top = 72
-    Width = 78
-    BitmapOptions.Direction = sdVertical
-    OnClick = sknbtnMFUClick
-    Toggle = True
-  end
   object sknbtnEject: TBCImageButton
     Left = 271
     Height = 22
@@ -260,6 +233,36 @@ object frmGraphicMenu: TfrmGraphicMenu
     Width = 60
     BitmapOptions.Direction = sdVertical
     OnClick = sknbtnExitClick
+  end
+  object sknbtnList: TBCImageTab
+    Left = 15
+    Height = 20
+    Top = 72
+    Width = 78
+    BitmapOptions.Direction = sdVertical
+    GroupIndex = 1
+    OnClick = sknbtnListClick
+    Toggle = True
+  end
+  object sknbtnMFU: TBCImageTab
+    Left = 177
+    Height = 20
+    Top = 72
+    Width = 78
+    BitmapOptions.Direction = sdVertical
+    GroupIndex = 1
+    OnClick = sknbtnMFUClick
+    Toggle = True
+  end
+  object sknbtnRecents: TBCImageTab
+    Left = 96
+    Height = 20
+    Top = 72
+    Width = 78
+    BitmapOptions.Direction = sdVertical
+    GroupIndex = 1
+    OnClick = sknbtnRecentsClick
+    Toggle = True
   end
   object tmrFader: TTimer
     Interval = 20
