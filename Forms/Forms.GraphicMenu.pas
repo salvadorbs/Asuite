@@ -72,6 +72,7 @@ type
     imgDragSpaceHidden: TImage;
     tmrCheckItems: TTimer;
     procedure FormCreate(Sender: TObject);
+    procedure pmWindowClose(Sender: TObject);
     procedure tmrFaderTimer(Sender: TObject);
     procedure imgLogoMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
@@ -96,6 +97,8 @@ type
     procedure tmrCheckItemsTimer(Sender: TObject);
     procedure FormHide(Sender: TObject);
     procedure mniRunClick(Sender: TObject);
+    procedure vstListHotChange(Sender: TBaseVirtualTree; OldNode,
+      NewNode: PVirtualNode);
 	private    
     { Private declarations }
     FOpening : Boolean;
@@ -139,29 +142,34 @@ var
 begin
   //Clear vstList
   vstList.Clear;
-  if edtSearch.Text <> '' then
-  begin
-    //TODO lazarus
-    //edtSearch.RightButton.ImageIndex := TThemeEngine.Create.CancelIcon;
-    //Do search
-    //Change node height and imagelist
-    TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, False);
-    frmMain.DoSearchItem(vstList, edtSearch.Text, stName);
-    vstList.SortTree(-1, sdAscending);
-    //Set first node as HotNode
-    Node := vstList.GetFirst;
-    //TODO lazarus
-    {
-    if Assigned(Node) then
-      vstList.SetCurrentHotNode(Node);
-    }
-  end
-  else begin
-    //TODO lazarus
-    //edtSearch.RightButton.ImageIndex := TThemeEngine.Create.SearchIcon;
-    //Change node height and imagelist
-    TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, Config.GMSmallIconSize);
-    PopulateListTree(vstList);
+  vstList.BeginUpdate;
+  try
+    if edtSearch.Text <> '' then
+    begin
+      //TODO lazarus
+      //edtSearch.RightButton.ImageIndex := TThemeEngine.Create.CancelIcon;
+
+      //Do search
+      //Change node height and imagelist
+      TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, False);
+      frmMain.DoSearchItem(vstList, edtSearch.Text, stName);
+      vstList.SortTree(-1, sdAscending);
+
+      //Select node
+      Node := vstList.GetFirst;
+      if Assigned(Node) then
+        vstList.Selected[Node] := True;
+    end
+    else begin
+      //TODO lazarus
+      //edtSearch.RightButton.ImageIndex := TThemeEngine.Create.SearchIcon;
+
+      //Change node height and imagelist
+      TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, Config.GMSmallIconSize);
+      PopulateListTree(vstList);
+    end;
+  finally
+    vstList.EndUpdate;
   end;
 end;
 
@@ -255,6 +263,11 @@ begin
     Self.Left  := Screen.WorkAreaRect.Right - Width;;
 end;
 
+procedure TfrmGraphicMenu.pmWindowClose(Sender: TObject);
+begin
+  vstList.ClearSelection;
+end;
+
 procedure TfrmGraphicMenu.FormDeactivate(Sender: TObject);
 begin
   //if menu lost its focus, it hide
@@ -274,19 +287,19 @@ var
   CurrentNode: PVirtualNode;
   NodeData: TvBaseNodeData;
 begin
-  CurrentNode := vstList.HotNode;
+  CurrentNode := vstList.GetFirstSelected();
   case Ord(Key) of
     VK_UP:
       begin
         Key := 0;
-        CurrentNode := vstList.GetPreviousVisible(vstList.HotNode);
+        CurrentNode := vstList.GetPreviousVisible(vstList.GetFirstSelected());
         if Not Assigned(CurrentNode) then
           CurrentNode := vstList.GetLast;
       end;
     VK_DOWN:
       begin
         Key := 0;
-        CurrentNode := vstList.GetNextVisible(vstList.HotNode);
+        CurrentNode := vstList.GetNextVisible(vstList.GetFirstSelected());
         if Not Assigned(CurrentNode) then
           CurrentNode := vstList.GetFirst;
       end;
@@ -323,11 +336,8 @@ begin
       end;
   end;
 
-  //TODO lazarus: rewrite this without hack helper!!!
-  {
   if Assigned(CurrentNode) then
-    vstList.SetCurrentHotNode(CurrentNode);
-  }
+    vstList.Selected[CurrentNode] := True;
 end;
 
 procedure TfrmGraphicMenu.FormKeyPress(Sender: TObject; var Key: Char);
@@ -400,6 +410,13 @@ end;
 procedure TfrmGraphicMenu.mniRunClick(Sender: TObject);
 begin
   TVirtualTreeMethods.Create.ExecuteSelectedNodes(vstList, TRunMode(TMenuItem(Sender).Tag), False);
+end;
+
+procedure TfrmGraphicMenu.vstListHotChange(Sender: TBaseVirtualTree; OldNode,
+  NewNode: PVirtualNode);
+begin
+  if Assigned(vstList.GetFirstSelected()) then
+    vstList.ClearSelection;
 end;
 
 procedure TfrmGraphicMenu.OpenRightButton(Sender: TObject);

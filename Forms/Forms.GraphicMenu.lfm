@@ -151,8 +151,9 @@ object frmGraphicMenu: TfrmGraphicMenu
     TabOrder = 0
     TreeOptions.AutoOptions = [toAutoScrollOnExpand, toAutoTristateTracking, toAutoDeleteMovedNodes, toAutoChangeScale]
     TreeOptions.MiscOptions = [toAcceptOLEDrop, toInitOnSave, toToggleOnDblClick, toWheelPanning, toVariableNodeHeight, toEditOnClick]
-    TreeOptions.PaintOptions = [toHideFocusRect, toHotTrack, toPopupMode, toShowBackground, toShowDropmark, toThemeAware, toUseBlendedImages, toAlwaysHideSelection, toUseExplorerTheme]
-    TreeOptions.SelectionOptions = [toDisableDrawSelection, toFullRowSelect, toRightClickSelect]
+    TreeOptions.PaintOptions = [toHideFocusRect, toHotTrack, toPopupMode, toShowBackground, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
+    TreeOptions.SelectionOptions = [toFullRowSelect, toRightClickSelect]
+    OnHotChange = vstListHotChange
   end
   object sknbtnASuite: TBCImageButton
     Left = 271
@@ -281,6 +282,7 @@ object frmGraphicMenu: TfrmGraphicMenu
   end
   object pmWindow: TPopupMenu
     OnPopup = pmWindowPopup
+    OnClose = pmWindowClose
     Left = 256
     Top = 16
     object mniRun: TMenuItem
