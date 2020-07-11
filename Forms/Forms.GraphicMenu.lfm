@@ -1,7 +1,7 @@
 object frmGraphicMenu: TfrmGraphicMenu
-  Left = 1184
+  Left = 1034
   Height = 530
-  Top = 298
+  Top = 397
   Width = 406
   AlphaBlend = True
   AlphaBlendValue = 0
@@ -118,19 +118,6 @@ object frmGraphicMenu: TfrmGraphicMenu
     Width = 48
     OnClick = imgPersonalPictureClick
     Stretch = True
-  end
-  object edtSearch: TEditButton
-    Left = 15
-    Height = 43
-    Top = 467
-    Width = 240
-    ButtonWidth = 23
-    MaxLength = 0
-    NumGlyphs = 1
-    OnChange = edtSearchChange
-    PasswordChar = #0
-    PopupMenu = frmMain.pmSearch
-    TabOrder = 1
   end
   object vstList: TVirtualStringTree
     Left = 15
@@ -264,6 +251,19 @@ object frmGraphicMenu: TfrmGraphicMenu
     GroupIndex = 1
     OnClick = sknbtnRecentsClick
     Toggle = True
+  end
+  object edtSearch: TEdit
+    Left = 15
+    Height = 23
+    Top = 467
+    Width = 240
+    OnChange = edtSearchChange
+    OnClick = edtSearchClick
+    OnEnter = edtSearchEnter
+    OnMouseEnter = edtSearchMouseEnter
+    ParentFont = False
+    PopupMenu = frmMain.pmSearch
+    TabOrder = 1
   end
   object tmrFader: TTimer
     Interval = 20

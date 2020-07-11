@@ -26,13 +26,14 @@ interface
 uses
   LCLIntf, LCLType, Classes, Forms, StdCtrls, ExtCtrls, ComCtrls, Messages,
   Controls, Graphics, Dialogs, SysUtils, VirtualTrees, Menus, EditBtn,
-  Lists.Base, BCImageTab, BCImageButton, DefaultTranslator;
+  Lists.Base, BCImageTab, BCImageButton, DefaultTranslator, BGRASpeedButton;
 
 type
 
   { TfrmGraphicMenu }
 
   TfrmGraphicMenu = class(TForm)
+    edtSearch: TEdit;
     imgDriveSpace: TImage;
     imgDivider2: TImage;
     lblDriveName: TLabel;
@@ -57,7 +58,6 @@ type
     OpenDialog1: TOpenDialog;
     imgDivider1: TImage;
     ApplicationEvents1: TApplicationProperties;
-    edtSearch: TEditButton;
     imgBackground: TImage;
     imgDriveBackground: TImage;
     pmWindow: TPopupMenu;
@@ -71,6 +71,9 @@ type
     imgUserFrame: TImage;
     imgDragSpaceHidden: TImage;
     tmrCheckItems: TTimer;
+    procedure edtSearchClick(Sender: TObject);
+    procedure edtSearchEnter(Sender: TObject);
+    procedure edtSearchMouseEnter(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure pmWindowClose(Sender: TObject);
     procedure tmrFaderTimer(Sender: TObject);
@@ -99,9 +102,11 @@ type
     procedure mniRunClick(Sender: TObject);
     procedure vstListHotChange(Sender: TBaseVirtualTree; OldNode,
       NewNode: PVirtualNode);
-	private    
+  private
     { Private declarations }
     FOpening : Boolean;
+    FSearchButton: TBGRASpeedButton;
+
     procedure OpenFolder(FolderPath: string);
     procedure UpdateDriveStats;
     procedure CheckUserPicture;
@@ -109,10 +114,10 @@ type
     procedure PopulateListTree(const ATree: TVirtualStringTree);
     procedure PopulateSpecialTree(const ATree: TVirtualStringTree; AList: TBaseItemsList; MaxItems: Integer);
     procedure SavePositionForm;
-	public
+  public
     { Public declarations }
     procedure OpenMenu;
-  	procedure CloseMenu;
+    procedure CloseMenu;
   end;
 
 var
@@ -146,8 +151,7 @@ begin
   try
     if edtSearch.Text <> '' then
     begin
-      //TODO lazarus
-      //edtSearch.RightButton.ImageIndex := TThemeEngine.Create.CancelIcon;
+      FSearchButton.ImageIndex := TThemeEngine.Create.CancelIcon;
 
       //Do search
       //Change node height and imagelist
@@ -161,8 +165,7 @@ begin
         vstList.Selected[Node] := True;
     end
     else begin
-      //TODO lazarus
-      //edtSearch.RightButton.ImageIndex := TThemeEngine.Create.SearchIcon;
+      FSearchButton.ImageIndex := TThemeEngine.Create.SearchIcon;
 
       //Change node height and imagelist
       TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, Config.GMSmallIconSize);
@@ -171,6 +174,9 @@ begin
   finally
     vstList.EndUpdate;
   end;
+
+  //We must repaint SearchButton because TEdit
+  FSearchButton.Invalidate;
 end;
 
 procedure TfrmGraphicMenu.btnSearchClick(Sender: TObject);
@@ -225,8 +231,6 @@ begin
   dblDriveUsed := dblDriveSize - DiskFree(Ord(Drive) - 64);
   imgDriveSpace.Width := Round(dblDriveUsed / dblDriveSize * (imgDriveBackground.Width - 4));
   lblDriveSpace.Caption := Format(msgGMHardDiskSpace, [DiskFreeString(Drive, True), DiskSizeString(Drive, True)]);
-
-  edtSearch.Images := dmImages.ilSmallIcons;
 end;
 
 procedure TfrmGraphicMenu.OpenFolder(FolderPath: string);
@@ -237,21 +241,22 @@ begin
   sPath := Config.Paths.RelativeToAbsolute(FolderPath);
   ErrorCode := OpenDocument(PChar(sPath));
   if ErrorCode then
-  begin
     ShowMessageFmtEx(msgErrGeneric, ['', SysErrorMessage(GetLastError)], True);
-  end;
 end;
 
 procedure TfrmGraphicMenu.FormCreate(Sender: TObject);
 begin
   TVirtualTreeEvents.Create.SetupVSTGraphicMenu(vstList, Self);
+
   //Load graphics
   TThemeEngine.Create.SetupThemeEngine(Self);
   TThemeEngine.Create.LoadTheme;
+
   //Set PopUpMenu's ImageIndexes
   pmWindow.Images := dmImages.ilSmallIcons;
   mniRun.ImageIndex := Config.IconsManager.GetIconIndex('run');
   mniProperty.ImageIndex := Config.IconsManager.GetIconIndex('property');
+
   //Position
   if Config.GMPositionTop <> -1 then
     Self.Top  := Config.GMPositionTop
@@ -260,7 +265,39 @@ begin
   if Config.GMPositionLeft <> -1 then
     Self.Left  := Config.GMPositionLeft
   else
-    Self.Left  := Screen.WorkAreaRect.Right - Width;;
+    Self.Left  := Screen.WorkAreaRect.Right - Width;
+
+  //Create speedbutton for Search
+  //TODO: Make a separate LCL component (TEdit + TBGRASpeedButton)
+  FSearchButton := TBGRASpeedButton.Create(Self);
+  FSearchButton.Flat   := True;
+  FSearchButton.Parent := edtSearch;
+  FSearchButton.Width  := 20;
+  FSearchButton.Align  := alRight;
+  FSearchButton.Constraints.MaxHeight := 18;
+  FSearchButton.Images := dmImages.ilSmallIcons;
+  FSearchButton.ImageIndex := TThemeEngine.Create.SearchIcon;
+  FSearchButton.Cursor := crArrow;
+  FSearchButton.OnClick := btnSearchClick;
+
+  //Set margin in edtSearch (so text doesn't go behind the button)
+  SendMessage(edtSearch.Handle, EM_SETMARGINS, EC_LEFTMARGIN or EC_RIGHTMARGIN, MakeLParam(0, FSearchButton.Width))
+end;
+
+procedure TfrmGraphicMenu.edtSearchClick(Sender: TObject);
+begin
+end;
+
+procedure TfrmGraphicMenu.edtSearchEnter(Sender: TObject);
+begin
+  //We must repaint SearchButton because TEdit
+  FSearchButton.Invalidate;
+end;
+
+procedure TfrmGraphicMenu.edtSearchMouseEnter(Sender: TObject);
+begin
+  //We must repaint SearchButton because TEdit
+  FSearchButton.Invalidate;
 end;
 
 procedure TfrmGraphicMenu.pmWindowClose(Sender: TObject);
