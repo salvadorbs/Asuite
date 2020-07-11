@@ -24,8 +24,8 @@ unit Forms.GraphicMenu;
 interface
 
 uses
-  LCLIntf, LCLType, Classes, Forms, StdCtrls, ExtCtrls, ComCtrls, Messages,
-  Controls, Graphics, Dialogs, SysUtils, VirtualTrees, Menus, EditBtn,
+  LCLIntf, LCLType, Classes, Forms, StdCtrls, ExtCtrls, ComCtrls,
+  Controls, Graphics, Dialogs, SysUtils, VirtualTrees, Menus, Windows,
   Lists.Base, BCImageTab, BCImageButton, DefaultTranslator, BGRASpeedButton;
 
 type
@@ -75,6 +75,7 @@ type
     procedure edtSearchEnter(Sender: TObject);
     procedure edtSearchMouseEnter(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure pmWindowClose(Sender: TObject);
     procedure tmrFaderTimer(Sender: TObject);
     procedure imgLogoMouseDown(Sender: TObject; Button: TMouseButton;
@@ -114,6 +115,8 @@ type
     procedure PopulateListTree(const ATree: TVirtualStringTree);
     procedure PopulateSpecialTree(const ATree: TVirtualStringTree; AList: TBaseItemsList; MaxItems: Integer);
     procedure SavePositionForm;
+    procedure WMWindowPosChanging(Var Msg : TWMWindowPosChanging); message WM_WindowPosChanging;
+    procedure HandleEdge(var AEdge: Integer; ASnapToEdge: Integer; ASnapDistance: Integer = 0);
   public
     { Public declarations }
     procedure OpenMenu;
@@ -122,6 +125,7 @@ type
 
 var
   frmGraphicMenu : TfrmGraphicMenu;
+  PrevWndProc: WNDPROC;
 
 implementation
 
@@ -131,8 +135,47 @@ uses
   Forms.Main, Utility.System, Kernel.Consts, AppConfig.Main, DataModules.Icons,
   Forms.About, NodeDataTypes.Base, Kernel.Enumerations, Forms.Options,
   Utility.Misc, VirtualTree.Events, VirtualTree.Methods, Kernel.Types,
-  NodeDataTypes.Custom, GraphicMenu.ThemeEngine, Kernel.ResourceStrings,
-  Windows;
+  NodeDataTypes.Custom, GraphicMenu.ThemeEngine, Kernel.ResourceStrings;
+
+function WndCallback(Ahwnd: HWND; uMsg: UINT; wParam: WParam; lParam: LParam): LRESULT; stdcall;
+const
+  Margin = 5;
+var
+  Rect: TRect;
+  MouseX, MouseY: LongInt;
+begin
+  if uMsg = WM_NCHITTEST then
+  begin
+    Result := Windows.DefWindowProc(Ahwnd, uMsg, wParam, lParam);
+    MouseX := GET_X_LPARAM(lParam);
+    MouseY := GET_Y_LPARAM(lParam);
+    with Rect do
+    begin
+      Left := MouseX - frmGraphicMenu.BoundsRect.Left;
+      Right := frmGraphicMenu.BoundsRect.Right - MouseX;
+      Top := MouseY - frmGraphicMenu.BoundsRect.Top;
+      Bottom := frmGraphicMenu.BoundsRect.Bottom - MouseY;
+      if (Top < Margin) and (Left < Margin) then
+        Result := windows.HTTOPLEFT
+      else if (Top < Margin) and (Right < Margin) then
+        Result := windows.HTTOPRIGHT
+      else if (Bottom < Margin) and (Left < Margin) then
+        Result := windows.HTBOTTOMLEFT
+      else if (Bottom < Margin) and (Right < Margin) then
+        Result := windows.HTBOTTOMRIGHT
+      else if (Top < Margin) then
+        Result := windows.HTTOP
+      else if (Left < Margin) then
+        Result := windows.HTLEFT
+      else if (Bottom < Margin) then
+        Result := windows.HTBOTTOM
+      else if (Right < Margin) then
+        Result := windows.HTRIGHT;
+    end;
+    Exit;
+  end;
+  Result := CallWindowProc(PrevWndProc,Ahwnd, uMsg, WParam, LParam);
+end;
 
 procedure TfrmGraphicMenu.ApplicationEvents1Deactivate(Sender: TObject);
 begin
@@ -151,7 +194,8 @@ begin
   try
     if edtSearch.Text <> '' then
     begin
-      FSearchButton.ImageIndex := TThemeEngine.Create.CancelIcon;
+      if Assigned(FSearchButton) then
+        FSearchButton.ImageIndex := TThemeEngine.Create.CancelIcon;
 
       //Do search
       //Change node height and imagelist
@@ -165,7 +209,8 @@ begin
         vstList.Selected[Node] := True;
     end
     else begin
-      FSearchButton.ImageIndex := TThemeEngine.Create.SearchIcon;
+      if Assigned(FSearchButton) then
+        FSearchButton.ImageIndex := TThemeEngine.Create.SearchIcon;
 
       //Change node height and imagelist
       TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, Config.GMSmallIconSize);
@@ -176,7 +221,8 @@ begin
   end;
 
   //We must repaint SearchButton because TEdit
-  FSearchButton.Invalidate;
+  if Assigned(FSearchButton) then
+    FSearchButton.Invalidate;
 end;
 
 procedure TfrmGraphicMenu.btnSearchClick(Sender: TObject);
@@ -200,6 +246,28 @@ begin
 
     Config.Changed := True;
   end;
+end;
+
+procedure TfrmGraphicMenu.WMWindowPosChanging(var Msg: TWMWindowPosChanging);
+begin
+  if (Parent = nil) and
+    ((Msg.WindowPos.X <> 0) or (Msg.WindowPos.Y <> 0)) and
+    ((Msg.WindowPos.cx = Self.Width) and (Msg.WindowPos.cy = Self.Height)) then
+  begin
+    HandleEdge(Msg.WindowPos.x, Monitor.WorkareaRect.Left, 0);
+    HandleEdge(Msg.WindowPos.y, Monitor.WorkareaRect.Top, 0);
+    HandleEdge(Msg.WindowPos.x, Monitor.WorkareaRect.Right, Self.Width);
+    HandleEdge(Msg.WindowPos.y, Monitor.WorkareaRect.Bottom, Self.Height);
+  end;
+
+  inherited;
+end;
+
+procedure TfrmGraphicMenu.HandleEdge(var AEdge: Integer; ASnapToEdge: Integer;
+  ASnapDistance: Integer);
+begin
+  if (Abs(AEdge + ASnapDistance - ASnapToEdge) < 10) then
+    AEdge := ASnapToEdge - ASnapDistance;
 end;
 
 procedure TfrmGraphicMenu.CheckUserPicture;
@@ -246,6 +314,8 @@ end;
 
 procedure TfrmGraphicMenu.FormCreate(Sender: TObject);
 begin
+  PrevWndProc := Windows.WNDPROC(SetWindowLongPtr(Self.Handle, GWL_WNDPROC, PtrInt(@WndCallback)));
+
   TVirtualTreeEvents.Create.SetupVSTGraphicMenu(vstList, Self);
 
   //Load graphics
@@ -284,6 +354,11 @@ begin
   SendMessage(edtSearch.Handle, EM_SETMARGINS, EC_LEFTMARGIN or EC_RIGHTMARGIN, MakeLParam(0, FSearchButton.Width))
 end;
 
+procedure TfrmGraphicMenu.FormDestroy(Sender: TObject);
+begin
+  FreeAndNil(FSearchButton);
+end;
+
 procedure TfrmGraphicMenu.edtSearchClick(Sender: TObject);
 begin
 end;
@@ -291,13 +366,15 @@ end;
 procedure TfrmGraphicMenu.edtSearchEnter(Sender: TObject);
 begin
   //We must repaint SearchButton because TEdit
-  FSearchButton.Invalidate;
+  if Assigned(FSearchButton) then
+    FSearchButton.Invalidate;
 end;
 
 procedure TfrmGraphicMenu.edtSearchMouseEnter(Sender: TObject);
 begin
   //We must repaint SearchButton because TEdit
-  FSearchButton.Invalidate;
+  if Assigned(FSearchButton) then
+    FSearchButton.Invalidate;
 end;
 
 procedure TfrmGraphicMenu.pmWindowClose(Sender: TObject);
@@ -417,7 +494,7 @@ begin
   if Button = mbLeft then
   begin
     ReleaseCapture;
-    Perform(WM_SYSCOMMAND, SC_DRAGMOVE, 0);
+    SendMessage(frmGraphicMenu.Handle, WM_SYSCOMMAND, SC_DRAGMOVE, 0);
 
     SavePositionForm;
   end;
@@ -433,7 +510,7 @@ begin
   if OpenDialog1.Execute then
   begin
     TempString := OpenDialog1.FileName;
-		imgPersonalPicture.Picture.LoadFromFile(TempString);
+    imgPersonalPicture.Picture.LoadFromFile(TempString);
     Config.GMPersonalPicture := Config.Paths.AbsoluteToRelative(TempString);
     Config.Changed := True;
   end;
