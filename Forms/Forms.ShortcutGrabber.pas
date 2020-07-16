@@ -205,11 +205,11 @@ var
 begin
   //Separate key and mod from THotkey and set GUI properly
   ShortCutToKey(hkKeys.HotKey, key, Modi);
-  SetGUIKeyFromKey(key);
   SetGUIModifierFromShiftState(Modi);
+  SetGUIKeyFromKey(key);
 
   //Change hotkey, reinsert only key
-  hkKeys.HotKey := ShortCut(key, []);
+  //hkKeys.HotKey := ShortCut(key, []);
 end;
 
 procedure TfrmShortcutGrabber.LoadImages;
@@ -270,6 +270,7 @@ begin
     btnShift.Pressed := false;
     btnAlt.Pressed   := false;
     btnCtrl.Pressed  := false;
+    btnWinKey.Pressed  := false;
 
     if (ssShift in AMod) then
       btnShift.Pressed := True;
@@ -279,6 +280,9 @@ begin
 
     if (ssCtrl in AMod) then
       btnCtrl.Pressed := True;
+
+    if (ssMeta in AMod) then
+      btnWinKey.Pressed := True;
   end;
 end;
 

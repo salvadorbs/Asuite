@@ -148,7 +148,7 @@ begin
   inherited;
   DebugLn('THotKey.KeyUp ' + IntToStr(Key));
 
-  filteredShiftState := Shift * [ssShift, ssAlt, ssCtrl];
+  filteredShiftState := Shift * [ssShift, ssAlt, ssCtrl, ssMeta];
   if ((Key = 8) or (Key = 46)) and (filteredShiftState = []) then
   begin
      Hotkey := 0;

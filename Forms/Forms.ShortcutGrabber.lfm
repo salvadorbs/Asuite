@@ -1,7 +1,7 @@
 object frmShortcutGrabber: TfrmShortcutGrabber
-  Left = 672
+  Left = 704
   Height = 189
-  Top = 471
+  Top = 473
   Width = 396
   BorderStyle = bsToolWindow
   Caption = 'Choose hotkey...'
@@ -48,7 +48,8 @@ object frmShortcutGrabber: TfrmShortcutGrabber
       TabOrder = 0
       Hotkey = 0
       Modifiers = []
-      NoModifier = False
+      NoModifier = True
+      OnChange = hkKeysChange
     end
     object btnAlt: TBCImageButton
       Left = 205
