@@ -71,7 +71,6 @@ type
     imgUserFrame: TImage;
     imgDragSpaceHidden: TImage;
     tmrCheckItems: TTimer;
-    procedure edtSearchClick(Sender: TObject);
     procedure edtSearchEnter(Sender: TObject);
     procedure edtSearchMouseEnter(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -357,10 +356,6 @@ end;
 procedure TfrmGraphicMenu.FormDestroy(Sender: TObject);
 begin
   FreeAndNil(FSearchButton);
-end;
-
-procedure TfrmGraphicMenu.edtSearchClick(Sender: TObject);
-begin
 end;
 
 procedure TfrmGraphicMenu.edtSearchEnter(Sender: TObject);

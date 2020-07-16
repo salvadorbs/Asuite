@@ -78,7 +78,7 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       Left = 8
       Height = 21
       Top = 61
-      Width = 67
+      Width = 51
       CenturyFrom = 1941
       MaxDate = 2958465
       MinDate = -53780
@@ -91,7 +91,7 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       LeadingZeros = True
       Kind = dtkTime
       TimeFormat = tf24
-      TimeDisplay = tdHMS
+      TimeDisplay = tdHM
       DateMode = dmUpDown
       Date = 39092
       Time = 0.942361111112405

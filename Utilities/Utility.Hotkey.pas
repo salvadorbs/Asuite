@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Utility.Hotkey;
 
-{$MODE DelphiUnicode}
+{$MODE Delphi}
 
 interface
 
@@ -157,7 +157,7 @@ var
   M, K: Word;
   Atom: Word;
 begin
-  Atom := GlobalAddAtomW(PChar('HotKeyManagerHotKeyTest'));
+  Atom := GlobalAddAtom(PChar('HotKeyManagerHotKeyTest'));
   SeparateHotKey(HotKey, M, K);
   Result := RegisterHotKey(Application.Handle, Atom, M, K);
   if Result then
@@ -389,7 +389,7 @@ begin
 
   Tokens := TStringList.Create;
   try
-    ExtractStrings(['+'], [' '], PAnsiChar(Text), Tokens);
+    ExtractStrings(['+'], [' '], PChar(Text), Tokens);
     Modifiers := GetModifiersValue;
     if (Modifiers = 0) and (Tokens.Count > 1) then
       // Something went wrong when translating the modifiers

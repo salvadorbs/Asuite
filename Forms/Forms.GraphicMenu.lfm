@@ -259,7 +259,6 @@ object frmGraphicMenu: TfrmGraphicMenu
     Top = 467
     Width = 240
     OnChange = edtSearchChange
-    OnClick = edtSearchClick
     OnEnter = edtSearchEnter
     OnMouseEnter = edtSearchMouseEnter
     ParentFont = False

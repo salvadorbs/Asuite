@@ -179,6 +179,8 @@ begin
     if IsRightButton(ButtonType) then
       DrawIconInPNGImage(IniFile, PNGButton, ButtonType);
   finally
+    if Assigned(Button.BitmapOptions.Bitmap) then
+      Button.BitmapOptions.Bitmap.Free;
     Button.BitmapOptions.Bitmap := PNGButton;
   end;
 end;
@@ -249,7 +251,7 @@ procedure TThemeEngine.DrawTextInPNGImage(IniFile: TIniFile;
   );
 var
   TopText, ButtonHeight, I : Integer;
-  FontNormal, FontHover, FontClicked, FontDisabled : TFont;
+  FontNormal, FontHover, FontClicked : TFont;
   Caption, IniFile_Section : string;
   DrawRect, R: TRect;
   DrawFlags: Cardinal;
