@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit BCImageTab;
 
-{$I bgracontrols.inc}
+{$I ASuiteComps.inc}
 
 interface
 
@@ -115,7 +115,7 @@ implementation
 
 procedure Register;
 begin
-  RegisterComponents('BGRA Controls',[TBCImageTab]);
+  RegisterComponents('ASuite Components',[TBCImageTab]);
 end;
 
 { TBCCustomImageTab }

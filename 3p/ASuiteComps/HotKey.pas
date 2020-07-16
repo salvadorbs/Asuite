@@ -36,6 +36,7 @@ type
     FModifiers: THKModifiers;
     FLastPressed: TShortCut;
     FNoModifier: Boolean;
+    FOnChange: TNotifyEvent;
 
     function GetCharFromVirtualKey(Key: Word): String;
   protected
@@ -65,6 +66,7 @@ type
     property Hotkey: TShortcut read FHotkey write FHotkey;
     property Modifiers: THKModifiers read FModifiers write FModifiers;
     property NoModifier: Boolean read FNoModifier write FNoModifier;
+    property OnChange: TNotifyEvent read FOnChange write FOnChange;
   end;
 
 procedure Register;
@@ -73,7 +75,7 @@ implementation
 
 procedure Register;
 begin
-  RegisterComponents('Additional',[THotKey]);
+  RegisterComponents('ASuite Components',[THotKey]);
 end;
 
 constructor THotKey.Create(AOwner: TComponent);
@@ -152,10 +154,15 @@ begin
      Hotkey := 0;
   end else
   begin
-    if not(FNoModifier) then
-      if (filteredShiftState = []) then filteredShiftState := [ssCtrl];
+    if not(FNoModifier) and (filteredShiftState = []) then
+      filteredShiftState := [ssCtrl];
+
     newShortCut := ShortCut(Key, filteredShiftState);
-    if (ShortCutToText(newShortCut) <> '') then Hotkey := newShortCut;
+    if (ShortCutToText(newShortCut) <> '') then
+      Hotkey := newShortCut;
+
+    if Assigned(FOnChange) then
+      FOnChange(Self);
   end;
   Invalidate;
 end;

@@ -2,7 +2,7 @@
 <CONFIG>
   <Package Version="5">
     <PathDelim Value="\"/>
-    <Name Value="BGRATab"/>
+    <Name Value="ASuiteComps"/>
     <Type Value="RunAndDesignTime"/>
     <CompilerOptions>
       <Version Value="11"/>
@@ -14,9 +14,14 @@
     <Version Major="1"/>
     <Files>
       <Item>
-        <Filename Value="bcimagetab.pas"/>
+        <Filename Value="BCImageTab.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCImageTab"/>
+      </Item>
+      <Item>
+        <Filename Value="HotKey.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="HotKey"/>
       </Item>
     </Files>
     <RequiredPkgs>

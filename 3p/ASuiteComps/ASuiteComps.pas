@@ -2,21 +2,22 @@
   This source is only used to compile and install the package.
  }
 
-unit BGRATab;
+unit ASuiteComps;
 
 {$warn 5023 off : no warning about unused units}
 interface
 
 uses
-  BCImageTab, LazarusPackageIntf;
+  BCImageTab, HotKey, LazarusPackageIntf;
 
 implementation
 
 procedure Register;
 begin
   RegisterUnit('BCImageTab', @BCImageTab.Register);
+  RegisterUnit('HotKey', @HotKey.Register);
 end;
 
 initialization
-  RegisterPackage('BGRATab', @Register);
+  RegisterPackage('ASuiteComps', @Register);
 end.
