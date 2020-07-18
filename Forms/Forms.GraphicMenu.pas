@@ -125,6 +125,7 @@ type
 var
   frmGraphicMenu : TfrmGraphicMenu;
   PrevWndProc: WNDPROC;
+  OldWindowX, OldWindowY: Integer;
 
 implementation
 
@@ -250,6 +251,7 @@ end;
 procedure TfrmGraphicMenu.WMWindowPosChanging(var Msg: TWMWindowPosChanging);
 begin
   if (Parent = nil) and
+    ((Msg.WindowPos.X <> OldWindowX) or (Msg.WindowPos.Y <> OldWindowY)) and
     ((Msg.WindowPos.X <> 0) or (Msg.WindowPos.Y <> 0)) and
     ((Msg.WindowPos.cx = Self.Width) and (Msg.WindowPos.cy = Self.Height)) then
   begin
@@ -257,6 +259,9 @@ begin
     HandleEdge(Msg.WindowPos.y, Monitor.WorkareaRect.Top, 0);
     HandleEdge(Msg.WindowPos.x, Monitor.WorkareaRect.Right, Self.Width);
     HandleEdge(Msg.WindowPos.y, Monitor.WorkareaRect.Bottom, Self.Height);
+
+    OldWindowX := Msg.WindowPos.x;
+    OldWindowY := Msg.WindowPos.y;
   end;
 
   inherited;
