@@ -27,6 +27,9 @@ uses
   SysUtils, Classes, Controls, Forms, Dialogs, DefaultTranslator;
 
 type
+
+  { TfrmBaseEntityPage }
+
   TfrmBaseEntityPage = class(TFrame)
   private
     { Private declarations }
@@ -39,6 +42,7 @@ type
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
     function SaveData: Boolean; virtual;
+    function LoadData: Boolean; virtual;
     property Title: string read GetTitle;
     property ImageIndex: integer read GetImageIndex;
   end;
@@ -57,7 +61,6 @@ uses
 constructor TfrmBaseEntityPage.Create(AOwner: TComponent);
 begin
   inherited;
-  Self.InternalLoadData;
   ScaleBy(Screen.PixelsPerInch, 96);
 end;
 
@@ -86,6 +89,11 @@ end;
 function TfrmBaseEntityPage.SaveData: Boolean;
 begin
   Result := Self.InternalSaveData;
+end;
+
+function TfrmBaseEntityPage.LoadData: Boolean;
+begin
+  Result := Self.InternalLoadData;
 end;
 
 end.

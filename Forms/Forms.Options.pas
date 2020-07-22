@@ -93,8 +93,11 @@ begin
   AddFrameNode(vstCategory, nil, TfrmMainWindowOptionsPage.Create(Self));
   //Advanced
   FFrameAdvanced := AddFrameNode(vstCategory, nil, TfrmAdvancedOptionsPage.Create(Self));
-  AddFrameNode(vstCategory, FFrameAdvanced, TfrmAutorunOptionsPage.Create(Self));
-  AddFrameNode(vstCategory, FFrameAdvanced, TfrmHotkeyOptionsPage.Create(Self));
+  if Assigned(FFrameAdvanced) then
+  begin
+    AddFrameNode(vstCategory, FFrameAdvanced, TfrmAutorunOptionsPage.Create(Self));
+    AddFrameNode(vstCategory, FFrameAdvanced, TfrmHotkeyOptionsPage.Create(Self));
+  end;
   //TrayIcon
   AddFrameNode(vstCategory, nil, TfrmTrayiconOptionsPage.Create(Self));
   //Stats

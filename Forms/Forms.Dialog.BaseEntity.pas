@@ -85,6 +85,12 @@ begin
     NodeData.Frame := FramePage;
     NodeData.Title := TfrmBaseEntityPage(FramePage).Title;
     NodeData.ImageIndex := TfrmBaseEntityPage(FramePage).ImageIndex;
+
+    TfrmBaseEntityPage(FramePage).Parent := Self.pnlDialogPage;
+    TfrmBaseEntityPage(FramePage).Visible := False;
+    TfrmBaseEntityPage(FramePage).Align := alClient;
+
+    TfrmBaseEntityPage(FramePage).LoadData;
   end;
 end;
 
@@ -123,8 +129,6 @@ begin
      FCurrentPage.Visible := False;
   end;
   FCurrentPage := TfrmBaseEntityPage(NewPage);
-  FCurrentPage.Parent  := pnlDialogPage;
-  FCurrentPage.Align   := alClient;
   FCurrentPage.Visible := True;
 end;
 
