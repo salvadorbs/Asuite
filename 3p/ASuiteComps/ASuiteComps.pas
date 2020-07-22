@@ -8,7 +8,7 @@ unit ASuiteComps;
 interface
 
 uses
-  BCImageTab, HotKey, LazarusPackageIntf;
+  BCImageTab, HotKey, ButtonedEdit, LazarusPackageIntf;
 
 implementation
 
@@ -16,6 +16,7 @@ procedure Register;
 begin
   RegisterUnit('BCImageTab', @BCImageTab.Register);
   RegisterUnit('HotKey', @HotKey.Register);
+  RegisterUnit('ButtonedEdit', @ButtonedEdit.Register);
 end;
 
 initialization
