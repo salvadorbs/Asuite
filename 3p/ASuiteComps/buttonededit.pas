@@ -25,7 +25,7 @@ interface
 
 uses
   Classes, SysUtils, StdCtrls, BCImageButton, Buttons, Controls, ImgList, LCLIntf,
-  Windows, LCLProc, Graphics, Menus;
+  Windows, LCLProc, Graphics, Menus, LCLType;
 
 type
   TButtonPosition = (bpLeft, bpRight);
@@ -93,23 +93,33 @@ type
     FLeftButton: TGlyphButtonOptions;
     FEditText: TEdit;
     FOnEditTextChange: TNotifyEvent;
+    FOnEditTextClick: TNotifyEvent;
+    FOnEditTextKeyPress: TKeyPressEvent;
     FRightButton: TGlyphButtonOptions;
 
     procedure DoEditTextChange(Sender: TObject);
+    procedure DoEditTextClick(Sender: TObject);
+    procedure DoEditTextKeyPress(Sender: TObject; var Key: Char);
+    function GetCharCase: TEditCharCase;
     function GetFont: TFont;
+    function GetOnKeyPress: TKeyPressEvent;
     function GetOnLeftButtonClick: TNotifyEvent;
     function GetOnRightButtonClick: TNotifyEvent;
     function GetParentFont: Boolean;
     function GetReadOnly: Boolean;
     function GetText: TCaption;
+    function GetTextHint: TTranslateString;
+    procedure SetCharCase(AValue: TEditCharCase);
     procedure SetFont(AValue: TFont);
     procedure SetLeftButton(AValue: TGlyphButtonOptions);
+    procedure SetOnKeyPress(AValue: TKeyPressEvent);
     procedure SetOnLeftButtonClick(AValue: TNotifyEvent);
     procedure SetOnRightButtonClick(AValue: TNotifyEvent);
     procedure SetParentFont(AValue: Boolean);
     procedure SetReadOnly(AValue: Boolean);
     procedure SetRightButton(AValue: TGlyphButtonOptions);
     procedure SetText(AValue: TCaption);
+    procedure SetTextHint(AValue: TTranslateString);
 
     procedure UpdateSize;
   protected     
@@ -117,18 +127,22 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-                                       
+
+    property CharCase: TEditCharCase read GetCharCase write SetCharCase default ecNormal;
     property Font: TFont read GetFont write SetFont;
     property LeftButton: TGlyphButtonOptions read FLeftButton write SetLeftButton;
     property ParentFont: Boolean read GetParentFont write SetParentFont;
     property RightButton: TGlyphButtonOptions read FRightButton write SetRightButton;
     property ReadOnly: Boolean read GetReadOnly write SetReadOnly default False;
     property Text: TCaption read GetText write SetText;
+    property TextHint: TTranslateString read GetTextHint write SetTextHint;
 
     //Events
     property OnChange: TNotifyEvent read FOnEditTextChange write FOnEditTextChange;
+    property OnClick: TNotifyEvent read FOnEditTextClick write FOnEditTextClick;
     property OnLeftButtonClick: TNotifyEvent read GetOnLeftButtonClick write SetOnLeftButtonClick;
     property OnRightButtonClick: TNotifyEvent read GetOnRightButtonClick write SetOnRightButtonClick;
+    property OnKeyPress: TKeyPressEvent read FOnEditTextKeyPress write FOnEditTextKeyPress;
   published
   end;
 
@@ -146,7 +160,7 @@ type
     property BiDiMode;
     property BorderSpacing;
     property BorderStyle default bsSingle;
-//    property CharCase;
+    property CharCase;
     property Color;
     property Constraints;
     property Enabled;
@@ -162,11 +176,15 @@ type
     property TabOrder;
     property TabStop;
     property Text;
+    property TextHint;
     property Visible;
 
+    //Events
     property OnChange;
+    property OnClick;
     property OnLeftButtonClick;
     property OnRightButtonClick;
+    property OnKeyPress;
   end;
 
 procedure Register;
@@ -340,6 +358,17 @@ begin
   Result := FEditText.Text;
 end;
 
+function TCustomButtonedEdit.GetTextHint: TTranslateString;
+begin
+  Result := FEditText.TextHint;
+end;
+
+procedure TCustomButtonedEdit.SetCharCase(AValue: TEditCharCase);
+begin
+  if FEditText.CharCase <> AValue then
+    FEditText.CharCase := AValue;
+end;
+
 procedure TCustomButtonedEdit.SetFont(AValue: TFont);
 begin
   if FEditText.Font <> AValue then
@@ -358,9 +387,31 @@ begin
     FOnEditTextChange(Self);
 end;
 
+procedure TCustomButtonedEdit.DoEditTextClick(Sender: TObject);
+begin
+  if Assigned(FOnEditTextClick) then
+    FOnEditTextClick(Self);
+end;
+
+procedure TCustomButtonedEdit.DoEditTextKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Assigned(FOnEditTextKeyPress) then
+    FOnEditTextKeyPress(Self, Key);
+end;
+
+function TCustomButtonedEdit.GetCharCase: TEditCharCase;
+begin
+  Result := FEditText.CharCase;
+end;
+
 function TCustomButtonedEdit.GetFont: TFont;
 begin
   Result := FEditText.Font;
+end;
+
+function TCustomButtonedEdit.GetOnKeyPress: TKeyPressEvent;
+begin
+  Result := FEditText.OnKeyPress;
 end;
 
 procedure TCustomButtonedEdit.SetLeftButton(AValue: TGlyphButtonOptions);
@@ -368,16 +419,19 @@ begin
   FLeftButton.Assign(AValue);
 end;
 
+procedure TCustomButtonedEdit.SetOnKeyPress(AValue: TKeyPressEvent);
+begin
+  FEditText.OnKeyPress := AValue;
+end;
+
 procedure TCustomButtonedEdit.SetOnLeftButtonClick(AValue: TNotifyEvent);
 begin
-  if Assigned(FLeftButton) then
-    FLeftButton.OnClick := AValue;
+  FLeftButton.OnClick := AValue;
 end;
 
 procedure TCustomButtonedEdit.SetOnRightButtonClick(AValue: TNotifyEvent);
 begin
-  if Assigned(FRightButton) then
-    FRightButton.OnClick := AValue;
+  FRightButton.OnClick := AValue;
 end;
 
 procedure TCustomButtonedEdit.SetParentFont(AValue: Boolean);
@@ -400,6 +454,12 @@ end;
 procedure TCustomButtonedEdit.SetText(AValue: TCaption);
 begin
   FEditText.Text := AValue;
+end;
+
+procedure TCustomButtonedEdit.SetTextHint(AValue: TTranslateString);
+begin
+  if FEditText.TextHint <> AValue then
+    FEditText.TextHint := AValue;
 end;
 
 procedure TCustomButtonedEdit.UpdateSize;
@@ -440,6 +500,8 @@ begin
     ParentColor := True;
     ParentFont := False;
     OnChange := DoEditTextChange;
+    OnClick := DoEditTextClick;
+    OnKeyPress := DoEditTextKeyPress;
   end;
 
   updateSize;
