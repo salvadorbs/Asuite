@@ -144,7 +144,7 @@ begin
     bShellExecute :=  OpenDocument(PChar(WindowsPath + '\System32\Rundll32.exe'));
     //Error message
     if not bShellExecute then
-      ShowMessageEx(Format('%s [%s]', [SysErrorMessage(GetLastError), 'Rundll32']), True);
+      ShowMessageEx(Format('%s [%s]', [SysErrorMessage(GetLastOSError), 'Rundll32']), True);
   end;
   //Close ASuite
   frmMain.miExitClick(Sender);

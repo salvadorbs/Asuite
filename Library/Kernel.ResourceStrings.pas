@@ -80,7 +80,6 @@ resourcestring
   msgImportProgress = 'Import in progress...';
   msgImportTitle2 = 'Select the location of file list to import in ASuite';
   msgImportTitle3 = 'Select which items to import';
-  msgInsertWinUserInfo = 'Please insert username and password';
   msgItTakeTime = 'It may take time...';
   msgItems = 'Items';
   msgItemsImported = 'Import finished. %d items imported';

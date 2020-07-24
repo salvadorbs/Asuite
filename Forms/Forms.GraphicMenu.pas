@@ -303,7 +303,7 @@ begin
   sPath := Config.Paths.RelativeToAbsolute(FolderPath);
   ErrorCode := OpenDocument(PChar(sPath));
   if ErrorCode then
-    ShowMessageFmtEx(msgErrGeneric, ['', SysErrorMessage(GetLastError)], True);
+    ShowMessageFmtEx(msgErrGeneric, ['', SysErrorMessage(GetLastOSError)], True);
 end;
 
 procedure TfrmGraphicMenu.FormCreate(Sender: TObject);

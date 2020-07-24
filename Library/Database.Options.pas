@@ -221,7 +221,6 @@ begin
       //Main Form
       AConfig.LangID             := SQLOptionsData.langid;
       //LangManager.LanguageID     := AConfig.LangID;
-      //TODO lazarus: Check if necessary use method UTF8ToString
       AConfig.CustomTitleString  := UTF8ToString(SQLOptionsData.customtitlestring);
       AConfig.UseCustomTitle     := SQLOptionsData.usecustomtitle;
       AConfig.HideTabSearch      := SQLOptionsData.hidetabsearch;

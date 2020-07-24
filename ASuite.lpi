@@ -30,7 +30,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="3"/>
-      <BuildNr Value="316"/>
+      <BuildNr Value="325"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
@@ -174,7 +174,7 @@
         <PackageName Value="LCL"/>
       </Item13>
     </RequiredPackages>
-    <Units Count="68">
+    <Units Count="69">
       <Unit0>
         <Filename Value="ASuite.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -525,6 +525,14 @@
         <Filename Value="Library\Kernel.ResourceStrings.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit67>
+      <Unit68>
+        <Filename Value="Forms\forms.uilogin.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmUILogin"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Forms.UILogin"/>
+      </Unit68>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

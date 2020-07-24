@@ -143,9 +143,11 @@ begin
 
   //Execute
   Result :=  OpenDocument(PChar(PathAbsoluteFile));
+
+  //TODO lazarus: GetLastOSError doesn't work
   //Error message
   if not Result then
-    ShowMessageEx(Format('%s [%s]', [SysErrorMessage(GetLastError), Self.Name]), True);
+    ShowMessageEx(Format('%s [%s]', [SysErrorMessage(GetLastOSError), Self.Name]), True);
 end;
 
 function TvFileNodeData.InternalExecuteAsAdmin(ARunFromCategory: Boolean): boolean;
@@ -167,7 +169,7 @@ begin
   Result := ShellExecuteExW(@ShellExecuteInfo);
 
   if not Result then
-    ShowMessageEx(SysErrorMessage(GetLastError), True);
+    ShowMessageEx(SysErrorMessage(GetLastOSError), True);
 end;
 
 function TvFileNodeData.InternalExecuteAsUser(ARunFromCategory: Boolean; AUserData: TUserData): boolean;
@@ -194,7 +196,7 @@ begin
     FileClose(ProcInfo.hThread);
   end
   else
-    ShowMessageEx(SysErrorMessage(GetLastError), True);
+    ShowMessageEx(SysErrorMessage(GetLastOSError), True);
 end;
 
 procedure TvFileNodeData.AfterExecute(ADoActionOnExe: Boolean);

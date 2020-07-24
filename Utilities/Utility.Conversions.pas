@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Forms, Dialogs, Clipbrd,
-  StdCtrls;
+  StdCtrls, TypInfo;
 
 { HTML }
 function RGBToHtml(iRGB: Cardinal): string;
@@ -89,8 +89,7 @@ var
   sColor, sStyle : string;
 begin
   sColor := ColorToHtml(Font.Color);  
-  //TODO Lazarus
-  //sStyle := IntToStr(byte(Font.Style));
+  sStyle := GetEnumName(TypeInfo(TFontStyles), integer(Font.Style));
   result := Font.Name + '|' + IntToStr(Font.Size) + '|' + sColor + '|' + sStyle;
 end;
 

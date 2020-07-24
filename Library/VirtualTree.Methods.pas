@@ -26,7 +26,7 @@ interface
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, VirtualTrees, UITypes,
   Kernel.Singleton, Kernel.Enumerations, NodeDataTypes.Base, Kernel.Types, Lists.Base,
-  SynLog;
+  SynLog, Forms.UILogin;
 
 type
   //TODO: Transform in a normal class with class methods
@@ -92,7 +92,7 @@ uses
   Utility.System, DataModules.Icons, AppConfig.Main, NodeDataTypes.Files,
   Utility.FileFolder, Forms.PropertySeparator, Kernel.ResourceStrings,
   NodeDataTypes.Category, NodeDataTypes.Separator, Forms.PropertyItem, Icons.Thread,
-  NodeDataTypes.Custom, Kernel.Consts, Icons.Node, Kernel.Logger;
+  NodeDataTypes.Custom, Kernel.Consts, Icons.Node, Kernel.Logger, Utility.Misc;
 
 { TVirtualTreeMethods }
 
@@ -300,16 +300,11 @@ begin
       //Execute as user
       rmAsUser:
         begin
-          {
-          //TODO lazarus
-          if TLoginForm.Login(msgRunAsTitle, msgInsertWinUserInfo, UserData.UserName, UserData.Password, True, '') then
-          begin
-            if UserData.UserName <> '' then
-              NodeData.ExecuteAsUser(True, NodeData.DataType = vtdtCategory, UserData)
-            else
-              ShowMessageEx(msgErrEmptyUserName, true);
-          end;
-          }
+          UserData := TfrmUILogin.Execute(ASender, msgRunAsTitle);
+          if UserData.UserName <> '' then
+            NodeData.ExecuteAsUser(True, NodeData.DataType = vtdtCategory, UserData)
+          else
+            ShowMessageEx(msgErrEmptyUserName, true);
         end;
       //Execute as Admin
       rmAsAdmin: NodeData.ExecuteAsAdmin(True, NodeData.DataType = vtdtCategory);
