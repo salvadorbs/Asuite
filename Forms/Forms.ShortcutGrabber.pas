@@ -47,6 +47,7 @@ type
     procedure btnCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure FormKeyPress(Sender: TObject; var Key: char);
     procedure hkKeysChange(Sender: TObject);
   private
     { Private declarations }
@@ -161,6 +162,15 @@ procedure TfrmShortcutGrabber.FormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
 begin
   CanClose := FCanClose;
+end;
+
+procedure TfrmShortcutGrabber.FormKeyPress(Sender: TObject; var Key: char);
+begin
+  if Ord(Key) = VK_RETURN then
+    btnOkClick(Sender)
+  else
+    if Ord(Key) = VK_ESCAPE then
+      btnCancelClick(Sender);
 end;
 
 procedure TfrmShortcutGrabber.FormCreate(Sender: TObject);

@@ -127,20 +127,18 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       ParentFont = False
       TabOrder = 0
     end
-    object edtHotkey: TEditButton
+    object edtHotkey: TButtonedEdit
       Left = 6
       Height = 21
       Top = 30
       Width = 187
-      ButtonWidth = 23
       CharCase = ecUppercase
-      MaxLength = 0
-      NumGlyphs = 1
-      OnChange = edtHotkeyChange
-      OnClick = edtHotkeyClick
-      PasswordChar = #0
+      ParentFont = False
       ReadOnly = True
       TabOrder = 1
+      OnChange = edtHotkeyChange
+      OnClick = edtHotkeyClick
+      OnRightButtonClick = edtHotkeyRightButtonClick
     end
   end
   object GroupBox1: TGroupBox[3]

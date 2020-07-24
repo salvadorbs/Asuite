@@ -28,7 +28,7 @@ uses
   ComCtrls, VirtualTrees, ActiveX, Kernel.Consts, DataModules.Icons,
   Kernel.BaseMainForm, StdCtrls, Buttons, UITypes,
   Kernel.Enumerations, ExtCtrls, {XMLDoc,} Lists.Manager,
-  Database.Manager, {Actions,} ActnList, Themes, EditBtn;
+  Database.Manager, ButtonedEdit, {Actions,} ActnList, Themes, EditBtn;
 
 type
 
@@ -36,6 +36,7 @@ type
 
   TfrmMain = class(TBaseMainForm)
     actSepEdit: TAction;
+    btnedtSearch: TButtonedEdit;
     miStatistics: TMenuItem;
     MenuItem2: TMenuItem;
     mniOpenFolderItem: TMenuItem;
@@ -82,7 +83,6 @@ type
     miSearchIconPath: TMenuItem;
     miSearchWorkingDirPath: TMenuItem;
     miSearchParameters: TMenuItem;
-    btnedtSearch: TEditButton;
     mniScanFolder: TMenuItem;
     
     ActionList1: TActionList;
@@ -357,11 +357,10 @@ procedure TfrmMain.btnedtSearchChange(Sender: TObject);
 begin
   if Config.SearchAsYouType then
   begin
-    //TODO lazarus
-    {if btnedtSearch.Text <> '' then
+    if btnedtSearch.Text <> '' then
       btnedtSearch.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel')
     else
-      btnedtSearch.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('search');}
+      btnedtSearch.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('search');
 
     DoSearchItem(vstSearch, btnedtSearch.Text, TSearchType(GetCheckedMenuItem(pmSearch).Tag));
   end;
@@ -454,10 +453,13 @@ begin
   pmSearch.Images      := dmImages.ilSmallIcons;
   pmWindow.Images      := dmImages.ilSmallIcons;
   pcList.Images        := dmImages.ilSmallIcons;
-  btnedtSearch.Images  := dmImages.ilSmallIcons;
+  btnedtSearch.RightButton.Images := dmImages.ilSmallIcons;
+  btnedtSearch.LeftButton.Images := dmImages.ilSmallIcons;
+
   //Set pcList tabs' ImageIndexes
   tbList.ImageIndex    := Config.IconsManager.GetIconIndex('tree_list');
   tbSearch.ImageIndex  := Config.IconsManager.GetIconIndex('search');
+
   //Set MainMenu's ImageIndexes
   miSaveList1.ImageIndex   := Config.IconsManager.GetIconIndex('save');
   miOptions1.ImageIndex    := Config.IconsManager.GetIconIndex('options');
@@ -471,10 +473,10 @@ begin
   actProperty.ImageIndex   := Config.IconsManager.GetIconIndex('property');
   miInfoASuite.ImageIndex  := Config.IconsManager.GetIconIndex('help');
   actRunItem.ImageIndex    := Config.IconsManager.GetIconIndex('run');
+
   //Set Search's ImageIndexes
-  //TODO lazarus
-  //btnedtSearch.LeftButton.ImageIndex  := Config.IconsManager.GetIconIndex('search_type');
-  //btnedtSearch.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('search');
+  btnedtSearch.LeftButton.ImageIndex  := Config.IconsManager.GetIconIndex('search_type');
+  btnedtSearch.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('search');
 end;
 
 procedure TfrmMain.ShowMainForm(Sender: TObject);

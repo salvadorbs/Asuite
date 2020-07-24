@@ -26,10 +26,16 @@ interface
 uses
   LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, Dialogs, Frame.BaseEntity, VirtualTrees, DefaultTranslator,
-  ComCtrls, StdCtrls, Lists.Base, Menus, ExtCtrls, Themes, EditBtn;
+  ComCtrls, StdCtrls, Lists.Base, ButtonedEdit, Menus, ExtCtrls, Themes;
 
 type
+
+  { TfrmHotkeyOptionsPage }
+
   TfrmHotkeyOptionsPage = class(TfrmBaseEntityPage)
+    edtHotkeyCM: TButtonedEdit;
+    edtHotkeyGM: TButtonedEdit;
+    edtHotkeyMF: TButtonedEdit;
     
     gbHotkey: TGroupBox;
     lblHotkeyWindow: TLabel;
@@ -43,9 +49,6 @@ type
     mniN1: TMenuItem;
     mniProperties: TMenuItem;
     lblHotkeyCM: TLabel;
-    edtHotkeyMF: TEditButton;
-    edtHotkeyGM: TEditButton;
-    edtHotkeyCM: TEditButton;
     procedure cbHotKeyClick(Sender: TObject);
     procedure mniEditHotkeyClick(Sender: TObject);
     procedure mniRemoveHotkeyClick(Sender: TObject);
@@ -91,12 +94,12 @@ procedure TfrmHotkeyOptionsPage.edtHotkeyClick(Sender: TObject);
 var
   strHotkey: string;
 begin
-  if Sender is TEditButton then
+  if Sender is TButtonedEdit then
   begin
-    strHotkey := TfrmShortcutGrabber.Execute(Self, TEditButton(Sender).Text);
-    if (strHotkey <> '') and (strHotkey <> TEditButton(Sender).Text) then
+    strHotkey := TfrmShortcutGrabber.Execute(Self, TButtonedEdit(Sender).Text);
+    if (strHotkey <> '') and (strHotkey <> TButtonedEdit(Sender).Text) then
     begin
-      TEditButton(Sender).Text := strHotkey;
+      TButtonedEdit(Sender).Text := strHotkey;
 
       if (Sender <> edtHotkeyMF) and (edtHotkeyMF.Text = strHotkey) then
         edtHotkeyMF.Text := '';
@@ -112,20 +115,19 @@ end;
 
 procedure TfrmHotkeyOptionsPage.edtHotkeyChange(Sender: TObject);
 var
-  edtHotkey: TEditButton;
+  edtHotkey: TButtonedEdit;
 begin
-  if Sender is TEditButton then
+  if Sender is TButtonedEdit then
   begin
-    edtHotkey := TEditButton(Sender);
-    //TODO lazarus
-    //edtHotkey.RightButton.Visible := edtHotkey.Text <> '';
+    edtHotkey := TButtonedEdit(Sender);
+    edtHotkey.RightButton.Visible := edtHotkey.Text <> '';
   end;
 end;
 
 procedure TfrmHotkeyOptionsPage.edtHotkeyClear(Sender: TObject);
 begin
-  if Sender is TEditButton then
-    TEditButton(Sender).Text := '';
+  if Sender is TButtonedEdit then
+    TButtonedEdit(Sender).Text := '';
 end;
 
 function TfrmHotkeyOptionsPage.GetImageIndex: Integer;
@@ -182,20 +184,17 @@ end;
 
 procedure TfrmHotkeyOptionsPage.LoadGlyphs;
 begin
-  edtHotkeyMF.Images := dmImages.ilSmallIcons;
-  edtHotkeyGM.Images := dmImages.ilSmallIcons;
-  edtHotkeyCM.Images := dmImages.ilSmallIcons;
+  edtHotkeyMF.RightButton.Images := dmImages.ilSmallIcons;
+  edtHotkeyGM.RightButton.Images := dmImages.ilSmallIcons;
+  edtHotkeyCM.RightButton.Images := dmImages.ilSmallIcons;
 
   mniRemoveHotkey.ImageIndex := Config.IconsManager.GetIconIndex('keyboard_delete');
   mniEditHotkey.ImageIndex   := Config.IconsManager.GetIconIndex('keyboard_edit');
   mniProperties.ImageIndex   := Config.IconsManager.GetIconIndex('property');
 
-  //TODO lazarus
-  {
   edtHotkeyMF.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel');
   edtHotkeyGM.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel');
   edtHotkeyCM.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel');
-  }
 end;
 
 procedure TfrmHotkeyOptionsPage.mniEditHotkeyClick(Sender: TObject);

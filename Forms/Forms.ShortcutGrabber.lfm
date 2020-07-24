@@ -11,8 +11,10 @@ object frmShortcutGrabber: TfrmShortcutGrabber
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
+  KeyPreview = True
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
+  OnKeyPress = FormKeyPress
   Position = poScreenCenter
   LCLVersion = '2.1.0.0'
   object pnlDialogPage: TPanel

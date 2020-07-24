@@ -24,12 +24,16 @@ unit Frame.Properties.Advanced;
 interface
 
 uses
-  LCLIntf, SysUtils, Classes, Controls, Dialogs, Frame.Properties.Base, EditBtn,
-  StdCtrls, DateUtils, DateTimePicker, DefaultTranslator;
+  LCLIntf, SysUtils, Classes, Controls, Dialogs, Frame.Properties.Base,
+  ButtonedEdit, StdCtrls, DateUtils, DateTimePicker, DefaultTranslator;
 
 type
+
+  { TfrmAdvancedPropertyPage }
+
   TfrmAdvancedPropertyPage = class(TfrmBasePropertyPage)
     cbShortcutDesktop: TCheckBox;
+    edtHotkey: TButtonedEdit;
     grpScheduler: TGroupBox;
     cxScheduler: TComboBox;
     dtpSchDate: TDateTimePicker;
@@ -41,7 +45,6 @@ type
     cbDontInsertMFU: TCheckBox;
     
     cbHotKey: TCheckBox;
-    edtHotkey: TEditButton;
     procedure cxSchedulerChange(Sender: TObject);
     procedure cbHotKeyClick(Sender: TObject);
     procedure edtHotkeyRightButtonClick(Sender: TObject);
@@ -124,10 +127,9 @@ begin
       end;
   end;
 
-  edtHotkey.Images := dmImages.ilSmallIcons;
+  edtHotkey.RightButton.Images := dmImages.ilSmallIcons;
 
-  //TODO lazarus
-  //edtHotkey.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel');
+  edtHotkey.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel');
 
   //Hide caret in hotkey control
   //HideCaret(edtHotkey.Handle);
@@ -158,13 +160,12 @@ end;
 
 procedure TfrmAdvancedPropertyPage.edtHotkeyChange(Sender: TObject);
 var
-  edtHotkey: TEditButton;
+  edtHotkey: TButtonedEdit;
 begin
-  if Sender is TEditButton then
+  if Sender is TButtonedEdit then
   begin
-    edtHotkey := TEditButton(Sender);
-    //TODO lazarus
-    //edtHotkey.RightButton.Visible := edtHotkey.Text <> '';
+    edtHotkey := TButtonedEdit(Sender);
+    edtHotkey.RightButton.Visible := edtHotkey.Text <> '';
   end;
 end;
 
@@ -172,18 +173,18 @@ procedure TfrmAdvancedPropertyPage.edtHotkeyClick(Sender: TObject);
 var
   strHotkey: string;
 begin
-  if Sender is TEditButton then
+  if Sender is TButtonedEdit then
   begin
-    strHotkey := TfrmShortcutGrabber.Execute(Self, TEditButton(Sender).Text);
+    strHotkey := TfrmShortcutGrabber.Execute(Self, TButtonedEdit(Sender).Text);
     if (strHotkey <> '') then
-      TEditButton(Sender).Text := strHotkey;
+      TButtonedEdit(Sender).Text := strHotkey;
   end;
 end;
 
 procedure TfrmAdvancedPropertyPage.edtHotkeyRightButtonClick(Sender: TObject);
 begin
-  if Sender is TEditButton then
-    TEditButton(Sender).Text := '';
+  if Sender is TButtonedEdit then
+    TButtonedEdit(Sender).Text := '';
 end;
 
 end.

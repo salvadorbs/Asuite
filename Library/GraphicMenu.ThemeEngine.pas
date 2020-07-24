@@ -414,22 +414,27 @@ begin
       BackgroundPath := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGEBACKGROUND, '');
       if FileExists(BackgroundPath) then
         FGraphicMenu.imgBackground.Picture.LoadFromFile(BackgroundPath);
+
       //User frame
       sTempPath := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGEUSERFRAME, '');
       if FileExists(sTempPath) then
         FGraphicMenu.imgUserFrame.Picture.LoadFromFile(sTempPath);
+
       //Logo
       sTempPath := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGELOGO, '');
       if FileExists(sTempPath) then
         FGraphicMenu.imgLogo.Picture.LoadFromFile(sTempPath);
+
       //Separator
       sTempPath := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGESEPARATOR, '');
       FGraphicMenu.imgDivider1.Picture.LoadFromFile(sTempPath);
       FGraphicMenu.imgDivider2.Picture.LoadFromFile(sTempPath);
+
       //Tabs
       DrawButton(IniFile, FGraphicMenu.sknbtnList, gmbList);
       DrawButton(IniFile, FGraphicMenu.sknbtnRecents, gmbMRU);
       DrawButton(IniFile, FGraphicMenu.sknbtnMFU, gmbMFU);
+
       //Right Buttons
       DrawButton(IniFile, FGraphicMenu.sknbtnASuite, gmbASuite);
       DrawButton(IniFile, FGraphicMenu.sknbtnOptions, gmbOptions);
@@ -439,9 +444,11 @@ begin
       DrawButton(IniFile, FGraphicMenu.sknbtnVideos, gmbVideos);
       DrawButton(IniFile, FGraphicMenu.sknbtnExplore, gmbExplore);
       DrawButton(IniFile, FGraphicMenu.sknbtnAbout, gmbAbout);
+
       //Eject and Close Buttons
       DrawButton(IniFile, FGraphicMenu.sknbtnEject, gmbEject);
       DrawButton(IniFile, FGraphicMenu.sknbtnExit, gmbExit);
+
       //Search
       sTempPath := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(INIFILE_SECTION_SEARCH, INIFILE_KEY_ICONSEARCH, '');
       if FileExists(sTempPath) then
@@ -449,17 +456,21 @@ begin
       sTempPath := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(INIFILE_SECTION_SEARCH, INIFILE_KEY_ICONCANCEL, '');
       if FileExists(sTempPath) then
         FCancelIcon := Config.IconsManager.GetPathIconIndex(sTempPath);
-      //TODO lazarus
-      //FGraphicMenu.edtSearch.RightButton.ImageIndex := FSearchIcon;
+
+      FGraphicMenu.edtSearch.RightButton.ImageIndex := FSearchIcon;
+
       //Hard Disk
       DrawHardDiskSpace(IniFile, FGraphicMenu.imgDriveBackground, FGraphicMenu.imgDriveSpace);
       FGraphicMenu.lblDriveName.Caption := format(msgGMDriveName, [UpperCase(Config.Paths.SuiteDrive)]);
+
       //Fonts
       strFont := IniFile.ReadString(INIFILE_SECTION_HARDDISK, INIFILE_KEY_FONT, '');
       StrToFont(strFont, FGraphicMenu.lblDriveName.Font);
       StrToFont(strFont, FGraphicMenu.lblDriveSpace.Font);
+
       //VirtualTrees
       StrToFont(IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_FONTTREE, ''), FGraphicMenu.vstList.Font);
+
       //Workaround for vst trasparent
       CopyImageInVst(FGraphicMenu.imgBackground, FGraphicMenu.vstList);
     finally

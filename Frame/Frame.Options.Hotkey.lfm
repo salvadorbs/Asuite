@@ -67,50 +67,44 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       ParentFont = False
       TabOrder = 0
     end
-    object edtHotkeyMF: TEditButton
+    object edtHotkeyMF: TButtonedEdit
       Left = 246
       Height = 21
       Top = 23
       Width = 179
-      ButtonWidth = 23
       CharCase = ecUppercase
-      MaxLength = 0
-      NumGlyphs = 1
-      OnChange = edtHotkeyChange
-      OnClick = edtHotkeyClick
-      PasswordChar = #0
+      ParentFont = False
       ReadOnly = True
       TabOrder = 1
+      OnChange = edtHotkeyChange
+      OnClick = edtHotkeyClick
+      OnRightButtonClick = edtHotkeyClear
     end
-    object edtHotkeyGM: TEditButton
+    object edtHotkeyGM: TButtonedEdit
       Left = 246
       Height = 21
       Top = 50
       Width = 179
-      ButtonWidth = 23
       CharCase = ecUppercase
-      MaxLength = 0
-      NumGlyphs = 1
-      OnChange = edtHotkeyChange
-      OnClick = edtHotkeyClick
-      PasswordChar = #0
+      ParentFont = False
       ReadOnly = True
       TabOrder = 2
+      OnChange = edtHotkeyChange
+      OnClick = edtHotkeyClick
+      OnRightButtonClick = edtHotkeyClear
     end
-    object edtHotkeyCM: TEditButton
+    object edtHotkeyCM: TButtonedEdit
       Left = 246
       Height = 21
       Top = 77
       Width = 179
-      ButtonWidth = 23
       CharCase = ecUppercase
-      MaxLength = 0
-      NumGlyphs = 1
-      OnChange = edtHotkeyChange
-      OnClick = edtHotkeyClick
-      PasswordChar = #0
+      ParentFont = False
       ReadOnly = True
       TabOrder = 3
+      OnChange = edtHotkeyChange
+      OnClick = edtHotkeyClick
+      OnRightButtonClick = edtHotkeyClear
     end
   end
   object grpOrderSoftware: TGroupBox[1]

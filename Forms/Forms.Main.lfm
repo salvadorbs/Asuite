@@ -124,26 +124,23 @@ object frmMain: TfrmMain
         TreeOptions.PaintOptions = [toHideFocusRect, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
         TreeOptions.SelectionOptions = [toFullRowSelect, toMultiSelect, toRightClickSelect]
       end
-      object btnedtSearch: TEditButton
+      object btnedtSearch: TButtonedEdit
         Left = 0
         Height = 21
         Top = 0
         Width = 193
         Align = alTop
-        ButtonWidth = 23
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'MS Shell Dlg 2'
-        MaxLength = 0
-        NumGlyphs = 1
-        OnChange = btnedtSearchChange
-        OnKeyPress = btnedtSearchKeyPress
         ParentFont = False
-        ParentShowHint = False
-        PasswordChar = #0
+        RightButton.Visible = True
         ShowHint = True
         TabOrder = 0
         TextHint = 'Name'
+        OnChange = btnedtSearchChange
+        OnRightButtonClick = btnedtSearchRightButtonClick
+        OnKeyPress = btnedtSearchKeyPress
       end
     end
   end
