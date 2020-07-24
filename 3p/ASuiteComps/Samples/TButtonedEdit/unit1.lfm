@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 2620
+  Left = 1921
   Height = 240
-  Top = 293
+  Top = 644
   Width = 320
   Caption = 'Form1'
   ClientHeight = 240
@@ -13,10 +13,12 @@ object Form1: TForm1
     Height = 24
     Top = 112
     Width = 200
-    BorderStyle = bsSingle
+    LeftButton.DropDownMenu = PopupMenu1
     LeftButton.Images = ImageList1
     LeftButton.ImageIndex = 1
     LeftButton.Visible = True
+    ReadOnly = False
+    RightButton.DropDownMenu = PopupMenu1
     RightButton.Images = ImageList1
     RightButton.ImageIndex = 0
     RightButton.Visible = True
@@ -25,7 +27,7 @@ object Form1: TForm1
     OnRightButtonClick = ButtonedEdit1RightButtonClick
   end
   object Edit1: TEdit
-    Left = 152
+    Left = 168
     Height = 23
     Top = 80
     Width = 80
@@ -76,5 +78,27 @@ object Form1: TForm1
       34FC5946E423C10885410B889CCD7E7649C802C4B25D90EBAF45DE43B5263D66
       80C2E005842FCA9C7D34633EFECF1E9CC2FE050109261F
     }
+  end
+  object PopupMenu1: TPopupMenu
+    Left = 8
+    Top = 8
+    object MenuItem1: TMenuItem
+      Caption = 'MenuItem1'
+    end
+    object MenuItem2: TMenuItem
+      Caption = 'MenuItem2'
+    end
+    object MenuItem3: TMenuItem
+      Caption = 'MenuItem3'
+    end
+    object MenuItem4: TMenuItem
+      Caption = 'MenuItem4'
+    end
+    object MenuItem5: TMenuItem
+      Caption = 'MenuItem5'
+    end
+    object MenuItem6: TMenuItem
+      Caption = 'MenuItem6'
+    end
   end
 end

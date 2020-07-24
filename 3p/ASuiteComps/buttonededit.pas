@@ -25,19 +25,32 @@ interface
 
 uses
   Classes, SysUtils, StdCtrls, BCImageButton, Buttons, Controls, ImgList, LCLIntf,
-  Windows, LCLProc, Graphics, LazLogger;
+  Windows, LCLProc, Graphics, Menus;
 
 type
   TButtonPosition = (bpLeft, bpRight);
 
+  TCustomButtonedEdit = class;
+
   { TCustomGlyphButton }
 
-  TCustomGlyphButton = class(TPersistent)
+  TCustomGlyphButton = class(TCustomSpeedButton)
   private
-    FButton: TCustomSpeedButton;
     FDropDownMenu: TPopupMenu;
-    FPosition: TButtonPosition;
+  public
+    property DropDownMenu: TPopupMenu read FDropDownMenu write FDropDownMenu;
 
+    procedure Click; override;
+  end;
+
+  { TCustomGlyphButtonOptions }
+
+  TCustomGlyphButtonOptions = class(TPersistent)
+  private
+    FButton: TCustomGlyphButton;
+    FParentControl: TCustomButtonedEdit;
+
+    function GetDropDownMenu: TPopupMenu;
     function GetImageIndex: TImageIndex;
     function GetImages: TCustomImageList;
     function GetOnClick: TNotifyEvent;
@@ -48,7 +61,7 @@ type
     procedure SetOnClick(AValue: TNotifyEvent);
     procedure SetVisibile(AValue: Boolean);
   public                                       
-    property DropDownMenu: TPopupMenu read FDropDownMenu write SetDropDownMenu;
+    property DropDownMenu: TPopupMenu read GetDropDownMenu write SetDropDownMenu;
     property Images: TCustomImageList read GetImages write SetImages;
     property ImageIndex: TImageIndex read GetImageIndex write SetImageIndex default -1;  
     property Visible: Boolean read GetVisible write SetVisibile default False;
@@ -56,17 +69,18 @@ type
     //Events
     property OnClick: TNotifyEvent read GetOnClick write SetOnClick;
 
-    constructor Create(AOwner: TComponent; APosition: TButtonPosition);
+    constructor Create(AOwner: TCustomButtonedEdit; APosition: TButtonPosition);
 
     procedure UpdateSize;
     procedure Invalidate;
     procedure Assign(ASource: TPersistent); override;
   end;
 
-  { TGlyphButton }
+  { TGlyphButtonOptions }
 
-  TGlyphButton = class(TCustomGlyphButton)
+  TGlyphButtonOptions = class(TCustomGlyphButtonOptions)
   published
+    property DropDownMenu;
     property Images;
     property ImageIndex;
     property Visible;
@@ -77,19 +91,23 @@ type
   TCustomButtonedEdit = class(TCustomControl)
   private
     FFont: TFont;
-    FLeftButton: TGlyphButton;
+    FLeftButton: TGlyphButtonOptions;
     FEditText: TEdit;
     FOnEditTextChange: TNotifyEvent;
-    FRightButton: TGlyphButton;
+    FReadOnly: Boolean;
+    FRightButton: TGlyphButtonOptions;
 
     procedure DoEditTextChange(Sender: TObject);
     function GetOnLeftButtonClick: TNotifyEvent;
     function GetOnRightButtonClick: TNotifyEvent;
+    function GetText: TCaption;
     procedure SetFont(AValue: TFont);
-    procedure SetLeftButton(AValue: TGlyphButton);
+    procedure SetLeftButton(AValue: TGlyphButtonOptions);
     procedure SetOnLeftButtonClick(AValue: TNotifyEvent);
     procedure SetOnRightButtonClick(AValue: TNotifyEvent);
-    procedure SetRightButton(AValue: TGlyphButton);
+    procedure SetReadOnly(AValue: Boolean);
+    procedure SetRightButton(AValue: TGlyphButtonOptions);
+    procedure SetText(AValue: TCaption);
 
     procedure UpdateSize;
   protected     
@@ -99,8 +117,10 @@ type
     destructor Destroy; override;
                                        
     property Font: TFont read FFont write SetFont;
-    property LeftButton: TGlyphButton read FLeftButton write SetLeftButton;
-    property RightButton: TGlyphButton read FRightButton write SetRightButton;
+    property LeftButton: TGlyphButtonOptions read FLeftButton write SetLeftButton;
+    property RightButton: TGlyphButtonOptions read FRightButton write SetRightButton;
+    property ReadOnly: Boolean read FReadOnly write SetReadOnly;
+    property Text: TCaption read GetText write SetText;
 
     //Events
     property OnChange: TNotifyEvent read FOnEditTextChange write FOnEditTextChange;
@@ -133,7 +153,7 @@ type
     property ParentBiDiMode;
 //    property PasswordChar;
     property PopupMenu;
-//    property ReadOnly;
+    property ReadOnly;
     property RightButton;
     property ShowHint;
     property TabOrder;
@@ -157,7 +177,25 @@ end;
 
 { TCustomGlyphButton }
 
-procedure TCustomGlyphButton.SetVisibile(AValue: Boolean);
+procedure TCustomGlyphButton.Click;
+var
+  X, Y: Integer;
+  P1, P2: TPoint;
+begin
+  if Assigned(FDropDownMenu) then
+  begin
+    P1.X:= 0;
+    P1.Y:= Self.Height;
+    P2:= Self.ClientToScreen(P1);
+    X:= P2.x;
+    Y:= P2.y;
+    FDropDownMenu.PopUp(X, Y);
+  end;
+end;
+
+{ TCustomGlyphButtonOptions }
+
+procedure TCustomGlyphButtonOptions.SetVisibile(AValue: Boolean);
 begin
   if AValue <> (FButton.Visible) then
   begin
@@ -165,7 +203,7 @@ begin
   end;
 end;
 
-procedure TCustomGlyphButton.SetImages(AValue: TCustomImageList);
+procedure TCustomGlyphButtonOptions.SetImages(AValue: TCustomImageList);
 begin
   if FButton.Images <> AValue then
   begin
@@ -173,47 +211,53 @@ begin
   end;
 end;
 
-procedure TCustomGlyphButton.SetOnClick(AValue: TNotifyEvent);
+procedure TCustomGlyphButtonOptions.SetOnClick(AValue: TNotifyEvent);
 begin
   FButton.OnClick := AValue;
 end;
 
-function TCustomGlyphButton.GetVisible: Boolean;
+function TCustomGlyphButtonOptions.GetVisible: Boolean;
 begin
   Result := FButton.Visible;
 end;
 
-procedure TCustomGlyphButton.SetDropDownMenu(AValue: TPopupMenu);
+procedure TCustomGlyphButtonOptions.SetDropDownMenu(AValue: TPopupMenu);
 begin
-  if FDropDownMenu <> AValue then
-    FDropDownMenu := AValue;
+  if FButton.DropDownMenu <> AValue then
+    FButton.DropDownMenu := AValue;
 end;
 
-function TCustomGlyphButton.GetImageIndex: TImageIndex;
+function TCustomGlyphButtonOptions.GetImageIndex: TImageIndex;
 begin
   Result := FButton.ImageIndex;
 end;
 
-function TCustomGlyphButton.GetImages: TCustomImageList;
+function TCustomGlyphButtonOptions.GetDropDownMenu: TPopupMenu;
+begin
+  Result := FButton.DropDownMenu;
+end;
+
+function TCustomGlyphButtonOptions.GetImages: TCustomImageList;
 begin
   Result := FButton.Images;
 end;
 
-function TCustomGlyphButton.GetOnClick: TNotifyEvent;
+function TCustomGlyphButtonOptions.GetOnClick: TNotifyEvent;
 begin
   Result := FButton.OnClick;
 end;
 
-procedure TCustomGlyphButton.SetImageIndex(AValue: TImageIndex);
+procedure TCustomGlyphButtonOptions.SetImageIndex(AValue: TImageIndex);
 begin
   if FButton.ImageIndex <> AValue then
     FButton.ImageIndex := AValue;
 end;
 
-constructor TCustomGlyphButton.Create(AOwner: TComponent;
+constructor TCustomGlyphButtonOptions.Create(AOwner: TCustomButtonedEdit;
   APosition: TButtonPosition);
 begin                       
-  FButton := TCustomSpeedButton.Create(AOwner);
+  FButton := TCustomGlyphButton.Create(AOwner);
+  FParentControl := AOwner;
 
   case APosition of
     bpLeft:
@@ -229,13 +273,13 @@ begin
   end;
   FButton.AutoSize := True;
   FButton.Flat := True;
-  FButton.Parent := TWinControl(AOwner);
+  FButton.Parent := TWinControl(FParentControl);
   FButton.Visible := False;
 
   UpdateSize;
 end;
 
-procedure TCustomGlyphButton.UpdateSize;
+procedure TCustomGlyphButtonOptions.UpdateSize;
 begin
   if ImageIndex <> -1 then
   begin
@@ -253,18 +297,18 @@ begin
   end;
 end;
 
-procedure TCustomGlyphButton.Invalidate;
+procedure TCustomGlyphButtonOptions.Invalidate;
 begin
   FButton.Invalidate;
 end;
 
-procedure TCustomGlyphButton.Assign(ASource: TPersistent);
+procedure TCustomGlyphButtonOptions.Assign(ASource: TPersistent);
 begin
-  if ASource is TCustomGlyphButton then
+  if ASource is TCustomGlyphButtonOptions then
   begin
-    Images := TCustomGlyphButton(ASource).Images;
-    ImageIndex := TCustomGlyphButton(ASource).ImageIndex;
-    Visible := TCustomGlyphButton(ASource).Visible;
+    Images := TCustomGlyphButtonOptions(ASource).Images;
+    ImageIndex := TCustomGlyphButtonOptions(ASource).ImageIndex;
+    Visible := TCustomGlyphButtonOptions(ASource).Visible;
   end;
 end;
 
@@ -274,6 +318,11 @@ function TCustomButtonedEdit.GetOnRightButtonClick: TNotifyEvent;
 begin
   if Assigned(FRightButton) then
     Result := FRightButton.OnClick;
+end;
+
+function TCustomButtonedEdit.GetText: TCaption;
+begin
+  Result := FEditText.Text;
 end;
 
 procedure TCustomButtonedEdit.SetFont(AValue: TFont);
@@ -297,7 +346,7 @@ begin
     FOnEditTextChange(Self);
 end;
 
-procedure TCustomButtonedEdit.SetLeftButton(AValue: TGlyphButton);
+procedure TCustomButtonedEdit.SetLeftButton(AValue: TGlyphButtonOptions);
 begin
   FLeftButton.Assign(AValue);
 end;
@@ -314,9 +363,23 @@ begin
     FRightButton.OnClick := AValue;
 end;
 
-procedure TCustomButtonedEdit.SetRightButton(AValue: TGlyphButton);
+procedure TCustomButtonedEdit.SetReadOnly(AValue: Boolean);
+begin
+  if FReadOnly <> AValue then
+  begin
+    FReadOnly := AValue;
+    FEditText.ReadOnly := AValue;
+  end;
+end;
+
+procedure TCustomButtonedEdit.SetRightButton(AValue: TGlyphButtonOptions);
 begin
   FRightButton.Assign(AValue);
+end;
+
+procedure TCustomButtonedEdit.SetText(AValue: TCaption);
+begin
+  FEditText.Text := AValue;
 end;
 
 procedure TCustomButtonedEdit.UpdateSize;
@@ -340,8 +403,10 @@ begin
 
   BorderStyle := bsSingle;
 
-  //Left Button
-  FLeftButton := TGlyphButton.Create(Self, bpLeft);
+  //Buttons
+  FLeftButton := TGlyphButtonOptions.Create(Self, bpLeft);
+  FRightButton := TGlyphButtonOptions.Create(Self, bpRight);
+
   //EditBox
   FEditText:= TEdit.Create(Self);
   with FEditText do
@@ -356,9 +421,6 @@ begin
     OnChange := DoEditTextChange;
   end;
   FFont := FEditText.Font;
-
-  //Right Button
-  FRightButton := TGlyphButton.Create(Self, bpRight);
 
   updateSize;
 end;

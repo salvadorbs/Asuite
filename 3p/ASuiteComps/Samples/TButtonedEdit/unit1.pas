@@ -5,8 +5,8 @@ unit Unit1;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Buttons, EditBtn,
-  StdCtrls, ButtonPanel, ButtonedEdit, BCPanel, BCImageButton;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Buttons,
+  StdCtrls, Menus, ButtonedEdit;
 
 type
 
@@ -16,6 +16,13 @@ type
     ButtonedEdit1: TButtonedEdit;
     Edit1: TEdit;
     ImageList1: TImageList;
+    MenuItem1: TMenuItem;
+    MenuItem2: TMenuItem;
+    MenuItem3: TMenuItem;
+    MenuItem4: TMenuItem;
+    MenuItem5: TMenuItem;
+    MenuItem6: TMenuItem;
+    PopupMenu1: TPopupMenu;
     procedure ButtonedEdit1Change(Sender: TObject);
     procedure ButtonedEdit1Enter(Sender: TObject);
     procedure ButtonedEdit1LeftButtonClick(Sender: TObject);
