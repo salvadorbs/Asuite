@@ -1,7 +1,7 @@
 object frmGraphicMenu: TfrmGraphicMenu
-  Left = 1034
+  Left = 1024
   Height = 530
-  Top = 397
+  Top = 396
   Width = 406
   AlphaBlend = True
   AlphaBlendValue = 0
@@ -17,7 +17,6 @@ object frmGraphicMenu: TfrmGraphicMenu
   KeyPreview = True
   OnCreate = FormCreate
   OnDeactivate = FormDeactivate
-  OnDestroy = FormDestroy
   OnHide = FormHide
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
@@ -253,17 +252,19 @@ object frmGraphicMenu: TfrmGraphicMenu
     OnClick = sknbtnRecentsClick
     Toggle = True
   end
-  object edtSearch: TEdit
+  object edtSearch: TButtonedEdit
     Left = 15
     Height = 23
     Top = 467
     Width = 240
-    OnChange = edtSearchChange
-    OnEnter = edtSearchEnter
-    OnMouseEnter = edtSearchMouseEnter
-    ParentFont = False
+    Font.Color = clWindowText
+    Font.Name = 'Tahoma'
     PopupMenu = frmMain.pmSearch
+    ReadOnly = False
+    RightButton.Visible = True
     TabOrder = 1
+    OnChange = edtSearchChange
+    OnRightButtonClick = edtSearchRightButtonClick
   end
   object tmrFader: TTimer
     Interval = 20

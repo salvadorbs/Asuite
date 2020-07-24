@@ -24,16 +24,16 @@ unit Forms.GraphicMenu;
 interface
 
 uses
-  LCLIntf, LCLType, Classes, Forms, StdCtrls, ExtCtrls, ComCtrls,
-  Controls, Graphics, Dialogs, SysUtils, VirtualTrees, Menus, Windows,
-  Lists.Base, BCImageTab, BCImageButton, DefaultTranslator, BGRASpeedButton;
+  LCLIntf, LCLType, Classes, Forms, StdCtrls, ExtCtrls, ComCtrls, Controls,
+  Graphics, Dialogs, SysUtils, VirtualTrees, Menus, Windows, Lists.Base,
+  BCImageTab, ButtonedEdit, BCImageButton, DefaultTranslator, BGRASpeedButton;
 
 type
 
   { TfrmGraphicMenu }
 
   TfrmGraphicMenu = class(TForm)
-    edtSearch: TEdit;
+    edtSearch: TButtonedEdit;
     imgDriveSpace: TImage;
     imgDivider2: TImage;
     lblDriveName: TLabel;
@@ -71,10 +71,7 @@ type
     imgUserFrame: TImage;
     imgDragSpaceHidden: TImage;
     tmrCheckItems: TTimer;
-    procedure edtSearchEnter(Sender: TObject);
-    procedure edtSearchMouseEnter(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
     procedure pmWindowClose(Sender: TObject);
     procedure tmrFaderTimer(Sender: TObject);
     procedure imgLogoMouseDown(Sender: TObject; Button: TMouseButton;
@@ -88,7 +85,7 @@ type
     procedure sknbtnExitClick(Sender: TObject);
     procedure imgPersonalPictureClick(Sender: TObject);
     procedure mniPropertyClick(Sender: TObject);
-    procedure btnSearchClick(Sender: TObject);
+    procedure edtSearchRightButtonClick(Sender: TObject);
     procedure edtSearchChange(Sender: TObject);
     procedure FormDeactivate(Sender: TObject);
     procedure ApplicationEvents1Deactivate(Sender: TObject);
@@ -105,7 +102,6 @@ type
   private
     { Private declarations }
     FOpening : Boolean;
-    FSearchButton: TBGRASpeedButton;
 
     procedure OpenFolder(FolderPath: string);
     procedure UpdateDriveStats;
@@ -194,8 +190,7 @@ begin
   try
     if edtSearch.Text <> '' then
     begin
-      if Assigned(FSearchButton) then
-        FSearchButton.ImageIndex := TThemeEngine.Create.CancelIcon;
+      edtSearch.RightButton.ImageIndex := TThemeEngine.Create.CancelIcon;
 
       //Do search
       //Change node height and imagelist
@@ -209,8 +204,7 @@ begin
         vstList.Selected[Node] := True;
     end
     else begin
-      if Assigned(FSearchButton) then
-        FSearchButton.ImageIndex := TThemeEngine.Create.SearchIcon;
+      edtSearch.RightButton.ImageIndex := TThemeEngine.Create.SearchIcon;
 
       //Change node height and imagelist
       TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, Config.GMSmallIconSize);
@@ -219,13 +213,9 @@ begin
   finally
     vstList.EndUpdate;
   end;
-
-  //We must repaint SearchButton because TEdit
-  if Assigned(FSearchButton) then
-    FSearchButton.Invalidate;
 end;
 
-procedure TfrmGraphicMenu.btnSearchClick(Sender: TObject);
+procedure TfrmGraphicMenu.edtSearchRightButtonClick(Sender: TObject);
 begin
   edtSearch.Text := '';
 end;
@@ -341,40 +331,8 @@ begin
   else
     Self.Left  := Screen.WorkAreaRect.Right - Width;
 
-  //Create speedbutton for Search
-  //TODO: Make a separate LCL component (TEdit + TBGRASpeedButton)
-  FSearchButton := TBGRASpeedButton.Create(Self);
-  FSearchButton.Flat   := True;
-  FSearchButton.Parent := edtSearch;
-  FSearchButton.Width  := 20;
-  FSearchButton.Align  := alRight;
-  FSearchButton.Constraints.MaxHeight := 18;
-  FSearchButton.Images := dmImages.ilSmallIcons;
-  FSearchButton.ImageIndex := TThemeEngine.Create.SearchIcon;
-  FSearchButton.Cursor := crArrow;
-  FSearchButton.OnClick := btnSearchClick;
-
-  //Set margin in edtSearch (so text doesn't go behind the button)
-  SendMessage(edtSearch.Handle, EM_SETMARGINS, EC_LEFTMARGIN or EC_RIGHTMARGIN, MakeLParam(0, FSearchButton.Width))
-end;
-
-procedure TfrmGraphicMenu.FormDestroy(Sender: TObject);
-begin
-  FreeAndNil(FSearchButton);
-end;
-
-procedure TfrmGraphicMenu.edtSearchEnter(Sender: TObject);
-begin
-  //We must repaint SearchButton because TEdit
-  if Assigned(FSearchButton) then
-    FSearchButton.Invalidate;
-end;
-
-procedure TfrmGraphicMenu.edtSearchMouseEnter(Sender: TObject);
-begin
-  //We must repaint SearchButton because TEdit
-  if Assigned(FSearchButton) then
-    FSearchButton.Invalidate;
+  edtSearch.RightButton.Images := dmImages.ilSmallIcons;
+  edtSearch.RightButton.ImageIndex := TThemeEngine.Create.SearchIcon;
 end;
 
 procedure TfrmGraphicMenu.pmWindowClose(Sender: TObject);

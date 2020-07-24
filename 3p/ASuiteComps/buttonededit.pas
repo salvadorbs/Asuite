@@ -90,21 +90,23 @@ type
 
   TCustomButtonedEdit = class(TCustomControl)
   private
-    FFont: TFont;
     FLeftButton: TGlyphButtonOptions;
     FEditText: TEdit;
     FOnEditTextChange: TNotifyEvent;
-    FReadOnly: Boolean;
     FRightButton: TGlyphButtonOptions;
 
     procedure DoEditTextChange(Sender: TObject);
+    function GetFont: TFont;
     function GetOnLeftButtonClick: TNotifyEvent;
     function GetOnRightButtonClick: TNotifyEvent;
+    function GetParentFont: Boolean;
+    function GetReadOnly: Boolean;
     function GetText: TCaption;
     procedure SetFont(AValue: TFont);
     procedure SetLeftButton(AValue: TGlyphButtonOptions);
     procedure SetOnLeftButtonClick(AValue: TNotifyEvent);
     procedure SetOnRightButtonClick(AValue: TNotifyEvent);
+    procedure SetParentFont(AValue: Boolean);
     procedure SetReadOnly(AValue: Boolean);
     procedure SetRightButton(AValue: TGlyphButtonOptions);
     procedure SetText(AValue: TCaption);
@@ -116,10 +118,11 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
                                        
-    property Font: TFont read FFont write SetFont;
+    property Font: TFont read GetFont write SetFont;
     property LeftButton: TGlyphButtonOptions read FLeftButton write SetLeftButton;
+    property ParentFont: Boolean read GetParentFont write SetParentFont;
     property RightButton: TGlyphButtonOptions read FRightButton write SetRightButton;
-    property ReadOnly: Boolean read FReadOnly write SetReadOnly;
+    property ReadOnly: Boolean read GetReadOnly write SetReadOnly default False;
     property Text: TCaption read GetText write SetText;
 
     //Events
@@ -148,9 +151,9 @@ type
     property Constraints;
     property Enabled;
     property Font;
-//    property Images;
     property LeftButton;
     property ParentBiDiMode;
+    property ParentFont;
 //    property PasswordChar;
     property PopupMenu;
     property ReadOnly;
@@ -182,6 +185,8 @@ var
   X, Y: Integer;
   P1, P2: TPoint;
 begin
+  inherited Click;
+
   if Assigned(FDropDownMenu) then
   begin
     P1.X:= 0;
@@ -320,6 +325,16 @@ begin
     Result := FRightButton.OnClick;
 end;
 
+function TCustomButtonedEdit.GetParentFont: Boolean;
+begin
+  Result := FEditText.ParentFont;
+end;
+
+function TCustomButtonedEdit.GetReadOnly: Boolean;
+begin
+  Result := FEditText.ReadOnly;
+end;
+
 function TCustomButtonedEdit.GetText: TCaption;
 begin
   Result := FEditText.Text;
@@ -327,11 +342,8 @@ end;
 
 procedure TCustomButtonedEdit.SetFont(AValue: TFont);
 begin
-  if FFont <> AValue then
-  begin
-    FFont := AValue;
-    FEditText.Font := FFont;
-  end;
+  if FEditText.Font <> AValue then
+    FEditText.Font := AValue;
 end;
 
 function TCustomButtonedEdit.GetOnLeftButtonClick: TNotifyEvent;
@@ -344,6 +356,11 @@ procedure TCustomButtonedEdit.DoEditTextChange(Sender: TObject);
 begin
   if Assigned(FOnEditTextChange) then
     FOnEditTextChange(Self);
+end;
+
+function TCustomButtonedEdit.GetFont: TFont;
+begin
+  Result := FEditText.Font;
 end;
 
 procedure TCustomButtonedEdit.SetLeftButton(AValue: TGlyphButtonOptions);
@@ -363,13 +380,16 @@ begin
     FRightButton.OnClick := AValue;
 end;
 
+procedure TCustomButtonedEdit.SetParentFont(AValue: Boolean);
+begin
+  if FEditText.ParentFont <> AValue then
+    FEditText.ParentFont := AValue;
+end;
+
 procedure TCustomButtonedEdit.SetReadOnly(AValue: Boolean);
 begin
-  if FReadOnly <> AValue then
-  begin
-    FReadOnly := AValue;
+  if FEditText.ReadOnly <> AValue then
     FEditText.ReadOnly := AValue;
-  end;
 end;
 
 procedure TCustomButtonedEdit.SetRightButton(AValue: TGlyphButtonOptions);
@@ -418,9 +438,9 @@ begin
     BorderSpacing.Top := 3;
     Parent := Self;
     ParentColor := True;
+    ParentFont := False;
     OnChange := DoEditTextChange;
   end;
-  FFont := FEditText.Font;
 
   updateSize;
 end;

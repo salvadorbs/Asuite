@@ -30,7 +30,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="3"/>
-      <BuildNr Value="279"/>
+      <BuildNr Value="297"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
@@ -83,14 +83,6 @@
 -dCompiler6_Up
 -dPUREPASCAL
 -dDebug"/>
-            <OtherDefines Count="6">
-              <Define0 Value="Borland"/>
-              <Define1 Value="Ver150"/>
-              <Define2 Value="Delphi7"/>
-              <Define3 Value="Compiler6_Up"/>
-              <Define4 Value="PUREPASCAL"/>
-              <Define5 Value="Debug"/>
-            </OtherDefines>
           </Other>
         </CompilerOptions>
       </Item2>
