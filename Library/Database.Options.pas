@@ -36,7 +36,7 @@ type
     FShowMenuAtStartUp  : Boolean;
     FMissedSchedulerTask: Boolean;
     //Main Form
-    FLangID             : Word;
+    FLangID             : String;
     FUseCustomTitle     : Boolean;
     FCustomTitleString  : RawUTF8;
     FHideTabSearch      : Boolean;
@@ -117,7 +117,7 @@ type
     property showmenuatstartup: Boolean read FShowMenuAtStartUp write FShowMenuAtStartUp;
     property missedschedulertask: Boolean read Fmissedschedulertask write Fmissedschedulertask;
     // Main Form
-    property langid: Word read FLangID write FLangID;
+    property langid: String read FLangID write FLangID;
     property usecustomtitle: Boolean read FUseCustomTitle write FUseCustomTitle;
     property customtitlestring : RawUTF8 read FCustomTitleString write FCustomTitleString;
     property hidetabsearch: Boolean read FHideTabSearch write FHideTabSearch;
@@ -220,7 +220,6 @@ begin
       AConfig.ShowGraphicMenuAtStartUp := SQLOptionsData.showmenuatstartup;
       //Main Form
       AConfig.LangID             := SQLOptionsData.langid;
-      //LangManager.LanguageID     := AConfig.LangID;
       AConfig.CustomTitleString  := UTF8ToString(SQLOptionsData.customtitlestring);
       AConfig.UseCustomTitle     := SQLOptionsData.usecustomtitle;
       AConfig.HideTabSearch      := SQLOptionsData.hidetabsearch;

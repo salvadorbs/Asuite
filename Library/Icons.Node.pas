@@ -172,7 +172,8 @@ begin
   //Delete cache icon and reset CRC
   ResetCacheIcon;
   //Force MainTree repaint node
-  Config.MainTree.InvalidateNode(FNodeData.PNode);
+  if Assigned(FNodeData.PNode) then
+    Config.MainTree.InvalidateNode(FNodeData.PNode);
 end;
 
 procedure TNodeIcon.SaveCacheIcon(const APath: string;

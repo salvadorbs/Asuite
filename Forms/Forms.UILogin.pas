@@ -25,7 +25,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  ButtonPanel, Kernel.Types;
+  ButtonPanel, Kernel.Types, DefaultTranslator;
 
 type
 

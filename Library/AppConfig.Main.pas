@@ -40,7 +40,7 @@ type
     FShowPanelAtStartUp : Boolean;
     FShowGraphicMenuAtStartUp  : Boolean;
     //Main Form
-    FLangID             : Word;
+    FLangID             : String;
     FUseCustomTitle     : Boolean;
     FCustomTitleString  : string;
     FHideTabSearch      : Boolean;
@@ -132,7 +132,7 @@ type
     procedure SetTVBackground(value: Boolean);
     procedure SetCache(value: boolean);
     procedure SetStartWithWindows(value: boolean);
-    procedure SetLangID(value: Word);
+    procedure SetLangID(value: String);
     procedure SetTVFont(value: TFont);
     procedure SetScheduler(value: Boolean);
     procedure SetGMTheme(value: string);
@@ -177,7 +177,7 @@ type
     property ShowGraphicMenuAtStartUp: Boolean read FShowGraphicMenuAtStartUp write FShowGraphicMenuAtStartUp;
     property MissedSchedulerTask: Boolean read FMissedSchedulerTask write FMissedSchedulerTask;
     // Main Form
-    property LangID: Word read FLangID write SetLangID;
+    property LangID: String read FLangID write SetLangID;
     property UseCustomTitle: Boolean read FUseCustomTitle write SetUseCustomTitle;
     property CustomTitleString : String read FCustomTitleString write FCustomTitleString;
     property HideTabSearch: Boolean read FHideTabSearch write SetHideTabSearch;
@@ -272,7 +272,7 @@ uses
   Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, Utility.Misc,
   Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder, Windows,
   Utility.XML, GraphicMenu.ThemeEngine, Kernel.Scheduler, Forms.ImportList,
-  TypInfo, Utility.HotKey, Kernel.ResourceStrings;
+  TypInfo, Utility.HotKey, Kernel.ResourceStrings, LCLTranslator;
 
 procedure TConfiguration.AfterUpdateConfig;
 begin   
@@ -310,17 +310,13 @@ begin
   FListManager  := TListManager.Create;
   FDBManager    := TDBManager.Create;
   FIconsManager := TIconsManager.Create;
-  //Find language files and register them in LangManager
-  TASuiteLogger.Info('Scanning for language files', []);
-  //LangManager.ScanForLangFiles(FPaths.SuitePathLocale, '*.lng', False);
-  //LangManager.LanguageID := 1040;
   //General
   FStartWithWindows   := False;
   FShowPanelAtStartUp := True;
   FShowGraphicMenuAtStartUp  := False;
   FMissedSchedulerTask := True;
   //Main Form
-  FLangID             := 1033; //1033 = English (United States)
+  FLangID             := 'en';
   FUseCustomTitle     := False;
   FCustomTitleString  := APP_TITLE;
   FHideTabSearch      := False;
@@ -804,12 +800,14 @@ begin
     DeleteASuiteAtWindowsStartup;
 end;
 
-procedure TConfiguration.SetLangID(value: Word);
+procedure TConfiguration.SetLangID(value: String);
 begin
-  if (value <> 0) then
+  if (value <> '') then
     FLangID := value
   else
-    FLangID := 1033;
+    FLangID := 'en';
+
+  SetDefaultLang(value);
 end;
 
 procedure TConfiguration.SetGraphicMenuHotKey(const Value: Cardinal);

@@ -59,7 +59,7 @@ var
 implementation
 
 uses
-  AppConfig.Main, Kernel.Enumerations, Kernel.ResourceStrings;
+  AppConfig.Main, Kernel.Enumerations, Kernel.ResourceStrings, FileUtil, LazFileUtils;
 
 {$R *.lfm}
 
@@ -78,22 +78,48 @@ end;
 function TfrmGeneralOptionsPage.InternalLoadData: Boolean;
 var
   I: Integer;
+  FileInfo: TSearchRec;
+  ID: String;
+  SearchMask: String;
 begin
   Result := inherited;
+
   //Startup
   cbWindowsStartup.Checked   := Config.StartWithWindows;
   cbShowPanelStartup.Checked := Config.ShowPanelAtStartUp;
   cbShowMenuStartup.Checked  := Config.ShowGraphicMenuAtStartUp;
   chkMissedSchedulerTask.Checked := Config.MissedSchedulerTask;
+
   //Language
-  //TODO lazarus
-  {
-  for I := 0 to LangManager.LanguageCount - 1 do
+  //Search for all languages/xxx.po files
+  //Add english translation
+  cxLanguage.Items.Add('en');
+
+  //Search existing translations
+  SearchMask := Config.Paths.SuitePathLocale + 'asuite.*.po';
+
+  if FindFirstUTF8(SearchMask, faAnyFile, FileInfo) = 0 then
   begin
-    cxLanguage.Items.Add(LangManager.LanguageNativeNames[I]);
-    if LangManager.LanguageIDs[I] = Config.LangID then
-      cxLanguage.ItemIndex  := I;
-  end;          }
+    repeat
+      I := -1;
+      if (FileInfo.Name = '.') or (FileInfo.Name = '..') or (FileInfo.Name = '') then
+        continue;
+
+      ID := ExtractFileNameWithoutExt(FileInfo.Name);
+
+      if (ID <> '') then
+        I := cxLanguage.Items.Add(ID);
+
+      if (ID = Config.LangID) and (I <> -1 )then
+        cxLanguage.ItemIndex  := I;
+    until
+      FindNextUTF8(FileInfo) <> 0;
+  end;
+  FindCloseUTF8(FileInfo);
+
+  if cxLanguage.ItemIndex <> -1 then
+    cxLanguage.ItemIndex  := 0;
+
   //Execution options
   cxActionOnExe.ItemIndex   := Ord(Config.ActionOnExe);
   cbRunSingleClick.Checked  := Config.RunSingleClick;
@@ -104,14 +130,16 @@ end;
 function TfrmGeneralOptionsPage.InternalSaveData: Boolean;
 begin
   Result := inherited;
+
   //Startup
   Config.StartWithWindows    := cbWindowsStartup.Checked;
   Config.ShowPanelAtStartUp  := cbShowPanelStartup.Checked;
   Config.ShowGraphicMenuAtStartUp := cbShowMenuStartup.Checked;
   Config.MissedSchedulerTask := chkMissedSchedulerTask.Checked;
+
   //Language
-  //TODO lazarus
-  //Config.LangID := LangManager.LanguageIDs[cxLanguage.ItemIndex];
+  Config.LangID := cxLanguage.Items[cxLanguage.ItemIndex];
+
   //Execution options
   Config.ActionOnExe    := TActionOnExecute(cxActionOnExe.ItemIndex);
   Config.RunSingleClick := cbRunSingleClick.Checked;

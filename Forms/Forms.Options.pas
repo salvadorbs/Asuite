@@ -51,7 +51,7 @@ implementation
 uses
   Frame.Options.General, Frame.Options.Advanced, Frame.Options.Trayicon,
   Frame.Options.Stats, Frame.Options.Autorun, AppConfig.Main, Kernel.Logger,
-  Forms.Main, Frame.Options.Hotkey, Frame.Options.MainWindow;
+  Forms.Main, Frame.Options.Hotkey, Frame.Options.MainWindow, LCLTranslator;
 
 {$R *.lfm}
 
@@ -110,8 +110,6 @@ begin
   Config.Changed := True;
   if frmMain.Visible then
     frmMain.FocusControl(frmMain.vstList);
-  //TODO lazarus
-  //LangManager.LanguageID := Config.LangID;
 end;
 
 end.

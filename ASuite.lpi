@@ -30,7 +30,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="3"/>
-      <BuildNr Value="325"/>
+      <BuildNr Value="349"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
@@ -526,12 +526,11 @@
         <IsPartOfProject Value="True"/>
       </Unit67>
       <Unit68>
-        <Filename Value="Forms\forms.uilogin.pas"/>
+        <Filename Value="Forms\Forms.UILogin.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="frmUILogin"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="Forms.UILogin"/>
       </Unit68>
     </Units>
   </ProjectOptions>
