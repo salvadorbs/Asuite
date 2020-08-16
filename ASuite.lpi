@@ -29,8 +29,9 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
-      <MajorVersionNr Value="3"/>
-      <BuildNr Value="349"/>
+      <MajorVersionNr Value="2"/>
+      <MinorVersionNr Value="1"/>
+      <BuildNr Value="432"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
@@ -174,7 +175,7 @@
         <PackageName Value="LCL"/>
       </Item13>
     </RequiredPackages>
-    <Units Count="69">
+    <Units Count="70">
       <Unit0>
         <Filename Value="ASuite.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -532,6 +533,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit68>
+      <Unit69>
+        <Filename Value="Library\thread.findfiles.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Thread.FindFiles"/>
+      </Unit69>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

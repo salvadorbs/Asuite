@@ -114,6 +114,8 @@ resourcestring
   msgHotkeyNoMod = 'You haven''t select any modifier keys!';
   msgHotkeyNoKey = 'You haven''t select any keys!';
   msgHotkeyNotAvailable = 'This hotkey is being used already by another software or system itself. Please choose another one.';
+  msgCancel = 'Cancel';
+  msgStop = 'Stop';
 
   implementation
 
