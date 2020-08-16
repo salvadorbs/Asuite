@@ -59,7 +59,8 @@ var
 implementation
 
 uses
-  AppConfig.Main, Kernel.Enumerations, Kernel.ResourceStrings, FileUtil, LazFileUtils;
+  AppConfig.Main, Kernel.Enumerations, Kernel.ResourceStrings, FileUtil, LazFileUtils,
+  Kernel.Consts;
 
 {$R *.lfm}
 
@@ -77,9 +78,9 @@ end;
 
 function TfrmGeneralOptionsPage.InternalLoadData: Boolean;
 var
-  I: Integer;
+  I, idxDot: Integer;
   FileInfo: TSearchRec;
-  ID: String;
+  strID: String;
   SearchMask: String;
 begin
   Result := inherited;
@@ -92,32 +93,37 @@ begin
 
   //Language
   //Search for all languages/xxx.po files
-  //Add english translation
-  cxLanguage.Items.Add('en');
 
   //Search existing translations
-  SearchMask := Config.Paths.SuitePathLocale + 'asuite.*.po';
+  SearchMask := Config.Paths.SuitePathLocale + LowerCase(APP_NAME) + '.*' + EXT_PO;
 
   if FindFirstUTF8(SearchMask, faAnyFile, FileInfo) = 0 then
   begin
     repeat
       I := -1;
-      if (FileInfo.Name = '.') or (FileInfo.Name = '..') or (FileInfo.Name = '') then
-        continue;
+      if (FileInfo.Attr and (faDirectory or faVolumeId) = 0) then
+      begin
+        if (FileInfo.Name = '.') or (FileInfo.Name = '..') or (FileInfo.Name = '') then
+          continue;
 
-      ID := ExtractFileNameWithoutExt(FileInfo.Name);
+        strID := ExtractFileNameWithoutExt(FileInfo.Name);
+        idxDot := pos('.', strID);
 
-      if (ID <> '') then
-        I := cxLanguage.Items.Add(ID);
+        if idxDot <> 0 then
+        begin
+          strID := copy(strID, idxDot + 1, Length(strID) - 1);
+          I := cxLanguage.Items.Add(strID);
+        end;
 
-      if (ID = Config.LangID) and (I <> -1 )then
-        cxLanguage.ItemIndex  := I;
+        if (strID = Config.LangID) and (I <> -1 )then
+          cxLanguage.ItemIndex  := I;
+      end;
     until
       FindNextUTF8(FileInfo) <> 0;
   end;
   FindCloseUTF8(FileInfo);
 
-  if cxLanguage.ItemIndex <> -1 then
+  if cxLanguage.ItemIndex = -1 then
     cxLanguage.ItemIndex  := 0;
 
   //Execution options
@@ -138,7 +144,8 @@ begin
   Config.MissedSchedulerTask := chkMissedSchedulerTask.Checked;
 
   //Language
-  Config.LangID := cxLanguage.Items[cxLanguage.ItemIndex];
+  if cxLanguage.ItemIndex <> -1 then
+    Config.LangID := cxLanguage.Items[cxLanguage.ItemIndex];
 
   //Execution options
   Config.ActionOnExe    := TActionOnExecute(cxActionOnExe.ItemIndex);

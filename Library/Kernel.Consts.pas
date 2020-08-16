@@ -59,6 +59,7 @@ const
   EXT_LNK       = '.lnk';
   EXT_URL       = '.url';
   EXT_EXE       = '.exe';
+  EXT_PO        = '.po';
 
   EXT_PATH_MASK = '*';
 

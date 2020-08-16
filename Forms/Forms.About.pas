@@ -24,7 +24,7 @@ unit Forms.About;
 interface
 
 uses
-  LCLIntf, SysUtils, Forms, Dialogs, StdCtrls, ExtCtrls, ATLinkLabel, DefaultTranslator;
+  LCLIntf, SysUtils, Forms, Dialogs, StdCtrls, ExtCtrls, ATLinkLabel, DefaultTranslator, Classes;
 
 type
 
@@ -40,7 +40,7 @@ type
     lblVersion: TLabel;
     lblCopyright: TLabel;
     imgLogo: TImage;
-    procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
     procedure imgDonateClick(Sender: TObject);
     procedure imgLicenseClick(Sender: TObject);
     procedure lnklblWebSiteClick(Sender: TObject);
@@ -60,8 +60,9 @@ uses
 
 {$R *.lfm}
 
-procedure TfrmAbout.FormCreate(Sender: TObject);
+procedure TfrmAbout.FormShow(Sender: TObject);
 begin
+  Self.Caption := Format(Self.Caption, [APP_NAME]);
   lblAppName.Caption := Format(lblAppName.Caption, [APP_NAME]);
   lblVersion.Caption := Format(lblVersion.Caption, [GetASuiteVersion(True), {$IFDEF Win32}'32'{$ELSE}'64'{$ENDIF}]);
 end;

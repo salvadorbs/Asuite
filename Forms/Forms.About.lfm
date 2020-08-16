@@ -4,14 +4,14 @@ object frmAbout: TfrmAbout
   Top = 162
   Width = 382
   BorderStyle = bsDialog
-  Caption = 'About Asuite'
+  Caption = 'About %s'
   ClientHeight = 171
   ClientWidth = 382
   Color = clBtnFace
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'MS Shell Dlg 2'
-  OnCreate = FormCreate
+  OnShow = FormShow
   Position = poOwnerFormCenter
   LCLVersion = '2.1.0.0'
   object GroupBox3: TGroupBox

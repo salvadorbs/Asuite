@@ -807,7 +807,7 @@ begin
   else
     FLangID := 'en';
 
-  SetDefaultLang(value);
+  SetDefaultLang(value, FPaths.SuitePathLocale);
 end;
 
 procedure TConfiguration.SetGraphicMenuHotKey(const Value: Cardinal);
