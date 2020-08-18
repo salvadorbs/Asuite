@@ -149,13 +149,11 @@ object frmImportList: TfrmImportList
           Top = 10
           Width = 107
           Caption = 'Launcher File location:'
-          Color = clBtnFace
           Font.Color = clWindowText
           Font.Height = -11
           Font.Name = 'Tahoma'
           ParentColor = False
           ParentFont = False
-          Transparent = False
         end
         object edtPathList: TFileNameEdit
           Left = 9

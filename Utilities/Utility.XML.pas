@@ -82,7 +82,7 @@ class function TImportOldListProcs.ASuite1NodeToTree(Tree: TVirtualStringTree;XM
                                           Parent: PVirtualNode): PVirtualNode;
 var
   NodeData : PBaseData;
-  schDate, schTime   : string;
+  schDate, schTime, sName : string;
   CustomRealNodeData : TvCustomRealNodeData;
 begin
   Result := nil;
@@ -109,7 +109,13 @@ begin
     //Get base properties
     if (CustomRealNodeData.DataType <> vtdtSeparator) then
     begin
-      CustomRealNodeData.Name     := String(XMLNode.Attributes[LongWord('name')]);
+      //Get name
+      if XMLNode.HasAttributes and (XMLNode.Attributes.Length > 0) then
+        sName := XMLNode.Attributes[0].NodeValue
+      else
+        sName := '';
+
+      CustomRealNodeData.Name     := sName;
       CustomRealNodeData.PathIcon := GetStrPropertyXML(XMLNode, 'PathIcon', '');
       CustomRealNodeData.HideFromMenu := GetBoolPropertyXML(XMLNode, 'HideSoftwareMenu', false);
       CustomRealNodeData.SchMode  := TSchedulerMode(GetIntPropertyXML (XMLNode, 'SchedulerMode',0));
@@ -155,6 +161,7 @@ class function TImportOldListProcs.PStartNodeToTree(Tree: TVirtualStringTree;
   XMLNode: TDOMNode; Parent: PVirtualNode): PVirtualNode;
 var
   NodeData     : PBaseData;
+  sName: string;
   CustomRealNodeData : TvCustomRealNodeData;
 begin
   Result := nil;
@@ -180,7 +187,13 @@ begin
     //Get base properties
     if CustomRealNodeData.DataType <> vtdtSeparator then
     begin
-      CustomRealNodeData.Name     := String(XMLNode.Attributes[LongWord('name')]);
+      //Get name
+      if XMLNode.HasAttributes and (XMLNode.Attributes.Length > 0) then
+        sName := XMLNode.Attributes[0].NodeValue
+      else
+        sName := '';
+
+      CustomRealNodeData.Name     := sName;
       CustomRealNodeData.PathIcon := GetStrPropertyXML(XMLNode,'icon','');
       //Check if it is a software, so get software properties
       if (CustomRealNodeData.DataType = vtdtFile) then
@@ -205,6 +218,7 @@ class function TImportOldListProcs.wppLauncherNodeToTree(Tree: TVirtualStringTre
                                                Parent: PVirtualNode): PVirtualNode;
 var
   NodeData     : PBaseData;
+  sName: string;
   CustomRealNodeData : TvCustomRealNodeData;
 begin
   Result := nil;
@@ -230,7 +244,13 @@ begin
     //Get base properties
     if CustomRealNodeData.DataType <> vtdtSeparator then
     begin
-      CustomRealNodeData.Name     := String(XMLNode.Attributes[LongWord('name')]);
+      //Get name
+      if XMLNode.HasAttributes and (XMLNode.Attributes.Length > 0) then
+        sName := XMLNode.Attributes[0].NodeValue
+      else
+        sName := '';
+
+      CustomRealNodeData.Name     := sName;
       CustomRealNodeData.PathIcon := GetStrPropertyXML(XMLNode,'icon','');
       CustomRealNodeData.HideFromMenu := GetBoolPropertyXML(XMLNode, 'HideSoftwareMenu', false);
       //Check if it is a software, so get software properties
@@ -317,7 +337,6 @@ var
 begin
   TASuiteLogger.Info('Load XML List', []);
   //Create XMLDoc
-  XMLDoc := TXMLDocument.Create;
   try
     ReadXMLFile(XMLDoc, FileName);
     //Load list and settings
@@ -417,7 +436,7 @@ end;
 Function GetHotKeyCode(KeyCode: Integer) : Integer;
 begin
   //TODO: Rewrite this code
-  Result := -1;
+  Result := 0;
   case KeyCode of
     0: Result := VkKeyScan('a');
     1: Result := VkKeyScan('b');

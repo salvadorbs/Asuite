@@ -79,7 +79,7 @@ implementation
 uses
   Forms.Main, AppConfig.Main, VirtualTree.Events, VirtualTree.Methods,
   Utility.FileFolder, Utility.XML, Database.Manager, NodeDataTypes.Base,
-  Kernel.Logger, Kernel.ResourceStrings;
+  Kernel.Logger, Kernel.ResourceStrings, Utility.Misc;
 
 procedure TfrmImportList.btnBackClick(Sender: TObject);
 begin
@@ -121,7 +121,6 @@ begin
   Config.ASuiteState := lsNormal;
   if (ModalResult = mrOk) and (vstListImp.HasChildren[vstListImp.RootNode]) then
   begin
-    {
     try
       if TreeImpToTree(vstListImp, Config.MainTree) then
       begin
@@ -136,7 +135,6 @@ begin
         TASuiteLogger.Error(msgErrGeneric, [E.ClassName,E.Message]);
       end;
     end;
-    }
   end;
 end;
 
@@ -216,7 +214,6 @@ var
 begin
   TASuiteLogger.Enter('PopulateTree', Self);
   vstListImp.BeginUpdate;
-  XMLDoc := TXMLDocument.Create;
   try
     vstListImp.Clear;
     FileName := LowerCase(ExtractFileName(FilePath));
