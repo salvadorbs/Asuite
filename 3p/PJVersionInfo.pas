@@ -15,6 +15,8 @@
 
 unit PJVersionInfo;
 
+{$MODE DelphiUnicode}
+
 // Determine if certain features are supported by compiler
 // * Supports_Assert          - Defined if assertions supported (all compilers
 //                              except Delphi 2).
@@ -148,7 +150,7 @@ type
     function GetStringFileInfoByIdx(Index: Integer): string;
     function GetFixedFileInfoItemByIdx(Index: Integer): DWORD;
   private
-    fPInfoBuffer: PChar;      // Pointer to info buffer
+    fPInfoBuffer: PWChar;      // Pointer to info buffer
     fPTransBuffer: Pointer;   // Pointer to translation buffer
     procedure GetInfoBuffer(Len: DWORD);
       {Creates an info buffer of required size.
@@ -643,7 +645,7 @@ begin
   if fPInfoBuffer <> nil then
     StrDispose(fPInfoBuffer);
   // Create the new one
-  fPInfoBuffer := StrAlloc(Len);
+  fPInfoBuffer := WideStrAlloc(Len);
 end;
 
 function TPJVersionInfo.GetLanguage: string;
@@ -660,7 +662,7 @@ begin
   Result := '';
   // Try to get language name from Win API if we have ver info
   if fHaveInfo and
-    (VerLanguageName(GetLanguageCode, Buf, Pred(cBufSize)) > 0) then
+    (VerLanguageNameW(GetLanguageCode, Buf, Pred(cBufSize)) > 0) then
     Result := Buf;
 end;
 
@@ -707,7 +709,7 @@ begin
     //   this uses info string + language and character set
     StrPCopy(CommandBuf, '\StringFileInfo\' + GetTransStr + '\' + Name);
     // Call API to get required string and return it if successful
-    if VerQueryValue(fPInfoBuffer, CommandBuf, Ptr, Len) then
+    if VerQueryValueW(fPInfoBuffer, CommandBuf, Ptr, Len) then
       Result := PChar(Ptr);
   end;
 end;
@@ -774,7 +776,7 @@ begin
   // Set NumTranslations property to 0: this is value if no info
   fNumTranslations := 0;
   // Record required size of version info buffer
-  InfoSize := GetFileVersionInfoSize(PChar(fFileName), Dummy);
+  InfoSize := GetFileVersionInfoSizeW(PChar(fFileName), Dummy);
   // Check that there was no error
   if InfoSize > 0 then
   begin
@@ -782,7 +784,7 @@ begin
     // Ensure we have a sufficiently large buffer allocated
     GetInfoBuffer(InfoSize);
     // Read file version info into storage and check success
-    if GetFileVersionInfo(PChar(fFileName), Dummy, InfoSize, fPInfoBuffer) then
+    if GetFileVersionInfoW(PChar(fFileName), Dummy, InfoSize, fPInfoBuffer) then
     begin
       // Success: we've read file version info to storage OK
       fHaveInfo := True;
