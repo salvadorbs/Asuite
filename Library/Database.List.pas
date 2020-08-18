@@ -151,7 +151,7 @@ begin
       if IsImport then
         Tree.CheckType[Node] := ctTriStateCheckBox;
       // generic fields
-      vData.Name          := UTF8ToString(SQLFilesData.title);
+      vData.Name          := UTF8DecodeToUnicodeString(SQLFilesData.title);
       vData.id            := SQLFilesData.ID;
       vData.ParentID      := id;
       vData.Position      := Node.Index;
@@ -162,7 +162,7 @@ begin
       begin
         with TvCustomRealNodeData(vData) do
         begin
-          PathIcon    := UTF8ToString(SQLFilesData.icon_path);
+          PathIcon    := UTF8DecodeToUnicodeString(SQLFilesData.icon_path);
           TNodeIcon(Icon).SetCacheCRC(SQLFilesData.cache_icon_crc);
           AutorunPos  := SQLFilesData.autorun_position;
           Autorun     := TAutorunType(SQLFilesData.autorun);
@@ -183,9 +183,9 @@ begin
         begin
           with TvFileNodeData(vData) do
           begin
-            PathFile         := UTF8ToString(SQLFilesData.path);
-            Parameters       := UTF8ToString(SQLFilesData.parameters);
-            WorkingDir       := UTF8ToString(SQLFilesData.work_path);
+            PathFile         := UTF8DecodeToUnicodeString(SQLFilesData.path);
+            Parameters       := UTF8DecodeToUnicodeString(SQLFilesData.parameters);
+            WorkingDir       := UTF8DecodeToUnicodeString(SQLFilesData.work_path);
             ShortcutDesktop  := SQLFilesData.dsk_shortcut;
             NoMRU            := SQLFilesData.no_mru;
             NoMFU            := SQLFilesData.no_mfu;
@@ -248,7 +248,7 @@ begin
     Ftype := Ord(AData.DataType);
   Fparent   := AParentID;
   Fposition := AIndex;
-  Ftitle    := StringToUTF8(AData.Name);
+  Ftitle    := UnicodeStringToUtf8(AData.Name);
   //Add specific category and file fields
   if AData.DataType <> vtdtSeparator then
   begin
@@ -259,7 +259,7 @@ begin
     //Add category and file fields
     with TvCustomRealNodeData(AData) do
     begin
-      Ficon_path      := StringToUTF8(PathIcon);
+      Ficon_path      := UnicodeStringToUtf8(PathIcon);
       Fcache_icon_crc := TNodeIcon(Icon).CacheIconCRC;
       Fwindow_state   := WindowState;
       Fautorun        := Ord(Autorun);
@@ -275,9 +275,9 @@ begin
     begin
       with TvFileNodeData(AData) do
       begin
-        Fpath       := StringToUTF8(PathFile);
-        Fwork_path  := StringToUTF8(WorkingDir);
-        Fparameters := StringToUTF8(Parameters);
+        Fpath       := UnicodeStringToUtf8(PathFile);
+        Fwork_path  := UnicodeStringToUtf8(WorkingDir);
+        Fparameters := UnicodeStringToUtf8(Parameters);
         Fdsk_shortcut := ShortcutDesktop;
         Fno_mru     := NoMRU;
         Fno_mfu     := NoMFU;
