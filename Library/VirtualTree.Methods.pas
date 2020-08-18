@@ -176,13 +176,18 @@ procedure TVirtualTreeMethods.AddNodeByPathFile(const ASender: TBaseVirtualTree;
 var
   NodeData: TvFileNodeData;
   Node: PVirtualNode;
+  sName: String;
 begin
   TASuiteLogger.Info('Add node by File Path (%s)', [QuotedStr(APathFile)]);
-
   Node := AddChildNodeEx(ASender, AParentNode, AAttachMode, vtdtFile);
   NodeData := TvFileNodeData(GetNodeItemData(Node, ASender));
+
   //Set some node record's variables
-  NodeData.Name := ChangeFileExt(ExtractFileName(APathFile), '');
+  sName := ChangeFileExt(ExtractFileName(APathFile), '');
+  if sName = '' then
+    sName := ExtractFileDrive(APathFile);
+  NodeData.Name := sName;
+
   if LowerCase(ExtractFileExt(APathFile)) = EXT_LNK then
   begin
     //Shortcut
