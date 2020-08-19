@@ -27,6 +27,9 @@ uses
   LCLIntf, SysUtils, Dialogs, Frame.BaseEntity, StdCtrls, DefaultTranslator;
 
 type
+
+  { TfrmGeneralOptionsPage }
+
   TfrmGeneralOptionsPage = class(TfrmBaseEntityPage)
     
     gbStartup: TGroupBox;

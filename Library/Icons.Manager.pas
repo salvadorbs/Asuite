@@ -25,7 +25,7 @@ interface
 
 uses
   SysUtils, Classes, Controls, Forms, Icons.Application, Generics.Collections,
-  Kernel.Consts, LCLIntf, LCLType, ShellApi;
+  Kernel.Consts, LCLIntf, LCLType;
 
 type
   TBaseIcons = class(TObjectDictionary<string, TApplicationIcon>);

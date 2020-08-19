@@ -253,8 +253,6 @@ var
   TopText, ButtonHeight, I : Integer;
   FontNormal, FontHover, FontClicked : TFont;
   Caption, IniFile_Section : string;
-  DrawRect, R: TRect;
-  DrawFlags: Cardinal;
   TextColor: TColor;
 
   procedure AssignFont(APNGImage: TBGRABitmap; AFont: TFont);

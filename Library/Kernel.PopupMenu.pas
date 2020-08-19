@@ -27,7 +27,7 @@ interface
 
 uses
   Classes, SysUtils, Menus, VirtualTrees, NodeDataTypes.Base,
-  LCLIntf, LCLType, LMessages, Messages;
+  LCLIntf, LCLType;
 
 type
 

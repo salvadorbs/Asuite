@@ -151,8 +151,8 @@ begin
                                        VersionInfo.FileVersionNumber.V3,
                                        VersionInfo.FileVersionNumber.V4]);
     end;
-    if VERSION_PRERELEASE <> '' then
-      Result := Result + ' ' + VERSION_PRERELEASE;
+
+    Result := Result + ' ' + VERSION_PRERELEASE;
   finally
     VersionInfo.Free;
   end;

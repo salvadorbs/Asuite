@@ -134,8 +134,8 @@ implementation
 uses
   AppConfig.Main, NodeDataTypes.Base, NodeDataTypes.Category, Kernel.ResourceStrings,
   NodeDataTypes.Files, NodeDataTypes.Custom, NodeDataTypes.Separator, Kernel.Types,
-  Kernel.Enumerations, Frame.BaseEntity, VirtualTree.Methods, DataModules.TrayMenu,
-  comobj, DataModules.Icons, Kernel.Logger, SynLog, Utility.Hotkey, ShellApi,
+  Kernel.Enumerations, VirtualTree.Methods, DataModules.TrayMenu,
+  comobj, DataModules.Icons, Kernel.Logger, SynLog, Utility.Hotkey,
   Windows, Utility.Misc;
 
 { TVirtualTreeEvents }

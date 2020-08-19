@@ -24,7 +24,7 @@ unit AppConfig.Paths;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, SysUtils, Graphics, Forms, Controls, Classes,
+  LCLIntf, LCLType, SysUtils, Graphics, Forms, Controls, Classes,
   ShlObj;
 
 type
@@ -69,7 +69,7 @@ type
 implementation
 
 uses
-  Utility.System, Kernel.Consts, Utility.FileFolder, Windows;
+  Kernel.Consts, Utility.FileFolder, Windows;
 
 { TConfigPaths }
 
@@ -131,6 +131,8 @@ function TConfigPaths.ExpandEnvVars(const Str: string): string;
 var
   BufSize: Integer; // size of expanded string
 begin
+  Result := '';
+
   // Get required buffer size
   BufSize := ExpandEnvironmentStringsW(PChar(Str), nil, 0);
   if BufSize > 0 then
@@ -138,10 +140,7 @@ begin
     // Read expanded string into result string
     SetLength(Result, BufSize - 1);
     ExpandEnvironmentStringsW(PChar(Str), PChar(Result), BufSize);
-  end
-  else
-    // Trying to expand empty string
-    Result := '';
+  end;
 end;
 
 function TConfigPaths.GetNumberSubFolders(const FolderPath: String): Integer;

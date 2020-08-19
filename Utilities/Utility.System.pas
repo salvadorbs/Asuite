@@ -24,8 +24,8 @@ unit Utility.System;
 interface
 
 uses
-  Kernel.Consts, LCLIntf, LCLType, SysUtils, Classes, Registry, StrUtils,
-  ComObj, Forms, Dialogs{, IOUtils};
+  Kernel.Consts, LCLIntf, LCLType, SysUtils, Classes, Registry,
+  ComObj, Forms, Dialogs;
 
 { Check functions }
 function HasDriveLetter(const Path: String): Boolean;
@@ -206,7 +206,7 @@ var
   sPath: String;
 begin
   Result := Default;
-  sPath := IncludeTrailingBackslash(Config.Paths.SuiteDrive + sPath);
+  sPath := IncludeTrailingBackslash(Config.Paths.SuiteDrive);
   if SysUtils.DirectoryExists(sPath) then
     Result := sPath;
 end;
@@ -215,7 +215,11 @@ function RegisterHotkeyEx(AId: Integer; AShortcut: Cardinal): Boolean;
 var
   Modifiers, Key: Word;
 begin
+  Modifiers := 0;
+  Key := 0;
+
   SeparateHotKey(AShortcut, Modifiers, Key);
+
   Result := RegisterHotKey(frmMain.Handle, AId, Modifiers, Key);
 end;
 

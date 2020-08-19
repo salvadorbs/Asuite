@@ -24,7 +24,7 @@ unit Forms.PropertyItem;
 interface
 
 uses
-  SysUtils, Classes, Controls, Forms, Dialogs, Forms.Dialog.BaseEntity, StdCtrls,
+  SysUtils, Classes, Controls, Forms, Dialogs, Forms.Dialog.BaseEntity,
   NodeDataTypes.Custom, DefaultTranslator;
 
 type

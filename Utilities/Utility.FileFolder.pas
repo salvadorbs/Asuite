@@ -6,11 +6,11 @@ interface
 
 uses
   Kernel.Consts, LCLIntf, LCLType, SysUtils, Classes, Kernel.Enumerations, ShlObj, ActiveX,
-  ComObj, FileCtrl, PJVersionInfo, FileUtil, ShellApi, Windows, Dialogs;
+  ComObj, PJVersionInfo, FileUtil, ShellApi, Windows, Dialogs;
 
 { Folders }
 function GetSpecialFolder(const ASpecialFolderID: Integer): string;
-function  BrowseForFolder(const InitialDir: String; const Caption: String = ''): String;
+function BrowseForFolder(const InitialDir: String; const Caption: String = ''): String;
 function DirToPath(const Dir: string): string;
 function IsDirectory(const DirName: string): Boolean;
 function IsFlagSet(const Flags, Mask: Integer): Boolean;
@@ -173,7 +173,9 @@ var
   ErrCode: Word;
   Buffer: Array[1..65521] of byte;
 begin
+  ErrCode := 0;
   Result := 0;
+
   if FileName <> '' then
     FCRC32File(FileName, Result, Buffer, SizeOf(Buffer), ErrCode);
 end;

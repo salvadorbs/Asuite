@@ -24,9 +24,9 @@ unit Forms.Options;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, Messages, SysUtils, Variants, Classes, Graphics,
+  LCLIntf, LCLType, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, Dialogs, Forms.Dialog.BaseEntity, VirtualTrees, DefaultTranslator,
-  ExtCtrls, StdCtrls, Frame.BaseEntity;
+  ExtCtrls, Frame.BaseEntity;
 
 type
   TfrmOptions = class(TfrmDialogBase)

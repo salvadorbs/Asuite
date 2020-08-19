@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Forms, Dialogs, Clipbrd,
-  StdCtrls, TypInfo;
+  TypInfo;
 
 { HTML }
 function RGBToHtml(iRGB: Cardinal): string;

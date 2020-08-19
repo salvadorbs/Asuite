@@ -31,7 +31,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="432"/>
+      <BuildNr Value="487"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
@@ -78,7 +78,11 @@
             </Options>
           </Linking>
           <Other>
-            <CustomOptions Value="-dBorland
+            <CompilerMessages>
+              <IgnoredMessages idx5044="True" idx5024="True" idx4105="True" idx4104="True"/>
+            </CompilerMessages>
+            <CustomOptions Value="-Xm
+-dBorland
 -dVer150
 -dDelphi7
 -dCompiler6_Up
@@ -122,7 +126,12 @@
             </Options>
           </Linking>
           <Other>
-            <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
+            <CustomOptions Value="-Xm
+-dBorland
+-dVer150
+-dDelphi7
+-dCompiler6_Up
+-dPUREPASCAL"/>
           </Other>
         </CompilerOptions>
       </Item3>
