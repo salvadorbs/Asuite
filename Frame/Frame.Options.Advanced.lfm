@@ -16,14 +16,16 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
     ParentFont = False
     TabOrder = 0
     object gbMFU: TGroupBox
-      Left = 0
+      Left = 4
       Height = 73
       Top = 72
-      Width = 254
+      Width = 246
       Align = alTop
+      BorderSpacing.Left = 4
+      BorderSpacing.Right = 4
       Caption = 'Most Frequently Used'
       ClientHeight = 55
-      ClientWidth = 250
+      ClientWidth = 242
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
@@ -67,14 +69,16 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
       end
     end
     object gbRecents: TGroupBox
-      Left = 0
+      Left = 4
       Height = 72
       Top = 0
-      Width = 254
+      Width = 246
       Align = alTop
+      BorderSpacing.Left = 4
+      BorderSpacing.Right = 4
       Caption = 'Recents'
       ClientHeight = 54
-      ClientWidth = 250
+      ClientWidth = 242
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
@@ -118,14 +122,16 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
       end
     end
     object gbBackup: TGroupBox
-      Left = 0
+      Left = 4
       Height = 72
       Top = 145
-      Width = 254
+      Width = 246
       Align = alTop
+      BorderSpacing.Left = 4
+      BorderSpacing.Right = 4
       Caption = 'Backup'
       ClientHeight = 54
-      ClientWidth = 250
+      ClientWidth = 242
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
@@ -184,14 +190,16 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
     ParentFont = False
     TabOrder = 1
     object gbOtherFunctions: TGroupBox
-      Left = 0
+      Left = 4
       Height = 73
       Top = 147
-      Width = 191
+      Width = 183
       Align = alTop
+      BorderSpacing.Left = 4
+      BorderSpacing.Right = 4
       Caption = 'Other functions'
       ClientHeight = 55
-      ClientWidth = 187
+      ClientWidth = 179
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
@@ -224,14 +232,16 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
       end
     end
     object grpClearElements: TGroupBox
-      Left = 0
+      Left = 4
       Height = 147
       Top = 0
-      Width = 191
+      Width = 183
       Align = alTop
+      BorderSpacing.Left = 4
+      BorderSpacing.Right = 4
       Caption = 'Clear elements'
       ClientHeight = 129
-      ClientWidth = 187
+      ClientWidth = 179
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'

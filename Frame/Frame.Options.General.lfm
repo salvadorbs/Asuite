@@ -3,14 +3,16 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
   ClientHeight = 359
   DesignTop = 21
   object gbStartup: TGroupBox[0]
-    Left = 0
+    Left = 4
     Height = 94
     Top = 0
-    Width = 445
+    Width = 437
     Align = alTop
+    BorderSpacing.Left = 4
+    BorderSpacing.Right = 4
     Caption = 'Startup'
     ClientHeight = 76
-    ClientWidth = 441
+    ClientWidth = 433
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -71,6 +73,8 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     Height = 47
     Top = 228
     Width = 174
+    BorderSpacing.Left = 4
+    BorderSpacing.Right = 4
     Caption = 'Language'
     ClientHeight = 29
     ClientWidth = 170
@@ -95,14 +99,16 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     end
   end
   object gbExecution: TGroupBox[2]
-    Left = 0
+    Left = 4
     Height = 125
     Top = 94
-    Width = 445
+    Width = 437
     Align = alTop
+    BorderSpacing.Left = 4
+    BorderSpacing.Right = 4
     Caption = 'Execution'
     ClientHeight = 107
-    ClientWidth = 441
+    ClientWidth = 433
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'

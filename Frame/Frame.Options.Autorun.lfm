@@ -1,17 +1,19 @@
 inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
   Height = 405
   ClientHeight = 405
-  DesignLeft = 8
-  DesignTop = 41
+  DesignLeft = -740
+  DesignTop = 343
   object grpStartupOrderItems: TGroupBox[0]
-    Left = 0
+    Left = 4
     Height = 200
     Top = 0
-    Width = 445
+    Width = 437
     Align = alTop
+    BorderSpacing.Left = 4
+    BorderSpacing.Right = 4
     Caption = 'Startup'
     ClientHeight = 182
-    ClientWidth = 441
+    ClientWidth = 433
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -43,19 +45,44 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       TabOrder = 0
     end
     object vstStartupItems: TVirtualStringTree
-      Left = 0
+      Left = 6
       Height = 136
       Top = 46
-      Width = 441
+      Width = 393
       Align = alBottom
+      BorderSpacing.Left = 6
+      BorderSpacing.Right = 34
       DefaultNodeHeight = 32
       DragOperations = []
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
       Header.AutoSizeIndex = 0
-      Header.Columns = <>
-      Header.MainColumn = -1
+      Header.Columns = <      
+        item
+          MinWidth = 50
+          Position = 0
+          Text = 'Name'
+        end      
+        item
+          MaxWidth = 100
+          MinWidth = 36
+          Position = 1
+          Text = 'Type'
+          Width = 36
+        end      
+        item
+          MinWidth = 100
+          Position = 2
+          Text = 'Category'
+          Width = 100
+        end      
+        item
+          MinWidth = 100
+          Position = 3
+          Text = 'Path executable'
+          Width = 200
+        end>
       Header.Options = [hoColumnResize, hoVisible]
       ParentFont = False
       PopupMenu = pmAutorun
@@ -64,34 +91,9 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       TreeOptions.PaintOptions = [toPopupMode, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
       TreeOptions.SelectionOptions = [toFullRowSelect]
       OnGetPopupMenu = vstGetPopupMenu
-      Header.Columns = <
-        item
-          MinWidth = 50
-          Position = 0
-          Text = 'Name'
-        end
-        item
-          MaxWidth = 100
-          MinWidth = 36
-          Position = 1
-          Text = 'Type'
-          Width = 36
-        end
-        item
-          MinWidth = 100
-          Position = 2
-          Text = 'Category'
-          Width = 100
-        end
-        item
-          MinWidth = 100
-          Position = 3
-          Text = 'Path executable'
-          Width = 200
-        end>
     end
     object btnStartupUp: TKSpeedButton
-      Left = 405
+      Left = 404
       Height = 25
       Top = 74
       Width = 27
@@ -104,7 +106,7 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       OnClick = btnStartupUpClick
     end
     object btnStartupDelete: TKSpeedButton
-      Left = 405
+      Left = 404
       Height = 25
       Top = 105
       Width = 27
@@ -117,7 +119,7 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       OnClick = btnStartupDeleteClick
     end
     object btnStartupDown: TKSpeedButton
-      Left = 405
+      Left = 404
       Height = 25
       Top = 136
       Width = 27
@@ -131,14 +133,16 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
     end
   end
   object grpShutdownOrderItems: TGroupBox[1]
-    Left = 0
+    Left = 4
     Height = 200
     Top = 200
-    Width = 445
+    Width = 437
     Align = alTop
+    BorderSpacing.Left = 4
+    BorderSpacing.Right = 4
     Caption = 'Shutdown'
     ClientHeight = 182
-    ClientWidth = 441
+    ClientWidth = 433
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -170,19 +174,44 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       TabOrder = 0
     end
     object vstShutdownItems: TVirtualStringTree
-      Left = 0
+      Left = 6
       Height = 136
       Top = 46
-      Width = 441
+      Width = 393
       Align = alBottom
+      BorderSpacing.Left = 6
+      BorderSpacing.Right = 34
       DefaultNodeHeight = 32
       DragOperations = []
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
       Header.AutoSizeIndex = 0
-      Header.Columns = <>
-      Header.MainColumn = -1
+      Header.Columns = <      
+        item
+          MinWidth = 50
+          Position = 0
+          Text = 'Name'
+        end      
+        item
+          MaxWidth = 100
+          MinWidth = 36
+          Position = 1
+          Text = 'Type'
+          Width = 36
+        end      
+        item
+          MinWidth = 100
+          Position = 2
+          Text = 'Category'
+          Width = 100
+        end      
+        item
+          MinWidth = 100
+          Position = 3
+          Text = 'Path executable'
+          Width = 200
+        end>
       Header.Options = [hoColumnResize, hoVisible]
       ParentFont = False
       PopupMenu = pmAutorun
@@ -191,34 +220,9 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       TreeOptions.PaintOptions = [toPopupMode, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
       TreeOptions.SelectionOptions = [toFullRowSelect]
       OnGetPopupMenu = vstGetPopupMenu
-      Header.Columns = <
-        item
-          MinWidth = 50
-          Position = 0
-          Text = 'Name'
-        end
-        item
-          MaxWidth = 100
-          MinWidth = 36
-          Position = 1
-          Text = 'Type'
-          Width = 36
-        end
-        item
-          MinWidth = 100
-          Position = 2
-          Text = 'Category'
-          Width = 100
-        end
-        item
-          MinWidth = 100
-          Position = 3
-          Text = 'Path executable'
-          Width = 200
-        end>
     end
     object btnShutdownDelete: TKSpeedButton
-      Left = 405
+      Left = 404
       Height = 25
       Top = 105
       Width = 27
@@ -231,7 +235,7 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       OnClick = btnShutdownDeleteClick
     end
     object btnShutdownDown: TKSpeedButton
-      Left = 405
+      Left = 404
       Height = 25
       Top = 136
       Width = 27
@@ -244,7 +248,7 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       OnClick = btnShutdownDownClick
     end
     object btnShutdownUp: TKSpeedButton
-      Left = 405
+      Left = 404
       Height = 25
       Top = 74
       Width = 27

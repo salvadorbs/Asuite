@@ -1,17 +1,19 @@
 inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
   Height = 405
   ClientHeight = 405
-  DesignLeft = 9
-  DesignTop = 16
+  DesignLeft = 328
+  DesignTop = 57
   object gbHotkey: TGroupBox[0]
-    Left = 0
+    Left = 4
     Height = 118
     Top = 0
-    Width = 445
+    Width = 437
     Align = alTop
+    BorderSpacing.Left = 4
+    BorderSpacing.Right = 4
     Caption = 'Hotkey'
     ClientHeight = 100
-    ClientWidth = 441
+    ClientWidth = 433
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -71,7 +73,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       Left = 246
       Height = 21
       Top = 23
-      Width = 179
+      Width = 181
       CharCase = ecUppercase
       ParentFont = False
       ReadOnly = True
@@ -84,7 +86,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       Left = 246
       Height = 21
       Top = 50
-      Width = 179
+      Width = 181
       CharCase = ecUppercase
       ParentFont = False
       ReadOnly = True
@@ -97,7 +99,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       Left = 246
       Height = 21
       Top = 77
-      Width = 179
+      Width = 181
       CharCase = ecUppercase
       ParentFont = False
       ReadOnly = True
@@ -108,14 +110,17 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     end
   end
   object grpOrderSoftware: TGroupBox[1]
-    Left = 0
-    Height = 287
+    Left = 4
+    Height = 283
     Top = 118
-    Width = 445
+    Width = 437
     Align = alClient
+    BorderSpacing.Left = 4
+    BorderSpacing.Right = 4
+    BorderSpacing.Bottom = 4
     Caption = 'Hotkey list used'
-    ClientHeight = 269
-    ClientWidth = 441
+    ClientHeight = 265
+    ClientWidth = 433
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -124,11 +129,14 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     TabOrder = 1
     object vstItems: TVirtualStringTree
       Cursor = 63
-      Left = 0
-      Height = 269
+      Left = 6
+      Height = 259
       Top = 0
-      Width = 441
+      Width = 421
       Align = alClient
+      BorderSpacing.Left = 6
+      BorderSpacing.Right = 6
+      BorderSpacing.Bottom = 6
       DefaultNodeHeight = 32
       DragOperations = []
       Font.Color = clWindowText

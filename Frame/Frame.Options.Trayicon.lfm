@@ -1,14 +1,16 @@
 inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
   DesignTop = 12
   object gbTrayicon: TGroupBox[0]
-    Left = 0
+    Left = 4
     Height = 134
     Top = 0
-    Width = 445
+    Width = 437
     Align = alTop
+    BorderSpacing.Left = 4
+    BorderSpacing.Right = 4
     Caption = 'System Tray'
     ClientHeight = 116
-    ClientWidth = 441
+    ClientWidth = 433
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -160,14 +162,16 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
     end
   end
   object grpClassicMenu: TGroupBox[1]
-    Left = 0
+    Left = 4
     Height = 83
     Top = 235
-    Width = 445
+    Width = 437
     Align = alTop
+    BorderSpacing.Left = 4
+    BorderSpacing.Right = 4
     Caption = 'Classic Menu'
     ClientHeight = 65
-    ClientWidth = 441
+    ClientWidth = 433
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -212,14 +216,16 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
     end
   end
   object grpGraphicMenu: TGroupBox[2]
-    Left = 0
+    Left = 4
     Height = 101
     Top = 134
-    Width = 445
+    Width = 437
     Align = alTop
+    BorderSpacing.Left = 4
+    BorderSpacing.Right = 4
     Caption = 'Graphic Menu'
     ClientHeight = 83
-    ClientWidth = 441
+    ClientWidth = 433
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'

@@ -2,14 +2,16 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
   DesignLeft = 10
   DesignTop = 12
   object gbTreeView: TGroupBox[0]
-    Left = 0
+    Left = 4
     Height = 165
     Top = 142
-    Width = 445
+    Width = 437
     Align = alTop
+    BorderSpacing.Left = 4
+    BorderSpacing.Right = 4
     Caption = 'Treeview'
     ClientHeight = 147
-    ClientWidth = 441
+    ClientWidth = 433
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
@@ -21,6 +23,8 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       Height = 19
       Top = 70
       Width = 146
+      BorderSpacing.Left = 4
+      BorderSpacing.Right = 4
       Caption = 'Active custom background'
       Font.Color = clWindowText
       Font.Height = -11
@@ -34,6 +38,8 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       Height = 25
       Top = 120
       Width = 121
+      BorderSpacing.Left = 4
+      BorderSpacing.Right = 4
       Caption = 'Font settings...'
       Font.Color = clWindowText
       Font.Height = -11
@@ -47,6 +53,8 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       Height = 19
       Top = 2
       Width = 198
+      BorderSpacing.Left = 4
+      BorderSpacing.Right = 4
       Caption = 'Automatic opening/closing categories'
       Font.Color = clWindowText
       Font.Height = -11
@@ -59,6 +67,8 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       Height = 19
       Top = 53
       Width = 162
+      BorderSpacing.Left = 4
+      BorderSpacing.Right = 4
       Caption = 'Small icon size in main window'
       Font.Color = clWindowText
       Font.Height = -11
@@ -76,6 +86,8 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       HideDirectories = False
       ButtonWidth = 20
       NumGlyphs = 1
+      BorderSpacing.Left = 4
+      BorderSpacing.Right = 4
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
@@ -89,6 +101,8 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       Height = 19
       Top = 19
       Width = 298
+      BorderSpacing.Left = 4
+      BorderSpacing.Right = 4
       Caption = 'Automatic opening category, after drag&&drop an item in it'
       Font.Color = clWindowText
       Font.Height = -11
@@ -101,6 +115,8 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       Height = 19
       Top = 36
       Width = 208
+      BorderSpacing.Left = 4
+      BorderSpacing.Right = 4
       Caption = 'Disable delete items confirmation dialog'
       Font.Color = clWindowText
       Font.Height = -11
@@ -110,14 +126,16 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
     end
   end
   object gbWindow: TGroupBox[1]
-    Left = 0
+    Left = 4
     Height = 142
     Top = 0
-    Width = 445
+    Width = 437
     Align = alTop
+    BorderSpacing.Left = 4
+    BorderSpacing.Right = 4
     Caption = 'General'
     ClientHeight = 124
-    ClientWidth = 441
+    ClientWidth = 433
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'

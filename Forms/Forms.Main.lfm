@@ -1,7 +1,7 @@
 object frmMain: TfrmMain
-  Left = 610
+  Left = 718
   Height = 386
-  Top = 215
+  Top = 280
   Width = 201
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'ASuite'
@@ -26,14 +26,14 @@ object frmMain: TfrmMain
     Height = 366
     Top = 0
     Width = 201
-    ActivePage = tbList
+    ActivePage = tbSearch
     Align = alClient
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Shell Dlg 2'
     MultiLine = True
     ParentFont = False
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 0
     OnChange = pcListChange
     Options = [nboMultiLine]
@@ -90,10 +90,10 @@ object frmMain: TfrmMain
       ParentFont = False
       object vstSearch: TVirtualStringTree
         Left = 0
-        Height = 289
-        Top = 21
+        Height = 316
+        Top = 24
         Width = 193
-        Align = alTop
+        Align = alBottom
         Anchors = [akTop, akLeft, akRight, akBottom]
         AnimationDuration = 0
         Font.Color = clWindowText
