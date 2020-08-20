@@ -1,7 +1,7 @@
 inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
   Height = 405
   ClientHeight = 405
-  DesignLeft = -740
+  DesignLeft = 1180
   DesignTop = 343
   object grpStartupOrderItems: TGroupBox[0]
     Left = 4

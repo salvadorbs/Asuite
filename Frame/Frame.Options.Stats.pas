@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Variants, Classes, DefaultTranslator, Controls,
-  Forms, Dialogs, Frame.BaseEntity, StdCtrls;
+  Forms, Dialogs, Frame.BaseEntity, JPP.DoubleLineLabel, StdCtrls;
 
 type
   TMemoryStatusEx = packed record
@@ -40,35 +40,26 @@ type
      ullAvailExtendedVirtual: Int64;
    end;
 
+  { TfrmStatsOptionsPage }
+
   TfrmStatsOptionsPage = class(TfrmBaseEntityPage)
     gbASuite: TGroupBox;
-    lbSoftware: TLabel;
-    lbCat: TLabel;
-    lbTotal: TLabel;
-    lbSoftware2: TLabel;
-    lbCat2: TLabel;
-    lbTotal2: TLabel;
+    lbCat: TJppDoubleLineLabel;
+    lblBuild: TJppDoubleLineLabel;
+    lblProcessor: TJppDoubleLineLabel;
+    lblRam: TJppDoubleLineLabel;
+    lbNamePc: TJppDoubleLineLabel;
+    lbOs: TJppDoubleLineLabel;
+    lbSize: TJppDoubleLineLabel;
+    lbSoftware: TJppDoubleLineLabel;
     gbSupport: TGroupBox;
-    lbSize: TLabel;
-    lbSpaceUsed: TLabel;
-    lbSpaceFree: TLabel;
-    lbSpaceFree2: TLabel;
-    lbSize2: TLabel;
-    lbSpaceUsed2: TLabel;
+    lbSpaceFree: TJppDoubleLineLabel;
     gbSystem: TGroupBox;
-    lbOs: TLabel;
-    lbNamePc: TLabel;
-    lbUser: TLabel;
-    lbOs2: TLabel;
-    lbUser2: TLabel;
-    lbNamePc2: TLabel;
-    
-    lblBuild2: TLabel;
-    lblBuild: TLabel;
-    lblProcessor: TLabel;
-    lblProcessor2: TLabel;
-    lblRam: TLabel;
-    lblRam2: TLabel;
+    lbSpaceUsed: TJppDoubleLineLabel;
+    lbTotal: TJppDoubleLineLabel;
+
+    lbUser: TJppDoubleLineLabel;
+    procedure lbSizeClick(Sender: TObject);
   private
     { Private declarations }
     function GetTotalPhysMemory: Int64;
@@ -113,7 +104,13 @@ begin
   Result := msgStats;
 end;
 
-function TfrmStatsOptionsPage.GetTotalPhysMemory: Int64;var
+procedure TfrmStatsOptionsPage.lbSizeClick(Sender: TObject);
+begin
+
+end;
+
+function TfrmStatsOptionsPage.GetTotalPhysMemory: Int64;
+var
   MemoryEx: TMemoryStatusEx;
 begin
   begin
@@ -152,28 +149,30 @@ var
   Drive: char;
   ListStats: rListStats;
 begin
-  GetTotalPhysMemory;
   Result := inherited;
+
   //System
-  lbOs2.Caption := TPJOSInfo.ProductName + ' ' + TPJOSInfo.Edition;
-  lblBuild2.Caption := Format('%d.%d.%d', [TPJOSInfo.MajorVersion, TPJOSInfo.MinorVersion, TPJOSInfo.BuildNumber]);
-  lblProcessor2.Caption := TPJComputerInfo.ProcessorName;
-  lblRam2.Caption   := BytesToGBStr(GetTotalPhysMemory, 2, True) + ' GB';
-  lbNamePc2.Caption := TPJComputerInfo.ComputerName;
-  lbUser2.Caption   := TPJComputerInfo.UserName;
+  lbOs.RightCaption := TPJOSInfo.ProductName + ' ' + TPJOSInfo.Edition;
+  lblBuild.RightCaption := Format('%d.%d.%d', [TPJOSInfo.MajorVersion, TPJOSInfo.MinorVersion, TPJOSInfo.BuildNumber]);
+  lblProcessor.RightCaption := TPJComputerInfo.ProcessorName;
+  lblRam.RightCaption   := BytesToGBStr(GetTotalPhysMemory, 2, True) + ' GB';
+  lbNamePc.RightCaption := TPJComputerInfo.ComputerName;
+  lbUser.RightCaption   := TPJComputerInfo.UserName;
+
   //Drive
   Drive := Config.Paths.SuiteDrive[1];
   gbSupport.Caption := Format(gbSupport.Caption, [Drive]);
-  lbSize2.Caption   := DiskSizeString(Drive, True);
-  lbSpaceFree2.Caption := DiskFreeString(Drive, True);
-  lbSpaceUsed2.Caption := DiskUsedString(Drive, True);
+  lbSize.RightCaption   := DiskSizeString(Drive, True);
+  lbSpaceFree.RightCaption := DiskFreeString(Drive, True);
+  lbSpaceUsed.RightCaption := DiskUsedString(Drive, True);
+
   //Launcher
   ListStats.SwCount  := 0;
   ListStats.CatCount := 0;
   Config.MainTree.IterateSubtree(nil, TVirtualTreeMethods.Create.UpdateListItemCount, @ListStats);
-  lbSoftware2.Caption := IntToStr(ListStats.SwCount);
-  lbCat2.Caption      := IntToStr(ListStats.CatCount);
-  lbTotal2.Caption    := IntToStr(ListStats.SwCount + ListStats.CatCount);
+  lbSoftware.RightCaption := IntToStr(ListStats.SwCount);
+  lbCat.RightCaption      := IntToStr(ListStats.CatCount);
+  lbTotal.RightCaption    := IntToStr(ListStats.SwCount + ListStats.CatCount);
 end;
 
 end.
