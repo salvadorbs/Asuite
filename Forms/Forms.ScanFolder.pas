@@ -54,6 +54,7 @@ type
     pbScan: TProgressBar;
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormCreate(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: char);
     procedure vstGetNodeDataSize(Sender: TBaseVirtualTree;
       var NodeDataSize: Integer);
     procedure vstGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
@@ -272,6 +273,15 @@ begin
   LoadSettings;
 
   vstShell.Images := dmImages.ilSmallIcons;
+end;
+
+procedure TfrmScanFolder.FormKeyPress(Sender: TObject; var Key: char);
+begin
+  if Ord(Key) = VK_RETURN then
+    btnScanClick(Sender)
+  else
+    if Ord(Key) = VK_ESCAPE then
+      btnCancelClick(Sender);
 end;
 
 procedure TfrmScanFolder.FormCloseQuery(Sender: TObject; var CanClose: Boolean);

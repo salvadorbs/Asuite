@@ -8,8 +8,10 @@ object frmScanFolder: TfrmScanFolder
   ClientHeight = 256
   ClientWidth = 579
   Color = clBtnFace
+  KeyPreview = True
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
+  OnKeyPress = FormKeyPress
   Position = poMainFormCenter
   LCLVersion = '2.1.0.0'
   object btnScan: TButton
