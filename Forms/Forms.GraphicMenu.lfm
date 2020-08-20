@@ -11,9 +11,6 @@ object frmGraphicMenu: TfrmGraphicMenu
   ClientHeight = 530
   ClientWidth = 406
   Color = clBtnFace
-  Font.Color = clWindowText
-  Font.Height = -29
-  Font.Name = 'Tahoma'
   KeyPreview = True
   OnCreate = FormCreate
   OnDeactivate = FormDeactivate
@@ -257,10 +254,8 @@ object frmGraphicMenu: TfrmGraphicMenu
     Height = 23
     Top = 467
     Width = 240
-    Font.Color = clWindowText
-    Font.Name = 'Tahoma'
+    ParentFont = False
     PopupMenu = frmMain.pmSearch
-    ReadOnly = False
     RightButton.Visible = True
     TabOrder = 1
     OnChange = edtSearchChange

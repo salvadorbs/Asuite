@@ -212,35 +212,39 @@ object frmUILogin: TfrmUILogin
   end
   object edtUserName: TEdit
     Left = 104
-    Height = 22
+    Height = 23
     Top = 112
     Width = 193
+    ParentFont = False
     TabOrder = 0
   end
   object edtPassword: TEdit
     Left = 104
-    Height = 22
+    Height = 23
     Top = 144
     Width = 193
     EchoMode = emPassword
+    ParentFont = False
     PasswordChar = '*'
     TabOrder = 1
   end
   object lblUserName: TLabel
     Left = 16
-    Height = 14
+    Height = 15
     Top = 112
-    Width = 59
+    Width = 58
     Caption = '&User Name'
     ParentColor = False
+    ParentFont = False
   end
   object lblPassword: TLabel
     Left = 16
-    Height = 14
+    Height = 15
     Top = 144
-    Width = 51
+    Width = 50
     Caption = '&Password'
     ParentColor = False
+    ParentFont = False
   end
   object lblInfo: TLabel
     Left = 0
@@ -252,7 +256,6 @@ object frmUILogin: TfrmUILogin
     Caption = 'Please insert username and password'
     Font.Color = 8912896
     Font.Height = -13
-    Font.Name = 'Tahoma'
     ParentColor = False
     ParentFont = False
   end

@@ -1,6 +1,6 @@
 inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
-  DesignLeft = 10
-  DesignTop = 43
+  DesignLeft = -731
+  DesignTop = 212
   object pnlLeft: TPanel[0]
     Left = 0
     Height = 380
@@ -10,38 +10,30 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
     BevelOuter = bvNone
     ClientHeight = 380
     ClientWidth = 254
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Tahoma'
     ParentFont = False
     TabOrder = 0
     object gbMFU: TGroupBox
       Left = 4
       Height = 73
-      Top = 72
+      Top = 80
       Width = 246
       Align = alTop
       BorderSpacing.Left = 4
+      BorderSpacing.Top = 4
       BorderSpacing.Right = 4
       Caption = 'Most Frequently Used'
-      ClientHeight = 55
+      ClientHeight = 53
       ClientWidth = 242
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 1
       object lbMaxMFU: TLabel
         Left = 6
-        Height = 13
-        Top = 29
-        Width = 111
+        Height = 15
+        Top = 25
+        Width = 128
         Caption = 'Max number MFU items'
         Color = clBtnFace
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
         ParentColor = False
         ParentFont = False
         Transparent = False
@@ -49,20 +41,17 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
       object cbMFU: TCheckBox
         Left = 6
         Height = 19
-        Top = 4
-        Width = 186
+        Top = 0
+        Width = 203
         Caption = 'Active Most Frequently Used items'
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
         OnClick = cbMFUClick
         ParentFont = False
         TabOrder = 0
       end
       object seMFU: TSpinEdit
         Left = 183
-        Height = 21
-        Top = 25
+        Height = 23
+        Top = 21
         Width = 57
         MaxValue = 20
         TabOrder = 1
@@ -71,30 +60,25 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
     object gbRecents: TGroupBox
       Left = 4
       Height = 72
-      Top = 0
+      Top = 4
       Width = 246
       Align = alTop
       BorderSpacing.Left = 4
+      BorderSpacing.Top = 4
       BorderSpacing.Right = 4
       Caption = 'Recents'
-      ClientHeight = 54
+      ClientHeight = 52
       ClientWidth = 242
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 0
       object lbMaxMRU: TLabel
         Left = 6
-        Height = 13
-        Top = 29
-        Width = 121
+        Height = 15
+        Top = 25
+        Width = 136
         Caption = 'Max number recent items'
         Color = clBtnFace
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
         ParentColor = False
         ParentFont = False
         Transparent = False
@@ -102,20 +86,17 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
       object cbMRU: TCheckBox
         Left = 6
         Height = 19
-        Top = 4
-        Width = 112
+        Top = 0
+        Width = 121
         Caption = 'Active recent items'
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
         OnClick = cbMRUClick
         ParentFont = False
         TabOrder = 0
       end
       object seRecents: TSpinEdit
         Left = 183
-        Height = 21
-        Top = 25
+        Height = 23
+        Top = 21
         Width = 57
         MaxValue = 20
         TabOrder = 1
@@ -124,30 +105,25 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
     object gbBackup: TGroupBox
       Left = 4
       Height = 72
-      Top = 145
+      Top = 157
       Width = 246
       Align = alTop
       BorderSpacing.Left = 4
+      BorderSpacing.Top = 4
       BorderSpacing.Right = 4
       Caption = 'Backup'
-      ClientHeight = 54
+      ClientHeight = 52
       ClientWidth = 242
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 2
       object lbMaxBackup: TLabel
         Left = 6
-        Height = 13
-        Top = 29
-        Width = 118
+        Height = 15
+        Top = 26
+        Width = 134
         Caption = 'Max number backup files'
         Color = clBtnFace
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
         ParentColor = False
         ParentFont = False
         Transparent = False
@@ -155,20 +131,17 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
       object cbBackup: TCheckBox
         Left = 6
         Height = 19
-        Top = 6
-        Width = 137
+        Top = 3
+        Width = 152
         Caption = 'Active automatic backup'
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
         OnClick = cbBackupClick
         ParentFont = False
         TabOrder = 0
       end
       object seBackup: TSpinEdit
         Left = 183
-        Height = 21
-        Top = 25
+        Height = 23
+        Top = 22
         Width = 57
         MaxValue = 10
         TabOrder = 1
@@ -184,91 +157,70 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
     BevelOuter = bvNone
     ClientHeight = 380
     ClientWidth = 191
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Tahoma'
     ParentFont = False
     TabOrder = 1
     object gbOtherFunctions: TGroupBox
-      Left = 4
-      Height = 73
-      Top = 147
-      Width = 183
+      Left = 0
+      Height = 72
+      Top = 157
+      Width = 187
       Align = alTop
-      BorderSpacing.Left = 4
+      BorderSpacing.Top = 4
       BorderSpacing.Right = 4
       Caption = 'Other functions'
-      ClientHeight = 55
-      ClientWidth = 179
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
+      ClientHeight = 52
+      ClientWidth = 183
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 1
       object cbCache: TCheckBox
         Left = 6
         Height = 19
-        Top = 3
-        Width = 83
+        Top = 0
+        Width = 89
         Caption = 'Enable cache'
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
         ParentFont = False
         TabOrder = 0
       end
       object cbScheduler: TCheckBox
         Left = 6
         Height = 19
-        Top = 22
-        Width = 101
+        Top = 19
+        Width = 109
         Caption = 'Enable scheduler'
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
         ParentFont = False
         TabOrder = 1
       end
     end
     object grpClearElements: TGroupBox
-      Left = 4
-      Height = 147
-      Top = 0
-      Width = 183
+      Left = 0
+      Height = 149
+      Top = 4
+      Width = 187
       Align = alTop
-      BorderSpacing.Left = 4
+      BorderSpacing.Top = 4
       BorderSpacing.Right = 4
       Caption = 'Clear elements'
       ClientHeight = 129
-      ClientWidth = 179
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
+      ClientWidth = 183
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 0
       object lbClearElements: TLabel
         Left = 6
-        Height = 13
-        Top = 4
-        Width = 135
+        Height = 15
+        Top = 0
+        Width = 151
         Caption = 'Clear the following elements'
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
         ParentColor = False
         ParentFont = False
       end
       object cbClearMFU: TCheckBox
         Left = 6
         Height = 19
-        Top = 38
-        Width = 125
+        Top = 34
+        Width = 135
         Caption = 'Most Frequently Used'
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
         OnClick = UpdateBtnClear
         ParentFont = False
         TabOrder = 1
@@ -276,12 +228,9 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
       object cbClearBackup: TCheckBox
         Left = 6
         Height = 19
-        Top = 55
-        Width = 59
+        Top = 51
+        Width = 64
         Caption = 'Backups'
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
         OnClick = UpdateBtnClear
         ParentFont = False
         TabOrder = 2
@@ -289,12 +238,9 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
       object cbClearCache: TCheckBox
         Left = 6
         Height = 19
-        Top = 72
-        Width = 77
+        Top = 68
+        Width = 84
         Caption = 'Cache icons'
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
         OnClick = UpdateBtnClear
         ParentFont = False
         TabOrder = 3
@@ -302,13 +248,10 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
       object btnClear: TButton
         Left = 50
         Height = 23
-        Top = 95
+        Top = 91
         Width = 82
         Caption = 'Clear'
         Default = True
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
         OnClick = btnClearClick
         ParentFont = False
         TabOrder = 4
@@ -316,12 +259,9 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
       object cbClearMRU: TCheckBox
         Left = 6
         Height = 19
-        Top = 20
-        Width = 59
+        Top = 16
+        Width = 61
         Caption = 'Recents'
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
         OnClick = UpdateBtnClear
         ParentFont = False
         TabOrder = 0

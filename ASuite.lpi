@@ -31,7 +31,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="487"/>
+      <BuildNr Value="512"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
@@ -145,34 +145,34 @@
     </RunParams>
     <RequiredPackages Count="13">
       <Item1>
-        <PackageName Value="ASuiteComps"/>
+        <PackageName Value="jppacklcl"/>
       </Item1>
       <Item2>
-        <PackageName Value="bgracontrols"/>
+        <PackageName Value="ASuiteComps"/>
       </Item2>
       <Item3>
-        <PackageName Value="FCL"/>
+        <PackageName Value="bgracontrols"/>
       </Item3>
       <Item4>
-        <PackageName Value="mormot_cross"/>
+        <PackageName Value="FCL"/>
       </Item4>
       <Item5>
-        <PackageName Value="mormot_base"/>
+        <PackageName Value="mormot_cross"/>
       </Item5>
       <Item6>
-        <PackageName Value="HashLib4PascalPackage"/>
+        <PackageName Value="mormot_base"/>
       </Item6>
       <Item7>
-        <PackageName Value="uniqueinstance_package"/>
+        <PackageName Value="HashLib4PascalPackage"/>
       </Item7>
       <Item8>
-        <PackageName Value="virtualtreeview_package"/>
+        <PackageName Value="uniqueinstance_package"/>
       </Item8>
       <Item9>
-        <PackageName Value="DateTimeCtrls"/>
+        <PackageName Value="virtualtreeview_package"/>
       </Item9>
       <Item10>
-        <PackageName Value="atflatcontrols_package"/>
+        <PackageName Value="DateTimeCtrls"/>
       </Item10>
       <Item11>
         <PackageName Value="lclextensions_package"/>

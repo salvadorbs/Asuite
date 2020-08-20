@@ -1,30 +1,27 @@
 inherited frmBehaviorPropertyPage: TfrmBehaviorPropertyPage
-  DesignLeft = 82
-  DesignTop = 29
+  DesignLeft = -738
+  DesignTop = 479
   object grpAutoExecute: TGroupBox[0]
-    Left = 0
+    Left = 4
     Height = 78
-    Top = 0
-    Width = 360
+    Top = 4
+    Width = 352
     Align = alTop
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
     Caption = 'Autorun'
-    ClientHeight = 60
-    ClientWidth = 356
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Tahoma'
+    ClientHeight = 58
+    ClientWidth = 348
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 0
     object cxAutoExecute: TComboBox
       Left = 6
-      Height = 21
-      Top = 3
+      Height = 23
+      Top = 0
       Width = 338
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      ItemHeight = 13
+      ItemHeight = 15
       Items.Strings = (
         'Never'
         'Always on startup'
@@ -37,14 +34,11 @@ inherited frmBehaviorPropertyPage: TfrmBehaviorPropertyPage
       TabOrder = 0
     end
     object btnChangeOrder: TButton
-      Left = 100
+      Left = 105
       Height = 21
       Top = 30
       Width = 150
       Caption = 'Change autorun order'
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       OnClick = btnChangeOrderClick
       ParentFont = False
       TabOrder = 1
@@ -53,7 +47,7 @@ inherited frmBehaviorPropertyPage: TfrmBehaviorPropertyPage
   object pnl1: TPanel[1]
     Left = 0
     Height = 53
-    Top = 78
+    Top = 82
     Width = 360
     Align = alTop
     BevelOuter = bvNone
@@ -61,29 +55,26 @@ inherited frmBehaviorPropertyPage: TfrmBehaviorPropertyPage
     ClientWidth = 360
     TabOrder = 1
     object grpOnExecute: TGroupBox
-      Left = 0
-      Height = 53
-      Top = 0
+      Left = 4
+      Height = 49
+      Top = 4
       Width = 173
       Align = alLeft
+      BorderSpacing.Left = 4
+      BorderSpacing.Top = 4
+      BorderSpacing.Right = 4
       Caption = 'On Execute'
-      ClientHeight = 35
+      ClientHeight = 29
       ClientWidth = 169
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 0
       object cxActionOnExe: TComboBox
         Left = 6
-        Height = 21
-        Top = 5
+        Height = 23
+        Top = 0
         Width = 158
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        ItemHeight = 13
+        ItemHeight = 15
         Items.Strings = (
           'Default (options)'
           'Just run file'
@@ -96,29 +87,26 @@ inherited frmBehaviorPropertyPage: TfrmBehaviorPropertyPage
       end
     end
     object grpWindowState: TGroupBox
-      Left = 173
-      Height = 53
-      Top = 0
+      Left = 181
+      Height = 49
+      Top = 4
       Width = 175
       Align = alLeft
+      BorderSpacing.Left = 4
+      BorderSpacing.Top = 4
+      BorderSpacing.Right = 4
       Caption = 'Window State'
-      ClientHeight = 35
+      ClientHeight = 29
       ClientWidth = 171
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 1
       object cxWindowState: TComboBox
         Left = 6
-        Height = 21
-        Top = 5
+        Height = 23
+        Top = 0
         Width = 158
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        ItemHeight = 13
+        ItemHeight = 15
         Items.Strings = (
           'Normal'
           'Minimized'

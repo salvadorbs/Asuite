@@ -24,7 +24,8 @@ unit Forms.About;
 interface
 
 uses
-  LCLIntf, SysUtils, Forms, Dialogs, StdCtrls, ExtCtrls, ATLinkLabel, DefaultTranslator, Classes;
+  LCLIntf, SysUtils, Forms, Dialogs, StdCtrls, ExtCtrls, JPP.LinkLabel,
+  DefaultTranslator, Classes;
 
 type
 
@@ -32,7 +33,6 @@ type
 
   TfrmAbout = class(TForm)
     GroupBox3: TGroupBox;
-    lnklblWebSite: TATLabelLink;
     
     imgLicense: TImage;
     imgDonate: TImage;
@@ -40,6 +40,7 @@ type
     lblVersion: TLabel;
     lblCopyright: TLabel;
     imgLogo: TImage;
+    lnklblWebSite: TJppLinkLabel;
     procedure FormShow(Sender: TObject);
     procedure imgDonateClick(Sender: TObject);
     procedure imgLicenseClick(Sender: TObject);

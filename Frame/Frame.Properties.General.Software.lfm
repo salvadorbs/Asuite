@@ -1,7 +1,17 @@
 inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
-  DesignLeft = -1
-  DesignTop = 7
+  DesignLeft = -663
+  DesignTop = 332
   inherited gbItem: TGroupBox
+    Left = 4
+    Height = 104
+    Top = 4
+    Width = 352
+    Align = alTop
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    ClientHeight = 84
+    ClientWidth = 348
     inherited edtName: TEdit
       Width = 161
     end
@@ -11,56 +21,48 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
     object btnExtractName: TButton[4]
       Left = 214
       Height = 21
-      Top = 10
+      Top = 16
       Width = 130
       Caption = 'Extract name from exe'
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       OnClick = btnExtractNameClick
       ParentFont = False
       TabOrder = 1
     end
   end
   object grpSoftware: TGroupBox[1]
-    Left = 3
-    Height = 184
-    Top = 88
-    Width = 354
+    Left = 4
+    Height = 208
+    Top = 112
+    Width = 352
+    Align = alTop
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
     Caption = 'Path'
-    ClientHeight = 166
-    ClientWidth = 350
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Tahoma'
+    ClientHeight = 188
+    ClientWidth = 348
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 1
     object lbWorkingDir: TLabel
       Left = 6
-      Height = 13
-      Top = 37
-      Width = 171
+      Height = 15
+      Top = 40
+      Width = 193
       Caption = 'Custom working directory (optional)'
       Color = clBtnFace
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentColor = False
       ParentFont = False
       Transparent = False
     end
     object lbInfo2: TLabel
       Left = 6
-      Height = 52
-      Top = 110
+      Height = 66
+      Top = 122
       Width = 338
       AutoSize = False
       Caption = 'Note: You can use these vars (included environment variables) in relative path:'#13#10'- $asuite = ASuite folder path ("%s")'#13#10'- $drive = drive path ("%s")'
       Color = clBtnFace
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentColor = False
       ParentFont = False
       Transparent = False
@@ -68,55 +70,43 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
     end
     object lbParameters: TLabel
       Left = 6
-      Height = 13
-      Top = 71
-      Width = 104
+      Height = 15
+      Top = 80
+      Width = 114
       Caption = 'Parameters (optional)'
       Color = clBtnFace
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentColor = False
       ParentFont = False
       Transparent = False
     end
     object lbPathExe: TLabel
       Left = 6
-      Height = 13
-      Top = 3
-      Width = 161
+      Height = 15
+      Top = 0
+      Width = 176
       Caption = 'Executable/folder/web page path'
       Color = clBtnFace
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentColor = False
       ParentFont = False
       Transparent = False
     end
     object edtParameters: TEdit
       Left = 6
-      Height = 21
-      Top = 84
+      Height = 23
+      Top = 96
       Width = 267
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentFont = False
       TabOrder = 2
     end
     object edtWorkingDir: TDirectoryEdit
       Left = 6
-      Height = 21
-      Top = 50
+      Height = 23
+      Top = 56
       Width = 338
       Directory = '$ASuite\'
       ShowHidden = False
       ButtonWidth = 23
       NumGlyphs = 1
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       MaxLength = 0
       ParentFont = False
       TabOrder = 1
@@ -125,7 +115,7 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
     end
     object edtPathExe: TFileNameEdit
       Left = 6
-      Height = 21
+      Height = 23
       Top = 16
       Width = 338
       DialogOptions = [ofHideReadOnly, ofEnableSizing]
@@ -133,9 +123,6 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       HideDirectories = False
       ButtonWidth = 23
       NumGlyphs = 1
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       MaxLength = 0
       ParentFont = False
       TabOrder = 0

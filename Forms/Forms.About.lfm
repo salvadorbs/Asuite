@@ -1,31 +1,29 @@
 object frmAbout: TfrmAbout
-  Left = 420
+  Left = -1056
   Height = 171
-  Top = 162
+  Top = 462
   Width = 382
   BorderStyle = bsDialog
   Caption = 'About %s'
-  ClientHeight = 171
-  ClientWidth = 382
+  ClientHeight = 0
+  ClientWidth = 0
   Color = clBtnFace
-  Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'MS Shell Dlg 2'
   OnShow = FormShow
   Position = poOwnerFormCenter
   LCLVersion = '2.1.0.0'
   object GroupBox3: TGroupBox
-    Left = 0
-    Height = 171
+    Left = 4
+    Height = 167
     Top = 0
-    Width = 382
+    Width = 374
     Align = alClient
-    ClientHeight = 153
-    ClientWidth = 378
+    BorderSpacing.Left = 4
+    BorderSpacing.Right = 4
+    BorderSpacing.Bottom = 4
+    ClientHeight = 149
+    ClientWidth = 370
     Color = clBtnFace
-    Font.Color = clWindowText
     Font.Height = -11
-    Font.Name = 'MS Shell Dlg 2'
     ParentColor = False
     ParentFont = False
     TabOrder = 0
@@ -499,38 +497,29 @@ object frmAbout: TfrmAbout
     end
     object lblAppName: TLabel
       Left = 155
-      Height = 17
-      Top = 3
-      Width = 17
+      Height = 15
+      Top = 4
+      Width = 15
       Caption = '%s'
-      Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentColor = False
       ParentFont = False
     end
     object lblVersion: TLabel
       Left = 155
-      Height = 13
+      Height = 15
       Top = 23
-      Width = 54
+      Width = 58
       Caption = '%s (%s bit)'
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Segoe UI'
       ParentColor = False
       ParentFont = False
     end
     object lblCopyright: TLabel
       Left = 155
-      Height = 13
-      Top = 39
-      Width = 172
+      Height = 15
+      Top = 40
+      Width = 177
       Caption = 'Copyright 2006-2015 Matteo Salvi'
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Segoe UI'
       ParentColor = False
       ParentFont = False
     end
@@ -840,21 +829,24 @@ object frmAbout: TfrmAbout
         91BE2D3B51FC1FCBC0634A1AEC6ED80000000049454E44AE426082
       }
     end
-    object lnklblWebSite: TATLabelLink
-      Cursor = crHandPoint
+    object lnklblWebSite: TJppLinkLabel
       Left = 155
       Height = 15
-      Top = 55
+      Top = 56
       Width = 181
+      FontNormal.Color = clBlue
+      FontHot.Color = clRed
+      FontHot.Style = [fsUnderline]
+      FontDisabled.Color = clBtnShadow
+      FontDisabled.Style = [fsUnderline]
+      FontVisitedNormal.Color = clPurple
+      FontVisitedHot.Color = clPurple
+      FontVisitedHot.Style = [fsUnderline]
       Caption = 'http://www.salvadorsoftware.com'
-      Font.Color = clBlue
       ParentColor = False
-      ParentFont = False
       ParentShowHint = False
       ShowHint = True
       OnClick = lnklblWebSiteClick
-      ColorLinkNormal = clBlue
-      ColorLinkMouseover = clRed
     end
   end
 end

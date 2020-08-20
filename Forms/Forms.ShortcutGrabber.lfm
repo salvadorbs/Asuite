@@ -1,16 +1,13 @@
 object frmShortcutGrabber: TfrmShortcutGrabber
-  Left = 704
+  Left = -745
   Height = 189
-  Top = 473
+  Top = 427
   Width = 396
   BorderStyle = bsToolWindow
   Caption = 'Choose hotkey...'
   ClientHeight = 189
   ClientWidth = 396
   Color = clBtnFace
-  Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'Tahoma'
   KeyPreview = True
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -25,20 +22,14 @@ object frmShortcutGrabber: TfrmShortcutGrabber
     Anchors = [akTop, akLeft, akRight, akBottom]
     ClientHeight = 142
     ClientWidth = 380
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Tahoma'
     ParentFont = False
     TabOrder = 0
     object lblInfo: TLabel
       Left = 13
-      Height = 13
+      Height = 15
       Top = 78
-      Width = 228
+      Width = 244
       Caption = 'Select modifiers above, then enter desired key:'
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentColor = False
       ParentFont = False
     end
@@ -59,9 +50,6 @@ object frmShortcutGrabber: TfrmShortcutGrabber
       Top = 14
       Width = 74
       BitmapOptions.Direction = sdVertical
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentFont = False
       Toggle = True
     end
@@ -71,9 +59,6 @@ object frmShortcutGrabber: TfrmShortcutGrabber
       Top = 14
       Width = 74
       BitmapOptions.Direction = sdVertical
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentFont = False
       Toggle = True
     end
@@ -83,9 +68,6 @@ object frmShortcutGrabber: TfrmShortcutGrabber
       Top = 14
       Width = 74
       BitmapOptions.Direction = sdVertical
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentFont = False
       Toggle = True
     end
@@ -95,9 +77,6 @@ object frmShortcutGrabber: TfrmShortcutGrabber
       Top = 14
       Width = 46
       BitmapOptions.Direction = sdVertical
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentFont = False
       Toggle = True
     end
@@ -110,9 +89,6 @@ object frmShortcutGrabber: TfrmShortcutGrabber
     Anchors = [akRight, akBottom]
     Caption = 'Ok'
     Default = True
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Tahoma'
     ModalResult = 1
     OnClick = btnOkClick
     ParentFont = False
@@ -125,9 +101,6 @@ object frmShortcutGrabber: TfrmShortcutGrabber
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = 'Cancel'
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Tahoma'
     ModalResult = 2
     OnClick = btnCancelClick
     ParentFont = False

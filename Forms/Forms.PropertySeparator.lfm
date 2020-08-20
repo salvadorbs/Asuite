@@ -1,16 +1,13 @@
 object frmPropertySeparator: TfrmPropertySeparator
-  Left = 5
+  Left = -729
   Height = 103
-  Top = 12
+  Top = 385
   Width = 284
   BorderStyle = bsDialog
   Caption = 'Properties'
   ClientHeight = 103
   ClientWidth = 284
   Color = clBtnFace
-  Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'Tahoma'
   Position = poMainFormCenter
   LCLVersion = '2.1.0.0'
   object btnCancel: TButton
@@ -19,9 +16,6 @@ object frmPropertySeparator: TfrmPropertySeparator
     Top = 71
     Width = 73
     Caption = 'Cancel'
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Tahoma'
     ModalResult = 2
     ParentFont = False
     TabOrder = 2
@@ -33,9 +27,6 @@ object frmPropertySeparator: TfrmPropertySeparator
     Width = 75
     Caption = 'Ok'
     Default = True
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Tahoma'
     ModalResult = 1
     ParentFont = False
     TabOrder = 1
@@ -47,9 +38,6 @@ object frmPropertySeparator: TfrmPropertySeparator
     Width = 265
     ClientHeight = 57
     ClientWidth = 265
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Tahoma'
     ParentFont = False
     TabOrder = 0
     object lbName: TLabel
@@ -59,20 +47,14 @@ object frmPropertySeparator: TfrmPropertySeparator
       Width = 41
       AutoSize = False
       Caption = 'Name'
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentColor = False
       ParentFont = False
     end
     object edtName: TEdit
       Left = 6
-      Height = 21
+      Height = 23
       Top = 22
       Width = 249
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentFont = False
       TabOrder = 0
     end

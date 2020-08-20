@@ -1,7 +1,23 @@
 inherited frmPropertyItem: TfrmPropertyItem
-  Top = 11
+  Left = -724
+  Height = 371
+  Top = 309
   Caption = 'Property'
+  ClientHeight = 371
+  inherited btnOk: TButton
+    Top = 340
+  end
   inherited btnCancel: TButton
+    Top = 340
     OnClick = nil
+  end
+  inherited pnlDialogPage: TPanel
+    Height = 326
+  end
+  inherited vstCategory: TVirtualStringTree
+    Height = 326
+  end
+  inherited btnApply: TButton
+    Top = 340
   end
 end

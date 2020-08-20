@@ -1,73 +1,60 @@
 inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
-  DesignTop = 12
+  DesignLeft = -796
+  DesignTop = 449
   object gbTrayicon: TGroupBox[0]
     Left = 4
-    Height = 134
-    Top = 0
+    Height = 128
+    Top = 4
     Width = 437
     Align = alTop
     BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
     BorderSpacing.Right = 4
     Caption = 'System Tray'
-    ClientHeight = 116
+    ClientHeight = 108
     ClientWidth = 433
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Tahoma'
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 0
     object lbTrayLeftClick: TLabel
       Left = 6
-      Height = 13
-      Top = 68
-      Width = 41
+      Height = 15
+      Top = 62
+      Width = 47
       Caption = 'Left click'
       Color = clBtnFace
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentColor = False
       ParentFont = False
       Transparent = False
     end
     object lbTrayRightClick: TLabel
       Left = 290
-      Height = 13
-      Top = 68
-      Width = 47
+      Height = 15
+      Top = 62
+      Width = 55
       Caption = 'Right click'
       Color = clBtnFace
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentColor = False
       ParentFont = False
       Transparent = False
     end
     object lblMiddleClick: TLabel
       Left = 150
-      Height = 13
-      Top = 68
-      Width = 52
+      Height = 15
+      Top = 62
+      Width = 64
       Caption = 'Middle click'
       Color = clBtnFace
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentColor = False
       ParentFont = False
       Transparent = False
     end
     object cxLeftClick: TComboBox
       Left = 6
-      Height = 21
-      Top = 84
+      Height = 23
+      Top = 78
       Width = 138
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      ItemHeight = 13
+      ItemHeight = 15
       Items.Strings = (
         'No action'
         'Show window'
@@ -81,25 +68,19 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
     object cbTrayicon: TCheckBox
       Left = 6
       Height = 19
-      Top = 6
-      Width = 156
+      Top = 0
+      Width = 167
       Caption = 'Enable the System Tray icon'
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       OnClick = cbTrayiconClick
       ParentFont = False
       TabOrder = 0
     end
     object cxRightClick: TComboBox
       Left = 290
-      Height = 21
-      Top = 84
+      Height = 23
+      Top = 78
       Width = 138
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      ItemHeight = 13
+      ItemHeight = 15
       Items.Strings = (
         'No action'
         'Show window'
@@ -113,29 +94,23 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
     object cbTrayCustomIcon: TCheckBox
       Left = 6
       Height = 19
-      Top = 25
-      Width = 101
+      Top = 19
+      Width = 111
       Caption = 'Custom tray icon'
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       OnClick = cbTrayCustomIconClick
       ParentFont = False
       TabOrder = 1
     end
     object edtCustomIcon: TFileNameEdit
       Left = 6
-      Height = 21
-      Top = 44
+      Height = 23
+      Top = 38
       Width = 422
       DialogOptions = [ofHideReadOnly, ofEnableSizing]
       FilterIndex = 0
       HideDirectories = False
       ButtonWidth = 23
       NumGlyphs = 1
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       MaxLength = 0
       ParentFont = False
       TabOrder = 2
@@ -143,13 +118,10 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
     end
     object cxMiddleClick: TComboBox
       Left = 148
-      Height = 21
-      Top = 84
+      Height = 23
+      Top = 78
       Width = 138
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      ItemHeight = 13
+      ItemHeight = 15
       Items.Strings = (
         'No action'
         'Show window'
@@ -164,95 +136,76 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
   object grpClassicMenu: TGroupBox[1]
     Left = 4
     Height = 83
-    Top = 235
+    Top = 246
     Width = 437
     Align = alTop
     BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
     BorderSpacing.Right = 4
     Caption = 'Classic Menu'
-    ClientHeight = 65
+    ClientHeight = 63
     ClientWidth = 433
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Tahoma'
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 2
     object cbSubMenuMFU: TCheckBox
-      Left = 1
+      Left = 6
       Height = 19
-      Top = 4
-      Width = 201
+      Top = 0
+      Width = 224
       Caption = 'Most Used items on trayicon submenu'
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentFont = False
       TabOrder = 0
     end
     object cbSubMenuMRU: TCheckBox
-      Left = 1
+      Left = 6
       Height = 19
-      Top = 23
-      Width = 185
+      Top = 19
+      Width = 204
       Caption = 'Recent items on trayicon submenu'
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentFont = False
       TabOrder = 1
     end
     object chkAutoExpansion: TCheckBox
-      Left = 1
+      Left = 6
       Height = 19
-      Top = 42
-      Width = 155
+      Top = 38
+      Width = 168
       Caption = 'Active autoexpansion folder'
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentFont = False
       TabOrder = 2
     end
   end
   object grpGraphicMenu: TGroupBox[2]
     Left = 4
-    Height = 101
-    Top = 134
+    Height = 106
+    Top = 136
     Width = 437
     Align = alTop
     BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
     BorderSpacing.Right = 4
     Caption = 'Graphic Menu'
-    ClientHeight = 83
+    ClientHeight = 86
     ClientWidth = 433
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Tahoma'
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 1
     object lbMenuTheme: TLabel
       Left = 6
-      Height = 13
-      Top = 39
-      Width = 32
+      Height = 15
+      Top = 40
+      Width = 36
       Caption = 'Theme'
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentColor = False
       ParentFont = False
     end
     object cxTheme: TComboBox
       Left = 6
-      Height = 21
-      Top = 52
+      Height = 23
+      Top = 56
       Width = 145
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      ItemHeight = 13
+      ItemHeight = 15
       ParentFont = False
       Style = csDropDownList
       TabOrder = 4
@@ -260,48 +213,36 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
     object cbMenuFade: TCheckBox
       Left = 6
       Height = 19
-      Top = 3
-      Width = 109
+      Top = 0
+      Width = 114
       Caption = 'Enable fade effect'
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentFont = False
       TabOrder = 0
     end
     object cbSmallIcon: TCheckBox
       Left = 6
       Height = 19
-      Top = 22
-      Width = 141
+      Top = 19
+      Width = 155
       Caption = 'Small TreeView''s icon size'
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentFont = False
       TabOrder = 2
     end
     object chkAutomaticHideMenu: TCheckBox
       Left = 226
       Height = 19
-      Top = 22
-      Width = 96
+      Top = 19
+      Width = 108
       Caption = 'Auto-hide menu'
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentFont = False
       TabOrder = 3
     end
     object chkUserPicture: TCheckBox
       Left = 226
       Height = 19
-      Top = 3
-      Width = 146
+      Top = 0
+      Width = 161
       Caption = 'Show user picture in menu'
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentFont = False
       TabOrder = 1
     end

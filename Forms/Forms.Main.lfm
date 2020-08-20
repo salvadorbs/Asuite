@@ -10,9 +10,6 @@ object frmMain: TfrmMain
   Color = clBtnFace
   Constraints.MinHeight = 370
   Constraints.MinWidth = 200
-  Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'MS Sans Serif'
   Menu = MainMenu
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
@@ -28,9 +25,6 @@ object frmMain: TfrmMain
     Width = 201
     ActivePage = tbSearch
     Align = alClient
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'MS Shell Dlg 2'
     MultiLine = True
     ParentFont = False
     TabIndex = 1
@@ -41,9 +35,6 @@ object frmMain: TfrmMain
       Caption = 'List'
       ClientHeight = 340
       ClientWidth = 193
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Shell Dlg 2'
       ParentFont = False
       object vstList: TVirtualStringTree
         Left = 0
@@ -56,9 +47,6 @@ object frmMain: TfrmMain
         )
         DragMode = dmAutomatic
         EditDelay = 500
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
         Header.AutoSizeIndex = 0
         Header.Columns = <>
         Header.Font.Color = clWindowText
@@ -84,9 +72,6 @@ object frmMain: TfrmMain
       Caption = 'Search'
       ClientHeight = 340
       ClientWidth = 193
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Shell Dlg 2'
       ParentFont = False
       object vstSearch: TVirtualStringTree
         Left = 0
@@ -96,9 +81,6 @@ object frmMain: TfrmMain
         Align = alBottom
         Anchors = [akTop, akLeft, akRight, akBottom]
         AnimationDuration = 0
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Shell Dlg 2'
         Header.AutoSizeIndex = 0
         Header.Columns = <        
           item
@@ -130,9 +112,6 @@ object frmMain: TfrmMain
         Top = 0
         Width = 193
         Align = alTop
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Shell Dlg 2'
         ParentFont = False
         RightButton.Visible = True
         ShowHint = True

@@ -8,9 +8,6 @@ object frmDialogBase: TfrmDialogBase
   ClientHeight = 325
   ClientWidth = 559
   Color = clBtnFace
-  Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'Tahoma'
   KeyPreview = True
   OnKeyPress = FormKeyPress
   Position = poMainFormCenter
@@ -22,9 +19,6 @@ object frmDialogBase: TfrmDialogBase
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = 'Ok'
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Tahoma'
     ModalResult = 1
     OnClick = btnOkClick
     ParentFont = False
@@ -37,9 +31,6 @@ object frmDialogBase: TfrmDialogBase
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = 'Cancel'
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Tahoma'
     ModalResult = 2
     OnClick = btnCancelClick
     ParentFont = False
@@ -51,9 +42,6 @@ object frmDialogBase: TfrmDialogBase
     Top = 8
     Width = 361
     Anchors = [akTop, akLeft, akRight, akBottom]
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Tahoma'
     ParentFont = False
     TabOrder = 1
   end
@@ -63,9 +51,6 @@ object frmDialogBase: TfrmDialogBase
     Top = 8
     Width = 177
     Anchors = [akTop, akLeft, akBottom]
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Tahoma'
     Header.AutoSizeIndex = 0
     Header.Columns = <>
     Header.Font.Color = clWindowText
@@ -84,9 +69,6 @@ object frmDialogBase: TfrmDialogBase
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = 'Apply'
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Tahoma'
     OnClick = btnApplyClick
     ParentFont = False
     TabOrder = 4

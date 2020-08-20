@@ -25,7 +25,8 @@ interface
 
 uses
   LCLIntf, SysUtils, Classes, Controls, Dialogs, Frame.Properties.Base,
-  ButtonedEdit, StdCtrls, DateUtils, DateTimePicker, DefaultTranslator;
+  ButtonedEdit, StdCtrls, DateUtils, DateTimePicker, DefaultTranslator,
+  ExtCtrls;
 
 type
 
@@ -39,12 +40,14 @@ type
     dtpSchDate: TDateTimePicker;
     dtpSchTime: TDateTimePicker;
     grpHotkey: TGroupBox;
-    GroupBox1: TGroupBox;
+    grpMenu: TGroupBox;
     cbHideSoftware: TCheckBox;
     cbDontInsertMRU: TCheckBox;
     cbDontInsertMFU: TCheckBox;
     
     cbHotKey: TCheckBox;
+    pnlTop: TPanel;
+    pnlBottom: TPanel;
     procedure cxSchedulerChange(Sender: TObject);
     procedure cbHotKeyClick(Sender: TObject);
     procedure edtHotkeyRightButtonClick(Sender: TObject);

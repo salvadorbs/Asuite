@@ -24,9 +24,12 @@ unit Frame.Properties.Behavior;
 interface
 
 uses
-  SysUtils, Dialogs, StdCtrls, Frame.Properties.Base, ExtCtrls, DefaultTranslator;
+  SysUtils, Dialogs, StdCtrls, Frame.Properties.Base, ExtCtrls, DefaultTranslator, Classes;
 
 type
+
+  { TfrmBehaviorPropertyPage }
+
   TfrmBehaviorPropertyPage = class(TfrmBasePropertyPage)
     
     grpAutoExecute: TGroupBox;

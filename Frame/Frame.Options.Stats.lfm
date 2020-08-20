@@ -1,16 +1,17 @@
 inherited frmStatsOptionsPage: TfrmStatsOptionsPage
-  DesignLeft = -878
+  DesignLeft = 1042
   DesignTop = 305
   object gbASuite: TGroupBox[0]
     Left = 4
-    Height = 83
-    Top = 224
+    Height = 80
+    Top = 220
     Width = 437
     Align = alTop
     BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
     BorderSpacing.Right = 4
     Caption = 'ASuite'
-    ClientHeight = 65
+    ClientHeight = 62
     ClientWidth = 433
     Font.Color = clWindowText
     Font.Height = -11
@@ -21,8 +22,8 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     object lbSoftware: TJppDoubleLineLabel
       Left = 6
       Height = 15
-      Top = 4
-      Width = 425
+      Top = 0
+      Width = 419
       RightCaption = 'Value'
       LinePeriod = 4
       Caption = 'Software added'
@@ -34,8 +35,8 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     object lbTotal: TJppDoubleLineLabel
       Left = 6
       Height = 15
-      Top = 42
-      Width = 425
+      Top = 38
+      Width = 419
       RightCaption = 'Value'
       LinePeriod = 4
       Caption = 'Total'
@@ -49,8 +50,8 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     object lbCat: TJppDoubleLineLabel
       Left = 6
       Height = 15
-      Top = 23
-      Width = 425
+      Top = 19
+      Width = 419
       RightCaption = 'Value'
       LinePeriod = 4
       Caption = 'Categories added'
@@ -62,14 +63,15 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
   end
   object gbSupport: TGroupBox[1]
     Left = 4
-    Height = 84
+    Height = 76
     Top = 140
     Width = 437
     Align = alTop
     BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
     BorderSpacing.Right = 4
     Caption = 'Drive %S:'
-    ClientHeight = 66
+    ClientHeight = 58
     ClientWidth = 433
     Font.Color = clWindowText
     Font.Height = -11
@@ -80,8 +82,8 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     object lbSize: TJppDoubleLineLabel
       Left = 6
       Height = 15
-      Top = 4
-      Width = 425
+      Top = 0
+      Width = 419
       RightCaption = 'Value'
       LinePeriod = 4
       Caption = 'Size'
@@ -94,8 +96,8 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     object lbSpaceFree: TJppDoubleLineLabel
       Left = 6
       Height = 15
-      Top = 42
-      Width = 425
+      Top = 38
+      Width = 419
       RightCaption = 'Value'
       LinePeriod = 4
       Caption = 'Used space'
@@ -107,8 +109,8 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     object lbSpaceUsed: TJppDoubleLineLabel
       Left = 6
       Height = 15
-      Top = 23
-      Width = 425
+      Top = 19
+      Width = 419
       RightCaption = 'Value'
       LinePeriod = 4
       Caption = 'Free space'
@@ -120,14 +122,14 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
   end
   object gbSystem: TGroupBox[2]
     Left = 4
-    Height = 140
+    Height = 136
     Top = 0
     Width = 437
     Align = alTop
     BorderSpacing.Left = 4
     BorderSpacing.Right = 4
     Caption = 'System'
-    ClientHeight = 122
+    ClientHeight = 118
     ClientWidth = 433
     Font.Color = clWindowText
     Font.Height = -11
@@ -138,8 +140,8 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     object lbOs: TJppDoubleLineLabel
       Left = 6
       Height = 15
-      Top = 4
-      Width = 425
+      Top = 0
+      Width = 419
       RightCaption = 'Value'
       LinePeriod = 4
       Caption = 'Operating System'
@@ -148,8 +150,8 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     object lbNamePc: TJppDoubleLineLabel
       Left = 6
       Height = 15
-      Top = 98
-      Width = 425
+      Top = 94
+      Width = 419
       RightCaption = 'Value'
       LinePeriod = 4
       Caption = 'Computer name'
@@ -158,8 +160,8 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     object lbUser: TJppDoubleLineLabel
       Left = 6
       Height = 15
-      Top = 79
-      Width = 425
+      Top = 75
+      Width = 419
       RightCaption = 'Value'
       LinePeriod = 4
       Caption = 'Current user'
@@ -168,8 +170,8 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     object lblBuild: TJppDoubleLineLabel
       Left = 6
       Height = 15
-      Top = 23
-      Width = 425
+      Top = 19
+      Width = 419
       RightCaption = 'Value'
       LinePeriod = 4
       Caption = 'Build Version'
@@ -178,8 +180,8 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     object lblProcessor: TJppDoubleLineLabel
       Left = 6
       Height = 15
-      Top = 61
-      Width = 425
+      Top = 57
+      Width = 419
       RightCaption = 'Value'
       LinePeriod = 4
       Caption = 'Processor'
@@ -188,8 +190,8 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     object lblRam: TJppDoubleLineLabel
       Left = 6
       Height = 15
-      Top = 42
-      Width = 425
+      Top = 38
+      Width = 419
       RightCaption = 'Value'
       LinePeriod = 4
       Caption = 'Total physical memory'
