@@ -65,6 +65,9 @@ procedure StrToFont(const s: string; AFont: TFont);
 var
   Strs : TStringList;
 begin
+  if s = '' then
+    Exit;
+
   if Assigned(AFont) then
   begin
     Strs  := TStringList.Create;

@@ -151,14 +151,15 @@ end;
 procedure TfrmScanFolder.btnScanClick(Sender: TObject);
 var
   ListNodeData : TvBaseNodeData;
-begin
+begin             
+  SaveSettings;
+
   TASuiteLogger.Info('Start scanning folders to search files', []);
   if vstTypes.HasChildren[vstTypes.RootNode] then
   begin
     if Assigned(vstShell.Selected) then
     begin
       TASuiteLogger.Info('Path: %s', [vstShell.Selected.GetTextPath]);
-      SaveSettings;
 
       pbScan.Style := pbstMarquee;
       pbScan.Position := 0;

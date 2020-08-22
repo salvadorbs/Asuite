@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Graphics, Forms, Controls, VirtualTrees, Kernel.Enumerations,
-  Classes, AppConfig.Paths, JSONPropStorage,xmlpropstorage,
+  Classes, AppConfig.Paths, jsonConf,
   Lists.Manager, Database.Manager, Icons.Manager, Kernel.Logger, Dialogs;
 
 type
@@ -120,9 +120,8 @@ type
     FDBManager : TDBManager;
     FIconsManager: TIconsManager;
     FLogger: TASuiteLogger;
-    FConfigStorage: TJSONPropStorage;
-    procedure RestoreProperties(Sender: TObject);
-    procedure SavingProperties(Sender: TObject);
+    procedure RestoreSettings(AJSONConfig: TJSONConfig);
+    procedure SaveSettings(AJSONConfig: TJSONConfig);
     procedure SetHoldSize(value: Boolean);
     procedure SetAlwaysOnTop(value: Boolean);
     procedure SetTrayIcon(value: Boolean);
@@ -170,7 +169,6 @@ type
     property ListManager: TListManager read FListManager;
     property DBManager: TDBManager read FDBManager;
     property IconsManager: TIconsManager read FIconsManager;
-    property ConfigStorage: TJSONPropStorage read FConfigStorage;
 
     property SmallHeightNode: Integer read FSmallHeightNode;
     property BigHeightNode: Integer read FBigHeightNode;
@@ -303,12 +301,6 @@ constructor TConfiguration.Create;
 var
   I: Integer;
 begin
-  FConfigStorage := TJSONPropStorage.Create(nil);
-  FConfigStorage.OnRestoreProperties := RestoreProperties;
-  FConfigStorage.OnSavingProperties := SavingProperties;
-  //FConfigStorage.Formatted := True;
-  FConfigStorage.Active := True;
-
   TScheduler.Create;
 
   //Node height based of DPI
@@ -441,7 +433,6 @@ begin
   FDBManager.Destroy;
   FIconsManager.Destroy;
   FLogger.Free;
-  FConfigSTorage.Free;
 end;
 
 procedure TConfiguration.SetASuiteState(const Value: TLauncherState);
@@ -541,184 +532,202 @@ begin
   end;
 end;
 
-procedure TConfiguration.SavingProperties(Sender: TObject);
+procedure TConfiguration.SaveSettings(AJSONConfig: TJSONConfig);
 begin
   try
-    FConfigSTorage.StoredValue[CONFIG_GMTHEME] := Self.GMTheme;
+    AJSONConfig.SetValue(CONFIG_GMTHEME, Self.GMTheme);
 
     //General
-    FConfigSTorage.StoredValue[CONFIG_STARTWITHWINDOWS]          := Self.StartWithWindows.ToString;
-    FConfigSTorage.StoredValue[CONFIG_SHOWPANELATSTARTUP]        := Self.ShowPanelAtStartUp.ToString;
-    FConfigSTorage.StoredValue[CONFIG_SHOWMENUATSTARTUP]         := Self.ShowGraphicMenuAtStartUp.ToString;
-    FConfigSTorage.StoredValue[CONFIG_MISSEDSCHEDULERTASK]       := Self.MissedSchedulerTask.ToString;
+    AJSONConfig.SetValue(CONFIG_STARTWITHWINDOWS, Self.StartWithWindows);
+    AJSONConfig.SetValue(CONFIG_SHOWPANELATSTARTUP, Self.ShowPanelAtStartUp);
+    AJSONConfig.SetValue(CONFIG_SHOWMENUATSTARTUP, Self.ShowGraphicMenuAtStartUp);
+    AJSONConfig.SetValue(CONFIG_MISSEDSCHEDULERTASK, Self.MissedSchedulerTask);
+
     // Main Form
-    FConfigSTorage.StoredValue[CONFIG_LANGID]                    := Self.LangID;
-    FConfigSTorage.StoredValue[CONFIG_USECUSTOMTITLE]            := Self.UseCustomTitle.ToString;
-    FConfigSTorage.StoredValue[CONFIG_CUSTOMTITLESTRING]         := Self.CustomTitleString;
-    FConfigSTorage.StoredValue[CONFIG_HIDETABSEARCH]             := Self.HideTabSearch.ToString;
-    FConfigSTorage.StoredValue[CONFIG_SEARCHASYOUTYPE]           := Self.SearchAsYouType.ToString;
+    AJSONConfig.SetValue(CONFIG_LANGID, Self.LangID);
+    AJSONConfig.SetValue(CONFIG_USECUSTOMTITLE, Self.UseCustomTitle);
+    AJSONConfig.SetValue(CONFIG_CUSTOMTITLESTRING, Self.CustomTitleString);
+    AJSONConfig.SetValue(CONFIG_HIDETABSEARCH, Self.HideTabSearch);
+    AJSONConfig.SetValue(CONFIG_SEARCHASYOUTYPE, Self.SearchAsYouType);
+
     // Main Form - Position and size
-    FConfigSTorage.StoredValue[CONFIG_HOLDSIZE]                  := Self.HoldSize.ToString;
-    FConfigSTorage.StoredValue[CONFIG_ALWAYSONTOP]               := Self.AlwaysOnTop.ToString;
+    AJSONConfig.SetValue(CONFIG_HOLDSIZE, Self.HoldSize);
+    AJSONConfig.SetValue(CONFIG_ALWAYSONTOP, Self.AlwaysOnTop);
+    //TODO: frmMain Position
+
     // Main Form - Treevew
-    FConfigSTorage.StoredValue[CONFIG_TVBACKGROUND]              := Self.TVBackground.ToString;
-    FConfigSTorage.StoredValue[CONFIG_TVBACKGROUNDPATH]          := Self.TVBackgroundPath;
-    FConfigSTorage.StoredValue[CONFIG_TVSMALLICONSIZE]           := Self.TVSmallIconSize.ToString;
-    FConfigSTorage.StoredValue[CONFIG_TVAUTOOPCLCATS]            := Self.TVAutoOpClCats.ToString;
-    FConfigSTorage.StoredValue[CONFIG_TVAUTOOPCATSDRAG]          := Self.TVAutoOpCatsDrag.ToString;
-    FConfigSTorage.StoredValue[CONFIG_TVDISABLECONFIRMDELETE]    := Self.TVDisableConfirmDelete.ToString;
-    FConfigSTorage.StoredValue[CONFIG_TVFONT]                    := FontToStr(Self.TVFont);
+    AJSONConfig.SetValue(CONFIG_TVBACKGROUND, Self.TVBackground);
+    AJSONConfig.SetValue(CONFIG_TVBACKGROUNDPATH, Self.TVBackgroundPath);
+    AJSONConfig.SetValue(CONFIG_TVSMALLICONSIZE, Self.TVSmallIconSize);
+    AJSONConfig.SetValue(CONFIG_TVAUTOOPCLCATS, Self.TVAutoOpClCats);
+    AJSONConfig.SetValue(CONFIG_TVAUTOOPCATSDRAG, Self.TVAutoOpCatsDrag);
+    AJSONConfig.SetValue(CONFIG_TVDISABLECONFIRMDELETE, Self.TVDisableConfirmDelete);
+    AJSONConfig.SetValue(CONFIG_TVFONT, FontToStr(Self.TVFont));
+
     // MRU
-    FConfigSTorage.StoredValue[CONFIG_MRU]                       := Self.MRU.ToString;
-    FConfigSTorage.StoredValue[CONFIG_SUBMENUMRU]                := Self.SubMenuMRU.ToString;
-    FConfigSTorage.StoredValue[CONFIG_MRUNUMBER]                 := Self.MRUNumber.ToString;
+    AJSONConfig.SetValue(CONFIG_MRU, Self.MRU);
+    AJSONConfig.SetValue(CONFIG_SUBMENUMRU, Self.SubMenuMRU);
+    AJSONConfig.SetValue(CONFIG_MRUNUMBER, Self.MRUNumber);
+
     // MFU
-    FConfigSTorage.StoredValue[CONFIG_MFU]                       := Self.MFU.ToString;
-    FConfigSTorage.StoredValue[CONFIG_SUBMENUMFU]                := Self.SubMenuMFU.ToString;
-    FConfigSTorage.StoredValue[CONFIG_MFUNUMBER]                 := Self.MFUNumber.ToString;
+    AJSONConfig.SetValue(CONFIG_MFU, Self.MFU);
+    AJSONConfig.SetValue(CONFIG_SUBMENUMFU, Self.SubMenuMFU);
+    AJSONConfig.SetValue(CONFIG_MFUNUMBER, Self.MFUNumber);
+
     // Backup
-    FConfigSTorage.StoredValue[CONFIG_BACKUP]                    := Self.Backup.ToString;
-    FConfigSTorage.StoredValue[CONFIG_BACKUPNUMBER]              := Self.BackupNumber.ToString;
+    AJSONConfig.SetValue(CONFIG_BACKUP, Self.Backup);
+    AJSONConfig.SetValue(CONFIG_BACKUPNUMBER, Self.BackupNumber);
+
     // Other functions
-    FConfigSTorage.StoredValue[CONFIG_AUTORUNSTARTUP]            := Self.AutorunStartup.ToString;
-    FConfigSTorage.StoredValue[CONFIG_AUTORUNSHUTDOWN]           := Self.AutorunShutdown.ToString;
-    FConfigSTorage.StoredValue[CONFIG_CACHE]                     := Self.Cache.ToString;
-    FConfigSTorage.StoredValue[CONFIG_SCHEDULER]                 := Self.Scheduler.ToString;
+    AJSONConfig.SetValue(CONFIG_AUTORUNSTARTUP, Self.AutorunStartup);
+    AJSONConfig.SetValue(CONFIG_AUTORUNSHUTDOWN, Self.AutorunShutdown);
+    AJSONConfig.SetValue(CONFIG_CACHE, Self.Cache);
+    AJSONConfig.SetValue(CONFIG_SCHEDULER, Self.Scheduler);
+
     // Execution
-    FConfigSTorage.StoredValue[CONFIG_ACTIONONEXE]               := Integer(Self.ActionOnExe).ToString;
-    FConfigSTorage.StoredValue[CONFIG_RUNSINGLECLICK]            := Self.RunSingleClick.ToString;
-    FConfigSTorage.StoredValue[CONFIG_CONFIRMMESSAGECAT]         := Self.ConfirmRunCat.ToString;
-    FConfigSTorage.StoredValue[CONFIG_AUTOCLOSEPROCESS]          := Self.AutoCloseProcess.ToString;
+    AJSONConfig.SetValue(CONFIG_ACTIONONEXE, Integer(Self.ActionOnExe));
+    AJSONConfig.SetValue(CONFIG_RUNSINGLECLICK, Self.RunSingleClick);
+    AJSONConfig.SetValue(CONFIG_CONFIRMMESSAGECAT, Self.ConfirmRunCat);
+    AJSONConfig.SetValue(CONFIG_AUTOCLOSEPROCESS, Self.AutoCloseProcess);
+
     // Trayicon
-    FConfigSTorage.StoredValue[CONFIG_TRAYICON]                  := Self.TrayIcon.ToString;
-    FConfigSTorage.StoredValue[CONFIG_TRAYUSECUSTOMICON]         := Self.TrayUseCustomIcon.ToString;
-    FConfigSTorage.StoredValue[CONFIG_TRAYCUSTOMICONPATH]        := Self.TrayCustomIconPath;
-    FConfigSTorage.StoredValue[CONFIG_ACTIONCLICKLEFT]           := Integer(Self.ActionClickLeft).ToString;
-    FConfigSTorage.StoredValue[CONFIG_ACTIONCLICKMIDDLE]         := Integer(Self.ActionClickMiddle).ToString;
-    FConfigSTorage.StoredValue[CONFIG_ACTIONCLICKRIGHT]          := Integer(Self.ActionClickRight).ToString;
-    FConfigSTorage.StoredValue[CONFIG_AUTOEXPANSIONFOLDER]       := Self.AutoExpansionFolder.ToString;
+    AJSONConfig.SetValue(CONFIG_TRAYICON, Self.TrayIcon);
+    AJSONConfig.SetValue(CONFIG_TRAYUSECUSTOMICON, Self.TrayUseCustomIcon);
+    AJSONConfig.SetValue(CONFIG_TRAYCUSTOMICONPATH, Self.TrayCustomIconPath);
+    AJSONConfig.SetValue(CONFIG_ACTIONCLICKLEFT, Integer(Self.ActionClickLeft));
+    AJSONConfig.SetValue(CONFIG_ACTIONCLICKMIDDLE, Integer(Self.ActionClickMiddle));
+    AJSONConfig.SetValue(CONFIG_ACTIONCLICKRIGHT, Integer(Self.ActionClickRight));
+    AJSONConfig.SetValue(CONFIG_AUTOEXPANSIONFOLDER, Self.AutoExpansionFolder);
+
     //Graphic Menu
-    FConfigSTorage.StoredValue[CONFIG_GMFADE]                    := Self.GMFade.ToString;
-    FConfigSTorage.StoredValue[CONFIG_GMPERSONALPICTURE]         := Self.GMSmallIconSize.ToString;
-    FConfigSTorage.StoredValue[CONFIG_GMSMALLICONSIZE]           := Self.GMPersonalPicture;
-    FConfigSTorage.StoredValue[CONFIG_GMPOSITIONTOP]             := Self.GMPositionTop.ToString;
-    FConfigSTorage.StoredValue[CONFIG_GMPOSITIONLEFT]            := Self.GMPositionLeft.ToString;
-    FConfigSTorage.StoredValue[CONFIG_GMAUTOHIDEMENU]            := Self.GMAutomaticHideMenu.ToString;
-    FConfigSTorage.StoredValue[CONFIG_GMSHOWUSERPICTURE]         := Self.GMShowUserPicture.ToString;
+    AJSONConfig.SetValue(CONFIG_GMFADE, Self.GMFade);
+    AJSONConfig.SetValue(CONFIG_GMPERSONALPICTURE, Self.GMSmallIconSize);
+    AJSONConfig.SetValue(CONFIG_GMSMALLICONSIZE, Self.GMPersonalPicture);
+    AJSONConfig.SetValue(CONFIG_GMPOSITIONTOP, Self.GMPositionTop);
+    AJSONConfig.SetValue(CONFIG_GMPOSITIONLEFT, Self.GMPositionLeft);
+    AJSONConfig.SetValue(CONFIG_GMAUTOHIDEMENU, Self.GMAutomaticHideMenu);
+    AJSONConfig.SetValue(CONFIG_GMSHOWUSERPICTURE, Self.GMShowUserPicture);
+
     //Right buttons
-    FConfigSTorage.StoredValue[CONFIG_GMBTNDOCUMENTS]            := Self.GMBtnDocuments;
-    FConfigSTorage.StoredValue[CONFIG_GMBTNPICTURES]             := Self.GMBtnPictures;
-    FConfigSTorage.StoredValue[CONFIG_GMBTNMUSIC]                := Self.GMBtnMusic;
-    FConfigSTorage.StoredValue[CONFIG_GMBTNVIDEOS]               := Self.GMBtnVideos;
-    FConfigSTorage.StoredValue[CONFIG_GMBTNEXPLORE]              := Self.GMBtnExplore;
+    AJSONConfig.SetValue(CONFIG_GMBTNDOCUMENTS, Self.GMBtnDocuments);
+    AJSONConfig.SetValue(CONFIG_GMBTNPICTURES, Self.GMBtnPictures);
+    AJSONConfig.SetValue(CONFIG_GMBTNMUSIC, Self.GMBtnMusic);
+    AJSONConfig.SetValue(CONFIG_GMBTNVIDEOS, Self.GMBtnVideos);
+    AJSONConfig.SetValue(CONFIG_GMBTNEXPLORE, Self.GMBtnExplore);
+
     //HotKeys
-    FConfigSTorage.StoredValue[CONFIG_HOTKEY]                    := Self.HotKey.ToString;
-    FConfigSTorage.StoredValue[CONFIG_WINDOWHOTKEY]              := Self.WindowHotKey.ToString;
-    FConfigSTorage.StoredValue[CONFIG_MENUHOTKEY]                := Self.GraphicMenuHotKey.ToString;
-    FConfigSTorage.StoredValue[CONFIG_CLASSICMENUHOTKEY]         := Self.ClassicMenuHotkey.ToString;
+    //TODO: Maybe better use string and not word type (more human reading)
+    AJSONConfig.SetValue(CONFIG_HOTKEY, Self.HotKey);
+    AJSONConfig.SetValue(CONFIG_WINDOWHOTKEY, Self.WindowHotKey);
+    AJSONConfig.SetValue(CONFIG_MENUHOTKEY, Self.GraphicMenuHotKey);
+    AJSONConfig.SetValue(CONFIG_CLASSICMENUHOTKEY, Self.ClassicMenuHotkey);
+
     // Misc
-    FConfigSTorage.StoredValue[CONFIG_SCANFOLDERAUTOEXTRACTNAME] := Self.ScanFolderAutoExtractName.ToString;
-    FConfigSTorage.StoredValue[CONFIG_SCANFOLDERFILETYPES]       := Self.ScanFolderFileTypes.Text;
-    FConfigSTorage.StoredValue[CONFIG_SCANFOLDEREXCLUDENAMES]    := Self.ScanFolderExcludeNames.Text;
+    AJSONConfig.SetValue(CONFIG_SCANFOLDERAUTOEXTRACTNAME, Self.ScanFolderAutoExtractName);
+    AJSONConfig.SetValue(CONFIG_SCANFOLDERFILETYPES, Self.ScanFolderFileTypes);
+    AJSONConfig.SetValue(CONFIG_SCANFOLDEREXCLUDENAMES, Self.ScanFolderExcludeNames);
   finally
     Self.Changed := False;
   end;
 end;
 
-procedure TConfiguration.RestoreProperties(Sender: TObject);
+procedure TConfiguration.RestoreSettings(AJSONConfig: TJSONConfig);
+var
+  Text: Boolean;
 begin
   //Get GMTheme before everything (so ASuite know where icons folder)
-  Self.GMTheme                   := FConfigSTorage.StoredValue[CONFIG_GMTHEME];
+  Self.GMTheme := AJSONConfig.GetValue(CONFIG_GMTHEME, Self.GMTheme);
   TASuiteLogger.Info('Loaded GraphicMenu theme = ', [Self.GMTheme]);
 
   //General
-  Self.StartWithWindows          := FConfigSTorage.StoredValue[CONFIG_STARTWITHWINDOWS].ToBoolean;
-  Self.ShowPanelAtStartUp        := FConfigSTorage.StoredValue[CONFIG_SHOWPANELATSTARTUP].ToBoolean;
-  Self.ShowGraphicMenuAtStartUp  := FConfigSTorage.StoredValue[CONFIG_SHOWMENUATSTARTUP].ToBoolean;
-  Self.MissedSchedulerTask       := FConfigSTorage.StoredValue[CONFIG_MISSEDSCHEDULERTASK].ToBoolean;
+  Self.StartWithWindows          := AJSONConfig.GetValue(CONFIG_STARTWITHWINDOWS, Self.StartWithWindows);
+  Self.ShowPanelAtStartUp        := AJSONConfig.GetValue(CONFIG_SHOWPANELATSTARTUP, Self.ShowPanelAtStartUp);
+  Self.ShowGraphicMenuAtStartUp  := AJSONConfig.GetValue(CONFIG_SHOWMENUATSTARTUP, Self.ShowGraphicMenuAtStartUp);
+  Self.MissedSchedulerTask       := AJSONConfig.GetValue(CONFIG_MISSEDSCHEDULERTASK, Self.MissedSchedulerTask);
 
   // Main Form
-  Self.LangID                    := FConfigSTorage.StoredValue[CONFIG_LANGID];
-  Self.UseCustomTitle            := FConfigSTorage.StoredValue[CONFIG_USECUSTOMTITLE].ToBoolean;
-  Self.CustomTitleString         := FConfigSTorage.StoredValue[CONFIG_CUSTOMTITLESTRING];
-  Self.HideTabSearch             := FConfigSTorage.StoredValue[CONFIG_HIDETABSEARCH].ToBoolean;
-  Self.SearchAsYouType           := FConfigSTorage.StoredValue[CONFIG_SEARCHASYOUTYPE].ToBoolean;
+  Self.LangID                    := AJSONConfig.GetValue(CONFIG_LANGID, Self.LangID);
+  Self.UseCustomTitle            := AJSONConfig.GetValue(CONFIG_USECUSTOMTITLE, Self.UseCustomTitle);
+  Self.CustomTitleString         := AJSONConfig.GetValue(CONFIG_CUSTOMTITLESTRING, Self.CustomTitleString);
+  Self.HideTabSearch             := AJSONConfig.GetValue(CONFIG_HIDETABSEARCH, Self.HideTabSearch);
+  Self.SearchAsYouType           := AJSONConfig.GetValue(CONFIG_SEARCHASYOUTYPE, Self.SearchAsYouType);
 
   // Main Form - Position and size
-  Self.HoldSize                  := FConfigSTorage.StoredValue[CONFIG_HOLDSIZE].ToBoolean;
-  Self.AlwaysOnTop               := FConfigSTorage.StoredValue[CONFIG_ALWAYSONTOP].ToBoolean;
+  Self.HoldSize                  := AJSONConfig.GetValue(CONFIG_HOLDSIZE, Self.HoldSize);
+  Self.AlwaysOnTop               := AJSONConfig.GetValue(CONFIG_ALWAYSONTOP, Self.AlwaysOnTop);
 
   // Main Form - Treevew
-  Self.TVBackground              := FConfigSTorage.StoredValue[CONFIG_TVBACKGROUND].ToBoolean;
-  Self.TVBackgroundPath          := FConfigSTorage.StoredValue[CONFIG_TVBACKGROUNDPATH];
-  Self.TVSmallIconSize           := FConfigSTorage.StoredValue[CONFIG_TVSMALLICONSIZE].ToBoolean;
-  Self.TVAutoOpClCats            := FConfigSTorage.StoredValue[CONFIG_TVAUTOOPCLCATS].ToBoolean;
-  Self.TVAutoOpCatsDrag          := FConfigSTorage.StoredValue[CONFIG_TVAUTOOPCATSDRAG].ToBoolean;
-  Self.TVDisableConfirmDelete    := FConfigSTorage.StoredValue[CONFIG_TVDISABLECONFIRMDELETE].ToBoolean;
-  StrToFont(FConfigSTorage.StoredValue[CONFIG_TVFONT], Self.TVFont);
+  Self.TVBackground              := AJSONConfig.GetValue(CONFIG_TVBACKGROUND, Self.TVBackground);
+  Self.TVBackgroundPath          := AJSONConfig.GetValue(CONFIG_TVBACKGROUNDPATH, Self.TVBackgroundPath);
+  Self.TVSmallIconSize           := AJSONConfig.GetValue(CONFIG_TVSMALLICONSIZE, Self.TVSmallIconSize);
+  Self.TVAutoOpClCats            := AJSONConfig.GetValue(CONFIG_TVAUTOOPCLCATS, Self.TVAutoOpClCats);
+  Self.TVAutoOpCatsDrag          := AJSONConfig.GetValue(CONFIG_TVAUTOOPCATSDRAG, Self.TVAutoOpCatsDrag);
+  Self.TVDisableConfirmDelete    := AJSONConfig.GetValue(CONFIG_TVDISABLECONFIRMDELETE, Self.TVDisableConfirmDelete);
+  //TODO: load separate keys font
+  StrToFont(AJSONConfig.GetValue(CONFIG_TVFONT, ''), Self.TVFont);
   Self.MainTree.Font.Assign(Self.TVFont);
 
   // MRU
-  Self.MRU                       := FConfigSTorage.StoredValue[CONFIG_MRU].ToBoolean;
-  Self.SubMenuMRU                := FConfigSTorage.StoredValue[CONFIG_SUBMENUMRU].ToBoolean;
-  Self.MRUNumber                 := FConfigSTorage.StoredValue[CONFIG_MRUNUMBER].ToInteger;
+  Self.MRU                       := AJSONConfig.GetValue(CONFIG_MRU, Self.MRU);
+  Self.SubMenuMRU                := AJSONConfig.GetValue(CONFIG_SUBMENUMRU, Self.SubMenuMRU);
+  Self.MRUNumber                 := AJSONConfig.GetValue(CONFIG_MRUNUMBER, Self.MRUNumber);
 
   // MFU
-  Self.MFU                       := FConfigSTorage.StoredValue[CONFIG_MFU].ToBoolean;
-  Self.SubMenuMFU                := FConfigSTorage.StoredValue[CONFIG_SUBMENUMFU].ToBoolean;
-  Self.MFUNumber                 := FConfigSTorage.StoredValue[CONFIG_MFUNUMBER].ToInteger;
+  Self.MFU                       := AJSONConfig.GetValue(CONFIG_MFU, Self.MFU);
+  Self.SubMenuMFU                := AJSONConfig.GetValue(CONFIG_SUBMENUMFU, Self.SubMenuMFU);
+  Self.MFUNumber                 := AJSONConfig.GetValue(CONFIG_MFUNUMBER, Self.MFUNumber);
 
   // Backup
-  Self.Backup                    := FConfigSTorage.StoredValue[CONFIG_BACKUP].ToBoolean;
-  Self.BackupNumber              := FConfigSTorage.StoredValue[CONFIG_BACKUPNUMBER].ToInteger;
+  Self.Backup                    := AJSONConfig.GetValue(CONFIG_BACKUP, Self.Backup);
+  Self.BackupNumber              := AJSONConfig.GetValue(CONFIG_BACKUPNUMBER, Self.BackupNumber);
 
   // Other functions
-  Self.AutorunStartup            := FConfigSTorage.StoredValue[CONFIG_AUTORUNSTARTUP].ToBoolean;
-  Self.AutorunShutdown           := FConfigSTorage.StoredValue[CONFIG_AUTORUNSHUTDOWN].ToBoolean;
-  Self.Cache                     := FConfigSTorage.StoredValue[CONFIG_CACHE].ToBoolean;
-  Self.Scheduler                 := FConfigSTorage.StoredValue[CONFIG_SCHEDULER].ToBoolean;
+  Self.AutorunStartup            := AJSONConfig.GetValue(CONFIG_AUTORUNSTARTUP, Self.AutorunStartup);
+  Self.AutorunShutdown           := AJSONConfig.GetValue(CONFIG_AUTORUNSHUTDOWN, Self.AutorunShutdown);
+  Self.Cache                     := AJSONConfig.GetValue(CONFIG_CACHE, Self.Cache);
+  Self.Scheduler                 := AJSONConfig.GetValue(CONFIG_SCHEDULER, Self.Scheduler);
 
   // Execution
-  Self.ActionOnExe               := TActionOnExecute(FConfigSTorage.StoredValue[CONFIG_ACTIONONEXE].ToInteger);
-  Self.RunSingleClick            := FConfigSTorage.StoredValue[CONFIG_RUNSINGLECLICK].ToBoolean;
-  Self.ConfirmRunCat             := FConfigSTorage.StoredValue[CONFIG_CONFIRMMESSAGECAT].ToBoolean;
-  Self.AutoCloseProcess          := FConfigSTorage.StoredValue[CONFIG_AUTOCLOSEPROCESS].ToBoolean;
+  Self.ActionOnExe               := TActionOnExecute(AJSONConfig.GetValue(CONFIG_ACTIONONEXE, Integer(Self.ActionOnExe)));
+  Self.RunSingleClick            := AJSONConfig.GetValue(CONFIG_RUNSINGLECLICK, Self.RunSingleClick);
+  Self.ConfirmRunCat             := AJSONConfig.GetValue(CONFIG_CONFIRMMESSAGECAT, Self.ConfirmRunCat);
+  Self.AutoCloseProcess          := AJSONConfig.GetValue(CONFIG_AUTOCLOSEPROCESS, Self.AutoCloseProcess);
 
   // Trayicon
-  Self.TrayIcon                  := FConfigSTorage.StoredValue[CONFIG_TRAYICON].ToBoolean;
-  Self.TrayUseCustomIcon         := FConfigSTorage.StoredValue[CONFIG_TRAYUSECUSTOMICON].ToBoolean;
-  Self.TrayCustomIconPath        := FConfigSTorage.StoredValue[CONFIG_TRAYCUSTOMICONPATH];
-  Self.ActionClickLeft           := TTrayiconActionClick(FConfigSTorage.StoredValue[CONFIG_ACTIONCLICKLEFT].ToInteger);
-  Self.ActionClickMiddle         := TTrayiconActionClick(FConfigSTorage.StoredValue[CONFIG_ACTIONCLICKMIDDLE].ToInteger);
-  Self.ActionClickRight          := TTrayiconActionClick(FConfigSTorage.StoredValue[CONFIG_ACTIONCLICKRIGHT].ToInteger);
-  Self.AutoExpansionFolder       := FConfigSTorage.StoredValue[CONFIG_AUTOEXPANSIONFOLDER].ToBoolean;
+  Self.TrayIcon                  := AJSONConfig.GetValue(CONFIG_TRAYICON, Self.TrayIcon);
+  Self.TrayUseCustomIcon         := AJSONConfig.GetValue(CONFIG_TRAYUSECUSTOMICON, Self.TrayUseCustomIcon);
+  Self.TrayCustomIconPath        := AJSONConfig.GetValue(CONFIG_TRAYCUSTOMICONPATH, Self.TrayCustomIconPath);
+  Self.ActionClickLeft           := TTrayiconActionClick(AJSONConfig.GetValue(CONFIG_ACTIONCLICKLEFT, Integer(Self.ActionClickLeft)));
+  Self.ActionClickMiddle         := TTrayiconActionClick(AJSONConfig.GetValue(CONFIG_ACTIONCLICKMIDDLE, Integer(Self.ActionClickMiddle)));
+  Self.ActionClickRight          := TTrayiconActionClick(AJSONConfig.GetValue(CONFIG_ACTIONCLICKRIGHT, Integer(Self.ActionClickRight)));
+  Self.AutoExpansionFolder       := AJSONConfig.GetValue(CONFIG_AUTOEXPANSIONFOLDER, Self.AutoExpansionFolder);
 
   //Graphic Menu
-  Self.GMFade                    := FConfigSTorage.StoredValue[CONFIG_GMFADE].ToBoolean;
-  Self.GMSmallIconSize           := FConfigSTorage.StoredValue[CONFIG_GMPERSONALPICTURE].ToBoolean;
-  Self.GMPersonalPicture         := FConfigSTorage.StoredValue[CONFIG_GMSMALLICONSIZE];
-  Self.GMPositionTop             := FConfigSTorage.StoredValue[CONFIG_GMPOSITIONTOP].ToInteger;
-  Self.GMPositionLeft            := FConfigSTorage.StoredValue[CONFIG_GMPOSITIONLEFT].ToInteger;
-  Self.GMAutomaticHideMenu       := FConfigSTorage.StoredValue[CONFIG_GMAUTOHIDEMENU].ToBoolean;
-  Self.GMShowUserPicture         := FConfigSTorage.StoredValue[CONFIG_GMSHOWUSERPICTURE].ToBoolean;
+  Self.GMFade                    := AJSONConfig.GetValue(CONFIG_GMFADE, Self.GMFade);
+  Self.GMSmallIconSize           := AJSONConfig.GetValue(CONFIG_GMPERSONALPICTURE, Self.GMSmallIconSize);
+  Self.GMPersonalPicture         := AJSONConfig.GetValue(CONFIG_GMSMALLICONSIZE, Self.GMPersonalPicture);
+  Self.GMPositionTop             := AJSONConfig.GetValue(CONFIG_GMPOSITIONTOP, Self.GMPositionTop);
+  Self.GMPositionLeft            := AJSONConfig.GetValue(CONFIG_GMPOSITIONLEFT, Self.GMPositionLeft);
+  Self.GMAutomaticHideMenu       := AJSONConfig.GetValue(CONFIG_GMAUTOHIDEMENU, Self.GMAutomaticHideMenu);
+  Self.GMShowUserPicture         := AJSONConfig.GetValue(CONFIG_GMSHOWUSERPICTURE, Self.GMShowUserPicture);
 
   //Right buttons
-  Self.GMBtnDocuments            := FConfigSTorage.StoredValue[CONFIG_GMBTNDOCUMENTS];
-  Self.GMBtnPictures             := FConfigSTorage.StoredValue[CONFIG_GMBTNPICTURES];
-  Self.GMBtnMusic                := FConfigSTorage.StoredValue[CONFIG_GMBTNMUSIC];
-  Self.GMBtnVideos               := FConfigSTorage.StoredValue[CONFIG_GMBTNVIDEOS];
-  Self.GMBtnExplore              := FConfigSTorage.StoredValue[CONFIG_GMBTNEXPLORE];
+  Self.GMBtnDocuments            := AJSONConfig.GetValue(CONFIG_GMBTNDOCUMENTS, Self.GMBtnDocuments);
+  Self.GMBtnPictures             := AJSONConfig.GetValue(CONFIG_GMBTNPICTURES, Self.GMBtnPictures);
+  Self.GMBtnMusic                := AJSONConfig.GetValue(CONFIG_GMBTNMUSIC, Self.GMBtnMusic);
+  Self.GMBtnVideos               := AJSONConfig.GetValue(CONFIG_GMBTNVIDEOS, Self.GMBtnVideos);
+  Self.GMBtnExplore              := AJSONConfig.GetValue(CONFIG_GMBTNEXPLORE, Self.GMBtnExplore);
 
   //HotKeys
-  Self.HotKey                    := FConfigSTorage.StoredValue[CONFIG_HOTKEY].ToBoolean;
-  Self.WindowHotKey              := FConfigSTorage.StoredValue[CONFIG_WINDOWHOTKEY].ToInteger;
-  Self.GraphicMenuHotKey         := FConfigSTorage.StoredValue[CONFIG_MENUHOTKEY].ToInteger;
-  Self.ClassicMenuHotkey         := FConfigSTorage.StoredValue[CONFIG_CLASSICMENUHOTKEY].ToInteger;
+  Self.HotKey                    := AJSONConfig.GetValue(CONFIG_HOTKEY, Self.HotKey);
+  Self.WindowHotKey              := AJSONConfig.GetValue(CONFIG_WINDOWHOTKEY, Self.WindowHotKey);
+  Self.GraphicMenuHotKey         := AJSONConfig.GetValue(CONFIG_MENUHOTKEY, Self.GraphicMenuHotKey);
+  Self.ClassicMenuHotkey         := AJSONConfig.GetValue(CONFIG_CLASSICMENUHOTKEY, Self.ClassicMenuHotkey);
 
   // Misc
-  Self.ScanFolderAutoExtractName := FConfigSTorage.StoredValue[CONFIG_SCANFOLDERAUTOEXTRACTNAME].ToBoolean;
-  Self.ScanFolderFileTypes.Text  := FConfigSTorage.StoredValue[CONFIG_SCANFOLDERFILETYPES];
-  Self.ScanFolderExcludeNames.Text := FConfigSTorage.StoredValue[CONFIG_SCANFOLDEREXCLUDENAMES];
+  Self.ScanFolderAutoExtractName := AJSONConfig.GetValue(CONFIG_SCANFOLDERAUTOEXTRACTNAME, Self.ScanFolderAutoExtractName);
+  AJSONConfig.GetValue(CONFIG_SCANFOLDERFILETYPES, Self.ScanFolderFileTypes, Self.ScanFolderFileTypes);
+  AJSONConfig.GetValue(CONFIG_SCANFOLDEREXCLUDENAMES, Self.ScanFolderExcludeNames, Self.ScanFolderExcludeNames);
 
   Self.AfterUpdateConfig;
 end;
@@ -741,25 +750,45 @@ begin
 end;
 
 procedure TConfiguration.LoadConfig;
-begin
-  //If settings.json is not exists, save default options
-  if not FileExists(ChangeFileExt(UnicodeString(Application.ExeName), '.json')) then
-  begin
-    TASuiteLogger.Info('ASuite Options not found - Saving default configurations', []);
-    FConfigStorage.Save;
-  end;
+var
+  JSONConfig: TJSONConfig;
+begin                                                
+  TASuiteLogger.Enter('Loading ASuite configuration', Self);
 
-  TASuiteLogger.Info('Loading ASuite Options', []);
-  FConfigStorage.Restore;
+  //if FileExists(SETTINGS_FILENAME) then
+  //begin
+  //  TASuiteLogger.Info('Found ASuite configuration', []);
+    try
+      JSONConfig := TJSONConfig.Create(nil);
+      JSONConfig.Formatted := True;
+      JSONConfig.FormatIndentsize := 4;    
+      JSONConfig.Filename := SETTINGS_FILENAME; 
+      RestoreSettings(JSONConfig);
+    finally
+      JSONConfig.Free;
+    end;
+  //end
+  //else   
+  //  TASuiteLogger.Info('ASuite Configuration not found', []);
 end;
 
-procedure TConfiguration.SaveConfig;
+procedure TConfiguration.SaveConfig;  
+var
+  JSONConfig: TJSONConfig;
 begin
   //If settings is changed, insert it else (if it exists) update it
   if Config.Changed then
   begin
     TASuiteLogger.Info('Saving ASuite Options', []);
-    FConfigStorage.Save;
+    try
+      JSONConfig := TJSONConfig.Create(nil);
+      JSONConfig.Formatted := True;
+      JSONConfig.FormatIndentsize := 4;
+      JSONConfig.Filename := SETTINGS_FILENAME;
+      SaveSettings(JSONConfig);
+    finally
+      JSONConfig.Free;
+    end;
   end;
 end;
 
