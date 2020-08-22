@@ -94,6 +94,9 @@ const
   FILEICON_Folder = 'folder';
   FILEICON_Url    = 'page_url';
 
+  //ASuite files
+  SETTINGS_FILENAME = 'settings.json';
+
   //Modifier buttons for TfrmShortcutGrabber
   FILENAME_CTRL   = 'ctrl.png';
   FILENAME_ALT    = 'alt.png';

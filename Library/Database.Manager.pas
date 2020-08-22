@@ -56,19 +56,18 @@ type
     procedure ClearTable(SQLRecordClass:TSQLRecordClass);
 
     procedure ImportData(ATree: TBaseVirtualTree); //For frmImportList
-    procedure ImportOptions; //For frmImportList
   end;
 
 implementation
 
 uses
   Kernel.Consts, AppConfig.Main, Utility.FileFolder, Utility.Misc,
-  Database.Version, Database.Options, Database.List, Kernel.Logger,
+  Database.Version, Database.List, Kernel.Logger,
   VirtualTree.Methods, SynLog, Kernel.ResourceStrings;
 
 constructor TDBManager.Create;
 begin
-  FSQLModel := TSQLModel.Create([TSQLtbl_version, TSQLtbl_list, TSQLtbl_options]);
+  FSQLModel := TSQLModel.Create([TSQLtbl_version, TSQLtbl_list]);
 end;
 
 procedure TDBManager.RemoveItem(aID: Integer);
@@ -137,18 +136,6 @@ begin
   end;
 end;
 
-procedure TDBManager.ImportOptions;
-begin
-  TASuiteLogger.Enter('ImportOptions', Self);
-  TASuiteLogger.Info('Import options from SQLite Database %s', [Self.FDBFileName]);
-  try
-    TSQLtbl_options.Load(Self, Config);
-  except
-    on E : Exception do
-      ShowMessageFmtEx(msgErrGeneric,[E.ClassName, E.Message], True);
-  end;
-end;
-
 procedure TDBManager.ClearTable(SQLRecordClass: TSQLRecordClass);
 var
   SQLData: TSQLRecord;
@@ -172,9 +159,6 @@ begin
     try
       //Load Database version
       TSQLtbl_version.Load(Self);
-      //Load Options
-      TSQLtbl_options.Load(Self, Config);
-      Config.AfterUpdateConfig;
       //Load list
       TSQLtbl_list.Load(Self, ATree, False);
     except
@@ -202,9 +186,6 @@ begin
       if FDatabase.TransactionBegin(TSQLtbl_list, 1) then
       begin
         TSQLtbl_list.Save(Self, ATree);
-        //If settings is changed, insert it else (if it exists) update it
-        if Config.Changed then
-          TSQLtbl_options.Save(Self, Config);
         //Save new version info
         TSQLtbl_version.Save(Self);
         //Commit data in sqlite database

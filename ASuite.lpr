@@ -37,7 +37,6 @@ uses
   Frame.Properties.General.Software in 'Frame\Frame.Properties.General.Software.pas' {frmSWGeneralPropertyPage: TFrame},
   Utility.Process in 'Utilities\Utility.Process.pas',
   Database.Version in 'Library\Database.Version.pas',
-  Database.Options in 'Library\Database.Options.pas',
   Database.List in 'Library\Database.List.pas',
   Database.Manager in 'Library\Database.Manager.pas',
   NodeDataTypes.Files in 'Library\NodeDataTypes.Files.pas',

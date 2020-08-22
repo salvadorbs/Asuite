@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Graphics, Forms, Controls, VirtualTrees, Kernel.Enumerations,
-  Classes, AppConfig.Paths,
+  Classes, AppConfig.Paths, JSONPropStorage,xmlpropstorage,
   Lists.Manager, Database.Manager, Icons.Manager, Kernel.Logger, Dialogs;
 
 type
@@ -41,6 +41,7 @@ type
     FShowGraphicMenuAtStartUp  : Boolean;
     //Main Form
     FLangID             : String;
+    FTVDisableConfirmDelete: Boolean;
     FUseCustomTitle     : Boolean;
     FCustomTitleString  : string;
     FHideTabSearch      : Boolean;
@@ -109,7 +110,6 @@ type
     FMissedSchedulerTask  : Boolean;
     FAutoExpansionFolder  : Boolean;
     FActionClickMiddle    : TTrayiconActionClick;
-    FScanFolderFlatStructure   : boolean;
     FScanFolderAutoExtractName : boolean;
     FScanFolderFileTypes  : TStringList;
     FScanFolderExcludeNames: TStringList;
@@ -120,7 +120,9 @@ type
     FDBManager : TDBManager;
     FIconsManager: TIconsManager;
     FLogger: TASuiteLogger;
-    FTVDisableConfirmDelete: Boolean;
+    FConfigStorage: TJSONPropStorage;
+    procedure RestoreProperties(Sender: TObject);
+    procedure SavingProperties(Sender: TObject);
     procedure SetHoldSize(value: Boolean);
     procedure SetAlwaysOnTop(value: Boolean);
     procedure SetTrayIcon(value: Boolean);
@@ -161,12 +163,14 @@ type
     constructor Create; overload;
     destructor Destroy; override;
 
+    //TODO: Move all singleton and these classes in a separate class called TASuiteInstance
     property MainTree: TVirtualStringTree read GetMainTree write FMainTree;
     property ImportTree: TVirtualStringTree read GetImportTree;
     property Paths: TConfigPaths read FPaths;
     property ListManager: TListManager read FListManager;
     property DBManager: TDBManager read FDBManager;
     property IconsManager: TIconsManager read FIconsManager;
+    property ConfigStorage: TJSONPropStorage read FConfigStorage;
 
     property SmallHeightNode: Integer read FSmallHeightNode;
     property BigHeightNode: Integer read FBigHeightNode;
@@ -246,7 +250,6 @@ type
     property ReadOnlyMode: Boolean read FReadOnlyMode write FReadOnlyMode;
     property Changed: Boolean read FChanged write SetChanged;
     property ASuiteState: TLauncherState read FASuiteState write SetASuiteState;
-    property ScanFolderFlatStructure: boolean read FScanFolderFlatStructure write FScanFolderFlatStructure;
     property ScanFolderAutoExtractName: boolean read FScanFolderAutoExtractName write FScanFolderAutoExtractName;
     property ScanFolderFileTypes: TStringList read FScanFolderFileTypes write FScanFolderFileTypes;
     property ScanFolderExcludeNames: TStringList read FScanFolderExcludeNames write FScanFolderExcludeNames;
@@ -261,6 +264,9 @@ type
     //Database
     procedure LoadList;
     function SaveList(DoBackup: Boolean): Boolean;
+
+    procedure LoadConfig;
+    procedure SaveConfig;
   end;
 
 var
@@ -272,9 +278,10 @@ uses
   Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, Utility.Misc,
   Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder, Windows,
   Utility.XML, GraphicMenu.ThemeEngine, Kernel.Scheduler, Forms.ImportList,
-  TypInfo, Utility.HotKey, Kernel.ResourceStrings, LCLTranslator;
+  TypInfo, Utility.HotKey, Kernel.ResourceStrings, LCLTranslator, AppConfig.Consts,
+  Utility.Conversions;
 
-procedure TConfiguration.AfterUpdateConfig;
+procedure TConfiguration.AfterUpdateConfig();
 begin   
   TVirtualTreeMethods.Create.UpdateItemColor(Config.MainTree);
 end;
@@ -296,34 +303,48 @@ constructor TConfiguration.Create;
 var
   I: Integer;
 begin
+  FConfigStorage := TJSONPropStorage.Create(nil);
+  FConfigStorage.OnRestoreProperties := RestoreProperties;
+  FConfigStorage.OnSavingProperties := SavingProperties;
+  //FConfigStorage.Formatted := True;
+  FConfigStorage.Active := True;
+
   TScheduler.Create;
+
   //Node height based of DPI
   FSmallHeightNode := Round((Screen.PixelsPerInch / 96.0) * 18);
   FBigHeightNode   := Round((Screen.PixelsPerInch / 96.0) * 36);
+
   //Params
   for I := 1 to ParamCount do
     HandleParam(ParamStr(I));
+
   //Create some classes
   FPaths  := TConfigPaths.Create;
   FLogger := TASuiteLogger.Create(FPaths.SuitePathData);
-  TASuiteLogger.Info('Start software', []);
+
+  TASuiteLogger.Info('Creating Managers', []);
   FListManager  := TListManager.Create;
   FDBManager    := TDBManager.Create;
   FIconsManager := TIconsManager.Create;
+
   //General
   FStartWithWindows   := False;
   FShowPanelAtStartUp := True;
   FShowGraphicMenuAtStartUp  := False;
   FMissedSchedulerTask := True;
+
   //Main Form
   FLangID             := 'en';
   FUseCustomTitle     := False;
   FCustomTitleString  := APP_TITLE;
   FHideTabSearch      := False;
   FSearchAsYouType    := True;
+
   //Main Form - Position and size
   FHoldSize           := False;
   FAlwaysOnTop        := False;
+
   //Main Form - Treevew
   FTVBackground       := False;
   FTVBackgroundPath   := '';
@@ -331,32 +352,39 @@ begin
   FTVAutoOpClCats     := True;
   FTVAutoOpCatsDrag   := True;
   TVDisableConfirmDelete := False;
+
   //Treeview Font
   FTVFont             := TFont.Create;
   FTVFont.Name        := 'MS Sans Serif';
   FTVFont.Size        := 8;
   FTVFont.Color       := clWindowText;
+
   //MRU
   FMRU                := True;
   FSubMenuMRU         := False;
   FMRUNumber          := 11;
+
   //MFU
   FMFU                := True;
   FSubMenuMFU         := True;
   FMFUNumber          := 11;
+
   //Backup
   FBackup             := True;
   FBackupNumber       := 5;
+
   //Other functions
   FAutorunStartup     := True;
   FAutorunShutdown    := True;
   FCache              := True;
   FScheduler          := True;
+
   //Execution
   FActionOnExe        := aeDefault;
   FRunSingleClick     := False;
   FConfirmRunCat      := True;
   FAutoCloseProcess   := False;
+
   //Trayicon
   FTrayIcon           := True;
   FTrayUseCustomIcon  := False;
@@ -365,6 +393,7 @@ begin
   FActionClickMiddle  := tcNone;
   FActionClickRight   := tcShowGraphicMenu;
   FAutoExpansionFolder := True;
+
   //Graphic Menu
   FGMTheme            := 'Default';
   FGMFade             := True;
@@ -373,23 +402,26 @@ begin
   FGMPositionLeft     := -1;
   FGMAutomaticHideMenu := True;
   FGMShowUserPicture   := True;
+
   //Right buttons
   FGMBtnDocuments     := '%USERPROFILE%\Documents';
   FGMBtnPictures      := '%USERPROFILE%\Pictures';
   FGMBtnMusic         := '%USERPROFILE%\Music';
   FGMBtnVideos        := '%USERPROFILE%\Videos';
   FGMBtnExplore       := '$drive';
+
   //Misc
   FReadOnlyMode       := False;
   FChanged            := False;
   FASuiteState        := lsStartUp;
   FHotKey             := True;
+
   //Hotkey
   FWindowHotKey       := 0;
   FGraphicMenuHotKey  := 0;
   FClassicMenuHotkey  := 0;
+
   //ScanFolder
-  FScanFolderFlatStructure   := False;
   FScanFolderAutoExtractName := True;
   FScanFolderFileTypes  := TStringList.Create;
   FScanFolderFileTypes.Add(EXT_LNK);
@@ -409,6 +441,7 @@ begin
   FDBManager.Destroy;
   FIconsManager.Destroy;
   FLogger.Free;
+  FConfigSTorage.Free;
 end;
 
 procedure TConfiguration.SetASuiteState(const Value: TLauncherState);
@@ -494,7 +527,7 @@ begin
   end;
 end;
 
-procedure TConfiguration.SetHoldSize(value: boolean);
+procedure TConfiguration.SetHoldSize(value: Boolean);
 begin
   FHoldSize := value;
   if FHoldSize then
@@ -506,6 +539,188 @@ begin
     frmMain.BorderStyle := bsSizeable;
     frmMain.BorderIcons := [biSystemMenu, biMinimize, biMaximize];
   end;
+end;
+
+procedure TConfiguration.SavingProperties(Sender: TObject);
+begin
+  try
+    FConfigSTorage.StoredValue[CONFIG_GMTHEME] := Self.GMTheme;
+
+    //General
+    FConfigSTorage.StoredValue[CONFIG_STARTWITHWINDOWS]          := Self.StartWithWindows.ToString;
+    FConfigSTorage.StoredValue[CONFIG_SHOWPANELATSTARTUP]        := Self.ShowPanelAtStartUp.ToString;
+    FConfigSTorage.StoredValue[CONFIG_SHOWMENUATSTARTUP]         := Self.ShowGraphicMenuAtStartUp.ToString;
+    FConfigSTorage.StoredValue[CONFIG_MISSEDSCHEDULERTASK]       := Self.MissedSchedulerTask.ToString;
+    // Main Form
+    FConfigSTorage.StoredValue[CONFIG_LANGID]                    := Self.LangID;
+    FConfigSTorage.StoredValue[CONFIG_USECUSTOMTITLE]            := Self.UseCustomTitle.ToString;
+    FConfigSTorage.StoredValue[CONFIG_CUSTOMTITLESTRING]         := Self.CustomTitleString;
+    FConfigSTorage.StoredValue[CONFIG_HIDETABSEARCH]             := Self.HideTabSearch.ToString;
+    FConfigSTorage.StoredValue[CONFIG_SEARCHASYOUTYPE]           := Self.SearchAsYouType.ToString;
+    // Main Form - Position and size
+    FConfigSTorage.StoredValue[CONFIG_HOLDSIZE]                  := Self.HoldSize.ToString;
+    FConfigSTorage.StoredValue[CONFIG_ALWAYSONTOP]               := Self.AlwaysOnTop.ToString;
+    // Main Form - Treevew
+    FConfigSTorage.StoredValue[CONFIG_TVBACKGROUND]              := Self.TVBackground.ToString;
+    FConfigSTorage.StoredValue[CONFIG_TVBACKGROUNDPATH]          := Self.TVBackgroundPath;
+    FConfigSTorage.StoredValue[CONFIG_TVSMALLICONSIZE]           := Self.TVSmallIconSize.ToString;
+    FConfigSTorage.StoredValue[CONFIG_TVAUTOOPCLCATS]            := Self.TVAutoOpClCats.ToString;
+    FConfigSTorage.StoredValue[CONFIG_TVAUTOOPCATSDRAG]          := Self.TVAutoOpCatsDrag.ToString;
+    FConfigSTorage.StoredValue[CONFIG_TVDISABLECONFIRMDELETE]    := Self.TVDisableConfirmDelete.ToString;
+    FConfigSTorage.StoredValue[CONFIG_TVFONT]                    := FontToStr(Self.TVFont);
+    // MRU
+    FConfigSTorage.StoredValue[CONFIG_MRU]                       := Self.MRU.ToString;
+    FConfigSTorage.StoredValue[CONFIG_SUBMENUMRU]                := Self.SubMenuMRU.ToString;
+    FConfigSTorage.StoredValue[CONFIG_MRUNUMBER]                 := Self.MRUNumber.ToString;
+    // MFU
+    FConfigSTorage.StoredValue[CONFIG_MFU]                       := Self.MFU.ToString;
+    FConfigSTorage.StoredValue[CONFIG_SUBMENUMFU]                := Self.SubMenuMFU.ToString;
+    FConfigSTorage.StoredValue[CONFIG_MFUNUMBER]                 := Self.MFUNumber.ToString;
+    // Backup
+    FConfigSTorage.StoredValue[CONFIG_BACKUP]                    := Self.Backup.ToString;
+    FConfigSTorage.StoredValue[CONFIG_BACKUPNUMBER]              := Self.BackupNumber.ToString;
+    // Other functions
+    FConfigSTorage.StoredValue[CONFIG_AUTORUNSTARTUP]            := Self.AutorunStartup.ToString;
+    FConfigSTorage.StoredValue[CONFIG_AUTORUNSHUTDOWN]           := Self.AutorunShutdown.ToString;
+    FConfigSTorage.StoredValue[CONFIG_CACHE]                     := Self.Cache.ToString;
+    FConfigSTorage.StoredValue[CONFIG_SCHEDULER]                 := Self.Scheduler.ToString;
+    // Execution
+    FConfigSTorage.StoredValue[CONFIG_ACTIONONEXE]               := Integer(Self.ActionOnExe).ToString;
+    FConfigSTorage.StoredValue[CONFIG_RUNSINGLECLICK]            := Self.RunSingleClick.ToString;
+    FConfigSTorage.StoredValue[CONFIG_CONFIRMMESSAGECAT]         := Self.ConfirmRunCat.ToString;
+    FConfigSTorage.StoredValue[CONFIG_AUTOCLOSEPROCESS]          := Self.AutoCloseProcess.ToString;
+    // Trayicon
+    FConfigSTorage.StoredValue[CONFIG_TRAYICON]                  := Self.TrayIcon.ToString;
+    FConfigSTorage.StoredValue[CONFIG_TRAYUSECUSTOMICON]         := Self.TrayUseCustomIcon.ToString;
+    FConfigSTorage.StoredValue[CONFIG_TRAYCUSTOMICONPATH]        := Self.TrayCustomIconPath;
+    FConfigSTorage.StoredValue[CONFIG_ACTIONCLICKLEFT]           := Integer(Self.ActionClickLeft).ToString;
+    FConfigSTorage.StoredValue[CONFIG_ACTIONCLICKMIDDLE]         := Integer(Self.ActionClickMiddle).ToString;
+    FConfigSTorage.StoredValue[CONFIG_ACTIONCLICKRIGHT]          := Integer(Self.ActionClickRight).ToString;
+    FConfigSTorage.StoredValue[CONFIG_AUTOEXPANSIONFOLDER]       := Self.AutoExpansionFolder.ToString;
+    //Graphic Menu
+    FConfigSTorage.StoredValue[CONFIG_GMFADE]                    := Self.GMFade.ToString;
+    FConfigSTorage.StoredValue[CONFIG_GMPERSONALPICTURE]         := Self.GMSmallIconSize.ToString;
+    FConfigSTorage.StoredValue[CONFIG_GMSMALLICONSIZE]           := Self.GMPersonalPicture;
+    FConfigSTorage.StoredValue[CONFIG_GMPOSITIONTOP]             := Self.GMPositionTop.ToString;
+    FConfigSTorage.StoredValue[CONFIG_GMPOSITIONLEFT]            := Self.GMPositionLeft.ToString;
+    FConfigSTorage.StoredValue[CONFIG_GMAUTOHIDEMENU]            := Self.GMAutomaticHideMenu.ToString;
+    FConfigSTorage.StoredValue[CONFIG_GMSHOWUSERPICTURE]         := Self.GMShowUserPicture.ToString;
+    //Right buttons
+    FConfigSTorage.StoredValue[CONFIG_GMBTNDOCUMENTS]            := Self.GMBtnDocuments;
+    FConfigSTorage.StoredValue[CONFIG_GMBTNPICTURES]             := Self.GMBtnPictures;
+    FConfigSTorage.StoredValue[CONFIG_GMBTNMUSIC]                := Self.GMBtnMusic;
+    FConfigSTorage.StoredValue[CONFIG_GMBTNVIDEOS]               := Self.GMBtnVideos;
+    FConfigSTorage.StoredValue[CONFIG_GMBTNEXPLORE]              := Self.GMBtnExplore;
+    //HotKeys
+    FConfigSTorage.StoredValue[CONFIG_HOTKEY]                    := Self.HotKey.ToString;
+    FConfigSTorage.StoredValue[CONFIG_WINDOWHOTKEY]              := Self.WindowHotKey.ToString;
+    FConfigSTorage.StoredValue[CONFIG_MENUHOTKEY]                := Self.GraphicMenuHotKey.ToString;
+    FConfigSTorage.StoredValue[CONFIG_CLASSICMENUHOTKEY]         := Self.ClassicMenuHotkey.ToString;
+    // Misc
+    FConfigSTorage.StoredValue[CONFIG_SCANFOLDERAUTOEXTRACTNAME] := Self.ScanFolderAutoExtractName.ToString;
+    FConfigSTorage.StoredValue[CONFIG_SCANFOLDERFILETYPES]       := Self.ScanFolderFileTypes.Text;
+    FConfigSTorage.StoredValue[CONFIG_SCANFOLDEREXCLUDENAMES]    := Self.ScanFolderExcludeNames.Text;
+  finally
+    Self.Changed := False;
+  end;
+end;
+
+procedure TConfiguration.RestoreProperties(Sender: TObject);
+begin
+  //Get GMTheme before everything (so ASuite know where icons folder)
+  Self.GMTheme                   := FConfigSTorage.StoredValue[CONFIG_GMTHEME];
+  TASuiteLogger.Info('Loaded GraphicMenu theme = ', [Self.GMTheme]);
+
+  //General
+  Self.StartWithWindows          := FConfigSTorage.StoredValue[CONFIG_STARTWITHWINDOWS].ToBoolean;
+  Self.ShowPanelAtStartUp        := FConfigSTorage.StoredValue[CONFIG_SHOWPANELATSTARTUP].ToBoolean;
+  Self.ShowGraphicMenuAtStartUp  := FConfigSTorage.StoredValue[CONFIG_SHOWMENUATSTARTUP].ToBoolean;
+  Self.MissedSchedulerTask       := FConfigSTorage.StoredValue[CONFIG_MISSEDSCHEDULERTASK].ToBoolean;
+
+  // Main Form
+  Self.LangID                    := FConfigSTorage.StoredValue[CONFIG_LANGID];
+  Self.UseCustomTitle            := FConfigSTorage.StoredValue[CONFIG_USECUSTOMTITLE].ToBoolean;
+  Self.CustomTitleString         := FConfigSTorage.StoredValue[CONFIG_CUSTOMTITLESTRING];
+  Self.HideTabSearch             := FConfigSTorage.StoredValue[CONFIG_HIDETABSEARCH].ToBoolean;
+  Self.SearchAsYouType           := FConfigSTorage.StoredValue[CONFIG_SEARCHASYOUTYPE].ToBoolean;
+
+  // Main Form - Position and size
+  Self.HoldSize                  := FConfigSTorage.StoredValue[CONFIG_HOLDSIZE].ToBoolean;
+  Self.AlwaysOnTop               := FConfigSTorage.StoredValue[CONFIG_ALWAYSONTOP].ToBoolean;
+
+  // Main Form - Treevew
+  Self.TVBackground              := FConfigSTorage.StoredValue[CONFIG_TVBACKGROUND].ToBoolean;
+  Self.TVBackgroundPath          := FConfigSTorage.StoredValue[CONFIG_TVBACKGROUNDPATH];
+  Self.TVSmallIconSize           := FConfigSTorage.StoredValue[CONFIG_TVSMALLICONSIZE].ToBoolean;
+  Self.TVAutoOpClCats            := FConfigSTorage.StoredValue[CONFIG_TVAUTOOPCLCATS].ToBoolean;
+  Self.TVAutoOpCatsDrag          := FConfigSTorage.StoredValue[CONFIG_TVAUTOOPCATSDRAG].ToBoolean;
+  Self.TVDisableConfirmDelete    := FConfigSTorage.StoredValue[CONFIG_TVDISABLECONFIRMDELETE].ToBoolean;
+  StrToFont(FConfigSTorage.StoredValue[CONFIG_TVFONT], Self.TVFont);
+  Self.MainTree.Font.Assign(Self.TVFont);
+
+  // MRU
+  Self.MRU                       := FConfigSTorage.StoredValue[CONFIG_MRU].ToBoolean;
+  Self.SubMenuMRU                := FConfigSTorage.StoredValue[CONFIG_SUBMENUMRU].ToBoolean;
+  Self.MRUNumber                 := FConfigSTorage.StoredValue[CONFIG_MRUNUMBER].ToInteger;
+
+  // MFU
+  Self.MFU                       := FConfigSTorage.StoredValue[CONFIG_MFU].ToBoolean;
+  Self.SubMenuMFU                := FConfigSTorage.StoredValue[CONFIG_SUBMENUMFU].ToBoolean;
+  Self.MFUNumber                 := FConfigSTorage.StoredValue[CONFIG_MFUNUMBER].ToInteger;
+
+  // Backup
+  Self.Backup                    := FConfigSTorage.StoredValue[CONFIG_BACKUP].ToBoolean;
+  Self.BackupNumber              := FConfigSTorage.StoredValue[CONFIG_BACKUPNUMBER].ToInteger;
+
+  // Other functions
+  Self.AutorunStartup            := FConfigSTorage.StoredValue[CONFIG_AUTORUNSTARTUP].ToBoolean;
+  Self.AutorunShutdown           := FConfigSTorage.StoredValue[CONFIG_AUTORUNSHUTDOWN].ToBoolean;
+  Self.Cache                     := FConfigSTorage.StoredValue[CONFIG_CACHE].ToBoolean;
+  Self.Scheduler                 := FConfigSTorage.StoredValue[CONFIG_SCHEDULER].ToBoolean;
+
+  // Execution
+  Self.ActionOnExe               := TActionOnExecute(FConfigSTorage.StoredValue[CONFIG_ACTIONONEXE].ToInteger);
+  Self.RunSingleClick            := FConfigSTorage.StoredValue[CONFIG_RUNSINGLECLICK].ToBoolean;
+  Self.ConfirmRunCat             := FConfigSTorage.StoredValue[CONFIG_CONFIRMMESSAGECAT].ToBoolean;
+  Self.AutoCloseProcess          := FConfigSTorage.StoredValue[CONFIG_AUTOCLOSEPROCESS].ToBoolean;
+
+  // Trayicon
+  Self.TrayIcon                  := FConfigSTorage.StoredValue[CONFIG_TRAYICON].ToBoolean;
+  Self.TrayUseCustomIcon         := FConfigSTorage.StoredValue[CONFIG_TRAYUSECUSTOMICON].ToBoolean;
+  Self.TrayCustomIconPath        := FConfigSTorage.StoredValue[CONFIG_TRAYCUSTOMICONPATH];
+  Self.ActionClickLeft           := TTrayiconActionClick(FConfigSTorage.StoredValue[CONFIG_ACTIONCLICKLEFT].ToInteger);
+  Self.ActionClickMiddle         := TTrayiconActionClick(FConfigSTorage.StoredValue[CONFIG_ACTIONCLICKMIDDLE].ToInteger);
+  Self.ActionClickRight          := TTrayiconActionClick(FConfigSTorage.StoredValue[CONFIG_ACTIONCLICKRIGHT].ToInteger);
+  Self.AutoExpansionFolder       := FConfigSTorage.StoredValue[CONFIG_AUTOEXPANSIONFOLDER].ToBoolean;
+
+  //Graphic Menu
+  Self.GMFade                    := FConfigSTorage.StoredValue[CONFIG_GMFADE].ToBoolean;
+  Self.GMSmallIconSize           := FConfigSTorage.StoredValue[CONFIG_GMPERSONALPICTURE].ToBoolean;
+  Self.GMPersonalPicture         := FConfigSTorage.StoredValue[CONFIG_GMSMALLICONSIZE];
+  Self.GMPositionTop             := FConfigSTorage.StoredValue[CONFIG_GMPOSITIONTOP].ToInteger;
+  Self.GMPositionLeft            := FConfigSTorage.StoredValue[CONFIG_GMPOSITIONLEFT].ToInteger;
+  Self.GMAutomaticHideMenu       := FConfigSTorage.StoredValue[CONFIG_GMAUTOHIDEMENU].ToBoolean;
+  Self.GMShowUserPicture         := FConfigSTorage.StoredValue[CONFIG_GMSHOWUSERPICTURE].ToBoolean;
+
+  //Right buttons
+  Self.GMBtnDocuments            := FConfigSTorage.StoredValue[CONFIG_GMBTNDOCUMENTS];
+  Self.GMBtnPictures             := FConfigSTorage.StoredValue[CONFIG_GMBTNPICTURES];
+  Self.GMBtnMusic                := FConfigSTorage.StoredValue[CONFIG_GMBTNMUSIC];
+  Self.GMBtnVideos               := FConfigSTorage.StoredValue[CONFIG_GMBTNVIDEOS];
+  Self.GMBtnExplore              := FConfigSTorage.StoredValue[CONFIG_GMBTNEXPLORE];
+
+  //HotKeys
+  Self.HotKey                    := FConfigSTorage.StoredValue[CONFIG_HOTKEY].ToBoolean;
+  Self.WindowHotKey              := FConfigSTorage.StoredValue[CONFIG_WINDOWHOTKEY].ToInteger;
+  Self.GraphicMenuHotKey         := FConfigSTorage.StoredValue[CONFIG_MENUHOTKEY].ToInteger;
+  Self.ClassicMenuHotkey         := FConfigSTorage.StoredValue[CONFIG_CLASSICMENUHOTKEY].ToInteger;
+
+  // Misc
+  Self.ScanFolderAutoExtractName := FConfigSTorage.StoredValue[CONFIG_SCANFOLDERAUTOEXTRACTNAME].ToBoolean;
+  Self.ScanFolderFileTypes.Text  := FConfigSTorage.StoredValue[CONFIG_SCANFOLDERFILETYPES];
+  Self.ScanFolderExcludeNames.Text := FConfigSTorage.StoredValue[CONFIG_SCANFOLDEREXCLUDENAMES];
+
+  Self.AfterUpdateConfig;
 end;
 
 procedure TConfiguration.SetHotKey(const Value: Boolean);
@@ -523,6 +738,29 @@ begin
   Result := False;
   if not FReadOnlyMode then
     Result := FDBManager.SaveData(Config.MainTree, DoBackup);
+end;
+
+procedure TConfiguration.LoadConfig;
+begin
+  //If settings.json is not exists, save default options
+  if not FileExists(ChangeFileExt(UnicodeString(Application.ExeName), '.json')) then
+  begin
+    TASuiteLogger.Info('ASuite Options not found - Saving default configurations', []);
+    FConfigStorage.Save;
+  end;
+
+  TASuiteLogger.Info('Loading ASuite Options', []);
+  FConfigStorage.Restore;
+end;
+
+procedure TConfiguration.SaveConfig;
+begin
+  //If settings is changed, insert it else (if it exists) update it
+  if Config.Changed then
+  begin
+    TASuiteLogger.Info('Saving ASuite Options', []);
+    FConfigStorage.Save;
+  end;
 end;
 
 procedure TConfiguration.SetAlwaysOnTop(value: Boolean);
@@ -710,7 +948,7 @@ begin
   end;
 end;
 
-procedure TConfiguration.SetCache(value: Boolean);
+procedure TConfiguration.SetCache(value: boolean);
 begin
   FCache := value;
   //If disabled, delete all file icon-cache and folders cache
@@ -723,7 +961,6 @@ end;
 procedure TConfiguration.SetChanged(const Value: Boolean);
 begin
   FChanged := Value;
-  TVirtualTreeMethods.Create.RefreshList(FMainTree);
 end;
 
 procedure TConfiguration.SetClassicMenuHotkey(const Value: Cardinal);
@@ -791,7 +1028,7 @@ begin
   UpdateGMTheme;
 end;
 
-procedure TConfiguration.SetStartWithWindows(value: Boolean);
+procedure TConfiguration.SetStartWithWindows(value: boolean);
 begin
   FStartWithWindows := value;
   if FStartWithWindows then

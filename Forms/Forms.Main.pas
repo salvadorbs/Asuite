@@ -431,6 +431,7 @@ procedure TfrmMain.mniScanFolderClick(Sender: TObject);
 begin
   TfrmScanFolder.Execute(Self);
   TVirtualTreeMethods.Create.RefreshList(GetActiveTree);
+  Config.SaveConfig;
 end;
 
 procedure TfrmMain.pcListChange(Sender: TObject);
@@ -588,14 +589,21 @@ end;
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   TASuiteLogger.Enter('FormClose', Self);
+
   //Close all process opened by ASuite
   if Config.AutoCloseProcess then
     CloseProcessOpenByASuite;
+
   Config.ListManager.ExecuteAutorunList(amShutdown);
+
   //Execute actions on ASuite's shutdown (inside vstList)
   Config.MainTree.IterateSubtree(nil, TVirtualTreeMethods.Create.ActionsOnShutdown, nil);
+
   //Hotkey
   Config.ListManager.HotKeyItemList.Clear;
+
+  Config.SaveConfig;
+
   TVirtualTreeMethods.Create.RefreshList(nil);
 end;
 
@@ -631,6 +639,7 @@ begin
     miSaveList1.Enabled := False;
   end;
   //Load Database and get icons (only first level of tree)
+  Config.LoadConfig;
   Config.LoadList;
   Config.ListManager.ExecuteAutorunList(amStartup);
   //Check missed scheduler tasks

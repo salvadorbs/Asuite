@@ -77,6 +77,7 @@ begin
   try
     Result := frmOptions.ShowModal;
 
+    Config.SaveConfig;
     Config.AfterUpdateConfig;
   finally
     FreeAndNil(frmOptions);
