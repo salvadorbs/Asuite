@@ -48,7 +48,10 @@ const
   CONFIG_TVAUTOOPCLCATS = 'mainform/treeview/autoopencategory';
   CONFIG_TVAUTOOPCATSDRAG = 'mainform/treeview/autoopencategory/drag';
   CONFIG_TVDISABLECONFIRMDELETE = 'mainform/treeview/';
-  CONFIG_TVFONT = 'mainform/treeview/font';
+  CONFIG_TVFONTNAME = 'mainform/treeview/font/name';
+  CONFIG_TVFONTSIZE = 'mainform/treeview/font/size';
+  CONFIG_TVFONTCOLOR = 'mainform/treeview/font/color';
+  CONFIG_TVFONTSTYLE = 'mainform/treeview/font/style';
   CONFIG_TVSMALLICONSIZE = 'mainform/treeview/icons/smallsize';
 
   //MRU

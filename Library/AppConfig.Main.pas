@@ -562,7 +562,11 @@ begin
     AJSONConfig.SetValue(CONFIG_TVAUTOOPCLCATS, Self.TVAutoOpClCats);
     AJSONConfig.SetValue(CONFIG_TVAUTOOPCATSDRAG, Self.TVAutoOpCatsDrag);
     AJSONConfig.SetValue(CONFIG_TVDISABLECONFIRMDELETE, Self.TVDisableConfirmDelete);
-    AJSONConfig.SetValue(CONFIG_TVFONT, FontToStr(Self.TVFont));
+    AJSONConfig.SetValue(CONFIG_TVFONTNAME, UnicodeString(Self.TVFont.Name));
+    AJSONConfig.SetValue(CONFIG_TVFONTSIZE, Self.TVFont.Size);
+    AJSONConfig.SetValue(CONFIG_TVFONTCOLOR, ColorToHtml(Self.TVFont.Color));
+    //TODO: separate style in child items
+    AJSONConfig.SetValue(CONFIG_TVFONTSTYLE, UnicodeString(GetEnumName(TypeInfo(TFontStyles), ord(Self.TVFont.Style))));
 
     // MRU
     AJSONConfig.SetValue(CONFIG_MRU, Self.MRU);
@@ -664,7 +668,10 @@ begin
   Self.TVAutoOpCatsDrag          := AJSONConfig.GetValue(CONFIG_TVAUTOOPCATSDRAG, Self.TVAutoOpCatsDrag);
   Self.TVDisableConfirmDelete    := AJSONConfig.GetValue(CONFIG_TVDISABLECONFIRMDELETE, Self.TVDisableConfirmDelete);
   //TODO: load separate keys font
-  StrToFont(AJSONConfig.GetValue(CONFIG_TVFONT, ''), Self.TVFont);
+  Self.TVFont.Name               := AJSONConfig.GetValue(CONFIG_TVFONTNAME, UnicodeString(Self.TVFont.Name));
+  Self.TVFont.Color              := HtmlToColor(AJSONConfig.GetValue(CONFIG_TVFONTCOLOR, ColorToHtml(Self.TVFont.Color)));
+  Self.TVFont.Size               := AJSONConfig.GetValue(CONFIG_TVFONTSIZE, Self.TVFont.Size);
+  Self.TVFont.Style              := TFontStyles({byte}AJSONConfig.GetValue(CONFIG_TVFONTSIZE, 0));
   Self.MainTree.Font.Assign(Self.TVFont);
 
   // MRU
