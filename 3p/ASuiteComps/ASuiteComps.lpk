@@ -12,30 +12,31 @@
       </SearchPaths>
     </CompilerOptions>
     <Version Major="1"/>
-    <Files>
-      <Item>
+    <Files Count="3">
+      <Item1>
         <Filename Value="BCImageTab.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="BCImageTab"/>
-      </Item>
-      <Item>
+      </Item1>
+      <Item2>
         <Filename Value="HotKey.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="HotKey"/>
-      </Item>
-      <Item>
+      </Item2>
+      <Item3>
         <Filename Value="buttonededit.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="ButtonedEdit"/>
-      </Item>
+      </Item3>
     </Files>
-    <RequiredPkgs>
-      <Item>
+    <CompatibilityMode Value="True"/>
+    <RequiredPkgs Count="2">
+      <Item1>
         <PackageName Value="bgracontrols"/>
-      </Item>
-      <Item>
+      </Item1>
+      <Item2>
         <PackageName Value="BGRABitmapPack"/>
-      </Item>
+      </Item2>
     </RequiredPkgs>
     <UsageOptions>
       <UnitPath Value="$(PkgOutDir)"/>
