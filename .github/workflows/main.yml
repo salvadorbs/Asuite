@@ -1,0 +1,72 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the develop branch
+on:
+  pull_request:
+  push:
+    paths-ignore:
+    - "README.md"
+    branches:
+      - master
+      - develop
+      - releases/*
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: windows-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+      
+    - name: Cache
+      uses: actions/cache@v2.1.1
+      env:
+        cache-name: cache-laz
+      with:
+        # A list of files, directories, and wildcard patterns to cache and restore
+        path: ./_temp/lazarus
+        # An explicit key for restoring and saving the cache
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('${{ runner.temp }}/lazarus/lazbuild.exe') }}
+
+    # Runs a single command using the runners shell
+    - name: Install Lazarus
+      if: steps.cache.outputs.cache-hit != 'true'
+      uses: salvadorbs/setup-lazarus@v2.2.2
+      with:
+        lazarus-version: "dist"
+        include-packages: "JPLib, JPPack, MORMot, HashLib, uniqueinstance, VirtualTreeView V5, LCLExtensions, KControls, BGRABitmap, BGRAControls"
+
+    - name: Download a file
+      uses: carlosperate/download-file-action@v1.0.3
+      id: download-poetry
+      with:
+        file-url: 'http://synopse.info/files/sqlite3fpc.7z'
+        file-name: 'sqlite3fpc.7z'
+        location: '${{ runner.temp }}/lazarus/Packages/mormot/'
+    
+    - name: extract-7z-action
+      uses: DuckSoft/extract-7z-action@v1.0
+      with:
+        pathSource: '${{ runner.temp }}/lazarus/Packages/mormot/sqlite3fpc.7z' 
+        pathTarget: '${{ runner.temp }}/lazarus/Packages/mormot/'
+
+    - name: Validate Cache
+      if: steps.cache.outputs.cache-hit == 'true'
+      run: lazbuild --version && echo "::set-output name=success::true" || echo "::set-output name=success::false"
+
+    - name: Build the ASuite Components
+      run: lazbuild --add-package "${{ github.workspace}}/3p/ASuiteComps/ASuiteComps.lpk" --skip-dependencies
+      
+    - name: Build the Lazarus
+      run: lazbuild --build-ide=
+      
+    - name: Build the Main Application
+      run: lazbuild "${{ github.workspace}}/ASuite.lpi" --no-write-project --verbose --verbose-pkgsearch
