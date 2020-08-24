@@ -807,7 +807,7 @@ begin
   //If settings is changed, insert it else (if it exists) update it
   if Config.Changed then
   begin
-    TASuiteLogger.Info('Saving ASuite Options', []);
+    TASuiteLogger.Enter('Saving ASuite Options', Self);
     try
       JSONConfig := TJSONConfig.Create(nil);
       JSONConfig.Formatted := True;

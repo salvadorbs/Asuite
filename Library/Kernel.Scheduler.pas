@@ -33,6 +33,7 @@ type
     FTimer: TTimer;
 
     procedure DoTimer(Sender: TObject);
+    function CompareSchDates(ANodeData: TvCustomRealNodeData; ANow: TDateTime): Boolean;
     function GetSchedulerTime(ANodeData: TvCustomRealNodeData; ANow: TDateTime; ADecDay: Boolean): TDateTime;
   public
     procedure Initialize; override;
@@ -47,6 +48,15 @@ implementation
 
 uses
   AppConfig.Main, Kernel.Enumerations, Kernel.ResourceStrings;
+
+function ResetHourMinute(var ANow: TDateTime): TDateTime;
+var
+  tempDateTime: TDateTime;
+begin
+  tempDateTime := RecodeMinute(ANow, 0);
+  tempDateTime := RecodeSecond(Result, 0);
+  Result := tempDateTime;
+end;
 
 { TScheduler }
 
@@ -94,7 +104,7 @@ begin
     if Assigned(NodeData) then
     begin
       //Compare time and/or date based of scheduler mode and run node
-      if (CompareDateTime(GetSchedulerTime(NodeData, dtNowDateTime, False), dtNowDateTime) = 0) and (NodeData.SchMode <> smDisabled) then
+      if CompareSchDates(NodeData, dtNowDateTime) and (NodeData.SchMode <> smDisabled) then
         NodeData.Execute(True, NodeData.DataType = vtdtCategory, False);
     end;
   end;
@@ -106,20 +116,31 @@ begin
   FTimer.Free;
 end;
 
+function TScheduler.CompareSchDates(ANodeData: TvCustomRealNodeData; ANow: TDateTime): Boolean;
+begin
+  Result := False;
+  if Assigned(ANodeData) then
+  begin
+    case ANodeData.SchMode of
+      smOnce:
+        Result := SameDateTime(ANow, ANodeData.SchDateTime);
+      smHourly:
+        Result := SameTime(ResetHourMinute(ANow), ANodeData.SchDateTime);
+      smDaily:
+        Result := SameTime(ANow, ANodeData.SchDateTime);
+    end;
+  end;
+end;
+
 function TScheduler.GetSchedulerTime(ANodeData: TvCustomRealNodeData; ANow: TDateTime; ADecDay: Boolean): TDateTime;
 begin
   Result := 0;
   if Assigned(ANodeData) then
   begin
     case ANodeData.SchMode of
-      smDisabled: Result := 0;
       smOnce: Result := ANodeData.SchDateTime;
       smHourly:
-      begin
-        //Run software every hour
-        Result := RecodeMinute(ANow, 0);
-        Result := RecodeSecond(Result, 0);
-      end;
+        Result := ResetHourMinute(ANow);
       smDaily:
       begin
         //Run software every day (user choose time, hour and minute)
