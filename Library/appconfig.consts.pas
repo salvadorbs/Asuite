@@ -40,7 +40,10 @@ const
   //MAIN FORM - POSITION AND SIZE
   CONFIG_HOLDSIZE = 'mainform/holdsize';
   CONFIG_ALWAYSONTOP = 'mainform/alwaysontop';
-  //CONFIG_MAINFORMPOSSIZE = '';
+  CONFIG_MAINFORM_LEFT = 'mainform/pos/left';
+  CONFIG_MAINFORM_TOP = 'mainform/pos/top';
+  CONFIG_MAINFORM_WIDTH = 'mainform/pos/width';
+  CONFIG_MAINFORM_HEIGHT = 'mainform/pos/height';
 
   //MAIN FORM - TREEVEW
   CONFIG_TVBACKGROUND = 'mainform/treeview/background';
@@ -51,7 +54,10 @@ const
   CONFIG_TVFONTNAME = 'mainform/treeview/font/name';
   CONFIG_TVFONTSIZE = 'mainform/treeview/font/size';
   CONFIG_TVFONTCOLOR = 'mainform/treeview/font/color';
-  CONFIG_TVFONTSTYLE = 'mainform/treeview/font/style';
+  CONFIG_TVFONTSTYLE_BOLD = 'mainform/treeview/font/style/bold';
+  CONFIG_TVFONTSTYLE_ITALIC = 'mainform/treeview/font/style/italic';
+  CONFIG_TVFONTSTYLE_UNDERLINE = 'mainform/treeview/font/style/underline';
+  CONFIG_TVFONTSTYLE_STRIKEOUT = 'mainform/treeview/font/style/strikeout';
   CONFIG_TVSMALLICONSIZE = 'mainform/treeview/icons/smallsize';
 
   //MRU

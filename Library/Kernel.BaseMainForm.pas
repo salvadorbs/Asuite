@@ -34,6 +34,8 @@ type
    Result: PtrInt;
   End;
 
+  { TBaseMainForm }
+
   TBaseMainForm = class(TForm)
   private
     FSessionEnding : Boolean;
@@ -42,6 +44,7 @@ type
     procedure WMExitSizeMove(var Message: TMessage) ; message WM_EXITSIZEMOVE;
     procedure WMSysCommand(var Message: TWMSysCommand); message WM_SYSCOMMAND;
     procedure WMHotKey(Var Msg : TWMHotKey); message WM_HOTKEY;
+    procedure WMMove(Var Msg : TWMMove); message WM_MOVE;
   protected
     procedure WndProc(var Msg: TMessage); override;
     procedure CreateParams(var Params: TCreateParams); override;
@@ -185,6 +188,13 @@ begin
       end;
     end;
   end;
+end;
+
+procedure TBaseMainForm.WMMove(var Msg: TWMMove);
+begin
+  inherited;
+
+  Config.Changed := True;
 end;
 
 end.

@@ -660,6 +660,7 @@ end;
 procedure TfrmMain.FormResize(Sender: TObject);
 begin
   GetActiveTree.Refresh;
+  Config.Changed := True;
 end;
 
 procedure TfrmMain.FormShow(Sender: TObject);

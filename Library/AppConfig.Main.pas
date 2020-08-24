@@ -549,11 +549,14 @@ begin
     AJSONConfig.SetValue(CONFIG_CUSTOMTITLESTRING, Self.CustomTitleString);
     AJSONConfig.SetValue(CONFIG_HIDETABSEARCH, Self.HideTabSearch);
     AJSONConfig.SetValue(CONFIG_SEARCHASYOUTYPE, Self.SearchAsYouType);
-
-    // Main Form - Position and size
     AJSONConfig.SetValue(CONFIG_HOLDSIZE, Self.HoldSize);
     AJSONConfig.SetValue(CONFIG_ALWAYSONTOP, Self.AlwaysOnTop);
-    //TODO: frmMain Position
+
+    // Main Form - Position and size
+    AJSONConfig.SetValue(CONFIG_MAINFORM_LEFT, frmMain.Left);
+    AJSONConfig.SetValue(CONFIG_MAINFORM_TOP, frmMain.Top);
+    AJSONConfig.SetValue(CONFIG_MAINFORM_WIDTH, frmMain.Width);
+    AJSONConfig.SetValue(CONFIG_MAINFORM_HEIGHT, frmMain.Height);
 
     // Main Form - Treevew
     AJSONConfig.SetValue(CONFIG_TVBACKGROUND, Self.TVBackground);
@@ -563,10 +566,14 @@ begin
     AJSONConfig.SetValue(CONFIG_TVAUTOOPCATSDRAG, Self.TVAutoOpCatsDrag);
     AJSONConfig.SetValue(CONFIG_TVDISABLECONFIRMDELETE, Self.TVDisableConfirmDelete);
     AJSONConfig.SetValue(CONFIG_TVFONTNAME, UnicodeString(Self.TVFont.Name));
+
+    // Main Form - TVFont
     AJSONConfig.SetValue(CONFIG_TVFONTSIZE, Self.TVFont.Size);
     AJSONConfig.SetValue(CONFIG_TVFONTCOLOR, ColorToHtml(Self.TVFont.Color));
-    //TODO: separate style in child items
-    AJSONConfig.SetValue(CONFIG_TVFONTSTYLE, UnicodeString(GetEnumName(TypeInfo(TFontStyles), ord(Self.TVFont.Style))));
+    AJSONConfig.SetValue(CONFIG_TVFONTSTYLE_BOLD, (fsBold in Self.TVFont.Style));
+    AJSONConfig.SetValue(CONFIG_TVFONTSTYLE_ITALIC, (fsItalic in Self.TVFont.Style));
+    AJSONConfig.SetValue(CONFIG_TVFONTSTYLE_UNDERLINE, (fsUnderline in Self.TVFont.Style));
+    AJSONConfig.SetValue(CONFIG_TVFONTSTYLE_STRIKEOUT, (fsStrikeOut in Self.TVFont.Style));
 
     // MRU
     AJSONConfig.SetValue(CONFIG_MRU, Self.MRU);
@@ -637,7 +644,7 @@ end;
 
 procedure TConfiguration.RestoreSettings(AJSONConfig: TJSONConfig);
 var
-  Text: Boolean;
+  nLeft, nTop, nWidth, nHeight: Integer;
 begin
   //Get GMTheme before everything (so ASuite know where icons folder)
   Self.GMTheme := AJSONConfig.GetValue(CONFIG_GMTHEME, Self.GMTheme);
@@ -655,10 +662,15 @@ begin
   Self.CustomTitleString         := AJSONConfig.GetValue(CONFIG_CUSTOMTITLESTRING, Self.CustomTitleString);
   Self.HideTabSearch             := AJSONConfig.GetValue(CONFIG_HIDETABSEARCH, Self.HideTabSearch);
   Self.SearchAsYouType           := AJSONConfig.GetValue(CONFIG_SEARCHASYOUTYPE, Self.SearchAsYouType);
-
-  // Main Form - Position and size
   Self.HoldSize                  := AJSONConfig.GetValue(CONFIG_HOLDSIZE, Self.HoldSize);
   Self.AlwaysOnTop               := AJSONConfig.GetValue(CONFIG_ALWAYSONTOP, Self.AlwaysOnTop);
+
+  // Main Form - Position and size
+  nLeft   := AJSONConfig.GetValue(CONFIG_MAINFORM_LEFT, frmMain.Left);
+  nTop    := AJSONConfig.GetValue(CONFIG_MAINFORM_TOP, frmMain.Top);
+  nWidth  := AJSONConfig.GetValue(CONFIG_MAINFORM_WIDTH, frmMain.Width);
+  nHeight := AJSONConfig.GetValue(CONFIG_MAINFORM_HEIGHT, frmMain.Height);
+  frmMain.SetBounds(nLeft, nTop, nWidth, nHeight);
 
   // Main Form - Treevew
   Self.TVBackground              := AJSONConfig.GetValue(CONFIG_TVBACKGROUND, Self.TVBackground);
@@ -667,11 +679,20 @@ begin
   Self.TVAutoOpClCats            := AJSONConfig.GetValue(CONFIG_TVAUTOOPCLCATS, Self.TVAutoOpClCats);
   Self.TVAutoOpCatsDrag          := AJSONConfig.GetValue(CONFIG_TVAUTOOPCATSDRAG, Self.TVAutoOpCatsDrag);
   Self.TVDisableConfirmDelete    := AJSONConfig.GetValue(CONFIG_TVDISABLECONFIRMDELETE, Self.TVDisableConfirmDelete);
-  //TODO: load separate keys font
+
+  // Main Form - TVFont
   Self.TVFont.Name               := AJSONConfig.GetValue(CONFIG_TVFONTNAME, UnicodeString(Self.TVFont.Name));
   Self.TVFont.Color              := HtmlToColor(AJSONConfig.GetValue(CONFIG_TVFONTCOLOR, ColorToHtml(Self.TVFont.Color)));
   Self.TVFont.Size               := AJSONConfig.GetValue(CONFIG_TVFONTSIZE, Self.TVFont.Size);
   Self.TVFont.Style              := TFontStyles({byte}AJSONConfig.GetValue(CONFIG_TVFONTSIZE, 0));
+  if AJSONConfig.GetValue(CONFIG_TVFONTSTYLE_BOLD, (fsBold in Self.TVFont.Style)) then
+     Self.TVFont.Style := Self.TVFont.Style + [fsBold];
+  if AJSONConfig.GetValue(CONFIG_TVFONTSTYLE_ITALIC, (fsItalic in Self.TVFont.Style)) then
+     Self.TVFont.Style := Self.TVFont.Style + [fsItalic];
+  if AJSONConfig.GetValue(CONFIG_TVFONTSTYLE_UNDERLINE, (fsUnderline in Self.TVFont.Style)) then
+     Self.TVFont.Style := Self.TVFont.Style + [fsUnderline];
+  if AJSONConfig.GetValue(CONFIG_TVFONTSTYLE_STRIKEOUT, (fsStrikeOut in Self.TVFont.Style)) then
+     Self.TVFont.Style := Self.TVFont.Style + [fsStrikeOut];
   Self.MainTree.Font.Assign(Self.TVFont);
 
   // MRU
