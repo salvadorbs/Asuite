@@ -19,12 +19,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Lists.HotKey;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Classes, NodeDataTypes.Custom, Menus, SysUtils,
-  Windows, Kernel.Enumerations, NodeDataTypes.Base,
-  DateUtils, Dialogs, UITypes, Lists.Base;
+  NodeDataTypes.Custom, SysUtils,
+  LCLIntf, LCLType, Kernel.Enumerations,
+  Lists.Base;
 
 type
   THotkeyItemsList = class(TBaseItemsList)

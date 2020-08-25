@@ -19,16 +19,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Options.Advanced;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Frame.BaseEntity, VirtualTrees,
-  Vcl.ComCtrls, DKLang, Vcl.StdCtrls, Vcl.Samples.Spin, Vcl.ExtCtrls;
+  LCLIntf, SysUtils, Variants, Controls, Dialogs, Frame.BaseEntity, VirtualTrees,
+  StdCtrls, ExtCtrls, Spin, DefaultTranslator;
 
 type
   TfrmAdvancedOptionsPage = class(TfrmBaseEntityPage)
-    DKLanguageController1: TDKLanguageController;
+    
     pnlLeft: TPanel;
     gbMFU: TGroupBox;
     lbMaxMFU: TLabel;
@@ -81,10 +82,11 @@ var
 implementation
 
 uses
-  AppConfig.Main, Utility.FileFolder, Utility.Misc, Kernel.Consts, VirtualTree.Methods,
-  NodeDataTypes.Files, NodeDataTypes.Custom, Kernel.Enumerations;
+  AppConfig.Main, Utility.FileFolder, Kernel.Consts, VirtualTree.Methods,
+  NodeDataTypes.Files, NodeDataTypes.Custom, Kernel.Enumerations, Kernel.ResourceStrings,
+  Utility.Misc;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmAdvancedOptionsPage }
 
@@ -119,7 +121,7 @@ begin
       cbClearCache.Checked := False;
     end;
   finally
-    ShowMessageEx(DKLangConstW('msgOperationCompleted'));
+    ShowMessageEx(msgOperationCompleted);
     //Save list
     TVirtualTreeMethods.Create.RefreshList(nil);
   end;
@@ -178,7 +180,7 @@ end;
 
 function TfrmAdvancedOptionsPage.GetTitle: string;
 begin
-  Result := DKLangConstW('msgAdvanced');
+  Result := msgAdvanced;
 end;
 
 function TfrmAdvancedOptionsPage.InternalLoadData: Boolean;

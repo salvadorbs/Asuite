@@ -1,0 +1,152 @@
+inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
+  Height = 359
+  ClientHeight = 359
+  DesignLeft = 941
+  DesignTop = 292
+  object gbStartup: TGroupBox[0]
+    Left = 4
+    Height = 92
+    Top = 4
+    Width = 437
+    Align = alTop
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    Caption = 'Startup'
+    ClientHeight = 72
+    ClientWidth = 433
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 0
+    object cbWindowsStartup: TCheckBox
+      Left = 6
+      Height = 19
+      Top = 0
+      Width = 230
+      Caption = 'Start ASuite on Windows system startup'
+      ParentFont = False
+      TabOrder = 0
+    end
+    object cbShowPanelStartup: TCheckBox
+      Left = 6
+      Height = 19
+      Top = 34
+      Width = 188
+      Caption = 'Show window on ASuite startup'
+      ParentFont = False
+      TabOrder = 2
+    end
+    object cbShowMenuStartup: TCheckBox
+      Left = 6
+      Height = 19
+      Top = 51
+      Width = 220
+      Caption = 'Show graphic menu on ASuite startup'
+      ParentFont = False
+      TabOrder = 3
+    end
+    object chkMissedSchedulerTask: TCheckBox
+      Left = 6
+      Height = 19
+      Top = 17
+      Width = 261
+      Caption = 'Check missed scheduler task at ASuite startup'
+      ParentFont = False
+      TabOrder = 1
+    end
+  end
+  object grpLanguage: TGroupBox[1]
+    Left = 3
+    Height = 56
+    Top = 224
+    Width = 174
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    Caption = 'Language'
+    ClientHeight = 36
+    ClientWidth = 170
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 2
+    object cxLanguage: TComboBox
+      Left = 6
+      Height = 23
+      Top = 0
+      Width = 158
+      ItemHeight = 15
+      ParentFont = False
+      Style = csDropDownList
+      TabOrder = 0
+    end
+  end
+  object gbExecution: TGroupBox[2]
+    Left = 4
+    Height = 124
+    Top = 100
+    Width = 437
+    Align = alTop
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    Caption = 'Execution'
+    ClientHeight = 104
+    ClientWidth = 433
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 1
+    object lbActionOnExe: TLabel
+      Left = 6
+      Height = 15
+      Top = 35
+      Width = 71
+      Caption = 'On execution'
+      Color = clBtnFace
+      ParentColor = False
+      ParentFont = False
+      Transparent = False
+    end
+    object cbRunSingleClick: TCheckBox
+      Left = 6
+      Height = 19
+      Top = 0
+      Width = 236
+      Caption = 'Execute with single click in main window'
+      ParentFont = False
+      TabOrder = 0
+    end
+    object cxActionOnExe: TComboBox
+      Left = 6
+      Height = 23
+      Top = 51
+      Width = 169
+      ItemHeight = 15
+      Items.Strings = (
+        'Just run file'
+        'Run and hide ASuite'
+        'Run and close ASuite'
+      )
+      ParentFont = False
+      Style = csDropDownList
+      TabOrder = 2
+    end
+    object chkConfirmMessageCat: TCheckBox
+      Left = 6
+      Height = 19
+      Top = 18
+      Width = 214
+      Caption = 'Ask to confirm before run a category'
+      ParentFont = False
+      TabOrder = 1
+    end
+    object chkAutoCloseProcess: TCheckBox
+      Left = 6
+      Height = 19
+      Top = 78
+      Width = 321
+      Caption = 'Close all process opened by ASuite at launcher shutdown'
+      ParentFont = False
+      TabOrder = 3
+    end
+  end
+end

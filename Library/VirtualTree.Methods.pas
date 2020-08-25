@@ -19,14 +19,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit VirtualTree.Methods;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Windows, SysUtils, Classes, Graphics, VirtualTrees, ActiveX, UITypes, DKLang,
+  LCLIntf, LCLType, SysUtils, Classes, Graphics, VirtualTrees, UITypes,
   Kernel.Singleton, Kernel.Enumerations, NodeDataTypes.Base, Kernel.Types, Lists.Base,
-  SynLog, Vcl.Themes;
+  SynLog, Forms.UILogin;
 
 type
+  //TODO: Transform in a normal class with class methods
   TVirtualTreeMethods = class(TSingleton)
   private
   public
@@ -87,9 +90,9 @@ implementation
 
 uses
   Utility.System, DataModules.Icons, AppConfig.Main, NodeDataTypes.Files,
-  Utility.FileFolder, Forms.PropertySeparator, mORMotUILogin, Utility.Misc,
+  Utility.FileFolder, Forms.PropertySeparator, Kernel.ResourceStrings,
   NodeDataTypes.Category, NodeDataTypes.Separator, Forms.PropertyItem, Icons.Thread,
-  NodeDataTypes.Custom, Kernel.Consts, Icons.Node, Kernel.Logger;
+  NodeDataTypes.Custom, Kernel.Consts, Icons.Node, Kernel.Logger, Utility.Misc;
 
 { TVirtualTreeMethods }
 
@@ -107,7 +110,7 @@ begin
     ChildNode  := AddChildNodeEx(ASender, AParentNode, amInsertAfter, AType);
     //Set ChildNode's pNode and name (temporary)
     NodeData       := GetNodeItemData(ChildNode, ASender);
-    NodeData.Name  := DKLangConstW('msgNoName') + IntToStr(ASender.TotalCount);
+    NodeData.Name  := msgNoName + IntToStr(ASender.TotalCount + 1);
     //If AType is a vtdtFolder, asuite must ask to user the folder
     if AType = vtdtFolder then
     begin
@@ -173,13 +176,18 @@ procedure TVirtualTreeMethods.AddNodeByPathFile(const ASender: TBaseVirtualTree;
 var
   NodeData: TvFileNodeData;
   Node: PVirtualNode;
+  sName: String;
 begin
   TASuiteLogger.Info('Add node by File Path (%s)', [QuotedStr(APathFile)]);
-
   Node := AddChildNodeEx(ASender, AParentNode, AAttachMode, vtdtFile);
   NodeData := TvFileNodeData(GetNodeItemData(Node, ASender));
+
   //Set some node record's variables
-  NodeData.Name := ChangeFileExt(ExtractFileName(APathFile), '');
+  sName := ChangeFileExt(ExtractFileName(APathFile), '');
+  if sName = '' then
+    sName := ExtractFileDrive(APathFile);
+  NodeData.Name := sName;
+
   if LowerCase(ExtractFileExt(APathFile)) = EXT_LNK then
   begin
     //Shortcut
@@ -297,13 +305,11 @@ begin
       //Execute as user
       rmAsUser:
         begin
-          if TLoginForm.Login(DKLangConstW('msgRunAsTitle'), DKLangConstW('msgInsertWinUserInfo'), UserData.UserName, UserData.Password, True, '') then
-          begin
-            if UserData.UserName <> '' then
-              NodeData.ExecuteAsUser(True, NodeData.DataType = vtdtCategory, UserData)
-            else
-              ShowMessageEx(DKLangConstW('msgErrEmptyUserName'), true);
-          end;
+          UserData := TfrmUILogin.Execute(ASender, msgRunAsTitle);
+          if UserData.UserName <> '' then
+            NodeData.ExecuteAsUser(True, NodeData.DataType = vtdtCategory, UserData)
+          else
+            ShowMessageEx(msgErrEmptyUserName, true);
         end;
       //Execute as Admin
       rmAsAdmin: NodeData.ExecuteAsAdmin(True, NodeData.DataType = vtdtCategory);
@@ -358,6 +364,8 @@ function TVirtualTreeMethods.GetNodeDataEx(const ANode: PVirtualNode;
 var
   ListNode: PVirtualNode;
 begin
+  Assert(Assigned(Config));
+
   //Check if ATree is MainTree (frmMain.vstList), to get nodedata from the right Tree
   Result := nil;
   if (ATree <> Config.MainTree) and (ATree <> Config.ImportTree) then
@@ -385,7 +393,7 @@ var
 begin
   Result := nil;
   BaseData := GetNodeDataEx(ANode, ATree);
-  if Assigned(BaseData) then
+  if Assigned(BaseData) and Assigned(BaseData.Data) then
     Result := BaseData.Data;
 end;
 
@@ -591,7 +599,7 @@ procedure TVirtualTreeMethods.UpdateItemColor(const ASender: TBaseVirtualTree);
 begin
   //MainTree's color
   if not(Config.TVBackground) and ((Config.TVFont.Color = clBlack) or (Config.TVFont.Color = clWindowText)) then
-    ASender.Font.Color := TStyleManager.ActiveStyle.GetSystemColor(clWindowText);
+    ASender.Font.Color := clWindowText;
 end;
 
 procedure TVirtualTreeMethods.UpdateListItemCount(Sender: TBaseVirtualTree;

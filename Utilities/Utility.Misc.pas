@@ -19,11 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Utility.Misc;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Windows, SysUtils, Classes, Graphics, Forms, Dialogs, ComCtrls, Clipbrd,
-  Kernel.Consts, StdCtrls, XMLIntf, System.UITypes, DKLang, Menus;
+  LCLIntf, LCLType, SysUtils, Classes, Graphics, Forms, Dialogs, ComCtrls, Clipbrd,
+  Kernel.Consts, StdCtrls, {XMLIntf,} UITypes, Menus;
 
 { Forms }
 function  IsFormOpen(const FormName : string): Boolean;
@@ -57,7 +59,8 @@ function  GetHotKeyMod(AShortcut: TShortcut) : Integer;
 implementation
 
 uses
-  Registry, PJVersionInfo, AppConfig.Main, Kernel.Logger, HotkeyManager;
+  PJVersionInfo, AppConfig.Main, Kernel.Logger, Utility.Hotkey, LCLProc,
+  Windows, Kernel.ResourceStrings;
 
 function IsFormOpen(const FormName : string): Boolean;
 var
@@ -96,7 +99,7 @@ begin
   // Check if inserted name is empty, then
   if (Trim(Edit.Text) = '') then
   begin
-    ShowMessageEx(DKLangConstW('msgErrEmptyName'),true);
+    ShowMessageEx(msgErrEmptyName,true);
     Edit.Color := clYellow;
     Result := False;
   end;
@@ -108,7 +111,7 @@ var
 begin
   Result := 0;
 
-  //Convert THotkey to Cardinal (HotkeyManager)
+  //Convert THotkey to Cardinal
   if AOldValue <> 0 then
   begin
     strHotkey := ShortCutToText(AOldValue);
@@ -148,8 +151,8 @@ begin
                                        VersionInfo.FileVersionNumber.V3,
                                        VersionInfo.FileVersionNumber.V4]);
     end;
-    if VERSION_PRERELEASE <> '' then
-      Result := Result + ' ' + VERSION_PRERELEASE;
+
+    Result := Result + ' ' + VERSION_PRERELEASE;
   finally
     VersionInfo.Free;
   end;
@@ -166,7 +169,7 @@ begin
   for n := 0 to Clipboard.FormatCount - 1 do
   begin
     fmt := Clipboard.Formats[n];
-    GetClipboardFormatName(fmt, buf, Pred(SizeOf(buf)));
+    GetClipboardFormatNameW(fmt, buf, Pred(SizeOf(buf)));
     if fmt = format then
     begin
       Result := True;
@@ -201,8 +204,8 @@ begin
   if (Result[1] <> QuoteChar) then Exit;     //Text is not quoted
   if (Result[Len] <> QuoteChar) then Exit;   //Text is not quoted
 
-  System.Delete(Result, Len, 1);
-  System.Delete(Result, 1, 1);
+  Delete(Result, Len, 1);
+  Delete(Result, 1, 1);
 
   Result := StringReplace(Result, QuoteChar + QuoteChar, QuoteChar, [rfReplaceAll]);
 end;

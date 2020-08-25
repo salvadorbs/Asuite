@@ -19,11 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Icons.Node;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
   SysUtils, Classes, Icons.Base, NodeDataTypes.Base, Kernel.Enumerations,
-  NodeDataTypes.Custom, Graphics, Controls, KIcon, CommCtrl, Windows, System.IOUtils;
+  NodeDataTypes.Custom, Graphics, Controls, KIcon, CommCtrl, LCLIntf, LCLType;
 
 type
   TNodeIcon = class(TBaseIcon)
@@ -53,7 +55,7 @@ implementation
 
 uses
   Utility.System, AppConfig.Main, NodeDataTypes.Files, Kernel.Consts,
-  Utility.FileFolder, DataModules.Icons;
+  Utility.FileFolder, DataModules.Icons, Windows;
 
 { TNodeIcon }
 
@@ -75,7 +77,7 @@ begin
   try
     //Bug: TBitmap doesn't support alpha format
     //Workaround: Get HIcon from ImageList and load it in a TKIcon
-    hIcon := ImageList_GetIcon(AImageList.Handle, AImageIndex, ILD_NORMAL);
+    hIcon := ImageList_GetIcon(AImageList.ResolutionByIndex[0].Reference.Handle, AImageIndex, ILD_NORMAL);
     if hIcon <> 0 then
     begin
       KIcon.LoadFromHandle(hIcon);
@@ -107,7 +109,7 @@ begin
   if (Config.Cache) and (Config.ASuiteState <> lsImporting) then
   begin
     //Check CRC, if it fails reset cache icon
-    if (CacheIconCRC = GetFileCRC32(PathCacheIcon)) then
+    if (FileExists(PathCacheIcon)) and (CacheIconCRC = GetFileCRC32(PathCacheIcon)) then
       sTempPath := PathCacheIcon
     else
       ResetCacheIcon;
@@ -140,6 +142,9 @@ end;
 function TNodeIcon.LoadIcon: Integer;
 begin
   Result := -1;
+  if FNodeData.DataType = vtdtSeparator then
+    Exit;
+
   //Check file path and if it isn't found, get fileicon_error and exit
   if FNodeData.DataType = vtdtFile then
   begin
@@ -167,7 +172,8 @@ begin
   //Delete cache icon and reset CRC
   ResetCacheIcon;
   //Force MainTree repaint node
-  Config.MainTree.InvalidateNode(FNodeData.PNode);
+  if Assigned(FNodeData.PNode) then
+    Config.MainTree.InvalidateNode(FNodeData.PNode);
 end;
 
 procedure TNodeIcon.SaveCacheIcon(const APath: string;

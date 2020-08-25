@@ -1,0 +1,62 @@
+object frmPropertySeparator: TfrmPropertySeparator
+  Left = -729
+  Height = 103
+  Top = 385
+  Width = 284
+  BorderStyle = bsDialog
+  Caption = 'Properties'
+  ClientHeight = 103
+  ClientWidth = 284
+  Color = clBtnFace
+  Position = poMainFormCenter
+  LCLVersion = '2.1.0.0'
+  object btnCancel: TButton
+    Left = 200
+    Height = 25
+    Top = 71
+    Width = 73
+    Caption = 'Cancel'
+    ModalResult = 2
+    ParentFont = False
+    TabOrder = 2
+  end
+  object btnOk: TButton
+    Left = 119
+    Height = 25
+    Top = 71
+    Width = 75
+    Caption = 'Ok'
+    Default = True
+    ModalResult = 1
+    ParentFont = False
+    TabOrder = 1
+  end
+  object Panel1: TPanel
+    Left = 8
+    Height = 57
+    Top = 8
+    Width = 265
+    ClientHeight = 57
+    ClientWidth = 265
+    ParentFont = False
+    TabOrder = 0
+    object lbName: TLabel
+      Left = 6
+      Height = 13
+      Top = 6
+      Width = 41
+      AutoSize = False
+      Caption = 'Name'
+      ParentColor = False
+      ParentFont = False
+    end
+    object edtName: TEdit
+      Left = 6
+      Height = 23
+      Top = 22
+      Width = 249
+      ParentFont = False
+      TabOrder = 0
+    end
+  end
+end

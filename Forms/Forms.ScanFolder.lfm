@@ -1,0 +1,221 @@
+object frmScanFolder: TfrmScanFolder
+  Left = -1011
+  Height = 256
+  Top = 378
+  Width = 579
+  BorderStyle = bsDialog
+  Caption = 'Scan folder'
+  ClientHeight = 256
+  ClientWidth = 579
+  Color = clBtnFace
+  KeyPreview = True
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  OnKeyPress = FormKeyPress
+  Position = poMainFormCenter
+  LCLVersion = '2.1.0.0'
+  object btnScan: TButton
+    Left = 415
+    Height = 25
+    Top = 223
+    Width = 75
+    Anchors = [akRight, akBottom]
+    Caption = 'Scan'
+    Default = True
+    OnClick = btnScanClick
+    ParentFont = False
+    TabOrder = 2
+  end
+  object btnCancel: TButton
+    Left = 496
+    Height = 25
+    Top = 223
+    Width = 75
+    Anchors = [akRight, akBottom]
+    Caption = 'Cancel'
+    OnClick = btnCancelClick
+    ParentFont = False
+    TabOrder = 3
+  end
+  object pnlFilters: TPanel
+    Left = 207
+    Height = 210
+    Top = 8
+    Width = 364
+    Anchors = [akTop, akRight, akBottom]
+    ClientHeight = 210
+    ClientWidth = 364
+    ParentFont = False
+    TabOrder = 1
+    object grpFileTypes: TGroupBox
+      Left = 6
+      Height = 114
+      Top = 61
+      Width = 169
+      Caption = 'File Types'
+      ClientHeight = 94
+      ClientWidth = 165
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 1
+      object btnTypesDelete: TButton
+        Left = 101
+        Height = 17
+        Top = 58
+        Width = 58
+        Caption = 'Delete'
+        Enabled = False
+        OnClick = btnTypesDeleteClick
+        ParentFont = False
+        TabOrder = 3
+      end
+      object btnTypesAdd: TButton
+        Left = 101
+        Height = 17
+        Top = 35
+        Width = 58
+        Caption = 'Add'
+        Enabled = False
+        OnClick = btnTypesAddClick
+        ParentFont = False
+        TabOrder = 2
+      end
+      object edtTypes: TEdit
+        Left = 101
+        Height = 23
+        Top = 8
+        Width = 58
+        OnChange = edtTypesChange
+        ParentFont = False
+        TabOrder = 1
+      end
+      object vstTypes: TVirtualStringTree
+        Left = 7
+        Height = 80
+        Top = 8
+        Width = 88
+        Header.AutoSizeIndex = 0
+        Header.Columns = <>
+        Header.MainColumn = -1
+        Images = ilExtIcons
+        ParentFont = False
+        TabOrder = 0
+        TreeOptions.PaintOptions = [toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
+        TreeOptions.SelectionOptions = [toFullRowSelect]
+        OnAddToSelection = vstTypesAddToSelection
+        OnFreeNode = vstFreeNode
+        OnGetText = vstGetText
+        OnGetImageIndex = vstGetImageIndex
+        OnGetNodeDataSize = vstGetNodeDataSize
+        OnRemoveFromSelection = vstTypesRemoveFromSelection
+      end
+    end
+    object grpExclude: TGroupBox
+      Left = 181
+      Height = 114
+      Top = 61
+      Width = 169
+      Caption = 'Exclude files'
+      ClientHeight = 94
+      ClientWidth = 165
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 2
+      object edtExclude: TEdit
+        Left = 101
+        Height = 23
+        Top = 8
+        Width = 58
+        OnChange = edtExcludeChange
+        ParentFont = False
+        TabOrder = 1
+      end
+      object btnExcludeAdd: TButton
+        Left = 101
+        Height = 17
+        Top = 35
+        Width = 58
+        Caption = 'Add'
+        Enabled = False
+        OnClick = btnExcludeAddClick
+        ParentFont = False
+        TabOrder = 2
+      end
+      object btnExcludeDelete: TButton
+        Left = 101
+        Height = 17
+        Top = 58
+        Width = 58
+        Caption = 'Delete'
+        Enabled = False
+        OnClick = btnExcludeDeleteClick
+        ParentFont = False
+        TabOrder = 3
+      end
+      object vstExclude: TVirtualStringTree
+        Left = 7
+        Height = 80
+        Top = 8
+        Width = 88
+        Header.AutoSizeIndex = 0
+        Header.Columns = <>
+        Header.MainColumn = -1
+        ParentFont = False
+        TabOrder = 0
+        TreeOptions.PaintOptions = [toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
+        TreeOptions.SelectionOptions = [toFullRowSelect]
+        OnAddToSelection = vstExcludeAddToSelection
+        OnFreeNode = vstFreeNode
+        OnGetText = vstGetText
+        OnGetNodeDataSize = vstGetNodeDataSize
+        OnRemoveFromSelection = vstExcludeRemoveFromSelection
+      end
+    end
+    object grpGeneralSettings: TGroupBox
+      Left = 6
+      Height = 50
+      Top = 5
+      Width = 345
+      Caption = 'General settings'
+      ClientHeight = 30
+      ClientWidth = 341
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
+      object chkExtractName: TCheckBox
+        Left = 7
+        Height = 19
+        Top = 4
+        Width = 321
+        Caption = 'Extract name automatically from executables (only *.exe)'
+        ParentFont = False
+        TabOrder = 0
+      end
+    end
+    object pbScan: TProgressBar
+      Left = 6
+      Height = 18
+      Top = 181
+      Width = 345
+      ParentFont = False
+      Smooth = True
+      TabOrder = 3
+    end
+  end
+  object vstShell: TShellTreeView
+    Left = 8
+    Height = 210
+    Top = 8
+    Width = 193
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    FileSortType = fstAlphabet
+    ParentFont = False
+    TabOrder = 0
+    OnGetImageIndex = vstShellGetImageIndex
+    ObjectTypes = [otFolders]
+  end
+  object ilExtIcons: TImageList
+    Left = 328
+    Top = 224
+  end
+end

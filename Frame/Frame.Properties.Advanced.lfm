@@ -1,0 +1,195 @@
+inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
+  Width = 359
+  ClientWidth = 359
+  DesignLeft = -806
+  DesignTop = 256
+  object pnlTop: TPanel[0]
+    Left = 0
+    Height = 112
+    Top = 0
+    Width = 359
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 112
+    ClientWidth = 359
+    TabOrder = 0
+    object grpScheduler: TGroupBox
+      Left = 4
+      Height = 108
+      Top = 4
+      Width = 156
+      Align = alLeft
+      BorderSpacing.Left = 4
+      BorderSpacing.Top = 4
+      BorderSpacing.Right = 4
+      Caption = 'Scheduler'
+      ClientHeight = 88
+      ClientWidth = 152
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
+      object cxScheduler: TComboBox
+        Left = 6
+        Height = 23
+        Top = 0
+        Width = 138
+        ItemHeight = 15
+        Items.Strings = (
+          'Disabled'
+          'Once'
+          'Hourly'
+          'Daily'
+        )
+        OnChange = cxSchedulerChange
+        ParentFont = False
+        Style = csDropDownList
+        TabOrder = 0
+      end
+      object dtpSchDate: TDateTimePicker
+        Left = 6
+        Height = 23
+        Top = 27
+        Width = 83
+        CenturyFrom = 1941
+        MaxDate = 2958465
+        MinDate = -53780
+        ParentFont = False
+        TabOrder = 1
+        TrailingSeparator = False
+        LeadingZeros = True
+        Kind = dtkDate
+        TimeFormat = tf24
+        TimeDisplay = tdHMS
+        DateMode = dmComboBox
+        Date = 39092
+        Time = 0.942071932870022
+        UseDefaultSeparators = True
+        HideDateTimeParts = []
+        MonthNames = 'Long'
+      end
+      object dtpSchTime: TDateTimePicker
+        Left = 6
+        Height = 23
+        Top = 54
+        Width = 50
+        CenturyFrom = 1941
+        MaxDate = 2958465
+        MinDate = -53780
+        ParentFont = False
+        TabOrder = 2
+        TrailingSeparator = False
+        LeadingZeros = True
+        Kind = dtkTime
+        TimeFormat = tf24
+        TimeDisplay = tdHM
+        DateMode = dmUpDown
+        Date = 39092
+        Time = 0.942361111112405
+        UseDefaultSeparators = True
+        HideDateTimeParts = []
+        MonthNames = 'Long'
+      end
+    end
+    object grpHotkey: TGroupBox
+      Left = 164
+      Height = 108
+      Top = 4
+      Width = 191
+      Align = alClient
+      BorderSpacing.Top = 4
+      BorderSpacing.Right = 4
+      Caption = 'Hotkey'
+      ClientHeight = 88
+      ClientWidth = 187
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 1
+      object cbHotKey: TCheckBox
+        Left = 6
+        Height = 19
+        Top = 0
+        Width = 92
+        Caption = 'Active hotkey'
+        OnClick = cbHotKeyClick
+        ParentFont = False
+        TabOrder = 0
+      end
+      object edtHotkey: TButtonedEdit
+        Left = 6
+        Height = 21
+        Top = 27
+        Width = 178
+        CharCase = ecUppercase
+        ParentFont = False
+        ReadOnly = True
+        TabOrder = 1
+        OnChange = edtHotkeyChange
+        OnClick = edtHotkeyClick
+        OnRightButtonClick = edtHotkeyRightButtonClick
+      end
+    end
+  end
+  object pnlBottom: TPanel[1]
+    Left = 0
+    Height = 116
+    Top = 112
+    Width = 359
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 116
+    ClientWidth = 359
+    TabOrder = 1
+    object grpMenu: TGroupBox
+      Left = 4
+      Height = 84
+      Top = 4
+      Width = 351
+      Align = alTop
+      BorderSpacing.Left = 4
+      BorderSpacing.Top = 4
+      BorderSpacing.Right = 4
+      Caption = 'Menu'
+      ClientHeight = 64
+      ClientWidth = 347
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
+      object cbHideSoftware: TCheckBox
+        Left = 6
+        Height = 19
+        Top = 0
+        Width = 178
+        Caption = 'Hide this software from menu'
+        ParentFont = False
+        TabOrder = 0
+      end
+      object cbDontInsertMRU: TCheckBox
+        Left = 6
+        Height = 19
+        Top = 19
+        Width = 242
+        Caption = 'Don''t insert this software in recents (MRU)'
+        ParentFont = False
+        TabOrder = 1
+      end
+      object cbDontInsertMFU: TCheckBox
+        Left = 6
+        Height = 19
+        Top = 38
+        Width = 192
+        Caption = 'Don''t insert this software in MFU'
+        ParentFont = False
+        TabOrder = 2
+      end
+    end
+    object cbShortcutDesktop: TCheckBox
+      Left = 12
+      Height = 19
+      Top = 88
+      Width = 288
+      Caption = 'Create shortcut on desktop when ASuite is running'
+      ParentFont = False
+      TabOrder = 1
+    end
+  end
+end

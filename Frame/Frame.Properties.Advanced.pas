@@ -19,28 +19,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Properties.Advanced;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Frame.Properties.Base, Vcl.ComCtrls,
-  Vcl.StdCtrls, DKLang, DateUtils, Vcl.ExtCtrls, Vcl.Themes;
+  LCLIntf, SysUtils, Classes, Controls, Dialogs, Frame.Properties.Base,
+  ButtonedEdit, StdCtrls, DateUtils, DateTimePicker, DefaultTranslator,
+  ExtCtrls;
 
 type
+
+  { TfrmAdvancedPropertyPage }
+
   TfrmAdvancedPropertyPage = class(TfrmBasePropertyPage)
     cbShortcutDesktop: TCheckBox;
+    edtHotkey: TButtonedEdit;
     grpScheduler: TGroupBox;
     cxScheduler: TComboBox;
     dtpSchDate: TDateTimePicker;
     dtpSchTime: TDateTimePicker;
     grpHotkey: TGroupBox;
-    GroupBox1: TGroupBox;
+    grpMenu: TGroupBox;
     cbHideSoftware: TCheckBox;
     cbDontInsertMRU: TCheckBox;
     cbDontInsertMFU: TCheckBox;
-    DKLanguageController1: TDKLanguageController;
+    
     cbHotKey: TCheckBox;
-    edtHotkey: TButtonedEdit;
+    pnlTop: TPanel;
+    pnlBottom: TPanel;
     procedure cxSchedulerChange(Sender: TObject);
     procedure cbHotKeyClick(Sender: TObject);
     procedure edtHotkeyRightButtonClick(Sender: TObject);
@@ -64,12 +71,11 @@ implementation
 
 uses
   Kernel.Enumerations, NodeDataTypes.Files, Forms.ShortcutGrabber, AppConfig.Main,
-  DataModules.Icons, HotKeyManager;
+  DataModules.Icons, Utility.Hotkey, Kernel.ResourceStrings;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmAdvancedPropertyPage }
-
 
 procedure TfrmAdvancedPropertyPage.cbHotKeyClick(Sender: TObject);
 begin
@@ -90,7 +96,7 @@ end;
 
 function TfrmAdvancedPropertyPage.GetTitle: string;
 begin
-  Result := DKLangConstW('msgAdvanced');
+  Result := msgAdvanced;
 end;
 
 function TfrmAdvancedPropertyPage.InternalLoadData: Boolean;
@@ -105,7 +111,7 @@ begin
     cxSchedulerChange(Self);
     //Hotkey
     cbHotKey.Checked       := CurrentNodeData.ActiveHotkey;
-    edtHotkey.Text         := HotKeyToText(CurrentNodeData.Hotkey, False);
+    edtHotkey.Text         := Utility.Hotkey.HotKeyToText(CurrentNodeData.Hotkey, False);
     cbHotKeyClick(Self);
     //Specific file settings
     cbHideSoftware.Checked := CurrentNodeData.HideFromMenu;
@@ -124,13 +130,12 @@ begin
       end;
   end;
 
-  edtHotkey.Images := dmImages.ilSmallIcons;
+  edtHotkey.RightButton.Images := dmImages.ilSmallIcons;
+
   edtHotkey.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel');
 
   //Hide caret in hotkey control
-  HideCaret(edtHotkey.Handle);
-
-  edtHotkey.Color := StyleServices.GetSystemColor(edtHotkey.Color);
+  //HideCaret(edtHotkey.Handle);
 end;
 
 function TfrmAdvancedPropertyPage.InternalSaveData: Boolean;
@@ -143,7 +148,7 @@ begin
     CurrentNodeData.SchDateTime  := Int(dtpSchDate.Date) + Frac(dtpSchTime.Time);
     CurrentNodeData.SchDateTime  := RecodeSecond(CurrentNodeData.SchDateTime, 0);
     //Hotkey
-    CurrentNodeData.Hotkey       := TextToHotKey(edtHotkey.Text, False);
+    CurrentNodeData.Hotkey       := Utility.Hotkey.TextToHotKey(edtHotkey.Text, False);
     CurrentNodeData.ActiveHotkey := cbHotKey.Checked;
     //Specific file settings
     CurrentNodeData.HideFromMenu := cbHideSoftware.Checked;

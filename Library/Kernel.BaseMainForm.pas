@@ -19,12 +19,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Kernel.BaseMainForm;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Forms, Controls, Classes, Dialogs, ActnList, Graphics, Windows, Messages;
+  Forms, Controls, Classes, Dialogs, Graphics, LCLIntf, LCLType, LMessages, Messages;
 
 type
+  TWMHotKey = Packed Record
+   MSG   : Cardinal;
+   HotKey: PtrInt;
+   Unused: PtrInt;
+   Result: PtrInt;
+  End;
+
+  { TBaseMainForm }
+
   TBaseMainForm = class(TForm)
   private
     FSessionEnding : Boolean;
@@ -33,6 +44,7 @@ type
     procedure WMExitSizeMove(var Message: TMessage) ; message WM_EXITSIZEMOVE;
     procedure WMSysCommand(var Message: TWMSysCommand); message WM_SYSCOMMAND;
     procedure WMHotKey(Var Msg : TWMHotKey); message WM_HOTKEY;
+    procedure WMMove(Var Msg : TWMMove); message WM_MOVE;
   protected
     procedure WndProc(var Msg: TMessage); override;
     procedure CreateParams(var Params: TCreateParams); override;
@@ -50,19 +62,17 @@ implementation
 
 uses
   AppConfig.Main, NodeDataTypes.Custom, Kernel.Consts, DataModules.TrayMenu,
-  Kernel.Enumerations, USingleInst, VirtualTree.Methods;
+  Kernel.Enumerations, VirtualTree.Methods;
 
 constructor TBaseMainForm.Create(AOwner: TComponent);
 begin
   inherited;
   Config.ASuiteState := lsNormal;
-  UseLatestCommonDialogs := False;
 end;
 
 procedure TBaseMainForm.CreateParams(var Params: TCreateParams);
 begin
   inherited;
-  SingleInst.CreateParams(Params);
 end;
 
 destructor TBaseMainForm.Destroy;
@@ -117,8 +127,7 @@ end;
 
 procedure TBaseMainForm.WndProc(var Msg: TMessage);
 begin
-  if not SingleInst.HandleMessages(Self.Handle, Msg) then
-    inherited;
+  inherited;
 end;
 
 procedure TBaseMainForm.WMEndSession(var Msg : TWMEndSession);
@@ -179,6 +188,13 @@ begin
       end;
     end;
   end;
+end;
+
+procedure TBaseMainForm.WMMove(var Msg: TWMMove);
+begin
+  inherited;
+
+  Config.Changed := True;
 end;
 
 end.

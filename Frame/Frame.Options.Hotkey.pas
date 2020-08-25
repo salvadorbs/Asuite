@@ -19,16 +19,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Options.Hotkey;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DKLang, Frame.BaseEntity, VirtualTrees,
-  Vcl.ComCtrls, Vcl.StdCtrls, Lists.Base, Vcl.Menus, Vcl.ExtCtrls, Vcl.Themes;
+  LCLIntf, LCLType, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, Frame.BaseEntity, VirtualTrees, DefaultTranslator,
+  ComCtrls, StdCtrls, Lists.Base, ButtonedEdit, Menus, ExtCtrls, Themes;
 
 type
+
+  { TfrmHotkeyOptionsPage }
+
   TfrmHotkeyOptionsPage = class(TfrmBaseEntityPage)
-    DKLanguageController1: TDKLanguageController;
+    edtHotkeyCM: TButtonedEdit;
+    edtHotkeyGM: TButtonedEdit;
+    edtHotkeyMF: TButtonedEdit;
+    
     gbHotkey: TGroupBox;
     lblHotkeyWindow: TLabel;
     lblHotkeyGM: TLabel;
@@ -41,9 +49,6 @@ type
     mniN1: TMenuItem;
     mniProperties: TMenuItem;
     lblHotkeyCM: TLabel;
-    edtHotkeyMF: TButtonedEdit;
-    edtHotkeyGM: TButtonedEdit;
-    edtHotkeyCM: TButtonedEdit;
     procedure cbHotKeyClick(Sender: TObject);
     procedure mniEditHotkeyClick(Sender: TObject);
     procedure mniRemoveHotkeyClick(Sender: TObject);
@@ -71,9 +76,10 @@ implementation
 
 uses
   AppConfig.Main, VirtualTree.Events, VirtualTree.Methods, NodeDataTypes.Custom,
-  Forms.ShortcutGrabber, HotkeyManager, DataModules.Icons, System.UITypes;
+  Forms.ShortcutGrabber, Utility.Hotkey, DataModules.Icons, UITypes,
+  Kernel.ResourceStrings;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmHotkeyOptionsPage }
 
@@ -91,7 +97,7 @@ begin
   if Sender is TButtonedEdit then
   begin
     strHotkey := TfrmShortcutGrabber.Execute(Self, TButtonedEdit(Sender).Text);
-    if (strHotkey <> '') then
+    if (strHotkey <> '') and (strHotkey <> TButtonedEdit(Sender).Text) then
     begin
       TButtonedEdit(Sender).Text := strHotkey;
 
@@ -131,7 +137,7 @@ end;
 
 function TfrmHotkeyOptionsPage.GetTitle: string;
 begin
-  Result := DKLangConstW('msgHotkey');
+  Result := msgHotkey;
 end;
 
 function TfrmHotkeyOptionsPage.InternalLoadData: Boolean;
@@ -147,7 +153,7 @@ begin
 
   //Populate VST with HotKeyItemList's items
   TVirtualTreeMethods.Create.PopulateVSTItemList(vstItems, Config.ListManager.HotKeyItemList);
-  vstItems.SortTree(0, sdAscending);
+  vstItems.SortTree(0, VirtualTrees.sdAscending);
   vstItems.Header.AutoFitColumns;
 
   //Enable/disable visual components
@@ -155,13 +161,13 @@ begin
   LoadGlyphs;
 
   //Hide caret in hotkey control
-  HideCaret(edtHotkeyMF.Handle);
-  HideCaret(edtHotkeyGM.Handle);
-  HideCaret(edtHotkeyCM.Handle);
+  //HideCaret(edtHotkeyMF.Handle);
+  //HideCaret(edtHotkeyGM.Handle);
+  //HideCaret(edtHotkeyCM.Handle);
 
-  edtHotkeyMF.Color := StyleServices.GetSystemColor(edtHotkeyMF.Color);
-  edtHotkeyGM.Color := StyleServices.GetSystemColor(edtHotkeyGM.Color);
-  edtHotkeyCM.Color := StyleServices.GetSystemColor(edtHotkeyCM.Color);
+  edtHotkeyMF.Color := edtHotkeyMF.Color;
+  edtHotkeyGM.Color := edtHotkeyGM.Color;
+  edtHotkeyCM.Color := edtHotkeyCM.Color;
 end;
 
 function TfrmHotkeyOptionsPage.InternalSaveData: Boolean;
@@ -178,9 +184,9 @@ end;
 
 procedure TfrmHotkeyOptionsPage.LoadGlyphs;
 begin
-  edtHotkeyMF.Images := dmImages.ilSmallIcons;
-  edtHotkeyGM.Images := dmImages.ilSmallIcons;
-  edtHotkeyCM.Images := dmImages.ilSmallIcons;
+  edtHotkeyMF.RightButton.Images := dmImages.ilSmallIcons;
+  edtHotkeyGM.RightButton.Images := dmImages.ilSmallIcons;
+  edtHotkeyCM.RightButton.Images := dmImages.ilSmallIcons;
 
   mniRemoveHotkey.ImageIndex := Config.IconsManager.GetIconIndex('keyboard_delete');
   mniEditHotkey.ImageIndex   := Config.IconsManager.GetIconIndex('keyboard_edit');
@@ -228,7 +234,7 @@ end;
 
 procedure TfrmHotkeyOptionsPage.mniRemoveHotkeyClick(Sender: TObject);
 begin
-  if (MessageDlg((DKLangConstW('msgConfirm')),mtWarning, [mbYes,mbNo], 0) = mrYes) then
+  if (MessageDlg((msgConfirm),mtWarning, [mbYes,mbNo], 0) = mrYes) then
     if Assigned(vstItems.FocusedNode) then
       vstItems.IsVisible[vstItems.FocusedNode] := False;
 end;

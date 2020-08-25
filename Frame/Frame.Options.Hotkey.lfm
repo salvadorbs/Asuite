@@ -1,0 +1,180 @@
+inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
+  Height = 405
+  ClientHeight = 405
+  DesignLeft = 1039
+  DesignTop = 387
+  object gbHotkey: TGroupBox[0]
+    Left = 4
+    Height = 126
+    Top = 4
+    Width = 437
+    Align = alTop
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    Caption = 'Hotkey'
+    ClientHeight = 106
+    ClientWidth = 433
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 0
+    object lblHotkeyWindow: TLabel
+      Left = 6
+      Height = 15
+      Top = 23
+      Width = 199
+      Caption = 'Show window when hotkey is pressed'
+      ParentColor = False
+      ParentFont = False
+    end
+    object lblHotkeyGM: TLabel
+      Left = 6
+      Height = 15
+      Top = 51
+      Width = 231
+      Caption = 'Show graphic menu when hotkey is pressed'
+      ParentColor = False
+      ParentFont = False
+    end
+    object lblHotkeyCM: TLabel
+      Left = 6
+      Height = 15
+      Top = 78
+      Width = 225
+      Caption = 'Show classic menu when hotkey is pressed'
+      ParentColor = False
+      ParentFont = False
+    end
+    object cbHotKey: TCheckBox
+      Left = 6
+      Height = 19
+      Top = 0
+      Width = 94
+      Caption = 'Enable hotkey'
+      OnClick = cbHotKeyClick
+      ParentFont = False
+      TabOrder = 0
+    end
+    object edtHotkeyMF: TButtonedEdit
+      Left = 246
+      Height = 21
+      Top = 21
+      Width = 181
+      CharCase = ecUppercase
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 1
+      OnChange = edtHotkeyChange
+      OnClick = edtHotkeyClick
+      OnRightButtonClick = edtHotkeyClear
+    end
+    object edtHotkeyGM: TButtonedEdit
+      Left = 246
+      Height = 21
+      Top = 48
+      Width = 181
+      CharCase = ecUppercase
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 2
+      OnChange = edtHotkeyChange
+      OnClick = edtHotkeyClick
+      OnRightButtonClick = edtHotkeyClear
+    end
+    object edtHotkeyCM: TButtonedEdit
+      Left = 246
+      Height = 21
+      Top = 75
+      Width = 181
+      CharCase = ecUppercase
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 3
+      OnChange = edtHotkeyChange
+      OnClick = edtHotkeyClick
+      OnRightButtonClick = edtHotkeyClear
+    end
+  end
+  object grpOrderSoftware: TGroupBox[1]
+    Left = 4
+    Height = 267
+    Top = 134
+    Width = 437
+    Align = alClient
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    BorderSpacing.Bottom = 4
+    Caption = 'Hotkey list used'
+    ClientHeight = 247
+    ClientWidth = 433
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 1
+    object vstItems: TVirtualStringTree
+      Cursor = 63
+      Left = 6
+      Height = 241
+      Top = 0
+      Width = 421
+      Align = alClient
+      BorderSpacing.Left = 6
+      BorderSpacing.Right = 6
+      BorderSpacing.Bottom = 6
+      DefaultNodeHeight = 32
+      DragOperations = []
+      Header.AutoSizeIndex = 0
+      Header.Columns = <      
+        item
+          MinWidth = 50
+          Position = 0
+          Text = 'Name'
+        end      
+        item
+          MaxWidth = 100
+          MinWidth = 36
+          Position = 1
+          Text = 'Type'
+          Width = 36
+        end      
+        item
+          MinWidth = 60
+          Position = 2
+          Text = 'Category'
+          Width = 100
+        end      
+        item
+          MinWidth = 100
+          Position = 3
+          Text = 'Hotkey'
+          Width = 200
+        end>
+      Header.Options = [hoColumnResize, hoDblClickResize, hoDrag, hoVisible, hoHeaderClickAutoSort]
+      ParentFont = False
+      PopupMenu = pmHotkey
+      TabOrder = 0
+      TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
+      TreeOptions.PaintOptions = [toPopupMode, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
+      TreeOptions.SelectionOptions = [toFullRowSelect, toRightClickSelect]
+    end
+  end
+  object pmHotkey: TPopupMenu[2]
+    Left = 264
+    Top = 200
+    object mniEditHotkey: TMenuItem
+      Caption = 'Edit Hotkey'
+      OnClick = mniEditHotkeyClick
+    end
+    object mniRemoveHotkey: TMenuItem
+      Caption = 'Remove Hotkey'
+      OnClick = mniRemoveHotkeyClick
+    end
+    object mniN1: TMenuItem
+      Caption = '-'
+    end
+    object mniProperties: TMenuItem
+      Caption = 'Properties'
+      OnClick = mniPropertiesClick
+    end
+  end
+end

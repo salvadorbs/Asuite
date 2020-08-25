@@ -1,0 +1,246 @@
+inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
+  Height = 405
+  ClientHeight = 405
+  DesignLeft = 1083
+  DesignTop = 344
+  object grpStartupOrderItems: TGroupBox[0]
+    Left = 4
+    Height = 200
+    Top = 4
+    Width = 437
+    Align = alTop
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    Caption = 'Startup'
+    ClientHeight = 180
+    ClientWidth = 433
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 0
+    object lblStartupInfo: TLabel
+      Left = 6
+      Height = 15
+      Top = 23
+      Width = 211
+      Caption = 'Order of startup autorun items in ASuite'
+      ParentColor = False
+      ParentFont = False
+    end
+    object chkStartup: TCheckBox
+      Left = 6
+      Height = 19
+      Top = 0
+      Width = 140
+      Caption = 'Enable startup autorun'
+      ParentFont = False
+      TabOrder = 0
+    end
+    object vstStartupItems: TVirtualStringTree
+      Left = 6
+      Height = 136
+      Top = 40
+      Width = 393
+      Align = alBottom
+      BorderSpacing.Left = 6
+      BorderSpacing.Right = 34
+      BorderSpacing.Bottom = 4
+      DefaultNodeHeight = 32
+      DragOperations = []
+      Header.AutoSizeIndex = 0
+      Header.Columns = <      
+        item
+          MinWidth = 50
+          Position = 0
+          Text = 'Name'
+        end      
+        item
+          MaxWidth = 100
+          MinWidth = 36
+          Position = 1
+          Text = 'Type'
+          Width = 36
+        end      
+        item
+          MinWidth = 50
+          Position = 2
+          Text = 'Category'
+          Width = 60
+        end      
+        item
+          MinWidth = 100
+          Position = 3
+          Text = 'Path executable'
+          Width = 200
+        end>
+      Header.Options = [hoColumnResize, hoVisible]
+      ParentFont = False
+      PopupMenu = pmAutorun
+      TabOrder = 1
+      TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
+      TreeOptions.PaintOptions = [toPopupMode, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
+      TreeOptions.SelectionOptions = [toFullRowSelect]
+      OnGetPopupMenu = vstGetPopupMenu
+    end
+    object btnStartupUp: TKSpeedButton
+      Left = 404
+      Height = 25
+      Top = 64
+      Width = 27
+      Anchors = [akTop]
+      Font.Color = clBtnText
+      ParentFont = False
+      TabOrder = 2
+      OnClick = btnStartupUpClick
+    end
+    object btnStartupDelete: TKSpeedButton
+      Left = 404
+      Height = 25
+      Top = 95
+      Width = 27
+      Anchors = [akTop]
+      Font.Color = clBtnText
+      ParentFont = False
+      TabOrder = 3
+      OnClick = btnStartupDeleteClick
+    end
+    object btnStartupDown: TKSpeedButton
+      Left = 404
+      Height = 25
+      Top = 126
+      Width = 27
+      Anchors = [akTop]
+      Font.Color = clBtnText
+      ParentFont = False
+      TabOrder = 4
+      OnClick = btnStartupDownClick
+    end
+  end
+  object grpShutdownOrderItems: TGroupBox[1]
+    Left = 4
+    Height = 200
+    Top = 208
+    Width = 437
+    Align = alTop
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    Caption = 'Shutdown'
+    ClientHeight = 180
+    ClientWidth = 433
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 1
+    object lblShutdownInfo: TLabel
+      Left = 6
+      Height = 15
+      Top = 23
+      Width = 227
+      Caption = 'Order of shutdown autorun items in ASuite'
+      ParentColor = False
+      ParentFont = False
+    end
+    object chkShutdown: TCheckBox
+      Left = 6
+      Height = 19
+      Top = 0
+      Width = 156
+      Caption = 'Enable shutdown autorun'
+      ParentFont = False
+      TabOrder = 0
+    end
+    object vstShutdownItems: TVirtualStringTree
+      Left = 6
+      Height = 136
+      Top = 40
+      Width = 393
+      Align = alBottom
+      BorderSpacing.Left = 6
+      BorderSpacing.Right = 34
+      BorderSpacing.Bottom = 4
+      DefaultNodeHeight = 32
+      DragOperations = []
+      Header.AutoSizeIndex = 0
+      Header.Columns = <      
+        item
+          MinWidth = 50
+          Position = 0
+          Text = 'Name'
+        end      
+        item
+          MaxWidth = 100
+          MinWidth = 36
+          Position = 1
+          Text = 'Type'
+          Width = 36
+        end      
+        item
+          MinWidth = 50
+          Position = 2
+          Text = 'Category'
+        end      
+        item
+          MinWidth = 100
+          Position = 3
+          Text = 'Path executable'
+          Width = 200
+        end>
+      Header.Options = [hoColumnResize, hoVisible]
+      ParentFont = False
+      PopupMenu = pmAutorun
+      TabOrder = 1
+      TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
+      TreeOptions.PaintOptions = [toPopupMode, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
+      TreeOptions.SelectionOptions = [toFullRowSelect]
+      OnGetPopupMenu = vstGetPopupMenu
+    end
+    object btnShutdownDelete: TKSpeedButton
+      Left = 404
+      Height = 25
+      Top = 95
+      Width = 27
+      Anchors = [akTop]
+      Font.Color = clBtnText
+      ParentFont = False
+      TabOrder = 3
+      OnClick = btnShutdownDeleteClick
+    end
+    object btnShutdownDown: TKSpeedButton
+      Left = 404
+      Height = 25
+      Top = 126
+      Width = 27
+      Anchors = [akTop]
+      Font.Color = clBtnText
+      ParentFont = False
+      TabOrder = 4
+      OnClick = btnShutdownDownClick
+    end
+    object btnShutdownUp: TKSpeedButton
+      Left = 404
+      Height = 25
+      Top = 64
+      Width = 27
+      Anchors = [akTop]
+      Font.Color = clBtnText
+      ParentFont = False
+      TabOrder = 2
+      OnClick = btnShutdownUpClick
+    end
+  end
+  object pmAutorun: TPopupMenu[2]
+    Left = 304
+    Top = 24
+    object mniRemoveAutorun: TMenuItem
+      Caption = 'Remove autorun'
+      OnClick = mniRemoveAutorunClick
+    end
+    object mniN1: TMenuItem
+      Caption = '-'
+    end
+    object mniProperties: TMenuItem
+      Caption = 'Properties'
+      OnClick = mniPropertiesClick
+    end
+  end
+end

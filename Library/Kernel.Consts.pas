@@ -19,6 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Kernel.Consts;
 
+{$MODE DelphiUnicode}
+
 interface
 
 const
@@ -57,6 +59,7 @@ const
   EXT_LNK       = '.lnk';
   EXT_URL       = '.url';
   EXT_EXE       = '.exe';
+  EXT_PO        = '.po';
 
   EXT_PATH_MASK = '*';
 
@@ -88,25 +91,17 @@ const
   CONST_PATH_URLICON = '%urlicon%';
 
   //ASuite filename icons
-  FILEICON_Folder     = 'folder';
-  FILEICON_Url        = 'page_url';
+  FILEICON_Folder = 'folder';
+  FILEICON_Url    = 'page_url';
+
+  //ASuite files
+  SETTINGS_FILENAME = 'settings.json';
 
   //Modifier buttons for TfrmShortcutGrabber
-  CTRL_NORMAL_FILENAME  = 'ctrl_normal.png';
-  CTRL_HOVER_FILENAME   = 'ctrl_hover.png';
-  CTRL_CLICKED_FILENAME = 'ctrl_clicked.png';
-
-  ALT_NORMAL_FILENAME  = 'alt_normal.png';
-  ALT_HOVER_FILENAME   = 'alt_hover.png';
-  ALT_CLICKED_FILENAME = 'alt_clicked.png';
-
-  SHIFT_NORMAL_FILENAME  = 'shift_normal.png';
-  SHIFT_HOVER_FILENAME   = 'shift_hover.png';
-  SHIFT_CLICKED_FILENAME = 'shift_clicked.png';
-
-  WINKEY_NORMAL_FILENAME  = 'winkey_normal.png';
-  WINKEY_HOVER_FILENAME   = 'winkey_hover.png';
-  WINKEY_CLICKED_FILENAME = 'winkey_clicked.png';
+  FILENAME_CTRL   = 'ctrl.png';
+  FILENAME_ALT    = 'alt.png';
+  FILENAME_SHIFT  = 'shift.png';
+  FILENAME_WINKEY = 'winkey.png';
 
 implementation
 

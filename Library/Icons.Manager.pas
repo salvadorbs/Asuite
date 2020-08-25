@@ -19,11 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Icons.Manager;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  SysUtils, Classes, Controls, IniFiles, Forms, Icons.Application, Generics.Collections,
-  IOUtils, Kernel.Consts, ShellApi, Windows;
+  SysUtils, Classes, Controls, Forms, Icons.Application, Generics.Collections,
+  Kernel.Consts, LCLIntf, LCLType;
 
 type
   TBaseIcons = class(TObjectDictionary<string, TApplicationIcon>);
@@ -51,7 +53,7 @@ type
 implementation
 
 uses
-  AppConfig.Main, Kernel.Logger;
+  AppConfig.Main, Kernel.Logger, FileUtil;
 
 { TIconsManager }
 
@@ -71,23 +73,24 @@ var
   Icon: TApplicationIcon;
 begin
   Result := -1;
-  Icon := FItems.Items[AName];
+
+  Icon := nil;
+  if FItems.ContainsKey(AName) then
+    Icon := FItems.Items[AName];
+
   if Assigned(Icon) then
     Result := Icon.ImageIndex;
 end;
 
 function TIconsManager.GetPathIconIndex(APathIcon: string): Integer;
 var
-  FileInfo: TSHFileInfo;
-  Flags: Integer;
+  Icon: TApplicationIcon;
 begin
-  Result := -1;
-  Flags := SHGFI_SYSICONINDEX or SHGFI_ICON or SHGFI_USEFILEATTRIBUTES;
-  //Get index
-  if SHGetFileInfo(PChar(Config.Paths.RelativeToAbsolute(APathIcon)), 0, FileInfo, SizeOf(TSHFileInfo), Flags) <> 0 then
-  begin
-    DestroyIcon(FileInfo.hIcon);
-    Result := FileInfo.iIcon;
+  Icon := TApplicationIcon.Create(APathIcon);
+  try
+    Result := Icon.LoadIcon;
+  finally
+    Icon.Free;
   end;
 end;
 
@@ -103,23 +106,30 @@ procedure TIconsManager.LoadAllIcons;
 var
   Icon: TApplicationIcon;
   sPath: string;
+  IconFiles: TStringList;
 begin
   TASuiteLogger.Enter('LoadAllIcons', Self);
   TASuiteLogger.Info('Search and load all icons in folder "%s"', [FPathTheme + ICONS_DIR]);
 
   FItems.Clear;
   //Load all icons in FPathTheme + ICONS_DIR
-  if TDirectory.Exists(FPathTheme + ICONS_DIR) then
+  if DirectoryExists(FPathTheme + ICONS_DIR) then
   begin
-    for sPath in TDirectory.GetFiles(FPathTheme + ICONS_DIR, '*' + EXT_ICO) do
-    begin
-      //Create TBaseIcon, load icon and add it in FItems
-      Icon := TApplicationIcon.Create(sPath);
-      try
-//        Icon.Load;
-      finally
-        FItems.Add(Icon.Name, Icon);
+    IconFiles := FileUtil.FindAllFiles(FPathTheme + ICONS_DIR, '*' + EXT_ICO);
+    try
+      for sPath in IconFiles do
+      begin
+        //Create TBaseIcon, load icon and add it in FItems
+        Icon := TApplicationIcon.Create(sPath);
+        try
+          //Speed up asuite startup (it is doesn't necessary load now icon)
+  //        Icon.Load;
+        finally
+          FItems.Add(Icon.Name, Icon);
+        end;
       end;
+    finally
+      IconFiles.Free;
     end;
   end;
 end;

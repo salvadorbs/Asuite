@@ -19,21 +19,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.ScanFolder;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, DKLang, Vcl.Themes,
-  VirtualExplorerTree, MPShellUtilities, ShellApi, Vcl.ImgList, MPCommonUtilities,
-  System.ImageList, VirtualFileSearch, MPCommonObjects, StrUtils, SynTaskDialog;
+  LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, DefaultTranslator, ShellCtrls,
+  ImgList, StrUtils, FileUtil, Thread.FindFiles;
 
 type
+
+  { TfrmScanFolder }
+
   TfrmScanFolder = class(TForm)
     btnScan: TButton;
     btnCancel: TButton;
     pnlFilters: TPanel;
-    DKLanguageController1: TDKLanguageController;
-    vstShell: TVirtualExplorerTree;
+    
+    vstShell: TShellTreeView;
     grpFileTypes: TGroupBox;
     btnTypesDelete: TButton;
     btnTypesAdd: TButton;
@@ -46,18 +50,15 @@ type
     vstExclude: TVirtualStringTree;
     ilExtIcons: TImageList;
     grpGeneralSettings: TGroupBox;
-    vfsScan: TVirtualFileSearch;
     chkExtractName: TCheckBox;
     pbScan: TProgressBar;
-    procedure vstShellEnumFolder(Sender: TCustomVirtualExplorerTree;
-      Namespace: TNamespace; var AllowAsChild: Boolean);
-    procedure vstShellInitNode(Sender: TBaseVirtualTree; ParentNode,
-      Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormCreate(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: char);
     procedure vstGetNodeDataSize(Sender: TBaseVirtualTree;
       var NodeDataSize: Integer);
     procedure vstGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
-      Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+      Column: TColumnIndex; TextType: TVSTTextType; var CellText: AnsiString);
     procedure vstGetImageIndex(Sender: TBaseVirtualTree;
       Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
       var Ghosted: Boolean; var ImageIndex: TImageIndex);
@@ -67,6 +68,7 @@ type
     procedure btnExcludeAddClick(Sender: TObject);
     procedure edtTypesChange(Sender: TObject);
     procedure edtExcludeChange(Sender: TObject);
+    procedure vstShellGetImageIndex(Sender: TObject; Node: TTreeNode);
     procedure vstTypesRemoveFromSelection(Sender: TBaseVirtualTree;
       Node: PVirtualNode);
     procedure vstTypesAddToSelection(Sender: TBaseVirtualTree;
@@ -78,19 +80,22 @@ type
     procedure btnScanClick(Sender: TObject);
     procedure vstFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure btnCancelClick(Sender: TObject);
-    procedure vfsScanSearchEnd(Sender: TObject; Results: TCommonPIDLList);
-    function FindMatchText(Strings: TStrings; const Str: string): Integer;
   private
     { Private declarations }
-    FStartTime: Cardinal;
+    FListNode: PVirtualNode;
+    FThreadFindFiles: TFindFiles;
 
+    procedure FileFound(AFilePath: String);
     procedure PopulateStringList(AListView: TVirtualStringTree; AStringList: TStringList);
     procedure PopulateVSTListView(AListView: TVirtualStringTree; AStringList: TStringList; AIsExtension: Boolean);
     function GetExtImage(AExtension: string): Integer;
-    procedure AddItem(AListView: TVirtualStringTree; AText: string; AIsExtension: Boolean);
+    procedure AddItem(AListView: TVirtualStringTree; AText: string);
 
     procedure LoadSettings;
     procedure SaveSettings;
+    procedure SearchEnd(ATotalFiles: Integer; ATime: Cardinal);
+    procedure SetupThreadFinder;
+    procedure ThreadTerminate(Sender: TObject);
   public
     { Public declarations }
     class procedure Execute(AOwner: TComponent);
@@ -102,20 +107,20 @@ var
 implementation
 
 uses
-  AppConfig.Main, Kernel.Enumerations, Kernel.Types, VirtualTree.Methods,
-  NodeDataTypes.Base, Utility.Misc, Kernel.Logger, Kernel.Consts, Utility.FileFolder,
-  NodeDataTypes.Files, VirtualFileSearch.Helper, System.UITypes;
+  AppConfig.Main, Kernel.Types, ShellApi, Kernel.Logger, Kernel.Consts,
+  DataModules.Icons, NodeDataTypes.Base, VirtualTree.Methods, Kernel.Enumerations,
+  Utility.FileFolder, NodeDataTypes.Files, Utility.Misc, Kernel.ResourceStrings;
 
-{$R *.dfm}
+{$R *.lfm}
 
 procedure TfrmScanFolder.btnCancelClick(Sender: TObject);
 begin
-  if (vfsScan.IsRunning) then
+  if Assigned(FThreadFindFiles) then
   begin
-    if MessageDlg((DKLangConstW('msgCancelScanFolder')), mtWarning, [mbYes,mbNo], 0) = mrYes then
+    if MessageDlg((msgCancelScanFolder), mtWarning, [mbYes,mbNo], 0) = mrYes then
     begin
-      vfsScan.Stop;
-      Close;
+      FThreadFindFiles.Stop;
+      btnCancel.Caption := msgCancel;
     end;
   end
   else
@@ -126,7 +131,7 @@ procedure TfrmScanFolder.btnExcludeAddClick(Sender: TObject);
 begin
   if edtExclude.Text <> '' then
   begin
-    AddItem(vstExclude, LowerCase(edtExclude.Text), False);
+    AddItem(vstExclude, LowerCase(edtExclude.Text));
     edtExclude.Clear;
   end;
 end;
@@ -145,53 +150,51 @@ end;
 
 procedure TfrmScanFolder.btnScanClick(Sender: TObject);
 var
-  listCriteria : TStringList;
-begin
-  //Check if user add at least one file extension
+  ListNodeData : TvBaseNodeData;
+begin             
+  SaveSettings;
+
   TASuiteLogger.Info('Start scanning folders to search files', []);
-  FStartTime := GetTickCount;
   if vstTypes.HasChildren[vstTypes.RootNode] then
   begin
-    TASuiteLogger.Info('Paths: %s', [vstShell.Storage.ResolvedFileNames.ToString]);
-    SaveSettings;
-    if vstShell.Storage.ResolvedFileNames.Count > 0 then
+    if Assigned(vstShell.Selected) then
     begin
+      TASuiteLogger.Info('Path: %s', [vstShell.Selected.GetTextPath]);
+
       pbScan.Style := pbstMarquee;
       pbScan.Position := 0;
 
-      //Prepare vfsScan
-      vfsScan.SearchPaths.Clear;
-      vfsScan.SearchPaths.Assign(vstShell.Storage.ResolvedFileNames);
-      vfsScan.SearchCriteriaFilename.Clear;
-      vfsScan.UpdateRate := 50;
-
-      listCriteria := TStringList.Create;
-      try
-        PopulateStringList(vstTypes, listCriteria);
-        vfsScan.SearchCriteriaFilename.Assign(listCriteria);
-      finally
-        listCriteria.Free;
-      end;
-
-      vfsScan.Run;
       btnScan.Enabled := False;
+      btnCancel.Caption := msgStop;
+
+      FThreadFindFiles := TFindFiles.Create;
+      SetupThreadFinder;
+
+      Config.MainTree.BeginUpdate;
+      //Add parent node named as Form's caption
+      FListNode := TVirtualTreeMethods.Create.AddChildNodeEx(Config.MainTree, nil, amInsertAfter, vtdtCategory);
+      ListNodeData := TVirtualTreeMethods.Create.GetNodeItemData(FListNode, Config.MainTree);
+      ListNodeData.Name := Self.Caption + ' - ' + vstShell.Selected.GetTextPath;
+
+      FThreadFindFiles.Start;
     end
     else begin
-      ShowMessageEx(DKLangConstW('msgErrScanFolderEmptyPath'), True);
+      ShowMessageEx(msgErrScanFolderEmptyPath, True);
     end;
   end
   else
-    ShowMessageEx(DKLangConstW('msgErrScanFolderMissingTypes'), True);
+    ShowMessageEx(msgErrScanFolderMissingTypes, True);
 end;
 
 procedure TfrmScanFolder.btnTypesAddClick(Sender: TObject);
 var
   str: string;
 begin
+  //TODO lazarus: Use regexp to validate the entry (only allowed ".ext")
   if edtTypes.Text <> '' then
   begin
     str := LowerCase(edtTypes.Text);
-    AddItem(vstTypes, str, True);
+    AddItem(vstTypes, str);
     edtTypes.Clear;
   end;
 end;
@@ -213,6 +216,17 @@ begin
   btnExcludeAdd.Enabled := edtExclude.Text <> '';
 end;
 
+procedure TfrmScanFolder.vstShellGetImageIndex(Sender: TObject; Node: TTreeNode
+  );
+begin
+  if Node.Level = 0 then
+    Node.ImageIndex := Config.IconsManager.GetIconIndex('disk')
+  else
+    Node.ImageIndex := Config.IconsManager.GetIconIndex('folder');
+
+  Node.SelectedIndex := Node.ImageIndex;
+end;
+
 procedure TfrmScanFolder.edtTypesChange(Sender: TObject);
 begin
   btnTypesAdd.Enabled := edtTypes.Text <> '';
@@ -232,17 +246,20 @@ begin
   end;
 end;
 
-procedure TfrmScanFolder.AddItem(AListView: TVirtualStringTree; AText: string; AIsExtension: Boolean);
+procedure TfrmScanFolder.AddItem(AListView: TVirtualStringTree; AText: string);
 var
   Node: PVirtualNode;
   NodeData: PScanFolderData;
 begin
+  //Useless *, so I removed it - 14/08/2020
+  {
   if AIsExtension then
   begin
     //Add . or * if user forget it
     if AText[1] <> EXT_PATH_MASK then
       AText := EXT_PATH_MASK + AText;
   end;
+  }
   //Add item in ListView
   Node := AListView.AddChild(nil);
   NodeData := AListView.GetNodeData(Node);
@@ -252,24 +269,37 @@ end;
 
 procedure TfrmScanFolder.FormCreate(Sender: TObject);
 begin
-  vstShell.Active := True;
+  FThreadFindFiles := nil;
+
   LoadSettings;
 
-  //Change vstShell text's color
-  vstShell.VETColors.FileTextColor := StyleServices.GetSystemColor(clWindowText);
-  vstShell.VETColors.FolderTextColor := StyleServices.GetSystemColor(clWindowText);
+  vstShell.Images := dmImages.ilSmallIcons;
+end;
+
+procedure TfrmScanFolder.FormKeyPress(Sender: TObject; var Key: char);
+begin
+  if Ord(Key) = VK_RETURN then
+    btnScanClick(Sender)
+  else
+    if Ord(Key) = VK_ESCAPE then
+      btnCancelClick(Sender);
+end;
+
+procedure TfrmScanFolder.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+  CanClose := not Assigned(FThreadFindFiles);
 end;
 
 function TfrmScanFolder.GetExtImage(AExtension: string): Integer;
 var
-  FileInfo: TSHFileInfo;
+  FileInfo: TSHFILEINFOW;
   Icon: TIcon;
 begin
   Result := -1;
   Icon := TIcon.Create;
   try
     //Get index
-    if SHGetFileInfo(PChar(AExtension), 0, FileInfo, SizeOf(TSHFileInfo), SHGFI_ICON or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES) <> 0 then
+    if SHGetFileInfoW(PChar(AExtension), 0, FileInfo, SizeOf(TSHFileInfo), SHGFI_ICON or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES) <> 0 then
     begin
       Icon.Handle := FileInfo.hIcon;
       Result := ilExtIcons.AddIcon(Icon);
@@ -294,7 +324,7 @@ begin
   try
     AListView.Clear;
     for I := 0 to AStringList.Count - 1 do
-      AddItem(AListView, LowerCase(AStringList[I]), AIsExtension);
+      AddItem(AListView, LowerCase(AStringList[I]));
   finally
     AListView.EndUpdate;
   end;
@@ -308,6 +338,44 @@ begin
   PopulateStringList(vstTypes, Config.ScanFolderFileTypes);
   PopulateStringList(vstExclude, Config.ScanFolderExcludeNames);
   Config.Changed := True;
+end;
+
+procedure TfrmScanFolder.SearchEnd(ATotalFiles: Integer; ATime: Cardinal);
+begin
+  TASuiteLogger.Info('Added new %d nodes! Elapsed Search Time = %d ms', [ATotalFiles, ATime]);
+
+  pbScan.Style := pbstNormal;
+  pbScan.Position := pbScan.Max;
+  ShowMessageFmtEx(msgFoundNumFiles, [ATotalFiles]);
+
+  //Select and expanded ScanFolder node
+  Config.MainTree.ClearSelection;
+  if Assigned(FListNode) then
+  begin
+    Config.MainTree.Selected[FListNode] := True;
+    Config.MainTree.FocusedNode := FListNode;
+  end;
+
+  btnScan.Enabled := True;
+  btnCancel.Caption := msgCancel;
+  Config.MainTree.EndUpdate;
+
+  Close;
+end;
+
+procedure TfrmScanFolder.SetupThreadFinder;
+begin
+  FThreadFindFiles.Directory := vstShell.Selected.GetTextPath;
+  PopulateStringList(vstTypes, FThreadFindFiles.SearchCriteriaFilename);
+  PopulateStringList(vstExclude, FThreadFindFiles.SearchExcludeFilename);
+  FThreadFindFiles.OnFileFound := FileFound;
+  FThreadFindFiles.OnSearchEnd := SearchEnd;
+  FThreadFindFiles.OnTerminate := ThreadTerminate;
+end;
+
+procedure TfrmScanFolder.ThreadTerminate(Sender: TObject);
+begin
+  FThreadFindFiles := nil;
 end;
 
 procedure TfrmScanFolder.PopulateStringList(AListView: TVirtualStringTree; AStringList: TStringList);
@@ -327,17 +395,29 @@ begin
   end;
 end;
 
-procedure TfrmScanFolder.vstShellEnumFolder(
-  Sender: TCustomVirtualExplorerTree; Namespace: TNamespace;
-  var AllowAsChild: Boolean);
+procedure TfrmScanFolder.FileFound(AFilePath: String);
+var
+  sFileExt, sShortName: String;
+  Node: PVirtualNode;
+  NodeData: TvBaseNodeData;
 begin
-  AllowAsChild := (NameSpace.FileSystem or NameSpace.IsMyComputer) and Not(Namespace.Stream);
-end;
+  sFileExt := ExtractFileExt(AFilePath);
+  sShortName := ExtractFileName(AFilePath);
 
-procedure TfrmScanFolder.vstShellInitNode(Sender: TBaseVirtualTree;
-  ParentNode, Node: PVirtualNode; var InitialStates: TVirtualNodeInitStates);
-begin
-   Node.CheckType := ctTriStateCheckBox;
+  if Assigned(FListNode) then
+  begin
+    Node := TVirtualTreeMethods.Create.AddChildNodeEx(Config.MainTree, FListNode, amInsertAfter, vtdtFile, False);
+    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Config.MainTree);
+
+    //Name
+    if chkExtractName.Checked then
+      NodeData.Name := ExtractFileNameEx(AFilePath)
+    else
+      NodeData.Name := sShortName;
+
+    //Path
+    TvFileNodeData(NodeData).PathFile := AFilePath;
+  end;
 end;
 
 procedure TfrmScanFolder.vstTypesAddToSelection(Sender: TBaseVirtualTree;
@@ -360,84 +440,6 @@ procedure TfrmScanFolder.vstTypesRemoveFromSelection(Sender: TBaseVirtualTree;
   Node: PVirtualNode);
 begin
   btnTypesDelete.Enabled := False;
-end;
-
-procedure TfrmScanFolder.vfsScanSearchEnd(Sender: TObject;
-  Results: TCommonPIDLList);
-var
-  I : Integer;
-  ListNode: PVirtualNode;
-  ListNodeData : TvBaseNodeData;
-  Node: PVirtualNode;
-  NodeData: TvBaseNodeData;
-  sFileExt, sShortName, sPath: String;
-  IntNewNodes: Integer;
-begin
-  IntNewNodes := 0;
-
-  TASuiteLogger.Info('Done scanning folders! Elapsed Search Time = %s ms. Found %d', [IntToStr(GetTickCount - FStartTime), Results.Count]);
-  if Results.Count > 0 then
-  begin
-    Config.MainTree.BeginUpdate;
-    try
-      //Add parent node named as Form's caption
-      ListNode := TVirtualTreeMethods.Create.AddChildNodeEx(Config.MainTree, nil, amInsertAfter, vtdtCategory);
-      ListNodeData := TVirtualTreeMethods.Create.GetNodeItemData(ListNode, Config.MainTree);
-      ListNodeData.Name := Self.Caption;
-      for I := 0 to Results.Count - 1 do
-      begin
-        sPath := PIDLToPath(Results[I]);
-        sFileExt := ExtractFileExt(sPath);
-        sShortName := ExtractFileName(sPath);
-
-        if (sPath <> '') and (FindMatchText(Config.ScanFolderExcludeNames, sShortName) = -1) then
-        begin
-          Node := TVirtualTreeMethods.Create.AddChildNodeEx(Config.MainTree, ListNode, amInsertAfter, vtdtFile, False);
-          NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Config.MainTree);
-
-          //Name
-          if chkExtractName.Checked then
-            NodeData.Name := ExtractFileNameEx(sPath)
-          else
-            NodeData.Name := sShortName;
-
-          //Path
-          TvFileNodeData(NodeData).PathFile := sPath;
-
-          Inc(IntNewNodes);
-        end;
-      end;
-
-    finally
-      btnScan.Enabled := True;
-      Config.MainTree.EndUpdate;
-    end;
-  end;
-
-  TASuiteLogger.Info('Added new %d nodes! Elapsed Search Time = %s ms', [IntNewNodes, IntToStr(GetTickCount - FStartTime)]);
-
-  pbScan.Style := pbstNormal;
-  pbScan.Position := pbScan.Max;
-  ShowMessageFmtEx(DKLangConstW('msgFoundNumFiles'), [Results.Count]);
-
-  //Select and expanded ScanFolder node
-  Config.MainTree.ClearSelection;
-  if Assigned(ListNode) then
-  begin
-    Config.MainTree.Selected[ListNode] := True;
-    Config.MainTree.FocusedNode := ListNode;
-  end;
-
-  Close;
-end;
-
-function TfrmScanFolder.FindMatchText(Strings: TStrings;
-  const Str: string): Integer;
-begin
-  for Result := 0 to Strings.Count-1 do
-    if ContainsText(Str, Strings[Result]) then
-      exit;
-  Result := -1;
 end;
 
 procedure TfrmScanFolder.vstExcludeAddToSelection(Sender: TBaseVirtualTree;
@@ -468,7 +470,7 @@ end;
 
 procedure TfrmScanFolder.vstGetText(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
-  var CellText: string);
+  var CellText: AnsiString);
 var
   NodeData: pScanFolderData;
 begin

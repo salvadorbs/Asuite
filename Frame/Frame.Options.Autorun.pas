@@ -19,17 +19,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Options.Autorun;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.Buttons, kgraphics,
-  DKLang, Frame.BaseEntity, Vcl.StdCtrls, VirtualTrees, Lists.Base, Vcl.Menus,
-  kcontrols, kbuttons;
+  LCLIntf, SysUtils, Classes, Controls, Dialogs, kgraphics, Frame.BaseEntity,
+  StdCtrls, VirtualTrees, Lists.Base, Menus, kbuttons, DefaultTranslator;
 
 type
   TfrmAutorunOptionsPage = class(TfrmBaseEntityPage)
-    DKLanguageController1: TDKLanguageController;
+    
     grpStartupOrderItems: TGroupBox;
     grpShutdownOrderItems: TGroupBox;
     chkStartup: TCheckBox;
@@ -85,10 +85,9 @@ implementation
 
 uses
   NodeDataTypes.Custom, AppConfig.Main, DataModules.Icons,
-  VirtualTree.Methods, NodeDataTypes.Base,
-  System.UITypes, Kernel.Enumerations, VirtualTree.Events;
+  VirtualTree.Methods, Kernel.ResourceStrings, Kernel.Enumerations, VirtualTree.Events;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmItemsOptionsPage }
 
@@ -134,7 +133,7 @@ end;
 
 function TfrmAutorunOptionsPage.GetTitle: string;
 begin
-  Result := DKLangConstW('msgAutorun');
+  Result := msgAutorun;
 end;
 
 function TfrmAutorunOptionsPage.InternalLoadData: Boolean;
@@ -199,7 +198,7 @@ end;
 
 procedure TfrmAutorunOptionsPage.mniRemoveAutorunClick(Sender: TObject);
 begin
-  if (MessageDlg((DKLangConstW('msgConfirm')),mtWarning, [mbYes,mbNo], 0) = mrYes) then
+  if (MessageDlg((msgConfirm),mtWarning, [mbYes,mbNo], 0) = mrYes) then
     if Assigned(GetActiveTree.FocusedNode) then
       GetActiveTree.IsVisible[GetActiveTree.FocusedNode] := False;
 end;
@@ -221,7 +220,7 @@ end;
 procedure TfrmAutorunOptionsPage.RemoveItem(const ATree: TBaseVirtualTree);
 begin
   if Assigned(ATree.FocusedNode) then
-    if (MessageDlg((DKLangConstW('msgConfirm')),mtWarning, [mbYes,mbNo], 0) = mrYes) then
+    if (MessageDlg((msgConfirm),mtWarning, [mbYes,mbNo], 0) = mrYes) then
       ATree.IsVisible[ATree.FocusedNode] := False;
 end;
 

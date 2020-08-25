@@ -19,10 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Database.List;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  mORMot, mORMotSQLite3, SynCommons, Database.Manager, VirtualTrees, DKLang, SysUtils,
+  mORMot, SynCommons, Database.Manager, VirtualTrees, SysUtils,
   Dialogs, Classes, NodeDataTypes.Base, SynLog;
 
 type
@@ -104,7 +106,7 @@ implementation
 
 uses
   Kernel.Enumerations, Utility.Misc, VirtualTree.Methods, NodeDataTypes.Custom,
-  NodeDataTypes.Files, AppConfig.Main, Icons.Node, Kernel.Logger;
+  NodeDataTypes.Files, AppConfig.Main, Icons.Node, Kernel.Logger, Kernel.ResourceStrings;
 
 { TSQLtbl_files }
 
@@ -149,7 +151,7 @@ begin
       if IsImport then
         Tree.CheckType[Node] := ctTriStateCheckBox;
       // generic fields
-      vData.Name          := UTF8ToString(SQLFilesData.title);
+      vData.Name          := UTF8DecodeToUnicodeString(SQLFilesData.title);
       vData.id            := SQLFilesData.ID;
       vData.ParentID      := id;
       vData.Position      := Node.Index;
@@ -160,7 +162,7 @@ begin
       begin
         with TvCustomRealNodeData(vData) do
         begin
-          PathIcon    := UTF8ToString(SQLFilesData.icon_path);
+          PathIcon    := UTF8DecodeToUnicodeString(SQLFilesData.icon_path);
           TNodeIcon(Icon).SetCacheCRC(SQLFilesData.cache_icon_crc);
           AutorunPos  := SQLFilesData.autorun_position;
           Autorun     := TAutorunType(SQLFilesData.autorun);
@@ -181,9 +183,9 @@ begin
         begin
           with TvFileNodeData(vData) do
           begin
-            PathFile         := UTF8ToString(SQLFilesData.path);
-            Parameters       := UTF8ToString(SQLFilesData.parameters);
-            WorkingDir       := UTF8ToString(SQLFilesData.work_path);
+            PathFile         := UTF8DecodeToUnicodeString(SQLFilesData.path);
+            Parameters       := UTF8DecodeToUnicodeString(SQLFilesData.parameters);
+            WorkingDir       := UTF8DecodeToUnicodeString(SQLFilesData.work_path);
             ShortcutDesktop  := SQLFilesData.dsk_shortcut;
             NoMRU            := SQLFilesData.no_mru;
             NoMFU            := SQLFilesData.no_mfu;
@@ -223,7 +225,7 @@ begin
         TSQLtbl_list.SaveItemsByParentID(Tree, ADBManager, Node.FirstChild, vData.ID);
     except
       on E : Exception do
-        ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName, E.Message], True);
+        ShowMessageFmtEx(msgErrGeneric,[E.ClassName, E.Message], True);
     end;
     Node := Node.NextSibling;
   end;
@@ -246,7 +248,7 @@ begin
     Ftype := Ord(AData.DataType);
   Fparent   := AParentID;
   Fposition := AIndex;
-  Ftitle    := StringToUTF8(AData.Name);
+  Ftitle    := UnicodeStringToUtf8(AData.Name);
   //Add specific category and file fields
   if AData.DataType <> vtdtSeparator then
   begin
@@ -257,7 +259,7 @@ begin
     //Add category and file fields
     with TvCustomRealNodeData(AData) do
     begin
-      Ficon_path      := StringToUTF8(PathIcon);
+      Ficon_path      := UnicodeStringToUtf8(PathIcon);
       Fcache_icon_crc := TNodeIcon(Icon).CacheIconCRC;
       Fwindow_state   := WindowState;
       Fautorun        := Ord(Autorun);
@@ -273,9 +275,9 @@ begin
     begin
       with TvFileNodeData(AData) do
       begin
-        Fpath       := StringToUTF8(PathFile);
-        Fwork_path  := StringToUTF8(WorkingDir);
-        Fparameters := StringToUTF8(Parameters);
+        Fpath       := UnicodeStringToUtf8(PathFile);
+        Fwork_path  := UnicodeStringToUtf8(WorkingDir);
+        Fparameters := UnicodeStringToUtf8(Parameters);
         Fdsk_shortcut := ShortcutDesktop;
         Fno_mru     := NoMRU;
         Fno_mfu     := NoMFU;

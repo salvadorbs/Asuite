@@ -19,10 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit AppConfig.Paths;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Windows, SysUtils, Graphics, Forms, Controls, Vcl.Imaging.pngimage, Classes,
+  LCLIntf, LCLType, SysUtils, Graphics, Forms, Controls, Classes,
   ShlObj;
 
 type
@@ -67,7 +69,7 @@ type
 implementation
 
 uses
-  Utility.System, Kernel.Consts, Utility.FileFolder;
+  Kernel.Consts, Utility.FileFolder, Windows;
 
 { TConfigPaths }
 
@@ -129,17 +131,16 @@ function TConfigPaths.ExpandEnvVars(const Str: string): string;
 var
   BufSize: Integer; // size of expanded string
 begin
+  Result := '';
+
   // Get required buffer size
-  BufSize := ExpandEnvironmentStrings(PChar(Str), nil, 0);
+  BufSize := ExpandEnvironmentStringsW(PChar(Str), nil, 0);
   if BufSize > 0 then
   begin
     // Read expanded string into result string
     SetLength(Result, BufSize - 1);
-    ExpandEnvironmentStrings(PChar(Str), PChar(Result), BufSize);
-  end
-  else
-    // Trying to expand empty string
-    Result := '';
+    ExpandEnvironmentStringsW(PChar(Str), PChar(Result), BufSize);
+  end;
 end;
 
 function TConfigPaths.GetNumberSubFolders(const FolderPath: String): Integer;
@@ -149,16 +150,18 @@ begin
   Result := 0;
   //Count subfolders in FolderPath
   if FindFirst(FolderPath + '*.*', faAnyFile, SearchRec) = 0 then
-  repeat
-    if ((SearchRec.Name <> '.') and (SearchRec.Name <> '..')) and
-       ((SearchRec.Attr and faDirectory) = (faDirectory)) then
-    begin
-      //Increment result
-      Inc(Result);
-      Result := Result + GetNumberSubFolders(IncludeTrailingBackslash(FolderPath + SearchRec.Name));
-    end;
-  until FindNext(SearchRec) <> 0;
-  FindClose(SearchRec);
+  begin
+    repeat
+      if ((SearchRec.Name <> '.') and (SearchRec.Name <> '..')) and
+         ((SearchRec.Attr and faDirectory) = (faDirectory)) then
+      begin
+        //Increment result
+        Inc(Result);
+        Result := Result + GetNumberSubFolders(IncludeTrailingBackslash(FolderPath + SearchRec.Name));
+      end;
+    until FindNext(SearchRec) <> 0;
+    SysUtils.FindClose(SearchRec);
+  end;
 end;
 
 function TConfigPaths.RelativeToAbsolute(const APath: String): string;

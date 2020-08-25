@@ -19,11 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Utility.System;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Kernel.Consts, Windows, ShellApi, SysUtils, Classes, Registry, StrUtils,
-  ShlObj, ActiveX, ComObj, Forms, Dialogs, System.IOUtils;
+  Kernel.Consts, LCLIntf, LCLType, SysUtils, Classes, Registry,
+  ComObj, Forms, Dialogs;
 
 { Check functions }
 function HasDriveLetter(const Path: String): Boolean;
@@ -48,7 +50,7 @@ implementation
 
 uses
   Utility.Conversions, Forms.Main, AppConfig.Main, Utility.Misc, Kernel.Logger,
-  HotKeyManager, VirtualTree.Methods;
+  VirtualTree.Methods, LazFileUtils, Windows, Utility.Hotkey;
 
 function HasDriveLetter(const Path: String): Boolean;
 var P: PChar;
@@ -96,7 +98,7 @@ var
   PathTemp : String;
 begin
   PathTemp := Config.Paths.RelativeToAbsolute(Path);
-  if TPath.IsUNCPath(PathTemp) then
+  if IsUNCPath(PathTemp) then
     Result := True
   else
     if IsValidURLProtocol(PathTemp) then
@@ -135,17 +137,14 @@ var
   bShellExecute: Boolean;
 begin
   //Call "Safe Remove hardware" Dialog
-  WindowsPath := GetEnvironmentVariable('WinDir');
+  WindowsPath := SysUtils.GetEnvironmentVariable('WinDir');
   if FileExists(PChar(WindowsPath + '\System32\Rundll32.exe')) then
   begin
     TASuiteLogger.Info('Call Eject Dialog', []);
-    bShellExecute := ShellExecute(0,'open',
-                     PChar(WindowsPath + '\System32\Rundll32.exe'),
-                     PChar('Shell32,Control_RunDLL hotplug.dll'),
-                     PChar(WindowsPath + '\System32'),SW_SHOWNORMAL) > 32;
+    bShellExecute :=  OpenDocument(PChar(WindowsPath + '\System32\Rundll32.exe'));
     //Error message
     if not bShellExecute then
-      ShowMessageEx(Format('%s [%s]', [SysErrorMessage(GetLastError), 'Rundll32']), True);
+      ShowMessageEx(Format('%s [%s]', [SysErrorMessage(GetLastOSError), 'Rundll32']), True);
   end;
   //Close ASuite
   frmMain.miExitClick(Sender);
@@ -207,7 +206,7 @@ var
   sPath: String;
 begin
   Result := Default;
-  sPath := IncludeTrailingBackslash(Config.Paths.SuiteDrive + sPath);
+  sPath := IncludeTrailingBackslash(Config.Paths.SuiteDrive);
   if SysUtils.DirectoryExists(sPath) then
     Result := sPath;
 end;
@@ -216,7 +215,11 @@ function RegisterHotkeyEx(AId: Integer; AShortcut: Cardinal): Boolean;
 var
   Modifiers, Key: Word;
 begin
+  Modifiers := 0;
+  Key := 0;
+
   SeparateHotKey(AShortcut, Modifiers, Key);
+
   Result := RegisterHotKey(frmMain.Handle, AId, Modifiers, Key);
 end;
 

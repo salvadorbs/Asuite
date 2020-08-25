@@ -1,14 +1,16 @@
 unit Utility.FileFolder;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Kernel.Consts, Windows, SysUtils, Classes, Kernel.Enumerations, ShlObj, ActiveX,
-  ComObj, FileCtrl, PJVersionInfo;
+  Kernel.Consts, LCLIntf, LCLType, SysUtils, Classes, Kernel.Enumerations, ShlObj, ActiveX,
+  ComObj, PJVersionInfo, FileUtil, ShellApi, Windows, Dialogs;
 
 { Folders }
 function GetSpecialFolder(const ASpecialFolderID: Integer): string;
-function  BrowseForFolder(const InitialDir: String; const Caption: String = ''): String;
+function BrowseForFolder(const InitialDir: String; const Caption: String = ''): String;
 function DirToPath(const Dir: string): string;
 function IsDirectory(const DirName: string): Boolean;
 function IsFlagSet(const Flags, Mask: Integer): Boolean;
@@ -39,20 +41,26 @@ var
   vSpecialPath : array[0..MAX_PATH] of Char;
 begin
   SHGetSpecialFolderLocation(0, ASpecialFolderID, vSFolder);
-  SHGetPathFromIDList(vSFolder, vSpecialPath);
+  SHGetPathFromIDListW(vSFolder, vSpecialPath);
   Result := IncludeTrailingBackslash(StrPas(vSpecialPath));
 end;
 
 function BrowseForFolder(const InitialDir: String; const Caption: String): String;
 var
   Path: string;
+  Dialog: TSelectDirectoryDialog;
 begin
   Result := '';
   //Get Path and delete \ in last char. Example c:\xyz\ to c:\xyz
   Path   := ExcludeTrailingPathDelimiter(InitialDir);
   //Call Browse for folder dialog and get new path
-  if SelectDirectory('','',Path) then
-    Result := Path;
+  Dialog := TSelectDirectoryDialog.Create(nil);
+  try
+    if Dialog.Execute then
+      Result := Path;
+  finally
+    Dialog.Free;
+  end;
 end;
 
 function DirToPath(const Dir: string): string;
@@ -82,10 +90,10 @@ var
   H: THandle;
 begin
   FileName := IncludeTrailingPathDelimiter(AName) + 'chk.tmp';
-  H := CreateFile(PChar(FileName), GENERIC_READ or GENERIC_WRITE, 0, nil,
+  H := CreateFileW(PChar(FileName), GENERIC_READ or GENERIC_WRITE, 0, nil,
     CREATE_NEW, FILE_ATTRIBUTE_TEMPORARY or FILE_FLAG_DELETE_ON_CLOSE, 0);
   Result := H <> INVALID_HANDLE_VALUE;
-  if Result then CloseHandle(H);
+  if Result then FileClose(H);
 end;
 
 function DeleteFiles(const Dir, Wildcard: string): Integer;
@@ -165,7 +173,9 @@ var
   ErrCode: Word;
   Buffer: Array[1..65521] of byte;
 begin
+  ErrCode := 0;
   Result := 0;
+
   if FileName <> '' then
     FCRC32File(FileName, Result, Buffer, SizeOf(Buffer), ErrCode);
 end;
@@ -205,26 +215,26 @@ begin
     repeat
       BackupList.Add(BackupSearch.Name);
     until
-      FindNext(BackupSearch) <> 0;
-    FindClose(BackupSearch);
+      SysUtils.FindNext(BackupSearch) <> 0;
+    SysUtils.FindClose(BackupSearch);
   end;
   BackupList.Sort;
   for I := 1 to BackupList.Count - MaxNumber do
-    DeleteFile(Config.Paths.SuitePathBackup + BackupList[I - 1]);
+    SysUtils.DeleteFile(Config.Paths.SuitePathBackup + BackupList[I - 1]);
   BackupList.Free;
 end;
 
 procedure CreateShortcutOnDesktop(const FileName, TargetFilePath, Params, WorkingDir: String);
 var
   IObject  : IUnknown;
-  ISLink   : IShellLink;
+  ISLink   : IShellLinkW;
   IPFile   : IPersistFile;
   PIDL     : PItemIDList;
   InFolder : array[0..MAX_PATH] of Char;
 begin
   //Create objects
   IObject := CreateComObject(CLSID_ShellLink);
-  ISLink  := IObject as IShellLink;
+  ISLink  := IObject as IShellLinkW;
   IPFile  := IObject as IPersistFile;
   //Create link
   ISLink.SetPath(pChar(TargetFilePath));
@@ -235,7 +245,7 @@ begin
     ISLink.SetWorkingDirectory(pChar(WorkingDir));
   //DesktopPath
   SHGetSpecialFolderLocation(0, CSIDL_DESKTOPDIRECTORY, PIDL);
-  SHGetPathFromIDList(PIDL, InFolder);
+  SHGetPathFromIDListW(PIDL, InFolder);
   //Save link
   IPFile.Save(PWChar(IncludeTrailingPathDelimiter(InFolder) + FileName), false);
 end;
@@ -247,32 +257,28 @@ var
   LinkName    : String;
 begin
   SHGetSpecialFolderLocation(0, CSIDL_DESKTOPDIRECTORY, PIDL);
-  SHGetPathFromIDList(PIDL, DesktopPath);
-  LinkName := PWChar(IncludeTrailingPathDelimiter(DesktopPath) + FileName);
+  SHGetPathFromIDListW(PIDL, DesktopPath);
+  LinkName := PChar(IncludeTrailingPathDelimiter(DesktopPath) + FileName);
   if (FileExists(LinkName)) then
-    DeleteFile(LinkName);
+    SysUtils.DeleteFile(LinkName);
 end;
 
-function GetShortcutTarget(const LinkFileName:String; ShortcutType: TShortcutField):String;
+function GetShortcutTarget(const LinkFileName: String; ShortcutType: TShortcutField):String;
 var
-  ISLink    : IShellLink;
+  ISLink    : IShellLinkW;
   IPFile    : IPersistFile;
-  WidePath  : PWideChar;
+  WidePath  : PChar;
   Info      : Array[0..MAX_PATH] of Char;
-  wfs       : TWin32FindData;
+  wfs       : WIN32_FIND_DATAW;
 begin
-  CoCreateInstance(CLSID_ShellLink,nil,CLSCTX_INPROC_SERVER,IShellLink,ISLink);
+  CoCreateInstance(CLSID_ShellLink, nil, CLSCTX_INPROC_SERVER, IShellLinkW, ISLink);
   if ISLink.QueryInterface(IPersistFile, IPFile) = 0 then
   begin
-    {$IFDEF UNICODE}
-    WidePath := PWideChar(LinkFileName);
-    {$ELSE}
-    MultiByteToWideChar(CP_ACP,MB_PRECOMPOSED,PChar(LinkFileName),-1,@WidePath,MAX_PATH);
-    {$ENDIF}
+    WidePath := PChar(LinkFileName);
     //Get pathexe, parameters or working directory from shortcut
     IPFile.Load(WidePath, STGM_READ);
     case ShortcutType of
-     sfPathFile   : ISLink.GetPath(@info,MAX_PATH,wfs,SLGP_UNCPRIORITY);
+     sfPathFile   : ISLink.GetPath(@info,MAX_PATH,@wfs,SLGP_UNCPRIORITY);
      sfParameter  : ISLink.GetArguments(@info,MAX_PATH);
      sfWorkingDir : ISLink.GetWorkingDirectory(@info,MAX_PATH);
     end;
@@ -305,7 +311,7 @@ var
   sDesktopPath : string;
 begin
   SHGetSpecialFolderLocation(0, CSIDL_DESKTOPDIRECTORY, PIDL);
-  SHGetPathFromIDList(PIDL, DesktopPath);
+  SHGetPathFromIDListW(PIDL, DesktopPath);
   sDesktopPath := DesktopPath;
   RenameFile(sDesktopPath + PathDelim + OldFileName,sDesktopPath + PathDelim + FileName);
 end;

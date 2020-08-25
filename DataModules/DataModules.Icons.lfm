@@ -1,0 +1,18 @@
+object dmImages: TdmImages
+  OnCreate = DataModuleCreate
+  OldCreateOrder = False
+  Height = 120
+  HorizontalOffset = 954
+  VerticalOffset = 383
+  Width = 201
+  object ilSmallIcons: TBGRAImageList
+    Left = 8
+    Top = 8
+  end
+  object ilLargeIcons: TBGRAImageList
+    Height = 32
+    Width = 32
+    Left = 48
+    Top = 8
+  end
+end

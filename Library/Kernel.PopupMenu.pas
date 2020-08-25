@@ -19,15 +19,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Kernel.PopupMenu;
 
+//TODO: Rename this unit with proper name (Kernel.ASMenuItem or Kernel.Menus)
+
+{$MODE DelphiUnicode}
+
 interface
 
 uses
   Classes, SysUtils, Menus, VirtualTrees, NodeDataTypes.Base,
-  Windows, Messages;
+  LCLIntf, LCLType;
 
 type
 
   //ASuite TrayIcon Menu
+
+  { TASMenuItem }
+
   TASMenuItem = class(TMenuItem)
   private
     FData: TvBaseNodeData;
@@ -42,6 +49,9 @@ type
     property Data  : TvBaseNodeData read FData write SetData;
     property pNode : PVirtualNode read FpNode write SetpNode;
     property Path  : string read FPath write FPath;
+
+    procedure NewBottomLine;
+    procedure InsertNewLine(ABefore: Boolean; AItem: TMenuItem);
   end;
 
 implementation
@@ -53,6 +63,42 @@ begin
   inherited Create(AOwner);
   FData  := nil;
   FpNode := nil;
+end;
+
+procedure TASMenuItem.NewBottomLine;
+var
+  Separator: TMenuItem;
+begin
+  if Self.Count = 0 then
+  begin
+    Separator := TMenuItem.Create(nil);
+    Separator.Caption := cLineCaption;
+    Self.Add(NewLine)
+  end
+  else begin
+    if not(Self[Self.Count - 1].IsLine()) then
+      InsertNewLine(False, Self.Items[Self.Count - 1]);
+  end;
+end;
+
+procedure TASMenuItem.InsertNewLine(ABefore: Boolean; AItem: TMenuItem);
+begin
+  if ABefore then
+  begin
+    if (AItem.MenuIndex > 0) and
+       Self.Items[AItem.MenuIndex - 1].IsLine then
+      Self.Items[AItem.MenuIndex - 1].Visible := True
+    else
+      Self.Insert(AItem.MenuIndex, NewLine);
+  end
+  else
+  begin
+    if (AItem.MenuIndex < Self.Count - 1) and
+       Self.Items[AItem.MenuIndex + 1].IsLine then
+      Self.Items[AItem.MenuIndex + 1].Visible := True
+    else
+      Self.Insert(AItem.MenuIndex + 1, NewLine);
+  end;
 end;
 
 procedure TASMenuItem.SetData(const Value: TvBaseNodeData);

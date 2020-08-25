@@ -19,15 +19,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Options.General;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DKLang, Frame.BaseEntity, Vcl.StdCtrls;
+  LCLIntf, SysUtils, Dialogs, Frame.BaseEntity, StdCtrls, DefaultTranslator;
 
 type
+
+  { TfrmGeneralOptionsPage }
+
   TfrmGeneralOptionsPage = class(TfrmBaseEntityPage)
-    DKLanguageController1: TDKLanguageController;
+    
     gbStartup: TGroupBox;
     cbWindowsStartup: TCheckBox;
     cbShowPanelStartup: TCheckBox;
@@ -41,8 +45,6 @@ type
     cxActionOnExe: TComboBox;
     chkConfirmMessageCat: TCheckBox;
     chkAutoCloseProcess: TCheckBox;
-    grpTheme: TGroupBox;
-    cbTheme: TComboBox;
   private
     { Private declarations }
   strict protected
@@ -53,16 +55,17 @@ type
   public
     { Public declarations }
   end;
-  TfrmGeneralOptionsPageClass = class of TfrmGeneralOptionsPage;
+
 var
   frmGeneralOptionsPage: TfrmGeneralOptionsPage;
 
 implementation
 
 uses
-  AppConfig.Main, Kernel.Enumerations;
+  AppConfig.Main, Kernel.Enumerations, Kernel.ResourceStrings, FileUtil, LazFileUtils,
+  Kernel.Consts;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmGeneralOptionsPage }
 
@@ -73,27 +76,59 @@ end;
 
 function TfrmGeneralOptionsPage.GetTitle: string;
 begin
-  Result := DKLangConstW('msgGeneral');
+  Result := msgGeneral;
 end;
 
 function TfrmGeneralOptionsPage.InternalLoadData: Boolean;
 var
-  I: Integer;
+  I, idxDot: Integer;
+  FileInfo: TSearchRec;
+  strID: String;
+  SearchMask: String;
 begin
   Result := inherited;
+
   //Startup
   cbWindowsStartup.Checked   := Config.StartWithWindows;
   cbShowPanelStartup.Checked := Config.ShowPanelAtStartUp;
   cbShowMenuStartup.Checked  := Config.ShowGraphicMenuAtStartUp;
   chkMissedSchedulerTask.Checked := Config.MissedSchedulerTask;
-  cbTheme.ItemIndex          := Ord(Config.ASuiteTheme);
+
   //Language
-  for I := 0 to LangManager.LanguageCount - 1 do
+  //Search for all languages/xxx.po files
+
+  //Search existing translations
+  SearchMask := Config.Paths.SuitePathLocale + LowerCase(APP_NAME) + '.*' + EXT_PO;
+
+  if FindFirstUTF8(SearchMask, faAnyFile, FileInfo) = 0 then
   begin
-    cxLanguage.Items.Add(LangManager.LanguageNativeNames[I]);
-    if LangManager.LanguageIDs[I] = Config.LangID then
-      cxLanguage.ItemIndex  := I;
+    repeat
+      I := -1;
+      if (FileInfo.Attr and (faDirectory or faVolumeId) = 0) then
+      begin
+        if (FileInfo.Name = '.') or (FileInfo.Name = '..') or (FileInfo.Name = '') then
+          continue;
+
+        strID := ExtractFileNameWithoutExt(FileInfo.Name);
+        idxDot := pos('.', strID);
+
+        if idxDot <> 0 then
+        begin
+          strID := copy(strID, idxDot + 1, Length(strID) - 1);
+          I := cxLanguage.Items.Add(strID);
+        end;
+
+        if (strID = Config.LangID) and (I <> -1 )then
+          cxLanguage.ItemIndex  := I;
+      end;
+    until
+      FindNextUTF8(FileInfo) <> 0;
   end;
+  FindCloseUTF8(FileInfo);
+
+  if cxLanguage.ItemIndex = -1 then
+    cxLanguage.ItemIndex  := 0;
+
   //Execution options
   cxActionOnExe.ItemIndex   := Ord(Config.ActionOnExe);
   cbRunSingleClick.Checked  := Config.RunSingleClick;
@@ -104,14 +139,17 @@ end;
 function TfrmGeneralOptionsPage.InternalSaveData: Boolean;
 begin
   Result := inherited;
+
   //Startup
   Config.StartWithWindows    := cbWindowsStartup.Checked;
   Config.ShowPanelAtStartUp  := cbShowPanelStartup.Checked;
   Config.ShowGraphicMenuAtStartUp := cbShowMenuStartup.Checked;
   Config.MissedSchedulerTask := chkMissedSchedulerTask.Checked;
-  Config.ASuiteTheme         := TASuiteTheme(cbTheme.ItemIndex);
+
   //Language
-  Config.LangID := LangManager.LanguageIDs[cxLanguage.ItemIndex];
+  if cxLanguage.ItemIndex <> -1 then
+    Config.LangID := cxLanguage.Items[cxLanguage.ItemIndex];
+
   //Execution options
   Config.ActionOnExe    := TActionOnExecute(cxActionOnExe.ItemIndex);
   Config.RunSingleClick := cbRunSingleClick.Checked;

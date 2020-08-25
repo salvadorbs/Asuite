@@ -1,0 +1,201 @@
+inherited frmStatsOptionsPage: TfrmStatsOptionsPage
+  DesignLeft = 1042
+  DesignTop = 305
+  object gbASuite: TGroupBox[0]
+    Left = 4
+    Height = 80
+    Top = 220
+    Width = 437
+    Align = alTop
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    Caption = 'ASuite'
+    ClientHeight = 62
+    ClientWidth = 433
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 2
+    object lbSoftware: TJppDoubleLineLabel
+      Left = 6
+      Height = 15
+      Top = 0
+      Width = 419
+      RightCaption = 'Value'
+      LinePeriod = 4
+      Caption = 'Software added'
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      ParentFont = False
+    end
+    object lbTotal: TJppDoubleLineLabel
+      Left = 6
+      Height = 15
+      Top = 38
+      Width = 419
+      RightCaption = 'Value'
+      LinePeriod = 4
+      Caption = 'Total'
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      RightCaptionFont.Style = [fsBold]
+    end
+    object lbCat: TJppDoubleLineLabel
+      Left = 6
+      Height = 15
+      Top = 19
+      Width = 419
+      RightCaption = 'Value'
+      LinePeriod = 4
+      Caption = 'Categories added'
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      ParentFont = False
+    end
+  end
+  object gbSupport: TGroupBox[1]
+    Left = 4
+    Height = 76
+    Top = 140
+    Width = 437
+    Align = alTop
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    Caption = 'Drive %S:'
+    ClientHeight = 58
+    ClientWidth = 433
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 1
+    object lbSize: TJppDoubleLineLabel
+      Left = 6
+      Height = 15
+      Top = 0
+      Width = 419
+      RightCaption = 'Value'
+      LinePeriod = 4
+      Caption = 'Size'
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      ParentFont = False
+      OnClick = lbSizeClick
+    end
+    object lbSpaceFree: TJppDoubleLineLabel
+      Left = 6
+      Height = 15
+      Top = 38
+      Width = 419
+      RightCaption = 'Value'
+      LinePeriod = 4
+      Caption = 'Used space'
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      ParentFont = False
+    end
+    object lbSpaceUsed: TJppDoubleLineLabel
+      Left = 6
+      Height = 15
+      Top = 19
+      Width = 419
+      RightCaption = 'Value'
+      LinePeriod = 4
+      Caption = 'Free space'
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      ParentFont = False
+    end
+  end
+  object gbSystem: TGroupBox[2]
+    Left = 4
+    Height = 136
+    Top = 0
+    Width = 437
+    Align = alTop
+    BorderSpacing.Left = 4
+    BorderSpacing.Right = 4
+    Caption = 'System'
+    ClientHeight = 118
+    ClientWidth = 433
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 0
+    object lbOs: TJppDoubleLineLabel
+      Left = 6
+      Height = 15
+      Top = 0
+      Width = 419
+      RightCaption = 'Value'
+      LinePeriod = 4
+      Caption = 'Operating System'
+      ParentFont = False
+    end
+    object lbNamePc: TJppDoubleLineLabel
+      Left = 6
+      Height = 15
+      Top = 94
+      Width = 419
+      RightCaption = 'Value'
+      LinePeriod = 4
+      Caption = 'Computer name'
+      ParentFont = False
+    end
+    object lbUser: TJppDoubleLineLabel
+      Left = 6
+      Height = 15
+      Top = 75
+      Width = 419
+      RightCaption = 'Value'
+      LinePeriod = 4
+      Caption = 'Current user'
+      ParentFont = False
+    end
+    object lblBuild: TJppDoubleLineLabel
+      Left = 6
+      Height = 15
+      Top = 19
+      Width = 419
+      RightCaption = 'Value'
+      LinePeriod = 4
+      Caption = 'Build Version'
+      ParentFont = False
+    end
+    object lblProcessor: TJppDoubleLineLabel
+      Left = 6
+      Height = 15
+      Top = 57
+      Width = 419
+      RightCaption = 'Value'
+      LinePeriod = 4
+      Caption = 'Processor'
+      ParentFont = False
+    end
+    object lblRam: TJppDoubleLineLabel
+      Left = 6
+      Height = 15
+      Top = 38
+      Width = 419
+      RightCaption = 'Value'
+      LinePeriod = 4
+      Caption = 'Total physical memory'
+      ParentFont = False
+    end
+  end
+end

@@ -19,16 +19,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Options.Trayicon;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DKLang, Frame.BaseEntity, Vcl.StdCtrls,
-  Vcl.Mask, JvExMask, JvToolEdit;
+  LCLIntf, SysUtils, Classes, Graphics, Forms, Dialogs, Frame.BaseEntity, StdCtrls,
+  EditBtn, DefaultTranslator;
 
 type
   TfrmTrayiconOptionsPage = class(TfrmBaseEntityPage)
-    DKLanguageController1: TDKLanguageController;
+    
     gbTrayicon: TGroupBox;
     lbTrayLeftClick: TLabel;
     lbTrayRightClick: TLabel;
@@ -37,7 +38,7 @@ type
     cbTrayicon: TCheckBox;
     cxRightClick: TComboBox;
     cbTrayCustomIcon: TCheckBox;
-    edtCustomIcon: TJvFilenameEdit;
+    edtCustomIcon: TFileNameEdit;
     cxMiddleClick: TComboBox;
     grpClassicMenu: TGroupBox;
     cbSubMenuMFU: TCheckBox;
@@ -73,9 +74,9 @@ var
 implementation
 
 uses
-  AppConfig.Main, Kernel.Enumerations;
+  AppConfig.Main, Kernel.Enumerations, Kernel.ResourceStrings;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmTrayiconOptionsPage }
 
@@ -101,7 +102,7 @@ procedure TfrmTrayiconOptionsPage.edtCustomIconBeforeDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
   AName := Config.Paths.RelativeToAbsolute(AName);
-  edtCustomIcon.Filter := DKLangConstW('msgFilterIcon');
+  edtCustomIcon.Filter := msgFilterIcon;
 end;
 
 function TfrmTrayiconOptionsPage.GetImageIndex: Integer;
@@ -111,7 +112,7 @@ end;
 
 function TfrmTrayiconOptionsPage.GetTitle: string;
 begin
-  Result := DKLangConstW('msgTrayIcon');
+  Result := msgTrayIcon;
 end;
 
 function TfrmTrayiconOptionsPage.InternalLoadData: Boolean;

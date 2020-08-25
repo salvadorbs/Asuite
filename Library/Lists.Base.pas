@@ -19,11 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Lists.Base;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Classes, NodeDataTypes.Custom, Menus, SysUtils, Kernel.Types, Windows,
-  NodeDataTypes.Base, DateUtils, Dialogs, UITypes;
+  NodeDataTypes.Custom, Menus, SysUtils, Kernel.Types, LCLIntf,
+  Dialogs;
 
 type
   TBaseItemsList = class

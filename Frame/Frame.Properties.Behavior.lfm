@@ -1,0 +1,121 @@
+inherited frmBehaviorPropertyPage: TfrmBehaviorPropertyPage
+  DesignLeft = -738
+  DesignTop = 479
+  object grpAutoExecute: TGroupBox[0]
+    Left = 4
+    Height = 78
+    Top = 4
+    Width = 352
+    Align = alTop
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    Caption = 'Autorun'
+    ClientHeight = 58
+    ClientWidth = 348
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 0
+    object cxAutoExecute: TComboBox
+      Left = 6
+      Height = 23
+      Top = 0
+      Width = 338
+      ItemHeight = 15
+      Items.Strings = (
+        'Never'
+        'Always on startup'
+        'Startup, only if no previous instances are running'
+        'Always on shutdown'
+      )
+      OnChange = cxAutoExecuteChange
+      ParentFont = False
+      Style = csDropDownList
+      TabOrder = 0
+    end
+    object btnChangeOrder: TButton
+      Left = 105
+      Height = 21
+      Top = 30
+      Width = 150
+      Caption = 'Change autorun order'
+      OnClick = btnChangeOrderClick
+      ParentFont = False
+      TabOrder = 1
+    end
+  end
+  object pnl1: TPanel[1]
+    Left = 0
+    Height = 53
+    Top = 82
+    Width = 360
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 53
+    ClientWidth = 360
+    TabOrder = 1
+    object grpOnExecute: TGroupBox
+      Left = 4
+      Height = 49
+      Top = 4
+      Width = 173
+      Align = alLeft
+      BorderSpacing.Left = 4
+      BorderSpacing.Top = 4
+      BorderSpacing.Right = 4
+      Caption = 'On Execute'
+      ClientHeight = 29
+      ClientWidth = 169
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
+      object cxActionOnExe: TComboBox
+        Left = 6
+        Height = 23
+        Top = 0
+        Width = 158
+        ItemHeight = 15
+        Items.Strings = (
+          'Default (options)'
+          'Just run file'
+          'Run and hide ASuite'
+          'Run and close ASuite'
+        )
+        ParentFont = False
+        Style = csDropDownList
+        TabOrder = 0
+      end
+    end
+    object grpWindowState: TGroupBox
+      Left = 181
+      Height = 49
+      Top = 4
+      Width = 175
+      Align = alLeft
+      BorderSpacing.Left = 4
+      BorderSpacing.Top = 4
+      BorderSpacing.Right = 4
+      Caption = 'Window State'
+      ClientHeight = 29
+      ClientWidth = 171
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 1
+      object cxWindowState: TComboBox
+        Left = 6
+        Height = 23
+        Top = 0
+        Width = 158
+        ItemHeight = 15
+        Items.Strings = (
+          'Normal'
+          'Minimized'
+          'Maximized'
+        )
+        ParentFont = False
+        Style = csDropDownList
+        TabOrder = 0
+      end
+    end
+  end
+end

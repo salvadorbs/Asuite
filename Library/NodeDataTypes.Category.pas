@@ -19,12 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit NodeDataTypes.Category;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  VirtualTrees, Menus, SysUtils, Dialogs, DateUtils, Kernel.Enumerations,
-  Winapi.Windows, NodeDataTypes.Base, NodeDataTypes.Custom, Kernel.Types,
-  UITypes;
+  VirtualTrees, SysUtils, Dialogs, Kernel.Enumerations, Controls,
+  LCLIntf, NodeDataTypes.Base, NodeDataTypes.Custom, Kernel.Types;
 
 type
   TvCategoryNodeData = class(TvCustomRealNodeData)
@@ -52,7 +53,7 @@ type
 implementation
 
 uses
-  NodeDataTypes.Files, VirtualTree.Methods, AppConfig.Main, DKLang;
+  NodeDataTypes.Files, VirtualTree.Methods, AppConfig.Main, Kernel.ResourceStrings;
 
 procedure TvCategoryNodeData.CallBackExecuteNode(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
@@ -133,7 +134,7 @@ begin
   if (Config.ConfirmRunCat) then
   begin
     if CheckRunnableSubItems(Config.MainTree) then
-      Result := (MessageDlg(Format(DKLangConstW('msgConfirmRunCat'), [Self.Name]), mtWarning, [mbYes, mbNo], 0) = mrYes);
+      Result := (MessageDlg(Format(msgConfirmRunCat, [Self.Name]), mtWarning, [mbYes, mbNo], 0) = mrYes);
   end
   else
     Result := True;

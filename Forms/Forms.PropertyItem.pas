@@ -19,16 +19,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.PropertyItem;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Forms.Dialog.BaseEntity, VirtualTrees,
-  Vcl.ExtCtrls, Vcl.StdCtrls, DKLang, Frame.BaseEntity, NodeDataTypes.Custom;
+  SysUtils, Classes, Controls, Forms, Dialogs, Forms.Dialog.BaseEntity,
+  NodeDataTypes.Custom, DefaultTranslator;
 
 type
   TfrmPropertyItem = class(TfrmDialogBase)
-    DKLanguageController1: TDKLanguageController;
+    
   private
     { Private declarations }
     FListNodeData: TvCustomRealNodeData;
@@ -52,7 +53,7 @@ uses
   Frame.Properties.Behavior, Frame.Properties.General.Category,
   Frame.Properties.General.Software;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmPropertyItem }
 
@@ -85,12 +86,12 @@ begin
   Result := True;
 
   if (FListNodeData.DataType = vtdtFile) or (FListNodeData.DataType = vtdtFolder) then
-    FFrameGeneral := AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmSWGeneralPropertyPage.Create(Self, FListNodeData)))
+    FFrameGeneral := AddFrameNode(vstCategory, nil, TfrmSWGeneralPropertyPage.Create(Self, FListNodeData))
   else
     if FListNodeData.DataType = vtdtCategory then
-      FFrameGeneral := AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmCatGeneralPropertyPage.Create(Self, FListNodeData)));
-  AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmAdvancedPropertyPage.Create(Self, FListNodeData)));
-  AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmBehaviorPropertyPage.Create(Self, FListNodeData)));
+      FFrameGeneral := AddFrameNode(vstCategory, nil, TfrmCatGeneralPropertyPage.Create(Self, FListNodeData));
+  AddFrameNode(vstCategory, nil, TfrmAdvancedPropertyPage.Create(Self, FListNodeData));
+  AddFrameNode(vstCategory, nil, TfrmBehaviorPropertyPage.Create(Self, FListNodeData));
 end;
 
 function TfrmPropertyItem.InternalSaveData: Boolean;

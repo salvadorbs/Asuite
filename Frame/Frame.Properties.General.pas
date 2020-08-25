@@ -19,12 +19,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Properties.General;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, DKLang, Frame.Properties.Base,
-  Vcl.Mask, JvExMask, JvToolEdit, Vcl.Styles, Vcl.Themes;
+  LCLIntf, LCLType, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, StdCtrls, Frame.Properties.Base, Themes,
+  EditBtn, DefaultTranslator;
 
 type
   TfrmBaseGeneralPropertyPage = class(TfrmBasePropertyPage)
@@ -32,7 +34,7 @@ type
     lbName: TLabel;
     edtName: TEdit;
     lbPathIcon: TLabel;
-    edtPathIcon: TJvFilenameEdit;
+    edtPathIcon: TFileNameEdit;
     procedure edtPathIconAfterDialog(Sender: TObject; var AName: string;
       var AAction: Boolean);
     procedure edtPathIconBeforeDialog(Sender: TObject; var AName: string;
@@ -49,7 +51,7 @@ type
     function InternalLoadData: Boolean; override;
     function InternalSaveData: Boolean; override;
 
-    function CheckPropertyPath(ASender: TJvFileDirEdit; APath: string = ''): Boolean;
+    function CheckPropertyPath(ASender: TCustomEditButton; APath: string = ''): Boolean;
   public
     { Public declarations }
   end;
@@ -61,9 +63,9 @@ implementation
 
 uses
   Utility.Misc, Kernel.Enumerations, NodeDataTypes.Files, AppConfig.Main,
-  Utility.System;
+  Utility.System, Kernel.ResourceStrings;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmGeneralPropertyPage }
 
@@ -73,13 +75,13 @@ begin
   // Check if inserted name is empty, then
   if (Trim(Edit.Text) = '') then
   begin
-    ShowMessageEx(DKLangConstW('msgErrEmptyName'),true);
+    ShowMessageEx(msgErrEmptyName,true);
     Edit.Color := clYellow;
     Result := False;
   end;
 end;
 
-function TfrmBaseGeneralPropertyPage.CheckPropertyPath(ASender: TJvFileDirEdit;
+function TfrmBaseGeneralPropertyPage.CheckPropertyPath(ASender: TCustomEditButton;
   APath: string): Boolean;
 var
   cColor : TColor;
@@ -93,21 +95,21 @@ begin
   if Result then
   begin
     //File found - Change font color with default color (clWindowText)
-    cColor := TStyleManager.ActiveStyle.GetSystemColor(clWindowText);
+    cColor := clWindowText;
     sHint  := '';
   end
   else begin
     //File not found - Change font color with red
     cColor := clRed;
-    sHint  := DKLangConstW('msgFileNotFound');
+    sHint  := msgFileNotFound;
   end;
   //Change ASender's properties Color and Hint in based of vars cColor and sHint
   ASender.Hint := sHint;
-  if (ASender is TJvFilenameEdit) then
-    TJvFilenameEdit(ASender).Font.Color := cColor
+  if (ASender is TFileNameEdit) then
+    TFileNameEdit(ASender).Font.Color := cColor
   else
-    if (ASender is TJvDirectoryEdit) then
-      TJvDirectoryEdit(ASender).Font.Color := cColor;
+    if (ASender is TDirectoryEdit) then
+      TDirectoryEdit(ASender).Font.Color := cColor;
 end;
 
 procedure TfrmBaseGeneralPropertyPage.edtNameEnter(Sender: TObject);
@@ -126,7 +128,7 @@ end;
 procedure TfrmBaseGeneralPropertyPage.edtPathIconBeforeDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
-  edtPathIcon.Filter := DKLangConstW('msgFilterIconExe');
+  edtPathIcon.Filter := msgFilterIconExe;
   AName := Config.Paths.RelativeToAbsolute(AName);
 end;
 
@@ -147,7 +149,7 @@ end;
 
 function TfrmBaseGeneralPropertyPage.GetTitle: string;
 begin
-  Result := DKLangConstW('msgGeneral');
+  Result := msgGeneral;
 end;
 
 function TfrmBaseGeneralPropertyPage.InternalLoadData: Boolean;

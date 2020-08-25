@@ -19,22 +19,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.Main;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
+  LCLIntf, LCLType, LMessages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
   ComCtrls, VirtualTrees, ActiveX, Kernel.Consts, DataModules.Icons,
-  Kernel.BaseMainForm, StdCtrls, Buttons, System.UITypes,
-  Kernel.Enumerations, Vcl.ExtCtrls, XMLDoc, DKLang, Lists.Manager,
-  Database.Manager, System.Actions, Vcl.ActnList, Vcl.Themes;
+  Kernel.BaseMainForm, StdCtrls, Buttons, UITypes,
+  Kernel.Enumerations, ExtCtrls, {XMLDoc,} Lists.Manager,
+  Database.Manager, ButtonedEdit, {Actions,} ActnList, Themes, EditBtn;
 
 type
 
   { TfrmMain }
 
   TfrmMain = class(TBaseMainForm)
+    actSepEdit: TAction;
+    btnedtSearch: TButtonedEdit;
     miStatistics: TMenuItem;
     MenuItem2: TMenuItem;
+    mniOpenFolderItem: TMenuItem;
+    mniRunAsAdminItem: TMenuItem;
+    mniRunAsItem: TMenuItem;
+    mniRunItem: TMenuItem;
+    N9: TMenuItem;
     vstList: TVirtualStringTree;
     pcList: TPageControl;
     tbList: TTabSheet;
@@ -74,9 +83,8 @@ type
     miSearchIconPath: TMenuItem;
     miSearchWorkingDirPath: TMenuItem;
     miSearchParameters: TMenuItem;
-    btnedtSearch: TButtonedEdit;
     mniScanFolder: TMenuItem;
-    DKLanguageController1: TDKLanguageController;
+    
     ActionList1: TActionList;
     actRunItem: TAction;
     actRunAsItem: TAction;
@@ -95,6 +103,7 @@ type
     tmrCheckItems: TTimer;
     actSortList: TAction;
     mniSortList: TMenuItem;
+    procedure actSepEditUpdate(Sender: TObject);
     procedure miOptionsClick(Sender: TObject);
     procedure miStatisticsClick(Sender: TObject);
     procedure miImportListClick(Sender: TObject);
@@ -104,7 +113,6 @@ type
     procedure miExitClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure miExportListClick(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
     procedure miInfoASuiteClick(Sender: TObject);
     procedure btnedtSearchRightButtonClick(Sender: TObject);
     procedure ChangeSearchTextHint(Sender: TObject);
@@ -154,9 +162,9 @@ uses
   DataModules.TrayMenu, Forms.ImportList, AppConfig.Main, Utility.System,
   VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base, Kernel.Scheduler,
   Kernel.Types, NodeDataTypes.Files, VirtualTree.Events, Utility.Process,
-  Kernel.Logger, SynLog;
+  Kernel.Logger, SynLog, FileUtil, Kernel.ResourceStrings;
 
-{$R *.dfm}
+{$R *.lfm}
 
 procedure TfrmMain.actAddItemUpdate(Sender: TObject);
 begin
@@ -196,7 +204,7 @@ begin
   Config.ASuiteState := lsDeleting;
   try
     Tree := GetActiveTree;
-    if (Tree.GetFirstSelected <> nil) and (Config.TVDisableConfirmDelete or (MessageDlg((DKLangConstW('msgConfirmDeleteItem')), mtWarning, [mbYes,mbNo], 0) = mrYes)) then
+    if (Tree.GetFirstSelected <> nil) and (Config.TVDisableConfirmDelete or (MessageDlg((msgConfirmDeleteItem), mtWarning, [mbYes,mbNo], 0) = mrYes)) then
     begin
       Nodes := Tree.GetSortedSelection(true);
       //Delete items
@@ -249,15 +257,18 @@ begin
       end
     else
       Tree.DefaultPasteMode := amAddChildLast;
-    Tree.PasteFromClipboard;
-    Tree.Expanded[Tree.GetFirstSelected] := True;
-    TVirtualTreeMethods.Create.RefreshList(Tree);
+    if Tree.PasteFromClipboard then
+    begin
+      Tree.Expanded[Tree.GetFirstSelected] := True;
+      TVirtualTreeMethods.Create.RefreshList(Tree);
+    end;
   end;
 end;
 
 procedure TfrmMain.actPasteUpdate(Sender: TObject);
 begin
-  TAction(Sender).Enabled := IsFormatInClipBoard(CF_VIRTUALTREE) and (GetActiveTree = vstList);
+  if Assigned(Sender) then
+    TAction(Sender).Enabled := IsFormatInClipBoard(CF_VIRTUALTREE) and (GetActiveTree = vstList);
 end;
 
 procedure TfrmMain.actPropertyExecute(Sender: TObject);
@@ -371,11 +382,11 @@ begin
 end;
 
 procedure TfrmMain.miSaveListClick(Sender: TObject);
-begin;
+begin
   if Config.SaveList(True) then
-    ShowMessageEx(DKLangConstW('msgSaveCompleted'))
+    ShowMessageEx(msgSaveCompleted)
   else
-    ShowMessageEx(DKLangConstW('msgErrSave'),true);
+    ShowMessageEx(msgErrSave,true);
 end;
 
 procedure TfrmMain.ChangeSearchTextHint(Sender: TObject);
@@ -406,6 +417,11 @@ begin
   TfrmOptions.Execute(Self);
 end;
 
+procedure TfrmMain.actSepEditUpdate(Sender: TObject);
+begin
+  TAction(Sender).Visible := (GetActiveTree = vstList);
+end;
+
 procedure TfrmMain.miStatisticsClick(Sender: TObject);
 begin
   TfrmOptions.Execute(Self, TfrmStatsOptionsPage);
@@ -415,6 +431,7 @@ procedure TfrmMain.mniScanFolderClick(Sender: TObject);
 begin
   TfrmScanFolder.Execute(Self);
   TVirtualTreeMethods.Create.RefreshList(GetActiveTree);
+  Config.SaveConfig;
 end;
 
 procedure TfrmMain.pcListChange(Sender: TObject);
@@ -426,9 +443,6 @@ begin
     btnedtSearch.Text := '';
   end;
   TVirtualTreeMethods.Create.CheckVisibleNodePathExe(GetActiveTree);
-
-  //Workaround TButtonedEdit search transparency icon
-  frmMain.btnedtSearch.Color := StyleServices.GetSystemColor(clWindow);
 end;
 
 procedure TfrmMain.SetAllIcons;
@@ -441,10 +455,13 @@ begin
   pmSearch.Images      := dmImages.ilSmallIcons;
   pmWindow.Images      := dmImages.ilSmallIcons;
   pcList.Images        := dmImages.ilSmallIcons;
-  btnedtSearch.Images  := dmImages.ilSmallIcons;
+  btnedtSearch.RightButton.Images := dmImages.ilSmallIcons;
+  btnedtSearch.LeftButton.Images := dmImages.ilSmallIcons;
+
   //Set pcList tabs' ImageIndexes
   tbList.ImageIndex    := Config.IconsManager.GetIconIndex('tree_list');
   tbSearch.ImageIndex  := Config.IconsManager.GetIconIndex('search');
+
   //Set MainMenu's ImageIndexes
   miSaveList1.ImageIndex   := Config.IconsManager.GetIconIndex('save');
   miOptions1.ImageIndex    := Config.IconsManager.GetIconIndex('options');
@@ -458,6 +475,7 @@ begin
   actProperty.ImageIndex   := Config.IconsManager.GetIconIndex('property');
   miInfoASuite.ImageIndex  := Config.IconsManager.GetIconIndex('help');
   actRunItem.ImageIndex    := Config.IconsManager.GetIconIndex('run');
+
   //Set Search's ImageIndexes
   btnedtSearch.LeftButton.ImageIndex  := Config.IconsManager.GetIconIndex('search_type');
   btnedtSearch.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('search');
@@ -571,14 +589,21 @@ end;
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   TASuiteLogger.Enter('FormClose', Self);
+
   //Close all process opened by ASuite
   if Config.AutoCloseProcess then
     CloseProcessOpenByASuite;
+
   Config.ListManager.ExecuteAutorunList(amShutdown);
+
   //Execute actions on ASuite's shutdown (inside vstList)
   Config.MainTree.IterateSubtree(nil, TVirtualTreeMethods.Create.ActionsOnShutdown, nil);
+
   //Hotkey
   Config.ListManager.HotKeyItemList.Clear;
+
+  Config.SaveConfig;
+
   TVirtualTreeMethods.Create.RefreshList(nil);
 end;
 
@@ -614,6 +639,7 @@ begin
     miSaveList1.Enabled := False;
   end;
   //Load Database and get icons (only first level of tree)
+  Config.LoadConfig;
   Config.LoadList;
   Config.ListManager.ExecuteAutorunList(amStartup);
   //Check missed scheduler tasks
@@ -626,11 +652,6 @@ begin
   TVirtualTreeMethods.Create.GetAllIcons(vstList, nil);
 end;
 
-procedure TfrmMain.FormDestroy(Sender: TObject);
-begin
-  Config.Destroy;
-end;
-
 procedure TfrmMain.FormHide(Sender: TObject);
 begin
   tmrCheckItems.Enabled := False;
@@ -639,6 +660,7 @@ end;
 procedure TfrmMain.FormResize(Sender: TObject);
 begin
   GetActiveTree.Refresh;
+  Config.Changed := True;
 end;
 
 procedure TfrmMain.FormShow(Sender: TObject);

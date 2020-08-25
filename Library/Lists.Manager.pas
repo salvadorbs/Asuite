@@ -19,11 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Lists.Manager;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Classes, Menus, SysUtils, Kernel.Singleton, Lists.Special, NodeDataTypes.Custom,
-  Lists.Base, Lists.HotKey, Kernel.Enumerations, SynLog;
+  SysUtils, Kernel.Singleton, Lists.Special, NodeDataTypes.Custom,
+  Lists.Base, Lists.HotKey, Kernel.Enumerations{, SynLog};
 
 type
   TListManager = class(TSingleton)
@@ -52,7 +54,7 @@ type
 implementation
 
 uses
-  Windows, AppConfig.Main, VirtualTree.Methods, Kernel.Logger;
+  LCLIntf, LCLType, AppConfig.Main, VirtualTree.Methods, Kernel.Logger;
 
 { TLauncherLists }
 

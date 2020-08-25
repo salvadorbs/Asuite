@@ -19,12 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.Dialog.BaseEntity;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.ComCtrls,
-  Vcl.StdCtrls, Frame.BaseEntity, VirtualTrees;
+  LCLIntf, LCLType, SysUtils, Classes, Controls, Forms, Dialogs, ExtCtrls, ComCtrls,
+  StdCtrls, Frame.BaseEntity, VirtualTrees, DefaultTranslator;
 
 type
   TfrmDialogBase = class(TForm)
@@ -50,14 +51,14 @@ type
     function InternalLoadData: Boolean; virtual;
     function InternalSaveData: Boolean; virtual;
     function AddFrameNode(Tree: TBaseVirtualTree; Parent: PVirtualNode;
-                          FramePage: TPageFrameClass): PVirtualNode;
+                          FramePage: TfrmBaseEntityPage): PVirtualNode;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
 
     property CurrentPage: TfrmBaseEntityPage read FCurrentPage write FCurrentPage;
 
-    procedure ChangePage(NewPage: TPageFrameClass);
+    procedure ChangePage(NewPage: TfrmBaseEntityPage);
   end;
 
 var
@@ -68,12 +69,12 @@ implementation
 uses
   VirtualTree.Events, Kernel.Types, Kernel.Logger;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmDialogBase }
 
 function TfrmDialogBase.AddFrameNode(Tree: TBaseVirtualTree;
-  Parent: PVirtualNode; FramePage: TPageFrameClass): PVirtualNode;
+  Parent: PVirtualNode; FramePage: TfrmBaseEntityPage): PVirtualNode;
 var
   NodeData: PFramesNodeData;
 begin
@@ -84,6 +85,12 @@ begin
     NodeData.Frame := FramePage;
     NodeData.Title := TfrmBaseEntityPage(FramePage).Title;
     NodeData.ImageIndex := TfrmBaseEntityPage(FramePage).ImageIndex;
+
+    TfrmBaseEntityPage(FramePage).Parent := Self.pnlDialogPage;
+    TfrmBaseEntityPage(FramePage).Visible := False;
+    TfrmBaseEntityPage(FramePage).Align := alClient;
+
+    TfrmBaseEntityPage(FramePage).LoadData;
   end;
 end;
 
@@ -112,18 +119,16 @@ begin
     ModalResult := mrNone;
 end;
 
-procedure TfrmDialogBase.ChangePage(NewPage: TPageFrameClass);
+procedure TfrmDialogBase.ChangePage(NewPage: TfrmBaseEntityPage);
 begin
   if Assigned(FCurrentPage) then
   begin
-    if FCurrentPage.ClassType = NewPage then
+    if FCurrentPage = NewPage then
       Exit
     else
      FCurrentPage.Visible := False;
   end;
   FCurrentPage := TfrmBaseEntityPage(NewPage);
-  FCurrentPage.Parent  := pnlDialogPage;
-  FCurrentPage.Align   := alClient;
   FCurrentPage.Visible := True;
 end;
 
@@ -171,7 +176,7 @@ begin
   begin
     NodeData := Tree.GetNodeData(Node);
 
-    if TfrmBaseEntityPage(NodeData.Frame).ClassName = AFramePage.ClassName then
+    if NodeData.Frame.ClassName = AFramePage.ClassName then
       Exit(Node);
 
     if Node.ChildCount > 0 then

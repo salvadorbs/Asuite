@@ -19,12 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Properties.General.Software;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
-  DKLang, Frame.Properties.General, Vcl.Mask, JvExMask, JvToolEdit;
+  SysUtils, Graphics, Dialogs, StdCtrls, Frame.Properties.General, EditBtn,
+  DefaultTranslator;
 
 type
   TfrmSWGeneralPropertyPage = class(TfrmBaseGeneralPropertyPage)
@@ -34,9 +35,9 @@ type
     edtParameters: TEdit;
     lbParameters: TLabel;
     lbPathExe: TLabel;
-    DKLanguageController1: TDKLanguageController;
-    edtWorkingDir: TJvDirectoryEdit;
-    edtPathExe: TJvFilenameEdit;
+    
+    edtWorkingDir: TDirectoryEdit;
+    edtPathExe: TFileNameEdit;
     btnExtractName: TButton;
     procedure edtPathExeAfterDialog(Sender: TObject; var AName: string;
       var AAction: Boolean);
@@ -64,10 +65,10 @@ var
 implementation
 
 uses
-  Kernel.Consts, NodeDataTypes.Files, AppConfig.Main,
+  Kernel.Consts, NodeDataTypes.Files, AppConfig.Main, Kernel.ResourceStrings,
   Utility.FileFolder;
 
-{$R *.dfm}
+{$R *.lfm}
 
 procedure TfrmSWGeneralPropertyPage.btnExtractNameClick(Sender: TObject);
 begin
@@ -83,7 +84,7 @@ end;
 procedure TfrmSWGeneralPropertyPage.edtPathExeBeforeDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
-  edtPathExe.Filter := DKLangConstW('msgFilterExe');
+  edtPathExe.Filter := msgFilterExe;
   AName := Config.Paths.RelativeToAbsolute(AName);
 end;
 

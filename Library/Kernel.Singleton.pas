@@ -52,6 +52,8 @@
 
 unit Kernel.Singleton;
 
+{$MODE Delphi}
+
 interface
 
 type

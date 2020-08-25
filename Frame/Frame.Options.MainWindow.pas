@@ -19,22 +19,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Options.MainWindow;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Frame.BaseEntity, DKLang, Vcl.StdCtrls,
-  Vcl.Mask, JvExMask, JvToolEdit;
+  LCLIntf, SysUtils, Classes, Graphics, Forms, Dialogs, Frame.BaseEntity, StdCtrls,
+  EditBtn, DefaultTranslator;
 
 type
   TfrmMainWindowOptionsPage = class(TfrmBaseEntityPage)
-    DKLanguageController1: TDKLanguageController;
+    
     gbTreeView: TGroupBox;
     cbBackground: TCheckBox;
     btnFontSettings: TButton;
     cbAutoOpClCat: TCheckBox;
     cbSmallIcon: TCheckBox;
-    edtBackground: TJvFilenameEdit;
+    edtBackground: TFileNameEdit;
     gbWindow: TGroupBox;
     cbWindowOnTop: TCheckBox;
     cbHoldSize: TCheckBox;
@@ -69,9 +70,9 @@ var
 implementation
 
 uses
-  AppConfig.Main;
+  AppConfig.Main, Kernel.ResourceStrings;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmBaseEntityPage1 }
 
@@ -99,7 +100,7 @@ end;
 procedure TfrmMainWindowOptionsPage.edtBackgroundBeforeDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
-  edtBackground.Filter := DKLangConstW('msgFilterBackground');
+  edtBackground.Filter := msgFilterBackground;
   AName := Config.Paths.RelativeToAbsolute(AName);
 end;
 
@@ -110,7 +111,7 @@ end;
 
 function TfrmMainWindowOptionsPage.GetTitle: string;
 begin
-  Result := DKLangConstW('msgMainWindow');
+  Result := msgMainWindow;
 end;
 
 function TfrmMainWindowOptionsPage.InternalLoadData: Boolean;

@@ -19,29 +19,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit DataModules.Icons;
 
+{$MODE DelphiUnicode}
+
 {$I ASuite.inc}
 
 interface
 
 uses
-  SysUtils, Classes, Controls, Windows, Graphics, Dialogs, vcl.Forms,
-  ShellApi, CommCtrl, Vcl.ImgList, System.ImageList, kgraphics, kicon;
+  SysUtils, Classes, Controls, LCLIntf, LCLType, Graphics, Dialogs, CommCtrl,
+  kgraphics, kicon, BGRAImageList, Windows, DefaultTranslator;
 
 type
+
+  { TdmImages }
+
   TdmImages = class(TDataModule)
+    ilSmallIcons: TBGRAImageList;
+    ilLargeIcons: TBGRAImageList;
+    procedure DataModuleCreate(Sender: TObject);
   private
+    FSysImageListLarge: Windows.THANDLE;
+    FSysImageListSmall: Windows.THANDLE;
     { Private declarations }
     procedure DrawTransparentBitmap(DC: HDC; hBmp: HBITMAP; xStart: integer;
                                     yStart : integer; cTransparentColor : COLORREF);
-    function getIlSmallIcons: TImageList;
-    function getIlLargeIcons: TImageList;
+    function SysImageListHandle(const Path: string; const WantLargeIcons: Boolean): Windows.THandle;
   public
-    { Public declarations }
-    property ilSmallIcons: TImageList read getIlSmallIcons;
-    property ilLargeIcons: TImageList read getIlLargeIcons;
+    property SysImageListSmall: Windows.THANDLE read FSysImageListSmall;
+    property SysImageListLarge: Windows.THANDLE read FSysImageListLarge;
 
     procedure GetAlphaBitmapFromImageList(ABMP: TKAlphaBitmap;const AImageIndex: Integer; ASmallIcon: Boolean = True);
-    procedure DrawIconInBitmap(const AGlyph: TBitmap;const AImageIndex: Integer; ASmallIcon: Boolean = True);
+    procedure DrawIconInBitmap(const AGlyph: Graphics.TBitmap;const AImageIndex: Integer; ASmallIcon: Boolean = True);
+
+    function AddIcon(ABMP: Graphics.TBitmap; const WantLargeIcons: Boolean): Integer;
   end;
 
 var
@@ -50,23 +60,23 @@ var
 implementation
 
 uses
-  AppConfig.Main, MPCommonObjects;
+  ShellApi, AppConfig.Main;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TdmImages }
 
-procedure TdmImages.DrawIconInBitmap(const AGlyph: TBitmap;
+procedure TdmImages.DrawIconInBitmap(const AGlyph: Graphics.TBitmap;
   const AImageIndex: Integer; ASmallIcon: Boolean);
 var
-  BMP: TBitmap;
+  BMP: Graphics.TBitmap;
 begin
   AGlyph.Assign(nil);
 
   if AImageIndex <> -1 then
   begin
     //Buttons' image
-    BMP := TBitmap.Create;
+    BMP := Graphics.TBitmap.Create;
     try
       if ASmallIcon then
         ilSmallIcons.GetBitmap(AImageIndex, BMP)
@@ -77,6 +87,18 @@ begin
     finally
       BMP.Free;
     end;
+  end;
+end;
+
+function TdmImages.AddIcon(ABMP: Graphics.TBitmap; const WantLargeIcons: Boolean): Integer;
+begin
+  Result := -1;
+  if Assigned(ABMP) then
+  begin
+    if WantLargeIcons then
+      Result := ilLargeIcons.Add(ABMP, nil)
+    else                         
+      Result := ilSmallIcons.Add(ABMP, nil);
   end;
 end;
 
@@ -93,9 +115,9 @@ begin
     try
       //Get handle from imagelist
       if ASmallIcon then
-        hIcon := ImageList_GetIcon(ilSmallIcons.Handle, AImageIndex, ILD_NORMAL)
+        hIcon := ImageList_GetIcon(ilSmallIcons.ResolutionByIndex[0].Reference.Handle, AImageIndex, ILD_NORMAL)
       else
-        hIcon := ImageList_GetIcon(ilLargeIcons.Handle, AImageIndex, ILD_NORMAL);
+        hIcon := ImageList_GetIcon(ilLargeIcons.ResolutionByIndex[0].Reference.Handle, AImageIndex, ILD_NORMAL);
 
       if hIcon <> 0 then
       begin
@@ -113,8 +135,14 @@ begin
   end;
 end;
 
-procedure TdmImages.DrawTransparentBitmap(DC: HDC; hBmp: HBITMAP; xStart,
-  yStart: integer; cTransparentColor: COLORREF);
+procedure TdmImages.DataModuleCreate(Sender: TObject);
+begin
+  FSysImageListLarge := SysImageListHandle(Config.Paths.SuitePathData, True);
+  FSysImageListSmall := SysImageListHandle(Config.Paths.SuitePathData, False);
+end;
+
+procedure TdmImages.DrawTransparentBitmap(DC: HDC; hBmp: HBITMAP;
+  xStart: integer; yStart: integer; cTransparentColor: COLORREF);
 var
       bm:                                                  BITMAP;
       cColor:                                              COLORREF;
@@ -214,14 +242,23 @@ begin
    DeleteDC(hdcTemp);
 end;
 
-function TdmImages.getIlSmallIcons: TImageList;
+function TdmImages.SysImageListHandle(const Path: string;
+  const WantLargeIcons: Boolean): Windows.THandle;
+  {Returns a handle to the system image list for path Path.
+  WantLargeIcons determines if the image list is to contain large or small
+  icons.}
+var
+  FI: ShellAPI.TSHFileInfoW; // required file info structure
+  Flags: Windows.UINT;      // flags used to request image list
 begin
-  result := MPCommonObjects.SmallSysImages;
-end; 
+  Flags := ShellAPI.SHGFI_SYSICONINDEX or ShellAPI.SHGFI_ICON;
 
-function TdmImages.getIlLargeIcons: TImageList;
-begin
-  result := MPCommonObjects.LargeSysImages;
+  if WantLargeIcons then
+    Flags := Flags or ShellAPI.SHGFI_LARGEICON
+  else
+    Flags := Flags or ShellAPI.SHGFI_SMALLICON;
+
+  Result := ShellAPI.SHGetFileInfo(PChar(Path), 0, FI, SizeOf(FI), Flags);
 end;
 
 end.

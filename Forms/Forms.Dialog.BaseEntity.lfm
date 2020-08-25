@@ -1,0 +1,76 @@
+object frmDialogBase: TfrmDialogBase
+  Left = 32
+  Height = 325
+  Top = 36
+  Width = 559
+  BorderStyle = bsDialog
+  Caption = 'frmDialogBase'
+  ClientHeight = 325
+  ClientWidth = 559
+  Color = clBtnFace
+  KeyPreview = True
+  OnKeyPress = FormKeyPress
+  Position = poMainFormCenter
+  LCLVersion = '2.1.0.0'
+  object btnOk: TButton
+    Left = 315
+    Height = 25
+    Top = 294
+    Width = 75
+    Anchors = [akRight, akBottom]
+    Caption = 'Ok'
+    ModalResult = 1
+    OnClick = btnOkClick
+    ParentFont = False
+    TabOrder = 2
+  end
+  object btnCancel: TButton
+    Left = 396
+    Height = 25
+    Top = 294
+    Width = 75
+    Anchors = [akRight, akBottom]
+    Caption = 'Cancel'
+    ModalResult = 2
+    OnClick = btnCancelClick
+    ParentFont = False
+    TabOrder = 3
+  end
+  object pnlDialogPage: TPanel
+    Left = 191
+    Height = 280
+    Top = 8
+    Width = 361
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    ParentFont = False
+    TabOrder = 1
+  end
+  object vstCategory: TVirtualStringTree
+    Left = 8
+    Height = 280
+    Top = 8
+    Width = 177
+    Anchors = [akTop, akLeft, akBottom]
+    Header.AutoSizeIndex = 0
+    Header.Columns = <>
+    Header.Font.Color = clWindowText
+    Header.Font.Height = -11
+    Header.Font.Name = 'Tahoma'
+    Header.MainColumn = -1
+    ParentFont = False
+    TabOrder = 0
+    TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowRoot, toShowTreeLines, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
+    TreeOptions.SelectionOptions = [toFullRowSelect]
+  end
+  object btnApply: TButton
+    Left = 477
+    Height = 25
+    Top = 294
+    Width = 75
+    Anchors = [akRight, akBottom]
+    Caption = 'Apply'
+    OnClick = btnApplyClick
+    ParentFont = False
+    TabOrder = 4
+  end
+end

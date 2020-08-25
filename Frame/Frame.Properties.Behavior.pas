@@ -19,16 +19,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Properties.Behavior;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, DKLang, Frame.Properties.Base,
-  Vcl.ExtCtrls;
+  SysUtils, Dialogs, StdCtrls, Frame.Properties.Base, ExtCtrls, DefaultTranslator, Classes;
 
 type
+
+  { TfrmBehaviorPropertyPage }
+
   TfrmBehaviorPropertyPage = class(TfrmBasePropertyPage)
-    DKLanguageController1: TDKLanguageController;
+    
     grpAutoExecute: TGroupBox;
     cxAutoExecute: TComboBox;
     btnChangeOrder: TButton;
@@ -56,9 +59,10 @@ var
 implementation
 
 uses
-  Kernel.Enumerations, Forms.Options, Frame.Options.Autorun, AppConfig.Main;
+  Kernel.Enumerations, Forms.Options, Frame.Options.Autorun, AppConfig.Main,
+  Kernel.ResourceStrings;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmMenuPropertyPage }
 
@@ -80,7 +84,7 @@ end;
 
 function TfrmBehaviorPropertyPage.GetTitle: string;
 begin
-  Result := DKLangConstW('msgBehavior');
+  Result := msgBehavior;
 end;
 
 function TfrmBehaviorPropertyPage.InternalLoadData: Boolean;
@@ -90,7 +94,9 @@ begin
   begin
     //Insert cat specific setting
     if CurrentNodeData.DataType = vtdtCategory then
-      cxWindowState.Items.Insert(0, DKLangConstW('msgDefaultItemSettings'));
+    begin
+      cxWindowState.Items.Insert(0, msgDefaultItemSettings);
+    end;
     cxActionOnExe.ItemIndex := Ord(CurrentNodeData.ActionOnExe);
     cxAutoExecute.ItemIndex := Ord(CurrentNodeData.Autorun);
     btnChangeOrder.Enabled  := (cxAutoExecute.ItemIndex <> 0);
