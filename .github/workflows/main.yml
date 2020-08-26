@@ -19,40 +19,50 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
-    runs-on: windows-latest
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      matrix:
+        operating-system: [windows-latest]
+        lazarus-versions: [dist]
+        lazarus-packages: ["JPLib, JPPack, MORMot, HashLib, uniqueinstance, VirtualTreeView V5, LCLExtensions, KControls, BGRABitmap, BGRAControls, ASuiteComps"]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
+
+    - name: Generate Cache Hash
+      run: echo ${{ matrix.operating-system }}-${{ matrix.lazarus-versions }}-asd${{ matrix.lazarus-packages }} > cache
       
     - name: Cache
+      id: cache
       uses: actions/cache@v2.1.1
       env:
         cache-name: cache-laz
       with:
         # A list of files, directories, and wildcard patterns to cache and restore
-        path: ./_temp/lazarus
+        path: ${{ runner.temp }}\lazarus
         # An explicit key for restoring and saving the cache
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('${{ runner.temp }}/lazarus/lazbuild.exe') }}
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('cache') }}
 
     # Runs a single command using the runners shell
     - name: Install Lazarus
       if: steps.cache.outputs.cache-hit != 'true'
-      uses: salvadorbs/setup-lazarus@v2.2.2
+      uses: salvadorbs/setup-lazarus@master
       with:
-        lazarus-version: "dist"
-        include-packages: "JPLib, JPPack, MORMot, HashLib, uniqueinstance, VirtualTreeView V5, LCLExtensions, KControls, BGRABitmap, BGRAControls"
+        lazarus-version: ${{ matrix.lazarus-versions }}
+        include-packages: ${{ matrix.lazarus-packages }}
 
     - name: Download a file
+      if: steps.cache.outputs.cache-hit != 'true'
       uses: carlosperate/download-file-action@v1.0.3
-      id: download-poetry
       with:
         file-url: 'http://synopse.info/files/sqlite3fpc.7z'
         file-name: 'sqlite3fpc.7z'
         location: '${{ runner.temp }}/lazarus/Packages/mormot/'
     
     - name: extract-7z-action
+      if: steps.cache.outputs.cache-hit != 'true'
       uses: DuckSoft/extract-7z-action@v1.0
       with:
         pathSource: '${{ runner.temp }}/lazarus/Packages/mormot/sqlite3fpc.7z' 
@@ -60,13 +70,11 @@ jobs:
 
     - name: Validate Cache
       if: steps.cache.outputs.cache-hit == 'true'
-      run: lazbuild --version && echo "::set-output name=success::true" || echo "::set-output name=success::false"
+      run: ${{ runner.temp }}\lazarus\lazbuild.exe --version && echo "::set-output name=success::true" || echo "::set-output name=success::false"
 
     - name: Build the ASuite Components
-      run: lazbuild --add-package "${{ github.workspace}}/3p/ASuiteComps/ASuiteComps.lpk" --skip-dependencies
-      
-    - name: Build the Lazarus
-      run: lazbuild --build-ide=
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: ${{ runner.temp }}\lazarus\lazbuild.exe --add-package "${{ github.workspace}}/3p/ASuiteComps/ASuiteComps.lpk" --skip-dependencies --primary-config-path=${{ runner.temp }}\lazarus\config
       
     - name: Build the Main Application
-      run: lazbuild "${{ github.workspace}}/ASuite.lpi" --no-write-project --verbose --verbose-pkgsearch
+      run: ${{ runner.temp }}\lazarus\lazbuild.exe "${{ github.workspace}}/ASuite.lpi" --no-write-project --build-mode=debug --primary-config-path=${{ runner.temp }}\lazarus\config
