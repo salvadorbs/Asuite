@@ -43,7 +43,7 @@ jobs:
         # A list of files, directories, and wildcard patterns to cache and restore
         path: ${{ runner.temp }}\lazarus
         # An explicit key for restoring and saving the cache
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('cache') }}
+        key: ${{ runner.os }}-build64bit-${{ env.cache-name }}-${{ hashFiles('cache') }}
 
     # Runs a single command using the runners shell
     - name: Install Lazarus

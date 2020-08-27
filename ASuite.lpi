@@ -31,7 +31,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="569"/>
+      <BuildNr Value="571"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
@@ -60,6 +60,8 @@
               <OverflowChecks Value="True"/>
               <StackChecks Value="True"/>
             </Checks>
+            <TargetCPU Value="x86_64"/>
+            <TargetOS Value="win64"/>
             <Optimizations>
               <OptimizationLevel Value="0"/>
             </Optimizations>
@@ -110,6 +112,8 @@
           </Parsing>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="x86_64"/>
+            <TargetOS Value="win64"/>
             <Optimizations>
               <OptimizationLevel Value="3"/>
             </Optimizations>
@@ -117,6 +121,7 @@
           <Linking>
             <Debugging>
               <GenerateDebugInfo Value="False"/>
+              <StripSymbols Value="True"/>
             </Debugging>
             <LinkSmart Value="True"/>
             <Options>
@@ -563,6 +568,10 @@
         <SyntaxMode Value="Delphi"/>
       </SyntaxOptions>
     </Parsing>
+    <CodeGeneration>
+      <TargetCPU Value="x86_64"/>
+      <TargetOS Value="win64"/>
+    </CodeGeneration>
     <Linking>
       <Options>
         <Win32>
