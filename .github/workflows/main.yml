@@ -43,7 +43,7 @@ jobs:
         # A list of files, directories, and wildcard patterns to cache and restore
         path: ${{ runner.temp }}\lazarus
         # An explicit key for restoring and saving the cache
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-test4-${{ hashFiles('cache') }}
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('cache') }}
 
     # Runs a single command using the runners shell
     - name: Install Lazarus
@@ -54,7 +54,7 @@ jobs:
         include-packages-opm: ${{ matrix.lazarus-packages }}
         include-packages-local: "${{ github.workspace}}/3p/ASuiteComps/ASuiteComps.lpk"
 
-    - name: Download a file
+    - name: Download sqlite3fpc.7z (static sqlite3 library)
       if: steps.cache.outputs.cache-hit != 'true'
       uses: carlosperate/download-file-action@v1.0.3
       with:
@@ -62,7 +62,7 @@ jobs:
         file-name: 'sqlite3fpc.7z'
         location: '${{ runner.temp }}/lazarus/Packages/mormot/'
     
-    - name: extract-7z-action
+    - name: Extract sqlite3fpc.7z in mORMot
       if: steps.cache.outputs.cache-hit != 'true'
       uses: DuckSoft/extract-7z-action@v1.0
       with:
@@ -73,10 +73,10 @@ jobs:
       if: steps.cache.outputs.cache-hit == 'true'
       run: ${{ runner.temp }}\lazarus\lazbuild.exe --version && echo "::set-output name=success::true" || echo "::set-output name=success::false"
 
-    - name: Build ASuite Debug Mode
+    - name: Build ASuite (Debug Mode)
       run: ${{ runner.temp }}\lazarus\lazbuild.exe "${{ github.workspace}}/ASuite.lpi" --no-write-project --build-mode=debug --primary-config-path=${{ runner.temp }}\lazarus\config
 
-    - name: Upload a Build Artifact
+    - name: Upload the Build Artifact
       uses: actions/upload-artifact@v2.1.4
       with:
         # Artifact name
