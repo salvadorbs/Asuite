@@ -519,7 +519,7 @@ object frmAbout: TfrmAbout
       Height = 15
       Top = 40
       Width = 177
-      Caption = 'Copyright 2006-2015 Matteo Salvi'
+      Caption = 'Copyright 2006-2020 Matteo Salvi'
       ParentColor = False
       ParentFont = False
     end

@@ -405,7 +405,7 @@ msgid "%s"
 msgstr ""
 
 #: tfrmabout.lblcopyright.caption
-msgid "Copyright 2006-2015 Matteo Salvi"
+msgid "Copyright 2006-2020 Matteo Salvi"
 msgstr ""
 
 #: tfrmabout.lblversion.caption
