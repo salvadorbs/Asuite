@@ -42,7 +42,7 @@ type
 implementation
 
 uses
-  AppConfig.Main, Utility.System;
+  AppConfig.Main, VirtualTree.Methods;
 
 function THotkeyItemsList.AddItem(AItem: TvCustomRealNodeData): Integer;
 begin
@@ -51,18 +51,17 @@ begin
     Exit;
 
   Result := inherited;
-  //TODO: Fix me!
-  //if Config.HotKey then
-    //RegisterHotKeyEx(AItem.ID, AItem.Hotkey);
+  if Config.HotKey then
+    HotkeyManager.RegisterNotify(AItem.Hotkey, TVirtualTreeMethods.Create.HotKeyNotify, AItem.ID);
 end;
 
 procedure THotkeyItemsList.Clear;
 var
   I: Integer;
 begin 
-  //TODO: Fix me!
-  //for I := 0 to FItems.Count - 1 do
-  //  UnregisterHotKeyEx(FItems[I].ID);
+  for I := 0 to FItems.Count - 1 do
+    HotkeyManager.UnregisterNotify(TvCustomRealNodeData(FItems[I]).Hotkey);
+
   inherited;
 end;
 
@@ -92,10 +91,8 @@ begin
     if FItems[I].DataType <> vtdtSeparator then
     begin
       NodeData := TvCustomRealNodeData(FItems[I]);
-      //TODO: Fix me!
-      //UnregisterHotKeyEx(NodeData.ID);
-      //if Config.HotKey then
-      //  RegisterHotKeyEx(NodeData.ID, NodeData.Hotkey);
+
+      HotkeyManager.RefreshNotify(NodeData.Hotkey);
     end;
   end;
 end;
@@ -103,9 +100,8 @@ end;
 function THotkeyItemsList.RemoveItem(AItem: TvCustomRealNodeData): Integer;
 begin
   Result := inherited;
-  //TODO: Fix me!
-  //if (Config.HotKey) and (AItem.ID <> -1) then
-  //  UnregisterHotKeyEx(AItem.ID);
+  if (Config.HotKey) and (AItem.ID <> -1) then
+    HotkeyManager.UnregisterNotify(AItem.Hotkey);
 end;
 
 end.

@@ -56,8 +56,9 @@ type
     constructor Create; virtual;
     destructor Destroy; override;
 
-    function RegisterNotify(Shortcut: TShortCut; Notify: TKeyNotifyEvent): Boolean;
+    function RegisterNotify(Shortcut: TShortCut; Notify: TKeyNotifyEvent; Tag: Integer = -1): Boolean;
     function UnregisterNotify(Shortcut: TShortCut): Boolean;
+    procedure RefreshNotify(Shortcut: TShortCut);
                       
     function FindHotkey(Key: Word; ShiftState: TShiftState): Integer; overload;
     function FindHotkey(Shortcut: TShortCut): Integer; overload;     
@@ -71,10 +72,10 @@ type
 function HotkeyCompare(constref A, B: TShortcutEx): Integer;
 
 { Returns the global hotkey capture instance }
-function HotkeyCapture: TBaseHotkeyManager;
+function HotkeyManager: TBaseHotkeyManager;
 
 var
-  InternalCapture: TBaseHotkeyManager;
+  InternalManager: TBaseHotkeyManager;
 
 implementation
 
@@ -240,19 +241,15 @@ begin
   end;
 end;
 
-function TBaseHotkeyManager.RegisterNotify(Shortcut: TShortCut; Notify: TKeyNotifyEvent): Boolean;
+function TBaseHotkeyManager.RegisterNotify(Shortcut: TShortCut; Notify: TKeyNotifyEvent; Tag: Integer = -1): Boolean;
 var
   H: TShortcutEx;
   I: Integer;
-  Key: Word;
-  ShiftState: TShiftState;
 begin
-  ShortCutToKey(Shortcut, Key, ShiftState);
-
-  if not IsKeyValid(Key) then
+  if Shortcut = 0 then
     Exit(False);
 
-  I := FindHotkey(Key, ShiftState);
+  I := FindHotkey(Shortcut);
 
   Result := I < 0;
   if Result then
@@ -260,6 +257,8 @@ begin
     H := TShortcutEx.Create(Shortcut);
     try                               
       H.Notify := Notify;
+      H.Tag := Tag;
+
       Result := DoRegister(H);
     finally      
       FList.Add(H);
@@ -270,21 +269,33 @@ end;
 function TBaseHotkeyManager.UnregisterNotify(Shortcut: TShortCut): Boolean;
 var
   I: Integer;
-  Key: Word;
-  ShiftState: TShiftState;
 begin
   Result := False;
-  ShortCutToKey(Shortcut, Key, ShiftState);
 
-  if not IsKeyValid(Key) then
+  if Shortcut = 0 then
     Exit(False);
 
-  I := FindHotkey(Key, ShiftState);
-
+  I := FindHotkey(Shortcut);
   if I > -1 then
   begin
     Result := DoUnregister(FList[I]);     
     FList.Delete(I);
+  end;
+end;
+
+procedure TBaseHotkeyManager.RefreshNotify(Shortcut: TShortCut);
+var
+  I: Integer;
+  ShortCutEx: TShortcutEx;
+begin
+  I := FindHotkey(Shortcut);
+  if I > -1 then
+  begin
+    ShortCutEx := Self[I];
+
+    DoUnregister(ShortCutEx);
+
+    DoRegister(ShortCutEx);
   end;
 end;
 
@@ -311,14 +322,14 @@ begin
   while Count > 0 do
   begin
     H := Hotkeys[Count - 1];
-    UnregisterNotify(H.Shortcut);
+    UnregisterNotify(H.SimpleShortcut);
   end;
 end;
 
 initialization
-  InternalCapture := nil;
+  InternalManager := nil;
 
 finalization
-  InternalCapture.Free;
+  InternalManager.Free;
 end.
 
