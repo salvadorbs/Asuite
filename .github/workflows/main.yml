@@ -49,6 +49,8 @@ jobs:
     - name: Install Lazarus
       if: steps.cache.outputs.cache-hit != 'true'
       uses: salvadorbs/setup-lazarus@master
+      env:
+        ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true' #fixed error 
       with:
         lazarus-version: ${{ matrix.lazarus-versions }}
         include-packages-opm: ${{ matrix.lazarus-packages }}
