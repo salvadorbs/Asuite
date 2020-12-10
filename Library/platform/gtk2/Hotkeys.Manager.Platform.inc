@@ -409,11 +409,11 @@ begin
   Result := True;
 end;
 
-function HotkeyCapture: TBaseHotkeyManager;
+function HotkeyManager: TBaseHotkeyManager;
 begin
-  if InternalCapture = nil then
-    InternalCapture := THotkeyCaptureImpl.Create;
+  if InternalManager = nil then
+    InternalManager := THotkeyCaptureImpl.Create;
 
-  Result := TBaseHotkeyManager(InternalCapture);
+  Result := TBaseHotkeyManager(InternalManager);
 end;
 

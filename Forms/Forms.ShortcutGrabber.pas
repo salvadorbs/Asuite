@@ -78,7 +78,7 @@ implementation
 
 uses
   Kernel.Logger, Utility.Misc, AppConfig.Main, Kernel.Consts,
-  Utility.System, Kernel.ResourceStrings;
+  Utility.System, Kernel.ResourceStrings, Hotkeys.Manager;
 
 {$R *.lfm}
 
@@ -115,8 +115,7 @@ begin
       if FHotkey <> UpperCase(NewHotkey) then
       begin
         //Is it available?
-        //TODO: Fix me!
-        //FCanClose := IsHotkeyAvailable(HotKeyVar);
+        FCanClose := HotkeyManager.IsHotkeyAvailable(HotKeyVar);
 
         if FCanClose then
           FHotkey := NewHotkey

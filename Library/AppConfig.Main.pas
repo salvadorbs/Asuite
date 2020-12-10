@@ -100,7 +100,7 @@ type
     FGMBtnExplore       : string;
     //HotKeys
     FHotKey             : Boolean;
-    FWindowHotKey       : Cardinal;
+    FWindowHotKey       : Cardinal;  //TODO: Try as TShortcut
     FGraphicMenuHotKey  : Cardinal;
     FClassicMenuHotkey  : Cardinal;
     //Misc
@@ -154,6 +154,7 @@ type
     function GetMainTree: TVirtualStringTree;
     function GetImportTree: TVirtualStringTree;
     procedure SetASuiteState(const Value: TLauncherState);
+    procedure UpdateHotkey(OldValue, NewValue: TShortcut; Tag: Integer);
 
   protected
     procedure HandleParam(const Param: string);
@@ -277,7 +278,7 @@ uses
   Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder, Windows,
   Utility.XML, GraphicMenu.ThemeEngine, Kernel.Scheduler, Forms.ImportList,
   TypInfo, Kernel.ResourceStrings, LCLTranslator, AppConfig.Consts,
-  Utility.Conversions;
+  Utility.Conversions, Hotkeys.Manager;
 
 procedure TConfiguration.AfterUpdateConfig();
 begin   
@@ -442,6 +443,23 @@ begin
      GetEnumName(TypeInfo(TLauncherState), Ord(Value))]);
 
   FASuiteState := Value;
+end;
+
+procedure TConfiguration.UpdateHotkey(OldValue, NewValue: TShortcut; Tag: Integer);
+begin
+  if (FHotKey) then
+  begin
+    //Unregister hotkey (if actived)
+    HotkeyManager.UnregisterNotify(OldValue);
+
+    //Register hotkey
+    if (NewValue <> 0) then
+    begin
+      if not(HotkeyManager.RegisterNotify(NewValue,
+        TVirtualTreeMethods.Create.HotKeyNotify, Tag)) then
+        ShowMessageEx(msgErrRegWindowHotkey, true);
+    end;
+  end;
 end;
 
 function TConfiguration.GetImportTree: TVirtualStringTree;
@@ -891,20 +909,7 @@ end;
 
 procedure TConfiguration.SetWindowHotKey(const Value: Cardinal);
 begin
-  if (FHotKey) then
-  begin
-    //Unregister hotkey (if actived)      
-    //TODO: Fix me!
-    //UnregisterHotKeyEx(frmMain.Handle);
-    //Register hotkey
-    if (Value <> 0) then
-    begin
-      //if Not(RegisterHotKeyEx(frmMain.Handle, Value)) then
-      //begin
-      //  ShowMessageEx(msgErrRegWindowHotkey, true);
-      //end;
-    end;
-  end;
+  UpdateHotkey(FWindowHotKey, Value, frmMain.Handle);
   FWindowHotKey := Value;
 end;
 
@@ -1023,18 +1028,7 @@ end;
 
 procedure TConfiguration.SetClassicMenuHotkey(const Value: Cardinal);
 begin
-  if (Config.HotKey) then
-  begin
-    //Unregister hotkey
-    //TODO: Fix me!
-    //UnregisterHotKeyEx(frmCMenuID);
-    //Register Menuhotkey
-    if (Value <> 0) then
-    begin
-      //if Not(RegisterHotKeyEx(frmCMenuID, Value)) then
-      //  ShowMessageEx(msgErrRegCMHotkey);
-    end;
-  end;
+  UpdateHotkey(FClassicMenuHotkey, Value, frmCMenuID);
   FClassicMenuHotKey := Value;
 end;
 
@@ -1108,18 +1102,7 @@ end;
 
 procedure TConfiguration.SetGraphicMenuHotKey(const Value: Cardinal);
 begin
-  if (Config.HotKey) then
-  begin
-    //Unregister hotkey
-    //TODO: Fix me!
-    //UnregisterHotKeyEx(frmGMenuID);
-    //Register Menuhotkey
-    if (Value <> 0) then
-    begin
-      //if Not(RegisterHotKeyEx(frmGMenuID, Value)) then
-      //  ShowMessageEx(msgErrRegGMHotkey);
-    end;
-  end;
+  UpdateHotkey(FGraphicMenuHotKey, Value, frmGMenuID);
   FGraphicMenuHotKey := Value;
 end;
 

@@ -26,8 +26,10 @@ interface
 uses
   Classes, SysUtils, LCLProc, LCLType;
 
-type       
-  TKeyNotifyEvent = procedure(Sender: TObject; Key: Word; Shift: TShiftState) of object;
+type
+  TShortcutEx = class;
+
+  TKeyNotifyEvent = procedure(Sender: TObject; ShortcutEx: TShortcutEx) of object;
 
   { TShortcutEx }
 
@@ -38,19 +40,19 @@ type
       FShortcut: TShortCut;
       FNotify: TKeyNotifyEvent;
       FIndex: Integer;
+      FTag: Integer;
 
       function GetShortcut: TShortcut;
       procedure SetShortcut(AValue: TShortcut);
     public
       property Key: Word read FKey;
       property ShiftState: TShiftState read FShiftState;
-      property Shortcut: TShortcut read GetShortcut write SetShortcut;
+      property SimpleShortcut: TShortcut read GetShortcut write SetShortcut;
       property Notify: TKeyNotifyEvent read FNotify write FNotify;
       property Index: Integer read FIndex write FIndex;
+      property Tag: Integer read FTag write FTag;
 
       constructor Create(AShortCut: TShortcut);
-
-      function ToString: String;
   end;
 
 implementation
@@ -77,7 +79,7 @@ procedure TShortcutEx.SetShortcut(AValue: TShortcut);
 begin
   FShortcut := AValue;
 
-  ShortCutToKey(Shortcut, FKey, FShiftState);
+  ShortCutToKey(SimpleShortcut, FKey, FShiftState);
 end;
 
 constructor TShortcutEx.Create(AShortCut: TShortcut);
@@ -86,12 +88,7 @@ begin
 
   FIndex := -1;
   FNotify := nil;
-  Self.Shortcut := AShortCut;
-end;
-
-function TShortcutEx.ToString: String;
-begin
-  Result := ShortCutToText(FShortcut);
+  Self.SimpleShortcut := AShortCut;
 end;
 
 end.

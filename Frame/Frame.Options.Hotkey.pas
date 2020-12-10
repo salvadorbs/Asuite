@@ -126,8 +126,8 @@ end;
 
 procedure TfrmHotkeyOptionsPage.edtHotkeyClear(Sender: TObject);
 begin
-  if Sender is TButtonedEdit then
-    TButtonedEdit(Sender).Text := '';
+  if Sender is TCustomGlyphButton then
+    TButtonedEdit(TCustomGlyphButton(Sender).Parent).Text := '';
 end;
 
 function TfrmHotkeyOptionsPage.GetImageIndex: Integer;
@@ -147,9 +147,15 @@ begin
 
   //Hot Keys
   cbHotKey.Checked := Config.HotKey;
-  edtHotkeyMF.Text := ShortCutToText(Config.WindowHotKey);
-  edtHotkeyGM.Text := ShortCutToText(Config.GraphicMenuHotkey);
-  edtHotkeyCM.Text := ShortCutToText(Config.ClassicMenuHotkey);
+
+  if Config.WindowHotKey <> 0 then
+    edtHotkeyMF.Text := ShortCutToText(Config.WindowHotKey);
+
+  if Config.GraphicMenuHotkey <> 0 then
+    edtHotkeyGM.Text := ShortCutToText(Config.GraphicMenuHotkey);
+
+  if Config.ClassicMenuHotkey <> 0 then
+    edtHotkeyCM.Text := ShortCutToText(Config.ClassicMenuHotkey);
 
   //Populate VST with HotKeyItemList's items
   TVirtualTreeMethods.Create.PopulateVSTItemList(vstItems, Config.ListManager.HotKeyItemList);

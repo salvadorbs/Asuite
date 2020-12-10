@@ -33,12 +33,12 @@ type
 
   THotkeyCaptureImpl = TGWin32HotkeyManager;
 
-function HotkeyCapture: TBaseHotkeyManager;
+function HotkeyManager: TBaseHotkeyManager;
 begin
-  if InternalCapture = nil then
-    InternalCapture := THotkeyCaptureImpl.Create;
+  if InternalManager = nil then
+    InternalManager := THotkeyCaptureImpl.Create;
 
-  Result := TBaseHotkeyManager(InternalCapture);
+  Result := TBaseHotkeyManager(InternalManager);
 end;
 
 function WinProc(hw: HWND; uMsg: UINT; wp: WPARAM; lp: LPARAM): LRESULT;
@@ -59,7 +59,7 @@ begin
         begin
           H := Capture[I];
           if Assigned(H.Notify) then
-            H.Notify(Capture, H.Key, H.ShiftState);
+            H.Notify(Capture, H);
         end;
       end
   else
@@ -144,9 +144,9 @@ var
   Key, Modifiers: Word;
   id: Integer;
 begin
-  SeparateHotKey(Shortcut.Shortcut, Modifiers, Key);
+  SeparateHotKey(Shortcut.SimpleShortcut, Modifiers, Key);
 
-  id := GlobalAddAtomW(PChar(HotKeyAtomPrefix + IntToStr(Shortcut.Shortcut)));
+  id := GlobalAddAtomW(PChar(HotKeyAtomPrefix + IntToStr(Shortcut.SimpleShortcut)));
   Result := RegisterHotKey(HWindow, Longint(id), Modifiers, Key);
 
   if Result then
@@ -157,7 +157,7 @@ function TGWin32HotkeyManager.DoUnregister(Shortcut: TShortCutEx): Boolean;
 var
   I, Index: Integer;
 begin                                
-  I := FindHotkey(Shortcut.Shortcut);
+  I := FindHotkey(Shortcut.SimpleShortcut);
   Index := Self[I].Index;
 
   Result := UnRegisterHotkey(HWindow, Longint(Index));

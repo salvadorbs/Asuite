@@ -26,10 +26,13 @@ interface
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, VirtualTrees, UITypes,
   Kernel.Singleton, Kernel.Enumerations, NodeDataTypes.Base, Kernel.Types, Lists.Base,
-  SynLog, Forms.UILogin;
+  SynLog, Forms.UILogin, Hotkeys.ShortcutEx;
 
 type
   //TODO: Transform in a normal class with class methods
+
+  { TVirtualTreeMethods }
+
   TVirtualTreeMethods = class(TSingleton)
   private
   public
@@ -74,7 +77,8 @@ type
     procedure UpdateNodeHeight(Sender: TBaseVirtualTree; Node: PVirtualNode;
                                Data: Pointer; var Abort: Boolean);
 
-    //Misc
+    //Misc                              
+    procedure HotKeyNotify(Sender: TObject; ShortcutEx: TShortcutEx); //TODO: Move in proper class
     procedure ExecuteSelectedNodes(ASender: TBaseVirtualTree; ARunMode: TRunMode;
                                    ACheckSingleInstance: Boolean);
     procedure ExecuteNode(ASender: TBaseVirtualTree; ANode: PVirtualNode; ARunMode: TRunMode;
@@ -92,7 +96,8 @@ uses
   Utility.System, DataModules.Icons, AppConfig.Main, NodeDataTypes.Files,
   Utility.FileFolder, Forms.PropertySeparator, Kernel.ResourceStrings,
   NodeDataTypes.Category, NodeDataTypes.Separator, Forms.PropertyItem, Icons.Thread,
-  NodeDataTypes.Custom, Kernel.Consts, Icons.Node, Kernel.Logger, Utility.Misc;
+  NodeDataTypes.Custom, Kernel.Consts, Icons.Node, Kernel.Logger, Utility.Misc,
+  Forms.Main, DataModules.TrayMenu;
 
 { TVirtualTreeMethods }
 
@@ -641,6 +646,51 @@ begin
       Sender.NodeHeight[Node] := Config.SmallHeightNode
     else
       Sender.NodeHeight[Node] := Integer(Data^);
+  end;
+end;
+
+procedure TVirtualTreeMethods.HotKeyNotify(Sender: TObject; ShortcutEx: TShortcutEx);
+var
+  NodeData: TvCustomRealNodeData;
+begin
+  //TODO: Fix me
+  if Config.HotKey then
+  begin
+    // Show frmMain
+    if ShortcutEx.Tag = frmMain.Handle then
+    begin
+      if frmMain.Showing then
+        frmMain.HideMainForm
+      else
+        frmMain.ShowMainForm(Self);
+    end
+    else
+    begin
+      case ShortcutEx.Tag of
+        // Show Graphic Menu
+        frmGMenuID:
+          begin
+            dmTrayMenu.ShowGraphicMenu;
+          end;
+        // Show Classic Menu
+        frmCMenuID:
+          begin
+            dmTrayMenu.ShowClassicMenu;
+          end;
+      else
+        begin
+          // Execute item
+          NodeData := Config.ListManager.HotKeyItemList.IndexOfID(ShortcutEx.Tag);
+          if Assigned(NodeData) then
+          begin
+            if (NodeData.DataType <> vtdtSeparator) then
+              NodeData.Execute(True, NodeData.DataType = vtdtCategory, False);
+
+            TVirtualTreeMethods.Create.RefreshList(nil);
+          end;
+        end;
+      end;
+    end;
   end;
 end;
 

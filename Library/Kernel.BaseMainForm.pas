@@ -27,12 +27,6 @@ uses
   Forms, Controls, Classes, Dialogs, Graphics, LCLIntf, LCLType, LMessages, Messages;
 
 type
-  TWMHotKey = Packed Record
-   MSG   : Cardinal;
-   HotKey: PtrInt;
-   Unused: PtrInt;
-   Result: PtrInt;
-  End;
 
   { TBaseMainForm }
 
@@ -43,7 +37,6 @@ type
     procedure WMEndSession(var Msg : TWMEndSession); message WM_ENDSESSION;
     procedure WMExitSizeMove(var Message: TMessage) ; message WM_EXITSIZEMOVE;
     procedure WMSysCommand(var Message: TWMSysCommand); message WM_SYSCOMMAND;
-    procedure WMHotKey(Var Msg : TWMHotKey); message WM_HOTKEY;
     procedure WMMove(Var Msg : TWMMove); message WM_MOVE;
   protected
     procedure WndProc(var Msg: TMessage); override;
@@ -144,50 +137,6 @@ procedure TBaseMainForm.WMExitSizeMove(var Message: TMessage);
 begin
   Config.Changed := True;
   TVirtualTreeMethods.Create.RefreshList(nil);
-end;
-
-procedure TBaseMainForm.WMHotKey(var Msg: TWMHotKey);
-var
-  NodeData: TvCustomRealNodeData;
-begin
-  if Config.HotKey then
-  begin
-    // Show frmMain
-    if Msg.HotKey = Integer(Self.Handle) then
-    begin
-      if Self.Showing then
-        HideMainForm
-      else
-        ShowMainForm(Self);
-    end
-    else
-    begin
-      case Msg.HotKey of
-        // Show Graphic Menu
-        frmGMenuID:
-          begin
-            dmTrayMenu.ShowGraphicMenu;
-          end;
-        // Show Classic Menu
-        frmCMenuID:
-          begin
-            dmTrayMenu.ShowClassicMenu;
-          end;
-      else
-        begin
-          // Execute item
-          NodeData := Config.ListManager.HotKeyItemList.IndexOfID(Msg.HotKey);
-          if Assigned(NodeData) then
-          begin
-            if (NodeData.DataType <> vtdtSeparator) then
-              NodeData.Execute(True, NodeData.DataType = vtdtCategory, False);
-
-            TVirtualTreeMethods.Create.RefreshList(nil);
-          end;
-        end;
-      end;
-    end;
-  end;
 end;
 
 procedure TBaseMainForm.WMMove(var Msg: TWMMove);
