@@ -14,7 +14,7 @@ type
 
   { TWin32HotkeyCaptureList }
 
-  TWin32HotkeyCaptureList = class(TGenericHotkeyCaptureList)
+  TGWin32HotkeyManager = class(TBaseHotkeyManager)
   private
     FWindowClassAtom: ATOM;
     FWindowClassInfo: WNDCLASSEX;
@@ -31,20 +31,20 @@ type
     function IsHotkeyAvailable(Shortcut: TShortCut): Boolean; override;
   end;
 
-  THotkeyCaptureImpl = TWin32HotkeyCaptureList;
+  THotkeyCaptureImpl = TGWin32HotkeyManager;
 
-function HotkeyCapture: TGenericHotkeyCaptureList;
+function HotkeyCapture: TBaseHotkeyManager;
 begin
   if InternalCapture = nil then
     InternalCapture := THotkeyCaptureImpl.Create;
 
-  Result := TGenericHotkeyCaptureList(InternalCapture);
+  Result := TBaseHotkeyManager(InternalCapture);
 end;
 
 function WinProc(hw: HWND; uMsg: UINT; wp: WPARAM; lp: LPARAM): LRESULT;
   stdcall; export;
 var
-  Capture: TWin32HotkeyCaptureList;
+  Capture: TGWin32HotkeyManager;
   I: Integer;
   H: TShortcutEx;
 begin
@@ -52,7 +52,7 @@ begin
   case uMsg of
     WM_HOTKEY:
       begin
-        Capture := TWin32HotkeyCaptureList(GetWindowLongPtr(HWindow, GWL_USERDATA));
+        Capture := TGWin32HotkeyManager(GetWindowLongPtr(HWindow, GWL_USERDATA));
         I := Capture.FindHotkeyByIndex(Longint(wp));
 
         if I > -1 then
@@ -97,9 +97,9 @@ begin
   Modifiers := V;
 end;
 
-{ TWin32HotkeyCaptureList }
+{ TGWin32HotkeyManager }
 
-function TWin32HotkeyCaptureList.RegisterWindowClass: boolean;
+function TGWin32HotkeyManager.RegisterWindowClass: boolean;
 begin
   FWindowClassInfo.cbSize := sizeof(FWindowClassInfo);
   FWindowClassInfo.Style := 0;
@@ -117,7 +117,7 @@ begin
   Result := FWindowClassAtom <> 0;
 end;
 
-function TWin32HotkeyCaptureList.CreateAppWindow: boolean;
+function TGWin32HotkeyManager.CreateAppWindow: boolean;
 begin
   Result := false;
 
@@ -139,7 +139,7 @@ begin
   end;
 end;
 
-function TWin32HotkeyCaptureList.DoRegister(Shortcut: TShortCutEx): Boolean;
+function TGWin32HotkeyManager.DoRegister(Shortcut: TShortCutEx): Boolean;
 var
   Key, Modifiers: Word;
   id: Integer;
@@ -153,7 +153,7 @@ begin
     Shortcut.Index := id;
 end;
 
-function TWin32HotkeyCaptureList.DoUnregister(Shortcut: TShortCutEx): Boolean;
+function TGWin32HotkeyManager.DoUnregister(Shortcut: TShortCutEx): Boolean;
 var
   I, Index: Integer;
 begin                                
@@ -164,21 +164,21 @@ begin
   GlobalDeleteAtom(Index);
 end;
 
-constructor TWin32HotkeyCaptureList.Create;
+constructor TGWin32HotkeyManager.Create;
 begin
   inherited Create;    
 
   CreateAppWindow;
 end;
 
-destructor TWin32HotkeyCaptureList.Destroy;
+destructor TGWin32HotkeyManager.Destroy;
 begin             
   DestroyWindow(HWindow);
 
   inherited Destroy;
 end;
 
-function TWin32HotkeyCaptureList.IsHotkeyAvailable(Shortcut: TShortCut): Boolean;
+function TGWin32HotkeyManager.IsHotkeyAvailable(Shortcut: TShortCut): Boolean;
 var
   Modifiers, Key: Word;
   WasRegistered: boolean;

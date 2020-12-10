@@ -5,9 +5,9 @@ uses
 
 type
 
-  { TGTK2HotkeyCaptureList }
+  { TGTK2HotkeyManager }
 
-  TGTK2HotkeyCaptureList = class(TGenericHotkeyCaptureList)
+  TGTK2HotkeyManager = class(TBaseHotkeyManager)
   private
     FRoot: PGdkWindow;
     FDisplay: PDisplay;
@@ -20,7 +20,7 @@ type
     function IsHotkeyAvailable(Shortcut: TShortCut): Boolean; override;
   end;       
 
-  THotkeyCaptureImpl = TGTK2HotkeyCaptureList;
+  THotkeyCaptureImpl = TGTK2HotkeyManager;
 
 {
   X Key Modifiers:
@@ -280,7 +280,7 @@ end;
 
 function FilterKeys(AnyEvent: PXAnyEvent; Event: PGdkEvent; Data: Pointer): TGdkFilterReturn; cdecl;
 var
-  Capture: TGTK2HotkeyCaptureList absolute Data;
+  Capture: TGTK2HotkeyManager absolute Data;
   KeyEvent: PXKeyEvent absolute AnyEvent;
   Sym: TKeySym;
   Key: Word;
@@ -308,7 +308,7 @@ begin
     Result := GDK_FILTER_CONTINUE;
 end;
 
-function TGTK2HotkeyCaptureList.DoRegister(Shortcut: TShortCut): Boolean;
+function TGTK2HotkeyManager.DoRegister(Shortcut: TShortCut): Boolean;
 
   procedure CaptureKey(Display: PDisplay; KeyCode: LongWord; Modifier: LongWord; Window: TWindow);
   begin
@@ -353,7 +353,7 @@ begin
   end;
 end;
 
-function TGTK2HotkeyCaptureList.DoUnregister(Shortcut: TShortCut): Boolean;
+function TGTK2HotkeyManager.DoUnregister(Shortcut: TShortCut): Boolean;
 
   procedure ReleaseKey(Display: PDisplay; KeyCode: LongWord; Modifier: LongWord; Window: TWindow);
   begin
@@ -395,7 +395,7 @@ begin
   end;
 end;
 
-constructor TGTK2HotkeyCaptureList.Create;
+constructor TGTK2HotkeyManager.Create;
 begin
   inherited Create;
 
@@ -403,17 +403,17 @@ begin
   FDisplay := GDK_WINDOW_XDISPLAY(FRoot);
 end;
 
-function TGTK2HotkeyCaptureList.IsHotkeyAvailable(Shortcut: TShortCut): Boolean;
+function TGTK2HotkeyManager.IsHotkeyAvailable(Shortcut: TShortCut): Boolean;
 begin
   //TODO: Sob :(
   Result := True;
 end;
 
-function HotkeyCapture: TGenericHotkeyCaptureList;
+function HotkeyCapture: TBaseHotkeyManager;
 begin
   if InternalCapture = nil then
     InternalCapture := THotkeyCaptureImpl.Create;
 
-  Result := TGenericHotkeyCaptureList(InternalCapture);
+  Result := TBaseHotkeyManager(InternalCapture);
 end;
 

@@ -31,7 +31,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="576"/>
+      <BuildNr Value="578"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
@@ -43,8 +43,8 @@
             <Filename Value="bin\ASuite"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="Forms;DataModules;Library;Utilities;Frame;$(ProjOutDir)"/>
-            <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p;Library\platform\$(LCLWidgetType)"/>
+            <IncludeFiles Value="Forms;DataModules;Library;Utilities;Frame;$(ProjOutDir);Library\platform\$(LCLWidgetType)"/>
+            <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -101,8 +101,8 @@
             <Filename Value="bin\ASuite"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="Forms;DataModules;Library;Utilities;Frame;$(ProjOutDir)"/>
-            <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p;Library\platform\$(LCLWidgetType)"/>
+            <IncludeFiles Value="Forms;DataModules;Library;Utilities;Frame;$(ProjOutDir);Library\platform\$(LCLWidgetType)"/>
+            <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -572,8 +572,8 @@
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <SearchPaths>
-      <IncludeFiles Value="Forms;DataModules;Library;Utilities;Frame;$(ProjOutDir)"/>
-      <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p;Library\platform\$(LCLWidgetType)"/>
+      <IncludeFiles Value="Forms;DataModules;Library;Utilities;Frame;$(ProjOutDir);Library\platform\$(LCLWidgetType)"/>
+      <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>
