@@ -29,7 +29,8 @@ unit Hotkeys.Manager;
 interface
 
 uses
-  SysUtils, Classes, LCLType, Menus, ShortcutEx, Generics.Collections, Generics.Defaults;
+  SysUtils, Classes, LCLType, Menus, Hotkeys.ShortcutEx, Generics.Collections,
+  Generics.Defaults;
 
 { THotkeyCaptureList }
 
@@ -38,9 +39,9 @@ type
 
   THotkeysComparer = TComparer<TShortcutEx>;
 
-  { TGenericHotkeyCaptureList }
+  { TBaseHotkeyManager }
 
-  THotkeyManager = class
+  TBaseHotkeyManager = class
   private
     FList: THotkeyList;
     function GetHotkey(Index: Integer): TShortcutEx;
@@ -70,10 +71,10 @@ type
 function HotkeyCompare(constref A, B: TShortcutEx): Integer;
 
 { Returns the global hotkey capture instance }
-function HotkeyCapture: TGenericHotkeyCaptureList;   
+function HotkeyCapture: TBaseHotkeyManager;
 
 var
-  InternalCapture: TGenericHotkeyCaptureList;
+  InternalCapture: TBaseHotkeyManager;
 
 implementation
 
@@ -183,14 +184,14 @@ begin
   end;
 end;
 
-constructor TGenericHotkeyCaptureList.Create;
+constructor TBaseHotkeyManager.Create;
 begin
   inherited Create;
 
   FList := THotkeyList.Create(THotkeysComparer.Construct(HotkeyCompare), True);
 end;
 
-destructor TGenericHotkeyCaptureList.Destroy;
+destructor TBaseHotkeyManager.Destroy;
 begin
   ClearAllHotkeys;
   FList.Free;
@@ -198,12 +199,12 @@ begin
   inherited Destroy;
 end;
 
-function TGenericHotkeyCaptureList.GetHotkey(Index: Integer): TShortcutEx;
+function TBaseHotkeyManager.GetHotkey(Index: Integer): TShortcutEx;
 begin
   Result := FList[Index];
 end;
 
-function TGenericHotkeyCaptureList.GetCount: Integer;
+function TBaseHotkeyManager.GetCount: Integer;
 begin
   Result := FList.Count;
 end;
@@ -216,7 +217,7 @@ begin
   Result := LongInt(A.ShiftState) - LongInt(B.ShiftState);
 end;
 
-function TGenericHotkeyCaptureList.FindHotkey(Key: Word; ShiftState: TShiftState): Integer;
+function TBaseHotkeyManager.FindHotkey(Key: Word; ShiftState: TShiftState): Integer;
 var
   Shortcut: TShortcut;
 begin
@@ -225,7 +226,7 @@ begin
   Result := FindHotkey(Shortcut);
 end;
 
-function TGenericHotkeyCaptureList.FindHotkey(Shortcut: TShortCut): Integer;
+function TBaseHotkeyManager.FindHotkey(Shortcut: TShortCut): Integer;
 var
   Item: TShortcutEx;
 begin     
@@ -239,7 +240,7 @@ begin
   end;
 end;
 
-function TGenericHotkeyCaptureList.RegisterNotify(Shortcut: TShortCut; Notify: TKeyNotifyEvent): Boolean;
+function TBaseHotkeyManager.RegisterNotify(Shortcut: TShortCut; Notify: TKeyNotifyEvent): Boolean;
 var
   H: TShortcutEx;
   I: Integer;
@@ -266,7 +267,7 @@ begin
   end;
 end;
 
-function TGenericHotkeyCaptureList.UnregisterNotify(Shortcut: TShortCut): Boolean;
+function TBaseHotkeyManager.UnregisterNotify(Shortcut: TShortCut): Boolean;
 var
   I: Integer;
   Key: Word;
@@ -287,7 +288,7 @@ begin
   end;
 end;
 
-function TGenericHotkeyCaptureList.FindHotkeyByIndex(Index: Integer): Integer;
+function TBaseHotkeyManager.FindHotkeyByIndex(Index: Integer): Integer;
 var
   I: Integer;
 begin
@@ -303,7 +304,7 @@ begin
   end;
 end;
 
-procedure TGenericHotkeyCaptureList.ClearAllHotkeys;
+procedure TBaseHotkeyManager.ClearAllHotkeys;
 var
   H: TShortcutEx;
 begin
