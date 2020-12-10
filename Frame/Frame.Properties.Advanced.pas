@@ -71,7 +71,7 @@ implementation
 
 uses
   Kernel.Enumerations, NodeDataTypes.Files, Forms.ShortcutGrabber, AppConfig.Main,
-  DataModules.Icons, Utility.Hotkey, Kernel.ResourceStrings;
+  DataModules.Icons, Kernel.ResourceStrings, LCLProc;
 
 {$R *.lfm}
 
@@ -111,7 +111,7 @@ begin
     cxSchedulerChange(Self);
     //Hotkey
     cbHotKey.Checked       := CurrentNodeData.ActiveHotkey;
-    edtHotkey.Text         := Utility.Hotkey.HotKeyToText(CurrentNodeData.Hotkey, False);
+    edtHotkey.Text         := ShortCutToText(CurrentNodeData.Hotkey);
     cbHotKeyClick(Self);
     //Specific file settings
     cbHideSoftware.Checked := CurrentNodeData.HideFromMenu;
@@ -148,7 +148,7 @@ begin
     CurrentNodeData.SchDateTime  := Int(dtpSchDate.Date) + Frac(dtpSchTime.Time);
     CurrentNodeData.SchDateTime  := RecodeSecond(CurrentNodeData.SchDateTime, 0);
     //Hotkey
-    CurrentNodeData.Hotkey       := Utility.Hotkey.TextToHotKey(edtHotkey.Text, False);
+    CurrentNodeData.Hotkey       := TextToShortCut(edtHotkey.Text);
     CurrentNodeData.ActiveHotkey := cbHotKey.Checked;
     //Specific file settings
     CurrentNodeData.HideFromMenu := cbHideSoftware.Checked;

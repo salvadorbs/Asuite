@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, Menus, ComCtrls, BCImageButton, ExtCtrls, hotkey,
+  StdCtrls, Menus, ComCtrls, BCImageButton, ExtCtrls, HotKey, LCLProc,
   Windows, DefaultTranslator;
 
 type
@@ -54,11 +54,11 @@ type
     FHotkey: string;
     FCanClose: Boolean;
 
-    function GetModifierFromGUI(): Word;
+    function GetModifierFromGUI(): TShiftState;
     function GetKeyFromGUI(): Word;
 
     procedure SetGUIKeyFromKey(AKey: Word);
-    procedure SetGUIModifierFromMod(AMod: Word);
+    procedure SetGUIModifierFromMod(AMod: TShiftState);
     procedure SetGUIModifierFromShiftState(AMod: TShiftState);
     procedure LoadPNGButtonState(AButton: TBCImageButton; APathFile: string);
     procedure LoadImages();
@@ -78,7 +78,7 @@ implementation
 
 uses
   Kernel.Logger, Utility.Misc, AppConfig.Main, Kernel.Consts,
-  Utility.System, Utility.Hotkey, Kernel.ResourceStrings;
+  Utility.System, Kernel.ResourceStrings;
 
 {$R *.lfm}
 
@@ -91,8 +91,9 @@ end;
 
 procedure TfrmShortcutGrabber.btnOkClick(Sender: TObject);
 var
-  Key, Modifiers: Word;
-  HotKeyVar: Cardinal;
+  Key: Word;
+  Modifiers: TShiftState;
+  HotKeyVar: TShortCut;
   NewHotkey: string;
 begin
   FCanClose := False;
@@ -104,17 +105,18 @@ begin
 
   if Key <> 0 then
   begin
-    if Modifiers <> 0 then
+    if Modifiers <> [] then
     begin
       //Convert Key + Modifier in Cardinal
-      HotKeyVar := Utility.Hotkey.GetHotKey(Modifiers, Key);
-      NewHotkey := HotKeyToText(HotKeyVar, False);
+      HotKeyVar := KeyToShortCut(Key, Modifiers);
+      NewHotkey := ShortCutToText(HotKeyVar);
 
       //Check old and new hotkey. They must differs (user choose another hotkey)
       if FHotkey <> UpperCase(NewHotkey) then
       begin
         //Is it available?
-        FCanClose := IsHotkeyAvailable(HotKeyVar);
+        //TODO: Fix me!
+        //FCanClose := IsHotkeyAvailable(HotKeyVar);
 
         if FCanClose then
           FHotkey := NewHotkey
@@ -191,21 +193,21 @@ begin
   Result := Key;
 end;
 
-function TfrmShortcutGrabber.GetModifierFromGUI(): Word;
+function TfrmShortcutGrabber.GetModifierFromGUI(): TShiftState;
 begin
-  Result := 0;
+  Result := [];
 
   if btnCtrl.Pressed then
-    Result := Result or MOD_CONTROL;
+    Result := Result + [ssCtrl];
 
   if btnShift.Pressed then
-    Result := Result or MOD_SHIFT;
+    Result := Result + [ssShift];
 
   if btnAlt.Pressed then
-    Result := Result or MOD_ALT;
+    Result := Result + [ssAlt];
 
   if btnWinKey.Pressed then
-    Result := Result or MOD_WIN;
+    Result := Result + [ssMeta];
 end;
 
 procedure TfrmShortcutGrabber.hkKeysChange(Sender: TObject);
@@ -241,12 +243,13 @@ end;
 
 procedure TfrmShortcutGrabber.SetGuiFromHotkey(AHotkey: string);
 var
-  Hotkey: Cardinal;
-  Modi, Key: Word;
+  Shortcut: TShortcut;
+  Key: Word;
+  Modi: TShiftState;
 begin
   //I need separate key from modifiers
-  Hotkey := TextToHotKey(AHotkey, false);
-  SeparateHotKey(Hotkey, Modi, Key);
+  Shortcut := TextToShortCut(AHotkey);
+  ShortCutToKey(Shortcut, Key, Modi);
 
   //Set gui
   SetGUIKeyFromKey(Key);
@@ -258,18 +261,18 @@ begin
   hkKeys.HotKey := ShortCut(AKey, []);
 end;
 
-procedure TfrmShortcutGrabber.SetGUIModifierFromMod(AMod: Word);
+procedure TfrmShortcutGrabber.SetGUIModifierFromMod(AMod: TShiftState);
 begin
-  if (AMod and MOD_ALT) <> 0 then
+  if ssAlt in AMod then
     btnAlt.Pressed := True;
 
-  if (AMod and MOD_CONTROL) <> 0 then
+  if ssCtrl in AMod then
     btnCtrl.Pressed := True;
 
-  if (AMod and MOD_SHIFT) <> 0 then
+  if ssShift in AMod then
     btnShift.Pressed := True;
 
-  if (AMod and MOD_WIN) <> 0 then
+  if ssMeta in AMod then
     btnWinKey.Pressed := True;
 end;
 

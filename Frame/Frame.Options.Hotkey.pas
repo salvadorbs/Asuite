@@ -76,8 +76,8 @@ implementation
 
 uses
   AppConfig.Main, VirtualTree.Events, VirtualTree.Methods, NodeDataTypes.Custom,
-  Forms.ShortcutGrabber, Utility.Hotkey, DataModules.Icons, UITypes,
-  Kernel.ResourceStrings;
+  Forms.ShortcutGrabber, DataModules.Icons, UITypes, Kernel.ResourceStrings,
+  LCLProc;
 
 {$R *.lfm}
 
@@ -147,9 +147,9 @@ begin
 
   //Hot Keys
   cbHotKey.Checked := Config.HotKey;
-  edtHotkeyMF.Text := HotKeyToText(Config.WindowHotKey, False);
-  edtHotkeyGM.Text := HotKeyToText(Config.GraphicMenuHotkey, False);
-  edtHotkeyCM.Text := HotKeyToText(Config.ClassicMenuHotkey, False);
+  edtHotkeyMF.Text := ShortCutToText(Config.WindowHotKey);
+  edtHotkeyGM.Text := ShortCutToText(Config.GraphicMenuHotkey);
+  edtHotkeyCM.Text := ShortCutToText(Config.ClassicMenuHotkey);
 
   //Populate VST with HotKeyItemList's items
   TVirtualTreeMethods.Create.PopulateVSTItemList(vstItems, Config.ListManager.HotKeyItemList);
@@ -175,9 +175,9 @@ begin
   Result := inherited;
   //Hot Keys
   Config.HotKey       := cbHotKey.Checked;
-  Config.WindowHotKey := TextToHotKey(edtHotkeyMF.Text, False);
-  Config.GraphicMenuHotkey := TextToHotKey(edtHotkeyGM.Text, False);
-  Config.ClassicMenuHotkey := TextToHotKey(edtHotkeyCM.Text, False);
+  Config.WindowHotKey := TextToShortCut(edtHotkeyMF.Text);
+  Config.GraphicMenuHotkey := TextToShortCut(edtHotkeyGM.Text);
+  Config.ClassicMenuHotkey := TextToShortCut(edtHotkeyCM.Text);
   //Save vst items in HotKeyItemList
   SaveInHotkeyItemList(vstItems, Config.ListManager.HotKeyItemList);
 end;
@@ -207,10 +207,10 @@ begin
     NodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(vstItems.FocusedNode, vstItems));
     if Assigned(NodeData) then
     begin
-      ShortCut := TfrmShortcutGrabber.Execute(Self, HotKeyToText(NodeData.Hotkey, False));
+      ShortCut := TfrmShortcutGrabber.Execute(Self, ShortCutToText(NodeData.Hotkey));
       if (ShortCut <> '') then
       begin
-        NodeData.Hotkey  := TextToHotKey(ShortCut, false);
+        NodeData.Hotkey  := TextToShortCut(ShortCut);
         NodeData.ActiveHotkey := True;
         NodeData.Changed := True;
 

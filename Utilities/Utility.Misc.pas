@@ -33,7 +33,6 @@ procedure SetFormPosition(Form: TForm; ListFormLeft, ListFormTop: Integer);
 
 { Misc }
 function CheckPropertyName(Edit: TEdit): Boolean;
-function ConvertHotkey(AOldValue: TShortcut): Cardinal;
 function GetCheckedMenuItem(PopupMenu: TPopupMenu): TMenuItem;
 function GetASuiteVersion(ASimpleFormat: Boolean): string;
 function IsFormatInClipBoard(format: Word): Boolean;
@@ -59,8 +58,8 @@ function  GetHotKeyMod(AShortcut: TShortcut) : Integer;
 implementation
 
 uses
-  PJVersionInfo, AppConfig.Main, Kernel.Logger, Utility.Hotkey, LCLProc,
-  Windows, Kernel.ResourceStrings;
+  PJVersionInfo, AppConfig.Main, Kernel.Logger, LCLProc, Windows,
+  Kernel.ResourceStrings;
 
 function IsFormOpen(const FormName : string): Boolean;
 var
@@ -102,22 +101,6 @@ begin
     ShowMessageEx(msgErrEmptyName,true);
     Edit.Color := clYellow;
     Result := False;
-  end;
-end;
-
-function ConvertHotkey(AOldValue: TShortcut): Cardinal;
-var
-  strHotkey: string;
-begin
-  Result := 0;
-
-  //Convert THotkey to Cardinal
-  if AOldValue <> 0 then
-  begin
-    strHotkey := ShortCutToText(AOldValue);
-
-    if strHotkey <> '' then
-      Result := TextToHotKey(strHotkey, False);
   end;
 end;
 

@@ -134,9 +134,8 @@ implementation
 uses
   AppConfig.Main, NodeDataTypes.Base, NodeDataTypes.Category, Kernel.ResourceStrings,
   NodeDataTypes.Files, NodeDataTypes.Custom, NodeDataTypes.Separator, Kernel.Types,
-  Kernel.Enumerations, VirtualTree.Methods, DataModules.TrayMenu,
-  comobj, DataModules.Icons, Kernel.Logger, SynLog, Utility.Hotkey,
-  Windows, Utility.Misc;
+  Kernel.Enumerations, VirtualTree.Methods, DataModules.TrayMenu, LCLProc,
+  comobj, DataModules.Icons, Kernel.Logger, SynLog, Windows, Utility.Misc;
 
 { TVirtualTreeEvents }
 
@@ -328,7 +327,7 @@ begin
         end;
       end;
       2: Result := CompareText(GetNodeParentName(Sender, Data1.pNode), GetNodeParentName(Sender, Data2.pNode));
-      3: Result := CompareText(HotKeyToText(Data1.Hotkey, False), HotKeyToText(Data2.Hotkey, False));
+      3: Result := CompareText(ShortcutToText(Data1.Hotkey), ShortcutToText(Data2.Hotkey));
     end;
 end;
 
@@ -540,7 +539,7 @@ begin
     case Column of
       0: CellText := NodeData.Name;
       2: CellText := GetNodeParentName(Sender, NodeData.pNode);
-      3: CellText := HotKeyToText(NodeData.Hotkey, False)
+      3: CellText := ShortCutToText(NodeData.Hotkey)
     end;
   end;
 end;
