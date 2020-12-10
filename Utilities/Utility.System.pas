@@ -42,15 +42,12 @@ function DarkModeIsEnabled: boolean;
 procedure EjectDialog(Sender: TObject);
 function ExtractDirectoryName(const Filename: string): string;
 function GetCorrectWorkingDir(Default: string): string;
-function RegisterHotkeyEx(AId: Integer; AShortcut: Cardinal): Boolean;
-function UnRegisterHotkeyEx(AId: Integer): Boolean;
-function IsHotkeyAvailable(AShortcut: Cardinal): Boolean;
 
 implementation
 
 uses
   Utility.Conversions, Forms.Main, AppConfig.Main, Utility.Misc, Kernel.Logger,
-  VirtualTree.Methods, LazFileUtils, Windows, Utility.Hotkey;
+  VirtualTree.Methods, LazFileUtils, Windows;
 
 function HasDriveLetter(const Path: String): Boolean;
 var P: PChar;
@@ -209,38 +206,6 @@ begin
   sPath := IncludeTrailingBackslash(Config.Paths.SuiteDrive);
   if SysUtils.DirectoryExists(sPath) then
     Result := sPath;
-end;
-
-function RegisterHotkeyEx(AId: Integer; AShortcut: Cardinal): Boolean;
-var
-  Modifiers, Key: Word;
-begin
-  Modifiers := 0;
-  Key := 0;
-
-  SeparateHotKey(AShortcut, Modifiers, Key);
-
-  Result := RegisterHotKey(frmMain.Handle, AId, Modifiers, Key);
-end;
-
-function UnRegisterHotkeyEx(AId: Integer): Boolean;
-begin
-  Result := UnregisterHotKey(frmMain.Handle, AId);
-end;
-
-function IsHotkeyAvailable(AShortcut: Cardinal): Boolean;
-begin
-  Result := HotKeyAvailable(AShortcut);
-
-  //Find another item or config who has this hotkey
-  if Result then
-    Result := not Assigned(Config.MainTree.IterateSubtree(nil, TVirtualTreeMethods.Create.FindHotkey, @AShortcut, [], True));
-
-  if Result then
-  begin
-    Result := not ((Config.WindowHotKey = AShortcut) or (Config.GraphicMenuHotKey = AShortcut) or
-                   (Config.ClassicMenuHotkey = AShortcut));
-  end;
 end;
 
 end.

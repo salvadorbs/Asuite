@@ -168,13 +168,7 @@ begin
           Autorun     := TAutorunType(SQLFilesData.autorun);
           SchMode     := TSchedulerMode(SQLFilesData.scheduler_mode);
           SchDateTime := SQLFilesData.scheduler_datetime;
-          if (ADBManager.DBVersion.V1 = 2) and (ADBManager.DBVersion.V2 = 0) and (ADBManager.DBVersion.V3 = 0) then
-          begin
-            Hotkey  := ConvertHotkey(SQLFilesData.hotkey);
-            Changed := True;
-          end
-          else
-            Hotkey     := SQLFilesData.hotkey;
+          Hotkey      := SQLFilesData.hotkey;
           ActiveHotkey := SQLFilesData.activehotkey;
           WindowState := SQLFilesData.window_state;
           ActionOnExe := TActionOnExecute(SQLFilesData.onlaunch);

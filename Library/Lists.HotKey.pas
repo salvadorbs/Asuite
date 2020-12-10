@@ -52,16 +52,18 @@ begin
     Exit;
 
   Result := inherited;
-  if Config.HotKey then
-    RegisterHotKeyEx(AItem.ID, AItem.Hotkey);
+  //TODO: Fix me!
+  //if Config.HotKey then
+    //RegisterHotKeyEx(AItem.ID, AItem.Hotkey);
 end;
 
 procedure THotkeyItemsList.Clear;
 var
   I: Integer;
-begin
-  for I := 0 to FItems.Count - 1 do
-    UnregisterHotKeyEx(FItems[I].ID);
+begin 
+  //TODO: Fix me!
+  //for I := 0 to FItems.Count - 1 do
+  //  UnregisterHotKeyEx(FItems[I].ID);
   inherited;
 end;
 
@@ -91,9 +93,10 @@ begin
     if FItems[I].DataType <> vtdtSeparator then
     begin
       NodeData := TvCustomRealNodeData(FItems[I]);
-      UnregisterHotKeyEx(NodeData.ID);
-      if Config.HotKey then
-        RegisterHotKeyEx(NodeData.ID, NodeData.Hotkey);
+      //TODO: Fix me!
+      //UnregisterHotKeyEx(NodeData.ID);
+      //if Config.HotKey then
+      //  RegisterHotKeyEx(NodeData.ID, NodeData.Hotkey);
     end;
   end;
 end;
@@ -101,8 +104,9 @@ end;
 function THotkeyItemsList.RemoveItem(AItem: TvCustomRealNodeData): Integer;
 begin
   Result := inherited;
-  if (Config.HotKey) and (AItem.ID <> -1) then
-    UnregisterHotKeyEx(AItem.ID);
+  //TODO: Fix me!
+  //if (Config.HotKey) and (AItem.ID <> -1) then
+  //  UnregisterHotKeyEx(AItem.ID);
 end;
 
 end.

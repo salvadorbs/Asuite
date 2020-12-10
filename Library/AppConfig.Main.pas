@@ -276,7 +276,7 @@ uses
   Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, Utility.Misc,
   Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder, Windows,
   Utility.XML, GraphicMenu.ThemeEngine, Kernel.Scheduler, Forms.ImportList,
-  TypInfo, Utility.HotKey, Kernel.ResourceStrings, LCLTranslator, AppConfig.Consts,
+  TypInfo, Kernel.ResourceStrings, LCLTranslator, AppConfig.Consts,
   Utility.Conversions;
 
 procedure TConfiguration.AfterUpdateConfig();
@@ -893,15 +893,16 @@ procedure TConfiguration.SetWindowHotKey(const Value: Cardinal);
 begin
   if (FHotKey) then
   begin
-    //Unregister hotkey (if actived)
-    UnregisterHotKeyEx(frmMain.Handle);
+    //Unregister hotkey (if actived)      
+    //TODO: Fix me!
+    //UnregisterHotKeyEx(frmMain.Handle);
     //Register hotkey
     if (Value <> 0) then
     begin
-      if Not(RegisterHotKeyEx(frmMain.Handle, Value)) then
-      begin
-        ShowMessageEx(msgErrRegWindowHotkey, true);
-      end;
+      //if Not(RegisterHotKeyEx(frmMain.Handle, Value)) then
+      //begin
+      //  ShowMessageEx(msgErrRegWindowHotkey, true);
+      //end;
     end;
   end;
   FWindowHotKey := Value;
@@ -1025,12 +1026,13 @@ begin
   if (Config.HotKey) then
   begin
     //Unregister hotkey
-    UnregisterHotKeyEx(frmCMenuID);
+    //TODO: Fix me!
+    //UnregisterHotKeyEx(frmCMenuID);
     //Register Menuhotkey
     if (Value <> 0) then
     begin
-      if Not(RegisterHotKeyEx(frmCMenuID, Value)) then
-        ShowMessageEx(msgErrRegCMHotkey);
+      //if Not(RegisterHotKeyEx(frmCMenuID, Value)) then
+      //  ShowMessageEx(msgErrRegCMHotkey);
     end;
   end;
   FClassicMenuHotKey := Value;
@@ -1109,12 +1111,13 @@ begin
   if (Config.HotKey) then
   begin
     //Unregister hotkey
-    UnregisterHotKeyEx(frmGMenuID);
+    //TODO: Fix me!
+    //UnregisterHotKeyEx(frmGMenuID);
     //Register Menuhotkey
     if (Value <> 0) then
     begin
-      if Not(RegisterHotKeyEx(frmGMenuID, Value)) then
-        ShowMessageEx(msgErrRegGMHotkey);
+      //if Not(RegisterHotKeyEx(frmGMenuID, Value)) then
+      //  ShowMessageEx(msgErrRegGMHotkey);
     end;
   end;
   FGraphicMenuHotKey := Value;

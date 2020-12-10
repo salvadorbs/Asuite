@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="12"/>
+    <Version Value="11"/>
     <PathDelim Value="\"/>
     <General>
       <Flags>
@@ -9,9 +9,9 @@
         <MainUnitHasCreateFormStatements Value="False"/>
         <MainUnitHasTitleStatement Value="False"/>
         <MainUnitHasScaledStatement Value="False"/>
-        <CompatibilityMode Value="True"/>
       </Flags>
       <SessionStorage Value="InProjectDir"/>
+      <MainUnit Value="0"/>
       <Title Value="ASuite"/>
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
@@ -31,7 +31,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="571"/>
+      <BuildNr Value="576"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>
@@ -44,7 +44,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="Forms;DataModules;Library;Utilities;Frame;$(ProjOutDir)"/>
-            <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p"/>
+            <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p;Library\platform\$(LCLWidgetType)"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -102,7 +102,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="Forms;DataModules;Library;Utilities;Frame;$(ProjOutDir)"/>
-            <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p"/>
+            <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p;Library\platform\$(LCLWidgetType)"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -147,6 +147,7 @@
     </PublishOptions>
     <RunParams>
       <FormatVersion Value="2"/>
+      <Modes Count="0"/>
     </RunParams>
     <RequiredPackages Count="13">
       <Item1>
@@ -189,7 +190,7 @@
         <PackageName Value="LCL"/>
       </Item13>
     </RequiredPackages>
-    <Units Count="70">
+    <Units Count="73">
       <Unit0>
         <Filename Value="ASuite.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -529,30 +530,42 @@
         <IsPartOfProject Value="True"/>
       </Unit64>
       <Unit65>
-        <Filename Value="Utilities\Utility.Hotkey.pas"/>
+        <Filename Value="Library\Kernel.ResourceStrings.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit65>
       <Unit66>
-        <Filename Value="Library\Kernel.ResourceStrings.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit66>
-      <Unit67>
         <Filename Value="Forms\Forms.UILogin.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="frmUILogin"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit67>
-      <Unit68>
+      </Unit66>
+      <Unit67>
         <Filename Value="Library\thread.findfiles.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Thread.FindFiles"/>
-      </Unit68>
-      <Unit69>
+      </Unit67>
+      <Unit68>
         <Filename Value="Library\appconfig.consts.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="AppConfig.Consts"/>
+      </Unit68>
+      <Unit69>
+        <Filename Value="Library\Hotkeys.Manager.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit69>
+      <Unit70>
+        <Filename Value="Library\Hotkeys.ShortcutEx.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit70>
+      <Unit71>
+        <Filename Value="Library\platform\gtk2\Hotkeys.Manager.Platform.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit71>
+      <Unit72>
+        <Filename Value="Library\platform\win32\Hotkeys.Manager.Platform.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit72>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -560,7 +573,7 @@
     <PathDelim Value="\"/>
     <SearchPaths>
       <IncludeFiles Value="Forms;DataModules;Library;Utilities;Frame;$(ProjOutDir)"/>
-      <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p"/>
+      <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p;Library\platform\$(LCLWidgetType)"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>
