@@ -275,7 +275,7 @@ implementation
 
 uses
   Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, Utility.Misc,
-  Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder, Windows,
+  Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder, {$IFDEF Windows}Windows,{$ENDIF}
   Utility.XML, GraphicMenu.ThemeEngine, Kernel.Scheduler, Forms.ImportList,
   TypInfo, Kernel.ResourceStrings, LCLTranslator, AppConfig.Consts,
   Utility.Conversions, Hotkeys.Manager;

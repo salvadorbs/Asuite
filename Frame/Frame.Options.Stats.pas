@@ -84,7 +84,7 @@ implementation
 {$I ASuite.INC}
 
 uses
-  Utility.Misc, AppConfig.Main, Kernel.Types, VirtualTree.Methods, Windows,
+  Utility.Misc, AppConfig.Main, Kernel.Types, VirtualTree.Methods, {$IFDEF Windows}Windows,{$ENDIF}
   PJSysInfo, Kernel.ResourceStrings;
 
 {$R *.lfm}

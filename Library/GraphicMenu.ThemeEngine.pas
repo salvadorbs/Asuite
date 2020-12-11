@@ -96,7 +96,7 @@ implementation
 
 uses
   Kernel.Consts, AppConfig.Main, Utility.Conversions, Kernel.ResourceStrings,
-  GraphicMenu.ThemeEngine.Consts, Kernel.Logger, Windows, Utility.Misc,
+  GraphicMenu.ThemeEngine.Consts, Kernel.Logger, {$IFDEF Windows}Windows,{$ENDIF} Utility.Misc,
   BGRABitmapTypes, Types;
 
 { TThemeEngineMethods }

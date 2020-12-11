@@ -27,7 +27,7 @@ interface
 
 uses
   SysUtils, Classes, Controls, LCLIntf, LCLType, Graphics, Dialogs, CommCtrl,
-  kgraphics, kicon, BGRAImageList, Windows, DefaultTranslator;
+  kgraphics, kicon, BGRAImageList, {$IFDEF Windows}Windows,{$ENDIF} DefaultTranslator;
 
 type
 
