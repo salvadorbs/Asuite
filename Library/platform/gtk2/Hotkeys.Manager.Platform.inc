@@ -12,8 +12,8 @@ type
     FRoot: PGdkWindow;
     FDisplay: PDisplay;
   protected
-    function DoRegister(Shortcut: TShortCut): Boolean; override;
-    function DoUnregister(Shortcut: TShortCut): Boolean; override;
+    function DoRegister(Shortcut: TShortCutEx): Boolean; override;
+    function DoUnregister(Shortcut: TShortCutEx): Boolean; override;
   public
     constructor Create; override;
 
@@ -300,7 +300,7 @@ begin
   begin
     H := Capture[I];
     if Assigned(H.Notify) then
-      H.Notify(Capture, Key, ShiftState);
+      H.Notify(Capture, H);
 
     Result := GDK_FILTER_REMOVE;
   end
@@ -308,7 +308,7 @@ begin
     Result := GDK_FILTER_CONTINUE;
 end;
 
-function TGTK2HotkeyManager.DoRegister(Shortcut: TShortCut): Boolean;
+function TGTK2HotkeyManager.DoRegister(Shortcut: TShortcutEx): Boolean;
 
   procedure CaptureKey(Display: PDisplay; KeyCode: LongWord; Modifier: LongWord; Window: TWindow);
   begin
@@ -330,7 +330,7 @@ var
   Key: Word;
   ShiftState: TShiftState;
 begin
-  ShortCutToKey(Shortcut, Key, ShiftState);
+  ShortCutToKey(Shortcut.SimpleShortcut, Key, ShiftState);
 
   Result := Key <> 0;
   if (Result) then
@@ -353,7 +353,7 @@ begin
   end;
 end;
 
-function TGTK2HotkeyManager.DoUnregister(Shortcut: TShortCut): Boolean;
+function TGTK2HotkeyManager.DoUnregister(Shortcut: TShortcutEx): Boolean;
 
   procedure ReleaseKey(Display: PDisplay; KeyCode: LongWord; Modifier: LongWord; Window: TWindow);
   begin
@@ -372,7 +372,7 @@ var
   Key: Word;
   ShiftState: TShiftState;
 begin
-  ShortCutToKey(Shortcut, Key, ShiftState);
+  ShortCutToKey(Shortcut.SimpleShortcut, Key, ShiftState);
 
   Result := Key <> 0;
   if (Result) then
