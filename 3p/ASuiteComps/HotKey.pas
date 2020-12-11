@@ -18,7 +18,7 @@ unit HotKey;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, Menus, Windows, LMessages, LCLIntf, LCLType, LCLProc, LazLogger;
+  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, Menus, {$IFDEF Windows}Windows,{$ENDIF} LMessages, LCLIntf, LCLType, LCLProc, LazLogger;
 
 type
   THKModifier = (

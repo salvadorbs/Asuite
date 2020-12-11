@@ -135,7 +135,7 @@ uses
   AppConfig.Main, NodeDataTypes.Base, NodeDataTypes.Category, Kernel.ResourceStrings,
   NodeDataTypes.Files, NodeDataTypes.Custom, NodeDataTypes.Separator, Kernel.Types,
   Kernel.Enumerations, VirtualTree.Methods, DataModules.TrayMenu, LCLProc,
-  comobj, DataModules.Icons, Kernel.Logger, SynLog, Windows, Utility.Misc;
+  comobj, DataModules.Icons, Kernel.Logger, SynLog, {$IFDEF Windows}Windows,{$ENDIF} Utility.Misc;
 
 { TVirtualTreeEvents }
 

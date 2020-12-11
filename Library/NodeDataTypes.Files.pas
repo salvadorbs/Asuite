@@ -89,7 +89,7 @@ implementation
 uses
   AppConfig.Main, Kernel.Consts, Utility.FileFolder,
   Utility.System, Utility.Process, VirtualTree.Methods, Utility.Misc,
-  Windows, JwaWindows, JwaWinBase, ShellApi;
+  {$IFDEF Windows}Windows, JwaWindows, JwaWinBase, ShellApi{$ENDIF};
 
 constructor TvFileNodeData.Create(AType: TvTreeDataType);
 begin

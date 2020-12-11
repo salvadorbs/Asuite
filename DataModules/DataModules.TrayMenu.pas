@@ -139,7 +139,7 @@ uses
   DataModules.Icons, Forms.Main, AppConfig.Main, VirtualTree.Methods,
   Utility.System, Forms.GraphicMenu, Kernel.Types, NodeDataTypes.Files,
   NodeDataTypes.Custom, NodeDataTypes.Base, Kernel.Consts, Kernel.Logger,
-  Utility.Misc, Utility.FileFolder, Windows, Kernel.ResourceStrings;
+  Utility.Misc, Utility.FileFolder, {$IFDEF Windows}Windows,{$ENDIF} Kernel.ResourceStrings;
 
 {$R *.lfm}
 

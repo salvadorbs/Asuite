@@ -58,7 +58,7 @@ function  GetHotKeyMod(AShortcut: TShortcut) : Integer;
 implementation
 
 uses
-  PJVersionInfo, AppConfig.Main, Kernel.Logger, LCLProc, Windows,
+  PJVersionInfo, AppConfig.Main, Kernel.Logger, LCLProc, {$IFDEF Windows}Windows,{$ENDIF}
   Kernel.ResourceStrings;
 
 function IsFormOpen(const FormName : string): Boolean;
