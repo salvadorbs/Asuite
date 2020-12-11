@@ -57,7 +57,7 @@ uses
   {$IFDEF Supports_RTLNameSpaces}
   Winapi.Windows, System.Classes;
   {$ELSE}
-  Windows, Classes;
+  {$IFDEF Windows}Windows,{$ENDIF} Classes;
   {$ENDIF}
 
 
@@ -130,13 +130,14 @@ type
     file and exposes the information as properties. Supports multi-lingual
     version iformation resources.
   }
-  TPJVersionInfo = class(TComponent)
+  TPJVersionInfo = class(TComponent)    
+  {$IFDEF MSWINDOWS}
   private // properties
     fFileName: string;
     fHaveInfo: Boolean;
     fNumTranslations: Integer;
     fCurrentTranslation: Integer;
-    fFixedFileInfo: TVSFixedFileInfo;
+    {$IFDEF Windows}fFixedFileInfo: TVSFixedFileInfo; {$ENDIF}
     procedure SetFileName(AName: string);
     function GetProductVersionNumber: TPJVersionNumber;
     function GetFileVersionNumber: TPJVersionNumber;
@@ -150,13 +151,13 @@ type
     function GetStringFileInfoByIdx(Index: Integer): string;
     function GetFixedFileInfoItemByIdx(Index: Integer): DWORD;
   private
-    fPInfoBuffer: PWChar;      // Pointer to info buffer
+    fPInfoBuffer: PChar;      // Pointer to info buffer
     fPTransBuffer: Pointer;   // Pointer to translation buffer
     procedure GetInfoBuffer(Len: DWORD);
       {Creates an info buffer of required size.
         @param Len [in] Required buffer size in characters.
       }
-    procedure GetTransBuffer(Len: UINT);
+    {$IFDEF MSWINDOWS} procedure GetTransBuffer(Len: UINT);    {$ENDIF}
       {Creates a translation table buffer of required size.
         @param Required buffer size in bytes.
       }
@@ -284,9 +285,11 @@ type
   published
     property FileName: string read fFileName write SetFileName;
       {Name of file containing version information. If set to '' (default) the
-      version information comes from the containing executable file}
+      version information comes from the containing executable file}          
+    {$ENDIF}
   end;
 
+{$IFDEF MSWINDOWS}
 function VerNumToStr(const Ver: TPJVersionNumber): string;
   {Converts a version number to its string representation as a dotted quad.
     @param Ver [in] Version number to be converted.
@@ -300,6 +303,7 @@ function CompareVerNums(const Ver1, Ver2: TPJVersionNumber): Integer;
     @param Ver2 [in] Second version number to compare.
     @return 0 if Ver1 = Ver2, -ve if Ver1 < Ver2, +ve if Ver1 > Ver2.
   }
+{$ENDIF}
 
 procedure Register;
   {Registers this component.
@@ -325,6 +329,7 @@ begin
   RegisterComponents('DelphiDabbler', [TPJVersionInfo]);
 end;
 
+{$IFDEF MSWINDOWS}
 type
   // ANSI version of CPINFOEX: provides information about a code page
   _cpinfoexA = packed record
@@ -373,7 +378,9 @@ type
   PCPInfoEx = PCPInfoExA;
   {$ENDIF}
   CPINFOEX = TCPInfoEx;
+{$ENDIF}
 
+{$IFDEF MSWINDOWS}
 var
   // Pointer to Windows API GetCPInfoEx function if it exists or to GetCPInfoAlt
   // otherwise
@@ -387,7 +394,9 @@ const
   {$ELSE}
   cGetCPInfoEx = 'GetCPInfoExA';
   {$ENDIF}
+{$ENDIF}
 
+{$IFDEF MSWINDOWS}
 function GetCPInfoAlt(CodePage: UINT; dwFlags: DWORD;
   var lpCPInfoEx: TCPInfoEx): BOOL; stdcall;
   {Local implementation of GetCPInfoEx, for use on OSs that don't support
@@ -932,6 +941,7 @@ initialization
 GetCPInfoExFn := GetProcAddress(GetModuleHandle('Kernel32.dll'), cGetCPInfoEx);
 if not Assigned(GetCPInfoExFn) then
   GetCPInfoExFn := GetCPInfoAlt;
+{$ENDIF}
 
 end.
 

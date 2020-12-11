@@ -24,8 +24,8 @@ unit AppConfig.Paths;
 interface
 
 uses
-  LCLIntf, LCLType, SysUtils, Graphics, Forms, Controls, Classes,
-  ShlObj;
+  LCLIntf, LCLType, SysUtils, Graphics, Forms, Controls, Classes
+  {$IFDEF MSWINDOWS}, ShlObj {$ENDIF};
 
 type
   TConfigPaths = class
@@ -69,7 +69,7 @@ type
 implementation
 
 uses
-  Kernel.Consts, Utility.FileFolder, Windows;
+  Kernel.Consts, Utility.FileFolder{$IFDEF MSWINDOWS} , Windows {$ENDIF};
 
 { TConfigPaths }
 
@@ -111,8 +111,10 @@ begin
   SetCurrentDir(FSuitePathWorking);
   if Not(IsDirectoryWriteable(FSuitePathWorking)) then
   begin
+    {$IFDEF MSWINDOWS}
     FSuitePathData := IncludeTrailingBackslash(GetSpecialFolder(CSIDL_LOCAL_APPDATA) + APP_NAME);
     SysUtils.ForceDirectories(FSuitePathData);
+    {$ENDIF}
   end
   else
     FSuitePathData := FSuitePathWorking;
@@ -134,6 +136,7 @@ begin
   Result := '';
 
   // Get required buffer size
+  {$IFDEF MSWINDOWS}
   BufSize := ExpandEnvironmentStringsW(PChar(Str), nil, 0);
   if BufSize > 0 then
   begin
@@ -141,6 +144,7 @@ begin
     SetLength(Result, BufSize - 1);
     ExpandEnvironmentStringsW(PChar(Str), PChar(Result), BufSize);
   end;
+  {$ENDIF}
 end;
 
 function TConfigPaths.GetNumberSubFolders(const FolderPath: String): Integer;

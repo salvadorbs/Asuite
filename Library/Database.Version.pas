@@ -78,7 +78,8 @@ var
   VersionInfo: TPJVersionInfo;
   IsDataExists: Boolean;
 begin
-  TASuiteLogger.Info('Saving ASuite Version', []);
+  {$IFDEF MSWINDOWS}
+TASuiteLogger.Info('Saving ASuite Version', []);
   VersionInfo := TPJVersionInfo.Create(nil);
   try
     VersionInfo.FileName := Config.Paths.SuiteFullFileName;
@@ -104,6 +105,7 @@ begin
   finally
     VersionInfo.Free;
   end;
+{$ENDIF}
 end;
 
 function TSQLtbl_version.ToVersionNumber: TPJVersionNumber;

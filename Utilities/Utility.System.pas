@@ -25,7 +25,7 @@ interface
 
 uses
   Kernel.Consts, LCLIntf, LCLType, SysUtils, Classes, Registry,
-  ComObj, Forms, Dialogs;
+  {$IFDEF MSWINDOWS} ComObj, {$ENDIF} Forms, Dialogs;
 
 { Check functions }
 function HasDriveLetter(const Path: String): Boolean;
@@ -47,7 +47,7 @@ implementation
 
 uses
   Utility.Conversions, Forms.Main, AppConfig.Main, Utility.Misc, Kernel.Logger,
-  VirtualTree.Methods, LazFileUtils, Windows;
+  VirtualTree.Methods, LazFileUtils{$IFDEF MSWINDOWS} , Windows {$ENDIF};
 
 function HasDriveLetter(const Path: String): Boolean;
 var P: PChar;

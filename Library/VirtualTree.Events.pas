@@ -24,7 +24,7 @@ unit VirtualTree.Events;
 interface
 
 uses
-  LCLIntf, LCLType, SysUtils, Classes, Graphics, VirtualTrees, ActiveX,
+  LCLIntf, LCLType, SysUtils, Classes, Graphics, VirtualTrees, {$IFDEF MSWINDOWS} ActiveX, {$ENDIF}
   Kernel.Singleton, Forms.GraphicMenu, Forms.Dialog.BaseEntity, Menus, Forms, Controls;
 
 type
@@ -36,10 +36,13 @@ type
     function GetNodeParentName(const ASender: TBaseVirtualTree; const ANode: PVirtualNode): string;
     procedure DrawSeparatorItem(const ASender: TBaseVirtualTree; const ANode: PVirtualNode;
                                 TargetCanvas: TCanvas; const CellRect: TRect; var DefaultDraw: Boolean);
+    //TODO: Linux - See https://forum.lazarus.freepascal.org/index.php?topic=40061.0
+    {$IFDEF MSWINDOWS}
     procedure DragDropFiles(const ASender: TBaseVirtualTree; ADataObject: IDataObject;
                             AttachMode: TVTNodeAttachMode);
     function GetTextFromDataObject(DataObject: IDataObject): string;
     procedure GetFileListFromDataObject(const DataObj: IDataObject; FileList: TStringList);
+    {$ENDIF}
   public
     //Methods to set events in vsts
     procedure SetupVSTList(ATree: TVirtualStringTree);
@@ -70,8 +73,10 @@ type
     procedure DoFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure DoNewText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;
       const NewText: String);
+    {$IFDEF MSWINDOWS}
     procedure DoDragDrop(Sender: TBaseVirtualTree; Source: TObject; DataObject: IDataObject;
       Formats: TFormatArray; Shift: TShiftState; const Pt: TPoint; var Effect: LongWord; Mode: TDropMode);
+    {$ENDIF}
     procedure DoEditing(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex; var Allowed: Boolean);
     procedure DoDrawText(Sender: TBaseVirtualTree; TargetCanvas: TCanvas;
@@ -135,7 +140,7 @@ uses
   AppConfig.Main, NodeDataTypes.Base, NodeDataTypes.Category, Kernel.ResourceStrings,
   NodeDataTypes.Files, NodeDataTypes.Custom, NodeDataTypes.Separator, Kernel.Types,
   Kernel.Enumerations, VirtualTree.Methods, DataModules.TrayMenu, LCLProc,
-  comobj, DataModules.Icons, Kernel.Logger, SynLog, {$IFDEF Windows}Windows,{$ENDIF} Utility.Misc;
+  DataModules.Icons, Kernel.Logger, SynLog, {$IFDEF Windows}comobj, Windows,{$ENDIF} Utility.Misc;
 
 { TVirtualTreeEvents }
 
@@ -227,7 +232,9 @@ begin
   ATree.OnCompareNodes := DoCompareNodesList;
   ATree.OnNodeDblClick := DoNodeDblClick;
   ATree.OnDragOver     := DoDragOver;
+  {$IFDEF MSWINDOWS}
   ATree.OnDragDrop     := DoDragDrop;
+  {$ENDIF}
   ATree.OnDrawText     := DoDrawText;
   ATree.OnEditing      := DoEditing;
   ATree.OnExpanded     := DoExpanded;
@@ -352,6 +359,7 @@ begin
       Result := CompareText(Data1.Name, Data2.Name);
 end;
 
+{$IFDEF MSWINDOWS}
 procedure TVirtualTreeEvents.DoDragDrop(Sender: TBaseVirtualTree; Source: TObject; DataObject: IDataObject;
       Formats: TFormatArray; Shift: TShiftState; const Pt: TPoint; var Effect: LongWord; Mode: TDropMode);
 var
@@ -410,6 +418,7 @@ begin
     end;
   end;
 end;
+{$ENDIF}
 
 procedure TVirtualTreeEvents.DoDragOver(Sender: TBaseVirtualTree; Source: TObject;
   Shift: TShiftState; State: TDragState; const Pt: TPoint; Mode: TDropMode;
@@ -654,6 +663,7 @@ begin
   end;
 end;
 
+{$IFDEF MSWINDOWS}
 procedure TVirtualTreeEvents.DragDropFiles(const ASender: TBaseVirtualTree;
   ADataObject: IDataObject; AttachMode: TVTNodeAttachMode);
 var
@@ -671,6 +681,7 @@ begin
     FileNames.Free;
   end;
 end;
+{$ENDIF}
 
 procedure TVirtualTreeEvents.DrawSeparatorItem(const ASender: TBaseVirtualTree;
   const ANode: PVirtualNode; TargetCanvas: TCanvas; const CellRect: TRect;
@@ -693,6 +704,7 @@ begin
   end;
 end;
 
+{$IFDEF MSWINDOWS}
 procedure TVirtualTreeEvents.GetFileListFromDataObject(
   const DataObj: IDataObject; FileList: TStringList);
 var
@@ -730,6 +742,7 @@ begin
     ReleaseStgMedium(Medium);
   end;
 end;
+{$ENDIF}
 
 function TVirtualTreeEvents.GetNodeParentName(const ASender: TBaseVirtualTree;
   const ANode: PVirtualNode): string;
@@ -747,6 +760,7 @@ begin
     Result := '<Root>';
 end;
 
+{$IFDEF MSWINDOWS}
 function TVirtualTreeEvents.GetTextFromDataObject(
   DataObject: IDataObject): string;
 var
@@ -784,6 +798,7 @@ begin
     end;
   end;
 end;
+{$ENDIF}
 
 procedure TVirtualTreeEvents.DoCompareNodesSearch(Sender: TBaseVirtualTree; Node1,
   Node2: PVirtualNode; Column: TColumnIndex; var Result: Integer);

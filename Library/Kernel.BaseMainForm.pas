@@ -33,13 +33,17 @@ type
   TBaseMainForm = class(TForm)
   private
     FSessionEnding : Boolean;
+    {$IFDEF MSWINDOWS}
     procedure WMQueryEndSession(var Message: TMessage); message WM_QUERYENDSESSION;
     procedure WMEndSession(var Msg : TWMEndSession); message WM_ENDSESSION;
     procedure WMExitSizeMove(var Message: TMessage) ; message WM_EXITSIZEMOVE;
     procedure WMSysCommand(var Message: TWMSysCommand); message WM_SYSCOMMAND;
     procedure WMMove(Var Msg : TWMMove); message WM_MOVE;
+    {$ENDIF}
   protected
+    {$IFDEF MSWINDOWS}
     procedure WndProc(var Msg: TMessage); override;
+    {$ENDIF}  
     procedure CreateParams(var Params: TCreateParams); override;
   public
     constructor Create(AOwner : TComponent); override;
@@ -105,6 +109,7 @@ begin
   end;
 end;
 
+{$IFDEF MSWINDOWS}
 procedure TBaseMainForm.WMQueryEndSession(var Message: TMessage);
 begin
   FSessionEnding := True;
@@ -145,5 +150,6 @@ begin
 
   Config.Changed := True;
 end;
+{$ENDIF}
 
 end.

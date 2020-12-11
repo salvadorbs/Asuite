@@ -24,7 +24,7 @@ unit Icons.Base;
 interface
 
 uses
-  SysUtils, Controls, SyncObjs, LCLIntf, LCLType, ShellApi, CommCtrl;
+  SysUtils, Controls, SyncObjs, LCLIntf, LCLType{$IFDEF MSWINDOWS}, ShellApi, CommCtrl{$ENDIF};
 
 type
 
@@ -83,17 +83,20 @@ end;
 
 function TBaseIcon.GetIconFromSysImageList(const APathFile: string;
   const AWantLargeIcon: Boolean): Integer;
-var        
+{$IFDEF MSWINDOWS}
+var
   FileInfo: TSHFileInfoW;
   Flags: Integer;
   bmp: Graphics.TBitmap;
   hIco: HICON;
   FileIcon: kIcon.TIcon;
+{$ENDIF}
 begin
+  {$IFDEF MSWINDOWS}
   Result := -1;
 
   Assert(Assigned(dmImages));
-          
+
   if AWantLargeIcon then
     Flags := SHGFI_SYSICONINDEX or SHGFI_LARGEICON or SHGFI_USEFILEATTRIBUTES
   else
@@ -129,6 +132,7 @@ begin
   finally
     DestroyIcon(FileInfo.hIcon);
   end;
+  {$ENDIF}
 end;
 
 function TBaseIcon.InternalGetImageIndex(const APathFile: string): Integer;

@@ -148,13 +148,13 @@ end;
 
 procedure TBCCustomImageTab.UpdateExclusive;
 var
-  Msg: TMessage;
+  Msg: TLMessage;
 begin
   if (FGroupIndex <> 0) and (Parent <> nil)
   then begin
     Msg.Msg := CM_BUTTONPRESSED;
     Msg.WParam := FGroupIndex;
-    Msg.LParam := Longint(Self);
+    Msg.LParam := Ptrint(Self);
     Msg.Result := 0;
     Parent.Broadcast(Msg);
   end;

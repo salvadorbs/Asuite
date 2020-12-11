@@ -191,18 +191,14 @@ function THotKey.GetCharFromVirtualKey(Key: Word): String;
 var
   keyboardState: TKeyboardState;
   asciiResult: Integer;
+  Shortcut: TShortCut;
 begin
-  GetKeyboardState(keyboardState);
-  SetLength(Result, 2);
-
-  asciiResult := ToAscii(Key, MapVirtualKey(Key, 0), keyboardState, @Result[1], 0);
-  case asciiResult of
-    0: Result := '';
-    1: SetLength(Result, 1);
-    2:;
-    else
-      Result := '';
-    end;
+  Result := '';
+  if Key <> 0 then
+  begin      
+    Shortcut := KeyToShortCut(Key, []);
+    Result := ShortCutToText(Shortcut);
+  end;
 end;
 
 end.

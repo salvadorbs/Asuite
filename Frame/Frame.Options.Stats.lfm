@@ -12,7 +12,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     BorderSpacing.Right = 4
     Caption = 'ASuite'
     ClientHeight = 62
-    ClientWidth = 433
+    ClientWidth = 435
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
@@ -72,7 +72,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     BorderSpacing.Right = 4
     Caption = 'Drive %S:'
     ClientHeight = 58
-    ClientWidth = 433
+    ClientWidth = 435
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
@@ -130,7 +130,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     BorderSpacing.Right = 4
     Caption = 'System'
     ClientHeight = 118
-    ClientWidth = 433
+    ClientWidth = 435
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Sans Serif'

@@ -5,8 +5,8 @@ unit Utility.FileFolder;
 interface
 
 uses
-  Kernel.Consts, LCLIntf, LCLType, SysUtils, Classes, Kernel.Enumerations, ShlObj, ActiveX,
-  ComObj, PJVersionInfo, FileUtil, ShellApi, {$IFDEF Windows}Windows,{$ENDIF} Dialogs;
+  Kernel.Consts, LCLIntf, LCLType, SysUtils, Classes, Kernel.Enumerations,
+  FileUtil, {$IFDEF Windows}ShellApi, ComObj, ActiveX, ShlObj, PJVersionInfo, Windows,{$ENDIF} Dialogs;
 
 { Folders }
 function GetSpecialFolder(const ASpecialFolderID: Integer): string;
@@ -36,13 +36,17 @@ uses
   AppConfig.Main, IniFiles, FCRC32;
 
 function GetSpecialFolder(const ASpecialFolderID: Integer): string;
+{$IFDEF MSWINDOWS}
 var
   vSFolder :  pItemIDList;
   vSpecialPath : array[0..MAX_PATH] of Char;
+{$ENDIF}
 begin
+  {$IFDEF MSWINDOWS}
   SHGetSpecialFolderLocation(0, ASpecialFolderID, vSFolder);
   SHGetPathFromIDListW(vSFolder, vSpecialPath);
   Result := IncludeTrailingBackslash(StrPas(vSpecialPath));
+  {$ENDIF}
 end;
 
 function BrowseForFolder(const InitialDir: String; const Caption: String): String;
@@ -85,15 +89,19 @@ begin
 end;
 
 function IsDirectoryWriteable(const AName: string): Boolean;
+{$IFDEF MSWINDOWS}
 var
   FileName: String;
   H: THandle;
+{$ENDIF}
 begin
+  {$IFDEF MSWINDOWS}
   FileName := IncludeTrailingPathDelimiter(AName) + 'chk.tmp';
   H := CreateFileW(PChar(FileName), GENERIC_READ or GENERIC_WRITE, 0, nil,
     CREATE_NEW, FILE_ATTRIBUTE_TEMPORARY or FILE_FLAG_DELETE_ON_CLOSE, 0);
   Result := H <> INVALID_HANDLE_VALUE;
   if Result then FileClose(H);
+  {$ENDIF}
 end;
 
 function DeleteFiles(const Dir, Wildcard: string): Integer;
@@ -181,10 +189,13 @@ begin
 end;
 
 function ExtractFileNameEx(const AFileName: String): string;
+{$IFDEF MSWINDOWS}
 var
   VersionInfo : TPJVersionInfo;
   sPath : String;
+{$ENDIF}
 begin
+  {$IFDEF MSWINDOWS}
   sPath := Config.Paths.RelativeToAbsolute(AFileName);
   Result := ExtractFileName(sPath);
   VersionInfo := TPJVersionInfo.Create(nil);
@@ -201,6 +212,7 @@ begin
   finally
     VersionInfo.Free;
   end;
+  {$ENDIF}
 end;
 
 procedure DeleteOldBackups(const MaxNumber: Integer);
@@ -225,13 +237,16 @@ begin
 end;
 
 procedure CreateShortcutOnDesktop(const FileName, TargetFilePath, Params, WorkingDir: String);
+{$IFDEF MSWINDOWS}
 var
   IObject  : IUnknown;
   ISLink   : IShellLinkW;
   IPFile   : IPersistFile;
   PIDL     : PItemIDList;
   InFolder : array[0..MAX_PATH] of Char;
+{$ENDIF}
 begin
+  {$IFDEF MSWINDOWS}
   //Create objects
   IObject := CreateComObject(CLSID_ShellLink);
   ISLink  := IObject as IShellLinkW;
@@ -248,30 +263,38 @@ begin
   SHGetPathFromIDListW(PIDL, InFolder);
   //Save link
   IPFile.Save(PWChar(IncludeTrailingPathDelimiter(InFolder) + FileName), false);
+  {$ENDIF}
 end;
 
 procedure DeleteShortcutOnDesktop(const FileName: String);
+{$IFDEF MSWINDOWS}
 var
   PIDL        : PItemIDList;
   DesktopPath : array[0..MAX_PATH] of Char;
   LinkName    : String;
+{$ENDIF}
 begin
+  {$IFDEF MSWINDOWS}
   SHGetSpecialFolderLocation(0, CSIDL_DESKTOPDIRECTORY, PIDL);
   SHGetPathFromIDListW(PIDL, DesktopPath);
   LinkName := PChar(IncludeTrailingPathDelimiter(DesktopPath) + FileName);
   if (FileExists(LinkName)) then
     SysUtils.DeleteFile(LinkName);
+  {$ENDIF}
 end;
 
 function GetShortcutTarget(const LinkFileName: String; ShortcutType: TShortcutField):String;
+{$IFDEF MSWINDOWS}
 var
   ISLink    : IShellLinkW;
   IPFile    : IPersistFile;
   WidePath  : PChar;
   Info      : Array[0..MAX_PATH] of Char;
   wfs       : WIN32_FIND_DATAW;
+{$ENDIF}
 begin
-  CoCreateInstance(CLSID_ShellLink, nil, CLSCTX_INPROC_SERVER, IShellLinkW, ISLink);
+  {$IFDEF MSWINDOWS}
+CoCreateInstance(CLSID_ShellLink, nil, CLSCTX_INPROC_SERVER, IShellLinkW, ISLink);
   if ISLink.QueryInterface(IPersistFile, IPFile) = 0 then
   begin
     WidePath := PChar(LinkFileName);
@@ -286,6 +309,7 @@ begin
   end
   else
     Result := LinkFileName;
+{$ENDIF}
 end;
 
 function GetUrlTarget(const AFileName: String; ShortcutType: TShortcutField): String;
@@ -305,15 +329,19 @@ begin
 end;
 
 procedure RenameShortcutOnDesktop(const OldFileName, FileName: String);
+{$IFDEF MSWINDOWS}
 var
   PIDL        : PItemIDList;
   DesktopPath : array[0..MAX_PATH] of Char;
   sDesktopPath : string;
+{$ENDIF}
 begin
+  {$IFDEF MSWINDOWS}
   SHGetSpecialFolderLocation(0, CSIDL_DESKTOPDIRECTORY, PIDL);
   SHGetPathFromIDListW(PIDL, DesktopPath);
   sDesktopPath := DesktopPath;
   RenameFile(sDesktopPath + PathDelim + OldFileName,sDesktopPath + PathDelim + FileName);
+  {$ENDIF}
 end;
 
 end.

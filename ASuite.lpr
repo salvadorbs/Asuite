@@ -3,6 +3,9 @@ program ASuite;
 {$MODE Delphi}
 
 uses
+  {$IFDEF UseCThreads}
+  cthreads,
+  {$ENDIF}
   Forms,
   SysUtils,
   LCLIntf, LCLType, LMessages, Interfaces,
@@ -74,7 +77,8 @@ uses
   Kernel.Scheduler in 'Library\Kernel.Scheduler.pas',
   Kernel.Logger in 'Library\Kernel.Logger.pas';
 
-{$R *.res}
+{$R *.res} 
+{$I ASuite.inc}
 
 var
   hash, identifier: string;

@@ -88,8 +88,8 @@ implementation
 
 uses
   AppConfig.Main, Kernel.Consts, Utility.FileFolder,
-  Utility.System, Utility.Process, VirtualTree.Methods, Utility.Misc,
-  {$IFDEF Windows}Windows, JwaWindows, JwaWinBase, ShellApi{$ENDIF};
+  Utility.System, Utility.Process, VirtualTree.Methods, Utility.Misc
+  {$IFDEF Windows}, Windows, JwaWindows, JwaWinBase, ShellApi{$ENDIF};
 
 constructor TvFileNodeData.Create(AType: TvTreeDataType);
 begin
@@ -151,9 +151,12 @@ begin
 end;
 
 function TvFileNodeData.InternalExecuteAsAdmin(ARunFromCategory: Boolean): boolean;
+{$IFDEF MSWINDOWS}
 var
   ShellExecuteInfo: TShellExecuteInfoW;
+{$ENDIF}
 begin
+  {$IFDEF MSWINDOWS}
   ZeroMemory(@ShellExecuteInfo, SizeOf(ShellExecuteInfo));
   ShellExecuteInfo.cbSize := SizeOf(TShellExecuteInfo);
   ShellExecuteInfo.Wnd    := GetDesktopWindow;
@@ -170,13 +173,17 @@ begin
 
   if not Result then
     ShowMessageEx(SysErrorMessage(GetLastOSError), True);
+  {$ENDIF}
 end;
 
 function TvFileNodeData.InternalExecuteAsUser(ARunFromCategory: Boolean; AUserData: TUserData): boolean;
+{$IFDEF MSWINDOWS}
 var
   StartupInfo : JwaWinBase.TStartupInfoW;
   ProcInfo    : TProcessInformation;
+{$ENDIF}
 begin
+  {$IFDEF MSWINDOWS}
   FillMemory(@StartupInfo, sizeof(StartupInfo), 0);
   FillMemory(@ProcInfo, sizeof(ProcInfo), 0);
   StartupInfo.cb := sizeof(TStartupInfoW);
@@ -197,6 +204,7 @@ begin
   end
   else
     ShowMessageEx(SysErrorMessage(GetLastOSError), True);
+  {$ENDIF}
 end;
 
 procedure TvFileNodeData.AfterExecute(ADoActionOnExe: Boolean);

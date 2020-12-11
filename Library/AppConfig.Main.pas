@@ -288,7 +288,9 @@ end;
 function TConfiguration.CheckReadOnlyMode: Boolean;
 begin
   //Check if ASuite is running from a cd rom
+  {$IFDEF MSWINDOWS}
   Result := GetDriveTypeW(PChar(Config.Paths.SuiteDrive)) = DRIVE_CDROM;
+  {$ENDIF}
   if (Config.ReadOnlyMode) then
   begin
     Config.Cache  := False;

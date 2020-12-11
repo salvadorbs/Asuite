@@ -25,7 +25,7 @@ interface
 
 uses
   Classes, SysUtils, StdCtrls, BCImageButton, Buttons, Controls, ImgList, LCLIntf,
-  {$IFDEF Windows}Windows,{$ENDIF} LCLProc, Graphics, Menus, LCLType;
+  {$IFDEF Windows}Windows,{$ENDIF} LCLProc, Graphics, Menus, LCLType, Types;
 
 type
   TButtonPosition = (bpLeft, bpRight);
