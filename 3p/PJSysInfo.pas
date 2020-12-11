@@ -136,11 +136,12 @@ interface
 uses
   // Delphi
   {$IFNDEF RTLNAMESPACES}
-  SysUtils, Classes, Windows;
+  SysUtils, Classes{$IFDEF MSWINDOWS} , Windows {$ENDIF};
   {$ELSE}
   System.SysUtils, System.Classes, Winapi.Windows;
   {$ENDIF}
-
+              
+  {$IFDEF MSWINDOWS}
 
 type
   // Windows types not defined in all supported Delphi VCLs
@@ -446,7 +447,7 @@ type
     osWin10Svr,             // Windows 2016 Server
     osWinSvr2019            // Windows 2019 Server
   );
-  
+
 type
   ///  <summary>Enumeration identifying processor architecture.</summary>
   TPJProcessorArchitecture = (
@@ -952,9 +953,10 @@ var
   // is False.
   Win32ProductInfo: LongWord = 0;
 
-
+{$ENDIF}
 implementation
 
+{$IFDEF MSWINDOWS}
 
 uses
   // Delphi
@@ -2947,7 +2949,8 @@ end;
 initialization
 
 // Initialize global variables from extended OS and product info
-InitPlatformIdEx;
+  InitPlatformIdEx;
+{$ENDIF}
 
 end.
 

@@ -31,9 +31,9 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="593"/>
+      <BuildNr Value="596"/>
     </VersionInfo>
-    <BuildModes Count="3">
+    <BuildModes Count="4">
       <Item1 Name="Default" Default="True"/>
       <Item2 Name="Debug">
         <CompilerOptions>
@@ -140,6 +140,52 @@
           </Other>
         </CompilerOptions>
       </Item3>
+      <Item4 Name="Linux Debug">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="bin\ASuite"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="Forms;DataModules;Library;Utilities;Frame;$(ProjOutDir);Library\platform\$(LCLWidgetType)"/>
+            <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p"/>
+            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <SyntaxMode Value="Delphi"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <TargetCPU Value="x86_64"/>
+            <TargetOS Value="linux"/>
+          </CodeGeneration>
+          <Linking>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dBorland
+-dVer150
+-dDelphi7
+-dCompiler6_Up
+-dPUREPASCAL
+-dUseCthreads"/>
+            <OtherDefines Count="6">
+              <Define0 Value="Borland"/>
+              <Define1 Value="Ver150"/>
+              <Define2 Value="Delphi7"/>
+              <Define3 Value="Compiler6_Up"/>
+              <Define4 Value="PUREPASCAL"/>
+              <Define5 Value="-dUseCthreads"/>
+            </OtherDefines>
+          </Other>
+        </CompilerOptions>
+      </Item4>
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>

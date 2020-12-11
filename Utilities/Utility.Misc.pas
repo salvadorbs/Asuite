@@ -115,9 +115,12 @@ begin
 end;
 
 function GetASuiteVersion(ASimpleFormat: Boolean): string;
+{$IFDEF MSWINDOWS}
 var
   VersionInfo: TPJVersionInfo;
+{$ENDIF}
 begin
+  {$IFDEF MSWINDOWS}
   VersionInfo := TPJVersionInfo.Create(nil);
   try
     VersionInfo.FileName := Config.Paths.SuiteFullFileName;
@@ -139,6 +142,7 @@ begin
   finally
     VersionInfo.Free;
   end;
+  {$ENDIF}
 end;
 
 function IsFormatInClipBoard(format: Word): Boolean;
@@ -152,7 +156,9 @@ begin
   for n := 0 to Clipboard.FormatCount - 1 do
   begin
     fmt := Clipboard.Formats[n];
+    {$IFDEF MSWINDOWS}
     GetClipboardFormatNameW(fmt, buf, Pred(SizeOf(buf)));
+    {$ENDIF}
     if fmt = format then
     begin
       Result := True;
@@ -296,6 +302,12 @@ Function GetHotKeyMod(AShortcut: TShortcut): Integer;
 var
   Shift: TShiftState;
   Key: Word;
+{$IFNDEF MSWINDOWS}
+const
+  MOD_ALT = 1;
+  MOD_CONTROL = 2;
+  MOD_SHIFT = 4;
+{$ENDIF}
 begin
   Result := 0;
   ShortCutToKey(AShortcut, Key, Shift);

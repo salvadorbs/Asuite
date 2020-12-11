@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, LCLType, LMessages, SysUtils, Kernel.Enumerations, Forms.Main, AppConfig.Main,
-  SynLog, JwaWinBase, jwatlhelp32;
+  SynLog{$IFDEF MSWINDOWS} , JwaWinBase, jwatlhelp32 {$ENDIF};
 
 { Processes, execution }
 procedure ActionOnExe(Action: TActionOnExecute);
@@ -56,10 +56,13 @@ begin
 end;
 
 function IsProcessExists(exeFileName: string): Boolean;
+{$IFDEF MSWINDOWS}
 var
   hSnapShot : THandle;
   ProcInfo  : TProcessEntry32;
+{$ENDIF}
 begin
+  {$IFDEF MSWINDOWS}
   Result      := False;
   exeFileName := UpperCase(ExeFileName);
   hSnapShot   := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
@@ -79,16 +82,20 @@ begin
     end;
   end;
   FileClose(hSnapShot);
+  {$ENDIF}
 end;
 
 procedure CloseProcessOpenByASuite;
+{$IFDEF MSWINDOWS}
 var
   hSnapShot, hProcess : THandle;
   ProcInfo  : TProcessEntry32;
   ContinueLoop: Boolean;
 const
   PROCESS_TERMINATE = $0001;
+{$ENDIF}
 begin
+  {$IFDEF MSWINDOWS}
   TASuiteLogger.Info('Close processes opened by ASuite', []);
   hSnapShot   := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
   //Check processes
@@ -110,6 +117,7 @@ begin
     end;
   end;
   FileClose(hSnapShot);
+  {$ENDIF}
 end;
 
 procedure RunActionOnExe(Action: TActionOnExecute);

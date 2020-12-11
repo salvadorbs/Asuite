@@ -13,7 +13,7 @@ object frmScanFolder: TfrmScanFolder
   OnCreate = FormCreate
   OnKeyPress = FormKeyPress
   Position = poMainFormCenter
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.0.10.0'
   object btnScan: TButton
     Left = 415
     Height = 25
@@ -53,8 +53,8 @@ object frmScanFolder: TfrmScanFolder
       Top = 61
       Width = 169
       Caption = 'File Types'
-      ClientHeight = 94
-      ClientWidth = 165
+      ClientHeight = 96
+      ClientWidth = 167
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 1
@@ -116,8 +116,8 @@ object frmScanFolder: TfrmScanFolder
       Top = 61
       Width = 169
       Caption = 'Exclude files'
-      ClientHeight = 94
-      ClientWidth = 165
+      ClientHeight = 96
+      ClientWidth = 167
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 2
@@ -177,8 +177,8 @@ object frmScanFolder: TfrmScanFolder
       Top = 5
       Width = 345
       Caption = 'General settings'
-      ClientHeight = 30
-      ClientWidth = 341
+      ClientHeight = 32
+      ClientWidth = 343
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 0

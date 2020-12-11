@@ -5,7 +5,7 @@ object frmMain: TfrmMain
   Width = 201
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'ASuite'
-  ClientHeight = 366
+  ClientHeight = 386
   ClientWidth = 201
   Color = clBtnFace
   Constraints.MinHeight = 370
@@ -17,7 +17,7 @@ object frmMain: TfrmMain
   OnHide = FormHide
   OnResize = FormResize
   OnShow = FormShow
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.0.10.0'
   object pcList: TPageControl
     Left = 0
     Height = 366
@@ -33,8 +33,8 @@ object frmMain: TfrmMain
     Options = [nboMultiLine]
     object tbList: TTabSheet
       Caption = 'List'
-      ClientHeight = 340
-      ClientWidth = 193
+      ClientHeight = 332
+      ClientWidth = 191
       ParentFont = False
       object vstList: TVirtualStringTree
         Left = 0
@@ -62,7 +62,7 @@ object frmMain: TfrmMain
         TabOrder = 0
         TextMargin = 2
         TreeOptions.AutoOptions = [toAutoDropExpand, toAutoExpand, toAutoScroll, toAutoScrollOnExpand, toAutoTristateTracking, toAutoChangeScale]
-        TreeOptions.MiscOptions = [toAcceptOLEDrop, toEditable, toFullRepaintOnResize, toToggleOnDblClick, toWheelPanning, toVariableNodeHeight, toFullRowDrag]
+        TreeOptions.MiscOptions = [toEditable, toFullRepaintOnResize, toToggleOnDblClick, toWheelPanning, toVariableNodeHeight, toFullRowDrag]
         TreeOptions.PaintOptions = [toHideFocusRect, toShowBackground, toShowButtons, toShowDropmark, toShowRoot, toShowTreeLines, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
         TreeOptions.SelectionOptions = [toFullRowSelect, toMultiSelect, toRightClickSelect]
         TreeOptions.StringOptions = [toAutoAcceptEditChange]
@@ -70,8 +70,8 @@ object frmMain: TfrmMain
     end
     object tbSearch: TTabSheet
       Caption = 'Search'
-      ClientHeight = 340
-      ClientWidth = 193
+      ClientHeight = 332
+      ClientWidth = 191
       ParentFont = False
       object vstSearch: TVirtualStringTree
         Left = 0
@@ -96,6 +96,7 @@ object frmMain: TfrmMain
         Header.Font.Color = clWindowText
         Header.Font.Height = -11
         Header.Font.Name = 'Tahoma'
+        Header.Height = 21
         Header.Options = [hoColumnResize, hoDblClickResize, hoDrag, hoVisible, hoHeaderClickAutoSort]
         HintMode = hmHint
         ParentFont = False

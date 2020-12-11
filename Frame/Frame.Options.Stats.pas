@@ -81,18 +81,20 @@ var
 
 implementation
 
-{$I ASuite.INC}
+{$I ASuite.inc}
 
 uses
-  Utility.Misc, AppConfig.Main, Kernel.Types, VirtualTree.Methods, {$IFDEF Windows}Windows,{$ENDIF}
-  PJSysInfo, Kernel.ResourceStrings;
+  Utility.Misc, AppConfig.Main, Kernel.Types, VirtualTree.Methods, {$IFDEF Windows}Windows, PJSysInfo,{$ENDIF}
+  Kernel.ResourceStrings;
 
 {$R *.lfm}
 
 { TfrmStatsOptionsPage }
 
+{$IFDEF MSWINDOWS}
 function GlobalMemoryStatusEx(var lpBuffer : TMemoryStatusEx) : BOOL;  stdcall;
   external 'kernel32.dll' name 'GlobalMemoryStatusEx';
+{$ENDIF}
 
 function TfrmStatsOptionsPage.GetImageIndex: Integer;
 begin
@@ -115,7 +117,9 @@ var
 begin
   begin
     MemoryEx.dwLength := SizeOf(TMemoryStatusEx);
+    {$IFDEF MSWINDOWS}
     GlobalMemoryStatusEx(MemoryEx);
+    {$ENDIF}
     Result := MemoryEx.ullTotalPhys;
   end;
 end;
@@ -152,12 +156,14 @@ begin
   Result := inherited;
 
   //System
+  {$IFDEF MSWINDOWS}
   lbOs.RightCaption := TPJOSInfo.ProductName + ' ' + TPJOSInfo.Edition;
   lblBuild.RightCaption := Format('%d.%d.%d', [TPJOSInfo.MajorVersion, TPJOSInfo.MinorVersion, TPJOSInfo.BuildNumber]);
   lblProcessor.RightCaption := TPJComputerInfo.ProcessorName;
   lblRam.RightCaption   := BytesToGBStr(GetTotalPhysMemory, 2, True) + ' GB';
   lbNamePc.RightCaption := TPJComputerInfo.ComputerName;
   lbUser.RightCaption   := TPJComputerInfo.UserName;
+  {$ENDIF}
 
   //Drive
   Drive := Config.Paths.SuiteDrive[1];

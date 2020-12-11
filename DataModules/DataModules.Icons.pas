@@ -26,10 +26,14 @@ unit DataModules.Icons;
 interface
 
 uses
-  SysUtils, Classes, Controls, LCLIntf, LCLType, Graphics, Dialogs, CommCtrl,
-  kgraphics, kicon, BGRAImageList, {$IFDEF Windows}Windows,{$ENDIF} DefaultTranslator;
+  SysUtils, Classes, Controls, LCLIntf, LCLType, Graphics, Dialogs,
+  kgraphics, kicon, BGRAImageList, {$IFDEF Windows}CommCtrl, Windows,{$ENDIF} DefaultTranslator;
 
 type
+
+  {$IFDEF MSWINDOWS}
+  THANDLE = Windows.THANDLE;
+  {$ENDIF}
 
   { TdmImages }
 
@@ -38,15 +42,15 @@ type
     ilLargeIcons: TBGRAImageList;
     procedure DataModuleCreate(Sender: TObject);
   private
-    FSysImageListLarge: Windows.THANDLE;
-    FSysImageListSmall: Windows.THANDLE;
+    FSysImageListLarge: THANDLE;
+    FSysImageListSmall: THANDLE;
     { Private declarations }
     procedure DrawTransparentBitmap(DC: HDC; hBmp: HBITMAP; xStart: integer;
                                     yStart : integer; cTransparentColor : COLORREF);
-    function SysImageListHandle(const Path: string; const WantLargeIcons: Boolean): Windows.THandle;
+    function SysImageListHandle(const Path: string; const WantLargeIcons: Boolean): THandle;
   public
-    property SysImageListSmall: Windows.THANDLE read FSysImageListSmall;
-    property SysImageListLarge: Windows.THANDLE read FSysImageListLarge;
+    property SysImageListSmall: THANDLE read FSysImageListSmall;
+    property SysImageListLarge: THANDLE read FSysImageListLarge;
 
     procedure GetAlphaBitmapFromImageList(ABMP: TKAlphaBitmap;const AImageIndex: Integer; ASmallIcon: Boolean = True);
     procedure DrawIconInBitmap(const AGlyph: Graphics.TBitmap;const AImageIndex: Integer; ASmallIcon: Boolean = True);
@@ -60,7 +64,7 @@ var
 implementation
 
 uses
-  ShellApi, AppConfig.Main;
+  {$IFDEF MSWINDOWS} ShellApi, {$ENDIF} AppConfig.Main;
 
 {$R *.lfm}
 
@@ -104,10 +108,13 @@ end;
 
 procedure TdmImages.GetAlphaBitmapFromImageList(ABMP: TKAlphaBitmap;
   const AImageIndex: Integer; ASmallIcon: Boolean);
+{$IFDEF MSWINDOWS}
 var
   KIcon: TKIcon;
   hIcon: Windows.HICON;
+{$ENDIF}
 begin
+  {$IFDEF MSWINDOWS}
   if AImageIndex <> -1 then
   begin
     //Buttons' image
@@ -133,6 +140,7 @@ begin
       KIcon.Free;
     end;
   end;
+  {$ENDIF}
 end;
 
 procedure TdmImages.DataModuleCreate(Sender: TObject);
@@ -243,14 +251,17 @@ begin
 end;
 
 function TdmImages.SysImageListHandle(const Path: string;
-  const WantLargeIcons: Boolean): Windows.THandle;
+  const WantLargeIcons: Boolean): THandle;
   {Returns a handle to the system image list for path Path.
   WantLargeIcons determines if the image list is to contain large or small
   icons.}
+{$IFDEF MSWINDOWS}
 var
   FI: ShellAPI.TSHFileInfoW; // required file info structure
   Flags: Windows.UINT;      // flags used to request image list
+{$ENDIF}
 begin
+  {$IFDEF MSWINDOWS}
   Flags := ShellAPI.SHGFI_SYSICONINDEX or ShellAPI.SHGFI_ICON;
 
   if WantLargeIcons then
@@ -259,6 +270,7 @@ begin
     Flags := Flags or ShellAPI.SHGFI_SMALLICON;
 
   Result := ShellAPI.SHGetFileInfo(PChar(Path), 0, FI, SizeOf(FI), Flags);
+  {$ENDIF}
 end;
 
 end.

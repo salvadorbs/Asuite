@@ -110,7 +110,7 @@ type
     procedure PopulateListTree(const ATree: TVirtualStringTree);
     procedure PopulateSpecialTree(const ATree: TVirtualStringTree; AList: TBaseItemsList; MaxItems: Integer);
     procedure SavePositionForm;
-    procedure WMWindowPosChanging(Var Msg : TWMWindowPosChanging); message WM_WindowPosChanging;
+    {$IFDEF MSWINDOWS} procedure WMWindowPosChanging(Var Msg : TWMWindowPosChanging); message WM_WindowPosChanging;  {$ENDIF}
     procedure HandleEdge(var AEdge: Integer; ASnapToEdge: Integer; ASnapDistance: Integer = 0);
   public
     { Public declarations }
@@ -120,7 +120,7 @@ type
 
 var
   frmGraphicMenu : TfrmGraphicMenu;
-  PrevWndProc: WNDPROC;
+  {$IFDEF MSWINDOWS} PrevWndProc: WNDPROC; {$ENDIF}
   OldWindowX, OldWindowY: Integer;
 
 implementation
@@ -133,6 +133,7 @@ uses
   Utility.Misc, VirtualTree.Events, VirtualTree.Methods, Kernel.Types,
   NodeDataTypes.Custom, GraphicMenu.ThemeEngine, Kernel.ResourceStrings;
 
+{$IFDEF MSWINDOWS}
 function WndCallback(Ahwnd: HWND; uMsg: UINT; wParam: WParam; lParam: LParam): LRESULT; stdcall;
 const
   Margin = 5;
@@ -172,6 +173,7 @@ begin
   end;
   Result := CallWindowProc(PrevWndProc,Ahwnd, uMsg, WParam, LParam);
 end;
+{$ENDIF}
 
 procedure TfrmGraphicMenu.ApplicationEvents1Deactivate(Sender: TObject);
 begin
@@ -238,6 +240,7 @@ begin
   end;
 end;
 
+{$IFDEF MSWINDOWS}
 procedure TfrmGraphicMenu.WMWindowPosChanging(var Msg: TWMWindowPosChanging);
 begin
   if (Parent = nil) and
@@ -256,6 +259,7 @@ begin
 
   inherited;
 end;
+{$ENDIF}
 
 procedure TfrmGraphicMenu.HandleEdge(var AEdge: Integer; ASnapToEdge: Integer;
   ASnapDistance: Integer);
@@ -308,7 +312,9 @@ end;
 
 procedure TfrmGraphicMenu.FormCreate(Sender: TObject);
 begin
+  {$IFDEF MSWINDOWS}
   PrevWndProc := Windows.WNDPROC(SetWindowLongPtr(Self.Handle, GWL_WNDPROC, PtrInt(@WndCallback)));
+  {$ENDIF}
 
   TVirtualTreeEvents.Create.SetupVSTGraphicMenu(vstList, Self);
 
@@ -452,7 +458,9 @@ begin
   if Button = mbLeft then
   begin
     ReleaseCapture;
+    {$IFDEF MSWINDOWS}
     SendMessage(frmGraphicMenu.Handle, WM_SYSCOMMAND, SC_DRAGMOVE, 0);
+    {$ENDIF}
 
     SavePositionForm;
   end;

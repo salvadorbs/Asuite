@@ -25,9 +25,14 @@ interface
 
 uses
   SysUtils, Classes, Icons.Base, NodeDataTypes.Base, Kernel.Enumerations,
-  NodeDataTypes.Custom, Graphics, Controls, KIcon, CommCtrl, LCLIntf, LCLType;
+  NodeDataTypes.Custom, Graphics, Controls, KIcon, {$IFDEF MSWINDOWS} CommCtrl, {$ENDIF}
+  LCLIntf, LCLType;
 
 type
+  {$IFNDEF MSWINDOWS}
+  TKIcon = TIcon;
+  {$ENDIF}
+
   TNodeIcon = class(TBaseIcon)
   private
     { private declarations }
@@ -55,7 +60,7 @@ implementation
 
 uses
   Utility.System, AppConfig.Main, NodeDataTypes.Files, Kernel.Consts,
-  Utility.FileFolder, DataModules.Icons, Windows;
+  Utility.FileFolder, DataModules.Icons{$IFDEF MSWINDOWS}, Windows {$ENDIF};
 
 { TNodeIcon }
 
@@ -67,10 +72,13 @@ begin
 end;
 
 procedure TNodeIcon.ExtractAndAddIcon(AImageList: TImageList; AImageIndex: Integer; AIcon: TKIcon);
+{$IFDEF MSWINDOWS}
 var
   KIcon: TKIcon;
-  hIcon: Windows.HICON;
+  hIcon: Windows.HICON;  
+{$ENDIF}
 begin
+{$IFDEF MSWINDOWS}
   Assert(Assigned(AIcon), 'Icon is not assigned!');
 
   KIcon := TKIcon.Create;
@@ -89,6 +97,7 @@ begin
   finally
     KIcon.Free;
   end;
+{$ENDIF}
 end;
 
 function TNodeIcon.GetPathCacheIcon: string;

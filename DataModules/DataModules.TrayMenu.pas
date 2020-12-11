@@ -185,7 +185,7 @@ begin
   APopupMenu.PopupComponent := tiTrayMenu.Owner;
   //Show menu
   APopupMenu.Popup(CursorPoint.X, CursorPoint.Y);
-  PostMessage(Application.Handle, WM_NULL, 0, 0);
+  {$IFDEF MSWINDOWS} PostMessage(Application.Handle, WM_NULL, 0, 0); {$ENDIF}
 end;
 
 procedure TdmTrayMenu.SearchAddDirectory(AMI: TASMenuItem; FolderPath: string);
@@ -580,7 +580,9 @@ begin
         TextSpace   := 1;
       end;
     end;
+  {$IFDEF MSWINDOWS}
   DrawTextW(ACanvas.Handle, PChar(LineCaption), Length(LineCaption), TextArea, Flags or DT_CALCRECT);
+  {$ENDIF}
   OffsetRect(TextArea, Round((RectWidth(LineArea) - RectWidth(TextArea)) / 2 - TextSpace), 0);
   Inc(ARect.Top, (CaptionLineItemHeight div 2) - 1);
   //Create first line
@@ -591,7 +593,9 @@ begin
   Inc(ARect.Top);
   Inc(ARect.Bottom);
   DrawFadeLine(ACanvas, TextArea, ARect, clBtnHighlight, FadeLineWidth, True);
+  {$IFDEF MSWINDOWS}
   DrawTextW(ACanvas.Handle, PChar(LineCaption), Length(LineCaption), TextArea, Flags);
+  {$ENDIF}
 end;
 
 procedure TdmTrayMenu.DrawFadeLine(ACanvas: TCanvas; AClipRect, ALineRect: TRect; AColor: TColor; AFadeWidth: Integer; AClip: Boolean);

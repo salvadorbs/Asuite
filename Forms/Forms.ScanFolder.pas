@@ -107,7 +107,7 @@ var
 implementation
 
 uses
-  AppConfig.Main, Kernel.Types, ShellApi, Kernel.Logger, Kernel.Consts,
+  AppConfig.Main, Kernel.Types, {$IFDEF MSWINDOWS} ShellApi,  {$ENDIF}Kernel.Logger, Kernel.Consts,
   DataModules.Icons, NodeDataTypes.Base, VirtualTree.Methods, Kernel.Enumerations,
   Utility.FileFolder, NodeDataTypes.Files, Utility.Misc, Kernel.ResourceStrings;
 
@@ -291,10 +291,13 @@ begin
 end;
 
 function TfrmScanFolder.GetExtImage(AExtension: string): Integer;
+{$IFDEF MSWINDOWS}
 var
   FileInfo: TSHFILEINFOW;
   Icon: TIcon;
+{$ENDIF}
 begin
+  {$IFDEF MSWINDOWS}
   Result := -1;
   Icon := TIcon.Create;
   try
@@ -307,6 +310,7 @@ begin
   finally
     Icon.Free;
   end;
+  {$ENDIF}
 end;
 
 procedure TfrmScanFolder.LoadSettings;
