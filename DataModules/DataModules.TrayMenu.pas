@@ -27,7 +27,7 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  Menus, ExtCtrls, VirtualTrees, ImgList, Messages,
+  Menus, ExtCtrls, VirtualTrees, ImgList, Messages, LazFileUtils,
   Kernel.PopupMenu, Lists.Base, Kernel.Enumerations, LazMethodList;
 
 type
@@ -798,7 +798,7 @@ begin
       be enough. }
     TMenuItemPrivateHack(MI).FItems.Capacity := 4096;
     {$ENDIF}
-    MI.Path := IncludeTrailingBackslash(MI.Path);
+    MI.Path := AppendPathDelim(MI.Path);
     { first directories }
     SearchAddDirectory(MI);
     { then files }

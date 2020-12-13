@@ -24,7 +24,7 @@ unit AppConfig.Paths;
 interface
 
 uses
-  LCLIntf, LCLType, SysUtils, Graphics, Forms, Controls, Classes
+  LCLIntf, LCLType, SysUtils, Graphics, Forms, Controls, Classes, LazFileUtils
   {$IFDEF MSWINDOWS}, ShlObj {$ENDIF};
 
 type
@@ -79,9 +79,9 @@ var
 begin
   sPath := APath;
   //Const %FolderIcon%
-  sPath  := StringReplace(sPath, FSuitePathCurrentTheme + ICONS_DIR + FILEICON_Folder + EXT_ICO, CONST_PATH_FOLDERICON, [rfIgnoreCase,rfReplaceAll]);
+  sPath  := StringReplace(sPath, AppendPathDelim(FSuitePathCurrentTheme + ICONS_DIR) + FILEICON_Folder + EXT_ICO, CONST_PATH_FOLDERICON, [rfIgnoreCase,rfReplaceAll]);
   //Const %UrlIcon%
-  sPath  := StringReplace(sPath, FSuitePathCurrentTheme + ICONS_DIR + FILEICON_Url + EXT_ICO, CONST_PATH_URLICON, [rfIgnoreCase,rfReplaceAll]);
+  sPath  := StringReplace(sPath, AppendPathDelim(FSuitePathCurrentTheme + ICONS_DIR) + FILEICON_Url + EXT_ICO, CONST_PATH_URLICON, [rfIgnoreCase,rfReplaceAll]);
   //Const $ASuite
   sPath  := StringReplace(sPath, ExcludeTrailingPathDelimiter(SuitePathWorking), CONST_PATH_ASuite, [rfIgnoreCase,rfReplaceAll]);
   //Const $Drive
@@ -109,19 +109,20 @@ begin
   FSuiteDrive        := LowerCase(ExtractFileDrive(FSuiteFullFileName));
   FSuitePathWorking  := ExtractFilePath(FSuiteFullFileName);
   SetCurrentDir(FSuitePathWorking);
+  //TODO: Use GetAppConfigDir (see https://wiki.freepascal.org/Multiplatform_Programming_Guide#Configuration_files)
   if Not(IsDirectoryWriteable(FSuitePathWorking)) then
   begin
     {$IFDEF MSWINDOWS}
-    FSuitePathData := IncludeTrailingBackslash(GetSpecialFolder(CSIDL_LOCAL_APPDATA) + APP_NAME);
+    FSuitePathData := AppendPathDelim(GetSpecialFolder(CSIDL_LOCAL_APPDATA) + APP_NAME);
     SysUtils.ForceDirectories(FSuitePathData);
     {$ENDIF}
   end
   else
     FSuitePathData := FSuitePathWorking;
-  FSuitePathLocale     := FSuitePathWorking + LOCALE_DIR;
-  FSuitePathCache      := FSuitePathData + CACHE_DIR;
-  FSuitePathBackup     := FSuitePathData + BACKUP_DIR;
-  FSuitePathMenuThemes := FSuitePathWorking + MENUTHEMES_DIR;
+  FSuitePathLocale     := AppendPathDelim(FSuitePathWorking + LOCALE_DIR);
+  FSuitePathCache      := AppendPathDelim(FSuitePathData + CACHE_DIR);
+  FSuitePathBackup     := AppendPathDelim(FSuitePathData + BACKUP_DIR);
+  FSuitePathMenuThemes := AppendPathDelim(FSuitePathWorking + MENUTHEMES_DIR);
   //List
   //Check if xml list exists, else get sqlite list
   FSuitePathList := FSuitePathData + 'asuite.xml';
@@ -161,7 +162,7 @@ begin
       begin
         //Increment result
         Inc(Result);
-        Result := Result + GetNumberSubFolders(IncludeTrailingBackslash(FolderPath + SearchRec.Name));
+        Result := Result + GetNumberSubFolders(AppendPathDelim(FolderPath + SearchRec.Name));
       end;
     until FindNext(SearchRec) <> 0;
     SysUtils.FindClose(SearchRec);
@@ -177,11 +178,11 @@ begin
   begin
     sPath := APath;
     //CONST_PATH_FOLDERICON = Folder Icon's path
-    sPath := StringReplace(sPath, CONST_PATH_FOLDERICON, FSuitePathCurrentTheme +
-                           ICONS_DIR + FILEICON_Folder + EXT_ICO, [rfIgnoreCase,rfReplaceAll]);
+    sPath := StringReplace(sPath, CONST_PATH_FOLDERICON, AppendPathDelim(FSuitePathCurrentTheme +
+                           ICONS_DIR) + FILEICON_Folder + EXT_ICO, [rfIgnoreCase,rfReplaceAll]);
     //CONST_PATH_URLICON = Url Icon's path
-    sPath := StringReplace(sPath, CONST_PATH_URLICON, FSuitePathCurrentTheme +
-                           ICONS_DIR + FILEICON_Url + EXT_ICO, [rfIgnoreCase,rfReplaceAll]);
+    sPath := StringReplace(sPath, CONST_PATH_URLICON, AppendPathDelim(FSuitePathCurrentTheme +
+                           ICONS_DIR) + FILEICON_Url + EXT_ICO, [rfIgnoreCase,rfReplaceAll]);
     //CONST_PATH_ASuite = Launcher's path
     sPath := StringReplace(sPath, CONST_PATH_ASuite, SuitePathWorking, [rfIgnoreCase,rfReplaceAll]);
     //CONST_PATH_DRIVE = Launcher's Drive (ex. ASuite in H:\Software\ASuite.exe, CONST_PATH_DRIVE is H: )

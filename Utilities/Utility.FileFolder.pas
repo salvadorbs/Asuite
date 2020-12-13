@@ -45,7 +45,7 @@ begin
   {$IFDEF MSWINDOWS}
   SHGetSpecialFolderLocation(0, ASpecialFolderID, vSFolder);
   SHGetPathFromIDListW(vSFolder, vSpecialPath);
-  Result := IncludeTrailingBackslash(StrPas(vSpecialPath));
+  Result := AppendPathDelim(StrPas(vSpecialPath));
   {$ENDIF}
 end;
 
@@ -262,7 +262,7 @@ begin
   SHGetSpecialFolderLocation(0, CSIDL_DESKTOPDIRECTORY, PIDL);
   SHGetPathFromIDListW(PIDL, InFolder);
   //Save link
-  IPFile.Save(PWChar(IncludeTrailingPathDelimiter(InFolder) + FileName), false);
+  IPFile.Save(PWChar(AppendPathDelim(InFolder) + FileName), false);
   {$ENDIF}
 end;
 
@@ -277,7 +277,7 @@ begin
   {$IFDEF MSWINDOWS}
   SHGetSpecialFolderLocation(0, CSIDL_DESKTOPDIRECTORY, PIDL);
   SHGetPathFromIDListW(PIDL, DesktopPath);
-  LinkName := PChar(IncludeTrailingPathDelimiter(DesktopPath) + FileName);
+  LinkName := PChar(AppendPathDelim(DesktopPath) + FileName);
   if (FileExists(LinkName)) then
     SysUtils.DeleteFile(LinkName);
   {$ENDIF}

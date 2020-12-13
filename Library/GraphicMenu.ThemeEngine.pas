@@ -26,7 +26,7 @@ interface
 uses
   Classes, Kernel.Singleton, IniFiles, ExtCtrls, LCLIntf, LCLType,
   Graphics, SysUtils, VirtualTrees, Controls, Forms.GraphicMenu, BGRABitmap,
-  BCImageButton;
+  BCImageButton, LazFileUtils;
 
 type
   TGraphicMenuElement = (
@@ -65,8 +65,9 @@ type
 
     //Get methods
     function GetButtonCaption(IniFile: TIniFile; ButtonType: TGraphicMenuElement): string;
-    function GetButtonIconPath(IniFile: TIniFile; ButtonType: TGraphicMenuElement): string;
+    function GetButtonIconPath(IniFile: TIniFile; ButtonType: TGraphicMenuElement): AnsiString;
     function GetIniFileSection(ElementType: TGraphicMenuElement): string;
+    function GetPathFromIni(IniFile: TIniFile; Section, Key, DefaultValue: String; InitialPath: String = ''): AnsiString;
 
     //Draw methods
     procedure DrawEmptyButton(PNGImage: TBGRABitmap; Button: TBCCustomImageButton; imgBackground: TImage);
@@ -100,6 +101,16 @@ uses
   BGRABitmapTypes, Types;
 
 { TThemeEngineMethods }
+
+function TThemeEngine.GetPathFromIni(IniFile: TIniFile; Section, Key, DefaultValue: String; InitialPath: String = ''): AnsiString;
+begin
+  if InitialPath = '' then
+    Result := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(Section, Key, DefaultValue)
+  else
+    Result := InitialPath + IniFile.ReadString(Section, Key, DefaultValue);
+
+  ForcePathDelims(Result);
+end;
 
 procedure TThemeEngine.CopyImageInVst(Source: TImage;
   Tree: TVirtualStringTree);
@@ -165,7 +176,7 @@ begin
     IniFile_Section := GetIniFileSection(ButtonType);
 
     //Get images path
-    strButtonFile := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(IniFile_Section, INIFILE_KEY_IMAGEBUTTON, '');
+    strButtonFile := GetPathFromIni(IniFile, IniFile_Section, INIFILE_KEY_IMAGEBUTTON, '');
 
     //Load png button states
     //Normal state
@@ -205,10 +216,11 @@ var
   HDPath, HDSpacePath: string;
 begin
   //Hard Disk Space
-  HDPath := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(INIFILE_SECTION_HARDDISK, INIFILE_KEY_IMAGEBACKGROUND, '');
-  HDSpacePath := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(INIFILE_SECTION_HARDDISK, INIFILE_KEY_IMAGESPACE, '');
+  HDPath := GetPathFromIni(IniFile, INIFILE_SECTION_HARDDISK, INIFILE_KEY_IMAGEBACKGROUND, '');
   if FileExists(HDPath) then
     DriveBackGround.Picture.LoadFromFile(HDPath);
+
+  HDSpacePath := GetPathFromIni(IniFile, INIFILE_SECTION_HARDDISK, INIFILE_KEY_IMAGESPACE, '');
   if FileExists(HDSpacePath) then
     DriveSpace.Picture.LoadFromFile(HDSpacePath);
 end;
@@ -344,7 +356,7 @@ begin
 end;
 
 function TThemeEngine.GetButtonIconPath(IniFile: TIniFile;
-  ButtonType: TGraphicMenuElement): string;
+  ButtonType: TGraphicMenuElement): AnsiString;
 begin
   Result := '';
   case ButtonType of
@@ -365,6 +377,8 @@ begin
     gmbAbout     :
       Result := IniFile.ReadString(INIFILE_SECTION_RIGHTBUTTONS, INIFILE_KEY_ICONHELP, '');
   end;
+
+  ForcePathDelims(Result);
 end;
 
 function TThemeEngine.GetIniFileSection(
@@ -409,22 +423,22 @@ begin
     try
       //IniFile Section General
       //Background
-      BackgroundPath := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGEBACKGROUND, '');
+      BackgroundPath := GetPathFromIni(IniFile, INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGEBACKGROUND, '');
       if FileExists(BackgroundPath) then
         FGraphicMenu.imgBackground.Picture.LoadFromFile(BackgroundPath);
 
       //User frame
-      sTempPath := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGEUSERFRAME, '');
+      sTempPath := GetPathFromIni(IniFile, INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGEUSERFRAME, '');
       if FileExists(sTempPath) then
         FGraphicMenu.imgUserFrame.Picture.LoadFromFile(sTempPath);
 
       //Logo
-      sTempPath := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGELOGO, '');
+      sTempPath := GetPathFromIni(IniFile, INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGELOGO, '');
       if FileExists(sTempPath) then
         FGraphicMenu.imgLogo.Picture.LoadFromFile(sTempPath);
 
       //Separator
-      sTempPath := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGESEPARATOR, '');
+      sTempPath := GetPathFromIni(IniFile, INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGESEPARATOR, '');
       FGraphicMenu.imgDivider1.Picture.LoadFromFile(sTempPath);
       FGraphicMenu.imgDivider2.Picture.LoadFromFile(sTempPath);
 
@@ -448,10 +462,11 @@ begin
       DrawButton(IniFile, FGraphicMenu.sknbtnExit, gmbExit);
 
       //Search
-      sTempPath := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(INIFILE_SECTION_SEARCH, INIFILE_KEY_ICONSEARCH, '');
+      sTempPath := GetPathFromIni(IniFile, INIFILE_SECTION_SEARCH, INIFILE_KEY_ICONSEARCH, '');
       if FileExists(sTempPath) then
         FSearchIcon := Config.IconsManager.GetPathIconIndex(sTempPath);
-      sTempPath := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(INIFILE_SECTION_SEARCH, INIFILE_KEY_ICONCANCEL, '');
+
+      sTempPath := GetPathFromIni(IniFile, INIFILE_SECTION_SEARCH, INIFILE_KEY_ICONCANCEL, '');
       if FileExists(sTempPath) then
         FCancelIcon := Config.IconsManager.GetPathIconIndex(sTempPath);
 

@@ -26,7 +26,7 @@ interface
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, Menus, ComCtrls, BCImageButton, ExtCtrls, HotKey, LCLProc,
-  {$IFDEF Windows}Windows,{$ENDIF} DefaultTranslator;
+  {$IFDEF Windows}Windows,{$ENDIF} DefaultTranslator, LazFileUtils;
 
 type
 
@@ -225,10 +225,10 @@ end;
 
 procedure TfrmShortcutGrabber.LoadImages;
 begin
-  LoadPNGButtonState(btnAlt, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + FILENAME_ALT);
-  LoadPNGButtonState(btnCtrl, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + FILENAME_CTRL);
-  LoadPNGButtonState(btnShift, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + FILENAME_SHIFT);
-  LoadPNGButtonState(btnWinKey, Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR + FILENAME_WINKEY);
+  LoadPNGButtonState(btnAlt, AppendPathDelim(Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR) + FILENAME_ALT);
+  LoadPNGButtonState(btnCtrl, AppendPathDelim(Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR) + FILENAME_CTRL);
+  LoadPNGButtonState(btnShift, AppendPathDelim(Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR) + FILENAME_SHIFT);
+  LoadPNGButtonState(btnWinKey, AppendPathDelim(Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR) + FILENAME_WINKEY);
 end;
 
 procedure TfrmShortcutGrabber.LoadPNGButtonState(AButton: TBCImageButton; APathFile: string);

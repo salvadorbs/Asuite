@@ -26,7 +26,7 @@ interface
 uses
   LCLIntf, LCLType, Classes, Forms, StdCtrls, ExtCtrls, ComCtrls, Controls,
   Graphics, Dialogs, SysUtils, VirtualTrees, Menus, {$IFDEF Windows}Windows,{$ENDIF} Lists.Base,
-  BCImageTab, ButtonedEdit, BCImageButton, DefaultTranslator, BGRASpeedButton;
+  BCImageTab, ButtonedEdit, BCImageButton, DefaultTranslator, BGRASpeedButton, LMessages;
 
 type
 
@@ -110,7 +110,7 @@ type
     procedure PopulateListTree(const ATree: TVirtualStringTree);
     procedure PopulateSpecialTree(const ATree: TVirtualStringTree; AList: TBaseItemsList; MaxItems: Integer);
     procedure SavePositionForm;
-    {$IFDEF MSWINDOWS} procedure WMWindowPosChanging(Var Msg : TWMWindowPosChanging); message WM_WindowPosChanging;  {$ENDIF}
+    procedure LMWindowPosChanging(Var Msg : TLMWindowPosChanging); message LM_WindowPosChanging;
     procedure HandleEdge(var AEdge: Integer; ASnapToEdge: Integer; ASnapDistance: Integer = 0);
   public
     { Public declarations }
@@ -240,8 +240,7 @@ begin
   end;
 end;
 
-{$IFDEF MSWINDOWS}
-procedure TfrmGraphicMenu.WMWindowPosChanging(var Msg: TWMWindowPosChanging);
+procedure TfrmGraphicMenu.LMWindowPosChanging(Var Msg : TLMWindowPosChanging);
 begin
   if (Parent = nil) and
     ((Msg.WindowPos.X <> OldWindowX) or (Msg.WindowPos.Y <> OldWindowY)) and
@@ -259,7 +258,6 @@ begin
 
   inherited;
 end;
-{$ENDIF}
 
 procedure TfrmGraphicMenu.HandleEdge(var AEdge: Integer; ASnapToEdge: Integer;
   ASnapDistance: Integer);

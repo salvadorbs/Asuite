@@ -31,23 +31,14 @@ const
 
   VERSION_PRERELEASE = ''; //For Alpha and Beta version
 
-  BACKUP_DIR     = 'backup\';
-  CACHE_DIR      = 'cache\';
-  LOCALE_DIR     = 'locale\';
-  MENUTHEMES_DIR = 'themes\';
-  ICONS_DIR      = 'icons\';
-  BUTTONS_DIR    = 'buttons\';
-
-  // Caratteri speciali
-  LF                = #10;              { line feed }
-  CR                = #13;              { carriage return }
-  SLASH             = '/';              { forward slash }
-  BACKSLASH         = '\';              { back slash }
-  CRLF              = CR + LF;          { new line }
+  BACKUP_DIR     = 'backup';
+  CACHE_DIR      = 'cache';
+  LOCALE_DIR     = 'locale';
+  MENUTHEMES_DIR = 'themes';
+  ICONS_DIR      = 'icons';
+  BUTTONS_DIR    = 'buttons';
 
   //FileSystem
-  PATH_SEPARATOR    = BACKSLASH;  // Windows only, for now
-  SLASHES           = [SLASH, BACKSLASH];
   DriveLetters      = ['a'..'z', 'A'..'Z'];
 
   //Extensions
