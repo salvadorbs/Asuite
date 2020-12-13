@@ -203,7 +203,7 @@ var
   sPath: String;
 begin
   Result := Default;
-  sPath := IncludeTrailingBackslash(Config.Paths.SuiteDrive);
+  sPath := AppendPathDelim(Config.Paths.SuiteDrive);
   if SysUtils.DirectoryExists(sPath) then
     Result := sPath;
 end;

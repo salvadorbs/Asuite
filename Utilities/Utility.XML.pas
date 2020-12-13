@@ -361,7 +361,7 @@ begin
     //ASuite 1.x
     Node := XMLDoc.DocumentElement.FindNode('Option');
     //Get GMTheme before everything (so ASuite know where icons folder)
-    Config.GMTheme        := GetStrPropertyXML(Node, 'MenuTheme','Default');
+    Config.GMTheme        := GetStrPropertyXML(Node, 'MenuTheme','default');
     //General
     Config.StartWithWindows   := GetBoolPropertyXML(Node, 'StartOnWindowsStartup', false);
     Config.ShowPanelAtStartUp := GetBoolPropertyXML(Node, 'StartUpShowPanel', true);
@@ -429,7 +429,7 @@ begin
     Config.UseCustomTitle     := GetBoolPropertyXML(Node, 'ClassicMenu',false);
     //Only default menu
     Config.GMFade         := GetBoolPropertyXML(Node, 'MenuFade',true);
-    Config.GMPersonalPicture := GetStrPropertyXML(Node, 'MenuPersonalPicture','Default');
+    Config.GMPersonalPicture := GetStrPropertyXML(Node, 'MenuPersonalPicture','default');
   end;
 end;
 

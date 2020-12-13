@@ -609,6 +609,23 @@ msgstr ""
 msgid "General settings"
 msgstr ""
 
+#: tfrmshortcutgrabber.btncancel.caption
+msgctxt "tfrmshortcutgrabber.btncancel.caption"
+msgid "Cancel"
+msgstr ""
+
+#: tfrmshortcutgrabber.btnok.caption
+msgid "Ok"
+msgstr ""
+
+#: tfrmshortcutgrabber.caption
+msgid "Choose hotkey..."
+msgstr ""
+
+#: tfrmshortcutgrabber.lblinfo.caption
+msgid "Select modifiers above, then enter desired key:"
+msgstr ""
+
 #: tfrmstatsoptionspage.gbasuite.caption
 msgctxt "tfrmstatsoptionspage.gbasuite.caption"
 msgid "ASuite"

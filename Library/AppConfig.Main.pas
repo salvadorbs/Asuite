@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Graphics, Forms, Controls, VirtualTrees, Kernel.Enumerations,
-  Classes, AppConfig.Paths, jsonConf,
+  Classes, AppConfig.Paths, jsonConf, LazFileUtils,
   Lists.Manager, Database.Manager, Icons.Manager, Kernel.Logger, Dialogs;
 
 type
@@ -390,7 +390,7 @@ begin
   FAutoExpansionFolder := True;
 
   //Graphic Menu
-  FGMTheme            := 'Default';
+  FGMTheme            := 'default';
   FGMFade             := True;
   FGMPersonalPicture  := 'PersonalPicture.png';
   FGMPositionTop      := -1;
@@ -892,12 +892,13 @@ begin
   if (FTrayUseCustomIcon) and (FileExists(sPath)) then
     dmTrayMenu.tiTrayMenu.Icon.LoadFromFile(sPath)
   else begin
-    sPath := FPaths.RelativeToAbsolute(FPaths.SuitePathCurrentTheme + ICONS_DIR + 'asuite' + EXT_ICO);
+    sPath := FPaths.RelativeToAbsolute(AppendPathDelim(FPaths.SuitePathCurrentTheme + ICONS_DIR) + LowerCase(APP_NAME) + EXT_ICO);
     if FileExists(sPath) then
       dmTrayMenu.tiTrayMenu.Icon.LoadFromFile(sPath);
   end;
   //If you can't change trayicon's property visible, it will use old icon
   dmTrayMenu.tiTrayMenu.Visible := FTrayIcon;
+  dmTrayMenu.tiTrayMenu.Show;
 end;
 
 procedure TConfiguration.SetUseCustomTitle(value: Boolean);
@@ -919,7 +920,7 @@ procedure TConfiguration.UpdateGMTheme;
 begin
   TASuiteLogger.Info('Change Current Theme path to "%s"', [FPaths.SuitePathMenuThemes + FGMTheme]);
   //Set Paths
-  FPaths.SuitePathCurrentTheme := IncludeTrailingBackslash(FPaths.SuitePathMenuThemes + FGMTheme);
+  FPaths.SuitePathCurrentTheme := AppendPathDelim(FPaths.SuitePathMenuThemes + FGMTheme);
   FIconsManager.PathTheme      := FPaths.SuitePathCurrentTheme;
   //Loading icons
   frmMain.SetAllIcons;
