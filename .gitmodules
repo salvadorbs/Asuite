@@ -1,0 +1,3 @@
+[submodule "3p/AsuiteComps"]
+	path = 3p/AsuiteComps
+	url = https://github.com/salvadorbs/AsuiteComps
