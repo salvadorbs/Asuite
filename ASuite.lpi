@@ -30,7 +30,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="614"/>
+      <BuildNr Value="615"/>
     </VersionInfo>
     <BuildModes Count="4">
       <Item1 Name="Default" Default="True"/>
@@ -42,7 +42,7 @@
             <Filename Value="bin\ASuite"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="Forms;DataModules;Library;Utilities;Frame;$(ProjOutDir);Library\platform\$(LCLWidgetType)"/>
+            <IncludeFiles Value="Forms;DataModules;Library;Utilities;Frame;$(ProjOutDir)"/>
             <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
@@ -100,7 +100,7 @@
             <Filename Value="bin\ASuite"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="Forms;DataModules;Library;Utilities;Frame;$(ProjOutDir);Library\platform\$(LCLWidgetType)"/>
+            <IncludeFiles Value="Forms;DataModules;Library;Utilities;Frame;$(ProjOutDir)"/>
             <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
@@ -147,7 +147,7 @@
             <Filename Value="bin\ASuite"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="Forms;DataModules;Library;Utilities;Frame;$(ProjOutDir);Library\platform\$(LCLWidgetType)"/>
+            <IncludeFiles Value="Forms;DataModules;Library;Utilities;Frame;$(ProjOutDir)"/>
             <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
@@ -235,7 +235,7 @@
         <PackageName Value="LCL"/>
       </Item13>
     </RequiredPackages>
-    <Units Count="73">
+    <Units Count="69">
       <Unit0>
         <Filename Value="ASuite.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -595,29 +595,13 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="AppConfig.Consts"/>
       </Unit68>
-      <Unit69>
-        <Filename Value="Library/Hotkeys.Manager.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit69>
-      <Unit70>
-        <Filename Value="Library/Hotkeys.ShortcutEx.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit70>
-      <Unit71>
-        <Filename Value="Library/platform/gtk2/Hotkeys.Manager.Platform.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit71>
-      <Unit72>
-        <Filename Value="Library/platform/win32/Hotkeys.Manager.Platform.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit72>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <SearchPaths>
-      <IncludeFiles Value="Forms;DataModules;Library;Utilities;Frame;$(ProjOutDir);Library\platform\$(LCLWidgetType)"/>
+      <IncludeFiles Value="Forms;DataModules;Library;Utilities;Frame;$(ProjOutDir)"/>
       <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>

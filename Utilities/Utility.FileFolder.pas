@@ -6,7 +6,8 @@ interface
 
 uses
   Kernel.Consts, LCLIntf, LCLType, SysUtils, Classes, Kernel.Enumerations,
-  FileUtil, {$IFDEF Windows}ShellApi, ComObj, ActiveX, ShlObj, PJVersionInfo, Windows,{$ENDIF} Dialogs;
+  FileUtil, {$IFDEF Windows}ShellApi, ComObj, ActiveX, ShlObj, PJVersionInfo, Windows,{$ENDIF} Dialogs,
+  LazFileUtils;
 
 { Folders }
 function GetSpecialFolder(const ASpecialFolderID: Integer): string;
