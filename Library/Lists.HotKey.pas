@@ -24,7 +24,7 @@ unit Lists.HotKey;
 interface
 
 uses
-  NodeDataTypes.Custom, SysUtils, Hotkeys.Manager, LCLIntf, LCLType,
+  NodeDataTypes.Custom, SysUtils, Hotkeys.Manager.Platform, LCLIntf, LCLType,
   Kernel.Enumerations, Lists.Base;
 
 type

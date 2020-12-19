@@ -278,7 +278,7 @@ uses
   Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder, {$IFDEF Windows}Windows,{$ENDIF}
   Utility.XML, GraphicMenu.ThemeEngine, Kernel.Scheduler, Forms.ImportList,
   TypInfo, Kernel.ResourceStrings, LCLTranslator, AppConfig.Consts,
-  Utility.Conversions, Hotkeys.Manager;
+  Utility.Conversions, Hotkeys.Manager.Platform;
 
 procedure TConfiguration.AfterUpdateConfig();
 begin   
