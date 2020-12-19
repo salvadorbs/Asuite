@@ -78,7 +78,7 @@ implementation
 
 uses
   Kernel.Logger, Utility.Misc, AppConfig.Main, Kernel.Consts,
-  Utility.System, Kernel.ResourceStrings, Hotkeys.Manager;
+  Utility.System, Kernel.ResourceStrings, Hotkeys.Manager.Platform;
 
 {$R *.lfm}
 
