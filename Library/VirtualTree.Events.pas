@@ -228,6 +228,10 @@ procedure TVirtualTreeEvents.SetupVSTList(ATree: TVirtualStringTree);
 begin
   ATree.Images := dmImages.ilSmallIcons;
 
+  {$IFDEF MSWINDOWS}
+  ATree.TreeOptions.MiscOptions := ATree.TreeOptions.MiscOptions + [toAcceptOLEDrop];
+  {$ENDIF}
+
   ATree.OnNodeClick    := DoNodeSingleClick;
   ATree.OnCompareNodes := DoCompareNodesList;
   ATree.OnNodeDblClick := DoNodeDblClick;
@@ -395,6 +399,7 @@ begin
       try
         for I := 0 to High(Formats) do
         begin
+          TASuiteLogger.Info('Found Clipboard Format = %s', [IntToStr(Formats[I])]);
           //Files
           if Formats[I] = CF_HDROP then
             DragDropFiles(Sender, DataObject, AttachMode)
