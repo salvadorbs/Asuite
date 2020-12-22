@@ -69,7 +69,7 @@ type
 implementation
 
 uses
-  Kernel.Consts, Utility.FileFolder{$IFDEF MSWINDOWS} , Windows {$ENDIF};
+  Kernel.Consts, Utility.FileFolder{$IFDEF MSWINDOWS} , Windows {$ENDIF}, SynCommons;
 
 { TConfigPaths }
 
@@ -110,7 +110,7 @@ begin
   FSuitePathWorking  := ExtractFilePath(FSuiteFullFileName);
   SetCurrentDir(FSuitePathWorking);
   //TODO: Use GetAppConfigDir (see https://wiki.freepascal.org/Multiplatform_Programming_Guide#Configuration_files)
-  if Not(IsDirectoryWriteable(FSuitePathWorking)) then
+  if Not(IsDirectoryWritable(FSuitePathWorking)) then
   begin
     {$IFDEF MSWINDOWS}
     FSuitePathData := AppendPathDelim(GetSpecialFolder(CSIDL_LOCAL_APPDATA) + APP_NAME);
