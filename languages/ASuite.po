@@ -1197,15 +1197,6 @@ msgctxt "tfrmstatsoptionspage.lblram.rightcaption"
 msgid "Value"
 msgstr ""
 
-#: tfrmstatsoptionspage.lbnamepc.caption
-msgid "Computer name"
-msgstr ""
-
-#: tfrmstatsoptionspage.lbnamepc.rightcaption
-msgctxt "tfrmstatsoptionspage.lbnamepc.rightcaption"
-msgid "Value"
-msgstr ""
-
 #: tfrmstatsoptionspage.lbos.caption
 msgid "Operating System"
 msgstr ""

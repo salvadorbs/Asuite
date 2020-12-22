@@ -30,7 +30,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="626"/>
+      <BuildNr Value="637"/>
     </VersionInfo>
     <BuildModes Count="4">
       <Item1 Name="Default" Default="True"/>
@@ -235,7 +235,7 @@
         <PackageName Value="LCL"/>
       </Item13>
     </RequiredPackages>
-    <Units Count="69">
+    <Units Count="68">
       <Unit0>
         <Filename Value="ASuite.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -571,30 +571,26 @@
         <IsPartOfProject Value="True"/>
       </Unit63>
       <Unit64>
-        <Filename Value="3p/PJVersionInfo.pas"/>
+        <Filename Value="Library/Kernel.ResourceStrings.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit64>
       <Unit65>
-        <Filename Value="Library/Kernel.ResourceStrings.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit65>
-      <Unit66>
         <Filename Value="Forms/Forms.UILogin.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="frmUILogin"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit66>
-      <Unit67>
+      </Unit65>
+      <Unit66>
         <Filename Value="Library/thread.findfiles.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Thread.FindFiles"/>
-      </Unit67>
-      <Unit68>
+      </Unit66>
+      <Unit67>
         <Filename Value="Library/appconfig.consts.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="AppConfig.Consts"/>
-      </Unit68>
+      </Unit67>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

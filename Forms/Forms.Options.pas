@@ -88,6 +88,8 @@ function TfrmOptions.InternalLoadData: Boolean;
 var
   FFrameAdvanced: PVirtualNode;
 begin
+  TASuiteLogger.Enter('InternalLoadData form Options', Self);
+
   Result := True;
   //General
   FFrameGeneral  := AddFrameNode(vstCategory, nil, TfrmGeneralOptionsPage.Create(Self));
@@ -107,6 +109,8 @@ end;
 
 function TfrmOptions.InternalSaveData: Boolean;
 begin
+  TASuiteLogger.Enter('InternalSaveData form Options', Self);
+
   Result := True;
   Config.Changed := True;
   if frmMain.Visible then

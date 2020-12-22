@@ -3,7 +3,6 @@ object frmBaseEntityPage: TfrmBaseEntityPage
   Height = 380
   Top = 0
   Width = 445
-  LCLVersion = '2.1.0.0'
   ParentFont = False
   TabOrder = 0
   DesignLeft = 11

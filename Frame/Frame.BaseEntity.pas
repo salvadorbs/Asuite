@@ -41,8 +41,8 @@ type
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
-    function SaveData: Boolean; virtual;
-    function LoadData: Boolean; virtual;
+    function SaveData: Boolean;
+    function LoadData: Boolean;
     property Title: string read GetTitle;
     property ImageIndex: integer read GetImageIndex;
   end;
@@ -76,13 +76,13 @@ end;
 
 function TfrmBaseEntityPage.InternalLoadData: Boolean;
 begin
-  TASuiteLogger.Enter('InternalLoadData', Self);
+  TASuiteLogger.Enter(PUTF8Char('InternalLoadData frame ' + Self.ClassName), Self);
   Result := True;
 end;
 
 function TfrmBaseEntityPage.InternalSaveData: Boolean;
 begin
-  TASuiteLogger.Enter('InternalSaveData', Self);
+  TASuiteLogger.Enter(PUTF8Char('InternalSaveData frame ' + Self.ClassName), Self);
   Result := True;
 end;
 
