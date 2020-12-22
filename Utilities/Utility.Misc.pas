@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Forms, Dialogs, ComCtrls, Clipbrd,
-  Kernel.Consts, StdCtrls, {XMLIntf,} UITypes, Menus;
+  Kernel.Consts, StdCtrls, UITypes, Menus, FileInfo;
 
 { Forms }
 function  IsFormOpen(const FormName : string): Boolean;
@@ -34,7 +34,8 @@ procedure SetFormPosition(Form: TForm; ListFormLeft, ListFormTop: Integer);
 { Misc }
 function CheckPropertyName(Edit: TEdit): Boolean;
 function GetCheckedMenuItem(PopupMenu: TPopupMenu): TMenuItem;
-function GetASuiteVersion(ASimpleFormat: Boolean): string;
+function GetASuiteVersion(ASimpleFormat: Boolean): string; overload;
+function GetASuiteVersion: TProgramVersion; overload;
 function IsFormatInClipBoard(format: Word): Boolean;
 function IsLightColor(const AColor: TColor): Boolean;
 function RemoveQuotes(const S: string; const QuoteChar: Char): string;
@@ -58,7 +59,7 @@ function  GetHotKeyMod(AShortcut: TShortcut) : Integer;
 implementation
 
 uses
-  PJVersionInfo, AppConfig.Main, Kernel.Logger, LCLProc, {$IFDEF Windows}Windows,{$ENDIF}
+  AppConfig.Main, Kernel.Logger, LCLProc, {$IFDEF Windows}Windows,{$ENDIF}
   Kernel.ResourceStrings;
 
 function IsFormOpen(const FormName : string): Boolean;
@@ -115,34 +116,44 @@ begin
 end;
 
 function GetASuiteVersion(ASimpleFormat: Boolean): string;
-{$IFDEF MSWINDOWS}
 var
-  VersionInfo: TPJVersionInfo;
-{$ENDIF}
+  Version: TProgramVersion;
 begin
-  {$IFDEF MSWINDOWS}
-  VersionInfo := TPJVersionInfo.Create(nil);
+  Version := GetASuiteVersion;
   try
-    VersionInfo.FileName := Config.Paths.SuiteFullFileName;
     if ASimpleFormat then
     begin
       //Version format "Major.Minor Beta"
-      Result := Format('%d.%d', [VersionInfo.FileVersionNumber.V1,
-                                 VersionInfo.FileVersionNumber.V2]);
+      Result := Format('%d.%d', [Version.Major,
+                                 Version.Minor]);
     end
     else begin
       //Version format "Major.Minor.Revision.Build Beta"
-      Result := Format('%d.%d.%d.%d', [VersionInfo.FileVersionNumber.V1,
-                                       VersionInfo.FileVersionNumber.V2,
-                                       VersionInfo.FileVersionNumber.V3,
-                                       VersionInfo.FileVersionNumber.V4]);
+      Result := Format('%d.%d.%d.%d', [Version.Major,
+                                       Version.Minor,
+                                       Version.Revision,
+                                       Version.Build]);
     end;
 
     Result := Result + ' ' + VERSION_PRERELEASE;
+  except
+    on E : Exception do
+      ShowMessageFmtEx(msgErrGeneric,[E.ClassName, E.Message], True);
+  end;
+end;
+
+function GetASuiteVersion: TProgramVersion;
+var
+  VersionInfo: TFileVersionInfo;
+begin
+  VersionInfo := TFileVersionInfo.Create(nil);
+  try
+    VersionInfo.ReadFileInfo;
+
+    Result := StrToProgramVersion(VersionInfo.VersionStrings.Values['FileVersion']);
   finally
     VersionInfo.Free;
   end;
-  {$ENDIF}
 end;
 
 function IsFormatInClipBoard(format: Word): Boolean;
@@ -222,7 +233,7 @@ end;
 
 { Stats }
 
-function DiskFloatToString(Number: Double;Units: Boolean): string;
+function DiskFloatToString(Number: double; Units: Boolean): string;
 var
   TypeSpace : String;
 begin
@@ -290,7 +301,7 @@ begin
       Result := 0;
 end;
 
-Function GetHotKeyCode(AShortcut: TShortcut): Word;
+function GetHotKeyCode(AShortcut: TShortcut): Word;
 var
   Shift: TShiftState;
 begin
@@ -298,7 +309,7 @@ begin
   ShortCutToKey(AShortcut, Result, Shift);
 end;
 
-Function GetHotKeyMod(AShortcut: TShortcut): Integer;
+function GetHotKeyMod(AShortcut: TShortcut): Integer;
 var
   Shift: TShiftState;
   Key: Word;

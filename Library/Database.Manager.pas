@@ -24,14 +24,14 @@ unit Database.Manager;
 interface
 
 uses
-  LCLType, SysUtils, Dialogs, VirtualTrees, PJVersionInfo,
-  mORMot, SynCommons, mORMotSQLite3, Controls;
+  LCLType, SysUtils, Dialogs, VirtualTrees, mORMot, SynCommons, mORMotSQLite3,
+  Controls, FileInfo;
 
 type
   TDBManager = class
   private
     FDBFileName : string;
-    FDBVersion  : TPJVersionNumber;
+    FDBVersion  : TProgramVersion;
     FDatabase   : TSQLRestServerDB;
     FSQLModel   : TSQLModel;
 
@@ -42,7 +42,7 @@ type
     destructor Destroy; override;
 
     property DBFileName: string read FDBFileName write FDBFileName;
-    property DBVersion: TPJVersionNumber read FDBVersion write FDBVersion;
+    property DBVersion: TProgramVersion read FDBVersion write FDBVersion;
     property Database: TSQLRestServerDB read FDatabase;
 
     procedure Setup(const ADBFilePath: string);
