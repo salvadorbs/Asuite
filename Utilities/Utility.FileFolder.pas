@@ -6,7 +6,7 @@ interface
 
 uses
   Kernel.Consts, LCLIntf, LCLType, SysUtils, Classes, Kernel.Enumerations,
-  FileUtil, {$IFDEF Windows}ShellApi, ComObj, ActiveX, ShlObj, PJVersionInfo, Windows,{$ENDIF} Dialogs,
+  FileUtil, {$IFDEF Windows}ShellApi, ComObj, ActiveX, ShlObj, Windows,{$ENDIF} Dialogs,
   LazFileUtils;
 
 { Folders }
@@ -15,7 +15,6 @@ function BrowseForFolder(const InitialDir: String; const Caption: String = ''): 
 function DirToPath(const Dir: string): string;
 function IsDirectory(const DirName: string): Boolean;
 function IsFlagSet(const Flags, Mask: Integer): Boolean;
-function IsDirectoryWriteable(const AName: string): Boolean;
 
 { Files }
 procedure DeleteOldBackups(const MaxNumber: Integer);
@@ -34,7 +33,7 @@ procedure RenameShortcutOnDesktop(const OldFileName, FileName: String);
 implementation
 
 uses
-  AppConfig.Main, IniFiles, FCRC32;
+  AppConfig.Main, IniFiles, FCRC32, FileInfo;
 
 function GetSpecialFolder(const ASpecialFolderID: Integer): string;
 {$IFDEF MSWINDOWS}
@@ -87,22 +86,6 @@ end;
 function IsFlagSet(const Flags, Mask: Integer): Boolean;
 begin
   Result := Mask = (Flags and Mask);
-end;
-
-function IsDirectoryWriteable(const AName: string): Boolean;
-{$IFDEF MSWINDOWS}
-var
-  FileName: String;
-  H: THandle;
-{$ENDIF}
-begin
-  {$IFDEF MSWINDOWS}
-  FileName := IncludeTrailingPathDelimiter(AName) + 'chk.tmp';
-  H := CreateFileW(PChar(FileName), GENERIC_READ or GENERIC_WRITE, 0, nil,
-    CREATE_NEW, FILE_ATTRIBUTE_TEMPORARY or FILE_FLAG_DELETE_ON_CLOSE, 0);
-  Result := H <> INVALID_HANDLE_VALUE;
-  if Result then FileClose(H);
-  {$ENDIF}
 end;
 
 function DeleteFiles(const Dir, Wildcard: string): Integer;
@@ -190,30 +173,27 @@ begin
 end;
 
 function ExtractFileNameEx(const AFileName: String): string;
-{$IFDEF MSWINDOWS}
 var
-  VersionInfo : TPJVersionInfo;
-  sPath : String;
-{$ENDIF}
+  VersionInfo : TFileVersionInfo;
+  sPath, strFileDescription, strProductName : String;
 begin
-  {$IFDEF MSWINDOWS}
   sPath := Config.Paths.RelativeToAbsolute(AFileName);
   Result := ExtractFileName(sPath);
-  VersionInfo := TPJVersionInfo.Create(nil);
+
+  VersionInfo := TFileVersionInfo.Create(nil);
   try
-    if FileExists(sPath) then
-    begin
-      VersionInfo.FileName := sPath;
-      if (VersionInfo.FileDescription <> '') then
-        Result := VersionInfo.FileDescription
-      else
-        if (VersionInfo.ProductName <> '') then
-          Result := VersionInfo.ProductName;
+    VersionInfo.FileName := sPath;
+    strFileDescription := VersionInfo.VersionStrings.Values['FileDescription'];
+    if (strFileDescription <> '') then
+      Result := strFileDescription
+    else begin
+      strProductName := VersionInfo.VersionStrings.Values['ProductName'];
+      if (strProductName <> '') then
+        Result := strProductName;
     end;
   finally
     VersionInfo.Free;
   end;
-  {$ENDIF}
 end;
 
 procedure DeleteOldBackups(const MaxNumber: Integer);
