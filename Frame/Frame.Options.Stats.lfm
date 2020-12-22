@@ -1,10 +1,10 @@
 inherited frmStatsOptionsPage: TfrmStatsOptionsPage
-  DesignLeft = 1042
-  DesignTop = 305
+  DesignLeft = 1041
+  DesignTop = 304
   object gbASuite: TGroupBox[0]
     Left = 4
     Height = 80
-    Top = 220
+    Top = 196
     Width = 437
     Align = alTop
     BorderSpacing.Left = 4
@@ -12,7 +12,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     BorderSpacing.Right = 4
     Caption = 'ASuite'
     ClientHeight = 62
-    ClientWidth = 435
+    ClientWidth = 433
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
@@ -64,7 +64,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
   object gbSupport: TGroupBox[1]
     Left = 4
     Height = 76
-    Top = 140
+    Top = 116
     Width = 437
     Align = alTop
     BorderSpacing.Left = 4
@@ -72,7 +72,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     BorderSpacing.Right = 4
     Caption = 'Drive %S:'
     ClientHeight = 58
-    ClientWidth = 435
+    ClientWidth = 433
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
@@ -91,7 +91,6 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       Font.Height = -11
       Font.Name = 'Tahoma'
       ParentFont = False
-      OnClick = lbSizeClick
     end
     object lbSpaceFree: TJppDoubleLineLabel
       Left = 6
@@ -122,15 +121,15 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
   end
   object gbSystem: TGroupBox[2]
     Left = 4
-    Height = 136
+    Height = 112
     Top = 0
     Width = 437
     Align = alTop
     BorderSpacing.Left = 4
     BorderSpacing.Right = 4
     Caption = 'System'
-    ClientHeight = 118
-    ClientWidth = 435
+    ClientHeight = 94
+    ClientWidth = 433
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
@@ -145,16 +144,6 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       RightCaption = 'Value'
       LinePeriod = 4
       Caption = 'Operating System'
-      ParentFont = False
-    end
-    object lbNamePc: TJppDoubleLineLabel
-      Left = 6
-      Height = 15
-      Top = 94
-      Width = 419
-      RightCaption = 'Value'
-      LinePeriod = 4
-      Caption = 'Computer name'
       ParentFont = False
     end
     object lbUser: TJppDoubleLineLabel
