@@ -28,17 +28,6 @@ uses
   Forms, Dialogs, Frame.BaseEntity, JPP.DoubleLineLabel, StdCtrls;
 
 type
-  TMemoryStatusEx = packed record
-     dwLength: DWORD;
-     dwMemoryLoad: DWORD;
-     ullTotalPhys: Int64;
-     ullAvailPhys: Int64;
-     ullTotalPageFile: Int64;
-     ullAvailPageFile: Int64;
-     ullTotalVirtual: Int64;
-     ullAvailVirtual: Int64;
-     ullAvailExtendedVirtual: Int64;
-   end;
 
   { TfrmStatsOptionsPage }
 
@@ -48,7 +37,6 @@ type
     lblBuild: TJppDoubleLineLabel;
     lblProcessor: TJppDoubleLineLabel;
     lblRam: TJppDoubleLineLabel;
-    lbNamePc: TJppDoubleLineLabel;
     lbOs: TJppDoubleLineLabel;
     lbSize: TJppDoubleLineLabel;
     lbSoftware: TJppDoubleLineLabel;
@@ -57,17 +45,9 @@ type
     gbSystem: TGroupBox;
     lbSpaceUsed: TJppDoubleLineLabel;
     lbTotal: TJppDoubleLineLabel;
-
     lbUser: TJppDoubleLineLabel;
-    procedure lbSizeClick(Sender: TObject);
   private
     { Private declarations }
-    function GetTotalPhysMemory: Int64;
-    function BytesToGBStr(const Bytes: Int64; const DecimalPlaces: Byte;
-                          const SeparateThousands: Boolean): string;
-    function BytesToGB(const Bytes: Int64): Extended;
-    function FloatToFixed(const Value: Extended; const DecimalPlaces: Byte;
-                          const SeparateThousands: Boolean): string;
   strict protected
     function GetTitle: string; override;
     function GetImageIndex: Integer; override;
@@ -84,17 +64,12 @@ implementation
 {$I ASuite.inc}
 
 uses
-  Utility.Misc, AppConfig.Main, Kernel.Types, VirtualTree.Methods, {$IFDEF Windows}Windows, PJSysInfo,{$ENDIF}
-  Kernel.ResourceStrings;
+  Utility.Misc, AppConfig.Main, Kernel.Types, VirtualTree.Methods,
+  Kernel.ResourceStrings, BZSystem;
 
 {$R *.lfm}
 
 { TfrmStatsOptionsPage }
-
-{$IFDEF MSWINDOWS}
-function GlobalMemoryStatusEx(var lpBuffer : TMemoryStatusEx) : BOOL;  stdcall;
-  external 'kernel32.dll' name 'GlobalMemoryStatusEx';
-{$ENDIF}
 
 function TfrmStatsOptionsPage.GetImageIndex: Integer;
 begin
@@ -106,48 +81,6 @@ begin
   Result := msgStats;
 end;
 
-procedure TfrmStatsOptionsPage.lbSizeClick(Sender: TObject);
-begin
-
-end;
-
-function TfrmStatsOptionsPage.GetTotalPhysMemory: Int64;
-var
-  MemoryEx: TMemoryStatusEx;
-begin
-  begin
-    MemoryEx.dwLength := SizeOf(TMemoryStatusEx);
-    {$IFDEF MSWINDOWS}
-    GlobalMemoryStatusEx(MemoryEx);
-    {$ENDIF}
-    Result := MemoryEx.ullTotalPhys;
-  end;
-end;
-
-function TfrmStatsOptionsPage.FloatToFixed(const Value: Extended; const DecimalPlaces: Byte;
-  const SeparateThousands: Boolean): string;
-const
-  // float format specifiers
-  cFmtSpec: array[Boolean] of Char = ('f', 'n');
-begin
-  Result := SysUtils.Format(
-    '%.*' + cFmtSpec[SeparateThousands], [DecimalPlaces, Value]
-  );
-end;
-
-function TfrmStatsOptionsPage.BytesToGB(const Bytes: Int64): Extended;
-const
-  cOneGB = 1024 * 1024 * 1024; // a gigabyte in bytes
-begin
-  Result := Bytes / cOneGB;
-end;
-
-function TfrmStatsOptionsPage.BytesToGBStr(const Bytes: Int64; const DecimalPlaces: Byte;
-  const SeparateThousands: Boolean): string;
-begin
-  Result := FloatToFixed(BytesToGB(Bytes), DecimalPlaces, SeparateThousands);
-end;
-
 function TfrmStatsOptionsPage.InternalLoadData: Boolean;
 var
   Drive: char;
@@ -156,14 +89,11 @@ begin
   Result := inherited;
 
   //System
-  {$IFDEF MSWINDOWS}
-  lbOs.RightCaption := TPJOSInfo.ProductName + ' ' + TPJOSInfo.Edition;
-  lblBuild.RightCaption := Format('%d.%d.%d', [TPJOSInfo.MajorVersion, TPJOSInfo.MinorVersion, TPJOSInfo.BuildNumber]);
-  lblProcessor.RightCaption := TPJComputerInfo.ProcessorName;
-  lblRam.RightCaption   := BytesToGBStr(GetTotalPhysMemory, 2, True) + ' GB';
-  lbNamePc.RightCaption := TPJComputerInfo.ComputerName;
-  lbUser.RightCaption   := TPJComputerInfo.UserName;
-  {$ENDIF}
+  lbOs.RightCaption := GetplatformAsString;
+  lblBuild.RightCaption := GetPlatformInfo.Version;
+  lblProcessor.RightCaption := BZCPUInfos.BrandName;
+  lblRam.RightCaption   := FormatByteSize(GetMemoryStatus.TotalPhys);
+  lbUser.RightCaption   := GetCurrentUserName;
 
   //Drive
   Drive := Config.Paths.SuiteDrive[1];
