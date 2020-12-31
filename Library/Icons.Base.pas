@@ -92,6 +92,8 @@ var
   FileIcon: kIcon.TIcon;
 {$ENDIF}
 begin
+  //TODO: In linux we must get mime type and after image
+  //      (see https://lists.lazarus-ide.org/pipermail/lazarus/2010-January/048660.html and https://forum.lazarus.freepascal.org/index.php?topic=40538.0)
   {$IFDEF MSWINDOWS}
   Result := -1;
 

@@ -92,6 +92,7 @@ var
 begin
   sPath := APath;
 
+  //TODO: Use FAsuiteVars, instead
   //Const %FolderIcon%
   sPath  := StringReplace(sPath, AppendPathDelim(FSuitePathCurrentTheme + ICONS_DIR) + FILEICON_Folder + EXT_ICO, CONST_PATH_FOLDERICON, [rfIgnoreCase, rfReplaceAll]);
 
