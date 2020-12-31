@@ -30,7 +30,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="637"/>
+      <BuildNr Value="747"/>
     </VersionInfo>
     <BuildModes Count="4">
       <Item1 Name="Default" Default="True"/>
@@ -235,7 +235,7 @@
         <PackageName Value="LCL"/>
       </Item13>
     </RequiredPackages>
-    <Units Count="68">
+    <Units Count="69">
       <Unit0>
         <Filename Value="ASuite.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -591,6 +591,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="AppConfig.Consts"/>
       </Unit67>
+      <Unit68>
+        <Filename Value="Library/appconfig.pathvars.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="AppConfig.PathVars"/>
+      </Unit68>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

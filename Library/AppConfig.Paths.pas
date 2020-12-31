@@ -24,10 +24,12 @@ unit AppConfig.Paths;
 interface
 
 uses
-  LCLIntf, LCLType, SysUtils, Graphics, Forms, Controls, Classes, LazFileUtils
-  {$IFDEF MSWINDOWS}, ShlObj {$ENDIF};
+  LCLIntf, LCLType, SysUtils, Graphics, Forms, Controls, Classes, LazFileUtils, Dialogs,
+  Generics.Defaults, Generics.Collections, LazUTF8, AppConfig.PathVars;
 
 type
+  { TConfigPaths }
+
   TConfigPaths = class
   private
     FSuitePathList       : String;
@@ -41,17 +43,25 @@ type
     FSuitePathBackup     : String;
     FSuitePathMenuThemes     : String;
     FSuitePathCurrentTheme   : String;
+
+    FEnvironmentVars : TPathVars;
+    FASuiteVars      : TPathVars;
+
+    procedure SetSuitePathCurrentTheme(AValue: String);
+    procedure UpdateEnvironmentVars;
+    procedure UpdateASuiteVars;
   public
-    constructor Create; overload;
+    constructor Create;
+    destructor Destroy; override;
 
     function AbsoluteToRelative(const APath: String): string;
     function RelativeToAbsolute(const APath: String): string;
-    function ExpandEnvVars(const Str: string): string;
 
     procedure CheckBackupFolder;
     procedure CheckCacheFolders;
     function  GetNumberSubFolders(const FolderPath: String): Integer;
     procedure RemoveCacheFolders;
+    procedure UpdatePathVariables;
 
     property SuitePathList: String read FSuitePathList write FSuitePathList;
     property SuiteFullFileName: String read FSuiteFullFileName write FSuiteFullFileName;
@@ -63,13 +73,16 @@ type
     property SuitePathCache: String read FSuitePathCache write FSuitePathCache;
     property SuitePathBackup: String read FSuitePathBackup write FSuitePathBackup;
     property SuitePathMenuThemes: String read FSuitePathMenuThemes write FSuitePathMenuThemes;
-    property SuitePathCurrentTheme: String read FSuitePathCurrentTheme write FSuitePathCurrentTheme;
+    property SuitePathCurrentTheme: String read FSuitePathCurrentTheme write SetSuitePathCurrentTheme;
+
+    property EnvironmentVars: TPathVars read FEnvironmentVars;
+    property ASuiteVars: TPathVars read FASuiteVars;
   end;
 
 implementation
 
 uses
-  Kernel.Consts, Utility.FileFolder{$IFDEF MSWINDOWS} , Windows {$ENDIF}, SynCommons;
+  Kernel.Consts, Utility.FileFolder, SynCommons;
 
 { TConfigPaths }
 
@@ -78,14 +91,19 @@ var
   sPath: string;
 begin
   sPath := APath;
+
   //Const %FolderIcon%
-  sPath  := StringReplace(sPath, AppendPathDelim(FSuitePathCurrentTheme + ICONS_DIR) + FILEICON_Folder + EXT_ICO, CONST_PATH_FOLDERICON, [rfIgnoreCase,rfReplaceAll]);
+  sPath  := StringReplace(sPath, AppendPathDelim(FSuitePathCurrentTheme + ICONS_DIR) + FILEICON_Folder + EXT_ICO, CONST_PATH_FOLDERICON, [rfIgnoreCase, rfReplaceAll]);
+
   //Const %UrlIcon%
-  sPath  := StringReplace(sPath, AppendPathDelim(FSuitePathCurrentTheme + ICONS_DIR) + FILEICON_Url + EXT_ICO, CONST_PATH_URLICON, [rfIgnoreCase,rfReplaceAll]);
+  sPath  := StringReplace(sPath, AppendPathDelim(FSuitePathCurrentTheme + ICONS_DIR) + FILEICON_Url + EXT_ICO, CONST_PATH_URLICON, [rfIgnoreCase, rfReplaceAll]);
+
   //Const $ASuite
-  sPath  := StringReplace(sPath, ExcludeTrailingPathDelimiter(SuitePathWorking), CONST_PATH_ASuite, [rfIgnoreCase,rfReplaceAll]);
+  sPath  := StringReplace(sPath, ExcludeTrailingPathDelimiter(SuitePathWorking), CONST_PATH_ASuite, [rfIgnoreCase, rfReplaceAll]);
+
   //Const $Drive
-  sPath  := StringReplace(sPath, SUITEDRIVE, CONST_PATH_DRIVE, [rfIgnoreCase,rfReplaceAll]);
+  sPath  := StringReplace(sPath, SUITEDRIVE, CONST_PATH_DRIVE, [rfIgnoreCase, rfReplaceAll]);
+
   Result := sPath;
 end;
 
@@ -101,6 +119,64 @@ begin
   SysUtils.ForceDirectories(FSuitePathCache);
 end;
 
+procedure TConfigPaths.UpdateEnvironmentVars;
+var
+  str: AnsiString;
+  arrString: TStringArray;
+  I: Integer;
+begin
+  FEnvironmentVars.Clear;
+
+  for I := 0 to GetEnvironmentVariableCountUTF8 - 1 do
+  begin
+    str := GetEnvironmentStringUTF8(I);
+    if str[1] <> '=' then
+    begin
+      arrString := str.Split('=', 2);
+      if Length(arrString) = 2 then
+        //Key in UpperCase, value don't care if up or lower case
+        FEnvironmentVars.Add(UpperCase(arrString[0]), arrString[1]);
+    end;
+  end;
+end;
+
+procedure TConfigPaths.SetSuitePathCurrentTheme(AValue: String);
+begin
+  if FSuitePathCurrentTheme = AValue then Exit;
+    FSuitePathCurrentTheme := AValue;
+
+  UpdatePathVariables;
+end;
+
+procedure TConfigPaths.UpdateASuiteVars;
+var
+  strFolderIcon: AnsiString;
+
+  //Workaround for const string
+  function DeQuotedStr(AVar: AnsiString): AnsiString;
+  begin
+    Result := UpperCase(AVar);
+    Result := AnsiDequotedStr(Result, '%');
+  end;
+
+begin
+  FASuiteVars.Clear;
+
+  strFolderIcon := AppendPathDelim(FSuitePathCurrentTheme + ICONS_DIR);
+
+  //CONST_PATH_ASuite = Launcher's path
+  FASuiteVars.Add(DeQuotedStr(CONST_PATH_ASUITE), SuitePathWorking);
+
+  //CONST_PATH_DRIVE = Launcher's Drive (ex. ASuite in H:\Software\ASuite.exe, CONST_PATH_DRIVE is H: )
+  FASuiteVars.Add(DeQuotedStr(CONST_PATH_DRIVE), SUITEDRIVE);
+
+  //CONST_PATH_FOLDERICON = Folder Icon's path
+  FASuiteVars.Add(DeQuotedStr(CONST_PATH_FOLDERICON), strFolderIcon + FILEICON_Folder + EXT_ICO);
+
+  //CONST_PATH_URLICON = Url Icon's path
+  FASuiteVars.Add(DeQuotedStr(CONST_PATH_URLICON), strFolderIcon + FILEICON_Url + EXT_ICO);
+end;
+
 constructor TConfigPaths.Create;
 begin
   //Default paths
@@ -109,13 +185,10 @@ begin
   FSuiteDrive        := LowerCase(ExtractFileDrive(FSuiteFullFileName));
   FSuitePathWorking  := ExtractFilePath(FSuiteFullFileName);
   SetCurrentDir(FSuitePathWorking);
-  //TODO: Use GetAppConfigDir (see https://wiki.freepascal.org/Multiplatform_Programming_Guide#Configuration_files)
   if Not(IsDirectoryWritable(FSuitePathWorking)) then
   begin
-    {$IFDEF MSWINDOWS}
-    FSuitePathData := AppendPathDelim(GetSpecialFolder(CSIDL_LOCAL_APPDATA) + APP_NAME);
+    FSuitePathData := GetAppConfigDir(True);
     SysUtils.ForceDirectories(FSuitePathData);
-    {$ENDIF}
   end
   else
     FSuitePathData := FSuitePathWorking;
@@ -128,24 +201,22 @@ begin
   FSuitePathList := FSuitePathData + 'asuite.xml';
   if not FileExists(FSuitePathList) then
     FSuitePathList := FSuitePathData + ChangeFileExt(FSuiteFileName, EXT_SQL);
+
+  //Path variables
+  {$IFDEF MSWINDOWS}
+  FEnvironmentVars := TPathVars.Create('\%([^%]+)\%');
+  {$ELSE}
+  FEnvironmentVars := TPathVars.Create('\$\{([^}]+)\}');
+  {$ENDIF}
+  FASuiteVars := TPathVars.Create('\%([^%]+)\%');
+
+  UpdatePathVariables;
 end;
 
-function TConfigPaths.ExpandEnvVars(const Str: string): string;
-var
-  BufSize: Integer; // size of expanded string
+destructor TConfigPaths.Destroy;
 begin
-  Result := '';
-
-  // Get required buffer size
-  {$IFDEF MSWINDOWS}
-  BufSize := ExpandEnvironmentStringsW(PChar(Str), nil, 0);
-  if BufSize > 0 then
-  begin
-    // Read expanded string into result string
-    SetLength(Result, BufSize - 1);
-    ExpandEnvironmentStringsW(PChar(Str), PChar(Result), BufSize);
-  end;
-  {$ENDIF}
+  FEnvironmentVars.Free;
+  FASuiteVars.Free;
 end;
 
 function TConfigPaths.GetNumberSubFolders(const FolderPath: String): Integer;
@@ -177,21 +248,26 @@ begin
   if APath <> '' then
   begin
     sPath := APath;
-    //CONST_PATH_FOLDERICON = Folder Icon's path
-    sPath := StringReplace(sPath, CONST_PATH_FOLDERICON, AppendPathDelim(FSuitePathCurrentTheme +
-                           ICONS_DIR) + FILEICON_Folder + EXT_ICO, [rfIgnoreCase,rfReplaceAll]);
-    //CONST_PATH_URLICON = Url Icon's path
-    sPath := StringReplace(sPath, CONST_PATH_URLICON, AppendPathDelim(FSuitePathCurrentTheme +
-                           ICONS_DIR) + FILEICON_Url + EXT_ICO, [rfIgnoreCase,rfReplaceAll]);
-    //CONST_PATH_ASuite = Launcher's path
-    sPath := StringReplace(sPath, CONST_PATH_ASuite, SuitePathWorking, [rfIgnoreCase,rfReplaceAll]);
-    //CONST_PATH_DRIVE = Launcher's Drive (ex. ASuite in H:\Software\ASuite.exe, CONST_PATH_DRIVE is H: )
-    sPath := StringReplace(sPath, CONST_PATH_DRIVE, SUITEDRIVE, [rfIgnoreCase,rfReplaceAll]);
+
+    //Replace old ASuite variables
+    //Note: Unfortunately old asuite vars is not quoted, but in format $var.
+    //      So these two vars are deprecated. This code remain for only backwards compatibility
+    //CONST_PATH_ASuite_old = Launcher's path
+    sPath := StringReplace(sPath, CONST_PATH_ASuite_old, SuitePathWorking, [rfIgnoreCase,rfReplaceAll]);
+    //CONST_PATH_DRIVE_old = Launcher's Drive (ex. ASuite in H:\Software\ASuite.exe, CONST_PATH_DRIVE is H: )
+    sPath := StringReplace(sPath, CONST_PATH_DRIVE_old, SUITEDRIVE, [rfIgnoreCase,rfReplaceAll]);
+
+    //Replace ASuite variables
+    sPath := FASuiteVars.ExpandVars(sPath);
+
+    //TODO: Maybe FTL has a similar functions to do this in cross platform style
     //Remove double slash (\)
     if Pos('\\', sPath) <> 1 then
       sPath := StringReplace(sPath, '\\', PathDelim, [rfIgnoreCase,rfReplaceAll]);
+
     //Replace environment variable
-    sPath := ExpandEnvVars(sPath);
+    sPath := FEnvironmentVars.ExpandVars(sPath);
+
     //If sPath exists, expand it in absolute path (to avoid the "..")
     if (FileExists(sPath) or SysUtils.DirectoryExists(sPath)) and (Length(sPath) <> 2) then
       Result := ExpandFileName(sPath)
@@ -208,6 +284,12 @@ begin
     DeleteFiles(FSuitePathCache,'*.*');
     RemoveDir(FSuitePathCache);
   end;
+end;
+
+procedure TConfigPaths.UpdatePathVariables;
+begin
+  UpdateEnvironmentVars;
+  UpdateASuiteVars;
 end;
 
 end.

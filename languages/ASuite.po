@@ -1281,8 +1281,8 @@ msgstr ""
 #: tfrmswgeneralpropertypage.lbinfo2.caption
 msgid ""
 "Note: You can use these vars (included environment variables) in relative path:\n"
-"- $asuite = ASuite folder path (\"%s\")\n"
-"- $drive = drive path (\"%s\")\n"
+"- %asuite% = ASuite folder path (\"%s\")\n"
+"- %drive% = drive path (\"%s\")\n"
 msgstr ""
 
 #: tfrmswgeneralpropertypage.lbparameters.caption

@@ -26,7 +26,7 @@ interface
 uses
   LCLIntf, LCLType, Classes, Forms, StdCtrls, ExtCtrls, ComCtrls, Controls,
   Graphics, Dialogs, SysUtils, VirtualTrees, Menus, Lists.Base,
-  BCImageTab, ButtonedEdit, BCImageButton, DefaultTranslator, objpas;
+  BCImageTab, ButtonedEdit, BCImageButton, DefaultTranslator;
 
 type
 
