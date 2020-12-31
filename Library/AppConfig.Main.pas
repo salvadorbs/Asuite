@@ -687,7 +687,7 @@ begin
   Self.TVFont.Name               := AJSONConfig.GetValue(CONFIG_TVFONTNAME, UnicodeString(Self.TVFont.Name));
   Self.TVFont.Color              := HtmlToColor(AJSONConfig.GetValue(CONFIG_TVFONTCOLOR, ColorToHtml(Self.TVFont.Color)));
   Self.TVFont.Size               := AJSONConfig.GetValue(CONFIG_TVFONTSIZE, Self.TVFont.Size);
-  Self.TVFont.Style              := TFontStyles({byte}AJSONConfig.GetValue(CONFIG_TVFONTSIZE, 0));
+  //Self.TVFont.Style              := TFontStyles({byte}AJSONConfig.GetValue(CONFIG_TVFONTSIZE, 0));
   if AJSONConfig.GetValue(CONFIG_TVFONTSTYLE_BOLD, (fsBold in Self.TVFont.Style)) then
      Self.TVFont.Style := Self.TVFont.Style + [fsBold];
   if AJSONConfig.GetValue(CONFIG_TVFONTSTYLE_ITALIC, (fsItalic in Self.TVFont.Style)) then
@@ -815,6 +815,7 @@ begin
       JSONConfig := TJSONConfig.Create(nil);
       JSONConfig.Formatted := True;
       JSONConfig.FormatIndentsize := 4;
+      //TODO: Check this. If asuite uses a different folder for settings? ex. appdata
       JSONConfig.Filename := SETTINGS_FILENAME;
       SaveSettings(JSONConfig);
     finally
