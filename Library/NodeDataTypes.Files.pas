@@ -28,6 +28,9 @@ uses
   NodeDataTypes.Custom, LCLIntf, LCLType, DateUtils;
 
 type
+
+  { TvFileNodeData }
+
   TvFileNodeData = class(TvCustomRealNodeData)
   private
     //Specific private variables and functions
@@ -52,6 +55,7 @@ type
     procedure SetClickCount(const Value: Integer);
     function GetWorkingDir(): string;
     function GetWindowState(ARunFromCategory: Boolean): Integer;
+    function  IsProcessExists(exeFileName: string): Boolean;
   protected
     procedure SetLastAccess(const Value: Int64); override;
     procedure AfterExecute(ADoActionOnExe: Boolean); override;
@@ -88,7 +92,7 @@ implementation
 
 uses
   AppConfig.Main, Kernel.Consts, Utility.FileFolder,
-  Utility.System, Utility.Process, VirtualTree.Methods, Utility.Misc
+  Utility.System, VirtualTree.Methods, Utility.Misc
   {$IFDEF Windows}, Windows, JwaWindows, JwaWinBase, ShellApi{$ENDIF};
 
 constructor TvFileNodeData.Create(AType: TvTreeDataType);
@@ -258,6 +262,36 @@ begin
   end;
 end;
 
+function TvFileNodeData.IsProcessExists(exeFileName: string): Boolean;
+{$IFDEF MSWINDOWS}
+var
+  hSnapShot : THandle;
+  ProcInfo  : TProcessEntry32;
+{$ENDIF}
+begin
+  {$IFDEF MSWINDOWS}
+  Result      := False;
+  exeFileName := UpperCase(ExeFileName);
+  hSnapShot   := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+  //Check processes
+  if (hSnapShot <> THandle(-1)) then
+  begin
+    ProcInfo.dwSize := SizeOf(ProcInfo);
+    //First process
+    if (Process32First(hSnapshot, ProcInfo)) then
+    begin
+      //Compare first process with ExeFileName
+      if (UpperCase(ExtractFileName(ProcInfo.szExeFile)) = ExeFileName) then
+        Result := True;
+      while (Process32Next(hSnapShot, ProcInfo)) do
+        if (UpperCase(ExtractFileName(ProcInfo.szExeFile)) = ExeFileName) then
+          Result := True;
+    end;
+  end;
+  FileClose(hSnapShot);
+  {$ENDIF}
+end;
+
 function TvFileNodeData.GetWorkingDir(): string;
 begin
   //Working directory
@@ -272,7 +306,7 @@ begin
     Result := Self.WorkingDirAbsolute;
 end;
 
-procedure TvFileNodeData.Copy(Source: TvBaseNodeData);
+procedure TvFileNodeData.Copy(source: TvBaseNodeData);
 var
   SourceNodeData: TvFileNodeData;
 begin
