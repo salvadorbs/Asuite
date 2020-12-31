@@ -40,6 +40,8 @@ object frmGraphicMenu: TfrmGraphicMenu
     Top = 9
     Width = 200
     OnMouseDown = imgLogoMouseDown
+    OnMouseMove = imgLogoMouseMove
+    OnMouseUp = imgDragSpaceHiddenMouseUp
   end
   object imgDivider1: TImage
     Left = 271
@@ -97,6 +99,8 @@ object frmGraphicMenu: TfrmGraphicMenu
     Top = 0
     Width = 406
     OnMouseDown = imgLogoMouseDown
+    OnMouseMove = imgLogoMouseMove
+    OnMouseUp = imgDragSpaceHiddenMouseUp
   end
   object imgUserFrame: TImage
     Cursor = crHandPoint

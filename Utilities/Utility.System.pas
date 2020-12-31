@@ -25,7 +25,7 @@ interface
 
 uses
   Kernel.Consts, LCLIntf, LCLType, SysUtils, Classes, Registry,
-  {$IFDEF MSWINDOWS} ComObj, {$ENDIF} Forms, Dialogs;
+  Forms, Dialogs;
 
 { Check functions }
 function HasDriveLetter(const Path: String): Boolean;
@@ -38,7 +38,6 @@ procedure SetASuiteAtWindowsStartup;
 procedure DeleteASuiteAtWindowsStartup;
 
 { Misc }
-function DarkModeIsEnabled: boolean;
 procedure EjectDialog(Sender: TObject);
 function ExtractDirectoryName(const Filename: string): string;
 function GetCorrectWorkingDir(Default: string): string;
@@ -47,7 +46,7 @@ implementation
 
 uses
   Utility.Conversions, Forms.Main, AppConfig.Main, Utility.Misc, Kernel.Logger,
-  VirtualTree.Methods, LazFileUtils{$IFDEF MSWINDOWS} , Windows {$ENDIF};
+  VirtualTree.Methods, LazFileUtils;
 
 function HasDriveLetter(const Path: String): Boolean;
 var P: PChar;
@@ -94,6 +93,8 @@ function IsPathExists(const Path: String): Boolean;
 var
   PathTemp : String;
 begin
+  //TODO: Review it
+
   PathTemp := Config.Paths.RelativeToAbsolute(Path);
   if IsUNCPath(PathTemp) then
     Result := True
@@ -104,35 +105,13 @@ begin
       Result := (FileExists(PathTemp)) or (SysUtils.DirectoryExists(PathTemp));
 end;
 
-function DarkModeIsEnabled: boolean;
-const
-  TheKey   = 'Software\Microsoft\Windows\CurrentVersion\Themes\Personalize\';
-  TheValue = 'AppsUseLightTheme';
-var
-  Reg: TRegistry;
-begin
-  Result := False;
-  Reg    := TRegistry.Create(KEY_READ);
-  try
-    Reg.RootKey := HKEY_CURRENT_USER;
-    if Reg.KeyExists(TheKey) then
-      if Reg.OpenKey(TheKey, False) then
-      try
-        if Reg.ValueExists(TheValue) then
-          Result := Reg.ReadInteger(TheValue) = 0;
-      finally
-        Reg.CloseKey;
-      end;
-  finally
-    Reg.Free;
-  end;
-end;
-
 procedure EjectDialog(Sender: TObject);
 var
   WindowsPath : string;
   bShellExecute: Boolean;
 begin
+  //TODO: Add Linux method
+
   //Call "Safe Remove hardware" Dialog
   WindowsPath := SysUtils.GetEnvironmentVariable('WinDir');
   if FileExists(PChar(WindowsPath + '\System32\Rundll32.exe')) then
@@ -167,6 +146,8 @@ procedure SetASuiteAtWindowsStartup;
 var
   Registry : TRegistry;
 begin
+  //TODO: Add Linux method
+
   Registry := TRegistry.Create;
   try
     with Registry do
@@ -185,6 +166,8 @@ procedure DeleteASuiteAtWindowsStartup;
 var
   Registry : TRegistry;
 begin
+  //TODO: Add Linux method
+
   Registry := TRegistry.Create;
   try
     with Registry do
@@ -202,6 +185,8 @@ function GetCorrectWorkingDir(Default: string): string;
 var
   sPath: String;
 begin
+  //TODO: Review it (in Linux, is it works?)
+
   Result := Default;
   sPath := AppendPathDelim(Config.Paths.SuiteDrive);
   if SysUtils.DirectoryExists(sPath) then
