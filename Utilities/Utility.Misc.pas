@@ -59,8 +59,7 @@ function  GetHotKeyMod(AShortcut: TShortcut) : Integer;
 implementation
 
 uses
-  AppConfig.Main, Kernel.Logger, LCLProc, {$IFDEF Windows}Windows,{$ENDIF}
-  Kernel.ResourceStrings;
+  AppConfig.Main, Kernel.Logger, LCLProc, Kernel.ResourceStrings;
 
 function IsFormOpen(const FormName : string): Boolean;
 var
@@ -158,19 +157,13 @@ end;
 
 function IsFormatInClipBoard(format: Word): Boolean;
 var
-  buf : array [0..60] of Char;
-  n   : Integer;
-  fmt : Word;
+  I: Integer;
 begin
   //Get clipboard format
   Result := False;
-  for n := 0 to Clipboard.FormatCount - 1 do
+  for I := 0 to Clipboard.FormatCount - 1 do
   begin
-    fmt := Clipboard.Formats[n];
-    {$IFDEF MSWINDOWS}
-    GetClipboardFormatNameW(fmt, buf, Pred(SizeOf(buf)));
-    {$ENDIF}
-    if fmt = format then
+    if Clipboard.Formats[I] = format then
     begin
       Result := True;
       Break;
@@ -313,12 +306,10 @@ function GetHotKeyMod(AShortcut: TShortcut): Integer;
 var
   Shift: TShiftState;
   Key: Word;
-{$IFNDEF MSWINDOWS}
 const
   MOD_ALT = 1;
   MOD_CONTROL = 2;
   MOD_SHIFT = 4;
-{$ENDIF}
 begin
   Result := 0;
   ShortCutToKey(AShortcut, Key, Shift);

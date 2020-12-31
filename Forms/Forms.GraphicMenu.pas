@@ -25,8 +25,8 @@ interface
 
 uses
   LCLIntf, LCLType, Classes, Forms, StdCtrls, ExtCtrls, ComCtrls, Controls,
-  Graphics, Dialogs, SysUtils, VirtualTrees, Menus, {$IFDEF Windows}Windows,{$ENDIF} Lists.Base,
-  BCImageTab, ButtonedEdit, BCImageButton, DefaultTranslator, BGRASpeedButton, LMessages;
+  Graphics, Dialogs, SysUtils, VirtualTrees, Menus, Lists.Base,
+  BCImageTab, ButtonedEdit, BCImageButton, DefaultTranslator, objpas;
 
 type
 
@@ -72,6 +72,10 @@ type
     imgDragSpaceHidden: TImage;
     tmrCheckItems: TTimer;
     procedure FormCreate(Sender: TObject);
+    procedure imgDragSpaceHiddenMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure imgLogoMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
     procedure pmWindowClose(Sender: TObject);
     procedure tmrFaderTimer(Sender: TObject);
     procedure imgLogoMouseDown(Sender: TObject; Button: TMouseButton;
@@ -110,7 +114,6 @@ type
     procedure PopulateListTree(const ATree: TVirtualStringTree);
     procedure PopulateSpecialTree(const ATree: TVirtualStringTree; AList: TBaseItemsList; MaxItems: Integer);
     procedure SavePositionForm;
-    procedure LMWindowPosChanging(Var Msg : TLMWindowPosChanging); message LM_WindowPosChanging;
     procedure HandleEdge(var AEdge: Integer; ASnapToEdge: Integer; ASnapDistance: Integer = 0);
   public
     { Public declarations }
@@ -120,7 +123,6 @@ type
 
 var
   frmGraphicMenu : TfrmGraphicMenu;
-  {$IFDEF MSWINDOWS} PrevWndProc: WNDPROC; {$ENDIF}
   OldWindowX, OldWindowY: Integer;
 
 implementation
@@ -132,48 +134,6 @@ uses
   Forms.About, NodeDataTypes.Base, Kernel.Enumerations, Forms.Options,
   Utility.Misc, VirtualTree.Events, VirtualTree.Methods, Kernel.Types,
   NodeDataTypes.Custom, GraphicMenu.ThemeEngine, Kernel.ResourceStrings;
-
-{$IFDEF MSWINDOWS}
-function WndCallback(Ahwnd: HWND; uMsg: UINT; wParam: WParam; lParam: LParam): LRESULT; stdcall;
-const
-  Margin = 5;
-var
-  Rect: TRect;
-  MouseX, MouseY: LongInt;
-begin
-  if uMsg = WM_NCHITTEST then
-  begin
-    Result := Windows.DefWindowProc(Ahwnd, uMsg, wParam, lParam);
-    MouseX := GET_X_LPARAM(lParam);
-    MouseY := GET_Y_LPARAM(lParam);
-    with Rect do
-    begin
-      Left := MouseX - frmGraphicMenu.BoundsRect.Left;
-      Right := frmGraphicMenu.BoundsRect.Right - MouseX;
-      Top := MouseY - frmGraphicMenu.BoundsRect.Top;
-      Bottom := frmGraphicMenu.BoundsRect.Bottom - MouseY;
-      if (Top < Margin) and (Left < Margin) then
-        Result := windows.HTTOPLEFT
-      else if (Top < Margin) and (Right < Margin) then
-        Result := windows.HTTOPRIGHT
-      else if (Bottom < Margin) and (Left < Margin) then
-        Result := windows.HTBOTTOMLEFT
-      else if (Bottom < Margin) and (Right < Margin) then
-        Result := windows.HTBOTTOMRIGHT
-      else if (Top < Margin) then
-        Result := windows.HTTOP
-      else if (Left < Margin) then
-        Result := windows.HTLEFT
-      else if (Bottom < Margin) then
-        Result := windows.HTBOTTOM
-      else if (Right < Margin) then
-        Result := windows.HTRIGHT;
-    end;
-    Exit;
-  end;
-  Result := CallWindowProc(PrevWndProc,Ahwnd, uMsg, WParam, LParam);
-end;
-{$ENDIF}
 
 procedure TfrmGraphicMenu.ApplicationEvents1Deactivate(Sender: TObject);
 begin
@@ -240,25 +200,6 @@ begin
   end;
 end;
 
-procedure TfrmGraphicMenu.LMWindowPosChanging(Var Msg : TLMWindowPosChanging);
-begin
-  if (Parent = nil) and
-    ((Msg.WindowPos.X <> OldWindowX) or (Msg.WindowPos.Y <> OldWindowY)) and
-    ((Msg.WindowPos.X <> 0) or (Msg.WindowPos.Y <> 0)) and
-    ((Msg.WindowPos.cx = Self.Width) and (Msg.WindowPos.cy = Self.Height)) then
-  begin
-    HandleEdge(Msg.WindowPos.x, Monitor.WorkareaRect.Left, 0);
-    HandleEdge(Msg.WindowPos.y, Monitor.WorkareaRect.Top, 0);
-    HandleEdge(Msg.WindowPos.x, Monitor.WorkareaRect.Right, Self.Width);
-    HandleEdge(Msg.WindowPos.y, Monitor.WorkareaRect.Bottom, Self.Height);
-
-    OldWindowX := Msg.WindowPos.x;
-    OldWindowY := Msg.WindowPos.y;
-  end;
-
-  inherited;
-end;
-
 procedure TfrmGraphicMenu.HandleEdge(var AEdge: Integer; ASnapToEdge: Integer;
   ASnapDistance: Integer);
 begin
@@ -310,10 +251,6 @@ end;
 
 procedure TfrmGraphicMenu.FormCreate(Sender: TObject);
 begin
-  {$IFDEF MSWINDOWS}
-  PrevWndProc := Windows.WNDPROC(SetWindowLongPtr(Self.Handle, GWL_WNDPROC, PtrInt(@WndCallback)));
-  {$ENDIF}
-
   TVirtualTreeEvents.Create.SetupVSTGraphicMenu(vstList, Self);
 
   //Load graphics
@@ -337,6 +274,41 @@ begin
 
   edtSearch.RightButton.Images := dmImages.ilSmallIcons;
   edtSearch.RightButton.ImageIndex := TThemeEngine.Create.SearchIcon;
+end;
+
+procedure TfrmGraphicMenu.imgDragSpaceHiddenMouseUp(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  if Button = mbLeft then
+    SavePositionForm;
+end;
+
+procedure TfrmGraphicMenu.imgLogoMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+var
+  CursorPos: TPoint;
+  xx, yy: LongInt;
+begin
+  CursorPos := Mouse.CursorPos;
+  //Only when user uses left click
+  if ssLeft in Shift then
+  begin
+    if (Parent = nil) and
+      ((CursorPos.X <> OldWindowX) or (CursorPos.Y <> OldWindowY)) and
+      ((CursorPos.X <> 0) or (CursorPos.Y <> 0)) then
+    begin
+      xx := CursorPos.x - OldWindowX;
+      yy := CursorPos.y - OldWindowY;
+
+      HandleEdge(xx, Monitor.WorkareaRect.Left, 0);
+      HandleEdge(yy, Monitor.WorkareaRect.Top, 0);
+      HandleEdge(xx, Monitor.WorkareaRect.Right, Self.Width);
+      HandleEdge(yy, Monitor.WorkareaRect.Bottom, Self.Height);
+
+      Self.Left := xx;
+      Self.Top  := yy;
+    end;
+  end;
 end;
 
 procedure TfrmGraphicMenu.pmWindowClose(Sender: TObject);
@@ -450,18 +422,12 @@ end;
 
 procedure TfrmGraphicMenu.imgLogoMouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-const
-  SC_DRAGMOVE = $F012;
+var
+  CursorPos: TPoint;
 begin
-  if Button = mbLeft then
-  begin
-    ReleaseCapture;
-    {$IFDEF MSWINDOWS}
-    SendMessage(frmGraphicMenu.Handle, WM_SYSCOMMAND, SC_DRAGMOVE, 0);
-    {$ENDIF}
-
-    SavePositionForm;
-  end;
+  CursorPos := Mouse.CursorPos;
+  OldWindowX := CursorPos.x - Self.Left;
+  OldWindowY := CursorPos.y - Self.Top;
 end;
 
 procedure TfrmGraphicMenu.imgPersonalPictureClick(Sender: TObject);
@@ -653,8 +619,8 @@ begin
     if (Self.AlphaBlendValue < 225) and Config.GMFade then
    	  Self.AlphaBlendValue := Self.AlphaBlendValue + 30
     else begin
- 	    Self.AlphaBlendValue := 255;
-   	  tmrFader.Enabled     := False;
+      Self.AlphaBlendValue := 255;
+      tmrFader.Enabled     := False;
     end;
   end
   else begin

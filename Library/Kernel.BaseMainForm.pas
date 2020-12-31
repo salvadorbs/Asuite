@@ -24,7 +24,7 @@ unit Kernel.BaseMainForm;
 interface
 
 uses
-  Forms, Controls, Classes, Dialogs, Graphics, LCLIntf, LCLType, LMessages, Messages;
+  Forms, Controls, Classes, Dialogs, Graphics, LCLIntf, LCLType, Messages;
 
 type
 
@@ -33,18 +33,9 @@ type
   TBaseMainForm = class(TForm)
   private
     FSessionEnding : Boolean;
-    {$IFDEF MSWINDOWS}
-    procedure WMQueryEndSession(var Message: TMessage); message WM_QUERYENDSESSION;
-    procedure WMEndSession(var Msg : TWMEndSession); message WM_ENDSESSION;
-    procedure WMExitSizeMove(var Message: TMessage) ; message WM_EXITSIZEMOVE;
-    procedure WMSysCommand(var Message: TWMSysCommand); message WM_SYSCOMMAND;
-    procedure WMMove(Var Msg : TWMMove); message WM_MOVE;
-    {$ENDIF}
-  protected
-    {$IFDEF MSWINDOWS}
-    procedure WndProc(var Msg: TMessage); override;
-    {$ENDIF}  
-    procedure CreateParams(var Params: TCreateParams); override;
+    procedure ApplicationEndSession(Sender: TObject);
+    procedure ApplicationMinimize(Sender: TObject);
+    procedure ApplicationQueryEndSession(var Cancel: Boolean);
   public
     constructor Create(AOwner : TComponent); override;
     destructor Destroy; override;
@@ -58,18 +49,16 @@ type
 implementation
 
 uses
-  AppConfig.Main, NodeDataTypes.Custom, Kernel.Consts, DataModules.TrayMenu,
-  Kernel.Enumerations, VirtualTree.Methods;
+  AppConfig.Main, Kernel.Enumerations, VirtualTree.Methods;
 
 constructor TBaseMainForm.Create(AOwner: TComponent);
 begin
   inherited;
   Config.ASuiteState := lsNormal;
-end;
 
-procedure TBaseMainForm.CreateParams(var Params: TCreateParams);
-begin
-  inherited;
+  Application.OnMinimize := ApplicationMinimize;
+  Application.OnQueryEndSession := ApplicationQueryEndSession;
+  Application.OnEndSession := ApplicationEndSession;
 end;
 
 destructor TBaseMainForm.Destroy;
@@ -84,12 +73,15 @@ begin
   begin
     // Restore the app, but don't automatically show its taskbar icon
     // Show application's TASKBAR icon (not the tray icon)
-    ShowWindow(Application.Handle, SW_RESTORE);
+    Self.ShowInTaskBar := stDefault;
+
     Application.Restore;
+
     // Show the form itself
     if Application.MainForm.WindowState = wsMinimized then
       Application.MainForm.WindowState := wsNormal;    // Override minimized state
     Application.MainForm.Visible := True;
+
     // Bring the main form (or its modal dialog) to the foreground
     SetForegroundWindow(Application.Handle);
   end;
@@ -104,52 +96,25 @@ begin
     { Hide application's TASKBAR icon (not the tray icon). Do this AFTER
         the main form is hidden, or any child windows will redisplay the
         taskbar icon if they are visible. }
-    if IsWindowVisible(Application.Handle) then
-      ShowWindow(Application.Handle, SW_HIDE);
+    Self.ShowInTaskBar := stNever;
   end;
 end;
 
-{$IFDEF MSWINDOWS}
-procedure TBaseMainForm.WMQueryEndSession(var Message: TMessage);
+procedure TBaseMainForm.ApplicationMinimize(Sender: TObject);
+begin
+  HideMainForm;
+end;
+
+procedure TBaseMainForm.ApplicationQueryEndSession(var Cancel: Boolean);
 begin
   FSessionEnding := True;
-  Message.Result := 1;
 end;
 
-procedure TBaseMainForm.WMSysCommand(var Message: TWMSysCommand);
-begin
-  inherited;
-  if Message.cmdType = SC_MINIMIZE then
-    HideMainForm;
-end;
-
-procedure TBaseMainForm.WndProc(var Msg: TMessage);
-begin
-  inherited;
-end;
-
-procedure TBaseMainForm.WMEndSession(var Msg : TWMEndSession);
+procedure TBaseMainForm.ApplicationEndSession(Sender: TObject);
 begin
   //Close ASuite on Windows shutdown
-  if Msg.EndSession = True then
-  begin
-    Config.ASuiteState := lsShutdown;
-    Close;
-  end;
+  Config.ASuiteState := lsShutdown;
+  Close;
 end;
-
-procedure TBaseMainForm.WMExitSizeMove(var Message: TMessage);
-begin
-  Config.Changed := True;
-  TVirtualTreeMethods.Create.RefreshList(nil);
-end;
-
-procedure TBaseMainForm.WMMove(var Msg: TWMMove);
-begin
-  inherited;
-
-  Config.Changed := True;
-end;
-{$ENDIF}
 
 end.

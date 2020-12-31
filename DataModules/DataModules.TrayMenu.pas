@@ -28,7 +28,7 @@ interface
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   Menus, ExtCtrls, VirtualTrees, ImgList, Messages, LazFileUtils,
-  Kernel.PopupMenu, Lists.Base, Kernel.Enumerations, LazMethodList;
+  Kernel.PopupMenu, Lists.Base, Kernel.Enumerations;
 
 type
 
@@ -69,6 +69,7 @@ type
     procedure PopulateCategoryItems(Sender: TObject);
     procedure ShowPopupMenu(const APopupMenu: TPopupMenu);
     procedure RunFromTrayMenu(Sender: TObject);
+    function GetTextWidth(const AText: string; AFont: TFont): Integer;
   public
     { Public declarations }
     procedure ShowClassicMenu;
@@ -139,7 +140,7 @@ uses
   DataModules.Icons, Forms.Main, AppConfig.Main, VirtualTree.Methods,
   Utility.System, Forms.GraphicMenu, Kernel.Types, NodeDataTypes.Files,
   NodeDataTypes.Custom, NodeDataTypes.Base, Kernel.Consts, Kernel.Logger,
-  Utility.Misc, Utility.FileFolder, {$IFDEF Windows}Windows,{$ENDIF} Kernel.ResourceStrings;
+  Utility.Misc, Utility.FileFolder, Kernel.ResourceStrings;
 
 {$R *.lfm}
 
@@ -185,7 +186,6 @@ begin
   APopupMenu.PopupComponent := tiTrayMenu.Owner;
   //Show menu
   APopupMenu.Popup(CursorPoint.X, CursorPoint.Y);
-  {$IFDEF MSWINDOWS} PostMessage(Application.Handle, WM_NULL, 0, 0); {$ENDIF}
 end;
 
 procedure TdmTrayMenu.SearchAddDirectory(AMI: TASMenuItem; FolderPath: string);
@@ -535,6 +535,20 @@ begin
   DoDrawCaptionedSeparator(Sender, ACanvas, ARect);
 end;
 
+function TdmTrayMenu.GetTextWidth(const AText: string; AFont: TFont): Integer;
+var
+  bmp: Graphics.TBitmap; // Graphics.TBitmap, not Windows.TBitmap
+begin
+  Result := 0;
+  bmp := Graphics.TBitmap.Create;
+  try
+    bmp.Canvas.Font.Assign(AFont);
+    Result := bmp.Canvas.TextWidth(AText);
+  finally
+    bmp.Free;
+  end;
+end;
+
 procedure TdmTrayMenu.DoDrawCaptionedSeparator(Sender: TObject; ACanvas: TCanvas; ARect: TRect;
   ACaption: string);
 
@@ -580,11 +594,9 @@ begin
         TextSpace   := 1;
       end;
     end;
-  {$IFDEF MSWINDOWS}
-  DrawTextW(ACanvas.Handle, PChar(LineCaption), Length(LineCaption), TextArea, Flags or DT_CALCRECT);
-  {$ENDIF}
+  TextArea.Width := GetTextWidth(LineCaption, ACanvas.Font);
   OffsetRect(TextArea, Round((RectWidth(LineArea) - RectWidth(TextArea)) / 2 - TextSpace), 0);
-  Inc(ARect.Top, (CaptionLineItemHeight div 2) - 1);
+  Inc(ARect.Top, (CaptionLineItemHeight div 2) + 1);
   //Create first line
   Inc(ARect.Top);
   Inc(ARect.Bottom);
@@ -593,9 +605,7 @@ begin
   Inc(ARect.Top);
   Inc(ARect.Bottom);
   DrawFadeLine(ACanvas, TextArea, ARect, clBtnHighlight, FadeLineWidth, True);
-  {$IFDEF MSWINDOWS}
-  DrawTextW(ACanvas.Handle, PChar(LineCaption), Length(LineCaption), TextArea, Flags);
-  {$ENDIF}
+  ACanvas.TextOut(TextArea.Left, TextArea.Top, LineCaption);
 end;
 
 procedure TdmTrayMenu.DrawFadeLine(ACanvas: TCanvas; AClipRect, ALineRect: TRect; AColor: TColor; AFadeWidth: Integer; AClip: Boolean);
