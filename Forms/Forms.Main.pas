@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, LCLType, LMessages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
-  ComCtrls, VirtualTrees, {$IFDEF MSWINDOWS} ActiveX, {$ENDIF} Kernel.Consts, DataModules.Icons,
+  ComCtrls, VirtualTrees, Kernel.Consts, DataModules.Icons,
   Kernel.BaseMainForm, StdCtrls, Buttons, UITypes,
   Kernel.Enumerations, ExtCtrls, {XMLDoc,} Lists.Manager,
   Database.Manager, ButtonedEdit, {Actions,} ActnList, Themes, EditBtn;

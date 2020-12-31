@@ -26,7 +26,7 @@ interface
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, Menus, ComCtrls, BCImageButton, ExtCtrls, HotKey, LCLProc,
-  {$IFDEF Windows}Windows,{$ENDIF} DefaultTranslator, LazFileUtils;
+  DefaultTranslator, LazFileUtils;
 
 type
 
