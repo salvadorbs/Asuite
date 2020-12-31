@@ -100,7 +100,7 @@ type
     FGMBtnExplore       : string;
     //HotKeys
     FHotKey             : Boolean;
-    FWindowHotKey       : Cardinal;  //TODO: Try as TShortcut
+    FWindowHotKey       : Cardinal;  //TODO: Try as TShortcut or as string
     FGraphicMenuHotKey  : Cardinal;
     FClassicMenuHotkey  : Cardinal;
     //Misc
@@ -273,7 +273,7 @@ implementation
 
 uses
   Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, Utility.Misc,
-  Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder, {$IFDEF Windows}Windows,{$ENDIF}
+  Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder,
   Utility.XML, GraphicMenu.ThemeEngine, Kernel.Scheduler, Forms.ImportList,
   TypInfo, Kernel.ResourceStrings, LCLTranslator, AppConfig.Consts,
   Utility.Conversions, Hotkeys.Manager.Platform;
@@ -414,7 +414,7 @@ begin
   FTVFont.Free;
   FScanFolderFileTypes.Free;
   FScanFolderExcludeNames.Free;
-  FPaths.Free;
+  FPaths.Destroy;
   FListManager.Destroy;
   FDBManager.Destroy;
   FIconsManager.Destroy;

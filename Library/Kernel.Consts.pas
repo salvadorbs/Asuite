@@ -76,10 +76,12 @@ const
   PG_MENUSEARCH = 3;
 
   //ASuite placeholders for path
-  CONST_PATH_ASUITE  = '$asuite';
-  CONST_PATH_DRIVE   = '$drive';
-  CONST_PATH_FOLDERICON = '%foldericon%';
-  CONST_PATH_URLICON = '%urlicon%';
+  CONST_PATH_ASUITE_old  = '$asuite'; //Deprecated
+  CONST_PATH_DRIVE_old   = '$drive'; //Deprecated
+  CONST_PATH_ASUITE      = '%asuite%';
+  CONST_PATH_DRIVE       = '%drive%';
+  CONST_PATH_FOLDERICON  = '%foldericon%';
+  CONST_PATH_URLICON     = '%urlicon%';
 
   //ASuite filename icons
   FILEICON_Folder = 'folder';
