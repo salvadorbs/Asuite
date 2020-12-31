@@ -143,6 +143,7 @@ type
     { Private declarations }
     function  GetActiveTree: TBaseVirtualTree;
     procedure PopulatePopUpMenuFromAnother(APopupMenu: TMenuItem; AParentMenuItem: TMenuItem);
+    procedure CloseProcessOpenByASuite;
   public
     { Public declarations }
     procedure ShowMainForm(Sender: TObject);
@@ -161,8 +162,9 @@ uses
   Forms.Options, Forms.About, Utility.Misc, Forms.ScanFolder,
   DataModules.TrayMenu, Forms.ImportList, AppConfig.Main, Utility.System,
   VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base, Kernel.Scheduler,
-  Kernel.Types, NodeDataTypes.Files, VirtualTree.Events, Utility.Process,
-  Kernel.Logger, SynLog, FileUtil, Kernel.ResourceStrings;
+  Kernel.Types, NodeDataTypes.Files, VirtualTree.Events,
+  Kernel.Logger, SynLog, FileUtil, Kernel.ResourceStrings
+  {$IFDEF MSWINDOWS} , JwaWinBase, jwatlhelp32 {$ENDIF};
 
 {$R *.lfm}
 
@@ -533,6 +535,41 @@ begin
   end;
 end;
 
+procedure TfrmMain.CloseProcessOpenByASuite;
+{$IFDEF MSWINDOWS}
+var
+  hSnapShot, hProcess : THandle;
+  ProcInfo  : TProcessEntry32;
+  ContinueLoop: Boolean;
+const
+  PROCESS_TERMINATE = $0001;
+{$ENDIF}
+begin
+  {$IFDEF MSWINDOWS}
+  TASuiteLogger.Info('Close processes opened by ASuite', []);
+  hSnapShot   := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+  //Check processes
+  if (hSnapShot <> THandle(-1)) then
+  begin
+    ProcInfo.dwSize := SizeOf(ProcInfo);
+    ContinueLoop := Process32First(hSnapshot, ProcInfo);
+    while ContinueLoop do
+    begin
+      //Close process with ParentID same as ASuite PID
+      if (ProcInfo.th32ParentProcessID = GetCurrentProcessId) and (ProcInfo.szExeFile <> LowerCase('Rundll32.exe')) then
+      begin
+        hProcess := OpenProcess(PROCESS_TERMINATE, False, ProcInfo.th32ProcessID);
+        TerminateProcess(hProcess, 0);
+        FileClose(hProcess);
+      end;
+
+      ContinueLoop := Process32Next(hSnapShot, ProcInfo);
+    end;
+  end;
+  FileClose(hSnapShot);
+  {$ENDIF}
+end;
+
 procedure TfrmMain.DoSearchItem(const TreeSearch: TBaseVirtualTree; const Keyword: string;
                                 const SearchType: TSearchType);
 var
@@ -582,7 +619,7 @@ begin
   if (SaveDialog1.Execute) then
   begin
     TVirtualTreeMethods.Create.RefreshList(GetActiveTree);
-    CopyFile(PChar(Config.DBManager.DBFileName), PChar(SaveDialog1.FileName), False);
+    FileUtil.CopyFile(PChar(Config.DBManager.DBFileName), PChar(SaveDialog1.FileName), False);
   end;
 end;
 

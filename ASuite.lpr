@@ -38,7 +38,6 @@ uses
   Frame.Properties.Behavior in 'Frame\Frame.Properties.Behavior.pas' {frmBehaviorPropertyPage: TFrame},
   Frame.Properties.General.Category in 'Frame\Frame.Properties.General.Category.pas' {frmCatGeneralPropertyPage: TFrame},
   Frame.Properties.General.Software in 'Frame\Frame.Properties.General.Software.pas' {frmSWGeneralPropertyPage: TFrame},
-  Utility.Process in 'Utilities\Utility.Process.pas',
   Database.Version in 'Library\Database.Version.pas',
   Database.List in 'Library\Database.List.pas',
   Database.Manager in 'Library\Database.Manager.pas',

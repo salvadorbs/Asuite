@@ -28,6 +28,9 @@ uses
   DateUtils, Menus, Classes, Kernel.Types;
 
 type
+
+  { TvCustomRealNodeData }
+
   TvCustomRealNodeData = class(TvBaseNodeData)
   private
     FPathIcon    : String;
@@ -46,6 +49,7 @@ type
     procedure SetSchDateTime(value: TDateTime);
     procedure SetActiveHotkey(const Value: Boolean);
     function GetPathAbsoluteIcon: String;
+    procedure RunActionOnExe(Action: TActionOnExecute);
   protected
     procedure SetLastAccess(const Value: Int64); virtual;
     procedure AfterExecute(ADoActionOnExe: Boolean); virtual;
@@ -79,8 +83,7 @@ type
 implementation
 
 uses
-  AppConfig.Main, Lists.Manager, VirtualTree.Methods, Kernel.Logger,
-  Utility.Process;
+  AppConfig.Main, Lists.Manager, VirtualTree.Methods, Kernel.Logger, Forms.Main;
 
 procedure TvCustomRealNodeData.Copy(source: TvBaseNodeData);
 var
@@ -165,6 +168,33 @@ end;
 function TvCustomRealNodeData.GetPathAbsoluteIcon: String;
 begin
   Result := Config.Paths.RelativeToAbsolute(FPathIcon);
+end;
+
+procedure TvCustomRealNodeData.RunActionOnExe(Action: TActionOnExecute);
+
+  procedure ActionOnExe(Action: TActionOnExecute);
+  begin
+    case Action of
+      aeRunAndHide:
+      begin
+        //Hide frmMain
+        frmMain.Close;
+      end;
+      aeRunAndClose:
+      begin
+        //Close application
+        Config.ASuiteState := lsShutdown;
+        frmMain.Close;
+      end;
+    end;
+  end;
+
+begin
+  //If Action is aeDefault, using launcher options
+  if Action = aeDefault then
+    ActionOnExe(TActionOnExecute(Ord(Config.ActionOnExe) + 1))
+  else //Else software options
+    ActionOnExe(Action);
 end;
 
 function TvCustomRealNodeData.Execute(ADoActionOnExe: Boolean;
