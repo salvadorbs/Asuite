@@ -24,7 +24,8 @@ unit VirtualTree.Events;
 interface
 
 uses
-  LCLIntf, LCLType, SysUtils, Classes, Graphics, VirtualTrees, {$IFDEF MSWINDOWS} ActiveX, {$ENDIF}
+  LCLIntf, LCLType, SysUtils, Classes, Graphics, VirtualTrees, 
+  {$IFDEF MSWINDOWS} ActiveX, {$ELSE} FakeActiveX, {$ENDIF}
   Kernel.Singleton, Forms.GraphicMenu, Forms.Dialog.BaseEntity, Menus, Forms, Controls;
 
 type
