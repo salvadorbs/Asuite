@@ -632,12 +632,6 @@ begin
   VSTEvents := TVirtualTreeEvents.Create;
   VSTEvents.SetupVSTList(vstList);
   VSTEvents.SetupVSTSearch(vstSearch);
-  //Check read only
-  if Config.CheckReadOnlyMode then
-  begin
-    miOptions1.Enabled  := False;
-    miSaveList1.Enabled := False;
-  end;
   //Load Database and get icons (only first level of tree)
   Config.LoadConfig;
   Config.LoadList;
