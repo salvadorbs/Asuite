@@ -253,8 +253,6 @@ type
     property ScanFolderFileTypes: TStringList read FScanFolderFileTypes write FScanFolderFileTypes;
     property ScanFolderExcludeNames: TStringList read FScanFolderExcludeNames write FScanFolderExcludeNames;
 
-    function CheckReadOnlyMode: Boolean;
-
     procedure AfterUpdateConfig();
     
     //Update theme paths
@@ -283,21 +281,6 @@ uses
 procedure TConfiguration.AfterUpdateConfig();
 begin   
   TVirtualTreeMethods.Create.UpdateItemColor(Config.MainTree);
-end;
-
-function TConfiguration.CheckReadOnlyMode: Boolean;
-begin
-  //Check if ASuite is running from a cd rom
-  {$IFDEF MSWINDOWS}
-  Result := GetDriveTypeW(PChar(Config.Paths.SuiteDrive)) = DRIVE_CDROM;
-  {$ENDIF}
-  if (Config.ReadOnlyMode) then
-  begin
-    Config.Cache  := False;
-    Config.Backup := False;
-    Config.MRU    := False;
-  end;
-  Config.ReadOnlyMode := Result;
 end;
 
 constructor TConfiguration.Create;
