@@ -6,11 +6,10 @@ interface
 
 uses
   Kernel.Consts, LCLIntf, LCLType, SysUtils, Classes, Kernel.Enumerations,
-  FileUtil, {$IFDEF Windows}ShellApi, ComObj, ActiveX, ShlObj, Windows,{$ENDIF} Dialogs,
+  FileUtil, {$IFDEF Windows}ComObj, ActiveX, ShlObj, Windows,{$ELSE} FakeActiveX, {$ENDIF} Dialogs,
   LazFileUtils;
 
 { Folders }
-function GetSpecialFolder(const ASpecialFolderID: Integer): string;
 function BrowseForFolder(const InitialDir: String; const Caption: String = ''): String;
 function DirToPath(const Dir: string): string;
 function IsDirectory(const DirName: string): Boolean;
@@ -35,33 +34,18 @@ implementation
 uses
   AppConfig.Main, IniFiles, FCRC32, FileInfo;
 
-function GetSpecialFolder(const ASpecialFolderID: Integer): string;
-{$IFDEF MSWINDOWS}
-var
-  vSFolder :  pItemIDList;
-  vSpecialPath : array[0..MAX_PATH] of Char;
-{$ENDIF}
-begin
-  {$IFDEF MSWINDOWS}
-  SHGetSpecialFolderLocation(0, ASpecialFolderID, vSFolder);
-  SHGetPathFromIDListW(vSFolder, vSpecialPath);
-  Result := AppendPathDelim(StrPas(vSpecialPath));
-  {$ENDIF}
-end;
-
 function BrowseForFolder(const InitialDir: String; const Caption: String): String;
 var
   Path: string;
   Dialog: TSelectDirectoryDialog;
 begin
   Result := '';
-  //Get Path and delete \ in last char. Example c:\xyz\ to c:\xyz
-  Path   := ExcludeTrailingPathDelimiter(InitialDir);
   //Call Browse for folder dialog and get new path
   Dialog := TSelectDirectoryDialog.Create(nil);
   try
+    Dialog.InitialDir := ExcludeTrailingPathDelimiter(InitialDir);
     if Dialog.Execute then
-      Result := Path;
+      Result := Dialog.FileName;
   finally
     Dialog.Free;
   end;
@@ -217,17 +201,15 @@ begin
   BackupList.Free;
 end;
 
-procedure CreateShortcutOnDesktop(const FileName, TargetFilePath, Params, WorkingDir: String);
 {$IFDEF MSWINDOWS}
+procedure CreateShortcutOnDesktop(const FileName, TargetFilePath, Params, WorkingDir: String);
 var
   IObject  : IUnknown;
   ISLink   : IShellLinkW;
   IPFile   : IPersistFile;
   PIDL     : PItemIDList;
   InFolder : array[0..MAX_PATH] of Char;
-{$ENDIF}
 begin
-  {$IFDEF MSWINDOWS}
   //Create objects
   IObject := CreateComObject(CLSID_ShellLink);
   ISLink  := IObject as IShellLinkW;
@@ -244,28 +226,41 @@ begin
   SHGetPathFromIDListW(PIDL, InFolder);
   //Save link
   IPFile.Save(PWChar(AppendPathDelim(InFolder) + FileName), false);
-  {$ENDIF}
 end;
+{$ELSE}
+{$IFDEF UNIX}
+procedure CreateShortcutOnDesktop(const FileName, TargetFilePath, Params, WorkingDir: String);
+begin
+  //TODO: Shortcut (symbolic link with RunCommand? or https://www.freepascal.org/docs-html/rtl/baseunix/fplink.html ?)
+  //https://www.heatware.net/linux-unix/symlinks-symbolic-remove-create-delete/
+end;
+{$ENDIF UNIX}
+{$ENDIF MSWINDOWS}
 
-procedure DeleteShortcutOnDesktop(const FileName: String);
 {$IFDEF MSWINDOWS}
+procedure DeleteShortcutOnDesktop(const FileName: String);
 var
   PIDL        : PItemIDList;
   DesktopPath : array[0..MAX_PATH] of Char;
   LinkName    : String;
-{$ENDIF}
 begin
-  {$IFDEF MSWINDOWS}
   SHGetSpecialFolderLocation(0, CSIDL_DESKTOPDIRECTORY, PIDL);
   SHGetPathFromIDListW(PIDL, DesktopPath);
   LinkName := PChar(AppendPathDelim(DesktopPath) + FileName);
   if (FileExists(LinkName)) then
     SysUtils.DeleteFile(LinkName);
-  {$ENDIF}
 end;
+{$ELSE}
+{$IFDEF UNIX}
+procedure DeleteShortcutOnDesktop(const FileName: String);
+begin
+  //TODO: See above
+end;
+{$ENDIF UNIX}
+{$ENDIF}
 
-function GetShortcutTarget(const LinkFileName: String; ShortcutType: TShortcutField):String;
 {$IFDEF MSWINDOWS}
+function GetShortcutTarget(const LinkFileName: String; ShortcutType: TShortcutField):String;
 var
   ISLink    : IShellLinkW;
   IPFile    : IPersistFile;
@@ -290,13 +285,21 @@ CoCreateInstance(CLSID_ShellLink, nil, CLSCTX_INPROC_SERVER, IShellLinkW, ISLink
   end
   else
     Result := LinkFileName;
-{$ENDIF}
 end;
+{$ELSE}
+{$IFDEF UNIX}
+function GetShortcutTarget(const LinkFileName: String; ShortcutType: TShortcutField):String;
+begin
+  //TODO: See https://www.freepascal.org/docs-html/rtl/baseunix/fpreadlink.html
+end;
+{$ENDIF UNIX}
+{$ENDIF}
 
 function GetUrlTarget(const AFileName: String; ShortcutType: TShortcutField): String;
 var
   IniFile: TIniFile;
 begin
+  //TODO: Check in linux
   IniFile := TIniFile.Create(AFileName);
   try
     case ShortcutType of
@@ -317,6 +320,7 @@ var
   sDesktopPath : string;
 {$ENDIF}
 begin
+  //TODO: Better remove and create (more simpler in cross platform)
   {$IFDEF MSWINDOWS}
   SHGetSpecialFolderLocation(0, CSIDL_DESKTOPDIRECTORY, PIDL);
   SHGetPathFromIDListW(PIDL, DesktopPath);

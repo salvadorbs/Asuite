@@ -131,6 +131,7 @@ begin
     except
       on E : Exception do
       begin
+        //TODO: Refactor this in one line code
         ShowMessageEx(msgImportFailed, True);
         TASuiteLogger.Error(msgErrGeneric, [E.ClassName,E.Message]);
       end;
