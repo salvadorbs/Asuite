@@ -17,7 +17,7 @@ For more informations, see https://docs.github.com/en/free-pro-team@latest/githu
 ## Third party components
 Once Lazarus is installed, you need to install these components from OPM (Online Package Manager):
 - Lazarus VirtualTree https://github.com/blikblum/VirtualTreeView-Lazarus
-- mORMot 1.18 http://synopse.info/fossil/wiki?name=SQLite3+Framework
+- mORMot 1.18 http://synopse.info/fossil/wiki?name=SQLite3+Framework (probably you need download http://synopse.info/files/sqlite3fpc.7z and extract files in subfolder onlinepackagemanager\packages\mormot\static)
 - BGRA Controls https://github.com/bgrabitmap/bgracontrols
 - JPPack https://github.com/jackdp/JPPack
 - HashLib4Pascal https://github.com/Xor-el/HashLib4Pascal
