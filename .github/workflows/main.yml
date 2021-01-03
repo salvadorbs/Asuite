@@ -30,6 +30,8 @@ jobs:
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
 
     - name: Generate Cache Hash
       run: echo os=${{ matrix.operating-system }}-laz=${{ matrix.lazarus-versions }}-pkg=${{ matrix.lazarus-packages }} > cache
