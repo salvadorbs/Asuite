@@ -40,7 +40,7 @@ jobs:
       id: cache
       uses: actions/cache@v2.1.1
       env:
-        cache-name: cache-laz
+        cache-name: cache-laz-v1
       with:
         # A list of files, directories, and wildcard patterns to cache and restore
         path: ${{ runner.temp }}\lazarus
