@@ -24,7 +24,7 @@ jobs:
       matrix:
         operating-system: [windows-latest]
         lazarus-versions: [dist]
-        lazarus-packages: ["JPLib, JPPack, MORMot, HashLib, uniqueinstance, VirtualTreeView V5, LCLExtensions, KControls, BGRABitmap, BGRAControls, ASuiteComps"]
+        lazarus-packages: ["JPLib,JPPack,MORMot,HashLib,uniqueinstance,VirtualTreeView V5,LCLExtensions,KControls,BGRABitmap,BGRAControls,ASuiteComps"]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -40,7 +40,7 @@ jobs:
       id: cache
       uses: actions/cache@v2.1.1
       env:
-        cache-name: cache-laz-v0.1
+        cache-name: cache-laz-v0.2
       with:
         # A list of files, directories, and wildcard patterns to cache and restore
         path: ${{ runner.temp }}\lazarus
@@ -65,22 +65,22 @@ jobs:
         file-url: 'http://synopse.info/files/sqlite3fpc.7z'
         file-name: 'sqlite3fpc.7z'
         location: '${{ runner.temp }}/lazarus/Packages/mormot/'
-    
+   
+    - name: Remove Sparta_Generics from jpLib.lpk
+      run: |
+        $file = gi ${{ runner.temp }}/lazarus/Packages/JPLib/packages/Lazarus/jplib.lpk
+        [xml]$xml=Get-Content -Path $file
+        $node=$xml.SelectSingleNode('CONFIG/Package/RequiredPkgs/Item1')
+        $node.ParentNode.RemoveChild($node)
+        $xml.Save($file.Fullname)
+
+   
     - name: Extract sqlite3fpc.7z in mORMot
       if: steps.cache.outputs.cache-hit != 'true'
       uses: DuckSoft/extract-7z-action@v1.0
       with:
         pathSource: '${{ runner.temp }}/lazarus/Packages/mormot/sqlite3fpc.7z' 
         pathTarget: '${{ runner.temp }}/lazarus/Packages/mormot/'
-
-    - name: Upload the Build Artifact
-      uses: actions/upload-artifact@v2.1.4
-      with:
-        # Artifact name
-        name: Lazarus Folder
-        # A file, directory or wildcard pattern that describes what to upload
-        path: ${{ runner.temp }}\lazarus
-        # The desired behavior if no files are found using the provided path.
 
     - name: Validate Cache
       if: steps.cache.outputs.cache-hit == 'true'
