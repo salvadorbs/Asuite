@@ -40,7 +40,7 @@ jobs:
       id: cache
       uses: actions/cache@v2.1.1
       env:
-        cache-name: cache-laz-v1
+        cache-name: cache-laz-v0.1
       with:
         # A list of files, directories, and wildcard patterns to cache and restore
         path: ${{ runner.temp }}\lazarus
@@ -72,6 +72,15 @@ jobs:
       with:
         pathSource: '${{ runner.temp }}/lazarus/Packages/mormot/sqlite3fpc.7z' 
         pathTarget: '${{ runner.temp }}/lazarus/Packages/mormot/'
+
+    - name: Upload the Build Artifact
+      uses: actions/upload-artifact@v2.1.4
+      with:
+        # Artifact name
+        name: Lazarus Folder
+        # A file, directory or wildcard pattern that describes what to upload
+        path: ${{ runner.temp }}\lazarus
+        # The desired behavior if no files are found using the provided path.
 
     - name: Validate Cache
       if: steps.cache.outputs.cache-hit == 'true'
