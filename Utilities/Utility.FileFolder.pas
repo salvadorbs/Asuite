@@ -27,12 +27,11 @@ procedure CreateShortcutOnDesktop(const FileName, TargetFilePath, Params, Workin
 procedure DeleteShortcutOnDesktop(const FileName: String);
 function  GetShortcutTarget(const LinkFileName: String; ShortcutType: TShortcutField):String;
 function  GetUrlTarget(const AFileName: String; ShortcutType: TShortcutField): String;
-procedure RenameShortcutOnDesktop(const OldFileName, FileName: String);
 
 implementation
 
 uses
-  AppConfig.Main, IniFiles, FCRC32, FileInfo{$IFDEF UNIX}, LazFileUtils, BaseUnix{$ENDIF};
+  AppConfig.Main, IniFiles, FCRC32, FileInfo;
 
 function BrowseForFolder(const InitialDir: String; const Caption: String): String;
 var
@@ -304,23 +303,6 @@ begin
   finally
     IniFile.Free;
   end;
-end;
-
-procedure RenameShortcutOnDesktop(const OldFileName, FileName: String);
-{$IFDEF MSWINDOWS}
-var
-  PIDL        : PItemIDList;
-  DesktopPath : array[0..MAX_PATH] of Char;
-  sDesktopPath : string;
-{$ENDIF}
-begin
-  //TODO: Better remove and create (more simpler in cross platform)
-  {$IFDEF MSWINDOWS}
-  SHGetSpecialFolderLocation(0, CSIDL_DESKTOPDIRECTORY, PIDL);
-  SHGetPathFromIDListW(PIDL, DesktopPath);
-  sDesktopPath := DesktopPath;
-  RenameFile(sDesktopPath + PathDelim + OldFileName,sDesktopPath + PathDelim + FileName);
-  {$ENDIF}
 end;
 
 end.

@@ -434,7 +434,6 @@ end;
 
 Function GetHotKeyCode(KeyCode: Integer) : Integer;
 begin
-  //TODO: Rewrite this code
   Result := 0;
   case KeyCode of
     0: Result := VK_A;

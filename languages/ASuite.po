@@ -330,6 +330,10 @@ msgstr ""
 msgid "Save completed"
 msgstr ""
 
+#: kernel.resourcestrings.msgscanfolderextnotvalid
+msgid "Ext file not valid. Please check it and retry!"
+msgstr ""
+
 #: kernel.resourcestrings.msgscanningcancel
 msgctxt "kernel.resourcestrings.msgscanningcancel"
 msgid "Cancel"
@@ -365,6 +369,10 @@ msgstr ""
 
 #: kernel.resourcestrings.msgusetriggersensors
 msgid "Active Sensors for %s"
+msgstr ""
+
+#: tdmtraymenu.action1.caption
+msgid "actCategory"
 msgstr ""
 
 #: tfrmabout.caption
@@ -674,11 +682,6 @@ msgstr ""
 
 #: tfrmgeneraloptionspage.grplanguage.caption
 msgid "Language"
-msgstr ""
-
-#: tfrmgeneraloptionspage.grptheme.caption
-msgctxt "tfrmgeneraloptionspage.grptheme.caption"
-msgid "Theme"
 msgstr ""
 
 #: tfrmgeneraloptionspage.lbactiononexe.caption
@@ -1365,5 +1368,17 @@ msgstr ""
 
 #: tfrmtrayiconoptionspage.lbtrayrightclick.caption
 msgid "Right click"
+msgstr ""
+
+#: tfrmuilogin.lblinfo.caption
+msgid "Please insert username and password"
+msgstr ""
+
+#: tfrmuilogin.lblpassword.caption
+msgid "&Password"
+msgstr ""
+
+#: tfrmuilogin.lblusername.caption
+msgid "&User Name"
 msgstr ""
 

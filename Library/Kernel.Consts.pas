@@ -52,7 +52,8 @@ const
   EXT_EXE       = '.exe';
   EXT_PO        = '.po';
 
-  EXT_PATH_MASK = '*';
+  EXT_PATH_MASK = '*';    
+  EXT_PATH_DOT = '.';
 
   //File
   DEBUG_FILE    = 'Debug.txt';

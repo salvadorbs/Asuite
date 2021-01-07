@@ -96,6 +96,7 @@ type
     procedure SearchEnd(ATotalFiles: Integer; ATime: Cardinal);
     procedure SetupThreadFinder;
     procedure ThreadTerminate(Sender: TObject);
+    function FindNodeByText(AListView: TVirtualStringTree; AText: String): PVirtualNode;
   public
     { Public declarations }
     class procedure Execute(AOwner: TComponent);
@@ -109,7 +110,8 @@ implementation
 uses
   AppConfig.Main, Kernel.Types, {$IFDEF MSWINDOWS} ShellApi,  {$ENDIF}Kernel.Logger, Kernel.Consts,
   DataModules.Icons, NodeDataTypes.Base, VirtualTree.Methods, Kernel.Enumerations,
-  Utility.FileFolder, NodeDataTypes.Files, Utility.Misc, Kernel.ResourceStrings;
+  Utility.FileFolder, NodeDataTypes.Files, Utility.Misc, Kernel.ResourceStrings,
+  RegExpr;
 
 {$R *.lfm}
 
@@ -189,13 +191,25 @@ end;
 procedure TfrmScanFolder.btnTypesAddClick(Sender: TObject);
 var
   str: string;
+  RegexObj: TRegExpr;
 begin
-  //TODO lazarus: Use regexp to validate the entry (only allowed ".ext")
-  if edtTypes.Text <> '' then
-  begin
+  RegexObj := TRegExpr.Create('^\.[a-zA-Z0-9]+$');
+  try
     str := LowerCase(edtTypes.Text);
-    AddItem(vstTypes, str);
-    edtTypes.Clear;
+
+    //Try add the dot, if user not insert it
+    if str[1] <> EXT_PATH_DOT then
+      str := EXT_PATH_DOT + str;
+
+    if RegexObj.Exec(str) then
+    begin
+      AddItem(vstTypes, str);
+      edtTypes.Clear;
+    end
+    else
+      ShowMessageEx(msgScanFolderExtNotValid, True);
+  finally
+    RegexObj.Free;
   end;
 end;
 
@@ -260,6 +274,11 @@ begin
       AText := EXT_PATH_MASK + AText;
   end;
   }
+
+  //Exit if found a node with same text
+  if Assigned(FindNodeByText(AListView, AText)) then
+    Exit;
+                    
   //Add item in ListView
   Node := AListView.AddChild(nil);
   NodeData := AListView.GetNodeData(Node);
@@ -380,6 +399,25 @@ end;
 procedure TfrmScanFolder.ThreadTerminate(Sender: TObject);
 begin
   FThreadFindFiles := nil;
+end;
+
+function TfrmScanFolder.FindNodeByText(AListView: TVirtualStringTree;
+  AText: String): PVirtualNode;
+var
+  Node: PVirtualNode;
+  NodeData: pScanFolderData;
+begin
+  Result := nil;
+
+  Node := AListView.GetFirst;
+  while Assigned(Node) and not Assigned(Result) do
+  begin
+    NodeData := AListView.GetNodeData(Node);
+    if LowerCase(NodeData.Text) = LowerCase(AText) then
+      Result := Node;
+
+    Node := AListView.GetNext(Node);
+  end;
 end;
 
 procedure TfrmScanFolder.PopulateStringList(AListView: TVirtualStringTree; AStringList: TStringList);
