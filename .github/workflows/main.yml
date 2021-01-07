@@ -14,86 +14,118 @@ on:
       - develop
       - releases/*
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
-    runs-on: ${{ matrix.operating-system }}
+    name: ${{ matrix.config.name }}
+    
+    runs-on: ${{ matrix.config.os }}
+    
+    defaults:
+      run:
+        shell: bash
+        
     strategy:
+      fail-fast: false
       matrix:
-        operating-system: [windows-latest]
-        lazarus-versions: [dist]
-        lazarus-packages: ["JPLib,JPPack,MORMot,HashLib,uniqueinstance,VirtualTreeView V5,LCLExtensions,KControls,BGRABitmap,BGRAControls,ASuiteComps"]
+        config:
+
+          - os: windows-latest
+            name: 'Windows 64'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/1.8.2g/fpclazup-x86_64-win64.exe'
+            fpcup-opt: ''
+            fpc-url: 'https://svn.freepascal.org/svn/fpc/tags/release_3_2_0'
+            laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_0_10/'
+            #lazpatch: '${{ github.workspace}}/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
+            laz-dir: 'fpcLaz'
+            lazbuild: 'fpcLaz/lazarus/lazbuild.exe'
+            build-mode: 'Debug'
+            binary: 'ASuite.exe'
+
+          - os: ubuntu-latest
+            name: 'Linux 64'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/1.8.2g/fpclazup-x86_64-linux'
+            fpcup-opt: ''
+            fpc-url: 'https://svn.freepascal.org/svn/fpc/tags/release_3_2_0'
+            laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_0_10/'
+            #lazpatch: '${{ github.workspace}}/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
+            laz-dir: 'fpcLaz'
+            lazbuild: 'fpcLaz/lazarus/lazbuild'
+            build-mode: 'Linux Debug'
+            binary: 'ASuite'
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
       with:
-        submodules: 'recursive'
+        submodules: true
+        
+    - name: Install Dependencies (Ubuntu)
+      if: matrix.config.os == 'ubuntu-latest'
+      run: |
+        sudo apt-get update
+        sudo apt-get -m -y install libgtk2.0-dev libpango1.0-dev libffi-dev libxtst-dev xvfb libqt5pas-dev libqt5pas1
+        Xvfb :1 &
 
     - name: Generate Cache Hash
-      run: echo os=${{ matrix.operating-system }}-laz=${{ matrix.lazarus-versions }}-pkg=${{ matrix.lazarus-packages }} > cache
-      
+      run: echo "${{ matrix.config.fpcup-url }}${{ matrix.config.fpcup-opt }}${{ matrix.config.fpc-url }}${{ matrix.config.laz-url }}${{ matrix.config.name }}" > .cache
+
     - name: Cache
       id: cache
-      uses: actions/cache@v2.1.1
+      uses: actions/cache@v2.1.3
       env:
-        cache-name: cache-laz-v0.2
+        cache-name: cache-laz-v0.1
       with:
-        # A list of files, directories, and wildcard patterns to cache and restore
-        path: ${{ runner.temp }}\lazarus
-        # An explicit key for restoring and saving the cache
-        key: ${{ runner.os }}-build64bit-${{ env.cache-name }}-${{ hashFiles('cache') }}
+        path: lazarus
+        key: ${{ runner.os }}-${{ hashFiles('.cache') }}      
 
-    # Runs a single command using the runners shell
     - name: Install Lazarus
       if: steps.cache.outputs.cache-hit != 'true'
-      uses: salvadorbs/setup-lazarus@master
-      env:
-        ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true' #fixed error 
-      with:
-        lazarus-version: ${{ matrix.lazarus-versions }}
-        include-packages-opm: ${{ matrix.lazarus-packages }}
-        include-packages-local: "${{ github.workspace}}/3p/ASuiteComps/ASuiteComps.lpk"
-
-    - name: Download sqlite3fpc.7z (static sqlite3 library)
-      if: steps.cache.outputs.cache-hit != 'true'
-      uses: carlosperate/download-file-action@v1.0.3
-      with:
-        file-url: 'http://synopse.info/files/sqlite3fpc.7z'
-        file-name: 'sqlite3fpc.7z'
-        location: '${{ runner.temp }}/lazarus/Packages/mormot/'
-   
-    - name: Remove Sparta_Generics from jpLib.lpk
       run: |
-        $file = gi ${{ runner.temp }}/lazarus/Packages/JPLib/packages/Lazarus/jplib.lpk
-        [xml]$xml=Get-Content -Path $file
-        $node=$xml.SelectSingleNode('CONFIG/Package/RequiredPkgs/Item1')
-        $node.ParentNode.RemoveChild($node)
-        $xml.Save($file.Fullname)
-
+        curl --retry 5 -L -o fpcup ${{ matrix.config.fpcup-url }}
+        chmod +x fpcup
+        mkdir ${{ matrix.config.laz-dir }}
+        ./fpcup --installdir=${{ matrix.config.laz-dir }} --fpcURL=${{ matrix.config.fpc-url }} --lazURL=${{ matrix.config.laz-url }} ${{ matrix.config.fpcup-opt }} --only=docker --noconfirm --verbose
    
-    - name: Extract sqlite3fpc.7z in mORMot
+    - name: Remove Sparta_Generics from jpLib.lpk requirements
+      uses: Amadevus/pwsh-script@v2
       if: steps.cache.outputs.cache-hit != 'true'
-      uses: DuckSoft/extract-7z-action@v1.0
       with:
-        pathSource: '${{ runner.temp }}/lazarus/Packages/mormot/sqlite3fpc.7z' 
-        pathTarget: '${{ runner.temp }}/lazarus/Packages/mormot/'
+        script: |
+          $file = gi ${{ github.workspace }}/3p/JPLib/packages/Lazarus/jplib.lpk
+          [xml]$xml=Get-Content -Path $file
+          $node=$xml.SelectSingleNode('CONFIG/Package/RequiredPkgs/Item1')
+          $node.ParentNode.RemoveChild($node)
+          $xml.Save($file.Fullname)
+      
+    - name: Install packages
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: |
+        ${{ matrix.config.lazbuild }} --add-package-link "${{ github.workspace }}/3p/bgrabitmap/bgrabitmap/bgrabitmappack.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/bgrabitmap/bglcontrols/bglcontrols.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/bgracontrols/bgracontrols.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/bgracontrols/bgrapascalscriptcomponent.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/JPLib/packages/Lazarus/jplib.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/JPPack/packages/Lazarus/jppacklcl.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package-link "${{ github.workspace }}/3p/mORMot/Packages/mormot_base.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package-link "${{ github.workspace }}/3p/mORMot/Packages/mormot_cross.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package-link "${{ github.workspace }}/3p/HashLib4Pascal/HashLib/src/Packages/FPC/HashLib4PascalPackage.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/luipack/uniqueinstance/uniqueinstance_package.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package-link "${{ github.workspace }}/3p/luipack/lclextensions/lclextensions_package.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/VirtualTreeView-Lazarus/Source/virtualtreeview_package.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/KControls/packages/kcontrols/kcontrolsbase.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/KControls/packages/kcontrols/kcontrolslaz.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/AsuiteComps/ASuiteComps.lpk" --skip-dependencies
 
     - name: Validate Cache
       if: steps.cache.outputs.cache-hit == 'true'
-      run: ${{ runner.temp }}\lazarus\lazbuild.exe --version && echo "::set-output name=success::true" || echo "::set-output name=success::false"
+      run: ${{ matrix.config.lazbuild }} --version && echo "::set-output name=success::true" || echo "::set-output name=success::false"
 
     - name: Build ASuite (Debug Mode)
-      run: ${{ runner.temp }}\lazarus\lazbuild.exe "${{ github.workspace}}/ASuite.lpi" --no-write-project --build-mode=debug --primary-config-path=${{ runner.temp }}\lazarus\config
+      run: ${{ matrix.config.lazbuild }} "${{ github.workspace }}/ASuite.lpi" --no-write-project --build-mode="${{ matrix.config.build-mode }}"
 
     - name: Upload the Build Artifact
       uses: actions/upload-artifact@v2.1.4
       with:
-        # Artifact name
-        name: ASuite build
-        # A file, directory or wildcard pattern that describes what to upload
-        path: ${{ github.workspace}}\bin
-        # The desired behavior if no files are found using the provided path.
+        name: ASuite ${{ matrix.config.build-mode }} build ${{ runner.os }} 
+        path: ${{ github.workspace}}/bin
