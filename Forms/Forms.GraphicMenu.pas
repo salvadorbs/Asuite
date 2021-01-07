@@ -244,9 +244,15 @@ var
   sPath: string;
 begin
   sPath := Config.Paths.RelativeToAbsolute(FolderPath);
-  ErrorCode := OpenDocument(PChar(sPath));
+
+  {$IFDEF MSWINDOWS}
+  ErrorCode := ShellExecuteW(GetDesktopWindow, 'open', PChar(sPath), PChar(''), PChar(sPath), SW_SHOWDEFAULT) <= 32;
+  {$ELSE}
+  //TODO: Add linux method
+  {$ENDIF}
+
   if ErrorCode then
-    ShowMessageFmtEx(msgErrGeneric, ['', SysErrorMessage(GetLastOSError)], True);
+    ShowMessageFmtEx(msgErrGeneric, ['OpenFolder()', SysErrorMessage(GetLastOSError)], True);
 end;
 
 procedure TfrmGraphicMenu.FormCreate(Sender: TObject);

@@ -46,7 +46,7 @@ implementation
 
 uses
   Utility.Conversions, Forms.Main, AppConfig.Main, Utility.Misc, Kernel.Logger,
-  VirtualTree.Methods, LazFileUtils;
+  VirtualTree.Methods, LazFileUtils, ShellApi;
 
 function HasDriveLetter(const Path: String): Boolean;
 var P: PChar;
@@ -106,24 +106,30 @@ begin
 end;
 
 procedure EjectDialog(Sender: TObject);
+{$IFDEF MSWINDOWS}
 var
   WindowsPath : string;
   bShellExecute: Boolean;
+{$ENDIF}
 begin
-  //TODO: Add Linux method
+  {$IFDEF MSWINDOWS}
 
   //Call "Safe Remove hardware" Dialog
   WindowsPath := SysUtils.GetEnvironmentVariable('WinDir');
   if FileExists(PChar(WindowsPath + '\System32\Rundll32.exe')) then
   begin
     TASuiteLogger.Info('Call Eject Dialog', []);
-    bShellExecute :=  OpenDocument(PChar(WindowsPath + '\System32\Rundll32.exe'));
+    bShellExecute := ShellExecuteW(0,'open',
+                     PChar(WindowsPath + '\System32\Rundll32.exe'),
+                     PChar('Shell32,Control_RunDLL hotplug.dll'),
+                     PChar(WindowsPath + '\System32'),SW_SHOWNORMAL) > 32;
     //Error message
     if not bShellExecute then
       ShowMessageEx(Format('%s [%s]', [SysErrorMessage(GetLastOSError), 'Rundll32']), True);
   end;
   //Close ASuite
   frmMain.miExitClick(Sender);
+  {$ENDIF}
 end;
 
 function ExtractDirectoryName(const Filename: string): string;

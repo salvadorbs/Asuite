@@ -146,7 +146,13 @@ begin
       Exit;
 
   //Execute
-  Result :=  OpenDocument(PChar(PathAbsoluteFile));
+  {$IFDEF MSWINDOWS}
+  Result := ShellExecute(GetDesktopWindow, nil, PChar(PathAbsoluteFile),
+                         PChar(Config.Paths.RelativeToAbsolute(FParameters)),
+                         PChar(GetWorkingDir), GetWindowState(ARunFromCategory)) > 32;
+  {$ELSE}
+  //TODO: Add linux method
+  {$ENDIF}
 
   //TODO lazarus: GetLastOSError doesn't work
   //Error message
@@ -328,8 +334,14 @@ end;
 function TvFileNodeData.ExplorePath: Boolean;
 begin
   Result := False;
+  {$IFDEF MSWINDOWS}
   if Not(IsValidURLProtocol(Self.PathAbsoluteFile)) then
-    Result :=  OpenDocument(PChar(ExtractFileDir(Self.PathAbsoluteFile)));
+    Result := ShellExecute(GetDesktopWindow, 'open',
+                           PChar(ExtractFileDir(Self.PathAbsoluteFile)),
+                           nil, nil, SW_NORMAL) > 32;
+  {$ELSE}
+  //TODO: Add linux method
+  {$ENDIF}
 end;
 
 procedure TvFileNodeData.SetPathFile(value:string);
