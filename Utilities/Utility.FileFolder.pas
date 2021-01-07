@@ -32,7 +32,7 @@ procedure RenameShortcutOnDesktop(const OldFileName, FileName: String);
 implementation
 
 uses
-  AppConfig.Main, IniFiles, FCRC32, FileInfo;
+  AppConfig.Main, IniFiles, FCRC32, FileInfo{$IFDEF UNIX}, LazFileUtils, BaseUnix{$ENDIF};
 
 function BrowseForFolder(const InitialDir: String; const Caption: String): String;
 var
@@ -231,33 +231,29 @@ end;
 {$IFDEF UNIX}
 procedure CreateShortcutOnDesktop(const FileName, TargetFilePath, Params, WorkingDir: String);
 begin
-  //TODO: Shortcut (symbolic link with RunCommand? or https://www.freepascal.org/docs-html/rtl/baseunix/fplink.html ?)
-  //https://www.heatware.net/linux-unix/symlinks-symbolic-remove-create-delete/
+  fpSymlink(TargetFilePath, AppendPathDelim(GetUserDir + 'Desktop') + Filename);
 end;
 {$ENDIF UNIX}
 {$ENDIF MSWINDOWS}
 
-{$IFDEF MSWINDOWS}
 procedure DeleteShortcutOnDesktop(const FileName: String);
 var
+  {$IFDEF MSWINDOWS}
   PIDL        : PItemIDList;
+  {$ENDIF}
   DesktopPath : array[0..MAX_PATH] of Char;
   LinkName    : String;
 begin
+  {$IFDEF MSWINDOWS}
   SHGetSpecialFolderLocation(0, CSIDL_DESKTOPDIRECTORY, PIDL);
   SHGetPathFromIDListW(PIDL, DesktopPath);
+  {$ELSE}
+  DesktopPath := AppendPathDelim(GetUserDir + 'Desktop');
+  {$ENDIF}
   LinkName := PChar(AppendPathDelim(DesktopPath) + FileName);
   if (FileExists(LinkName)) then
     SysUtils.DeleteFile(LinkName);
 end;
-{$ELSE}
-{$IFDEF UNIX}
-procedure DeleteShortcutOnDesktop(const FileName: String);
-begin
-  //TODO: See above
-end;
-{$ENDIF UNIX}
-{$ENDIF}
 
 {$IFDEF MSWINDOWS}
 function GetShortcutTarget(const LinkFileName: String; ShortcutType: TShortcutField):String;
@@ -267,9 +263,7 @@ var
   WidePath  : PChar;
   Info      : Array[0..MAX_PATH] of Char;
   wfs       : WIN32_FIND_DATAW;
-{$ENDIF}
 begin
-  {$IFDEF MSWINDOWS}
 CoCreateInstance(CLSID_ShellLink, nil, CLSCTX_INPROC_SERVER, IShellLinkW, ISLink);
   if ISLink.QueryInterface(IPersistFile, IPFile) = 0 then
   begin
@@ -290,7 +284,7 @@ end;
 {$IFDEF UNIX}
 function GetShortcutTarget(const LinkFileName: String; ShortcutType: TShortcutField):String;
 begin
-  //TODO: See https://www.freepascal.org/docs-html/rtl/baseunix/fpreadlink.html
+  Result := ReadAllLinks(LinkFileName, False);
 end;
 {$ENDIF UNIX}
 {$ENDIF}
