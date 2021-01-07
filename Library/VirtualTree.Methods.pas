@@ -197,8 +197,10 @@ begin
   begin
     //Shortcut
     NodeData.PathFile   := Config.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfPathFile));
+    {$IFDEF MSWINDOWS}
     NodeData.Parameters := Config.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfParameter));
     NodeData.WorkingDir := Config.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfWorkingDir));
+    {$ENDIF}
   end
   else begin
     if LowerCase(ExtractFileExt(APathFile)) = EXT_URL then
