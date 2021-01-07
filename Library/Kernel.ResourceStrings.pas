@@ -115,7 +115,8 @@ resourcestring
   msgHotkeyNoKey = 'You haven''t select any keys!';
   msgHotkeyNotAvailable = 'This hotkey is being used already by another software or system itself. Please choose another one.';
   msgCancel = 'Cancel';
-  msgStop = 'Stop';
+  msgStop = 'Stop';             
+  msgScanFolderExtNotValid = 'Ext file not valid. Please check it and retry!';
 
   implementation
 

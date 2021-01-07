@@ -214,6 +214,9 @@ var
   XMLDoc   : TXMLDocument;
 begin
   TASuiteLogger.Enter('PopulateTree', Self);
+
+  XMLDoc := nil;
+
   vstListImp.BeginUpdate;
   try
     vstListImp.Clear;
@@ -248,7 +251,8 @@ begin
       end;
   finally
     vstListImp.EndUpdate;
-    XMLDoc.Free;
+    if Assigned(XMLDoc) then
+      XMLDoc.Free;
   end;
 end;
 
@@ -272,7 +276,6 @@ var
       //Copy from NodeDataImp
       NodeData.Copy(NodeDataImp);
       //Set some properties
-      RenameShortcutOnDesktop(NodeData.Name + EXT_LNK, NodeDataImp.Name + EXT_LNK);
       NodeData.Name     := NodeDataImp.Name;
       NodeData.Position := tn.Index;
     end;

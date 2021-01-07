@@ -46,6 +46,7 @@ type
     procedure Add(const AKey: String; const AValue: String);
 
     function ExpandVars(const Str: string): string;
+    function DeExpandVars(const APath: string; AKey: String): string;
 
     property RegExp: String read FRegExp write FRegExp;
   end;
@@ -130,6 +131,11 @@ begin
   finally
     RegexObj.Free;
   end;
+end;
+
+function TPathVars.DeExpandVars(const APath: string; AKey: String): string;
+begin
+  Result := StringReplace(APath, KeyToValue(AKey), AnsiQuotedStr(LowerCase(AKey), '%'), [rfIgnoreCase, rfReplaceAll]);
 end;
 
 end.

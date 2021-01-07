@@ -37,6 +37,7 @@ type
     FSuiteFileName       : String;
     FSuiteDrive          : String;
     FSuitePathData       : String;
+    FSuitePathSettings: String;
     FSuitePathWorking    : String;
     FSuitePathLocale     : String;
     FSuitePathCache      : String;
@@ -47,6 +48,7 @@ type
     FEnvironmentVars : TPathVars;
     FASuiteVars      : TPathVars;
 
+    function DeQuotedStr(AVar: AnsiString): AnsiString;
     procedure SetSuitePathCurrentTheme(AValue: String);
     procedure UpdateEnvironmentVars;
     procedure UpdateASuiteVars;
@@ -63,7 +65,8 @@ type
     procedure RemoveCacheFolders;
     procedure UpdatePathVariables;
 
-    property SuitePathList: String read FSuitePathList write FSuitePathList;
+    property SuitePathList: String read FSuitePathList write FSuitePathList;     
+    property SuitePathSettings: String read FSuitePathSettings write FSuitePathSettings;
     property SuiteFullFileName: String read FSuiteFullFileName write FSuiteFullFileName;
     property SuiteFileName: String read FSuiteFileName write FSuiteFileName;
     property SuiteDrive: String read FSuiteDrive write FSuiteDrive;
@@ -92,18 +95,17 @@ var
 begin
   sPath := APath;
 
-  //TODO: Use FAsuiteVars, instead
   //Const %FolderIcon%
-  sPath  := StringReplace(sPath, AppendPathDelim(FSuitePathCurrentTheme + ICONS_DIR) + FILEICON_Folder + EXT_ICO, CONST_PATH_FOLDERICON, [rfIgnoreCase, rfReplaceAll]);
+  sPath := FASuiteVars.DeExpandVars(sPath, DeQuotedStr(CONST_PATH_FOLDERICON));
 
   //Const %UrlIcon%
-  sPath  := StringReplace(sPath, AppendPathDelim(FSuitePathCurrentTheme + ICONS_DIR) + FILEICON_Url + EXT_ICO, CONST_PATH_URLICON, [rfIgnoreCase, rfReplaceAll]);
+  sPath := FASuiteVars.DeExpandVars(sPath, DeQuotedStr(CONST_PATH_URLICON));
 
   //Const $ASuite
-  sPath  := StringReplace(sPath, ExcludeTrailingPathDelimiter(SuitePathWorking), CONST_PATH_ASuite, [rfIgnoreCase, rfReplaceAll]);
+  sPath := FASuiteVars.DeExpandVars(sPath, DeQuotedStr(CONST_PATH_ASuite));
 
   //Const $Drive
-  sPath  := StringReplace(sPath, SUITEDRIVE, CONST_PATH_DRIVE, [rfIgnoreCase, rfReplaceAll]);
+  sPath := FASuiteVars.DeExpandVars(sPath, DeQuotedStr(CONST_PATH_DRIVE));
 
   Result := sPath;
 end;
@@ -149,17 +151,16 @@ begin
   UpdatePathVariables;
 end;
 
+//Workaround for const string
+function TConfigPaths.DeQuotedStr(AVar: AnsiString): AnsiString;
+begin
+  Result := UpperCase(AVar);
+  Result := AnsiDequotedStr(Result, '%');
+end;
+
 procedure TConfigPaths.UpdateASuiteVars;
 var
   strFolderIcon: AnsiString;
-
-  //Workaround for const string
-  function DeQuotedStr(AVar: AnsiString): AnsiString;
-  begin
-    Result := UpperCase(AVar);
-    Result := AnsiDequotedStr(Result, '%');
-  end;
-
 begin
   FASuiteVars.Clear;
 
@@ -186,6 +187,7 @@ begin
   FSuiteDrive        := LowerCase(ExtractFileDrive(FSuiteFullFileName));
   FSuitePathWorking  := ExtractFilePath(FSuiteFullFileName);
   SetCurrentDir(FSuitePathWorking);
+  //TODO: Review structure folder - SetCurrentDir(FSuitePathWorking) is correct?
   if Not(IsDirectoryWritable(FSuitePathWorking)) then
   begin
     FSuitePathData := GetAppConfigDir(True);
@@ -202,6 +204,8 @@ begin
   FSuitePathList := FSuitePathData + 'asuite.xml';
   if not FileExists(FSuitePathList) then
     FSuitePathList := FSuitePathData + ChangeFileExt(FSuiteFileName, EXT_SQL);
+
+  FSuitePathSettings := FSuitePathData + SETTINGS_FILENAME;
 
   //Path variables
   {$IFDEF MSWINDOWS}
@@ -261,13 +265,11 @@ begin
     //Replace ASuite variables
     sPath := FASuiteVars.ExpandVars(sPath);
 
-    //TODO: Maybe FTL has a similar functions to do this in cross platform style
-    //Remove double slash (\)
-    if Pos('\\', sPath) <> 1 then
-      sPath := StringReplace(sPath, '\\', PathDelim, [rfIgnoreCase,rfReplaceAll]);
-
     //Replace environment variable
     sPath := FEnvironmentVars.ExpandVars(sPath);
+                                                                                
+    //Remove double path delimiter and resolve dots
+    sPath := TrimFilename(sPath);
 
     //If sPath exists, expand it in absolute path (to avoid the "..")
     if (FileExists(sPath) or SysUtils.DirectoryExists(sPath)) and (Length(sPath) <> 2) then

@@ -96,7 +96,6 @@ end;
 
 procedure TfrmDialogBase.btnApplyClick(Sender: TObject);
 begin
-  //TODO: Remove it and button apply (useless)
   //If IterateSubtree returns a value, something is wrong
   if Not Assigned(vstCategory.IterateSubtree(nil, SaveNodeData, nil)) then
     InternalSaveData;
