@@ -140,7 +140,7 @@ uses
   DataModules.Icons, Forms.Main, AppConfig.Main, VirtualTree.Methods,
   Utility.System, Forms.GraphicMenu, Kernel.Types, NodeDataTypes.Files,
   NodeDataTypes.Custom, NodeDataTypes.Base, Kernel.Consts, Kernel.Logger,
-  Utility.Misc, Utility.FileFolder, Kernel.ResourceStrings;
+  Utility.Misc, Utility.FileFolder, Kernel.ResourceStrings{$IFDEF MSWINDOWS} , ShellApi, Windows {$ENDIF};
 
 {$R *.lfm}
 
@@ -836,7 +836,12 @@ end;
 
 procedure TdmTrayMenu.OpenFile(Sender: TObject);
 begin
-   OpenDocument(PChar(TASMenuItem(Sender).Path));
+  {$IFDEF MSWINDOWS}
+  ShellExecuteW(GetDesktopWindow, nil, PChar(TASMenuItem(Sender).Path), nil,
+               PChar(ExtractFileDir(TASMenuItem(Sender).Path)), SW_SHOW);
+  {$ELSE}
+  //TODO: Add linux method - Maybe OpenDocument(PChar(TASMenuItem(Sender).Path));
+  {$ENDIF}
 end;
 
 end.
