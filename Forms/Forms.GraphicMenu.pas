@@ -76,7 +76,6 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure imgLogoMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
-    procedure pmWindowClose(Sender: TObject);
     procedure tmrFaderTimer(Sender: TObject);
     procedure imgLogoMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
@@ -101,8 +100,6 @@ type
     procedure tmrCheckItemsTimer(Sender: TObject);
     procedure FormHide(Sender: TObject);
     procedure mniRunClick(Sender: TObject);
-    procedure vstListHotChange(Sender: TBaseVirtualTree; OldNode,
-      NewNode: PVirtualNode);
   private
     { Private declarations }
     FOpening : Boolean;
@@ -133,7 +130,8 @@ uses
   Forms.Main, Utility.System, Kernel.Consts, AppConfig.Main, DataModules.Icons,
   Forms.About, NodeDataTypes.Base, Kernel.Enumerations, Forms.Options,
   Utility.Misc, VirtualTree.Events, VirtualTree.Methods, Kernel.Types,
-  NodeDataTypes.Custom, GraphicMenu.ThemeEngine, Kernel.ResourceStrings;
+  NodeDataTypes.Custom, GraphicMenu.ThemeEngine, Kernel.ResourceStrings
+  {$IFDEF MSWINDOWS} , ShellApi, Windows {$ENDIF};
 
 procedure TfrmGraphicMenu.ApplicationEvents1Deactivate(Sender: TObject);
 begin
@@ -160,10 +158,10 @@ begin
       frmMain.DoSearchItem(vstList, edtSearch.Text, stName);
       vstList.SortTree(-1, sdAscending);
 
-      //Select node
+      //Set first node as HotNode
       Node := vstList.GetFirst;
       if Assigned(Node) then
-        vstList.Selected[Node] := True;
+        vstList.HotNode := Node;
     end
     else begin
       edtSearch.RightButton.ImageIndex := TThemeEngine.Create.SearchIcon;
@@ -317,11 +315,6 @@ begin
   end;
 end;
 
-procedure TfrmGraphicMenu.pmWindowClose(Sender: TObject);
-begin
-  vstList.ClearSelection;
-end;
-
 procedure TfrmGraphicMenu.FormDeactivate(Sender: TObject);
 begin
   //if menu lost its focus, it hide
@@ -341,19 +334,19 @@ var
   CurrentNode: PVirtualNode;
   NodeData: TvBaseNodeData;
 begin
-  CurrentNode := vstList.GetFirstSelected();
+  CurrentNode := vstList.HotNode;
   case Ord(Key) of
     VK_UP:
       begin
         Key := 0;
-        CurrentNode := vstList.GetPreviousVisible(vstList.GetFirstSelected());
+        CurrentNode := vstList.GetPreviousVisible(vstList.HotNode);
         if Not Assigned(CurrentNode) then
           CurrentNode := vstList.GetLast;
       end;
     VK_DOWN:
       begin
         Key := 0;
-        CurrentNode := vstList.GetNextVisible(vstList.GetFirstSelected());
+        CurrentNode := vstList.GetNextVisible(vstList.HotNode);
         if Not Assigned(CurrentNode) then
           CurrentNode := vstList.GetFirst;
       end;
@@ -391,7 +384,7 @@ begin
   end;
 
   if Assigned(CurrentNode) then
-    vstList.Selected[CurrentNode] := True;
+    vstList.HotNode := CurrentNode;
 end;
 
 procedure TfrmGraphicMenu.FormKeyPress(Sender: TObject; var Key: Char);
@@ -460,13 +453,6 @@ end;
 procedure TfrmGraphicMenu.mniRunClick(Sender: TObject);
 begin
   TVirtualTreeMethods.Create.ExecuteSelectedNodes(vstList, TRunMode(TMenuItem(Sender).Tag), False);
-end;
-
-procedure TfrmGraphicMenu.vstListHotChange(Sender: TBaseVirtualTree; OldNode,
-  NewNode: PVirtualNode);
-begin
-  if Assigned(vstList.GetFirstSelected()) then
-    vstList.ClearSelection;
 end;
 
 procedure TfrmGraphicMenu.OpenRightButton(Sender: TObject);

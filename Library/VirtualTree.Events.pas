@@ -173,7 +173,10 @@ begin
   if Assigned(HitInfo.HitNode) then
   begin
     NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Tree.GetFirstSelected, Tree);
-    if NodeData.DataType = vtdtCategory then
+    if Not(Assigned(NodeData)) then
+      Exit;
+
+    if Assigned(NodeData) and (NodeData.DataType = vtdtCategory) then
     begin
       Tree.Expanded[Tree.GetFirstSelected] := Not(Tree.Expanded[Tree.GetFirstSelected]);
       FGraphicMenu.FocusControl(FGraphicMenu.edtSearch);
