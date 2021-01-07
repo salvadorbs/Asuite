@@ -1,0 +1,71 @@
+From 4e952ae17601b8195b48a14c754a7d0d9b7d8318 Mon Sep 17 00:00:00 2001
+From: Matteo Salvi <salvadorbs@gmail.com>
+Date: Thu, 7 Jan 2021 18:26:34 +0100
+Subject: [PATCH] Added SetCurrentHotNode
+
+---
+ Source/VirtualTrees.pas | 34 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 33 insertions(+), 1 deletion(-)
+
+diff --git a/Source/VirtualTrees.pas b/Source/VirtualTrees.pas
+index 0d48b14..bb2adf7 100644
+--- a/Source/VirtualTrees.pas
++++ b/Source/VirtualTrees.pas
+@@ -2475,6 +2475,7 @@ type
+     procedure SetChildCount(Node: PVirtualNode; NewChildCount: Cardinal);
+     procedure SetClipboardFormats(const Value: TClipboardFormats);
+     procedure SetColors(const Value: TVTColors);
++    procedure SetCurrentHotNode(const Value: PVirtualNode);
+     procedure SetCustomCheckImages(const Value: TCustomImageList);
+     procedure SetDefaultNodeHeight(Value: Cardinal);
+     procedure SetDisabled(Node: PVirtualNode; Value: Boolean);
+@@ -3283,7 +3284,7 @@ type
+     property Font;
+     property FullyVisible[Node: PVirtualNode]: Boolean read GetFullyVisible write SetFullyVisible;
+     property HasChildren[Node: PVirtualNode]: Boolean read GetHasChildren write SetHasChildren;
+-    property HotNode: PVirtualNode read FCurrentHotNode;
++    property HotNode: PVirtualNode read FCurrentHotNode write SetCurrentHotNode;
+     property IsDisabled[Node: PVirtualNode]: Boolean read GetDisabled write SetDisabled;
+     property IsEffectivelyFiltered[Node: PVirtualNode]: Boolean read GetEffectivelyFiltered;
+     property IsEffectivelyVisible[Node: PVirtualNode]: Boolean read GetEffectivelyVisible;
+@@ -14824,6 +14825,37 @@ begin
+   FColors.Assign(Value);
+ end;
+ 
++procedure TBaseVirtualTree.SetCurrentHotNode(const Value: PVirtualNode);
++var
++  DoInvalidate: Boolean;
++const
++  MouseButtonDown = [tsLeftButtonDown, tsMiddleButtonDown, tsRightButtonDown];
++begin
++  with Self do begin
++    if FCurrentHotNode <> Value then
++    begin
++      DoInvalidate := (toHotTrack in FOptions.PaintOptions) or
++        (toCheckSupport in FOptions.MiscOptions);
++      DoHotChange(FCurrentHotNode, Value);
++      // Invalidate old FCurrentHotNode
++      if Assigned(FCurrentHotNode) and DoInvalidate then
++        InvalidateNode(FCurrentHotNode);
++      // Set new FCurrentHotNode and invalidate it
++      FCurrentHotNode := Value;
++      if Assigned(FCurrentHotNode) and DoInvalidate then
++        InvalidateNode(FCurrentHotNode);
++      // Scroll view
++      if (FUpdateCount = 0) and
++        not(toDisableAutoscrollOnFocus in FOptions.AutoOptions)
++      then
++        ScrollIntoView(FCurrentHotNode,
++          (toCenterScrollIntoView in FOptions.SelectionOptions)
++          and (MouseButtonDown * FStates = []),
++          not(toFullRowSelect in FOptions.SelectionOptions));
++    end;
++  end;
++end;
++
+ //----------------------------------------------------------------------------------------------------------------------
+ 
+ procedure TBaseVirtualTree.SetCustomCheckImages(const Value: TCustomImageList);
+-- 
+2.18.0.windows.1
+
