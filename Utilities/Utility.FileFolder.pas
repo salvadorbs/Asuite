@@ -31,7 +31,7 @@ function  GetUrlTarget(const AFileName: String; ShortcutType: TShortcutField): S
 implementation
 
 uses
-  AppConfig.Main, IniFiles, FCRC32, FileInfo;
+  AppConfig.Main, IniFiles, FCRC32, FileInfo {$IFDEF UNIX} , BaseUnix {$ENDIF};
 
 function BrowseForFolder(const InitialDir: String; const Caption: String): String;
 var
@@ -230,7 +230,7 @@ end;
 {$IFDEF UNIX}
 procedure CreateShortcutOnDesktop(const FileName, TargetFilePath, Params, WorkingDir: String);
 begin
-  fpSymlink(TargetFilePath, AppendPathDelim(GetUserDir + 'Desktop') + Filename);
+  fpSymlink(PAnsiChar(TargetFilePath), PAnsiChar(AppendPathDelim(GetUserDir + 'Desktop') + Filename));
 end;
 {$ENDIF UNIX}
 {$ENDIF MSWINDOWS}
