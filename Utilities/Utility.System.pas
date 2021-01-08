@@ -46,7 +46,7 @@ implementation
 
 uses
   Utility.Conversions, Forms.Main, AppConfig.Main, Utility.Misc, Kernel.Logger,
-  VirtualTree.Methods, LazFileUtils, ShellApi;
+  VirtualTree.Methods, LazFileUtils{$IFDEF MSWINDOWS} , ShellApi {$ENDIF};
 
 function HasDriveLetter(const Path: String): Boolean;
 var P: PChar;
