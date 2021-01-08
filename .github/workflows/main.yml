@@ -89,7 +89,6 @@ jobs:
    
     - name: Remove Sparta_Generics from jpLib.lpk requirements
       uses: Amadevus/pwsh-script@v2
-      if: steps.cache.outputs.cache-hit != 'true'
       with:
         script: |
           $file = gi ${{ github.workspace }}/3p/JPLib/packages/Lazarus/jplib.lpk
