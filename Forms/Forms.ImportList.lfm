@@ -11,7 +11,7 @@ object frmImportList: TfrmImportList
   OnClose = FormClose
   OnCreate = FormCreate
   Position = poMainFormCenter
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.0.10.0'
   object bvl1: TBevel
     Left = 0
     Height = 2
@@ -95,7 +95,6 @@ object frmImportList: TfrmImportList
     ActivePage = tsList
     Align = alTop
     ParentFont = False
-    Style = tsFlatButtons
     TabIndex = 1
     TabOrder = 1
     object tsAskFileList: TTabSheet

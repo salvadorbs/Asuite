@@ -19,6 +19,7 @@ object frmGraphicMenu: TfrmGraphicMenu
   OnKeyPress = FormKeyPress
   OnMouseWheel = FormMouseWheel
   OnShow = FormShow
+  LCLVersion = '2.0.10.0'
   Scaled = False
   object imgBackground: TImage
     Left = 0
