@@ -70,8 +70,8 @@ jobs:
             build-widgetset: 'gtk3'
             build-os: 'linux'
             binary: 'ASuite'
-
-          - os: ubuntu-latest
+          
+          - os: ubuntu-20.04
             name: 'Linux 64 QT5'
             fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/1.8.2g/fpclazup-x86_64-linux'
             fpcup-opt: ''
@@ -93,11 +93,24 @@ jobs:
         submodules: true
         
     - name: Install Dependencies (Ubuntu)
-      if: matrix.config.os == 'ubuntu-latest'
+      if: matrix.config.os == 'ubuntu-latest' || matrix.config.os == 'ubuntu-20.04'
       run: |
         sudo apt-get update
-        sudo apt-get -m -y install libgtk2.0-dev libpango1.0-dev libffi-dev libxtst-dev xvfb libqt5pas-dev libqt5pas1
+        sudo apt-get -m -y install libgtk2.0-dev libpango1.0-dev libffi-dev libxtst-dev xvfb
         Xvfb :1 &
+        
+    - name: Install Dependencies (Ubuntu - only GTK3)
+      if: (matrix.config.os == 'ubuntu-latest' || matrix.config.os == 'ubuntu-20.04') && matrix.config.build-widgetset == 'gtk3'
+      run: sudo apt-get -m -y install libgtk-3-dev
+        
+    - name: Install Dependencies (Ubuntu - only QT5)
+      if: (matrix.config.os == 'ubuntu-latest' || matrix.config.os == 'ubuntu-20.04') && matrix.config.build-widgetset == 'qt5'
+      run: |
+        sudo apt-get -m -y install libqt5pas-dev libqt5pas1 qt5-qmake qtbase5-dev qt5-default libqt5x11extras5-dev libxcb-keysyms1-dev
+        cd ${{ github.workspace }}/3p/AsuiteComps/library/platform/unix/QGHotkeyHookPas
+        qmake
+        make
+        sudo make install
 
     - name: Generate Cache Hash
       run: echo "${{ matrix.config.fpcup-url }}${{ matrix.config.fpcup-opt }}${{ matrix.config.fpc-url }}${{ matrix.config.laz-url }}${{ matrix.config.name }}" > .cache
@@ -156,7 +169,7 @@ jobs:
       run: ${{ matrix.config.lazbuild }} "${{ github.workspace }}/ASuite.lpi" --no-write-project --build-mode="${{ matrix.config.build-mode }}" --widgetset=${{ matrix.config.build-widgetset }} --operating-system=${{ matrix.config.build-os }}
 
     - name: Upload the Build Artifact
-      uses: actions/upload-artifact@v2.1.4
+      uses: actions/upload-artifact@v2.2.2
       with:
-        name: ASuite ${{ matrix.config.build-mode }} build - ${{ matrix.config.widgetset }}
+        name: ASuite ${{ matrix.config.build-mode }} build - ${{ matrix.config.build-widgetset }}
         path: ${{ github.workspace}}/bin

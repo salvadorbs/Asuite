@@ -2,6 +2,8 @@ program ASuite;
 
 {$MODE Delphi}
 
+{$I ASuite.inc}
+
 uses
   {$IFDEF UseCThreads}
   cthreads,
@@ -77,7 +79,6 @@ uses
   Kernel.Logger in 'Library\Kernel.Logger.pas';
 
 {$R *.res} 
-{$I ASuite.inc}
 
 var
   hash, identifier: string;
