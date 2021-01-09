@@ -39,10 +39,12 @@ jobs:
             laz-dir: 'fpcLaz'
             lazbuild: 'fpcLaz/lazarus/lazbuild.exe'
             build-mode: 'Debug'
+            build-widgetset: 'win32'
+            build-os: 'win64'
             binary: 'ASuite.exe'
 
           - os: ubuntu-latest
-            name: 'Linux 64'
+            name: 'Linux 64 GTK2'
             fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/1.8.2g/fpclazup-x86_64-linux'
             fpcup-opt: ''
             fpc-url: 'https://svn.freepascal.org/svn/fpc/tags/release_3_2_0'
@@ -50,7 +52,37 @@ jobs:
             #lazpatch: '${{ github.workspace}}/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
             laz-dir: 'fpcLaz'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
-            build-mode: 'Linux Debug'
+            build-mode: 'Debug'
+            build-widgetset: 'gtk2'
+            build-os: 'linux'
+            binary: 'ASuite'
+
+          - os: ubuntu-latest
+            name: 'Linux 64 GTK3'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/1.8.2g/fpclazup-x86_64-linux'
+            fpcup-opt: ''
+            fpc-url: 'https://svn.freepascal.org/svn/fpc/tags/release_3_2_0'
+            laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_0_10/'
+            #lazpatch: '${{ github.workspace}}/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
+            laz-dir: 'fpcLaz'
+            lazbuild: 'fpcLaz/lazarus/lazbuild'
+            build-mode: 'Debug'
+            build-widgetset: 'gtk3'
+            build-os: 'linux'
+            binary: 'ASuite'
+
+          - os: ubuntu-latest
+            name: 'Linux 64 QT5'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/1.8.2g/fpclazup-x86_64-linux'
+            fpcup-opt: ''
+            fpc-url: 'https://svn.freepascal.org/svn/fpc/tags/release_3_2_0'
+            laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_0_10/'
+            #lazpatch: '${{ github.workspace}}/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
+            laz-dir: 'fpcLaz'
+            lazbuild: 'fpcLaz/lazarus/lazbuild'
+            build-mode: 'Debug'
+            build-widgetset: 'qt5'
+            build-os: 'linux'
             binary: 'ASuite'
 
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -120,11 +152,11 @@ jobs:
       if: steps.cache.outputs.cache-hit == 'true'
       run: ${{ matrix.config.lazbuild }} --version && echo "::set-output name=success::true" || echo "::set-output name=success::false"
 
-    - name: Build ASuite (Debug Mode)
-      run: ${{ matrix.config.lazbuild }} "${{ github.workspace }}/ASuite.lpi" --no-write-project --build-mode="${{ matrix.config.build-mode }}"
+    - name: Build ASuite (${{ matrix.config.build-mode }})
+      run: ${{ matrix.config.lazbuild }} "${{ github.workspace }}/ASuite.lpi" --no-write-project --build-mode="${{ matrix.config.build-mode }}" --widgetset=${{ matrix.config.build-widgetset }} --operating-system=${{ matrix.config.build-os }}
 
     - name: Upload the Build Artifact
       uses: actions/upload-artifact@v2.1.4
       with:
-        name: ASuite ${{ matrix.config.build-mode }} build ${{ runner.os }} 
+        name: ASuite ${{ matrix.config.build-mode }} build - ${{ matrix.config.widgetset }}
         path: ${{ github.workspace}}/bin
