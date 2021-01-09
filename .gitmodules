@@ -18,7 +18,7 @@
 	url = https://github.com/bgrabitmap/bgrabitmap.git
 [submodule "3p/luipack"]
 	path = 3p/luipack
-	url = https://github.com/blikblum/luipack.git
+	url = https://github.com/salvadorbs/luipack.git
 [submodule "3p/VirtualTreeView-Lazarus"]
 	path = 3p/VirtualTreeView-Lazarus
 	url = https://github.com/salvadorbs/VirtualTreeView-Lazarus.git
