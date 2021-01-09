@@ -1,0 +1,6 @@
+{"version":1,"strings":[
+{"hash":147548670,"name":"tfrmbehaviorpropertypage.grpautoexecute.caption","sourcebytes":[65,117,116,111,114,117,110],"value":"Autorun"},
+{"hash":104411282,"name":"tfrmbehaviorpropertypage.btnchangeorder.caption","sourcebytes":[67,104,97,110,103,101,32,97,117,116,111,114,117,110,32,111,114,100,101,114],"value":"Change autorun order"},
+{"hash":216976613,"name":"tfrmbehaviorpropertypage.grponexecute.caption","sourcebytes":[79,110,32,69,120,101,99,117,116,101],"value":"On Execute"},
+{"hash":213574597,"name":"tfrmbehaviorpropertypage.grpwindowstate.caption","sourcebytes":[87,105,110,100,111,119,32,83,116,97,116,101],"value":"Window State"}
+]}

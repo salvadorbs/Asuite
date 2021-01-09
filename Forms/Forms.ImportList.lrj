@@ -1,0 +1,13 @@
+{"version":1,"strings":[
+{"hash":154630084,"name":"tfrmimportlist.caption","sourcebytes":[73,109,112,111,114,116,32,108,105,115,116],"value":"Import list"},
+{"hash":65308571,"name":"tfrmimportlist.btnback.caption","sourcebytes":[60,32,66,97,99,107],"value":"< Back"},
+{"hash":88929854,"name":"tfrmimportlist.btnnext.caption","sourcebytes":[78,101,120,116,32,62],"value":"Next >"},
+{"hash":77089212,"name":"tfrmimportlist.btncancel.caption","sourcebytes":[67,97,110,99,101,108],"value":"Cancel"},
+{"hash":100375588,"name":"tfrmimportlist.lbltitle.caption","sourcebytes":[80,108,97,99,101,104,111,108,100,101,114,32,116,101,120,116],"value":"Placeholder text"},
+{"hash":89313044,"name":"tfrmimportlist.tsaskfilelist.caption","sourcebytes":[116,115,65,115,107,70,105,108,101,76,105,115,116],"value":"tsAskFileList"},
+{"hash":41254308,"name":"tfrmimportlist.gbfile.caption","sourcebytes":[70,105,108,101,32,76,105,115,116],"value":"File List"},
+{"hash":236150730,"name":"tfrmimportlist.lblfile.caption","sourcebytes":[76,97,117,110,99,104,101,114,32,70,105,108,101,32,108,111,99,97,116,105,111,110,58],"value":"Launcher File location:"},
+{"hash":192982067,"name":"tfrmimportlist.tslist.caption","sourcebytes":[116,115,73,116,101,109,115],"value":"tsItems"},
+{"hash":195296268,"name":"tfrmimportlist.btnselectall.caption","sourcebytes":[83,101,108,101,99,116,32,97,108,108],"value":"Select all"},
+{"hash":252378124,"name":"tfrmimportlist.btndeselectall.caption","sourcebytes":[68,101,115,101,108,101,99,116,32,97,108,108],"value":"Deselect all"}
+]}

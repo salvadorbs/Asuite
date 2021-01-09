@@ -5,7 +5,7 @@ object frmMain: TfrmMain
   Width = 201
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'ASuite'
-  ClientHeight = 386
+  ClientHeight = 366
   ClientWidth = 201
   Color = clBtnFace
   Constraints.MinHeight = 370

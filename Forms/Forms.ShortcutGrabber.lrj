@@ -1,0 +1,6 @@
+{"version":1,"strings":[
+{"hash":227496718,"name":"tfrmshortcutgrabber.caption","sourcebytes":[67,104,111,111,115,101,32,104,111,116,107,101,121,46,46,46],"value":"Choose hotkey..."},
+{"hash":109287994,"name":"tfrmshortcutgrabber.lblinfo.caption","sourcebytes":[83,101,108,101,99,116,32,109,111,100,105,102,105,101,114,115,32,97,98,111,118,101,44,32,116,104,101,110,32,101,110,116,101,114,32,100,101,115,105,114,101,100,32,107,101,121,58],"value":"Select modifiers above, then enter desired key:"},
+{"hash":1371,"name":"tfrmshortcutgrabber.btnok.caption","sourcebytes":[79,107],"value":"Ok"},
+{"hash":77089212,"name":"tfrmshortcutgrabber.btncancel.caption","sourcebytes":[67,97,110,99,101,108],"value":"Cancel"}
+]}

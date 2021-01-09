@@ -1,0 +1,10 @@
+{"version":1,"strings":[
+{"hash":247200594,"name":"tfrmadvancedpropertypage.grpscheduler.caption","sourcebytes":[83,99,104,101,100,117,108,101,114],"value":"Scheduler"},
+{"hash":83276233,"name":"tfrmadvancedpropertypage.grphotkey.caption","sourcebytes":[72,111,116,107,101,121],"value":"Hotkey"},
+{"hash":22920697,"name":"tfrmadvancedpropertypage.cbhotkey.caption","sourcebytes":[65,99,116,105,118,101,32,104,111,116,107,101,121],"value":"Active hotkey"},
+{"hash":343125,"name":"tfrmadvancedpropertypage.grpmenu.caption","sourcebytes":[77,101,110,117],"value":"Menu"},
+{"hash":227251173,"name":"tfrmadvancedpropertypage.cbhidesoftware.caption","sourcebytes":[72,105,100,101,32,116,104,105,115,32,115,111,102,116,119,97,114,101,32,102,114,111,109,32,109,101,110,117],"value":"Hide this software from menu"},
+{"hash":153613577,"name":"tfrmadvancedpropertypage.cbdontinsertmru.caption","sourcebytes":[68,111,110,39,116,32,105,110,115,101,114,116,32,116,104,105,115,32,115,111,102,116,119,97,114,101,32,105,110,32,114,101,99,101,110,116,115,32,40,77,82,85,41],"value":"Don't insert this software in recents (MRU)"},
+{"hash":58197253,"name":"tfrmadvancedpropertypage.cbdontinsertmfu.caption","sourcebytes":[68,111,110,39,116,32,105,110,115,101,114,116,32,116,104,105,115,32,115,111,102,116,119,97,114,101,32,105,110,32,77,70,85],"value":"Don't insert this software in MFU"},
+{"hash":82387767,"name":"tfrmadvancedpropertypage.cbshortcutdesktop.caption","sourcebytes":[67,114,101,97,116,101,32,115,104,111,114,116,99,117,116,32,111,110,32,100,101,115,107,116,111,112,32,119,104,101,110,32,65,83,117,105,116,101,32,105,115,32,114,117,110,110,105,110,103],"value":"Create shortcut on desktop when ASuite is running"}
+]}

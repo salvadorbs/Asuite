@@ -1,0 +1,15 @@
+{"version":1,"strings":[
+{"hash":83276233,"name":"tfrmhotkeyoptionspage.gbhotkey.caption","sourcebytes":[72,111,116,107,101,121],"value":"Hotkey"},
+{"hash":79264932,"name":"tfrmhotkeyoptionspage.lblhotkeywindow.caption","sourcebytes":[83,104,111,119,32,119,105,110,100,111,119,32,119,104,101,110,32,104,111,116,107,101,121,32,105,115,32,112,114,101,115,115,101,100],"value":"Show window when hotkey is pressed"},
+{"hash":162766164,"name":"tfrmhotkeyoptionspage.lblhotkeygm.caption","sourcebytes":[83,104,111,119,32,103,114,97,112,104,105,99,32,109,101,110,117,32,119,104,101,110,32,104,111,116,107,101,121,32,105,115,32,112,114,101,115,115,101,100],"value":"Show graphic menu when hotkey is pressed"},
+{"hash":247070100,"name":"tfrmhotkeyoptionspage.lblhotkeycm.caption","sourcebytes":[83,104,111,119,32,99,108,97,115,115,105,99,32,109,101,110,117,32,119,104,101,110,32,104,111,116,107,101,121,32,105,115,32,112,114,101,115,115,101,100],"value":"Show classic menu when hotkey is pressed"},
+{"hash":179389433,"name":"tfrmhotkeyoptionspage.cbhotkey.caption","sourcebytes":[69,110,97,98,108,101,32,104,111,116,107,101,121],"value":"Enable hotkey"},
+{"hash":195587076,"name":"tfrmhotkeyoptionspage.grpordersoftware.caption","sourcebytes":[72,111,116,107,101,121,32,108,105,115,116,32,117,115,101,100],"value":"Hotkey list used"},
+{"hash":346165,"name":"tfrmhotkeyoptionspage.vstitems.header.columns[0].text","sourcebytes":[78,97,109,101],"value":"Name"},
+{"hash":376933,"name":"tfrmhotkeyoptionspage.vstitems.header.columns[1].text","sourcebytes":[84,121,112,101],"value":"Type"},
+{"hash":145482249,"name":"tfrmhotkeyoptionspage.vstitems.header.columns[2].text","sourcebytes":[67,97,116,101,103,111,114,121],"value":"Category"},
+{"hash":83276233,"name":"tfrmhotkeyoptionspage.vstitems.header.columns[3].text","sourcebytes":[72,111,116,107,101,121],"value":"Hotkey"},
+{"hash":79503785,"name":"tfrmhotkeyoptionspage.mniedithotkey.caption","sourcebytes":[69,100,105,116,32,72,111,116,107,101,121],"value":"Edit Hotkey"},
+{"hash":204660201,"name":"tfrmhotkeyoptionspage.mniremovehotkey.caption","sourcebytes":[82,101,109,111,118,101,32,72,111,116,107,101,121],"value":"Remove Hotkey"},
+{"hash":114087587,"name":"tfrmhotkeyoptionspage.mniproperties.caption","sourcebytes":[80,114,111,112,101,114,116,105,101,115],"value":"Properties"}
+]}

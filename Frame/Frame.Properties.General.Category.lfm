@@ -2,16 +2,8 @@ inherited frmCatGeneralPropertyPage: TfrmCatGeneralPropertyPage
   DesignLeft = -754
   DesignTop = 282
   inherited gbItem: TGroupBox
-    Left = 4
     Height = 104
-    Top = 4
-    Width = 352
-    Align = alTop
-    BorderSpacing.Left = 4
-    BorderSpacing.Top = 4
-    BorderSpacing.Right = 4
     ClientHeight = 84
-    ClientWidth = 348
   end
   object grpSubItems: TGroupBox[1]
     Left = 4

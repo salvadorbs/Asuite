@@ -1,0 +1,17 @@
+{"version":1,"strings":[
+{"hash":146590327,"name":"tfrmmainwindowoptionspage.gbtreeview.caption","sourcebytes":[84,114,101,101,118,105,101,119],"value":"Treeview"},
+{"hash":118462388,"name":"tfrmmainwindowoptionspage.cbbackground.caption","sourcebytes":[65,99,116,105,118,101,32,99,117,115,116,111,109,32,98,97,99,107,103,114,111,117,110,100],"value":"Active custom background"},
+{"hash":171138814,"name":"tfrmmainwindowoptionspage.btnfontsettings.caption","sourcebytes":[70,111,110,116,32,115,101,116,116,105,110,103,115,46,46,46],"value":"Font settings..."},
+{"hash":1465171,"name":"tfrmmainwindowoptionspage.cbautoopclcat.caption","sourcebytes":[65,117,116,111,109,97,116,105,99,32,111,112,101,110,105,110,103,47,99,108,111,115,105,110,103,32,99,97,116,101,103,111,114,105,101,115],"value":"Automatic opening/closing categories"},
+{"hash":214476567,"name":"tfrmmainwindowoptionspage.cbsmallicon.caption","sourcebytes":[83,109,97,108,108,32,105,99,111,110,32,115,105,122,101,32,105,110,32,109,97,105,110,32,119,105,110,100,111,119],"value":"Small icon size in main window"},
+{"hash":111937580,"name":"tfrmmainwindowoptionspage.edtbackground.text","sourcebytes":[36,65,83,117,105,116,101,92],"value":"$ASuite\\"},
+{"hash":154214516,"name":"tfrmmainwindowoptionspage.cbautoopdragdrop.caption","sourcebytes":[65,117,116,111,109,97,116,105,99,32,111,112,101,110,105,110,103,32,99,97,116,101,103,111,114,121,44,32,97,102,116,101,114,32,100,114,97,103,38,38,100,114,111,112,32,97,110,32,105,116,101,109,32,105,110,32,105,116],"value":"Automatic opening category, after drag&&drop an item in it"},
+{"hash":7565767,"name":"tfrmmainwindowoptionspage.cbdisableconfirmdelete.caption","sourcebytes":[68,105,115,97,98,108,101,32,100,101,108,101,116,101,32,105,116,101,109,115,32,99,111,110,102,105,114,109,97,116,105,111,110,32,100,105,97,108,111,103],"value":"Disable delete items confirmation dialog"},
+{"hash":231000124,"name":"tfrmmainwindowoptionspage.gbwindow.caption","sourcebytes":[71,101,110,101,114,97,108],"value":"General"},
+{"hash":246842832,"name":"tfrmmainwindowoptionspage.cbwindowontop.caption","sourcebytes":[77,97,105,110,32,119,105,110,100,111,119,32,97,108,119,97,121,115,32,111,110,32,116,111,112],"value":"Main window always on top"},
+{"hash":76356885,"name":"tfrmmainwindowoptionspage.cbholdsize.caption","sourcebytes":[72,111,108,100,32,109,97,105,110,32,119,105,110,100,111,119,32,115,105,122,101],"value":"Hold main window size"},
+{"hash":23028519,"name":"tfrmmainwindowoptionspage.cbhidesearch.caption","sourcebytes":[72,105,100,101,32,116,97,98,32,83,101,97,114,99,104,32,105,110,32,109,97,105,110,32,119,105,110,100,111,119],"value":"Hide tab Search in main window"},
+{"hash":74104997,"name":"tfrmmainwindowoptionspage.edtcustomtitle.text","sourcebytes":[65,83,117,105,116,101],"value":"ASuite"},
+{"hash":92056341,"name":"tfrmmainwindowoptionspage.cbcustomtitle.caption","sourcebytes":[67,117,115,116,111,109,32,109,97,105,110,32,119,105,110,100,111,119,32,116,105,116,108,101],"value":"Custom main window title"},
+{"hash":159678229,"name":"tfrmmainwindowoptionspage.chksearchasyoutype.caption","sourcebytes":[83,101,97,114,99,104,32,97,115,32,121,111,117,32,116,121,112,101],"value":"Search as you type"}
+]}

@@ -11,7 +11,7 @@ object frmDialogBase: TfrmDialogBase
   KeyPreview = True
   OnKeyPress = FormKeyPress
   Position = poMainFormCenter
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.0.10.0'
   object btnOk: TButton
     Left = 315
     Height = 25
