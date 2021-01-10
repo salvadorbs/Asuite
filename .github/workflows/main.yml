@@ -172,4 +172,6 @@ jobs:
       uses: actions/upload-artifact@v2.2.2
       with:
         name: ASuite ${{ matrix.config.build-mode }} build - ${{ matrix.config.build-widgetset }}
-        path: ${{ github.workspace}}/bin
+        path: |
+          ${{ github.workspace}}/bin
+          ${{ github.workspace }}/3p/AsuiteComps/library/platform/unix/QGHotkeyHookPas/libQGHotkeyHookPas.so*
