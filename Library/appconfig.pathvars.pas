@@ -76,7 +76,8 @@ end;
 
 procedure TPathVars.Add(const AKey: String; const AValue: String);
 begin
-  FItems.Add(AKey, AValue);
+  if FItems.ContainsValue(AKey) then
+    FItems.Add(AKey, AValue);
 end;
 
 function TPathVars.KeyToValue(const AVarKey: String): String;

@@ -896,7 +896,7 @@ end;
 
 procedure TConfiguration.SetWindowHotKey(const Value: Cardinal);
 begin
-  UpdateHotkey(FWindowHotKey, Value, frmMain.Handle);
+  UpdateHotkey(FWindowHotKey, Value, frmMainID);
   FWindowHotKey := Value;
 end;
 

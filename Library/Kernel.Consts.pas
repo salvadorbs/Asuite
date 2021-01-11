@@ -61,10 +61,11 @@ const
   BACKUP_FILE   = APP_NAME + '_%s' + EXT_SQLBCK;
 
   //Form
-  frmMainWidth  = 190;
-  frmMainHeight = 440;
-  frmGMenuID    = 123456789;
-  frmCMenuID    = 987654321;
+  frmMainWidth  = 190; //TODO: Linux vs Windows?
+  frmMainHeight = 440; //TODO: Linux vs Windows?
+  frmMainID     = 294257584;
+  frmGMenuID    = 711285620;
+  frmCMenuID    = 459741425;    
 
   // PageControl Indexes
   PG_LIST       = 0;
