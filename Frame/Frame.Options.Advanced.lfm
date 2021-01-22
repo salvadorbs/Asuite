@@ -1,6 +1,6 @@
 inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
-  DesignLeft = -731
-  DesignTop = 212
+  DesignLeft = -2
+  DesignTop = 209
   object pnlLeft: TPanel[0]
     Left = 0
     Height = 380
@@ -8,6 +8,7 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
     Width = 254
     Align = alLeft
     BevelOuter = bvNone
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ClientHeight = 380
     ClientWidth = 254
     ParentFont = False
@@ -155,6 +156,7 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
     Width = 191
     Align = alClient
     BevelOuter = bvNone
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ClientHeight = 380
     ClientWidth = 191
     ParentFont = False

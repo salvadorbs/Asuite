@@ -1,176 +1,176 @@
 inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
-  DesignLeft = -687
-  DesignTop = 190
+  DesignLeft = 558
+  DesignTop = 225
   object gbTreeView: TGroupBox[0]
     Left = 4
-    Height = 168
-    Top = 152
+    Height = 171
+    Top = 154
     Width = 437
     Align = alTop
+    AutoSize = True
     BorderSpacing.Left = 4
     BorderSpacing.Top = 4
     BorderSpacing.Right = 4
     Caption = 'Treeview'
-    ClientHeight = 148
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.TopBottomSpacing = 4
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ClientHeight = 151
     ClientWidth = 433
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 1
     object cbBackground: TCheckBox
-      Left = 6
+      Left = 4
       Height = 19
-      Top = 68
-      Width = 163
-      BorderSpacing.Left = 4
-      BorderSpacing.Right = 4
+      Top = 4
+      Width = 425
       Caption = 'Active custom background'
       OnClick = cbBackgroundClick
       ParentFont = False
       TabOrder = 4
     end
-    object btnFontSettings: TButton
-      Left = 150
-      Height = 25
-      Top = 118
-      Width = 121
-      BorderSpacing.Left = 4
-      BorderSpacing.Right = 4
-      Caption = 'Font settings...'
-      OnClick = btnFontSettingsClick
-      ParentFont = False
-      TabOrder = 6
-    end
     object cbAutoOpClCat: TCheckBox
-      Left = 6
+      Left = 4
       Height = 19
-      Top = 0
-      Width = 223
-      BorderSpacing.Left = 4
-      BorderSpacing.Right = 4
+      Top = 23
+      Width = 425
       Caption = 'Automatic opening/closing categories'
       ParentFont = False
       TabOrder = 0
     end
     object cbSmallIcon: TCheckBox
-      Left = 6
+      Left = 4
       Height = 19
-      Top = 51
-      Width = 185
-      BorderSpacing.Left = 4
-      BorderSpacing.Right = 4
+      Top = 42
+      Width = 425
       Caption = 'Small icon size in main window'
       ParentFont = False
       TabOrder = 3
     end
     object edtBackground: TFileNameEdit
-      Left = 6
+      Left = 4
       Height = 23
-      Top = 91
-      Width = 422
+      Top = 61
+      Width = 425
       DialogOptions = [ofHideReadOnly, ofEnableSizing]
       FilterIndex = 0
       HideDirectories = False
       ButtonWidth = 20
       NumGlyphs = 1
-      BorderSpacing.Left = 4
-      BorderSpacing.Right = 4
       MaxLength = 0
       ParentFont = False
       TabOrder = 5
       Text = '$ASuite\'
     end
     object cbAutoOpDragDrop: TCheckBox
-      Left = 6
+      Left = 4
       Height = 19
-      Top = 17
-      Width = 330
-      BorderSpacing.Left = 4
-      BorderSpacing.Right = 4
+      Top = 84
+      Width = 425
       Caption = 'Automatic opening category, after drag&&drop an item in it'
       ParentFont = False
       TabOrder = 1
     end
     object cbDisableConfirmDelete: TCheckBox
-      Left = 6
+      Left = 4
       Height = 19
-      Top = 34
-      Width = 233
-      BorderSpacing.Left = 4
-      BorderSpacing.Right = 4
+      Top = 103
+      Width = 425
       Caption = 'Disable delete items confirmation dialog'
       ParentFont = False
       TabOrder = 2
     end
+    object btnFontSettings: TButton
+      Left = 165
+      Height = 25
+      Top = 122
+      Width = 103
+      AutoSize = True
+      BorderSpacing.CellAlignHorizontal = ccaCenter
+      Caption = 'Font settings...'
+      OnClick = btnFontSettingsClick
+      ParentFont = False
+      TabOrder = 6
+    end
   end
   object gbWindow: TGroupBox[1]
     Left = 4
-    Height = 144
+    Height = 146
     Top = 4
     Width = 437
     Align = alTop
+    AutoSize = True
     BorderSpacing.Left = 4
     BorderSpacing.Top = 4
     BorderSpacing.Right = 4
     Caption = 'General'
-    ClientHeight = 124
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.TopBottomSpacing = 4
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ClientHeight = 126
     ClientWidth = 433
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 0
     object cbWindowOnTop: TCheckBox
-      Left = 6
+      Left = 4
       Height = 19
-      Top = 17
-      Width = 168
+      Top = 4
+      Width = 425
       Caption = 'Main window always on top'
       ParentFont = False
       TabOrder = 1
     end
     object cbHoldSize: TCheckBox
-      Left = 6
+      Left = 4
       Height = 19
-      Top = 0
-      Width = 143
+      Top = 23
+      Width = 425
       Caption = 'Hold main window size'
       ParentFont = False
       TabOrder = 0
     end
     object cbHideSearch: TCheckBox
-      Left = 6
+      Left = 4
       Height = 19
-      Top = 34
-      Width = 191
+      Top = 42
+      Width = 425
       Caption = 'Hide tab Search in main window'
       ParentFont = False
       TabOrder = 2
     end
-    object edtCustomTitle: TEdit
-      Left = 16
-      Height = 23
-      Top = 91
-      Width = 128
+    object chkSearchAsYouType: TCheckBox
+      Left = 4
+      Height = 19
+      Top = 61
+      Width = 425
+      Caption = 'Search as you type'
       ParentFont = False
-      TabOrder = 5
-      Text = 'ASuite'
+      TabOrder = 3
     end
     object cbCustomTitle: TCheckBox
-      Left = 6
+      Left = 4
       Height = 19
-      Top = 68
-      Width = 160
+      Top = 80
+      Width = 425
       Caption = 'Custom main window title'
       OnClick = cbCustomTitleClick
       ParentFont = False
       TabOrder = 4
     end
-    object chkSearchAsYouType: TCheckBox
-      Left = 6
-      Height = 19
-      Top = 51
-      Width = 118
-      Caption = 'Search as you type'
+    object edtCustomTitle: TEdit
+      Left = 4
+      Height = 23
+      Top = 99
+      Width = 150
+      BorderSpacing.CellAlignHorizontal = ccaLeftTop
+      Constraints.MinWidth = 150
       ParentFont = False
-      TabOrder = 3
+      TabOrder = 5
+      Text = 'ASuite'
     end
   end
   object FontDialog1: TFontDialog[2]

@@ -3,7 +3,7 @@ object frmDialogBase: TfrmDialogBase
   Height = 325
   Top = 36
   Width = 559
-  BorderStyle = bsDialog
+  BorderStyle = bsSizeToolWin
   Caption = 'frmDialogBase'
   ClientHeight = 325
   ClientWidth = 559
@@ -11,7 +11,6 @@ object frmDialogBase: TfrmDialogBase
   KeyPreview = True
   OnKeyPress = FormKeyPress
   Position = poMainFormCenter
-  LCLVersion = '2.0.10.0'
   object btnOk: TButton
     Left = 315
     Height = 25
