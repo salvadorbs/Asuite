@@ -25,10 +25,17 @@ interface
 
 uses
   LCLIntf, SysUtils, Classes, Controls, Dialogs, kgraphics, Frame.BaseEntity,
-  StdCtrls, VirtualTrees, Lists.Base, Menus, kbuttons, DefaultTranslator;
+  StdCtrls, VirtualTrees, Lists.Base, Menus, kbuttons, DefaultTranslator,
+  ExtCtrls;
 
 type
+
+  { TfrmAutorunOptionsPage }
+
   TfrmAutorunOptionsPage = class(TfrmBaseEntityPage)
+    btnStartupDelete: TKSpeedButton;
+    btnStartupDown: TKSpeedButton;
+    btnStartupUp: TKSpeedButton;
     
     grpStartupOrderItems: TGroupBox;
     grpShutdownOrderItems: TGroupBox;
@@ -36,11 +43,7 @@ type
     lblStartupInfo: TLabel;
     chkShutdown: TCheckBox;
     lblShutdownInfo: TLabel;
-    vstStartupItems: TVirtualStringTree;
     vstShutdownItems: TVirtualStringTree;
-    btnStartupUp: TKSpeedButton;
-    btnStartupDelete: TKSpeedButton;
-    btnStartupDown: TKSpeedButton;
     btnShutdownDelete: TKSpeedButton;
     btnShutdownDown: TKSpeedButton;
     btnShutdownUp: TKSpeedButton;
@@ -48,6 +51,7 @@ type
     mniRemoveAutorun: TMenuItem;
     mniN1: TMenuItem;
     mniProperties: TMenuItem;
+    vstStartupItems: TVirtualStringTree;
     procedure btnStartupUpClick(Sender: TObject);
     procedure btnShutdownUpClick(Sender: TObject);
     procedure btnStartupDeleteClick(Sender: TObject);
