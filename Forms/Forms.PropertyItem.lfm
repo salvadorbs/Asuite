@@ -4,6 +4,8 @@ inherited frmPropertyItem: TfrmPropertyItem
   Top = 309
   Caption = 'Property'
   ClientHeight = 371
+  Constraints.MinHeight = 370
+  Constraints.MinWidth = 550
   inherited btnOk: TButton
     Top = 340
   end

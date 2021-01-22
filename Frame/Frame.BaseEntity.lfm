@@ -3,8 +3,9 @@ object frmBaseEntityPage: TfrmBaseEntityPage
   Height = 380
   Top = 0
   Width = 445
+  ChildSizing.Layout = cclLeftToRightThenTopToBottom
   ParentFont = False
   TabOrder = 0
-  DesignLeft = 11
-  DesignTop = 34
+  DesignLeft = 10
+  DesignTop = 33
 end
