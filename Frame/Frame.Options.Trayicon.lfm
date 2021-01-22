@@ -1,5 +1,5 @@
 inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
-  DesignLeft = -796
+  DesignLeft = 0
   DesignTop = 449
   object gbTrayicon: TGroupBox[0]
     Left = 4

@@ -38,17 +38,17 @@ type
     edtHotkeyMF: TButtonedEdit;
     
     gbHotkey: TGroupBox;
-    lblHotkeyWindow: TLabel;
-    lblHotkeyGM: TLabel;
     cbHotKey: TCheckBox;
     grpOrderSoftware: TGroupBox;
+    lblHotkeyCM: TLabel;
+    lblHotkeyGM: TLabel;
+    lblHotkeyWindow: TLabel;
     vstItems: TVirtualStringTree;
     pmHotkey: TPopupMenu;
     mniEditHotkey: TMenuItem;
     mniRemoveHotkey: TMenuItem;
     mniN1: TMenuItem;
     mniProperties: TMenuItem;
-    lblHotkeyCM: TLabel;
     procedure cbHotKeyClick(Sender: TObject);
     procedure mniEditHotkeyClick(Sender: TObject);
     procedure mniRemoveHotkeyClick(Sender: TObject);
