@@ -25,32 +25,39 @@ interface
 
 uses
   LCLIntf, SysUtils, Classes, Graphics, Forms, Dialogs, Frame.BaseEntity, StdCtrls,
-  EditBtn, DefaultTranslator;
+  EditBtn, DefaultTranslator, ExtCtrls;
 
 type
+
+  { TfrmTrayiconOptionsPage }
+
   TfrmTrayiconOptionsPage = class(TfrmBaseEntityPage)
+    cxLeftClick: TComboBox;
+    cxMiddleClick: TComboBox;
+    cxRightClick: TComboBox;
+    cxTheme: TComboBox;
     
     gbTrayicon: TGroupBox;
-    lbTrayLeftClick: TLabel;
-    lbTrayRightClick: TLabel;
     lblMiddleClick: TLabel;
-    cxLeftClick: TComboBox;
+    lbMenuTheme: TLabel;
+    lbTrayLeftClick: TLabel;
     cbTrayicon: TCheckBox;
-    cxRightClick: TComboBox;
     cbTrayCustomIcon: TCheckBox;
     edtCustomIcon: TFileNameEdit;
-    cxMiddleClick: TComboBox;
     grpClassicMenu: TGroupBox;
     cbSubMenuMFU: TCheckBox;
     cbSubMenuMRU: TCheckBox;
     chkAutoExpansion: TCheckBox;
     grpGraphicMenu: TGroupBox;
-    lbMenuTheme: TLabel;
-    cxTheme: TComboBox;
     cbMenuFade: TCheckBox;
     cbSmallIcon: TCheckBox;
     chkAutomaticHideMenu: TCheckBox;
     chkUserPicture: TCheckBox;
+    lbTrayRightClick: TLabel;
+    Panel1: TPanel;
+    Panel2: TPanel;
+    Panel3: TPanel;
+    Panel4: TPanel;
     procedure cbTrayiconClick(Sender: TObject);
     procedure cbTrayCustomIconClick(Sender: TObject);
     procedure edtCustomIconAfterDialog(Sender: TObject; var AName: string;

@@ -1,6 +1,7 @@
 inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
-  DesignLeft = -2
-  DesignTop = 209
+  ChildSizing.EnlargeHorizontal = crsScaleChilds
+  DesignLeft = 1735
+  DesignTop = 286
   object pnlLeft: TPanel[0]
     Left = 0
     Height = 380
@@ -8,6 +9,7 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
     Width = 254
     Align = alLeft
     BevelOuter = bvNone
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ClientHeight = 380
     ClientWidth = 254
@@ -55,10 +57,11 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
         Transparent = False
       end
       object seMFU: TSpinEdit
-        Left = 4
+        Left = 96
         Height = 23
         Top = 38
-        Width = 234
+        Width = 50
+        BorderSpacing.CellAlignHorizontal = ccaCenter
         MaxValue = 20
         TabOrder = 1
       end
@@ -105,10 +108,11 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
         Transparent = False
       end
       object seRecents: TSpinEdit
-        Left = 4
+        Left = 96
         Height = 23
         Top = 38
-        Width = 234
+        Width = 50
+        BorderSpacing.CellAlignHorizontal = ccaCenter
         MaxValue = 20
         TabOrder = 1
       end
@@ -155,10 +159,11 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
         Transparent = False
       end
       object seBackup: TSpinEdit
-        Left = 4
+        Left = 96
         Height = 23
         Top = 38
-        Width = 234
+        Width = 50
+        BorderSpacing.CellAlignHorizontal = ccaCenter
         MaxValue = 10
         TabOrder = 1
       end
@@ -171,6 +176,7 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
     Width = 191
     Align = alClient
     BevelOuter = bvNone
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ClientHeight = 380
     ClientWidth = 191
