@@ -41,6 +41,7 @@ object frmDialogBase: TfrmDialogBase
     Top = 8
     Width = 361
     Anchors = [akTop, akLeft, akRight, akBottom]
+    AutoSize = True
     ParentFont = False
     TabOrder = 1
   end

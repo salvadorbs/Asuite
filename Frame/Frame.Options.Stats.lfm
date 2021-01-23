@@ -11,7 +11,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     BorderSpacing.Top = 4
     BorderSpacing.Right = 4
     Caption = 'ASuite'
-    ClientHeight = 62
+    ClientHeight = 60
     ClientWidth = 433
     Font.Style = [fsBold]
     ParentFont = False
@@ -59,7 +59,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     BorderSpacing.Top = 4
     BorderSpacing.Right = 4
     Caption = 'Drive %S:'
-    ClientHeight = 58
+    ClientHeight = 56
     ClientWidth = 433
     Font.Style = [fsBold]
     ParentFont = False
@@ -104,7 +104,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     BorderSpacing.Left = 4
     BorderSpacing.Right = 4
     Caption = 'System'
-    ClientHeight = 94
+    ClientHeight = 92
     ClientWidth = 433
     Font.Style = [fsBold]
     ParentFont = False

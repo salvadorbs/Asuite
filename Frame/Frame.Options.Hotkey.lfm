@@ -1,7 +1,9 @@
 inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
   Height = 405
+  AutoSize = True
   ChildSizing.LeftRightSpacing = 4
   ChildSizing.TopBottomSpacing = 4
+  ChildSizing.EnlargeHorizontal = crsScaleChilds
   ClientHeight = 405
   DesignLeft = 1936
   DesignTop = 245
@@ -10,7 +12,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     Height = 182
     Top = 4
     Width = 437
-    Align = alTop
+    AutoSize = True
     BorderSpacing.Left = 4
     BorderSpacing.Top = 4
     BorderSpacing.Right = 4
@@ -40,7 +42,6 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       Height = 15
       Top = 27
       Width = 425
-      BorderSpacing.Bottom = 6
       Caption = 'Show window when hotkey is pressed'
       ParentColor = False
       ParentFont = False
@@ -50,8 +51,10 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       AnchorSideTop.Side = asrCenter
       Left = 116
       Height = 22
-      Top = 48
+      Top = 46
       Width = 200
+      BorderSpacing.Top = 4
+      BorderSpacing.Bottom = 4
       BorderSpacing.CellAlignHorizontal = ccaCenter
       CharCase = ecUppercase
       Constraints.MinWidth = 200
@@ -65,9 +68,8 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     object lblHotkeyGM: TLabel
       Left = 4
       Height = 15
-      Top = 70
+      Top = 72
       Width = 425
-      BorderSpacing.Bottom = 6
       Caption = 'Show graphic menu when hotkey is pressed'
       ParentColor = False
       ParentFont = False
@@ -78,6 +80,8 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       Height = 22
       Top = 91
       Width = 200
+      BorderSpacing.Top = 4
+      BorderSpacing.Bottom = 4
       BorderSpacing.CellAlignHorizontal = ccaCenter
       CharCase = ecUppercase
       Constraints.MinWidth = 200
@@ -91,9 +95,8 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     object lblHotkeyCM: TLabel
       Left = 4
       Height = 15
-      Top = 113
+      Top = 117
       Width = 425
-      BorderSpacing.Bottom = 6
       Caption = 'Show classic menu when hotkey is pressed'
       ParentColor = False
       ParentFont = False
@@ -102,8 +105,9 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       AnchorSideTop.Side = asrCenter
       Left = 116
       Height = 22
-      Top = 134
+      Top = 136
       Width = 200
+      BorderSpacing.Top = 4
       BorderSpacing.CellAlignHorizontal = ccaCenter
       CharCase = ecUppercase
       Constraints.MinWidth = 200
@@ -117,10 +121,10 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
   end
   object grpOrderSoftware: TGroupBox[1]
     Left = 4
-    Height = 211
+    Height = 210
     Top = 190
     Width = 437
-    Align = alClient
+    AutoSize = True
     BorderSpacing.Left = 4
     BorderSpacing.Top = 4
     BorderSpacing.Right = 4
@@ -130,7 +134,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     ChildSizing.TopBottomSpacing = 4
     ChildSizing.EnlargeHorizontal = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
-    ClientHeight = 191
+    ClientHeight = 190
     ClientWidth = 433
     Font.Style = [fsBold]
     ParentFont = False
@@ -138,13 +142,14 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     object vstItems: TVirtualStringTree
       Cursor = 63
       Left = 6
-      Height = 181
+      Height = 180
       Top = 4
       Width = 421
       Align = alClient
       BorderSpacing.Left = 6
       BorderSpacing.Right = 6
       BorderSpacing.Bottom = 6
+      Constraints.MinHeight = 180
       DefaultNodeHeight = 32
       DragOperations = []
       Header.AutoSizeIndex = 0
