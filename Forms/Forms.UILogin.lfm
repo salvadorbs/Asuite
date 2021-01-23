@@ -10,7 +10,6 @@ object frmUILogin: TfrmUILogin
   Color = clBtnFace
   Font.Color = clWindowText
   Font.Height = -12
-  Font.Name = 'Tahoma'
   Position = poScreenCenter
   LCLVersion = '2.0.10.0'
   object imgTop: TImage

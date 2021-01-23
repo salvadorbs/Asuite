@@ -52,9 +52,6 @@ object frmDialogBase: TfrmDialogBase
     Anchors = [akTop, akLeft, akBottom]
     Header.AutoSizeIndex = 0
     Header.Columns = <>
-    Header.Font.Color = clWindowText
-    Header.Font.Height = -11
-    Header.Font.Name = 'Tahoma'
     Header.MainColumn = -1
     ParentFont = False
     TabOrder = 0

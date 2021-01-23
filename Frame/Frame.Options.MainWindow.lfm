@@ -176,7 +176,6 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
   object FontDialog1: TFontDialog[2]
     Font.Color = clWindowText
     Font.Height = -11
-    Font.Name = 'Tahoma'
     MinFontSize = 0
     MaxFontSize = 0
     Left = 246

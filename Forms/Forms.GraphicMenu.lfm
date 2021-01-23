@@ -74,7 +74,6 @@ object frmGraphicMenu: TfrmGraphicMenu
     Caption = '132Mb / 2Gb (6.6%)'
     Font.Color = clWhite
     Font.Height = -9
-    Font.Name = 'Tahoma'
     Layout = tlCenter
     ParentColor = False
     ParentFont = False
@@ -87,7 +86,6 @@ object frmGraphicMenu: TfrmGraphicMenu
     AutoSize = False
     Font.Color = clWhite
     Font.Height = -9
-    Font.Name = 'Tahoma'
     Layout = tlCenter
     ParentBidiMode = False
     ParentColor = False

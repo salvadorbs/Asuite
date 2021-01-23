@@ -4,7 +4,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
   object gbASuite: TGroupBox[0]
     Left = 4
     Height = 80
-    Top = 196
+    Top = 200
     Width = 437
     Align = alTop
     BorderSpacing.Left = 4
@@ -13,9 +13,6 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     Caption = 'ASuite'
     ClientHeight = 62
     ClientWidth = 433
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 2
@@ -27,9 +24,6 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       RightCaption = 'Value'
       LinePeriod = 4
       Caption = 'Software added'
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentFont = False
     end
     object lbTotal: TJppDoubleLineLabel
@@ -40,9 +34,6 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       RightCaption = 'Value'
       LinePeriod = 4
       Caption = 'Total'
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
       RightCaptionFont.Style = [fsBold]
@@ -55,16 +46,13 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       RightCaption = 'Value'
       LinePeriod = 4
       Caption = 'Categories added'
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentFont = False
     end
   end
   object gbSupport: TGroupBox[1]
     Left = 4
     Height = 76
-    Top = 116
+    Top = 120
     Width = 437
     Align = alTop
     BorderSpacing.Left = 4
@@ -73,9 +61,6 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     Caption = 'Drive %S:'
     ClientHeight = 58
     ClientWidth = 433
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 1
@@ -87,9 +72,6 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       RightCaption = 'Value'
       LinePeriod = 4
       Caption = 'Size'
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentFont = False
     end
     object lbSpaceFree: TJppDoubleLineLabel
@@ -100,9 +82,6 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       RightCaption = 'Value'
       LinePeriod = 4
       Caption = 'Used space'
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentFont = False
     end
     object lbSpaceUsed: TJppDoubleLineLabel
@@ -113,16 +92,13 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       RightCaption = 'Value'
       LinePeriod = 4
       Caption = 'Free space'
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
       ParentFont = False
     end
   end
   object gbSystem: TGroupBox[2]
     Left = 4
     Height = 112
-    Top = 0
+    Top = 4
     Width = 437
     Align = alTop
     BorderSpacing.Left = 4
@@ -130,9 +106,6 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     Caption = 'System'
     ClientHeight = 94
     ClientWidth = 433
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 0

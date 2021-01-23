@@ -170,7 +170,7 @@ begin
   Config.ActionClickMiddle  := TTrayiconActionClick(cxMiddleClick.ItemIndex);
   Config.ActionClickRight   := TTrayiconActionClick(cxRightClick.ItemIndex);
   //Graphic Menu
-  Config.GMTheme         := cxTheme.Items[cxTheme.ItemIndex];
+  Config.GMTheme         := cxTheme.Items[cxTheme.ItemIndex]; //TODO: Bug
   Config.GMFade          := cbMenuFade.Checked;
   Config.GMSmallIconSize := cbSmallIcon.Checked;
   Config.GMAutomaticHideMenu := chkAutomaticHideMenu.Checked;
