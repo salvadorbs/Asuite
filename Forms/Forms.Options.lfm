@@ -3,7 +3,6 @@ inherited frmOptions: TfrmOptions
   Height = 450
   Top = 225
   Width = 645
-  BorderStyle = bsSizeToolWin
   Caption = 'Options'
   ClientHeight = 450
   ClientWidth = 645
