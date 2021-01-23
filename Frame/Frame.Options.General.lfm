@@ -123,7 +123,9 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
       Left = 4
       Height = 23
       Top = 84
-      Width = 425
+      Width = 180
+      BorderSpacing.CellAlignHorizontal = ccaLeftTop
+      Constraints.MinWidth = 180
       ItemHeight = 15
       Items.Strings = (
         'Just run file'
@@ -139,7 +141,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     Left = 4
     Height = 51
     Top = 247
-    Width = 200
+    Width = 150
     BorderSpacing.Left = 4
     BorderSpacing.Top = 4
     BorderSpacing.Right = 4
@@ -150,8 +152,8 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     ChildSizing.EnlargeHorizontal = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ClientHeight = 31
-    ClientWidth = 196
-    Constraints.MinWidth = 200
+    ClientWidth = 146
+    Constraints.MinWidth = 150
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 2
@@ -159,7 +161,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
       Left = 4
       Height = 23
       Top = 4
-      Width = 188
+      Width = 138
       ItemHeight = 15
       ParentFont = False
       Style = csDropDownList

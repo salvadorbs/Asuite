@@ -3,11 +3,11 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
   ChildSizing.LeftRightSpacing = 4
   ChildSizing.TopBottomSpacing = 4
   ClientHeight = 405
-  DesignLeft = 1037
-  DesignTop = 385
+  DesignLeft = 1936
+  DesignTop = 245
   object gbHotkey: TGroupBox[0]
     Left = 4
-    Height = 126
+    Height = 182
     Top = 4
     Width = 437
     Align = alTop
@@ -19,7 +19,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     ChildSizing.TopBottomSpacing = 4
     ChildSizing.EnlargeHorizontal = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
-    ClientHeight = 106
+    ClientHeight = 162
     ClientWidth = 433
     Font.Style = [fsBold]
     ParentFont = False
@@ -35,23 +35,26 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       ParentFont = False
       TabOrder = 0
     end
-    object lblHotkeyCM: TLabel
+    object lblHotkeyWindow: TLabel
       Left = 4
       Height = 15
       Top = 27
       Width = 425
-      Caption = 'Show classic menu when hotkey is pressed'
+      BorderSpacing.Bottom = 6
+      Caption = 'Show window when hotkey is pressed'
       ParentColor = False
       ParentFont = False
     end
-    object edtHotkeyCM: TButtonedEdit
-      AnchorSideTop.Control = lblHotkeyCM
+    object edtHotkeyMF: TButtonedEdit
+      AnchorSideLeft.Side = asrCenter
       AnchorSideTop.Side = asrCenter
-      Left = 246
-      Height = 21
-      Top = 24
-      Width = 181
+      Left = 116
+      Height = 22
+      Top = 48
+      Width = 200
+      BorderSpacing.CellAlignHorizontal = ccaCenter
       CharCase = ecUppercase
+      Constraints.MinWidth = 200
       ParentFont = False
       ReadOnly = True
       TabOrder = 1
@@ -59,14 +62,25 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       OnClick = edtHotkeyClick
       OnRightButtonClick = edtHotkeyClear
     end
+    object lblHotkeyGM: TLabel
+      Left = 4
+      Height = 15
+      Top = 70
+      Width = 425
+      BorderSpacing.Bottom = 6
+      Caption = 'Show graphic menu when hotkey is pressed'
+      ParentColor = False
+      ParentFont = False
+    end
     object edtHotkeyGM: TButtonedEdit
-      AnchorSideTop.Control = lblHotkeyGM
       AnchorSideTop.Side = asrCenter
-      Left = 246
-      Height = 21
-      Top = 51
-      Width = 181
+      Left = 116
+      Height = 22
+      Top = 91
+      Width = 200
+      BorderSpacing.CellAlignHorizontal = ccaCenter
       CharCase = ecUppercase
+      Constraints.MinWidth = 200
       ParentFont = False
       ReadOnly = True
       TabOrder = 2
@@ -74,26 +88,25 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       OnClick = edtHotkeyClick
       OnRightButtonClick = edtHotkeyClear
     end
-    object lblHotkeyGM: TLabel
+    object lblHotkeyCM: TLabel
       Left = 4
       Height = 15
-      Top = 54
+      Top = 113
       Width = 425
-      BorderSpacing.Top = 12
-      BorderSpacing.Bottom = 12
-      Caption = 'Show graphic menu when hotkey is pressed'
+      BorderSpacing.Bottom = 6
+      Caption = 'Show classic menu when hotkey is pressed'
       ParentColor = False
       ParentFont = False
     end
-    object edtHotkeyMF: TButtonedEdit
-      AnchorSideLeft.Side = asrCenter
-      AnchorSideTop.Control = lblHotkeyWindow
+    object edtHotkeyCM: TButtonedEdit
       AnchorSideTop.Side = asrCenter
-      Left = 246
-      Height = 21
-      Top = 78
-      Width = 181
+      Left = 116
+      Height = 22
+      Top = 134
+      Width = 200
+      BorderSpacing.CellAlignHorizontal = ccaCenter
       CharCase = ecUppercase
+      Constraints.MinWidth = 200
       ParentFont = False
       ReadOnly = True
       TabOrder = 3
@@ -101,20 +114,11 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       OnClick = edtHotkeyClick
       OnRightButtonClick = edtHotkeyClear
     end
-    object lblHotkeyWindow: TLabel
-      Left = 4
-      Height = 15
-      Top = 81
-      Width = 425
-      Caption = 'Show window when hotkey is pressed'
-      ParentColor = False
-      ParentFont = False
-    end
   end
   object grpOrderSoftware: TGroupBox[1]
     Left = 4
-    Height = 267
-    Top = 134
+    Height = 211
+    Top = 190
     Width = 437
     Align = alClient
     BorderSpacing.Left = 4
@@ -126,7 +130,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     ChildSizing.TopBottomSpacing = 4
     ChildSizing.EnlargeHorizontal = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
-    ClientHeight = 247
+    ClientHeight = 191
     ClientWidth = 433
     Font.Style = [fsBold]
     ParentFont = False
@@ -134,7 +138,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     object vstItems: TVirtualStringTree
       Cursor = 63
       Left = 6
-      Height = 237
+      Height = 181
       Top = 4
       Width = 421
       Align = alClient

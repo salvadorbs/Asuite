@@ -1,176 +1,244 @@
 inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
-  DesignLeft = 0
-  DesignTop = 449
+  ChildSizing.LeftRightSpacing = 4
+  ChildSizing.TopBottomSpacing = 4
+  ChildSizing.EnlargeHorizontal = crsScaleChilds
+  DesignLeft = 1884
+  DesignTop = 228
   object gbTrayicon: TGroupBox[0]
     Left = 4
-    Height = 128
+    Height = 131
     Top = 4
     Width = 437
-    Align = alTop
-    BorderSpacing.Left = 4
-    BorderSpacing.Top = 4
-    BorderSpacing.Right = 4
     Caption = 'System Tray'
-    ClientHeight = 108
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.TopBottomSpacing = 4
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ClientHeight = 111
     ClientWidth = 433
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 0
-    object lbTrayLeftClick: TLabel
-      Left = 6
-      Height = 15
-      Top = 62
-      Width = 47
-      Caption = 'Left click'
-      Color = clBtnFace
-      ParentColor = False
-      ParentFont = False
-      Transparent = False
-    end
-    object lbTrayRightClick: TLabel
-      Left = 290
-      Height = 15
-      Top = 62
-      Width = 55
-      Caption = 'Right click'
-      Color = clBtnFace
-      ParentColor = False
-      ParentFont = False
-      Transparent = False
-    end
-    object lblMiddleClick: TLabel
-      Left = 150
-      Height = 15
-      Top = 62
-      Width = 64
-      Caption = 'Middle click'
-      Color = clBtnFace
-      ParentColor = False
-      ParentFont = False
-      Transparent = False
-    end
-    object cxLeftClick: TComboBox
-      Left = 6
-      Height = 23
-      Top = 78
-      Width = 138
-      ItemHeight = 15
-      Items.Strings = (
-        'No action'
-        'Show window'
-        'Show graphic menu'
-        'Show classic menu'
-      )
-      ParentFont = False
-      Style = csDropDownList
-      TabOrder = 3
-    end
     object cbTrayicon: TCheckBox
-      Left = 6
+      Left = 4
       Height = 19
-      Top = 0
-      Width = 167
+      Top = 4
+      Width = 425
       Caption = 'Enable the System Tray icon'
       OnClick = cbTrayiconClick
       ParentFont = False
       TabOrder = 0
     end
-    object cxRightClick: TComboBox
-      Left = 290
-      Height = 23
-      Top = 78
-      Width = 138
-      ItemHeight = 15
-      Items.Strings = (
-        'No action'
-        'Show window'
-        'Show graphic menu'
-        'Show classic menu'
-      )
-      ParentFont = False
-      Style = csDropDownList
-      TabOrder = 5
-    end
     object cbTrayCustomIcon: TCheckBox
-      Left = 6
+      Left = 4
       Height = 19
-      Top = 19
-      Width = 111
+      Top = 23
+      Width = 425
       Caption = 'Custom tray icon'
       OnClick = cbTrayCustomIconClick
       ParentFont = False
       TabOrder = 1
     end
     object edtCustomIcon: TFileNameEdit
-      Left = 6
+      Left = 4
       Height = 23
-      Top = 38
-      Width = 422
+      Top = 42
+      Width = 425
       DialogOptions = [ofHideReadOnly, ofEnableSizing]
       FilterIndex = 0
       HideDirectories = False
       ButtonWidth = 23
       NumGlyphs = 1
+      BorderSpacing.Bottom = 4
       MaxLength = 0
       ParentFont = False
       TabOrder = 2
       Text = '$ASuite\'
     end
-    object cxMiddleClick: TComboBox
-      Left = 148
-      Height = 23
-      Top = 78
-      Width = 138
-      ItemHeight = 15
-      Items.Strings = (
-        'No action'
-        'Show window'
-        'Show graphic menu'
-        'Show classic menu'
-      )
-      ParentFont = False
-      Style = csDropDownList
-      TabOrder = 4
+    object Panel1: TPanel
+      Left = 4
+      Height = 38
+      Top = 69
+      Width = 425
+      AutoSize = True
+      BevelOuter = bvNone
+      ChildSizing.EnlargeHorizontal = crsScaleChilds
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ChildSizing.ControlsPerLine = 3
+      ClientHeight = 38
+      ClientWidth = 425
+      TabOrder = 3
+      object Panel2: TPanel
+        Left = 0
+        Height = 38
+        Top = 0
+        Width = 138
+        AutoSize = True
+        BevelOuter = bvNone
+        ChildSizing.EnlargeHorizontal = crsScaleChilds
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ClientHeight = 38
+        ClientWidth = 138
+        TabOrder = 0
+        object lbTrayLeftClick: TLabel
+          Left = 0
+          Height = 15
+          Top = 0
+          Width = 138
+          Caption = 'Left click'
+          Color = clBtnFace
+          ParentColor = False
+          ParentFont = False
+          Transparent = False
+        end
+        object cxLeftClick: TComboBox
+          AnchorSideTop.Side = asrBottom
+          Left = 0
+          Height = 23
+          Top = 15
+          Width = 138
+          ItemHeight = 15
+          Items.Strings = (
+            'No action'
+            'Show window'
+            'Show graphic menu'
+            'Show classic menu'
+          )
+          ParentFont = False
+          Style = csDropDownList
+          TabOrder = 0
+        end
+      end
+      object Panel3: TPanel
+        Left = 138
+        Height = 38
+        Top = 0
+        Width = 149
+        AutoSize = True
+        BevelOuter = bvNone
+        ChildSizing.LeftRightSpacing = 4
+        ChildSizing.EnlargeHorizontal = crsScaleChilds
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ClientHeight = 38
+        ClientWidth = 149
+        TabOrder = 1
+        object lblMiddleClick: TLabel
+          AnchorSideLeft.Side = asrBottom
+          Left = 4
+          Height = 15
+          Top = 0
+          Width = 141
+          Caption = 'Middle click'
+          Color = clBtnFace
+          ParentColor = False
+          ParentFont = False
+          Transparent = False
+        end
+        object cxMiddleClick: TComboBox
+          AnchorSideLeft.Side = asrBottom
+          AnchorSideTop.Side = asrBottom
+          Left = 4
+          Height = 23
+          Top = 15
+          Width = 141
+          ItemHeight = 15
+          Items.Strings = (
+            'No action'
+            'Show window'
+            'Show graphic menu'
+            'Show classic menu'
+          )
+          ParentFont = False
+          Style = csDropDownList
+          TabOrder = 0
+        end
+      end
+      object Panel4: TPanel
+        Left = 287
+        Height = 38
+        Top = 0
+        Width = 138
+        AutoSize = True
+        BevelOuter = bvNone
+        ChildSizing.EnlargeHorizontal = crsScaleChilds
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ClientHeight = 38
+        ClientWidth = 138
+        TabOrder = 2
+        object lbTrayRightClick: TLabel
+          Left = 0
+          Height = 15
+          Top = 0
+          Width = 138
+          Caption = 'Right click'
+          Color = clBtnFace
+          ParentColor = False
+          ParentFont = False
+          Transparent = False
+        end
+        object cxRightClick: TComboBox
+          AnchorSideLeft.Side = asrBottom
+          AnchorSideTop.Side = asrBottom
+          Left = 0
+          Height = 23
+          Top = 15
+          Width = 138
+          ItemHeight = 15
+          Items.Strings = (
+            'No action'
+            'Show window'
+            'Show graphic menu'
+            'Show classic menu'
+          )
+          ParentFont = False
+          Style = csDropDownList
+          TabOrder = 0
+        end
+      end
     end
   end
   object grpClassicMenu: TGroupBox[1]
     Left = 4
-    Height = 83
-    Top = 246
+    Height = 85
+    Top = 139
     Width = 437
-    Align = alTop
+    AutoSize = True
     BorderSpacing.Left = 4
     BorderSpacing.Top = 4
     BorderSpacing.Right = 4
     Caption = 'Classic Menu'
-    ClientHeight = 63
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.TopBottomSpacing = 4
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ClientHeight = 65
     ClientWidth = 433
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 2
     object cbSubMenuMFU: TCheckBox
-      Left = 6
+      Left = 4
       Height = 19
-      Top = 0
-      Width = 224
+      Top = 4
+      Width = 425
       Caption = 'Most Used items on trayicon submenu'
       ParentFont = False
       TabOrder = 0
     end
     object cbSubMenuMRU: TCheckBox
-      Left = 6
+      Left = 4
       Height = 19
-      Top = 19
-      Width = 204
+      Top = 23
+      Width = 425
       Caption = 'Recent items on trayicon submenu'
       ParentFont = False
       TabOrder = 1
     end
     object chkAutoExpansion: TCheckBox
-      Left = 6
+      Left = 4
       Height = 19
-      Top = 38
-      Width = 168
+      Top = 42
+      Width = 425
       Caption = 'Active autoexpansion folder'
       ParentFont = False
       TabOrder = 2
@@ -178,73 +246,78 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
   end
   object grpGraphicMenu: TGroupBox[2]
     Left = 4
-    Height = 106
-    Top = 136
+    Height = 150
+    Top = 224
     Width = 437
-    Align = alTop
-    BorderSpacing.Left = 4
-    BorderSpacing.Top = 4
-    BorderSpacing.Right = 4
+    AutoSize = True
     Caption = 'Graphic Menu'
-    ClientHeight = 86
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.TopBottomSpacing = 4
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ClientHeight = 130
     ClientWidth = 433
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 1
-    object lbMenuTheme: TLabel
-      Left = 6
-      Height = 15
-      Top = 40
-      Width = 36
-      Caption = 'Theme'
-      ParentColor = False
-      ParentFont = False
-    end
-    object cxTheme: TComboBox
-      Left = 6
-      Height = 23
-      Top = 56
-      Width = 145
-      ItemHeight = 15
-      ParentFont = False
-      Style = csDropDownList
-      TabOrder = 4
-    end
     object cbMenuFade: TCheckBox
-      Left = 6
+      Left = 4
       Height = 19
-      Top = 0
-      Width = 114
+      Top = 4
+      Width = 425
       Caption = 'Enable fade effect'
       ParentFont = False
       TabOrder = 0
     end
     object cbSmallIcon: TCheckBox
-      Left = 6
+      Left = 4
       Height = 19
-      Top = 19
-      Width = 155
+      Top = 23
+      Width = 425
       Caption = 'Small TreeView''s icon size'
       ParentFont = False
       TabOrder = 2
     end
     object chkAutomaticHideMenu: TCheckBox
-      Left = 226
+      Left = 4
       Height = 19
-      Top = 19
-      Width = 108
+      Top = 42
+      Width = 425
       Caption = 'Auto-hide menu'
       ParentFont = False
       TabOrder = 3
     end
     object chkUserPicture: TCheckBox
-      Left = 226
+      Left = 4
       Height = 19
-      Top = 0
-      Width = 161
+      Top = 61
+      Width = 425
+      BorderSpacing.Bottom = 4
       Caption = 'Show user picture in menu'
       ParentFont = False
       TabOrder = 1
+    end
+    object lbMenuTheme: TLabel
+      Left = 4
+      Height = 15
+      Top = 84
+      Width = 425
+      BorderSpacing.Bottom = 4
+      Caption = 'Theme'
+      ParentColor = False
+      ParentFont = False
+    end
+    object cxTheme: TComboBox
+      Left = 4
+      Height = 23
+      Top = 103
+      Width = 150
+      BorderSpacing.CellAlignHorizontal = ccaLeftTop
+      Constraints.MinWidth = 150
+      ItemHeight = 15
+      ParentFont = False
+      Style = csDropDownList
+      TabOrder = 4
     end
   end
 end
