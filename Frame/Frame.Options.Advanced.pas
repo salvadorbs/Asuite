@@ -28,19 +28,22 @@ uses
   StdCtrls, ExtCtrls, Spin, DefaultTranslator;
 
 type
+
+  { TfrmAdvancedOptionsPage }
+
   TfrmAdvancedOptionsPage = class(TfrmBaseEntityPage)
+    cbCache: TCheckBox;
+    cbMFU: TCheckBox;
+    cbScheduler: TCheckBox;
+    gbMFU: TGroupBox;
+    gbOtherFunctions: TGroupBox;
+    lbMaxMFU: TLabel;
     
     pnlLeft: TPanel;
-    gbMFU: TGroupBox;
-    lbMaxMFU: TLabel;
-    cbMFU: TCheckBox;
     gbRecents: TGroupBox;
     lbMaxMRU: TLabel;
     cbMRU: TCheckBox;
     pnlRight: TPanel;
-    gbOtherFunctions: TGroupBox;
-    cbCache: TCheckBox;
-    cbScheduler: TCheckBox;
     grpClearElements: TGroupBox;
     lbClearElements: TLabel;
     cbClearMFU: TCheckBox;
@@ -48,8 +51,8 @@ type
     cbClearCache: TCheckBox;
     btnClear: TButton;
     cbClearMRU: TCheckBox;
-    seRecents: TSpinEdit;
     seMFU: TSpinEdit;
+    seRecents: TSpinEdit;
     gbBackup: TGroupBox;
     lbMaxBackup: TLabel;
     cbBackup: TCheckBox;

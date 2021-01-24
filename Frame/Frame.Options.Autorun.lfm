@@ -1,15 +1,15 @@
 inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
-  Height = 405
-  ClientHeight = 405
-  DesignLeft = 1083
-  DesignTop = 344
+  Height = 450
+  ChildSizing.EnlargeHorizontal = crsScaleChilds
+  ClientHeight = 450
+  DesignLeft = 2475
+  DesignTop = 159
   object grpStartupOrderItems: TGroupBox[0]
     Left = 4
-    Height = 200
+    Height = 219
     Top = 4
     Width = 437
-    Align = alTop
-    Anchors = [akTop, akLeft, akRight, akBottom]
+    AutoSize = True
     BorderSpacing.Left = 4
     BorderSpacing.Top = 4
     BorderSpacing.Right = 4
@@ -18,7 +18,7 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
     ChildSizing.TopBottomSpacing = 4
     ChildSizing.EnlargeHorizontal = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
-    ClientHeight = 180
+    ClientHeight = 199
     ClientWidth = 433
     Font.Style = [fsBold]
     ParentFont = False
@@ -43,105 +43,114 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       ParentFont = False
       TabOrder = 0
     end
-    object vstStartupItems: TVirtualStringTree
+    object Panel1: TPanel
       Left = 4
-      Height = 128
-      Top = 48
-      Width = 395
-      Align = alBottom
-      BorderSpacing.Right = 34
-      BorderSpacing.Bottom = 4
-      DefaultNodeHeight = 32
-      DefaultText = 'Node'
-      DragOperations = []
-      Header.AutoSizeIndex = 0
-      Header.Columns = <      
-        item
-          MinWidth = 50
-          Position = 0
-          Text = 'Name'
-        end      
-        item
-          MaxWidth = 100
-          MinWidth = 36
-          Position = 1
-          Text = 'Type'
-          Width = 36
-        end      
-        item
-          MinWidth = 50
-          Position = 2
-          Text = 'Category'
-          Width = 60
-        end      
-        item
-          MinWidth = 100
-          Position = 3
-          Text = 'Path executable'
-          Width = 200
-        end>
-      Header.Options = [hoColumnResize, hoVisible]
-      ParentFont = False
-      PopupMenu = pmAutorun
+      Height = 149
+      Top = 46
+      Width = 425
+      AutoSize = True
+      BevelOuter = bvNone
+      ClientHeight = 149
+      ClientWidth = 425
       TabOrder = 1
-      TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
-      TreeOptions.PaintOptions = [toPopupMode, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
-      TreeOptions.SelectionOptions = [toFullRowSelect]
-      OnGetPopupMenu = vstGetPopupMenu
-    end
-    object btnStartupDown: TKSpeedButton
-      AnchorSideLeft.Control = vstStartupItems
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideTop.Control = btnStartupDelete
-      AnchorSideTop.Side = asrBottom
-      Left = 404
-      Height = 25
-      Top = 124
-      Width = 27
-      Anchors = [akTop, akRight]
-      Font.Color = clBtnText
-      ParentFont = False
-      TabOrder = 2
-      OnClick = btnStartupDownClick
-    end
-    object btnStartupDelete: TKSpeedButton
-      AnchorSideLeft.Control = vstStartupItems
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideTop.Control = btnStartupUp
-      AnchorSideTop.Side = asrCenter
-      AnchorSideBottom.Control = vstStartupItems
-      AnchorSideBottom.Side = asrCenter
-      Left = 404
-      Height = 25
-      Top = 99
-      Width = 27
-      Anchors = [akRight, akBottom]
-      Font.Color = clBtnText
-      ParentFont = False
-      TabOrder = 3
-      OnClick = btnStartupDeleteClick
-    end
-    object btnStartupUp: TKSpeedButton
-      AnchorSideLeft.Control = vstStartupItems
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideBottom.Control = btnStartupDelete
-      Left = 404
-      Height = 25
-      Top = 74
-      Width = 27
-      Anchors = [akRight, akBottom]
-      Font.Color = clBtnText
-      ParentFont = False
-      TabOrder = 4
-      OnClick = btnStartupUpClick
+      object vstStartupItems: TVirtualStringTree
+        Left = 0
+        Height = 145
+        Top = 0
+        Width = 391
+        Align = alBottom
+        BorderSpacing.Right = 34
+        BorderSpacing.Bottom = 4
+        DefaultNodeHeight = 32
+        DefaultText = 'Node'
+        DragOperations = []
+        Header.AutoSizeIndex = 0
+        Header.Columns = <        
+          item
+            MinWidth = 50
+            Position = 0
+            Text = 'Name'
+          end        
+          item
+            MaxWidth = 100
+            MinWidth = 36
+            Position = 1
+            Text = 'Type'
+            Width = 36
+          end        
+          item
+            MinWidth = 50
+            Position = 2
+            Text = 'Category'
+            Width = 60
+          end        
+          item
+            MinWidth = 100
+            Position = 3
+            Text = 'Path executable'
+            Width = 200
+          end>
+        Header.Options = [hoColumnResize, hoVisible]
+        ParentFont = False
+        PopupMenu = pmAutorun
+        TabOrder = 0
+        TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
+        TreeOptions.PaintOptions = [toPopupMode, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
+        TreeOptions.SelectionOptions = [toFullRowSelect]
+        OnGetPopupMenu = vstGetPopupMenu
+      end
+      object btnStartupUp: TKSpeedButton
+        AnchorSideLeft.Control = vstStartupItems
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideBottom.Control = btnStartupDelete
+        Left = 398
+        Height = 25
+        Top = 35
+        Width = 27
+        Anchors = [akRight, akBottom]
+        Font.Color = clBtnText
+        ParentFont = False
+        TabOrder = 1
+        OnClick = btnStartupUpClick
+      end
+      object btnStartupDelete: TKSpeedButton
+        AnchorSideLeft.Control = vstStartupItems
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideTop.Control = vstStartupItems
+        AnchorSideTop.Side = asrCenter
+        Left = 398
+        Height = 25
+        Top = 60
+        Width = 27
+        Anchors = [akTop, akRight]
+        Font.Color = clBtnText
+        ParentFont = False
+        TabOrder = 2
+        OnClick = btnStartupDeleteClick
+      end
+      object btnStartupDown: TKSpeedButton
+        AnchorSideLeft.Control = vstStartupItems
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideTop.Control = btnStartupDelete
+        AnchorSideTop.Side = asrBottom
+        Left = 398
+        Height = 25
+        Top = 85
+        Width = 27
+        Anchors = [akTop, akRight]
+        Font.Color = clBtnText
+        ParentFont = False
+        TabOrder = 3
+        OnClick = btnStartupDownClick
+      end
     end
   end
   object grpShutdownOrderItems: TGroupBox[1]
     Left = 4
-    Height = 197
-    Top = 208
+    Height = 219
+    Top = 227
     Width = 437
-    Align = alClient
+    AutoSize = True
     BorderSpacing.Left = 4
     BorderSpacing.Top = 4
     BorderSpacing.Right = 4
@@ -150,7 +159,7 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
     ChildSizing.TopBottomSpacing = 4
     ChildSizing.EnlargeHorizontal = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
-    ClientHeight = 177
+    ClientHeight = 199
     ClientWidth = 433
     Font.Style = [fsBold]
     ParentFont = False
@@ -175,87 +184,105 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       ParentFont = False
       TabOrder = 0
     end
-    object vstShutdownItems: TVirtualStringTree
+    object Panel2: TPanel
       Left = 4
-      Height = 125
-      Top = 48
-      Width = 395
-      Align = alBottom
-      BorderSpacing.Right = 34
-      BorderSpacing.Bottom = 4
-      DefaultNodeHeight = 32
-      DragOperations = []
-      Header.AutoSizeIndex = 0
-      Header.Columns = <      
-        item
-          MinWidth = 50
-          Position = 0
-          Text = 'Name'
-        end      
-        item
-          MaxWidth = 100
-          MinWidth = 36
-          Position = 1
-          Text = 'Type'
-          Width = 36
-        end      
-        item
-          MinWidth = 50
-          Position = 2
-          Text = 'Category'
-        end      
-        item
-          MinWidth = 100
-          Position = 3
-          Text = 'Path executable'
-          Width = 200
-        end>
-      Header.Options = [hoColumnResize, hoVisible]
-      ParentFont = False
-      PopupMenu = pmAutorun
+      Height = 149
+      Top = 46
+      Width = 425
+      AutoSize = True
+      BevelOuter = bvNone
+      ClientHeight = 149
+      ClientWidth = 425
       TabOrder = 1
-      TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
-      TreeOptions.PaintOptions = [toPopupMode, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
-      TreeOptions.SelectionOptions = [toFullRowSelect]
-      OnGetPopupMenu = vstGetPopupMenu
-    end
-    object btnShutdownDelete: TKSpeedButton
-      AnchorSideTop.Control = vstShutdownItems
-      AnchorSideTop.Side = asrCenter
-      Left = 404
-      Height = 25
-      Top = 98
-      Width = 27
-      Anchors = [akTop, akRight]
-      Font.Color = clBtnText
-      ParentFont = False
-      TabOrder = 3
-      OnClick = btnShutdownDeleteClick
-    end
-    object btnShutdownDown: TKSpeedButton
-      AnchorSideTop.Control = btnShutdownDelete
-      AnchorSideTop.Side = asrBottom
-      Left = 404
-      Height = 25
-      Top = 123
-      Width = 27
-      Anchors = [akTop, akRight]
-      Font.Color = clBtnText
-      ParentFont = False
-      TabOrder = 4
-      OnClick = btnShutdownDownClick
-    end
-    object btnShutdownUp: TKSpeedButton
-      AnchorSideBottom.Control = btnShutdownDelete
-      Left = 404
-      Height = 25
-      Top = 73
-      Width = 27
-      Anchors = [akRight, akBottom]
-      Font.Color = clBtnText
-      ParentFont = False
-      TabOrder = 2
-      OnClick = btnShutdownUpClick
+      object vstShutdownItems: TVirtualStringTree
+        Left = 0
+        Height = 145
+        Top = 0
+        Width = 391
+        Align = alBottom
+        BorderSpacing.Right = 34
+        BorderSpacing.Bottom = 4
+        DefaultNodeHeight = 32
+        DefaultText = 'Node'
+        DragOperations = []
+        Header.AutoSizeIndex = 0
+        Header.Columns = <        
+          item
+            MinWidth = 50
+            Position = 0
+            Text = 'Name'
+          end        
+          item
+            MaxWidth = 100
+            MinWidth = 36
+            Position = 1
+            Text = 'Type'
+            Width = 36
+          end        
+          item
+            MinWidth = 50
+            Position = 2
+            Text = 'Category'
+          end        
+          item
+            MinWidth = 100
+            Position = 3
+            Text = 'Path executable'
+            Width = 200
+          end>
+        Header.Options = [hoColumnResize, hoVisible]
+        ParentFont = False
+        PopupMenu = pmAutorun
+        TabOrder = 0
+        TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
+        TreeOptions.PaintOptions = [toPopupMode, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
+        TreeOptions.SelectionOptions = [toFullRowSelect]
+        OnGetPopupMenu = vstGetPopupMenu
+      end
+      object btnShutdownUp: TKSpeedButton
+        AnchorSideLeft.Control = vstShutdownItems
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideBottom.Control = btnShutdownDelete
+        Left = 398
+        Height = 25
+        Top = 35
+        Width = 27
+        Anchors = [akRight, akBottom]
+        Font.Color = clBtnText
+        ParentFont = False
+        TabOrder = 1
+        OnClick = btnShutdownUpClick
+      end
+      object btnShutdownDelete: TKSpeedButton
+        AnchorSideLeft.Control = vstShutdownItems
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideTop.Control = vstShutdownItems
+        AnchorSideTop.Side = asrCenter
+        Left = 398
+        Height = 25
+        Top = 60
+        Width = 27
+        Anchors = [akTop, akRight]
+        Font.Color = clBtnText
+        ParentFont = False
+        TabOrder = 2
+        OnClick = btnShutdownDeleteClick
+      end
+      object btnShutdownDown: TKSpeedButton
+        AnchorSideLeft.Control = vstShutdownItems
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideTop.Control = btnShutdownDelete
+        AnchorSideTop.Side = asrBottom
+        Left = 398
+        Height = 25
+        Top = 85
+        Width = 27
+        Anchors = [akTop, akRight]
+        Font.Color = clBtnText
+        ParentFont = False
+        TabOrder = 3
+        OnClick = btnShutdownDownClick
+      end
     end
   end
   object pmAutorun: TPopupMenu[2]

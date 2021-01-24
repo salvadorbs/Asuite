@@ -1,20 +1,25 @@
 inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
+  Height = 450
   ChildSizing.LeftRightSpacing = 4
   ChildSizing.TopBottomSpacing = 4
   ChildSizing.EnlargeHorizontal = crsScaleChilds
-  DesignLeft = 1884
-  DesignTop = 228
+  ClientHeight = 450
+  DesignLeft = 2029
+  DesignTop = 158
   object gbTrayicon: TGroupBox[0]
     Left = 4
-    Height = 131
+    Height = 135
     Top = 4
     Width = 437
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
     Caption = 'System Tray'
     ChildSizing.LeftRightSpacing = 4
     ChildSizing.TopBottomSpacing = 4
     ChildSizing.EnlargeHorizontal = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
-    ClientHeight = 111
+    ClientHeight = 115
     ClientWidth = 433
     Font.Style = [fsBold]
     ParentFont = False
@@ -34,6 +39,7 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
       Height = 19
       Top = 23
       Width = 425
+      BorderSpacing.Bottom = 4
       Caption = 'Custom tray icon'
       OnClick = cbTrayCustomIconClick
       ParentFont = False
@@ -42,7 +48,7 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
     object edtCustomIcon: TFileNameEdit
       Left = 4
       Height = 23
-      Top = 42
+      Top = 46
       Width = 425
       DialogOptions = [ofHideReadOnly, ofEnableSizing]
       FilterIndex = 0
@@ -58,7 +64,7 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
     object Panel1: TPanel
       Left = 4
       Height = 38
-      Top = 69
+      Top = 73
       Width = 425
       AutoSize = True
       BevelOuter = bvNone
@@ -194,7 +200,7 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
   object grpClassicMenu: TGroupBox[1]
     Left = 4
     Height = 85
-    Top = 139
+    Top = 143
     Width = 437
     AutoSize = True
     BorderSpacing.Left = 4
@@ -241,9 +247,12 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
   object grpGraphicMenu: TGroupBox[2]
     Left = 4
     Height = 150
-    Top = 224
+    Top = 232
     Width = 437
     AutoSize = True
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
     Caption = 'Graphic Menu'
     ChildSizing.LeftRightSpacing = 4
     ChildSizing.TopBottomSpacing = 4

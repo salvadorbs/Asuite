@@ -1,11 +1,11 @@
 inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
-  Height = 359
+  Height = 450
   ChildSizing.LeftRightSpacing = 4
   ChildSizing.TopBottomSpacing = 4
   ChildSizing.EnlargeHorizontal = crsScaleChilds
-  ClientHeight = 359
-  DesignLeft = 938
-  DesignTop = 289
+  ClientHeight = 450
+  DesignLeft = 2030
+  DesignTop = 299
   object gbStartup: TGroupBox[0]
     Left = 4
     Height = 104

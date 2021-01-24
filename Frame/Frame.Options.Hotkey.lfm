@@ -1,10 +1,10 @@
 inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
-  Height = 405
+  Height = 450
   AutoSize = True
   ChildSizing.LeftRightSpacing = 4
   ChildSizing.TopBottomSpacing = 4
   ChildSizing.EnlargeHorizontal = crsScaleChilds
-  ClientHeight = 405
+  ClientHeight = 450
   DesignLeft = 1936
   DesignTop = 245
   object gbHotkey: TGroupBox[0]
@@ -121,7 +121,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
   end
   object grpOrderSoftware: TGroupBox[1]
     Left = 4
-    Height = 210
+    Height = 255
     Top = 190
     Width = 437
     AutoSize = True
@@ -134,7 +134,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     ChildSizing.TopBottomSpacing = 4
     ChildSizing.EnlargeHorizontal = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
-    ClientHeight = 190
+    ClientHeight = 235
     ClientWidth = 433
     Font.Style = [fsBold]
     ParentFont = False
@@ -142,14 +142,14 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     object vstItems: TVirtualStringTree
       Cursor = 63
       Left = 6
-      Height = 180
+      Height = 225
       Top = 4
       Width = 421
       Align = alClient
       BorderSpacing.Left = 6
       BorderSpacing.Right = 6
       BorderSpacing.Bottom = 6
-      Constraints.MinHeight = 180
+      Constraints.MinHeight = 225
       DefaultNodeHeight = 32
       DragOperations = []
       Header.AutoSizeIndex = 0
