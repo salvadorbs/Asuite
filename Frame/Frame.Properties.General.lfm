@@ -22,10 +22,8 @@ inherited frmBaseGeneralPropertyPage: TfrmBaseGeneralPropertyPage
       Top = 0
       Width = 32
       Caption = 'Name'
-      Color = clBtnFace
       ParentColor = False
       ParentFont = False
-      Transparent = False
     end
     object lbPathIcon: TLabel
       Left = 6
@@ -33,10 +31,8 @@ inherited frmBaseGeneralPropertyPage: TfrmBaseGeneralPropertyPage
       Top = 40
       Width = 150
       Caption = 'Custom icon path (optional)'
-      Color = clBtnFace
       ParentColor = False
       ParentFont = False
-      Transparent = False
     end
     object edtName: TEdit
       Left = 6

@@ -1,6 +1,9 @@
 inherited frmStatsOptionsPage: TfrmStatsOptionsPage
-  DesignLeft = 1041
-  DesignTop = 304
+  ChildSizing.LeftRightSpacing = 4
+  ChildSizing.TopBottomSpacing = 4
+  ChildSizing.EnlargeHorizontal = crsScaleChilds
+  DesignLeft = 1917
+  DesignTop = 257
   object gbASuite: TGroupBox[0]
     Left = 4
     Height = 80

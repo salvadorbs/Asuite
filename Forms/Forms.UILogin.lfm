@@ -7,7 +7,6 @@ object frmUILogin: TfrmUILogin
   BorderStyle = bsSingle
   ClientHeight = 219
   ClientWidth = 316
-  Color = clBtnFace
   Font.Color = clWindowText
   Font.Height = -12
   Position = poScreenCenter

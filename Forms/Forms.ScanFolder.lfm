@@ -7,7 +7,6 @@ object frmScanFolder: TfrmScanFolder
   Caption = 'Scan folder'
   ClientHeight = 256
   ClientWidth = 579
-  Color = clBtnFace
   KeyPreview = True
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate

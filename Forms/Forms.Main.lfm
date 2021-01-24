@@ -7,7 +7,6 @@ object frmMain: TfrmMain
   Caption = 'ASuite'
   ClientHeight = 366
   ClientWidth = 201
-  Color = clBtnFace
   Constraints.MinHeight = 370
   Constraints.MinWidth = 200
   Menu = MainMenu
@@ -67,12 +66,12 @@ object frmMain: TfrmMain
     end
     object tbSearch: TTabSheet
       Caption = 'Search'
-      ClientHeight = 332
-      ClientWidth = 191
+      ClientHeight = 338
+      ClientWidth = 193
       ParentFont = False
       object vstSearch: TVirtualStringTree
         Left = 0
-        Height = 316
+        Height = 314
         Top = 24
         Width = 193
         Align = alBottom
