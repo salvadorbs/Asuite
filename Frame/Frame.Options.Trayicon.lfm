@@ -86,10 +86,8 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
           Top = 0
           Width = 138
           Caption = 'Left click'
-          Color = clBtnFace
           ParentColor = False
           ParentFont = False
-          Transparent = False
         end
         object cxLeftClick: TComboBox
           AnchorSideTop.Side = asrBottom
@@ -129,10 +127,8 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
           Top = 0
           Width = 141
           Caption = 'Middle click'
-          Color = clBtnFace
           ParentColor = False
           ParentFont = False
-          Transparent = False
         end
         object cxMiddleClick: TComboBox
           AnchorSideLeft.Side = asrBottom
@@ -171,10 +167,8 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
           Top = 0
           Width = 138
           Caption = 'Right click'
-          Color = clBtnFace
           ParentColor = False
           ParentFont = False
-          Transparent = False
         end
         object cxRightClick: TComboBox
           AnchorSideLeft.Side = asrBottom

@@ -7,7 +7,6 @@ object frmShortcutGrabber: TfrmShortcutGrabber
   Caption = 'Choose hotkey...'
   ClientHeight = 189
   ClientWidth = 396
-  Color = clBtnFace
   KeyPreview = True
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate

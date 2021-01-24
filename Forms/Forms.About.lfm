@@ -7,7 +7,6 @@ object frmAbout: TfrmAbout
   Caption = 'About %s'
   ClientHeight = 171
   ClientWidth = 382
-  Color = clBtnFace
   OnShow = FormShow
   Position = poOwnerFormCenter
   LCLVersion = '2.0.10.0'
@@ -22,7 +21,6 @@ object frmAbout: TfrmAbout
     BorderSpacing.Bottom = 4
     ClientHeight = 149
     ClientWidth = 370
-    Color = clBtnFace
     Font.Height = -11
     ParentColor = False
     ParentFont = False

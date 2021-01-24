@@ -10,7 +10,6 @@ object frmGraphicMenu: TfrmGraphicMenu
   Caption = 'ASuite Menu'
   ClientHeight = 530
   ClientWidth = 406
-  Color = clBtnFace
   KeyPreview = True
   OnCreate = FormCreate
   OnDeactivate = FormDeactivate

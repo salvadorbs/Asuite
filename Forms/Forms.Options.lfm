@@ -1,7 +1,7 @@
 inherited frmOptions: TfrmOptions
-  Left = -795
+  Left = 469
   Height = 450
-  Top = 225
+  Top = 185
   Width = 645
   Caption = 'Options'
   ClientHeight = 450

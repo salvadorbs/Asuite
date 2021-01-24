@@ -114,10 +114,8 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
       BorderSpacing.Top = 4
       BorderSpacing.Bottom = 4
       Caption = 'On execution'
-      Color = clBtnFace
       ParentColor = False
       ParentFont = False
-      Transparent = False
     end
     object cxActionOnExe: TComboBox
       Left = 4

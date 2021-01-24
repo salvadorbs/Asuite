@@ -7,7 +7,6 @@ object frmImportList: TfrmImportList
   Caption = 'Import list'
   ClientHeight = 333
   ClientWidth = 287
-  Color = clBtnFace
   OnClose = FormClose
   OnCreate = FormCreate
   Position = poMainFormCenter
@@ -79,11 +78,9 @@ object frmImportList: TfrmImportList
       Width = 257
       AutoSize = False
       Caption = 'Placeholder text'
-      Color = clBtnFace
       Font.Style = [fsBold]
       ParentColor = False
       ParentFont = False
-      Transparent = False
       WordWrap = True
     end
   end

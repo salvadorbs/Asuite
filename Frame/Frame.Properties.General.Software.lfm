@@ -42,10 +42,8 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Top = 40
       Width = 193
       Caption = 'Custom working directory (optional)'
-      Color = clBtnFace
       ParentColor = False
       ParentFont = False
-      Transparent = False
     end
     object lbInfo2: TLabel
       Left = 6
@@ -54,10 +52,8 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Width = 338
       AutoSize = False
       Caption = 'Note: You can use these vars (included environment variables) in relative path:'#13#10'- %asuite% = ASuite folder path ("%s")'#13#10'- %drive% = drive path ("%s")'
-      Color = clBtnFace
       ParentColor = False
       ParentFont = False
-      Transparent = False
       WordWrap = True
     end
     object lbParameters: TLabel
@@ -66,10 +62,8 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Top = 80
       Width = 114
       Caption = 'Parameters (optional)'
-      Color = clBtnFace
       ParentColor = False
       ParentFont = False
-      Transparent = False
     end
     object lbPathExe: TLabel
       Left = 6
@@ -77,10 +71,8 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Top = 0
       Width = 176
       Caption = 'Executable/folder/web page path'
-      Color = clBtnFace
       ParentColor = False
       ParentFont = False
-      Transparent = False
     end
     object edtParameters: TEdit
       Left = 6
