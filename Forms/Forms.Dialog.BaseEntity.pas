@@ -150,6 +150,11 @@ begin
   Self.vstCategory.FullExpand;
 
   Self.pnlDialogPage.TabOrder := 0;
+
+  {$IFDEF UNIX}
+  //Workaround for form glitch in GTK2
+  BorderStyle := bsSizeable;
+  {$ENDIF}
 end;
 
 procedure TfrmDialogBase.FormKeyPress(Sender: TObject; var Key: Char);

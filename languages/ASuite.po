@@ -426,7 +426,7 @@ msgid "Recents"
 msgstr ""
 
 #: tfrmadvancedoptionspage.cbmfu.caption
-msgid "Active Most Frequently Used items"
+msgid "Active MFU items"
 msgstr ""
 
 #: tfrmadvancedoptionspage.cbmru.caption
