@@ -139,7 +139,7 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
         Height = 19
         Top = 4
         Width = 234
-        Caption = 'Active Most Frequently Used items'
+        Caption = 'Active MFU items'
         OnClick = cbMFUClick
         ParentFont = False
         TabOrder = 0
