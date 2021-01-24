@@ -1,4 +1,6 @@
 inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
+  Height = 450
+  ClientHeight = 450
   DesignLeft = 558
   DesignTop = 225
   object gbTreeView: TGroupBox[0]

@@ -33,24 +33,26 @@ type
   { TfrmAutorunOptionsPage }
 
   TfrmAutorunOptionsPage = class(TfrmBaseEntityPage)
-    btnStartupDelete: TKSpeedButton;
-    btnStartupDown: TKSpeedButton;
-    btnStartupUp: TKSpeedButton;
-    
-    grpStartupOrderItems: TGroupBox;
-    grpShutdownOrderItems: TGroupBox;
-    chkStartup: TCheckBox;
-    lblStartupInfo: TLabel;
-    chkShutdown: TCheckBox;
-    lblShutdownInfo: TLabel;
-    vstShutdownItems: TVirtualStringTree;
     btnShutdownDelete: TKSpeedButton;
     btnShutdownDown: TKSpeedButton;
     btnShutdownUp: TKSpeedButton;
+    btnStartupDelete: TKSpeedButton;
+    btnStartupDown: TKSpeedButton;
+    btnStartupUp: TKSpeedButton;
+    chkShutdown: TCheckBox;
+    grpShutdownOrderItems: TGroupBox;
+    
+    grpStartupOrderItems: TGroupBox;
+    chkStartup: TCheckBox;
+    lblShutdownInfo: TLabel;
+    lblStartupInfo: TLabel;
+    Panel1: TPanel;
+    Panel2: TPanel;
     pmAutorun: TPopupMenu;
     mniRemoveAutorun: TMenuItem;
     mniN1: TMenuItem;
     mniProperties: TMenuItem;
+    vstShutdownItems: TVirtualStringTree;
     vstStartupItems: TVirtualStringTree;
     procedure btnStartupUpClick(Sender: TObject);
     procedure btnShutdownUpClick(Sender: TObject);

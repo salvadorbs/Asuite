@@ -1,7 +1,9 @@
 inherited frmStatsOptionsPage: TfrmStatsOptionsPage
+  Height = 450
   ChildSizing.LeftRightSpacing = 4
   ChildSizing.TopBottomSpacing = 4
   ChildSizing.EnlargeHorizontal = crsScaleChilds
+  ClientHeight = 450
   DesignLeft = 1917
   DesignTop = 257
   object gbASuite: TGroupBox[0]
@@ -23,9 +25,10 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       Left = 6
       Height = 15
       Top = 0
-      Width = 419
+      Width = 425
       RightCaption = 'Value'
       LinePeriod = 4
+      Anchors = [akTop, akLeft, akRight]
       Caption = 'Software added'
       ParentFont = False
     end
@@ -33,9 +36,10 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       Left = 6
       Height = 15
       Top = 38
-      Width = 419
+      Width = 425
       RightCaption = 'Value'
       LinePeriod = 4
+      Anchors = [akTop, akLeft, akRight]
       Caption = 'Total'
       Font.Style = [fsBold]
       ParentFont = False
@@ -45,9 +49,10 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       Left = 6
       Height = 15
       Top = 19
-      Width = 419
+      Width = 425
       RightCaption = 'Value'
       LinePeriod = 4
+      Anchors = [akTop, akLeft, akRight]
       Caption = 'Categories added'
       ParentFont = False
     end
@@ -71,9 +76,10 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       Left = 6
       Height = 15
       Top = 0
-      Width = 419
+      Width = 425
       RightCaption = 'Value'
       LinePeriod = 4
+      Anchors = [akTop, akLeft, akRight]
       Caption = 'Size'
       ParentFont = False
     end
@@ -81,9 +87,10 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       Left = 6
       Height = 15
       Top = 38
-      Width = 419
+      Width = 425
       RightCaption = 'Value'
       LinePeriod = 4
+      Anchors = [akTop, akLeft, akRight]
       Caption = 'Used space'
       ParentFont = False
     end
@@ -91,9 +98,10 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       Left = 6
       Height = 15
       Top = 19
-      Width = 419
+      Width = 425
       RightCaption = 'Value'
       LinePeriod = 4
+      Anchors = [akTop, akLeft, akRight]
       Caption = 'Free space'
       ParentFont = False
     end
@@ -105,6 +113,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     Width = 437
     Align = alTop
     BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
     BorderSpacing.Right = 4
     Caption = 'System'
     ClientHeight = 92
@@ -116,9 +125,10 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       Left = 6
       Height = 15
       Top = 0
-      Width = 419
+      Width = 425
       RightCaption = 'Value'
       LinePeriod = 4
+      Anchors = [akTop, akLeft, akRight]
       Caption = 'Operating System'
       ParentFont = False
     end
@@ -126,9 +136,10 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       Left = 6
       Height = 15
       Top = 75
-      Width = 419
+      Width = 425
       RightCaption = 'Value'
       LinePeriod = 4
+      Anchors = [akTop, akLeft, akRight]
       Caption = 'Current user'
       ParentFont = False
     end
@@ -136,9 +147,10 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       Left = 6
       Height = 15
       Top = 19
-      Width = 419
+      Width = 425
       RightCaption = 'Value'
       LinePeriod = 4
+      Anchors = [akTop, akLeft, akRight]
       Caption = 'Build Version'
       ParentFont = False
     end
@@ -146,9 +158,10 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       Left = 6
       Height = 15
       Top = 57
-      Width = 419
+      Width = 425
       RightCaption = 'Value'
       LinePeriod = 4
+      Anchors = [akTop, akLeft, akRight]
       Caption = 'Processor'
       ParentFont = False
     end
@@ -156,9 +169,10 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       Left = 6
       Height = 15
       Top = 38
-      Width = 419
+      Width = 425
       RightCaption = 'Value'
       LinePeriod = 4
+      Anchors = [akTop, akLeft, akRight]
       Caption = 'Total physical memory'
       ParentFont = False
     end
