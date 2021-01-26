@@ -1,41 +1,30 @@
 inherited frmCatGeneralPropertyPage: TfrmCatGeneralPropertyPage
-  DesignLeft = -754
-  DesignTop = 282
-  inherited gbItem: TGroupBox
-    Height = 104
-    ClientHeight = 84
-  end
+  DesignLeft = 2132
   object grpSubItems: TGroupBox[1]
     Left = 4
-    Height = 193
-    Top = 112
+    Height = 192
+    Top = 114
     Width = 352
-    Align = alTop
     BorderSpacing.Left = 4
     BorderSpacing.Top = 4
     BorderSpacing.Right = 4
     Caption = 'Software in this category'
-    ClientHeight = 173
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.TopBottomSpacing = 4
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ClientHeight = 172
     ClientWidth = 348
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 1
-    object lblNote: TLabel
-      Left = 6
-      Height = 46
-      Top = 122
-      Width = 338
-      AutoSize = False
-      Caption = 'Note: In this list you can find all software items of this category (only first level). Uncheck items who you don''t want to start, when run this category.'
-      ParentColor = False
-      ParentFont = False
-      WordWrap = True
-    end
     object vstCategoryItems: TVirtualStringTree
-      Left = 6
-      Height = 116
-      Top = 0
-      Width = 338
+      Left = 4
+      Height = 115
+      Top = 4
+      Width = 340
+      BorderSpacing.Bottom = 4
+      Constraints.MinHeight = 115
       DragOperations = []
       Header.AutoSizeIndex = 0
       Header.Columns = <>
@@ -44,6 +33,16 @@ inherited frmCatGeneralPropertyPage: TfrmCatGeneralPropertyPage
       TabOrder = 0
       TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
       TreeOptions.PaintOptions = [toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
+    end
+    object lblNote: TLabel
+      Left = 4
+      Height = 45
+      Top = 123
+      Width = 340
+      Caption = 'Note: In this list you can find all software items of this category (only first level). Uncheck items who you don''t want to start, when run this category.'
+      ParentColor = False
+      ParentFont = False
+      WordWrap = True
     end
   end
 end

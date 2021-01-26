@@ -29,12 +29,15 @@ uses
   EditBtn, DefaultTranslator;
 
 type
+
+  { TfrmBaseGeneralPropertyPage }
+
   TfrmBaseGeneralPropertyPage = class(TfrmBasePropertyPage)
+    edtPathIcon: TFileNameEdit;
     gbItem: TGroupBox;
     lbName: TLabel;
     edtName: TEdit;
     lbPathIcon: TLabel;
-    edtPathIcon: TFileNameEdit;
     procedure edtPathIconAfterDialog(Sender: TObject; var AName: string;
       var AAction: Boolean);
     procedure edtPathIconBeforeDialog(Sender: TObject; var AName: string;

@@ -1,7 +1,7 @@
 inherited frmPropertyItem: TfrmPropertyItem
-  Left = -724
+  Left = 512
   Height = 371
-  Top = 309
+  Top = 225
   Caption = 'Property'
   ClientHeight = 371
   Constraints.MinHeight = 370

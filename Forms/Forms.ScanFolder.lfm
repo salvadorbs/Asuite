@@ -1,7 +1,7 @@
 object frmScanFolder: TfrmScanFolder
-  Left = -1011
+  Left = 502
   Height = 256
-  Top = 378
+  Top = 282
   Width = 579
   BorderStyle = bsDialog
   Caption = 'Scan folder'
@@ -52,8 +52,8 @@ object frmScanFolder: TfrmScanFolder
       Top = 61
       Width = 169
       Caption = 'File Types'
-      ClientHeight = 96
-      ClientWidth = 167
+      ClientHeight = 94
+      ClientWidth = 165
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 1
@@ -115,8 +115,8 @@ object frmScanFolder: TfrmScanFolder
       Top = 61
       Width = 169
       Caption = 'Exclude files'
-      ClientHeight = 96
-      ClientWidth = 167
+      ClientHeight = 94
+      ClientWidth = 165
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 2
@@ -176,8 +176,8 @@ object frmScanFolder: TfrmScanFolder
       Top = 5
       Width = 345
       Caption = 'General settings'
-      ClientHeight = 32
-      ClientWidth = 343
+      ClientHeight = 30
+      ClientWidth = 341
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 0

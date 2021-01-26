@@ -1,53 +1,57 @@
 inherited frmBaseGeneralPropertyPage: TfrmBaseGeneralPropertyPage
-  DesignLeft = -842
-  DesignTop = 128
+  DesignLeft = 2130
+  DesignTop = 224
   object gbItem: TGroupBox[0]
     Left = 4
-    Height = 109
+    Height = 106
     Top = 4
     Width = 352
-    Align = alTop
     BorderSpacing.Left = 4
     BorderSpacing.Top = 4
     BorderSpacing.Right = 4
     Caption = 'Item'
-    ClientHeight = 89
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.TopBottomSpacing = 4
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ClientHeight = 86
     ClientWidth = 348
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 0
     object lbName: TLabel
-      Left = 6
+      Left = 4
       Height = 15
-      Top = 0
-      Width = 32
+      Top = 4
+      Width = 340
       Caption = 'Name'
       ParentColor = False
       ParentFont = False
     end
-    object lbPathIcon: TLabel
-      Left = 6
-      Height = 15
-      Top = 40
-      Width = 150
-      Caption = 'Custom icon path (optional)'
-      ParentColor = False
-      ParentFont = False
-    end
     object edtName: TEdit
-      Left = 6
+      Left = 4
       Height = 23
-      Top = 16
-      Width = 145
+      Top = 19
+      Width = 340
+      BorderSpacing.Bottom = 2
       OnEnter = edtNameEnter
       ParentFont = False
       TabOrder = 0
     end
+    object lbPathIcon: TLabel
+      Left = 4
+      Height = 15
+      Top = 44
+      Width = 340
+      Caption = 'Custom icon path (optional)'
+      ParentColor = False
+      ParentFont = False
+    end
     object edtPathIcon: TFileNameEdit
-      Left = 6
+      Left = 4
       Height = 23
-      Top = 56
-      Width = 338
+      Top = 59
+      Width = 340
       DialogOptions = [ofHideReadOnly, ofEnableSizing]
       FilterIndex = 0
       HideDirectories = False

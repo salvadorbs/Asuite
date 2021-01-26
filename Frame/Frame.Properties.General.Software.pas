@@ -28,17 +28,19 @@ uses
   DefaultTranslator;
 
 type
+
+  { TfrmSWGeneralPropertyPage }
+
   TfrmSWGeneralPropertyPage = class(TfrmBaseGeneralPropertyPage)
-    grpSoftware: TGroupBox;
-    lbWorkingDir: TLabel;
-    lbInfo2: TLabel;
     edtParameters: TEdit;
+    edtWorkingDir: TDirectoryEdit;
+    grpSoftware: TGroupBox;
+    lbInfo2: TLabel;
     lbParameters: TLabel;
     lbPathExe: TLabel;
-    
-    edtWorkingDir: TDirectoryEdit;
+
     edtPathExe: TFileNameEdit;
-    btnExtractName: TButton;
+    lbWorkingDir: TLabel;
     procedure edtPathExeAfterDialog(Sender: TObject; var AName: string;
       var AAction: Boolean);
     procedure edtPathExeBeforeDialog(Sender: TObject; var AName: string;
@@ -90,7 +92,7 @@ end;
 
 procedure TfrmSWGeneralPropertyPage.edtPathExeChange(Sender: TObject);
 begin
-  btnExtractName.Enabled := CheckPropertyPath(edtPathExe);
+  //btnExtractName.Enabled := CheckPropertyPath(edtPathExe);
 end;
 
 procedure TfrmSWGeneralPropertyPage.edtWorkingDirAfterDialog(Sender: TObject;

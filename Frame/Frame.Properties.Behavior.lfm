@@ -1,26 +1,30 @@
 inherited frmBehaviorPropertyPage: TfrmBehaviorPropertyPage
-  DesignLeft = -738
-  DesignTop = 479
+  DesignLeft = 2074
+  DesignTop = 212
   object grpAutoExecute: TGroupBox[0]
     Left = 4
-    Height = 78
+    Height = 80
     Top = 4
     Width = 352
-    Align = alTop
     BorderSpacing.Left = 4
     BorderSpacing.Top = 4
     BorderSpacing.Right = 4
     Caption = 'Autorun'
-    ClientHeight = 58
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.TopBottomSpacing = 4
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ClientHeight = 60
     ClientWidth = 348
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 0
     object cxAutoExecute: TComboBox
-      Left = 6
+      Left = 4
       Height = 23
-      Top = 0
-      Width = 338
+      Top = 4
+      Width = 340
+      BorderSpacing.Bottom = 4
       ItemHeight = 15
       Items.Strings = (
         'Never'
@@ -34,10 +38,11 @@ inherited frmBehaviorPropertyPage: TfrmBehaviorPropertyPage
       TabOrder = 0
     end
     object btnChangeOrder: TButton
-      Left = 105
-      Height = 21
-      Top = 30
-      Width = 150
+      Left = 102
+      Height = 25
+      Top = 31
+      Width = 143
+      BorderSpacing.CellAlignHorizontal = ccaCenter
       Caption = 'Change autorun order'
       OnClick = btnChangeOrderClick
       ParentFont = False
@@ -45,73 +50,65 @@ inherited frmBehaviorPropertyPage: TfrmBehaviorPropertyPage
     end
   end
   object pnl1: TPanel[1]
-    Left = 0
-    Height = 53
-    Top = 82
-    Width = 360
-    Align = alTop
+    Left = 4
+    Height = 59
+    Top = 84
+    Width = 352
     BevelOuter = bvNone
-    ClientHeight = 53
-    ClientWidth = 360
+    ChildSizing.TopBottomSpacing = 4
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.Layout = cclTopToBottomThenLeftToRight
+    ClientHeight = 59
+    ClientWidth = 352
     TabOrder = 1
     object grpOnExecute: TGroupBox
-      Left = 4
-      Height = 49
+      Left = 0
+      Height = 51
       Top = 4
-      Width = 173
-      Align = alLeft
-      BorderSpacing.Left = 4
-      BorderSpacing.Top = 4
-      BorderSpacing.Right = 4
+      Width = 174
       Caption = 'On Execute'
-      ClientHeight = 29
-      ClientWidth = 169
+      ChildSizing.LeftRightSpacing = 4
+      ChildSizing.TopBottomSpacing = 4
+      ChildSizing.EnlargeHorizontal = crsScaleChilds
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ClientHeight = 31
+      ClientWidth = 170
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 0
       object cxActionOnExe: TComboBox
-        Left = 6
+        Left = 4
         Height = 23
-        Top = 0
-        Width = 158
+        Top = 4
+        Width = 162
         ItemHeight = 15
-        Items.Strings = (
-          'Default (options)'
-          'Just run file'
-          'Run and hide ASuite'
-          'Run and close ASuite'
-        )
         ParentFont = False
         Style = csDropDownList
         TabOrder = 0
       end
     end
     object grpWindowState: TGroupBox
-      Left = 181
-      Height = 49
+      Left = 178
+      Height = 51
       Top = 4
-      Width = 175
-      Align = alLeft
+      Width = 174
       BorderSpacing.Left = 4
-      BorderSpacing.Top = 4
-      BorderSpacing.Right = 4
       Caption = 'Window State'
-      ClientHeight = 29
-      ClientWidth = 171
+      ChildSizing.LeftRightSpacing = 4
+      ChildSizing.TopBottomSpacing = 4
+      ChildSizing.EnlargeHorizontal = crsScaleChilds
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ClientHeight = 31
+      ClientWidth = 170
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 1
       object cxWindowState: TComboBox
-        Left = 6
+        Left = 4
         Height = 23
-        Top = 0
-        Width = 158
+        Top = 4
+        Width = 162
         ItemHeight = 15
-        Items.Strings = (
-          'Normal'
-          'Minimized'
-          'Maximized'
-        )
         ParentFont = False
         Style = csDropDownList
         TabOrder = 0
