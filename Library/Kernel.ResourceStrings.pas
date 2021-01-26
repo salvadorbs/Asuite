@@ -118,6 +118,36 @@ resourcestring
   msgStop = 'Stop';             
   msgScanFolderExtNotValid = 'Ext file not valid. Please check it and retry!';
 
+  //ComboboxItems
+  cxActionOnExeOpt_item0 = 'Just run file';
+  cxActionOnExeOpt_item1 = 'Run and hide ASuite';
+  cxActionOnExeOpt_item2 = 'Run and close ASuite';
+
+  cxMouseClick_item0 = 'No action';
+  cxMouseClick_item1 = 'Show window';
+  cxMouseClick_item2 = 'Show graphic menu';
+  cxMouseClick_item3 = 'Show classic menu';
+
+  cxScheduler_item0 = 'Disabled';
+  cxScheduler_item1 = 'Once';
+  cxScheduler_item2 = 'Hourly';
+  cxScheduler_item3 = 'Daily';
+
+  cxAutoExecute_item0 = 'Never';
+  cxAutoExecute_item1 = 'Always on startup';
+  cxAutoExecute_item2 = 'Startup, only if no previous instances are running';
+  cxAutoExecute_item3 = 'Always on shutdown';
+
+  cxActionOnExe_item0 = 'Default (options)';
+  cxActionOnExe_item1 = 'Just run file';
+  cxActionOnExe_item2 = 'Run and hide ASuite';
+  cxActionOnExe_item3 = 'Run and close ASuite';
+
+  cxWindowState_item0 = 'Normal';
+  cxWindowState_item1 = 'Minimized';
+  cxWindowState_item2 = 'Maximized';
+
+
   implementation
 
 end.

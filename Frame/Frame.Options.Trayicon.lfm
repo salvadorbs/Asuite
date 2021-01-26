@@ -102,12 +102,6 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
           Top = 15
           Width = 138
           ItemHeight = 15
-          Items.Strings = (
-            'No action'
-            'Show window'
-            'Show graphic menu'
-            'Show classic menu'
-          )
           ParentFont = False
           Style = csDropDownList
           TabOrder = 0
@@ -144,12 +138,6 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
           Top = 15
           Width = 141
           ItemHeight = 15
-          Items.Strings = (
-            'No action'
-            'Show window'
-            'Show graphic menu'
-            'Show classic menu'
-          )
           ParentFont = False
           Style = csDropDownList
           TabOrder = 0
@@ -184,12 +172,6 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
           Top = 15
           Width = 138
           ItemHeight = 15
-          Items.Strings = (
-            'No action'
-            'Show window'
-            'Show graphic menu'
-            'Show classic menu'
-          )
           ParentFont = False
           Style = csDropDownList
           TabOrder = 0

@@ -26,12 +26,6 @@ inherited frmBehaviorPropertyPage: TfrmBehaviorPropertyPage
       Width = 340
       BorderSpacing.Bottom = 4
       ItemHeight = 15
-      Items.Strings = (
-        'Never'
-        'Always on startup'
-        'Startup, only if no previous instances are running'
-        'Always on shutdown'
-      )
       OnChange = cxAutoExecuteChange
       ParentFont = False
       Style = csDropDownList

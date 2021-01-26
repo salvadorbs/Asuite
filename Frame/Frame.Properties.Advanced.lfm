@@ -44,12 +44,6 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
         Width = 130
         Constraints.MinWidth = 130
         ItemHeight = 15
-        Items.Strings = (
-          'Disabled'
-          'Once'
-          'Hourly'
-          'Daily'
-        )
         OnChange = cxSchedulerChange
         ParentFont = False
         Style = csDropDownList

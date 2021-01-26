@@ -125,11 +125,6 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
       BorderSpacing.CellAlignHorizontal = ccaLeftTop
       Constraints.MinWidth = 180
       ItemHeight = 15
-      Items.Strings = (
-        'Just run file'
-        'Run and hide ASuite'
-        'Run and close ASuite'
-      )
       ParentFont = False
       Style = csDropDownList
       TabOrder = 3

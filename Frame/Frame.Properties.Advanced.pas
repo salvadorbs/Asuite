@@ -102,6 +102,13 @@ end;
 function TfrmAdvancedPropertyPage.InternalLoadData: Boolean;
 begin
   Result := inherited;
+
+  cxScheduler.Items.Add(cxScheduler_item0);
+  cxScheduler.Items.Add(cxScheduler_item1);
+  cxScheduler.Items.Add(cxScheduler_item2);
+  cxScheduler.Items.Add(cxScheduler_item3);
+
+  //TODO: Check this if. It is necessary check CurrentNodeData is assigned!?
   if Assigned(CurrentNodeData) then
   begin
     //Scheduler
