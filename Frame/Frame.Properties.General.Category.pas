@@ -25,13 +25,16 @@ interface
 
 uses
   LCLIntf, SysUtils, Controls, Dialogs, StdCtrls, VirtualTrees,
-  Frame.Properties.General, DefaultTranslator;
+  Frame.Properties.General, DefaultTranslator, EditBtn;
 
 type
+
+  { TfrmCatGeneralPropertyPage }
+
   TfrmCatGeneralPropertyPage = class(TfrmBaseGeneralPropertyPage)
     grpSubItems: TGroupBox;
-    vstCategoryItems: TVirtualStringTree;
     lblNote: TLabel;
+    vstCategoryItems: TVirtualStringTree;
     
   private
     { Private declarations }

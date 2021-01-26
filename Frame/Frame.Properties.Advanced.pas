@@ -33,21 +33,21 @@ type
   { TfrmAdvancedPropertyPage }
 
   TfrmAdvancedPropertyPage = class(TfrmBasePropertyPage)
+    cbDontInsertMFU: TCheckBox;
+    cbDontInsertMRU: TCheckBox;
+    cbHideSoftware: TCheckBox;
     cbShortcutDesktop: TCheckBox;
     edtHotkey: TButtonedEdit;
+    grpOthers: TGroupBox;
     grpScheduler: TGroupBox;
     cxScheduler: TComboBox;
     dtpSchDate: TDateTimePicker;
     dtpSchTime: TDateTimePicker;
     grpHotkey: TGroupBox;
-    grpMenu: TGroupBox;
-    cbHideSoftware: TCheckBox;
-    cbDontInsertMRU: TCheckBox;
-    cbDontInsertMFU: TCheckBox;
     
     cbHotKey: TCheckBox;
-    pnlTop: TPanel;
     pnlBottom: TPanel;
+    pnlTop: TPanel;
     procedure cxSchedulerChange(Sender: TObject);
     procedure cbHotKeyClick(Sender: TObject);
     procedure edtHotkeyRightButtonClick(Sender: TObject);
@@ -124,9 +124,9 @@ begin
     else
       if CurrentNodeData.DataType = vtdtCategory then
       begin
-        cbDontInsertMRU.Enabled   := False;
-        cbDontInsertMFU.Enabled   := False;
-        cbShortcutDesktop.Enabled := False;
+        cbDontInsertMRU.Visible   := False;
+        cbDontInsertMFU.Visible   := False;
+        cbShortcutDesktop.Visible := False;
       end;
   end;
 

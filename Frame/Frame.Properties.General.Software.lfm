@@ -1,117 +1,118 @@
 inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
-  DesignLeft = -663
-  DesignTop = 332
+  DesignLeft = 2186
+  DesignTop = 242
   inherited gbItem: TGroupBox
-    Height = 104
-    ClientHeight = 84
+    Width = 355
+    ClientWidth = 351
+    inherited lbName: TLabel
+      Width = 343
+    end
     inherited edtName: TEdit
-      Width = 161
+      Width = 343
+    end
+    inherited lbPathIcon: TLabel
+      Width = 343
     end
     inherited edtPathIcon: TFileNameEdit
-      TabOrder = 2
-    end
-    object btnExtractName: TButton[4]
-      Left = 214
-      Height = 21
-      Top = 16
-      Width = 130
-      Caption = 'Extract name from exe'
-      OnClick = btnExtractNameClick
-      ParentFont = False
-      TabOrder = 1
+      Width = 343
     end
   end
   object grpSoftware: TGroupBox[1]
     Left = 4
-    Height = 208
-    Top = 112
-    Width = 352
-    Align = alTop
+    Height = 210
+    Top = 114
+    Width = 355
     BorderSpacing.Left = 4
     BorderSpacing.Top = 4
     BorderSpacing.Right = 4
     Caption = 'Path'
-    ClientHeight = 188
-    ClientWidth = 348
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.TopBottomSpacing = 4
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ClientHeight = 190
+    ClientWidth = 351
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 1
-    object lbWorkingDir: TLabel
-      Left = 6
-      Height = 15
-      Top = 40
-      Width = 193
-      Caption = 'Custom working directory (optional)'
-      ParentColor = False
-      ParentFont = False
-    end
-    object lbInfo2: TLabel
-      Left = 6
-      Height = 66
-      Top = 122
-      Width = 338
-      AutoSize = False
-      Caption = 'Note: You can use these vars (included environment variables) in relative path:'#13#10'- %asuite% = ASuite folder path ("%s")'#13#10'- %drive% = drive path ("%s")'
-      ParentColor = False
-      ParentFont = False
-      WordWrap = True
-    end
-    object lbParameters: TLabel
-      Left = 6
-      Height = 15
-      Top = 80
-      Width = 114
-      Caption = 'Parameters (optional)'
-      ParentColor = False
-      ParentFont = False
-    end
     object lbPathExe: TLabel
-      Left = 6
+      Left = 4
       Height = 15
-      Top = 0
-      Width = 176
+      Top = 4
+      Width = 343
       Caption = 'Executable/folder/web page path'
       ParentColor = False
       ParentFont = False
     end
-    object edtParameters: TEdit
-      Left = 6
+    object edtPathExe: TFileNameEdit
+      Left = 4
       Height = 23
-      Top = 96
-      Width = 267
+      Top = 19
+      Width = 343
+      DialogOptions = [ofHideReadOnly, ofEnableSizing]
+      FilterIndex = 0
+      HideDirectories = False
+      ButtonWidth = 23
+      NumGlyphs = 1
+      BorderSpacing.Bottom = 2
+      MaxLength = 0
       ParentFont = False
-      TabOrder = 2
+      TabOrder = 0
+      OnChange = edtPathExeChange
+      Text = '$ASuite\'
+    end
+    object lbWorkingDir: TLabel
+      Left = 4
+      Height = 15
+      Top = 44
+      Width = 343
+      Caption = 'Custom working directory (optional)'
+      ParentColor = False
+      ParentFont = False
     end
     object edtWorkingDir: TDirectoryEdit
-      Left = 6
+      Left = 4
       Height = 23
-      Top = 56
-      Width = 338
+      Top = 59
+      Width = 343
       Directory = '$ASuite\'
       ShowHidden = False
       ButtonWidth = 23
       NumGlyphs = 1
+      BorderSpacing.Bottom = 2
       MaxLength = 0
       ParentFont = False
       TabOrder = 1
       OnChange = edtWorkingDirChange
       Text = '$ASuite\'
     end
-    object edtPathExe: TFileNameEdit
-      Left = 6
-      Height = 23
-      Top = 16
-      Width = 338
-      DialogOptions = [ofHideReadOnly, ofEnableSizing]
-      FilterIndex = 0
-      HideDirectories = False
-      ButtonWidth = 23
-      NumGlyphs = 1
-      MaxLength = 0
+    object lbParameters: TLabel
+      Left = 4
+      Height = 15
+      Top = 84
+      Width = 343
+      Caption = 'Parameters (optional)'
+      ParentColor = False
       ParentFont = False
-      TabOrder = 0
-      OnChange = edtPathExeChange
-      Text = '$ASuite\'
+    end
+    object edtParameters: TEdit
+      Left = 4
+      Height = 23
+      Top = 99
+      Width = 343
+      BorderSpacing.Bottom = 4
+      ParentFont = False
+      TabOrder = 2
+    end
+    object lbInfo2: TLabel
+      Left = 4
+      Height = 60
+      Top = 126
+      Width = 343
+      Caption = 'Note: You can use these vars (included environment variables) in relative path:'#13#10'- %asuite% = ASuite folder path ("%s")'#13#10'- %drive% = drive path ("%s")'
+      ParentColor = False
+      ParentFont = False
+      WordWrap = True
     end
   end
 end

@@ -1,38 +1,48 @@
 inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
   Width = 359
+  ChildSizing.LeftRightSpacing = 0
+  ChildSizing.TopBottomSpacing = 0
   ClientWidth = 359
-  DesignLeft = -806
-  DesignTop = 256
+  DesignLeft = 2132
+  DesignTop = 220
   object pnlTop: TPanel[0]
     Left = 0
-    Height = 112
+    Height = 111
     Top = 0
     Width = 359
-    Align = alTop
+    AutoSize = True
     BevelOuter = bvNone
-    ClientHeight = 112
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ClientHeight = 111
     ClientWidth = 359
     TabOrder = 0
     object grpScheduler: TGroupBox
       Left = 4
-      Height = 108
+      Height = 107
       Top = 4
-      Width = 156
+      Width = 142
       Align = alLeft
+      AutoSize = True
       BorderSpacing.Left = 4
       BorderSpacing.Top = 4
       BorderSpacing.Right = 4
       Caption = 'Scheduler'
-      ClientHeight = 88
-      ClientWidth = 152
+      ChildSizing.LeftRightSpacing = 4
+      ChildSizing.TopBottomSpacing = 4
+      ChildSizing.EnlargeHorizontal = crsScaleChilds
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ClientHeight = 87
+      ClientWidth = 138
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 0
       object cxScheduler: TComboBox
-        Left = 6
+        Left = 4
         Height = 23
-        Top = 0
-        Width = 138
+        Top = 4
+        Width = 130
+        Constraints.MinWidth = 130
         ItemHeight = 15
         Items.Strings = (
           'Disabled'
@@ -46,15 +56,17 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
         TabOrder = 0
       end
       object dtpSchDate: TDateTimePicker
-        Left = 6
+        Left = 4
         Height = 23
-        Top = 27
-        Width = 83
+        Top = 31
+        Width = 130
         CenturyFrom = 1941
         MaxDate = 2958465
         MinDate = -53780
         ParentFont = False
         TabOrder = 1
+        BorderSpacing.Top = 4
+        BorderSpacing.Bottom = 4
         TrailingSeparator = False
         LeadingZeros = True
         Kind = dtkDate
@@ -68,15 +80,16 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
         MonthNames = 'Long'
       end
       object dtpSchTime: TDateTimePicker
-        Left = 6
+        Left = 4
         Height = 23
-        Top = 54
-        Width = 50
+        Top = 58
+        Width = 130
         CenturyFrom = 1941
         MaxDate = 2958465
         MinDate = -53780
         ParentFont = False
         TabOrder = 2
+        BorderSpacing.Bottom = 6
         TrailingSeparator = False
         LeadingZeros = True
         Kind = dtkTime
@@ -91,34 +104,40 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       end
     end
     object grpHotkey: TGroupBox
-      Left = 164
-      Height = 108
+      Left = 150
+      Height = 107
       Top = 4
-      Width = 191
+      Width = 205
       Align = alClient
+      AutoSize = True
       BorderSpacing.Top = 4
       BorderSpacing.Right = 4
       Caption = 'Hotkey'
-      ClientHeight = 88
-      ClientWidth = 187
+      ChildSizing.LeftRightSpacing = 4
+      ChildSizing.TopBottomSpacing = 4
+      ChildSizing.EnlargeHorizontal = crsScaleChilds
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ClientHeight = 87
+      ClientWidth = 201
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 1
       object cbHotKey: TCheckBox
-        Left = 6
+        Left = 4
         Height = 19
-        Top = 0
-        Width = 92
+        Top = 4
+        Width = 193
         Caption = 'Active hotkey'
         OnClick = cbHotKeyClick
         ParentFont = False
         TabOrder = 0
       end
       object edtHotkey: TButtonedEdit
-        Left = 6
-        Height = 21
-        Top = 27
-        Width = 178
+        Left = 4
+        Height = 22
+        Top = 25
+        Width = 193
+        BorderSpacing.Top = 2
         CharCase = ecUppercase
         ParentFont = False
         ReadOnly = True
@@ -131,65 +150,73 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
   end
   object pnlBottom: TPanel[1]
     Left = 0
-    Height = 116
-    Top = 112
+    Height = 112
+    Top = 111
     Width = 359
-    Align = alTop
+    AutoSize = True
     BevelOuter = bvNone
-    ClientHeight = 116
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.TopBottomSpacing = 4
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ClientHeight = 112
     ClientWidth = 359
     TabOrder = 1
-    object grpMenu: TGroupBox
+    object grpOthers: TGroupBox
       Left = 4
-      Height = 84
+      Height = 104
       Top = 4
       Width = 351
-      Align = alTop
+      AutoSize = True
       BorderSpacing.Left = 4
       BorderSpacing.Top = 4
       BorderSpacing.Right = 4
-      Caption = 'Menu'
-      ClientHeight = 64
+      Caption = 'Others'
+      ChildSizing.LeftRightSpacing = 4
+      ChildSizing.TopBottomSpacing = 4
+      ChildSizing.EnlargeHorizontal = crsScaleChilds
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ClientHeight = 84
       ClientWidth = 347
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 0
       object cbHideSoftware: TCheckBox
-        Left = 6
+        Left = 4
         Height = 19
-        Top = 0
-        Width = 178
+        Top = 4
+        Width = 339
         Caption = 'Hide this software from menu'
         ParentFont = False
         TabOrder = 0
       end
       object cbDontInsertMRU: TCheckBox
-        Left = 6
+        Left = 4
         Height = 19
-        Top = 19
-        Width = 242
+        Top = 23
+        Width = 339
         Caption = 'Don''t insert this software in recents (MRU)'
         ParentFont = False
         TabOrder = 1
       end
       object cbDontInsertMFU: TCheckBox
-        Left = 6
+        Left = 4
         Height = 19
-        Top = 38
-        Width = 192
+        Top = 42
+        Width = 339
         Caption = 'Don''t insert this software in MFU'
         ParentFont = False
         TabOrder = 2
       end
-    end
-    object cbShortcutDesktop: TCheckBox
-      Left = 12
-      Height = 19
-      Top = 88
-      Width = 288
-      Caption = 'Create shortcut on desktop when ASuite is running'
-      ParentFont = False
-      TabOrder = 1
+      object cbShortcutDesktop: TCheckBox
+        Left = 4
+        Height = 19
+        Top = 61
+        Width = 339
+        Caption = 'Create shortcut on desktop when ASuite is running'
+        ParentFont = False
+        TabOrder = 3
+      end
     end
   end
 end
