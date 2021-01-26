@@ -184,8 +184,14 @@ begin
   //Default paths
   FSuiteFullFileName := Application.ExeName;
   FSuiteFileName     := ExtractFileName(FSuiteFullFileName);
-  FSuiteDrive        := LowerCase(ExtractFileDrive(FSuiteFullFileName));
   FSuitePathWorking  := ExtractFilePath(FSuiteFullFileName);
+
+  {$IFDEF MSWINDOWS}
+  FSuiteDrive        := LowerCase(ExtractFileDrive(FSuiteFullFileName));
+  {$ELSE}
+  FSuiteDrive        := LowerCase(FSuitePathWorking);
+  {$ENDIF}
+
   SetCurrentDir(FSuitePathWorking);
   //TODO: Review structure folder - SetCurrentDir(FSuitePathWorking) is correct?
   if Not(IsDirectoryWritable(FSuitePathWorking)) then
