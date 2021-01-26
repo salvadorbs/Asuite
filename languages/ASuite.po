@@ -1,6 +1,100 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
+#: kernel.resourcestrings.cxactiononexeopt_item0
+msgctxt "kernel.resourcestrings.cxactiononexeopt_item0"
+msgid "Just run file"
+msgstr ""
+
+#: kernel.resourcestrings.cxactiononexeopt_item1
+msgctxt "kernel.resourcestrings.cxactiononexeopt_item1"
+msgid "Run and hide ASuite"
+msgstr ""
+
+#: kernel.resourcestrings.cxactiononexeopt_item2
+msgctxt "kernel.resourcestrings.cxactiononexeopt_item2"
+msgid "Run and close ASuite"
+msgstr ""
+
+#: kernel.resourcestrings.cxactiononexe_item0
+msgid "Default (options)"
+msgstr ""
+
+#: kernel.resourcestrings.cxactiononexe_item1
+msgctxt "kernel.resourcestrings.cxactiononexe_item1"
+msgid "Just run file"
+msgstr ""
+
+#: kernel.resourcestrings.cxactiononexe_item2
+msgctxt "kernel.resourcestrings.cxactiononexe_item2"
+msgid "Run and hide ASuite"
+msgstr ""
+
+#: kernel.resourcestrings.cxactiononexe_item3
+msgctxt "kernel.resourcestrings.cxactiononexe_item3"
+msgid "Run and close ASuite"
+msgstr ""
+
+#: kernel.resourcestrings.cxautoexecute_item0
+msgid "Never"
+msgstr ""
+
+#: kernel.resourcestrings.cxautoexecute_item1
+msgid "Always on startup"
+msgstr ""
+
+#: kernel.resourcestrings.cxautoexecute_item2
+msgid "Startup, only if no previous instances are running"
+msgstr ""
+
+#: kernel.resourcestrings.cxautoexecute_item3
+msgid "Always on shutdown"
+msgstr ""
+
+#: kernel.resourcestrings.cxmouseclick_item0
+msgid "No action"
+msgstr ""
+
+#: kernel.resourcestrings.cxmouseclick_item1
+msgid "Show window"
+msgstr ""
+
+#: kernel.resourcestrings.cxmouseclick_item2
+msgid "Show graphic menu"
+msgstr ""
+
+#: kernel.resourcestrings.cxmouseclick_item3
+msgid "Show classic menu"
+msgstr ""
+
+#: kernel.resourcestrings.cxscheduler_item0
+msgid "Disabled"
+msgstr ""
+
+#: kernel.resourcestrings.cxscheduler_item1
+msgid "Once"
+msgstr ""
+
+#: kernel.resourcestrings.cxscheduler_item2
+msgid "Hourly"
+msgstr ""
+
+#: kernel.resourcestrings.cxscheduler_item3
+msgid "Daily"
+msgstr ""
+
+#: kernel.resourcestrings.cxwindowstate_item0
+msgid "Normal"
+msgstr ""
+
+#: kernel.resourcestrings.cxwindowstate_item1
+msgid "Minimized"
+msgstr ""
+
+#: kernel.resourcestrings.cxwindowstate_item2
+msgid "Maximized"
+msgstr ""
+
 #: kernel.resourcestrings.msgadvanced
 msgid "Advanced"
 msgstr ""
@@ -500,8 +594,8 @@ msgctxt "tfrmadvancedpropertypage.grphotkey.caption"
 msgid "Hotkey"
 msgstr ""
 
-#: tfrmadvancedpropertypage.grpmenu.caption
-msgid "Menu"
+#: tfrmadvancedpropertypage.grpothers.caption
+msgid "Others"
 msgstr ""
 
 #: tfrmadvancedpropertypage.grpscheduler.caption
@@ -1261,10 +1355,6 @@ msgstr ""
 #: tfrmstatsoptionspage.lbuser.rightcaption
 msgctxt "tfrmstatsoptionspage.lbuser.rightcaption"
 msgid "Value"
-msgstr ""
-
-#: tfrmswgeneralpropertypage.btnextractname.caption
-msgid "Extract name from exe"
 msgstr ""
 
 #: tfrmswgeneralpropertypage.edtpathexe.text

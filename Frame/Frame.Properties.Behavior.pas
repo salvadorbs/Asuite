@@ -90,6 +90,21 @@ end;
 function TfrmBehaviorPropertyPage.InternalLoadData: Boolean;
 begin
   Result := inherited;
+
+  cxAutoExecute.Items.Add(cxAutoExecute_item0);
+  cxAutoExecute.Items.Add(cxAutoExecute_item1);
+  cxAutoExecute.Items.Add(cxAutoExecute_item2);
+  cxAutoExecute.Items.Add(cxAutoExecute_item3);
+
+  cxActionOnExe.Items.Add(cxActionOnExe_item0);
+  cxActionOnExe.Items.Add(cxActionOnExe_item1);
+  cxActionOnExe.Items.Add(cxActionOnExe_item2);
+  cxActionOnExe.Items.Add(cxActionOnExe_item3);
+
+  cxWindowState.Items.Add(cxWindowState_item0);
+  cxWindowState.Items.Add(cxWindowState_item1);
+  cxWindowState.Items.Add(cxWindowState_item2);
+
   if Assigned(CurrentNodeData) then
   begin
     //Insert cat specific setting

@@ -88,6 +88,10 @@ var
 begin
   Result := inherited;
 
+  cxActionOnExe.Items.Add(cxActionOnExeOpt_item0);
+  cxActionOnExe.Items.Add(cxActionOnExeOpt_item1);
+  cxActionOnExe.Items.Add(cxActionOnExeOpt_item2);
+
   //Startup
   cbWindowsStartup.Checked   := Config.StartWithWindows;
   cbShowPanelStartup.Checked := Config.ShowPanelAtStartUp;
@@ -100,6 +104,7 @@ begin
   //Search existing translations
   SearchMask := Config.Paths.SuitePathLocale + LowerCase(APP_NAME) + '.*' + EXT_PO;
 
+  //TODO: Extract this code in a separate method
   if FindFirstUTF8(SearchMask, faAnyFile, FileInfo) = 0 then
   begin
     repeat

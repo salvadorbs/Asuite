@@ -66,6 +66,7 @@ type
       var AAction: Boolean);
   private
     { Private declarations }
+    procedure LoadComboMouseClickItems(AComboBox: TComboBox);
   strict protected
     function GetTitle: string; override;
     function GetImageIndex: Integer; override;
@@ -82,6 +83,14 @@ implementation
 
 uses
   AppConfig.Main, Kernel.Enumerations, Kernel.ResourceStrings;
+
+procedure TfrmTrayiconOptionsPage.LoadComboMouseClickItems(AComboBox: TComboBox);
+begin
+  AComboBox.Items.Add(cxMouseClick_item0);
+  AComboBox.Items.Add(cxMouseClick_item1);
+  AComboBox.Items.Add(cxMouseClick_item2);
+  AComboBox.Items.Add(cxMouseClick_item3);
+end;
 
 {$R *.lfm}
 
@@ -127,6 +136,11 @@ var
   searchResult : TSearchRec;
 begin
   Result := inherited;
+
+  LoadComboMouseClickItems(cxLeftClick);
+  LoadComboMouseClickItems(cxMiddleClick);
+  LoadComboMouseClickItems(cxRightClick);
+
   //Trayicon
   cbTrayicon.Checked        := Config.TrayIcon;
   cbTrayCustomIcon.Checked  := Config.TrayUseCustomIcon;
@@ -134,11 +148,13 @@ begin
   cxLeftClick.ItemIndex     := Ord(Config.ActionClickLeft);
   cxMiddleClick.ItemIndex   := Ord(Config.ActionClickMiddle);
   cxRightClick.ItemIndex    := Ord(Config.ActionClickRight);
+
   //Graphic Menu
   cbMenuFade.Checked  := Config.GMFade;
   cbSmallIcon.Checked := Config.GMSmallIconSize;
   chkAutomaticHideMenu.Checked := Config.GMAutomaticHideMenu;
   chkUserPicture.Checked := Config.GMShowUserPicture;
+
   //Get GM theme list
   if FindFirst(Config.Paths.SuitePathMenuThemes + '*.*', faDirectory, searchResult) = 0 then
   begin
@@ -150,10 +166,12 @@ begin
     FindClose(searchResult);
   end;
   cxTheme.ItemIndex  := cxTheme.Items.IndexOf(Config.GMTheme);
+
   //ClassicMenu
   cbSubMenuMRU.Checked := Config.SubMenuMRU;
   cbSubMenuMFU.Checked := Config.SubMenuMFU;
   chkAutoExpansion.Checked := Config.AutoExpansionFolder;
+
   //Enable/disable visual components
   cbTrayiconClick(Self);
   cbTrayCustomIconClick(Self);
