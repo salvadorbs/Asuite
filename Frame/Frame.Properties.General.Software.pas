@@ -118,13 +118,13 @@ var
   FileNodeData: TvFileNodeData;
 begin
   Result := inherited;
-  {$IFDEF MSWINDOWS}
-  lbInfo2.Caption := Format(lbInfo2.Caption, [Config.Paths.SuitePathWorking, Config.Paths.SuiteDrive]);
-  {$ELSE}
-  //Strange bug in Linux. %asuite% and %drive% causing error "Invalid argument index in format...", so I'm using a workaround
+
+  //lbInfo2.Caption := Format(lbInfo2.Caption, [Config.Paths.SuitePathWorking, Config.Paths.SuiteDrive]);
+
+  //Strange bug. %asuite% and %drive% causing error "Invalid argument index in format...", so I'm using a workaround
   lbInfo2.Caption := StringReplace(lbInfo2.Caption, '%s', Config.Paths.SuitePathWorking, [rfIgnoreCase]);
   lbInfo2.Caption := StringReplace(lbInfo2.Caption, '%s', Config.Paths.SuiteDrive, [rfIgnoreCase]);
-  {$ENDIF}
+
   if Assigned(CurrentNodeData) then
   begin
     FileNodeData := TvFileNodeData(CurrentNodeData);
