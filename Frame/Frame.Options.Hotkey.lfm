@@ -149,7 +149,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       BorderSpacing.Left = 6
       BorderSpacing.Right = 6
       BorderSpacing.Bottom = 6
-      Constraints.MinHeight = 200
+      Constraints.MinHeight = 225
       DefaultNodeHeight = 32
       DragOperations = []
       Header.AutoSizeIndex = 0

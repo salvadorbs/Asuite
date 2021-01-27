@@ -83,14 +83,14 @@ begin
   if Assigned(NodeData) then
   begin
     NodeData.Frame := FramePage;
-    NodeData.Title := TfrmBaseEntityPage(FramePage).Title;
-    NodeData.ImageIndex := TfrmBaseEntityPage(FramePage).ImageIndex;
+    NodeData.Title := FramePage.Title;
+    NodeData.ImageIndex := FramePage.ImageIndex;
 
-    TfrmBaseEntityPage(FramePage).Parent := Self.pnlDialogPage;
-    TfrmBaseEntityPage(FramePage).Visible := False;
-    TfrmBaseEntityPage(FramePage).Align := alClient;
+    FramePage.Parent := Self.pnlDialogPage;
+    FramePage.Visible := False;
+    FramePage.Align := alClient;
 
-    TfrmBaseEntityPage(FramePage).LoadData;
+    FramePage.LoadData;
   end;
 end;
 
@@ -137,13 +137,16 @@ var
 begin
   inherited;
   TVirtualTreeEvents.Create.SetupVSTDialogFrame(vstCategory);
+
   //Load frames
   Self.InternalLoadData;
+
   //Set default page
   if not Assigned(FDefaultPage) then
     selNode := FFrameGeneral
   else
     selNode := GetNodeByFrameClass(Self.vstCategory, FDefaultPage);
+
   //Select node (automatically open frame using vst's AddToSelection event)
   Self.vstCategory.FocusedNode := selNode;
   Self.vstCategory.Selected[selNode] := True;

@@ -3,7 +3,6 @@ object frmDialogBase: TfrmDialogBase
   Height = 325
   Top = 36
   Width = 559
-  AutoSize = True
   Caption = 'frmDialogBase'
   ClientHeight = 325
   ClientWidth = 559
@@ -51,6 +50,7 @@ object frmDialogBase: TfrmDialogBase
     Top = 8
     Width = 177
     Anchors = [akTop, akLeft, akBottom]
+    BorderSpacing.Left = 8
     Header.AutoSizeIndex = 0
     Header.Columns = <>
     Header.MainColumn = -1

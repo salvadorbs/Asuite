@@ -6,7 +6,7 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
   DesignTop = 159
   object grpStartupOrderItems: TGroupBox[0]
     Left = 4
-    Height = 219
+    Height = 217
     Top = 4
     Width = 437
     AutoSize = True
@@ -18,7 +18,7 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
     ChildSizing.TopBottomSpacing = 4
     ChildSizing.EnlargeHorizontal = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
-    ClientHeight = 199
+    ClientHeight = 197
     ClientWidth = 433
     Font.Style = [fsBold]
     ParentFont = False
@@ -45,12 +45,12 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
     end
     object Panel1: TPanel
       Left = 4
-      Height = 149
+      Height = 147
       Top = 46
       Width = 425
       AutoSize = True
       BevelOuter = bvNone
-      ClientHeight = 149
+      ClientHeight = 147
       ClientWidth = 425
       TabOrder = 1
       object vstStartupItems: TVirtualStringTree
@@ -60,7 +60,7 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
         Width = 391
         Align = alBottom
         BorderSpacing.Right = 34
-        BorderSpacing.Bottom = 4
+        BorderSpacing.Bottom = 2
         DefaultNodeHeight = 32
         DefaultText = 'Node'
         DragOperations = []
@@ -147,8 +147,8 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
   end
   object grpShutdownOrderItems: TGroupBox[1]
     Left = 4
-    Height = 219
-    Top = 227
+    Height = 218
+    Top = 225
     Width = 437
     AutoSize = True
     BorderSpacing.Left = 4
@@ -159,7 +159,7 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
     ChildSizing.TopBottomSpacing = 4
     ChildSizing.EnlargeHorizontal = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
-    ClientHeight = 199
+    ClientHeight = 198
     ClientWidth = 433
     Font.Style = [fsBold]
     ParentFont = False
@@ -186,12 +186,12 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
     end
     object Panel2: TPanel
       Left = 4
-      Height = 149
+      Height = 148
       Top = 46
       Width = 425
       AutoSize = True
       BevelOuter = bvNone
-      ClientHeight = 149
+      ClientHeight = 148
       ClientWidth = 425
       TabOrder = 1
       object vstShutdownItems: TVirtualStringTree
@@ -201,7 +201,7 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
         Width = 391
         Align = alBottom
         BorderSpacing.Right = 34
-        BorderSpacing.Bottom = 4
+        BorderSpacing.Bottom = 3
         DefaultNodeHeight = 32
         DefaultText = 'Node'
         DragOperations = []

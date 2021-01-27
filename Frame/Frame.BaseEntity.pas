@@ -61,7 +61,7 @@ uses
 constructor TfrmBaseEntityPage.Create(AOwner: TComponent);
 begin
   inherited;
-  ScaleBy(Screen.PixelsPerInch, 96);
+  //ScaleBy(Screen.PixelsPerInch, 96);
 end;
 
 function TfrmBaseEntityPage.GetImageIndex: integer;
