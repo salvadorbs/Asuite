@@ -160,7 +160,6 @@ begin
   //Populate VST with HotKeyItemList's items
   TVirtualTreeMethods.Create.PopulateVSTItemList(vstItems, Config.ListManager.HotKeyItemList);
   vstItems.SortTree(0, VirtualTrees.sdAscending);
-  vstItems.Header.AutoFitColumns;
 
   //Enable/disable visual components
   cbHotKeyClick(Self);

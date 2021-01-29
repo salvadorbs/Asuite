@@ -162,8 +162,6 @@ begin
   //Populate lstStartUp and lstShutdown
   TVirtualTreeMethods.Create.PopulateVSTItemList(vstStartupItems, Config.ListManager.StartupItemList);
   TVirtualTreeMethods.Create.PopulateVSTItemList(vstShutdownItems, Config.ListManager.ShutdownItemList);
-  vstStartupItems.Header.AutoFitColumns;
-  vstShutdownItems.Header.AutoFitColumns;
 
   LoadGlyphs;
 end;

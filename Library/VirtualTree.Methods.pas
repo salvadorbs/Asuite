@@ -596,7 +596,7 @@ begin
     //Check nodes path and get icons
     TVirtualTreeMethods.Create.CheckVisibleNodePathExe(ATree);
     //Auto columns width
-    TVirtualStringTree(ATree).Header.AutoFitColumns;
+    TVirtualStringTree(ATree).Header.AutoFitColumns(False);
   finally
     ATree.EndUpdate;
   end;
