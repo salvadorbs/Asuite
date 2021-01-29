@@ -1,73 +1,79 @@
 object frmDialogBase: TfrmDialogBase
-  Left = 32
-  Height = 325
-  Top = 36
-  Width = 559
+  Left = 1888
+  Height = 94
+  Top = 146
+  Width = 400
+  AutoSize = True
   Caption = 'frmDialogBase'
-  ClientHeight = 325
-  ClientWidth = 559
+  ChildSizing.EnlargeHorizontal = crsScaleChilds
+  ChildSizing.Layout = cclLeftToRightThenTopToBottom
+  ClientHeight = 94
+  ClientWidth = 400
   KeyPreview = True
   OnKeyPress = FormKeyPress
   Position = poMainFormCenter
   LCLVersion = '2.0.10.0'
-  object btnOk: TButton
-    Left = 315
-    Height = 25
-    Top = 294
-    Width = 75
-    Anchors = [akRight, akBottom]
-    Caption = 'Ok'
-    ModalResult = 1
-    OnClick = btnOkClick
-    ParentFont = False
-    TabOrder = 2
-  end
-  object btnCancel: TButton
-    Left = 396
-    Height = 25
-    Top = 294
-    Width = 75
-    Anchors = [akRight, akBottom]
-    Caption = 'Cancel'
-    ModalResult = 2
-    OnClick = btnCancelClick
-    ParentFont = False
-    TabOrder = 3
-  end
-  object pnlDialogPage: TPanel
-    Left = 191
-    Height = 280
-    Top = 8
-    Width = 361
-    Anchors = [akTop, akLeft, akRight, akBottom]
+  object Panel1: TPanel
+    Left = 6
+    Height = 50
+    Top = 6
+    Width = 388
     AutoSize = True
-    ParentFont = False
-    TabOrder = 1
-  end
-  object vstCategory: TVirtualStringTree
-    Left = 8
-    Height = 280
-    Top = 8
-    Width = 177
-    Anchors = [akTop, akLeft, akBottom]
-    BorderSpacing.Left = 8
-    Header.AutoSizeIndex = 0
-    Header.Columns = <>
-    Header.MainColumn = -1
-    ParentFont = False
+    BorderSpacing.Top = 6
+    BevelOuter = bvNone
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ChildSizing.ControlsPerLine = 2
+    ClientHeight = 50
+    ClientWidth = 388
     TabOrder = 0
-    TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowRoot, toShowTreeLines, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
-    TreeOptions.SelectionOptions = [toFullRowSelect]
+    object vstCategory: TVirtualStringTree
+      Left = 0
+      Height = 50
+      Top = 0
+      Width = 180
+      Constraints.MaxWidth = 180
+      Constraints.MinHeight = 50
+      Constraints.MinWidth = 180
+      DefaultText = 'Node'
+      Header.AutoSizeIndex = 0
+      Header.Columns = <>
+      Header.MainColumn = -1
+      ParentFont = False
+      TabOrder = 0
+      TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowRoot, toShowTreeLines, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
+      TreeOptions.SelectionOptions = [toFullRowSelect]
+    end
+    object pnlDialogPage: TPanel
+      Left = 187
+      Height = 50
+      Top = 0
+      Width = 201
+      BorderSpacing.Left = 6
+      Constraints.MinHeight = 50
+      Constraints.MinWidth = 200
+      ParentFont = False
+      TabOrder = 1
+    end
   end
-  object btnApply: TButton
-    Left = 477
-    Height = 25
-    Top = 294
-    Width = 75
-    Anchors = [akRight, akBottom]
-    Caption = 'Apply'
-    OnClick = btnApplyClick
-    ParentFont = False
-    TabOrder = 4
+  object ButtonPanel1: TButtonPanel
+    Left = 6
+    Height = 26
+    Top = 62
+    Width = 388
+    Align = alNone
+    OKButton.Name = 'OKButton'
+    OKButton.DefaultCaption = True
+    HelpButton.Name = 'HelpButton'
+    HelpButton.DefaultCaption = True
+    CloseButton.Name = 'CloseButton'
+    CloseButton.DefaultCaption = True
+    CloseButton.OnClick = btnOkClick
+    CancelButton.Name = 'CancelButton'
+    CancelButton.DefaultCaption = True
+    CancelButton.OnClick = btnCancelClick
+    TabOrder = 1
+    ShowButtons = [pbOK, pbCancel]
+    ShowBevel = False
   end
 end

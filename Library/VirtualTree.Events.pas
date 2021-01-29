@@ -315,8 +315,8 @@ var
   NodeData: PFramesNodeData;
 begin
   NodeData := Sender.GetNodeData(Node);
-  if Assigned(NodeData) and (Sender.Parent is TfrmDialogBase) then
-    TfrmDialogBase(Sender.Parent).ChangePage(NodeData.Frame);
+  if Assigned(NodeData) and (Sender.Parent.Parent is TfrmDialogBase) then
+    TfrmDialogBase(Sender.Parent.Parent).ChangePage(NodeData.Frame);
 end;
 
 procedure TVirtualTreeEvents.DoCompareNodesHotkey(Sender: TBaseVirtualTree;

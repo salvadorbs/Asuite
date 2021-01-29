@@ -1,6 +1,3 @@
 {"version":1,"strings":[
-{"hash":13248421,"name":"tfrmdialogbase.caption","sourcebytes":[102,114,109,68,105,97,108,111,103,66,97,115,101],"value":"frmDialogBase"},
-{"hash":1371,"name":"tfrmdialogbase.btnok.caption","sourcebytes":[79,107],"value":"Ok"},
-{"hash":77089212,"name":"tfrmdialogbase.btncancel.caption","sourcebytes":[67,97,110,99,101,108],"value":"Cancel"},
-{"hash":4749113,"name":"tfrmdialogbase.btnapply.caption","sourcebytes":[65,112,112,108,121],"value":"Apply"}
+{"hash":13248421,"name":"tfrmdialogbase.caption","sourcebytes":[102,114,109,68,105,97,108,111,103,66,97,115,101],"value":"frmDialogBase"}
 ]}

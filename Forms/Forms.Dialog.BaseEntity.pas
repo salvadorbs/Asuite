@@ -25,25 +25,27 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Classes, Controls, Forms, Dialogs, ExtCtrls, ComCtrls,
-  StdCtrls, Frame.BaseEntity, VirtualTrees, DefaultTranslator;
+  StdCtrls, Frame.BaseEntity, VirtualTrees, DefaultTranslator, ButtonPanel;
 
 type
+
+  { TfrmDialogBase }
+
   TfrmDialogBase = class(TForm)
-    btnOk: TButton;
-    btnCancel: TButton;
+    ButtonPanel1: TButtonPanel;
+    Panel1: TPanel;
     pnlDialogPage: TPanel;
     vstCategory: TVirtualStringTree;
-    btnApply: TButton;
     procedure btnOkClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
-    procedure btnApplyClick(Sender: TObject);
   private
     { Private declarations }
     procedure SaveNodeData(Sender: TBaseVirtualTree; Node: PVirtualNode;
                            Data: Pointer; var Abort: Boolean);
     function GetNodeByFrameClass(Tree: TBaseVirtualTree; AFramePage: TPageFrameClass;
                                  Node: PVirtualNode = nil): PVirtualNode;
+    procedure AdjustPanelSize;
   strict protected
     FCurrentPage: TfrmBaseEntityPage;
     FDefaultPage: TPageFrameClass;
@@ -94,13 +96,6 @@ begin
   end;
 end;
 
-procedure TfrmDialogBase.btnApplyClick(Sender: TObject);
-begin
-  //If IterateSubtree returns a value, something is wrong
-  if Not Assigned(vstCategory.IterateSubtree(nil, SaveNodeData, nil)) then
-    InternalSaveData;
-end;
-
 procedure TfrmDialogBase.btnCancelClick(Sender: TObject);
 begin
   ModalResult := mrCancel;
@@ -129,6 +124,8 @@ begin
   end;
   FCurrentPage := TfrmBaseEntityPage(NewPage);
   FCurrentPage.Visible := True;
+
+  AdjustPanelSize;
 end;
 
 constructor TfrmDialogBase.Create(AOwner: TComponent);
@@ -137,6 +134,8 @@ var
 begin
   inherited;
   TVirtualTreeEvents.Create.SetupVSTDialogFrame(vstCategory);
+  ButtonPanel1.OKButton.OnClick := btnOkClick;
+  ButtonPanel1.CancelButton.OnClick := btnCancelClick;
 
   //Load frames
   Self.InternalLoadData;
@@ -151,7 +150,6 @@ begin
   Self.vstCategory.FocusedNode := selNode;
   Self.vstCategory.Selected[selNode] := True;
   Self.vstCategory.FullExpand;
-
   Self.pnlDialogPage.TabOrder := 0;
 
   {$IFDEF UNIX}
@@ -191,6 +189,46 @@ begin
 
     Node := Tree.GetNextSibling(Node);
   end;
+end;
+
+procedure TfrmDialogBase.AdjustPanelSize;
+var
+  NodeData: PFramesNodeData;
+  Node: PVirtualNode;
+  intWidth, intHeight, PreferredWidth,PreferredHeight: Integer;
+  x:trect;
+begin
+  intWidth := pnlDialogPage.Constraints.MinWidth;
+  intHeight := pnlDialogPage.Constraints.MinHeight;
+  Node := vstCategory.GetFirst;
+
+  while Assigned(Node) do
+  begin
+    NodeData := vstCategory.GetNodeData(Node);
+
+    if Assigned(NodeData) then
+    begin
+      if NodeData.Frame.Height > intHeight then
+        intHeight := NodeData.Frame.Height;
+
+      if NodeData.Frame.Width > intWidth then
+        intWidth := NodeData.Frame.Width;
+    end;
+
+    Node := vstCategory.GetNext(Node);
+  end;
+
+  if pnlDialogPage.Height > intHeight then
+    intHeight := pnlDialogPage.Height;
+
+  if pnlDialogPage.Width > intWidth then
+    intWidth := pnlDialogPage.Width;
+
+  if intHeight > pnlDialogPage.Constraints.MinHeight then
+    pnlDialogPage.Constraints.MinHeight := intHeight;
+
+  if intWidth > pnlDialogPage.Constraints.MinWidth then
+    pnlDialogPage.Constraints.MinWidth := intWidth;
 end;
 
 function TfrmDialogBase.InternalLoadData: Boolean;

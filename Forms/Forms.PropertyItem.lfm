@@ -1,25 +1,3 @@
 inherited frmPropertyItem: TfrmPropertyItem
-  Left = 512
-  Height = 371
-  Top = 225
   Caption = 'Property'
-  ClientHeight = 371
-  Constraints.MinHeight = 370
-  Constraints.MinWidth = 550
-  inherited btnOk: TButton
-    Top = 340
-  end
-  inherited btnCancel: TButton
-    Top = 340
-    OnClick = nil
-  end
-  inherited pnlDialogPage: TPanel
-    Height = 326
-  end
-  inherited vstCategory: TVirtualStringTree
-    Height = 326
-  end
-  inherited btnApply: TButton
-    Top = 340
-  end
 end
