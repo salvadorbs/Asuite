@@ -1,4 +1,6 @@
 inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
+  Height = 286
+  ClientHeight = 286
   DesignLeft = 2132
   DesignTop = 220
   object pnlTop: TPanel[0]

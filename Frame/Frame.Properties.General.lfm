@@ -1,4 +1,6 @@
 inherited frmBaseGeneralPropertyPage: TfrmBaseGeneralPropertyPage
+  Height = 274
+  ClientHeight = 274
   DesignLeft = 2130
   DesignTop = 224
   object gbItem: TGroupBox[0]

@@ -1,12 +1,12 @@
 inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
   Height = 450
   ClientHeight = 450
-  DesignLeft = 558
-  DesignTop = 225
+  DesignLeft = 1987
+  DesignTop = 256
   object gbTreeView: TGroupBox[0]
     Left = 4
     Height = 171
-    Top = 154
+    Top = 173
     Width = 437
     Align = alTop
     AutoSize = True
@@ -99,7 +99,7 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
   end
   object gbWindow: TGroupBox[1]
     Left = 4
-    Height = 146
+    Height = 165
     Top = 4
     Width = 437
     Align = alTop
@@ -112,7 +112,7 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
     ChildSizing.TopBottomSpacing = 4
     ChildSizing.EnlargeHorizontal = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
-    ClientHeight = 126
+    ClientHeight = 145
     ClientWidth = 433
     Font.Style = [fsBold]
     ParentFont = False

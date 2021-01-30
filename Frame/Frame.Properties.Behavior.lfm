@@ -1,4 +1,6 @@
 inherited frmBehaviorPropertyPage: TfrmBehaviorPropertyPage
+  Height = 295
+  ClientHeight = 295
   DesignLeft = 2074
   DesignTop = 212
   object grpAutoExecute: TGroupBox[0]

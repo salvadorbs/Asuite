@@ -8,7 +8,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
   DesignTop = 299
   object gbStartup: TGroupBox[0]
     Left = 4
-    Height = 104
+    Height = 123
     Top = 4
     Width = 437
     BorderSpacing.Left = 4
@@ -19,7 +19,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     ChildSizing.TopBottomSpacing = 4
     ChildSizing.EnlargeHorizontal = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
-    ClientHeight = 84
+    ClientHeight = 103
     ClientWidth = 433
     Font.Style = [fsBold]
     ParentFont = False
@@ -64,7 +64,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
   object gbExecution: TGroupBox[1]
     Left = 4
     Height = 131
-    Top = 112
+    Top = 131
     Width = 437
     BorderSpacing.Left = 4
     BorderSpacing.Top = 4
@@ -133,7 +133,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
   object grpLanguage: TGroupBox[2]
     Left = 4
     Height = 51
-    Top = 247
+    Top = 266
     Width = 150
     BorderSpacing.Left = 4
     BorderSpacing.Top = 4

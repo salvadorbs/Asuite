@@ -4,6 +4,7 @@ object frmDialogBase: TfrmDialogBase
   Top = 146
   Width = 400
   AutoSize = True
+  BorderStyle = bsDialog
   Caption = 'frmDialogBase'
   ChildSizing.EnlargeHorizontal = crsScaleChilds
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
