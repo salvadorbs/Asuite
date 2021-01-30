@@ -727,6 +727,11 @@ msgstr ""
 msgid "Execute with single click in main window"
 msgstr ""
 
+#: tfrmgeneraloptionspage.cbsecondinstancegm.caption
+msgctxt "tfrmgeneraloptionspage.cbsecondinstancegm.caption"
+msgid "Show Graphic Menu, when run another ASuite instance"
+msgstr ""
+
 #: tfrmgeneraloptionspage.cbshowmenustartup.caption
 msgid "Show graphic menu on ASuite startup"
 msgstr ""
@@ -736,7 +741,7 @@ msgid "Show window on ASuite startup"
 msgstr ""
 
 #: tfrmgeneraloptionspage.cbwindowsstartup.caption
-msgid "Start ASuite on Windows system startup"
+msgid "Start ASuite on Operating System startup"
 msgstr ""
 
 #: tfrmgeneraloptionspage.chkautocloseprocess.caption
@@ -1089,6 +1094,10 @@ msgstr ""
 
 #: tfrmmainwindowoptionspage.cbcustomtitle.caption
 msgid "Custom main window title"
+msgstr ""
+
+#: tfrmmainwindowoptionspage.cbdialogcentermf.caption
+msgid "Open dialogs in the center of main window"
 msgstr ""
 
 #: tfrmmainwindowoptionspage.cbdisableconfirmdelete.caption

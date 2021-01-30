@@ -50,7 +50,7 @@ var
 implementation
 
 uses
-  Kernel.Logger;
+  Kernel.Logger, Utility.Misc;
 
 {$R *.lfm}
 
@@ -63,9 +63,14 @@ begin
   frm := TfrmPropertySeparator.Create(AOwner);
   try
     frm.LoadNodeData(NodeData);
+
+    SetFormPositionFromConfig(frm);
+
     frm.ShowModal;
+
     if frm.ModalResult = mrOK then
       frm.SaveNodeData(NodeData);
+
     Result := frm.ModalResult;
   finally
     frm.Free;

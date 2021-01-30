@@ -28,8 +28,11 @@ uses
   EditBtn, DefaultTranslator;
 
 type
+
+  { TfrmMainWindowOptionsPage }
+
   TfrmMainWindowOptionsPage = class(TfrmBaseEntityPage)
-    
+    cbDialogCenterMF: TCheckBox;
     gbTreeView: TGroupBox;
     cbBackground: TCheckBox;
     btnFontSettings: TButton;
@@ -117,6 +120,7 @@ end;
 function TfrmMainWindowOptionsPage.InternalLoadData: Boolean;
 begin
   Result := inherited;
+
   //Window
   cbHoldSize.Checked         := Config.HoldSize;
   cbWindowOnTop.Checked      := Config.AlwaysOnTop;
@@ -125,6 +129,8 @@ begin
   cbCustomTitle.Checked      := Config.UseCustomTitle;
   edtCustomTitle.Text        := Config.CustomTitleString;
   edtCustomTitle.Enabled     := Config.UseCustomTitle;
+  cbDialogCenterMF.Checked   := Config.DialogCenterMF;
+
   //Treeview
   cbAutoOpClCat.Checked := Config.TVAutoOpClCats;
   cbAutoOpDragDrop.Checked := Config.TVAutoOpCatsDrag;
@@ -132,6 +138,7 @@ begin
   cbSmallIcon.Checked   := Config.TVSmallIconSize;
   cbBackground.Checked  := Config.TVBackground;
   edtBackground.Text    := Config.TVBackgroundPath;
+
   //Treeview Font
   with FontDialog1.Font do
   begin
@@ -140,6 +147,7 @@ begin
     Size  := Config.TVFont.Size;
     Color := Config.TVFont.Color;
   end;
+
   //Update controls
   cbCustomTitleClick(Self);
   cbBackgroundClick(Self);
@@ -148,6 +156,7 @@ end;
 function TfrmMainWindowOptionsPage.InternalSaveData: Boolean;
 begin
   Result := inherited;
+
   //Window
   Config.HoldSize           := cbHoldSize.Checked;
   Config.AlwaysOnTop        := cbWindowOnTop.Checked;
@@ -155,14 +164,18 @@ begin
   Config.SearchAsYouType    := chkSearchAsYouType.Checked;
   Config.CustomTitleString  := edtCustomTitle.Text;
   Config.UseCustomTitle     := cbCustomTitle.Checked;
+  Config.DialogCenterMF     := cbDialogCenterMF.checked;
+
   //Treeview
   Config.TVAutoOpClCats     := cbAutoOpClCat.Checked;
   Config.TVAutoOpCatsDrag   := cbAutoOpDragDrop.Checked;
   Config.TVDisableConfirmDelete := cbDisableConfirmDelete.Checked;
   Config.TVSmallIconSize    := cbSmallIcon.Checked;
+
   //Treeview
   Config.TVBackgroundPath   := edtBackground.Text;
   Config.TVBackground       := cbBackground.Checked;
+
   //Treeview Font
   Config.TVFont             := FontDialog1.Font;
 end;

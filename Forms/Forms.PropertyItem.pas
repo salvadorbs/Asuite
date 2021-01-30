@@ -51,7 +51,7 @@ implementation
 uses
   Frame.Properties.Advanced, Kernel.Enumerations, Kernel.Logger,
   Frame.Properties.Behavior, Frame.Properties.General.Category,
-  Frame.Properties.General.Software;
+  Frame.Properties.General.Software, Utility.Misc;
 
 {$R *.lfm}
 
@@ -73,6 +73,8 @@ begin
 
   frm := TfrmPropertyItem.Create(AOwner, ANodeData);
   try
+    SetFormPositionFromConfig(frm);
+
     Result := frm.ShowModal;
   finally
     frm.Free;

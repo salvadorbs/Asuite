@@ -162,6 +162,8 @@ begin
 
   frmImportList := TfrmImportList.Create(AOwner);
   try
+    SetFormPositionFromConfig(frmImportList);
+
     frmImportList.ShowModal;
     frmImportList.vstListImp.Clear;
   finally

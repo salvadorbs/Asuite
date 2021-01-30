@@ -33,12 +33,14 @@ type
   { TConfiguration }
   TConfiguration = class
   private
+    FDialogCenterMF: Boolean;
     FSmallHeightNode    : Integer;
     FBigHeightNode      : Integer;
     //General
     FStartWithWindows   : Boolean;
     FShowPanelAtStartUp : Boolean;
     FShowGraphicMenuAtStartUp  : Boolean;
+    FShowGraphicMenuAnotherInstance: Boolean;
     //Main Form
     FLangID             : String;
     FTVDisableConfirmDelete: Boolean;
@@ -155,9 +157,6 @@ type
     function GetImportTree: TVirtualStringTree;
     procedure SetASuiteState(const Value: TLauncherState);
     procedure UpdateHotkey(OldValue, NewValue: TShortcut; Tag: Integer);
-
-  protected
-    procedure HandleParam(const Param: string);
   public
     { public declarations }
     constructor Create; overload;
@@ -179,6 +178,7 @@ type
     property ShowPanelAtStartUp: Boolean read FShowPanelAtStartUp write SetShowPanelAtStartUp;
     property ShowGraphicMenuAtStartUp: Boolean read FShowGraphicMenuAtStartUp write FShowGraphicMenuAtStartUp;
     property MissedSchedulerTask: Boolean read FMissedSchedulerTask write FMissedSchedulerTask;
+    property ShowGraphicMenuAnotherInstance: Boolean read FShowGraphicMenuAnotherInstance write FShowGraphicMenuAnotherInstance;
     // Main Form
     property LangID: String read FLangID write SetLangID;
     property UseCustomTitle: Boolean read FUseCustomTitle write SetUseCustomTitle;
@@ -188,6 +188,7 @@ type
     // Main Form - Position and size
     property HoldSize: Boolean read FHoldSize write SetHoldSize;
     property AlwaysOnTop: Boolean read FAlwaysOnTop write SetAlwaysOnTop;
+    property DialogCenterMF: Boolean read FDialogCenterMF write FDialogCenterMF;
     // Main Form - Treevew
     property TVBackground: Boolean read FTVBackground write SetTVBackground;
     property TVSmallIconSize: Boolean read FTVSmallIconSize write SetTVSmallIconSize;
@@ -254,7 +255,9 @@ type
     property ScanFolderExcludeNames: TStringList read FScanFolderExcludeNames write FScanFolderExcludeNames;
 
     procedure AfterUpdateConfig();
-    
+
+    procedure HandleParam(const Param: string; FirstInstance: Boolean = True);
+
     //Update theme paths
     procedure UpdateGMTheme;
 
@@ -290,6 +293,7 @@ begin
   TScheduler.Create;
 
   //Node height based of DPI
+  //TODO: Check it
   FSmallHeightNode := Round((Screen.PixelsPerInch / 96.0) * 18);
   FBigHeightNode   := Round((Screen.PixelsPerInch / 96.0) * 36);
 
@@ -311,6 +315,7 @@ begin
   FShowPanelAtStartUp := True;
   FShowGraphicMenuAtStartUp  := False;
   FMissedSchedulerTask := True;
+  FShowGraphicMenuAnotherInstance := True;
 
   //Main Form
   FLangID             := 'en';
@@ -322,6 +327,7 @@ begin
   //Main Form - Position and size
   FHoldSize           := False;
   FAlwaysOnTop        := False;
+  FDialogCenterMF     := True;
 
   //Main Form - Treevew
   FTVBackground       := False;
@@ -460,7 +466,7 @@ begin
   Result := FMainTree;
 end;
 
-procedure TConfiguration.HandleParam(const Param: string);
+procedure TConfiguration.HandleParam(const Param: string; FirstInstance: Boolean);
 var
   sName, sValue: string;
 
@@ -485,14 +491,12 @@ begin
   ParseParam(Param);
   if sName <> '' then
   begin
-    if CompareText(sName, 'list') = 0 then
+    if (CompareText(sName, 'list') = 0) and (FirstInstance) then
       FPaths.SuitePathList := FPaths.RelativeToAbsolute(RemoveAllQuotes(sValue));
-    if CompareText(sName, 'additem') = 0 then
-    begin
-      //Add new node
-      if Assigned(FDBManager) then
-        TVirtualTreeMethods.Create.AddNodeByPathFile(FMainTree, nil, RemoveAllQuotes(sValue), amInsertAfter);
-    end;
+
+    //Add new node
+    if (CompareText(sName, 'additem') = 0) and (Assigned(FDBManager)) then
+      TVirtualTreeMethods.Create.AddNodeByPathFile(FMainTree, nil, RemoveAllQuotes(sValue), amInsertAfter);
   end;
 end;
 
@@ -545,6 +549,7 @@ begin
     AJSONConfig.SetValue(CONFIG_SHOWPANELATSTARTUP, Self.ShowPanelAtStartUp);
     AJSONConfig.SetValue(CONFIG_SHOWMENUATSTARTUP, Self.ShowGraphicMenuAtStartUp);
     AJSONConfig.SetValue(CONFIG_MISSEDSCHEDULERTASK, Self.MissedSchedulerTask);
+    AJSONConfig.SetValue(CONFIG_SECONDINSTANCEGM, Self.ShowGraphicMenuAnotherInstance);
 
     // Main Form
     AJSONConfig.SetValue(CONFIG_LANGID, Self.LangID);
@@ -554,6 +559,7 @@ begin
     AJSONConfig.SetValue(CONFIG_SEARCHASYOUTYPE, Self.SearchAsYouType);
     AJSONConfig.SetValue(CONFIG_HOLDSIZE, Self.HoldSize);
     AJSONConfig.SetValue(CONFIG_ALWAYSONTOP, Self.AlwaysOnTop);
+    AJSONConfig.SetValue(CONFIG_MAINFORM_DIALOGS_CENTER, Self.DialogCenterMF);
 
     // Main Form - Position and size
     AJSONConfig.SetValue(CONFIG_MAINFORM_LEFT, frmMain.Left);
@@ -658,6 +664,7 @@ begin
   Self.ShowPanelAtStartUp        := AJSONConfig.GetValue(CONFIG_SHOWPANELATSTARTUP, Self.ShowPanelAtStartUp);
   Self.ShowGraphicMenuAtStartUp  := AJSONConfig.GetValue(CONFIG_SHOWMENUATSTARTUP, Self.ShowGraphicMenuAtStartUp);
   Self.MissedSchedulerTask       := AJSONConfig.GetValue(CONFIG_MISSEDSCHEDULERTASK, Self.MissedSchedulerTask);
+  Self.ShowGraphicMenuAnotherInstance := AJSONConfig.GetValue(CONFIG_SECONDINSTANCEGM, Self.ShowGraphicMenuAnotherInstance);
 
   // Main Form
   Self.LangID                    := AJSONConfig.GetValue(CONFIG_LANGID, Self.LangID);
@@ -667,6 +674,7 @@ begin
   Self.SearchAsYouType           := AJSONConfig.GetValue(CONFIG_SEARCHASYOUTYPE, Self.SearchAsYouType);
   Self.HoldSize                  := AJSONConfig.GetValue(CONFIG_HOLDSIZE, Self.HoldSize);
   Self.AlwaysOnTop               := AJSONConfig.GetValue(CONFIG_ALWAYSONTOP, Self.AlwaysOnTop);
+  Self.DialogCenterMF            := AJSONConfig.GetValue(CONFIG_MAINFORM_DIALOGS_CENTER, Self.DialogCenterMF);
 
   // Main Form - Position and size
   nLeft   := AJSONConfig.GetValue(CONFIG_MAINFORM_LEFT, frmMain.Left);

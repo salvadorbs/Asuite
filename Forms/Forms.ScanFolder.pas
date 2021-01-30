@@ -254,6 +254,8 @@ begin
 
   frm := TfrmScanFolder.Create(AOwner);
   try
+    SetFormPositionFromConfig(frm);
+
     frm.ShowModal;
   finally
     frm.Free;

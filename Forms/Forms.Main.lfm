@@ -387,4 +387,10 @@ object frmMain: TfrmMain
     Left = 144
     Top = 80
   end
+  object UniqueInstance1: TUniqueInstance
+    Enabled = True
+    OnOtherInstance = UniqueInstance1OtherInstance
+    Left = 16
+    Top = 80
+  end
 end

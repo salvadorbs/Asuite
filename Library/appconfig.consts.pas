@@ -29,6 +29,7 @@ const
   CONFIG_SHOWPANELATSTARTUP = 'startup/showpanel';
   CONFIG_SHOWMENUATSTARTUP = 'startup/showmenu';
   CONFIG_MISSEDSCHEDULERTASK = 'startup/checkmissedschedulertask';
+  CONFIG_SECONDINSTANCEGM = 'startup/singleinstance/showgraphicmenu';
 
   //MAIN FORM
   CONFIG_LANGID = 'application/langid';
@@ -44,6 +45,7 @@ const
   CONFIG_MAINFORM_TOP = 'mainform/pos/top';
   CONFIG_MAINFORM_WIDTH = 'mainform/pos/width';
   CONFIG_MAINFORM_HEIGHT = 'mainform/pos/height';
+  CONFIG_MAINFORM_DIALOGS_CENTER = 'mainform/opendialogcenter';
 
   //MAIN FORM - TREEVEW
   CONFIG_TVBACKGROUND = 'mainform/treeview/background';

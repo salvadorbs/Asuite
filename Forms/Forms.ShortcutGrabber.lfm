@@ -11,7 +11,7 @@ object frmShortcutGrabber: TfrmShortcutGrabber
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnKeyPress = FormKeyPress
-  Position = poScreenCenter
+  Position = poOwnerFormCenter
   LCLVersion = '2.0.10.0'
   object pnlDialogPage: TPanel
     Left = 8

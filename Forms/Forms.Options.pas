@@ -51,7 +51,8 @@ implementation
 uses
   Frame.Options.General, Frame.Options.Advanced, Frame.Options.Trayicon,
   Frame.Options.Stats, Frame.Options.Autorun, AppConfig.Main, Kernel.Logger,
-  Forms.Main, Frame.Options.Hotkey, Frame.Options.MainWindow, LCLTranslator;
+  Forms.Main, Frame.Options.Hotkey, Frame.Options.MainWindow, LCLTranslator,
+  Utility.Misc;
 
 {$R *.lfm}
 
@@ -75,6 +76,8 @@ begin
 
   frmOptions := TfrmOptions.Create(AOwner, APage);
   try
+    SetFormPositionFromConfig(frmOptions);
+
     Result := frmOptions.ShowModal;
 
     Config.SaveConfig;

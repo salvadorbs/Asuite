@@ -429,6 +429,7 @@ begin
         Result := TfrmPropertyItem.Execute(AOwner, TvCustomRealNodeData(BaseNode))
       else
         Result := TfrmPropertySeparator.Execute(AOwner, BaseNode);
+
       ATreeView.InvalidateNode(ANode);
 
       if Not(ANewNode) then

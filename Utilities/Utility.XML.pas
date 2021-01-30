@@ -382,8 +382,8 @@ begin
     //Menu Hotkey
     Config.GraphicMenuHotKey := XMLToShortcut(Node, 'MenuHotKeyCode', 'MenuHotKeyModifier');
     //frmMain position
-    SetFormPosition(frmMain, GetIntPropertyXML(Node,'ListFormLeft',frmMain.Left),
-                             GetIntPropertyXML(Node,'ListFormTop',frmMain.Top));
+    SetMainFormPosition(frmMain, GetIntPropertyXML(Node,'ListFormLeft',frmMain.Left),
+                                 GetIntPropertyXML(Node,'ListFormTop',frmMain.Top));
     frmMain.Position := poDesigned;
     //Main Form - Treevew
     Config.TVBackgroundPath := GetStrPropertyXML(Node, 'BackgroundPath','');

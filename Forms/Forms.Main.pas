@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, LCLType, LMessages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
-  ComCtrls, VirtualTrees, Kernel.Consts, DataModules.Icons,
+  ComCtrls, VirtualTrees, UniqueInstance, Kernel.Consts, DataModules.Icons,
   Kernel.BaseMainForm, StdCtrls, Buttons, UITypes,
   Kernel.Enumerations, ExtCtrls, {XMLDoc,} Lists.Manager,
   Database.Manager, ButtonedEdit, {Actions,} ActnList, Themes, EditBtn;
@@ -44,6 +44,7 @@ type
     mniRunAsItem: TMenuItem;
     mniRunItem: TMenuItem;
     N9: TMenuItem;
+    UniqueInstance1: TUniqueInstance;
     vstList: TVirtualStringTree;
     pcList: TPageControl;
     tbList: TTabSheet;
@@ -139,6 +140,8 @@ type
     procedure actSortListExecute(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure btnedtSearchChange(Sender: TObject);
+    procedure UniqueInstance1OtherInstance(Sender: TObject; ParamCount: Integer;
+      const Parameters: array of AnsiString);
   private
     { Private declarations }
     function  GetActiveTree: TBaseVirtualTree;
@@ -367,6 +370,23 @@ begin
 
     DoSearchItem(vstSearch, btnedtSearch.Text, TSearchType(GetCheckedMenuItem(pmSearch).Tag));
   end;
+end;
+
+procedure TfrmMain.UniqueInstance1OtherInstance(Sender: TObject;
+  ParamCount: Integer; const Parameters: array of AnsiString);
+var
+  I: Integer;
+begin
+  TASuiteLogger.Info('Started another instance', []);
+
+  //Parse parameters
+  for I := 0 to ParamCount - 1 do
+    Config.HandleParam(Parameters[I], False);
+
+  if Config.ShowGraphicMenuAnotherInstance then
+    dmTrayMenu.ShowGraphicMenu
+  else
+    ShowMainForm(Sender);
 end;
 
 procedure TfrmMain.btnedtSearchKeyPress(Sender: TObject; var Key: Char);

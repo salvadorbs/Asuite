@@ -52,7 +52,7 @@ var
 implementation
 
 uses
-  Kernel.Logger;
+  Kernel.Logger, Utility.Misc;
 
 {$R *.lfm}
 
@@ -67,6 +67,8 @@ begin
   Result.Password := '';
   frmUILogin := TfrmUILogin.Create(AOwner);
   try
+    SetFormPositionFromConfig(frmUILogin);
+
     frmUILogin.Caption := ACaption;
 
     if frmUILogin.ShowModal = mrOK then

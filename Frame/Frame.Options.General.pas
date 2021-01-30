@@ -24,13 +24,15 @@ unit Frame.Options.General;
 interface
 
 uses
-  LCLIntf, SysUtils, Dialogs, Frame.BaseEntity, StdCtrls, DefaultTranslator;
+  LCLIntf, SysUtils, Dialogs, Frame.BaseEntity, UniqueInstance, StdCtrls,
+  DefaultTranslator;
 
 type
 
   { TfrmGeneralOptionsPage }
 
   TfrmGeneralOptionsPage = class(TfrmBaseEntityPage)
+    cbSecondInstanceGM: TCheckBox;
     
     gbStartup: TGroupBox;
     cbWindowsStartup: TCheckBox;
@@ -97,6 +99,7 @@ begin
   cbShowPanelStartup.Checked := Config.ShowPanelAtStartUp;
   cbShowMenuStartup.Checked  := Config.ShowGraphicMenuAtStartUp;
   chkMissedSchedulerTask.Checked := Config.MissedSchedulerTask;
+  cbSecondInstanceGM.Checked := Config.ShowGraphicMenuAnotherInstance;
 
   //Language
   //Search for all languages/xxx.po files
@@ -150,6 +153,7 @@ begin
   Config.ShowPanelAtStartUp  := cbShowPanelStartup.Checked;
   Config.ShowGraphicMenuAtStartUp := cbShowMenuStartup.Checked;
   Config.MissedSchedulerTask := chkMissedSchedulerTask.Checked;
+  Config.ShowGraphicMenuAnotherInstance := cbSecondInstanceGM.Checked;
 
   //Language
   if cxLanguage.ItemIndex <> -1 then

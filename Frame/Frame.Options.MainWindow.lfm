@@ -174,6 +174,15 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       TabOrder = 5
       Text = 'ASuite'
     end
+    object cbDialogCenterMF: TCheckBox
+      Left = 4
+      Height = 19
+      Top = 122
+      Width = 425
+      Caption = 'Open dialogs in the center of main window'
+      ParentFont = False
+      TabOrder = 6
+    end
   end
   object FontDialog1: TFontDialog[2]
     Font.Color = clWindowText

@@ -252,12 +252,12 @@ begin
 
   {$IFDEF MSWINDOWS}
   ErrorCode := ShellExecuteW(GetDesktopWindow, 'open', PChar(sPath), PChar(''), PChar(sPath), SW_SHOWDEFAULT) <= 32;
-  {$ELSE}
-  //TODO: Add linux method
-  {$ENDIF}
 
   if ErrorCode then
     ShowMessageFmtEx(msgErrGeneric, ['OpenFolder()', SysErrorMessage(GetLastOSError)], True);
+  {$ELSE}
+  //TODO: Add linux method
+  {$ENDIF}
 end;
 
 procedure TfrmGraphicMenu.FormCreate(Sender: TObject);

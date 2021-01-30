@@ -13,5 +13,6 @@
 {"hash":23028519,"name":"tfrmmainwindowoptionspage.cbhidesearch.caption","sourcebytes":[72,105,100,101,32,116,97,98,32,83,101,97,114,99,104,32,105,110,32,109,97,105,110,32,119,105,110,100,111,119],"value":"Hide tab Search in main window"},
 {"hash":159678229,"name":"tfrmmainwindowoptionspage.chksearchasyoutype.caption","sourcebytes":[83,101,97,114,99,104,32,97,115,32,121,111,117,32,116,121,112,101],"value":"Search as you type"},
 {"hash":92056341,"name":"tfrmmainwindowoptionspage.cbcustomtitle.caption","sourcebytes":[67,117,115,116,111,109,32,109,97,105,110,32,119,105,110,100,111,119,32,116,105,116,108,101],"value":"Custom main window title"},
-{"hash":74104997,"name":"tfrmmainwindowoptionspage.edtcustomtitle.text","sourcebytes":[65,83,117,105,116,101],"value":"ASuite"}
+{"hash":74104997,"name":"tfrmmainwindowoptionspage.edtcustomtitle.text","sourcebytes":[65,83,117,105,116,101],"value":"ASuite"},
+{"hash":139064983,"name":"tfrmmainwindowoptionspage.cbdialogcentermf.caption","sourcebytes":[79,112,101,110,32,100,105,97,108,111,103,115,32,105,110,32,116,104,101,32,99,101,110,116,101,114,32,111,102,32,109,97,105,110,32,119,105,110,100,111,119],"value":"Open dialogs in the center of main window"}
 ]}

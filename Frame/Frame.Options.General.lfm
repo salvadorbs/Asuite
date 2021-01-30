@@ -29,7 +29,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
       Height = 19
       Top = 4
       Width = 425
-      Caption = 'Start ASuite on Windows system startup'
+      Caption = 'Start ASuite on Operating System startup'
       ParentFont = False
       TabOrder = 0
     end
@@ -59,6 +59,15 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
       Caption = 'Check missed scheduler task at ASuite startup'
       ParentFont = False
       TabOrder = 1
+    end
+    object cbSecondInstanceGM: TCheckBox
+      Left = 4
+      Height = 19
+      Top = 80
+      Width = 425
+      Caption = 'Show Graphic Menu, when run another ASuite instance'
+      ParentFont = False
+      TabOrder = 4
     end
   end
   object gbExecution: TGroupBox[1]

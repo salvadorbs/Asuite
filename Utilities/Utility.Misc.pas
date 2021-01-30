@@ -29,7 +29,8 @@ uses
 
 { Forms }
 function  IsFormOpen(const FormName : string): Boolean;
-procedure SetFormPosition(Form: TForm; ListFormLeft, ListFormTop: Integer);
+procedure SetMainFormPosition(Form: TForm; ListFormLeft, ListFormTop: Integer);
+procedure SetFormPositionFromConfig(AForm: TForm);
 
 { Misc }
 function CheckPropertyName(Edit: TEdit): Boolean;
@@ -74,7 +75,7 @@ begin
     end;
 end;
 
-procedure SetFormPosition(Form: TForm; ListFormLeft, ListFormTop: Integer);
+procedure SetMainFormPosition(Form: TForm; ListFormLeft, ListFormTop: Integer);
 begin
   if (ListFormTop <> -1) and (ListFormLeft <> -1) then
   begin
@@ -90,6 +91,16 @@ begin
   end
   else
     Form.Position := poDesktopCenter;
+end;
+
+procedure SetFormPositionFromConfig(AForm: TForm);
+begin
+  if Assigned(AForm) then
+  begin
+    AForm.Position := poMainFormCenter;
+    if Assigned(Config) and (not Config.DialogCenterMF) then
+      AForm.Position := poScreenCenter;
+  end;
 end;
 
 function CheckPropertyName(Edit: TEdit): Boolean;
