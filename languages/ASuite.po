@@ -719,20 +719,6 @@ msgstr ""
 msgid "Note: In this list you can find all software items of this category (only first level). Uncheck items who you don't want to start, when run this category."
 msgstr ""
 
-#: tfrmdialogbase.btnapply.caption
-msgid "Apply"
-msgstr ""
-
-#: tfrmdialogbase.btncancel.caption
-msgctxt "tfrmdialogbase.btncancel.caption"
-msgid "Cancel"
-msgstr ""
-
-#: tfrmdialogbase.btnok.caption
-msgctxt "tfrmdialogbase.btnok.caption"
-msgid "Ok"
-msgstr ""
-
 #: tfrmdialogbase.caption
 msgid "frmDialogBase"
 msgstr ""
