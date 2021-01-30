@@ -195,8 +195,7 @@ procedure TfrmDialogBase.AdjustPanelSize;
 var
   NodeData: PFramesNodeData;
   Node: PVirtualNode;
-  intWidth, intHeight, PreferredWidth,PreferredHeight: Integer;
-  x:trect;
+  intWidth, intHeight: Integer;
 begin
   intWidth := pnlDialogPage.Constraints.MinWidth;
   intHeight := pnlDialogPage.Constraints.MinHeight;

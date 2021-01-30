@@ -1,31 +1,27 @@
 inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
-  Width = 359
-  ChildSizing.LeftRightSpacing = 0
-  ChildSizing.TopBottomSpacing = 0
-  ClientWidth = 359
   DesignLeft = 2132
   DesignTop = 220
   object pnlTop: TPanel[0]
-    Left = 0
-    Height = 111
-    Top = 0
-    Width = 359
+    Left = 4
+    Height = 107
+    Top = 4
+    Width = 352
     AutoSize = True
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
     BevelOuter = bvNone
     ChildSizing.EnlargeHorizontal = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
-    ClientHeight = 111
-    ClientWidth = 359
+    ClientHeight = 107
+    ClientWidth = 352
     TabOrder = 0
     object grpScheduler: TGroupBox
-      Left = 4
+      Left = 0
       Height = 107
-      Top = 4
+      Top = 0
       Width = 142
       Align = alLeft
       AutoSize = True
-      BorderSpacing.Left = 4
-      BorderSpacing.Top = 4
       BorderSpacing.Right = 4
       Caption = 'Scheduler'
       ChildSizing.LeftRightSpacing = 4
@@ -98,21 +94,19 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       end
     end
     object grpHotkey: TGroupBox
-      Left = 150
+      Left = 146
       Height = 107
-      Top = 4
-      Width = 205
+      Top = 0
+      Width = 206
       Align = alClient
       AutoSize = True
-      BorderSpacing.Top = 4
-      BorderSpacing.Right = 4
       Caption = 'Hotkey'
       ChildSizing.LeftRightSpacing = 4
       ChildSizing.TopBottomSpacing = 4
       ChildSizing.EnlargeHorizontal = crsScaleChilds
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ClientHeight = 87
-      ClientWidth = 201
+      ClientWidth = 202
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 1
@@ -120,7 +114,7 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
         Left = 4
         Height = 19
         Top = 4
-        Width = 193
+        Width = 194
         Caption = 'Active hotkey'
         OnClick = cbHotKeyClick
         ParentFont = False
@@ -130,7 +124,7 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
         Left = 4
         Height = 22
         Top = 25
-        Width = 193
+        Width = 194
         BorderSpacing.Top = 2
         CharCase = ecUppercase
         ParentFont = False
@@ -142,75 +136,60 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       end
     end
   end
-  object pnlBottom: TPanel[1]
-    Left = 0
-    Height = 112
-    Top = 111
-    Width = 359
+  object grpOthers: TGroupBox[1]
+    Left = 4
+    Height = 104
+    Top = 115
+    Width = 352
     AutoSize = True
-    BevelOuter = bvNone
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    Caption = 'Others'
     ChildSizing.LeftRightSpacing = 4
     ChildSizing.TopBottomSpacing = 4
     ChildSizing.EnlargeHorizontal = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
-    ClientHeight = 112
-    ClientWidth = 359
+    ClientHeight = 84
+    ClientWidth = 348
+    Font.Style = [fsBold]
+    ParentFont = False
     TabOrder = 1
-    object grpOthers: TGroupBox
+    object cbHideSoftware: TCheckBox
       Left = 4
-      Height = 104
+      Height = 19
       Top = 4
-      Width = 351
-      AutoSize = True
-      BorderSpacing.Left = 4
-      BorderSpacing.Top = 4
-      BorderSpacing.Right = 4
-      Caption = 'Others'
-      ChildSizing.LeftRightSpacing = 4
-      ChildSizing.TopBottomSpacing = 4
-      ChildSizing.EnlargeHorizontal = crsScaleChilds
-      ChildSizing.Layout = cclLeftToRightThenTopToBottom
-      ClientHeight = 84
-      ClientWidth = 347
-      Font.Style = [fsBold]
+      Width = 340
+      Caption = 'Hide this software from menu'
       ParentFont = False
       TabOrder = 0
-      object cbHideSoftware: TCheckBox
-        Left = 4
-        Height = 19
-        Top = 4
-        Width = 339
-        Caption = 'Hide this software from menu'
-        ParentFont = False
-        TabOrder = 0
-      end
-      object cbDontInsertMRU: TCheckBox
-        Left = 4
-        Height = 19
-        Top = 23
-        Width = 339
-        Caption = 'Don''t insert this software in recents (MRU)'
-        ParentFont = False
-        TabOrder = 1
-      end
-      object cbDontInsertMFU: TCheckBox
-        Left = 4
-        Height = 19
-        Top = 42
-        Width = 339
-        Caption = 'Don''t insert this software in MFU'
-        ParentFont = False
-        TabOrder = 2
-      end
-      object cbShortcutDesktop: TCheckBox
-        Left = 4
-        Height = 19
-        Top = 61
-        Width = 339
-        Caption = 'Create shortcut on desktop when ASuite is running'
-        ParentFont = False
-        TabOrder = 3
-      end
+    end
+    object cbDontInsertMRU: TCheckBox
+      Left = 4
+      Height = 19
+      Top = 23
+      Width = 340
+      Caption = 'Don''t insert this software in recents (MRU)'
+      ParentFont = False
+      TabOrder = 1
+    end
+    object cbDontInsertMFU: TCheckBox
+      Left = 4
+      Height = 19
+      Top = 42
+      Width = 340
+      Caption = 'Don''t insert this software in MFU'
+      ParentFont = False
+      TabOrder = 2
+    end
+    object cbShortcutDesktop: TCheckBox
+      Left = 4
+      Height = 19
+      Top = 61
+      Width = 340
+      Caption = 'Create shortcut on desktop when ASuite is running'
+      ParentFont = False
+      TabOrder = 3
     end
   end
 end

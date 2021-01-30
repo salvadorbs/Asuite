@@ -1,27 +1,10 @@
 inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
-  DesignLeft = 2186
-  DesignTop = 242
-  inherited gbItem: TGroupBox
-    Width = 355
-    ClientWidth = 351
-    inherited lbName: TLabel
-      Width = 343
-    end
-    inherited edtName: TEdit
-      Width = 343
-    end
-    inherited lbPathIcon: TLabel
-      Width = 343
-    end
-    inherited edtPathIcon: TFileNameEdit
-      Width = 343
-    end
-  end
+  DesignTop = 228
   object grpSoftware: TGroupBox[1]
     Left = 4
     Height = 210
     Top = 114
-    Width = 355
+    Width = 352
     BorderSpacing.Left = 4
     BorderSpacing.Top = 4
     BorderSpacing.Right = 4
@@ -31,7 +14,7 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
     ChildSizing.EnlargeHorizontal = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ClientHeight = 190
-    ClientWidth = 351
+    ClientWidth = 348
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 1
@@ -39,7 +22,7 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Left = 4
       Height = 15
       Top = 4
-      Width = 343
+      Width = 340
       Caption = 'Executable/folder/web page path'
       ParentColor = False
       ParentFont = False
@@ -48,7 +31,7 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Left = 4
       Height = 23
       Top = 19
-      Width = 343
+      Width = 340
       DialogOptions = [ofHideReadOnly, ofEnableSizing]
       FilterIndex = 0
       HideDirectories = False
@@ -65,7 +48,7 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Left = 4
       Height = 15
       Top = 44
-      Width = 343
+      Width = 340
       Caption = 'Custom working directory (optional)'
       ParentColor = False
       ParentFont = False
@@ -74,7 +57,7 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Left = 4
       Height = 23
       Top = 59
-      Width = 343
+      Width = 340
       Directory = '$ASuite\'
       ShowHidden = False
       ButtonWidth = 23
@@ -90,7 +73,7 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Left = 4
       Height = 15
       Top = 84
-      Width = 343
+      Width = 340
       Caption = 'Parameters (optional)'
       ParentColor = False
       ParentFont = False
@@ -99,16 +82,22 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Left = 4
       Height = 23
       Top = 99
-      Width = 343
+      Width = 340
       BorderSpacing.Bottom = 4
       ParentFont = False
       TabOrder = 2
     end
     object lbInfo2: TLabel
+      AnchorSideTop.Control = edtParameters
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = edtParameters
+      AnchorSideRight.Side = asrBottom
       Left = 4
       Height = 60
       Top = 126
-      Width = 343
+      Width = 340
+      Anchors = [akTop, akLeft, akRight]
+      AutoSize = False
       Caption = 'Note: You can use these vars (included environment variables) in relative path:'#13#10'- %asuite% = ASuite folder path ("%s")'#13#10'- %drive% = drive path ("%s")'
       ParentColor = False
       ParentFont = False

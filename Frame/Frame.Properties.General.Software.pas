@@ -25,7 +25,7 @@ interface
 
 uses
   SysUtils, Graphics, Dialogs, StdCtrls, Frame.Properties.General, EditBtn,
-  DefaultTranslator;
+  DefaultTranslator, Classes;
 
 type
 
@@ -33,14 +33,14 @@ type
 
   TfrmSWGeneralPropertyPage = class(TfrmBaseGeneralPropertyPage)
     edtParameters: TEdit;
+    edtPathExe: TFileNameEdit;
     edtWorkingDir: TDirectoryEdit;
     grpSoftware: TGroupBox;
     lbInfo2: TLabel;
     lbParameters: TLabel;
     lbPathExe: TLabel;
-
-    edtPathExe: TFileNameEdit;
     lbWorkingDir: TLabel;
+
     procedure edtPathExeAfterDialog(Sender: TObject; var AName: string;
       var AAction: Boolean);
     procedure edtPathExeBeforeDialog(Sender: TObject; var AName: string;
