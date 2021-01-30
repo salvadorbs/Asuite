@@ -742,20 +742,6 @@ msgstr ""
 "categoria (solo del primo livello). Togli la spunta a quei elementi che non "
 "vuoi che vengano eseguiti, quando decidi di avviare questa categoria."
 
-#: tfrmdialogbase.btnapply.caption
-msgid "Apply"
-msgstr "Applica"
-
-#: tfrmdialogbase.btncancel.caption
-msgctxt "tfrmdialogbase.btncancel.caption"
-msgid "Cancel"
-msgstr "Annulla"
-
-#: tfrmdialogbase.btnok.caption
-msgctxt "tfrmdialogbase.btnok.caption"
-msgid "Ok"
-msgstr "Ok"
-
 #: tfrmdialogbase.caption
 msgid "frmDialogBase"
 msgstr "frmDialogBase"
