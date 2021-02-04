@@ -49,9 +49,9 @@ var
 implementation
 
 uses
-  Frame.Properties.Advanced, Kernel.Enumerations, Kernel.Logger,
+  Frame.Properties.Advanced, Kernel.Enumerations, Kernel.Logger, VirtualTrees,
   Frame.Properties.Behavior, Frame.Properties.General.Category,
-  Frame.Properties.General.Software, Utility.Misc;
+  Frame.Properties.General.Software, Utility.Misc, Frame.Properties.EnvironmentVars;
 
 {$R *.lfm}
 
@@ -82,6 +82,8 @@ begin
 end;
 
 function TfrmPropertyItem.InternalLoadData: Boolean;
+var
+  frmAdv: PVirtualNode;
 begin
   Assert(Assigned(FListNodeData), 'FListNodeData is not assigned!');
 
@@ -92,7 +94,12 @@ begin
   else
     if FListNodeData.DataType = vtdtCategory then
       FFrameGeneral := AddFrameNode(vstCategory, nil, TfrmCatGeneralPropertyPage.Create(Self, FListNodeData));
-  AddFrameNode(vstCategory, nil, TfrmAdvancedPropertyPage.Create(Self, FListNodeData));
+
+  frmAdv := AddFrameNode(vstCategory, nil, TfrmAdvancedPropertyPage.Create(Self, FListNodeData));
+
+  if (FListNodeData.DataType = vtdtFile) or (FListNodeData.DataType = vtdtFolder) then
+    AddFrameNode(vstCategory, frmAdv, TfrmEnvironmentVars.Create(Self, FListNodeData));
+
   AddFrameNode(vstCategory, nil, TfrmBehaviorPropertyPage.Create(Self, FListNodeData));
 end;
 

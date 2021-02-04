@@ -28,6 +28,9 @@ uses
   Dialogs, Classes, NodeDataTypes.Base, SynLog;
 
 type
+
+  { TSQLtbl_list }
+
   TSQLtbl_list = class(TSQLRecord) //Table tbl_list
   private
     Ftype             : Integer;
@@ -56,6 +59,7 @@ type
     Frun_from_category  : Boolean;
     FActiveHotkey       : Boolean;
     Fhotkey             : Word;
+    Fenvironment_vars   : RawUTF8;
 
     procedure LoadDataFromNode(AData: TvBaseNodeData; AIndex, AParentID: Integer);
 
@@ -100,6 +104,7 @@ type
     property activehotkey: Boolean read FActiveHotkey write FActiveHotkey;
     property hotkey: Word read Fhotkey write Fhotkey;
     property run_from_category: Boolean read Frun_from_category write Frun_from_category;
+    property environment_vars: RawUTF8 read Fenvironment_vars write Fenvironment_vars;
   end;
 
 implementation
@@ -186,6 +191,7 @@ begin
             LastAccess       := SQLFilesData.lastAccess;
             ClickCount       := SQLFilesData.clicks;
             RunFromCategory  := SQLFilesData.run_from_category;
+            EnvironmentVars.Text := UTF8DecodeToUnicodeString(SQLFilesData.environment_vars);
           end;
         end;
         if (nType = vtdtCategory) then
@@ -278,6 +284,7 @@ begin
         FlastAccess := LastAccess;
         Fclicks     := ClickCount;
         Frun_from_category := RunFromCategory;
+        Fenvironment_vars := UnicodeStringToUtf8(EnvironmentVars.Text);
       end;
     end;
   end;

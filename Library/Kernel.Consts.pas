@@ -51,6 +51,8 @@ const
   EXT_URL       = '.url';
   EXT_EXE       = '.exe';
   EXT_PO        = '.po';
+  EXT_BAT       = '.bat';
+  EXT_CMD       = '.cmd';
 
   EXT_PATH_MASK = '*';    
   EXT_PATH_DOT = '.';

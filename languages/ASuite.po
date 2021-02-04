@@ -153,6 +153,10 @@ msgstr ""
 msgid "Safely remove hardware"
 msgstr ""
 
+#: kernel.resourcestrings.msgenvironmentvars
+msgid "Environment Vars"
+msgstr ""
+
 #: kernel.resourcestrings.msgerremptyname
 msgid "Application's name field is empty"
 msgstr ""
@@ -723,6 +727,34 @@ msgstr ""
 msgid "frmDialogBase"
 msgstr ""
 
+#: tfrmenvironmentvars.actadd.caption
+msgctxt "tfrmenvironmentvars.actadd.caption"
+msgid "Add"
+msgstr ""
+
+#: tfrmenvironmentvars.actcopy.caption
+msgctxt "tfrmenvironmentvars.actcopy.caption"
+msgid "Copy"
+msgstr ""
+
+#: tfrmenvironmentvars.actdelete.caption
+msgctxt "tfrmenvironmentvars.actdelete.caption"
+msgid "Delete"
+msgstr ""
+
+#: tfrmenvironmentvars.actpaste.caption
+msgctxt "tfrmenvironmentvars.actpaste.caption"
+msgid "Paste"
+msgstr ""
+
+#: tfrmenvironmentvars.grpothers.caption
+msgid "Environment Variables"
+msgstr ""
+
+#: tfrmenvironmentvars.tbbuttons.caption
+msgid "tbButtons"
+msgstr ""
+
 #: tfrmgeneraloptionspage.cbrunsingleclick.caption
 msgid "Execute with single click in main window"
 msgstr ""
@@ -927,6 +959,7 @@ msgid "Add software..."
 msgstr ""
 
 #: tfrmmain.actcopy.caption
+msgctxt "tfrmmain.actcopy.caption"
 msgid "Copy"
 msgstr ""
 
@@ -945,6 +978,7 @@ msgid "Show application's folder"
 msgstr ""
 
 #: tfrmmain.actpaste.caption
+msgctxt "tfrmmain.actpaste.caption"
 msgid "Paste"
 msgstr ""
 

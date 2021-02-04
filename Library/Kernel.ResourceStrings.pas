@@ -32,6 +32,7 @@ resourcestring
   msgErrRun = 'Cannot run %s';
   msgAutorun = 'Autorun';
   msgAdvanced = 'Advanced';
+  msgEnvironmentVars = 'Environment Vars';
   msgBehavior = 'Behavior';
   msgConfirm = 'Are you sure?';
   msgErrGeneric = '%s error raised, with message: %s';
