@@ -288,7 +288,9 @@ var
   I: Integer;
 begin
   Nodes := GetActiveTree.GetSortedSelection(True);
+
   TAction(Sender).Enabled := False;
+
   if Length(Nodes) > 0 then
   begin
     for I := Low(Nodes) to High(Nodes) do
@@ -297,6 +299,9 @@ begin
 
       if NodeData.DataType <> vtdtSeparator then
         TAction(Sender).Enabled := True;
+
+      if ((TAction(Sender).Tag = 1) or (TAction(Sender).Tag = 2)) and (NodeData.IsFileItem) then
+        TAction(Sender).Enabled := IsExecutableFile(TvFileNodeData(NodeData).PathAbsoluteFile);
 
       if (TAction(Sender).Tag = 3) then
       begin

@@ -312,6 +312,7 @@ begin
       //Execute as user
       rmAsUser:
         begin
+          //TODO: In Linux we must call a dialog to get only username (see inputbox - https://wiki.freepascal.org/Dialog_Examples#Text_input_Dialogs)
           UserData := TfrmUILogin.Execute(ASender, msgRunAsTitle);
           if UserData.UserName <> '' then
             NodeData.ExecuteAsUser(True, NodeData.DataType = vtdtCategory, UserData)

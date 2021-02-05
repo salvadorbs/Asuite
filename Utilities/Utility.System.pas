@@ -24,7 +24,7 @@ unit Utility.System;
 interface
 
 uses
-  Kernel.Consts, LCLIntf, LCLType, SysUtils, Classes, Registry,
+  Kernel.Consts, LCLIntf, LCLType, SysUtils, Classes, Registry, process,
   Forms, Dialogs;
 
 { Check functions }
@@ -32,6 +32,10 @@ function HasDriveLetter(const Path: String): Boolean;
 function IsDriveRoot(const Path: String): Boolean;
 function IsValidURLProtocol(const URL: string): Boolean;
 function IsPathExists(const Path: String): Boolean;
+function IsExecutableFile(APathFile: String): Boolean;
+function CreateProcessEx(APathFile: String; AParameters: String = ''; AWorkingDir: String = '';
+                         AWindowState: TShowWindowOptions = swoShowDefault;
+                         AEnvironmentVars: TStringList = nil): Integer;
 
 { Registry }
 procedure SetASuiteAtWindowsStartup;
@@ -103,6 +107,51 @@ begin
       Result := True
     else
       Result := (FileExists(PathTemp)) or (SysUtils.DirectoryExists(PathTemp));
+end;
+
+function IsExecutableFile(APathFile: String): Boolean;
+{$IFDEF MSWINDOWS}
+var
+  lowerStrPath: String;
+{$ENDIF}
+begin
+  {$IFDEF MSWINDOWS}
+  lowerStrPath := LowerCase(ExtractFileExt(APathFile));
+  Result := (lowerStrPath = EXT_EXE) or (lowerStrPath = EXT_BAT) or (lowerStrPath = EXT_CMD);
+  {$ELSE}
+  Result := FileIsExecutable(APathFile);
+  {$ENDIF}
+end;
+
+function CreateProcessEx(APathFile: String; AParameters: String;
+  AWorkingDir: String; AWindowState: TShowWindowOptions;
+  AEnvironmentVars: TStringList): Integer;
+var
+  Process: TProcess;
+  I: Integer;
+begin
+  Process := TProcess.Create(nil);
+  try
+    try
+      Process.Executable := APathFile;
+      Process.ShowWindow := AWindowState;
+      Process.StartupOptions := [suoUseShowWindow];
+      Process.CurrentDirectory := AWorkingDir;
+      Process.Parameters.Text := AParameters;
+
+      if Assigned(AEnvironmentVars) then
+        for I := 0 to AEnvironmentVars.Count - 1 do
+          Process.Environment.Add(AEnvironmentVars[I]);
+
+      Process.Execute;
+
+      Result := Process.ProcessID;
+    except
+      Result := -1;
+    end;
+  finally
+    Process.Free;
+  end;
 end;
 
 procedure EjectDialog(Sender: TObject);

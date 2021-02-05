@@ -27,6 +27,9 @@ uses
   VirtualTrees, SysUtils, DateUtils, Kernel.Enumerations, Icons.Base, LazUTF8;
 
 type
+
+  { TvBaseNodeData }
+
   TvBaseNodeData = class
   private
     //Base private variables and functions
@@ -62,6 +65,7 @@ type
 
     procedure SetPointerNode(APNode: PVirtualNode);
     procedure Copy(source:TvBaseNodeData); virtual;
+    function IsFileItem: Boolean;
 
     property ID : Int64 read FID write FID;
     property ParentID : Int64 read FParentID write FParentID;
@@ -109,6 +113,12 @@ begin
   FName       := msgCopy + source.Name;
   FDataType   := source.DataType;
   FHideFromMenu := source.HideFromMenu;
+end;
+
+function TvBaseNodeData.IsFileItem: Boolean;
+begin
+  //TODO: Use this function in codebase!
+  Result := Self.DataType in [vtdtFile,vtdtFolder];
 end;
 
 function TvBaseNodeData.GetName: String;
