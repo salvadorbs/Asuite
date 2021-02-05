@@ -71,7 +71,7 @@ var
   NewNodeData     : PTreeDataX;
 begin
   CurrentFileData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender));
-  if (CurrentFileData.DataType in [vtdtFile,vtdtFolder]) and
+  if (CurrentFileData.IsFileItem) and
      (Node.Parent = PVirtualNode(Data)) then
   begin
     //Add new checked node in vstCategoryItems

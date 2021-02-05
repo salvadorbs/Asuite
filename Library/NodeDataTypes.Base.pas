@@ -66,6 +66,8 @@ type
     procedure SetPointerNode(APNode: PVirtualNode);
     procedure Copy(source:TvBaseNodeData); virtual;
     function IsFileItem: Boolean;
+    function IsSeparatorItem: Boolean;
+    function IsCategoryItem: Boolean;
 
     property ID : Int64 read FID write FID;
     property ParentID : Int64 read FParentID write FParentID;
@@ -117,8 +119,17 @@ end;
 
 function TvBaseNodeData.IsFileItem: Boolean;
 begin
-  //TODO: Use this function in codebase!
   Result := Self.DataType in [vtdtFile,vtdtFolder];
+end;
+
+function TvBaseNodeData.IsSeparatorItem: Boolean;
+begin
+  Result := (Self.DataType = vtdtSeparator);
+end;
+
+function TvBaseNodeData.IsCategoryItem: Boolean;
+begin
+  Result := (Self.DataType = vtdtCategory);
 end;
 
 function TvBaseNodeData.GetName: String;

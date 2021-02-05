@@ -89,15 +89,15 @@ begin
 
   Result := True;
 
-  if (FListNodeData.DataType = vtdtFile) or (FListNodeData.DataType = vtdtFolder) then
+  if (FListNodeData.IsFileItem) then
     FFrameGeneral := AddFrameNode(vstCategory, nil, TfrmSWGeneralPropertyPage.Create(Self, FListNodeData))
   else
-    if FListNodeData.DataType = vtdtCategory then
+    if FListNodeData.IsCategoryItem then
       FFrameGeneral := AddFrameNode(vstCategory, nil, TfrmCatGeneralPropertyPage.Create(Self, FListNodeData));
 
   frmAdv := AddFrameNode(vstCategory, nil, TfrmAdvancedPropertyPage.Create(Self, FListNodeData));
 
-  if (FListNodeData.DataType = vtdtFile) or (FListNodeData.DataType = vtdtFolder) then
+  if (FListNodeData.IsFileItem) then
     AddFrameNode(vstCategory, frmAdv, TfrmEnvironmentVars.Create(Self, FListNodeData));
 
   AddFrameNode(vstCategory, nil, TfrmBehaviorPropertyPage.Create(Self, FListNodeData));

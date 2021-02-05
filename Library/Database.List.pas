@@ -221,7 +221,7 @@ begin
         if ((vData.Changed) or (vData.Position <> Node.Index) or (vData.ParentID <> AParentID)) then
           TSQLtbl_list.UpdateFileRecord(vData, ADBManager, Node.Index, AParentID);
       //If type is category then process sub-nodes
-      if (vData.DataType = vtdtCategory) then
+      if (vData.IsCategoryItem) then
         TSQLtbl_list.SaveItemsByParentID(Tree, ADBManager, Node.FirstChild, vData.ID);
     except
       on E : Exception do
@@ -250,7 +250,7 @@ begin
   Fposition := AIndex;
   Ftitle    := UnicodeStringToUtf8(AData.Name);
   //Add specific category and file fields
-  if AData.DataType <> vtdtSeparator then
+  if not(AData.IsSeparatorItem) then
   begin
     //Add time fields
     FdateAdded      := AData.UnixAddDate;
@@ -271,7 +271,7 @@ begin
       Fhotkey         := Hotkey;
     end;
     //Add file fields
-    if (AData.DataType = vtdtFile) then
+    if (AData.IsFileItem) then
     begin
       with TvFileNodeData(AData) do
       begin

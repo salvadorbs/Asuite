@@ -347,6 +347,7 @@ begin
   end;
   FileClose(hSnapShot);
   {$ELSE}
+  //TODO: Maybe better runCommand with poWaitOnExit (more simple and less code)
   Process := TProcess.Create(nil);
   try
     Process.Executable := 'ps';

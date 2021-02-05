@@ -308,12 +308,12 @@ begin
     else
       AddItem(pmTrayicon.Items, MenuItem);
     //Set MenuItem properties
-    if (ItemNodeData.DataType = vtdtSeparator) then
+    if (ItemNodeData.IsSeparatorItem) then
       CreateSeparator(pmTrayicon, ItemNodeData.Name, MenuItem)
     else begin
       MenuItem.Caption    := ItemNodeData.Name;
       MenuItem.ImageIndex := ItemNodeData.Icon.ImageIndex;
-      if (ItemNodeData.DataType = vtdtFile) then
+      if (ItemNodeData.IsFileItem) then
       begin
         MenuItem.OnClick  := RunFromTrayMenu;
         TvFileNodeData(ItemNodeData).CheckPathFile;
@@ -329,7 +329,7 @@ begin
         end;
       end
       else begin
-        if ItemNodeData.DataType = vtdtCategory then
+        if ItemNodeData.IsCategoryItem then
         begin
           MenuItem.OnClick := PopulateCategoryItems;      
           AddSub(MenuItem);

@@ -157,7 +157,7 @@ begin
     begin
       ParentData := GetNodeItemData(AParentNode, ASender);
       //If parent node is a category then expand
-      if ParentData.DataType = vtdtCategory then
+      if ParentData.IsCategoryItem then
       begin
         Result := ASender.AddChild(AParentNode, CreateNodeData(AType));
         if Config.TVAutoOpCatsDrag and ADoExpand then
@@ -276,7 +276,7 @@ begin
     NodeData := GetNodeItemData(Node, ASender);
 
     if Assigned(NodeData) then
-      if NodeData.DataType = vtdtFile then
+      if NodeData.IsFileItem then
         TvFileNodeData(NodeData).CheckPathFile;
 
     //Next visible node
@@ -304,27 +304,27 @@ var
   UserData: TUserData;
 begin
   NodeData := TvCustomRealNodeData(GetNodeItemData(ANode, ASender));
-  if Not(NodeData.DataType = vtdtSeparator) then
+  if Not(NodeData.IsSeparatorItem) then
   begin
     case ARunMode of
       //Normal execute
-      rmNormal: NodeData.Execute(True, NodeData.DataType = vtdtCategory, ACheckSingleInstance);
+      rmNormal: NodeData.Execute(True, NodeData.IsCategoryItem, ACheckSingleInstance);
       //Execute as user
       rmAsUser:
         begin
           //TODO: In Linux we must call a dialog to get only username (see inputbox - https://wiki.freepascal.org/Dialog_Examples#Text_input_Dialogs)
           UserData := TfrmUILogin.Execute(ASender, msgRunAsTitle);
           if UserData.UserName <> '' then
-            NodeData.ExecuteAsUser(True, NodeData.DataType = vtdtCategory, UserData)
+            NodeData.ExecuteAsUser(True, NodeData.IsCategoryItem, UserData)
           else
             ShowMessageEx(msgErrEmptyUserName, true);
         end;
       //Execute as Admin
-      rmAsAdmin: NodeData.ExecuteAsAdmin(True, NodeData.DataType = vtdtCategory);
+      rmAsAdmin: NodeData.ExecuteAsAdmin(True, NodeData.IsCategoryItem);
       //Explore path
       rmExplorePath:
         begin
-          if (NodeData.DataType = vtdtFile) then
+          if (NodeData.IsFileItem) then
             TvFileNodeData(NodeData).ExplorePath;
         end;
     end;
@@ -426,7 +426,7 @@ begin
     BaseNode := GetNodeItemData(ANode, ATreeView);
     if Assigned(BaseNode) then
     begin
-      if BaseNode.DataType <> vtdtSeparator then
+      if not(BaseNode.IsSeparatorItem) then
         Result := TfrmPropertyItem.Execute(AOwner, TvCustomRealNodeData(BaseNode))
       else
         Result := TfrmPropertySeparator.Execute(AOwner, BaseNode);
@@ -487,7 +487,7 @@ begin
   if Assigned(NodeData) then
   begin
     TASuiteLogger.Info('Deleting node "%s"', [NodeData.Name]);
-    if (NodeData.DataType <> vtdtSeparator) then
+    if not(NodeData.IsSeparatorItem) then
     begin
       //Delete desktop's shortcut
       if NodeData is TvFileNodeData then
@@ -510,7 +510,7 @@ begin
   Hotkey := Cardinal(Data);
 
   CurrentNodeData := TvFileNodeData(GetNodeItemData(Node, Sender));
-  if Assigned(CurrentNodeData) and (CurrentNodeData.DataType <> vtdtSeparator) then
+  if Assigned(CurrentNodeData) and not(CurrentNodeData.IsSeparatorItem) then
   begin
     if TvCustomRealNodeData(CurrentNodeData).Hotkey = Hotkey then
       Abort := True;
@@ -529,7 +529,7 @@ begin
   LauncherSearch  := Data;
   CurrentFileData := TvFileNodeData(GetNodeItemData(Node, Sender));
   if Assigned(CurrentFileData) then
-    if (CurrentFileData.DataType in [vtdtFile,vtdtFolder]) then
+    if (CurrentFileData.IsFileItem) then
     begin
       Found := False;
       //Search Keyword in user specified field
@@ -556,7 +556,7 @@ var
   NodeData: TvBaseNodeData;
 begin
   NodeData := GetNodeItemData(Node, Sender);
-  if NodeData.DataType = vtdtFile then
+  if NodeData.IsFileItem then
   begin
     //Delete shortcut on shutdown
     if TvFileNodeData(NodeData).ShortcutDesktop then
@@ -646,7 +646,7 @@ begin
   if Assigned(NodeData) then
   begin
     //Change node height
-    if NodeData.DataType = vtdtSeparator then
+    if NodeData.IsSeparatorItem then
       Sender.NodeHeight[Node] := Config.SmallHeightNode
     else
       Sender.NodeHeight[Node] := Integer(Data^);
@@ -687,8 +687,8 @@ begin
           NodeData := Config.ListManager.HotKeyItemList.IndexOfID(ShortcutEx.Tag);
           if Assigned(NodeData) then
           begin
-            if (NodeData.DataType <> vtdtSeparator) then
-              NodeData.Execute(True, NodeData.DataType = vtdtCategory, False);
+            if not(NodeData.IsSeparatorItem) then
+              NodeData.Execute(True, NodeData.IsCategoryItem, False);
 
             TVirtualTreeMethods.Create.RefreshList(nil);
           end;

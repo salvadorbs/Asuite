@@ -81,7 +81,7 @@ begin
         begin
           //Start process
           if (MessageDlg(Format(msgMissedTask, [NodeData.Name]), mtWarning, [mbYes, mbNo], 0) = mrYes) then
-            NodeData.Execute(True, NodeData.DataType = vtdtCategory, False);
+            NodeData.Execute(True, NodeData.IsCategoryItem, False);
         end;
       end;
     end;
@@ -105,7 +105,7 @@ begin
     begin
       //Compare time and/or date based of scheduler mode and run node
       if CompareSchDates(NodeData, dtNowDateTime) and (NodeData.SchMode <> smDisabled) then
-        NodeData.Execute(True, NodeData.DataType = vtdtCategory, False);
+        NodeData.Execute(True, NodeData.IsCategoryItem, False);
     end;
   end;
 end;

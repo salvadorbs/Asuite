@@ -108,7 +108,7 @@ begin
   if Assigned(CurrentNodeData) then
   begin
     //Insert cat specific setting
-    if CurrentNodeData.DataType = vtdtCategory then
+    if CurrentNodeData.IsCategoryItem then
     begin
       cxWindowState.Items.Insert(0, msgDefaultItemSettings);
     end;

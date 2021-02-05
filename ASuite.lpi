@@ -30,7 +30,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="888"/>
+      <BuildNr Value="894"/>
     </VersionInfo>
     <BuildModes Count="4">
       <Item1 Name="Default" Default="True"/>
@@ -60,7 +60,6 @@
               <StackChecks Value="True"/>
             </Checks>
             <TargetCPU Value="x86_64"/>
-            <TargetOS Value="win64"/>
             <Optimizations>
               <OptimizationLevel Value="0"/>
             </Optimizations>
@@ -70,7 +69,6 @@
               <DebugInfoType Value="dsDwarf2Set"/>
               <UseHeaptrc Value="True"/>
               <TrashVariables Value="True"/>
-              <UseExternalDbgSyms Value="True"/>
             </Debugging>
             <Options>
               <Win32>

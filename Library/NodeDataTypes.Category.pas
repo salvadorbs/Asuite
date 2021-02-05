@@ -63,7 +63,7 @@ var
 begin
   SingleInstance := Data;
   NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
-  if (Assigned(NodeData)) and (NodeData.DataType in [vtdtFile,vtdtFolder]) then
+  if (Assigned(NodeData)) and (NodeData.IsFileItem) then
   begin
     if TvFileNodeData(NodeData).RunFromCategory then
       TvFileNodeData(NodeData).Execute(False, True, Boolean(SingleInstance));
@@ -77,7 +77,7 @@ var
   NodeData: TvBaseNodeData;
 begin
   NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
-  if (Assigned(NodeData)) and (NodeData.DataType in [vtdtFile,vtdtFolder]) then
+  if (Assigned(NodeData)) and (NodeData.IsFileItem) then
   begin
     if TvFileNodeData(NodeData).RunFromCategory then
       TvFileNodeData(NodeData).ExecuteAsAdmin(False, True);
@@ -92,7 +92,7 @@ var
 begin
   NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
   UserData := Data;
-  if (Assigned(NodeData)) and (NodeData.DataType in [vtdtFile,vtdtFolder]) then
+  if (Assigned(NodeData)) and (NodeData.IsFileItem) then
   begin
     if TvFileNodeData(NodeData).RunFromCategory then
       TvFileNodeData(NodeData).ExecuteAsUser(False, True, UserData^);
@@ -109,7 +109,7 @@ begin
   while Assigned(Node) do
   begin
     ChildNodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Tree);
-    if (Assigned(ChildNodeData)) and (ChildNodeData.DataType in [vtdtFile,vtdtFolder]) then
+    if (Assigned(ChildNodeData)) and (ChildNodeData.IsFileItem) then
     begin
       if (TvFileNodeData(ChildNodeData).RunFromCategory) then
       begin

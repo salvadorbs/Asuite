@@ -173,7 +173,7 @@ begin
     if Assigned(CurrentNodeData) then
     begin
       //Delete desktop shortcut
-      if (CurrentNodeData.DataType = vtdtFile) then
+      if (CurrentNodeData.IsFileItem) then
         TvFileNodeData(CurrentNodeData).ShortcutDesktop := False;
       CurrentNodeData.Name     := edtName.Text;
       CurrentNodeData.PathIcon := edtPathIcon.Text;

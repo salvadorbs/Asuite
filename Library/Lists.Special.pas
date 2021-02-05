@@ -118,7 +118,7 @@ end;
 function TMRUItemsComparer.Compare(constref Left, Right: TvBaseNodeData): Integer;
 begin
   Result := 0;
-  if (Left.DataType in [vtdtFile, vtdtFolder]) and (Right.DataType in [vtdtFile, vtdtFolder]) then
+  if (Left.IsFileItem) and (Right.IsFileItem) then
   begin
     Result := CompareInteger(TvFileNodeData(Right).LastAccess,
                              TvFileNodeData(Left).LastAccess);
@@ -128,7 +128,7 @@ end;
 function TMFUItemsComparer.Compare(constref Left, Right: TvBaseNodeData): Integer;
 begin
   Result := 0;
-  if (Left.DataType in [vtdtFile, vtdtFolder]) and (Right.DataType in [vtdtFile, vtdtFolder]) then
+  if (Left.IsFileItem) and (Right.IsFileItem) then
   begin
     Result := CompareInteger(TvFileNodeData(Right).ClickCount,
                              TvFileNodeData(Left).ClickCount);
