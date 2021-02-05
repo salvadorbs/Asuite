@@ -131,7 +131,7 @@ begin
     if FileExists(sPathAbsoluteIcon) then
       sTempPath := sPathAbsoluteIcon
     else //Else exe (if nodedata is a file item)
-      if FNodeData.DataType = vtdtFile then
+      if FNodeData.IsFileItem then
         sTempPath := TvFileNodeData(FNodeData).PathAbsoluteFile;
   end;
   //Get image index
@@ -144,18 +144,18 @@ begin
       SaveCacheIcon(sTempPath, Result);
   end;
   //If it is a category, get directly cat icon
-  if (FNodeData.DataType = vtdtCategory) and (Result = -1) then
+  if (FNodeData.IsCategoryItem) and (Result = -1) then
     Result := Config.IconsManager.GetIconIndex('category');
 end;
 
 function TNodeIcon.LoadIcon: Integer;
 begin
   Result := -1;
-  if FNodeData.DataType = vtdtSeparator then
+  if FNodeData.IsSeparatorItem then
     Exit;
 
   //Check file path and if it isn't found, get fileicon_error and exit
-  if FNodeData.DataType = vtdtFile then
+  if FNodeData.IsFileItem then
   begin
     if Not(TvFileNodeData(FNodeData).IsPathFileExists) then
       Result := Config.IconsManager.GetIconIndex('file_error');

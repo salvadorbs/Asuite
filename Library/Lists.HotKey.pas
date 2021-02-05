@@ -88,7 +88,7 @@ begin
   //This method unregister and register hotkey again for every item
   for I := 0 to FItems.Count - 1 do
   begin
-    if FItems[I].DataType <> vtdtSeparator then
+    if not(FItems[I].IsSeparatorItem) then
     begin
       NodeData := TvCustomRealNodeData(FItems[I]);
 

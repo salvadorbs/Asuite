@@ -121,14 +121,14 @@ begin
     cbHotKeyClick(Self);
     //Specific file settings
     cbHideSoftware.Checked := CurrentNodeData.HideFromMenu;
-    if CurrentNodeData.DataType = vtdtFile then
+    if CurrentNodeData.IsFileItem then
     begin
       cbDontInsertMRU.Checked   := TvFileNodeData(CurrentNodeData).NoMRU;
       cbDontInsertMFU.Checked   := TvFileNodeData(CurrentNodeData).NoMFU;
       cbShortcutDesktop.Checked := TvFileNodeData(CurrentNodeData).ShortcutDesktop;
     end
     else
-      if CurrentNodeData.DataType = vtdtCategory then
+      if CurrentNodeData.IsCategoryItem then
       begin
         cbDontInsertMRU.Visible   := False;
         cbDontInsertMFU.Visible   := False;
@@ -158,7 +158,7 @@ begin
     CurrentNodeData.ActiveHotkey := cbHotKey.Checked;
     //Specific file settings
     CurrentNodeData.HideFromMenu := cbHideSoftware.Checked;
-    if CurrentNodeData.DataType = vtdtFile then
+    if CurrentNodeData.IsFileItem then
     begin
       TvFileNodeData(CurrentNodeData).NoMRU := cbDontInsertMRU.Checked;
       TvFileNodeData(CurrentNodeData).NoMFU := cbDontInsertMFU.Checked;

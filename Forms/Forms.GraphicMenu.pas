@@ -500,13 +500,13 @@ procedure TfrmGraphicMenu.pmWindowPopup(Sender: TObject);
 var
   NodeData : TvBaseNodeData;
 begin
-  if Assigned(vstList.GetFirstSelected()) then
+  if Assigned(vstList.GetFirstSelected) then
   begin
     NodeData := TVirtualTreeMethods.Create.GetNodeItemData(vstList.GetFirstSelected, vstList);
-    mniRun.Enabled := (NodeData.DataType <> vtdtSeparator);
-    mniRunAs.Enabled         := (NodeData.DataType <> vtdtSeparator);
-    mniRunAsAdmin.Enabled    := (NodeData.DataType <> vtdtSeparator);
-    mniOpenFolderSw.Enabled  := (NodeData.DataType in [vtdtFile, vtdtFolder]);
+    mniRun.Enabled := not(NodeData.IsSeparatorItem);
+    mniRunAs.Enabled         := not(NodeData.IsSeparatorItem) and (NodeData.IsFileItem);
+    mniRunAsAdmin.Enabled    := not(NodeData.IsSeparatorItem) and (NodeData.IsFileItem);
+    mniOpenFolderSw.Enabled  := NodeData.IsFileItem;
   end;
 end;
 

@@ -176,13 +176,13 @@ begin
     if Not(Assigned(NodeData)) then
       Exit;
 
-    if Assigned(NodeData) and (NodeData.DataType = vtdtCategory) then
+    if Assigned(NodeData) and (NodeData.IsCategoryItem) then
     begin
       Tree.Expanded[Tree.GetFirstSelected] := Not(Tree.Expanded[Tree.GetFirstSelected]);
       FGraphicMenu.FocusControl(FGraphicMenu.edtSearch);
     end
     else
-      if NodeData.DataType = vtdtFile then
+      if NodeData.IsFileItem then
       begin
         DoNodeDblClick(Tree, HitInfo);
         FGraphicMenu.CloseMenu;
@@ -335,7 +335,7 @@ begin
       begin
         if (Data1.DataType) <> (Data2.DataType) then
         begin
-          if Data1.DataType = vtdtCategory then
+          if Data1.IsCategoryItem then
             Result := -1
           else
             Result := 1
@@ -356,9 +356,9 @@ begin
   if (Not Assigned(Data1)) or (Not Assigned(Data2)) then
     Result := 0
   else
-    if (Data1.DataType = vtdtCategory) <> (Data2.DataType = vtdtCategory) then
+    if (Data1.IsCategoryItem) <> (Data2.IsCategoryItem) then
     begin
-      if Data1.DataType = vtdtCategory then
+      if Data1.IsCategoryItem then
         Result := -1
       else
         Result := 1
@@ -394,7 +394,7 @@ begin
         NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Sender.DropTargetNode, Sender);
         //Check if DropMode is in a vtdtCategory (so expand it, before drop item)
         //or another item type (change Mode and AttachMode for insert after new nodes)
-        if NodeData.DataType <> vtdtCategory then
+        if not(NodeData.IsCategoryItem) then
           AttachMode := amInsertAfter
         else
           if Config.TVAutoOpCatsDrag then
@@ -449,7 +449,7 @@ var
   NodeData : TvBaseNodeData;
 begin
   NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
-  Allowed  := (NodeData.DataType <> vtdtSeparator) and Not(Config.RunSingleClick);
+  Allowed  := not(NodeData.IsSeparatorItem) and Not(Config.RunSingleClick);
 end;
 
 procedure TVirtualTreeEvents.DoExpanded(Sender: TBaseVirtualTree;
@@ -501,7 +501,7 @@ begin
     if Column = 1 then
       CellText := GetNodeParentName(Sender, NodeData.pNode)
     else begin
-      if (NodeData.DataType = vtdtSeparator) and (NodeData.Name = '') then
+      if (NodeData.IsSeparatorItem) and (NodeData.Name = '') then
         CellText := ' '
       else
         CellText := NodeData.Name;
@@ -524,7 +524,7 @@ begin
       2: CellText := GetNodeParentName(Sender, NodeData.pNode);
       3:
       begin
-        if NodeData.DataType = vtdtFile then
+        if NodeData.IsFileItem then
           CellText := TvFileNodeData(NodeData).PathFile;
       end;
     end;
@@ -576,7 +576,7 @@ var
 begin
   NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
   if Assigned(NodeData) then
-    if NodeData.DataType = vtdtSeparator then
+    if NodeData.IsSeparatorItem then
       NodeHeight := Config.SmallHeightNode;
 end;
 
@@ -629,11 +629,9 @@ var
 begin
   //Get data and check if AbsoluteExe path exists
   NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
-  if Assigned(NodeData) then
-    if NodeData.DataType = vtdtFile then
-      if Not(TvFileNodeData(NodeData).IsPathFileExists) then
-        TargetCanvas.Font.Color := clRed;
-  //TODO: change clred in case of black theme
+  if Assigned(NodeData) and NodeData.IsFileItem then
+    if Not(TvFileNodeData(NodeData).IsPathFileExists) then
+      TargetCanvas.Font.Color := clRed;
 end;
 
 procedure TVirtualTreeEvents.DoResizeGM(Sender: TObject);
@@ -701,7 +699,7 @@ begin
   NodeData := TVirtualTreeMethods.Create.GetNodeItemData(ANode, ASender);
   if Assigned(NodeData) then
   begin
-    if NodeData.DataType = vtdtSeparator then
+    if NodeData.IsSeparatorItem then
     begin
       //Resize CellRect.Width, if necessary
       if ASender.ClientWidth < CellRect.Width then
@@ -882,7 +880,7 @@ begin
         0: ImageIndex := NodeData.Icon.ImageIndex;
         1:
         begin
-          if NodeData.DataType = vtdtCategory then
+          if NodeData.IsCategoryItem then
             ImageIndex := Config.IconsManager.GetIconIndex('category')
           else
             ImageIndex := Config.IconsManager.GetIconIndex('file');

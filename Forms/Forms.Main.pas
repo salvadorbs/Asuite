@@ -255,7 +255,7 @@ begin
     NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Tree.GetFirstSelected, Tree);
     if Assigned(NodeData) then
     begin
-      if NodeData.DataType = vtdtCategory then
+      if NodeData.IsCategoryItem then
         Tree.DefaultPasteMode := amAddChildLast
       else
         Tree.DefaultPasteMode := amInsertAfter;
@@ -291,28 +291,25 @@ begin
 
   TAction(Sender).Enabled := False;
 
-  if Length(Nodes) > 0 then
+  for I := Low(Nodes) to High(Nodes) do
   begin
-    for I := Low(Nodes) to High(Nodes) do
+    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Nodes[I], GetActiveTree);
+
+    if not(NodeData.IsSeparatorItem) then
+      TAction(Sender).Enabled := True;
+
+    if ((TAction(Sender).Tag = 1) or (TAction(Sender).Tag = 2)) and (NodeData.IsFileItem) then
+      TAction(Sender).Enabled := IsExecutableFile(TvFileNodeData(NodeData).PathAbsoluteFile);
+
+    if (TAction(Sender).Tag = 3) then
     begin
-      NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Nodes[I], GetActiveTree);
-
-      if NodeData.DataType <> vtdtSeparator then
-        TAction(Sender).Enabled := True;
-
-      if ((TAction(Sender).Tag = 1) or (TAction(Sender).Tag = 2)) and (NodeData.IsFileItem) then
-        TAction(Sender).Enabled := IsExecutableFile(TvFileNodeData(NodeData).PathAbsoluteFile);
-
-      if (TAction(Sender).Tag = 3) then
+      if NodeData.IsFileItem then
       begin
-        if NodeData.DataType = vtdtFile then
-        begin
-          if IsValidURLProtocol(TvFileNodeData(NodeData).PathAbsoluteFile) then
-            TAction(Sender).Enabled := False
-        end
-        else
-          TAction(Sender).Enabled := False;
-      end;
+        if IsValidURLProtocol(TvFileNodeData(NodeData).PathAbsoluteFile) then
+          TAction(Sender).Enabled := False
+      end
+      else
+        TAction(Sender).Enabled := False;
     end;
   end;
 end;
@@ -345,7 +342,7 @@ begin
     for I := Low(Nodes) to High(Nodes) do
     begin
       NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Nodes[I], GetActiveTree);
-      if NodeData.DataType = vtdtCategory then
+      if NodeData.IsCategoryItem then
         TAction(Sender).Enabled := True;
     end;
   end;

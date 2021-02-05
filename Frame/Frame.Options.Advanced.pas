@@ -151,7 +151,7 @@ var
   CurrentNodeData : TvCustomRealNodeData;
 begin
   CurrentNodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender));
-  if CurrentNodeData.DataType <> vtdtSeparator then
+  if not(CurrentNodeData.IsSeparatorItem) then
     CurrentNodeData.Icon.ResetIcon;
   CurrentNodeData.Changed := True;
 end;

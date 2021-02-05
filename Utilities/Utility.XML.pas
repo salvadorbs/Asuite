@@ -106,7 +106,7 @@ begin
     NodeData.Data.SetPointerNode(Result);
     CustomRealNodeData   := TvCustomRealNodeData(NodeData.Data);
     //Get base properties
-    if (CustomRealNodeData.DataType <> vtdtSeparator) then
+    if not(CustomRealNodeData.IsSeparatorItem) then
     begin
       //Get name
       if XMLNode.HasAttributes and (XMLNode.Attributes.Length > 0) then
@@ -184,7 +184,7 @@ begin
     NodeData.Data.SetPointerNode(Result);
     CustomRealNodeData  := TvCustomRealNodeData(NodeData.Data);
     //Get base properties
-    if CustomRealNodeData.DataType <> vtdtSeparator then
+    if not(CustomRealNodeData.IsSeparatorItem) then
     begin
       //Get name
       if XMLNode.HasAttributes and (XMLNode.Attributes.Length > 0) then
@@ -241,7 +241,7 @@ begin
     NodeData.Data.SetPointerNode(Result);
     CustomRealNodeData  := TvCustomRealNodeData(NodeData.Data);
     //Get base properties
-    if CustomRealNodeData.DataType <> vtdtSeparator then
+    if not(CustomRealNodeData.IsSeparatorItem) then
     begin
       //Get name
       if XMLNode.HasAttributes and (XMLNode.Attributes.Length > 0) then
