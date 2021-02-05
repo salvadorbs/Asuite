@@ -137,7 +137,7 @@ var
 implementation
 
 uses
-  DataModules.Icons, Forms.Main, AppConfig.Main, VirtualTree.Methods,
+  DataModules.Icons, Forms.Main, AppConfig.Main, VirtualTree.Methods, process,
   Utility.System, Forms.GraphicMenu, Kernel.Types, NodeDataTypes.Files,
   NodeDataTypes.Custom, NodeDataTypes.Base, Kernel.Consts, Kernel.Logger,
   Utility.Misc, Utility.FileFolder, Kernel.ResourceStrings{$IFDEF MSWINDOWS} , ShellApi, Windows {$ENDIF};
@@ -812,7 +812,7 @@ begin
     { first directories }
     SearchAddDirectory(MI);
     { then files }
-    SearchAddFiles(MI);                ;
+    SearchAddFiles(MI);
 
     //A Folder empty will have 3 child items (folder empty, "Open this folder" and a separator)
     //Change visibile property to false for last child (separator)
@@ -836,12 +836,10 @@ end;
 
 procedure TdmTrayMenu.OpenFile(Sender: TObject);
 begin
-  {$IFDEF MSWINDOWS}
-  ShellExecuteW(GetDesktopWindow, nil, PChar(TASMenuItem(Sender).Path), nil,
-               PChar(ExtractFileDir(TASMenuItem(Sender).Path)), SW_SHOW);
-  {$ELSE}
-  //TODO: Add linux method - Maybe OpenDocument(PChar(TASMenuItem(Sender).Path));
-  {$ENDIF}
+  if IsExecutableFile(TASMenuItem(Sender).Path) then
+    CreateProcessEx(TASMenuItem(Sender).Path)
+  else
+    OpenDocument(TASMenuItem(Sender).Path);
 end;
 
 end.

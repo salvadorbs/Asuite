@@ -25,7 +25,7 @@ interface
 
 uses
   SysUtils, Kernel.Enumerations, NodeDataTypes.Base, Kernel.Types, Classes,
-  NodeDataTypes.Custom, LCLIntf, LCLType, DateUtils, process;
+  NodeDataTypes.Custom, LCLIntf, LCLType, DateUtils, process, LazFileUtils;
 
 type
 
@@ -58,8 +58,6 @@ type
     function GetWindowState(ARunFromCategory: Boolean): Integer;
     function ConvertWindowStateToSWOptions(AWindowState: Integer): TShowWindowOptions;
     function  IsProcessExists(exeFileName: string): Boolean;
-    function CreateProcess(ARunFromCategory: Boolean): Integer;
-    function IsExecutableFile(APathFile: String): Boolean;
   protected
     procedure SetLastAccess(const Value: Int64); override;
     procedure AfterExecute(ADoActionOnExe: Boolean); override;
@@ -169,22 +167,15 @@ begin
     if (IsProcessExists(ExtractFileName(Path))) then
       Exit;
 
-  //Execute
-  //TODO: Refactoring
-  //      For url & documents, use OpenDocument (who uses xdg-open in Linux and ShellExecute in Windows)
-  //      For executable (EXE, CMD, BAT for Windows, files with permission Execute on), use CreateProcess
-  {$IFDEF MSWINDOWS}
+  //For url & documents, use OpenDocument (who uses xdg-open in Linux and ShellExecute in Windows)
+  //For executable (EXE, CMD, BAT for Windows, or files with permission Execute for Linux), use CreateProcess
   if IsExecutableFile(Path) then
-    Result := CreateProcess(ARunFromCategory) <> -1
+    Result := CreateProcessEx(PathAbsoluteFile, Config.Paths.RelativeToAbsolute(FParameters),
+                              GetWorkingDirAbsolute, ConvertWindowStateToSWOptions(GetWindowState(ARunFromCategory)),
+                              EnvironmentVars) <> -1
   else
-    Result := ShellExecute(GetDesktopWindow, nil, PChar(Path),
-                           PChar(Config.Paths.RelativeToAbsolute(FParameters)),
-                           PChar(GetWorkingDirAbsolute), GetWindowState(ARunFromCategory)) > 32;
-  {$ELSE}
-  //TODO: Add linux method
-  {$ENDIF}
+    Result := OpenDocument(Path);
 
-  //TODO lazarus: GetLastOSError doesn't work
   //Error message
   if not Result then
     ShowMessageEx(Format('%s [%s]', [SysErrorMessage(GetLastOSError), Self.Name]), True);
@@ -196,6 +187,11 @@ var
   ShellExecuteInfo: TShellExecuteInfoW;
 {$ENDIF}
 begin
+  Result := False;
+
+  if not(IsExecutableFile(PathAbsoluteFile)) then
+    Exit;
+
   {$IFDEF MSWINDOWS}
   ZeroMemory(@ShellExecuteInfo, SizeOf(ShellExecuteInfo));
   ShellExecuteInfo.cbSize := SizeOf(TShellExecuteInfo);
@@ -225,6 +221,11 @@ var
   ProcInfo    : TProcessInformation;
 {$ENDIF}
 begin
+  Result := False;
+
+  if not(IsExecutableFile(PathAbsoluteFile)) then
+    Exit;
+
   {$IFDEF MSWINDOWS}
   FillMemory(@StartupInfo, sizeof(StartupInfo), 0);
   FillMemory(@ProcInfo, sizeof(ProcInfo), 0);
@@ -315,10 +316,14 @@ begin
 end;
 
 function TvFileNodeData.IsProcessExists(exeFileName: string): Boolean;
-{$IFDEF MSWINDOWS}
 var
+{$IFDEF MSWINDOWS}
   hSnapShot : THandle;
   ProcInfo  : TProcessEntry32;
+{$ELSE}
+  Process: TProcess;
+  Output: TStringList;
+  Index: Integer;
 {$ENDIF}
 begin
   {$IFDEF MSWINDOWS}
@@ -342,54 +347,30 @@ begin
   end;
   FileClose(hSnapShot);
   {$ELSE}
-  //TODO: Add linux method - See https://forum.lazarus.freepascal.org/index.php?topic=45879.0
-  {$ENDIF}
-end;
-
-function TvFileNodeData.CreateProcess(ARunFromCategory: Boolean): Integer;
-var
-  Process: TProcess;
-  I: Integer;
-begin
   Process := TProcess.Create(nil);
   try
+    Process.Executable := 'ps';
+    Process.Parameters.Add('-C');
+    Process.Parameters.Add(ExeFileName);
+    Process.Options := [poUsePipes, poWaitOnExit];
+
+    Process.Execute;
+
+    Output := TStringList.Create;
     try
-      Process.Executable := PathAbsoluteFile;
-      Process.ShowWindow := ConvertWindowStateToSWOptions(GetWindowState(ARunFromCategory));
-      Process.StartupOptions := [suoUseShowWindow];
-      Process.CurrentDirectory := GetWorkingDirAbsolute;
-      Process.Parameters.Text := Config.Paths.RelativeToAbsolute(FParameters);
+      Output.LoadFromStream(Process.Output);
 
-      //Add custom environment vars
-      for I := 0 to EnvironmentVars.Count - 1 do
-        Process.Environment.Add(EnvironmentVars[I]);
-
-      //Add actual environment vars
-      for I := 0 to GetEnvironmentVariableCountUTF8 - 1 do
-        Process.Environment.Add(GetEnvironmentStringUTF8(I));
-
-      Process.Execute;
-
-      Result := Process.ProcessID;
-    except
-      Result := -1;
+      repeat
+        Index := UTF8Pos(ExeFileName, Output.Text, Index + 1);
+        if Index <> 0 then
+          Result := True;
+      until Index = 0;
+    finally
+      Output.Free;
     end;
   finally
     Process.Free;
   end;
-end;
-
-function TvFileNodeData.IsExecutableFile(APathFile: String): Boolean;
-{$IFDEF MSWINDOWS}
-var
-  lowerStrPath: String;
-{$ENDIF}
-begin
-  {$IFDEF MSWINDOWS}
-  lowerStrPath := LowerCase(ExtractFileExt(APathFile));
-  Result := (lowerStrPath = EXT_EXE) or (lowerStrPath = EXT_BAT) or (lowerStrPath = EXT_CMD);
-  {$ELSE}
-  //TODO: Add linux method - Check execute permission
   {$ENDIF}
 end;
 
@@ -415,14 +396,8 @@ end;
 function TvFileNodeData.ExplorePath: Boolean;
 begin
   Result := False;
-  {$IFDEF MSWINDOWS}
   if Not(IsValidURLProtocol(Self.PathAbsoluteFile)) then
-    Result := ShellExecute(GetDesktopWindow, 'open',
-                           PChar(ExtractFileDir(Self.PathAbsoluteFile)),
-                           nil, nil, SW_NORMAL) > 32;
-  {$ELSE}
-  //TODO: Add linux method
-  {$ENDIF}
+    Result := OpenDocument(ExtractFileDir(Self.PathAbsoluteFile));
 end;
 
 procedure TvFileNodeData.SetPathFile(value:string);
