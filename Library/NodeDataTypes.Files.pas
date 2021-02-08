@@ -176,6 +176,7 @@ begin
   else
     Result := OpenDocument(Path);
 
+  //TODO bug: Oddly, using Lazarus opendocument, GetLastOSError does not work properly (detects no errors)
   //Error message
   if not Result then
     ShowMessageEx(Format('%s [%s]', [SysErrorMessage(GetLastOSError), Self.Name]), True);
@@ -268,6 +269,7 @@ procedure TvFileNodeData.CheckPathFile;
 var
   bPathExists: Boolean;
 begin
+  //TODO: Add support to shell:AppsFolder
   bPathExists := IsPathExists(Self.PathAbsoluteFile);
   if FIsPathFileExists <> bPathExists then
   begin

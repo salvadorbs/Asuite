@@ -181,7 +181,7 @@ end;
 
 constructor TConfigPaths.Create;
 begin
-  //TODO: Review all vars (against Linux)
+  //TODO: Review all vars (against Linux) and use better properties
   //Default paths
   FSuiteFullFileName := Application.ExeName;
   FSuiteFileName     := ExtractFileName(FSuiteFullFileName);

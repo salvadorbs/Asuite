@@ -245,19 +245,15 @@ end;
 
 procedure TfrmGraphicMenu.OpenFolder(FolderPath: string);
 var
-  ErrorCode: Boolean;
+  Result: Boolean;
   sPath: string;
 begin
   sPath := Config.Paths.RelativeToAbsolute(FolderPath);
 
-  {$IFDEF MSWINDOWS}
-  ErrorCode := ShellExecuteW(GetDesktopWindow, 'open', PChar(sPath), PChar(''), PChar(sPath), SW_SHOWDEFAULT) <= 32;
+  Result := OpenDocument(sPath);
 
-  if ErrorCode then
+  if not Result then
     ShowMessageFmtEx(msgErrGeneric, ['OpenFolder()', SysErrorMessage(GetLastOSError)], True);
-  {$ELSE}
-  //TODO: Add linux method
-  {$ENDIF}
 end;
 
 procedure TfrmGraphicMenu.FormCreate(Sender: TObject);
