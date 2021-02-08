@@ -76,7 +76,7 @@ end;
 
 procedure TPathVars.Add(const AKey: String; const AValue: String);
 begin
-  if FItems.ContainsValue(AKey) then
+  if not(FItems.ContainsValue(AKey)) then
     FItems.Add(AKey, AValue);
 end;
 
@@ -85,6 +85,9 @@ var
   Item: TKeyValue;
 begin
   Result := '';
+
+  Assert(Assigned(FItems));
+
   for Item in FItems do
   begin
     if Item.Key = UpperCase(AVarKey) then

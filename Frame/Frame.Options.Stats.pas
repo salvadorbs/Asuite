@@ -96,6 +96,7 @@ begin
   lbUser.RightCaption   := GetCurrentUserName;
 
   //Drive
+  //TODO: Extract this code in a proper unit (same code is used in another unit)
   {$IFDEF MSWINDOWS}
   if Length(Drive) > 0 then
   begin

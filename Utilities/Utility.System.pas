@@ -50,7 +50,7 @@ implementation
 
 uses
   Utility.Conversions, Forms.Main, AppConfig.Main, Utility.Misc, Kernel.Logger,
-  VirtualTree.Methods, LazFileUtils{$IFDEF MSWINDOWS} , ShellApi {$ENDIF};
+  VirtualTree.Methods, LazFileUtils{$IFDEF MSWINDOWS} , ShellApi {$ENDIF}, LazUTF8;
 
 function HasDriveLetter(const Path: String): Boolean;
 var P: PChar;
@@ -139,9 +139,14 @@ begin
       Process.CurrentDirectory := AWorkingDir;
       Process.Parameters.Text := AParameters;
 
+      //Add custom environment vars
       if Assigned(AEnvironmentVars) then
         for I := 0 to AEnvironmentVars.Count - 1 do
           Process.Environment.Add(AEnvironmentVars[I]);
+
+      //Add actual environment vars
+      for I := 0 to GetEnvironmentVariableCountUTF8 - 1 do
+        Process.Environment.Add(GetEnvironmentStringUTF8(I));
 
       Process.Execute;
 
@@ -201,7 +206,7 @@ procedure SetASuiteAtWindowsStartup;
 var
   Registry : TRegistry;
 begin
-  //TODO: Add Linux method
+  //TODO: Add Linux method - See https://github.com/tomboy-notes/tomboy-ng/blob/master/source/autostart.pas
 
   Registry := TRegistry.Create;
   try
@@ -221,7 +226,7 @@ procedure DeleteASuiteAtWindowsStartup;
 var
   Registry : TRegistry;
 begin
-  //TODO: Add Linux method
+  //TODO: Add Linux method - See https://github.com/tomboy-notes/tomboy-ng/blob/master/source/autostart.pas
 
   Registry := TRegistry.Create;
   try
