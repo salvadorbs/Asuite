@@ -34,7 +34,7 @@ jobs:
             fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/1.8.2g/fpclazup-x86_64-win64.exe'
             fpcup-opt: ''
             fpc-url: 'https://svn.freepascal.org/svn/fpc/tags/release_3_2_0'
-            laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_0_10/'
+            laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_0_12/'
             #lazpatch: '${{ github.workspace}}/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
             laz-dir: 'fpcLaz'
             lazbuild: 'fpcLaz/lazarus/lazbuild.exe'
@@ -48,7 +48,7 @@ jobs:
             fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/1.8.2g/fpclazup-x86_64-linux'
             fpcup-opt: ''
             fpc-url: 'https://svn.freepascal.org/svn/fpc/tags/release_3_2_0'
-            laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_0_10/'
+            laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_0_12/'
             #lazpatch: '${{ github.workspace}}/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
             laz-dir: 'fpcLaz'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
@@ -62,7 +62,7 @@ jobs:
             fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/1.8.2g/fpclazup-x86_64-linux'
             fpcup-opt: ''
             fpc-url: 'https://svn.freepascal.org/svn/fpc/tags/release_3_2_0'
-            laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_0_10/'
+            laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_0_12/'
             #lazpatch: '${{ github.workspace}}/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
             laz-dir: 'fpcLaz'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
@@ -76,7 +76,7 @@ jobs:
             fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/1.8.2g/fpclazup-x86_64-linux'
             fpcup-opt: ''
             fpc-url: 'https://svn.freepascal.org/svn/fpc/tags/release_3_2_0'
-            laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_0_10/'
+            laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_0_12/'
             #lazpatch: '${{ github.workspace}}/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
             laz-dir: 'fpcLaz'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
