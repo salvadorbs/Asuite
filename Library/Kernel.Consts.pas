@@ -92,6 +92,8 @@ const
   FILEICON_Url    = 'page_url';
 
   //ASuite files
+  LIST_SQLITE_FILENAME = 'asuite.sqlite';
+  LIST_XML_FILENAME = 'asuite.sqlite';
   SETTINGS_FILENAME = 'settings.json';
 
   //Modifier buttons for TfrmShortcutGrabber

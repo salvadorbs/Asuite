@@ -44,7 +44,6 @@ procedure DeleteASuiteAtWindowsStartup;
 { Misc }
 procedure EjectDialog(Sender: TObject);
 function ExtractDirectoryName(const Filename: string): string;
-function GetCorrectWorkingDir(Default: string): string;
 
 implementation
 
@@ -239,18 +238,6 @@ begin
   finally
     Registry.Free;
   end;
-end;
-
-function GetCorrectWorkingDir(Default: string): string;
-var
-  sPath: String;
-begin
-  //TODO: Review it (in Linux, is it works?)
-
-  Result := Default;
-  sPath := AppendPathDelim(Config.Paths.SuiteDrive);
-  if SysUtils.DirectoryExists(sPath) then
-    Result := sPath;
 end;
 
 end.

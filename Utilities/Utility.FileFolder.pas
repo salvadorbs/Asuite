@@ -10,7 +10,7 @@ uses
   LazFileUtils;
 
 { Folders }
-function BrowseForFolder(const InitialDir: String; const Caption: String = ''): String;
+function BrowseForFolder(const InitialDir: String = ''; const Caption: String = ''): String;
 function DirToPath(const Dir: string): string;
 function IsDirectory(const DirName: string): Boolean;
 function IsFlagSet(const Flags, Mask: Integer): Boolean;

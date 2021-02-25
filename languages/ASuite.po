@@ -1280,7 +1280,7 @@ msgid "ASuite"
 msgstr ""
 
 #: tfrmstatsoptionspage.gbsupport.caption
-msgid "Drive %S:"
+msgid "Drive %S"
 msgstr ""
 
 #: tfrmstatsoptionspage.gbsystem.caption
