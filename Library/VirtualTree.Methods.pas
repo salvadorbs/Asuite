@@ -119,7 +119,7 @@ begin
     //If AType is a vtdtFolder, asuite must ask to user the folder
     if AType = vtdtFolder then
     begin
-      FolderPath := BrowseForFolder(Config.Paths.SuitePathWorking);
+      FolderPath := BrowseForFolder();
       if FolderPath <> '' then
       begin
         sName := ExtractDirectoryName(FolderPath + PathDelim);

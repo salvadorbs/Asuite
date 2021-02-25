@@ -38,6 +38,7 @@ type
   { TdmImages }
 
   TdmImages = class(TDataModule)
+    //TODO: Use only one TBGRAImageList
     ilSmallIcons: TBGRAImageList;
     ilLargeIcons: TBGRAImageList;
     procedure DataModuleCreate(Sender: TObject);

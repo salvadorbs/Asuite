@@ -508,12 +508,13 @@ begin
   TASuiteLogger.Info('Finding ASuite SQLite Database', []);
   Assert(Assigned(FMainTree), 'FMainTree is not assigned!');
   try
-    //List & Options
+    //List
     if ExtractFileExt(FPaths.SuitePathList) = EXT_XML then
     begin
       sFilePath := FPaths.SuitePathList;
-      FPaths.SuitePathList := ChangeFileExt(FPaths.SuiteFileName, EXT_SQL);
+      FPaths.SuitePathList := ChangeFileExt(FPaths.SuitePathList, EXT_SQL);
     end;
+
     if Assigned(FDBManager) then
       FDBManager.Setup(FPaths.SuitePathList);
   finally
@@ -794,14 +795,14 @@ var
 begin                                                
   TASuiteLogger.Enter('Loading ASuite configuration', Self);
 
-  //if FileExists(SETTINGS_FILENAME) then
+  //if FileExists(FPaths.SuitePathSettings) then
   //begin
   //  TASuiteLogger.Info('Found ASuite configuration', []);
     try
       JSONConfig := TJSONConfig.Create(nil);
       JSONConfig.Formatted := True;
       JSONConfig.FormatIndentsize := 4;    
-      JSONConfig.Filename := SETTINGS_FILENAME; 
+      JSONConfig.Filename := FPaths.SuitePathSettings; 
       RestoreSettings(JSONConfig);
     finally
       JSONConfig.Free;
@@ -824,7 +825,7 @@ begin
       JSONConfig.Formatted := True;
       JSONConfig.FormatIndentsize := 4;
       //TODO: Check this. If asuite uses a different folder for settings? ex. appdata
-      JSONConfig.Filename := SETTINGS_FILENAME;
+      JSONConfig.Filename := FPaths.SuitePathSettings;
       SaveSettings(JSONConfig);
     finally
       JSONConfig.Free;

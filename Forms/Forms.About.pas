@@ -57,7 +57,7 @@ var
 implementation
 
 uses
-  Utility.Misc, Kernel.Consts, AppConfig.Main;
+  Utility.Misc, Kernel.Consts, AppConfig.Main, LazFileUtils;
 
 {$R *.lfm}
 
@@ -75,7 +75,7 @@ end;
 
 procedure TfrmAbout.imgLicenseClick(Sender: TObject);
 begin
-   OpenDocument(PChar(Config.Paths.SuitePathWorking + 'docs\license.txt'));
+   OpenDocument(PChar(AppendPathDelim(Config.Paths.SuitePathWorking) + 'docs' + PathDelim +  'license.txt'));
 end;
 
 procedure TfrmAbout.lnklblWebSiteClick(Sender: TObject);

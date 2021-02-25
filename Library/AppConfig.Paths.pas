@@ -32,23 +32,21 @@ type
 
   TConfigPaths = class
   private
+    FSuitePathCurrentTheme: String;
     FSuitePathList       : String;
-    FSuiteFullFileName   : String;
-    FSuiteFileName       : String;
     FSuiteDrive          : String;
     FSuitePathData       : String;
     FSuitePathSettings: String;
     FSuitePathWorking    : String;
-    FSuitePathLocale     : String;
-    FSuitePathCache      : String;
-    FSuitePathBackup     : String;
-    FSuitePathMenuThemes     : String;
-    FSuitePathCurrentTheme   : String;
 
     FEnvironmentVars : TPathVars;
     FASuiteVars      : TPathVars;
 
     function DeQuotedStr(AVar: AnsiString): AnsiString;
+    function GetSuitePathBackup: String;
+    function GetSuitePathCache: String;
+    function GetSuitePathLocale: String;
+    function GetSuitePathMenuThemes: String;
     procedure SetSuitePathCurrentTheme(AValue: String);
     procedure UpdateEnvironmentVars;
     procedure UpdateASuiteVars;
@@ -67,15 +65,13 @@ type
 
     property SuitePathList: String read FSuitePathList write FSuitePathList;     
     property SuitePathSettings: String read FSuitePathSettings write FSuitePathSettings;
-    property SuiteFullFileName: String read FSuiteFullFileName write FSuiteFullFileName;
-    property SuiteFileName: String read FSuiteFileName write FSuiteFileName;
     property SuiteDrive: String read FSuiteDrive write FSuiteDrive;
     property SuitePathData: String read FSuitePathData write FSuitePathData;
     property SuitePathWorking: String read FSuitePathWorking write FSuitePathWorking;
-    property SuitePathLocale: String read FSuitePathLocale write FSuitePathLocale;
-    property SuitePathCache: String read FSuitePathCache write FSuitePathCache;
-    property SuitePathBackup: String read FSuitePathBackup write FSuitePathBackup;
-    property SuitePathMenuThemes: String read FSuitePathMenuThemes write FSuitePathMenuThemes;
+    property SuitePathLocale: String read GetSuitePathLocale;
+    property SuitePathCache: String read GetSuitePathCache;
+    property SuitePathBackup: String read GetSuitePathBackup;
+    property SuitePathMenuThemes: String read GetSuitePathMenuThemes;
     property SuitePathCurrentTheme: String read FSuitePathCurrentTheme write SetSuitePathCurrentTheme;
 
     property EnvironmentVars: TPathVars read FEnvironmentVars;
@@ -113,13 +109,13 @@ end;
 procedure TConfigPaths.CheckBackupFolder;
 begin
   //Check if folder backup exists, else create it
-  SysUtils.ForceDirectories(FSuitePathBackup);
+  SysUtils.ForceDirectories(Self.SuitePathBackup);
 end;
 
 procedure TConfigPaths.CheckCacheFolders;
 begin
   //Check if folder cache exists, else create it
-  SysUtils.ForceDirectories(FSuitePathCache);
+  SysUtils.ForceDirectories(Self.SuitePathCache);
 end;
 
 procedure TConfigPaths.UpdateEnvironmentVars;
@@ -158,6 +154,26 @@ begin
   Result := AnsiDequotedStr(Result, '%');
 end;
 
+function TConfigPaths.GetSuitePathBackup: String;
+begin
+  Result := AppendPathDelim(FSuitePathData + BACKUP_DIR);
+end;
+
+function TConfigPaths.GetSuitePathCache: String;
+begin
+  Result := AppendPathDelim(FSuitePathData + CACHE_DIR);
+end;
+
+function TConfigPaths.GetSuitePathLocale: String;
+begin
+  Result := AppendPathDelim(FSuitePathWorking + LOCALE_DIR);
+end;
+
+function TConfigPaths.GetSuitePathMenuThemes: String;
+begin
+  Result := AppendPathDelim(FSuitePathWorking + MENUTHEMES_DIR);
+end;
+
 procedure TConfigPaths.UpdateASuiteVars;
 var
   strFolderIcon: AnsiString;
@@ -180,37 +196,35 @@ begin
 end;
 
 constructor TConfigPaths.Create;
+var
+  strPathExe: String;
 begin
-  //TODO: Review all vars (against Linux) and use better properties
   //Default paths
-  FSuiteFullFileName := Application.ExeName;
-  FSuiteFileName     := ExtractFileName(FSuiteFullFileName);
-  FSuitePathWorking  := ExtractFilePath(FSuiteFullFileName);
+  strPathExe := Application.ExeName;
+  FSuitePathWorking  := ExtractFilePath(strPathExe);
 
   {$IFDEF MSWINDOWS}
-  FSuiteDrive        := LowerCase(ExtractFileDrive(FSuiteFullFileName));
+  FSuiteDrive        := LowerCase(ExtractFileDrive(strPathExe));
   {$ELSE}
-  FSuiteDrive        := LowerCase(FSuitePathWorking);
+  //In Linux, use the folder path of asuite
+  FSuiteDrive        := FSuitePathWorking;
   {$ENDIF}
-
   SetCurrentDir(FSuitePathWorking);
-  //TODO: Review structure folder - SetCurrentDir(FSuitePathWorking) is correct?
+
   if Not(IsDirectoryWritable(FSuitePathWorking)) then
   begin
+    //FSuitePathWorking = ASuite.exe folder (ex C:\path\to\asuite_folder\)
+    //FSuitePathData    = ASuite config folder (ex. C:\Users\user\AppData\Roaming\asuite\)
     FSuitePathData := GetAppConfigDir(True);
     SysUtils.ForceDirectories(FSuitePathData);
   end
   else
     FSuitePathData := FSuitePathWorking;
-  FSuitePathLocale     := AppendPathDelim(FSuitePathWorking + LOCALE_DIR);
-  FSuitePathCache      := AppendPathDelim(FSuitePathData + CACHE_DIR);
-  FSuitePathBackup     := AppendPathDelim(FSuitePathData + BACKUP_DIR);
-  FSuitePathMenuThemes := AppendPathDelim(FSuitePathWorking + MENUTHEMES_DIR);
-  //List
+
   //Check if xml list exists, else get sqlite list
-  FSuitePathList := FSuitePathData + 'asuite.xml';
+  FSuitePathList := FSuitePathData + LIST_XML_FILENAME;
   if not FileExists(FSuitePathList) then
-    FSuitePathList := FSuitePathData + ChangeFileExt(FSuiteFileName, EXT_SQL);
+    FSuitePathList := FSuitePathData + LIST_SQLITE_FILENAME;
 
   FSuitePathSettings := FSuitePathData + SETTINGS_FILENAME;
 
@@ -287,12 +301,15 @@ begin
 end;
 
 procedure TConfigPaths.RemoveCacheFolders;
+var
+  strPath: String;
 begin
+  strPath := Self.SuitePathCache;
   //Delete all file icon-cache and folder cache
-  if (SysUtils.DirectoryExists(FSuitePathCache)) then
+  if (strPath <> '') and (SysUtils.DirectoryExists(strPath)) then
   begin
-    DeleteFiles(FSuitePathCache,'*.*');
-    RemoveDir(FSuitePathCache);
+    DeleteFiles(strPath, '*.*');
+    RemoveDir(strPath);
   end;
 end;
 
