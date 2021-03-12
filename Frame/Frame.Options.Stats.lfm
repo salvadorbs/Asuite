@@ -66,7 +66,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
     BorderSpacing.Left = 4
     BorderSpacing.Top = 4
     BorderSpacing.Right = 4
-    Caption = 'Drive %S:'
+    Caption = 'Drive %S'
     ClientHeight = 56
     ClientWidth = 433
     Font.Style = [fsBold]

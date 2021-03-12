@@ -45,10 +45,8 @@ procedure ShowMessageEx(const Msg: string; Error: boolean = False);
 procedure ShowMessageFmtEx(const Msg: string; Params: array of const; Error: boolean = False);
 
 { Stats }
-function  DiskFloatToString(Number: double;Units: Boolean): string;
-function  DiskFreeString(Drive: Char;Units: Boolean): string;
-function  DiskSizeString(Drive: Char;Units: Boolean): string;
-function  DiskUsedString(Drive: Char;Units: Boolean): string;
+function  DiskFloatToString(Size: Int64; Units: Boolean): string;
+function  GetDiskFreeSpace(const Path : String; out FreeSize, TotalSize : Int64) : Boolean;
 
 { Integer }
 function  CompareInteger(int1, int2: Integer): Integer;
@@ -60,7 +58,12 @@ function  GetHotKeyMod(AShortcut: TShortcut) : Integer;
 implementation
 
 uses
-  AppConfig.Main, Kernel.Logger, LCLProc, Kernel.ResourceStrings;
+  AppConfig.Main, Kernel.Logger, LCLProc, Kernel.ResourceStrings
+  {$IFDEF MSWINDOWS}
+  , Windows
+  {$ELSE}
+  , BaseUnix, Unix
+  {$ENDIF};
 
 function IsFormOpen(const FormName : string): Boolean;
 var
@@ -237,58 +240,57 @@ end;
 
 { Stats }
 
-function DiskFloatToString(Number: double; Units: Boolean): string;
+function DiskFloatToString(Size: Int64; Units: Boolean): string;
 var
   TypeSpace : String;
+  dblSize: Double;
 begin
-  if Number >= 1024 then
+  //KiloBytes
+  dblSize := Size;
+  if dblSize >= 1024 then
   begin
-    //KiloBytes
-    Number    := Number / (1024);
+    dblSize    := dblSize / (1024);
     TypeSpace := ' KB';
-    if Number >= 1024 then
+
+    //MegaBytes
+    if dblSize >= 1024 then
     begin
-      //MegaBytes
-      Number    := Number / (1024);
+      dblSize    := dblSize / (1024);
       TypeSpace := ' MB';
-      if Number >= 1024 then
+
+      //GigaBytes
+      if dblSize >= 1024 then
       begin
-        //GigaBytes
-        Number    := Number / (1024);
+        dblSize    := dblSize / (1024);
         TypeSpace := ' GB';
       end;
     end;
   end;
-  Result := FormatFloat('0.00',Number);
+
+  Result := FormatFloat('0.00',dblSize);
+
   if Units then
     Result := Result + TypeSpace;
 end;
 
-function DiskFreeString(Drive: Char;Units: Boolean): string;
+//Warning: Code taken from DoubleCMD source (unit uOSUtils.pas)
+function GetDiskFreeSpace(const Path : String; out FreeSize, TotalSize : Int64) : Boolean;
+{$IFDEF UNIX}
 var
-  Free : Double;
+  sbfs: TStatFS;
 begin
-  Free   := DiskFree(Ord(Drive) - 64);
-  Result := DiskFloatToString(Free,Units);
+  Result:= (fpStatFS(PAnsiChar(Path), @sbfs) = 0);
+  if not Result then Exit;
+  FreeSize := (Int64(sbfs.bavail) * sbfs.bsize);
+  TotalSize := (Int64(sbfs.blocks) * sbfs.bsize);
 end;
-
-function DiskSizeString(Drive: Char;Units: Boolean): string;
-var
-  Size : Double;
+{$ELSE}
 begin
-  Size   := DiskSize(Ord(Drive) - 64);
-  Result := DiskFloatToString(Size,Units);
+  FreeSize := 0;
+  TotalSize := 0;
+  Result:= GetDiskFreeSpaceExW(PWideChar(Path), FreeSize, TotalSize, nil);
 end;
-
-function DiskUsedString(Drive: Char;Units: Boolean): string;
-var
-  Free : Double;
-  Size : Double;
-begin
-  Free   := (DiskFree(Ord(Drive) - 64));
-  Size   := (DiskSize(Ord(Drive) - 64));
-  Result := DiskFloatToString(Size - Free,Units);
-end;
+{$ENDIF}
 
 function CompareInteger(int1, int2: Integer): Integer;
 begin

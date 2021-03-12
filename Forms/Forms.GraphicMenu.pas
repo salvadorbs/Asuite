@@ -224,23 +224,19 @@ end;
 
 procedure TfrmGraphicMenu.UpdateDriveStats;
 var
-  dblDriveSize: Double;
-  Drive: Char;
-  dblDriveUsed: Double;
+  Drive: String;
+  intDiskSize, intDiskFree, intDiskUsed: Int64;
 begin
-  {$IFDEF MSWINDOWS}
+  //Calculate and display the drive size
+  Drive := Config.Paths.SuiteDrive;
+
   if Length(Drive) > 0 then
   begin
-    //Calculate and display the drive size
-    Drive := Config.Paths.SuiteDrive[1];
-    dblDriveSize := DiskSize(Ord(Drive) - 64);
-    dblDriveUsed := dblDriveSize - DiskFree(Ord(Drive) - 64);
-    imgDriveSpace.Width := Round(dblDriveUsed / dblDriveSize * (imgDriveBackground.Width - 4));
-    lblDriveSpace.Caption := Format(msgGMHardDiskSpace, [DiskFreeString(Drive, True), DiskSizeString(Drive, True)]);
+    Utility.Misc.GetDiskFreeSpace(Drive, intDiskFree, intDiskSize);
+    intDiskUsed := (intDiskSize - intDiskFree);
+    imgDriveSpace.Width := Round(intDiskUsed  / intDiskSize * (imgDriveBackground.Width - 4));
+    lblDriveSpace.Caption := Format(msgGMHardDiskSpace, [DiskFloatToString(intDiskFree, True), DiskFloatToString(intDiskUsed, True)]);
   end;
-  {$ELSE}
-  //TODO Linux: See https://forum.lazarus.freepascal.org/index.php?topic=19439.0
-  {$ENDIF}
 end;
 
 procedure TfrmGraphicMenu.OpenFolder(FolderPath: string);
