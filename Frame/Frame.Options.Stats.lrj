@@ -6,7 +6,7 @@
 {"hash":5991036,"name":"tfrmstatsoptionspage.lbtotal.caption","sourcebytes":[84,111,116,97,108],"value":"Total"},
 {"hash":6063029,"name":"tfrmstatsoptionspage.lbcat.rightcaption","sourcebytes":[86,97,108,117,101],"value":"Value"},
 {"hash":243645908,"name":"tfrmstatsoptionspage.lbcat.caption","sourcebytes":[67,97,116,101,103,111,114,105,101,115,32,97,100,100,101,100],"value":"Categories added"},
-{"hash":13066746,"name":"tfrmstatsoptionspage.gbsupport.caption","sourcebytes":[68,114,105,118,101,32,37,83,58],"value":"Drive %S:"},
+{"hash":151811603,"name":"tfrmstatsoptionspage.gbsupport.caption","sourcebytes":[68,114,105,118,101,32,37,83],"value":"Drive %S"},
 {"hash":6063029,"name":"tfrmstatsoptionspage.lbsize.rightcaption","sourcebytes":[86,97,108,117,101],"value":"Value"},
 {"hash":368901,"name":"tfrmstatsoptionspage.lbsize.caption","sourcebytes":[83,105,122,101],"value":"Size"},
 {"hash":6063029,"name":"tfrmstatsoptionspage.lbspacefree.rightcaption","sourcebytes":[86,97,108,117,101],"value":"Value"},

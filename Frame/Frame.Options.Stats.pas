@@ -83,8 +83,9 @@ end;
 
 function TfrmStatsOptionsPage.InternalLoadData: Boolean;
 var
-  Drive: char;
+  Drive: String;
   ListStats: rListStats;
+  intDiskSize, intDiskFree: Int64;
 begin
   Result := inherited;
 
@@ -96,19 +97,17 @@ begin
   lbUser.RightCaption   := GetCurrentUserName;
 
   //Drive
-  //TODO: Extract this code in a proper unit (same code is used in another unit)
-  {$IFDEF MSWINDOWS}
+  Drive := Config.Paths.SuiteDrive;
+
   if Length(Drive) > 0 then
   begin
-    Drive := Config.Paths.SuiteDrive[1];
-    gbSupport.Caption := Format(gbSupport.Caption, [Drive]);
-    lbSize.RightCaption   := DiskSizeString(Drive, True);
-    lbSpaceFree.RightCaption := DiskFreeString(Drive, True);
-    lbSpaceUsed.RightCaption := DiskUsedString(Drive, True);
+    GetDiskFreeSpace(Drive, intDiskFree, intDiskSize);
+    lbSize.RightCaption   := DiskFloatToString(intDiskSize, True);
+    lbSpaceFree.RightCaption := DiskFloatToString(intDiskFree, True);
+    lbSpaceUsed.RightCaption := DiskFloatToString((intDiskSize - intDiskFree), True);
   end;
-  {$ELSE}
-  //TODO Linux: See https://forum.lazarus.freepascal.org/index.php?topic=19439.0
-  {$ENDIF}
+
+  gbSupport.Caption := Format(gbSupport.Caption, [Drive]);
 
   //Launcher
   ListStats.SwCount  := 0;
