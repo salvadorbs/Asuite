@@ -27,7 +27,7 @@ interface
 
 uses
   SysUtils, Classes, Controls, LCLIntf, LCLType, Graphics, Dialogs,
-  kgraphics, kicon, BGRAImageList, {$IFDEF Windows}CommCtrl, Windows,{$ENDIF} DefaultTranslator;
+  BGRAImageList, {$IFDEF Windows}CommCtrl, Windows,{$ENDIF} DefaultTranslator;
 
 type
 
@@ -51,7 +51,7 @@ type
     property SysImageListLarge: THANDLE read FSysImageListLarge;
     property SysImageListSmall: THANDLE read FSysImageListSmall;
 
-    procedure GetAlphaBitmapFromImageList(ABMP: TKAlphaBitmap; const AImageIndex: Integer);
+    procedure GetAlphaBitmapFromImageList(ABMP: Graphics.TBitmap; const AImageIndex: Integer);
     procedure DrawIconInBitmap(const AGlyph: Graphics.TBitmap; const AImageIndex: Integer);
 
     function AddIcon(Images: Graphics.TBitmap): Integer;
@@ -104,38 +104,20 @@ begin
   Result := ilLargeIcons.AddMultipleResolutions(Images);
 end;
 
-procedure TdmImages.GetAlphaBitmapFromImageList(ABMP: TKAlphaBitmap;
+procedure TdmImages.GetAlphaBitmapFromImageList(ABMP: Graphics.TBitmap;
   const AImageIndex: Integer);
 {$IFDEF MSWINDOWS}
 var
-  KIcon: TKIcon;
-  hIcon: Windows.HICON;
   Images: TCustomImageListResolution;
 {$ENDIF}
 begin
   {$IFDEF MSWINDOWS}
   if AImageIndex <> -1 then
   begin
-    //Buttons' image
-    KIcon := TKIcon.Create;
-    try
-      //Get handle from imagelist
-      ilLargeIcons.FindResolution(ICON_SMALL, Images);
-      hIcon := ImageList_GetIcon(Images.Reference.Handle, AImageIndex, ILD_NORMAL);
+    //Button's image
+    ilLargeIcons.FindResolution(ICON_SMALL, Images);
 
-      if hIcon <> 0 then
-      begin
-        //Load handle in TKIcon and copy it as TKAlphaBitmap (so we can't losing alpha)
-        KIcon.LoadFromHandle(hIcon);
-        KIcon.OptimalIcon := True;
-        KIcon.CopyToAlphaBitmap(KIcon.CurrentIndex, ABMP);
-
-        //Destroy handle, now useless
-        DestroyIcon(hIcon);
-      end;
-    finally
-      KIcon.Free;
-    end;
+    Images.GetBitmap(AImageIndex, ABMP);
   end;
   {$ENDIF}
 end;

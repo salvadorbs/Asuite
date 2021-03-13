@@ -30,7 +30,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="929"/>
+      <BuildNr Value="934"/>
     </VersionInfo>
     <BuildModes Count="4">
       <Item1 Name="Default" Default="True"/>
@@ -192,7 +192,7 @@
       <FormatVersion Value="2"/>
       <Modes Count="0"/>
     </RunParams>
-    <RequiredPackages Count="13">
+    <RequiredPackages Count="12">
       <Item1>
         <PackageName Value="jppacklcl"/>
       </Item1>
@@ -227,11 +227,8 @@
         <PackageName Value="lclextensions_package"/>
       </Item11>
       <Item12>
-        <PackageName Value="KControlsLaz"/>
-      </Item12>
-      <Item13>
         <PackageName Value="LCL"/>
-      </Item13>
+      </Item12>
     </RequiredPackages>
     <Units Count="69">
       <Unit0>
