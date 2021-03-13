@@ -5,10 +5,6 @@ object dmImages: TdmImages
   HorizontalOffset = 954
   VerticalOffset = 383
   Width = 201
-  object ilSmallIcons: TBGRAImageList
-    Left = 8
-    Top = 8
-  end
   object ilLargeIcons: TBGRAImageList
     Height = 32
     Width = 32

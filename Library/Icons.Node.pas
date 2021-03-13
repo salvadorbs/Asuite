@@ -33,6 +33,8 @@ type
   TKIcon = TIcon;
   {$ENDIF}
 
+  { TNodeIcon }
+
   TNodeIcon = class(TBaseIcon)
   private
     { private declarations }
@@ -42,24 +44,25 @@ type
     function InternalLoadIcon: Integer;
     function GetPathCacheIcon: string;
     procedure SaveCacheIcon(const APath: string; const AImageIndex: Integer);
-    procedure ExtractAndAddIcon(AImageList: TImageList; AImageIndex: Integer; AIcon: TKIcon);
+    procedure ExtractAndAddIcon(AImageList: TImageList; AImageIndex: Integer;
+      AIcon: TKIcon; ALargeIcon: Boolean);
+    procedure SetCacheIconCRC(AValue: Integer);
   public
     { public declarations }
     constructor Create(ANodeData: TvBaseNodeData);
 
     property PathCacheIcon: string read GetPathCacheIcon;
-    property CacheIconCRC: Integer read FCacheIconCRC;
+    property CacheIconCRC: Integer read FCacheIconCRC write SetCacheIconCRC;
 
     function LoadIcon: Integer; override;
     procedure ResetIcon; override;
     procedure ResetCacheIcon;
-    procedure SetCacheCRC(ACRC: Integer);
   end;
 
 implementation
 
 uses
-  Utility.System, AppConfig.Main, NodeDataTypes.Files, Kernel.Consts,
+  Utility.System, AppConfig.Main, NodeDataTypes.Files, Kernel.Consts, ImgList,
   Utility.FileFolder, DataModules.Icons{$IFDEF MSWINDOWS}, Windows {$ENDIF};
 
 { TNodeIcon }
@@ -71,11 +74,12 @@ begin
   FCacheIconCRC := 0;
 end;
 
-procedure TNodeIcon.ExtractAndAddIcon(AImageList: TImageList; AImageIndex: Integer; AIcon: TKIcon);
+procedure TNodeIcon.ExtractAndAddIcon(AImageList: TImageList; AImageIndex: Integer; AIcon: TKIcon; ALargeIcon: Boolean);
 {$IFDEF MSWINDOWS}
 var
   KIcon: TKIcon;
-  hIcon: Windows.HICON;  
+  hIcon: Windows.HICON;
+  Images: TCustomImageListResolution;
 {$ENDIF}
 begin
 {$IFDEF MSWINDOWS}
@@ -85,11 +89,18 @@ begin
   try
     //Bug: TBitmap doesn't support alpha format
     //Workaround: Get HIcon from ImageList and load it in a TKIcon
-    hIcon := ImageList_GetIcon(AImageList.ResolutionByIndex[0].Reference.Handle, AImageIndex, ILD_NORMAL);
+    if ALargeIcon then
+      AImageList.FindResolution(ICON_LARGE, Images)
+    else
+      AImageList.FindResolution(ICON_SMALL, Images);
+
+    hIcon := ImageList_GetIcon(Images.Reference.Handle, AImageIndex, ILD_NORMAL);
+
     if hIcon <> 0 then
     begin
       KIcon.LoadFromHandle(hIcon);
       DestroyIcon(hIcon);
+
       //Add extracted icon in AIcon
       if KIcon.IconCount > 0 then
         AIcon.Add(KIcon.Handles[0]);
@@ -98,6 +109,12 @@ begin
     KIcon.Free;
   end;
 {$ENDIF}
+end;
+
+procedure TNodeIcon.SetCacheIconCRC(AValue: Integer);
+begin
+  if FCacheIconCRC <> AValue then
+    FCacheIconCRC := AValue;
 end;
 
 function TNodeIcon.GetPathCacheIcon: string;
@@ -109,20 +126,23 @@ end;
 
 function TNodeIcon.InternalLoadIcon: Integer;
 var
-  sTempPath, sPathAbsoluteIcon: string;
+  sTempPath, sPathAbsoluteIcon, sPathCacheIcon: string;
 begin
   //Priority cache->icon->exe
   sTempPath := '';
   Result   := -1;
+
   //Get cache icon path
   if (Config.Cache) and (Config.ASuiteState <> lsImporting) then
   begin
     //Check CRC, if it fails reset cache icon
-    if (FileExists(PathCacheIcon)) and (CacheIconCRC = GetFileCRC32(PathCacheIcon)) then
-      sTempPath := PathCacheIcon
+    sPathCacheIcon := PathCacheIcon;
+    if (FileExists(sPathCacheIcon)) and (CacheIconCRC = GetFileCRC32(sPathCacheIcon)) then
+      sTempPath := sPathCacheIcon
     else
       ResetCacheIcon;
   end;
+
   //Icon or exe
   if Not FileExists(sTempPath) then
   begin
@@ -134,6 +154,7 @@ begin
       if FNodeData.IsFileItem then
         sTempPath := TvFileNodeData(FNodeData).PathAbsoluteFile;
   end;
+
   //Get image index
   if (sTempPath <> '') then
   begin
@@ -143,6 +164,7 @@ begin
     if (Config.ASuiteState <> lsImporting) then
       SaveCacheIcon(sTempPath, Result);
   end;
+
   //If it is a category, get directly cat icon
   if (FNodeData.IsCategoryItem) and (Result = -1) then
     Result := Config.IconsManager.GetIconIndex('category');
@@ -196,9 +218,11 @@ begin
     begin
       Icon := TKIcon.Create;
       try
+        //TODO: Save cache in multiple resolution in a single file ico
         //Extract and insert icons in TKIcon
-        ExtractAndAddIcon(dmImages.ilSmallIcons, AImageIndex, Icon);
-        ExtractAndAddIcon(dmImages.ilLargeIcons, AImageIndex, Icon);
+        ExtractAndAddIcon(dmImages.ilLargeIcons, AImageIndex, Icon, True);
+        ExtractAndAddIcon(dmImages.ilLargeIcons, AImageIndex, Icon, False);
+
         //Save file and get CRC from it
         Icon.SaveToFile(PathCacheIcon);
         FCacheIconCRC := GetFileCRC32(PathCacheIcon);
@@ -209,12 +233,6 @@ begin
       end;
     end;
   end;
-end;
-
-procedure TNodeIcon.SetCacheCRC(ACRC: Integer);
-begin
-  if ACRC <> 0 then
-    FCacheIconCRC := ACRC;
 end;
 
 end.

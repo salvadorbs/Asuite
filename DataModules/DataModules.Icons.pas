@@ -38,25 +38,24 @@ type
   { TdmImages }
 
   TdmImages = class(TDataModule)
-    //TODO: Use only one TBGRAImageList
-    ilSmallIcons: TBGRAImageList;
     ilLargeIcons: TBGRAImageList;
     procedure DataModuleCreate(Sender: TObject);
   private
+    { Private declarations }
     FSysImageListLarge: THANDLE;
     FSysImageListSmall: THANDLE;
-    { Private declarations }
     procedure DrawTransparentBitmap(DC: HDC; hBmp: HBITMAP; xStart: integer;
                                     yStart : integer; cTransparentColor : COLORREF);
-    function SysImageListHandle(const Path: string; const WantLargeIcons: Boolean): THandle;
+    procedure SysImageListHandle(const Path: string);
   public
-    property SysImageListSmall: THANDLE read FSysImageListSmall;
     property SysImageListLarge: THANDLE read FSysImageListLarge;
+    property SysImageListSmall: THANDLE read FSysImageListSmall;
 
-    procedure GetAlphaBitmapFromImageList(ABMP: TKAlphaBitmap;const AImageIndex: Integer; ASmallIcon: Boolean = True);
-    procedure DrawIconInBitmap(const AGlyph: Graphics.TBitmap;const AImageIndex: Integer; ASmallIcon: Boolean = True);
+    procedure GetAlphaBitmapFromImageList(ABMP: TKAlphaBitmap; const AImageIndex: Integer);
+    procedure DrawIconInBitmap(const AGlyph: Graphics.TBitmap; const AImageIndex: Integer);
 
-    function AddIcon(ABMP: Graphics.TBitmap; const WantLargeIcons: Boolean): Integer;
+    function AddIcon(Images: Graphics.TBitmap): Integer;
+    function AddMultipleResolutions(Images: array of TCustomBitmap): Integer;
   end;
 
 var
@@ -65,14 +64,14 @@ var
 implementation
 
 uses
-  {$IFDEF MSWINDOWS} ShellApi, {$ENDIF} AppConfig.Main;
+  {$IFDEF MSWINDOWS} ShellApi, shlobj,{$ENDIF} AppConfig.Main, ImgList, Kernel.Consts;
 
 {$R *.lfm}
 
 { TdmImages }
 
 procedure TdmImages.DrawIconInBitmap(const AGlyph: Graphics.TBitmap;
-  const AImageIndex: Integer; ASmallIcon: Boolean);
+  const AImageIndex: Integer);
 var
   BMP: Graphics.TBitmap;
 begin
@@ -83,10 +82,7 @@ begin
     //Buttons' image
     BMP := Graphics.TBitmap.Create;
     try
-      if ASmallIcon then
-        ilSmallIcons.GetBitmap(AImageIndex, BMP)
-      else
-        ilLargeIcons.GetBitmap(AImageIndex, BMP);
+      ilLargeIcons.GetBitmap(AImageIndex, BMP);
       AGlyph.Assign(BMP);
       DrawTransparentBitmap(AGlyph.Canvas.Handle, BMP.Handle, 0, 0, clWhite);
     finally
@@ -95,24 +91,26 @@ begin
   end;
 end;
 
-function TdmImages.AddIcon(ABMP: Graphics.TBitmap; const WantLargeIcons: Boolean): Integer;
+function TdmImages.AddIcon(Images: Graphics.TBitmap): Integer;
 begin
   Result := -1;
-  if Assigned(ABMP) then
-  begin
-    if WantLargeIcons then
-      Result := ilLargeIcons.Add(ABMP, nil)
-    else                         
-      Result := ilSmallIcons.Add(ABMP, nil);
-  end;
+
+  if Assigned(Images) then
+    Result := ilLargeIcons.Add(Images, nil);
+end;
+
+function TdmImages.AddMultipleResolutions(Images: array of TCustomBitmap): Integer;
+begin
+  Result := ilLargeIcons.AddMultipleResolutions(Images);
 end;
 
 procedure TdmImages.GetAlphaBitmapFromImageList(ABMP: TKAlphaBitmap;
-  const AImageIndex: Integer; ASmallIcon: Boolean);
+  const AImageIndex: Integer);
 {$IFDEF MSWINDOWS}
 var
   KIcon: TKIcon;
   hIcon: Windows.HICON;
+  Images: TCustomImageListResolution;
 {$ENDIF}
 begin
   {$IFDEF MSWINDOWS}
@@ -122,10 +120,8 @@ begin
     KIcon := TKIcon.Create;
     try
       //Get handle from imagelist
-      if ASmallIcon then
-        hIcon := ImageList_GetIcon(ilSmallIcons.ResolutionByIndex[0].Reference.Handle, AImageIndex, ILD_NORMAL)
-      else
-        hIcon := ImageList_GetIcon(ilLargeIcons.ResolutionByIndex[0].Reference.Handle, AImageIndex, ILD_NORMAL);
+      ilLargeIcons.FindResolution(ICON_SMALL, Images);
+      hIcon := ImageList_GetIcon(Images.Reference.Handle, AImageIndex, ILD_NORMAL);
 
       if hIcon <> 0 then
       begin
@@ -146,8 +142,11 @@ end;
 
 procedure TdmImages.DataModuleCreate(Sender: TObject);
 begin
-  FSysImageListLarge := SysImageListHandle(Config.Paths.SuitePathData, True);
-  FSysImageListSmall := SysImageListHandle(Config.Paths.SuitePathData, False);
+  SysImageListHandle(Config.Paths.SuitePathData);
+
+  //Small and large icons in a single ImageList
+  ilLargeIcons.RegisterResolutions([ICON_SMALL, ICON_LARGE]);
+  ilLargeIcons.Scaled := True;
 end;
 
 procedure TdmImages.DrawTransparentBitmap(DC: HDC; hBmp: HBITMAP;
@@ -251,26 +250,21 @@ begin
    DeleteDC(hdcTemp);
 end;
 
-function TdmImages.SysImageListHandle(const Path: string;
-  const WantLargeIcons: Boolean): THandle;
+procedure TdmImages.SysImageListHandle(const Path: string);
   {Returns a handle to the system image list for path Path.
   WantLargeIcons determines if the image list is to contain large or small
   icons.}
 {$IFDEF MSWINDOWS}
-var
-  FI: ShellAPI.TSHFileInfoW; // required file info structure
-  Flags: Windows.UINT;      // flags used to request image list
+//var
+//  FI: ShellAPI.TSHFileInfoW; // required file info structure
+//  Flags: Windows.UINT;      // flags used to request image list
 {$ENDIF}
 begin
   {$IFDEF MSWINDOWS}
-  Flags := ShellAPI.SHGFI_SYSICONINDEX or ShellAPI.SHGFI_ICON;
+  //Flags := ShellAPI.SHGFI_SYSICONINDEX or ShellAPI.SHGFI_ICON or ShellAPI.SHGFI_LARGEICON //or ShellAPI.SHGFI_SMALLICON;
 
-  if WantLargeIcons then
-    Flags := Flags or ShellAPI.SHGFI_LARGEICON
-  else
-    Flags := Flags or ShellAPI.SHGFI_SMALLICON;
-
-  Result := ShellAPI.SHGetFileInfo(PChar(Path), 0, FI, SizeOf(FI), Flags);
+  //Result := ShellAPI.SHGetFileInfo(PChar(Path), 0, FI, SizeOf(FI), Flags);
+  Shell_GetImageLists(FSysImageListLarge, FSysImageListSmall);
   {$ENDIF}
 end;
 

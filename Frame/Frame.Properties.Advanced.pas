@@ -70,7 +70,7 @@ implementation
 
 uses
   Kernel.Enumerations, NodeDataTypes.Files, Forms.ShortcutGrabber, AppConfig.Main,
-  DataModules.Icons, Kernel.ResourceStrings, LCLProc;
+  DataModules.Icons, Kernel.ResourceStrings, LCLProc, Kernel.Consts;
 
 {$R *.lfm}
 
@@ -136,8 +136,8 @@ begin
       end;
   end;
 
-  edtHotkey.RightButton.Images := dmImages.ilSmallIcons;
-
+  edtHotkey.RightButton.Images := dmImages.ilLargeIcons;
+  edtHotkey.RightButton.ImagesWidth := ICON_SMALL;
   edtHotkey.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel');
 
   //Hide caret in hotkey control

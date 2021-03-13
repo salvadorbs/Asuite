@@ -64,7 +64,7 @@ type
 implementation
 
 uses
-  DataModules.Icons, Kernel.ResourceStrings, AppConfig.Main, Clipbrd,
+  DataModules.Icons, Kernel.ResourceStrings, AppConfig.Main, Clipbrd, Kernel.Consts,
   NodeDataTypes.Files;
 
 {$R *.lfm}
@@ -153,7 +153,9 @@ begin
   //Align right border with vleVars
   tbButtons.Constraints.MinWidth := vleVars.Width + 1;
 
-  tbButtons.Images      := dmImages.ilSmallIcons;
+  tbButtons.Images      := dmImages.ilLargeIcons;
+  tbButtons.ImagesWidth := ICON_SMALL;
+
   actAdd.ImageIndex    := Config.IconsManager.GetIconIndex('add');
   actDelete.ImageIndex := Config.IconsManager.GetIconIndex('delete');
   actCopy.ImageIndex   := Config.IconsManager.GetIconIndex('copy');
