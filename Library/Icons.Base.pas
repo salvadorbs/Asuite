@@ -24,7 +24,8 @@ unit Icons.Base;
 interface
 
 uses
-  SysUtils, Controls, SyncObjs, LCLIntf, LCLType{$IFDEF MSWINDOWS}, ShellApi, CommCtrl{$ENDIF};
+  SysUtils, Controls, SyncObjs, LCLIntf, LCLType{$IFDEF MSWINDOWS}, ShellApi, CommCtrl{$ENDIF},
+  Graphics;
 
 type
 
@@ -34,7 +35,8 @@ type
   private
     FLock: SyncObjs.TCriticalSection;
 
-    function GetIconFromSysImageList(const APathFile: string; const AWantLargeIcon: Boolean): Integer;
+    function GetIconFromSysImageList(const APathFile: string;
+      const AWantLargeIcon: Boolean): Graphics.TBitmap;
     function GetImageIndex: Integer;
   protected
     FImageIndex: Integer;
@@ -53,7 +55,7 @@ type
 implementation
 
 uses
-   DataModules.Icons, kicon, Graphics;
+   DataModules.Icons, kicon;
 
 { TBaseIcon }
 
@@ -82,20 +84,19 @@ begin
 end;
 
 function TBaseIcon.GetIconFromSysImageList(const APathFile: string;
-  const AWantLargeIcon: Boolean): Integer;
+  const AWantLargeIcon: Boolean): Graphics.TBitmap;
 {$IFDEF MSWINDOWS}
 var
   FileInfo: TSHFileInfoW;
   Flags: Integer;
-  bmp: Graphics.TBitmap;
   hIco: HICON;
   FileIcon: kIcon.TIcon;
 {$ENDIF}
 begin
   //TODO: In linux we must get mime type and after image
   //      (see https://lists.lazarus-ide.org/pipermail/lazarus/2010-January/048660.html and https://forum.lazarus.freepascal.org/index.php?topic=40538.0)
+  Result := Graphics.TBitmap.Create;
   {$IFDEF MSWINDOWS}
-  Result := -1;
 
   Assert(Assigned(dmImages));
 
@@ -112,6 +113,7 @@ begin
         hIco := ImageList_GetIcon(dmImages.SysImageListLarge, FileInfo.iIcon, ILD_NORMAL)
       else
         hIco := ImageList_GetIcon(dmImages.SysImageListSmall, FileInfo.iIcon, ILD_NORMAL);
+
       //Check icon handle
       if hIco <> 0 then
       begin
@@ -121,34 +123,34 @@ begin
           //Workaround: FileIcon lose Alpha, if it add directly in ImageList
           //Load icon handle and copy to bitmap bmp
           FileIcon.LoadFromHandle(hIco);
-          bmp    := Graphics.TBitmap.Create;
-          FileIcon.CopyToBitmap(0, bmp);
-          //Add in ASuite ImageList
-          Result := dmImages.AddIcon(bmp, AWantLargeIcon);
+          FileIcon.CopyToBitmap(0, Result);
         finally
           FreeAndNil(FileIcon);
-          FreeAndNil(bmp);
         end;
       end;
     end;
   finally
     DestroyIcon(FileInfo.hIcon);
   end;
+
   {$ENDIF}
 end;
 
 function TBaseIcon.InternalGetImageIndex(const APathFile: string): Integer;
 var
-  IndexSmallIcon: Integer;
+  bmpSmallIcon, bmpLargeIcon: TBitmap;
 begin
   Result := -1;
 
-  //Get Large icon and insert it in ASuite ImageList
-  GetIconFromSysImageList(APathFile, True);
-  //Get Small icon and insert it in ASuite ImageList
-  IndexSmallIcon := GetIconFromSysImageList(APathFile, False);
-
-  Result := IndexSmallIcon;
+  //Get icon and insert it in ASuite ImageList
+  bmpLargeIcon := GetIconFromSysImageList(APathFile, True);
+  bmpSmallIcon := GetIconFromSysImageList(APathFile, False);
+  try
+    Result := dmImages.AddMultipleResolutions([bmpSmallIcon, bmpLargeIcon]);
+  finally
+    FreeAndNil(bmpLargeIcon);
+    FreeAndNil(bmpSmallIcon);
+  end;
 end;
 
 procedure TBaseIcon.ResetIcon;

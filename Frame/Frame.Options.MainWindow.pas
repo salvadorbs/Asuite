@@ -32,12 +32,14 @@ type
   { TfrmMainWindowOptionsPage }
 
   TfrmMainWindowOptionsPage = class(TfrmBaseEntityPage)
-    cbDialogCenterMF: TCheckBox;
-    gbTreeView: TGroupBox;
-    cbBackground: TCheckBox;
     btnFontSettings: TButton;
     cbAutoOpClCat: TCheckBox;
+    cbAutoOpDragDrop: TCheckBox;
+    cbDialogCenterMF: TCheckBox;
+    cbDisableConfirmDelete: TCheckBox;
     cbSmallIcon: TCheckBox;
+    gbTreeView: TGroupBox;
+    cbBackground: TCheckBox;
     edtBackground: TFileNameEdit;
     gbWindow: TGroupBox;
     cbWindowOnTop: TCheckBox;
@@ -46,9 +48,7 @@ type
     edtCustomTitle: TEdit;
     cbCustomTitle: TCheckBox;
     FontDialog1: TFontDialog;
-    cbAutoOpDragDrop: TCheckBox;
     chkSearchAsYouType: TCheckBox;
-    cbDisableConfirmDelete: TCheckBox;
     procedure cbCustomTitleClick(Sender: TObject);
     procedure cbBackgroundClick(Sender: TObject);
     procedure btnFontSettingsClick(Sender: TObject);

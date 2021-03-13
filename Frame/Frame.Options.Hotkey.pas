@@ -77,7 +77,7 @@ implementation
 uses
   AppConfig.Main, VirtualTree.Events, VirtualTree.Methods, NodeDataTypes.Custom,
   Forms.ShortcutGrabber, DataModules.Icons, UITypes, Kernel.ResourceStrings,
-  LCLProc;
+  LCLProc, Kernel.Consts;
 
 {$R *.lfm}
 
@@ -189,9 +189,14 @@ end;
 
 procedure TfrmHotkeyOptionsPage.LoadGlyphs;
 begin
-  edtHotkeyMF.RightButton.Images := dmImages.ilSmallIcons;
-  edtHotkeyGM.RightButton.Images := dmImages.ilSmallIcons;
-  edtHotkeyCM.RightButton.Images := dmImages.ilSmallIcons;
+  edtHotkeyMF.RightButton.Images := dmImages.ilLargeIcons;
+  edtHotkeyMF.RightButton.ImagesWidth := ICON_SMALL;
+
+  edtHotkeyGM.RightButton.Images := dmImages.ilLargeIcons;
+  edtHotkeyGM.RightButton.ImagesWidth := ICON_SMALL;
+
+  edtHotkeyCM.RightButton.Images := dmImages.ilLargeIcons;
+  edtHotkeyCM.RightButton.ImagesWidth := ICON_SMALL;
 
   mniRemoveHotkey.ImageIndex := Config.IconsManager.GetIconIndex('keyboard_delete');
   mniEditHotkey.ImageIndex   := Config.IconsManager.GetIconIndex('keyboard_edit');

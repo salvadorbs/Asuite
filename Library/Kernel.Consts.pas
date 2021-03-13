@@ -67,7 +67,11 @@ const
   frmMainHeight = 440; //TODO: Linux vs Windows?
   frmMainID     = 294257584;
   frmGMenuID    = 711285620;
-  frmCMenuID    = 459741425;    
+  frmCMenuID    = 459741425;
+
+  //Icons Size
+  ICON_SMALL = 16;
+  ICON_LARGE = 32;
 
   // PageControl Indexes
   PG_LIST       = 0;

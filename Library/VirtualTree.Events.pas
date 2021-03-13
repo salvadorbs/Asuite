@@ -140,7 +140,7 @@ implementation
 uses
   AppConfig.Main, NodeDataTypes.Base, NodeDataTypes.Category, Kernel.ResourceStrings,
   NodeDataTypes.Files, NodeDataTypes.Custom, NodeDataTypes.Separator, Kernel.Types,
-  Kernel.Enumerations, VirtualTree.Methods, DataModules.TrayMenu, LCLProc,
+  Kernel.Enumerations, VirtualTree.Methods, DataModules.TrayMenu, LCLProc, Kernel.Consts,
   DataModules.Icons, Kernel.Logger, SynLog, {$IFDEF Windows}comobj, Windows,{$ENDIF} Utility.Misc;
 
 { TVirtualTreeEvents }
@@ -194,6 +194,8 @@ procedure TVirtualTreeEvents.SetupVSTGraphicMenu(ATree: TVirtualStringTree; AGra
 begin
   FGraphicMenu := AGraphicMenu;
 
+  ATree.Images := dmImages.ilLargeIcons;
+
   ATree.OnClick         := DoSingleClickGM;
   ATree.OnCompareNodes  := DoCompareNodesList;
   ATree.OnDrawText      := DoDrawText;
@@ -209,6 +211,7 @@ end;
 procedure TVirtualTreeEvents.SetupVSTHotkey(ATree: TVirtualStringTree);
 begin
   ATree.Images := dmImages.ilLargeIcons;
+  ATree.ImagesWidth := ICON_LARGE;
   ATree.DefaultNodeHeight := Config.BigHeightNode;
 
   ATree.OnGetNodeDataSize := DoGetNodeDataSizeSearch;
@@ -219,7 +222,8 @@ end;
 
 procedure TVirtualTreeEvents.SetupVSTImportList(ATree: TVirtualStringTree);
 begin
-  ATree.Images := dmImages.ilSmallIcons;
+  ATree.Images := dmImages.ilLargeIcons;
+  ATree.ImagesWidth := ICON_SMALL;
 
   ATree.OnDrawText  := DoDrawText;
   ATree.OnFreeNode  := DoFreeNode;
@@ -230,7 +234,8 @@ end;
 
 procedure TVirtualTreeEvents.SetupVSTList(ATree: TVirtualStringTree);
 begin
-  ATree.Images := dmImages.ilSmallIcons;
+  ATree.Images := dmImages.ilLargeIcons;
+  ATree.ImagesWidth := ICON_SMALL;
 
   {$IFDEF MSWINDOWS}
   ATree.TreeOptions.MiscOptions := ATree.TreeOptions.MiscOptions + [toAcceptOLEDrop];
@@ -261,6 +266,7 @@ end;
 procedure TVirtualTreeEvents.SetupVSTAutorun(ATree: TVirtualStringTree);
 begin
   ATree.Images := dmImages.ilLargeIcons;
+  ATree.ImagesWidth := ICON_LARGE;
   ATree.DefaultNodeHeight := Config.BigHeightNode;
 
   ATree.OnGetNodeDataSize := DoGetNodeDataSizeSearch;
@@ -272,6 +278,7 @@ procedure TVirtualTreeEvents.SetupVSTDialogFrame(ATree: TVirtualStringTree);
 begin
   ATree.Clear;
   ATree.Images := dmImages.ilLargeIcons;
+  ATree.ImagesWidth := ICON_LARGE;
   ATree.DefaultNodeHeight := Config.BigHeightNode;
 
   ATree.OnAddToSelection  := DoAddToSelectionFrame;
@@ -283,7 +290,8 @@ end;
 
 procedure TVirtualTreeEvents.SetupVSTSearch(ATree: TVirtualStringTree);
 begin
-  ATree.Images := dmImages.ilSmallIcons;
+  ATree.Images := dmImages.ilLargeIcons;
+  ATree.ImagesWidth := ICON_SMALL;
 
   ATree.OnNodeClick       := DoNodeSingleClick;
   ATree.OnCompareNodes    := DoCompareNodesSearch;
@@ -296,7 +304,8 @@ end;
 
 procedure TVirtualTreeEvents.SetupVSTSimple(ATree: TVirtualStringTree);
 begin
-  ATree.Images := dmImages.ilSmallIcons;
+  ATree.Images := dmImages.ilLargeIcons;
+  ATree.ImagesWidth := ICON_SMALL;
 
   ATree.OnGetText         := DoGetText;
   ATree.OnGetImageIndex   := DoGetImageIndex;

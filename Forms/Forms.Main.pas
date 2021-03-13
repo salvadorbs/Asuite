@@ -473,14 +473,29 @@ procedure TfrmMain.SetAllIcons;
 begin
   //Set IcoImages
   //Set submenuimages to three MainMenu's subitems
-  miFile.SubMenuImages := dmImages.ilSmallIcons;
-  miEdit.SubMenuImages := dmImages.ilSmallIcons;
-  miHelp.SubMenuImages := dmImages.ilSmallIcons;
-  pmSearch.Images      := dmImages.ilSmallIcons;
-  pmWindow.Images      := dmImages.ilSmallIcons;
-  pcList.Images        := dmImages.ilSmallIcons;
-  btnedtSearch.RightButton.Images := dmImages.ilSmallIcons;
-  btnedtSearch.LeftButton.Images := dmImages.ilSmallIcons;
+  miFile.SubMenuImages := dmImages.ilLargeIcons;
+  miFile.SubMenuImagesWidth := ICON_SMALL;
+
+  miEdit.SubMenuImages := dmImages.ilLargeIcons;
+  miEdit.SubMenuImagesWidth := ICON_SMALL;
+
+  miHelp.SubMenuImages := dmImages.ilLargeIcons;
+  miHelp.SubMenuImagesWidth := ICON_SMALL;
+
+  pmSearch.Images      := dmImages.ilLargeIcons;
+  pmSearch.ImagesWidth := ICON_SMALL;
+
+  pmWindow.Images      := dmImages.ilLargeIcons;
+  pmWindow.ImagesWidth := ICON_SMALL;
+
+  pcList.Images        := dmImages.ilLargeIcons;
+  pcList.ImagesWidth := ICON_SMALL;
+
+  btnedtSearch.RightButton.Images := dmImages.ilLargeIcons;
+  btnedtSearch.RightButton.ImagesWidth := ICON_SMALL;
+
+  btnedtSearch.LeftButton.Images := dmImages.ilLargeIcons;
+  btnedtSearch.LeftButton.ImagesWidth := ICON_SMALL;
 
   //Set pcList tabs' ImageIndexes
   tbList.ImageIndex    := Config.IconsManager.GetIconIndex('tree_list');

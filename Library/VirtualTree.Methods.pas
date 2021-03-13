@@ -254,11 +254,11 @@ begin
   if ASmallIcon then
   begin
     ASender.DefaultNodeHeight := Config.SmallHeightNode;
-    ASender.Images := dmImages.ilSmallIcons;
+    ASender.ImagesWidth := ICON_SMALL;
   end
   else begin
     ASender.DefaultNodeHeight := Config.BigHeightNode;
-    ASender.Images := dmImages.ilLargeIcons;
+    ASender.ImagesWidth := ICON_LARGE;
   end;
   ASender.ScrollBarOptions.VerticalIncrement := ASender.DefaultNodeHeight;
 end;
