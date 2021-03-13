@@ -33,7 +33,7 @@ const
 
   //MAIN FORM
   CONFIG_LANGID = 'application/langid';
-  CONFIG_USECUSTOMTITLE = 'mainform/customtitle';
+  CONFIG_USECUSTOMTITLE = 'mainform/customtitle/active';
   CONFIG_CUSTOMTITLESTRING = 'mainform/customtitle/string';
   CONFIG_HIDETABSEARCH = 'mainform/hidetabsearch';
   CONFIG_SEARCHASYOUTYPE = 'mainform/searchasyoutype';
@@ -48,11 +48,11 @@ const
   CONFIG_MAINFORM_DIALOGS_CENTER = 'mainform/opendialogcenter';
 
   //MAIN FORM - TREEVEW
-  CONFIG_TVBACKGROUND = 'mainform/treeview/background';
+  CONFIG_TVBACKGROUND = 'mainform/treeview/background/active';
   CONFIG_TVBACKGROUNDPATH = 'mainform/treeview/background/path';
-  CONFIG_TVAUTOOPCLCATS = 'mainform/treeview/autoopencategory';
+  CONFIG_TVAUTOOPCLCATS = 'mainform/treeview/autoopencategory/active';
   CONFIG_TVAUTOOPCATSDRAG = 'mainform/treeview/autoopencategory/drag';
-  CONFIG_TVDISABLECONFIRMDELETE = 'mainform/treeview/';
+  CONFIG_TVDISABLECONFIRMDELETE = 'mainform/treeview/disableconfirmdelete';
   CONFIG_TVFONTNAME = 'mainform/treeview/font/name';
   CONFIG_TVFONTSIZE = 'mainform/treeview/font/size';
   CONFIG_TVFONTCOLOR = 'mainform/treeview/font/color';
@@ -63,17 +63,17 @@ const
   CONFIG_TVSMALLICONSIZE = 'mainform/treeview/icons/smallsize';
 
   //MRU
-  CONFIG_MRU = 'application/mru';
+  CONFIG_MRU = 'application/mru/active';
   CONFIG_SUBMENUMRU = 'application/mru/submenu';
   CONFIG_MRUNUMBER = 'application/mru/number';
 
   //MFU
-  CONFIG_MFU = 'application/mfu';
+  CONFIG_MFU = 'application/mfu/active';
   CONFIG_SUBMENUMFU = 'application/mfu/submenu';
   CONFIG_MFUNUMBER = 'application/mfu/number';
 
   //BACKUP
-  CONFIG_BACKUP = 'application/backup';
+  CONFIG_BACKUP = 'application/backup/active';
   CONFIG_BACKUPNUMBER = 'application/backup/number';
 
   //OTHER FUNCTIONS
@@ -89,8 +89,8 @@ const
   CONFIG_AUTOCLOSEPROCESS = 'application/shutdown/autocloseprocess';
 
   //TRAYICON
-  CONFIG_TRAYICON = 'trayicon';
-  CONFIG_TRAYUSECUSTOMICON = 'trayicon/classicmenu/customicon';
+  CONFIG_TRAYICON = 'trayicon/active';
+  CONFIG_TRAYUSECUSTOMICON = 'trayicon/classicmenu/customicon/active';
   CONFIG_TRAYCUSTOMICONPATH = 'trayicon/classicmenu/customicon/path';
   CONFIG_ACTIONCLICKLEFT = 'trayicon/classicmenu/clickleft';
   CONFIG_ACTIONCLICKMIDDLE = 'trayicon/classicmenu/clickmiddle';
@@ -115,7 +115,7 @@ const
   CONFIG_GMBTNEXPLORE = 'graphicmenu/path/explore';
 
   //HOT KEYS
-  CONFIG_HOTKEY = 'application/hotkey';
+  CONFIG_HOTKEY = 'application/hotkey/active';
   CONFIG_WINDOWHOTKEY = 'application/hotkey/window';
   CONFIG_MENUHOTKEY = 'application/hotkey/graphicmenu';
   CONFIG_CLASSICMENUHOTKEY = 'application/hotkey/classicmenu';
