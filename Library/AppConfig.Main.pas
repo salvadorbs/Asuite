@@ -622,8 +622,8 @@ begin
 
     //Graphic Menu
     AJSONConfig.SetValue(CONFIG_GMFADE, Self.GMFade);
-    AJSONConfig.SetValue(CONFIG_GMPERSONALPICTURE, Self.GMSmallIconSize);
-    AJSONConfig.SetValue(CONFIG_GMSMALLICONSIZE, Self.GMPersonalPicture);
+    AJSONConfig.SetValue(CONFIG_GMSMALLICONSIZE, Self.GMSmallIconSize);
+    AJSONConfig.SetValue(CONFIG_GMPERSONALPICTURE, Self.GMPersonalPicture);
     AJSONConfig.SetValue(CONFIG_GMPOSITIONTOP, Self.GMPositionTop);
     AJSONConfig.SetValue(CONFIG_GMPOSITIONLEFT, Self.GMPositionLeft);
     AJSONConfig.SetValue(CONFIG_GMAUTOHIDEMENU, Self.GMAutomaticHideMenu);
@@ -744,8 +744,8 @@ begin
 
   //Graphic Menu
   Self.GMFade                    := AJSONConfig.GetValue(CONFIG_GMFADE, Self.GMFade);
-  Self.GMSmallIconSize           := AJSONConfig.GetValue(CONFIG_GMPERSONALPICTURE, Self.GMSmallIconSize);
-  Self.GMPersonalPicture         := AJSONConfig.GetValue(CONFIG_GMSMALLICONSIZE, Self.GMPersonalPicture);
+  Self.GMSmallIconSize           := AJSONConfig.GetValue(CONFIG_GMSMALLICONSIZE, Self.GMSmallIconSize);
+  Self.GMPersonalPicture         := AJSONConfig.GetValue(CONFIG_GMPERSONALPICTURE, Self.GMPersonalPicture);
   Self.GMPositionTop             := AJSONConfig.GetValue(CONFIG_GMPOSITIONTOP, Self.GMPositionTop);
   Self.GMPositionLeft            := AJSONConfig.GetValue(CONFIG_GMPOSITIONLEFT, Self.GMPositionLeft);
   Self.GMAutomaticHideMenu       := AJSONConfig.GetValue(CONFIG_GMAUTOHIDEMENU, Self.GMAutomaticHideMenu);
