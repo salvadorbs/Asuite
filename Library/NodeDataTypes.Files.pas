@@ -106,7 +106,7 @@ begin
     Self.PathIcon := CONST_PATH_FOLDERICON;
   //Paths
   FPathFile         := '';
-  FIsPathFileExists := False;
+  FIsPathFileExists := True;
   //Advanced
   FParameters      := '';
   FWorkingDir      := '';
