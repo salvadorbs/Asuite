@@ -2,8 +2,8 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
   Height = 450
   ChildSizing.EnlargeHorizontal = crsScaleChilds
   ClientHeight = 450
-  DesignLeft = 2475
-  DesignTop = 159
+  DesignLeft = 2470
+  DesignTop = 166
   object grpStartupOrderItems: TGroupBox[0]
     Left = 4
     Height = 217
@@ -99,7 +99,7 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
         TreeOptions.SelectionOptions = [toFullRowSelect]
         OnGetPopupMenu = vstGetPopupMenu
       end
-      object btnStartupUp: TKSpeedButton
+      object btnStartupUp: TSpeedButton
         AnchorSideLeft.Control = vstStartupItems
         AnchorSideLeft.Side = asrBottom
         AnchorSideBottom.Control = btnStartupDelete
@@ -109,11 +109,10 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
         Width = 27
         Anchors = [akRight, akBottom]
         Font.Color = clBtnText
-        ParentFont = False
-        TabOrder = 1
         OnClick = btnStartupUpClick
+        ParentFont = False
       end
-      object btnStartupDelete: TKSpeedButton
+      object btnStartupDelete: TSpeedButton
         AnchorSideLeft.Control = vstStartupItems
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = vstStartupItems
@@ -124,11 +123,10 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
         Width = 27
         Anchors = [akTop, akRight]
         Font.Color = clBtnText
-        ParentFont = False
-        TabOrder = 2
         OnClick = btnStartupDeleteClick
+        ParentFont = False
       end
-      object btnStartupDown: TKSpeedButton
+      object btnStartupDown: TSpeedButton
         AnchorSideLeft.Control = vstStartupItems
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = btnStartupDelete
@@ -139,9 +137,8 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
         Width = 27
         Anchors = [akTop, akRight]
         Font.Color = clBtnText
-        ParentFont = False
-        TabOrder = 3
         OnClick = btnStartupDownClick
+        ParentFont = False
       end
     end
   end
@@ -239,7 +236,7 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
         TreeOptions.SelectionOptions = [toFullRowSelect]
         OnGetPopupMenu = vstGetPopupMenu
       end
-      object btnShutdownUp: TKSpeedButton
+      object btnShutdownUp: TSpeedButton
         AnchorSideLeft.Control = vstShutdownItems
         AnchorSideLeft.Side = asrBottom
         AnchorSideBottom.Control = btnShutdownDelete
@@ -249,11 +246,10 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
         Width = 27
         Anchors = [akRight, akBottom]
         Font.Color = clBtnText
-        ParentFont = False
-        TabOrder = 1
         OnClick = btnShutdownUpClick
+        ParentFont = False
       end
-      object btnShutdownDelete: TKSpeedButton
+      object btnShutdownDelete: TSpeedButton
         AnchorSideLeft.Control = vstShutdownItems
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = vstShutdownItems
@@ -264,11 +260,10 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
         Width = 27
         Anchors = [akTop, akRight]
         Font.Color = clBtnText
-        ParentFont = False
-        TabOrder = 2
         OnClick = btnShutdownDeleteClick
+        ParentFont = False
       end
-      object btnShutdownDown: TKSpeedButton
+      object btnShutdownDown: TSpeedButton
         AnchorSideLeft.Control = vstShutdownItems
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = btnShutdownDelete
@@ -279,9 +274,8 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
         Width = 27
         Anchors = [akTop, akRight]
         Font.Color = clBtnText
-        ParentFont = False
-        TabOrder = 3
         OnClick = btnShutdownDownClick
+        ParentFont = False
       end
     end
   end

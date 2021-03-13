@@ -22,9 +22,6 @@
 [submodule "3p/VirtualTreeView-Lazarus"]
 	path = 3p/VirtualTreeView-Lazarus
 	url = https://github.com/salvadorbs/VirtualTreeView-Lazarus.git
-[submodule "3p/KControls"]
-	path = 3p/KControls
-	url = https://github.com/kryslt/KControls.git
 [submodule "3p/bgracontrols"]
 	path = 3p/bgracontrols
 	url = https://github.com/bgrabitmap/bgracontrols.git

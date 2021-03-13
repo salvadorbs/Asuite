@@ -24,21 +24,20 @@ unit Frame.Options.Autorun;
 interface
 
 uses
-  LCLIntf, SysUtils, Classes, Controls, Dialogs, kgraphics, Frame.BaseEntity,
-  StdCtrls, VirtualTrees, Lists.Base, Menus, kbuttons, DefaultTranslator,
-  ExtCtrls;
+  LCLIntf, SysUtils, Classes, Controls, Dialogs, Frame.BaseEntity,
+  StdCtrls, VirtualTrees, Lists.Base, Menus, DefaultTranslator, ExtCtrls, Buttons;
 
 type
 
   { TfrmAutorunOptionsPage }
 
   TfrmAutorunOptionsPage = class(TfrmBaseEntityPage)
-    btnShutdownDelete: TKSpeedButton;
-    btnShutdownDown: TKSpeedButton;
-    btnShutdownUp: TKSpeedButton;
-    btnStartupDelete: TKSpeedButton;
-    btnStartupDown: TKSpeedButton;
-    btnStartupUp: TKSpeedButton;
+    btnShutdownDelete: TSpeedButton;
+    btnShutdownDown: TSpeedButton;
+    btnShutdownUp: TSpeedButton;
+    btnStartupDelete: TSpeedButton;
+    btnStartupDown: TSpeedButton;
+    btnStartupUp: TSpeedButton;
     chkShutdown: TCheckBox;
     grpShutdownOrderItems: TGroupBox;
     
@@ -74,7 +73,7 @@ type
     procedure SaveInAutorunItemList(const ATree: TBaseVirtualTree;const AutorunItemList: TBaseItemsList);
     function  GetActiveTree: TBaseVirtualTree;
     procedure LoadGlyphs;
-    procedure ChangeButtonGlyph(AButton: TKSpeedButton; AImageKey: string);
+    procedure ChangeButtonGlyph(AButton: TSpeedButton; AImageKey: string);
   strict protected
     function GetTitle: string; override;
     function GetImageIndex: Integer; override;
@@ -90,7 +89,7 @@ var
 implementation
 
 uses
-  NodeDataTypes.Custom, AppConfig.Main, DataModules.Icons,
+  NodeDataTypes.Custom, AppConfig.Main, DataModules.Icons, Graphics,
   VirtualTree.Methods, Kernel.ResourceStrings, Kernel.Enumerations, VirtualTree.Events;
 
 {$R *.lfm}
@@ -177,11 +176,12 @@ begin
   SaveInAutorunItemList(vstShutdownItems, Config.ListManager.ShutdownItemList);
 end;
 
-procedure TfrmAutorunOptionsPage.ChangeButtonGlyph(AButton: TKSpeedButton; AImageKey: string);
+procedure TfrmAutorunOptionsPage.ChangeButtonGlyph(AButton: TSpeedButton;
+  AImageKey: string);
 var
-  ABMP: TKAlphaBitmap;
+  ABMP: TBitmap;
 begin
-  ABMP := TKAlphaBitmap.Create;
+  ABMP := TBitmap.Create;
   try
     dmImages.GetAlphaBitmapFromImageList(ABMP, Config.IconsManager.GetIconIndex(AImageKey));
     AButton.Glyph := ABMP;

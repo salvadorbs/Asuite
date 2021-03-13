@@ -24,8 +24,8 @@ unit Icons.Base;
 interface
 
 uses
-  SysUtils, Controls, SyncObjs, LCLIntf, LCLType{$IFDEF MSWINDOWS}, ShellApi, CommCtrl{$ENDIF},
-  Graphics;
+  SysUtils, Controls, SyncObjs, LCLIntf, LCLType, Graphics
+  {$IFDEF MSWINDOWS}, ShellApi, CommCtrl, uBitmap{$ENDIF};
 
 type
 
@@ -55,7 +55,7 @@ type
 implementation
 
 uses
-   DataModules.Icons, kicon;
+   DataModules.Icons;
 
 { TBaseIcon }
 
@@ -89,8 +89,6 @@ function TBaseIcon.GetIconFromSysImageList(const APathFile: string;
 var
   FileInfo: TSHFileInfoW;
   Flags: Integer;
-  hIco: HICON;
-  FileIcon: kIcon.TIcon;
 {$ENDIF}
 begin
   //TODO: In linux we must get mime type and after image
@@ -106,28 +104,13 @@ begin
     Flags := SHGFI_SYSICONINDEX or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES;
 
   try
+    //TODO: Maybe use ExtractIconExW for exe and SHGetFileInfoW for other file exts
     if SHGetFileInfoW(PChar(APathFile), 0, FileInfo, SizeOf(TSHFileInfo), Flags) <> 0 then
     begin
-      //Get icon handle
       if AWantLargeIcon then
-        hIco := ImageList_GetIcon(dmImages.SysImageListLarge, FileInfo.iIcon, ILD_NORMAL)
+        BitmapCreateFromHICON(ImageList_GetIcon(dmImages.SysImageListLarge, FileInfo.iIcon, ILD_NORMAL))
       else
-        hIco := ImageList_GetIcon(dmImages.SysImageListSmall, FileInfo.iIcon, ILD_NORMAL);
-
-      //Check icon handle
-      if hIco <> 0 then
-      begin
-        //Use kIcon's TIcon - It supports alpha 32bpp
-        FileIcon := kIcon.TIcon.Create;
-        try
-          //Workaround: FileIcon lose Alpha, if it add directly in ImageList
-          //Load icon handle and copy to bitmap bmp
-          FileIcon.LoadFromHandle(hIco);
-          FileIcon.CopyToBitmap(0, Result);
-        finally
-          FreeAndNil(FileIcon);
-        end;
-      end;
+        BitmapCreateFromHICON(ImageList_GetIcon(dmImages.SysImageListSmall, FileInfo.iIcon, ILD_NORMAL));
     end;
   finally
     DestroyIcon(FileInfo.hIcon);

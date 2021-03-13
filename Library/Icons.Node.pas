@@ -25,13 +25,10 @@ interface
 
 uses
   SysUtils, Classes, Icons.Base, NodeDataTypes.Base, Kernel.Enumerations,
-  NodeDataTypes.Custom, Graphics, Controls, KIcon, {$IFDEF MSWINDOWS} CommCtrl, {$ENDIF}
+  NodeDataTypes.Custom, Graphics, Controls, {$IFDEF MSWINDOWS} CommCtrl, {$ENDIF}
   LCLIntf, LCLType;
 
 type
-  {$IFNDEF MSWINDOWS}
-  TKIcon = TIcon;
-  {$ENDIF}
 
   { TNodeIcon }
 
@@ -45,7 +42,7 @@ type
     function GetPathCacheIcon: string;
     procedure SaveCacheIcon(const APath: string; const AImageIndex: Integer);
     procedure ExtractAndAddIcon(AImageList: TImageList; AImageIndex: Integer;
-      AIcon: TKIcon; ALargeIcon: Boolean);
+      AIcon: TIcon; ALargeIcon: Boolean);
     procedure SetCacheIconCRC(AValue: Integer);
   public
     { public declarations }
@@ -74,40 +71,21 @@ begin
   FCacheIconCRC := 0;
 end;
 
-procedure TNodeIcon.ExtractAndAddIcon(AImageList: TImageList; AImageIndex: Integer; AIcon: TKIcon; ALargeIcon: Boolean);
+procedure TNodeIcon.ExtractAndAddIcon(AImageList: TImageList; AImageIndex: Integer; AIcon: TIcon; ALargeIcon: Boolean);
 {$IFDEF MSWINDOWS}
 var
-  KIcon: TKIcon;
-  hIcon: Windows.HICON;
   Images: TCustomImageListResolution;
 {$ENDIF}
 begin
 {$IFDEF MSWINDOWS}
   Assert(Assigned(AIcon), 'Icon is not assigned!');
 
-  KIcon := TKIcon.Create;
-  try
-    //Bug: TBitmap doesn't support alpha format
-    //Workaround: Get HIcon from ImageList and load it in a TKIcon
-    if ALargeIcon then
-      AImageList.FindResolution(ICON_LARGE, Images)
-    else
-      AImageList.FindResolution(ICON_SMALL, Images);
+  if ALargeIcon then
+    AImageList.FindResolution(ICON_LARGE, Images)
+  else
+    AImageList.FindResolution(ICON_SMALL, Images);
 
-    hIcon := ImageList_GetIcon(Images.Reference.Handle, AImageIndex, ILD_NORMAL);
-
-    if hIcon <> 0 then
-    begin
-      KIcon.LoadFromHandle(hIcon);
-      DestroyIcon(hIcon);
-
-      //Add extracted icon in AIcon
-      if KIcon.IconCount > 0 then
-        AIcon.Add(KIcon.Handles[0]);
-    end;
-  finally
-    KIcon.Free;
-  end;
+  Images.GetIcon(AImageIndex, AIcon);
 {$ENDIF}
 end;
 
@@ -210,16 +188,15 @@ end;
 procedure TNodeIcon.SaveCacheIcon(const APath: string;
   const AImageIndex: Integer);
 var
-  Icon: TKIcon;
+  Icon: TIcon;
 begin
   if (Config.Cache) and (AImageIndex <> -1) then
   begin
     if (FNodeData.ID <> -1) and (LowerCase(ExtractFileExt(APath)) <>  EXT_ICO) then
     begin
-      Icon := TKIcon.Create;
+      Icon := TIcon.Create;
       try
-        //TODO: Save cache in multiple resolution in a single file ico
-        //Extract and insert icons in TKIcon
+        //Extract and insert icons in TIcon
         ExtractAndAddIcon(dmImages.ilLargeIcons, AImageIndex, Icon, True);
         ExtractAndAddIcon(dmImages.ilLargeIcons, AImageIndex, Icon, False);
 
