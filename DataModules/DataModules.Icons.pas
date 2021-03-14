@@ -115,7 +115,7 @@ begin
   if AImageIndex <> -1 then
   begin
     //Button's image
-    ilLargeIcons.FindResolution(ICON_SMALL, Images);
+    ilLargeIcons.FindResolution(ICON_SIZE_SMALL, Images);
 
     Images.GetBitmap(AImageIndex, ABMP);
   end;
@@ -127,7 +127,7 @@ begin
   SysImageListHandle(Config.Paths.SuitePathData);
 
   //Small and large icons in a single ImageList
-  ilLargeIcons.RegisterResolutions([ICON_SMALL, ICON_LARGE]);
+  ilLargeIcons.RegisterResolutions([ICON_SIZE_SMALL, ICON_SIZE_LARGE]);
   ilLargeIcons.Scaled := True;
 end;
 

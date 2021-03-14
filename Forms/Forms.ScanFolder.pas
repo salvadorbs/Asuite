@@ -295,7 +295,7 @@ begin
   LoadSettings;
 
   vstShell.Images := dmImages.ilLargeIcons;
-  vstShell.ImagesWidth := ICON_SMALL;
+  vstShell.ImagesWidth := ICON_SIZE_SMALL;
 end;
 
 procedure TfrmScanFolder.FormKeyPress(Sender: TObject; var Key: char);

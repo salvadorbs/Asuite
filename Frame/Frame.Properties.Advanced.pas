@@ -137,7 +137,7 @@ begin
   end;
 
   edtHotkey.RightButton.Images := dmImages.ilLargeIcons;
-  edtHotkey.RightButton.ImagesWidth := ICON_SMALL;
+  edtHotkey.RightButton.ImagesWidth := ICON_SIZE_SMALL;
   edtHotkey.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel');
 
   //Hide caret in hotkey control

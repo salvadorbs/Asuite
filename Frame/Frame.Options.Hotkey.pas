@@ -190,13 +190,13 @@ end;
 procedure TfrmHotkeyOptionsPage.LoadGlyphs;
 begin
   edtHotkeyMF.RightButton.Images := dmImages.ilLargeIcons;
-  edtHotkeyMF.RightButton.ImagesWidth := ICON_SMALL;
+  edtHotkeyMF.RightButton.ImagesWidth := ICON_SIZE_SMALL;
 
   edtHotkeyGM.RightButton.Images := dmImages.ilLargeIcons;
-  edtHotkeyGM.RightButton.ImagesWidth := ICON_SMALL;
+  edtHotkeyGM.RightButton.ImagesWidth := ICON_SIZE_SMALL;
 
   edtHotkeyCM.RightButton.Images := dmImages.ilLargeIcons;
-  edtHotkeyCM.RightButton.ImagesWidth := ICON_SMALL;
+  edtHotkeyCM.RightButton.ImagesWidth := ICON_SIZE_SMALL;
 
   mniRemoveHotkey.ImageIndex := Config.IconsManager.GetIconIndex('keyboard_delete');
   mniEditHotkey.ImageIndex   := Config.IconsManager.GetIconIndex('keyboard_edit');
