@@ -154,7 +154,7 @@ begin
   tbButtons.Constraints.MinWidth := vleVars.Width + 1;
 
   tbButtons.Images      := dmImages.ilLargeIcons;
-  tbButtons.ImagesWidth := ICON_SMALL;
+  tbButtons.ImagesWidth := ICON_SIZE_SMALL;
 
   actAdd.ImageIndex    := Config.IconsManager.GetIconIndex('add');
   actDelete.ImageIndex := Config.IconsManager.GetIconIndex('delete');

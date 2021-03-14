@@ -262,7 +262,7 @@ begin
 
   //Set PopUpMenu's ImageIndexes
   pmWindow.Images := dmImages.ilLargeIcons;
-  pmWindow.ImagesWidth := ICON_SMALL;
+  pmWindow.ImagesWidth := ICON_SIZE_SMALL;
 
   mniRun.ImageIndex := Config.IconsManager.GetIconIndex('run');
   mniProperty.ImageIndex := Config.IconsManager.GetIconIndex('property');
@@ -278,7 +278,7 @@ begin
     Self.Left  := Screen.WorkAreaRect.Right - Width;
 
   edtSearch.RightButton.Images := dmImages.ilLargeIcons;
-  edtSearch.RightButton.ImagesWidth := ICON_SMALL;
+  edtSearch.RightButton.ImagesWidth := ICON_SIZE_SMALL;
   edtSearch.RightButton.ImageIndex := TThemeEngine.Create.SearchIcon;
 end;
 

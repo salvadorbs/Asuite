@@ -93,7 +93,7 @@ var
 begin
   //TODO: In linux we must get mime type and after image
   //      (see https://lists.lazarus-ide.org/pipermail/lazarus/2010-January/048660.html and https://forum.lazarus.freepascal.org/index.php?topic=40538.0)
-  Result := Graphics.TBitmap.Create;
+  Result := nil;
   {$IFDEF MSWINDOWS}
 
   Assert(Assigned(dmImages));
@@ -104,18 +104,20 @@ begin
     Flags := SHGFI_SYSICONINDEX or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES;
 
   try
-    //TODO: Maybe use ExtractIconExW for exe and SHGetFileInfoW for other file exts
+    //TODO: Maybe use ExtractIconExW for exe/ico and SHGetFileInfoW for other file exts
     if SHGetFileInfoW(PChar(APathFile), 0, FileInfo, SizeOf(TSHFileInfo), Flags) <> 0 then
     begin
       if AWantLargeIcon then
-        BitmapCreateFromHICON(ImageList_GetIcon(dmImages.SysImageListLarge, FileInfo.iIcon, ILD_NORMAL))
+        Result := BitmapCreateFromHICON(ImageList_GetIcon(dmImages.SysImageListLarge, FileInfo.iIcon, ILD_NORMAL))
       else
-        BitmapCreateFromHICON(ImageList_GetIcon(dmImages.SysImageListSmall, FileInfo.iIcon, ILD_NORMAL));
+        Result := BitmapCreateFromHICON(ImageList_GetIcon(dmImages.SysImageListSmall, FileInfo.iIcon, ILD_NORMAL));
     end;
   finally
     DestroyIcon(FileInfo.hIcon);
   end;
 
+  if Result = nil then
+    Result := Graphics.TBitmap.Create;
   {$ENDIF}
 end;
 

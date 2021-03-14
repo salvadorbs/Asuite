@@ -70,8 +70,8 @@ const
   frmCMenuID    = 459741425;
 
   //Icons Size
-  ICON_SMALL = 16;
-  ICON_LARGE = 32;
+  ICON_SIZE_SMALL = 16;
+  ICON_SIZE_LARGE = 32;
 
   // PageControl Indexes
   PG_LIST       = 0;

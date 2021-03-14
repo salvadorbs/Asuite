@@ -81,9 +81,11 @@ begin
   Assert(Assigned(AIcon), 'Icon is not assigned!');
 
   if ALargeIcon then
-    AImageList.FindResolution(ICON_LARGE, Images)
+    AImageList.FindResolution(ICON_SIZE_LARGE, Images)
   else
-    AImageList.FindResolution(ICON_SMALL, Images);
+    AImageList.FindResolution(ICON_SIZE_SMALL, Images);
+
+  Assert(Assigned(Images), 'Images is not assigned!');
 
   Images.GetIcon(AImageIndex, AIcon);
 {$ENDIF}
