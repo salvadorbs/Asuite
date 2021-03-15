@@ -27,8 +27,8 @@ uses
   Classes, SysUtils, Generics.Defaults, Generics.Collections, RegExpr;
 
 type
-  TVarsList = TFastHashMap<String, String>;
-  TKeyValue = TPair<String, String>;
+  TVarsList = TFastHashMap<string, string>;
+  TKeyValue = TPair<string, string>;
 
   { TPathVars }
 
