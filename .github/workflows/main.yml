@@ -122,7 +122,7 @@ jobs:
         cache-name: cache-laz-v0.2
       with:
         path: ${{ matrix.config.laz-dir }}
-        key: ${{ runner.os }}-${{ hashFiles('.cache') }}      
+        key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('.cache') }}     
 
     - name: Install Lazarus
       if: steps.cache.outputs.cache-hit != 'true'
@@ -157,8 +157,6 @@ jobs:
         ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/luipack/uniqueinstance/uniqueinstance_package.lpk" --skip-dependencies
         ${{ matrix.config.lazbuild }} --add-package-link "${{ github.workspace }}/3p/luipack/lclextensions/lclextensions_package.lpk" --skip-dependencies
         ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/VirtualTreeView-Lazarus/Source/virtualtreeview_package.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/KControls/packages/kcontrols/kcontrolsbase.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/KControls/packages/kcontrols/kcontrolslaz.lpk" --skip-dependencies
         ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/AsuiteComps/ASuiteComps.lpk" --skip-dependencies
 
     - name: Validate Cache
