@@ -34,6 +34,7 @@ type
   TBaseIcon = class
   private
     FLock: SyncObjs.TCriticalSection;
+    FStatic: Boolean;
 
     function GetIconFromSysImageList(const APathFile: string;
       const AWantLargeIcon: Boolean): Graphics.TBitmap;
@@ -41,15 +42,17 @@ type
   protected
     FImageIndex: Integer;
 
+    function GetName: string; virtual; abstract;
     function InternalGetImageIndex(const APathFile: string): Integer;
-  public
-    constructor Create;
-    destructor Destroy; override;
-
     function LoadIcon: Integer; virtual; abstract;
+  public
+    constructor Create(AStatic: Boolean = False);
+    destructor Destroy; override;
     procedure ResetIcon; virtual;
 
+    property Name: string read GetName;
     property ImageIndex: Integer read GetImageIndex;
+    property Static: Boolean read FStatic write FStatic;
   end;
 
 implementation
@@ -59,10 +62,11 @@ uses
 
 { TBaseIcon }
 
-constructor TBaseIcon.Create;
+constructor TBaseIcon.Create(AStatic: Boolean);
 begin
   FImageIndex := -1;
   FLock := SyncObjs.TCriticalSection.Create;
+  FStatic := AStatic;
 end;
 
 destructor TBaseIcon.Destroy;

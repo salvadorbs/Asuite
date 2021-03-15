@@ -26,7 +26,7 @@ interface
 uses
   SysUtils, Classes, Icons.Base, NodeDataTypes.Base, Kernel.Enumerations,
   NodeDataTypes.Custom, Graphics, Controls, {$IFDEF MSWINDOWS} CommCtrl, {$ENDIF}
-  LCLIntf, LCLType;
+  LCLIntf, LCLType, BGRABitmap;
 
 type
 
@@ -41,9 +41,11 @@ type
     function InternalLoadIcon: Integer;
     function GetPathCacheIcon: string;
     procedure SaveCacheIcon(const APath: string; const AImageIndex: Integer);
-    procedure ExtractAndAddIcon(AImageList: TImageList; AImageIndex: Integer;
-      AIcon: TIcon; ALargeIcon: Boolean);
+    function GetIconFromImgList(AImageList: TImageList; AImageIndex: Integer;
+      ALargeIcon: Boolean): TBGRABitmap;
     procedure SetCacheIconCRC(AValue: Integer);
+  protected
+    function GetName: string; override;
   public
     { public declarations }
     constructor Create(ANodeData: TvBaseNodeData);
@@ -60,7 +62,8 @@ implementation
 
 uses
   Utility.System, AppConfig.Main, NodeDataTypes.Files, Kernel.Consts, ImgList,
-  Utility.FileFolder, DataModules.Icons{$IFDEF MSWINDOWS}, Windows {$ENDIF};
+  Utility.FileFolder, DataModules.Icons{$IFDEF MSWINDOWS}, Windows {$ENDIF},
+  BGRAIconCursor, BGRABitmapTypes;
 
 { TNodeIcon }
 
@@ -71,23 +74,30 @@ begin
   FCacheIconCRC := 0;
 end;
 
-procedure TNodeIcon.ExtractAndAddIcon(AImageList: TImageList; AImageIndex: Integer; AIcon: TIcon; ALargeIcon: Boolean);
+function TNodeIcon.GetIconFromImgList(AImageList: TImageList;
+  AImageIndex: Integer; ALargeIcon: Boolean): TBGRABitmap;
 {$IFDEF MSWINDOWS}
 var
   Images: TCustomImageListResolution;
+  bmpTemp: Graphics.TBitmap;
 {$ENDIF}
 begin
 {$IFDEF MSWINDOWS}
-  Assert(Assigned(AIcon), 'Icon is not assigned!');
+  bmpTemp := Graphics.TBitmap.Create;
+  try
+    if ALargeIcon then
+      AImageList.FindResolution(ICON_SIZE_LARGE, Images)
+    else
+      AImageList.FindResolution(ICON_SIZE_SMALL, Images);
 
-  if ALargeIcon then
-    AImageList.FindResolution(ICON_SIZE_LARGE, Images)
-  else
-    AImageList.FindResolution(ICON_SIZE_SMALL, Images);
+    Assert(Assigned(Images), 'Images is not assigned!');
 
-  Assert(Assigned(Images), 'Images is not assigned!');
+    Images.GetBitmap(AImageIndex, bmpTemp);
 
-  Images.GetIcon(AImageIndex, AIcon);
+    Result := TBGRABitmap.Create(bmpTemp);
+  finally
+    bmpTemp.Free;
+  end;
 {$ENDIF}
 end;
 
@@ -95,6 +105,13 @@ procedure TNodeIcon.SetCacheIconCRC(AValue: Integer);
 begin
   if FCacheIconCRC <> AValue then
     FCacheIconCRC := AValue;
+end;
+
+function TNodeIcon.GetName: string;
+begin
+  Result := '';
+  if Assigned(FNodeData) then
+    Result := FNodeData.Name;
 end;
 
 function TNodeIcon.GetPathCacheIcon: string;
@@ -190,17 +207,21 @@ end;
 procedure TNodeIcon.SaveCacheIcon(const APath: string;
   const AImageIndex: Integer);
 var
-  Icon: TIcon;
+  Icon: TBGRAIconCursor;
+  bmpLargeIcon, bmpSmallIcon: TBGRABitmap;
 begin
   if (Config.Cache) and (AImageIndex <> -1) then
   begin
     if (FNodeData.ID <> -1) and (LowerCase(ExtractFileExt(APath)) <>  EXT_ICO) then
     begin
-      Icon := TIcon.Create;
+      Icon := TBGRAIconCursor.Create(ifIco);
       try
         //Extract and insert icons in TIcon
-        ExtractAndAddIcon(dmImages.ilLargeIcons, AImageIndex, Icon, True);
-        ExtractAndAddIcon(dmImages.ilLargeIcons, AImageIndex, Icon, False);
+        bmpLargeIcon := GetIconFromImgList(dmImages.ilLargeIcons, AImageIndex, True);
+        bmpSmallIcon := GetIconFromImgList(dmImages.ilLargeIcons, AImageIndex, False);
+
+        Icon.Add(bmpSmallIcon, 32);
+        Icon.Add(bmpLargeIcon, 32);
 
         //Save file and get CRC from it
         Icon.SaveToFile(PathCacheIcon);
@@ -209,6 +230,8 @@ begin
         FNodeData.Changed := True;
       finally
         Icon.Free;
+        bmpLargeIcon.Free;
+        bmpSmallIcon.Free;
       end;
     end;
   end;

@@ -21,6 +21,7 @@ function DeleteFiles(const Dir, Wildcard: string): Integer;
 function ListFiles(const Dir, Wildcard: string; const List: Classes.TStrings): Boolean;
 function GetFileCRC32(const FileName: String): Integer;
 function ExtractFileNameEx(const AFileName: String): string;
+function ExtractOnlyFileName(const AFileName: String): string;
 
 { Desktop shortcut }
 procedure CreateShortcutOnDesktop(const FileName, TargetFilePath, Params, WorkingDir: String);
@@ -177,6 +178,12 @@ begin
   finally
     VersionInfo.Free;
   end;
+end;
+
+function ExtractOnlyFileName(const AFileName: String): string;
+begin
+  Result := LowerCase(ExtractFileName(AFileName));
+  Result := ChangeFileExt(Result, '');
 end;
 
 procedure DeleteOldBackups(const MaxNumber: Integer);

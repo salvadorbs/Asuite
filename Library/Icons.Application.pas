@@ -27,24 +27,30 @@ uses
   SysUtils, Classes, Icons.Base;
 
 type
+
+  { TApplicationIcon }
+
+  //TODO: Rename it in TFileIcon
   TApplicationIcon = class(TBaseIcon)
   private
     FPathFile: string;
-    function GetName: string;
-  public
-    constructor Create(APathFile: string);
-
+  protected
+    function GetName: string; override;
     function LoadIcon: Integer; override;
+  public
+    constructor Create(APathFile: string; AStatic: Boolean = False);
 
-    property Name: string read GetName;
     property PathFile: string read FPathFile write FPathFile;
   end;
 
 implementation
 
-constructor TApplicationIcon.Create(APathFile: string);
+uses
+  Utility.FileFolder;
+
+constructor TApplicationIcon.Create(APathFile: string; AStatic: Boolean);
 begin
-  inherited Create;
+  inherited Create(AStatic);
   FPathFile := APathFile;
 end;
 
@@ -52,10 +58,7 @@ function TApplicationIcon.GetName: string;
 begin
   Result := '';
   if FPathFile <> '' then
-  begin
-    Result := ExtractFileName(FPathFile);
-    Result := ChangeFileExt(Result, '');
-  end;
+    Result := ExtractOnlyFileName(FPathFile);
 end;
 
 function TApplicationIcon.LoadIcon: Integer;
