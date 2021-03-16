@@ -103,19 +103,14 @@ begin
   Assert(Assigned(dmImages));
 
   if AWantLargeIcon then
-    Flags := SHGFI_SYSICONINDEX or SHGFI_LARGEICON or SHGFI_USEFILEATTRIBUTES
+    Flags := SHGFI_ICON or SHGFI_LARGEICON or SHGFI_USEFILEATTRIBUTES
   else
-    Flags := SHGFI_SYSICONINDEX or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES;
+    Flags := SHGFI_ICON or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES;
 
   try
     //TODO: Maybe use ExtractIconExW for exe/ico and SHGetFileInfoW for other file exts
     if SHGetFileInfoW(PChar(APathFile), 0, FileInfo, SizeOf(TSHFileInfo), Flags) <> 0 then
-    begin
-      if AWantLargeIcon then
-        Result := BitmapCreateFromHICON(ImageList_GetIcon(dmImages.SysImageListLarge, FileInfo.iIcon, ILD_NORMAL))
-      else
-        Result := BitmapCreateFromHICON(ImageList_GetIcon(dmImages.SysImageListSmall, FileInfo.iIcon, ILD_NORMAL));
-    end;
+      Result := BitmapCreateFromHICON(FileInfo.hIcon);
   finally
     DestroyIcon(FileInfo.hIcon);
   end;

@@ -76,6 +76,7 @@ begin
 
   StartTime := GetTickCount64;
   try
+    //TODO: Memory LEAK!!!!!
     foundList := FindAllFiles(FDirectory, '*', True, faAnyFile);
 
     for I := 0 to foundList.Count - 1 do

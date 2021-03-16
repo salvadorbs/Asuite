@@ -42,15 +42,9 @@ type
     procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }
-    FSysImageListLarge: THANDLE;
-    FSysImageListSmall: THANDLE;
     procedure DrawTransparentBitmap(DC: HDC; hBmp: HBITMAP; xStart: integer;
                                     yStart : integer; cTransparentColor : COLORREF);
-    procedure SysImageListHandle(const Path: string);
   public
-    property SysImageListLarge: THANDLE read FSysImageListLarge;
-    property SysImageListSmall: THANDLE read FSysImageListSmall;
-
     procedure GetAlphaBitmapFromImageList(ABMP: Graphics.TBitmap; const AImageIndex: Integer);
     procedure DrawIconInBitmap(const AGlyph: Graphics.TBitmap; const AImageIndex: Integer);
 
@@ -124,8 +118,6 @@ end;
 
 procedure TdmImages.DataModuleCreate(Sender: TObject);
 begin
-  SysImageListHandle(Config.Paths.SuitePathData);
-
   //Small and large icons in a single ImageList
   ilLargeIcons.RegisterResolutions([ICON_SIZE_SMALL, ICON_SIZE_LARGE]);
   ilLargeIcons.Scaled := True;
@@ -230,24 +222,6 @@ begin
    DeleteDC(hdcObject);
    DeleteDC(hdcSave);
    DeleteDC(hdcTemp);
-end;
-
-procedure TdmImages.SysImageListHandle(const Path: string);
-  {Returns a handle to the system image list for path Path.
-  WantLargeIcons determines if the image list is to contain large or small
-  icons.}
-{$IFDEF MSWINDOWS}
-//var
-//  FI: ShellAPI.TSHFileInfoW; // required file info structure
-//  Flags: Windows.UINT;      // flags used to request image list
-{$ENDIF}
-begin
-  {$IFDEF MSWINDOWS}
-  //Flags := ShellAPI.SHGFI_SYSICONINDEX or ShellAPI.SHGFI_ICON or ShellAPI.SHGFI_LARGEICON //or ShellAPI.SHGFI_SMALLICON;
-
-  //Result := ShellAPI.SHGetFileInfo(PChar(Path), 0, FI, SizeOf(FI), Flags);
-  Shell_GetImageLists(FSysImageListLarge, FSysImageListSmall);
-  {$ENDIF}
 end;
 
 end.

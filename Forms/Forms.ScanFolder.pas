@@ -326,6 +326,7 @@ begin
     //Get index
     if SHGetFileInfoW(PChar(AExtension), 0, FileInfo, SizeOf(TSHFileInfo), SHGFI_ICON or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES) <> 0 then
     begin
+      //TODO: Use TIconsManager
       Icon.Handle := FileInfo.hIcon;
       Result := ilExtIcons.AddIcon(Icon);
     end;
