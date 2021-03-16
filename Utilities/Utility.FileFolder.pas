@@ -19,7 +19,6 @@ function IsFlagSet(const Flags, Mask: Integer): Boolean;
 procedure DeleteOldBackups(const MaxNumber: Integer);
 function DeleteFiles(const Dir, Wildcard: string): Integer;
 function ListFiles(const Dir, Wildcard: string; const List: Classes.TStrings): Boolean;
-function GetFileCRC32(const FileName: String): Integer;
 function ExtractFileNameEx(const AFileName: String): string;
 function ExtractOnlyFileName(const AFileName: String): string;
 
@@ -32,11 +31,10 @@ function  GetUrlTarget(const AFileName: String; ShortcutType: TShortcutField): S
 implementation
 
 uses
-  AppConfig.Main, IniFiles, FCRC32, FileInfo {$IFDEF UNIX} , BaseUnix {$ENDIF};
+  AppConfig.Main, IniFiles, FileInfo {$IFDEF UNIX} , BaseUnix {$ENDIF};
 
 function BrowseForFolder(const InitialDir: String; const Caption: String): String;
 var
-  Path: string;
   Dialog: TSelectDirectoryDialog;
 begin
   Result := '';
@@ -53,6 +51,7 @@ end;
 
 function DirToPath(const Dir: string): string;
 begin
+  //TODO: Use FPC RTL!!!
   if (Dir <> '') and (Dir[Length(Dir)] <> '\') then
     Result := Dir + '\'
   else
@@ -142,18 +141,6 @@ begin
     // Tidy up
     SysUtils.FindClose(SR);
   end;
-end;
-
-function GetFileCRC32(const FileName: String): Integer;
-var
-  ErrCode: Word;
-  Buffer: Array[1..65521] of byte;
-begin
-  ErrCode := 0;
-  Result := 0;
-
-  if FileName <> '' then
-    FCRC32File(FileName, Result, Buffer, SizeOf(Buffer), ErrCode);
 end;
 
 function ExtractFileNameEx(const AFileName: String): string;
