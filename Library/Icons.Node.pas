@@ -36,21 +36,24 @@ type
   private
     { private declarations }
     FNodeData: TvBaseNodeData;
+    FCacheIconCRC: Integer;
 
     function InternalLoadIcon: Integer;
     function GetPathCacheIcon: string;
     procedure SaveCacheIcon(const APath: string; const AImageIndex: Integer);
     function GetIconFromImgList(AImageList: TImageList; AImageIndex: Integer;
       ALargeIcon: Boolean): TBGRABitmap;
+    procedure SetCacheIconCRC(AValue: Integer);
   protected
     function GetName: string; override;
-    function LoadIcon: Integer; override;
   public
     { public declarations }
     constructor Create(ANodeData: TvBaseNodeData);
 
     property PathCacheIcon: string read GetPathCacheIcon;
+    property CacheIconCRC: Integer read FCacheIconCRC write SetCacheIconCRC;
 
+    function LoadIcon: Integer; override;
     procedure ResetIcon; override;
     procedure ResetCacheIcon;
   end;
@@ -68,6 +71,7 @@ constructor TNodeIcon.Create(ANodeData: TvBaseNodeData);
 begin
   inherited Create;
   FNodeData     := ANodeData;
+  FCacheIconCRC := 0;
 end;
 
 function TNodeIcon.GetIconFromImgList(AImageList: TImageList;
@@ -97,11 +101,17 @@ begin
 {$ENDIF}
 end;
 
+procedure TNodeIcon.SetCacheIconCRC(AValue: Integer);
+begin
+  if FCacheIconCRC <> AValue then
+    FCacheIconCRC := AValue;
+end;
+
 function TNodeIcon.GetName: string;
 begin
   Result := '';
   if Assigned(FNodeData) then
-    Result := IntToStr(FNodeData.ID);
+    Result := FNodeData.Name;
 end;
 
 function TNodeIcon.GetPathCacheIcon: string;
@@ -113,7 +123,7 @@ end;
 
 function TNodeIcon.InternalLoadIcon: Integer;
 var
-  sTempPath, sPathAbsoluteIcon: string;
+  sTempPath, sPathAbsoluteIcon, sPathCacheIcon: string;
 begin
   //Priority cache->icon->exe
   sTempPath := '';
@@ -122,9 +132,10 @@ begin
   //Get cache icon path
   if (Config.Cache) and (Config.ASuiteState <> lsImporting) then
   begin
-    //Check if file exists
-    if FileExists(PathCacheIcon) then
-      sTempPath := PathCacheIcon
+    //Check CRC, if it fails reset cache icon
+    sPathCacheIcon := PathCacheIcon;
+    if (FileExists(sPathCacheIcon)) and (CacheIconCRC = GetFileCRC32(sPathCacheIcon)) then
+      sTempPath := sPathCacheIcon
     else
       ResetCacheIcon;
   end;
@@ -168,7 +179,6 @@ begin
     if Not(TvFileNodeData(FNodeData).IsPathFileExists) then
       Result := Config.IconsManager.GetIconIndex('file_error');
   end;
-
   //Get imageindex
   if (Result = -1) then
     Result := InternalLoadIcon;
@@ -179,6 +189,7 @@ begin
   //Small icon cache
   if FileExists(PathCacheIcon) then
     SysUtils.DeleteFile(PathCacheIcon);
+  FCacheIconCRC := 0;
 
   FNodeData.Changed := True;
 end;
@@ -186,10 +197,8 @@ end;
 procedure TNodeIcon.ResetIcon;
 begin
   inherited;
-
-  //Delete cache icon
+  //Delete cache icon and reset CRC
   ResetCacheIcon;
-
   //Force MainTree repaint node
   if Assigned(FNodeData.PNode) then
     Config.MainTree.InvalidateNode(FNodeData.PNode);
@@ -214,8 +223,9 @@ begin
         Icon.Add(bmpSmallIcon, 32);
         Icon.Add(bmpLargeIcon, 32);
 
-        //Save icon file
+        //Save file and get CRC from it
         Icon.SaveToFile(PathCacheIcon);
+        FCacheIconCRC := GetFileCRC32(PathCacheIcon);
 
         FNodeData.Changed := True;
       finally
