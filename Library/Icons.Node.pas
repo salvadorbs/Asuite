@@ -40,7 +40,7 @@ type
 
     function InternalLoadIcon: Integer;
     function GetPathCacheIcon: string;
-    procedure SaveCacheIcon(const APath: string; const AImageIndex: Integer);
+    procedure SaveCacheIcon(const APath: string; const AImageIndex: Integer; const AHash: Integer);
     function GetIconFromImgList(AImageList: TImageList; AImageIndex: Integer;
       ALargeIcon: Boolean): TBGRABitmap;
     procedure SetCacheIconCRC(AValue: Integer);
@@ -110,31 +110,48 @@ end;
 function TNodeIcon.GetName: string;
 begin
   Result := '';
-  if Assigned(FNodeData) then
-    Result := FNodeData.Name;
+  if Assigned(FNodeData) and (FNodeData.ID <> -1) then
+    Result := IntToStr(FNodeData.ID);
 end;
 
 function TNodeIcon.GetPathCacheIcon: string;
 begin
   Result := '';
-  if FNodeData.ID <> -1 then
-    Result := Config.Paths.SuitePathCache + IntToStr(FNodeData.ID) + EXT_ICO;
+  if (Self.Name <> '') then
+    Result := Config.Paths.SuitePathCache + Self.Name + EXT_ICO;
 end;
 
 function TNodeIcon.InternalLoadIcon: Integer;
 var
-  sTempPath, sPathAbsoluteIcon, sPathCacheIcon: string;
+  sTempPath, sPathCacheIcon, sDefaultPath: string;
+  intHash: Integer;
+
+  function GetIconPath: String;
+  var
+    sPathAbsoluteIcon: string;
+  begin
+    //Get custom icon path
+    sPathAbsoluteIcon := TvCustomRealNodeData(FNodeData).PathAbsoluteIcon;
+    if FileExists(sPathAbsoluteIcon) then
+      Result := sPathAbsoluteIcon
+    else //Else absolute filename (if nodedata is a file item)
+      if FNodeData.IsFileItem then
+        Result := TvFileNodeData(FNodeData).PathAbsoluteFile;
+  end;
+
 begin
   //Priority cache->icon->exe
   sTempPath := '';
   Result   := -1;
+  sDefaultPath := GetIconPath;
+  intHash := GetFileCRC32(sDefaultPath);
 
   //Get cache icon path
   if (Config.Cache) and (Config.ASuiteState <> lsImporting) then
   begin
     //Check CRC, if it fails reset cache icon
     sPathCacheIcon := PathCacheIcon;
-    if (FileExists(sPathCacheIcon)) and (CacheIconCRC = GetFileCRC32(sPathCacheIcon)) then
+    if (FileExists(sPathCacheIcon)) and (CacheIconCRC = intHash) then
       sTempPath := sPathCacheIcon
     else
       ResetCacheIcon;
@@ -142,15 +159,7 @@ begin
 
   //Icon or exe
   if Not FileExists(sTempPath) then
-  begin
-    //Get custom icon path
-    sPathAbsoluteIcon := TvCustomRealNodeData(FNodeData).PathAbsoluteIcon;
-    if FileExists(sPathAbsoluteIcon) then
-      sTempPath := sPathAbsoluteIcon
-    else //Else exe (if nodedata is a file item)
-      if FNodeData.IsFileItem then
-        sTempPath := TvFileNodeData(FNodeData).PathAbsoluteFile;
-  end;
+    sTempPath := sDefaultPath;
 
   //Get image index
   if (sTempPath <> '') then
@@ -159,7 +168,7 @@ begin
       Result := InternalGetImageIndex(sTempPath);
     //Save icon cache
     if (Config.ASuiteState <> lsImporting) then
-      SaveCacheIcon(sTempPath, Result);
+      SaveCacheIcon(sTempPath, Result, intHash);
   end;
 
   //If it is a category, get directly cat icon
@@ -205,14 +214,14 @@ begin
 end;
 
 procedure TNodeIcon.SaveCacheIcon(const APath: string;
-  const AImageIndex: Integer);
+  const AImageIndex: Integer; const AHash: Integer);
 var
   Icon: TBGRAIconCursor;
   bmpLargeIcon, bmpSmallIcon: TBGRABitmap;
 begin
   if (Config.Cache) and (AImageIndex <> -1) then
   begin
-    if (FNodeData.ID <> -1) and (LowerCase(ExtractFileExt(APath)) <>  EXT_ICO) then
+    if (FNodeData.ID <> -1) and (LowerCase(ExtractFileExt(APath)) = EXT_EXE) then
     begin
       Icon := TBGRAIconCursor.Create(ifIco);
       try
@@ -225,7 +234,7 @@ begin
 
         //Save file and get CRC from it
         Icon.SaveToFile(PathCacheIcon);
-        FCacheIconCRC := GetFileCRC32(PathCacheIcon);
+        FCacheIconCRC := AHash;
 
         FNodeData.Changed := True;
       finally

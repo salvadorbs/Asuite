@@ -7,7 +7,7 @@ interface
 uses
   Kernel.Consts, LCLIntf, LCLType, SysUtils, Classes, Kernel.Enumerations,
   FileUtil, {$IFDEF Windows}ComObj, ActiveX, ShlObj, Windows,{$ELSE} FakeActiveX, {$ENDIF} Dialogs,
-  LazFileUtils;
+  LazFileUtils, HlpXXHash32,  HlpHashFactory;
 
 { Folders }
 function BrowseForFolder(const InitialDir: String = ''; const Caption: String = ''): String;
@@ -32,7 +32,7 @@ function  GetUrlTarget(const AFileName: String; ShortcutType: TShortcutField): S
 implementation
 
 uses
-  AppConfig.Main, IniFiles, FCRC32, FileInfo {$IFDEF UNIX} , BaseUnix {$ENDIF};
+  AppConfig.Main, IniFiles, FileInfo {$IFDEF UNIX} , BaseUnix {$ENDIF};
 
 function BrowseForFolder(const InitialDir: String; const Caption: String): String;
 var
@@ -145,15 +145,11 @@ begin
 end;
 
 function GetFileCRC32(const FileName: String): Integer;
-var
-  ErrCode: Word;
-  Buffer: Array[1..65521] of byte;
 begin
-  ErrCode := 0;
   Result := 0;
 
-  if FileName <> '' then
-    FCRC32File(FileName, Result, Buffer, SizeOf(Buffer), ErrCode);
+  if (FileName <> '') and FileExists(FileName) then
+    Result := THashFactory.THash32.CreateXXHash32().ComputeFile(FileName).GetInt32();
 end;
 
 function ExtractFileNameEx(const AFileName: String): string;
