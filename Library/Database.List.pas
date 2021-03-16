@@ -49,7 +49,6 @@ type
     Fhide_from_menu   : Boolean;
     Fdsk_shortcut     : Boolean;
     Ficon_path        : RawUTF8;
-    Fcache_icon_crc   : Integer;
     Fonlaunch         : Byte;
     Fwindow_state     : Integer;
     Fautorun          : Byte;
@@ -94,7 +93,6 @@ type
     property hide_from_menu: Boolean read Fhide_from_menu write Fhide_from_menu;
     property dsk_shortcut: Boolean read Fdsk_shortcut write Fdsk_shortcut;
     property icon_path: RawUTF8 read Ficon_path write Ficon_path;
-    property cache_icon_crc: Integer read Fcache_icon_crc write Fcache_icon_crc;
     property onlaunch: Byte read Fonlaunch write Fonlaunch;
     property window_state: Integer read Fwindow_state write Fwindow_state;
     property autorun: Byte read Fautorun write Fautorun;
@@ -168,7 +166,6 @@ begin
         with TvCustomRealNodeData(vData) do
         begin
           PathIcon    := UTF8DecodeToUnicodeString(SQLFilesData.icon_path);
-          TNodeIcon(Icon).CacheIconCRC := SQLFilesData.cache_icon_crc;
           AutorunPos  := SQLFilesData.autorun_position;
           Autorun     := TAutorunType(SQLFilesData.autorun);
           SchMode     := TSchedulerMode(SQLFilesData.scheduler_mode);
@@ -260,7 +257,6 @@ begin
     with TvCustomRealNodeData(AData) do
     begin
       Ficon_path      := UnicodeStringToUtf8(PathIcon);
-      Fcache_icon_crc := TNodeIcon(Icon).CacheIconCRC;
       Fwindow_state   := WindowState;
       Fautorun        := Ord(Autorun);
       Fautorun_position := AutorunPos;
