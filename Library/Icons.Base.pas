@@ -24,7 +24,7 @@ unit Icons.Base;
 interface
 
 uses
-  SysUtils, Controls, SyncObjs, LCLIntf, LCLType, Graphics
+  SysUtils, Controls, SyncObjs, LCLIntf, LCLType, Graphics, BGRAIconCursor, BGRABitmap
   {$IFDEF MSWINDOWS}, ShellApi, CommCtrl, uBitmap{$ENDIF};
 
 type
@@ -36,8 +36,13 @@ type
     FLock: SyncObjs.TCriticalSection;
     FStatic: Boolean;
 
-    function GetIconFromSysImageList(const APathFile: string;
-      const AWantLargeIcon: Boolean): Graphics.TBitmap;
+    function BGRABitmapCreateFromHICON(AHIcon: HICON): TBGRABitmap;
+    function ExtractIconFromSysImageList(const APathFile: string;
+      const AWantLargeIcon: Boolean): TBGRABitmap;
+    function ExtractIconFromFile(const APathFile: string;
+      const AWantLargeIcon: Boolean): TBGRABitmap;
+    function GetIconFromFile(const APathFile: string; const AWantLargeIcon: Boolean
+      ): TBGRABitmap;
     function GetImageIndex: Integer;
   protected
     FImageIndex: Integer;
@@ -58,7 +63,7 @@ type
 implementation
 
 uses
-   DataModules.Icons;
+   DataModules.Icons, Kernel.Consts, BGRABitmapTypes;
 
 { TBaseIcon }
 
@@ -87,8 +92,8 @@ begin
   end;
 end;
 
-function TBaseIcon.GetIconFromSysImageList(const APathFile: string;
-  const AWantLargeIcon: Boolean): Graphics.TBitmap;
+function TBaseIcon.ExtractIconFromSysImageList(const APathFile: string;
+  const AWantLargeIcon: Boolean): TBGRABitmap;
 {$IFDEF MSWINDOWS}
 var
   FileInfo: TSHFileInfoW;
@@ -108,29 +113,79 @@ begin
     Flags := SHGFI_ICON or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES;
 
   try
-    //TODO: Maybe use ExtractIconExW for exe/ico and SHGetFileInfoW for other file exts
     if SHGetFileInfoW(PChar(APathFile), 0, FileInfo, SizeOf(TSHFileInfo), Flags) <> 0 then
-      Result := BitmapCreateFromHICON(FileInfo.hIcon);
+      Result := BGRABitmapCreateFromHICON(FileInfo.hIcon);
   finally
     DestroyIcon(FileInfo.hIcon);
   end;
+  {$ENDIF}
+end;
+
+function TBaseIcon.BGRABitmapCreateFromHICON(AHIcon: HICON): TBGRABitmap;
+var
+  bmpTemp: Graphics.TBitmap;
+begin
+  bmpTemp := BitmapCreateFromHICON(AHIcon);
+  try
+    Result := TBGRABitmap.Create(bmpTemp);
+  finally
+    FreeAndNil(bmpTemp);
+  end;
+end;
+
+function TBaseIcon.ExtractIconFromFile(const APathFile: string;
+  const AWantLargeIcon: Boolean): TBGRABitmap;
+var
+  Icon : TBGRAIconCursor;
+  IcoHandle: THandle;
+begin
+  Result := nil;
+
+  if not FileExists(APathFile) then
+    Exit;
+
+  Icon := TBGRAIconCursor.Create(ifIco);
+  try
+    Icon.LoadFromFile(APathFile);
+
+    if AWantLargeIcon then
+      Result := (Icon.GetBestFitBitmap(ICON_SIZE_LARGE, ICON_SIZE_LARGE) as TBGRABitmap)
+    else
+      Result := (Icon.GetBestFitBitmap(ICON_SIZE_LARGE, ICON_SIZE_LARGE) as TBGRABitmap);
+  finally
+    Icon.Free;
+  end;
+end;
+
+function TBaseIcon.GetIconFromFile(const APathFile: string;
+  const AWantLargeIcon: Boolean): TBGRABitmap;
+begin
+  Result := nil;
+
+  if ExtractFileExt(APathFile) = EXT_ICO then
+    Result := ExtractIconFromFile(APathFile, AWantLargeIcon)
+  else
+    Result := ExtractIconFromSysImageList(APathFile, AWantLargeIcon);
 
   if Result = nil then
-    Result := Graphics.TBitmap.Create;
-  {$ENDIF}
+    Result := TBGRABitmap.Create;
 end;
 
 function TBaseIcon.InternalGetImageIndex(const APathFile: string): Integer;
 var
-  bmpSmallIcon, bmpLargeIcon: TBitmap;
+  bmpSmallIcon, bmpLargeIcon: TBGRABitmap;
 begin
   Result := -1;
 
+  //TODO: Find icon cache
+
   //Get icon and insert it in ASuite ImageList
-  bmpLargeIcon := GetIconFromSysImageList(APathFile, True);
-  bmpSmallIcon := GetIconFromSysImageList(APathFile, False);
+  bmpLargeIcon := GetIconFromFile(APathFile, True);
+  bmpSmallIcon := GetIconFromFile(APathFile, False);
   try
-    Result := dmImages.AddMultipleResolutions([bmpSmallIcon, bmpLargeIcon]);
+    Result := dmImages.AddMultipleResolutions([bmpSmallIcon.Bitmap, bmpLargeIcon.Bitmap]);
+
+    //TODO: Save icon cache
   finally
     FreeAndNil(bmpLargeIcon);
     FreeAndNil(bmpSmallIcon);
