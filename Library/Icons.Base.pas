@@ -36,7 +36,9 @@ type
     FLock: SyncObjs.TCriticalSection;
     FStatic: Boolean;
 
+    {$IFDEF MSWINDOWS}
     function BGRABitmapCreateFromHICON(AHIcon: HICON): TBGRABitmap;
+    {$ENDIF}
     function ExtractIconFromSysImageList(const APathFile: string;
       const AWantLargeIcon: Boolean): TBGRABitmap;
     function ExtractIconFromFile(const APathFile: string;
@@ -121,6 +123,7 @@ begin
   {$ENDIF}
 end;
 
+{$IFDEF MSWINDOWS}
 function TBaseIcon.BGRABitmapCreateFromHICON(AHIcon: HICON): TBGRABitmap;
 var
   bmpTemp: Graphics.TBitmap;
@@ -132,6 +135,7 @@ begin
     FreeAndNil(bmpTemp);
   end;
 end;
+{$ENDIF}
 
 function TBaseIcon.ExtractIconFromFile(const APathFile: string;
   const AWantLargeIcon: Boolean): TBGRABitmap;
