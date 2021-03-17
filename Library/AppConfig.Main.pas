@@ -509,7 +509,7 @@ begin
   Assert(Assigned(FMainTree), 'FMainTree is not assigned!');
   try
     //List
-    if ExtractFileExt(FPaths.SuitePathList) = EXT_XML then
+    if ExtractFileExtEx(FPaths.SuitePathList) = EXT_XML then
     begin
       sFilePath := FPaths.SuitePathList;
       FPaths.SuitePathList := ChangeFileExt(FPaths.SuitePathList, EXT_SQL);
@@ -957,7 +957,7 @@ begin
   if (FTVBackground) and (FTVBackgroundPath <> '') and
      (FileExists(FPaths.RelativeToAbsolute(FTVBackgroundPath))) then
   begin
-    if LowerCase(ExtractFileExt(FPaths.RelativeToAbsolute(FTVBackgroundPath))) <> '.bmp' then
+    if ExtractFileExtEx(FPaths.RelativeToAbsolute(FTVBackgroundPath)) <> EXT_BMP then
     begin
       BackgroundBMP := Graphics.TBitmap.Create;
       BackgroundPNG := TPortableNetworkGraphic.Create;

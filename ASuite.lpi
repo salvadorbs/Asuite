@@ -30,7 +30,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="957"/>
+      <BuildNr Value="987"/>
     </VersionInfo>
     <BuildModes Count="4">
       <Item1 Name="Default" Default="True"/>
@@ -230,7 +230,7 @@
         <PackageName Value="LCL"/>
       </Item12>
     </RequiredPackages>
-    <Units Count="69">
+    <Units Count="70">
       <Unit0>
         <Filename Value="ASuite.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -595,6 +595,11 @@
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="Frame.Properties.EnvironmentVars"/>
       </Unit68>
+      <Unit69>
+        <Filename Value="Library/icons.extfile.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Icons.ExtFile"/>
+      </Unit69>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

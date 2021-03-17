@@ -12,7 +12,7 @@ object frmScanFolder: TfrmScanFolder
   OnCreate = FormCreate
   OnKeyPress = FormKeyPress
   Position = poMainFormCenter
-  LCLVersion = '2.0.10.0'
+  LCLVersion = '2.0.12.0'
   object btnScan: TButton
     Left = 415
     Height = 25
@@ -96,7 +96,6 @@ object frmScanFolder: TfrmScanFolder
         Header.AutoSizeIndex = 0
         Header.Columns = <>
         Header.MainColumn = -1
-        Images = ilExtIcons
         ParentFont = False
         TabOrder = 0
         TreeOptions.PaintOptions = [toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
@@ -212,9 +211,5 @@ object frmScanFolder: TfrmScanFolder
     TabOrder = 0
     OnGetImageIndex = vstShellGetImageIndex
     ObjectTypes = [otFolders]
-  end
-  object ilExtIcons: TImageList
-    Left = 328
-    Top = 224
   end
 end

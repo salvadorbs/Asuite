@@ -48,7 +48,6 @@ type
     btnExcludeDelete: TButton;
     vstTypes: TVirtualStringTree;
     vstExclude: TVirtualStringTree;
-    ilExtIcons: TImageList;
     grpGeneralSettings: TGroupBox;
     chkExtractName: TCheckBox;
     pbScan: TProgressBar;
@@ -88,7 +87,6 @@ type
     procedure FileFound(AFilePath: String);
     procedure PopulateStringList(AListView: TVirtualStringTree; AStringList: TStringList);
     procedure PopulateVSTListView(AListView: TVirtualStringTree; AStringList: TStringList; AIsExtension: Boolean);
-    function GetExtImage(AExtension: string): Integer;
     procedure AddItem(AListView: TVirtualStringTree; AText: string);
 
     procedure LoadSettings;
@@ -111,7 +109,7 @@ uses
   AppConfig.Main, Kernel.Types, {$IFDEF MSWINDOWS} ShellApi,  {$ENDIF}Kernel.Logger, Kernel.Consts,
   DataModules.Icons, NodeDataTypes.Base, VirtualTree.Methods, Kernel.Enumerations,
   Utility.FileFolder, NodeDataTypes.Files, Utility.Misc, Kernel.ResourceStrings,
-  RegExpr;
+  RegExpr, Icons.Manager;
 
 {$R *.lfm}
 
@@ -285,7 +283,7 @@ begin
   Node := AListView.AddChild(nil);
   NodeData := AListView.GetNodeData(Node);
   NodeData.Text := AText;
-  NodeData.ImageIndex := GetExtImage(AText);
+  NodeData.ImageIndex := Config.IconsManager.GetExtIconIndex(AText);
 end;
 
 procedure TfrmScanFolder.FormCreate(Sender: TObject);
@@ -296,6 +294,9 @@ begin
 
   vstShell.Images := dmImages.ilLargeIcons;
   vstShell.ImagesWidth := ICON_SIZE_SMALL;
+
+  vstTypes.Images := dmImages.ilLargeIcons;
+  vstTypes.ImagesWidth := ICON_SIZE_SMALL;
 end;
 
 procedure TfrmScanFolder.FormKeyPress(Sender: TObject; var Key: char);
@@ -310,30 +311,6 @@ end;
 procedure TfrmScanFolder.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
   CanClose := not Assigned(FThreadFindFiles);
-end;
-
-function TfrmScanFolder.GetExtImage(AExtension: string): Integer;
-{$IFDEF MSWINDOWS}
-var
-  FileInfo: TSHFILEINFOW;
-  Icon: TIcon;
-{$ENDIF}
-begin
-  {$IFDEF MSWINDOWS}
-  Result := -1;
-  Icon := TIcon.Create;
-  try
-    //Get index
-    if SHGetFileInfoW(PChar(AExtension), 0, FileInfo, SizeOf(TSHFileInfo), SHGFI_ICON or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES) <> 0 then
-    begin
-      //TODO: Use TIconsManager
-      Icon.Handle := FileInfo.hIcon;
-      Result := ilExtIcons.AddIcon(Icon);
-    end;
-  finally
-    Icon.Free;
-  end;
-  {$ENDIF}
 end;
 
 procedure TfrmScanFolder.LoadSettings;
@@ -443,11 +420,10 @@ end;
 
 procedure TfrmScanFolder.FileFound(AFilePath: String);
 var
-  sFileExt, sShortName: String;
+  sShortName: String;
   Node: PVirtualNode;
   NodeData: TvBaseNodeData;
 begin
-  sFileExt := ExtractFileExt(AFilePath);
   sShortName := ExtractFileName(AFilePath);
 
   if Assigned(FListNode) then

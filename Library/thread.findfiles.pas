@@ -60,6 +60,9 @@ type
 
 implementation
 
+uses
+  Utility.FileFolder;
+
 { TFindFiles }
 
 procedure TFindFiles.Execute;
@@ -85,7 +88,7 @@ begin
         break;
 
       sPath := foundList[I];
-      sFileExt := ExtractFileExt(sPath);
+      sFileExt := ExtractFileExtEx(sPath);
       sShortName := ExtractFileName(sPath);
 
       if (sPath <> '') and (SearchCriteriaFilename.IndexOf(sFileExt) <> -1) and (FindMatchText(FSearchExcludeFilename, sShortName) = -1) then
@@ -116,8 +119,8 @@ end;
 
 constructor TFindFiles.Create;
 begin
-  inherited Create(True);
   FreeOnTerminate := True;
+  inherited Create(True);
 
   FDirectory := '';
   FSearchCriteriaFilename := TStringList.Create;
