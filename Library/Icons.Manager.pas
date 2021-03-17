@@ -24,7 +24,7 @@ unit Icons.Manager;
 interface
 
 uses
-  SysUtils, Classes, Controls, Forms, Icons.Application, Generics.Collections,
+  SysUtils, Classes, Controls, Forms, Icons.Files, Generics.Collections,
   Kernel.Consts, LCLIntf, LCLType, Icons.Base, Icons.ExtFile;
 
 type
@@ -42,7 +42,7 @@ type
 
     procedure LoadAllIcons;
     procedure SetPathTheme(const Value: string);
-    function FindByPath(APathFile: String): TApplicationIcon;
+    function FindByPath(APathFile: String): TFileIcon;
     function FindByName(AName: String): TBaseIcon;
     function FindByExt(AExtension: String): TExtFileIcon;
   public
@@ -108,7 +108,7 @@ end;
 
 function TIconsManager.GetPathIconIndex(APathIcon: string): Integer;
 var
-  Icon: TApplicationIcon;
+  Icon: TFileIcon;
 begin
   Result := -1;
 
@@ -118,7 +118,7 @@ begin
   if Assigned(Icon) then
     Result := Icon.ImageIndex
   else begin
-    Icon := TApplicationIcon.Create(APathIcon);
+    Icon := TFileIcon.Create(APathIcon);
     try
       Result := Icon.ImageIndex;
     finally
@@ -201,7 +201,7 @@ begin
         Icon := FindByName(ExtractFileNameOnly(sPath));
 
         if not(Assigned(Icon)) then
-          AddIcon(TApplicationIcon.Create(sPath, True));
+          AddIcon(TFileIcon.Create(sPath, True));
       end;
     finally
       IconFiles.Free;
@@ -215,18 +215,18 @@ begin
   LoadAllIcons;
 end;
 
-function TIconsManager.FindByPath(APathFile: String): TApplicationIcon;
+function TIconsManager.FindByPath(APathFile: String): TFileIcon;
 var
   Item: TBaseIcon;
 begin
-  //Warning: only TApplicationIcon!
+  //Warning: only TFileIcon!
   Result := nil;
 
   for Item in FItems do
   begin
-    if (Item is TApplicationIcon) and (TApplicationIcon(Item).PathFile = APathFile) then
+    if (Item is TFileIcon) and (TFileIcon(Item).PathFile = APathFile) then
     begin
-      Result := TApplicationIcon(Item);
+      Result := TFileIcon(Item);
       break;
     end;
   end;

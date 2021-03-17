@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 }
 
-unit AppConfig.PathVars;
+unit AppConfig.PathList;
 
 {$MODE DelphiUnicode}
 
@@ -30,9 +30,9 @@ type
   TVarsList = TFastHashMap<string, string>;
   TKeyValue = TPair<string, string>;
 
-  { TPathVars }
+  { TPathList }
 
-  TPathVars = class
+  TPathList = class
   private
     FItems: TVarsList;
     FRegExp: String;
@@ -53,15 +53,15 @@ type
 
 implementation
 
-{ TPathVars }
+{ TPathList }
 
-constructor TPathVars.Create(const ARegExp: String);
+constructor TPathList.Create(const ARegExp: String);
 begin
   FItems  := TVarsList.Create;
   FRegExp := ARegExp;
 end;
 
-destructor TPathVars.Destroy;
+destructor TPathList.Destroy;
 begin
   inherited Destroy;
 
@@ -69,18 +69,18 @@ begin
   FreeAndNil(FItems);
 end;
 
-procedure TPathVars.Clear;
+procedure TPathList.Clear;
 begin
   FItems.Clear;
 end;
 
-procedure TPathVars.Add(const AKey: String; const AValue: String);
+procedure TPathList.Add(const AKey: String; const AValue: String);
 begin
   if not(FItems.ContainsValue(AKey)) then
     FItems.Add(AKey, AValue);
 end;
 
-function TPathVars.KeyToValue(const AVarKey: String): String;
+function TPathList.KeyToValue(const AVarKey: String): String;
 var
   Item: TKeyValue;
 begin
@@ -98,7 +98,7 @@ begin
   end;
 end;
 
-function TPathVars.ReplaceVar(APath: String; AVarKey: String; AVarKeyQuoted: String): String;
+function TPathList.ReplaceVar(APath: String; AVarKey: String; AVarKeyQuoted: String): String;
 var
   VarValue: String;
 begin
@@ -109,7 +109,7 @@ begin
     Result := StringReplace(APath, AVarKeyQuoted, VarValue, [rfIgnoreCase]);
 end;
 
-function TPathVars.ExpandVars(const Str: string): string;
+function TPathList.ExpandVars(const Str: string): string;
 var
   RegexObj: TRegExpr;
 begin
@@ -137,7 +137,7 @@ begin
   end;
 end;
 
-function TPathVars.DeExpandVars(const APath: string; AKey: String): string;
+function TPathList.DeExpandVars(const APath: string; AKey: String): string;
 begin
   Result := StringReplace(APath, KeyToValue(AKey), AnsiQuotedStr(LowerCase(AKey), '%'), [rfIgnoreCase, rfReplaceAll]);
 end;

@@ -62,7 +62,7 @@ var
   SingleInstance: PBoolean;
 begin
   SingleInstance := Data;
-  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
+  NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
   if (Assigned(NodeData)) and (NodeData.IsFileItem) then
   begin
     if TvFileNodeData(NodeData).RunFromCategory then
@@ -76,7 +76,7 @@ procedure TvCategoryNodeData.CallBackExecuteNodeAsAdmin(
 var
   NodeData: TvBaseNodeData;
 begin
-  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
+  NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
   if (Assigned(NodeData)) and (NodeData.IsFileItem) then
   begin
     if TvFileNodeData(NodeData).RunFromCategory then
@@ -90,7 +90,7 @@ var
   NodeData: TvBaseNodeData;
   UserData: pUserData;
 begin
-  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
+  NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
   UserData := Data;
   if (Assigned(NodeData)) and (NodeData.IsFileItem) then
   begin
@@ -108,7 +108,7 @@ begin
   Node := Self.PNode.FirstChild;
   while Assigned(Node) do
   begin
-    ChildNodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Tree);
+    ChildNodeData := TVirtualTreeMethods.GetNodeItemData(Node, Tree);
     if (Assigned(ChildNodeData)) and (ChildNodeData.IsFileItem) then
     begin
       if (TvFileNodeData(ChildNodeData).RunFromCategory) then

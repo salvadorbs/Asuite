@@ -166,6 +166,9 @@ type
     property MainTree: TVirtualStringTree read GetMainTree write FMainTree;
     property ImportTree: TVirtualStringTree read GetImportTree;
     property Paths: TConfigPaths read FPaths;
+
+    //TODO: Move all singleton and these classes in a separate class called TASuiteManager
+    //      (after delete substring "manager" from these classes)
     property ListManager: TListManager read FListManager;
     property DBManager: TDBManager read FDBManager;
     property IconsManager: TIconsManager read FIconsManager;
@@ -283,7 +286,7 @@ uses
 
 procedure TConfiguration.AfterUpdateConfig();
 begin   
-  TVirtualTreeMethods.Create.UpdateItemColor(Config.MainTree);
+  TVirtualTreeMethods.UpdateItemColor(Config.MainTree);
 end;
 
 constructor TConfiguration.Create;
@@ -447,7 +450,7 @@ begin
     if (NewValue <> 0) then
     begin
       if not(HotkeyManager.RegisterNotify(NewValue,
-        TVirtualTreeMethods.Create.HotKeyNotify, Tag)) then
+        TVirtualTreeMethods.HotKeyNotify, Tag)) then
         ShowMessageEx(msgErrRegWindowHotkey, true);
     end;
   end;
@@ -496,7 +499,7 @@ begin
 
     //Add new node
     if (CompareText(sName, 'additem') = 0) and (Assigned(FDBManager)) then
-      TVirtualTreeMethods.Create.AddNodeByPathFile(FMainTree, nil, RemoveAllQuotes(sValue), amInsertAfter);
+      TVirtualTreeMethods.AddNodeByPathFile(FMainTree, nil, RemoveAllQuotes(sValue), amInsertAfter);
   end;
 end;
 
@@ -998,11 +1001,11 @@ begin
   begin
     FTVSmallIconSize := Value;
     //Change node height and imagelist
-    TVirtualTreeMethods.Create.ChangeTreeIconSize(FMainTree, FTVSmallIconSize);
+    TVirtualTreeMethods.ChangeTreeIconSize(FMainTree, FTVSmallIconSize);
     if FMainTree.HasChildren[FMainTree.RootNode] then
     begin
       FMainTree.FullCollapse;
-      TVirtualTreeMethods.Create.ChangeAllNodeHeight(FMainTree, FMainTree.DefaultNodeHeight);
+      TVirtualTreeMethods.ChangeAllNodeHeight(FMainTree, FMainTree.DefaultNodeHeight);
     end;
   end;
 end;

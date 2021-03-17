@@ -172,8 +172,8 @@ begin
 
       Config.MainTree.BeginUpdate;
       //Add parent node named as Form's caption
-      FListNode := TVirtualTreeMethods.Create.AddChildNodeEx(Config.MainTree, nil, amInsertAfter, vtdtCategory);
-      ListNodeData := TVirtualTreeMethods.Create.GetNodeItemData(FListNode, Config.MainTree);
+      FListNode := TVirtualTreeMethods.AddChildNodeEx(Config.MainTree, nil, amInsertAfter, vtdtCategory);
+      ListNodeData := TVirtualTreeMethods.GetNodeItemData(FListNode, Config.MainTree);
       ListNodeData.Name := Self.Caption + ' - ' + vstShell.Selected.GetTextPath;
 
       FThreadFindFiles.Start;
@@ -428,8 +428,8 @@ begin
 
   if Assigned(FListNode) then
   begin
-    Node := TVirtualTreeMethods.Create.AddChildNodeEx(Config.MainTree, FListNode, amInsertAfter, vtdtFile, False);
-    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Config.MainTree);
+    Node := TVirtualTreeMethods.AddChildNodeEx(Config.MainTree, FListNode, amInsertAfter, vtdtFile, False);
+    NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Config.MainTree);
 
     //Name
     if chkExtractName.Checked then

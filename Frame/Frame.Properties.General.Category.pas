@@ -70,7 +70,7 @@ var
   NewNode         : PVirtualNode;
   NewNodeData     : PTreeDataX;
 begin
-  CurrentFileData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender));
+  CurrentFileData := TvCustomRealNodeData(TVirtualTreeMethods.GetNodeItemData(Node, Sender));
   if (CurrentFileData.IsFileItem) and
      (Node.Parent = PVirtualNode(Data)) then
   begin
@@ -114,7 +114,7 @@ procedure TfrmCatGeneralPropertyPage.SetCategoryItems(Sender: TBaseVirtualTree;
 var
   FileNodeData : TvFileNodeData;
 begin
-  FileNodeData := TvFileNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender));
+  FileNodeData := TvFileNodeData(TVirtualTreeMethods.GetNodeItemData(Node, Sender));
   FileNodeData.RunFromCategory := (Node.CheckState = csCheckedNormal);
   FileNodeData.Changed := True;
 end;

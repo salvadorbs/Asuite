@@ -159,8 +159,8 @@ begin
   chkStartup.Checked  := Config.AutorunStartup;
   chkShutdown.Checked := Config.AutorunShutdown;
   //Populate lstStartUp and lstShutdown
-  TVirtualTreeMethods.Create.PopulateVSTItemList(vstStartupItems, Config.ListManager.StartupItemList);
-  TVirtualTreeMethods.Create.PopulateVSTItemList(vstShutdownItems, Config.ListManager.ShutdownItemList);
+  TVirtualTreeMethods.PopulateVSTItemList(vstStartupItems, Config.ListManager.StartupItemList);
+  TVirtualTreeMethods.PopulateVSTItemList(vstShutdownItems, Config.ListManager.ShutdownItemList);
 
   LoadGlyphs;
 end;
@@ -197,7 +197,7 @@ end;
 
 procedure TfrmAutorunOptionsPage.mniPropertiesClick(Sender: TObject);
 begin
-  TVirtualTreeMethods.Create.ShowItemProperty(Self, GetActiveTree, GetActiveTree.FocusedNode);
+  TVirtualTreeMethods.ShowItemProperty(Self, GetActiveTree, GetActiveTree.FocusedNode);
 end;
 
 procedure TfrmAutorunOptionsPage.mniRemoveAutorunClick(Sender: TObject);
@@ -238,7 +238,7 @@ begin
   Node := ATree.GetFirst;
   while Assigned(Node) do
   begin
-    NodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node, ATree));
+    NodeData := TvCustomRealNodeData(TVirtualTreeMethods.GetNodeItemData(Node, ATree));
     if Assigned(NodeData) then
     begin
       if ATree.IsVisible[Node] then

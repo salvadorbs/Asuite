@@ -117,7 +117,7 @@ begin
     if Assigned(List) then
     begin
       for I := 0 to List.Count - 1 do
-        TVirtualTreeMethods.Create.ExecuteNode(Config.MainTree, List[I].pNode, rmNormal, True);
+        TVirtualTreeMethods.ExecuteNode(Config.MainTree, List[I].pNode, rmNormal, True);
     end;
   end;
 end;

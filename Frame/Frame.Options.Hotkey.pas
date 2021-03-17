@@ -158,7 +158,7 @@ begin
     edtHotkeyCM.Text := ShortCutToText(Config.ClassicMenuHotkey);
 
   //Populate VST with HotKeyItemList's items
-  TVirtualTreeMethods.Create.PopulateVSTItemList(vstItems, Config.ListManager.HotKeyItemList);
+  TVirtualTreeMethods.PopulateVSTItemList(vstItems, Config.ListManager.HotKeyItemList);
   vstItems.SortTree(0, VirtualTrees.sdAscending);
 
   //Enable/disable visual components
@@ -214,7 +214,7 @@ var
 begin
   if Assigned(vstItems.FocusedNode) then
   begin
-    NodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(vstItems.FocusedNode, vstItems));
+    NodeData := TvCustomRealNodeData(TVirtualTreeMethods.GetNodeItemData(vstItems.FocusedNode, vstItems));
     if Assigned(NodeData) then
     begin
       ShortCut := TfrmShortcutGrabber.Execute(Self, ShortCutToText(NodeData.Hotkey));
@@ -239,7 +239,7 @@ end;
 
 procedure TfrmHotkeyOptionsPage.mniPropertiesClick(Sender: TObject);
 begin
-  TVirtualTreeMethods.Create.ShowItemProperty(Self, vstItems, vstItems.FocusedNode, False);
+  TVirtualTreeMethods.ShowItemProperty(Self, vstItems, vstItems.FocusedNode, False);
 end;
 
 procedure TfrmHotkeyOptionsPage.mniRemoveHotkeyClick(Sender: TObject);
@@ -258,7 +258,7 @@ begin
   Node := ATree.GetFirst;
   while Assigned(Node) do
   begin
-    NodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node, ATree));
+    NodeData := TvCustomRealNodeData(TVirtualTreeMethods.GetNodeItemData(Node, ATree));
     if Assigned(NodeData) then
     begin
       NodeData.ActiveHotkey := ATree.IsVisible[Node];

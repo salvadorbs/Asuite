@@ -289,7 +289,7 @@ begin
   begin
     Assert(PNode.Parent <> Config.MainTree.RootNode, 'Parent''s item = Main tree root node (run from category mode)');
 
-    ParentNodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(PNode.Parent, Config.MainTree));
+    ParentNodeData := TvCustomRealNodeData(TVirtualTreeMethods.GetNodeItemData(PNode.Parent, Config.MainTree));
     //Override child item's FWindowState
     case ParentNodeData.WindowState of
       1: Result := SW_SHOWDEFAULT;

@@ -52,7 +52,7 @@ begin
 
   Result := inherited;
   if Config.HotKey then
-    HotkeyManager.RegisterNotify(AItem.Hotkey, TVirtualTreeMethods.Create.HotKeyNotify, AItem.ID);
+    HotkeyManager.RegisterNotify(AItem.Hotkey, TVirtualTreeMethods.HotKeyNotify, AItem.ID);
 end;
 
 procedure THotkeyItemsList.Clear;

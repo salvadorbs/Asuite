@@ -49,6 +49,7 @@ type
     chkAutoCloseProcess: TCheckBox;
   private
     { Private declarations }
+    procedure AddLanguages(AComboBox: TComboBox);
   strict protected
     function GetTitle: string; override;
     function GetImageIndex: Integer; override;
@@ -76,17 +77,49 @@ begin
   Result := Config.IconsManager.GetIconIndex('general');
 end;
 
+procedure TfrmGeneralOptionsPage.AddLanguages(AComboBox: TComboBox);
+var
+  SearchMask: String;
+  strID: String;
+  FileInfo: TSearchRec;
+  idxDot: Integer;
+  I: Integer;
+begin
+  SearchMask := Config.Paths.SuitePathLocale + LowerCase(APP_NAME) + '.*' + EXT_PO;
+
+  if FindFirstUTF8(SearchMask, faAnyFile, FileInfo) = 0 then
+  begin
+    repeat
+      I := - 1;
+      if (FileInfo.Attr and (faDirectory or faVolumeId) = 0) then
+      begin
+        if (FileInfo.Name = '.') or (FileInfo.Name = '..') or (FileInfo.Name = '') then
+          continue;
+
+        strID := ExtractFileNameWithoutExt(FileInfo.Name);
+        idxDot := pos('.', strID);
+
+        if idxDot <> 0 then
+        begin
+          strID := copy(strID, idxDot + 1, Length(strID) - 1);
+          I := AComboBox.Items.Add(strID);
+        end;
+
+        if (strID = Config.LangID) and (I <> - 1 )then
+          AComboBox.ItemIndex  := I;
+      end;
+    until
+      FindNextUTF8(FileInfo) <> 0;
+  end;
+  FindCloseUTF8(FileInfo);
+end;
+
 function TfrmGeneralOptionsPage.GetTitle: string;
 begin
   Result := msgGeneral;
 end;
 
 function TfrmGeneralOptionsPage.InternalLoadData: Boolean;
-var
-  I, idxDot: Integer;
-  FileInfo: TSearchRec;
-  strID: String;
-  SearchMask: String;
 begin
   Result := inherited;
 
@@ -105,34 +138,7 @@ begin
   //Search for all languages/xxx.po files
 
   //Search existing translations
-  SearchMask := Config.Paths.SuitePathLocale + LowerCase(APP_NAME) + '.*' + EXT_PO;
-
-  //TODO: Extract this code in a separate method
-  if FindFirstUTF8(SearchMask, faAnyFile, FileInfo) = 0 then
-  begin
-    repeat
-      I := -1;
-      if (FileInfo.Attr and (faDirectory or faVolumeId) = 0) then
-      begin
-        if (FileInfo.Name = '.') or (FileInfo.Name = '..') or (FileInfo.Name = '') then
-          continue;
-
-        strID := ExtractFileNameWithoutExt(FileInfo.Name);
-        idxDot := pos('.', strID);
-
-        if idxDot <> 0 then
-        begin
-          strID := copy(strID, idxDot + 1, Length(strID) - 1);
-          I := cxLanguage.Items.Add(strID);
-        end;
-
-        if (strID = Config.LangID) and (I <> -1 )then
-          cxLanguage.ItemIndex  := I;
-      end;
-    until
-      FindNextUTF8(FileInfo) <> 0;
-  end;
-  FindCloseUTF8(FileInfo);
+  AddLanguages(cxLanguage);
 
   if cxLanguage.ItemIndex = -1 then
     cxLanguage.ItemIndex  := 0;

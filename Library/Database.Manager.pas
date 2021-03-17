@@ -89,7 +89,7 @@ begin
       //Run actions (ex. remove node from MRU list) before delete nodes and
       //remove each selected items from sqlite database
       for I := High(ANodes) downto 0 do
-        ATree.IterateSubtree(ANodes[I], TVirtualTreeMethods.Create.BeforeDeleteNode, nil, [], False);
+        ATree.IterateSubtree(ANodes[I], TVirtualTreeMethods.BeforeDeleteNode, nil, [], False);
       //Commit database's updates
       FDatabase.Commit(1);
     except

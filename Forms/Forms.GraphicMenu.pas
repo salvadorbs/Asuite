@@ -154,7 +154,7 @@ begin
 
       //Do search
       //Change node height and imagelist
-      TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, False);
+      TVirtualTreeMethods.ChangeTreeIconSize(vstList, False);
       frmMain.DoSearchItem(vstList, edtSearch.Text, stName);
       vstList.SortTree(-1, sdAscending);
 
@@ -167,7 +167,7 @@ begin
       edtSearch.RightButton.ImageIndex := TThemeEngine.Create.SearchIcon;
 
       //Change node height and imagelist
-      TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, Config.GMSmallIconSize);
+      TVirtualTreeMethods.ChangeTreeIconSize(vstList, Config.GMSmallIconSize);
       PopulateListTree(vstList);
     end;
   finally
@@ -357,18 +357,18 @@ begin
         Key := 0;
         if Assigned(CurrentNode) then
         begin
-          NodeData := TVirtualTreeMethods.Create.GetNodeItemData(CurrentNode, vstList);
+          NodeData := TVirtualTreeMethods.GetNodeItemData(CurrentNode, vstList);
           if Assigned(NodeData) then
           begin
             case NodeData.DataType of
               vtdtCategory:
                 begin
                   if (ssCtrl in Shift) then
-                    TVirtualTreeMethods.Create.ExecuteNode(vstList, CurrentNode, rmNormal, False)
+                    TVirtualTreeMethods.ExecuteNode(vstList, CurrentNode, rmNormal, False)
                   else
                     vstList.Expanded[CurrentNode] := Not(vstList.Expanded[CurrentNode]);
                 end;
-              vtdtFile: TVirtualTreeMethods.Create.ExecuteNode(vstList, CurrentNode, rmNormal, False);
+              vtdtFile: TVirtualTreeMethods.ExecuteNode(vstList, CurrentNode, rmNormal, False);
             end;
           end;
         end;
@@ -410,7 +410,7 @@ begin
   edtSearch.Text := '';
   Self.FocusControl(edtSearch);
   //Change node height and imagelist
-  TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, Config.GMSmallIconSize);
+  TVirtualTreeMethods.ChangeTreeIconSize(vstList, Config.GMSmallIconSize);
   //Clear and populate virtualtree
   PopulateListTree(vstList);
   UpdateDriveStats;
@@ -449,12 +449,12 @@ end;
 
 procedure TfrmGraphicMenu.mniPropertyClick(Sender: TObject);
 begin
-  TVirtualTreeMethods.Create.ShowItemProperty(Self, vstList, vstList.GetFirstSelected);
+  TVirtualTreeMethods.ShowItemProperty(Self, vstList, vstList.GetFirstSelected);
 end;
 
 procedure TfrmGraphicMenu.mniRunClick(Sender: TObject);
 begin
-  TVirtualTreeMethods.Create.ExecuteSelectedNodes(vstList, TRunMode(TMenuItem(Sender).Tag), False);
+  TVirtualTreeMethods.ExecuteSelectedNodes(vstList, TRunMode(TMenuItem(Sender).Tag), False);
 end;
 
 procedure TfrmGraphicMenu.OpenRightButton(Sender: TObject);
@@ -497,7 +497,7 @@ var
 begin
   if Assigned(vstList.GetFirstSelected) then
   begin
-    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(vstList.GetFirstSelected, vstList);
+    NodeData := TVirtualTreeMethods.GetNodeItemData(vstList.GetFirstSelected, vstList);
     mniRun.Enabled := not(NodeData.IsSeparatorItem);
     mniRunAs.Enabled         := not(NodeData.IsSeparatorItem) and (NodeData.IsFileItem);
     mniRunAsAdmin.Enabled    := not(NodeData.IsSeparatorItem) and (NodeData.IsFileItem);
@@ -511,11 +511,11 @@ begin
   ATree.BeginUpdate;
   try
     //Populate and get icons from first level
-    Config.MainTree.IterateSubtree(nil, TVirtualTreeMethods.Create.AddNodeInTreeFromMainTree, @ATree);
+    Config.MainTree.IterateSubtree(nil, TVirtualTreeMethods.AddNodeInTreeFromMainTree, @ATree);
   finally
     ATree.EndUpdate;
     //Check nodes path
-    TVirtualTreeMethods.Create.CheckVisibleNodePathExe(ATree);
+    TVirtualTreeMethods.CheckVisibleNodePathExe(ATree);
   end;
 end;
 
@@ -530,7 +530,7 @@ begin
   ATree.BeginUpdate;
   try
     //Change node height and imagelist
-    TVirtualTreeMethods.Create.ChangeTreeIconSize(ATree, False);
+    TVirtualTreeMethods.ChangeTreeIconSize(ATree, False);
     //Set limit based on MaxItems or AList.Count
     if MaxItems < AList.Count then
       ItemCount := MaxItems
@@ -556,7 +556,7 @@ begin
     ATree.EndUpdate;
     ATree.ValidateNode(ATree.RootNode, True);
     //Check nodes path
-    TVirtualTreeMethods.Create.CheckVisibleNodePathExe(ATree);
+    TVirtualTreeMethods.CheckVisibleNodePathExe(ATree);
   end;
 end;
 
@@ -573,7 +573,7 @@ end;
 procedure TfrmGraphicMenu.sknbtnListClick(Sender: TObject);
 begin
   //Change node height and imagelist
-  TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, Config.GMSmallIconSize);
+  TVirtualTreeMethods.ChangeTreeIconSize(vstList, Config.GMSmallIconSize);
   PopulateListTree(vstList);
   edtSearch.Text := '';
 end;
@@ -603,7 +603,7 @@ end;
 procedure TfrmGraphicMenu.tmrCheckItemsTimer(Sender: TObject);
 begin
   if Config.ASuiteState = lsNormal then
-    TVirtualTreeMethods.Create.CheckVisibleNodePathExe(vstList);
+    TVirtualTreeMethods.CheckVisibleNodePathExe(vstList);
 end;
 
 procedure TfrmGraphicMenu.tmrFaderTimer(Sender: TObject);
