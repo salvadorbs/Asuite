@@ -36,6 +36,8 @@ type
     FCacheIconCRC: Integer;
     FLock: SyncObjs.TCriticalSection;
     FStatic: Boolean;
+    FImageIndex: Integer;
+    FTempItem: Boolean;
 
     {$IFDEF MSWINDOWS}
     function BGRABitmapCreateFromHICON(AHIcon: HICON): TBGRABitmap;
@@ -53,8 +55,6 @@ type
     function GetIconFromImgList(AImageList: TImageList; AImageIndex: Integer;
       ALargeIcon: Boolean): TBGRABitmap;
   protected
-    FImageIndex: Integer;
-
     function InternalLoadIcon: Integer; virtual;
     function GetName: string; virtual; abstract;
     function InternalGetImageIndex(const APathFile: string): Integer;
@@ -72,6 +72,7 @@ type
     property Static: Boolean read FStatic write FStatic;
     property CacheIconCRC: Integer read FCacheIconCRC write SetCacheIconCRC;
     property PathCacheIcon: string read GetPathCacheIcon;
+    property TempItem: Boolean read FTempItem write FTempItem;
   end;
 
 implementation
@@ -88,6 +89,7 @@ begin
   FLock := SyncObjs.TCriticalSection.Create;
   FStatic := AStatic;
   FCacheIconCRC := 0;
+  FTempItem := True;
 end;
 
 destructor TBaseIcon.Destroy;
@@ -112,16 +114,21 @@ function TBaseIcon.InternalLoadIcon: Integer;
 var
   sTempPath, sPathCacheIcon, sDefaultPath: string;
   intHash: Integer;
+  isExeFile: Boolean;
 begin
   Result := -1;
+  intHash := 0;
 
   sDefaultPath := GetDefaultPathIcon;
-  intHash := GetFileXXHash32(sDefaultPath);
 
   //Get cache icon path
   if (Config.Cache) and (Config.ASuiteState <> lsImporting) then
   begin
-    //Check CRC, if it fails reset cache icon
+    isExeFile := (ExtractFileExtEx(sDefaultPath) = EXT_EXE);
+    if isExeFile then
+      intHash := GetFileXXHash32(sDefaultPath);
+
+    //Check CRC for only .exe, if it fails reset cache icon
     sPathCacheIcon := PathCacheIcon;
     if (FileExists(sPathCacheIcon)) and (CacheIconCRC = intHash) then
       sTempPath := sPathCacheIcon
@@ -145,10 +152,19 @@ begin
 end;
 
 function TBaseIcon.GetPathCacheIcon: string;
+var
+  sExt, sNameFile: string;
 begin
   Result := '';
-  if (Self.Name <> '') then
-    Result := Config.Paths.SuitePathCache + Self.Name + EXT_ICO;
+
+  sExt := ExtractFileExtEx(GetDefaultPathIcon);
+  if ((sExt = EXT_EXE) or (sExt = EXT_ICO) or (sExt = '')) then
+    sNameFile := Self.Name
+  else
+    sNameFile := Copy(sExt, 2, Length(sExt) - 1);
+
+  if (sNameFile <> '') then
+    Result := Config.Paths.SuitePathCache + sNameFile + EXT_ICO;
 end;
 
 procedure TBaseIcon.SetCacheIconCRC(AValue: Integer);
@@ -165,8 +181,8 @@ var
 begin
   if (Config.Cache) and (AImageIndex <> -1) then
   begin
-    //TODO: Don't save temp icon. only node icon!
-    if (Self.Name <> '') and (LowerCase(ExtractFileExt(APath)) = EXT_EXE) then
+    if (Self.Name <> '') and (ExtractFileExtEx(APath) <> EXT_ICO) and
+       ((not FTempItem) or (FTempItem and (ExtractFileExtEx(APath) <> EXT_EXE))) then
     begin
       Icon := TBGRAIconCursor.Create(ifIco);
       try
@@ -288,7 +304,7 @@ function TBaseIcon.GetIconFromFile(const APathFile: string;
 begin
   Result := nil;
 
-  if ExtractFileExt(APathFile) = EXT_ICO then
+  if ExtractFileExtEx(APathFile) = EXT_ICO then
     Result := ExtractIconFromFile(APathFile, AWantLargeIcon)
   else
     Result := ExtractIconFromSysImageList(APathFile, AWantLargeIcon);
@@ -303,15 +319,11 @@ var
 begin
   Result := -1;
 
-  //TODO: Find icon cache
-
   //Get icon and insert it in ASuite ImageList
   bmpLargeIcon := GetIconFromFile(APathFile, True);
   bmpSmallIcon := GetIconFromFile(APathFile, False);
   try
     Result := dmImages.AddMultipleResolutions([bmpSmallIcon.Bitmap, bmpLargeIcon.Bitmap]);
-
-    //TODO: Save icon cache
   finally
     FreeAndNil(bmpLargeIcon);
     FreeAndNil(bmpSmallIcon);
@@ -328,7 +340,6 @@ begin
   FImageIndex := -1;
 
   //Delete cache icon and reset CRC
-  //TODO: Only for .exe and node files
   ResetCacheIcon;
 end;
 

@@ -49,7 +49,8 @@ implementation
 
 uses
   Utility.Conversions, Forms.Main, AppConfig.Main, Utility.Misc, Kernel.Logger,
-  VirtualTree.Methods, LazFileUtils{$IFDEF MSWINDOWS} , ShellApi {$ENDIF}, LazUTF8;
+  VirtualTree.Methods, LazFileUtils{$IFDEF MSWINDOWS} , ShellApi {$ENDIF}, LazUTF8,
+  Utility.FileFolder;
 
 function HasDriveLetter(const Path: String): Boolean;
 var P: PChar;
@@ -115,7 +116,7 @@ var
 {$ENDIF}
 begin
   {$IFDEF MSWINDOWS}
-  lowerStrPath := LowerCase(ExtractFileExt(APathFile));
+  lowerStrPath := ExtractFileExtEx(APathFile);
   Result := (lowerStrPath = EXT_EXE) or (lowerStrPath = EXT_BAT) or (lowerStrPath = EXT_CMD);
   {$ELSE}
   Result := FileIsExecutable(APathFile);

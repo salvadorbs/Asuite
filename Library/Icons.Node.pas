@@ -63,6 +63,7 @@ begin
   inherited Create;
   FNodeData     := ANodeData;
   FCacheIconCRC := 0;
+  Self.TempItem := False;
 end;
 
 function TNodeIcon.GetName: string;

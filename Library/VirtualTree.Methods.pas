@@ -193,7 +193,7 @@ begin
     sName := ExtractFileDrive(APathFile);
   NodeData.Name := sName;
 
-  if LowerCase(ExtractFileExt(APathFile)) = EXT_LNK then
+  if ExtractFileExtEx(APathFile) = EXT_LNK then
   begin
     //Shortcut
     NodeData.PathFile   := Config.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfPathFile));
@@ -203,7 +203,7 @@ begin
     {$ENDIF}
   end
   else begin
-    if LowerCase(ExtractFileExt(APathFile)) = EXT_URL then
+    if ExtractFileExtEx(APathFile) = EXT_URL then
     begin
       //Shortcut
       NodeData.PathFile   := Config.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfPathFile));

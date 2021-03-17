@@ -37,6 +37,7 @@ type
   protected
     function GetName: string; override;
     function LoadIcon: Integer; override;
+    function GetDefaultPathIcon: string; override;
   public
     constructor Create(APathFile: string; AStatic: Boolean = False);
 
@@ -64,8 +65,14 @@ end;
 function TApplicationIcon.LoadIcon: Integer;
 begin
   Result := -1;
+
   if FileExists(FPathFile) then
-    Result := InternalGetImageIndex(FPathFile);
+    Result := inherited;
+end;
+
+function TApplicationIcon.GetDefaultPathIcon: string;
+begin
+  Result := FPathFile;
 end;
 
 end.
