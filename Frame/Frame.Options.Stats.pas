@@ -112,7 +112,7 @@ begin
   //Launcher
   ListStats.SwCount  := 0;
   ListStats.CatCount := 0;
-  Config.MainTree.IterateSubtree(nil, TVirtualTreeMethods.Create.UpdateListItemCount, @ListStats);
+  Config.MainTree.IterateSubtree(nil, TVirtualTreeMethods.UpdateListItemCount, @ListStats);
   lbSoftware.RightCaption := IntToStr(ListStats.SwCount);
   lbCat.RightCaption      := IntToStr(ListStats.CatCount);
   lbTotal.RightCaption    := IntToStr(ListStats.SwCount + ListStats.CatCount);

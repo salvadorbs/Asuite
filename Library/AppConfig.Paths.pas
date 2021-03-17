@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Graphics, Forms, Controls, Classes, LazFileUtils, Dialogs,
-  Generics.Defaults, Generics.Collections, LazUTF8, AppConfig.PathVars;
+  Generics.Defaults, Generics.Collections, LazUTF8, AppConfig.PathList;
 
 type
   { TConfigPaths }
@@ -39,8 +39,8 @@ type
     FSuitePathSettings: String;
     FSuitePathWorking    : String;
 
-    FEnvironmentVars : TPathVars;
-    FASuiteVars      : TPathVars;
+    FEnvironmentVars : TPathList;
+    FASuiteVars      : TPathList;
 
     function DeQuotedStr(AVar: AnsiString): AnsiString;
     function GetSuitePathBackup: String;
@@ -74,8 +74,8 @@ type
     property SuitePathMenuThemes: String read GetSuitePathMenuThemes;
     property SuitePathCurrentTheme: String read FSuitePathCurrentTheme write SetSuitePathCurrentTheme;
 
-    property EnvironmentVars: TPathVars read FEnvironmentVars;
-    property ASuiteVars: TPathVars read FASuiteVars;
+    property EnvironmentVars: TPathList read FEnvironmentVars;
+    property ASuiteVars: TPathList read FASuiteVars;
   end;
 
 implementation
@@ -230,11 +230,11 @@ begin
 
   //Path variables
   {$IFDEF MSWINDOWS}
-  FEnvironmentVars := TPathVars.Create('\%([^%]+)\%');
+  FEnvironmentVars := TPathList.Create('\%([^%]+)\%');
   {$ELSE}
-  FEnvironmentVars := TPathVars.Create('\$\{([^}]+)\}');
+  FEnvironmentVars := TPathList.Create('\$\{([^}]+)\}');
   {$ENDIF}
-  FASuiteVars := TPathVars.Create('\%([^%]+)\%');
+  FASuiteVars := TPathList.Create('\%([^%]+)\%');
 
   UpdatePathVariables;
 end;

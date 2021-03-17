@@ -126,7 +126,7 @@ begin
   finally
     ShowMessageEx(msgOperationCompleted);
     //Save list
-    TVirtualTreeMethods.Create.RefreshList(nil);
+    TVirtualTreeMethods.RefreshList(nil);
   end;
 end;
 
@@ -150,7 +150,7 @@ procedure TfrmAdvancedOptionsPage.ClearCache(Sender: TBaseVirtualTree;
 var
   CurrentNodeData : TvCustomRealNodeData;
 begin
-  CurrentNodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender));
+  CurrentNodeData := TvCustomRealNodeData(TVirtualTreeMethods.GetNodeItemData(Node, Sender));
   if not(CurrentNodeData.IsSeparatorItem) then
     CurrentNodeData.Icon.ResetIcon;
   CurrentNodeData.Changed := True;
@@ -161,7 +161,7 @@ procedure TfrmAdvancedOptionsPage.ClearMFU(Sender: TBaseVirtualTree;
 var
   NodeData : TvFileNodeData;
 begin
-  NodeData := TvFileNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender));
+  NodeData := TvFileNodeData(TVirtualTreeMethods.GetNodeItemData(Node, Sender));
   NodeData.ClickCount := 0;
   NodeData.Changed := True;
 end;
@@ -171,7 +171,7 @@ procedure TfrmAdvancedOptionsPage.ClearMRU(Sender: TBaseVirtualTree;
 var
   NodeData : TvFileNodeData;
 begin
-  NodeData := TvFileNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender));
+  NodeData := TvFileNodeData(TVirtualTreeMethods.GetNodeItemData(Node, Sender));
   NodeData.LastAccess := -1;
   NodeData.Changed := True;
 end;

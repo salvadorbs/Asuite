@@ -139,59 +139,59 @@ end;
 class procedure TSQLtbl_list.LoadItemsByParentID(Tree: TBaseVirtualTree; ADBManager: TDBManager;
   ID: Integer; ParentNode: PVirtualNode; IsImport: Boolean);
 var
-  SQLFilesData : TSQLtbl_list; //TODO: Change name to SQLItemsData
+  SQLItemsData : TSQLtbl_list;
   nType    : TvTreeDataType;
   vData    : TvBaseNodeData;
   Node     : PVirtualNode;
 begin
   //Get files from DBTable and order them by parent, position
-  SQLFilesData := TSQLtbl_list.CreateAndFillPrepare(ADBManager.Database, 'parent=? ORDER BY parent, position',[ID]);
+  SQLItemsData := TSQLtbl_list.CreateAndFillPrepare(ADBManager.Database, 'parent=? ORDER BY parent, position',[ID]);
   try
     //Get files and its properties
-    while SQLFilesData.FillOne do
+    while SQLItemsData.FillOne do
     begin
-      nType := TvTreeDataType(SQLFilesData.itemtype);
-      Node  := TVirtualTreeMethods.Create.AddChildNodeEx(Tree, ParentNode, amInsertAfter, nType, False);
-      vData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Tree);
+      nType := TvTreeDataType(SQLItemsData.itemtype);
+      Node  := TVirtualTreeMethods.AddChildNodeEx(Tree, ParentNode, amInsertAfter, nType, False);
+      vData := TVirtualTreeMethods.GetNodeItemData(Node, Tree);
       if IsImport then
         Tree.CheckType[Node] := ctTriStateCheckBox;
       // generic fields
-      vData.Name          := UTF8DecodeToUnicodeString(SQLFilesData.title);
-      vData.id            := SQLFilesData.ID;
+      vData.Name          := UTF8DecodeToUnicodeString(SQLItemsData.title);
+      vData.id            := SQLItemsData.ID;
       vData.ParentID      := id;
       vData.Position      := Node.Index;
-      vData.UnixAddDate   := SQLFilesData.dateAdded;
-      vData.UnixEditDate  := SQLFilesData.lastModified;
-      vData.HideFromMenu  := SQLFilesData.hide_from_menu;
+      vData.UnixAddDate   := SQLItemsData.dateAdded;
+      vData.UnixEditDate  := SQLItemsData.lastModified;
+      vData.HideFromMenu  := SQLItemsData.hide_from_menu;
       if (nType <> vtdtSeparator) then
       begin
         with TvCustomRealNodeData(vData) do
         begin
-          PathIcon    := UTF8DecodeToUnicodeString(SQLFilesData.icon_path);
-          Icon.CacheIconCRC := SQLFilesData.cache_icon_crc;
-          AutorunPos  := SQLFilesData.autorun_position;
-          Autorun     := TAutorunType(SQLFilesData.autorun);
-          SchMode     := TSchedulerMode(SQLFilesData.scheduler_mode);
-          SchDateTime := SQLFilesData.scheduler_datetime;
-          Hotkey      := SQLFilesData.hotkey;
-          ActiveHotkey := SQLFilesData.activehotkey;
-          WindowState := SQLFilesData.window_state;
-          ActionOnExe := TActionOnExecute(SQLFilesData.onlaunch);
+          PathIcon    := UTF8DecodeToUnicodeString(SQLItemsData.icon_path);
+          Icon.CacheIconCRC := SQLItemsData.cache_icon_crc;
+          AutorunPos  := SQLItemsData.autorun_position;
+          Autorun     := TAutorunType(SQLItemsData.autorun);
+          SchMode     := TSchedulerMode(SQLItemsData.scheduler_mode);
+          SchDateTime := SQLItemsData.scheduler_datetime;
+          Hotkey      := SQLItemsData.hotkey;
+          ActiveHotkey := SQLItemsData.activehotkey;
+          WindowState := SQLItemsData.window_state;
+          ActionOnExe := TActionOnExecute(SQLItemsData.onlaunch);
         end;
         if (nType = vtdtFile) then
         begin
           with TvFileNodeData(vData) do
           begin
-            PathFile         := UTF8DecodeToUnicodeString(SQLFilesData.path);
-            Parameters       := UTF8DecodeToUnicodeString(SQLFilesData.parameters);
-            WorkingDir       := UTF8DecodeToUnicodeString(SQLFilesData.work_path);
-            ShortcutDesktop  := SQLFilesData.dsk_shortcut;
-            NoMRU            := SQLFilesData.no_mru;
-            NoMFU            := SQLFilesData.no_mfu;
-            LastAccess       := SQLFilesData.lastAccess;
-            ClickCount       := SQLFilesData.clicks;
-            RunFromCategory  := SQLFilesData.run_from_category;
-            EnvironmentVars.Text := UTF8DecodeToUnicodeString(SQLFilesData.environment_vars);
+            PathFile         := UTF8DecodeToUnicodeString(SQLItemsData.path);
+            Parameters       := UTF8DecodeToUnicodeString(SQLItemsData.parameters);
+            WorkingDir       := UTF8DecodeToUnicodeString(SQLItemsData.work_path);
+            ShortcutDesktop  := SQLItemsData.dsk_shortcut;
+            NoMRU            := SQLItemsData.no_mru;
+            NoMFU            := SQLItemsData.no_mfu;
+            LastAccess       := SQLItemsData.lastAccess;
+            ClickCount       := SQLItemsData.clicks;
+            RunFromCategory  := SQLItemsData.run_from_category;
+            EnvironmentVars.Text := UTF8DecodeToUnicodeString(SQLItemsData.environment_vars);
           end;
         end;
         if (nType = vtdtCategory) then
@@ -199,7 +199,7 @@ begin
       end;
     end;
   finally
-    SQLFilesData.Free;
+    SQLItemsData.Free;
   end;
 end;
 
@@ -212,7 +212,7 @@ begin
   Node  := ANode;
   while (Node <> nil) do
   begin
-    vData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Tree);
+    vData := TVirtualTreeMethods.GetNodeItemData(Node, Tree);
     try
       //Insert or update record
       if (vData.ID < 0) then

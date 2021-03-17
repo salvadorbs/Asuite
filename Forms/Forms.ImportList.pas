@@ -127,7 +127,7 @@ begin
         ShowMessageFmtEx(msgItemsImported, [GetNumberNodeImp(vstListImp)]);
         TASuiteLogger.Info(msgItemsImported, [GetNumberNodeImp(vstListImp)]);
       end;
-      TVirtualTreeMethods.Create.GetAllIcons(Config.MainTree, nil);
+      TVirtualTreeMethods.GetAllIcons(Config.MainTree, nil);
     except
       on E : Exception do
       begin
@@ -180,7 +180,7 @@ begin
   try
     PopulateTree(vstListImp, edtPathList.Text);
   finally
-    TVirtualTreeMethods.Create.GetAllIcons(vstListImp, nil);
+    TVirtualTreeMethods.GetAllIcons(vstListImp, nil);
   end;
 end;
 
@@ -203,7 +203,7 @@ var
   NumberNode : Integer;
 begin
   NumberNode := 0;
-  Sender.IterateSubtree(nil, TVirtualTreeMethods.Create.IncNumberNode, @NumberNode, [], True);
+  Sender.IterateSubtree(nil, TVirtualTreeMethods.IncNumberNode, @NumberNode, [], True);
   Result := NumberNode;
 end;
 
@@ -268,13 +268,13 @@ var
     NodeData, NodeDataImp : TvBaseNodeData;
   begin
     if (tnImp = nil) then Exit;
-    NodeDataImp := TVirtualTreeMethods.Create.GetNodeItemData(tnImp, TreeImp);
+    NodeDataImp := TVirtualTreeMethods.GetNodeItemData(tnImp, TreeImp);
     //Import checked item in main list
     if (tnImp.CheckState = csCheckedNormal) or (tnImp.CheckState = csMixedNormal) then
     begin
       //Create new node in vstList
-      tn             := TVirtualTreeMethods.Create.AddChildNodeEx(Tree, tn, amInsertAfter, NodeDataImp.DataType, False);
-      NodeData       := TVirtualTreeMethods.Create.GetNodeItemData(tn, Tree);
+      tn             := TVirtualTreeMethods.AddChildNodeEx(Tree, tn, amInsertAfter, NodeDataImp.DataType, False);
+      NodeData       := TVirtualTreeMethods.GetNodeItemData(tn, Tree);
       //Copy from NodeDataImp
       NodeData.Copy(NodeDataImp);
       //Set some properties

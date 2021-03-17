@@ -29,65 +29,64 @@ uses
   SynLog, Forms.UILogin, Hotkeys.ShortcutEx;
 
 type
-  //TODO: Transform in a normal class with class methods
 
   { TVirtualTreeMethods }
 
-  TVirtualTreeMethods = class(TSingleton)
+  TVirtualTreeMethods = class
   private
   public
     //Add child methods
-    function AddChildNodeEx(const ASender: TBaseVirtualTree; AParentNode: PVirtualNode;
+    class function AddChildNodeEx(const ASender: TBaseVirtualTree; AParentNode: PVirtualNode;
                             AAttachMode: TVTNodeAttachMode; AType: TvTreeDataType;
                             ADoExpand: Boolean = True): PVirtualNode;
-    function AddChildNodeByGUI(const ASender: TBaseVirtualTree; AParentNode: PVirtualNode;
+    class function AddChildNodeByGUI(const ASender: TBaseVirtualTree; AParentNode: PVirtualNode;
                                 AType: TvTreeDataType): TvBaseNodeData;
-    procedure AddNodeByPathFile(const ASender: TBaseVirtualTree; AParentNode: PVirtualNode;
+    class procedure AddNodeByPathFile(const ASender: TBaseVirtualTree; AParentNode: PVirtualNode;
                                 const APathFile: string; AAttachMode: TVTNodeAttachMode);
-    function AddNodeByText(const ASender: TBaseVirtualTree; AParentNode: PVirtualNode;
+    class function AddNodeByText(const ASender: TBaseVirtualTree; AParentNode: PVirtualNode;
                            const AText: string; AAttachMode: TVTNodeAttachMode): Boolean;
 
     //Get Data from Virtual TreeView
-    function GetNodeDataEx(const ANode: PVirtualNode; const ATree: TBaseVirtualTree): PBaseData;
-    function GetNodeItemData(const ANode: PVirtualNode; const ATree: TBaseVirtualTree): TvBaseNodeData;
-    function GetListNodeFromSubTree(const ANodeX: PVirtualNode;const ATree: TBaseVirtualTree): PVirtualNode;
+    class function GetNodeDataEx(const ANode: PVirtualNode; const ATree: TBaseVirtualTree): PBaseData;
+    class function GetNodeItemData(const ANode: PVirtualNode; const ATree: TBaseVirtualTree): TvBaseNodeData;
+    class function GetListNodeFromSubTree(const ANodeX: PVirtualNode;const ATree: TBaseVirtualTree): PVirtualNode;
 
     //Visual
-    procedure GetAllIcons(const ASender: TBaseVirtualTree; AParentNode : PVirtualNode);
-    procedure ChangeAllNodeHeight(const ASender: TBaseVirtualTree; const ANewNodeHeight: Integer);
-    procedure ChangeTreeIconSize(const ASender: TVirtualStringTree; const ASmallIcon: Boolean);
-    procedure CheckVisibleNodePathExe(const ASender: TBaseVirtualTree);
-    procedure UpdateItemColor(const ASender: TBaseVirtualTree);
+    class procedure GetAllIcons(const ASender: TBaseVirtualTree; AParentNode : PVirtualNode);
+    class procedure ChangeAllNodeHeight(const ASender: TBaseVirtualTree; const ANewNodeHeight: Integer);
+    class procedure ChangeTreeIconSize(const ASender: TVirtualStringTree; const ASmallIcon: Boolean);
+    class procedure CheckVisibleNodePathExe(const ASender: TBaseVirtualTree);
+    class procedure UpdateItemColor(const ASender: TBaseVirtualTree);
 
     //Iterate methods
-    procedure BeforeDeleteNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
+    class procedure BeforeDeleteNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
                                Data: Pointer; var Abort: Boolean);
-    procedure ActionsOnShutdown(Sender: TBaseVirtualTree; Node: PVirtualNode;
+    class procedure ActionsOnShutdown(Sender: TBaseVirtualTree; Node: PVirtualNode;
                                 Data: Pointer; var Abort: Boolean);
-    procedure AddNodeInTreeFromMainTree(Sender: TBaseVirtualTree; Node: PVirtualNode;
+    class procedure AddNodeInTreeFromMainTree(Sender: TBaseVirtualTree; Node: PVirtualNode;
                                         Data: Pointer; var Abort: Boolean);
-    procedure FindNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
+    class procedure FindNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
                        Data: Pointer; var Abort: Boolean);
-    procedure FindHotkey(Sender: TBaseVirtualTree; Node: PVirtualNode;
+    class procedure FindHotkey(Sender: TBaseVirtualTree; Node: PVirtualNode;
                        Data: Pointer; var Abort: Boolean);
-    procedure IncNumberNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
+    class procedure IncNumberNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
                             Data: Pointer; var Abort: Boolean);
-    procedure UpdateListItemCount(Sender: TBaseVirtualTree; Node: PVirtualNode;
+    class procedure UpdateListItemCount(Sender: TBaseVirtualTree; Node: PVirtualNode;
                                   Data: Pointer; var Abort: Boolean);
-    procedure UpdateNodeHeight(Sender: TBaseVirtualTree; Node: PVirtualNode;
+    class procedure UpdateNodeHeight(Sender: TBaseVirtualTree; Node: PVirtualNode;
                                Data: Pointer; var Abort: Boolean);
 
     //Misc                              
-    procedure HotKeyNotify(Sender: TObject; ShortcutEx: TShortcutEx); //TODO: Move in proper class
-    procedure ExecuteSelectedNodes(ASender: TBaseVirtualTree; ARunMode: TRunMode;
+    class procedure HotKeyNotify(Sender: TObject; ShortcutEx: TShortcutEx); //TODO: Move in proper class
+    class procedure ExecuteSelectedNodes(ASender: TBaseVirtualTree; ARunMode: TRunMode;
                                    ACheckSingleInstance: Boolean);
-    procedure ExecuteNode(ASender: TBaseVirtualTree; ANode: PVirtualNode; ARunMode: TRunMode;
+    class procedure ExecuteNode(ASender: TBaseVirtualTree; ANode: PVirtualNode; ARunMode: TRunMode;
                           ACheckSingleInstance: Boolean);
-    function CreateNodeData(AType: TvTreeDataType): TvBaseNodeData;
-    function ShowItemProperty(const AOwner: TComponent; const ATreeView: TBaseVirtualTree;
+    class function CreateNodeData(AType: TvTreeDataType): TvBaseNodeData;
+    class function ShowItemProperty(const AOwner: TComponent; const ATreeView: TBaseVirtualTree;
                               const ANode: PVirtualNode; ANewNode: Boolean = False): Integer;
-    procedure RefreshList(const ATree: TBaseVirtualTree);
-    procedure PopulateVSTItemList(const ATree: TBaseVirtualTree; const ABaseItemsList: TBaseItemsList);
+    class procedure RefreshList(const ATree: TBaseVirtualTree);
+    class procedure PopulateVSTItemList(const ATree: TBaseVirtualTree; const ABaseItemsList: TBaseItemsList);
   end;
 
 implementation
@@ -101,8 +100,9 @@ uses
 
 { TVirtualTreeMethods }
 
-function TVirtualTreeMethods.AddChildNodeByGUI(const ASender: TBaseVirtualTree;
-  AParentNode: PVirtualNode; AType: TvTreeDataType): TvBaseNodeData;
+class function TVirtualTreeMethods.AddChildNodeByGUI(
+  const ASender: TBaseVirtualTree; AParentNode: PVirtualNode;
+  AType: TvTreeDataType): TvBaseNodeData;
 var
   ChildNode : PVirtualNode;
   NodeData  : TvBaseNodeData;
@@ -145,9 +145,10 @@ begin
   end;
 end;
 
-function TVirtualTreeMethods.AddChildNodeEx(const ASender: TBaseVirtualTree;
-  AParentNode: PVirtualNode; AAttachMode: TVTNodeAttachMode;
-  AType: TvTreeDataType; ADoExpand: Boolean): PVirtualNode;
+class function TVirtualTreeMethods.AddChildNodeEx(
+  const ASender: TBaseVirtualTree; AParentNode: PVirtualNode;
+  AAttachMode: TVTNodeAttachMode; AType: TvTreeDataType; ADoExpand: Boolean
+  ): PVirtualNode;
 var
   ParentData, NodeData: TvBaseNodeData;
 begin
@@ -175,9 +176,9 @@ begin
   end;
 end;
 
-procedure TVirtualTreeMethods.AddNodeByPathFile(const ASender: TBaseVirtualTree;
-  AParentNode: PVirtualNode; const APathFile: string;
-  AAttachMode: TVTNodeAttachMode);
+class procedure TVirtualTreeMethods.AddNodeByPathFile(
+  const ASender: TBaseVirtualTree; AParentNode: PVirtualNode;
+  const APathFile: string; AAttachMode: TVTNodeAttachMode);
 var
   NodeData: TvFileNodeData;
   Node: PVirtualNode;
@@ -221,9 +222,9 @@ begin
     NodeData.PathIcon := CONST_PATH_FOLDERICON;
 end;
 
-function TVirtualTreeMethods.AddNodeByText(const ASender: TBaseVirtualTree;
-  AParentNode: PVirtualNode; const AText: string;
-  AAttachMode: TVTNodeAttachMode): Boolean;
+class function TVirtualTreeMethods.AddNodeByText(
+  const ASender: TBaseVirtualTree; AParentNode: PVirtualNode;
+  const AText: string; AAttachMode: TVTNodeAttachMode): Boolean;
 var
   Node     : PVirtualNode;
   NodeData : TvFileNodeData;
@@ -241,13 +242,13 @@ begin
   end;
 end;
 
-procedure TVirtualTreeMethods.ChangeAllNodeHeight(
+class procedure TVirtualTreeMethods.ChangeAllNodeHeight(
   const ASender: TBaseVirtualTree; const ANewNodeHeight: Integer);
 begin
   ASender.IterateSubtree(nil, UpdateNodeHeight, @ANewNodeHeight);
 end;
 
-procedure TVirtualTreeMethods.ChangeTreeIconSize(
+class procedure TVirtualTreeMethods.ChangeTreeIconSize(
   const ASender: TVirtualStringTree; const ASmallIcon: Boolean);
 begin
   //Change default node height and imagelist based of IconSize
@@ -263,7 +264,7 @@ begin
   ASender.ScrollBarOptions.VerticalIncrement := ASender.DefaultNodeHeight;
 end;
 
-procedure TVirtualTreeMethods.CheckVisibleNodePathExe(
+class procedure TVirtualTreeMethods.CheckVisibleNodePathExe(
   const ASender: TBaseVirtualTree);
 var
   Node: PVirtualNode;
@@ -284,8 +285,8 @@ begin
   end;
 end;
 
-function TVirtualTreeMethods.CreateNodeData(
-  AType: TvTreeDataType): TvBaseNodeData;
+class function TVirtualTreeMethods.CreateNodeData(AType: TvTreeDataType
+  ): TvBaseNodeData;
 begin
   case AType of
     vtdtCategory  : Result := TvCategoryNodeData.Create;
@@ -297,8 +298,8 @@ begin
   end;
 end;
 
-procedure TVirtualTreeMethods.ExecuteNode(ASender: TBaseVirtualTree; ANode: PVirtualNode;
-  ARunMode: TRunMode; ACheckSingleInstance: Boolean);
+class procedure TVirtualTreeMethods.ExecuteNode(ASender: TBaseVirtualTree;
+  ANode: PVirtualNode; ARunMode: TRunMode; ACheckSingleInstance: Boolean);
 var
   NodeData: TvCustomRealNodeData;
   UserData: TUserData;
@@ -331,8 +332,8 @@ begin
   end;
 end;
 
-procedure TVirtualTreeMethods.ExecuteSelectedNodes(ASender: TBaseVirtualTree; ARunMode: TRunMode;
-  ACheckSingleInstance: Boolean);
+class procedure TVirtualTreeMethods.ExecuteSelectedNodes(
+  ASender: TBaseVirtualTree; ARunMode: TRunMode; ACheckSingleInstance: Boolean);
 var
   Nodes: TNodeArray;
   I: Integer;
@@ -345,7 +346,8 @@ begin
   RefreshList(ASender);
 end;
 
-procedure TVirtualTreeMethods.GetAllIcons(const ASender: TBaseVirtualTree; AParentNode : PVirtualNode);
+class procedure TVirtualTreeMethods.GetAllIcons(
+  const ASender: TBaseVirtualTree; AParentNode: PVirtualNode);
 var
   IconThread: TTreeIconsThread;
 begin
@@ -356,8 +358,8 @@ begin
   end;
 end;
 
-function TVirtualTreeMethods.GetListNodeFromSubTree(const ANodeX: PVirtualNode;
-  const ATree: TBaseVirtualTree): PVirtualNode;
+class function TVirtualTreeMethods.GetListNodeFromSubTree(
+  const ANodeX: PVirtualNode; const ATree: TBaseVirtualTree): PVirtualNode;
 var
   NodeDataX : PTreeDataX;
 begin
@@ -367,7 +369,7 @@ begin
     Result := NodeDataX.pNodeList;
 end;
 
-function TVirtualTreeMethods.GetNodeDataEx(const ANode: PVirtualNode;
+class function TVirtualTreeMethods.GetNodeDataEx(const ANode: PVirtualNode;
   const ATree: TBaseVirtualTree): PBaseData;
 var
   ListNode: PVirtualNode;
@@ -394,7 +396,7 @@ begin
 //  Assert(Assigned(Result), 'Result is not assigned');
 end;
 
-function TVirtualTreeMethods.GetNodeItemData(const ANode: PVirtualNode;
+class function TVirtualTreeMethods.GetNodeItemData(const ANode: PVirtualNode;
   const ATree: TBaseVirtualTree): TvBaseNodeData;
 var
   BaseData: PBaseData;
@@ -405,7 +407,7 @@ begin
     Result := BaseData.Data;
 end;
 
-procedure TVirtualTreeMethods.RefreshList(const ATree: TBaseVirtualTree);
+class procedure TVirtualTreeMethods.RefreshList(const ATree: TBaseVirtualTree);
 begin
   TASuiteLogger.Info('Refresh List', []);
   Config.SaveList(Config.ASuiteState = lsStartUp);
@@ -414,7 +416,7 @@ begin
     CheckVisibleNodePathExe(ATree);
 end;
 
-function TVirtualTreeMethods.ShowItemProperty(const AOwner: TComponent;
+class function TVirtualTreeMethods.ShowItemProperty(const AOwner: TComponent;
   const ATreeView: TBaseVirtualTree; const ANode: PVirtualNode;
   ANewNode: Boolean): Integer;
 var
@@ -439,7 +441,7 @@ begin
   end;
 end;
 
-procedure TVirtualTreeMethods.AddNodeInTreeFromMainTree(
+class procedure TVirtualTreeMethods.AddNodeInTreeFromMainTree(
   Sender: TBaseVirtualTree; Node: PVirtualNode; Data: Pointer;
   var Abort: Boolean);
 var
@@ -478,8 +480,8 @@ begin
   end;
 end;
 
-procedure TVirtualTreeMethods.BeforeDeleteNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
-                           Data: Pointer; var Abort: Boolean);
+class procedure TVirtualTreeMethods.BeforeDeleteNode(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
 var
   NodeData : TvCustomRealNodeData;
 begin
@@ -501,7 +503,7 @@ begin
   end;
 end;
 
-procedure TVirtualTreeMethods.FindHotkey(Sender: TBaseVirtualTree;
+class procedure TVirtualTreeMethods.FindHotkey(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
 var
   Hotkey: Cardinal;
@@ -517,7 +519,7 @@ begin
   end;
 end;
 
-procedure TVirtualTreeMethods.FindNode(Sender: TBaseVirtualTree;
+class procedure TVirtualTreeMethods.FindNode(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
 var
   LauncherSearch  : ^TLauncherSearch;
@@ -550,8 +552,8 @@ begin
     end;
 end;
 
-procedure TVirtualTreeMethods.ActionsOnShutdown(Sender: TBaseVirtualTree; Node: PVirtualNode;
-                           Data: Pointer; var Abort: Boolean);
+class procedure TVirtualTreeMethods.ActionsOnShutdown(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
 var
   NodeData: TvBaseNodeData;
 begin
@@ -567,15 +569,15 @@ begin
   end;
 end;
 
-procedure TVirtualTreeMethods.IncNumberNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
-                                             Data: Pointer; var Abort: Boolean);
+class procedure TVirtualTreeMethods.IncNumberNode(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
 begin
   if (Node.CheckState = csCheckedNormal) or (Node.CheckState = csMixedNormal) then
     Inc(Integer(Data^));
 end;
 
-procedure TVirtualTreeMethods.PopulateVSTItemList(const ATree: TBaseVirtualTree;
-  const ABaseItemsList: TBaseItemsList);
+class procedure TVirtualTreeMethods.PopulateVSTItemList(
+  const ATree: TBaseVirtualTree; const ABaseItemsList: TBaseItemsList);
 var
   I: Integer;
   CurrentFileData : TvCustomRealNodeData;
@@ -596,7 +598,7 @@ begin
       end;
     end;
     //Check nodes path and get icons
-    TVirtualTreeMethods.Create.CheckVisibleNodePathExe(ATree);
+    TVirtualTreeMethods.CheckVisibleNodePathExe(ATree);
     //Auto columns width
     TVirtualStringTree(ATree).Header.AutoFitColumns(False);
   finally
@@ -604,15 +606,17 @@ begin
   end;
 end;
 
-procedure TVirtualTreeMethods.UpdateItemColor(const ASender: TBaseVirtualTree);
+class procedure TVirtualTreeMethods.UpdateItemColor(
+  const ASender: TBaseVirtualTree);
 begin
   //MainTree's color
   if not(Config.TVBackground) and ((Config.TVFont.Color = clBlack) or (Config.TVFont.Color = clWindowText)) then
     ASender.Font.Color := clWindowText;
 end;
 
-procedure TVirtualTreeMethods.UpdateListItemCount(Sender: TBaseVirtualTree;
-  Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
+class procedure TVirtualTreeMethods.UpdateListItemCount(
+  Sender: TBaseVirtualTree; Node: PVirtualNode; Data: Pointer;
+  var Abort: Boolean);
 var
   NodeData  : TvBaseNodeData;
   ListStats : PListStats;
@@ -630,7 +634,7 @@ begin
   end;
 end;
 
-procedure TVirtualTreeMethods.UpdateNodeHeight(Sender: TBaseVirtualTree;
+class procedure TVirtualTreeMethods.UpdateNodeHeight(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
 var
   NodeData: TvBaseNodeData;
@@ -653,7 +657,8 @@ begin
   end;
 end;
 
-procedure TVirtualTreeMethods.HotKeyNotify(Sender: TObject; ShortcutEx: TShortcutEx);
+class procedure TVirtualTreeMethods.HotKeyNotify(Sender: TObject;
+  ShortcutEx: TShortcutEx);
 var
   NodeData: TvCustomRealNodeData;
 begin
@@ -666,7 +671,7 @@ begin
       if frmMain.Showing then
         frmMain.HideMainForm
       else
-        frmMain.ShowMainForm(Self);
+        frmMain.ShowMainForm(nil);
     end
     else
     begin
@@ -690,7 +695,7 @@ begin
             if not(NodeData.IsSeparatorItem) then
               NodeData.Execute(True, NodeData.IsCategoryItem, False);
 
-            TVirtualTreeMethods.Create.RefreshList(nil);
+            TVirtualTreeMethods.RefreshList(nil);
           end;
         end;
       end;

@@ -107,7 +107,6 @@ begin
   cxScheduler.Items.Add(cxScheduler_item2);
   cxScheduler.Items.Add(cxScheduler_item3);
 
-  //TODO: Check this if. It is necessary check CurrentNodeData is assigned!? Better use assert
   if Assigned(CurrentNodeData) then
   begin
     //Scheduler

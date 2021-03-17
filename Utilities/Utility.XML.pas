@@ -92,13 +92,13 @@ begin
     //Create a new XMLNode
     //Get item type
     if (XMLNode.NodeName = 'Category') then
-      Result := Tree.AddChild(Parent, TVirtualTreeMethods.Create.CreateNodeData(vtdtCategory))
+      Result := Tree.AddChild(Parent, TVirtualTreeMethods.CreateNodeData(vtdtCategory))
     else
       if (XMLNode.NodeName = 'Software') then
-        Result := Tree.AddChild(Parent, TVirtualTreeMethods.Create.CreateNodeData(vtdtFile))
+        Result := Tree.AddChild(Parent, TVirtualTreeMethods.CreateNodeData(vtdtFile))
       else
         if XMLNode.NodeName = 'Separator' then
-          Result := Tree.AddChild(Parent, TVirtualTreeMethods.Create.CreateNodeData(vtdtSeparator));
+          Result := Tree.AddChild(Parent, TVirtualTreeMethods.CreateNodeData(vtdtSeparator));
     //Add checkbox
     if Config.ASuiteState = lsImporting then
       Tree.CheckType[Result] := ctTriStateCheckBox;
@@ -171,13 +171,13 @@ begin
     //Create a new XMLNode
     //Get item type
     if (XMLNode.NodeName = 'files') then
-      Result := tree.AddChild(Parent, TVirtualTreeMethods.Create.CreateNodeData(vtdtCategory))
+      Result := tree.AddChild(Parent, TVirtualTreeMethods.CreateNodeData(vtdtCategory))
     else
       if (XMLNode.NodeName = 'file') then
-        Result := tree.AddChild(Parent, TVirtualTreeMethods.Create.CreateNodeData(vtdtFile))
+        Result := tree.AddChild(Parent, TVirtualTreeMethods.CreateNodeData(vtdtFile))
       else
         if XMLNode.NodeName = 'separator' then
-          Result := Tree.AddChild(Parent, TVirtualTreeMethods.Create.CreateNodeData(vtdtSeparator));
+          Result := Tree.AddChild(Parent, TVirtualTreeMethods.CreateNodeData(vtdtSeparator));
     //Add checkbox
     Tree.CheckType[Result] := ctTriStateCheckBox;
     NodeData := Tree.GetNodeData(Result);
@@ -228,13 +228,13 @@ begin
     //Create a new XMLNode
     //Get item type
     if (XMLNode.NodeName = 'files') then
-      Result := tree.AddChild(Parent, TVirtualTreeMethods.Create.CreateNodeData(vtdtCategory))
+      Result := tree.AddChild(Parent, TVirtualTreeMethods.CreateNodeData(vtdtCategory))
     else
       if (XMLNode.NodeName = 'file') then
-        Result := tree.AddChild(Parent, TVirtualTreeMethods.Create.CreateNodeData(vtdtFile))
+        Result := tree.AddChild(Parent, TVirtualTreeMethods.CreateNodeData(vtdtFile))
       else
         if XMLNode.NodeName = 'separator' then
-          Result := Tree.AddChild(Parent, TVirtualTreeMethods.Create.CreateNodeData(vtdtSeparator));
+          Result := Tree.AddChild(Parent, TVirtualTreeMethods.CreateNodeData(vtdtSeparator));
     //Add checkbox
     Tree.CheckType[Result] := ctTriStateCheckBox;
     NodeData := Tree.GetNodeData(Result);

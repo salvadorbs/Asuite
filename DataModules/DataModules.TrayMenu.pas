@@ -28,7 +28,7 @@ interface
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   Menus, ExtCtrls, VirtualTrees, ImgList, Messages, LazFileUtils,
-  Kernel.PopupMenu, Lists.Base, Kernel.Enumerations;
+  Kernel.ASMenuItem, Lists.Base, Kernel.Enumerations;
 
 type
 
@@ -298,13 +298,13 @@ var
 begin
   if Assigned(Node) then
   begin
-    NodeData := TVirtualTreeMethods.Create.GetNodeDataEx(Node, Sender);
+    NodeData := TVirtualTreeMethods.GetNodeDataEx(Node, Sender);
     ItemNodeData := NodeData.Data;
     //Create a menu item and add it in trayicon menu
     MenuItem := TASMenuItem.Create(Application.MainForm);
     if (Node.Parent <> Sender.RootNode) then
     begin
-      ParentNodeData := TVirtualTreeMethods.Create.GetNodeDataEx(Node.Parent, Sender);
+      ParentNodeData := TVirtualTreeMethods.GetNodeDataEx(Node.Parent, Sender);
       AddItem(ParentNodeData.MenuItem, MenuItem);
     end
     else
@@ -833,7 +833,7 @@ end;
 
 procedure TdmTrayMenu.RunFromTrayMenu(Sender: TObject);
 begin
-  TVirtualTreeMethods.Create.ExecuteNode(Config.MainTree, TASMenuItem(Sender).pNode, rmNormal, False);
+  TVirtualTreeMethods.ExecuteNode(Config.MainTree, TASMenuItem(Sender).pNode, rmNormal, False);
 end;
 
 procedure TdmTrayMenu.OpenFile(Sender: TObject);

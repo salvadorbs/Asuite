@@ -30,7 +30,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="987"/>
+      <BuildNr Value="997"/>
     </VersionInfo>
     <BuildModes Count="4">
       <Item1 Name="Default" Default="True"/>
@@ -471,7 +471,7 @@
         <IsPartOfProject Value="True"/>
       </Unit43>
       <Unit44>
-        <Filename Value="Library/Kernel.PopupMenu.pas"/>
+        <Filename Value="Library/Kernel.ASMenuItem.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit44>
       <Unit45>
@@ -539,7 +539,7 @@
         <IsPartOfProject Value="True"/>
       </Unit57>
       <Unit58>
-        <Filename Value="Library/Icons.Application.pas"/>
+        <Filename Value="Library/Icons.Files.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit58>
       <Unit59>
@@ -573,32 +573,27 @@
         <ResourceBaseClass Value="Form"/>
       </Unit64>
       <Unit65>
-        <Filename Value="Library/thread.findfiles.pas"/>
+        <Filename Value="Library/Thread.FindFiles.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="Thread.FindFiles"/>
       </Unit65>
       <Unit66>
-        <Filename Value="Library/appconfig.consts.pas"/>
+        <Filename Value="Library/AppConfig.Consts.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="AppConfig.Consts"/>
       </Unit66>
       <Unit67>
-        <Filename Value="Library/appconfig.pathvars.pas"/>
+        <Filename Value="Library/AppConfig.PathList.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="AppConfig.PathVars"/>
       </Unit67>
       <Unit68>
-        <Filename Value="Frame/frame.properties.environmentvars.pas"/>
+        <Filename Value="Frame/Frame.Properties.EnvironmentVars.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="frmEnvironmentVars"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <UnitName Value="Frame.Properties.EnvironmentVars"/>
       </Unit68>
       <Unit69>
-        <Filename Value="Library/icons.extfile.pas"/>
+        <Filename Value="Library/Icons.ExtFile.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="Icons.ExtFile"/>
       </Unit69>
     </Units>
   </ProjectOptions>

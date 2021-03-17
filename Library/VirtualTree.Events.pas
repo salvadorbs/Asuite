@@ -149,7 +149,7 @@ procedure TVirtualTreeEvents.DoNodeDblClick(Sender: TBaseVirtualTree; const HitI
 begin
   //Check if user click on node or expand button (+/-)
   if Not(ClickOnButtonTree(Sender, HitInfo)) then
-    TVirtualTreeMethods.Create.ExecuteSelectedNodes(Sender, rmNormal, False);
+    TVirtualTreeMethods.ExecuteSelectedNodes(Sender, rmNormal, False);
 end;
 
 procedure TVirtualTreeEvents.DoNodeSingleClick(Sender: TBaseVirtualTree; const HitInfo: THitInfo);
@@ -157,7 +157,7 @@ begin
   //Check if user click on node or expand button (+/-)
   if Not(ClickOnButtonTree(Sender, HitInfo)) then
     if (Config.RunSingleClick) then
-      TVirtualTreeMethods.Create.ExecuteSelectedNodes(Sender, rmNormal, False)
+      TVirtualTreeMethods.ExecuteSelectedNodes(Sender, rmNormal, False)
 end;
 
 procedure TVirtualTreeEvents.DoSingleClickGM(Sender: TObject);
@@ -172,7 +172,7 @@ begin
   Tree.GetHitTestInfoAt(Point.X, Point.Y, True, HitInfo);
   if Assigned(HitInfo.HitNode) then
   begin
-    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Tree.GetFirstSelected, Tree);
+    NodeData := TVirtualTreeMethods.GetNodeItemData(Tree.GetFirstSelected, Tree);
     if Not(Assigned(NodeData)) then
       Exit;
 
@@ -333,8 +333,8 @@ procedure TVirtualTreeEvents.DoCompareNodesHotkey(Sender: TBaseVirtualTree;
 var
   Data1, Data2: TvCustomRealNodeData;
 begin
-  Data1 := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node1, Sender));
-  Data2 := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node2, Sender));
+  Data1 := TvCustomRealNodeData(TVirtualTreeMethods.GetNodeItemData(Node1, Sender));
+  Data2 := TvCustomRealNodeData(TVirtualTreeMethods.GetNodeItemData(Node2, Sender));
   if (Not Assigned(Data1)) or (Not Assigned(Data2)) then
     Result := 0
   else
@@ -360,8 +360,8 @@ procedure TVirtualTreeEvents.DoCompareNodesList(Sender: TBaseVirtualTree; Node1,
 var
   Data1, Data2: TvBaseNodeData;
 begin
-  Data1 := TVirtualTreeMethods.Create.GetNodeItemData(Node1, Sender);
-  Data2 := TVirtualTreeMethods.Create.GetNodeItemData(Node2, Sender);
+  Data1 := TVirtualTreeMethods.GetNodeItemData(Node1, Sender);
+  Data2 := TVirtualTreeMethods.GetNodeItemData(Node2, Sender);
   if (Not Assigned(Data1)) or (Not Assigned(Data2)) then
     Result := 0
   else
@@ -400,7 +400,7 @@ begin
     try
       if (Mode = dmOnNode) and Assigned(Sender.DropTargetNode) then
       begin
-        NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Sender.DropTargetNode, Sender);
+        NodeData := TVirtualTreeMethods.GetNodeItemData(Sender.DropTargetNode, Sender);
         //Check if DropMode is in a vtdtCategory (so expand it, before drop item)
         //or another item type (change Mode and AttachMode for insert after new nodes)
         if not(NodeData.IsCategoryItem) then
@@ -424,14 +424,14 @@ begin
             end
             else //Text
               if (Formats[I] = CF_UNICODETEXT) and Not(NodeCreated) then
-                NodeCreated := TVirtualTreeMethods.Create.AddNodeByText(Sender, Sender.DropTargetNode, GetTextFromDataObject(DataObject), AttachMode);
+                NodeCreated := TVirtualTreeMethods.AddNodeByText(Sender, Sender.DropTargetNode, GetTextFromDataObject(DataObject), AttachMode);
         end;
       except
         on E : Exception do
           ShowMessageFmtEx(msgErrGeneric,[E.ClassName,E.Message], True);
       end;
     finally
-      TVirtualTreeMethods.Create.RefreshList(Sender);
+      TVirtualTreeMethods.RefreshList(Sender);
       Sender.EndUpdate;
     end;
   end;
@@ -457,14 +457,14 @@ procedure TVirtualTreeEvents.DoEditing(Sender: TBaseVirtualTree; Node: PVirtualN
 var
   NodeData : TvBaseNodeData;
 begin
-  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
+  NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
   Allowed  := not(NodeData.IsSeparatorItem) and Not(Config.RunSingleClick);
 end;
 
 procedure TVirtualTreeEvents.DoExpanded(Sender: TBaseVirtualTree;
   Node: PVirtualNode);
 begin
-//  TVirtualTreeMethods.Create.CheckVisibleNodePathExe(Sender);
+//  TVirtualTreeMethods.CheckVisibleNodePathExe(Sender);
 end;
 
 procedure TVirtualTreeEvents.DoFreeNode(Sender: TBaseVirtualTree;
@@ -472,7 +472,7 @@ procedure TVirtualTreeEvents.DoFreeNode(Sender: TBaseVirtualTree;
 var
   NodeData : TvBaseNodeData;
 begin
-  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
+  NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
   if Assigned(NodeData) then
     FreeAndNil(NodeData);
 end;
@@ -504,7 +504,7 @@ procedure TVirtualTreeEvents.DoGetText(Sender: TBaseVirtualTree; Node: PVirtualN
 var
   NodeData: TvBaseNodeData;
 begin
-  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
+  NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
   if Assigned(NodeData) then
   begin
     if Column = 1 then
@@ -525,7 +525,7 @@ var
   NodeData : TvCustomRealNodeData;
 begin
   CellText := '';
-  NodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender));
+  NodeData := TvCustomRealNodeData(TVirtualTreeMethods.GetNodeItemData(Node, Sender));
   if Assigned(NodeData) then
   begin
     case Column of
@@ -560,7 +560,7 @@ var
   NodeData : TvCustomRealNodeData;
 begin
   CellText := '';
-  NodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender));
+  NodeData := TvCustomRealNodeData(TVirtualTreeMethods.GetNodeItemData(Node, Sender));
   if Assigned(NodeData) then
   begin
     case Column of
@@ -575,7 +575,7 @@ procedure TVirtualTreeEvents.DoKeyPress(Sender: TObject; var Key: Char);
 begin
   if (Sender is TBaseVirtualTree) then
     if Ord(Key) = VK_RETURN then
-      TVirtualTreeMethods.Create.ExecuteSelectedNodes((Sender as TBaseVirtualTree), rmNormal, False)
+      TVirtualTreeMethods.ExecuteSelectedNodes((Sender as TBaseVirtualTree), rmNormal, False)
 end;
 
 procedure TVirtualTreeEvents.DoMeasureItem(Sender: TBaseVirtualTree;
@@ -583,7 +583,7 @@ procedure TVirtualTreeEvents.DoMeasureItem(Sender: TBaseVirtualTree;
 var
   NodeData: TvBaseNodeData;
 begin
-  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
+  NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
   if Assigned(NodeData) then
     if NodeData.IsSeparatorItem then
       NodeHeight := Config.SmallHeightNode;
@@ -599,7 +599,7 @@ begin
   Stream.ReadBuffer(DataSource^,SizeOf(rBaseData));
   //Copy source's properties in DataDest
   DataDest := Sender.GetNodeData(Node);
-  DataDest.Data := TVirtualTreeMethods.Create.CreateNodeData(DataSource.Data.DataType);
+  DataDest.Data := TVirtualTreeMethods.CreateNodeData(DataSource.Data.DataType);
   //Copy DataSource in DataDest
   case DataSource.Data.DataType of
     vtdtCategory  : TvCategoryNodeData(DataDest.Data).Copy(DataSource.Data);
@@ -624,10 +624,10 @@ procedure TVirtualTreeEvents.DoNewText(Sender: TBaseVirtualTree; Node: PVirtualN
 var
   NodeData : TvBaseNodeData;
 begin
-  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
+  NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
   if Assigned(NodeData) then
     NodeData.Name := NewText;
-  TVirtualTreeMethods.Create.RefreshList(Sender);
+  TVirtualTreeMethods.RefreshList(Sender);
 end;
 
 procedure TVirtualTreeEvents.DoPaintText(Sender: TBaseVirtualTree;
@@ -637,7 +637,7 @@ var
   NodeData: TvBaseNodeData;
 begin
   //Get data and check if AbsoluteExe path exists
-  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
+  NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
   if Assigned(NodeData) and NodeData.IsFileItem then
     if Not(TvFileNodeData(NodeData).IsPathFileExists) then
       TargetCanvas.Font.Color := clRed;
@@ -663,7 +663,7 @@ procedure TVirtualTreeEvents.DoSaveNode(Sender: TBaseVirtualTree; Node: PVirtual
 var
   Data: PBaseData;
 begin
-  Data := TVirtualTreeMethods.Create.GetNodeDataEx(Node, Sender);
+  Data := TVirtualTreeMethods.GetNodeDataEx(Node, Sender);
   Stream.WriteBuffer(Data^,SizeOf(rBaseData));
 end;
 
@@ -692,7 +692,7 @@ begin
     GetFileListFromDataObject(ADataObject, FileNames);
     //Iterate file list to add nodes
     for I := 0 to FileNames.Count - 1 do
-      TVirtualTreeMethods.Create.AddNodeByPathFile(ASender, ASender.DropTargetNode, FileNames[I], AttachMode);
+      TVirtualTreeMethods.AddNodeByPathFile(ASender, ASender.DropTargetNode, FileNames[I], AttachMode);
   finally
     FileNames.Free;
   end;
@@ -705,7 +705,7 @@ procedure TVirtualTreeEvents.DrawSeparatorItem(const ASender: TBaseVirtualTree;
 var
   NodeData: TvBaseNodeData;
 begin
-  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(ANode, ASender);
+  NodeData := TVirtualTreeMethods.GetNodeItemData(ANode, ASender);
   if Assigned(NodeData) then
   begin
     if NodeData.IsSeparatorItem then
@@ -768,7 +768,7 @@ begin
   Result := '';
   if (ANode.Parent <> Config.MainTree.RootNode) then
   begin
-    CatData := TVirtualTreeMethods.Create.GetNodeItemData(ANode.Parent, Config.MainTree);
+    CatData := TVirtualTreeMethods.GetNodeItemData(ANode.Parent, Config.MainTree);
     if Assigned(CatData) then
       Result  := CatData.Name;
   end
@@ -822,16 +822,16 @@ var
   Data1, Data2, CatData1, CatData2: TvBaseNodeData;
   CatName1, CatName2 : String;
 begin
-  Data1 := TVirtualTreeMethods.Create.GetNodeItemData(Node1, Sender);
-  Data2 := TVirtualTreeMethods.Create.GetNodeItemData(Node2, Sender);
+  Data1 := TVirtualTreeMethods.GetNodeItemData(Node1, Sender);
+  Data2 := TVirtualTreeMethods.GetNodeItemData(Node2, Sender);
   if (Not Assigned(Data1)) or (Not Assigned(Data2)) then
     Result := 0
   else
     if Column = 0 then
       Result := CompareText(Data1.Name, Data2.Name)
     else begin
-      CatData1 := TVirtualTreeMethods.Create.GetNodeItemData(Data1.pNode.Parent, Config.MainTree);
-      CatData2 := TVirtualTreeMethods.Create.GetNodeItemData(Data2.pNode.Parent, Config.MainTree);
+      CatData1 := TVirtualTreeMethods.GetNodeItemData(Data1.pNode.Parent, Config.MainTree);
+      CatData2 := TVirtualTreeMethods.GetNodeItemData(Data2.pNode.Parent, Config.MainTree);
       if Assigned(CatData1) then
         CatName1 := CatData1.Name
       else
@@ -852,7 +852,7 @@ var
 begin
   if (Kind = ikNormal) or (Kind = ikSelected) then
   begin
-    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
+    NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
     if (Column = 0) or (Column = -1) then
       ImageIndex := NodeData.Icon.ImageIndex
     else
@@ -882,7 +882,7 @@ var
 begin
   if (Kind = ikNormal) or (Kind = ikSelected) then
   begin
-    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
+    NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
     if Assigned(NodeData) then
     begin
       case Column of
