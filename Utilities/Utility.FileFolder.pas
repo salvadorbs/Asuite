@@ -19,7 +19,7 @@ function IsFlagSet(const Flags, Mask: Integer): Boolean;
 procedure DeleteOldBackups(const MaxNumber: Integer);
 function DeleteFiles(const Dir, Wildcard: string): Integer;
 function ListFiles(const Dir, Wildcard: string; const List: Classes.TStrings): Boolean;
-function GetFileCRC32(const FileName: String): Integer;
+function GetFileXXHash32(const FileName: String): Integer;
 function ExtractFileNameEx(const AFileName: String): string;
 function ExtractOnlyFileName(const AFileName: String): string;
 
@@ -144,7 +144,7 @@ begin
   end;
 end;
 
-function GetFileCRC32(const FileName: String): Integer;
+function GetFileXXHash32(const FileName: String): Integer;
 begin
   Result := 0;
 
