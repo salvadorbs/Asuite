@@ -168,7 +168,7 @@ begin
         with TvCustomRealNodeData(vData) do
         begin
           PathIcon    := UTF8DecodeToUnicodeString(SQLFilesData.icon_path);
-          TNodeIcon(Icon).CacheIconCRC := SQLFilesData.cache_icon_crc;
+          Icon.CacheIconCRC := SQLFilesData.cache_icon_crc;
           AutorunPos  := SQLFilesData.autorun_position;
           Autorun     := TAutorunType(SQLFilesData.autorun);
           SchMode     := TSchedulerMode(SQLFilesData.scheduler_mode);
