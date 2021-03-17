@@ -7,7 +7,7 @@ interface
 uses
   Kernel.Consts, LCLIntf, LCLType, SysUtils, Classes, Kernel.Enumerations,
   FileUtil, {$IFDEF Windows}ComObj, ActiveX, ShlObj, Windows,{$ELSE} FakeActiveX, {$ENDIF} Dialogs,
-  LazFileUtils, HlpXXHash32,  HlpHashFactory;
+  LazFileUtils, HlpHashFactory;
 
 { Folders }
 function BrowseForFolder(const InitialDir: String = ''; const Caption: String = ''): String;
@@ -21,7 +21,6 @@ function DeleteFiles(const Dir, Wildcard: string): Integer;
 function ListFiles(const Dir, Wildcard: string; const List: Classes.TStrings): Boolean;
 function GetFileXXHash32(const FileName: String): Integer;
 function ExtractFileNameEx(const AFileName: String): string;
-function ExtractOnlyFileName(const AFileName: String): string;
 function ExtractFileExtEx(const AFileName: String): string;
 
 { Desktop shortcut }
@@ -175,12 +174,6 @@ begin
   finally
     VersionInfo.Free;
   end;
-end;
-
-function ExtractOnlyFileName(const AFileName: String): string;
-begin
-  Result := LowerCase(ExtractFileName(AFileName));
-  Result := ChangeFileExt(Result, '');
 end;
 
 function ExtractFileExtEx(const AFileName: String): string;

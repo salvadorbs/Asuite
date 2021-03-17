@@ -28,6 +28,7 @@ uses
   {$IFDEF MSWINDOWS}, ShellApi, CommCtrl, uBitmap{$ENDIF};
 
 type
+  //TODO: Add some logs in this and child class
 
   { TBaseIcon }
 

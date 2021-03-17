@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 }
 
-unit Icons.Application;
+unit Icons.ExtFile;
 
 {$MODE DelphiUnicode}
 
@@ -28,51 +28,39 @@ uses
 
 type
 
-  { TApplicationIcon }
+  { TExtFileIcon }
 
-  //TODO: Rename it in TFileIcon
-  TApplicationIcon = class(TBaseIcon)
+  TExtFileIcon = class(TBaseIcon)
   private
-    FPathFile: string;
+    FExtFile: string;
   protected
     function GetName: string; override;
     function LoadIcon: Integer; override;
-    function GetDefaultPathIcon: string; override;
   public
-    constructor Create(APathFile: string; AStatic: Boolean = False);
+    constructor Create(AExtFile: string);
 
-    property PathFile: string read FPathFile write FPathFile;
+    property ExtFile: string read FExtFile write FExtFile;
   end;
 
 implementation
 
-uses
-  Utility.FileFolder, LazFileUtils;
-
-constructor TApplicationIcon.Create(APathFile: string; AStatic: Boolean);
+constructor TExtFileIcon.Create(AExtFile: string);
 begin
-  inherited Create(AStatic);
-  FPathFile := APathFile;
+  inherited Create;
+  FExtFile := AExtFile;
 end;
 
-function TApplicationIcon.GetName: string;
+function TExtFileIcon.GetName: string;
 begin
-  Result := '';
-  if FPathFile <> '' then
-    Result := LowerCase(ExtractFileNameOnly(FPathFile));
+  Result := LowerCase(FExtFile);
 end;
 
-function TApplicationIcon.LoadIcon: Integer;
+function TExtFileIcon.LoadIcon: Integer;
 begin
   Result := -1;
-
-  if FileExists(FPathFile) then
-    Result := inherited;
-end;
-
-function TApplicationIcon.GetDefaultPathIcon: string;
-begin
-  Result := FPathFile;
+  if (FExtFile <> '') then
+    Result := InternalGetImageIndex(FExtFile);
 end;
 
 end.
+

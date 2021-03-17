@@ -25,7 +25,7 @@ interface
 
 uses
   SysUtils, Classes, Controls, Forms, Icons.Application, Generics.Collections,
-  Kernel.Consts, LCLIntf, LCLType, Icons.Base;
+  Kernel.Consts, LCLIntf, LCLType, Icons.Base, Icons.ExtFile;
 
 type
   TBaseIcons = class(TObjectList<TBaseIcon>);
@@ -37,12 +37,14 @@ type
     { private declarations }
     FPathTheme: string;
     FItems: TBaseIcons;
+    FExtItems: TBaseIcons;
     function GetPathTheme: string;
 
     procedure LoadAllIcons;
     procedure SetPathTheme(const Value: string);
     function FindByPath(APathFile: String): TApplicationIcon;
     function FindByName(AName: String): TBaseIcon;
+    function FindByExt(AExtension: String): TExtFileIcon;
   public
     { public declarations }
     constructor Create;
@@ -51,7 +53,9 @@ type
     procedure Clear(AOnlyStaticItems: Boolean);
     function GetIconIndex(AName: string): Integer;
     function GetPathIconIndex(APathIcon: string): Integer;
+    function GetExtIconIndex(AExtension: string): Integer;
     procedure AddIcon(ABaseIcon: TBaseIcon);
+    procedure AddExtIcon(ABaseIcon: TBaseIcon);
 
     property PathTheme: string read GetPathTheme write SetPathTheme;
   end;
@@ -59,18 +63,20 @@ type
 implementation
 
 uses
-  AppConfig.Main, Kernel.Logger, FileUtil, Utility.FileFolder;
+  AppConfig.Main, Kernel.Logger, FileUtil, Utility.FileFolder, LazFileUtils;
 
 { TIconsManager }
 
 constructor TIconsManager.Create;
 begin
   FItems := TBaseIcons.Create(True);
+  FExtItems := TBaseIcons.Create(True);
 end;
 
 destructor TIconsManager.Destroy;
 begin
   FItems.Free;
+  FExtItems.Free;
   inherited;
 end;
 
@@ -121,15 +127,48 @@ begin
   end;
 end;
 
+function TIconsManager.GetExtIconIndex(AExtension: string): Integer;
+var
+  Icon: TExtFileIcon;
+begin
+  Result := -1;
+
+  //Before find the icon, if it isn't exists yet, I will load it
+  Icon := FindByExt(AExtension);
+
+  if Assigned(Icon) then
+    Result := Icon.ImageIndex
+  else begin
+    Icon := TExtFileIcon.Create(AExtension);
+    try
+      Result := Icon.ImageIndex;
+    finally
+      AddIcon(Icon);
+    end;
+  end;
+end;
+
 procedure TIconsManager.AddIcon(ABaseIcon: TBaseIcon);
 begin
   Assert(Assigned(ABaseIcon), 'ABaseIcon is not assigned!');
 
   try
     //It is doesn't necessary load now icon (so in this way, speed up icon loading)
-    //Icon.LoadIcon;
+    //ABaseIcon.LoadIcon;
   finally
     FItems.Add(ABaseIcon);
+  end;
+end;
+
+procedure TIconsManager.AddExtIcon(ABaseIcon: TBaseIcon);
+begin
+  Assert(Assigned(ABaseIcon), 'ABaseIcon is not assigned!');
+
+  try
+    //Call ImageIndex, so I will extract the icon now
+    ABaseIcon.ImageIndex;
+  finally
+    FExtItems.Add(ABaseIcon);
   end;
 end;
 
@@ -159,7 +198,7 @@ begin
       //Add new icon in FItems
       for sPath in IconFiles do
       begin
-        Icon := FindByName(ExtractOnlyFileName(sPath));
+        Icon := FindByName(ExtractFileNameOnly(sPath));
 
         if not(Assigned(Icon)) then
           AddIcon(TApplicationIcon.Create(sPath, True));
@@ -201,10 +240,25 @@ begin
 
   for Item in FItems do
   begin
-    //TODO: Doesn't work
     if (Item.Name = AName) then
     begin
       Result := Item;
+      break;
+    end;
+  end;
+end;
+
+function TIconsManager.FindByExt(AExtension: String): TExtFileIcon;
+var
+  Item: TBaseIcon;
+begin
+  Result := nil;
+
+  for Item in FExtItems do
+  begin
+    if (Item.Name = LowerCase(AExtension)) and (Item is TExtFileIcon) then
+    begin
+      Result := TExtFileIcon(Item);
       break;
     end;
   end;

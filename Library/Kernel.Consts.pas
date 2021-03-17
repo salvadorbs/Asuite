@@ -53,6 +53,7 @@ const
   EXT_PO        = '.po';
   EXT_BAT       = '.bat';
   EXT_CMD       = '.cmd';
+  EXT_BMP       = '.bmp';
 
   EXT_PATH_MASK = '*';    
   EXT_PATH_DOT = '.';
