@@ -294,7 +294,7 @@ function GetUrlTarget(const AFileName: String; ShortcutType: TShortcutField): St
 var
   IniFile: TIniFile;
 begin
-  //TODO: Check in linux
+  //.url files exists only in Windows
   IniFile := TIniFile.Create(AFileName);
   try
     case ShortcutType of

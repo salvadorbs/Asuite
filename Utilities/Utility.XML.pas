@@ -372,19 +372,12 @@ begin
     //Main Form - Position and size
     Config.HoldSize    := GetBoolPropertyXML(Node, 'HoldSize', false);
     Config.AlwaysOnTop := GetBoolPropertyXML(Node, 'MainOnTop', false);
-    //frmMain's size
-    frmMain.Width      := GetIntPropertyXML(Node,'ListFormWidth',frmMainWidth);
-    frmMain.Height     := GetIntPropertyXML(Node,'ListFormHeight',frmMainHeight);
     //Hotkey
     Config.HotKey      := GetBoolPropertyXML(Node, 'ActiveHotKey',true);
     //Window Hotkey
     Config.WindowHotkey := XMLToShortcut(Node, 'HotKeyCode', 'HotKeyModifier');
     //Menu Hotkey
     Config.GraphicMenuHotKey := XMLToShortcut(Node, 'MenuHotKeyCode', 'MenuHotKeyModifier');
-    //frmMain position
-    SetMainFormPosition(frmMain, GetIntPropertyXML(Node,'ListFormLeft',frmMain.Left),
-                                 GetIntPropertyXML(Node,'ListFormTop',frmMain.Top));
-    frmMain.Position := poDesigned;
     //Main Form - Treevew
     Config.TVBackgroundPath := GetStrPropertyXML(Node, 'BackgroundPath','');
     Config.TVBackground     := GetBoolPropertyXML(Node, 'Background',False);

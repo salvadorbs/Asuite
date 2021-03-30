@@ -29,7 +29,6 @@ uses
 
 { Forms }
 function  IsFormOpen(const FormName : string): Boolean;
-procedure SetMainFormPosition(Form: TForm; ListFormLeft, ListFormTop: Integer);
 procedure SetFormPositionFromConfig(AForm: TForm);
 
 { Misc }
@@ -76,24 +75,6 @@ begin
       Result := True;
       Break;
     end;
-end;
-
-procedure SetMainFormPosition(Form: TForm; ListFormLeft, ListFormTop: Integer);
-begin
-  if (ListFormTop <> -1) and (ListFormLeft <> -1) then
-  begin
-    if (ListFormTop + frmMainHeight) <= Screen.Height then
-      Form.Top  := ListFormTop
-    else
-      Form.Top  := Screen.Height - Form.Height - 30;
-    if (ListFormLeft + frmMainWidth) <= Screen.Width then
-      Form.Left := ListFormLeft
-    else
-      Form.Left := Screen.Width - Form.Width;
-    Form.Position := poDesigned;
-  end
-  else
-    Form.Position := poDesktopCenter;
 end;
 
 procedure SetFormPositionFromConfig(AForm: TForm);
