@@ -640,7 +640,6 @@ var
   NodeData: TvBaseNodeData;
   SubNode: PVirtualNode;
 begin
-  //TODO: Check this code
   //Get NodeData (need it because we must know DataType)
   if Sender = Config.MainTree then
     SubNode := Node
@@ -662,41 +661,37 @@ class procedure TVirtualTreeMethods.HotKeyNotify(Sender: TObject;
 var
   NodeData: TvCustomRealNodeData;
 begin
-  //TODO: Fix me
   if Config.HotKey then
   begin
-    // Show frmMain
-    if ShortcutEx.Tag = frmMain.Handle then
-    begin
-      if frmMain.Showing then
-        frmMain.HideMainForm
-      else
-        frmMain.ShowMainForm(nil);
-    end
-    else
-    begin
-      case ShortcutEx.Tag of
-        // Show Graphic Menu
-        frmGMenuID:
-          begin
-            dmTrayMenu.ShowGraphicMenu;
-          end;
-        // Show Classic Menu
-        frmCMenuID:
-          begin
-            dmTrayMenu.ShowClassicMenu;
-          end;
-      else
+    case ShortcutEx.Tag of
+      // Show frmMain
+      frmMainID:
         begin
-          // Execute item
-          NodeData := Config.ListManager.HotKeyItemList.IndexOfID(ShortcutEx.Tag);
-          if Assigned(NodeData) then
-          begin
-            if not(NodeData.IsSeparatorItem) then
-              NodeData.Execute(True, NodeData.IsCategoryItem, False);
+          if frmMain.Showing then
+            frmMain.HideMainForm
+          else
+            frmMain.ShowMainForm(Sender);
+        end;
+      // Show Graphic Menu
+      frmGMenuID:
+        begin
+          dmTrayMenu.ShowGraphicMenu;
+        end;
+      // Show Classic Menu
+      frmCMenuID:
+        begin
+          dmTrayMenu.ShowClassicMenu;
+        end;
+    else
+      begin
+        // Execute item
+        NodeData := Config.ListManager.HotKeyItemList.IndexOfID(ShortcutEx.Tag);
+        if Assigned(NodeData) then
+        begin
+          if not(NodeData.IsSeparatorItem) then
+            NodeData.Execute(True, NodeData.IsCategoryItem, False);
 
-            TVirtualTreeMethods.RefreshList(nil);
-          end;
+          TVirtualTreeMethods.RefreshList(nil);
         end;
       end;
     end;

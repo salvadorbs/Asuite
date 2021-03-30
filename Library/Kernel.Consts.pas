@@ -64,8 +64,6 @@ const
   BACKUP_FILE   = APP_NAME + '_%s' + EXT_SQLBCK;
 
   //Form
-  frmMainWidth  = 190; //TODO: Linux vs Windows?
-  frmMainHeight = 440; //TODO: Linux vs Windows?
   frmMainID     = 294257584;
   frmGMenuID    = 711285620;
   frmCMenuID    = 459741425;
@@ -73,6 +71,10 @@ const
   //Icons Size
   ICON_SIZE_SMALL = 16;
   ICON_SIZE_LARGE = 32;
+
+  //Node Heidht
+  NODE_HEIGHT_SMALL = 18;
+  NODE_HEIGHT_LARGE = 36;
 
   // PageControl Indexes
   PG_LIST       = 0;

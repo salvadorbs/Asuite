@@ -97,8 +97,6 @@ function IsPathExists(const Path: String): Boolean;
 var
   PathTemp : String;
 begin
-  //TODO: Review it
-
   PathTemp := Config.Paths.RelativeToAbsolute(Path);
   if IsUNCPath(PathTemp) then
     Result := True
