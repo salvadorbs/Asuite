@@ -32,7 +32,7 @@ function  GetUrlTarget(const AFileName: String; ShortcutType: TShortcutField): S
 implementation
 
 uses
-  AppConfig.Main, IniFiles, FileInfo {$IFDEF UNIX} , BaseUnix {$ENDIF};
+  AppConfig.Main, IniFiles, FileInfo, Kernel.Instance, Kernel.Manager {$IFDEF UNIX} , BaseUnix {$ENDIF};
 
 function BrowseForFolder(const InitialDir: String; const Caption: String): String;
 var
@@ -157,7 +157,7 @@ var
   VersionInfo : TFileVersionInfo;
   sPath, strFileDescription, strProductName : String;
 begin
-  sPath := Config.Paths.RelativeToAbsolute(AFileName);
+  sPath := ASuiteInstance.Paths.RelativeToAbsolute(AFileName);
   Result := ExtractFileName(sPath);
 
   VersionInfo := TFileVersionInfo.Create(nil);
@@ -188,7 +188,7 @@ var
   I            : Integer;
 begin
   BackupList := TStringList.Create;
-  if FindFirst(Config.Paths.SuitePathBackup + APP_NAME + '_*' + EXT_SQLBCK, faAnyFile, BackupSearch) = 0 then
+  if FindFirst(ASuiteInstance.Paths.SuitePathBackup + APP_NAME + '_*' + EXT_SQLBCK, faAnyFile, BackupSearch) = 0 then
   begin
     repeat
       BackupList.Add(BackupSearch.Name);
@@ -198,7 +198,7 @@ begin
   end;
   BackupList.Sort;
   for I := 1 to BackupList.Count - MaxNumber do
-    SysUtils.DeleteFile(Config.Paths.SuitePathBackup + BackupList[I - 1]);
+    SysUtils.DeleteFile(ASuiteInstance.Paths.SuitePathBackup + BackupList[I - 1]);
   BackupList.Free;
 end;
 

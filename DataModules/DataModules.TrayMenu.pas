@@ -140,7 +140,8 @@ uses
   DataModules.Icons, Forms.Main, AppConfig.Main, VirtualTree.Methods, process,
   Utility.System, Forms.GraphicMenu, Kernel.Types, NodeDataTypes.Files,
   NodeDataTypes.Custom, NodeDataTypes.Base, Kernel.Consts, Kernel.Logger,
-  Utility.Misc, Utility.FileFolder, Kernel.ResourceStrings{$IFDEF MSWINDOWS} , ShellApi, Windows {$ENDIF};
+  Utility.Misc, Utility.FileFolder, Kernel.ResourceStrings, Kernel.Instance,
+  Kernel.Manager {$IFDEF MSWINDOWS} , ShellApi, Windows {$ENDIF};
 
 {$R *.lfm}
 
@@ -150,7 +151,7 @@ begin
   pmTrayicon.ImagesWidth := ICON_SIZE_SMALL;
 
   tiTrayMenu.Hint := Format('%s %s (%s)',[APP_NAME, GetASuiteVersion(True),
-                                          UpperCase(Config.Paths.SuiteDrive)]);
+                                          UpperCase(ASuiteInstance.Paths.SuiteDrive)]);
 end;
 
 procedure TdmTrayMenu.tiTrayMenuDblClick(Sender: TObject);
@@ -212,7 +213,7 @@ begin
         //Create new menuitem and add base properties
         NMI             := TASMenuItem.Create(AMI);
         NMI.Path        := sPath + SR.Name + PathDelim;
-        NMI.ImageIndex  := Config.IconsManager.GetPathIconIndex(Config.Paths.RelativeToAbsolute(CONST_PATH_FOLDERICON)); // folder image
+        NMI.ImageIndex  := ASuiteManager.IconsManager.GetPathIconIndex(ASuiteInstance.Paths.RelativeToAbsolute(CONST_PATH_FOLDERICON)); // folder image
         //Add item in traymenu
         AddItem(AMI, NMI);
         //If it is not '.', expand folder else add OnClick event to open folder
@@ -258,7 +259,7 @@ begin
       NMI             := TASMenuItem.Create(AMI);
       NMI.Caption     := SR.Name;
       NMI.Path        := sPath + SR.Name;
-      NMI.ImageIndex  := Config.IconsManager.GetPathIconIndex(sPath + SR.Name);
+      NMI.ImageIndex  := ASuiteManager.IconsManager.GetPathIconIndex(sPath + SR.Name);
       NMI.OnClick     := OpenFile;
       //Add item in traymenu
       AddItem(AMI, NMI);
@@ -380,32 +381,32 @@ begin
   //Header
   CreateHeaderItems(Menu);
   //MFU
-  if (Config.MFU) and (Config.ListManager.MFUList.Count > 0) then
+  if (Config.MFU) and (ASuiteManager.ListManager.MFUList.Count > 0) then
   begin
     if Config.SubMenuMFU then
     begin
       CreateSeparator(Menu);
-      CreateSpecialList(Menu, Config.ListManager.MFUList, Config.MFUNumber, msgLongMFU);
+      CreateSpecialList(Menu, ASuiteManager.ListManager.MFUList, Config.MFUNumber, msgLongMFU);
     end
     else begin
       CreateSeparator(Menu, msgLongMFU);
-      CreateSpecialList(Menu, Config.ListManager.MFUList, Config.MFUNumber);
+      CreateSpecialList(Menu, ASuiteManager.ListManager.MFUList, Config.MFUNumber);
     end;
   end;
   CreateSeparator(Menu,msgList);
   //List
   PopulateCategoryItems(nil);
   //MRU
-  if (Config.MRU) and (Config.ListManager.MRUList.Count > 0) then
+  if (Config.MRU) and (ASuiteManager.ListManager.MRUList.Count > 0) then
   begin
     if Config.SubMenuMRU then
     begin
       CreateSeparator(Menu);
-      CreateSpecialList(Menu, Config.ListManager.MRUList, Config.MRUNumber, msgLongMRU);
+      CreateSpecialList(Menu, ASuiteManager.ListManager.MRUList, Config.MRUNumber, msgLongMRU);
     end
     else begin
       CreateSeparator(Menu,msgLongMRU);
-      CreateSpecialList(Menu, Config.ListManager.MRUList, Config.MRUNumber,'');
+      CreateSpecialList(Menu, ASuiteManager.ListManager.MRUList, Config.MRUNumber,'');
     end;
   end;
   CreateSeparator(Menu);
@@ -428,14 +429,14 @@ begin
       0:
         begin
           MenuItem.Caption := msgShowASuite;
-          MenuItem.ImageIndex := Config.IconsManager.GetIconIndex('asuite');
+          MenuItem.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('asuite');
           MenuItem.OnClick := ShowMainForm;
           MenuItem.Default := true;
         end;
       1:
         begin
           MenuItem.Caption := msgOpenOptions;
-          MenuItem.ImageIndex := Config.IconsManager.GetIconIndex('options');
+          MenuItem.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('options');
           MenuItem.OnClick := frmMain.miOptionsClick;
           MenuItem.Enabled := Not(Config.ReadOnlyMode);
         end;
@@ -573,7 +574,7 @@ begin
   TextSpace := 0;
   if (Sender is TMenuItem) then
   begin
-    CaptionLineItemHeight := Config.SmallHeightNode - 4;
+    CaptionLineItemHeight := ASuiteInstance.SmallHeightNode - 4;
     //Don't highlight menu item
     ACanvas.Brush.Style := bsClear;
     ACanvas.Font.Color  := clWindowText;
@@ -588,7 +589,7 @@ begin
     begin
       //Get Tree's Font
       ACanvas.Font.Assign(TBaseVirtualTree(Sender).Font);
-      CaptionLineItemHeight := Config.SmallHeightNode;
+      CaptionLineItemHeight := ASuiteInstance.SmallHeightNode;
       if ACaption <> '' then
       begin
         LineCaption := Format(' %s ', [ACaption]);
@@ -763,7 +764,7 @@ begin
   //Get first node
   if Assigned(Sender) then
   begin
-    Node := Config.MainTree.GetFirstChild(TASMenuItem(Sender).pNode);
+    Node := ASuiteInstance.MainTree.GetFirstChild(TASMenuItem(Sender).pNode);
     {$IFDEF FASTHACK}
     { allocate some space for the items TList. E.g. space for 4096 items should
       be enough. }
@@ -773,15 +774,15 @@ begin
       TASMenuItem(Sender).Items[0].Visible := False;
   end
   else
-    Node := Config.MainTree.GetFirst;
+    Node := ASuiteInstance.MainTree.GetFirst;
 
   try
     //Iterate time (only child level)
     while Assigned(Node) do
     begin
-      CreateListItems(Config.MainTree, Node);
+      CreateListItems(ASuiteInstance.MainTree, Node);
 
-      Node := Config.MainTree.GetNextSibling(Node);
+      Node := ASuiteInstance.MainTree.GetNextSibling(Node);
     end;
   finally
     if Assigned(Sender) then
@@ -833,7 +834,7 @@ end;
 
 procedure TdmTrayMenu.RunFromTrayMenu(Sender: TObject);
 begin
-  TVirtualTreeMethods.ExecuteNode(Config.MainTree, TASMenuItem(Sender).pNode, rmNormal, False);
+  TVirtualTreeMethods.ExecuteNode(ASuiteInstance.MainTree, TASMenuItem(Sender).pNode, rmNormal, False);
 end;
 
 procedure TdmTrayMenu.OpenFile(Sender: TObject);

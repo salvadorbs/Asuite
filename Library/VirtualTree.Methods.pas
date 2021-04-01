@@ -96,7 +96,7 @@ uses
   Utility.FileFolder, Forms.PropertySeparator, Kernel.ResourceStrings,
   NodeDataTypes.Category, NodeDataTypes.Separator, Forms.PropertyItem, Icons.Thread,
   NodeDataTypes.Custom, Kernel.Consts, Icons.Node, Kernel.Logger, Utility.Misc,
-  Forms.Main, DataModules.TrayMenu;
+  Forms.Main, DataModules.TrayMenu, Kernel.Instance, Kernel.Manager;
 
 { TVirtualTreeMethods }
 
@@ -125,7 +125,7 @@ begin
         sName := ExtractDirectoryName(FolderPath + PathDelim);
         if sName <> '' then
           NodeData.Name := sName;
-        TvFileNodeData(NodeData).PathFile := Config.Paths.AbsoluteToRelative(FolderPath + PathDelim);
+        TvFileNodeData(NodeData).PathFile := ASuiteInstance.Paths.AbsoluteToRelative(FolderPath + PathDelim);
       end
       else begin
         ASender.DeleteNode(ChildNode);
@@ -197,25 +197,25 @@ begin
   if ExtractFileExtEx(APathFile) = EXT_LNK then
   begin
     //Shortcut
-    NodeData.PathFile   := Config.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfPathFile));
+    NodeData.PathFile   := ASuiteInstance.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfPathFile));
     {$IFDEF MSWINDOWS}
-    NodeData.Parameters := Config.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfParameter));
-    NodeData.WorkingDir := Config.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfWorkingDir));
+    NodeData.Parameters := ASuiteInstance.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfParameter));
+    NodeData.WorkingDir := ASuiteInstance.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfWorkingDir));
     {$ENDIF}
   end
   else begin
     if ExtractFileExtEx(APathFile) = EXT_URL then
     begin
       //Shortcut
-      NodeData.PathFile   := Config.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfPathFile));
-      NodeData.PathIcon   := Config.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfPathIcon));
+      NodeData.PathFile   := ASuiteInstance.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfPathFile));
+      NodeData.PathIcon   := ASuiteInstance.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfPathIcon));
       if NodeData.PathIcon = '' then
         NodeData.PathIcon := CONST_PATH_URLICON;
-      NodeData.Parameters := Config.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfParameter));
-      NodeData.WorkingDir := Config.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfWorkingDir));
+      NodeData.Parameters := ASuiteInstance.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfParameter));
+      NodeData.WorkingDir := ASuiteInstance.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfWorkingDir));
     end
     else //Normal file
-      NodeData.PathFile := Config.Paths.AbsoluteToRelative(APathFile);
+      NodeData.PathFile := ASuiteInstance.Paths.AbsoluteToRelative(APathFile);
   end;
   //If it is a directory, use folder icon
   if DirectoryExists(NodeData.PathAbsoluteFile) then
@@ -254,11 +254,11 @@ begin
   //Change default node height and imagelist based of IconSize
   if ASmallIcon then
   begin
-    ASender.DefaultNodeHeight := Config.SmallHeightNode;
+    ASender.DefaultNodeHeight := ASuiteInstance.SmallHeightNode;
     ASender.ImagesWidth := ICON_SIZE_SMALL;
   end
   else begin
-    ASender.DefaultNodeHeight := Config.BigHeightNode;
+    ASender.DefaultNodeHeight := ASuiteInstance.BigHeightNode;
     ASender.ImagesWidth := ICON_SIZE_LARGE;
   end;
   ASender.ScrollBarOptions.VerticalIncrement := ASender.DefaultNodeHeight;
@@ -378,19 +378,19 @@ begin
 
   //Check if ATree is MainTree (frmMain.vstList), to get nodedata from the right Tree
   Result := nil;
-  if (ATree <> Config.MainTree) and (ATree <> Config.ImportTree) then
+  if (ATree <> ASuiteInstance.MainTree) and (ATree <> ASuiteInstance.ImportTree) then
   begin
     //If node is from another Tree, we must find the mainnode from MainTree
     ListNode := GetListNodeFromSubTree(ANode, ATree);
     if Assigned(ListNode) then
-      Result := Config.MainTree.GetNodeData(ListNode);
+      Result := ASuiteInstance.MainTree.GetNodeData(ListNode);
   end
   else begin
-    if ATree = Config.MainTree then
-      Result := Config.MainTree.GetNodeData(ANode)
+    if ATree = ASuiteInstance.MainTree then
+      Result := ASuiteInstance.MainTree.GetNodeData(ANode)
     else
-      if ATree = Config.ImportTree then
-        Result := Config.ImportTree.GetNodeData(ANode);
+      if ATree = ASuiteInstance.ImportTree then
+        Result := ASuiteInstance.ImportTree.GetNodeData(ANode);
   end;
 
 //  Assert(Assigned(Result), 'Result is not assigned');
@@ -494,12 +494,12 @@ begin
       //Delete desktop's shortcut
       if NodeData is TvFileNodeData then
         TvFileNodeData(NodeData).DeleteShortcutFile;
-      Config.ListManager.RemoveItemFromLists(NodeData);
+      ASuiteManager.ListManager.RemoveItemFromLists(NodeData);
     end;
     //Delete and reset cache icon
     TNodeIcon(NodeData.Icon).ResetCacheIcon;
     //Remove item from sqlite database
-    Config.DBManager.RemoveItem(NodeData.ID);
+    ASuiteManager.DBManager.RemoveItem(NodeData.ID);
   end;
 end;
 
@@ -624,7 +624,7 @@ begin
   ListStats := Data;
   if Assigned(Node) then
   begin
-    NodeData := GetNodeItemData(Node, Config.MainTree);
+    NodeData := GetNodeItemData(Node, ASuiteInstance.MainTree);
     //Count Softwares and Categories
     case NodeData.DataType of
       vtdtCategory : Inc(ListStats.CatCount);
@@ -641,16 +641,16 @@ var
   SubNode: PVirtualNode;
 begin
   //Get NodeData (need it because we must know DataType)
-  if Sender = Config.MainTree then
+  if Sender = ASuiteInstance.MainTree then
     SubNode := Node
   else //Else get right node from MainTree
     SubNode := GetListNodeFromSubTree(Node, Sender);
-  NodeData  := GetNodeItemData(SubNode, Config.MainTree);
+  NodeData  := GetNodeItemData(SubNode, ASuiteInstance.MainTree);
   if Assigned(NodeData) then
   begin
     //Change node height
     if NodeData.IsSeparatorItem then
-      Sender.NodeHeight[Node] := Config.SmallHeightNode
+      Sender.NodeHeight[Node] := ASuiteInstance.SmallHeightNode
     else
       Sender.NodeHeight[Node] := Integer(Data^);
   end;
@@ -685,7 +685,7 @@ begin
     else
       begin
         // Execute item
-        NodeData := Config.ListManager.HotKeyItemList.IndexOfID(ShortcutEx.Tag);
+        NodeData := ASuiteManager.ListManager.HotKeyItemList.IndexOfID(ShortcutEx.Tag);
         if Assigned(NodeData) then
         begin
           if not(NodeData.IsSeparatorItem) then

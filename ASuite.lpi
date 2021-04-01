@@ -12,6 +12,7 @@
       <SessionStorage Value="InProjectDir"/>
       <MainUnit Value="0"/>
       <Title Value="ASuite"/>
+      <Scaled Value="True"/>
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
@@ -30,7 +31,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="997"/>
+      <BuildNr Value="1020"/>
     </VersionInfo>
     <BuildModes Count="4">
       <Item1 Name="Default" Default="True"/>
@@ -230,7 +231,7 @@
         <PackageName Value="LCL"/>
       </Item12>
     </RequiredPackages>
-    <Units Count="70">
+    <Units Count="72">
       <Unit0>
         <Filename Value="ASuite.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -573,8 +574,9 @@
         <ResourceBaseClass Value="Form"/>
       </Unit64>
       <Unit65>
-        <Filename Value="Library/Thread.FindFiles.pas"/>
+        <Filename Value="Library/thread.findfiles.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="Thread.FindFiles"/>
       </Unit65>
       <Unit66>
         <Filename Value="Library/AppConfig.Consts.pas"/>
@@ -585,16 +587,25 @@
         <IsPartOfProject Value="True"/>
       </Unit67>
       <Unit68>
-        <Filename Value="Frame/Frame.Properties.EnvironmentVars.pas"/>
+        <Filename Value="Frame/frame.properties.environmentvars.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="frmEnvironmentVars"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="Frame.Properties.EnvironmentVars"/>
       </Unit68>
       <Unit69>
         <Filename Value="Library/Icons.ExtFile.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit69>
+      <Unit70>
+        <Filename Value="Library/Kernel.Instance.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit70>
+      <Unit71>
+        <Filename Value="Library/Kernel.Manager.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit71>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

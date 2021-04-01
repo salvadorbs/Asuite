@@ -54,7 +54,7 @@ type
 implementation
 
 uses
-  LCLIntf, LCLType, AppConfig.Main, VirtualTree.Methods, Kernel.Logger;
+  LCLIntf, LCLType, AppConfig.Main, VirtualTree.Methods, Kernel.Logger, Kernel.Instance, Kernel.Manager;
 
 { TLauncherLists }
 
@@ -117,7 +117,7 @@ begin
     if Assigned(List) then
     begin
       for I := 0 to List.Count - 1 do
-        TVirtualTreeMethods.ExecuteNode(Config.MainTree, List[I].pNode, rmNormal, True);
+        TVirtualTreeMethods.ExecuteNode(ASuiteInstance.MainTree, List[I].pNode, rmNormal, True);
     end;
   end;
 end;

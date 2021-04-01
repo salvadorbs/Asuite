@@ -97,7 +97,7 @@ implementation
 
 uses
   Kernel.Consts, AppConfig.Main, Utility.Conversions, Kernel.ResourceStrings,
-  GraphicMenu.ThemeEngine.Consts, Kernel.Logger, Utility.Misc,
+  GraphicMenu.ThemeEngine.Consts, Kernel.Logger, Utility.Misc, Kernel.Instance, Kernel.Manager,
   BGRABitmapTypes, Types;
 
 { TThemeEngineMethods }
@@ -105,7 +105,7 @@ uses
 function TThemeEngine.GetPathFromIni(IniFile: TIniFile; Section, Key, DefaultValue: String; InitialPath: String = ''): AnsiString;
 begin
   if InitialPath = '' then
-    Result := Config.Paths.SuitePathCurrentTheme + IniFile.ReadString(Section, Key, DefaultValue)
+    Result := ASuiteInstance.Paths.SuitePathCurrentTheme + IniFile.ReadString(Section, Key, DefaultValue)
   else
     Result := InitialPath + IniFile.ReadString(Section, Key, DefaultValue);
 
@@ -240,9 +240,9 @@ begin
     //Get and draw icon
     IniFile_Section := GetIniFileSection(ButtonType);
     IconPath := GetButtonIconPath(IniFile, ButtonType);
-    if FileExists(Config.Paths.SuitePathCurrentTheme + IconPath) then
+    if FileExists(ASuiteInstance.Paths.SuitePathCurrentTheme + IconPath) then
     begin
-      Icon.LoadFromFile(Config.Paths.SuitePathCurrentTheme + IconPath);
+      Icon.LoadFromFile(ASuiteInstance.Paths.SuitePathCurrentTheme + IconPath);
       buttonHeight := (PNGImage.Height div 4);
       iSpace := (buttonHeight - Icon.Height) div 2;
       PNGImage.Canvas.Lock;
@@ -416,10 +416,10 @@ begin
   TASuiteLogger.Enter('LoadTheme', Self);
 
   //Load theme
-  if FileExists(Config.Paths.SuitePathCurrentTheme + THEME_INI) then
+  if FileExists(ASuiteInstance.Paths.SuitePathCurrentTheme + THEME_INI) then
   begin
     TASuiteLogger.Info('Found theme.ini - Loading it', []);
-    IniFile := TIniFile.Create(Config.Paths.SuitePathCurrentTheme + THEME_INI);
+    IniFile := TIniFile.Create(ASuiteInstance.Paths.SuitePathCurrentTheme + THEME_INI);
     try
       //IniFile Section General
       //Background
@@ -464,17 +464,17 @@ begin
       //Search
       sTempPath := GetPathFromIni(IniFile, INIFILE_SECTION_SEARCH, INIFILE_KEY_ICONSEARCH, '');
       if FileExists(sTempPath) then
-        FSearchIcon := Config.IconsManager.GetPathIconIndex(sTempPath);
+        FSearchIcon := ASuiteManager.IconsManager.GetPathIconIndex(sTempPath);
 
       sTempPath := GetPathFromIni(IniFile, INIFILE_SECTION_SEARCH, INIFILE_KEY_ICONCANCEL, '');
       if FileExists(sTempPath) then
-        FCancelIcon := Config.IconsManager.GetPathIconIndex(sTempPath);
+        FCancelIcon := ASuiteManager.IconsManager.GetPathIconIndex(sTempPath);
 
       FGraphicMenu.edtSearch.RightButton.ImageIndex := FSearchIcon;
 
       //Hard Disk
       DrawHardDiskSpace(IniFile, FGraphicMenu.imgDriveBackground, FGraphicMenu.imgDriveSpace);
-      FGraphicMenu.lblDriveName.Caption := format(msgGMDriveName, [UpperCase(Config.Paths.SuiteDrive)]);
+      FGraphicMenu.lblDriveName.Caption := format(msgGMDriveName, [UpperCase(ASuiteInstance.Paths.SuiteDrive)]);
 
       //Fonts
       strFont := IniFile.ReadString(INIFILE_SECTION_HARDDISK, INIFILE_KEY_FONT, '');
@@ -491,7 +491,7 @@ begin
     end;
   end
   else
-    ShowMessageFmtEx(msgErrNoThemeIni, [Config.Paths.SuitePathCurrentTheme + THEME_INI], True);
+    ShowMessageFmtEx(msgErrNoThemeIni, [ASuiteInstance.Paths.SuitePathCurrentTheme + THEME_INI], True);
 end;
 
 procedure TThemeEngine.SetupThemeEngine(AGraphicMenu: TfrmGraphicMenu);

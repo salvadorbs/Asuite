@@ -54,7 +54,7 @@ implementation
 uses
   Utility.System, AppConfig.Main, NodeDataTypes.Files, Kernel.Consts, ImgList,
   Utility.FileFolder, DataModules.Icons{$IFDEF MSWINDOWS}, Windows {$ENDIF},
-  BGRAIconCursor, BGRABitmapTypes;
+  BGRAIconCursor, BGRABitmapTypes, Kernel.Instance, Kernel.Manager;
 
 { TNodeIcon }
 
@@ -101,7 +101,7 @@ begin
 
   //If it is a category, get directly cat icon
   if (FNodeData.IsCategoryItem) and (Result = -1) then
-    Result := Config.IconsManager.GetIconIndex('category');
+    Result := ASuiteManager.IconsManager.GetIconIndex('category');
 end;
 
 function TNodeIcon.LoadIcon: Integer;
@@ -114,7 +114,7 @@ begin
   if FNodeData.IsFileItem then
   begin
     if Not(TvFileNodeData(FNodeData).IsPathFileExists) then
-      Result := Config.IconsManager.GetIconIndex('file_error');
+      Result := ASuiteManager.IconsManager.GetIconIndex('file_error');
   end;
   //Get imageindex
   if (Result = -1) then
@@ -127,7 +127,7 @@ begin
 
   //Force MainTree repaint node
   if Assigned(FNodeData.PNode) then
-    Config.MainTree.InvalidateNode(FNodeData.PNode);
+    ASuiteInstance.MainTree.InvalidateNode(FNodeData.PNode);
 end;
 
 end.

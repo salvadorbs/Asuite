@@ -87,7 +87,7 @@ implementation
 uses
   AppConfig.Main, Utility.FileFolder, Kernel.Consts, VirtualTree.Methods,
   NodeDataTypes.Files, NodeDataTypes.Custom, Kernel.Enumerations, Kernel.ResourceStrings,
-  Utility.Misc;
+  Utility.Misc, Kernel.Instance, Kernel.Manager;
 
 {$R *.lfm}
 
@@ -99,28 +99,28 @@ begin
     //Clear MRU
     if cbClearMRU.Checked then
     begin
-      Config.ListManager.MRUList.Clear;
-      Config.MainTree.IterateSubtree(nil, ClearMRU, nil);
+      ASuiteManager.ListManager.MRUList.Clear;
+      ASuiteInstance.MainTree.IterateSubtree(nil, ClearMRU, nil);
       cbClearMRU.Checked := False;
     end;
     //Clear MFU
     if cbClearMFU.Checked then
     begin
-      Config.ListManager.MFUList.Clear;
-      Config.MainTree.IterateSubtree(nil, ClearMFU, nil);
+      ASuiteManager.ListManager.MFUList.Clear;
+      ASuiteInstance.MainTree.IterateSubtree(nil, ClearMFU, nil);
       cbClearMFU.Checked := False;
     end;
     //Clear Backup
     if cbClearBackup.Checked then
     begin
-      DeleteFiles(Config.Paths.SuitePathBackup, APP_NAME + '_*' + EXT_SQLBCK);
+      DeleteFiles(ASuiteInstance.Paths.SuitePathBackup, APP_NAME + '_*' + EXT_SQLBCK);
       cbClearBackup.Checked := False;
     end;
     //Clear Cache
     if cbClearCache.Checked then
     begin
-      Config.MainTree.FullCollapse;
-      Config.MainTree.IterateSubtree(nil, ClearCache, nil);
+      ASuiteInstance.MainTree.FullCollapse;
+      ASuiteInstance.MainTree.IterateSubtree(nil, ClearCache, nil);
       cbClearCache.Checked := False;
     end;
   finally
@@ -178,7 +178,7 @@ end;
 
 function TfrmAdvancedOptionsPage.GetImageIndex: Integer;
 begin
-  Result := Config.IconsManager.GetIconIndex('advanced');
+  Result := ASuiteManager.IconsManager.GetIconIndex('advanced');
 end;
 
 function TfrmAdvancedOptionsPage.GetTitle: string;

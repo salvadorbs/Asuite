@@ -53,7 +53,8 @@ type
 implementation
 
 uses
-  NodeDataTypes.Files, VirtualTree.Methods, AppConfig.Main, Kernel.ResourceStrings;
+  NodeDataTypes.Files, VirtualTree.Methods, AppConfig.Main, Kernel.ResourceStrings,
+  Kernel.Instance, Kernel.Manager;
 
 procedure TvCategoryNodeData.CallBackExecuteNode(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
@@ -133,7 +134,7 @@ begin
   Result := False;
   if (Config.ConfirmRunCat) then
   begin
-    if CheckRunnableSubItems(Config.MainTree) then
+    if CheckRunnableSubItems(ASuiteInstance.MainTree) then
       Result := (MessageDlg(Format(msgConfirmRunCat, [Self.Name]), mtWarning, [mbYes, mbNo], 0) = mrYes);
   end
   else
@@ -145,7 +146,7 @@ begin
   Result := ConfirmRunCategory;
 
   if Result then
-    Config.MainTree.IterateSubtree(Self.PNode, CallBackExecuteNode, @ASingleInstance);
+    ASuiteInstance.MainTree.IterateSubtree(Self.PNode, CallBackExecuteNode, @ASingleInstance);
 end;
 
 function TvCategoryNodeData.InternalExecuteAsAdmin(
@@ -154,7 +155,7 @@ begin
   Result := ConfirmRunCategory;
 
   if Result then
-    Config.MainTree.IterateSubtree(Self.PNode, CallBackExecuteNodeAsAdmin, nil);
+    ASuiteInstance.MainTree.IterateSubtree(Self.PNode, CallBackExecuteNodeAsAdmin, nil);
 end;
 
 function TvCategoryNodeData.InternalExecuteAsUser(ARunFromCategory: Boolean;
@@ -163,7 +164,7 @@ begin
   Result := ConfirmRunCategory;
 
   if Result then
-    Config.MainTree.IterateSubtree(Self.PNode, CallBackExecuteNodeAsUser, @AUserData);
+    ASuiteInstance.MainTree.IterateSubtree(Self.PNode, CallBackExecuteNodeAsUser, @AUserData);
 end;
 
 end.

@@ -65,7 +65,7 @@ implementation
 
 uses
   Utility.Misc, AppConfig.Main, Kernel.Types, VirtualTree.Methods,
-  Kernel.ResourceStrings, BZSystem;
+  Kernel.ResourceStrings, BZSystem, Kernel.Instance, Kernel.Manager;
 
 {$R *.lfm}
 
@@ -73,7 +73,7 @@ uses
 
 function TfrmStatsOptionsPage.GetImageIndex: Integer;
 begin
-  Result := Config.IconsManager.GetIconIndex('stats');
+  Result := ASuiteManager.IconsManager.GetIconIndex('stats');
 end;
 
 function TfrmStatsOptionsPage.GetTitle: string;
@@ -97,7 +97,7 @@ begin
   lbUser.RightCaption   := GetCurrentUserName;
 
   //Drive
-  Drive := Config.Paths.SuiteDrive;
+  Drive := ASuiteInstance.Paths.SuiteDrive;
 
   if Length(Drive) > 0 then
   begin
@@ -112,7 +112,7 @@ begin
   //Launcher
   ListStats.SwCount  := 0;
   ListStats.CatCount := 0;
-  Config.MainTree.IterateSubtree(nil, TVirtualTreeMethods.UpdateListItemCount, @ListStats);
+  ASuiteInstance.MainTree.IterateSubtree(nil, TVirtualTreeMethods.UpdateListItemCount, @ListStats);
   lbSoftware.RightCaption := IntToStr(ListStats.SwCount);
   lbCat.RightCaption      := IntToStr(ListStats.CatCount);
   lbTotal.RightCaption    := IntToStr(ListStats.SwCount + ListStats.CatCount);

@@ -141,7 +141,8 @@ uses
   AppConfig.Main, NodeDataTypes.Base, NodeDataTypes.Category, Kernel.ResourceStrings,
   NodeDataTypes.Files, NodeDataTypes.Custom, NodeDataTypes.Separator, Kernel.Types,
   Kernel.Enumerations, VirtualTree.Methods, DataModules.TrayMenu, LCLProc, Kernel.Consts,
-  DataModules.Icons, Kernel.Logger, SynLog, {$IFDEF Windows}comobj, Windows,{$ENDIF} Utility.Misc;
+  DataModules.Icons, Kernel.Logger, SynLog, Utility.Misc, Kernel.Instance, Kernel.Manager
+  {$IFDEF Windows}, comobj, Windows{$ENDIF};
 
 { TVirtualTreeEvents }
 
@@ -212,7 +213,7 @@ procedure TVirtualTreeEvents.SetupVSTHotkey(ATree: TVirtualStringTree);
 begin
   ATree.Images := dmImages.ilLargeIcons;
   ATree.ImagesWidth := ICON_SIZE_LARGE;
-  ATree.DefaultNodeHeight := Config.BigHeightNode;
+  ATree.DefaultNodeHeight := ASuiteInstance.BigHeightNode;
 
   ATree.OnGetNodeDataSize := DoGetNodeDataSizeSearch;
   ATree.OnCompareNodes    := DoCompareNodesHotkey;
@@ -267,7 +268,7 @@ procedure TVirtualTreeEvents.SetupVSTAutorun(ATree: TVirtualStringTree);
 begin
   ATree.Images := dmImages.ilLargeIcons;
   ATree.ImagesWidth := ICON_SIZE_LARGE;
-  ATree.DefaultNodeHeight := Config.BigHeightNode;
+  ATree.DefaultNodeHeight := ASuiteInstance.BigHeightNode;
 
   ATree.OnGetNodeDataSize := DoGetNodeDataSizeSearch;
   ATree.OnGetText         := DoGetTextAutorun;
@@ -279,7 +280,7 @@ begin
   ATree.Clear;
   ATree.Images := dmImages.ilLargeIcons;
   ATree.ImagesWidth := ICON_SIZE_LARGE;
-  ATree.DefaultNodeHeight := Config.BigHeightNode;
+  ATree.DefaultNodeHeight := ASuiteInstance.BigHeightNode;
 
   ATree.OnAddToSelection  := DoAddToSelectionFrame;
   ATree.OnFreeNode        := DoFreeNodeFrame;
@@ -586,7 +587,7 @@ begin
   NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
   if Assigned(NodeData) then
     if NodeData.IsSeparatorItem then
-      NodeHeight := Config.SmallHeightNode;
+      NodeHeight := ASuiteInstance.SmallHeightNode;
 end;
 
 procedure TVirtualTreeEvents.DoLoadNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
@@ -650,7 +651,7 @@ begin
   if Sender is TVirtualStringTree then
   begin
     DY := TVirtualStringTree(Sender).DefaultNodeHeight;
-    if TVirtualStringTree(Sender).DefaultNodeHeight = Config.BigHeightNode then
+    if TVirtualStringTree(Sender).DefaultNodeHeight = ASuiteInstance.BigHeightNode then
       TVirtualStringTree(Sender).BottomSpace := 1
     else
       TVirtualStringTree(Sender).BottomSpace := TVirtualStringTree(Sender).ClientHeight mod DY;
@@ -766,9 +767,9 @@ var
   CatData: TvBaseNodeData;
 begin
   Result := '';
-  if (ANode.Parent <> Config.MainTree.RootNode) then
+  if (ANode.Parent <> ASuiteInstance.MainTree.RootNode) then
   begin
-    CatData := TVirtualTreeMethods.GetNodeItemData(ANode.Parent, Config.MainTree);
+    CatData := TVirtualTreeMethods.GetNodeItemData(ANode.Parent, ASuiteInstance.MainTree);
     if Assigned(CatData) then
       Result  := CatData.Name;
   end
@@ -830,8 +831,8 @@ begin
     if Column = 0 then
       Result := CompareText(Data1.Name, Data2.Name)
     else begin
-      CatData1 := TVirtualTreeMethods.GetNodeItemData(Data1.pNode.Parent, Config.MainTree);
-      CatData2 := TVirtualTreeMethods.GetNodeItemData(Data2.pNode.Parent, Config.MainTree);
+      CatData1 := TVirtualTreeMethods.GetNodeItemData(Data1.pNode.Parent, ASuiteInstance.MainTree);
+      CatData2 := TVirtualTreeMethods.GetNodeItemData(Data2.pNode.Parent, ASuiteInstance.MainTree);
       if Assigned(CatData1) then
         CatName1 := CatData1.Name
       else
@@ -890,9 +891,9 @@ begin
         1:
         begin
           if NodeData.IsCategoryItem then
-            ImageIndex := Config.IconsManager.GetIconIndex('category')
+            ImageIndex := ASuiteManager.IconsManager.GetIconIndex('category')
           else
-            ImageIndex := Config.IconsManager.GetIconIndex('file');
+            ImageIndex := ASuiteManager.IconsManager.GetIconIndex('file');
         end;
       end;
     end;

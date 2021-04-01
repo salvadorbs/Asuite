@@ -50,7 +50,7 @@ implementation
 uses
   Utility.Conversions, Forms.Main, AppConfig.Main, Utility.Misc, Kernel.Logger,
   VirtualTree.Methods, LazFileUtils{$IFDEF MSWINDOWS} , ShellApi {$ENDIF}, LazUTF8,
-  Utility.FileFolder;
+  Utility.FileFolder, Kernel.Instance, Kernel.Manager;
 
 function HasDriveLetter(const Path: String): Boolean;
 var P: PChar;
@@ -97,7 +97,7 @@ function IsPathExists(const Path: String): Boolean;
 var
   PathTemp : String;
 begin
-  PathTemp := Config.Paths.RelativeToAbsolute(Path);
+  PathTemp := ASuiteInstance.Paths.RelativeToAbsolute(Path);
   if IsUNCPath(PathTemp) then
     Result := True
   else

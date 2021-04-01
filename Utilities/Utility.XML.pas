@@ -39,7 +39,7 @@ implementation
 uses
   Forms.Main, NodeDataTypes.Custom, Utility.Misc, AppConfig.Main, Kernel.Types,
   Utility.Conversions, VirtualTree.Methods, NodeDataTypes.Files, Menus,
-  Kernel.Logger;
+  Kernel.Logger, Kernel.Instance, Kernel.Manager;
 
 function GetStrPropertyXML(Node : TDOMNode;Name: String;Default: String): String;
 var
@@ -342,7 +342,7 @@ begin
     if (XMLDoc.DocumentElement.NodeName = 'ASuite') then
     begin
       LoadXMLSettings(XMLDoc);
-      XMLToTree(Config.MainTree, ltASuite1, XMLDoc);
+      XMLToTree(ASuiteInstance.MainTree, ltASuite1, XMLDoc);
     end;
     SysUtils.DeleteFile(FileName);
     Config.Changed := True;

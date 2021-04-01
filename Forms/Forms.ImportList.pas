@@ -79,7 +79,7 @@ implementation
 uses
   Forms.Main, AppConfig.Main, VirtualTree.Events, VirtualTree.Methods,
   Utility.FileFolder, Utility.XML, Database.Manager, NodeDataTypes.Base,
-  Kernel.Logger, Kernel.ResourceStrings, Utility.Misc;
+  Kernel.Logger, Kernel.ResourceStrings, Utility.Misc, Kernel.Instance, Kernel.Manager;
 
 procedure TfrmImportList.btnBackClick(Sender: TObject);
 begin
@@ -122,12 +122,12 @@ begin
   if (ModalResult = mrOk) and (vstListImp.HasChildren[vstListImp.RootNode]) then
   begin
     try
-      if TreeImpToTree(vstListImp, Config.MainTree) then
+      if TreeImpToTree(vstListImp, ASuiteInstance.MainTree) then
       begin
         ShowMessageFmtEx(msgItemsImported, [GetNumberNodeImp(vstListImp)]);
         TASuiteLogger.Info(msgItemsImported, [GetNumberNodeImp(vstListImp)]);
       end;
-      TVirtualTreeMethods.GetAllIcons(Config.MainTree, nil);
+      TVirtualTreeMethods.GetAllIcons(ASuiteInstance.MainTree, nil);
     except
       on E : Exception do
       begin

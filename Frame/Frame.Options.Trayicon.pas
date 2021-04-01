@@ -82,7 +82,7 @@ var
 implementation
 
 uses
-  AppConfig.Main, Kernel.Enumerations, Kernel.ResourceStrings;
+  AppConfig.Main, Kernel.Enumerations, Kernel.ResourceStrings, Kernel.Instance, Kernel.Manager;
 
 procedure TfrmTrayiconOptionsPage.LoadComboMouseClickItems(AComboBox: TComboBox);
 begin
@@ -111,19 +111,19 @@ end;
 procedure TfrmTrayiconOptionsPage.edtCustomIconAfterDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
-  AName := Config.Paths.AbsoluteToRelative(AName);
+  AName := ASuiteInstance.Paths.AbsoluteToRelative(AName);
 end;
 
 procedure TfrmTrayiconOptionsPage.edtCustomIconBeforeDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
-  AName := Config.Paths.RelativeToAbsolute(AName);
+  AName := ASuiteInstance.Paths.RelativeToAbsolute(AName);
   edtCustomIcon.Filter := msgFilterIcon;
 end;
 
 function TfrmTrayiconOptionsPage.GetImageIndex: Integer;
 begin
-  Result := Config.IconsManager.GetIconIndex('trayicon');
+  Result := ASuiteManager.IconsManager.GetIconIndex('trayicon');
 end;
 
 function TfrmTrayiconOptionsPage.GetTitle: string;
@@ -156,7 +156,7 @@ begin
   chkUserPicture.Checked := Config.GMShowUserPicture;
 
   //Get GM theme list
-  if FindFirst(Config.Paths.SuitePathMenuThemes + '*.*', faDirectory, searchResult) = 0 then
+  if FindFirst(ASuiteInstance.Paths.SuitePathMenuThemes + '*.*', faDirectory, searchResult) = 0 then
   begin
     repeat
       if ((searchResult.Name <> '.') and (searchResult.Name <> '..')) and

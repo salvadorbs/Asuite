@@ -73,7 +73,7 @@ var
 implementation
 
 uses
-  AppConfig.Main, Kernel.ResourceStrings;
+  AppConfig.Main, Kernel.ResourceStrings, Kernel.Instance, Kernel.Manager;
 
 {$R *.lfm}
 
@@ -97,19 +97,19 @@ end;
 procedure TfrmMainWindowOptionsPage.edtBackgroundAfterDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
-  AName := Config.Paths.AbsoluteToRelative(AName);
+  AName := ASuiteInstance.Paths.AbsoluteToRelative(AName);
 end;
 
 procedure TfrmMainWindowOptionsPage.edtBackgroundBeforeDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
   edtBackground.Filter := msgFilterBackground;
-  AName := Config.Paths.RelativeToAbsolute(AName);
+  AName := ASuiteInstance.Paths.RelativeToAbsolute(AName);
 end;
 
 function TfrmMainWindowOptionsPage.GetImageIndex: Integer;
 begin
-  Result := Config.IconsManager.GetIconIndex('mainwindow');
+  Result := ASuiteManager.IconsManager.GetIconIndex('mainwindow');
 end;
 
 function TfrmMainWindowOptionsPage.GetTitle: string;

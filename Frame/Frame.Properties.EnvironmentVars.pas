@@ -65,7 +65,7 @@ implementation
 
 uses
   DataModules.Icons, Kernel.ResourceStrings, AppConfig.Main, Clipbrd, Kernel.Consts,
-  NodeDataTypes.Files;
+  NodeDataTypes.Files, Kernel.Manager;
 
 {$R *.lfm}
 
@@ -143,7 +143,7 @@ end;
 
 function TfrmEnvironmentVars.GetImageIndex: Integer;
 begin
-  Result := Config.IconsManager.GetIconIndex('environment_vars');
+  Result := ASuiteManager.IconsManager.GetIconIndex('environment_vars');
 end;
 
 function TfrmEnvironmentVars.InternalLoadData: Boolean;
@@ -156,10 +156,10 @@ begin
   tbButtons.Images      := dmImages.ilLargeIcons;
   tbButtons.ImagesWidth := ICON_SIZE_SMALL;
 
-  actAdd.ImageIndex    := Config.IconsManager.GetIconIndex('add');
-  actDelete.ImageIndex := Config.IconsManager.GetIconIndex('delete');
-  actCopy.ImageIndex   := Config.IconsManager.GetIconIndex('copy');
-  actPaste.ImageIndex  := Config.IconsManager.GetIconIndex('paste');
+  actAdd.ImageIndex    := ASuiteManager.IconsManager.GetIconIndex('add');
+  actDelete.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('delete');
+  actCopy.ImageIndex   := ASuiteManager.IconsManager.GetIconIndex('copy');
+  actPaste.ImageIndex  := ASuiteManager.IconsManager.GetIconIndex('paste');
 
   vleVars.Strings.Clear;
   vleVars.Strings.AddStrings(TvFileNodeData(CurrentNodeData).EnvironmentVars);
