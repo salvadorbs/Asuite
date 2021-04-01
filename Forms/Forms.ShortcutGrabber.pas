@@ -77,8 +77,8 @@ var
 implementation
 
 uses
-  Kernel.Logger, Utility.Misc, AppConfig.Main, Kernel.Consts,
-  Utility.System, Kernel.ResourceStrings, Hotkeys.Manager.Platform, Kernel.Instance, Kernel.Manager;
+  Kernel.Logger, Utility.Misc, Kernel.Consts, Kernel.ResourceStrings,
+  Hotkeys.Manager.Platform, Kernel.Instance, Kernel.Manager;
 
 {$R *.lfm}
 

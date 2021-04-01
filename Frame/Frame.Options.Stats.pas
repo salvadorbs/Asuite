@@ -24,7 +24,7 @@ unit Frame.Options.Stats;
 interface
 
 uses
-  LCLIntf, LCLType, SysUtils, Variants, Classes, DefaultTranslator, Controls,
+  LCLIntf, SysUtils, Variants, Classes, DefaultTranslator, Controls,
   Forms, Dialogs, Frame.BaseEntity, JPP.DoubleLineLabel, StdCtrls;
 
 type
@@ -64,7 +64,7 @@ implementation
 {$I ASuite.inc}
 
 uses
-  Utility.Misc, AppConfig.Main, Kernel.Types, VirtualTree.Methods,
+  Utility.Misc, Kernel.Types, VirtualTree.Methods,
   Kernel.ResourceStrings, BZSystem, Kernel.Instance, Kernel.Manager;
 
 {$R *.lfm}

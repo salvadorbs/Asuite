@@ -26,7 +26,7 @@ interface
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, DefaultTranslator, ShellCtrls,
-  ImgList, StrUtils, FileUtil, Thread.FindFiles;
+  ImgList, FileUtil, Thread.FindFiles;
 
 type
 
@@ -106,10 +106,10 @@ var
 implementation
 
 uses
-  AppConfig.Main, Kernel.Types, {$IFDEF MSWINDOWS} ShellApi,  {$ENDIF}Kernel.Logger, Kernel.Consts,
+  AppConfig.Main, Kernel.Types, Kernel.Logger, Kernel.Consts,
   DataModules.Icons, NodeDataTypes.Base, VirtualTree.Methods, Kernel.Enumerations,
   Utility.FileFolder, NodeDataTypes.Files, Utility.Misc, Kernel.ResourceStrings,
-  RegExpr, Icons.Manager, Kernel.Instance, Kernel.Manager;
+  RegExpr, Kernel.Instance, Kernel.Manager;
 
 {$R *.lfm}
 

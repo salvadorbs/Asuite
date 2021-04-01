@@ -25,7 +25,7 @@ interface
 
 uses
   SysUtils, Classes, Controls, Forms, Icons.Files, Generics.Collections,
-  Kernel.Consts, LCLIntf, LCLType, Icons.Base, Icons.ExtFile;
+  Kernel.Consts, LCLIntf, Icons.Base, Icons.ExtFile;
 
 type
   TBaseIcons = class(TObjectList<TBaseIcon>);
@@ -63,8 +63,7 @@ type
 implementation
 
 uses
-  AppConfig.Main, Kernel.Logger, FileUtil, Utility.FileFolder, LazFileUtils,
-  Kernel.Instance, Kernel.Manager;
+  Kernel.Logger, FileUtil, LazFileUtils, Kernel.Instance, Kernel.Manager;
 
 { TIconsManager }
 

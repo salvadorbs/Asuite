@@ -24,9 +24,9 @@ unit Frame.Options.Hotkey;
 interface
 
 uses
-  LCLIntf, LCLType, SysUtils, Variants, Classes, Graphics,
+  LCLIntf, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, Dialogs, Frame.BaseEntity, VirtualTrees, DefaultTranslator,
-  ComCtrls, StdCtrls, Lists.Base, ButtonedEdit, Menus, ExtCtrls, Themes;
+  ComCtrls, StdCtrls, Lists.Base, ButtonedEdit, Menus, ExtCtrls;
 
 type
 

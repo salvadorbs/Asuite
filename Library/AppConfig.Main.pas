@@ -26,7 +26,7 @@ interface
 uses
   LCLIntf, LCLType, SysUtils, Graphics, Forms, Controls, VirtualTrees, Kernel.Enumerations,
   Classes, jsonConf, LazFileUtils,
-  Lists.Manager, Database.Manager, Icons.Manager, Kernel.Logger, Dialogs;
+  Kernel.Logger, Dialogs;
 
 type
 
@@ -254,7 +254,7 @@ implementation
 uses
   Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, Utility.Misc,
   Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder,
-  Utility.XML, GraphicMenu.ThemeEngine, Kernel.Scheduler, Forms.ImportList,
+  Utility.XML, GraphicMenu.ThemeEngine,
   TypInfo, Kernel.ResourceStrings, LCLTranslator, AppConfig.Consts,
   Utility.Conversions, Hotkeys.Manager.Platform, Kernel.Instance, Kernel.Manager;
 

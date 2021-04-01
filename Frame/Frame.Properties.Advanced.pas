@@ -69,8 +69,8 @@ var
 implementation
 
 uses
-  Kernel.Enumerations, NodeDataTypes.Files, Forms.ShortcutGrabber, AppConfig.Main,
-  DataModules.Icons, Kernel.ResourceStrings, LCLProc, Kernel.Consts, Kernel.Manager;
+  Kernel.Enumerations, NodeDataTypes.Files, Forms.ShortcutGrabber, Kernel.Manager,
+  DataModules.Icons, Kernel.ResourceStrings, LCLProc, Kernel.Consts;
 
 {$R *.lfm}
 

@@ -64,7 +64,7 @@ type
 implementation
 
 uses
-  DataModules.Icons, Kernel.ResourceStrings, AppConfig.Main, Clipbrd, Kernel.Consts,
+  DataModules.Icons, Kernel.ResourceStrings, Clipbrd, Kernel.Consts,
   NodeDataTypes.Files, Kernel.Manager;
 
 {$R *.lfm}
@@ -167,7 +167,7 @@ end;
 
 function TfrmEnvironmentVars.InternalSaveData: Boolean;
 var
-  I, EmptyRow: Integer;
+  EmptyRow: Integer;
   FileNodeData: TvFileNodeData;
 begin
   Result := inherited;

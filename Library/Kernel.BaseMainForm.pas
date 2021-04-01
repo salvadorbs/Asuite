@@ -24,7 +24,7 @@ unit Kernel.BaseMainForm;
 interface
 
 uses
-  Forms, Controls, Classes, Dialogs, Graphics, LCLIntf, LCLType, Messages;
+  Forms, Controls, Classes, Dialogs, Graphics, LCLIntf;
 
 type
 
@@ -49,7 +49,7 @@ type
 implementation
 
 uses
-  AppConfig.Main, Kernel.Enumerations, VirtualTree.Methods;
+  AppConfig.Main, Kernel.Enumerations;
 
 constructor TBaseMainForm.Create(AOwner: TComponent);
 begin

@@ -27,7 +27,7 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  Menus, ExtCtrls, VirtualTrees, ImgList, Messages, LazFileUtils,
+  Menus, ExtCtrls, VirtualTrees, ImgList, LazFileUtils,
   Kernel.ASMenuItem, Lists.Base, Kernel.Enumerations;
 
 type
@@ -137,11 +137,11 @@ var
 implementation
 
 uses
-  DataModules.Icons, Forms.Main, AppConfig.Main, VirtualTree.Methods, process,
+  DataModules.Icons, Forms.Main, AppConfig.Main, VirtualTree.Methods,
   Utility.System, Forms.GraphicMenu, Kernel.Types, NodeDataTypes.Files,
   NodeDataTypes.Custom, NodeDataTypes.Base, Kernel.Consts, Kernel.Logger,
   Utility.Misc, Utility.FileFolder, Kernel.ResourceStrings, Kernel.Instance,
-  Kernel.Manager {$IFDEF MSWINDOWS} , ShellApi, Windows {$ENDIF};
+  Kernel.Manager {$IFDEF MSWINDOWS} , Windows {$ENDIF};
 
 {$R *.lfm}
 
@@ -562,7 +562,6 @@ procedure TdmTrayMenu.DoDrawCaptionedSeparator(Sender: TObject; ACanvas: TCanvas
 
 var
   TextArea, LineArea: TRect;
-  Flags: Longint;
   LineCaption : string;  
   TextSpace, CaptionLineItemHeight: Cardinal;
 begin
@@ -570,7 +569,6 @@ begin
   LineArea := ARect;
   TextArea := LineArea;
   Dec(TextArea.Bottom, 1);
-  Flags := DT_SINGLELINE or DT_NOPREFIX or DT_VCENTER or DT_CENTER;
   TextSpace := 0;
   if (Sender is TMenuItem) then
   begin

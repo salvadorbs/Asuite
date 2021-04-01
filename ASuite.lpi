@@ -31,7 +31,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="1020"/>
+      <BuildNr Value="1042"/>
     </VersionInfo>
     <BuildModes Count="4">
       <Item1 Name="Default" Default="True"/>
@@ -79,7 +79,7 @@
           </Linking>
           <Other>
             <CompilerMessages>
-              <IgnoredMessages idx5044="True" idx5024="True" idx4105="True" idx4104="True"/>
+              <IgnoredMessages idx5044="True" idx5026="True" idx5024="True" idx4105="True" idx4104="True"/>
             </CompilerMessages>
             <CustomOptions Value="-Xm
 -dBorland
@@ -581,6 +581,7 @@
       <Unit66>
         <Filename Value="Library/AppConfig.Consts.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="AppConfig.Consts"/>
       </Unit66>
       <Unit67>
         <Filename Value="Library/AppConfig.PathList.pas"/>
@@ -597,6 +598,7 @@
       <Unit69>
         <Filename Value="Library/Icons.ExtFile.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="Icons.ExtFile"/>
       </Unit69>
       <Unit70>
         <Filename Value="Library/Kernel.Instance.pas"/>

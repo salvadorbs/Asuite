@@ -24,8 +24,8 @@ unit Frame.Properties.General;
 interface
 
 uses
-  LCLIntf, LCLType, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, StdCtrls, Frame.Properties.Base, Themes,
+  LCLIntf, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, StdCtrls, Frame.Properties.Base,
   EditBtn, DefaultTranslator;
 
 type
@@ -65,8 +65,8 @@ var
 implementation
 
 uses
-  Utility.Misc, Kernel.Enumerations, NodeDataTypes.Files, AppConfig.Main,
-  Utility.System, Kernel.ResourceStrings, Kernel.Instance, Kernel.Manager;
+  Utility.Misc, NodeDataTypes.Files, Utility.System, Kernel.ResourceStrings,
+  Kernel.Instance, Kernel.Manager;
 
 {$R *.lfm}
 

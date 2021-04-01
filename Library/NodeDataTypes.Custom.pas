@@ -25,7 +25,7 @@ interface
 
 uses
   SysUtils, Kernel.Enumerations, NodeDataTypes.Base,
-  DateUtils, Menus, Classes, Kernel.Types;
+  Classes, Kernel.Types;
 
 type
 
@@ -83,7 +83,7 @@ type
 implementation
 
 uses
-  AppConfig.Main, Lists.Manager, VirtualTree.Methods, Kernel.Logger, Forms.Main,
+  AppConfig.Main, Kernel.Logger, Forms.Main,
   Kernel.Instance, Kernel.Manager;
 
 procedure TvCustomRealNodeData.Copy(source: TvBaseNodeData);

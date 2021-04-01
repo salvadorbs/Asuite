@@ -111,7 +111,7 @@ implementation
 
 uses
   Kernel.Enumerations, Utility.Misc, VirtualTree.Methods, NodeDataTypes.Custom,
-  NodeDataTypes.Files, AppConfig.Main, Icons.Node, Kernel.Logger, Kernel.ResourceStrings,
+  NodeDataTypes.Files, Icons.Node, Kernel.Logger, Kernel.ResourceStrings,
   Kernel.Manager;
 
 { TSQLtbl_files }

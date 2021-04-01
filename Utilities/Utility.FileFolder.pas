@@ -36,7 +36,6 @@ uses
 
 function BrowseForFolder(const InitialDir: String; const Caption: String): String;
 var
-  Path: string;
   Dialog: TSelectDirectoryDialog;
 begin
   Result := '';
@@ -215,6 +214,7 @@ begin
   IObject := CreateComObject(CLSID_ShellLink);
   ISLink  := IObject as IShellLinkW;
   IPFile  := IObject as IPersistFile;
+  PIDL := nil;
   //Create link
   ISLink.SetPath(pChar(TargetFilePath));
   ISLink.SetArguments(pChar(Params));
@@ -246,6 +246,7 @@ var
   LinkName    : String;
 begin
   {$IFDEF MSWINDOWS}
+  PIDL := nil;
   SHGetSpecialFolderLocation(0, CSIDL_DESKTOPDIRECTORY, PIDL);
   SHGetPathFromIDListW(PIDL, DesktopPath);
   {$ELSE}

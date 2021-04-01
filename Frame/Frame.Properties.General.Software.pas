@@ -67,7 +67,7 @@ var
 implementation
 
 uses
-  Kernel.Consts, NodeDataTypes.Files, AppConfig.Main, Kernel.ResourceStrings,
+  Kernel.Consts, NodeDataTypes.Files, Kernel.ResourceStrings,
   Utility.FileFolder, Kernel.Instance, Kernel.Manager;
 
 {$R *.lfm}

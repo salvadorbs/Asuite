@@ -168,6 +168,7 @@ var
   Point    : TPoint;
   HitInfo  : ThitInfo;
 begin
+  HitInfo := Default(THitInfo);
   Tree  := TBaseVirtualTree(Sender);
   Point := Tree.ScreenToClient(Mouse.CursorPos);
   Tree.GetHitTestInfoAt(Point.X, Point.Y, True, HitInfo);
@@ -733,6 +734,7 @@ var
   FileName: string;                 // name of a dropped file
 begin
   // Get required storage medium from data object
+  FileName := '';
   FmtEtc.cfFormat := CF_HDROP;
   FmtEtc.ptd := nil;
   FmtEtc.dwAspect := DVASPECT_CONTENT;

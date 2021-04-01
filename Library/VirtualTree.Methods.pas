@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, VirtualTrees, UITypes,
-  Kernel.Singleton, Kernel.Enumerations, NodeDataTypes.Base, Kernel.Types, Lists.Base,
+  Kernel.Enumerations, NodeDataTypes.Base, Kernel.Types, Lists.Base,
   SynLog, Forms.UILogin, Hotkeys.ShortcutEx;
 
 type
@@ -92,7 +92,7 @@ type
 implementation
 
 uses
-  Utility.System, DataModules.Icons, AppConfig.Main, NodeDataTypes.Files,
+  Utility.System, AppConfig.Main, NodeDataTypes.Files,
   Utility.FileFolder, Forms.PropertySeparator, Kernel.ResourceStrings,
   NodeDataTypes.Category, NodeDataTypes.Separator, Forms.PropertyItem, Icons.Thread,
   NodeDataTypes.Custom, Kernel.Consts, Icons.Node, Kernel.Logger, Utility.Misc,
@@ -506,11 +506,9 @@ end;
 class procedure TVirtualTreeMethods.FindHotkey(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
 var
-  Hotkey: Cardinal;
+  Hotkey: Cardinal absolute Data;
   CurrentNodeData : TvBaseNodeData;
 begin
-  Hotkey := Cardinal(Data);
-
   CurrentNodeData := TvFileNodeData(GetNodeItemData(Node, Sender));
   if Assigned(CurrentNodeData) and not(CurrentNodeData.IsSeparatorItem) then
   begin

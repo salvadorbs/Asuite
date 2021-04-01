@@ -77,9 +77,9 @@ implementation
 {$R *.lfm}
 
 uses
-  Forms.Main, AppConfig.Main, VirtualTree.Events, VirtualTree.Methods,
+  AppConfig.Main, VirtualTree.Events, VirtualTree.Methods, Kernel.Manager,
   Utility.FileFolder, Utility.XML, Database.Manager, NodeDataTypes.Base,
-  Kernel.Logger, Kernel.ResourceStrings, Utility.Misc, Kernel.Instance, Kernel.Manager;
+  Kernel.Logger, Kernel.ResourceStrings, Utility.Misc, Kernel.Instance;
 
 procedure TfrmImportList.btnBackClick(Sender: TObject);
 begin

@@ -62,8 +62,7 @@ implementation
 
 uses
   Forms.ImportList, Kernel.Logger, Forms, Kernel.Consts,
-  Utility.Misc, VirtualTree.Methods, VirtualTree.Events, AppConfig.Main,
-  SynLog, Kernel.Manager;
+  Utility.Misc, VirtualTree.Methods, SynLog, Kernel.Manager;
 
 { TASuiteInstance }
 

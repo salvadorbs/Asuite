@@ -58,7 +58,7 @@ var
 implementation
 
 uses
-  {$IFDEF MSWINDOWS} ShellApi, shlobj,{$ENDIF} AppConfig.Main, ImgList, Kernel.Consts;
+  ImgList, Kernel.Consts;
 
 {$R *.lfm}
 
