@@ -333,6 +333,10 @@ msgstr ""
 msgid "Select which items to import"
 msgstr ""
 
+#: kernel.resourcestrings.msginputusername
+msgid "Please insert username"
+msgstr ""
+
 #: kernel.resourcestrings.msgitems
 msgid "Items"
 msgstr ""

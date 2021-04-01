@@ -269,7 +269,6 @@ procedure TvFileNodeData.CheckPathFile;
 var
   bPathExists: Boolean;
 begin
-  //TODO: Add support to shell:AppsFolder
   bPathExists := IsPathExists(Self.PathAbsoluteFile);
   if FIsPathFileExists <> bPathExists then
   begin
@@ -349,7 +348,6 @@ begin
   end;
   FileClose(hSnapShot);
   {$ELSE}
-  //TODO: Maybe better runCommand with poWaitOnExit (more simple and less code)
   Process := TProcess.Create(nil);
   try
     Process.Executable := 'ps';

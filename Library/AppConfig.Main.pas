@@ -238,10 +238,6 @@ type
     //Update theme paths
     procedure UpdateGMTheme;
 
-    //Database
-    procedure LoadList;
-    function SaveList(DoBackup: Boolean): Boolean;
-
     procedure LoadConfig;
     procedure SaveConfig;
   end;
@@ -400,32 +396,6 @@ begin
         TVirtualTreeMethods.HotKeyNotify, Tag)) then
         ShowMessageEx(msgErrRegWindowHotkey, true);
     end;
-  end;
-end;
-
-procedure TConfiguration.LoadList;
-var
-  sFilePath  : string;
-begin
-  //TODO: Move this method in proper place
-  TASuiteLogger.Info('Finding ASuite SQLite Database', []);
-  Assert(Assigned(ASuiteInstance.MainTree), 'ASuiteInstance.MainTree is not assigned!');
-  try
-    //List
-    if ExtractFileExtEx(ASuiteInstance.Paths.SuitePathList) = EXT_XML then
-    begin
-      sFilePath := ASuiteInstance.Paths.SuitePathList;
-      ASuiteInstance.Paths.SuitePathList := ChangeFileExt(ASuiteInstance.Paths.SuitePathList, EXT_SQL);
-    end;
-
-    if Assigned(ASuiteManager.DBManager) then
-      ASuiteManager.DBManager.Setup(ASuiteInstance.Paths.SuitePathList);
-  finally
-    //If exists old list format (xml), use it
-    if sFilePath <> '' then
-      LoadDatabaseFromXML(sFilePath)
-    else //Use new list format (sqlite db)
-      ASuiteManager.DBManager.LoadData(ASuiteInstance.MainTree);
   end;
 end;
 
@@ -684,18 +654,10 @@ begin
   end;
 end;
 
-function TConfiguration.SaveList(DoBackup: Boolean): Boolean;
-begin
-  //TODO: Move this method in proper place
-  Result := False;
-  if not FReadOnlyMode then
-    Result := ASuiteManager.DBManager.SaveData(ASuiteInstance.MainTree, DoBackup);
-end;
-
 procedure TConfiguration.LoadConfig;
 var
   JSONConfig: TJSONConfig;
-begin                                                
+begin
   TASuiteLogger.Enter('Loading ASuite configuration', Self);
 
   //if FileExists(ASuiteInstance.Paths.SuitePathSettings) then

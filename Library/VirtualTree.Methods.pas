@@ -92,7 +92,7 @@ type
 implementation
 
 uses
-  Utility.System, AppConfig.Main, NodeDataTypes.Files,
+  Utility.System, AppConfig.Main, NodeDataTypes.Files, Dialogs,
   Utility.FileFolder, Forms.PropertySeparator, Kernel.ResourceStrings,
   NodeDataTypes.Category, NodeDataTypes.Separator, Forms.PropertyItem, Icons.Thread,
   NodeDataTypes.Custom, Kernel.Consts, Icons.Node, Kernel.Logger, Utility.Misc,
@@ -313,8 +313,11 @@ begin
       //Execute as user
       rmAsUser:
         begin
-          //TODO: In Linux we must call a dialog to get only username (see inputbox - https://wiki.freepascal.org/Dialog_Examples#Text_input_Dialogs)
+          {$IFDEF MSWINDOWS}
           UserData := TfrmUILogin.Execute(ASender, msgRunAsTitle);
+          {$ELSE}
+          InputBox('Username', msgInputUsername, '');
+          {$ENDIF}
           if UserData.UserName <> '' then
             NodeData.ExecuteAsUser(True, NodeData.IsCategoryItem, UserData)
           else
@@ -410,7 +413,7 @@ end;
 class procedure TVirtualTreeMethods.RefreshList(const ATree: TBaseVirtualTree);
 begin
   TASuiteLogger.Info('Refresh List', []);
-  Config.SaveList(Config.ASuiteState = lsStartUp);
+  ASuiteInstance.SaveList(Config.ASuiteState = lsStartUp);
   //Check paths of only visible nodes
   if Assigned(ATree) then
     CheckVisibleNodePathExe(ATree);
