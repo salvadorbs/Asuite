@@ -118,6 +118,7 @@ resourcestring
   msgCancel = 'Cancel';
   msgStop = 'Stop';             
   msgScanFolderExtNotValid = 'Ext file not valid. Please check it and retry!';
+  msgInputUsername = 'Please insert username';
 
   //ComboboxItems
   cxActionOnExeOpt_item0 = 'Just run file';

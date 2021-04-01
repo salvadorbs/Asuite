@@ -78,7 +78,6 @@ begin
         AFont.Name  := Strs[0];
         AFont.Size  := StrToInt(Strs[1]);
         AFont.Color := HtmlToColor(Strs[2]);
-        { TODO : Check  this code }
         AFont.Style := TFontStyles({byte}(StrToInt(Strs[3])));
       end;
     finally

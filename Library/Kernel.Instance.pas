@@ -53,6 +53,10 @@ type
     property BigHeightNode: Integer read FBigHeightNode;
 
     procedure HandleParam(const Param: string; FirstInstance: Boolean = True);
+
+    //Database
+    procedure LoadList;
+    function SaveList(DoBackup: Boolean): Boolean;
   end;
 
 var
@@ -61,8 +65,8 @@ var
 implementation
 
 uses
-  Forms.ImportList, Kernel.Logger, Forms, Kernel.Consts,
-  Utility.Misc, VirtualTree.Methods, SynLog, Kernel.Manager;
+  Forms.ImportList, Kernel.Logger, Forms, Kernel.Consts, Utility.FileFolder,
+  Utility.Misc, Utility.XML, VirtualTree.Methods, SynLog, Kernel.Manager;
 
 { TASuiteInstance }
 
@@ -146,6 +150,36 @@ begin
     if (CompareText(sName, 'additem') = 0) and (Assigned(ASuiteManager.DBManager)) then
       TVirtualTreeMethods.AddNodeByPathFile(FMainTree, nil, RemoveAllQuotes(sValue), amInsertAfter);
   end;
+end;
+
+procedure TASuiteInstance.LoadList;
+var
+  sFilePath  : string;
+begin
+  TASuiteLogger.Info('Finding ASuite SQLite Database', []);
+  Assert(Assigned(ASuiteInstance.MainTree), 'ASuiteInstance.MainTree is not assigned!');
+  try
+    //List
+    if ExtractFileExtEx(ASuiteInstance.Paths.SuitePathList) = EXT_XML then
+    begin
+      sFilePath := ASuiteInstance.Paths.SuitePathList;
+      ASuiteInstance.Paths.SuitePathList := ChangeFileExt(ASuiteInstance.Paths.SuitePathList, EXT_SQL);
+    end;
+
+    if Assigned(ASuiteManager.DBManager) then
+      ASuiteManager.DBManager.Setup(ASuiteInstance.Paths.SuitePathList);
+  finally
+    //If exists old list format (xml), use it
+    if sFilePath <> '' then
+      LoadDatabaseFromXML(sFilePath)
+    else //Use new list format (sqlite db)
+      ASuiteManager.DBManager.LoadData(ASuiteInstance.MainTree);
+  end;
+end;
+
+function TASuiteInstance.SaveList(DoBackup: Boolean): Boolean;
+begin
+  Result := ASuiteManager.DBManager.SaveData(ASuiteInstance.MainTree, DoBackup);
 end;
 
 initialization

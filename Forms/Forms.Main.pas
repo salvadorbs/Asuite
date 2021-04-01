@@ -407,7 +407,7 @@ end;
 
 procedure TfrmMain.miSaveListClick(Sender: TObject);
 begin
-  if Config.SaveList(True) then
+  if ASuiteInstance.SaveList(True) then
     ShowMessageEx(msgSaveCompleted)
   else
     ShowMessageEx(msgErrSave,true);
@@ -708,7 +708,7 @@ begin
   VSTEvents.SetupVSTSearch(vstSearch);
   //Load Database and get icons (only first level of tree)
   Config.LoadConfig;
-  Config.LoadList;
+  ASuiteInstance.LoadList;
   ASuiteManager.ListManager.ExecuteAutorunList(amStartup);
   //Check missed scheduler tasks
   ASuiteInstance.Scheduler.CheckMissedTasks;
