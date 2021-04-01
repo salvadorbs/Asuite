@@ -29,8 +29,6 @@ uses
 type
   TASuiteLogger = Class
   public
-    constructor Create(ADestinationPath: string);
-
     class procedure Info(const AText: string; AParams: Array of const);
     class procedure Debug(const AText: string; AParams: Array of const);
     class procedure Error(const AText: string; AParams: Array of const);
@@ -42,20 +40,9 @@ type
 implementation
 
 uses
-  AppConfig.Main;
+  AppConfig.Main, Kernel.Instance, Kernel.Manager;
 
 { TASuiteLogger }
-
-constructor TASuiteLogger.Create(ADestinationPath: string);
-begin
-  with TSynLog.Family do
-  begin
-    DestinationPath := ADestinationPath;
-    Level := LOG_VERBOSE;
-    RotateFileCount := 1;
-    RotateFileDailyAtHour := 0;
-  end;
-end;
 
 class procedure TASuiteLogger.Debug(const AText: string; AParams: Array of const);
 begin

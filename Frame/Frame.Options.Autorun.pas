@@ -89,7 +89,7 @@ var
 implementation
 
 uses
-  NodeDataTypes.Custom, AppConfig.Main, DataModules.Icons, Graphics,
+  NodeDataTypes.Custom, AppConfig.Main, DataModules.Icons, Graphics, Kernel.Manager,
   VirtualTree.Methods, Kernel.ResourceStrings, Kernel.Enumerations, VirtualTree.Events;
 
 {$R *.lfm}
@@ -133,7 +133,7 @@ end;
 
 function TfrmAutorunOptionsPage.GetImageIndex: Integer;
 begin
-  Result := Config.IconsManager.GetIconIndex('autorun');
+  Result := ASuiteManager.IconsManager.GetIconIndex('autorun');
 end;
 
 function TfrmAutorunOptionsPage.GetTitle: string;
@@ -159,8 +159,8 @@ begin
   chkStartup.Checked  := Config.AutorunStartup;
   chkShutdown.Checked := Config.AutorunShutdown;
   //Populate lstStartUp and lstShutdown
-  TVirtualTreeMethods.PopulateVSTItemList(vstStartupItems, Config.ListManager.StartupItemList);
-  TVirtualTreeMethods.PopulateVSTItemList(vstShutdownItems, Config.ListManager.ShutdownItemList);
+  TVirtualTreeMethods.PopulateVSTItemList(vstStartupItems, ASuiteManager.ListManager.StartupItemList);
+  TVirtualTreeMethods.PopulateVSTItemList(vstShutdownItems, ASuiteManager.ListManager.ShutdownItemList);
 
   LoadGlyphs;
 end;
@@ -172,8 +172,8 @@ begin
   Config.AutorunStartup  := chkStartup.Checked;
   Config.AutorunShutdown := chkShutdown.Checked;
   //Save Startup and Shutdown lists
-  SaveInAutorunItemList(vstStartupItems, Config.ListManager.StartupItemList);
-  SaveInAutorunItemList(vstShutdownItems, Config.ListManager.ShutdownItemList);
+  SaveInAutorunItemList(vstStartupItems, ASuiteManager.ListManager.StartupItemList);
+  SaveInAutorunItemList(vstShutdownItems, ASuiteManager.ListManager.ShutdownItemList);
 end;
 
 procedure TfrmAutorunOptionsPage.ChangeButtonGlyph(AButton: TSpeedButton;
@@ -183,7 +183,7 @@ var
 begin
   ABMP := TBitmap.Create;
   try
-    dmImages.GetAlphaBitmapFromImageList(ABMP, Config.IconsManager.GetIconIndex(AImageKey));
+    dmImages.GetAlphaBitmapFromImageList(ABMP, ASuiteManager.IconsManager.GetIconIndex(AImageKey));
     AButton.Glyph := ABMP;
   finally
     ABMP.Free;
@@ -192,7 +192,7 @@ end;
 
 procedure TfrmAutorunOptionsPage.LoadGlyphs;
 begin
-  mniProperties.ImageIndex   := Config.IconsManager.GetIconIndex('property');
+  mniProperties.ImageIndex   := ASuiteManager.IconsManager.GetIconIndex('property');
 end;
 
 procedure TfrmAutorunOptionsPage.mniPropertiesClick(Sender: TObject);

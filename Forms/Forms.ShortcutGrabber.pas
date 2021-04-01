@@ -78,7 +78,7 @@ implementation
 
 uses
   Kernel.Logger, Utility.Misc, AppConfig.Main, Kernel.Consts,
-  Utility.System, Kernel.ResourceStrings, Hotkeys.Manager.Platform;
+  Utility.System, Kernel.ResourceStrings, Hotkeys.Manager.Platform, Kernel.Instance, Kernel.Manager;
 
 {$R *.lfm}
 
@@ -225,10 +225,10 @@ end;
 
 procedure TfrmShortcutGrabber.LoadImages;
 begin
-  LoadPNGButtonState(btnAlt, AppendPathDelim(Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR) + FILENAME_ALT);
-  LoadPNGButtonState(btnCtrl, AppendPathDelim(Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR) + FILENAME_CTRL);
-  LoadPNGButtonState(btnShift, AppendPathDelim(Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR) + FILENAME_SHIFT);
-  LoadPNGButtonState(btnWinKey, AppendPathDelim(Config.Paths.SuitePathCurrentTheme + BUTTONS_DIR) + FILENAME_WINKEY);
+  LoadPNGButtonState(btnAlt, AppendPathDelim(ASuiteInstance.Paths.SuitePathCurrentTheme + BUTTONS_DIR) + FILENAME_ALT);
+  LoadPNGButtonState(btnCtrl, AppendPathDelim(ASuiteInstance.Paths.SuitePathCurrentTheme + BUTTONS_DIR) + FILENAME_CTRL);
+  LoadPNGButtonState(btnShift, AppendPathDelim(ASuiteInstance.Paths.SuitePathCurrentTheme + BUTTONS_DIR) + FILENAME_SHIFT);
+  LoadPNGButtonState(btnWinKey, AppendPathDelim(ASuiteInstance.Paths.SuitePathCurrentTheme + BUTTONS_DIR) + FILENAME_WINKEY);
 end;
 
 procedure TfrmShortcutGrabber.LoadPNGButtonState(AButton: TBCImageButton; APathFile: string);

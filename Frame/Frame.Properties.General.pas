@@ -66,7 +66,7 @@ implementation
 
 uses
   Utility.Misc, Kernel.Enumerations, NodeDataTypes.Files, AppConfig.Main,
-  Utility.System, Kernel.ResourceStrings;
+  Utility.System, Kernel.ResourceStrings, Kernel.Instance, Kernel.Manager;
 
 {$R *.lfm}
 
@@ -124,7 +124,7 @@ end;
 procedure TfrmBaseGeneralPropertyPage.edtPathIconAfterDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
-  AName := Config.Paths.AbsoluteToRelative(AName);
+  AName := ASuiteInstance.Paths.AbsoluteToRelative(AName);
   CheckPropertyPath(edtPathIcon, AName);
 end;
 
@@ -132,7 +132,7 @@ procedure TfrmBaseGeneralPropertyPage.edtPathIconBeforeDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
   edtPathIcon.Filter := msgFilterIconExe;
-  AName := Config.Paths.RelativeToAbsolute(AName);
+  AName := ASuiteInstance.Paths.RelativeToAbsolute(AName);
 end;
 
 procedure TfrmBaseGeneralPropertyPage.edtPathIconChange(Sender: TObject);
@@ -147,7 +147,7 @@ end;
 
 function TfrmBaseGeneralPropertyPage.GetImageIndex: Integer;
 begin
-  Result := Config.IconsManager.GetIconIndex('property_general');
+  Result := ASuiteManager.IconsManager.GetIconIndex('property_general');
 end;
 
 function TfrmBaseGeneralPropertyPage.GetTitle: string;

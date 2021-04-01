@@ -165,8 +165,8 @@ uses
   Forms.Options, Forms.About, Utility.Misc, Forms.ScanFolder,
   DataModules.TrayMenu, Forms.ImportList, AppConfig.Main, Utility.System,
   VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base, Kernel.Scheduler,
-  Kernel.Types, NodeDataTypes.Files, VirtualTree.Events,
-  Kernel.Logger, SynLog, FileUtil, Kernel.ResourceStrings
+  Kernel.Types, NodeDataTypes.Files, VirtualTree.Events, Kernel.Manager,
+  Kernel.Logger, SynLog, FileUtil, Kernel.ResourceStrings, Kernel.Instance
   {$IFDEF MSWINDOWS} , JwaWinBase, jwatlhelp32 {$ENDIF};
 
 {$R *.lfm}
@@ -213,7 +213,7 @@ begin
     begin
       Nodes := Tree.GetSortedSelection(true);
       //Delete items
-      if Config.DBManager.DeleteItems(Tree, Nodes) then
+      if ASuiteManager.DBManager.DeleteItems(Tree, Nodes) then
       begin
         //Delete nodes and refresh list
         Tree.DeleteSelectedNodes;
@@ -366,9 +366,9 @@ begin
   if Config.SearchAsYouType then
   begin
     if btnedtSearch.Text <> '' then
-      btnedtSearch.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel')
+      btnedtSearch.RightButton.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('cancel')
     else
-      btnedtSearch.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('search');
+      btnedtSearch.RightButton.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('search');
 
     DoSearchItem(vstSearch, btnedtSearch.Text, TSearchType(GetCheckedMenuItem(pmSearch).Tag));
   end;
@@ -383,7 +383,7 @@ begin
 
   //Parse parameters
   for I := 0 to ParamCount - 1 do
-    Config.HandleParam(Parameters[I], False);
+    ASuiteInstance.HandleParam(Parameters[I], False);
 
   if Config.ShowGraphicMenuAnotherInstance then
     dmTrayMenu.ShowGraphicMenu
@@ -498,26 +498,26 @@ begin
   btnedtSearch.LeftButton.ImagesWidth := ICON_SIZE_SMALL;
 
   //Set pcList tabs' ImageIndexes
-  tbList.ImageIndex    := Config.IconsManager.GetIconIndex('tree_list');
-  tbSearch.ImageIndex  := Config.IconsManager.GetIconIndex('search');
+  tbList.ImageIndex    := ASuiteManager.IconsManager.GetIconIndex('tree_list');
+  tbSearch.ImageIndex  := ASuiteManager.IconsManager.GetIconIndex('search');
 
   //Set MainMenu's ImageIndexes
-  miSaveList1.ImageIndex   := Config.IconsManager.GetIconIndex('save');
-  miOptions1.ImageIndex    := Config.IconsManager.GetIconIndex('options');
-  actAddCat.ImageIndex     := Config.IconsManager.GetIconIndex('add_category');
-  actAddSoftware.ImageIndex := Config.IconsManager.GetIconIndex('add_software');
-  actAddFolder.ImageIndex  := Config.IconsManager.GetIconIndex('add_folder');
-  actCut.ImageIndex        := Config.IconsManager.GetIconIndex('cut');
-  actCopy.ImageIndex       := Config.IconsManager.GetIconIndex('copy');
-  actPaste.ImageIndex      := Config.IconsManager.GetIconIndex('paste');
-  actDelete.ImageIndex     := Config.IconsManager.GetIconIndex('delete');
-  actProperty.ImageIndex   := Config.IconsManager.GetIconIndex('property');
-  miInfoASuite.ImageIndex  := Config.IconsManager.GetIconIndex('help');
-  actRunItem.ImageIndex    := Config.IconsManager.GetIconIndex('run');
+  miSaveList1.ImageIndex   := ASuiteManager.IconsManager.GetIconIndex('save');
+  miOptions1.ImageIndex    := ASuiteManager.IconsManager.GetIconIndex('options');
+  actAddCat.ImageIndex     := ASuiteManager.IconsManager.GetIconIndex('add_category');
+  actAddSoftware.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('add_software');
+  actAddFolder.ImageIndex  := ASuiteManager.IconsManager.GetIconIndex('add_folder');
+  actCut.ImageIndex        := ASuiteManager.IconsManager.GetIconIndex('cut');
+  actCopy.ImageIndex       := ASuiteManager.IconsManager.GetIconIndex('copy');
+  actPaste.ImageIndex      := ASuiteManager.IconsManager.GetIconIndex('paste');
+  actDelete.ImageIndex     := ASuiteManager.IconsManager.GetIconIndex('delete');
+  actProperty.ImageIndex   := ASuiteManager.IconsManager.GetIconIndex('property');
+  miInfoASuite.ImageIndex  := ASuiteManager.IconsManager.GetIconIndex('help');
+  actRunItem.ImageIndex    := ASuiteManager.IconsManager.GetIconIndex('run');
 
   //Set Search's ImageIndexes
-  btnedtSearch.LeftButton.ImageIndex  := Config.IconsManager.GetIconIndex('search_type');
-  btnedtSearch.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('search');
+  btnedtSearch.LeftButton.ImageIndex  := ASuiteManager.IconsManager.GetIconIndex('search_type');
+  btnedtSearch.RightButton.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('search');
 end;
 
 procedure TfrmMain.ShowMainForm(Sender: TObject);
@@ -622,7 +622,7 @@ begin
       LauncherSearch.Keyword    := LowerCase(Keyword);
       LauncherSearch.SearchType := SearchType;
       //Do search using LauncherSearch for parameters
-      Config.MainTree.IterateSubtree(nil, TVirtualTreeMethods.FindNode, @LauncherSearch, [], True);
+      ASuiteInstance.MainTree.IterateSubtree(nil, TVirtualTreeMethods.FindNode, @LauncherSearch, [], True);
     finally
       TreeSearch.EndUpdate;
       TVirtualTreeMethods.CheckVisibleNodePathExe(TreeSearch);
@@ -656,7 +656,7 @@ begin
   if (SaveDialog1.Execute) then
   begin
     TVirtualTreeMethods.RefreshList(GetActiveTree);
-    FileUtil.CopyFile(PChar(Config.DBManager.DBFileName), PChar(SaveDialog1.FileName), False);
+    FileUtil.CopyFile(PChar(ASuiteManager.DBManager.DBFileName), PChar(SaveDialog1.FileName), False);
   end;
 end;
 
@@ -668,13 +668,13 @@ begin
   if Config.AutoCloseProcess then
     CloseProcessOpenByASuite;
 
-  Config.ListManager.ExecuteAutorunList(amShutdown);
+  ASuiteManager.ListManager.ExecuteAutorunList(amShutdown);
 
   //Execute actions on ASuite's shutdown (inside vstList)
-  Config.MainTree.IterateSubtree(nil, TVirtualTreeMethods.ActionsOnShutdown, nil);
+  ASuiteInstance.MainTree.IterateSubtree(nil, TVirtualTreeMethods.ActionsOnShutdown, nil);
 
   //Hotkey
-  Config.ListManager.HotKeyItemList.Clear;
+  ASuiteManager.ListManager.HotKeyItemList.Clear;
 
   Config.SaveConfig;
 
@@ -698,7 +698,7 @@ var
 begin
   TASuiteLogger.Enter('FormCreate', Self);
   //Set vstList as MainTree in Config
-  Config.MainTree := vstList;
+  ASuiteInstance.MainTree := vstList;
   Application.CreateForm(TdmImages, dmImages);
   Application.CreateForm(TdmTrayMenu, dmTrayMenu);
   pcList.ActivePageIndex := PG_LIST;
@@ -709,9 +709,9 @@ begin
   //Load Database and get icons (only first level of tree)
   Config.LoadConfig;
   Config.LoadList;
-  Config.ListManager.ExecuteAutorunList(amStartup);
+  ASuiteManager.ListManager.ExecuteAutorunList(amStartup);
   //Check missed scheduler tasks
-  TScheduler.Create.CheckMissedTasks;
+  ASuiteInstance.Scheduler.CheckMissedTasks;
   TVirtualTreeMethods.RefreshList(nil);
   //Get placeholder for edtSearch
   btnedtSearch.TextHint := StringReplace(miSearchName.Caption, '&', '', []);

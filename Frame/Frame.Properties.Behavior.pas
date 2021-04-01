@@ -60,7 +60,7 @@ implementation
 
 uses
   Kernel.Enumerations, Forms.Options, Frame.Options.Autorun, AppConfig.Main,
-  Kernel.ResourceStrings;
+  Kernel.ResourceStrings, Kernel.Manager;
 
 {$R *.lfm}
 
@@ -79,7 +79,7 @@ end;
 
 function TfrmBehaviorPropertyPage.GetImageIndex: Integer;
 begin
-  Result := Config.IconsManager.GetIconIndex('behavior');
+  Result := ASuiteManager.IconsManager.GetIconIndex('behavior');
 end;
 
 function TfrmBehaviorPropertyPage.GetTitle: string;

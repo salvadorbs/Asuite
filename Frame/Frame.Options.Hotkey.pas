@@ -77,7 +77,7 @@ implementation
 uses
   AppConfig.Main, VirtualTree.Events, VirtualTree.Methods, NodeDataTypes.Custom,
   Forms.ShortcutGrabber, DataModules.Icons, UITypes, Kernel.ResourceStrings,
-  LCLProc, Kernel.Consts;
+  LCLProc, Kernel.Consts, Kernel.Manager;
 
 {$R *.lfm}
 
@@ -132,7 +132,7 @@ end;
 
 function TfrmHotkeyOptionsPage.GetImageIndex: Integer;
 begin
-  Result := Config.IconsManager.GetIconIndex('hotkey');
+  Result := ASuiteManager.IconsManager.GetIconIndex('hotkey');
 end;
 
 function TfrmHotkeyOptionsPage.GetTitle: string;
@@ -158,7 +158,7 @@ begin
     edtHotkeyCM.Text := ShortCutToText(Config.ClassicMenuHotkey);
 
   //Populate VST with HotKeyItemList's items
-  TVirtualTreeMethods.PopulateVSTItemList(vstItems, Config.ListManager.HotKeyItemList);
+  TVirtualTreeMethods.PopulateVSTItemList(vstItems, ASuiteManager.ListManager.HotKeyItemList);
   vstItems.SortTree(0, VirtualTrees.sdAscending);
 
   //Enable/disable visual components
@@ -184,7 +184,7 @@ begin
   Config.GraphicMenuHotkey := TextToShortCut(edtHotkeyGM.Text);
   Config.ClassicMenuHotkey := TextToShortCut(edtHotkeyCM.Text);
   //Save vst items in HotKeyItemList
-  SaveInHotkeyItemList(vstItems, Config.ListManager.HotKeyItemList);
+  SaveInHotkeyItemList(vstItems, ASuiteManager.ListManager.HotKeyItemList);
 end;
 
 procedure TfrmHotkeyOptionsPage.LoadGlyphs;
@@ -198,13 +198,13 @@ begin
   edtHotkeyCM.RightButton.Images := dmImages.ilLargeIcons;
   edtHotkeyCM.RightButton.ImagesWidth := ICON_SIZE_SMALL;
 
-  mniRemoveHotkey.ImageIndex := Config.IconsManager.GetIconIndex('keyboard_delete');
-  mniEditHotkey.ImageIndex   := Config.IconsManager.GetIconIndex('keyboard_edit');
-  mniProperties.ImageIndex   := Config.IconsManager.GetIconIndex('property');
+  mniRemoveHotkey.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('keyboard_delete');
+  mniEditHotkey.ImageIndex   := ASuiteManager.IconsManager.GetIconIndex('keyboard_edit');
+  mniProperties.ImageIndex   := ASuiteManager.IconsManager.GetIconIndex('property');
 
-  edtHotkeyMF.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel');
-  edtHotkeyGM.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel');
-  edtHotkeyCM.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel');
+  edtHotkeyMF.RightButton.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('cancel');
+  edtHotkeyGM.RightButton.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('cancel');
+  edtHotkeyCM.RightButton.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('cancel');
 end;
 
 procedure TfrmHotkeyOptionsPage.mniEditHotkeyClick(Sender: TObject);

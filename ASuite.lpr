@@ -12,6 +12,9 @@ uses
   SysUtils,
   LCLIntf, LCLType, LMessages, Interfaces,
   SynSQLite3Static,
+  Kernel.Instance in 'Library\Kernel.Instance.pas',
+  Kernel.Manager in 'Library\Kernel.Manager.pas',
+  AppConfig.Main in 'Library\AppConfig.Main.pas',
   Forms.About in 'Forms\Forms.About.pas' {frmAbout},
   Forms.GraphicMenu in 'Forms\Forms.GraphicMenu.pas' {frmGraphicMenu},
   Forms.ImportList in 'Forms\Forms.ImportList.pas' {frmImportList},
@@ -20,7 +23,6 @@ uses
   Forms.ScanFolder in 'Forms\Forms.ScanFolder.pas' {frmScanFolder},
   DataModules.Icons in 'DataModules\DataModules.Icons.pas' {dmImages: TDataModule},
   DataModules.TrayMenu in 'DataModules\DataModules.TrayMenu.pas' {dmTrayMenu: TDataModule},
-  AppConfig.Main in 'Library\AppConfig.Main.pas',
   Kernel.BaseMainForm in 'Library\Kernel.BaseMainForm.pas',
   Kernel.Consts in 'Library\Kernel.Consts.pas',
   Kernel.Enumerations in 'Library\Kernel.Enumerations.pas',
@@ -100,7 +102,6 @@ begin
     {$ENDIF}
 
     Application.Initialize;
-    Config    := TConfiguration.Create;
   Application.Title := APP_TITLE;
 
     Application.CreateForm(TfrmMain, frmMain);

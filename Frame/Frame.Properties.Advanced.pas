@@ -70,7 +70,7 @@ implementation
 
 uses
   Kernel.Enumerations, NodeDataTypes.Files, Forms.ShortcutGrabber, AppConfig.Main,
-  DataModules.Icons, Kernel.ResourceStrings, LCLProc, Kernel.Consts;
+  DataModules.Icons, Kernel.ResourceStrings, LCLProc, Kernel.Consts, Kernel.Manager;
 
 {$R *.lfm}
 
@@ -90,7 +90,7 @@ end;
 
 function TfrmAdvancedPropertyPage.GetImageIndex: Integer;
 begin
-  Result := Config.IconsManager.GetIconIndex('advanced');
+  Result := AsuiteManager.IconsManager.GetIconIndex('advanced');
 end;
 
 function TfrmAdvancedPropertyPage.GetTitle: string;
@@ -137,7 +137,7 @@ begin
 
   edtHotkey.RightButton.Images := dmImages.ilLargeIcons;
   edtHotkey.RightButton.ImagesWidth := ICON_SIZE_SMALL;
-  edtHotkey.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel');
+  edtHotkey.RightButton.ImageIndex := AsuiteManager.IconsManager.GetIconIndex('cancel');
 
   //Hide caret in hotkey control
   //HideCaret(edtHotkey.Handle);

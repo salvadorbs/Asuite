@@ -130,7 +130,7 @@ uses
   Forms.Main, Utility.System, Kernel.Consts, AppConfig.Main, DataModules.Icons,
   Forms.About, NodeDataTypes.Base, Kernel.Enumerations, Forms.Options,
   Utility.Misc, VirtualTree.Events, VirtualTree.Methods, Kernel.Types,
-  NodeDataTypes.Custom, GraphicMenu.ThemeEngine, Kernel.ResourceStrings
+  NodeDataTypes.Custom, GraphicMenu.ThemeEngine, Kernel.ResourceStrings, Kernel.Instance, Kernel.Manager
   {$IFDEF MSWINDOWS} , ShellApi, Windows {$ENDIF};
 
 procedure TfrmGraphicMenu.ApplicationEvents1Deactivate(Sender: TObject);
@@ -211,11 +211,11 @@ var
 begin
   //User Picture
   if (Config.GMPersonalPicture = 'PersonalPicture.png') and (not FileExists(Config.GMPersonalPicture)) then
-    sTempPath := Config.Paths.SuitePathCurrentTheme + Config.GMPersonalPicture
+    sTempPath := ASuiteInstance.Paths.SuitePathCurrentTheme + Config.GMPersonalPicture
   else begin
-    sTempPath := Config.Paths.RelativeToAbsolute(Config.GMPersonalPicture);
+    sTempPath := ASuiteInstance.Paths.RelativeToAbsolute(Config.GMPersonalPicture);
     if Not FileExists(sTempPath) then
-      sTempPath := Config.Paths.SuitePathCurrentTheme + 'PersonalPicture.png';
+      sTempPath := ASuiteInstance.Paths.SuitePathCurrentTheme + 'PersonalPicture.png';
   end;
   imgPersonalPicture.Picture.LoadFromFile(sTempPath);
   imgPersonalPicture.Visible := (FileExists(sTempPath));
@@ -228,7 +228,7 @@ var
   intDiskSize, intDiskFree, intDiskUsed: Int64;
 begin
   //Calculate and display the drive size
-  Drive := Config.Paths.SuiteDrive;
+  Drive := ASuiteInstance.Paths.SuiteDrive;
 
   if Length(Drive) > 0 then
   begin
@@ -244,7 +244,7 @@ var
   Result: Boolean;
   sPath: string;
 begin
-  sPath := Config.Paths.RelativeToAbsolute(FolderPath);
+  sPath := ASuiteInstance.Paths.RelativeToAbsolute(FolderPath);
 
   Result := OpenDocument(sPath);
 
@@ -264,8 +264,8 @@ begin
   pmWindow.Images := dmImages.ilLargeIcons;
   pmWindow.ImagesWidth := ICON_SIZE_SMALL;
 
-  mniRun.ImageIndex := Config.IconsManager.GetIconIndex('run');
-  mniProperty.ImageIndex := Config.IconsManager.GetIconIndex('property');
+  mniRun.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('run');
+  mniProperty.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('property');
 
   //Position
   if Config.GMPositionTop <> -1 then
@@ -437,12 +437,12 @@ var
 begin
   TempString := '';
   OpenDialog1.Filter     := msgFilterPicture;
-  OpenDialog1.InitialDir := ExtractFileDir(Config.Paths.RelativeToAbsolute(Config.GMPersonalPicture));
+  OpenDialog1.InitialDir := ExtractFileDir(ASuiteInstance.Paths.RelativeToAbsolute(Config.GMPersonalPicture));
   if OpenDialog1.Execute then
   begin
     TempString := OpenDialog1.FileName;
     imgPersonalPicture.Picture.LoadFromFile(TempString);
-    Config.GMPersonalPicture := Config.Paths.AbsoluteToRelative(TempString);
+    Config.GMPersonalPicture := ASuiteInstance.Paths.AbsoluteToRelative(TempString);
     Config.Changed := True;
   end;
 end;
@@ -511,7 +511,7 @@ begin
   ATree.BeginUpdate;
   try
     //Populate and get icons from first level
-    Config.MainTree.IterateSubtree(nil, TVirtualTreeMethods.AddNodeInTreeFromMainTree, @ATree);
+    ASuiteInstance.MainTree.IterateSubtree(nil, TVirtualTreeMethods.AddNodeInTreeFromMainTree, @ATree);
   finally
     ATree.EndUpdate;
     //Check nodes path
@@ -580,12 +580,12 @@ end;
 
 procedure TfrmGraphicMenu.sknbtnMFUClick(Sender: TObject);
 begin
-  PopulateSpecialTree(vstList, Config.ListManager.MFUList, Config.MFUNumber);
+  PopulateSpecialTree(vstList, ASuiteManager.ListManager.MFUList, Config.MFUNumber);
 end;
 
 procedure TfrmGraphicMenu.sknbtnRecentsClick(Sender: TObject);
 begin
-  PopulateSpecialTree(vstList, Config.ListManager.MRUList, Config.MRUNumber);
+  PopulateSpecialTree(vstList, ASuiteManager.ListManager.MRUList, Config.MRUNumber);
 end;
 
 procedure TfrmGraphicMenu.OpenMenu;

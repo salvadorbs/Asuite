@@ -47,7 +47,7 @@ type
 implementation
 
 uses
-  AppConfig.Main, Kernel.Enumerations, Kernel.ResourceStrings;
+  AppConfig.Main, Kernel.Enumerations, Kernel.ResourceStrings, Kernel.Manager;
 
 function ResetHourMinute(var ANow: TDateTime): TDateTime;
 var
@@ -70,9 +70,9 @@ begin
   dtNowDateTime := RecodeSecond(dtNowDateTime, 0);
   if (Config.Scheduler) then
   begin
-    for I := 0 to Config.ListManager.SchedulerItemList.Count - 1 do
+    for I := 0 to ASuiteManager.ListManager.SchedulerItemList.Count - 1 do
     begin
-      NodeData := Config.ListManager.SchedulerItemList[I];
+      NodeData := ASuiteManager.ListManager.SchedulerItemList[I];
       if Assigned(NodeData) then
       begin
         dtLastAccess := UnixToDateTime(NodeData.LastAccess);
@@ -98,9 +98,9 @@ begin
     Exit;
   dtNowDateTime := RecodeMilliSecond(Now,0);
   //Check scheduler list to know which items to run
-  for I := 0 to Config.ListManager.SchedulerItemList.Count - 1 do
+  for I := 0 to ASuiteManager.ListManager.SchedulerItemList.Count - 1 do
   begin
-    NodeData := Config.ListManager.SchedulerItemList[I];
+    NodeData := ASuiteManager.ListManager.SchedulerItemList[I];
     if Assigned(NodeData) then
     begin
       //Compare time and/or date based of scheduler mode and run node

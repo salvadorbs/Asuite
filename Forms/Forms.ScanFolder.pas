@@ -109,7 +109,7 @@ uses
   AppConfig.Main, Kernel.Types, {$IFDEF MSWINDOWS} ShellApi,  {$ENDIF}Kernel.Logger, Kernel.Consts,
   DataModules.Icons, NodeDataTypes.Base, VirtualTree.Methods, Kernel.Enumerations,
   Utility.FileFolder, NodeDataTypes.Files, Utility.Misc, Kernel.ResourceStrings,
-  RegExpr, Icons.Manager;
+  RegExpr, Icons.Manager, Kernel.Instance, Kernel.Manager;
 
 {$R *.lfm}
 
@@ -170,10 +170,10 @@ begin
       FThreadFindFiles := TFindFiles.Create;
       SetupThreadFinder;
 
-      Config.MainTree.BeginUpdate;
+      ASuiteInstance.MainTree.BeginUpdate;
       //Add parent node named as Form's caption
-      FListNode := TVirtualTreeMethods.AddChildNodeEx(Config.MainTree, nil, amInsertAfter, vtdtCategory);
-      ListNodeData := TVirtualTreeMethods.GetNodeItemData(FListNode, Config.MainTree);
+      FListNode := TVirtualTreeMethods.AddChildNodeEx(ASuiteInstance.MainTree, nil, amInsertAfter, vtdtCategory);
+      ListNodeData := TVirtualTreeMethods.GetNodeItemData(FListNode, ASuiteInstance.MainTree);
       ListNodeData.Name := Self.Caption + ' - ' + vstShell.Selected.GetTextPath;
 
       FThreadFindFiles.Start;
@@ -232,9 +232,9 @@ procedure TfrmScanFolder.vstShellGetImageIndex(Sender: TObject; Node: TTreeNode
   );
 begin
   if Node.Level = 0 then
-    Node.ImageIndex := Config.IconsManager.GetIconIndex('disk')
+    Node.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('disk')
   else
-    Node.ImageIndex := Config.IconsManager.GetIconIndex('folder');
+    Node.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('folder');
 
   Node.SelectedIndex := Node.ImageIndex;
 end;
@@ -283,7 +283,7 @@ begin
   Node := AListView.AddChild(nil);
   NodeData := AListView.GetNodeData(Node);
   NodeData.Text := AText;
-  NodeData.ImageIndex := Config.IconsManager.GetExtIconIndex(AText);
+  NodeData.ImageIndex := ASuiteManager.IconsManager.GetExtIconIndex(AText);
 end;
 
 procedure TfrmScanFolder.FormCreate(Sender: TObject);
@@ -353,16 +353,16 @@ begin
   ShowMessageFmtEx(msgFoundNumFiles, [ATotalFiles]);
 
   //Select and expanded ScanFolder node
-  Config.MainTree.ClearSelection;
+  ASuiteInstance.MainTree.ClearSelection;
   if Assigned(FListNode) then
   begin
-    Config.MainTree.Selected[FListNode] := True;
-    Config.MainTree.FocusedNode := FListNode;
+    ASuiteInstance.MainTree.Selected[FListNode] := True;
+    ASuiteInstance.MainTree.FocusedNode := FListNode;
   end;
 
   btnScan.Enabled := True;
   btnCancel.Caption := msgCancel;
-  Config.MainTree.EndUpdate;
+  ASuiteInstance.MainTree.EndUpdate;
 
   Close;
 end;
@@ -428,8 +428,8 @@ begin
 
   if Assigned(FListNode) then
   begin
-    Node := TVirtualTreeMethods.AddChildNodeEx(Config.MainTree, FListNode, amInsertAfter, vtdtFile, False);
-    NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Config.MainTree);
+    Node := TVirtualTreeMethods.AddChildNodeEx(ASuiteInstance.MainTree, FListNode, amInsertAfter, vtdtFile, False);
+    NodeData := TVirtualTreeMethods.GetNodeItemData(Node, ASuiteInstance.MainTree);
 
     //Name
     if chkExtractName.Checked then

@@ -96,7 +96,7 @@ implementation
 
 uses
   AppConfig.Main, Kernel.Consts, Utility.FileFolder, LazUTF8,
-  Utility.System, VirtualTree.Methods, Utility.Misc
+  Utility.System, VirtualTree.Methods, Utility.Misc, Kernel.Instance, Kernel.Manager
   {$IFDEF Windows}, Windows, JwaWindows, JwaWinBase, ShellApi{$ENDIF};
 
 constructor TvFileNodeData.Create(AType: TvTreeDataType);
@@ -136,7 +136,7 @@ end;
 function TvFileNodeData.GetPathAbsoluteFile: String;
 begin
   if FPathFile <> '' then
-    Result := Config.Paths.RelativeToAbsolute(FPathFile)
+    Result := ASuiteInstance.Paths.RelativeToAbsolute(FPathFile)
   else
     Result := '';
 end;
@@ -151,7 +151,7 @@ begin
       Result := ExtractFileDir(Self.PathAbsoluteFile);
   end
   else
-    Result := Config.Paths.RelativeToAbsolute(FWorkingDir);
+    Result := ASuiteInstance.Paths.RelativeToAbsolute(FWorkingDir);
 end;
 
 function TvFileNodeData.InternalExecute(ARunFromCategory: Boolean; ACheckSingleInstance: Boolean): boolean;
@@ -170,7 +170,7 @@ begin
   //For url & documents, use OpenDocument (who uses xdg-open in Linux and ShellExecute in Windows)
   //For executable (EXE, CMD, BAT for Windows, or files with permission Execute for Linux), use CreateProcess
   if IsExecutableFile(Path) then
-    Result := CreateProcessEx(PathAbsoluteFile, Config.Paths.RelativeToAbsolute(FParameters),
+    Result := CreateProcessEx(PathAbsoluteFile, ASuiteInstance.Paths.RelativeToAbsolute(FParameters),
                               GetWorkingDirAbsolute, ConvertWindowStateToSWOptions(GetWindowState(ARunFromCategory)),
                               EnvironmentVars) <> -1
   else
@@ -203,7 +203,7 @@ begin
   ShellExecuteInfo.lpFile := PChar(PathAbsoluteFile);
   ShellExecuteInfo.lpDirectory := PChar(GetWorkingDirAbsolute);
   if FParameters <> '' then
-    ShellExecuteInfo.lpParameters := PChar(Config.Paths.RelativeToAbsolute(FParameters));
+    ShellExecuteInfo.lpParameters := PChar(ASuiteInstance.Paths.RelativeToAbsolute(FParameters));
   ShellExecuteInfo.nShow := GetWindowState(ARunFromCategory);
   //Run process
   Result := ShellExecuteExW(@ShellExecuteInfo);
@@ -258,10 +258,10 @@ procedure TvFileNodeData.AfterExecute(ADoActionOnExe: Boolean);
 begin
   //MFU
   SetClickCount(FClickCount + 1);
-  Config.ListManager.MFUList.Sort;
+  ASuiteManager.ListManager.MFUList.Sort;
   //MRU
   SetLastAccess(DateTimeToUnix(Now));
-  Config.ListManager.MRUList.Sort;
+  ASuiteManager.ListManager.MRUList.Sort;
   inherited;
 end;
 
@@ -287,9 +287,9 @@ begin
   //Window state
   if ARunFromCategory then
   begin
-    Assert(PNode.Parent <> Config.MainTree.RootNode, 'Parent''s item = Main tree root node (run from category mode)');
+    Assert(PNode.Parent <> ASuiteInstance.MainTree.RootNode, 'Parent''s item = Main tree root node (run from category mode)');
 
-    ParentNodeData := TvCustomRealNodeData(TVirtualTreeMethods.GetNodeItemData(PNode.Parent, Config.MainTree));
+    ParentNodeData := TvCustomRealNodeData(TVirtualTreeMethods.GetNodeItemData(PNode.Parent, ASuiteInstance.MainTree));
     //Override child item's FWindowState
     case ParentNodeData.WindowState of
       1: Result := SW_SHOWDEFAULT;
@@ -420,10 +420,10 @@ begin
   begin
     //If value is true, delete it from list
     if (value and (FNoMRU <> value)) then
-      Config.ListManager.MRUList.RemoveItem(Self)
+      ASuiteManager.ListManager.MRUList.RemoveItem(Self)
     else //else add it in list
       if (not value and (FNoMRU <> value)) and (LastAccess > -1) then
-        Config.ListManager.MRUList.AddItem(Self);
+        ASuiteManager.ListManager.MRUList.AddItem(Self);
   end;
   FNoMRU := value;
 end;
@@ -433,7 +433,7 @@ begin
   FClickCount := Value;
   if (Config.ASuiteState <> lsImporting) then
     if (FClickCount > 0) and (not Self.FNoMFU) then
-      Config.ListManager.MFUList.AddItem(Self);
+      ASuiteManager.ListManager.MFUList.AddItem(Self);
 end;
 
 procedure TvFileNodeData.SetLastAccess(const Value: Int64);
@@ -441,7 +441,7 @@ begin
   inherited;
   if (Config.ASuiteState <> lsImporting) then
     if (Self.LastAccess > -1) and (not FNoMRU) then
-      Config.ListManager.MRUList.AddItem(Self);
+      ASuiteManager.ListManager.MRUList.AddItem(Self);
 end;
 
 procedure TvFileNodeData.SetNoMFU(value:Boolean);
@@ -450,10 +450,10 @@ begin
   begin
     //If value is true, delete it from list
     if (value and (FNoMFU <> value)) then
-      Config.ListManager.MFUList.RemoveItem(Self)
+      ASuiteManager.ListManager.MFUList.RemoveItem(Self)
     else //else add it in list
       if (not value and (FNoMFU <> value)) and (FClickCount > 0) then
-        Config.ListManager.MFUList.AddItem(Self);
+        ASuiteManager.ListManager.MFUList.AddItem(Self);
   end;
   FNoMFU := value;
 end;

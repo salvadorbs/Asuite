@@ -66,7 +66,7 @@ implementation
 
 uses
   AppConfig.Main, Kernel.Enumerations, Kernel.ResourceStrings, FileUtil, LazFileUtils,
-  Kernel.Consts;
+  Kernel.Consts, Kernel.Instance, Kernel.Manager;
 
 {$R *.lfm}
 
@@ -74,7 +74,7 @@ uses
 
 function TfrmGeneralOptionsPage.GetImageIndex: Integer;
 begin
-  Result := Config.IconsManager.GetIconIndex('general');
+  Result := ASuiteManager.IconsManager.GetIconIndex('general');
 end;
 
 procedure TfrmGeneralOptionsPage.AddLanguages(AComboBox: TComboBox);
@@ -85,7 +85,7 @@ var
   idxDot: Integer;
   I: Integer;
 begin
-  SearchMask := Config.Paths.SuitePathLocale + LowerCase(APP_NAME) + '.*' + EXT_PO;
+  SearchMask := ASuiteInstance.Paths.SuitePathLocale + LowerCase(APP_NAME) + '.*' + EXT_PO;
 
   if FindFirstUTF8(SearchMask, faAnyFile, FileInfo) = 0 then
   begin

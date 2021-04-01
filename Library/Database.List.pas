@@ -111,7 +111,8 @@ implementation
 
 uses
   Kernel.Enumerations, Utility.Misc, VirtualTree.Methods, NodeDataTypes.Custom,
-  NodeDataTypes.Files, AppConfig.Main, Icons.Node, Kernel.Logger, Kernel.ResourceStrings;
+  NodeDataTypes.Files, AppConfig.Main, Icons.Node, Kernel.Logger, Kernel.ResourceStrings,
+  Kernel.Manager;
 
 { TSQLtbl_files }
 
@@ -130,7 +131,7 @@ begin
     //If enabled, register item's hotkey with new ID
     if AData is TvCustomRealNodeData then
       if TvCustomRealNodeData(AData).ActiveHotkey then
-        Config.ListManager.HotKeyItemList.AddItem(TvCustomRealNodeData(AData));
+        ASuiteManager.ListManager.HotKeyItemList.AddItem(TvCustomRealNodeData(AData));
 
     SQLFilesData.Free;
   end;

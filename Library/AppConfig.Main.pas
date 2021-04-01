@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Graphics, Forms, Controls, VirtualTrees, Kernel.Enumerations,
-  Classes, AppConfig.Paths, jsonConf, LazFileUtils,
+  Classes, jsonConf, LazFileUtils,
   Lists.Manager, Database.Manager, Icons.Manager, Kernel.Logger, Dialogs;
 
 type
@@ -33,9 +33,6 @@ type
   { TConfiguration }
   TConfiguration = class
   private
-    FDialogCenterMF: Boolean;
-    FSmallHeightNode    : Integer;
-    FBigHeightNode      : Integer;
     //General
     FStartWithWindows   : Boolean;
     FShowPanelAtStartUp : Boolean;
@@ -51,6 +48,7 @@ type
     //Main Form - Position and size
     FHoldSize           : Boolean;
     FAlwaysOnTop        : Boolean;
+    FDialogCenterMF     : Boolean;
     //Main Form - Treevew
     FTVBackground       : Boolean;
     FTVBackgroundPath   : string;
@@ -116,12 +114,6 @@ type
     FScanFolderFileTypes  : TStringList;
     FScanFolderExcludeNames: TStringList;
 
-    FMainTree: TVirtualStringTree;
-    FPaths: TConfigPaths;
-    FListManager : TListManager;
-    FDBManager : TDBManager;
-    FIconsManager: TIconsManager;
-    FLogger: TASuiteLogger;
     procedure RestoreSettings(AJSONConfig: TJSONConfig);
     procedure SaveSettings(AJSONConfig: TJSONConfig);
     procedure SetHoldSize(value: Boolean);
@@ -153,28 +145,12 @@ type
     procedure SetTVSmallIconSize(const Value: Boolean);
     procedure SetClassicMenuHotkey(const Value: Cardinal);
 
-    function GetMainTree: TVirtualStringTree;
-    function GetImportTree: TVirtualStringTree;
     procedure SetASuiteState(const Value: TLauncherState);
     procedure UpdateHotkey(OldValue, NewValue: TShortcut; Tag: Integer);
   public
     { public declarations }
     constructor Create; overload;
     destructor Destroy; override;
-
-    //TODO: Move all singleton and these classes in a separate class called TASuiteInstance
-    property MainTree: TVirtualStringTree read GetMainTree write FMainTree;
-    property ImportTree: TVirtualStringTree read GetImportTree;
-    property Paths: TConfigPaths read FPaths;
-
-    //TODO: Move all singleton and these classes in a separate class called TASuiteManager
-    //      (after delete substring "manager" from these classes)
-    property ListManager: TListManager read FListManager;
-    property DBManager: TDBManager read FDBManager;
-    property IconsManager: TIconsManager read FIconsManager;
-
-    property SmallHeightNode: Integer read FSmallHeightNode;
-    property BigHeightNode: Integer read FBigHeightNode;
 
     //General
     property StartWithWindows: Boolean read FStartWithWindows write SetStartWithWindows;
@@ -259,8 +235,6 @@ type
 
     procedure AfterUpdateConfig();
 
-    procedure HandleParam(const Param: string; FirstInstance: Boolean = True);
-
     //Update theme paths
     procedure UpdateGMTheme;
 
@@ -282,37 +256,15 @@ uses
   Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder,
   Utility.XML, GraphicMenu.ThemeEngine, Kernel.Scheduler, Forms.ImportList,
   TypInfo, Kernel.ResourceStrings, LCLTranslator, AppConfig.Consts,
-  Utility.Conversions, Hotkeys.Manager.Platform;
+  Utility.Conversions, Hotkeys.Manager.Platform, Kernel.Instance, Kernel.Manager;
 
 procedure TConfiguration.AfterUpdateConfig();
 begin   
-  TVirtualTreeMethods.UpdateItemColor(Config.MainTree);
+  TVirtualTreeMethods.UpdateItemColor(ASuiteInstance.MainTree);
 end;
 
 constructor TConfiguration.Create;
-var
-  I: Integer;
 begin
-  TScheduler.Create;
-
-  //Node height based of DPI
-  //TODO: Check it
-  FSmallHeightNode := Round((Screen.PixelsPerInch / 96.0) * 18);
-  FBigHeightNode   := Round((Screen.PixelsPerInch / 96.0) * 36);
-
-  //Params
-  for I := 1 to ParamCount do
-    HandleParam(ParamStr(I));
-
-  //Create some classes
-  FPaths  := TConfigPaths.Create;
-  FLogger := TASuiteLogger.Create(FPaths.SuitePathData);
-
-  TASuiteLogger.Info('Creating Managers', []);
-  FListManager  := TListManager.Create;
-  FDBManager    := TDBManager.Create;
-  FIconsManager := TIconsManager.Create;
-
   //General
   FStartWithWindows   := False;
   FShowPanelAtStartUp := True;
@@ -423,11 +375,6 @@ begin
   FTVFont.Free;
   FScanFolderFileTypes.Free;
   FScanFolderExcludeNames.Free;
-  FPaths.Destroy;
-  FListManager.Destroy;
-  FDBManager.Destroy;
-  FIconsManager.Destroy;
-  FLogger.Free;
 end;
 
 procedure TConfiguration.SetASuiteState(const Value: TLauncherState);
@@ -456,76 +403,29 @@ begin
   end;
 end;
 
-function TConfiguration.GetImportTree: TVirtualStringTree;
-begin
-  Result := nil;
-  if Assigned(frmImportList) then
-    Result := frmImportList.vstListImp;
-end;
-
-function TConfiguration.GetMainTree: TVirtualStringTree;
-begin
-  Assert(Assigned(FMainTree));
-  Result := FMainTree;
-end;
-
-procedure TConfiguration.HandleParam(const Param: string; FirstInstance: Boolean);
-var
-  sName, sValue: string;
-
-  procedure ParseParam(s: string);
-  var
-    iSplit: Integer;
-  begin
-    if (s[1] in ['-', '/']) then
-    begin
-      Delete(s, 1, 1);
-      iSplit := Pos('=', s);
-      if iSplit <> 0 then
-      begin
-        sName := Copy(s, 1, iSplit - 1);
-        sValue := Copy(s, iSplit + 1, 666);
-      end;
-    end;
-  end;
-
-begin
-  TASuiteLogger.Info('Received parameter "%s"', [Param]);
-  ParseParam(Param);
-  if sName <> '' then
-  begin
-    if (CompareText(sName, 'list') = 0) and (FirstInstance) then
-      FPaths.SuitePathList := FPaths.RelativeToAbsolute(RemoveAllQuotes(sValue));
-
-    //Add new node
-    if (CompareText(sName, 'additem') = 0) and (Assigned(FDBManager)) then
-      TVirtualTreeMethods.AddNodeByPathFile(FMainTree, nil, RemoveAllQuotes(sValue), amInsertAfter);
-  end;
-end;
-
 procedure TConfiguration.LoadList;
 var
   sFilePath  : string;
 begin
   //TODO: Move this method in proper place
   TASuiteLogger.Info('Finding ASuite SQLite Database', []);
-  Assert(Assigned(FMainTree), 'FMainTree is not assigned!');
+  Assert(Assigned(ASuiteInstance.MainTree), 'ASuiteInstance.MainTree is not assigned!');
   try
     //List
-    if ExtractFileExtEx(FPaths.SuitePathList) = EXT_XML then
+    if ExtractFileExtEx(ASuiteInstance.Paths.SuitePathList) = EXT_XML then
     begin
-      sFilePath := FPaths.SuitePathList;
-      FPaths.SuitePathList := ChangeFileExt(FPaths.SuitePathList, EXT_SQL);
+      sFilePath := ASuiteInstance.Paths.SuitePathList;
+      ASuiteInstance.Paths.SuitePathList := ChangeFileExt(ASuiteInstance.Paths.SuitePathList, EXT_SQL);
     end;
 
-    if Assigned(FDBManager) then
-      FDBManager.Setup(FPaths.SuitePathList);
+    if Assigned(ASuiteManager.DBManager) then
+      ASuiteManager.DBManager.Setup(ASuiteInstance.Paths.SuitePathList);
   finally
     //If exists old list format (xml), use it
     if sFilePath <> '' then
       LoadDatabaseFromXML(sFilePath)
     else //Use new list format (sqlite db)
-      FDBManager.LoadData(FMainTree);
+      ASuiteManager.DBManager.LoadData(ASuiteInstance.MainTree);
   end;
 end;
 
@@ -708,7 +608,7 @@ begin
      Self.TVFont.Style := Self.TVFont.Style + [fsUnderline];
   if AJSONConfig.GetValue(CONFIG_TVFONTSTYLE_STRIKEOUT, (fsStrikeOut in Self.TVFont.Style)) then
      Self.TVFont.Style := Self.TVFont.Style + [fsStrikeOut];
-  Self.MainTree.Font.Assign(Self.TVFont);
+  ASuiteInstance.MainTree.Font.Assign(Self.TVFont);
 
   // MRU
   Self.MRU                       := AJSONConfig.GetValue(CONFIG_MRU, Self.MRU);
@@ -780,7 +680,7 @@ begin
   if (FHotKey <> Value) then
   begin
     FHotKey := Value;
-    ListManager.HotKeyItemList.RefreshRegs;
+    ASuiteManager.ListManager.HotKeyItemList.RefreshRegs;
   end;
 end;
 
@@ -789,7 +689,7 @@ begin
   //TODO: Move this method in proper place
   Result := False;
   if not FReadOnlyMode then
-    Result := FDBManager.SaveData(Config.MainTree, DoBackup);
+    Result := ASuiteManager.DBManager.SaveData(ASuiteInstance.MainTree, DoBackup);
 end;
 
 procedure TConfiguration.LoadConfig;
@@ -798,14 +698,14 @@ var
 begin                                                
   TASuiteLogger.Enter('Loading ASuite configuration', Self);
 
-  //if FileExists(FPaths.SuitePathSettings) then
+  //if FileExists(ASuiteInstance.Paths.SuitePathSettings) then
   //begin
   //  TASuiteLogger.Info('Found ASuite configuration', []);
     try
       JSONConfig := TJSONConfig.Create(nil);
       JSONConfig.Formatted := True;
       JSONConfig.FormatIndentsize := 4;    
-      JSONConfig.Filename := FPaths.SuitePathSettings; 
+      JSONConfig.Filename := ASuiteInstance.Paths.SuitePathSettings; 
       RestoreSettings(JSONConfig);
     finally
       JSONConfig.Free;
@@ -828,7 +728,7 @@ begin
       JSONConfig.Formatted := True;
       JSONConfig.FormatIndentsize := 4;
       //TODO: Check this. If asuite uses a different folder for settings? ex. appdata
-      JSONConfig.Filename := FPaths.SuitePathSettings;
+      JSONConfig.Filename := ASuiteInstance.Paths.SuitePathSettings;
       SaveSettings(JSONConfig);
     finally
       JSONConfig.Free;
@@ -854,7 +754,7 @@ procedure TConfiguration.SetBackup(const Value: Boolean);
 begin
   FBackup := Value;
   if FBackup then
-    FPaths.CheckBackupFolder;
+    ASuiteInstance.Paths.CheckBackupFolder;
 end;
 
 procedure TConfiguration.SetBackupNumber(const Value: Integer);
@@ -867,7 +767,7 @@ end;
 procedure TConfiguration.SetScheduler(value: Boolean);
 begin
   FScheduler := value;
-  TScheduler.Create.Timer.Enabled := FScheduler;
+  ASuiteInstance.Scheduler.Timer.Enabled := FScheduler;
 end;
 
 procedure TConfiguration.SetTrayIcon(value: Boolean);
@@ -884,11 +784,11 @@ var
 begin
   FTrayUseCustomIcon := value;
   dmTrayMenu.tiTrayMenu.Visible := False;
-  sPath := FPaths.RelativeToAbsolute(FTrayCustomIconPath);
+  sPath := ASuiteInstance.Paths.RelativeToAbsolute(FTrayCustomIconPath);
   if (FTrayUseCustomIcon) and (FileExists(sPath)) then
     dmTrayMenu.tiTrayMenu.Icon.LoadFromFile(sPath)
   else begin
-    sPath := FPaths.RelativeToAbsolute(AppendPathDelim(FPaths.SuitePathCurrentTheme + ICONS_DIR) + LowerCase(APP_NAME) + EXT_ICO);
+    sPath := ASuiteInstance.Paths.RelativeToAbsolute(AppendPathDelim(ASuiteInstance.Paths.SuitePathCurrentTheme + ICONS_DIR) + LowerCase(APP_NAME) + EXT_ICO);
     if FileExists(sPath) then
       dmTrayMenu.tiTrayMenu.Icon.LoadFromFile(sPath);
   end;
@@ -914,10 +814,10 @@ end;
 
 procedure TConfiguration.UpdateGMTheme;
 begin
-  TASuiteLogger.Info('Change Current Theme path to "%s"', [FPaths.SuitePathMenuThemes + FGMTheme]);
+  TASuiteLogger.Info('Change Current Theme path to "%s"', [ASuiteInstance.Paths.SuitePathMenuThemes + FGMTheme]);
   //Set Paths
-  FPaths.SuitePathCurrentTheme := AppendPathDelim(FPaths.SuitePathMenuThemes + FGMTheme);
-  FIconsManager.PathTheme      := FPaths.SuitePathCurrentTheme;
+  ASuiteInstance.Paths.SuitePathCurrentTheme := AppendPathDelim(ASuiteInstance.Paths.SuitePathMenuThemes + FGMTheme);
+  ASuiteManager.IconsManager.PathTheme       := ASuiteInstance.Paths.SuitePathCurrentTheme;
   //Loading icons
   frmMain.SetAllIcons;
   //Refresh GraphicMenu
@@ -929,9 +829,9 @@ procedure TConfiguration.SetTVAutoOpClCats(value: Boolean);
 begin
   FTVAutoOpClCats := value;
   if FTVAutoOpClCats then
-    FMainTree.TreeOptions.AutoOptions := FMainTree.TreeOptions.AutoOptions + [toAutoExpand]
+    ASuiteInstance.MainTree.TreeOptions.AutoOptions := ASuiteInstance.MainTree.TreeOptions.AutoOptions + [toAutoExpand]
   else
-    FMainTree.TreeOptions.AutoOptions := FMainTree.TreeOptions.AutoOptions - [toAutoExpand];
+    ASuiteInstance.MainTree.TreeOptions.AutoOptions := ASuiteInstance.MainTree.TreeOptions.AutoOptions - [toAutoExpand];
 end;
 
 procedure TConfiguration.SetHideTabSearch(value: Boolean);
@@ -956,30 +856,30 @@ var
   BackgroundPNG : TPortableNetworkGraphic;
 begin
   FTVBackground := value;
-  FMainTree.TreeOptions.PaintOptions := FMainTree.TreeOptions.PaintOptions - [toShowBackground];
+  ASuiteInstance.MainTree.TreeOptions.PaintOptions := ASuiteInstance.MainTree.TreeOptions.PaintOptions - [toShowBackground];
   if (FTVBackground) and (FTVBackgroundPath <> '') and
-     (FileExists(FPaths.RelativeToAbsolute(FTVBackgroundPath))) then
+     (FileExists(ASuiteInstance.Paths.RelativeToAbsolute(FTVBackgroundPath))) then
   begin
-    if ExtractFileExtEx(FPaths.RelativeToAbsolute(FTVBackgroundPath)) <> EXT_BMP then
+    if ExtractFileExtEx(ASuiteInstance.Paths.RelativeToAbsolute(FTVBackgroundPath)) <> EXT_BMP then
     begin
       BackgroundBMP := Graphics.TBitmap.Create;
       BackgroundPNG := TPortableNetworkGraphic.Create;
       try
-        BackgroundPNG.LoadFromFile(FPaths.RelativeToAbsolute(FTVBackgroundPath));
+        BackgroundPNG.LoadFromFile(ASuiteInstance.Paths.RelativeToAbsolute(FTVBackgroundPath));
         BackgroundBMP.Assign(BackgroundPNG);
-        FMainTree.Background.Bitmap := BackgroundBMP;
+        ASuiteInstance.MainTree.Background.Bitmap := BackgroundBMP;
       finally
         BackgroundBMP.Free;
         BackgroundPNG.Free;
       end;
     end
     else
-      FMainTree.Background.LoadFromFile(FPaths.RelativeToAbsolute(FTVBackgroundPath));
-    FMainTree.TreeOptions.PaintOptions := FMainTree.TreeOptions.PaintOptions + [toShowBackground];
+      ASuiteInstance.MainTree.Background.LoadFromFile(ASuiteInstance.Paths.RelativeToAbsolute(FTVBackgroundPath));
+    ASuiteInstance.MainTree.TreeOptions.PaintOptions := ASuiteInstance.MainTree.TreeOptions.PaintOptions + [toShowBackground];
   end
   else
-    FMainTree.TreeOptions.PaintOptions := FMainTree.TreeOptions.PaintOptions - [toShowBackground];
-  FMainTree.Update;
+    ASuiteInstance.MainTree.TreeOptions.PaintOptions := ASuiteInstance.MainTree.TreeOptions.PaintOptions - [toShowBackground];
+  ASuiteInstance.MainTree.Update;
 end;
 
 procedure TConfiguration.SetTVFont(value: TFont);
@@ -990,7 +890,7 @@ begin
     FTVFont.Style := value.Style;
     FTVFont.Size  := value.Size;
     FTVFont.Color := value.Color;
-    FMainTree.Font.Assign(FTVFont);
+    ASuiteInstance.MainTree.Font.Assign(FTVFont);
   end;
 end;
 
@@ -1001,11 +901,11 @@ begin
   begin
     FTVSmallIconSize := Value;
     //Change node height and imagelist
-    TVirtualTreeMethods.ChangeTreeIconSize(FMainTree, FTVSmallIconSize);
-    if FMainTree.HasChildren[FMainTree.RootNode] then
+    TVirtualTreeMethods.ChangeTreeIconSize(ASuiteInstance.MainTree, FTVSmallIconSize);
+    if ASuiteInstance.MainTree.HasChildren[ASuiteInstance.MainTree.RootNode] then
     begin
-      FMainTree.FullCollapse;
-      TVirtualTreeMethods.ChangeAllNodeHeight(FMainTree, FMainTree.DefaultNodeHeight);
+      ASuiteInstance.MainTree.FullCollapse;
+      TVirtualTreeMethods.ChangeAllNodeHeight(ASuiteInstance.MainTree, ASuiteInstance.MainTree.DefaultNodeHeight);
     end;
   end;
 end;
@@ -1015,9 +915,9 @@ begin
   FCache := value;
   //If disabled, delete all file icon-cache and folders cache
   if Not(FCache) then
-    FPaths.RemoveCacheFolders
+    ASuiteInstance.Paths.RemoveCacheFolders
   else //Else create folders cache
-    FPaths.CheckCacheFolders;
+    ASuiteInstance.Paths.CheckCacheFolders;
 end;
 
 procedure TConfiguration.SetChanged(const Value: Boolean);
@@ -1096,7 +996,7 @@ begin
   else
     FLangID := 'en';
 
-  SetDefaultLang(value, FPaths.SuitePathLocale);
+  SetDefaultLang(value, ASuiteInstance.Paths.SuitePathLocale);
 end;
 
 procedure TConfiguration.SetGraphicMenuHotKey(const Value: Cardinal);
@@ -1104,6 +1004,9 @@ begin
   UpdateHotkey(FGraphicMenuHotKey, Value, frmGMenuID);
   FGraphicMenuHotKey := Value;
 end;
+
+initialization
+  Config := TConfiguration.Create;
 
 finalization
   FreeAndNil(Config);

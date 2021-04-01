@@ -63,7 +63,8 @@ type
 implementation
 
 uses
-  AppConfig.Main, Kernel.Logger, FileUtil, Utility.FileFolder, LazFileUtils;
+  AppConfig.Main, Kernel.Logger, FileUtil, Utility.FileFolder, LazFileUtils,
+  Kernel.Instance, Kernel.Manager;
 
 { TIconsManager }
 
@@ -177,7 +178,7 @@ begin
   if FPathTheme <> '' then
     Result := FPathTheme
   else
-    Result := Config.Paths.SuitePathCurrentTheme;
+    Result := ASuiteInstance.Paths.SuitePathCurrentTheme;
 end;
 
 procedure TIconsManager.LoadAllIcons;

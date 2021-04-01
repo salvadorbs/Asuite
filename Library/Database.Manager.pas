@@ -63,7 +63,7 @@ implementation
 uses
   Kernel.Consts, AppConfig.Main, Utility.FileFolder, Utility.Misc,
   Database.Version, Database.List, Kernel.Logger,
-  VirtualTree.Methods, SynLog, Kernel.ResourceStrings;
+  VirtualTree.Methods, SynLog, Kernel.ResourceStrings, Kernel.Instance, Kernel.Manager;
 
 constructor TDBManager.Create;
 begin
@@ -113,7 +113,7 @@ begin
   if (Config.Backup) then
   begin
     CopyFile(PChar(FDBFileName),
-             PChar(Format(Config.Paths.SuitePathBackup + BACKUP_FILE,[GetDateTimeAsString])),false);
+             PChar(Format(ASuiteInstance.Paths.SuitePathBackup + BACKUP_FILE,[GetDateTimeAsString])),false);
     DeleteOldBackups(Config.BackupNumber);
   end;
 end;

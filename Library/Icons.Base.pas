@@ -80,7 +80,7 @@ implementation
 
 uses
    DataModules.Icons, Kernel.Consts, BGRABitmapTypes, Utility.FileFolder,
-   AppConfig.Main, Kernel.Enumerations, Utility.System, ImgList;
+   AppConfig.Main, Kernel.Enumerations, Utility.System, ImgList, Kernel.Instance, Kernel.Manager;
 
 { TBaseIcon }
 
@@ -165,7 +165,7 @@ begin
     sNameFile := Copy(sExt, 2, Length(sExt) - 1);
 
   if (sNameFile <> '') then
-    Result := Config.Paths.SuitePathCache + sNameFile + EXT_ICO;
+    Result := ASuiteInstance.Paths.SuitePathCache + sNameFile + EXT_ICO;
 end;
 
 procedure TBaseIcon.SetCacheIconCRC(AValue: Integer);

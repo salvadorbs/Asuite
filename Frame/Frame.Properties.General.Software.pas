@@ -68,7 +68,7 @@ implementation
 
 uses
   Kernel.Consts, NodeDataTypes.Files, AppConfig.Main, Kernel.ResourceStrings,
-  Utility.FileFolder;
+  Utility.FileFolder, Kernel.Instance, Kernel.Manager;
 
 {$R *.lfm}
 
@@ -80,14 +80,14 @@ end;
 procedure TfrmSWGeneralPropertyPage.edtPathExeAfterDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
-  AName := Config.Paths.AbsoluteToRelative(AName);
+  AName := ASuiteInstance.Paths.AbsoluteToRelative(AName);
 end;
 
 procedure TfrmSWGeneralPropertyPage.edtPathExeBeforeDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
   edtPathExe.Filter := msgFilterExe;
-  AName := Config.Paths.RelativeToAbsolute(AName);
+  AName := ASuiteInstance.Paths.RelativeToAbsolute(AName);
 end;
 
 procedure TfrmSWGeneralPropertyPage.edtPathExeChange(Sender: TObject);
@@ -98,14 +98,14 @@ end;
 procedure TfrmSWGeneralPropertyPage.edtWorkingDirAfterDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
-  AName := Config.Paths.AbsoluteToRelative(AName);
+  AName := ASuiteInstance.Paths.AbsoluteToRelative(AName);
   CheckPropertyPath(edtWorkingDir, AName);
 end;
 
 procedure TfrmSWGeneralPropertyPage.edtWorkingDirBeforeDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
-  AName := Config.Paths.RelativeToAbsolute(AName);
+  AName := ASuiteInstance.Paths.RelativeToAbsolute(AName);
 end;
 
 procedure TfrmSWGeneralPropertyPage.edtWorkingDirChange(Sender: TObject);
@@ -119,11 +119,11 @@ var
 begin
   Result := inherited;
 
-  //lbInfo2.Caption := Format(lbInfo2.Caption, [Config.Paths.SuitePathWorking, Config.Paths.SuiteDrive]);
+  //lbInfo2.Caption := Format(lbInfo2.Caption, [ASuiteInstance.Paths.SuitePathWorking, ASuiteInstance.Paths.SuiteDrive]);
 
   //Strange bug. %asuite% and %drive% causing error "Invalid argument index in format...", so I'm using a workaround
-  lbInfo2.Caption := StringReplace(lbInfo2.Caption, '%s', Config.Paths.SuitePathWorking, [rfIgnoreCase]);
-  lbInfo2.Caption := StringReplace(lbInfo2.Caption, '%s', Config.Paths.SuiteDrive, [rfIgnoreCase]);
+  lbInfo2.Caption := StringReplace(lbInfo2.Caption, '%s', ASuiteInstance.Paths.SuitePathWorking, [rfIgnoreCase]);
+  lbInfo2.Caption := StringReplace(lbInfo2.Caption, '%s', ASuiteInstance.Paths.SuiteDrive, [rfIgnoreCase]);
 
   if Assigned(CurrentNodeData) then
   begin
