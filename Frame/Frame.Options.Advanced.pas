@@ -86,7 +86,7 @@ implementation
 
 uses
   AppConfig.Main, Utility.FileFolder, Kernel.Consts, VirtualTree.Methods,
-  NodeDataTypes.Files, NodeDataTypes.Custom, Kernel.Enumerations, Kernel.ResourceStrings,
+  NodeDataTypes.Files, NodeDataTypes.Custom, Kernel.ResourceStrings,
   Utility.Misc, Kernel.Instance, Kernel.Manager;
 
 {$R *.lfm}

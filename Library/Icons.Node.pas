@@ -24,9 +24,9 @@ unit Icons.Node;
 interface
 
 uses
-  SysUtils, Classes, Icons.Base, NodeDataTypes.Base, Kernel.Enumerations,
+  SysUtils, Classes, Icons.Base, NodeDataTypes.Base,
   NodeDataTypes.Custom, Graphics, Controls, {$IFDEF MSWINDOWS} CommCtrl, {$ENDIF}
-  LCLIntf, LCLType, BGRABitmap;
+  LCLIntf, BGRABitmap;
 
 type
 
@@ -52,9 +52,7 @@ type
 implementation
 
 uses
-  Utility.System, AppConfig.Main, NodeDataTypes.Files, Kernel.Consts, ImgList,
-  Utility.FileFolder, DataModules.Icons{$IFDEF MSWINDOWS}, Windows {$ENDIF},
-  BGRAIconCursor, BGRABitmapTypes, Kernel.Instance, Kernel.Manager;
+  NodeDataTypes.Files, ImgList, BGRABitmapTypes, Kernel.Instance, Kernel.Manager;
 
 { TNodeIcon }
 

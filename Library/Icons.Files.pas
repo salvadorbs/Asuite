@@ -46,7 +46,7 @@ type
 implementation
 
 uses
-  Utility.FileFolder, LazFileUtils;
+  LazFileUtils;
 
 constructor TFileIcon.Create(APathFile: string; AStatic: Boolean);
 begin

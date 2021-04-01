@@ -24,11 +24,11 @@ unit Forms.Main;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
+  LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
   ComCtrls, VirtualTrees, UniqueInstance, Kernel.Consts, DataModules.Icons,
-  Kernel.BaseMainForm, StdCtrls, Buttons, UITypes,
-  Kernel.Enumerations, ExtCtrls, {XMLDoc,} Lists.Manager,
-  Database.Manager, ButtonedEdit, {Actions,} ActnList, Themes, EditBtn;
+  Kernel.BaseMainForm, StdCtrls, UITypes,
+  Kernel.Enumerations, ExtCtrls,
+  ButtonedEdit, {Actions,} ActnList, EditBtn;
 
 type
 
@@ -164,7 +164,7 @@ implementation
 uses
   Forms.Options, Forms.About, Utility.Misc, Forms.ScanFolder,
   DataModules.TrayMenu, Forms.ImportList, AppConfig.Main, Utility.System,
-  VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base, Kernel.Scheduler,
+  VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base,
   Kernel.Types, NodeDataTypes.Files, VirtualTree.Events, Kernel.Manager,
   Kernel.Logger, SynLog, FileUtil, Kernel.ResourceStrings, Kernel.Instance
   {$IFDEF MSWINDOWS} , JwaWinBase, jwatlhelp32 {$ENDIF};

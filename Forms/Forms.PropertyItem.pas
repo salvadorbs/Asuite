@@ -49,7 +49,7 @@ var
 implementation
 
 uses
-  Frame.Properties.Advanced, Kernel.Enumerations, Kernel.Logger, VirtualTrees,
+  Frame.Properties.Advanced, Kernel.Logger, VirtualTrees,
   Frame.Properties.Behavior, Frame.Properties.General.Category,
   Frame.Properties.General.Software, Utility.Misc, Frame.Properties.EnvironmentVars;
 

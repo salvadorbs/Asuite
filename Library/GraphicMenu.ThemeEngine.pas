@@ -96,9 +96,9 @@ type
 implementation
 
 uses
-  Kernel.Consts, AppConfig.Main, Utility.Conversions, Kernel.ResourceStrings,
-  GraphicMenu.ThemeEngine.Consts, Kernel.Logger, Utility.Misc, Kernel.Instance, Kernel.Manager,
-  BGRABitmapTypes, Types;
+  Kernel.Consts, Utility.Conversions, Kernel.ResourceStrings, BGRABitmapTypes, Types,
+  GraphicMenu.ThemeEngine.Consts, Kernel.Logger, Utility.Misc, Kernel.Instance,
+  Kernel.Manager;
 
 { TThemeEngineMethods }
 
@@ -229,7 +229,7 @@ procedure TThemeEngine.DrawIconInPNGImage(IniFile: TIniFile;
   PNGImage: TBGRABitmap; ButtonType: TGraphicMenuElement);
 var
   Icon : TIcon;
-  IconPath, IniFile_Section : string;
+  IconPath: string;
   I, buttonHeight, iSpace: Integer;
 begin
   if Not Assigned(PNGImage) then
@@ -238,7 +238,6 @@ begin
   Icon := TIcon.Create;
   try
     //Get and draw icon
-    IniFile_Section := GetIniFileSection(ButtonType);
     IconPath := GetButtonIconPath(IniFile, ButtonType);
     if FileExists(ASuiteInstance.Paths.SuitePathCurrentTheme + IconPath) then
     begin
@@ -262,7 +261,7 @@ procedure TThemeEngine.DrawTextInPNGImage(IniFile: TIniFile;
   PNGImage: TBGRABitmap; ButtonType: TGraphicMenuElement; SpaceForIcon: Boolean
   );
 var
-  TopText, ButtonHeight, I : Integer;
+  ButtonHeight, I : Integer;
   FontNormal, FontHover, FontClicked : TFont;
   Caption, IniFile_Section : string;
   TextColor: TColor;
@@ -316,7 +315,6 @@ begin
             bsDisabled: AssignFont(PNGImage, FontNormal);
           end;
 
-          TopText := (ButtonHeight - Abs(PNGImage.Canvas.Font.Height)) div 2;
           if SpaceForIcon then
             PNGImage.TextRect(Rect(35, (ButtonHeight * I), PNGImage.Width, (ButtonHeight * (I + 1))), Caption, taLeftJustify, tlCenter, TextColor)
           else

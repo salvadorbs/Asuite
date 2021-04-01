@@ -25,7 +25,7 @@ interface
 
 uses
   NodeDataTypes.Custom, SysUtils, Hotkeys.Manager.Platform, LCLIntf, LCLType,
-  Kernel.Enumerations, Lists.Base;
+  Lists.Base;
 
 type
   THotkeyItemsList = class(TBaseItemsList)

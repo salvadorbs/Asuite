@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Graphics, Forms, Controls, Classes, LazFileUtils, Dialogs,
-  Generics.Defaults, Generics.Collections, LazUTF8, AppConfig.PathList;
+  LazUTF8, AppConfig.PathList;
 
 type
   { TConfigPaths }

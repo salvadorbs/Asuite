@@ -24,7 +24,7 @@ unit AppConfig.PathList;
 interface
 
 uses
-  Classes, SysUtils, Generics.Defaults, Generics.Collections, RegExpr;
+  Classes, SysUtils, Generics.Collections, RegExpr;
 
 type
   TVarsList = TFastHashMap<string, string>;

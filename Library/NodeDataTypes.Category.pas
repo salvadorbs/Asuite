@@ -60,14 +60,13 @@ procedure TvCategoryNodeData.CallBackExecuteNode(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
 var
   NodeData: TvBaseNodeData;
-  SingleInstance: PBoolean;
+  SingleInstance: Boolean absolute Data;
 begin
-  SingleInstance := Data;
   NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
   if (Assigned(NodeData)) and (NodeData.IsFileItem) then
   begin
     if TvFileNodeData(NodeData).RunFromCategory then
-      TvFileNodeData(NodeData).Execute(False, True, Boolean(SingleInstance));
+      TvFileNodeData(NodeData).Execute(False, True, SingleInstance);
   end;
 end;
 

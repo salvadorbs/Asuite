@@ -50,12 +50,8 @@ uses
   AppConfig.Main, Kernel.Enumerations, Kernel.ResourceStrings, Kernel.Manager;
 
 function ResetHourMinute(var ANow: TDateTime): TDateTime;
-var
-  tempDateTime: TDateTime;
 begin
-  tempDateTime := RecodeMinute(ANow, 0);
-  tempDateTime := RecodeSecond(Result, 0);
-  Result := tempDateTime;
+  Result := RecodeSecond(RecodeMinute(ANow, 0), 0);
 end;
 
 { TScheduler }

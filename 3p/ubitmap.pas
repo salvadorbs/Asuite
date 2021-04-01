@@ -349,7 +349,8 @@ var
   ARawImage: TRawImage;
   AImage: TLazIntfImage;
 begin
-  Result:= Graphics.TBitmap.Create;
+  Result := Graphics.TBitmap.Create;
+  IconInfo := Default(TICONINFO);
 
   if Windows.GetIconInfo(Handle, IconInfo) = False then
     Exit;

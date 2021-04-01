@@ -24,7 +24,7 @@ unit Forms.Options;
 interface
 
 uses
-  LCLIntf, LCLType, SysUtils, Variants, Classes, Graphics,
+  LCLIntf, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, Dialogs, Forms.Dialog.BaseEntity, VirtualTrees, DefaultTranslator,
   ExtCtrls, Frame.BaseEntity;
 

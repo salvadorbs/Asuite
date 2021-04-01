@@ -97,7 +97,7 @@ implementation
 uses
   AppConfig.Main, Kernel.Consts, Utility.FileFolder, LazUTF8,
   Utility.System, VirtualTree.Methods, Utility.Misc, Kernel.Instance, Kernel.Manager
-  {$IFDEF Windows}, Windows, JwaWindows, JwaWinBase, ShellApi{$ENDIF};
+  {$IFDEF Windows}, JwaWindows, JwaWinBase, ShellApi{$ENDIF};
 
 constructor TvFileNodeData.Create(AType: TvTreeDataType);
 begin

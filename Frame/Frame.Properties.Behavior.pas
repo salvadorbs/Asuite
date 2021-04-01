@@ -59,8 +59,8 @@ var
 implementation
 
 uses
-  Kernel.Enumerations, Forms.Options, Frame.Options.Autorun, AppConfig.Main,
-  Kernel.ResourceStrings, Kernel.Manager;
+  Kernel.Enumerations, Forms.Options, Frame.Options.Autorun, Kernel.ResourceStrings,
+  Kernel.Manager;
 
 {$R *.lfm}
 

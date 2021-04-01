@@ -56,7 +56,7 @@ implementation
 
 uses
   NodeDataTypes.Custom, NodeDataTypes.Files,
-  Kernel.Types, Kernel.Enumerations, Forms.Main,
+  Kernel.Types, Forms.Main,
   VirtualTree.Methods, VirtualTree.Events;
 
 {$R *.lfm}

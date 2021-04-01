@@ -36,6 +36,7 @@ type
   protected
     function GetName: string; override;
     function LoadIcon: Integer; override;
+    function GetDefaultPathIcon: string; override;
   public
     constructor Create(AExtFile: string);
 
@@ -60,6 +61,13 @@ begin
   Result := -1;
   if (FExtFile <> '') then
     Result := InternalGetImageIndex(FExtFile);
+end;
+
+function TExtFileIcon.GetDefaultPathIcon: string;
+begin
+  raise ENotImplemented.Create('This class does not need default path icon');
+
+  Result := '';
 end;
 
 end.

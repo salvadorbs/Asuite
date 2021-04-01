@@ -286,7 +286,7 @@ Var
 implementation
 
 uses
-   resreader, resource, versiontypes, versionresource, LCLVersion, InterfaceBase, LCLPlatformDef,
+   resreader, resource, versionresource, LCLVersion, InterfaceBase, LCLPlatformDef,
    forms
    //BZUtils
    {$IFDEF WINDOWS}
@@ -303,16 +303,6 @@ uses
      DOM,
      machoreader {needed for reading MACH-O executables}
    {$ENDIF};
-
-Const
-  WIDGETSET_GTK        = 'GTK widget';
-  WIDGETSET_GTK2       = 'GTK 2 widget';
-  WIDGETSET_WIN        = 'Win32/Win64 widget';
-  WIDGETSET_WINCE      = 'WinCE widget';
-  WIDGETSET_CARBON     = 'Carbon widget';
-  WIDGETSET_QT         = 'QT widget';
-  WIDGETSET_fpGUI      = 'fpGUI widget';
-  WIDGETSET_OTHER      = 'Other gui';
 
 //==============================================================================
 

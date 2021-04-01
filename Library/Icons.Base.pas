@@ -254,7 +254,7 @@ begin
     Flags := SHGFI_ICON or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES;
 
   try
-    if SHGetFileInfoW(PChar(APathFile), 0, FileInfo, SizeOf(TSHFileInfo), Flags) <> 0 then
+    if SHGetFileInfoW(PChar(APathFile), 0, FileInfo{%H-}, SizeOf(TSHFileInfo), Flags) <> 0 then
       Result := BGRABitmapCreateFromHICON(FileInfo.hIcon);
   finally
     DestroyIcon(FileInfo.hIcon);
@@ -280,7 +280,6 @@ function TBaseIcon.ExtractIconFromFile(const APathFile: string;
   const AWantLargeIcon: Boolean): TBGRABitmap;
 var
   Icon : TBGRAIconCursor;
-  IcoHandle: THandle;
 begin
   Result := nil;
 
