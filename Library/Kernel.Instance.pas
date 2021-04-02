@@ -35,11 +35,11 @@ type
     FMainTree: TVirtualStringTree;
     FPaths: TConfigPaths;
     FScheduler: TScheduler;
-    FSmallHeightNode    : Integer;
-    FBigHeightNode      : Integer;
 
+    function GetBigHeightNode: Integer;
     function GetImportTree: TVirtualStringTree;
     function GetMainTree: TVirtualStringTree;
+    function GetSmallHeightNode: Integer;
   public
     constructor Create; overload;
     destructor Destroy; override;
@@ -49,8 +49,8 @@ type
     property Paths: TConfigPaths read FPaths;
     property Scheduler: TScheduler read FScheduler;
 
-    property SmallHeightNode: Integer read FSmallHeightNode;
-    property BigHeightNode: Integer read FBigHeightNode;
+    property SmallHeightNode: Integer read GetSmallHeightNode;
+    property BigHeightNode: Integer read GetBigHeightNode;
 
     procedure HandleParam(const Param: string; FirstInstance: Boolean = True);
 
@@ -77,10 +77,22 @@ begin
     Result := frmImportList.vstListImp;
 end;
 
+function TASuiteInstance.GetBigHeightNode: Integer;
+begin
+  //Node height based of DPI
+  Result := Round((Screen.PixelsPerInch / 96.0) * NODE_HEIGHT_LARGE);
+end;
+
 function TASuiteInstance.GetMainTree: TVirtualStringTree;
 begin
   Assert(Assigned(FMainTree));
   Result := FMainTree;
+end;
+
+function TASuiteInstance.GetSmallHeightNode: Integer;
+begin
+  //Node height based of DPI
+  Result := Round((Screen.PixelsPerInch / 96.0) * NODE_HEIGHT_SMALL);
 end;
 
 constructor TASuiteInstance.Create;
@@ -88,10 +100,6 @@ var
   I: Integer;
 begin
   FScheduler := TScheduler.Create;
-
-  //Node height based of DPI
-  FSmallHeightNode := Round((Screen.PixelsPerInch / 96.0) * NODE_HEIGHT_SMALL);
-  FBigHeightNode   := Round((Screen.PixelsPerInch / 96.0) * NODE_HEIGHT_LARGE);
 
   //Params
   for I := 1 to ParamCount do
