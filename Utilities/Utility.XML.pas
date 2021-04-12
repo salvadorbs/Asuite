@@ -39,7 +39,7 @@ implementation
 uses
   NodeDataTypes.Custom, AppConfig.Main, Kernel.Types, Kernel.Manager,
   Utility.Conversions, VirtualTree.Methods, NodeDataTypes.Files, Menus,
-  Kernel.Logger, Kernel.Instance;
+  Kernel.Logger, Kernel.Instance, LCLProc;
 
 function GetStrPropertyXML(Node : TDOMNode;Name: String;Default: String): String;
 var
@@ -375,9 +375,9 @@ begin
     //Hotkey
     Config.HotKey      := GetBoolPropertyXML(Node, 'ActiveHotKey',true);
     //Window Hotkey
-    Config.WindowHotkey := XMLToShortcut(Node, 'HotKeyCode', 'HotKeyModifier');
+    Config.WindowHotkey := ShortCutToText(XMLToShortcut(Node, 'HotKeyCode', 'HotKeyModifier'));
     //Menu Hotkey
-    Config.GraphicMenuHotKey := XMLToShortcut(Node, 'MenuHotKeyCode', 'MenuHotKeyModifier');
+    Config.GraphicMenuHotKey := ShortCutToText(XMLToShortcut(Node, 'MenuHotKeyCode', 'MenuHotKeyModifier'));
     //Main Form - Treevew
     Config.TVBackgroundPath := GetStrPropertyXML(Node, 'BackgroundPath','');
     Config.TVBackground     := GetBoolPropertyXML(Node, 'Background',False);

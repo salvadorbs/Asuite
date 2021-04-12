@@ -25,8 +25,7 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Graphics, Forms, Controls, VirtualTrees, Kernel.Enumerations,
-  Classes, jsonConf, LazFileUtils,
-  Kernel.Logger, Dialogs;
+  Classes, jsonConf, LazFileUtils, Kernel.Logger, Dialogs;
 
 type
 
@@ -100,9 +99,9 @@ type
     FGMBtnExplore       : string;
     //HotKeys
     FHotKey             : Boolean;
-    FWindowHotKey       : Cardinal;  //TODO: Try as TShortcut or as string
-    FGraphicMenuHotKey  : Cardinal;
-    FClassicMenuHotkey  : Cardinal;
+    FWindowHotKey       : string;
+    FGraphicMenuHotKey  : string;
+    FClassicMenuHotkey  : string;
     //Misc
     FReadOnlyMode         : Boolean;
     FChanged              : Boolean;
@@ -139,14 +138,15 @@ type
     procedure SetBackupNumber(const Value: Integer);
     procedure SetChanged(const Value: Boolean);
     procedure SetBackup(const Value: Boolean);
-    procedure SetGraphicMenuHotKey(const Value: Cardinal);
-    procedure SetWindowHotKey(const Value: Cardinal);
+    procedure SetGraphicMenuHotKey(const Value: string);
+    procedure SetWindowHotKey(const Value: string);
     procedure SetHotKey(const Value: Boolean);
     procedure SetTVSmallIconSize(const Value: Boolean);
-    procedure SetClassicMenuHotkey(const Value: Cardinal);
+    procedure SetClassicMenuHotkey(const Value: string);
 
     procedure SetASuiteState(const Value: TLauncherState);
-    procedure UpdateHotkey(OldValue, NewValue: TShortcut; Tag: Integer);
+    function UpdateHotkey(OldValue, NewValue: String; Tag: Integer): Boolean;
+    function isValidHotkeyString(AValue: String): Boolean;
   public
     { public declarations }
     constructor Create; overload;
@@ -222,9 +222,9 @@ type
     property GMBtnExplore: string read FGMBtnExplore write SetGMBtnExplore;
     //HotKeys
     property HotKey: Boolean read FHotKey write SetHotKey;
-    property WindowHotKey: Cardinal read FWindowHotKey write SetWindowHotKey;
-    property GraphicMenuHotKey: Cardinal read FGraphicMenuHotKey write SetGraphicMenuHotKey;
-    property ClassicMenuHotkey: Cardinal read FClassicMenuHotkey write SetClassicMenuHotkey;
+    property WindowHotKey: string read FWindowHotKey write SetWindowHotKey;
+    property GraphicMenuHotKey: string read FGraphicMenuHotKey write SetGraphicMenuHotKey;
+    property ClassicMenuHotkey: string read FClassicMenuHotkey write SetClassicMenuHotkey;
     // Misc
     property ReadOnlyMode: Boolean read FReadOnlyMode write FReadOnlyMode;
     property Changed: Boolean read FChanged write SetChanged;
@@ -250,7 +250,7 @@ implementation
 uses
   Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, Utility.Misc,
   Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder,
-  Utility.XML, GraphicMenu.ThemeEngine,
+  Utility.XML, GraphicMenu.ThemeEngine, LCLProc,
   TypInfo, Kernel.ResourceStrings, LCLTranslator, AppConfig.Consts,
   Utility.Conversions, Hotkeys.Manager.Platform, Kernel.Instance, Kernel.Manager;
 
@@ -352,9 +352,9 @@ begin
   FHotKey             := True;
 
   //Hotkey
-  FWindowHotKey       := 0;
-  FGraphicMenuHotKey  := 0;
-  FClassicMenuHotkey  := 0;
+  FWindowHotKey       := '';
+  FGraphicMenuHotKey  := '';
+  FClassicMenuHotkey  := '';
 
   //ScanFolder
   FScanFolderAutoExtractName := True;
@@ -382,21 +382,31 @@ begin
   FASuiteState := Value;
 end;
 
-procedure TConfiguration.UpdateHotkey(OldValue, NewValue: TShortcut; Tag: Integer);
+function TConfiguration.UpdateHotkey(OldValue, NewValue: String; Tag: Integer
+  ): Boolean;
+var
+  newShortcut, oldShortcut: TShortcut;
 begin
+  Result := not FHotKey;
   if (FHotKey) then
   begin
+    oldShortcut := TextToShortCut(OldValue);
+    newShortcut := TextToShortCut(NewValue);
+
     //Unregister hotkey (if actived)
-    HotkeyManager.UnregisterNotify(OldValue);
+    HotkeyManager.UnregisterNotify(oldShortcut);
 
     //Register hotkey
-    if (NewValue <> 0) then
-    begin
-      if not(HotkeyManager.RegisterNotify(NewValue,
-        TVirtualTreeMethods.HotKeyNotify, Tag)) then
-        ShowMessageEx(msgErrRegWindowHotkey, true);
-    end;
+    if (newShortcut <> 0) then
+      Result := HotkeyManager.RegisterNotify(newShortcut, TVirtualTreeMethods.HotKeyNotify, Tag)
+    else
+      Result := True;
   end;
+end;
+
+function TConfiguration.isValidHotkeyString(AValue: String): Boolean;
+begin
+  Result := (TextToShortCut(AValue) <> 0);
 end;
 
 procedure TConfiguration.SetHoldSize(value: Boolean);
@@ -510,7 +520,6 @@ begin
     AJSONConfig.SetValue(CONFIG_GMBTNEXPLORE, Self.GMBtnExplore);
 
     //HotKeys
-    //TODO: Maybe better use string and not word type (more human reading)
     AJSONConfig.SetValue(CONFIG_HOTKEY, Self.HotKey);
     AJSONConfig.SetValue(CONFIG_WINDOWHOTKEY, Self.WindowHotKey);
     AJSONConfig.SetValue(CONFIG_MENUHOTKEY, Self.GraphicMenuHotKey);
@@ -768,9 +777,10 @@ begin
     frmMain.Caption := APP_TITLE;
 end;
 
-procedure TConfiguration.SetWindowHotKey(const Value: Cardinal);
+procedure TConfiguration.SetWindowHotKey(const Value: string);
 begin
-  UpdateHotkey(FWindowHotKey, Value, frmMainID);
+  if not UpdateHotkey(FWindowHotKey, Value, frmMainID) then
+    ShowMessageEx(msgErrRegWindowHotkey, true);
   FWindowHotKey := Value;
 end;
 
@@ -887,9 +897,10 @@ begin
   FChanged := Value;
 end;
 
-procedure TConfiguration.SetClassicMenuHotkey(const Value: Cardinal);
+procedure TConfiguration.SetClassicMenuHotkey(const Value: string);
 begin
-  UpdateHotkey(FClassicMenuHotkey, Value, frmCMenuID);
+  if not UpdateHotkey(FClassicMenuHotkey, Value, frmCMenuID) then
+    ShowMessageEx(msgErrRegCMHotkey, true);
   FClassicMenuHotKey := Value;
 end;
 
@@ -961,9 +972,10 @@ begin
   SetDefaultLang(value, ASuiteInstance.Paths.SuitePathLocale);
 end;
 
-procedure TConfiguration.SetGraphicMenuHotKey(const Value: Cardinal);
+procedure TConfiguration.SetGraphicMenuHotKey(const Value: string);
 begin
-  UpdateHotkey(FGraphicMenuHotKey, Value, frmGMenuID);
+  if not UpdateHotkey(FGraphicMenuHotKey, Value, frmGMenuID) then
+    ShowMessageEx(msgErrRegGMHotkey, true);
   FGraphicMenuHotKey := Value;
 end;
 
