@@ -148,14 +148,14 @@ begin
   //Hot Keys
   cbHotKey.Checked := Config.HotKey;
 
-  if Config.WindowHotKey <> 0 then
-    edtHotkeyMF.Text := ShortCutToText(Config.WindowHotKey);
+  if Config.WindowHotKey <> '' then
+    edtHotkeyMF.Text := Config.WindowHotKey;
 
-  if Config.GraphicMenuHotkey <> 0 then
-    edtHotkeyGM.Text := ShortCutToText(Config.GraphicMenuHotkey);
+  if Config.GraphicMenuHotkey <> '' then
+    edtHotkeyGM.Text := Config.GraphicMenuHotkey;
 
-  if Config.ClassicMenuHotkey <> 0 then
-    edtHotkeyCM.Text := ShortCutToText(Config.ClassicMenuHotkey);
+  if Config.ClassicMenuHotkey <> '' then
+    edtHotkeyCM.Text := Config.ClassicMenuHotkey;
 
   //Populate VST with HotKeyItemList's items
   TVirtualTreeMethods.PopulateVSTItemList(vstItems, ASuiteManager.ListManager.HotKeyItemList);
@@ -178,11 +178,13 @@ end;
 function TfrmHotkeyOptionsPage.InternalSaveData: Boolean;
 begin
   Result := inherited;
+
   //Hot Keys
   Config.HotKey       := cbHotKey.Checked;
-  Config.WindowHotKey := TextToShortCut(edtHotkeyMF.Text);
-  Config.GraphicMenuHotkey := TextToShortCut(edtHotkeyGM.Text);
-  Config.ClassicMenuHotkey := TextToShortCut(edtHotkeyCM.Text);
+  Config.WindowHotKey := edtHotkeyMF.Text;
+  Config.GraphicMenuHotkey := edtHotkeyGM.Text;
+  Config.ClassicMenuHotkey := edtHotkeyCM.Text;
+
   //Save vst items in HotKeyItemList
   SaveInHotkeyItemList(vstItems, ASuiteManager.ListManager.HotKeyItemList);
 end;
