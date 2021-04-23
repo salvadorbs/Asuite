@@ -171,7 +171,7 @@ begin
   //For executable (EXE, CMD, BAT for Windows, or files with permission Execute for Linux), use CreateProcess
   if IsExecutableFile(Path) then
     Result := CreateProcessEx(PathAbsoluteFile, ASuiteInstance.Paths.RelativeToAbsolute(FParameters),
-                              GetWorkingDirAbsolute, ConvertWindowStateToSWOptions(GetWindowState(ARunFromCategory)),
+                              WorkingDirAbsolute, ConvertWindowStateToSWOptions(GetWindowState(ARunFromCategory)),
                               EnvironmentVars) <> -1
   else
     Result := OpenDocument(Path);
@@ -211,7 +211,8 @@ begin
   if not Result then
     ShowMessageEx(SysErrorMessage(GetLastOSError), True);
   {$ELSE}
-  //TODO: Add linux method - See https://www.freedesktop.org/software/polkit/docs/0.105/pkexec.1.html
+  Result := CreateProcessEx('pkexec', Format('%s %s', [PathAbsoluteFile, Parameters]), WorkingDirAbsolute,
+                            ConvertWindowStateToSWOptions(GetWindowState(ARunFromCategory)), EnvironmentVars) <> -1);
   {$ENDIF}
 end;
 
@@ -249,8 +250,8 @@ begin
   else
     ShowMessageEx(SysErrorMessage(GetLastOSError), True);
   {$ELSE}
-  //TODO: Add linux method
-  //      https://www.freedesktop.org/software/polkit/docs/0.105/pkexec.1.html
+  Result := CreateProcessEx('pkexec', Format('%s %s %s', [AUserData.UserName, PathAbsoluteFile, Parameters]), WorkingDirAbsolute,
+                            ConvertWindowStateToSWOptions(GetWindowState(ARunFromCategory)), EnvironmentVars) <> -1);
   {$ENDIF}
 end;
 

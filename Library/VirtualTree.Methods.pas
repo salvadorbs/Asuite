@@ -77,7 +77,7 @@ type
                                Data: Pointer; var Abort: Boolean);
 
     //Misc                              
-    class procedure HotKeyNotify(Sender: TObject; ShortcutEx: TShortcutEx); //TODO: Move in proper class
+    class procedure HotKeyNotify(Sender: TObject; ShortcutEx: TShortcutEx);
     class procedure ExecuteSelectedNodes(ASender: TBaseVirtualTree; ARunMode: TRunMode;
                                    ACheckSingleInstance: Boolean);
     class procedure ExecuteNode(ASender: TBaseVirtualTree; ANode: PVirtualNode; ARunMode: TRunMode;
@@ -316,7 +316,7 @@ begin
           {$IFDEF MSWINDOWS}
           UserData := TfrmUILogin.Execute(ASender, msgRunAsTitle);
           {$ELSE}
-          InputBox('Username', msgInputUsername, '');
+          UserData.UserName := InputBox('Username', msgInputUsername, '');
           {$ENDIF}
           if UserData.UserName <> '' then
             NodeData.ExecuteAsUser(True, NodeData.IsCategoryItem, UserData)
