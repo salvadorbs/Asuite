@@ -25,7 +25,7 @@ interface
 
 uses
   SysUtils, Classes, Controls, Forms, Icons.Files, Generics.Collections,
-  Kernel.Consts, LCLIntf, Icons.Base, Icons.ExtFile;
+  Kernel.Consts, LCLIntf, Icons.Base, Icons.ExtFile, Contnrs;
 
 type
   TBaseIcons = class(TObjectList<TBaseIcon>);
@@ -38,6 +38,9 @@ type
     FPathTheme: string;
     FItems: TBaseIcons;
     FExtItems: TBaseIcons;
+    {$IFDEF UNIX}
+    FExtToMimeIconName: TFPDataHashTable;
+    {$ENDIF}
     function GetPathTheme: string;
 
     procedure LoadAllIcons;
@@ -45,6 +48,12 @@ type
     function FindByPath(APathFile: String): TFileIcon;
     function FindByName(AName: String): TBaseIcon;
     function FindByExt(AExtension: String): TExtFileIcon;
+    {$IFDEF UNIX}
+    procedure LoadMimeIconNames;
+    function GetIconByDesktopFile(AFileName: String): String;
+    function IsDirectory(AFilename: String): Boolean;
+    procedure ClearExtToMimeList;
+    {$ENDIF}
   public
     { public declarations }
     constructor Create;
@@ -56,6 +65,10 @@ type
     function GetExtIconIndex(AExtension: string): Integer;
     procedure AddIcon(ABaseIcon: TBaseIcon);
     procedure AddExtIcon(ABaseIcon: TBaseIcon);
+    {$IFDEF UNIX}
+    function GetSystemIconName(const AFileName: WideString): WideString;   
+    function CheckSystemIconName(const AIconName: Widestring): Boolean;
+    {$ENDIF}
 
     property PathTheme: string read GetPathTheme write SetPathTheme;
   end;
@@ -63,7 +76,14 @@ type
 implementation
 
 uses
-  Kernel.Logger, FileUtil, LazFileUtils, Kernel.Instance, Kernel.Manager;
+  Kernel.Logger, FileUtil, LazFileUtils, Kernel.Instance, Kernel.Manager
+  {$IFDEF UNIX}
+  , IniFiles, BaseUnix, StrUtils
+    {$IFDEF LCLQT5}
+    , qt5
+    {$ELSE}
+    {$ENDIF}
+  {$ENDIF};
 
 { TIconsManager }
 
@@ -71,12 +91,24 @@ constructor TIconsManager.Create;
 begin
   FItems := TBaseIcons.Create(True);
   FExtItems := TBaseIcons.Create(True);
+
+  {$IFDEF UNIX}
+  //Get mime and icons name from all extension in system
+  FExtToMimeIconName := TFPDataHashTable.Create;
+  LoadMimeIconNames;
+  {$ENDIF}
 end;
 
 destructor TIconsManager.Destroy;
 begin
   FItems.Free;
-  FExtItems.Free;
+  FExtItems.Free;  
+
+  {$IFDEF UNIX}
+  ClearExtToMimeList;
+  FExtToMimeIconName.Free;
+  {$ENDIF}
+
   inherited;
 end;
 
@@ -172,6 +204,78 @@ begin
   end;
 end;
 
+{$IFDEF UNIX}
+function TIconsManager.GetSystemIconName(const AFileName: WideString
+  ): WideString;
+var
+  I: Integer;
+  node: THTDataNode;
+  iconList: TStringList;
+  Extension: String;
+begin
+  Result := EmptyStr;
+
+  //It is a link? Ok, get target file icon
+  if FpReadLink(AFilename) <> EmptyStr then
+    Extension := '*' + ExtractFileExt(FpReadLink(AFileName))
+  else
+    Extension := '*' + ExtractFileExt(AFileName);
+
+  Extension := LowerCase(Extension);
+
+  //TODO: Special folders icon https://gitlab.gnome.org/GNOME/glib/-/commit/129eb074823101102611690f053ffa246bb7784d#3549e1301fc4c17bf0dd809eca0a36fb87aac264_1582_1582
+
+  if IsDirectory(AFileName) then
+  begin
+    if FileExists(AFileName + PathDelim + '.directory') then
+      Result := GetIconByDesktopFile(AFileName + PathDelim + '.directory')
+    else
+      Result := 'folder';
+  end
+  else if (Extension = '*.desktop') then
+  begin
+    Result := GetIconByDesktopFile(AFileName);
+  end
+  else if (Extension = '*.ico') then
+  begin
+    Result := AFileName;
+  end
+  else if (Extension <> '*') then
+  begin
+    node := THTDataNode(FExtToMimeIconName.Find(Extension));
+    if Assigned(node) then
+      begin
+        iconList := TStringList(node.Data);
+
+        //First valid icon wins
+        for I := 0 to iconList.Count - 1 do
+          begin
+            Result := iconList.Strings[I];
+
+            {$IFDEF LCLQT5}
+            if QIcon_hasThemeIcon(@Result) then break;
+            {$ELSE}
+            if gtk_icon_theme_has_icon(gtk_icon_theme_get_default, PChar(Result)) then break;
+            {$ENDIF}
+          end;
+      end;
+  end
+  else if FileIsExecutable(AFileName) then
+  begin
+    Result := 'application-x-executable';
+  end;
+
+  //Not found icon? No problem. Use generic icon
+  if (not CheckSystemIconName(Result)) or (Result = EmptyStr) then
+  begin
+    if FileIsText(AFileName) then
+      Result := 'text-x-generic'
+    else
+      Result := 'unknown';
+  end;
+end;
+{$ENDIF}
+
 function TIconsManager.GetPathTheme: string;
 begin
   if FPathTheme <> '' then
@@ -263,5 +367,148 @@ begin
     end;
   end;
 end;
+
+{$IFDEF UNIX}
+function TIconsManager.GetIconByDesktopFile(AFileName: String): String;
+var
+  iniDesktop: TIniFile = nil;
+begin
+  Result := EmptyStr;
+
+  try
+    iniDesktop := TIniFile.Create(AFileName);
+    try
+      Result := iniDesktop.ReadString('Desktop Entry', 'Icon', EmptyStr);
+    finally
+      FreeAndNil(iniDesktop);
+    end;
+  except
+    Exit;
+  end;
+end;
+
+function TIconsManager.CheckSystemIconName(const AIconName: Widestring
+  ): Boolean;
+begin
+  {$IFDEF LCLQT5}
+  //QIcon_fromTheme can load icon name and absolute filepath, too
+  Result := ((AIconName <> EmptyStr) and (QIcon_hasThemeIcon(@AIconName) or FileExists(AIconName)));
+  {$ELSE}
+  Result := ((AIconName <> EmptyStr) and (gtk_icon_theme_has_icon(gtk_icon_theme_get_default, PChar(AIconName)) or
+             FileExists(AIconName)));
+  {$ENDIF}
+end;
+
+function TIconsManager.IsDirectory(AFilename: String): Boolean;
+var
+  Info: BaseUnix.Stat;
+begin
+  Result := False;
+  if fpStat(AFilename, Info) >= 0 then
+    Result := fpS_ISDIR(Info.st_mode);
+end;
+
+procedure TIconsManager.ClearExtToMimeList;
+var
+  nodeList: TFPObjectList;
+  I, J : Integer;
+begin
+  for I := 0 to FExtToMimeIconName.HashTable.Count - 1 do
+  begin
+    begin
+      nodeList := TFPObjectList(FExtToMimeIconName.HashTable.Items[I]);
+      if Assigned(nodeList) then
+        for J := 0 to nodeList.Count - 1 do
+          TStringList(THtDataNode(nodeList.Items[J]).Data).Free;
+    end;
+  end;
+end;
+
+procedure TIconsManager.LoadMimeIconNames;
+const
+  mime_globs = '/usr/share/mime/globs';
+  mime_generic_icons = '/usr/share/mime/generic-icons';
+var
+  I, J: Integer;
+  globs: TStringList = nil;
+  generic_icons: THashedStringList = nil;
+  sMimeType,
+  sMimeIconName,
+  sExtension: String;
+  node: THTDataNode = nil;
+  iconsList: TStringList;
+begin
+  try
+    if FExtToMimeIconName.Count = 0 then
+    begin
+      if FpAccess(mime_globs, R_OK) = 0 then
+      begin
+        // Load mapping: MIME type -> file extension.
+        globs:= TStringList.Create;
+        globs.NameValueSeparator:= ':';
+        globs.LoadFromFile(mime_globs);
+
+        // Try to load mapping: MIME type -> generic MIME icon name.
+        if FileExists(mime_generic_icons) then
+          begin
+            generic_icons:= THashedStringList.Create;
+            generic_icons.NameValueSeparator:= ':';
+            generic_icons.LoadFromFile(mime_generic_icons);
+          end;
+
+        // Create mapping: file extension -> list of MIME icon names.
+        for I:= 0 to globs.Count - 1 do
+          if (globs.Strings[I]    <> EmptyStr) and   // bypass empty lines
+             (globs.Strings[I][1] <> '#') then // and comments
+          begin
+            sMimeType := globs.Names[I];
+            sMimeIconName:= StringReplace(sMimeType, '/', '-', []);
+            sExtension:= globs.ValueFromIndex[I];
+
+            // Support only extensions, not full file name masks.
+            if (sExtension <> EmptyStr) and (sExtension <> '.*') then
+            begin
+              node := THTDataNode(FExtToMimeIconName.Find(sExtension));
+              if not Assigned(node) then
+                begin
+                  iconsList := TStringList.Create;
+                  FExtToMimeIconName.Add(sExtension, iconsList);
+                end
+              else
+                iconsList := TStringList(node.Data);
+
+              if iconsList.IndexOf(sMimeIconName) < 0 then
+                iconsList.Add(sMimeIconName);
+
+              // Shared-mime-info spec says:
+              // "If [generic-icon] is not specified then the mimetype is used to generate the
+              // generic icon by using the top-level media type (e.g. "video" in "video/ogg")
+              // and appending "-x-generic" (i.e. "video-x-generic" in the previous example)."
+              if Assigned(generic_icons) then
+                begin
+                  J := generic_icons.IndexOfName(sMimeType);
+                  if J <> -1 then
+                    sMimeIconName := generic_icons.ValueFromIndex[J] // found generic icon
+                  else
+                    sMimeIconName := Copy2Symb(sMimeIconName, '-') + '-x-generic';
+                end
+              else
+                sMimeIconName := Copy2Symb(sMimeIconName, '-') + '-x-generic';
+
+              if iconsList.IndexOf(sMimeIconName) < 0 then
+                iconsList.Add(sMimeIconName);
+            end;
+          end;
+      end;
+    end;
+
+  finally
+    if Assigned(globs) then
+      FreeAndNil(globs);
+    if Assigned(generic_icons) then
+      FreeAndNil(generic_icons);
+  end;
+end;
+{$ENDIF}
 
 end.
