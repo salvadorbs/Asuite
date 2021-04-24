@@ -86,8 +86,12 @@ uses
   , IniFiles, BaseUnix, StrUtils
     {$IFDEF LCLQT5}
     , qt5
-    {$ELSE}
-    , gtk2
+    {$ELSE}     
+      {$IFDEF LCLGTK2}
+      , gtk2
+      {$ELSE}
+      , lazgtk3
+      {$ENDIF}
     {$ENDIF}
   {$ENDIF};
 
