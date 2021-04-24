@@ -66,8 +66,13 @@ type
     procedure AddIcon(ABaseIcon: TBaseIcon);
     procedure AddExtIcon(ABaseIcon: TBaseIcon);
     {$IFDEF UNIX}
-    function GetSystemIconName(const AFileName: WideString): WideString;   
-    function CheckSystemIconName(const AIconName: Widestring): Boolean;
+    {$IFDEF LCLQT5}  
+    function GetSystemIconName(const AFileName: String): String;
+    function CheckSystemIconName(const AIconName: String): Boolean;
+    {$ELSE}                                                          
+    function GetSystemIconName(const AFileName: AnsiString): AnsiString;
+    function CheckSystemIconName(const AIconName: AnsiString): Boolean;
+    {$ENDIF}
     {$ENDIF}
 
     property PathTheme: string read GetPathTheme write SetPathTheme;
@@ -82,6 +87,7 @@ uses
     {$IFDEF LCLQT5}
     , qt5
     {$ELSE}
+    , gtk2
     {$ENDIF}
   {$ENDIF};
 
@@ -204,9 +210,12 @@ begin
   end;
 end;
 
-{$IFDEF UNIX}
-function TIconsManager.GetSystemIconName(const AFileName: WideString
-  ): WideString;
+{$IFDEF UNIX}     
+{$IFDEF LCLQT5}  
+function TIconsManager.GetSystemIconName(const AFileName: String): String;
+{$ELSE}       
+function TIconsManager.GetSystemIconName(const AFileName: AnsiString): AnsiString;
+{$ENDIF}
 var
   I: Integer;
   node: THTDataNode;
@@ -255,7 +264,7 @@ begin
             {$IFDEF LCLQT5}
             if QIcon_hasThemeIcon(@Result) then break;
             {$ELSE}
-            if gtk_icon_theme_has_icon(gtk_icon_theme_get_default, PChar(Result)) then break;
+            if gtk_icon_theme_has_icon(gtk_icon_theme_get_default, PAnsiChar(Result)) then break;
             {$ENDIF}
           end;
       end;
@@ -386,18 +395,20 @@ begin
     Exit;
   end;
 end;
-
-function TIconsManager.CheckSystemIconName(const AIconName: Widestring
-  ): Boolean;
+                 
+{$IFDEF LCLQT5}
+function TIconsManager.CheckSystemIconName(const AIconName: String): Boolean;
 begin
-  {$IFDEF LCLQT5}
   //QIcon_fromTheme can load icon name and absolute filepath, too
   Result := ((AIconName <> EmptyStr) and (QIcon_hasThemeIcon(@AIconName) or FileExists(AIconName)));
-  {$ELSE}
-  Result := ((AIconName <> EmptyStr) and (gtk_icon_theme_has_icon(gtk_icon_theme_get_default, PChar(AIconName)) or
-             FileExists(AIconName)));
-  {$ENDIF}
+end;  
+{$ELSE}  
+function TIconsManager.CheckSystemIconName(const AIconName: AnsiString): Boolean;
+begin
+  Result := ((AIconName <> EmptyStr) and (gtk_icon_theme_has_icon(gtk_icon_theme_get_default, PAnsiChar(AIconName)) or
+             FileExists(AIconName)));     
 end;
+{$ENDIF}
 
 function TIconsManager.IsDirectory(AFilename: String): Boolean;
 var
