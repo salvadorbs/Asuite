@@ -24,7 +24,8 @@ unit NodeDataTypes.Base;
 interface
 
 uses
-  VirtualTrees, SysUtils, DateUtils, Kernel.Enumerations, Icons.Base, LazUTF8;
+  VirtualTrees, SysUtils, DateUtils, Kernel.Enumerations, Icons.Base, LazUTF8,
+  Icons.Custom;
 
 type
 
@@ -38,7 +39,7 @@ type
     FPosition    : Cardinal;
     FChanged     : boolean;
     FName        : String;
-    FIcon        : TBaseIcon;
+    FIcon        : TCustomIcon;
     FDataType    : TvTreeDataType;
     FPNode       : PVirtualNode; //Self PVirtualNode
     FAddDate     : Int64;
@@ -74,7 +75,7 @@ type
     property Position : Cardinal read FPosition write FPosition;
     property Changed: boolean read FChanged write SetChanged;
     property Name: string read GetName write SetName;
-    property Icon: TBaseIcon read FIcon;
+    property Icon: TCustomIcon read FIcon;
     property DataType: TvTreeDataType read GetDataType write SetDataType;
     property ParentNode: PVirtualNode read GetParentNode;
     property PNode: PVirtualNode read FPNode;
@@ -101,7 +102,7 @@ begin
   FHideFromMenu := False;
   FAddDate     := DateTimeToUnix(Now);
   FEditDate    := FAddDate;
-  FIcon        := TBaseIcon(TNodeIcon.Create(Self));
+  FIcon        := TCustomIcon(TNodeIcon.Create(Self));
 end;
 
 destructor TvBaseNodeData.Destroy;

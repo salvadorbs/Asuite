@@ -24,8 +24,8 @@ unit Icons.Base;
 interface
 
 uses
-  SysUtils, Controls, SyncObjs, LCLIntf, LCLType, Graphics, BGRAIconCursor, BGRABitmap
-  {$IFDEF MSWINDOWS}, ShellApi, CommCtrl, uBitmap{$ENDIF};
+  SysUtils, Controls, SyncObjs, LCLIntf, LCLType, Graphics, BGRAIconCursor,
+  BGRABitmap;
 
 type
   //TODO: Add some logs in this and child class
@@ -40,15 +40,6 @@ type
     FImageIndex: Integer;
     FTempItem: Boolean;
 
-    {$IFDEF MSWINDOWS}
-    function BGRABitmapCreateFromHICON(AHIcon: HICON): TBGRABitmap;
-    {$ENDIF}
-    function ExtractIconFromSysImageList(const APathFile: string;
-      const AWantLargeIcon: Boolean): TBGRABitmap;
-    function ExtractIconFromFile(const APathFile: string;
-      const AWantLargeIcon: Boolean): TBGRABitmap;
-    function GetIconFromFile(const APathFile: string; const AWantLargeIcon: Boolean
-      ): TBGRABitmap;
     function GetImageIndex: Integer;
     function GetPathCacheIcon: string;
     procedure SetCacheIconCRC(AValue: Integer);
@@ -56,11 +47,15 @@ type
     function GetIconFromImgList(AImageList: TImageList; AImageIndex: Integer;
       ALargeIcon: Boolean): TBGRABitmap;
   protected
-    function InternalLoadIcon: Integer; virtual;
-    function GetName: string; virtual; abstract;
     function InternalGetImageIndex(const APathFile: string): Integer;
+    function InternalLoadIcon: Integer; virtual;
     function LoadIcon: Integer; virtual;
+    function GetName: string; virtual; abstract;
     function GetDefaultPathIcon: string; virtual; abstract;
+    function GetIconFromFile(const APathFile: string; const AWantLargeIcon: Boolean
+      ): TBGRABitmap; virtual; abstract;
+    function LoadFromFileIcon(const APathFile: string; const AWantLargeIcon: Boolean
+      ): TBGRABitmap;
   public
     constructor Create(AStatic: Boolean = False);
     destructor Destroy; override;
@@ -80,7 +75,7 @@ implementation
 
 uses
    DataModules.Icons, Kernel.Consts, BGRABitmapTypes, Utility.FileFolder,
-   AppConfig.Main, Kernel.Enumerations, Utility.System, ImgList, Kernel.Instance, Kernel.Manager;
+   AppConfig.Main, Kernel.Enumerations, Utility.System, ImgList, Kernel.Instance;
 
 { TBaseIcon }
 
@@ -208,13 +203,10 @@ end;
 
 function TBaseIcon.GetIconFromImgList(AImageList: TImageList;
   AImageIndex: Integer; ALargeIcon: Boolean): TBGRABitmap;
-{$IFDEF MSWINDOWS}
 var
   Images: TCustomImageListResolution;
   bmpTemp: Graphics.TBitmap;
-{$ENDIF}
 begin
-{$IFDEF MSWINDOWS}
   bmpTemp := Graphics.TBitmap.Create;
   try
     if ALargeIcon then
@@ -230,60 +222,16 @@ begin
   finally
     bmpTemp.Free;
   end;
-{$ENDIF}
 end;
 
-function TBaseIcon.ExtractIconFromSysImageList(const APathFile: string;
-  const AWantLargeIcon: Boolean): TBGRABitmap;
-{$IFDEF MSWINDOWS}
-var
-  FileInfo: TSHFileInfoW;
-  Flags: Integer;
-{$ENDIF}
-begin
-  //TODO: In linux we must get mime type and after image
-  //      (see https://lists.lazarus-ide.org/pipermail/lazarus/2010-January/048660.html and https://forum.lazarus.freepascal.org/index.php?topic=40538.0)
-  Result := nil;
-  {$IFDEF MSWINDOWS}
-
-  Assert(Assigned(dmImages));
-
-  if AWantLargeIcon then
-    Flags := SHGFI_ICON or SHGFI_LARGEICON or SHGFI_USEFILEATTRIBUTES
-  else
-    Flags := SHGFI_ICON or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES;
-
-  try
-    if SHGetFileInfoW(PChar(APathFile), 0, FileInfo{%H-}, SizeOf(TSHFileInfo), Flags) <> 0 then
-      Result := BGRABitmapCreateFromHICON(FileInfo.hIcon);
-  finally
-    DestroyIcon(FileInfo.hIcon);
-  end;
-  {$ENDIF}
-end;
-
-{$IFDEF MSWINDOWS}
-function TBaseIcon.BGRABitmapCreateFromHICON(AHIcon: HICON): TBGRABitmap;
-var
-  bmpTemp: Graphics.TBitmap;
-begin
-  bmpTemp := BitmapCreateFromHICON(AHIcon);
-  try
-    Result := TBGRABitmap.Create(bmpTemp);
-  finally
-    FreeAndNil(bmpTemp);
-  end;
-end;
-{$ENDIF}
-
-function TBaseIcon.ExtractIconFromFile(const APathFile: string;
+function TBaseIcon.LoadFromFileIcon(const APathFile: string;
   const AWantLargeIcon: Boolean): TBGRABitmap;
 var
   Icon : TBGRAIconCursor;
 begin
   Result := nil;
 
-  if not FileExists(APathFile) then
+  if not FileExists(APathFile) and (ExtractFileExtEx(APathFile) = EXT_ICO) then
     Exit;
 
   Icon := TBGRAIconCursor.Create(ifIco);
@@ -297,20 +245,6 @@ begin
   finally
     Icon.Free;
   end;
-end;
-
-function TBaseIcon.GetIconFromFile(const APathFile: string;
-  const AWantLargeIcon: Boolean): TBGRABitmap;
-begin
-  Result := nil;
-
-  if ExtractFileExtEx(APathFile) = EXT_ICO then
-    Result := ExtractIconFromFile(APathFile, AWantLargeIcon)
-  else
-    Result := ExtractIconFromSysImageList(APathFile, AWantLargeIcon);
-
-  if Result = nil then
-    Result := TBGRABitmap.Create;
 end;
 
 function TBaseIcon.InternalGetImageIndex(const APathFile: string): Integer;

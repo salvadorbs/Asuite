@@ -24,15 +24,14 @@ unit Icons.Node;
 interface
 
 uses
-  SysUtils, Classes, Icons.Base, NodeDataTypes.Base,
-  NodeDataTypes.Custom, Graphics, Controls, {$IFDEF MSWINDOWS} CommCtrl, {$ENDIF}
-  LCLIntf, BGRABitmap;
+  SysUtils, Classes, Icons.Base, NodeDataTypes.Base, Graphics, Icons.Custom,
+  NodeDataTypes.Custom, Controls, LCLIntf, BGRABitmap;
 
 type
 
   { TNodeIcon }
 
-  TNodeIcon = class(TBaseIcon)
+  TNodeIcon = class(Icons.Custom.TCustomIcon)
   private
     { private declarations }
     FNodeData: TvBaseNodeData;

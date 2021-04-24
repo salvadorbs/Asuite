@@ -212,7 +212,7 @@ begin
     ShowMessageEx(SysErrorMessage(GetLastOSError), True);
   {$ELSE}
   Result := CreateProcessEx('pkexec', Format('%s %s', [PathAbsoluteFile, Parameters]), WorkingDirAbsolute,
-                            ConvertWindowStateToSWOptions(GetWindowState(ARunFromCategory)), EnvironmentVars) <> -1);
+                            ConvertWindowStateToSWOptions(GetWindowState(ARunFromCategory)), EnvironmentVars) <> -1;
   {$ENDIF}
 end;
 
@@ -251,7 +251,7 @@ begin
     ShowMessageEx(SysErrorMessage(GetLastOSError), True);
   {$ELSE}
   Result := CreateProcessEx('pkexec', Format('%s %s %s', [AUserData.UserName, PathAbsoluteFile, Parameters]), WorkingDirAbsolute,
-                            ConvertWindowStateToSWOptions(GetWindowState(ARunFromCategory)), EnvironmentVars) <> -1);
+                            ConvertWindowStateToSWOptions(GetWindowState(ARunFromCategory)), EnvironmentVars) <> -1;
   {$ENDIF}
 end;
 
