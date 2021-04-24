@@ -744,7 +744,11 @@ end;
 procedure TConfiguration.SetTrayIcon(value: Boolean);
 begin
   FTrayIcon := value;
-  dmTrayMenu.tiTrayMenu.Visible := FTrayIcon;
+
+  //Workaround for bug in GTK3 (unit gtk3wstrayicon - line 128)
+  if (dmTrayMenu.tiTrayMenu.Icon.Handle <> 0) then
+    dmTrayMenu.tiTrayMenu.Visible := FTrayIcon;
+
   if (not(FShowPanelAtStartUp)) and (not(FTrayicon)) then
     FShowPanelAtStartUp := True;
 end;
