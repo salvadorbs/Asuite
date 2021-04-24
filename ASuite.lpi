@@ -31,7 +31,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="1070"/>
+      <BuildNr Value="1077"/>
     </VersionInfo>
     <BuildModes Count="4">
       <Item1 Name="Default" Default="True"/>
@@ -44,7 +44,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="Forms;DataModules;Library;Utilities;Frame;$(ProjOutDir)"/>
-            <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p"/>
+            <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p;Library\$(LCLWidgetType)"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -100,7 +100,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="Forms;DataModules;Library;Utilities;Frame;$(ProjOutDir)"/>
-            <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p"/>
+            <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p;Library\$(LCLWidgetType)"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -147,7 +147,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="Forms;DataModules;Library;Utilities;Frame;$(ProjOutDir)"/>
-            <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p"/>
+            <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p;Library\$(LCLWidgetType)"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -612,7 +612,7 @@
     <PathDelim Value="\"/>
     <SearchPaths>
       <IncludeFiles Value="Forms;DataModules;Library;Utilities;Frame;$(ProjOutDir)"/>
-      <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p"/>
+      <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p;Library\$(LCLWidgetType)"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>
