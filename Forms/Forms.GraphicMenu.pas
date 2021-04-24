@@ -128,7 +128,7 @@ implementation
 
 uses
   Forms.Main, Utility.System, Kernel.Consts, AppConfig.Main, DataModules.Icons,
-  Forms.About, NodeDataTypes.Base, Kernel.Enumerations, Forms.Options,
+  Forms.About, NodeDataTypes.Base, Kernel.Enumerations, Forms.Options, LazVersion,
   Utility.Misc, VirtualTree.Events, VirtualTree.Methods, Kernel.Types,
   NodeDataTypes.Custom, GraphicMenu.ThemeEngine, Kernel.ResourceStrings, Kernel.Instance, Kernel.Manager
   {$IFDEF MSWINDOWS} , Windows {$ENDIF};
@@ -268,6 +268,7 @@ begin
   mniProperty.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('property');
 
   //Position
+  {$IF laz_fullversion>=2020000}
   if Config.GMPositionTop <> -1 then
     Self.Top  := Config.GMPositionTop
   else
@@ -276,6 +277,7 @@ begin
     Self.Left  := Config.GMPositionLeft
   else
     Self.Left  := Screen.WorkAreaRect.Right - Width;
+  {$ENDIF}
 
   edtSearch.RightButton.Images := dmImages.ilLargeIcons;
   edtSearch.RightButton.ImagesWidth := ICON_SIZE_SMALL;
