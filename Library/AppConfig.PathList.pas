@@ -76,7 +76,7 @@ end;
 
 procedure TPathList.Add(const AKey: String; const AValue: String);
 begin
-  if not(FItems.ContainsValue(AKey)) then
+  if not(FItems.ContainsKey(AKey)) then
     FItems.Add(AKey, AValue);
 end;
 
