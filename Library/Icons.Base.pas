@@ -44,8 +44,6 @@ type
     function GetPathCacheIcon: string;
     procedure SetCacheIconCRC(AValue: Integer);
     procedure SaveCacheIcon(const APath: string; const AImageIndex: Integer; const AHash: Integer);
-    function GetIconFromImgList(AImageList: TImageList; AImageIndex: Integer;
-      ALargeIcon: Boolean): TBGRABitmap;
   protected
     function InternalGetImageIndex(const APathFile: string): Integer;
     function InternalLoadIcon: Integer; virtual;
@@ -75,7 +73,8 @@ implementation
 
 uses
    DataModules.Icons, Kernel.Consts, BGRABitmapTypes, Utility.FileFolder,
-   AppConfig.Main, Kernel.Enumerations, Utility.System, ImgList, Kernel.Instance;
+   AppConfig.Main, Kernel.Enumerations, Utility.System, ImgList, Kernel.Instance,
+   Kernel.Manager;
 
 { TBaseIcon }
 
@@ -183,8 +182,8 @@ begin
       Icon := TBGRAIconCursor.Create(ifIco);
       try
         //Extract and insert icons in TIcon
-        bmpLargeIcon := GetIconFromImgList(dmImages.ilLargeIcons, AImageIndex, True);
-        bmpSmallIcon := GetIconFromImgList(dmImages.ilLargeIcons, AImageIndex, False);
+        bmpLargeIcon := ASuiteManager.IconsManager.GetIconFromImgList(AImageIndex, True);
+        bmpSmallIcon := ASuiteManager.IconsManager.GetIconFromImgList(AImageIndex, False);
 
         Icon.Add(bmpSmallIcon, 32);
         Icon.Add(bmpLargeIcon, 32);
@@ -198,29 +197,6 @@ begin
         bmpSmallIcon.Free;
       end;
     end;
-  end;
-end;
-
-function TBaseIcon.GetIconFromImgList(AImageList: TImageList;
-  AImageIndex: Integer; ALargeIcon: Boolean): TBGRABitmap;
-var
-  Images: TCustomImageListResolution;
-  bmpTemp: Graphics.TBitmap;
-begin
-  bmpTemp := Graphics.TBitmap.Create;
-  try
-    if ALargeIcon then
-      AImageList.FindResolution(ICON_SIZE_LARGE, Images)
-    else
-      AImageList.FindResolution(ICON_SIZE_SMALL, Images);
-
-    Assert(Assigned(Images), 'Images is not assigned!');
-
-    Images.GetBitmap(AImageIndex, bmpTemp);
-
-    Result := TBGRABitmap.Create(bmpTemp);
-  finally
-    bmpTemp.Free;
   end;
 end;
 

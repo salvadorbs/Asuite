@@ -19,7 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Kernel.Consts;
 
-{$MODE DelphiUnicode}
+{$MODE DelphiUnicode}    
+
+{$I ASuite.inc}
 
 interface
 
@@ -71,6 +73,12 @@ const
   //Icons Size
   ICON_SIZE_SMALL = 16;
   ICON_SIZE_LARGE = 32;
+
+  {$IFDEF QT}
+  ICON_SIZE_TRAY = 22;
+  {$ELSE}
+  ICON_SIZE_TRAY = 16;
+  {$ENDIF}
 
   //Node Heidht
   NODE_HEIGHT_SMALL = 18;

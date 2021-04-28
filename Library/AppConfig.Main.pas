@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Graphics, Forms, Controls, VirtualTrees, Kernel.Enumerations,
-  Classes, jsonConf, LazFileUtils, Kernel.Logger, Dialogs;
+  Classes, jsonConf, LazFileUtils, Kernel.Logger, BGRABitmap, Dialogs;
 
 type
 
@@ -113,6 +113,7 @@ type
     FScanFolderFileTypes  : TStringList;
     FScanFolderExcludeNames: TStringList;
 
+    function LoadIconFromFile(const APath: string): TBGRABitmap;
     procedure RestoreSettings(AJSONConfig: TJSONConfig);
     procedure SaveSettings(AJSONConfig: TJSONConfig);
     procedure SetHoldSize(value: Boolean);
@@ -250,8 +251,8 @@ implementation
 uses
   Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, Utility.Misc,
   Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder,
-  Utility.XML, GraphicMenu.ThemeEngine, LCLProc,
-  TypInfo, Kernel.ResourceStrings, LCLTranslator, AppConfig.Consts,
+  Utility.XML, GraphicMenu.ThemeEngine, LCLProc, BGRAIconCursor,
+  TypInfo, Kernel.ResourceStrings, LCLTranslator, AppConfig.Consts, BGRABitmapTypes,
   Utility.Conversions, Hotkeys.Manager.Platform, Kernel.Instance, Kernel.Manager;
 
 procedure TConfiguration.AfterUpdateConfig();
@@ -654,6 +655,26 @@ begin
   Self.AfterUpdateConfig;
 end;
 
+function TConfiguration.LoadIconFromFile(const APath: string): TBGRABitmap;
+var
+  Icon: TBGRAIconCursor;
+  bmp: TBGRABitmap;
+begin
+  Result := nil;
+
+  if not FileExists(APath) then
+    Exit;
+
+  Icon := TBGRAIconCursor.Create(ifIco);
+  try
+    Icon.LoadFromFile(APath);
+
+    Result := (Icon.GetBestFitBitmap(ICON_SIZE_TRAY, ICON_SIZE_TRAY) as TBGRABitmap);
+  finally
+    Icon.Free;
+  end;
+end;
+
 procedure TConfiguration.SetHotKey(const Value: Boolean);
 begin
   if (FHotKey <> Value) then
@@ -756,17 +777,26 @@ end;
 procedure TConfiguration.SetTrayUseCustomIcon(value: Boolean);
 var
   sPath: string;
+  bmp: TBGRABitmap;
 begin
   FTrayUseCustomIcon := value;
   dmTrayMenu.tiTrayMenu.Visible := False;
+
   sPath := ASuiteInstance.Paths.RelativeToAbsolute(FTrayCustomIconPath);
-  if (FTrayUseCustomIcon) and (FileExists(sPath)) then
-    dmTrayMenu.tiTrayMenu.Icon.LoadFromFile(sPath)
-  else begin
-    sPath := ASuiteInstance.Paths.RelativeToAbsolute(AppendPathDelim(ASuiteInstance.Paths.SuitePathCurrentTheme + ICONS_DIR) + LowerCase(APP_NAME) + EXT_ICO);
-    if FileExists(sPath) then
-      dmTrayMenu.tiTrayMenu.Icon.LoadFromFile(sPath);
+  if not((FTrayUseCustomIcon) and (FileExists(sPath))) then
+    sPath := AppendPathDelim(ASuiteInstance.Paths.SuitePathCurrentTheme + ICONS_DIR) + LowerCase(APP_NAME) + EXT_ICO;
+
+  try
+    bmp := LoadIconFromFile(sPath);
+
+    if Assigned(bmp) then
+      dmTrayMenu.tiTrayMenu.Icon.Assign(bmp.Bitmap)
+    else
+      dmTrayMenu.tiTrayMenu.Icon.AssignImage(Application.Icon);
+  finally
+    bmp.Free;
   end;
+
   //If you can't change trayicon's property visible, it will use old icon
   dmTrayMenu.tiTrayMenu.Visible := FTrayIcon;
   dmTrayMenu.tiTrayMenu.Show;
