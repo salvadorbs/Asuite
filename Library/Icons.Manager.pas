@@ -25,7 +25,7 @@ interface
 
 uses
   SysUtils, Classes, Controls, Forms, Icons.Files, Generics.Collections,
-  Kernel.Consts, LCLIntf, Icons.Base, Icons.ExtFile, Contnrs;
+  Kernel.Consts, LCLIntf, Icons.Base, Icons.ExtFile, Contnrs, BGRABitmap;
 
 type
   TBaseIcons = class(TObjectList<TBaseIcon>);
@@ -64,7 +64,9 @@ type
     function GetPathIconIndex(APathIcon: string): Integer;
     function GetExtIconIndex(AExtension: string): Integer;
     procedure AddIcon(ABaseIcon: TBaseIcon);
-    procedure AddExtIcon(ABaseIcon: TBaseIcon);
+    procedure AddExtIcon(ABaseIcon: TBaseIcon);   
+    function GetIconFromImgList(AImageIndex: Integer; ALargeIcon: Boolean
+      ): TBGRABitmap;
     {$IFDEF UNIX}
     {$IFDEF LCLQT5}  
     function GetSystemIconName(const AFileName: String): String;
@@ -81,7 +83,8 @@ type
 implementation
 
 uses
-  Kernel.Logger, FileUtil, LazFileUtils, Kernel.Instance, Kernel.Manager
+  Kernel.Logger, FileUtil, LazFileUtils, Kernel.Instance, Kernel.Manager, ImgList,
+  Graphics, DataModules.Icons
   {$IFDEF UNIX}
   , IniFiles, BaseUnix, StrUtils
     {$IFDEF LCLQT5}
@@ -211,6 +214,33 @@ begin
     ABaseIcon.ImageIndex;
   finally
     FExtItems.Add(ABaseIcon);
+  end;
+end;
+
+function TIconsManager.GetIconFromImgList(AImageIndex: Integer; ALargeIcon: Boolean): TBGRABitmap;
+var
+  Images: TCustomImageListResolution;
+  bmpTemp: Graphics.TBitmap;
+begin
+  Result := nil;
+
+  if not Assigned(dmImages.ilLargeIcons) then
+    Exit;
+
+  bmpTemp := Graphics.TBitmap.Create;
+  try
+    if ALargeIcon then
+      dmImages.ilLargeIcons.FindResolution(ICON_SIZE_LARGE, Images)
+    else
+      dmImages.ilLargeIcons.FindResolution(ICON_SIZE_SMALL, Images);
+
+    Assert(Assigned(Images), 'Images is not assigned!');
+
+    Images.GetBitmap(AImageIndex, bmpTemp);
+
+    Result := TBGRABitmap.Create(bmpTemp);
+  finally
+    bmpTemp.Free;
   end;
 end;
 

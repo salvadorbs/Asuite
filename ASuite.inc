@@ -26,4 +26,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 {$IFDEF UNIX}
   {$DEFINE UseCThreads}
+
+  {$IFDEF LCLGTK2}
+	{$DEFINE GTK}
+  {$ENDIF}
+
+  {$IFDEF LCLGTK3}
+	{$DEFINE GTK}
+  {$ENDIF}
+
+  {$IFDEF LCLQT}
+	{$DEFINE QT}
+  {$ENDIF}
+
+  {$IFDEF LCLQT5}
+	{$DEFINE QT}
+  {$ENDIF}
 {$ENDIF}
