@@ -119,7 +119,7 @@ jobs:
       id: cache
       uses: actions/cache@v2.1.3
       env:
-        cache-name: cache-laz-v0.2
+        cache-name: cache-laz-v0.2.1
       with:
         path: ${{ matrix.config.laz-dir }}
         key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('.cache') }}     
