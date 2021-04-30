@@ -413,10 +413,16 @@ end;
 class procedure TVirtualTreeMethods.RefreshList(const ATree: TBaseVirtualTree);
 begin
   TASuiteLogger.Info('Refresh List', []);
+
   ASuiteInstance.SaveList(Config.ASuiteState = lsStartUp);
+
   //Check paths of only visible nodes
   if Assigned(ATree) then
     CheckVisibleNodePathExe(ATree);
+
+  {$IFNDEF MSWINDOWS}
+  dmTrayMenu.RefreshClassicMenu();
+  {$ENDIF}
 end;
 
 class function TVirtualTreeMethods.ShowItemProperty(const AOwner: TComponent;
