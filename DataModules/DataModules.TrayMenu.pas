@@ -85,50 +85,6 @@ type
     Red, Green, Blue, Alpha: Byte;
   end;
 
-{$IFDEF FASTHACK}
-  { TESTED ONLY WITH DELPHI 5 ENTERPRISE. THE FIELD ORDER/SIZE MUST MATCH SO THAT
-    FItems: TList AND FParent: TMenuItem ARE ACCESSIBLE. }
-  TMenuItemPrivateHack = class(TComponent)
-  private
-{$HINTS OFF}
-    FActionLink: TMenuActionLink;
-    FCaption: TTranslateString;
-    FBitmap: TBitmap;
-    FGlyphShowMode: TGlyphShowMode;
-    FHandle: HMenu;
-    FHelpContext: THelpContext;
-    FHint: String;
-    FImageChangeLink: TChangeLink;
-    FImageIndex: TImageIndex;
-    FItems: TList; // list of TMenuItem
-    FMenu: TMenu;
-    FOnChange: TMenuChangeEvent;
-    FOnClick: TNotifyEvent;
-    FOnDrawItem: TMenuDrawItemEvent;
-    FOnMeasureItem: TMenuMeasureItemEvent;
-    FParent: TMenuItem;
-    FMerged: TMenuItem;
-    FMergedWith: TMenuItem;
-    FMergedItems: TMergedMenuItems;
-    FMenuItemHandlers: array[TMenuItemHandlerType] of TMethodList;
-    FSubMenuImages: TCustomImageList;
-    FSubMenuImagesWidth: Integer;
-    FShortCut: TShortCut;
-    FShortCutKey2: TShortCut;
-    FGroupIndex: Byte;
-    FRadioItem: Boolean;
-    FRightJustify: boolean;
-    FShowAlwaysCheckable: boolean;
-    FVisible: Boolean;
-    FBitmapIsValid: Boolean;
-    FAutoCheck: Boolean;
-    FChecked: Boolean;
-    FDefault: Boolean;
-    FEnabled: Boolean;
-{$HINTS ON}
-  end;
-{$ENDIF}
-
 const
   FadeLineWidth = 32;
 
@@ -783,11 +739,6 @@ begin
   if Assigned(Sender) then
   begin
     Node := ASuiteInstance.MainTree.GetFirstChild(TASMenuItem(Sender).pNode);
-    {$IFDEF FASTHACK}
-    { allocate some space for the items TList. E.g. space for 4096 items should
-      be enough. }
-    TMenuItemPrivateHack(TASMenuItem(Sender)).FItems.Capacity := 4096;
-    {$ENDIF}
     if TASMenuItem(Sender).Count > 0 then
       TASMenuItem(Sender).Items[0].Visible := False;
   end
@@ -806,12 +757,6 @@ begin
     if Assigned(Sender) then
     begin
       TASMenuItem(Sender).OnClick := nil;
-      {$IFDEF FASTHACK}
-        { because fast hack does not rebuild the handle, we use the autolinereduction
-          to do that. Add extract line here so it will rebuild the handle. Otherwise
-          we don't see any items in the menu.. :) }
-      TASMenuItem(Sender).AddSeparator;
-      {$ENDIF}
     end;
   end;
 end;
@@ -824,11 +769,6 @@ begin
 
   MI := TASMenuItem(Sender);
   try
-    {$IFDEF FASTHACK}
-    { allocate some space for the items TList. E.g. space for 4096 items should
-      be enough. }
-    TMenuItemPrivateHack(MI).FItems.Capacity := 4096;
-    {$ENDIF}
     MI.Path := AppendPathDelim(MI.Path);
     { first directories }
     SearchAddDirectory(MI);
@@ -842,12 +782,6 @@ begin
   finally
     MI.OnClick := nil;
   end;
-  {$IFDEF FASTHACK}
-    { because fast hack does not rebuild the handle, we use the autolinereduction
-      to do that. Add extract line here so it will rebuild the handle. Otherwise
-      we don't see any items in the menu.. :) }
-  MI.AddSeparator;
-  {$ENDIF}
 end;
 
 procedure TdmTrayMenu.RunFromTrayMenu(Sender: TObject);
