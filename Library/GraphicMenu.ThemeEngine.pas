@@ -228,14 +228,14 @@ end;
 procedure TThemeEngine.DrawIconInPNGImage(IniFile: TIniFile;
   PNGImage: TBGRABitmap; ButtonType: TGraphicMenuElement);
 var
-  Icon : TIcon;
+  Icon : TBGRABitmap;
   IconPath: string;
   I, buttonHeight, iSpace: Integer;
 begin
   if Not Assigned(PNGImage) then
     Exit;
 
-  Icon := TIcon.Create;
+  Icon := TBGRABitmap.Create;
   try
     //Get and draw icon
     IconPath := GetButtonIconPath(IniFile, ButtonType);
@@ -244,13 +244,9 @@ begin
       Icon.LoadFromFile(ASuiteInstance.Paths.SuitePathCurrentTheme + IconPath);
       buttonHeight := (PNGImage.Height div 4);
       iSpace := (buttonHeight - Icon.Height) div 2;
-      PNGImage.Canvas.Lock;
-      try
-        for I := 0 to 3 do
-          PNGImage.Canvas.Draw(5, iSpace + (buttonHeight * I), Icon);
-      finally
-        PNGImage.Canvas.Unlock;
-      end;
+
+      for I := 0 to 3 do
+        PNGImage.BlendImage(5, iSpace + (buttonHeight * I), Icon, boTransparent);
     end;
   finally
     Icon.Free;
@@ -303,25 +299,20 @@ begin
     Caption := GetButtonCaption(IniFile, ButtonType);
     if Caption <> '' then
     begin
-      PNGImage.Canvas.Lock;
-      try
-        ButtonHeight := (PNGImage.Height div 4);
-        for I := 0 to 3 do
-        begin
-          case TButtonState(I) of
-            bsNormal: AssignFont(PNGImage, FontNormal);
-            bsHover: AssignFont(PNGImage, FontHover);
-            bsClicked: AssignFont(PNGImage, FontClicked);
-            bsDisabled: AssignFont(PNGImage, FontNormal);
-          end;
-
-          if SpaceForIcon then
-            PNGImage.TextRect(Rect(35, (ButtonHeight * I), PNGImage.Width, (ButtonHeight * (I + 1))), Caption, taLeftJustify, tlCenter, TextColor)
-          else
-            PNGImage.TextRect(Rect(0, (ButtonHeight * I), PNGImage.Width, (ButtonHeight * (I + 1))), Caption, taCenter, tlCenter, TextColor)
+      ButtonHeight := (PNGImage.Height div 4);
+      for I := 0 to 3 do
+      begin
+        case TButtonState(I) of
+          bsNormal: AssignFont(PNGImage, FontNormal);
+          bsHover: AssignFont(PNGImage, FontHover);
+          bsClicked: AssignFont(PNGImage, FontClicked);
+          bsDisabled: AssignFont(PNGImage, FontNormal);
         end;
-      finally
-        PNGImage.Canvas.Unlock;
+
+        if SpaceForIcon then
+          PNGImage.TextRect(Rect(35, (ButtonHeight * I), PNGImage.Width, (ButtonHeight * (I + 1))), Caption, taLeftJustify, tlCenter, TextColor)
+        else
+          PNGImage.TextRect(Rect(0, (ButtonHeight * I), PNGImage.Width, (ButtonHeight * (I + 1))), Caption, taCenter, tlCenter, TextColor)
       end;
     end;
   finally
