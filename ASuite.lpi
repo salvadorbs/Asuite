@@ -31,7 +31,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="1077"/>
+      <BuildNr Value="1205"/>
     </VersionInfo>
     <BuildModes Count="4">
       <Item1 Name="Default" Default="True"/>
@@ -231,7 +231,7 @@
         <PackageName Value="LCL"/>
       </Item12>
     </RequiredPackages>
-    <Units Count="72">
+    <Units Count="74">
       <Unit0>
         <Filename Value="ASuite.lpr"/>
         <IsPartOfProject Value="True"/>

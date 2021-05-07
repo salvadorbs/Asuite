@@ -86,8 +86,20 @@ var
   Drive: String;
   ListStats: rListStats;
   intDiskSize, intDiskFree: Int64;
+  {$IFDEF QT}
+  QTExtraSpace: Integer;
+  {$ENDIF}
 begin
   Result := inherited;
+
+  {$IFDEF QT}
+  //Workaround: TJppDoubleLineLabel has not CalculatePreferredSize method
+  QTExtraSpace := Round((Screen.PixelsPerInch / 96.0) * 9);
+                                                    
+  gbSupport.Height := gbSupport.Height + QTExtraSpace;
+  gbSystem.Height := gbSystem.Height + QTExtraSpace;
+  gbASuite.Height := gbASuite.Height + QTExtraSpace;
+  {$ENDIF}
 
   //System
   lbOs.RightCaption := GetplatformAsString;
