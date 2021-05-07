@@ -658,7 +658,6 @@ end;
 function TConfiguration.LoadIconFromFile(const APath: string): TBGRABitmap;
 var
   Icon: TBGRAIconCursor;
-  bmp: TBGRABitmap;
 begin
   Result := nil;
 

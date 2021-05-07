@@ -535,6 +535,7 @@ begin
     Application.MainForm.Visible := True;
     // Bring the main form (or its modal dialog) to the foreground
     SetForegroundWindow(Application.Handle);
+    BringToFront;
   end;
 end;
 
