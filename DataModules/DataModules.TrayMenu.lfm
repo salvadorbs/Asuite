@@ -9,6 +9,7 @@ object dmTrayMenu: TdmTrayMenu
     Visible = True
     OnDblClick = tiTrayMenuDblClick
     OnMouseDown = tiTrayMenuMouseDown
+    OnMouseUp = tiTrayMenuMouseUp
     Left = 48
     Top = 16
   end
