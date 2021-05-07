@@ -233,6 +233,13 @@ end;
 
 procedure TdmTrayMenu.ShowClassicMenu;
 begin
+  //Workaround for Lazarus bug https://bugs.freepascal.org/view.php?id=38849
+  //QT5Trayicon's contextMenu broken after recreating popup's handle
+  //So hide trayicon before PopUpMethod and after it, show again
+  {$IFDEF UNIX and QT}
+  tiTrayMenu.Hide;
+  {$ENDIF}
+
   //Populate classic menu at runtime
   {$IFDEF MSWINDOWS}
   UpdateClassicMenu(pmTrayicon);
@@ -240,6 +247,10 @@ begin
 
   //Show classic menu
   ShowPopupMenu(pmTrayicon);
+
+  {$IFDEF UNIX and QT}
+  tiTrayMenu.Show;
+  {$ENDIF}
 end;
 
 procedure TdmTrayMenu.ShowGraphicMenu;
