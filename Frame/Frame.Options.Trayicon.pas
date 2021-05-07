@@ -19,7 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Options.Trayicon;
 
-{$MODE DelphiUnicode}
+{$MODE DelphiUnicode}   
+
+{$I ASuite.inc}
 
 interface
 
@@ -104,8 +106,18 @@ end;
 procedure TfrmTrayiconOptionsPage.cbTrayiconClick(Sender: TObject);
 begin
   cbTrayCustomIcon.Enabled := cbTrayicon.Checked;
-  cxLeftClick.Enabled      := cbTrayicon.Checked;
+  cxLeftClick.Enabled      := cbTrayicon.Checked;      
+  cxMiddleClick.Enabled    := cbTrayicon.Checked;
   cxRightClick.Enabled     := cbTrayicon.Checked;
+
+  //Linux
+  {$IFDEF UNIX}
+  cxRightClick.Enabled := False;
+    {$IFDEF GTK}
+  cxMiddleClick.Enabled := False;
+  cxLeftClick.Enabled := False;
+    {$ENDIF}
+  {$ENDIF}
 end;
 
 procedure TfrmTrayiconOptionsPage.edtCustomIconAfterDialog(Sender: TObject;
