@@ -44,6 +44,8 @@ type
     procedure ShowMainForm(Sender: TObject);
     procedure EjectDialog(Sender: TObject);
     procedure OpenFile(Sender: TObject);
+    procedure tiTrayMenuMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
     procedure CreateListItems(Sender: TBaseVirtualTree; Node: PVirtualNode);
@@ -122,6 +124,7 @@ end;
 procedure TdmTrayMenu.tiTrayMenuMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
+  {$IFNDEF QT}
   if (Config.ASuiteState = lsStartUp) then
     Exit;
   case Button of
@@ -129,6 +132,7 @@ begin
     TMouseButton.mbMiddle : DoTrayIconButtonClick(Sender, Config.ActionClickMiddle);
     TMouseButton.mbRight  : DoTrayIconButtonClick(Sender, Config.ActionClickRight);
   end;
+  {$ENDIF}
 end;
 
 procedure TdmTrayMenu.ShowMainForm(Sender: TObject);
@@ -236,7 +240,7 @@ begin
   //Workaround for Lazarus bug https://bugs.freepascal.org/view.php?id=38849
   //QT5Trayicon's contextMenu broken after recreating popup's handle
   //So hide trayicon before PopUpMethod and after it, show again
-  {$IFDEF UNIX and QT}
+  {$IFDEF QT}
   tiTrayMenu.Hide;
   {$ENDIF}
 
@@ -806,6 +810,19 @@ begin
     CreateProcessEx(TASMenuItem(Sender).Path)
   else
     OpenDocument(TASMenuItem(Sender).Path);
+end;
+
+procedure TdmTrayMenu.tiTrayMenuMouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  if (Config.ASuiteState = lsStartUp) then
+    Exit;
+  case Button of
+    TMouseButton.mbLeft   : DoTrayIconButtonClick(Sender, Config.ActionClickLeft);
+    TMouseButton.mbMiddle : DoTrayIconButtonClick(Sender, Config.ActionClickMiddle);
+    TMouseButton.mbRight  : DoTrayIconButtonClick(Sender, Config.ActionClickRight);
+  end;
+
 end;
 
 end.
