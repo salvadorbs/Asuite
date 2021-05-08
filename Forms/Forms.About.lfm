@@ -1,36 +1,41 @@
 object frmAbout: TfrmAbout
-  Left = -1056
-  Height = 171
+  Left = 0
+  Height = 170
   Top = 462
-  Width = 382
+  Width = 371
+  AutoSize = True
   BorderStyle = bsDialog
   Caption = 'About %s'
-  ClientHeight = 171
-  ClientWidth = 382
+  ClientHeight = 170
+  ClientWidth = 371
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '2.0.10.0'
   object GroupBox3: TGroupBox
     Left = 4
-    Height = 167
-    Top = 0
-    Width = 374
+    Height = 162
+    Top = 4
+    Width = 363
     Align = alClient
+    AutoSize = True
     BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
     BorderSpacing.Right = 4
     BorderSpacing.Bottom = 4
-    ClientHeight = 149
-    ClientWidth = 370
+    ClientHeight = 144
+    ClientWidth = 359
     Font.Height = -11
     ParentColor = False
     ParentFont = False
     TabOrder = 0
     object imgLicense: TImage
+      AnchorSideBottom.Control = imgLogo
+      AnchorSideBottom.Side = asrBottom
       Cursor = crHandPoint
-      Left = 155
+      Left = 150
       Height = 35
-      Top = 97
+      Top = 101
       Width = 87
+      Anchors = [akLeft, akBottom]
       AutoSize = True
       Center = True
       OnClick = imgLicenseClick
@@ -434,11 +439,14 @@ object frmAbout: TfrmAbout
       }
     end
     object imgDonate: TImage
+      AnchorSideBottom.Control = imgLicense
+      AnchorSideBottom.Side = asrBottom
       Cursor = crHandPoint
-      Left = 256
+      Left = 251
       Height = 35
-      Top = 97
+      Top = 101
       Width = 108
+      Anchors = [akLeft, akBottom]
       Center = True
       OnClick = imgDonateClick
       Picture.Data = {
@@ -494,9 +502,9 @@ object frmAbout: TfrmAbout
       Transparent = True
     end
     object lblAppName: TLabel
-      Left = 155
+      Left = 150
       Height = 15
-      Top = 4
+      Top = 16
       Width = 15
       Caption = '%s'
       Font.Style = [fsBold]
@@ -504,28 +512,31 @@ object frmAbout: TfrmAbout
       ParentFont = False
     end
     object lblVersion: TLabel
-      Left = 155
+      Left = 150
       Height = 15
-      Top = 23
+      Top = 35
       Width = 58
       Caption = '%s (%s bit)'
       ParentColor = False
       ParentFont = False
     end
     object lblCopyright: TLabel
-      Left = 155
+      Left = 150
       Height = 15
-      Top = 40
+      Top = 52
       Width = 177
       Caption = 'Copyright 2006-2020 Matteo Salvi'
       ParentColor = False
       ParentFont = False
     end
     object imgLogo: TImage
-      Left = 13
+      Left = 8
       Height = 128
-      Top = 4
+      Top = 8
       Width = 128
+      BorderSpacing.Left = 8
+      BorderSpacing.Top = 8
+      BorderSpacing.Bottom = 8
       Picture.Data = {
         1754506F727461626C654E6574776F726B477261706869631F25000089504E47
         0D0A1A0A0000000D4948445200000080000000800806000000C33E61CB000000
@@ -828,9 +839,9 @@ object frmAbout: TfrmAbout
       }
     end
     object lnklblWebSite: TJppLinkLabel
-      Left = 155
+      Left = 150
       Height = 15
-      Top = 56
+      Top = 68
       Width = 181
       FontNormal.Color = clBlue
       FontHot.Color = clRed
