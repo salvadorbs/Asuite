@@ -26,31 +26,32 @@ interface
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, DefaultTranslator, ShellCtrls,
-  ImgList, FileUtil, Thread.FindFiles;
+  ImgList, ButtonPanel, FileUtil, Thread.FindFiles;
 
 type
 
   { TfrmScanFolder }
 
   TfrmScanFolder = class(TForm)
-    btnScan: TButton;
-    btnCancel: TButton;
-    pnlFilters: TPanel;
-    
-    vstShell: TShellTreeView;
-    grpFileTypes: TGroupBox;
-    btnTypesDelete: TButton;
-    btnTypesAdd: TButton;
-    edtTypes: TEdit;
-    grpExclude: TGroupBox;
-    edtExclude: TEdit;
     btnExcludeAdd: TButton;
     btnExcludeDelete: TButton;
-    vstTypes: TVirtualStringTree;
-    vstExclude: TVirtualStringTree;
-    grpGeneralSettings: TGroupBox;
+    btnTypesAdd: TButton;
+    btnTypesDelete: TButton;
+    pnlButtons: TButtonPanel;
     chkExtractName: TCheckBox;
+    edtExclude: TEdit;
+    edtTypes: TEdit;
+    grpExclude: TGroupBox;
+    grpFileTypes: TGroupBox;
+    grpGeneralSettings: TGroupBox;
+    pnlGroups: TPanel;
+    pnlClient: TPanel;
     pbScan: TProgressBar;
+    pnlFilters: TPanel;
+    vstExclude: TVirtualStringTree;
+    vstShell: TShellTreeView;
+    vstTypes: TVirtualStringTree;
+
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: char);
@@ -120,7 +121,7 @@ begin
     if MessageDlg((msgCancelScanFolder), mtWarning, [mbYes,mbNo], 0) = mrYes then
     begin
       FThreadFindFiles.Stop;
-      btnCancel.Caption := msgCancel;
+      pnlButtons.CancelButton.Caption := msgCancel;
     end;
   end
   else
@@ -164,8 +165,8 @@ begin
       pbScan.Style := pbstMarquee;
       pbScan.Position := 0;
 
-      btnScan.Enabled := False;
-      btnCancel.Caption := msgStop;
+      pnlButtons.OKButton.Enabled := False;
+      pnlButtons.CancelButton.Caption := msgStop;
 
       FThreadFindFiles := TFindFiles.Create;
       SetupThreadFinder;
@@ -360,8 +361,8 @@ begin
     ASuiteInstance.MainTree.FocusedNode := FListNode;
   end;
 
-  btnScan.Enabled := True;
-  btnCancel.Caption := msgCancel;
+  pnlButtons.OKButton.Enabled := True;
+  pnlButtons.CancelButton.Caption := msgCancel;
   ASuiteInstance.MainTree.EndUpdate;
 
   Close;
