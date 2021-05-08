@@ -111,6 +111,7 @@ begin
   lowerStrPath := ExtractFileExtEx(APathFile);
   Result := (lowerStrPath = EXT_EXE) or (lowerStrPath = EXT_BAT) or (lowerStrPath = EXT_CMD);
   {$ELSE}
+  //TODO: Insert check if file has not extension
   Result := FileIsExecutable(APathFile);
   {$ENDIF}
 end;

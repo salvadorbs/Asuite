@@ -282,6 +282,11 @@ begin
   edtSearch.RightButton.Images := dmImages.ilLargeIcons;
   edtSearch.RightButton.ImagesWidth := ICON_SIZE_SMALL;
   edtSearch.RightButton.ImageIndex := TThemeEngine.Create.SearchIcon;
+
+  //TODO win32: Disable eject button if asuite runs on normal hd and not usb pen (ejectable devices)
+  {$IFDEF UNIX}
+  sknbtnEject.Visible := False;
+  {$ENDIF}
 end;
 
 procedure TfrmGraphicMenu.imgDragSpaceHiddenMouseUp(Sender: TObject;
