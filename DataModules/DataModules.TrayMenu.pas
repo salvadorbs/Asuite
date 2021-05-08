@@ -327,8 +327,11 @@ begin
           {$IFDEF GTK}
           PopulateCategoryItems(MenuItem);
           {$ELSE}
-          MenuItem.OnClick := PopulateCategoryItems;
-          AddSub(MenuItem);
+          if Sender.HasChildren[Node] then
+          begin
+            MenuItem.OnClick := PopulateCategoryItems;
+            AddSub(MenuItem);
+          end;
           {$ENDIF}
         end;
       end;
@@ -466,6 +469,9 @@ begin
     case I of
       0:
         begin
+          {$IFDEF UNIX}
+          MenuItem.Visible := False;
+          {$ENDIF}
           MenuItem.Caption := msgEjectHardware;
           MenuItem.OnClick := EjectDialog;
         end;
@@ -689,13 +695,14 @@ begin
     //Else create a new captioned separator
     if Assigned(ListMenuItem) then
       MenuItem := ListMenuItem
-    else begin
+    else
       MenuItem := TMenuItem.Create(Application.MainForm);
-      Menu.Items.Add(MenuItem);
-    end;
+
     MenuItem.Enabled    := False;
     MenuItem.Caption    := '-';
     MenuItem.Hint       := Text;
+
+    Menu.Items.Add(MenuItem);
 
     {$IFDEF MSWINDOWS}
     MenuItem.OnMeasureItem := MeasureCaptionedSeparator;
