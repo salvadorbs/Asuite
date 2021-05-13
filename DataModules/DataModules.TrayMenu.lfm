@@ -6,7 +6,6 @@ object dmTrayMenu: TdmTrayMenu
   VerticalOffset = 29
   Width = 215
   object tiTrayMenu: TTrayIcon
-    Visible = True
     OnDblClick = tiTrayMenuDblClick
     OnMouseDown = tiTrayMenuMouseDown
     OnMouseUp = tiTrayMenuMouseUp

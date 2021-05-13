@@ -84,6 +84,7 @@ begin
 
     // Bring the main form (or its modal dialog) to the foreground
     SetForegroundWindow(Application.Handle);
+    BringToFront;
   end;
 end;
 
@@ -102,7 +103,8 @@ end;
 
 procedure TBaseMainForm.ApplicationMinimize(Sender: TObject);
 begin
-  HideMainForm;
+  if Config.TrayIcon then
+    HideMainForm;
 end;
 
 procedure TBaseMainForm.ApplicationQueryEndSession(var Cancel: Boolean);
