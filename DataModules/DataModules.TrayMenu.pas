@@ -23,12 +23,31 @@ unit DataModules.TrayMenu;
 
 {$I ASuite.inc}
 
+{$IFDEF LCLGTK3}
+  {$LINKLIB libgdk-3.so.0}
+{$ENDIF}
+
 interface
 
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  Menus, ExtCtrls, VirtualTrees, ImgList, LazFileUtils,
-  Kernel.ASMenuItem, Lists.Base, Kernel.Enumerations;
+  Menus, ExtCtrls, VirtualTrees, ImgList, LazFileUtils, Process,
+  Kernel.ASMenuItem, Lists.Base, Kernel.Enumerations
+  {$IFDEF LINUX}
+  , x, xlib
+
+    {$IFDEF LCLGTK2}
+  , gdk2, gdk2x
+    {$ENDIF}
+
+    {$IFDEF LCLGTK3}
+  , LazGdk3, LazGLib2
+    {$ENDIF}
+
+    {$IFDEF QT}
+  , qt5
+    {$ENDIF}
+  {$ENDIF};
 
 type
 
@@ -71,7 +90,7 @@ type
     procedure PopulateCategoryItems(Sender: TObject);
     procedure ShowPopupMenu(const APopupMenu: TPopupMenu);
     procedure RunFromTrayMenu(Sender: TObject);
-    function GetTextWidth(const AText: string; AFont: TFont): Integer;
+    function GetTextWidth(const AText: string; AFont: Graphics.TFont): Integer;
   public
     { Public declarations }
     procedure ShowClassicMenu;
@@ -80,7 +99,16 @@ type
       ACaption: string = '');
     procedure CreateSeparator(Menu: TPopupMenu;Text: String = '';ListMenuItem: TMenuItem = nil);
     procedure RefreshClassicMenu;
+
+    //These functions come from the Tomboy-NG project https://github.com/tomboy-notes/tomboy-ng
+    class function CheckGnomeExtras: Boolean;
+    class function CheckSysTray: Boolean;
   end;
+
+{$IFDEF LCLGTK3}
+function gdk_x11_window_get_xid(AX11Window: PGdkWindow): guint32; cdecl; external;
+function gdk_x11_display_get_xdisplay(AX11Display: PGdkDisplay): PDisplay; cdecl; external;
+{$ENDIF}
 
 type
   TColorQuad = record
@@ -524,7 +552,8 @@ begin
   DoDrawCaptionedSeparator(Sender, ACanvas, ARect);
 end;
 
-function TdmTrayMenu.GetTextWidth(const AText: string; AFont: TFont): Integer;
+function TdmTrayMenu.GetTextWidth(const AText: string; AFont: Graphics.TFont
+  ): Integer;
 var
   bmp: Graphics.TBitmap; // Graphics.TBitmap, not Windows.TBitmap
 begin
@@ -715,6 +744,106 @@ end;
 procedure TdmTrayMenu.RefreshClassicMenu;
 begin
   UpdateClassicMenu(pmTrayicon);
+end;
+
+class function TdmTrayMenu.CheckGnomeExtras: Boolean;
+var
+  H : TLibHandle;
+
+  function FindInStringList(aList: TStringList; aString: String): Integer;
+  var
+    I: Integer = 0;
+  begin
+    while I < aList.Count do
+    begin
+      if pos(aString, AList.Strings[I]) > 0 then
+        Exit(I);
+
+      Inc(I);
+    end;
+
+    Result := -1;
+  end;
+
+  function CheckPlugIn(PlugInName : string) : boolean;
+  var
+    AProcess: TProcess;
+    List : TStringList = nil;
+  begin
+    result := false;
+
+    AProcess := TProcess.Create(nil);
+    try
+      AProcess.Executable:= 'gnome-extensions';
+      AProcess.Parameters.Add('info');
+      AProcess.Parameters.Add(PlugInName);
+
+      AProcess.Options := AProcess.Options + [poWaitOnExit, poUsePipes];
+
+      AProcess.Execute;
+
+      if (AProcess.ExitStatus = 0) then
+      begin
+        List := TStringList.Create;
+        List.LoadFromStream(AProcess.Output);
+
+        if FindInStringList(List, 'ENABLED') > -1 then
+          result := true;
+      end;
+    finally
+      freeandnil(List);
+      freeandnil(AProcess);
+    end;
+  end;
+
+begin
+  Result := false;
+
+  H := LoadLibrary('libappindicator3.so.1');
+  if H = NilHandle then
+  begin
+    TASuiteLogger.Info('Failed to Find libappindicator3, SysTray may not work.', []);
+    exit(False);
+  end;
+  unloadLibrary(H);
+
+  if CheckPlugIn('ubuntu-appindicators@ubuntu.com') or            // Ubuntu, Debian
+     CheckPlugIn('appindicatorsupport@rgcjonas.gmail.com') then  // Fedora
+    Result := True;
+
+  if not Result then
+    TASuiteLogger.Info('Failed to Find an enabled appindicator plugin, SysTray may not work.', []);
+end;
+
+class function TdmTrayMenu.CheckSysTray: Boolean;
+{$IFDEF LINUX}
+var
+  A : TAtom;
+  XDisplay: PDisplay;
+{$ENDIF}
+begin
+  {$IFDEF LINUX}
+    {$IFDEF LCLGTK2}
+  XDisplay := gdk_display;
+    {$ENDIF}
+
+    {$IFDEF LCLQT5}
+  XDisplay := QX11Info_display;
+    {$ENDIF}
+
+    {$IFDEF LCLGTK3}
+  XDisplay := gdk_x11_display_get_xdisplay(gdk_window_get_display(gdk_get_default_root_window));
+    {$ENDIF}
+
+    A := XInternAtom(XDisplay, '_NET_SYSTEM_TRAY_S0', False);
+    Result := (XGetSelectionOwner(XDisplay, A) <> 0);
+
+  if not Result then
+    Result := TdmTrayMenu.CheckGnomeExtras; // Thats libappindicator3 and an installed and enabled gnome-shell-extension-appindicator
+  {$ELSE}
+  //Windows is always true!
+  Result := True;
+  {$ENDIF}
 end;
 
 procedure TdmTrayMenu.CreateSpecialList(Menu: TPopupMenu;SList: TBaseItemsList;

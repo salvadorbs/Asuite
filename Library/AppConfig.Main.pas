@@ -763,7 +763,10 @@ end;
 
 procedure TConfiguration.SetTrayIcon(value: Boolean);
 begin
-  FTrayIcon := value;
+  if not TdmTrayMenu.CheckSysTray then
+    FTrayIcon := False
+  else
+    FTrayIcon := value;
 
   //Workaround for bug in GTK3 (unit gtk3wstrayicon - line 128)
   if (dmTrayMenu.tiTrayMenu.Icon.Handle <> 0) then
@@ -798,7 +801,8 @@ begin
 
   //If you can't change trayicon's property visible, it will use old icon
   dmTrayMenu.tiTrayMenu.Visible := FTrayIcon;
-  dmTrayMenu.tiTrayMenu.Show;
+  if dmTrayMenu.tiTrayMenu.Visible then
+    dmTrayMenu.tiTrayMenu.Show;
 end;
 
 procedure TConfiguration.SetUseCustomTitle(value: Boolean);
