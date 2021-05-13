@@ -1211,11 +1211,6 @@ msgctxt "tfrmpropertyseparator.lbname.caption"
 msgid "Name"
 msgstr ""
 
-#: tfrmscanfolder.btncancel.caption
-msgctxt "tfrmscanfolder.btncancel.caption"
-msgid "Cancel"
-msgstr ""
-
 #: tfrmscanfolder.btnexcludeadd.caption
 msgctxt "tfrmscanfolder.btnexcludeadd.caption"
 msgid "Add"
@@ -1224,10 +1219,6 @@ msgstr ""
 #: tfrmscanfolder.btnexcludedelete.caption
 msgctxt "tfrmscanfolder.btnexcludedelete.caption"
 msgid "Delete"
-msgstr ""
-
-#: tfrmscanfolder.btnscan.caption
-msgid "Scan"
 msgstr ""
 
 #: tfrmscanfolder.btntypesadd.caption
@@ -1258,6 +1249,10 @@ msgstr ""
 
 #: tfrmscanfolder.grpgeneralsettings.caption
 msgid "General settings"
+msgstr ""
+
+#: tfrmscanfolder.pnlbuttons.okbutton.caption
+msgid "&Scan"
 msgstr ""
 
 #: tfrmshortcutgrabber.btncancel.caption

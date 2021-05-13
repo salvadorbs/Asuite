@@ -1,7 +1,6 @@
 {"version":1,"strings":[
 {"hash":112046786,"name":"tfrmscanfolder.caption","sourcebytes":[83,99,97,110,32,102,111,108,100,101,114],"value":"Scan folder"},
 {"hash":2857342,"name":"tfrmscanfolder.pnlbuttons.okbutton.caption","sourcebytes":[38,83,99,97,110],"value":"&Scan"},
-{"hash":95463592,"name":"tfrmscanfolder.pnlfilters.caption","sourcebytes":[111,98,106,101,99,116,32,103,114,112,71,101,110,101,114,97,108,83,101,116,116,105,110,103,115,58,32,84,71,114,111,117,112,66,111,120],"value":"object grpGeneralSettings: TGroupBox"},
 {"hash":3792691,"name":"tfrmscanfolder.grpgeneralsettings.caption","sourcebytes":[71,101,110,101,114,97,108,32,115,101,116,116,105,110,103,115],"value":"General settings"},
 {"hash":250935257,"name":"tfrmscanfolder.chkextractname.caption","sourcebytes":[69,120,116,114,97,99,116,32,110,97,109,101,32,97,117,116,111,109,97,116,105,99,97,108,108,121,32,102,114,111,109,32,101,120,101,99,117,116,97,98,108,101,115,32,40,111,110,108,121,32,42,46,101,120,101,41],"value":"Extract name automatically from executables (only *.exe)"},
 {"hash":193386787,"name":"tfrmscanfolder.grpexclude.caption","sourcebytes":[69,120,99,108,117,100,101,32,102,105,108,101,115],"value":"Exclude files"},
