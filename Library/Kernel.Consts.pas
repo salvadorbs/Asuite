@@ -117,6 +117,17 @@ const
   FILENAME_SHIFT  = 'shift.png';
   FILENAME_WINKEY = 'winkey.png';
 
+  //Desktop file entries for Linux
+  DESKTOP_GROUP = 'Desktop Entry';
+  DESKTOP_KEY_NAME = 'Name';
+  DESKTOP_KEY_TYPE = 'Type';
+  DESKTOP_KEY_ICON = 'Icon';
+  DESKTOP_KEY_EXEC = 'Exec';
+  DESKTOP_KEY_STARTUPNOTIFY = 'StartupNotify';
+  DESKTOP_KEY_TERMINAL = 'Terminal';
+
+  DESKTOP_TYPE_APPLICATION = 'Application';
+
 implementation
 
 end.

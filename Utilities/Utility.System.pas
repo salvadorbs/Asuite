@@ -38,8 +38,9 @@ function CreateProcessEx(APathFile: String; AParameters: String = ''; AWorkingDi
                          AEnvironmentVars: TStringList = nil): Integer;
 
 { Registry }
-procedure SetASuiteAtWindowsStartup;
-procedure DeleteASuiteAtWindowsStartup;
+procedure SetASuiteAtOsStartup;
+procedure DeleteASuiteAtOsStartup;
+function GetAutoStartFolder: String;
 
 { Misc }
 procedure EjectDialog(Sender: TObject);
@@ -48,7 +49,7 @@ function ExtractDirectoryName(const Filename: string): string;
 implementation
 
 uses
-  Utility.Conversions, Forms.Main, Utility.Misc, Kernel.Logger,
+  Utility.Conversions, Forms.Main, Utility.Misc, Kernel.Logger, IniFiles,
   LazFileUtils{$IFDEF MSWINDOWS} , ShellApi {$ENDIF}, LazUTF8,
   Utility.FileFolder, Kernel.Instance, Kernel.Manager;
 
@@ -111,7 +112,7 @@ begin
   lowerStrPath := ExtractFileExtEx(APathFile);
   Result := (lowerStrPath = EXT_EXE) or (lowerStrPath = EXT_BAT) or (lowerStrPath = EXT_CMD);
   {$ELSE}
-  //TODO: Insert check if file has not extension
+  //TODO: Insert check if file has not extension or .desktop
   Result := FileIsExecutable(APathFile);
   {$ENDIF}
 end;
@@ -195,12 +196,16 @@ begin
   end;
 end;
 
-procedure SetASuiteAtWindowsStartup;
+procedure SetASuiteAtOsStartup;
 var
+{$IFDEF MSWINDOWS}
   Registry : TRegistry;
+{$ELSE}
+  AutoStartFolder: String;
+  DesktopFile: TIniFile;
+{$ENDIF}
 begin
-  //TODO: Add Linux method - See https://github.com/tomboy-notes/tomboy-ng/blob/master/source/autostart.pas
-
+  {$IFDEF MSWINDOWS}
   Registry := TRegistry.Create;
   try
     with Registry do
@@ -213,14 +218,38 @@ begin
   finally
     Registry.Free;
   end;
+
+  {$ELSE}
+
+  AutoStartFolder := GetAutoStartFolder;
+
+  if not DirPathExists(AutoStartFolder) then
+      ForceDirectory(AutoStartFolder);
+
+  DesktopFile := TIniFile.Create(AppendPathDelim(AutoStartFolder) + APP_NAME + '.desktop', [ifoWriteStringBoolean]);
+  try
+    DesktopFile.WriteString(DESKTOP_GROUP, DESKTOP_KEY_TYPE, DESKTOP_TYPE_APPLICATION);
+    DesktopFile.WriteString(DESKTOP_GROUP, DESKTOP_KEY_NAME, APP_NAME);
+    DesktopFile.WriteString(DESKTOP_GROUP, DESKTOP_KEY_EXEC, ExpandFileName(Application.ExeName));
+    DesktopFile.WriteBool(DESKTOP_GROUP, DESKTOP_KEY_STARTUPNOTIFY, False);
+    DesktopFile.WriteBool(DESKTOP_GROUP, DESKTOP_KEY_TERMINAL, False);
+
+    DesktopFile.UpdateFile;
+  finally
+    DesktopFile.Free;
+  end;
+  {$ENDIF}
 end;
 
-procedure DeleteASuiteAtWindowsStartup;
+procedure DeleteASuiteAtOsStartup;
 var
-  Registry : TRegistry;
+{$IFDEF MSWINDOWS}
+  Registry: TRegistry;
+{$ELSE}
+  AutoStartFile: String;
+{$ENDIF}
 begin
-  //TODO: Add Linux method - See https://github.com/tomboy-notes/tomboy-ng/blob/master/source/autostart.pas
-
+  {$IFDEF MSWINDOWS}
   Registry := TRegistry.Create;
   try
     with Registry do
@@ -232,6 +261,18 @@ begin
   finally
     Registry.Free;
   end;
+
+  {$ELSE}
+  AutoStartFile := AppendPathDelim(GetAutoStartFolder) + APP_NAME + '.desktop';
+
+  if FileExistsUTF8(AutoStartFile) then
+    DeleteFileUTF8(AutoStartFile);
+  {$ENDIF}
+end;
+
+function GetAutoStartFolder: String;
+begin
+  Result := AppendPathDelim(GetUserDir) + '.config/autostart';
 end;
 
 end.

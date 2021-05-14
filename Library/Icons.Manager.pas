@@ -421,7 +421,7 @@ begin
   try
     iniDesktop := TIniFile.Create(AFileName);
     try
-      Result := iniDesktop.ReadString('Desktop Entry', 'Icon', EmptyStr);
+      Result := iniDesktop.ReadString(DESKTOP_GROUP, DESKTOP_KEY_ICON, EmptyStr);
     finally
       FreeAndNil(iniDesktop);
     end;

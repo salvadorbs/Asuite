@@ -994,9 +994,9 @@ procedure TConfiguration.SetStartWithWindows(value: boolean);
 begin
   FStartWithWindows := value;
   if FStartWithWindows then
-    SetASuiteAtWindowsStartup
+    SetASuiteAtOsStartup
   else
-    DeleteASuiteAtWindowsStartup;
+    DeleteASuiteAtOsStartup;
 end;
 
 procedure TConfiguration.SetLangID(value: String);
