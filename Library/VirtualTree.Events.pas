@@ -74,10 +74,8 @@ type
     procedure DoFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure DoNewText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;
       const NewText: String);
-    {$IFDEF MSWINDOWS}
     procedure DoDragDrop(Sender: TBaseVirtualTree; Source: TObject; DataObject: IDataObject;
       Formats: TFormatArray; Shift: TShiftState; const Pt: TPoint; var Effect: LongWord; Mode: TDropMode);
-    {$ENDIF}
     procedure DoEditing(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex; var Allowed: Boolean);
     procedure DoDrawText(Sender: TBaseVirtualTree; TargetCanvas: TCanvas;
@@ -240,16 +238,16 @@ begin
   ATree.ImagesWidth := ICON_SIZE_SMALL;
 
   {$IFDEF MSWINDOWS}
-  ATree.TreeOptions.MiscOptions := ATree.TreeOptions.MiscOptions + [toAcceptOLEDrop];
+  ATree.TreeOptions.MiscOptions := ATree.TreeOptions.MiscOptions + [toAcceptOLEDrop];  
+  {$ELSE}
+  ATree.DragType := dtVCL;
   {$ENDIF}
 
   ATree.OnNodeClick    := DoNodeSingleClick;
   ATree.OnCompareNodes := DoCompareNodesList;
   ATree.OnNodeDblClick := DoNodeDblClick;
   ATree.OnDragOver     := DoDragOver;
-  {$IFDEF MSWINDOWS}
   ATree.OnDragDrop     := DoDragDrop;
-  {$ENDIF}
   ATree.OnDrawText     := DoDrawText;
   ATree.OnEditing      := DoEditing;
   ATree.OnExpanded     := DoExpanded;
@@ -378,17 +376,19 @@ begin
       Result := CompareText(Data1.Name, Data2.Name);
 end;
 
-{$IFDEF MSWINDOWS}
 procedure TVirtualTreeEvents.DoDragDrop(Sender: TBaseVirtualTree; Source: TObject; DataObject: IDataObject;
       Formats: TFormatArray; Shift: TShiftState; const Pt: TPoint; var Effect: LongWord; Mode: TDropMode);
-var
+var         
   I          : integer;
   NodeData   : TvBaseNodeData;
   AttachMode : TVTNodeAttachMode;
-  NodeCreated : Boolean;
+  NodeCreated : Boolean;     
+  Nodes: TNodeArray;
 begin
   TASuiteLogger.Enter('DoDragDrop', Self);
+
   NodeCreated := False;
+
   case Mode of
     dmAbove  : AttachMode := amInsertBefore;
     dmOnNode : AttachMode := amAddChildLast;
@@ -396,21 +396,24 @@ begin
   else
     AttachMode := amNowhere;
   end;
-  if Assigned(DataObject) then
-  begin
-    Sender.BeginUpdate;
-    try
-      if (Mode = dmOnNode) and Assigned(Sender.DropTargetNode) then
-      begin
-        NodeData := TVirtualTreeMethods.GetNodeItemData(Sender.DropTargetNode, Sender);
-        //Check if DropMode is in a vtdtCategory (so expand it, before drop item)
-        //or another item type (change Mode and AttachMode for insert after new nodes)
-        if not(NodeData.IsCategoryItem) then
-          AttachMode := amInsertAfter
-        else
-          if Config.TVAutoOpCatsDrag then
-            Sender.Expanded[Sender.DropTargetNode] := True;
-      end;
+
+  Sender.BeginUpdate;
+  try
+    if (Mode = dmOnNode) and Assigned(Sender.DropTargetNode) then
+    begin
+      NodeData := TVirtualTreeMethods.GetNodeItemData(Sender.DropTargetNode, Sender);
+      //Check if DropMode is in a vtdtCategory (so expand it, before drop item)
+      //or another item type (change Mode and AttachMode for insert after new nodes)
+      if not(NodeData.IsCategoryItem) then
+        AttachMode := amInsertAfter
+      else
+        if Config.TVAutoOpCatsDrag then
+          Sender.Expanded[Sender.DropTargetNode] := True;
+    end;
+
+{$IFDEF MSWINDOWS}
+    if Assigned(DataObject) then
+    begin
       try
         for I := 0 to High(Formats) do
         begin
@@ -432,13 +435,32 @@ begin
         on E : Exception do
           ShowMessageFmtEx(msgErrGeneric,[E.ClassName,E.Message], True);
       end;
-    finally
-      TVirtualTreeMethods.RefreshList(Sender);
-      Sender.EndUpdate;
     end;
+
+{$ELSE}
+
+    if Source = Sender then
+    begin
+      Nodes := Sender.GetSortedSelection(True);
+      if Effect = DROPEFFECT_COPY then
+      begin                
+        TASuiteLogger.Info('Copies VirtualTree nodes', []);
+        for I := 0 to High(Nodes) do
+          Sender.CopyTo(Nodes[I], Sender.DropTargetNode, AttachMode, False);
+      end
+      else begin
+        TASuiteLogger.Info('Moves VirtualTree nodes', []);
+        for I := 0 to High(Nodes) do
+          Sender.MoveTo(Nodes[I], Sender.DropTargetNode, AttachMode, False);
+      end;
+    end;   
+{$ENDIF}
+
+  finally
+    TVirtualTreeMethods.RefreshList(Sender);
+    Sender.EndUpdate;
   end;
 end;
-{$ENDIF}
 
 procedure TVirtualTreeEvents.DoDragOver(Sender: TBaseVirtualTree; Source: TObject;
   Shift: TShiftState; State: TDragState; const Pt: TPoint; Mode: TDropMode;
