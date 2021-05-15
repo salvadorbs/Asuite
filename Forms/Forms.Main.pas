@@ -147,6 +147,9 @@ type
     function  GetActiveTree: TBaseVirtualTree;
     procedure PopulatePopUpMenuFromAnother(APopupMenu: TMenuItem; AParentMenuItem: TMenuItem);
     procedure CloseProcessOpenByASuite;
+{$IFDEF UNIX}
+    procedure DoDropFiles(Sender: TObject; const FileNames: array of AnsiString);        
+{$ENDIF}
   public
     { Public declarations }
     procedure DoSearchItem(const TreeSearch: TBaseVirtualTree; const Keyword: string;
@@ -388,6 +391,26 @@ begin
   else
     ShowMainForm(Sender);
 end;
+           
+{$IFDEF UNIX}
+procedure TfrmMain.DoDropFiles(Sender: TObject;
+  const FileNames: array of AnsiString);
+var
+  I: Integer;
+begin
+  if pcList.ActivePageIndex <> PG_LIST then
+    Exit;
+
+  //Filenames is not only files
+  for I := 0 to Length(Filenames) - 1 do
+  begin
+    if FileExists(FileNames[I]) or DirectoryExists(FileNames[I]) then
+      TVirtualTreeMethods.AddNodeByPathFile(vstList, nil, FileNames[I], amAddChildLast)
+    else
+      TVirtualTreeMethods.AddNodeByText(vstList, nil, FileNames[I], amAddChildLast)
+  end;
+end;
+{$ENDIF}
 
 procedure TfrmMain.btnedtSearchKeyPress(Sender: TObject; var Key: Char);
 begin
@@ -548,6 +571,7 @@ const
   PROCESS_TERMINATE = $0001;
 {$ENDIF}
 begin
+  //TODO: Add linux method
   {$IFDEF MSWINDOWS}
   TASuiteLogger.Info('Close processes opened by ASuite', []);
   hSnapShot   := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
@@ -662,26 +686,37 @@ procedure TfrmMain.FormCreate(Sender: TObject);
 var
   VSTEvents: TVirtualTreeEvents;
 begin
-  TASuiteLogger.Enter('FormCreate', Self);
+  TASuiteLogger.Enter('MainFormCreate', Self);
+
+  {$IFDEF UNIX}
+  Self.AllowDropFiles := True;
+  Self.OnDropFiles := DoDropFiles;
+  {$ENDIF}
+
   //Set vstList as MainTree in Config
   ASuiteInstance.MainTree := vstList;
   Application.CreateForm(TdmImages, dmImages);
   Application.CreateForm(TdmTrayMenu, dmTrayMenu);
   pcList.ActivePageIndex := PG_LIST;
+
   //Setup events in vsts
   VSTEvents := TVirtualTreeEvents.Create;
   VSTEvents.SetupVSTList(vstList);
   VSTEvents.SetupVSTSearch(vstSearch);
+
   //Load Database and get icons (only first level of tree)
   Config.LoadConfig;
   ASuiteInstance.LoadList;
   ASuiteManager.ListManager.ExecuteAutorunList(amStartup);
+
   //Check missed scheduler tasks
   ASuiteInstance.Scheduler.CheckMissedTasks;
   TVirtualTreeMethods.RefreshList(nil);
+
   //Get placeholder for edtSearch
   btnedtSearch.TextHint := StringReplace(miSearchName.Caption, '&', '', []);
   PopulatePopUpMenuFromAnother(miEdit, pmWindow.Items);
+
   //Start threads
   TVirtualTreeMethods.GetAllIcons(vstList, nil);
 end;
