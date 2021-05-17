@@ -26,7 +26,7 @@ interface
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
   ComCtrls, VirtualTrees, UniqueInstance, Kernel.Consts, DataModules.Icons,
-  Kernel.BaseMainForm, StdCtrls, UITypes,
+  Kernel.BaseMainForm, StdCtrls, UITypes, VirtualTree.Helper,
   Kernel.Enumerations, ExtCtrls,
   ButtonedEdit, {Actions,} ActnList, EditBtn;
 
@@ -180,7 +180,12 @@ end;
 procedure TfrmMain.actCopyExecute(Sender: TObject);
 begin
   TASuiteLogger.Info('Copy nodes into clipboard', []);
+
+  {$IFDEF MSWINDOWS}
   vstList.CopyToClipBoard;
+  {$ELSE}
+  vstList.FakeCopyToClipBoard;
+  {$ENDIF}
 end;
 
 procedure TfrmMain.actCutCopyDeleteUpdate(Sender: TObject);
@@ -198,7 +203,12 @@ end;
 procedure TfrmMain.actCutExecute(Sender: TObject);
 begin
   TASuiteLogger.Info('Cut nodes into clipboard', []);
+
+  {$IFDEF MSWINDOWS}
   vstList.CutToClipBoard;
+  {$ELSE}
+  vstList.FakeCutToClipBoard;
+  {$ENDIF}
 end;
 
 procedure TfrmMain.actDeleteExecute(Sender: TObject);
@@ -248,8 +258,10 @@ procedure TfrmMain.actPasteExecute(Sender: TObject);
 var
   NodeData: TvBaseNodeData;
   Tree: TVirtualStringTree;
+  res: Boolean = False;
 begin
   TASuiteLogger.Info('Paste clipboard content in ASuite', []);
+
   Tree := TVirtualStringTree(GetActiveTree);
   if Assigned(Tree) then
   begin
@@ -262,8 +274,15 @@ begin
         Tree.DefaultPasteMode := amInsertAfter;
       end
     else
-      Tree.DefaultPasteMode := amAddChildLast;
-    if Tree.PasteFromClipboard then
+      Tree.DefaultPasteMode := amAddChildLast; 
+
+    {$IFDEF MSWINDOWS}
+    res := Tree.PasteFromClipboard;
+    {$ELSE}
+    res := vstList.FakePasteFromClipboard;
+    {$ENDIF}
+
+    if res then
     begin
       Tree.Expanded[Tree.GetFirstSelected] := True;
       TVirtualTreeMethods.RefreshList(Tree);
@@ -272,9 +291,14 @@ begin
 end;
 
 procedure TfrmMain.actPasteUpdate(Sender: TObject);
-begin
+begin               
   if Assigned(Sender) then
+  {$IFDEF MSWINDOWS}
     TAction(Sender).Enabled := IsFormatInClipBoard(CF_VIRTUALTREE) and (GetActiveTree = vstList);
+  {$ELSE}
+    TAction(Sender).Enabled := (Length(vstList.GetSortedCutCopySet(True)) > 0) and (GetActiveTree = vstList);
+  {$ENDIF}
+
 end;
 
 procedure TfrmMain.actPropertyExecute(Sender: TObject);
@@ -691,6 +715,9 @@ begin
   {$IFDEF UNIX}
   Self.AllowDropFiles := True;
   Self.OnDropFiles := DoDropFiles;
+
+  //Disable right click select for context menu issues
+  Self.vstList.TreeOptions.SelectionOptions := Self.vstList.TreeOptions.SelectionOptions - [toRightClickSelect];
   {$ENDIF}
 
   //Set vstList as MainTree in Config
