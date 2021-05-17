@@ -162,6 +162,10 @@ msgstr "Default (opzioni dell'elemento)"
 msgid "Safely remove hardware"
 msgstr "Rimozione sicura dell'hardware"
 
+#: kernel.resourcestrings.msgenvironmentvars
+msgid "Environment Vars"
+msgstr "Variabili d'ambiente"
+
 #: kernel.resourcestrings.msgerremptyname
 msgid "Application's name field is empty"
 msgstr "Il campo del nome dell'applicazione è vuoto"
@@ -341,6 +345,10 @@ msgstr "Seleziona la posizione della lista file da importare in ASuite"
 #: kernel.resourcestrings.msgimporttitle3
 msgid "Select which items to import"
 msgstr "Seleziona quali elementi importare"
+
+#: kernel.resourcestrings.msginputusername
+msgid "Please insert username"
+msgstr "Inserisci username"
 
 #: kernel.resourcestrings.msgitems
 msgid "Items"
@@ -742,27 +750,46 @@ msgstr ""
 "categoria (solo del primo livello). Togli la spunta a quei elementi che non "
 "vuoi che vengano eseguiti, quando decidi di avviare questa categoria."
 
-#: tfrmdialogbase.btnapply.caption
-msgid "Apply"
-msgstr "Applica"
-
-#: tfrmdialogbase.btncancel.caption
-msgctxt "tfrmdialogbase.btncancel.caption"
-msgid "Cancel"
-msgstr "Annulla"
-
-#: tfrmdialogbase.btnok.caption
-msgctxt "tfrmdialogbase.btnok.caption"
-msgid "Ok"
-msgstr "Ok"
-
 #: tfrmdialogbase.caption
 msgid "frmDialogBase"
 msgstr "frmDialogBase"
 
+#: tfrmenvironmentvars.actadd.caption
+msgctxt "tfrmenvironmentvars.actadd.caption"
+msgid "Add"
+msgstr "Aggiungi"
+
+#: tfrmenvironmentvars.actcopy.caption
+msgctxt "tfrmenvironmentvars.actcopy.caption"
+msgid "Copy"
+msgstr "Copia"
+
+#: tfrmenvironmentvars.actdelete.caption
+msgctxt "tfrmenvironmentvars.actdelete.caption"
+msgid "Delete"
+msgstr "Elimina"
+
+#: tfrmenvironmentvars.actpaste.caption
+msgctxt "tfrmenvironmentvars.actpaste.caption"
+msgid "Paste"
+msgstr "Incolla"
+
+#: tfrmenvironmentvars.grpothers.caption
+msgid "Environment Variables"
+msgstr "Variabili d'ambiente"
+
+#: tfrmenvironmentvars.tbbuttons.caption
+msgid "tbButtons"
+msgstr "tbButtons"
+
 #: tfrmgeneraloptionspage.cbrunsingleclick.caption
 msgid "Execute with single click in main window"
 msgstr "Esegui con un click singolo nella finestra principale"
+
+#: tfrmgeneraloptionspage.cbsecondinstancegm.caption
+msgctxt "tfrmgeneraloptionspage.cbsecondinstancegm.caption"
+msgid "Show Graphic Menu, when run another ASuite instance"
+msgstr "Mostra Graphic Menu, quando avvii un altro istanza di ASuite"
 
 #: tfrmgeneraloptionspage.cbshowmenustartup.caption
 msgid "Show graphic menu on ASuite startup"
@@ -773,8 +800,8 @@ msgid "Show window on ASuite startup"
 msgstr "Mostra la finestra principale all'avvio di ASuite"
 
 #: tfrmgeneraloptionspage.cbwindowsstartup.caption
-msgid "Start ASuite on Windows system startup"
-msgstr "Avvia ASuite all'accensione di Windows"
+msgid "Start ASuite on Operating System startup"
+msgstr "Avvia ASuite all'avvio del sistema"
 
 #: tfrmgeneraloptionspage.chkautocloseprocess.caption
 msgid "Close all process opened by ASuite at launcher shutdown"
@@ -959,6 +986,7 @@ msgid "Add software..."
 msgstr "Aggiungi software..."
 
 #: tfrmmain.actcopy.caption
+msgctxt "tfrmmain.actcopy.caption"
 msgid "Copy"
 msgstr "Copia"
 
@@ -977,6 +1005,7 @@ msgid "Show application's folder"
 msgstr "Mostra la cartella dell'applicazione"
 
 #: tfrmmain.actpaste.caption
+msgctxt "tfrmmain.actpaste.caption"
 msgid "Paste"
 msgstr "Incolla"
 
@@ -1129,6 +1158,10 @@ msgstr "Attiva sfondo personalizzato"
 msgid "Custom main window title"
 msgstr "Titolo personalizzato della finestra principale"
 
+#: tfrmmainwindowoptionspage.cbdialogcentermf.caption
+msgid "Open dialogs in the center of main window"
+msgstr "Apri finestre al centro di quella principale"
+
 #: tfrmmainwindowoptionspage.cbdisableconfirmdelete.caption
 msgid "Disable delete items confirmation dialog"
 msgstr "Disabilita messaggio di conferma per eliminazione degli elementi"
@@ -1202,11 +1235,6 @@ msgctxt "tfrmpropertyseparator.lbname.caption"
 msgid "Name"
 msgstr "Nome"
 
-#: tfrmscanfolder.btncancel.caption
-msgctxt "tfrmscanfolder.btncancel.caption"
-msgid "Cancel"
-msgstr "Annulla"
-
 #: tfrmscanfolder.btnexcludeadd.caption
 msgctxt "tfrmscanfolder.btnexcludeadd.caption"
 msgid "Add"
@@ -1216,10 +1244,6 @@ msgstr "Aggiungi"
 msgctxt "tfrmscanfolder.btnexcludedelete.caption"
 msgid "Delete"
 msgstr "Elimina"
-
-#: tfrmscanfolder.btnscan.caption
-msgid "Scan"
-msgstr "Scan"
 
 #: tfrmscanfolder.btntypesadd.caption
 msgctxt "tfrmscanfolder.btntypesadd.caption"
@@ -1251,6 +1275,10 @@ msgstr "Tipi File"
 msgid "General settings"
 msgstr "Opzioni generali"
 
+#: tfrmscanfolder.pnlbuttons.okbutton.caption
+msgid "&Scan"
+msgstr "&Scansiona"
+
 #: tfrmshortcutgrabber.btncancel.caption
 msgctxt "tfrmshortcutgrabber.btncancel.caption"
 msgid "Cancel"
@@ -1276,8 +1304,8 @@ msgid "ASuite"
 msgstr "ASuite"
 
 #: tfrmstatsoptionspage.gbsupport.caption
-msgid "Drive %S:"
-msgstr "Drive %S:"
+msgid "Drive %S"
+msgstr "Drive %S"
 
 #: tfrmstatsoptionspage.gbsystem.caption
 msgid "System"
