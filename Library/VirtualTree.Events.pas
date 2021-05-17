@@ -618,6 +618,8 @@ procedure TVirtualTreeEvents.DoLoadNode(Sender: TBaseVirtualTree; Node: PVirtual
 var
   DataDest, DataSource: PBaseData;
 begin
+  //TODO: Add new fields!
+
   //Create a new PBaseData as source
   New(DataSource);
   Stream.ReadBuffer(DataSource^,SizeOf(rBaseData));
