@@ -1,5 +1,5 @@
 {
-Copyright (C) 2006-2020 Matteo Salvi
+Copyright (C) 2006-2021 Matteo Salvi
 
 Website: http://www.salvadorsoftware.com/
 
@@ -31,7 +31,7 @@ const
   APP_NAME  = 'ASuite';
   APP_TITLE = APP_NAME;
 
-  VERSION_PRERELEASE = ''; //For Alpha and Beta version
+  VERSION_PRERELEASE = 'Alpha 1'; //For Alpha and Beta version
 
   BACKUP_DIR     = 'backup';
   CACHE_DIR      = 'cache';
