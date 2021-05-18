@@ -19,25 +19,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Properties.General.Software;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
-  DKLang, Frame.Properties.General, Vcl.Mask, JvExMask, JvToolEdit;
+  SysUtils, Graphics, Dialogs, StdCtrls, Frame.Properties.General, EditBtn,
+  DefaultTranslator, Classes;
 
 type
+
+  { TfrmSWGeneralPropertyPage }
+
   TfrmSWGeneralPropertyPage = class(TfrmBaseGeneralPropertyPage)
-    grpSoftware: TGroupBox;
-    lbWorkingDir: TLabel;
-    lbInfo2: TLabel;
     edtParameters: TEdit;
+    edtPathExe: TFileNameEdit;
+    edtWorkingDir: TDirectoryEdit;
+    grpSoftware: TGroupBox;
+    lbInfo2: TLabel;
     lbParameters: TLabel;
     lbPathExe: TLabel;
-    DKLanguageController1: TDKLanguageController;
-    edtWorkingDir: TJvDirectoryEdit;
-    edtPathExe: TJvFilenameEdit;
-    btnExtractName: TButton;
+    lbWorkingDir: TLabel;
+
     procedure edtPathExeAfterDialog(Sender: TObject; var AName: string;
       var AAction: Boolean);
     procedure edtPathExeBeforeDialog(Sender: TObject; var AName: string;
@@ -64,10 +67,10 @@ var
 implementation
 
 uses
-  Kernel.Consts, NodeDataTypes.Files, AppConfig.Main,
-  Utility.FileFolder;
+  Kernel.Consts, NodeDataTypes.Files, Kernel.ResourceStrings,
+  Utility.FileFolder, Kernel.Instance, Kernel.Manager;
 
-{$R *.dfm}
+{$R *.lfm}
 
 procedure TfrmSWGeneralPropertyPage.btnExtractNameClick(Sender: TObject);
 begin
@@ -77,32 +80,32 @@ end;
 procedure TfrmSWGeneralPropertyPage.edtPathExeAfterDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
-  AName := Config.Paths.AbsoluteToRelative(AName);
+  AName := ASuiteInstance.Paths.AbsoluteToRelative(AName);
 end;
 
 procedure TfrmSWGeneralPropertyPage.edtPathExeBeforeDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
-  edtPathExe.Filter := DKLangConstW('msgFilterExe');
-  AName := Config.Paths.RelativeToAbsolute(AName);
+  edtPathExe.Filter := msgFilterExe;
+  AName := ASuiteInstance.Paths.RelativeToAbsolute(AName);
 end;
 
 procedure TfrmSWGeneralPropertyPage.edtPathExeChange(Sender: TObject);
 begin
-  btnExtractName.Enabled := CheckPropertyPath(edtPathExe);
+  //btnExtractName.Enabled := CheckPropertyPath(edtPathExe);
 end;
 
 procedure TfrmSWGeneralPropertyPage.edtWorkingDirAfterDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
-  AName := Config.Paths.AbsoluteToRelative(AName);
+  AName := ASuiteInstance.Paths.AbsoluteToRelative(AName);
   CheckPropertyPath(edtWorkingDir, AName);
 end;
 
 procedure TfrmSWGeneralPropertyPage.edtWorkingDirBeforeDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
-  AName := Config.Paths.RelativeToAbsolute(AName);
+  AName := ASuiteInstance.Paths.RelativeToAbsolute(AName);
 end;
 
 procedure TfrmSWGeneralPropertyPage.edtWorkingDirChange(Sender: TObject);
@@ -115,7 +118,13 @@ var
   FileNodeData: TvFileNodeData;
 begin
   Result := inherited;
-  lbInfo2.Caption := Format(lbInfo2.Caption, [Config.Paths.SuitePathWorking, Config.Paths.SuiteDrive]);
+
+  //lbInfo2.Caption := Format(lbInfo2.Caption, [ASuiteInstance.Paths.SuitePathWorking, ASuiteInstance.Paths.SuiteDrive]);
+
+  //Strange bug. %asuite% and %drive% causing error "Invalid argument index in format...", so I'm using a workaround
+  lbInfo2.Caption := StringReplace(lbInfo2.Caption, '%s', ASuiteInstance.Paths.SuitePathWorking, [rfIgnoreCase]);
+  lbInfo2.Caption := StringReplace(lbInfo2.Caption, '%s', ASuiteInstance.Paths.SuiteDrive, [rfIgnoreCase]);
+
   if Assigned(CurrentNodeData) then
   begin
     FileNodeData := TvFileNodeData(CurrentNodeData);

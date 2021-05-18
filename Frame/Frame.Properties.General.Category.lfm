@@ -1,0 +1,48 @@
+inherited frmCatGeneralPropertyPage: TfrmCatGeneralPropertyPage
+  DesignLeft = 2132
+  object grpSubItems: TGroupBox[1]
+    Left = 4
+    Height = 192
+    Top = 114
+    Width = 352
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    Caption = 'Software in this category'
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.TopBottomSpacing = 4
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ClientHeight = 172
+    ClientWidth = 348
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 1
+    object vstCategoryItems: TVirtualStringTree
+      Left = 4
+      Height = 115
+      Top = 4
+      Width = 340
+      BorderSpacing.Bottom = 4
+      Constraints.MinHeight = 115
+      DragOperations = []
+      Header.AutoSizeIndex = 0
+      Header.Columns = <>
+      Header.MainColumn = -1
+      ParentFont = False
+      TabOrder = 0
+      TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
+      TreeOptions.PaintOptions = [toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
+    end
+    object lblNote: TLabel
+      Left = 4
+      Height = 45
+      Top = 123
+      Width = 340
+      Caption = 'Note: In this list you can find all software items of this category (only first level). Uncheck items who you don''t want to start, when run this category.'
+      ParentColor = False
+      ParentFont = False
+      WordWrap = True
+    end
+  end
+end

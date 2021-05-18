@@ -19,34 +19,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Utility.System;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Kernel.Consts, Windows, ShellApi, SysUtils, Classes, Registry, StrUtils,
-  ShlObj, ActiveX, ComObj, Forms, Dialogs, System.IOUtils;
+  Kernel.Consts, LCLIntf, LCLType, SysUtils, Classes, Registry, process,
+  Forms, Dialogs;
 
 { Check functions }
 function HasDriveLetter(const Path: String): Boolean;
 function IsDriveRoot(const Path: String): Boolean;
 function IsValidURLProtocol(const URL: string): Boolean;
 function IsPathExists(const Path: String): Boolean;
+function IsExecutableFile(APathFile: String): Boolean;
+function CreateProcessEx(APathFile: String; AParameters: String = ''; AWorkingDir: String = '';
+                         AWindowState: TShowWindowOptions = swoShowDefault;
+                         AEnvironmentVars: TStringList = nil): Integer;
 
 { Registry }
-procedure SetASuiteAtWindowsStartup;
-procedure DeleteASuiteAtWindowsStartup;
+procedure SetASuiteAtOsStartup;
+procedure DeleteASuiteAtOsStartup;
+function GetAutoStartFolder: String;
 
 { Misc }
 procedure EjectDialog(Sender: TObject);
 function ExtractDirectoryName(const Filename: string): string;
-function GetCorrectWorkingDir(Default: string): string;
-function RegisterHotkeyEx(AId: Integer; AShortcut: TShortCut): Boolean;
-function UnRegisterHotkeyEx(AId: Integer): Boolean;
-function IsHotkeyAvailable(AId: Integer; AShortcut: TShortcut): Boolean;
 
 implementation
 
 uses
-  Utility.Conversions, Forms.Main, AppConfig.Main, Utility.Misc, Kernel.Logger;
+  Utility.Conversions, Forms.Main, Utility.Misc, Kernel.Logger, IniFiles,
+  LazFileUtils{$IFDEF MSWINDOWS} , ShellApi {$ENDIF}, LazUTF8,
+  Utility.FileFolder, Kernel.Instance, Kernel.Manager;
 
 function HasDriveLetter(const Path: String): Boolean;
 var P: PChar;
@@ -93,36 +98,86 @@ function IsPathExists(const Path: String): Boolean;
 var
   PathTemp : String;
 begin
-  PathTemp := Config.Paths.RelativeToAbsolute(Path);
-  if TPath.IsUNCPath(PathTemp) then
-    Result := True
-  else
-    if IsValidURLProtocol(PathTemp) then
-      Result := True
-    else
-      Result := (FileExists(PathTemp)) or (SysUtils.DirectoryExists(PathTemp));
+  PathTemp := ASuiteInstance.Paths.RelativeToAbsolute(Path);
+  Result := (PathTemp = 'shell:AppsFolder') or IsUNCPath(PathTemp) or IsValidURLProtocol(PathTemp) or FileExists(PathTemp) or SysUtils.DirectoryExists(PathTemp)
+end;
+
+function IsExecutableFile(APathFile: String): Boolean;
+{$IFDEF MSWINDOWS}
+var
+  lowerStrPath: String;
+{$ENDIF}
+begin
+  {$IFDEF MSWINDOWS}
+  lowerStrPath := ExtractFileExtEx(APathFile);
+  Result := (lowerStrPath = EXT_EXE) or (lowerStrPath = EXT_BAT) or (lowerStrPath = EXT_CMD);
+  {$ELSE}
+  //TODO: Insert check if file has not extension or .desktop
+  Result := FileIsExecutable(APathFile);
+  {$ENDIF}
+end;
+
+function CreateProcessEx(APathFile: String; AParameters: String;
+  AWorkingDir: String; AWindowState: TShowWindowOptions;
+  AEnvironmentVars: TStringList): Integer;
+var
+  Process: TProcess;
+  I: Integer;
+begin
+  Process := TProcess.Create(nil);
+  try
+    try
+      Process.Executable := APathFile;
+      Process.ShowWindow := AWindowState;
+      Process.StartupOptions := [suoUseShowWindow];
+      Process.CurrentDirectory := AWorkingDir;
+      Process.Parameters.Text := AParameters;
+
+      //Add custom environment vars
+      if Assigned(AEnvironmentVars) then
+        for I := 0 to AEnvironmentVars.Count - 1 do
+          Process.Environment.Add(AEnvironmentVars[I]);
+
+      //Add actual environment vars
+      for I := 0 to GetEnvironmentVariableCountUTF8 - 1 do
+        Process.Environment.Add(GetEnvironmentStringUTF8(I));
+
+      Process.Execute;
+
+      Result := Process.ProcessID;
+    except
+      Result := -1;
+    end;
+  finally
+    Process.Free;
+  end;
 end;
 
 procedure EjectDialog(Sender: TObject);
+{$IFDEF MSWINDOWS}
 var
   WindowsPath : string;
   bShellExecute: Boolean;
+{$ENDIF}
 begin
+  {$IFDEF MSWINDOWS}
+
   //Call "Safe Remove hardware" Dialog
-  WindowsPath := GetEnvironmentVariable('WinDir');
+  WindowsPath := SysUtils.GetEnvironmentVariable('WinDir');
   if FileExists(PChar(WindowsPath + '\System32\Rundll32.exe')) then
   begin
     TASuiteLogger.Info('Call Eject Dialog', []);
-    bShellExecute := ShellExecute(0,'open',
+    bShellExecute := ShellExecuteW(0,'open',
                      PChar(WindowsPath + '\System32\Rundll32.exe'),
                      PChar('Shell32,Control_RunDLL hotplug.dll'),
                      PChar(WindowsPath + '\System32'),SW_SHOWNORMAL) > 32;
     //Error message
     if not bShellExecute then
-      ShowMessageEx(Format('%s [%s]', [SysErrorMessage(GetLastError), 'Rundll32']), True);
+      ShowMessageEx(Format('%s [%s]', [SysErrorMessage(GetLastOSError), 'Rundll32']), True);
   end;
   //Close ASuite
   frmMain.miExitClick(Sender);
+  {$ENDIF}
 end;
 
 function ExtractDirectoryName(const Filename: string): string;
@@ -141,10 +196,16 @@ begin
   end;
 end;
 
-procedure SetASuiteAtWindowsStartup;
+procedure SetASuiteAtOsStartup;
 var
+{$IFDEF MSWINDOWS}
   Registry : TRegistry;
+{$ELSE}
+  AutoStartFolder: String;
+  DesktopFile: TIniFile;
+{$ENDIF}
 begin
+  {$IFDEF MSWINDOWS}
   Registry := TRegistry.Create;
   try
     with Registry do
@@ -157,12 +218,38 @@ begin
   finally
     Registry.Free;
   end;
+
+  {$ELSE}
+
+  AutoStartFolder := GetAutoStartFolder;
+
+  if not DirPathExists(AutoStartFolder) then
+      ForceDirectory(AutoStartFolder);
+
+  DesktopFile := TIniFile.Create(AppendPathDelim(AutoStartFolder) + APP_NAME + '.desktop', [ifoWriteStringBoolean]);
+  try
+    DesktopFile.WriteString(DESKTOP_GROUP, DESKTOP_KEY_TYPE, DESKTOP_TYPE_APPLICATION);
+    DesktopFile.WriteString(DESKTOP_GROUP, DESKTOP_KEY_NAME, APP_NAME);
+    DesktopFile.WriteString(DESKTOP_GROUP, DESKTOP_KEY_EXEC, ExpandFileName(Application.ExeName));
+    DesktopFile.WriteBool(DESKTOP_GROUP, DESKTOP_KEY_STARTUPNOTIFY, False);
+    DesktopFile.WriteBool(DESKTOP_GROUP, DESKTOP_KEY_TERMINAL, False);
+
+    DesktopFile.UpdateFile;
+  finally
+    DesktopFile.Free;
+  end;
+  {$ENDIF}
 end;
 
-procedure DeleteASuiteAtWindowsStartup;
+procedure DeleteASuiteAtOsStartup;
 var
-  Registry : TRegistry;
+{$IFDEF MSWINDOWS}
+  Registry: TRegistry;
+{$ELSE}
+  AutoStartFile: String;
+{$ENDIF}
 begin
+  {$IFDEF MSWINDOWS}
   Registry := TRegistry.Create;
   try
     with Registry do
@@ -174,35 +261,18 @@ begin
   finally
     Registry.Free;
   end;
+
+  {$ELSE}
+  AutoStartFile := AppendPathDelim(GetAutoStartFolder) + APP_NAME + '.desktop';
+
+  if FileExistsUTF8(AutoStartFile) then
+    DeleteFileUTF8(AutoStartFile);
+  {$ENDIF}
 end;
 
-function GetCorrectWorkingDir(Default: string): string;
-var
-  sPath: String;
+function GetAutoStartFolder: String;
 begin
-  Result := Default;
-  sPath := IncludeTrailingBackslash(Config.Paths.SuiteDrive + sPath);
-  if SysUtils.DirectoryExists(sPath) then
-    Result := sPath;
-end;
-
-function RegisterHotkeyEx(AId: Integer; AShortcut: TShortCut): Boolean;
-begin
-  Result := RegisterHotKey(frmMain.Handle, AId,
-                           GetHotKeyMod(AShortcut),
-                           GetHotKeyCode(AShortcut))
-end;
-
-function UnRegisterHotkeyEx(AId: Integer): Boolean;
-begin
-  Result := UnregisterHotKey(frmMain.Handle, AId);
-end;
-
-function IsHotkeyAvailable(AId: Integer; AShortcut: TShortcut): Boolean;
-begin
-  Result := RegisterHotkeyEx(AId, AShortcut);
-  if Result then
-    UnregisterHotKeyEx(AShortcut);
+  Result := AppendPathDelim(GetUserDir) + '.config/autostart';
 end;
 
 end.

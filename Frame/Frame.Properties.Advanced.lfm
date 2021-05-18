@@ -1,0 +1,197 @@
+inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
+  Height = 286
+  ClientHeight = 286
+  DesignLeft = 2132
+  DesignTop = 220
+  object pnlTop: TPanel[0]
+    Left = 4
+    Height = 107
+    Top = 4
+    Width = 352
+    AutoSize = True
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BevelOuter = bvNone
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ClientHeight = 107
+    ClientWidth = 352
+    TabOrder = 0
+    object grpScheduler: TGroupBox
+      Left = 0
+      Height = 107
+      Top = 0
+      Width = 142
+      Align = alLeft
+      AutoSize = True
+      BorderSpacing.Right = 4
+      Caption = 'Scheduler'
+      ChildSizing.LeftRightSpacing = 4
+      ChildSizing.TopBottomSpacing = 4
+      ChildSizing.EnlargeHorizontal = crsScaleChilds
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ClientHeight = 87
+      ClientWidth = 138
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
+      object cxScheduler: TComboBox
+        Left = 4
+        Height = 23
+        Top = 4
+        Width = 130
+        Constraints.MinWidth = 130
+        ItemHeight = 15
+        OnChange = cxSchedulerChange
+        ParentFont = False
+        Style = csDropDownList
+        TabOrder = 0
+      end
+      object dtpSchDate: TDateTimePicker
+        Left = 4
+        Height = 23
+        Top = 31
+        Width = 130
+        CenturyFrom = 1941
+        MaxDate = 2958465
+        MinDate = -53780
+        ParentFont = False
+        TabOrder = 1
+        BorderSpacing.Top = 4
+        BorderSpacing.Bottom = 4
+        TrailingSeparator = False
+        LeadingZeros = True
+        Kind = dtkDate
+        TimeFormat = tf24
+        TimeDisplay = tdHMS
+        DateMode = dmComboBox
+        Date = 39092
+        Time = 0.942071932870022
+        UseDefaultSeparators = True
+        HideDateTimeParts = []
+        MonthNames = 'Long'
+      end
+      object dtpSchTime: TDateTimePicker
+        Left = 4
+        Height = 23
+        Top = 58
+        Width = 130
+        CenturyFrom = 1941
+        MaxDate = 2958465
+        MinDate = -53780
+        ParentFont = False
+        TabOrder = 2
+        BorderSpacing.Bottom = 6
+        TrailingSeparator = False
+        LeadingZeros = True
+        Kind = dtkTime
+        TimeFormat = tf24
+        TimeDisplay = tdHM
+        DateMode = dmUpDown
+        Date = 39092
+        Time = 0.942361111112405
+        UseDefaultSeparators = True
+        HideDateTimeParts = []
+        MonthNames = 'Long'
+      end
+    end
+    object grpHotkey: TGroupBox
+      Left = 146
+      Height = 107
+      Top = 0
+      Width = 206
+      Align = alClient
+      AutoSize = True
+      Caption = 'Hotkey'
+      ChildSizing.LeftRightSpacing = 4
+      ChildSizing.TopBottomSpacing = 4
+      ChildSizing.EnlargeHorizontal = crsScaleChilds
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ClientHeight = 87
+      ClientWidth = 202
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 1
+      object cbHotKey: TCheckBox
+        Left = 4
+        Height = 19
+        Top = 4
+        Width = 194
+        Caption = 'Active hotkey'
+        OnClick = cbHotKeyClick
+        ParentFont = False
+        TabOrder = 0
+      end
+      object edtHotkey: TButtonedEdit
+        Left = 4
+        Height = 22
+        Top = 25
+        Width = 194
+        BorderSpacing.Top = 2
+        CharCase = ecUppercase
+        ParentFont = False
+        ReadOnly = True
+        TabOrder = 1
+        OnChange = edtHotkeyChange
+        OnClick = edtHotkeyClick
+        OnRightButtonClick = edtHotkeyRightButtonClick
+      end
+    end
+  end
+  object grpOthers: TGroupBox[1]
+    Left = 4
+    Height = 104
+    Top = 115
+    Width = 352
+    AutoSize = True
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    Caption = 'Others'
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.TopBottomSpacing = 4
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ClientHeight = 84
+    ClientWidth = 348
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 1
+    object cbHideSoftware: TCheckBox
+      Left = 4
+      Height = 19
+      Top = 4
+      Width = 340
+      Caption = 'Hide this software from menu'
+      ParentFont = False
+      TabOrder = 0
+    end
+    object cbDontInsertMRU: TCheckBox
+      Left = 4
+      Height = 19
+      Top = 23
+      Width = 340
+      Caption = 'Don''t insert this software in recents (MRU)'
+      ParentFont = False
+      TabOrder = 1
+    end
+    object cbDontInsertMFU: TCheckBox
+      Left = 4
+      Height = 19
+      Top = 42
+      Width = 340
+      Caption = 'Don''t insert this software in MFU'
+      ParentFont = False
+      TabOrder = 2
+    end
+    object cbShortcutDesktop: TCheckBox
+      Left = 4
+      Height = 19
+      Top = 61
+      Width = 340
+      Caption = 'Create shortcut on desktop when ASuite is running'
+      ParentFont = False
+      TabOrder = 3
+    end
+  end
+end

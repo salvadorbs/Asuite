@@ -1,0 +1,109 @@
+object frmShortcutGrabber: TfrmShortcutGrabber
+  Left = 2012
+  Height = 189
+  Top = 275
+  Width = 396
+  ActiveControl = hkKeys
+  BorderStyle = bsToolWindow
+  Caption = 'Choose hotkey...'
+  ClientHeight = 189
+  ClientWidth = 396
+  KeyPreview = True
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  OnKeyPress = FormKeyPress
+  Position = poOwnerFormCenter
+  LCLVersion = '2.0.12.0'
+  object pnlDialogPage: TPanel
+    Left = 8
+    Height = 142
+    Top = 8
+    Width = 380
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    ClientHeight = 142
+    ClientWidth = 380
+    ParentFont = False
+    TabOrder = 0
+    object lblInfo: TLabel
+      Left = 13
+      Height = 15
+      Top = 78
+      Width = 244
+      Caption = 'Select modifiers above, then enter desired key:'
+      ParentColor = False
+      ParentFont = False
+    end
+    object hkKeys: THotKey
+      Left = 120
+      Height = 19
+      Top = 99
+      Width = 121
+      TabOrder = 0
+      Hotkey = 0
+      Modifiers = []
+      NoModifier = True
+      OnChange = hkKeysChange
+    end
+    object btnAlt: TBCImageButton
+      Left = 205
+      Height = 48
+      Top = 14
+      Width = 74
+      BitmapOptions.Direction = sdVertical
+      ParentFont = False
+      Toggle = True
+    end
+    object btnCtrl: TBCImageButton
+      Left = 13
+      Height = 48
+      Top = 14
+      Width = 74
+      BitmapOptions.Direction = sdVertical
+      ParentFont = False
+      Toggle = True
+    end
+    object btnShift: TBCImageButton
+      Left = 109
+      Height = 48
+      Top = 14
+      Width = 74
+      BitmapOptions.Direction = sdVertical
+      ParentFont = False
+      Toggle = True
+    end
+    object btnWinKey: TBCImageButton
+      Left = 303
+      Height = 48
+      Top = 14
+      Width = 46
+      BitmapOptions.Direction = sdVertical
+      ParentFont = False
+      Toggle = True
+    end
+  end
+  object btnOk: TButton
+    Left = 232
+    Height = 25
+    Top = 156
+    Width = 75
+    Anchors = [akRight, akBottom]
+    Caption = 'Ok'
+    Default = True
+    ModalResult = 1
+    OnClick = btnOkClick
+    ParentFont = False
+    TabOrder = 1
+  end
+  object btnCancel: TButton
+    Left = 313
+    Height = 25
+    Top = 156
+    Width = 75
+    Anchors = [akRight, akBottom]
+    Caption = 'Cancel'
+    ModalResult = 2
+    OnClick = btnCancelClick
+    ParentFont = False
+    TabOrder = 2
+  end
+end

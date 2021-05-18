@@ -19,16 +19,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Properties.Behavior;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, DKLang, Frame.Properties.Base,
-  Vcl.ExtCtrls;
+  SysUtils, Dialogs, StdCtrls, Frame.Properties.Base, ExtCtrls, DefaultTranslator, Classes;
 
 type
+
+  { TfrmBehaviorPropertyPage }
+
   TfrmBehaviorPropertyPage = class(TfrmBasePropertyPage)
-    DKLanguageController1: TDKLanguageController;
+    
     grpAutoExecute: TGroupBox;
     cxAutoExecute: TComboBox;
     btnChangeOrder: TButton;
@@ -56,9 +59,10 @@ var
 implementation
 
 uses
-  Kernel.Enumerations, Forms.Options, Frame.Options.Autorun, AppConfig.Main;
+  Kernel.Enumerations, Forms.Options, Frame.Options.Autorun, Kernel.ResourceStrings,
+  Kernel.Manager;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmMenuPropertyPage }
 
@@ -75,22 +79,39 @@ end;
 
 function TfrmBehaviorPropertyPage.GetImageIndex: Integer;
 begin
-  Result := Config.IconsManager.GetIconIndex('behavior');
+  Result := ASuiteManager.IconsManager.GetIconIndex('behavior');
 end;
 
 function TfrmBehaviorPropertyPage.GetTitle: string;
 begin
-  Result := DKLangConstW('msgBehavior');
+  Result := msgBehavior;
 end;
 
 function TfrmBehaviorPropertyPage.InternalLoadData: Boolean;
 begin
   Result := inherited;
+
+  cxAutoExecute.Items.Add(cxAutoExecute_item0);
+  cxAutoExecute.Items.Add(cxAutoExecute_item1);
+  cxAutoExecute.Items.Add(cxAutoExecute_item2);
+  cxAutoExecute.Items.Add(cxAutoExecute_item3);
+
+  cxActionOnExe.Items.Add(cxActionOnExe_item0);
+  cxActionOnExe.Items.Add(cxActionOnExe_item1);
+  cxActionOnExe.Items.Add(cxActionOnExe_item2);
+  cxActionOnExe.Items.Add(cxActionOnExe_item3);
+
+  cxWindowState.Items.Add(cxWindowState_item0);
+  cxWindowState.Items.Add(cxWindowState_item1);
+  cxWindowState.Items.Add(cxWindowState_item2);
+
   if Assigned(CurrentNodeData) then
   begin
     //Insert cat specific setting
-    if CurrentNodeData.DataType = vtdtCategory then
-      cxWindowState.Items.Insert(0, DKLangConstW('msgDefaultItemSettings'));
+    if CurrentNodeData.IsCategoryItem then
+    begin
+      cxWindowState.Items.Insert(0, msgDefaultItemSettings);
+    end;
     cxActionOnExe.ItemIndex := Ord(CurrentNodeData.ActionOnExe);
     cxAutoExecute.ItemIndex := Ord(CurrentNodeData.Autorun);
     btnChangeOrder.Enabled  := (cxAutoExecute.ItemIndex <> 0);

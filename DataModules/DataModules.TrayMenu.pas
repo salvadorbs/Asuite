@@ -19,17 +19,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit DataModules.TrayMenu;
 
+{$MODE DelphiUnicode}
+
 {$I ASuite.inc}
+
+{$IFDEF LCLGTK3}
+  {$LINKLIB libgdk-3.so.0}
+{$ENDIF}
 
 interface
 
 uses
-  Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  Menus, ExtCtrls, VirtualTrees, Lists.Manager, ShellApi, Vcl.ImgList,
-  Winapi.Messages, DKLang, System.UITypes, Kernel.PopupMenu, Lists.Base,
-  Kernel.Enumerations;
+  LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Menus, ExtCtrls, VirtualTrees, ImgList, LazFileUtils, Process,
+  Kernel.ASMenuItem, Lists.Base, Kernel.Enumerations
+  {$IFDEF LINUX}
+  , x, xlib
+
+    {$IFDEF LCLGTK2}
+  , gdk2, gdk2x
+    {$ENDIF}
+
+    {$IFDEF LCLGTK3}
+  , LazGdk3, LazGLib2
+    {$ENDIF}
+
+    {$IFDEF QT}
+  , qt5
+    {$ENDIF}
+  {$ENDIF};
 
 type
+
+  { TdmTrayMenu }
+
   TdmTrayMenu = class(TDataModule)
     tiTrayMenu: TTrayIcon;
     pmTrayicon: TPopupMenu;
@@ -40,6 +63,8 @@ type
     procedure ShowMainForm(Sender: TObject);
     procedure EjectDialog(Sender: TObject);
     procedure OpenFile(Sender: TObject);
+    procedure tiTrayMenuMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
     procedure CreateListItems(Sender: TBaseVirtualTree; Node: PVirtualNode);
@@ -54,17 +79,18 @@ type
     procedure CreateSpecialList(Menu: TPopupMenu; SList: TBaseItemsList;
                                MaxItems: Integer; SubMenuCaption: String = '');
     procedure AddItem(TargetItem, AMenuItem: TMenuItem);
-    procedure DrawCaptionedSeparator(Sender: TObject; ACanvas: TCanvas; ARect: TRect;
-      Selected: Boolean);
+    procedure DrawCaptionedSeparator(Sender: TObject; ACanvas: TCanvas;
+    ARect: TRect; AState: LCLType.TOwnerDrawState);
     procedure DoTrayIconButtonClick(ASender: TObject; ATrayiconAction: TTrayiconActionClick);
     procedure PopulateDirectory(Sender: TObject);
-    procedure SearchAddDirectory(AMI: TMenuItem; FolderPath: string = '');
-    procedure SearchAddFiles(AMI: TMenuItem; FolderPath: string = '');
+    procedure SearchAddDirectory(AMI: TASMenuItem; FolderPath: string = '');
+    procedure SearchAddFiles(AMI: TASMenuItem; FolderPath: string = '');
     procedure AddSub(MI: TMenuItem);
     procedure GetItemsIcons(Sender: TObject);
     procedure PopulateCategoryItems(Sender: TObject);
     procedure ShowPopupMenu(const APopupMenu: TPopupMenu);
     procedure RunFromTrayMenu(Sender: TObject);
+    function GetTextWidth(const AText: string; AFont: Graphics.TFont): Integer;
   public
     { Public declarations }
     procedure ShowClassicMenu;
@@ -72,54 +98,22 @@ type
     procedure DoDrawCaptionedSeparator(Sender: TObject; ACanvas: TCanvas; ARect: TRect;
       ACaption: string = '');
     procedure CreateSeparator(Menu: TPopupMenu;Text: String = '';ListMenuItem: TMenuItem = nil);
+    procedure RefreshClassicMenu;
+
+    //These functions come from the Tomboy-NG project https://github.com/tomboy-notes/tomboy-ng
+    class function CheckGnomeExtras: Boolean;
+    class function CheckSysTray: Boolean;
   end;
+
+{$IFDEF LCLGTK3}
+function gdk_x11_window_get_xid(AX11Window: PGdkWindow): guint32; cdecl; external;
+function gdk_x11_display_get_xdisplay(AX11Display: PGdkDisplay): PDisplay; cdecl; external;
+{$ENDIF}
 
 type
   TColorQuad = record
     Red, Green, Blue, Alpha: Byte;
   end;
-
-{$IFDEF FASTHACK}
-  { TESTED ONLY WITH DELPHI 5 ENTERPRISE. THE FIELD ORDER/SIZE MUST MATCH SO THAT
-    FItems: TList AND FParent: TMenuItem ARE ACCESSIBLE. }
-  TMenuItemPrivateHack = class(TComponent)
-  private
-{$HINTS OFF}
-    FCaption: string;
-    FChecked: Boolean;
-    FEnabled: Boolean;
-    FDefault: Boolean;
-    FAutoHotkeys: TMenuItemAutoFlag;
-    FAutoLineReduction: TMenuItemAutoFlag;
-    FRadioItem: Boolean;
-    FVisible: Boolean;
-    FGroupIndex: Byte;
-    FImageIndex: TImageIndex;
-    FActionLink: TMenuActionLink;
-    FBreak: TMenuBreak;
-    FBitmap: TBitmap;
-    FCommand: Word;
-    FHelpContext: THelpContext;
-    FHint: string;
-    FItems: TList;
-    FShortCut: TShortCut;
-    FParent: TMenuItem;
-    FMerged: TMenuItem;
-    FMergedWith: TMenuItem;
-    FMenu: TMenu;
-    FStreamedRebuild: Boolean;
-    FImageChangeLink: TChangeLink;
-    FSubMenuImages: TCustomImageList;
-    FOnChange: TMenuChangeEvent;
-    FOnClick: TNotifyEvent;
-    FOnDrawItem: TMenuDrawItemEvent;
-    FOnAdvancedDrawItem: TAdvancedMenuDrawItemEvent;
-    FOnMeasureItem: TMenuMeasureItemEvent;
-    FAutoCheck: Boolean;
-    FHandle: TMenuHandle;
-{$HINTS ON}
-  end;
-{$ENDIF}
 
 const
   FadeLineWidth = 32;
@@ -133,15 +127,21 @@ uses
   DataModules.Icons, Forms.Main, AppConfig.Main, VirtualTree.Methods,
   Utility.System, Forms.GraphicMenu, Kernel.Types, NodeDataTypes.Files,
   NodeDataTypes.Custom, NodeDataTypes.Base, Kernel.Consts, Kernel.Logger,
-  Utility.Misc, Utility.FileFolder;
+  Utility.Misc, Utility.FileFolder, Kernel.ResourceStrings, Kernel.Instance,
+  Kernel.Manager {$IFDEF MSWINDOWS} , Windows {$ENDIF};
 
-{$R *.dfm}
+{$R *.lfm}
 
 procedure TdmTrayMenu.DataModuleCreate(Sender: TObject);
 begin
-  pmTrayicon.Images := dmImages.ilSmallIcons;
+  pmTrayicon.Images := dmImages.ilLargeIcons;
+  pmTrayicon.ImagesWidth := ICON_SIZE_SMALL;
+
   tiTrayMenu.Hint := Format('%s %s (%s)',[APP_NAME, GetASuiteVersion(True),
-                                          UpperCase(Config.Paths.SuiteDrive)]);
+                                          UpperCase(ASuiteInstance.Paths.SuiteDrive)]);
+  {$IFNDEF MSWINDOWS}
+  tiTrayMenu.PopUpMenu := pmTrayicon;
+  {$ENDIF}
 end;
 
 procedure TdmTrayMenu.tiTrayMenuDblClick(Sender: TObject);
@@ -152,6 +152,7 @@ end;
 procedure TdmTrayMenu.tiTrayMenuMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
+  {$IFNDEF QT}
   if (Config.ASuiteState = lsStartUp) then
     Exit;
   case Button of
@@ -159,6 +160,7 @@ begin
     TMouseButton.mbMiddle : DoTrayIconButtonClick(Sender, Config.ActionClickMiddle);
     TMouseButton.mbRight  : DoTrayIconButtonClick(Sender, Config.ActionClickRight);
   end;
+  {$ENDIF}
 end;
 
 procedure TdmTrayMenu.ShowMainForm(Sender: TObject);
@@ -179,10 +181,9 @@ begin
   APopupMenu.PopupComponent := tiTrayMenu.Owner;
   //Show menu
   APopupMenu.Popup(CursorPoint.X, CursorPoint.Y);
-  PostMessage(Application.Handle, WM_NULL, 0, 0);
 end;
 
-procedure TdmTrayMenu.SearchAddDirectory(AMI: TMenuItem; FolderPath: string);
+procedure TdmTrayMenu.SearchAddDirectory(AMI: TASMenuItem; FolderPath: string);
 var
   SR    : TSearchRec;
   Found : Boolean;
@@ -204,9 +205,7 @@ begin
         //Create new menuitem and add base properties
         NMI             := TASMenuItem.Create(AMI);
         NMI.Path        := sPath + SR.Name + PathDelim;
-        NMI.ImageIndex  := Config.IconsManager.GetPathIconIndex(CONST_PATH_FOLDERICON); // folder image
-        //Set AutoHotkeys to maManual, speed up popup menu
-        NMI.AutoHotkeys := maManual;
+        NMI.ImageIndex  := ASuiteManager.IconsManager.GetPathIconIndex(ASuiteInstance.Paths.RelativeToAbsolute(CONST_PATH_FOLDERICON)); // folder image
         //Add item in traymenu
         AddItem(AMI, NMI);
         //If it is not '.', expand folder else add OnClick event to open folder
@@ -217,7 +216,7 @@ begin
           AddSub(NMI);
         end
         else begin
-          NMI.Caption := DKLangConstW('msgCMOpenFolder');
+          NMI.Caption := msgCMOpenFolder;
           NMI.OnClick := OpenFile;
           AMI.NewBottomLine;
         end;
@@ -226,11 +225,11 @@ begin
       Found := FindNext(SR) = 0;
     end;
   finally
-    FindClose(SR);
+    SysUtils.FindClose(SR);
   end;
 end;
 
-procedure TdmTrayMenu.SearchAddFiles(AMI: TMenuItem; FolderPath: string);
+procedure TdmTrayMenu.SearchAddFiles(AMI: TASMenuItem; FolderPath: string);
 var
   SR: TSearchRec;
   Found: Boolean;
@@ -245,15 +244,14 @@ begin
   try
     if Found then
       AMI.NewBottomLine;
+
     while Found do
     begin
       //Create new menuitem and add base properties
       NMI             := TASMenuItem.Create(AMI);
       NMI.Caption     := SR.Name;
       NMI.Path        := sPath + SR.Name;
-      NMI.ImageIndex  := Config.IconsManager.GetPathIconIndex(sPath + SR.Name);
-      //Set AutoHotkeys to maManual, speed up popup menu
-      NMI.AutoHotkeys := maManual;
+      NMI.ImageIndex  := ASuiteManager.IconsManager.GetPathIconIndex(sPath + SR.Name);
       NMI.OnClick     := OpenFile;
       //Add item in traymenu
       AddItem(AMI, NMI);
@@ -261,25 +259,41 @@ begin
       Found := FindNext(SR) = 0;
     end;
   finally
-    FindClose(SR);
+    SysUtils.FindClose(SR);
   end;
 end;
 
 procedure TdmTrayMenu.ShowClassicMenu;
 begin
-  TASuiteLogger.Enter('ShowClassicMenu', Self);
+  //Workaround for Lazarus bug https://bugs.freepascal.org/view.php?id=38849
+  //QT5Trayicon's contextMenu broken after recreating popup's handle
+  //So hide trayicon before PopUpMethod and after it, show again
+  {$IFDEF QT}
+  tiTrayMenu.Hide;
+  {$ENDIF}
+
   //Populate classic menu at runtime
+  {$IFDEF MSWINDOWS}
   UpdateClassicMenu(pmTrayicon);
+  {$ENDIF}
+
   //Show classic menu
   ShowPopupMenu(pmTrayicon);
+
+  {$IFDEF UNIX and QT}
+  tiTrayMenu.Show;
+  {$ENDIF}
 end;
 
 procedure TdmTrayMenu.ShowGraphicMenu;
 begin
-  if frmGraphicMenu.Visible then
-    frmGraphicMenu.CloseMenu
-  else
-    frmGraphicMenu.OpenMenu;
+  if Assigned(frmGraphicMenu) then
+  begin
+    if frmGraphicMenu.Visible then
+      frmGraphicMenu.CloseMenu
+    else
+      frmGraphicMenu.OpenMenu;
+  end;
 end;
 
 procedure TdmTrayMenu.CreateListItems(Sender: TBaseVirtualTree; Node: PVirtualNode);
@@ -290,53 +304,66 @@ var
 begin
   if Assigned(Node) then
   begin
-    NodeData := TVirtualTreeMethods.Create.GetNodeDataEx(Node, Sender);
+    NodeData := TVirtualTreeMethods.GetNodeDataEx(Node, Sender);
     ItemNodeData := NodeData.Data;
+
     //Create a menu item and add it in trayicon menu
     MenuItem := TASMenuItem.Create(Application.MainForm);
+
+    MenuItem.Data    := ItemNodeData;
+    MenuItem.pNode   := ItemNodeData.pNode;
+    MenuItem.Visible := not(ItemNodeData.HideFromMenu);
+
+    //Set NodeData's MenuItem
+    NodeData.MenuItem   := MenuItem;
+
     if (Node.Parent <> Sender.RootNode) then
     begin
-      ParentNodeData := TVirtualTreeMethods.Create.GetNodeDataEx(Node.Parent, Sender);
+      ParentNodeData := TVirtualTreeMethods.GetNodeDataEx(Node.Parent, Sender);
       AddItem(ParentNodeData.MenuItem, MenuItem);
     end
     else
       AddItem(pmTrayicon.Items, MenuItem);
-    //Set AutoHotkeys to maManual, speed up popup menu
-    MenuItem.AutoHotkeys := maManual;
+
     //Set MenuItem properties
-    if (ItemNodeData.DataType = vtdtSeparator) then
+    if (ItemNodeData.IsSeparatorItem) then
       CreateSeparator(pmTrayicon, ItemNodeData.Name, MenuItem)
     else begin
       MenuItem.Caption    := ItemNodeData.Name;
       MenuItem.ImageIndex := ItemNodeData.Icon.ImageIndex;
-      if (ItemNodeData.DataType = vtdtFile) then
+      if (ItemNodeData.IsFileItem) then
       begin
         MenuItem.OnClick  := RunFromTrayMenu;
         TvFileNodeData(ItemNodeData).CheckPathFile;
+
         //If it is a Directory, add in Trayicon Menu its subfolders and its subfiles
         if Config.AutoExpansionFolder then
         begin
           if IsDirectory(TvFileNodeData(ItemNodeData).PathAbsoluteFile) then
           begin
+            {$IFNDEF GTK}
             MenuItem.OnClick := PopulateDirectory;
             MenuItem.Path    := (TvFileNodeData(ItemNodeData)).PathAbsoluteFile;
             AddSub(MenuItem);
+            {$ENDIF}
           end;
         end;
       end
       else begin
-        if ItemNodeData.DataType = vtdtCategory then
+        if ItemNodeData.IsCategoryItem then
         begin
-          MenuItem.OnClick := PopulateCategoryItems;      
-          AddSub(MenuItem);
+          {$IFDEF GTK}
+          PopulateCategoryItems(MenuItem);
+          {$ELSE}
+          if Sender.HasChildren[Node] then
+          begin
+            MenuItem.OnClick := PopulateCategoryItems;
+            AddSub(MenuItem);
+          end;
+          {$ENDIF}
         end;
       end;
     end;
-    MenuItem.Data    := ItemNodeData;
-    MenuItem.pNode   := ItemNodeData.pNode;
-    MenuItem.Visible := not(ItemNodeData.HideFromMenu);
-    //Set NodeData's MenuItem
-    NodeData.MenuItem   := MenuItem;
   end;
 end;
 
@@ -374,32 +401,32 @@ begin
   //Header
   CreateHeaderItems(Menu);
   //MFU
-  if (Config.MFU) and (Config.ListManager.MFUList.Count > 0) then
+  if (Config.MFU) and (ASuiteManager.ListManager.MFUList.Count > 0) then
   begin
     if Config.SubMenuMFU then
     begin
       CreateSeparator(Menu);
-      CreateSpecialList(Menu, Config.ListManager.MFUList, Config.MFUNumber, DKLangConstW('msgLongMFU'));
+      CreateSpecialList(Menu, ASuiteManager.ListManager.MFUList, Config.MFUNumber, msgLongMFU);
     end
     else begin
-      CreateSeparator(Menu, DKLangConstW('msgLongMFU'));
-      CreateSpecialList(Menu, Config.ListManager.MFUList, Config.MFUNumber);
+      CreateSeparator(Menu, msgLongMFU);
+      CreateSpecialList(Menu, ASuiteManager.ListManager.MFUList, Config.MFUNumber);
     end;
   end;
-  CreateSeparator(Menu,DKLangConstW('msgList'));
+  CreateSeparator(Menu,msgList);
   //List
   PopulateCategoryItems(nil);
   //MRU
-  if (Config.MRU) and (Config.ListManager.MRUList.Count > 0) then
+  if (Config.MRU) and (ASuiteManager.ListManager.MRUList.Count > 0) then
   begin
     if Config.SubMenuMRU then
     begin
       CreateSeparator(Menu);
-      CreateSpecialList(Menu, Config.ListManager.MRUList, Config.MRUNumber, DKLangConstW('msgLongMRU'));
+      CreateSpecialList(Menu, ASuiteManager.ListManager.MRUList, Config.MRUNumber, msgLongMRU);
     end
     else begin
-      CreateSeparator(Menu,DKLangConstW('msgLongMRU'));
-      CreateSpecialList(Menu, Config.ListManager.MRUList, Config.MRUNumber,'');
+      CreateSeparator(Menu,msgLongMRU);
+      CreateSpecialList(Menu, ASuiteManager.ListManager.MRUList, Config.MRUNumber,'');
     end;
   end;
   CreateSeparator(Menu);
@@ -421,15 +448,15 @@ begin
     case I of
       0:
         begin
-          MenuItem.Caption := DKLangConstW('msgShowASuite');
-          MenuItem.ImageIndex := Config.IconsManager.GetIconIndex('asuite');
+          MenuItem.Caption := msgShowASuite;
+          MenuItem.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('asuite');
           MenuItem.OnClick := ShowMainForm;
           MenuItem.Default := true;
         end;
       1:
         begin
-          MenuItem.Caption := DKLangConstW('msgOpenOptions');
-          MenuItem.ImageIndex := Config.IconsManager.GetIconIndex('options');
+          MenuItem.Caption := msgOpenOptions;
+          MenuItem.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('options');
           MenuItem.OnClick := frmMain.miOptionsClick;
           MenuItem.Enabled := Not(Config.ReadOnlyMode);
         end;
@@ -453,16 +480,7 @@ end;
 
 procedure TdmTrayMenu.AddItem(TargetItem, AMenuItem: TMenuItem);
 begin
-{$IFDEF FASTHACK}
-  with TMenuItemPrivateHack(TargetItem) do
-  begin
-    if FItems = nil then FItems := TList.Create;
-    FItems.Insert(FItems.Count, AMenuItem);
-    TMenuItemPrivateHack(AMenuItem).FParent := TargetItem;
-  end;
-{$ELSE}
   TargetItem.Add(AMenuItem);
-{$ENDIF}
 end;
 
 procedure TdmTrayMenu.CreateFooterItems(Menu: TPopupMenu);
@@ -479,12 +497,15 @@ begin
     case I of
       0:
         begin
-          MenuItem.Caption := DKLangConstW('msgEjectHardware');
+          {$IFDEF UNIX}
+          MenuItem.Visible := False;
+          {$ENDIF}
+          MenuItem.Caption := msgEjectHardware;
           MenuItem.OnClick := EjectDialog;
         end;
       1:
         begin
-          MenuItem.Caption := DKLangConstW('msgExit');
+          MenuItem.Caption := msgExit;
           MenuItem.OnClick := frmMain.miExitClick;
         end;
     end;
@@ -525,10 +546,25 @@ begin
   end;
 end;
 
-procedure TdmTrayMenu.DrawCaptionedSeparator(Sender: TObject; ACanvas: TCanvas; ARect: TRect;
-  Selected: Boolean);
+procedure TdmTrayMenu.DrawCaptionedSeparator(Sender: TObject; ACanvas: TCanvas;
+    ARect: TRect; AState: LCLType.TOwnerDrawState);
 begin
   DoDrawCaptionedSeparator(Sender, ACanvas, ARect);
+end;
+
+function TdmTrayMenu.GetTextWidth(const AText: string; AFont: Graphics.TFont
+  ): Integer;
+var
+  bmp: Graphics.TBitmap; // Graphics.TBitmap, not Windows.TBitmap
+begin
+  Result := 0;
+  bmp := Graphics.TBitmap.Create;
+  try
+    bmp.Canvas.Font.Assign(AFont);
+    Result := bmp.Canvas.TextWidth(AText);
+  finally
+    bmp.Free;
+  end;
 end;
 
 procedure TdmTrayMenu.DoDrawCaptionedSeparator(Sender: TObject; ACanvas: TCanvas; ARect: TRect;
@@ -541,7 +577,6 @@ procedure TdmTrayMenu.DoDrawCaptionedSeparator(Sender: TObject; ACanvas: TCanvas
 
 var
   TextArea, LineArea: TRect;
-  Flags: Longint;
   LineCaption : string;  
   TextSpace, CaptionLineItemHeight: Cardinal;
 begin
@@ -549,13 +584,12 @@ begin
   LineArea := ARect;
   TextArea := LineArea;
   Dec(TextArea.Bottom, 1);
-  Flags := DT_SINGLELINE or DT_NOPREFIX or DT_VCENTER or DT_CENTER;
   TextSpace := 0;
   if (Sender is TMenuItem) then
   begin
-    CaptionLineItemHeight := Config.SmallHeightNode - 4;
+    CaptionLineItemHeight := ASuiteInstance.SmallHeightNode - 4;
     //Don't highlight menu item
-    ACanvas.Brush.Color := clMenu;
+    ACanvas.Brush.Style := bsClear;
     ACanvas.Font.Color  := clWindowText;
     if (Sender as TMenuItem).Hint <> '' then
     begin
@@ -568,7 +602,7 @@ begin
     begin
       //Get Tree's Font
       ACanvas.Font.Assign(TBaseVirtualTree(Sender).Font);
-      CaptionLineItemHeight := Config.SmallHeightNode;
+      CaptionLineItemHeight := ASuiteInstance.SmallHeightNode;
       if ACaption <> '' then
       begin
         LineCaption := Format(' %s ', [ACaption]);
@@ -576,9 +610,9 @@ begin
         TextSpace   := 1;
       end;
     end;
-  DrawText(ACanvas.Handle, PChar(LineCaption), Length(LineCaption), TextArea, Flags or DT_CALCRECT);
+  TextArea.Width := GetTextWidth(LineCaption, ACanvas.Font);
   OffsetRect(TextArea, Round((RectWidth(LineArea) - RectWidth(TextArea)) / 2 - TextSpace), 0);
-  Inc(ARect.Top, (CaptionLineItemHeight div 2) - 1);
+  Inc(ARect.Top, (CaptionLineItemHeight div 2) + 1);
   //Create first line
   Inc(ARect.Top);
   Inc(ARect.Bottom);
@@ -587,7 +621,7 @@ begin
   Inc(ARect.Top);
   Inc(ARect.Bottom);
   DrawFadeLine(ACanvas, TextArea, ARect, clBtnHighlight, FadeLineWidth, True);
-  DrawText(ACanvas.Handle, PChar(LineCaption), Length(LineCaption), TextArea, Flags);
+  ACanvas.TextOut(TextArea.Left, TextArea.Top, LineCaption);
 end;
 
 procedure TdmTrayMenu.DrawFadeLine(ACanvas: TCanvas; AClipRect, ALineRect: TRect; AColor: TColor; AFadeWidth: Integer; AClip: Boolean);
@@ -690,36 +724,147 @@ begin
     //Else create a new captioned separator
     if Assigned(ListMenuItem) then
       MenuItem := ListMenuItem
-    else begin
+    else
       MenuItem := TMenuItem.Create(Application.MainForm);
-      Menu.Items.Add(MenuItem);
-    end;
+
     MenuItem.Enabled    := False;
     MenuItem.Caption    := '-';
     MenuItem.Hint       := Text;
+
+    Menu.Items.Add(MenuItem);
+
+    {$IFDEF MSWINDOWS}
     MenuItem.OnMeasureItem := MeasureCaptionedSeparator;
+    //OnDrawItem is a windows-only feature
     MenuItem.OnDrawItem := DrawCaptionedSeparator;
+    {$ENDIF}
   end;
+end;
+
+procedure TdmTrayMenu.RefreshClassicMenu;
+begin
+  UpdateClassicMenu(pmTrayicon);
+end;
+
+class function TdmTrayMenu.CheckGnomeExtras: Boolean;
+var
+  H : TLibHandle;
+
+  function FindInStringList(aList: TStringList; aString: String): Integer;
+  var
+    I: Integer = 0;
+  begin
+    while I < aList.Count do
+    begin
+      if pos(aString, AList.Strings[I]) > 0 then
+        Exit(I);
+
+      Inc(I);
+    end;
+
+    Result := -1;
+  end;
+
+  function CheckPlugIn(PlugInName : string) : boolean;
+  var
+    AProcess: TProcess;
+    List : TStringList = nil;
+  begin
+    result := false;
+
+    AProcess := TProcess.Create(nil);
+    try
+      AProcess.Executable:= 'gnome-extensions';
+      AProcess.Parameters.Add('info');
+      AProcess.Parameters.Add(PlugInName);
+
+      AProcess.Options := AProcess.Options + [poWaitOnExit, poUsePipes];
+
+      AProcess.Execute;
+
+      if (AProcess.ExitStatus = 0) then
+      begin
+        List := TStringList.Create;
+        List.LoadFromStream(AProcess.Output);
+
+        if FindInStringList(List, 'ENABLED') > -1 then
+          result := true;
+      end;
+    finally
+      freeandnil(List);
+      freeandnil(AProcess);
+    end;
+  end;
+
+begin
+  Result := false;
+
+  H := LoadLibrary('libappindicator3.so.1');
+  if H = NilHandle then
+  begin
+    TASuiteLogger.Info('Failed to Find libappindicator3, SysTray may not work.', []);
+    exit(False);
+  end;
+  unloadLibrary(H);
+
+  if CheckPlugIn('ubuntu-appindicators@ubuntu.com') or            // Ubuntu, Debian
+     CheckPlugIn('appindicatorsupport@rgcjonas.gmail.com') then  // Fedora
+    Result := True;
+
+  if not Result then
+    TASuiteLogger.Info('Failed to Find an enabled appindicator plugin, SysTray may not work.', []);
+end;
+
+class function TdmTrayMenu.CheckSysTray: Boolean;
+{$IFDEF LINUX}
+var
+  A : TAtom;
+  XDisplay: PDisplay;
+{$ENDIF}
+begin
+  {$IFDEF LINUX}
+    {$IFDEF LCLGTK2}
+  XDisplay := gdk_display;
+    {$ENDIF}
+
+    {$IFDEF LCLQT5}
+  XDisplay := QX11Info_display;
+    {$ENDIF}
+
+    {$IFDEF LCLGTK3}
+  XDisplay := gdk_x11_display_get_xdisplay(gdk_window_get_display(gdk_get_default_root_window));
+    {$ENDIF}
+
+    A := XInternAtom(XDisplay, '_NET_SYSTEM_TRAY_S0', False);
+    Result := (XGetSelectionOwner(XDisplay, A) <> 0);
+
+  if not Result then
+    Result := TdmTrayMenu.CheckGnomeExtras; // Thats libappindicator3 and an installed and enabled gnome-shell-extension-appindicator
+  {$ELSE}
+  //Windows is always true!
+  Result := True;
+  {$ENDIF}
 end;
 
 procedure TdmTrayMenu.CreateSpecialList(Menu: TPopupMenu;SList: TBaseItemsList;
                                         MaxItems: Integer; SubMenuCaption: String);
 var
-  MenuItem : TASMenuItem;
+  ParentMenuItem : TMenuItem;
 begin
-  MenuItem := TASMenuItem.Create(Application.MainForm);
-  Menu.Items.Add(MenuItem);
   if SubMenuCaption <> '' then
   begin
-    //Yes submenu
-    UpdateSpecialList(MenuItem, SList, MaxItems);
-    MenuItem.Caption := SubMenuCaption;
+    //Yes submenu                 
+    ParentMenuItem := TASMenuItem.Create(Application.MainForm);
+    ParentMenuItem.Caption := SubMenuCaption;
+    Menu.Items.Add(ParentMenuItem);
   end
   else begin
     //No submenu
-    UpdateSpecialList(Menu.Items[0].parent, SList, MaxItems);
-    MenuItem.free;
-  end;
+    ParentMenuItem := Menu.Items[0].Parent;
+  end;           
+
+  if Assigned(ParentMenuItem) then
+    UpdateSpecialList(ParentMenuItem, SList, MaxItems);
 end;
 
 function TdmTrayMenu.IsCaptionedSeparator(MenuItem: TMenuItem): Boolean;
@@ -732,6 +877,7 @@ end;
 procedure TdmTrayMenu.MeasureCaptionedSeparator(Sender: TObject;
   ACanvas: TCanvas; var Width, Height: Integer);
 begin
+  //TODO: Fix me about DPI
   //Change separator's height
   Height := 15; //CaptionLineItemHeight + 1;
 end;
@@ -743,36 +889,25 @@ begin
   //Get first node
   if Assigned(Sender) then
   begin
-    Node := Config.MainTree.GetFirstChild(TASMenuItem(Sender).pNode);
-    {$IFDEF FASTHACK}
-    { allocate some space for the items TList. E.g. space for 4096 items should
-      be enough. }
-    TMenuItemPrivateHack(TASMenuItem(Sender)).FItems.Capacity := 4096;
-    {$ENDIF}
+    Node := ASuiteInstance.MainTree.GetFirstChild(TASMenuItem(Sender).pNode);
     if TASMenuItem(Sender).Count > 0 then
       TASMenuItem(Sender).Items[0].Visible := False;
   end
   else
-    Node := Config.MainTree.GetFirst;
+    Node := ASuiteInstance.MainTree.GetFirst;
 
   try
     //Iterate time (only child level)
     while Assigned(Node) do
     begin
-      CreateListItems(Config.MainTree, Node);
+      CreateListItems(ASuiteInstance.MainTree, Node);
 
-      Node := Config.MainTree.GetNextSibling(Node);
+      Node := ASuiteInstance.MainTree.GetNextSibling(Node);
     end;
   finally
     if Assigned(Sender) then
     begin
       TASMenuItem(Sender).OnClick := nil;
-      {$IFDEF FASTHACK}
-        { because fast hack does not rebuild the handle, we use the autolinereduction
-          to do that. Add extract line here so it will rebuild the handle. Otherwise
-          we don't see any items in the menu.. :) }
-      TASMenuItem(Sender).NewBottomLine;
-      {$ENDIF}
     end;
   end;
 end;
@@ -785,36 +920,45 @@ begin
 
   MI := TASMenuItem(Sender);
   try
-    {$IFDEF FASTHACK}
-    { allocate some space for the items TList. E.g. space for 4096 items should
-      be enough. }
-    TMenuItemPrivateHack(MI).FItems.Capacity := 4096;
-    {$ENDIF}
-    MI.Path := IncludeTrailingBackslash(MI.Path);
+    MI.Path := AppendPathDelim(MI.Path);
     { first directories }
     SearchAddDirectory(MI);
     { then files }
     SearchAddFiles(MI);
+
+    //A Folder empty will have 3 child items (folder empty, "Open this folder" and a separator)
+    //Change visibile property to false for last child (separator)
+    if (MI.Count = 3) and (MI.Items[MI.Count - 1].IsLine) then
+      MI.Items[MI.Count - 1].Visible := False;
   finally
     MI.OnClick := nil;
   end;
-  {$IFDEF FASTHACK}
-    { because fast hack does not rebuild the handle, we use the autolinereduction
-      to do that. Add extract line here so it will rebuild the handle. Otherwise
-      we don't see any items in the menu.. :) }
-  MI.NewBottomLine;
-  {$ENDIF}
 end;
 
 procedure TdmTrayMenu.RunFromTrayMenu(Sender: TObject);
 begin
-  TVirtualTreeMethods.Create.ExecuteNode(Config.MainTree, TASMenuItem(Sender).pNode, rmNormal, False);
+  TVirtualTreeMethods.ExecuteNode(ASuiteInstance.MainTree, TASMenuItem(Sender).pNode, rmNormal, False);
 end;
 
 procedure TdmTrayMenu.OpenFile(Sender: TObject);
 begin
-  ShellExecute(GetDesktopWindow, nil, PChar(TASMenuItem(Sender).Path), nil,
-               PChar(ExtractFileDir(TASMenuItem(Sender).Path)), SW_SHOW);
+  if IsExecutableFile(TASMenuItem(Sender).Path) then
+    CreateProcessEx(TASMenuItem(Sender).Path)
+  else
+    OpenDocument(TASMenuItem(Sender).Path);
+end;
+
+procedure TdmTrayMenu.tiTrayMenuMouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  if (Config.ASuiteState = lsStartUp) then
+    Exit;
+  case Button of
+    TMouseButton.mbLeft   : DoTrayIconButtonClick(Sender, Config.ActionClickLeft);
+    TMouseButton.mbMiddle : DoTrayIconButtonClick(Sender, Config.ActionClickMiddle);
+    TMouseButton.mbRight  : DoTrayIconButtonClick(Sender, Config.ActionClickRight);
+  end;
+
 end;
 
 end.

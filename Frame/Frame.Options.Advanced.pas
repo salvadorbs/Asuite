@@ -19,27 +19,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Options.Advanced;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Frame.BaseEntity, VirtualTrees,
-  Vcl.ComCtrls, DKLang, Vcl.StdCtrls, Vcl.Samples.Spin, Vcl.ExtCtrls;
+  LCLIntf, SysUtils, Variants, Controls, Dialogs, Frame.BaseEntity, VirtualTrees,
+  StdCtrls, ExtCtrls, Spin, DefaultTranslator;
 
 type
+
+  { TfrmAdvancedOptionsPage }
+
   TfrmAdvancedOptionsPage = class(TfrmBaseEntityPage)
-    DKLanguageController1: TDKLanguageController;
-    pnlLeft: TPanel;
-    gbMFU: TGroupBox;
-    lbMaxMFU: TLabel;
+    cbCache: TCheckBox;
     cbMFU: TCheckBox;
+    cbScheduler: TCheckBox;
+    gbMFU: TGroupBox;
+    gbOtherFunctions: TGroupBox;
+    lbMaxMFU: TLabel;
+    
+    pnlLeft: TPanel;
     gbRecents: TGroupBox;
     lbMaxMRU: TLabel;
     cbMRU: TCheckBox;
     pnlRight: TPanel;
-    gbOtherFunctions: TGroupBox;
-    cbCache: TCheckBox;
-    cbScheduler: TCheckBox;
     grpClearElements: TGroupBox;
     lbClearElements: TLabel;
     cbClearMFU: TCheckBox;
@@ -47,8 +51,8 @@ type
     cbClearCache: TCheckBox;
     btnClear: TButton;
     cbClearMRU: TCheckBox;
-    seRecents: TSpinEdit;
     seMFU: TSpinEdit;
+    seRecents: TSpinEdit;
     gbBackup: TGroupBox;
     lbMaxBackup: TLabel;
     cbBackup: TCheckBox;
@@ -81,10 +85,11 @@ var
 implementation
 
 uses
-  AppConfig.Main, Utility.FileFolder, Utility.Misc, Kernel.Consts, VirtualTree.Methods,
-  NodeDataTypes.Files, NodeDataTypes.Custom, Kernel.Enumerations;
+  AppConfig.Main, Utility.FileFolder, Kernel.Consts, VirtualTree.Methods,
+  NodeDataTypes.Files, NodeDataTypes.Custom, Kernel.ResourceStrings,
+  Utility.Misc, Kernel.Instance, Kernel.Manager;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmAdvancedOptionsPage }
 
@@ -94,34 +99,34 @@ begin
     //Clear MRU
     if cbClearMRU.Checked then
     begin
-      Config.ListManager.MRUList.Clear;
-      Config.MainTree.IterateSubtree(nil, ClearMRU, nil);
+      ASuiteManager.ListManager.MRUList.Clear;
+      ASuiteInstance.MainTree.IterateSubtree(nil, ClearMRU, nil);
       cbClearMRU.Checked := False;
     end;
     //Clear MFU
     if cbClearMFU.Checked then
     begin
-      Config.ListManager.MFUList.Clear;
-      Config.MainTree.IterateSubtree(nil, ClearMFU, nil);
+      ASuiteManager.ListManager.MFUList.Clear;
+      ASuiteInstance.MainTree.IterateSubtree(nil, ClearMFU, nil);
       cbClearMFU.Checked := False;
     end;
     //Clear Backup
     if cbClearBackup.Checked then
     begin
-      DeleteFiles(Config.Paths.SuitePathBackup, APP_NAME + '_*' + EXT_SQLBCK);
+      DeleteFiles(ASuiteInstance.Paths.SuitePathBackup, APP_NAME + '_*' + EXT_SQLBCK);
       cbClearBackup.Checked := False;
     end;
     //Clear Cache
     if cbClearCache.Checked then
     begin
-      Config.MainTree.FullCollapse;
-      Config.MainTree.IterateSubtree(nil, ClearCache, nil);
+      ASuiteInstance.MainTree.FullCollapse;
+      ASuiteInstance.MainTree.IterateSubtree(nil, ClearCache, nil);
       cbClearCache.Checked := False;
     end;
   finally
-    ShowMessageEx(DKLangConstW('msgOperationCompleted'));
+    ShowMessageEx(msgOperationCompleted);
     //Save list
-    TVirtualTreeMethods.Create.RefreshList(nil);
+    TVirtualTreeMethods.RefreshList(nil);
   end;
 end;
 
@@ -145,8 +150,8 @@ procedure TfrmAdvancedOptionsPage.ClearCache(Sender: TBaseVirtualTree;
 var
   CurrentNodeData : TvCustomRealNodeData;
 begin
-  CurrentNodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender));
-  if CurrentNodeData.DataType <> vtdtSeparator then
+  CurrentNodeData := TvCustomRealNodeData(TVirtualTreeMethods.GetNodeItemData(Node, Sender));
+  if not(CurrentNodeData.IsSeparatorItem) then
     CurrentNodeData.Icon.ResetIcon;
   CurrentNodeData.Changed := True;
 end;
@@ -156,7 +161,7 @@ procedure TfrmAdvancedOptionsPage.ClearMFU(Sender: TBaseVirtualTree;
 var
   NodeData : TvFileNodeData;
 begin
-  NodeData := TvFileNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender));
+  NodeData := TvFileNodeData(TVirtualTreeMethods.GetNodeItemData(Node, Sender));
   NodeData.ClickCount := 0;
   NodeData.Changed := True;
 end;
@@ -166,19 +171,19 @@ procedure TfrmAdvancedOptionsPage.ClearMRU(Sender: TBaseVirtualTree;
 var
   NodeData : TvFileNodeData;
 begin
-  NodeData := TvFileNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender));
+  NodeData := TvFileNodeData(TVirtualTreeMethods.GetNodeItemData(Node, Sender));
   NodeData.LastAccess := -1;
   NodeData.Changed := True;
 end;
 
 function TfrmAdvancedOptionsPage.GetImageIndex: Integer;
 begin
-  Result := Config.IconsManager.GetIconIndex('advanced');
+  Result := ASuiteManager.IconsManager.GetIconIndex('advanced');
 end;
 
 function TfrmAdvancedOptionsPage.GetTitle: string;
 begin
-  Result := DKLangConstW('msgAdvanced');
+  Result := msgAdvanced;
 end;
 
 function TfrmAdvancedOptionsPage.InternalLoadData: Boolean;

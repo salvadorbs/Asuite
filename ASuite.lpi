@@ -1,0 +1,655 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="11"/>
+    <General>
+      <Flags>
+        <MainUnitHasUsesSectionForAllUnits Value="False"/>
+        <MainUnitHasCreateFormStatements Value="False"/>
+        <MainUnitHasTitleStatement Value="False"/>
+        <MainUnitHasScaledStatement Value="False"/>
+      </Flags>
+      <SessionStorage Value="InProjectDir"/>
+      <MainUnit Value="0"/>
+      <Title Value="ASuite"/>
+      <Scaled Value="True"/>
+      <UseAppBundle Value="False"/>
+      <ResourceType Value="res"/>
+      <UseXPManifest Value="True"/>
+      <XPManifest>
+        <TextName Value="ASuite"/>
+        <TextDesc Value="Portable Launcher"/>
+      </XPManifest>
+      <Icon Value="0"/>
+    </General>
+    <i18n>
+      <EnableI18N Value="True"/>
+      <OutDir Value="languages"/>
+    </i18n>
+    <VersionInfo>
+      <UseVersionInfo Value="True"/>
+      <AutoIncrementBuild Value="True"/>
+      <MajorVersionNr Value="2"/>
+      <MinorVersionNr Value="1"/>
+      <BuildNr Value="1264"/>
+    </VersionInfo>
+    <BuildModes Count="4">
+      <Item1 Name="Default" Default="True"/>
+      <Item2 Name="Debug">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="bin\ASuite"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="Forms;DataModules;Library;Utilities;Frame;$(ProjOutDir)"/>
+            <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p;Library\$(LCLWidgetType)"/>
+            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <SyntaxMode Value="Delphi"/>
+              <IncludeAssertionCode Value="True"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <Checks>
+              <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
+            </Checks>
+            <TargetCPU Value="x86_64"/>
+            <Optimizations>
+              <OptimizationLevel Value="0"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf2Set"/>
+              <UseHeaptrc Value="True"/>
+              <TrashVariables Value="True"/>
+            </Debugging>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <CompilerMessages>
+              <IgnoredMessages idx5026="True" idx5024="True" idx4105="True" idx4104="True"/>
+            </CompilerMessages>
+            <CustomOptions Value="-Xm
+-dBorland
+-dVer150
+-dDelphi7
+-dCompiler6_Up
+-dPUREPASCAL
+-dDebug"/>
+          </Other>
+        </CompilerOptions>
+      </Item2>
+      <Item3 Name="Release">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="bin\ASuite"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="Forms;DataModules;Library;Utilities;Frame;$(ProjOutDir)"/>
+            <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p;Library\$(LCLWidgetType)"/>
+            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <SyntaxMode Value="Delphi"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="x86_64"/>
+            <TargetOS Value="win64"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <StripSymbols Value="True"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-Xm
+-dBorland
+-dVer150
+-dDelphi7
+-dCompiler6_Up
+-dPUREPASCAL"/>
+          </Other>
+        </CompilerOptions>
+      </Item3>
+      <Item4 Name="Linux Debug">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="bin\ASuite"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="Forms;DataModules;Library;Utilities;Frame;$(ProjOutDir)"/>
+            <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p;Library\$(LCLWidgetType)"/>
+            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <SyntaxMode Value="Delphi"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <TargetCPU Value="x86_64"/>
+            <TargetOS Value="linux"/>
+          </CodeGeneration>
+          <Linking>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dBorland
+-dVer150
+-dDelphi7
+-dCompiler6_Up
+-dPUREPASCAL
+-dUseCthreads"/>
+            <OtherDefines Count="6">
+              <Define0 Value="Borland"/>
+              <Define1 Value="Ver150"/>
+              <Define2 Value="Delphi7"/>
+              <Define3 Value="Compiler6_Up"/>
+              <Define4 Value="PUREPASCAL"/>
+              <Define5 Value="-dUseCthreads"/>
+            </OtherDefines>
+          </Other>
+        </CompilerOptions>
+      </Item4>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+      <UseFileFilters Value="True"/>
+    </PublishOptions>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="0"/>
+    </RunParams>
+    <RequiredPackages Count="12">
+      <Item1>
+        <PackageName Value="jppacklcl"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="ASuiteComps"/>
+      </Item2>
+      <Item3>
+        <PackageName Value="bgracontrols"/>
+      </Item3>
+      <Item4>
+        <PackageName Value="FCL"/>
+      </Item4>
+      <Item5>
+        <PackageName Value="mormot_cross"/>
+      </Item5>
+      <Item6>
+        <PackageName Value="mormot_base"/>
+      </Item6>
+      <Item7>
+        <PackageName Value="HashLib4PascalPackage"/>
+      </Item7>
+      <Item8>
+        <PackageName Value="uniqueinstance_package"/>
+      </Item8>
+      <Item9>
+        <PackageName Value="virtualtreeview_package"/>
+      </Item9>
+      <Item10>
+        <PackageName Value="DateTimeCtrls"/>
+      </Item10>
+      <Item11>
+        <PackageName Value="lclextensions_package"/>
+      </Item11>
+      <Item12>
+        <PackageName Value="LCL"/>
+      </Item12>
+    </RequiredPackages>
+    <Units Count="73">
+      <Unit0>
+        <Filename Value="ASuite.lpr"/>
+        <IsPartOfProject Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="Forms/Forms.About.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmAbout"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="Forms/Forms.GraphicMenu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmGraphicMenu"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="Forms/Forms.ImportList.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmImportList"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="Forms/Forms.Main.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmMain"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="Forms/Forms.PropertySeparator.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmPropertySeparator"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="Forms/Forms.ScanFolder.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmScanFolder"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="DataModules/DataModules.Icons.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="dmImages"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="DataModule"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="DataModules/DataModules.TrayMenu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="dmTrayMenu"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="DataModule"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="Library/AppConfig.Main.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="Library/Kernel.BaseMainForm.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="Library/Kernel.Consts.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="Library/Kernel.Enumerations.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="Utilities/Utility.FileFolder.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="Utilities/Utility.System.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="Utilities/Utility.XML.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="Frame/Frame.BaseEntity.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmBaseEntityPage"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="Frame/Frame.Properties.Base.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmBasePropertyPage"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="Frame/Frame.Properties.General.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmBaseGeneralPropertyPage"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="Frame/Frame.Options.Advanced.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmAdvancedOptionsPage"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit19>
+      <Unit20>
+        <Filename Value="Frame/Frame.Options.General.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmGeneralOptionsPage"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="Frame/Frame.Options.Hotkey.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmHotkeyOptionsPage"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="Frame/Frame.Options.Autorun.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmAutorunOptionsPage"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit22>
+      <Unit23>
+        <Filename Value="Frame/Frame.Options.Stats.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmStatsOptionsPage"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit23>
+      <Unit24>
+        <Filename Value="Frame/Frame.Options.Trayicon.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmTrayiconOptionsPage"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit24>
+      <Unit25>
+        <Filename Value="Frame/Frame.Properties.Advanced.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmAdvancedPropertyPage"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit25>
+      <Unit26>
+        <Filename Value="Frame/Frame.Properties.Behavior.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmBehaviorPropertyPage"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit26>
+      <Unit27>
+        <Filename Value="Frame/Frame.Properties.General.Category.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmCatGeneralPropertyPage"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit27>
+      <Unit28>
+        <Filename Value="Frame/Frame.Properties.General.Software.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmSWGeneralPropertyPage"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit28>
+      <Unit29>
+        <Filename Value="Library/Database.Version.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit29>
+      <Unit30>
+        <Filename Value="Library/Database.List.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit30>
+      <Unit31>
+        <Filename Value="Library/Database.Manager.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit31>
+      <Unit32>
+        <Filename Value="Library/NodeDataTypes.Files.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit32>
+      <Unit33>
+        <Filename Value="Library/NodeDataTypes.Separator.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit33>
+      <Unit34>
+        <Filename Value="Library/NodeDataTypes.Base.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit34>
+      <Unit35>
+        <Filename Value="Library/NodeDataTypes.Category.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit35>
+      <Unit36>
+        <Filename Value="Library/NodeDataTypes.Custom.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit36>
+      <Unit37>
+        <Filename Value="Library/Kernel.Types.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit37>
+      <Unit38>
+        <Filename Value="Library/Lists.Base.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit38>
+      <Unit39>
+        <Filename Value="Library/Lists.Special.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit39>
+      <Unit40>
+        <Filename Value="Library/Lists.HotKey.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit40>
+      <Unit41>
+        <Filename Value="Library/Lists.Manager.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit41>
+      <Unit42>
+        <Filename Value="Library/Kernel.Singleton.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit42>
+      <Unit43>
+        <Filename Value="Library/AppConfig.Paths.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit43>
+      <Unit44>
+        <Filename Value="Library/Kernel.ASMenuItem.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit44>
+      <Unit45>
+        <Filename Value="Utilities/Utility.Conversions.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit45>
+      <Unit46>
+        <Filename Value="Utilities/Utility.Misc.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit46>
+      <Unit47>
+        <Filename Value="Forms/Forms.ShortcutGrabber.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmShortcutGrabber"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit47>
+      <Unit48>
+        <Filename Value="Library/VirtualTree.Events.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit48>
+      <Unit49>
+        <Filename Value="Forms/Forms.Dialog.BaseEntity.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmDialogBase"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit49>
+      <Unit50>
+        <Filename Value="Forms/Forms.Options.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmOptions"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit50>
+      <Unit51>
+        <Filename Value="Forms/Forms.PropertyItem.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmPropertyItem"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit51>
+      <Unit52>
+        <Filename Value="Library/VirtualTree.Methods.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit52>
+      <Unit53>
+        <Filename Value="Library/GraphicMenu.ThemeEngine.Consts.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit53>
+      <Unit54>
+        <Filename Value="Library/GraphicMenu.ThemeEngine.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit54>
+      <Unit55>
+        <Filename Value="Library/Icons.Node.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit55>
+      <Unit56>
+        <Filename Value="Library/Icons.Manager.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit56>
+      <Unit57>
+        <Filename Value="Library/Icons.Base.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit57>
+      <Unit58>
+        <Filename Value="Library/Icons.Files.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit58>
+      <Unit59>
+        <Filename Value="Frame/Frame.Options.MainWindow.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmMainWindowOptionsPage"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit59>
+      <Unit60>
+        <Filename Value="Library/Icons.Thread.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit60>
+      <Unit61>
+        <Filename Value="Library/Kernel.Scheduler.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit61>
+      <Unit62>
+        <Filename Value="Library/Kernel.Logger.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit62>
+      <Unit63>
+        <Filename Value="Library/Kernel.ResourceStrings.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit63>
+      <Unit64>
+        <Filename Value="Forms/Forms.UILogin.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmUILogin"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit64>
+      <Unit65>
+        <Filename Value="Library/Thread.FindFiles.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit65>
+      <Unit66>
+        <Filename Value="Library/AppConfig.Consts.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit66>
+      <Unit67>
+        <Filename Value="Library/AppConfig.PathList.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit67>
+      <Unit68>
+        <Filename Value="Frame/frame.properties.environmentvars.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmEnvironmentVars"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="Frame.Properties.EnvironmentVars"/>
+      </Unit68>
+      <Unit69>
+        <Filename Value="Library/Icons.ExtFile.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit69>
+      <Unit70>
+        <Filename Value="Library/Kernel.Instance.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit70>
+      <Unit71>
+        <Filename Value="Library/Kernel.Manager.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit71>
+      <Unit72>
+        <Filename Value="Library/VirtualTree.Helper.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit72>
+    </Units>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <PathDelim Value="\"/>
+    <SearchPaths>
+      <IncludeFiles Value="Forms;DataModules;Library;Utilities;Frame;$(ProjOutDir)"/>
+      <OtherUnitFiles Value="Forms;DataModules;Library;Utilities;Frame;3p;Library\$(LCLWidgetType)"/>
+      <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <SyntaxMode Value="Delphi"/>
+      </SyntaxOptions>
+    </Parsing>
+    <CodeGeneration>
+      <TargetCPU Value="x86_64"/>
+      <TargetOS Value="win64"/>
+    </CodeGeneration>
+    <Linking>
+      <Options>
+        <Win32>
+          <GraphicApplication Value="True"/>
+        </Win32>
+      </Options>
+    </Linking>
+    <Other>
+      <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
+    </Other>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="3">
+      <Item1>
+        <Name Value="EAbort"/>
+      </Item1>
+      <Item2>
+        <Name Value="ECodetoolError"/>
+      </Item2>
+      <Item3>
+        <Name Value="EFOpenError"/>
+      </Item3>
+    </Exceptions>
+  </Debugging>
+</CONFIG>

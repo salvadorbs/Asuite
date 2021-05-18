@@ -19,42 +19,45 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.GraphicMenu;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Windows, Classes, Forms, StdCtrls, Buttons, ExtCtrls, ComCtrls, Messages,
-	ShellAPI, Controls, Graphics, Dialogs, SysUtils, VirtualTrees, AppEvnts,
-  Vcl.Imaging.pngimage, cySkinButton, IniFiles, Lists.Manager, Vcl.Menus,
-  DKLang, Lists.Base;
+  LCLIntf, LCLType, Classes, Forms, StdCtrls, ExtCtrls, ComCtrls, Controls,
+  Graphics, Dialogs, SysUtils, VirtualTrees, Menus, Lists.Base,
+  BCImageTab, ButtonedEdit, BCImageButton, DefaultTranslator;
 
 type
 
-	TfrmGraphicMenu = class(TForm)
-  	imgDriveSpace: TImage;
-	  imgDivider2: TImage;
-  	lblDriveName: TLabel;
-  	lblDriveSpace: TLabel;
-   	tmrFader: TTimer;
+  { TfrmGraphicMenu }
+
+  TfrmGraphicMenu = class(TForm)
+    edtSearch: TButtonedEdit;
+    imgDriveSpace: TImage;
+    imgDivider2: TImage;
+    lblDriveName: TLabel;
+    lblDriveSpace: TLabel;
+    sknbtnAbout: TBCImageButton;
+    sknbtnASuite: TBCImageButton;
+    sknbtnDocuments: TBCImageButton;
+    sknbtnEject: TBCImageButton;
+    sknbtnExit: TBCImageButton;
+    sknbtnExplore: TBCImageButton;
+    sknbtnList: TBCImageTab;
+    sknbtnMFU: TBCImageTab;
+    sknbtnMusic: TBCImageButton;
+    sknbtnOptions: TBCImageButton;
+    sknbtnPictures: TBCImageButton;
+    sknbtnRecents: TBCImageTab;
+    sknbtnVideos: TBCImageButton;
+    tmrFader: TTimer;
     imgLogo: TImage;
     imgPersonalPicture: TImage;
     vstList: TVirtualStringTree;
     OpenDialog1: TOpenDialog;
     imgDivider1: TImage;
-    ApplicationEvents1: TApplicationEvents;
-    sknbtnASuite: TcySkinButton;
-    sknbtnOptions: TcySkinButton;
-    sknbtnDocuments: TcySkinButton;
-    sknbtnPictures: TcySkinButton;
-    sknbtnAbout: TcySkinButton;
-    sknbtnExplore: TcySkinButton;
-    sknbtnVideos: TcySkinButton;
-    sknbtnMusic: TcySkinButton;
-    edtSearch: TButtonedEdit;
-    sknbtnList: TcySkinButton;
-    sknbtnRecents: TcySkinButton;
-    sknbtnMFU: TcySkinButton;
-    sknbtnEject: TcySkinButton;
-    sknbtnExit: TcySkinButton;
+    ApplicationEvents1: TApplicationProperties;
     imgBackground: TImage;
     imgDriveBackground: TImage;
     pmWindow: TPopupMenu;
@@ -64,11 +67,15 @@ type
     mniOpenFolderSw: TMenuItem;
     N6: TMenuItem;
     mniProperty: TMenuItem;
-    DKLanguageController1: TDKLanguageController;
+    
     imgUserFrame: TImage;
     imgDragSpaceHidden: TImage;
     tmrCheckItems: TTimer;
     procedure FormCreate(Sender: TObject);
+    procedure imgDragSpaceHiddenMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure imgLogoMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
     procedure tmrFaderTimer(Sender: TObject);
     procedure imgLogoMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
@@ -81,7 +88,7 @@ type
     procedure sknbtnExitClick(Sender: TObject);
     procedure imgPersonalPictureClick(Sender: TObject);
     procedure mniPropertyClick(Sender: TObject);
-    procedure btnSearchClick(Sender: TObject);
+    procedure edtSearchRightButtonClick(Sender: TObject);
     procedure edtSearchChange(Sender: TObject);
     procedure FormDeactivate(Sender: TObject);
     procedure ApplicationEvents1Deactivate(Sender: TObject);
@@ -93,9 +100,10 @@ type
     procedure tmrCheckItemsTimer(Sender: TObject);
     procedure FormHide(Sender: TObject);
     procedure mniRunClick(Sender: TObject);
-	private    
+  private
     { Private declarations }
     FOpening : Boolean;
+
     procedure OpenFolder(FolderPath: string);
     procedure UpdateDriveStats;
     procedure CheckUserPicture;
@@ -103,24 +111,27 @@ type
     procedure PopulateListTree(const ATree: TVirtualStringTree);
     procedure PopulateSpecialTree(const ATree: TVirtualStringTree; AList: TBaseItemsList; MaxItems: Integer);
     procedure SavePositionForm;
-	public
+    procedure HandleEdge(var AEdge: Integer; ASnapToEdge: Integer; ASnapDistance: Integer = 0);
+  public
     { Public declarations }
     procedure OpenMenu;
-  	procedure CloseMenu;
+    procedure CloseMenu;
   end;
 
 var
-	frmGraphicMenu : TfrmGraphicMenu;
+  frmGraphicMenu : TfrmGraphicMenu;
+  OldWindowX, OldWindowY: Integer;
 
 implementation
 
-{$R *.dfm}
+{$R *.lfm}
 
 uses
   Forms.Main, Utility.System, Kernel.Consts, AppConfig.Main, DataModules.Icons,
-  Forms.About, NodeDataTypes.Base, Kernel.Enumerations, Forms.Options,
+  Forms.About, NodeDataTypes.Base, Kernel.Enumerations, Forms.Options, LazVersion,
   Utility.Misc, VirtualTree.Events, VirtualTree.Methods, Kernel.Types,
-  NodeDataTypes.Custom, VirtualTree.Helper, GraphicMenu.ThemeEngine;
+  NodeDataTypes.Custom, GraphicMenu.ThemeEngine, Kernel.ResourceStrings, Kernel.Instance, Kernel.Manager
+  {$IFDEF MSWINDOWS} , Windows {$ENDIF};
 
 procedure TfrmGraphicMenu.ApplicationEvents1Deactivate(Sender: TObject);
 begin
@@ -135,28 +146,36 @@ var
 begin
   //Clear vstList
   vstList.Clear;
-  if edtSearch.Text <> '' then
-  begin
-    edtSearch.RightButton.ImageIndex := TThemeEngine.Create.CancelIcon;
-    //Do search
-    //Change node height and imagelist
-    TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, False);
-    frmMain.DoSearchItem(vstList, edtSearch.Text, stName);
-    vstList.SortTree(-1, sdAscending);
-    //Set first node as HotNode
-    Node := vstList.GetFirst;
-    if Assigned(Node) then
-      vstList.SetCurrentHotNode(Node);
-  end
-  else begin
-    edtSearch.RightButton.ImageIndex := TThemeEngine.Create.SearchIcon;
-    //Change node height and imagelist
-    TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, Config.GMSmallIconSize);
-    PopulateListTree(vstList);
+  vstList.BeginUpdate;
+  try
+    if edtSearch.Text <> '' then
+    begin
+      edtSearch.RightButton.ImageIndex := TThemeEngine.Create.CancelIcon;
+
+      //Do search
+      //Change node height and imagelist
+      TVirtualTreeMethods.ChangeTreeIconSize(vstList, False);
+      frmMain.DoSearchItem(vstList, edtSearch.Text, stName);
+      vstList.SortTree(-1, sdAscending);
+
+      //Set first node as HotNode
+      Node := vstList.GetFirst;
+      if Assigned(Node) then
+        vstList.HotNode := Node;
+    end
+    else begin
+      edtSearch.RightButton.ImageIndex := TThemeEngine.Create.SearchIcon;
+
+      //Change node height and imagelist
+      TVirtualTreeMethods.ChangeTreeIconSize(vstList, Config.GMSmallIconSize);
+      PopulateListTree(vstList);
+    end;
+  finally
+    vstList.EndUpdate;
   end;
 end;
 
-procedure TfrmGraphicMenu.btnSearchClick(Sender: TObject);
+procedure TfrmGraphicMenu.edtSearchRightButtonClick(Sender: TObject);
 begin
   edtSearch.Text := '';
 end;
@@ -179,17 +198,24 @@ begin
   end;
 end;
 
+procedure TfrmGraphicMenu.HandleEdge(var AEdge: Integer; ASnapToEdge: Integer;
+  ASnapDistance: Integer);
+begin
+  if (Abs(AEdge + ASnapDistance - ASnapToEdge) < 10) then
+    AEdge := ASnapToEdge - ASnapDistance;
+end;
+
 procedure TfrmGraphicMenu.CheckUserPicture;
 var
   sTempPath: string;
 begin
   //User Picture
   if (Config.GMPersonalPicture = 'PersonalPicture.png') and (not FileExists(Config.GMPersonalPicture)) then
-    sTempPath := Config.Paths.SuitePathCurrentTheme + Config.GMPersonalPicture
+    sTempPath := ASuiteInstance.Paths.SuitePathCurrentTheme + Config.GMPersonalPicture
   else begin
-    sTempPath := Config.Paths.RelativeToAbsolute(Config.GMPersonalPicture);
+    sTempPath := ASuiteInstance.Paths.RelativeToAbsolute(Config.GMPersonalPicture);
     if Not FileExists(sTempPath) then
-      sTempPath := Config.Paths.SuitePathCurrentTheme + 'PersonalPicture.png';
+      sTempPath := ASuiteInstance.Paths.SuitePathCurrentTheme + 'PersonalPicture.png';
   end;
   imgPersonalPicture.Picture.LoadFromFile(sTempPath);
   imgPersonalPicture.Visible := (FileExists(sTempPath));
@@ -198,40 +224,51 @@ end;
 
 procedure TfrmGraphicMenu.UpdateDriveStats;
 var
-  dblDriveSize: Double;
-  Drive: Char;
-  dblDriveUsed: Double;
+  Drive: String;
+  intDiskSize, intDiskFree, intDiskUsed: Int64;
 begin
   //Calculate and display the drive size
-  Drive := Config.Paths.SuiteDrive[1];
-  dblDriveSize := DiskSize(Ord(Drive) - 64);
-  dblDriveUsed := dblDriveSize - DiskFree(Ord(Drive) - 64);
-  imgDriveSpace.Width := Round(dblDriveUsed / dblDriveSize * (imgDriveBackground.Width - 4));
-  lblDriveSpace.Caption := Format(DKLangConstW('msgGMHardDiskSpace'), [DiskFreeString(Drive, True), DiskSizeString(Drive, True)]);
+  Drive := ASuiteInstance.Paths.SuiteDrive;
+
+  if Length(Drive) > 0 then
+  begin
+    Utility.Misc.GetDiskFreeSpace(Drive, intDiskFree, intDiskSize);
+    intDiskUsed := (intDiskSize - intDiskFree);
+    imgDriveSpace.Width := Round(intDiskUsed  / intDiskSize * (imgDriveBackground.Width - 4));
+    lblDriveSpace.Caption := Format(msgGMHardDiskSpace, [DiskFloatToString(intDiskFree, True), DiskFloatToString(intDiskUsed, True)]);
+  end;
 end;
 
 procedure TfrmGraphicMenu.OpenFolder(FolderPath: string);
 var
-  ErrorCode: Integer;
+  Result: Boolean;
   sPath: string;
 begin
-  sPath := Config.Paths.RelativeToAbsolute(FolderPath);
-  ErrorCode := ShellExecute(GetDesktopWindow, 'open', PChar(sPath), PChar(''), PChar(sPath), SW_SHOWDEFAULT);
-  if ErrorCode <= 32 then
-    ShowMessageFmtEx(DKLangConstW('msgErrGeneric'), ['', SysErrorMessage(ErrorCode)], True);
+  sPath := ASuiteInstance.Paths.RelativeToAbsolute(FolderPath);
+
+  Result := OpenDocument(sPath);
+
+  if not Result then
+    ShowMessageFmtEx(msgErrGeneric, ['OpenFolder()', SysErrorMessage(GetLastOSError)], True);
 end;
 
 procedure TfrmGraphicMenu.FormCreate(Sender: TObject);
 begin
   TVirtualTreeEvents.Create.SetupVSTGraphicMenu(vstList, Self);
+
   //Load graphics
   TThemeEngine.Create.SetupThemeEngine(Self);
   TThemeEngine.Create.LoadTheme;
+
   //Set PopUpMenu's ImageIndexes
-  pmWindow.Images := dmImages.ilSmallIcons;
-  mniRun.ImageIndex := Config.IconsManager.GetIconIndex('run');
-  mniProperty.ImageIndex := Config.IconsManager.GetIconIndex('property');
+  pmWindow.Images := dmImages.ilLargeIcons;
+  pmWindow.ImagesWidth := ICON_SIZE_SMALL;
+
+  mniRun.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('run');
+  mniProperty.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('property');
+
   //Position
+  {$IF laz_fullversion>=2020000}
   if Config.GMPositionTop <> -1 then
     Self.Top  := Config.GMPositionTop
   else
@@ -239,7 +276,52 @@ begin
   if Config.GMPositionLeft <> -1 then
     Self.Left  := Config.GMPositionLeft
   else
-    Self.Left  := Screen.WorkAreaRect.Right - Width;;
+    Self.Left  := Screen.WorkAreaRect.Right - Width;
+  {$ENDIF}
+
+  edtSearch.RightButton.Images := dmImages.ilLargeIcons;
+  edtSearch.RightButton.ImagesWidth := ICON_SIZE_SMALL;
+  edtSearch.RightButton.ImageIndex := TThemeEngine.Create.SearchIcon;
+
+  //TODO win32: Disable eject button if asuite runs on normal hd and not usb pen (ejectable devices)
+  {$IFDEF UNIX}
+  sknbtnEject.Visible := False;
+  {$ENDIF}
+end;
+
+procedure TfrmGraphicMenu.imgDragSpaceHiddenMouseUp(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  if Button = mbLeft then
+    SavePositionForm;
+end;
+
+procedure TfrmGraphicMenu.imgLogoMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+var
+  CursorPos: TPoint;
+  xx, yy: LongInt;
+begin
+  CursorPos := Mouse.CursorPos;
+  //Only when user uses left click
+  if ssLeft in Shift then
+  begin
+    if (Parent = nil) and
+      ((CursorPos.X <> OldWindowX) or (CursorPos.Y <> OldWindowY)) and
+      ((CursorPos.X <> 0) or (CursorPos.Y <> 0)) then
+    begin
+      xx := CursorPos.x - OldWindowX;
+      yy := CursorPos.y - OldWindowY;
+
+      HandleEdge(xx, Monitor.WorkareaRect.Left, 0);
+      HandleEdge(yy, Monitor.WorkareaRect.Top, 0);
+      HandleEdge(xx, Monitor.WorkareaRect.Right, Self.Width);
+      HandleEdge(yy, Monitor.WorkareaRect.Bottom, Self.Height);
+
+      Self.Left := xx;
+      Self.Top  := yy;
+    end;
+  end;
 end;
 
 procedure TfrmGraphicMenu.FormDeactivate(Sender: TObject);
@@ -282,18 +364,18 @@ begin
         Key := 0;
         if Assigned(CurrentNode) then
         begin
-          NodeData := TVirtualTreeMethods.Create.GetNodeItemData(CurrentNode, vstList);
+          NodeData := TVirtualTreeMethods.GetNodeItemData(CurrentNode, vstList);
           if Assigned(NodeData) then
           begin
             case NodeData.DataType of
               vtdtCategory:
                 begin
                   if (ssCtrl in Shift) then
-                    TVirtualTreeMethods.Create.ExecuteNode(vstList, CurrentNode, rmNormal, False)
+                    TVirtualTreeMethods.ExecuteNode(vstList, CurrentNode, rmNormal, False)
                   else
                     vstList.Expanded[CurrentNode] := Not(vstList.Expanded[CurrentNode]);
                 end;
-              vtdtFile: TVirtualTreeMethods.Create.ExecuteNode(vstList, CurrentNode, rmNormal, False);
+              vtdtFile: TVirtualTreeMethods.ExecuteNode(vstList, CurrentNode, rmNormal, False);
             end;
           end;
         end;
@@ -309,8 +391,9 @@ begin
           vstList.Expanded[CurrentNode] := True;
       end;
   end;
+
   if Assigned(CurrentNode) then
-    vstList.SetCurrentHotNode(CurrentNode);
+    vstList.HotNode := CurrentNode;
 end;
 
 procedure TfrmGraphicMenu.FormKeyPress(Sender: TObject; var Key: Char);
@@ -329,12 +412,12 @@ end;
 procedure TfrmGraphicMenu.FormShow(Sender: TObject);
 begin
   CheckUserPicture;
-  sknbtnList.Down := True;
+  sknbtnList.Pressed := True;
   //Clear edtSearch and focus it
   edtSearch.Text := '';
   Self.FocusControl(edtSearch);
   //Change node height and imagelist
-  TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, Config.GMSmallIconSize);
+  TVirtualTreeMethods.ChangeTreeIconSize(vstList, Config.GMSmallIconSize);
   //Clear and populate virtualtree
   PopulateListTree(vstList);
   UpdateDriveStats;
@@ -347,16 +430,12 @@ end;
 
 procedure TfrmGraphicMenu.imgLogoMouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-const
-  SC_DRAGMOVE = $F012;
+var
+  CursorPos: TPoint;
 begin
-  if Button = mbLeft then
-  begin
-    ReleaseCapture;
-    Perform(WM_SYSCOMMAND, SC_DRAGMOVE, 0);
-
-    SavePositionForm;
-  end;
+  CursorPos := Mouse.CursorPos;
+  OldWindowX := CursorPos.x - Self.Left;
+  OldWindowY := CursorPos.y - Self.Top;
 end;
 
 procedure TfrmGraphicMenu.imgPersonalPictureClick(Sender: TObject);
@@ -364,30 +443,30 @@ var
   TempString : string;
 begin
   TempString := '';
-  OpenDialog1.Filter     := DKLangConstW('msgFilterPicture');
-  OpenDialog1.InitialDir := ExtractFileDir(Config.Paths.RelativeToAbsolute(Config.GMPersonalPicture));
+  OpenDialog1.Filter     := msgFilterPicture;
+  OpenDialog1.InitialDir := ExtractFileDir(ASuiteInstance.Paths.RelativeToAbsolute(Config.GMPersonalPicture));
   if OpenDialog1.Execute then
   begin
     TempString := OpenDialog1.FileName;
-		imgPersonalPicture.Picture.LoadFromFile(TempString);
-    Config.GMPersonalPicture := Config.Paths.AbsoluteToRelative(TempString);
+    imgPersonalPicture.Picture.LoadFromFile(TempString);
+    Config.GMPersonalPicture := ASuiteInstance.Paths.AbsoluteToRelative(TempString);
     Config.Changed := True;
   end;
 end;
 
 procedure TfrmGraphicMenu.mniPropertyClick(Sender: TObject);
 begin
-  TVirtualTreeMethods.Create.ShowItemProperty(Self, vstList, vstList.GetFirstSelected);
+  TVirtualTreeMethods.ShowItemProperty(Self, vstList, vstList.GetFirstSelected);
 end;
 
 procedure TfrmGraphicMenu.mniRunClick(Sender: TObject);
 begin
-  TVirtualTreeMethods.Create.ExecuteSelectedNodes(vstList, TRunMode(TMenuItem(Sender).Tag), False);
+  TVirtualTreeMethods.ExecuteSelectedNodes(vstList, TRunMode(TMenuItem(Sender).Tag), False);
 end;
 
 procedure TfrmGraphicMenu.OpenRightButton(Sender: TObject);
 begin
-  if (Sender is TcySkinButton) then
+  if (Sender is TBCImageButton) then
   begin
     //Close Graphic Menu
     frmGraphicMenu.CloseMenu;
@@ -423,13 +502,13 @@ procedure TfrmGraphicMenu.pmWindowPopup(Sender: TObject);
 var
   NodeData : TvBaseNodeData;
 begin
-  if Assigned(vstList.GetFirstSelected()) then
+  if Assigned(vstList.GetFirstSelected) then
   begin
-    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(vstList.GetFirstSelected, vstList);
-    mniRun.Enabled := (NodeData.DataType <> vtdtSeparator);
-    mniRunAs.Enabled         := (NodeData.DataType <> vtdtSeparator);
-    mniRunAsAdmin.Enabled    := (NodeData.DataType <> vtdtSeparator);
-    mniOpenFolderSw.Enabled  := (NodeData.DataType in [vtdtFile, vtdtFolder]);
+    NodeData := TVirtualTreeMethods.GetNodeItemData(vstList.GetFirstSelected, vstList);
+    mniRun.Enabled := not(NodeData.IsSeparatorItem);
+    mniRunAs.Enabled         := not(NodeData.IsSeparatorItem) and (NodeData.IsFileItem);
+    mniRunAsAdmin.Enabled    := not(NodeData.IsSeparatorItem) and (NodeData.IsFileItem);
+    mniOpenFolderSw.Enabled  := NodeData.IsFileItem;
   end;
 end;
 
@@ -439,11 +518,11 @@ begin
   ATree.BeginUpdate;
   try
     //Populate and get icons from first level
-    Config.MainTree.IterateSubtree(nil, TVirtualTreeMethods.Create.AddNodeInTreeFromMainTree, @ATree);
+    ASuiteInstance.MainTree.IterateSubtree(nil, TVirtualTreeMethods.AddNodeInTreeFromMainTree, @ATree);
   finally
     ATree.EndUpdate;
     //Check nodes path
-    TVirtualTreeMethods.Create.CheckVisibleNodePathExe(ATree);
+    TVirtualTreeMethods.CheckVisibleNodePathExe(ATree);
   end;
 end;
 
@@ -458,7 +537,7 @@ begin
   ATree.BeginUpdate;
   try
     //Change node height and imagelist
-    TVirtualTreeMethods.Create.ChangeTreeIconSize(ATree, False);
+    TVirtualTreeMethods.ChangeTreeIconSize(ATree, False);
     //Set limit based on MaxItems or AList.Count
     if MaxItems < AList.Count then
       ItemCount := MaxItems
@@ -484,7 +563,7 @@ begin
     ATree.EndUpdate;
     ATree.ValidateNode(ATree.RootNode, True);
     //Check nodes path
-    TVirtualTreeMethods.Create.CheckVisibleNodePathExe(ATree);
+    TVirtualTreeMethods.CheckVisibleNodePathExe(ATree);
   end;
 end;
 
@@ -501,19 +580,19 @@ end;
 procedure TfrmGraphicMenu.sknbtnListClick(Sender: TObject);
 begin
   //Change node height and imagelist
-  TVirtualTreeMethods.Create.ChangeTreeIconSize(vstList, Config.GMSmallIconSize);
+  TVirtualTreeMethods.ChangeTreeIconSize(vstList, Config.GMSmallIconSize);
   PopulateListTree(vstList);
   edtSearch.Text := '';
 end;
 
 procedure TfrmGraphicMenu.sknbtnMFUClick(Sender: TObject);
 begin
-  PopulateSpecialTree(vstList, Config.ListManager.MFUList, Config.MFUNumber);
+  PopulateSpecialTree(vstList, ASuiteManager.ListManager.MFUList, Config.MFUNumber);
 end;
 
 procedure TfrmGraphicMenu.sknbtnRecentsClick(Sender: TObject);
 begin
-  PopulateSpecialTree(vstList, Config.ListManager.MRUList, Config.MRUNumber);
+  PopulateSpecialTree(vstList, ASuiteManager.ListManager.MRUList, Config.MRUNumber);
 end;
 
 procedure TfrmGraphicMenu.OpenMenu;
@@ -531,7 +610,7 @@ end;
 procedure TfrmGraphicMenu.tmrCheckItemsTimer(Sender: TObject);
 begin
   if Config.ASuiteState = lsNormal then
-    TVirtualTreeMethods.Create.CheckVisibleNodePathExe(vstList);
+    TVirtualTreeMethods.CheckVisibleNodePathExe(vstList);
 end;
 
 procedure TfrmGraphicMenu.tmrFaderTimer(Sender: TObject);
@@ -541,8 +620,8 @@ begin
     if (Self.AlphaBlendValue < 225) and Config.GMFade then
    	  Self.AlphaBlendValue := Self.AlphaBlendValue + 30
     else begin
- 	    Self.AlphaBlendValue := 255;
-   	  tmrFader.Enabled     := False;
+      Self.AlphaBlendValue := 255;
+      tmrFader.Enabled     := False;
     end;
   end
   else begin

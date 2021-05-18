@@ -1,0 +1,209 @@
+inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
+  Height = 450
+  AutoSize = True
+  ChildSizing.LeftRightSpacing = 4
+  ChildSizing.TopBottomSpacing = 4
+  ChildSizing.EnlargeHorizontal = crsScaleChilds
+  ClientHeight = 450
+  DesignLeft = 1936
+  DesignTop = 245
+  object gbHotkey: TGroupBox[0]
+    Left = 4
+    Height = 182
+    Top = 4
+    Width = 437
+    AutoSize = True
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    Caption = 'Hotkey'
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.TopBottomSpacing = 4
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ClientHeight = 162
+    ClientWidth = 433
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 0
+    object cbHotKey: TCheckBox
+      Left = 4
+      Height = 19
+      Top = 4
+      Width = 425
+      BorderSpacing.Bottom = 4
+      Caption = 'Enable hotkey'
+      OnClick = cbHotKeyClick
+      ParentFont = False
+      TabOrder = 0
+    end
+    object lblHotkeyWindow: TLabel
+      Left = 4
+      Height = 15
+      Top = 27
+      Width = 425
+      Caption = 'Show window when hotkey is pressed'
+      ParentColor = False
+      ParentFont = False
+    end
+    object edtHotkeyMF: TButtonedEdit
+      AnchorSideLeft.Side = asrCenter
+      AnchorSideTop.Side = asrCenter
+      Left = 116
+      Height = 22
+      Top = 46
+      Width = 200
+      BorderSpacing.Top = 4
+      BorderSpacing.Bottom = 4
+      BorderSpacing.CellAlignHorizontal = ccaCenter
+      CharCase = ecUppercase
+      Constraints.MinWidth = 200
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 1
+      OnChange = edtHotkeyChange
+      OnClick = edtHotkeyClick
+      OnRightButtonClick = edtHotkeyClear
+    end
+    object lblHotkeyGM: TLabel
+      Left = 4
+      Height = 15
+      Top = 72
+      Width = 425
+      Caption = 'Show graphic menu when hotkey is pressed'
+      ParentColor = False
+      ParentFont = False
+    end
+    object edtHotkeyGM: TButtonedEdit
+      AnchorSideTop.Side = asrCenter
+      Left = 116
+      Height = 22
+      Top = 91
+      Width = 200
+      BorderSpacing.Top = 4
+      BorderSpacing.Bottom = 4
+      BorderSpacing.CellAlignHorizontal = ccaCenter
+      CharCase = ecUppercase
+      Constraints.MinWidth = 200
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 2
+      OnChange = edtHotkeyChange
+      OnClick = edtHotkeyClick
+      OnRightButtonClick = edtHotkeyClear
+    end
+    object lblHotkeyCM: TLabel
+      Left = 4
+      Height = 15
+      Top = 117
+      Width = 425
+      Caption = 'Show classic menu when hotkey is pressed'
+      ParentColor = False
+      ParentFont = False
+    end
+    object edtHotkeyCM: TButtonedEdit
+      AnchorSideTop.Side = asrCenter
+      Left = 116
+      Height = 22
+      Top = 136
+      Width = 200
+      BorderSpacing.Top = 4
+      BorderSpacing.CellAlignHorizontal = ccaCenter
+      CharCase = ecUppercase
+      Constraints.MinWidth = 200
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 3
+      OnChange = edtHotkeyChange
+      OnClick = edtHotkeyClick
+      OnRightButtonClick = edtHotkeyClear
+    end
+  end
+  object grpOrderSoftware: TGroupBox[1]
+    Left = 4
+    Height = 255
+    Top = 190
+    Width = 437
+    AutoSize = True
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    BorderSpacing.Bottom = 4
+    Caption = 'Hotkey list used'
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.TopBottomSpacing = 4
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ClientHeight = 235
+    ClientWidth = 433
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 1
+    object vstItems: TVirtualStringTree
+      Cursor = 63
+      Left = 6
+      Height = 225
+      Top = 4
+      Width = 421
+      Align = alClient
+      BorderSpacing.Left = 6
+      BorderSpacing.Right = 6
+      BorderSpacing.Bottom = 6
+      Constraints.MinHeight = 225
+      DefaultNodeHeight = 32
+      DragOperations = []
+      Header.AutoSizeIndex = 0
+      Header.Columns = <      
+        item
+          MinWidth = 50
+          Position = 0
+          Text = 'Name'
+        end      
+        item
+          MaxWidth = 100
+          MinWidth = 36
+          Position = 1
+          Text = 'Type'
+          Width = 36
+        end      
+        item
+          MinWidth = 60
+          Position = 2
+          Text = 'Category'
+          Width = 100
+        end      
+        item
+          MinWidth = 100
+          Position = 3
+          Text = 'Hotkey'
+          Width = 200
+        end>
+      Header.Options = [hoColumnResize, hoDblClickResize, hoDrag, hoVisible, hoHeaderClickAutoSort]
+      ParentFont = False
+      PopupMenu = pmHotkey
+      TabOrder = 0
+      TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
+      TreeOptions.PaintOptions = [toPopupMode, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
+      TreeOptions.SelectionOptions = [toFullRowSelect, toRightClickSelect]
+    end
+  end
+  object pmHotkey: TPopupMenu[2]
+    Left = 264
+    Top = 200
+    object mniEditHotkey: TMenuItem
+      Caption = 'Edit Hotkey'
+      OnClick = mniEditHotkeyClick
+    end
+    object mniRemoveHotkey: TMenuItem
+      Caption = 'Remove Hotkey'
+      OnClick = mniRemoveHotkeyClick
+    end
+    object mniN1: TMenuItem
+      Caption = '-'
+    end
+    object mniProperties: TMenuItem
+      Caption = 'Properties'
+      OnClick = mniPropertiesClick
+    end
+  end
+end

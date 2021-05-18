@@ -1,0 +1,5 @@
+inherited frmOptions: TfrmOptions
+  Left = 1884
+  Top = 152
+  Caption = 'Options'
+end

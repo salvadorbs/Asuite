@@ -19,11 +19,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit VirtualTree.Events;
 
+{$MODE Delphi}
+
 interface
 
 uses
-  Windows, SysUtils, Classes, Graphics, VirtualTrees, ActiveX, UITypes, DKLang,
-  Kernel.Singleton, Forms.GraphicMenu, Forms.Dialog.BaseEntity, Menus, Forms;
+  LCLIntf, LCLType, SysUtils, Classes, Graphics, VirtualTrees, 
+  {$IFDEF MSWINDOWS} ActiveX, {$ELSE} FakeActiveX, {$ENDIF}
+  Kernel.Singleton, Forms.GraphicMenu, Forms.Dialog.BaseEntity, Menus, Forms, Controls;
 
 type
   TVirtualTreeEvents = class(TSingleton)
@@ -34,10 +37,13 @@ type
     function GetNodeParentName(const ASender: TBaseVirtualTree; const ANode: PVirtualNode): string;
     procedure DrawSeparatorItem(const ASender: TBaseVirtualTree; const ANode: PVirtualNode;
                                 TargetCanvas: TCanvas; const CellRect: TRect; var DefaultDraw: Boolean);
+    //TODO: Linux - See https://forum.lazarus.freepascal.org/index.php?topic=40061.0
+    {$IFDEF MSWINDOWS}
     procedure DragDropFiles(const ASender: TBaseVirtualTree; ADataObject: IDataObject;
                             AttachMode: TVTNodeAttachMode);
     function GetTextFromDataObject(DataObject: IDataObject): string;
     procedure GetFileListFromDataObject(const DataObj: IDataObject; FileList: TStringList);
+    {$ENDIF}
   public
     //Methods to set events in vsts
     procedure SetupVSTList(ATree: TVirtualStringTree);
@@ -50,14 +56,14 @@ type
     procedure SetupVSTAutorun(ATree: TVirtualStringTree);
 
     //Generic events
-    procedure DoDragOver(Sender: TBaseVirtualTree; Source: TObject;
-      Shift: TShiftState; State: TDragState; Pt: TPoint; Mode: TDropMode;
-      var Effect: Integer; var Accept: Boolean);
+    procedure DoDragOver(Sender: TBaseVirtualTree; Source: TObject; Shift: TShiftState;
+      State: TDragState; const Pt: TPoint; Mode: TDropMode; var Effect: LongWord;
+      var Accept: Boolean);
     procedure DoGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
     procedure DoGetImageIndex(Sender: TBaseVirtualTree;
       Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-      var Ghosted: Boolean; var ImageIndex: TImageIndex);
+      var Ghosted: Boolean; var ImageIndex: Integer);
     procedure DoPaintText(Sender: TBaseVirtualTree;
       const TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
       TextType: TVSTTextType);
@@ -66,11 +72,10 @@ type
     procedure DoLoadNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Stream: TStream);
     procedure DoFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
-    procedure DoNewText(Sender: TBaseVirtualTree; Node: PVirtualNode;
-      Column: TColumnIndex; NewText: string);
-    procedure DoDragDrop(Sender: TBaseVirtualTree; Source: TObject;
-      DataObject: IDataObject; Formats: TFormatArray; Shift: TShiftState;
-      Pt: TPoint; var Effect: Integer; Mode: TDropMode);
+    procedure DoNewText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;
+      const NewText: String);
+    procedure DoDragDrop(Sender: TBaseVirtualTree; Source: TObject; DataObject: IDataObject;
+      Formats: TFormatArray; Shift: TShiftState; const Pt: TPoint; var Effect: LongWord; Mode: TDropMode);
     procedure DoEditing(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex; var Allowed: Boolean);
     procedure DoDrawText(Sender: TBaseVirtualTree; TargetCanvas: TCanvas;
@@ -109,7 +114,7 @@ type
       Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
     procedure DoGetImageIndexFrame(Sender: TBaseVirtualTree;
       Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-      var Ghosted: Boolean; var ImageIndex: TImageIndex);
+      var Ghosted: Boolean; var ImageIndex: Integer);
     procedure DoFreeNodeFrame(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure DoAddToSelectionFrame(Sender: TBaseVirtualTree;
       Node: PVirtualNode);
@@ -121,7 +126,7 @@ type
       Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
     procedure DoGetImageIndexHotkey(Sender: TBaseVirtualTree;
       Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-      var Ghosted: Boolean; var ImageIndex: TImageIndex);
+      var Ghosted: Boolean; var ImageIndex: Integer);
 
     //Autorun events
     procedure DoGetTextAutorun(Sender: TBaseVirtualTree; Node: PVirtualNode;
@@ -131,10 +136,11 @@ type
 implementation
 
 uses
-  Utility.Misc, AppConfig.Main, NodeDataTypes.Base, NodeDataTypes.Category,
+  AppConfig.Main, NodeDataTypes.Base, NodeDataTypes.Category, Kernel.ResourceStrings,
   NodeDataTypes.Files, NodeDataTypes.Custom, NodeDataTypes.Separator, Kernel.Types,
-  Kernel.Enumerations, Frame.BaseEntity, Controls, VirtualTree.Methods, DataModules.TrayMenu,
-  ShellApi, comobj, DataModules.Icons, Kernel.Logger, SynLog;
+  Kernel.Enumerations, VirtualTree.Methods, DataModules.TrayMenu, LCLProc, Kernel.Consts,
+  DataModules.Icons, Kernel.Logger, SynLog, Utility.Misc, Kernel.Instance, Kernel.Manager
+  {$IFDEF Windows}, comobj, Windows{$ENDIF};
 
 { TVirtualTreeEvents }
 
@@ -142,7 +148,7 @@ procedure TVirtualTreeEvents.DoNodeDblClick(Sender: TBaseVirtualTree; const HitI
 begin
   //Check if user click on node or expand button (+/-)
   if Not(ClickOnButtonTree(Sender, HitInfo)) then
-    TVirtualTreeMethods.Create.ExecuteSelectedNodes(Sender, rmNormal, False);
+    TVirtualTreeMethods.ExecuteSelectedNodes(Sender, rmNormal, False);
 end;
 
 procedure TVirtualTreeEvents.DoNodeSingleClick(Sender: TBaseVirtualTree; const HitInfo: THitInfo);
@@ -150,7 +156,7 @@ begin
   //Check if user click on node or expand button (+/-)
   if Not(ClickOnButtonTree(Sender, HitInfo)) then
     if (Config.RunSingleClick) then
-      TVirtualTreeMethods.Create.ExecuteSelectedNodes(Sender, rmNormal, False)
+      TVirtualTreeMethods.ExecuteSelectedNodes(Sender, rmNormal, False)
 end;
 
 procedure TVirtualTreeEvents.DoSingleClickGM(Sender: TObject);
@@ -160,19 +166,23 @@ var
   Point    : TPoint;
   HitInfo  : ThitInfo;
 begin
+  HitInfo := Default(THitInfo);
   Tree  := TBaseVirtualTree(Sender);
   Point := Tree.ScreenToClient(Mouse.CursorPos);
   Tree.GetHitTestInfoAt(Point.X, Point.Y, True, HitInfo);
   if Assigned(HitInfo.HitNode) then
   begin
-    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Tree.GetFirstSelected, Tree);
-    if NodeData.DataType = vtdtCategory then
+    NodeData := TVirtualTreeMethods.GetNodeItemData(Tree.GetFirstSelected, Tree);
+    if Not(Assigned(NodeData)) then
+      Exit;
+
+    if Assigned(NodeData) and (NodeData.IsCategoryItem) then
     begin
       Tree.Expanded[Tree.GetFirstSelected] := Not(Tree.Expanded[Tree.GetFirstSelected]);
       FGraphicMenu.FocusControl(FGraphicMenu.edtSearch);
     end
     else
-      if NodeData.DataType = vtdtFile then
+      if NodeData.IsFileItem then
       begin
         DoNodeDblClick(Tree, HitInfo);
         FGraphicMenu.CloseMenu;
@@ -183,6 +193,8 @@ end;
 procedure TVirtualTreeEvents.SetupVSTGraphicMenu(ATree: TVirtualStringTree; AGraphicMenu: TfrmGraphicMenu);
 begin
   FGraphicMenu := AGraphicMenu;
+
+  ATree.Images := dmImages.ilLargeIcons;
 
   ATree.OnClick         := DoSingleClickGM;
   ATree.OnCompareNodes  := DoCompareNodesList;
@@ -199,7 +211,8 @@ end;
 procedure TVirtualTreeEvents.SetupVSTHotkey(ATree: TVirtualStringTree);
 begin
   ATree.Images := dmImages.ilLargeIcons;
-  ATree.DefaultNodeHeight := Config.BigHeightNode;
+  ATree.ImagesWidth := ICON_SIZE_LARGE;
+  ATree.DefaultNodeHeight := ASuiteInstance.BigHeightNode;
 
   ATree.OnGetNodeDataSize := DoGetNodeDataSizeSearch;
   ATree.OnCompareNodes    := DoCompareNodesHotkey;
@@ -209,7 +222,8 @@ end;
 
 procedure TVirtualTreeEvents.SetupVSTImportList(ATree: TVirtualStringTree);
 begin
-  ATree.Images := dmImages.ilSmallIcons;
+  ATree.Images := dmImages.ilLargeIcons;
+  ATree.ImagesWidth := ICON_SIZE_SMALL;
 
   ATree.OnDrawText  := DoDrawText;
   ATree.OnFreeNode  := DoFreeNode;
@@ -220,7 +234,14 @@ end;
 
 procedure TVirtualTreeEvents.SetupVSTList(ATree: TVirtualStringTree);
 begin
-  ATree.Images := dmImages.ilSmallIcons;
+  ATree.Images := dmImages.ilLargeIcons;
+  ATree.ImagesWidth := ICON_SIZE_SMALL;
+
+  {$IFDEF MSWINDOWS}
+  ATree.TreeOptions.MiscOptions := ATree.TreeOptions.MiscOptions + [toAcceptOLEDrop];  
+  {$ELSE}
+  ATree.DragType := dtVCL;
+  {$ENDIF}
 
   ATree.OnNodeClick    := DoNodeSingleClick;
   ATree.OnCompareNodes := DoCompareNodesList;
@@ -245,7 +266,8 @@ end;
 procedure TVirtualTreeEvents.SetupVSTAutorun(ATree: TVirtualStringTree);
 begin
   ATree.Images := dmImages.ilLargeIcons;
-  ATree.DefaultNodeHeight := Config.BigHeightNode;
+  ATree.ImagesWidth := ICON_SIZE_LARGE;
+  ATree.DefaultNodeHeight := ASuiteInstance.BigHeightNode;
 
   ATree.OnGetNodeDataSize := DoGetNodeDataSizeSearch;
   ATree.OnGetText         := DoGetTextAutorun;
@@ -256,7 +278,8 @@ procedure TVirtualTreeEvents.SetupVSTDialogFrame(ATree: TVirtualStringTree);
 begin
   ATree.Clear;
   ATree.Images := dmImages.ilLargeIcons;
-  ATree.DefaultNodeHeight := Config.BigHeightNode;
+  ATree.ImagesWidth := ICON_SIZE_LARGE;
+  ATree.DefaultNodeHeight := ASuiteInstance.BigHeightNode;
 
   ATree.OnAddToSelection  := DoAddToSelectionFrame;
   ATree.OnFreeNode        := DoFreeNodeFrame;
@@ -267,7 +290,8 @@ end;
 
 procedure TVirtualTreeEvents.SetupVSTSearch(ATree: TVirtualStringTree);
 begin
-  ATree.Images := dmImages.ilSmallIcons;
+  ATree.Images := dmImages.ilLargeIcons;
+  ATree.ImagesWidth := ICON_SIZE_SMALL;
 
   ATree.OnNodeClick       := DoNodeSingleClick;
   ATree.OnCompareNodes    := DoCompareNodesSearch;
@@ -280,7 +304,8 @@ end;
 
 procedure TVirtualTreeEvents.SetupVSTSimple(ATree: TVirtualStringTree);
 begin
-  ATree.Images := dmImages.ilSmallIcons;
+  ATree.Images := dmImages.ilLargeIcons;
+  ATree.ImagesWidth := ICON_SIZE_SMALL;
 
   ATree.OnGetText         := DoGetText;
   ATree.OnGetImageIndex   := DoGetImageIndex;
@@ -299,8 +324,8 @@ var
   NodeData: PFramesNodeData;
 begin
   NodeData := Sender.GetNodeData(Node);
-  if Assigned(NodeData) and (Sender.Parent is TfrmDialogBase) then
-    TfrmDialogBase(Sender.Parent).ChangePage(NodeData.Frame);
+  if Assigned(NodeData) and (Sender.Parent.Parent is TfrmDialogBase) then
+    TfrmDialogBase(Sender.Parent.Parent).ChangePage(NodeData.Frame);
 end;
 
 procedure TVirtualTreeEvents.DoCompareNodesHotkey(Sender: TBaseVirtualTree;
@@ -308,8 +333,8 @@ procedure TVirtualTreeEvents.DoCompareNodesHotkey(Sender: TBaseVirtualTree;
 var
   Data1, Data2: TvCustomRealNodeData;
 begin
-  Data1 := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node1, Sender));
-  Data2 := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node2, Sender));
+  Data1 := TvCustomRealNodeData(TVirtualTreeMethods.GetNodeItemData(Node1, Sender));
+  Data2 := TvCustomRealNodeData(TVirtualTreeMethods.GetNodeItemData(Node2, Sender));
   if (Not Assigned(Data1)) or (Not Assigned(Data2)) then
     Result := 0
   else
@@ -319,14 +344,14 @@ begin
       begin
         if (Data1.DataType) <> (Data2.DataType) then
         begin
-          if Data1.DataType = vtdtCategory then
+          if Data1.IsCategoryItem then
             Result := -1
           else
             Result := 1
         end;
       end;
       2: Result := CompareText(GetNodeParentName(Sender, Data1.pNode), GetNodeParentName(Sender, Data2.pNode));
-      3: Result := CompareText(ShortCutToText(Data1.Hotkey), ShortCutToText(Data2.Hotkey));
+      3: Result := CompareText(ShortcutToText(Data1.Hotkey), ShortcutToText(Data2.Hotkey));
     end;
 end;
 
@@ -335,14 +360,14 @@ procedure TVirtualTreeEvents.DoCompareNodesList(Sender: TBaseVirtualTree; Node1,
 var
   Data1, Data2: TvBaseNodeData;
 begin
-  Data1 := TVirtualTreeMethods.Create.GetNodeItemData(Node1, Sender);
-  Data2 := TVirtualTreeMethods.Create.GetNodeItemData(Node2, Sender);
+  Data1 := TVirtualTreeMethods.GetNodeItemData(Node1, Sender);
+  Data2 := TVirtualTreeMethods.GetNodeItemData(Node2, Sender);
   if (Not Assigned(Data1)) or (Not Assigned(Data2)) then
     Result := 0
   else
-    if (Data1.DataType = vtdtCategory) <> (Data2.DataType = vtdtCategory) then
+    if (Data1.IsCategoryItem) <> (Data2.IsCategoryItem) then
     begin
-      if Data1.DataType = vtdtCategory then
+      if Data1.IsCategoryItem then
         Result := -1
       else
         Result := 1
@@ -351,17 +376,19 @@ begin
       Result := CompareText(Data1.Name, Data2.Name);
 end;
 
-procedure TVirtualTreeEvents.DoDragDrop(Sender: TBaseVirtualTree; Source: TObject;
-  DataObject: IDataObject; Formats: TFormatArray; Shift: TShiftState;
-  Pt: TPoint; var Effect: Integer; Mode: TDropMode);
-var
+procedure TVirtualTreeEvents.DoDragDrop(Sender: TBaseVirtualTree; Source: TObject; DataObject: IDataObject;
+      Formats: TFormatArray; Shift: TShiftState; const Pt: TPoint; var Effect: LongWord; Mode: TDropMode);
+var         
   I          : integer;
   NodeData   : TvBaseNodeData;
   AttachMode : TVTNodeAttachMode;
-  NodeCreated : Boolean;
+  NodeCreated : Boolean;     
+  Nodes: TNodeArray;
 begin
   TASuiteLogger.Enter('DoDragDrop', Self);
+
   NodeCreated := False;
+
   case Mode of
     dmAbove  : AttachMode := amInsertBefore;
     dmOnNode : AttachMode := amAddChildLast;
@@ -369,24 +396,28 @@ begin
   else
     AttachMode := amNowhere;
   end;
-  if Assigned(DataObject) then
-  begin
-    Sender.BeginUpdate;
-    try
-      if (Mode = dmOnNode) and Assigned(Sender.DropTargetNode) then
-      begin
-        NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Sender.DropTargetNode, Sender);
-        //Check if DropMode is in a vtdtCategory (so expand it, before drop item)
-        //or another item type (change Mode and AttachMode for insert after new nodes)
-        if NodeData.DataType <> vtdtCategory then
-          AttachMode := amInsertAfter
-        else
-          if Config.TVAutoOpCatsDrag then
-            Sender.Expanded[Sender.DropTargetNode] := True;
-      end;
+
+  Sender.BeginUpdate;
+  try
+    if (Mode = dmOnNode) and Assigned(Sender.DropTargetNode) then
+    begin
+      NodeData := TVirtualTreeMethods.GetNodeItemData(Sender.DropTargetNode, Sender);
+      //Check if DropMode is in a vtdtCategory (so expand it, before drop item)
+      //or another item type (change Mode and AttachMode for insert after new nodes)
+      if not(NodeData.IsCategoryItem) then
+        AttachMode := amInsertAfter
+      else
+        if Config.TVAutoOpCatsDrag then
+          Sender.Expanded[Sender.DropTargetNode] := True;
+    end;
+
+{$IFDEF MSWINDOWS}
+    if Assigned(DataObject) then
+    begin
       try
         for I := 0 to High(Formats) do
         begin
+          TASuiteLogger.Info('Found Clipboard Format = %s', [IntToStr(Formats[I])]);
           //Files
           if Formats[I] = CF_HDROP then
             DragDropFiles(Sender, DataObject, AttachMode)
@@ -398,22 +429,42 @@ begin
             end
             else //Text
               if (Formats[I] = CF_UNICODETEXT) and Not(NodeCreated) then
-                NodeCreated := TVirtualTreeMethods.Create.AddNodeByText(Sender, Sender.DropTargetNode, GetTextFromDataObject(DataObject), AttachMode);
+                NodeCreated := TVirtualTreeMethods.AddNodeByText(Sender, Sender.DropTargetNode, GetTextFromDataObject(DataObject), AttachMode);
         end;
       except
         on E : Exception do
-          ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message], True);
+          ShowMessageFmtEx(msgErrGeneric,[E.ClassName,E.Message], True);
       end;
-    finally
-      TVirtualTreeMethods.Create.RefreshList(Sender);
-      Sender.EndUpdate;
     end;
+
+{$ELSE}
+
+    if Source = Sender then
+    begin
+      Nodes := Sender.GetSortedSelection(True);
+      if Effect = DROPEFFECT_COPY then
+      begin                
+        TASuiteLogger.Info('Copies VirtualTree nodes', []);
+        for I := 0 to High(Nodes) do
+          Sender.CopyTo(Nodes[I], Sender.DropTargetNode, AttachMode, False);
+      end
+      else begin
+        TASuiteLogger.Info('Moves VirtualTree nodes', []);
+        for I := 0 to High(Nodes) do
+          Sender.MoveTo(Nodes[I], Sender.DropTargetNode, AttachMode, False);
+      end;
+    end;   
+{$ENDIF}
+
+  finally
+    TVirtualTreeMethods.RefreshList(Sender);
+    Sender.EndUpdate;
   end;
 end;
 
 procedure TVirtualTreeEvents.DoDragOver(Sender: TBaseVirtualTree; Source: TObject;
-  Shift: TShiftState; State: TDragState; Pt: TPoint; Mode: TDropMode;
-  var Effect: Integer; var Accept: Boolean);
+  Shift: TShiftState; State: TDragState; const Pt: TPoint; Mode: TDropMode;
+  var Effect: LongWord; var Accept: Boolean);
 begin
   Accept := True;
 end;
@@ -430,14 +481,14 @@ procedure TVirtualTreeEvents.DoEditing(Sender: TBaseVirtualTree; Node: PVirtualN
 var
   NodeData : TvBaseNodeData;
 begin
-  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
-  Allowed  := (NodeData.DataType <> vtdtSeparator) and Not(Config.RunSingleClick);
+  NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
+  Allowed  := not(NodeData.IsSeparatorItem) and Not(Config.RunSingleClick);
 end;
 
 procedure TVirtualTreeEvents.DoExpanded(Sender: TBaseVirtualTree;
   Node: PVirtualNode);
 begin
-//  TVirtualTreeMethods.Create.CheckVisibleNodePathExe(Sender);
+//  TVirtualTreeMethods.CheckVisibleNodePathExe(Sender);
 end;
 
 procedure TVirtualTreeEvents.DoFreeNode(Sender: TBaseVirtualTree;
@@ -445,7 +496,7 @@ procedure TVirtualTreeEvents.DoFreeNode(Sender: TBaseVirtualTree;
 var
   NodeData : TvBaseNodeData;
 begin
-  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
+  NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
   if Assigned(NodeData) then
     FreeAndNil(NodeData);
 end;
@@ -457,10 +508,7 @@ var
 begin
   NodeData := Sender.GetNodeData(Node);
   if Assigned(NodeData) then
-  begin
-    TfrmBaseEntityPage(NodeData.Frame).Free;
     NodeData.Title := '';
-  end;
 end;
 
 procedure TVirtualTreeEvents.DoGetNodeDataSizeFrame(Sender: TBaseVirtualTree;
@@ -480,13 +528,13 @@ procedure TVirtualTreeEvents.DoGetText(Sender: TBaseVirtualTree; Node: PVirtualN
 var
   NodeData: TvBaseNodeData;
 begin
-  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
+  NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
   if Assigned(NodeData) then
   begin
     if Column = 1 then
       CellText := GetNodeParentName(Sender, NodeData.pNode)
     else begin
-      if (NodeData.DataType = vtdtSeparator) and (NodeData.Name = '') then
+      if (NodeData.IsSeparatorItem) and (NodeData.Name = '') then
         CellText := ' '
       else
         CellText := NodeData.Name;
@@ -501,7 +549,7 @@ var
   NodeData : TvCustomRealNodeData;
 begin
   CellText := '';
-  NodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender));
+  NodeData := TvCustomRealNodeData(TVirtualTreeMethods.GetNodeItemData(Node, Sender));
   if Assigned(NodeData) then
   begin
     case Column of
@@ -509,7 +557,7 @@ begin
       2: CellText := GetNodeParentName(Sender, NodeData.pNode);
       3:
       begin
-        if NodeData.DataType = vtdtFile then
+        if NodeData.IsFileItem then
           CellText := TvFileNodeData(NodeData).PathFile;
       end;
     end;
@@ -536,7 +584,7 @@ var
   NodeData : TvCustomRealNodeData;
 begin
   CellText := '';
-  NodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender));
+  NodeData := TvCustomRealNodeData(TVirtualTreeMethods.GetNodeItemData(Node, Sender));
   if Assigned(NodeData) then
   begin
     case Column of
@@ -551,7 +599,7 @@ procedure TVirtualTreeEvents.DoKeyPress(Sender: TObject; var Key: Char);
 begin
   if (Sender is TBaseVirtualTree) then
     if Ord(Key) = VK_RETURN then
-      TVirtualTreeMethods.Create.ExecuteSelectedNodes((Sender as TBaseVirtualTree), rmNormal, False)
+      TVirtualTreeMethods.ExecuteSelectedNodes((Sender as TBaseVirtualTree), rmNormal, False)
 end;
 
 procedure TVirtualTreeEvents.DoMeasureItem(Sender: TBaseVirtualTree;
@@ -559,10 +607,10 @@ procedure TVirtualTreeEvents.DoMeasureItem(Sender: TBaseVirtualTree;
 var
   NodeData: TvBaseNodeData;
 begin
-  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
+  NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
   if Assigned(NodeData) then
-    if NodeData.DataType = vtdtSeparator then
-      NodeHeight := Config.SmallHeightNode;
+    if NodeData.IsSeparatorItem then
+      NodeHeight := ASuiteInstance.SmallHeightNode;
 end;
 
 procedure TVirtualTreeEvents.DoLoadNode(Sender: TBaseVirtualTree; Node: PVirtualNode;
@@ -570,12 +618,14 @@ procedure TVirtualTreeEvents.DoLoadNode(Sender: TBaseVirtualTree; Node: PVirtual
 var
   DataDest, DataSource: PBaseData;
 begin
+  //TODO: Add new fields!
+
   //Create a new PBaseData as source
   New(DataSource);
   Stream.ReadBuffer(DataSource^,SizeOf(rBaseData));
   //Copy source's properties in DataDest
   DataDest := Sender.GetNodeData(Node);
-  DataDest.Data := TVirtualTreeMethods.Create.CreateNodeData(DataSource.Data.DataType);
+  DataDest.Data := TVirtualTreeMethods.CreateNodeData(DataSource.Data.DataType);
   //Copy DataSource in DataDest
   case DataSource.Data.DataType of
     vtdtCategory  : TvCategoryNodeData(DataDest.Data).Copy(DataSource.Data);
@@ -595,15 +645,15 @@ begin
   FreeMem(DataSource);
 end;
 
-procedure TVirtualTreeEvents.DoNewText(Sender: TBaseVirtualTree; Node: PVirtualNode;
-  Column: TColumnIndex; NewText: string);
+procedure TVirtualTreeEvents.DoNewText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;
+    const NewText: String);
 var
   NodeData : TvBaseNodeData;
 begin
-  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
+  NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
   if Assigned(NodeData) then
     NodeData.Name := NewText;
-  TVirtualTreeMethods.Create.RefreshList(Sender);
+  TVirtualTreeMethods.RefreshList(Sender);
 end;
 
 procedure TVirtualTreeEvents.DoPaintText(Sender: TBaseVirtualTree;
@@ -613,11 +663,10 @@ var
   NodeData: TvBaseNodeData;
 begin
   //Get data and check if AbsoluteExe path exists
-  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
-  if Assigned(NodeData) then
-    if NodeData.DataType = vtdtFile then
-      if Not(TvFileNodeData(NodeData).IsPathFileExists) then
-        TargetCanvas.Font.Color := clRed;
+  NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
+  if Assigned(NodeData) and NodeData.IsFileItem then
+    if Not(TvFileNodeData(NodeData).IsPathFileExists) then
+      TargetCanvas.Font.Color := clRed;
 end;
 
 procedure TVirtualTreeEvents.DoResizeGM(Sender: TObject);
@@ -627,7 +676,7 @@ begin
   if Sender is TVirtualStringTree then
   begin
     DY := TVirtualStringTree(Sender).DefaultNodeHeight;
-    if TVirtualStringTree(Sender).DefaultNodeHeight = Config.BigHeightNode then
+    if TVirtualStringTree(Sender).DefaultNodeHeight = ASuiteInstance.BigHeightNode then
       TVirtualStringTree(Sender).BottomSpace := 1
     else
       TVirtualStringTree(Sender).BottomSpace := TVirtualStringTree(Sender).ClientHeight mod DY;
@@ -640,7 +689,7 @@ procedure TVirtualTreeEvents.DoSaveNode(Sender: TBaseVirtualTree; Node: PVirtual
 var
   Data: PBaseData;
 begin
-  Data := TVirtualTreeMethods.Create.GetNodeDataEx(Node, Sender);
+  Data := TVirtualTreeMethods.GetNodeDataEx(Node, Sender);
   Stream.WriteBuffer(Data^,SizeOf(rBaseData));
 end;
 
@@ -656,6 +705,7 @@ begin
   end;
 end;
 
+{$IFDEF MSWINDOWS}
 procedure TVirtualTreeEvents.DragDropFiles(const ASender: TBaseVirtualTree;
   ADataObject: IDataObject; AttachMode: TVTNodeAttachMode);
 var
@@ -668,11 +718,12 @@ begin
     GetFileListFromDataObject(ADataObject, FileNames);
     //Iterate file list to add nodes
     for I := 0 to FileNames.Count - 1 do
-      TVirtualTreeMethods.Create.AddNodeByPathFile(ASender, ASender.DropTargetNode, FileNames[I], AttachMode);
+      TVirtualTreeMethods.AddNodeByPathFile(ASender, ASender.DropTargetNode, FileNames[I], AttachMode);
   finally
     FileNames.Free;
   end;
 end;
+{$ENDIF}
 
 procedure TVirtualTreeEvents.DrawSeparatorItem(const ASender: TBaseVirtualTree;
   const ANode: PVirtualNode; TargetCanvas: TCanvas; const CellRect: TRect;
@@ -680,10 +731,10 @@ procedure TVirtualTreeEvents.DrawSeparatorItem(const ASender: TBaseVirtualTree;
 var
   NodeData: TvBaseNodeData;
 begin
-  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(ANode, ASender);
+  NodeData := TVirtualTreeMethods.GetNodeItemData(ANode, ASender);
   if Assigned(NodeData) then
   begin
-    if NodeData.DataType = vtdtSeparator then
+    if NodeData.IsSeparatorItem then
     begin
       //Resize CellRect.Width, if necessary
       if ASender.ClientWidth < CellRect.Width then
@@ -695,6 +746,7 @@ begin
   end;
 end;
 
+{$IFDEF MSWINDOWS}
 procedure TVirtualTreeEvents.GetFileListFromDataObject(
   const DataObj: IDataObject; FileList: TStringList);
 var
@@ -706,6 +758,7 @@ var
   FileName: string;                 // name of a dropped file
 begin
   // Get required storage medium from data object
+  FileName := '';
   FmtEtc.cfFormat := CF_HDROP;
   FmtEtc.ptd := nil;
   FmtEtc.dwAspect := DVASPECT_CONTENT;
@@ -732,6 +785,7 @@ begin
     ReleaseStgMedium(Medium);
   end;
 end;
+{$ENDIF}
 
 function TVirtualTreeEvents.GetNodeParentName(const ASender: TBaseVirtualTree;
   const ANode: PVirtualNode): string;
@@ -739,9 +793,9 @@ var
   CatData: TvBaseNodeData;
 begin
   Result := '';
-  if (ANode.Parent <> Config.MainTree.RootNode) then
+  if (ANode.Parent <> ASuiteInstance.MainTree.RootNode) then
   begin
-    CatData := TVirtualTreeMethods.Create.GetNodeItemData(ANode.Parent, Config.MainTree);
+    CatData := TVirtualTreeMethods.GetNodeItemData(ANode.Parent, ASuiteInstance.MainTree);
     if Assigned(CatData) then
       Result  := CatData.Name;
   end
@@ -749,18 +803,24 @@ begin
     Result := '<Root>';
 end;
 
+{$IFDEF MSWINDOWS}
 function TVirtualTreeEvents.GetTextFromDataObject(
   DataObject: IDataObject): string;
 var
   Medium : TStgMedium;
-  PText  : PChar;
+  PText  : PWideChar;
 
+  // fill the structure used to get the Unicode string
   function MakeFormatEtc(const Fmt: TClipFormat): TFormatEtc;
   begin
-    Result.cfFormat := Fmt;
+    Result.cfFormat := CF_UNICODETEXT;
+    // no specific target device
     Result.ptd := nil;
+    // normal content to render
     Result.dwAspect := DVASPECT_CONTENT;
+    // no specific page of multipage data
     Result.lindex := -1;
+    // pass the data via memory
     Result.tymed := TYMED_HGLOBAL;
   end;
 
@@ -772,7 +832,7 @@ begin
     try
       PText := GlobalLock(Medium.hGlobal);
       try
-        Result := string(PText);
+        Result := WideString(PText);
       finally
         GlobalUnlock(Medium.hGlobal);
       end;
@@ -781,6 +841,7 @@ begin
     end;
   end;
 end;
+{$ENDIF}
 
 procedure TVirtualTreeEvents.DoCompareNodesSearch(Sender: TBaseVirtualTree; Node1,
   Node2: PVirtualNode; Column: TColumnIndex; var Result: Integer);
@@ -788,16 +849,16 @@ var
   Data1, Data2, CatData1, CatData2: TvBaseNodeData;
   CatName1, CatName2 : String;
 begin
-  Data1 := TVirtualTreeMethods.Create.GetNodeItemData(Node1, Sender);
-  Data2 := TVirtualTreeMethods.Create.GetNodeItemData(Node2, Sender);
+  Data1 := TVirtualTreeMethods.GetNodeItemData(Node1, Sender);
+  Data2 := TVirtualTreeMethods.GetNodeItemData(Node2, Sender);
   if (Not Assigned(Data1)) or (Not Assigned(Data2)) then
     Result := 0
   else
     if Column = 0 then
       Result := CompareText(Data1.Name, Data2.Name)
     else begin
-      CatData1 := TVirtualTreeMethods.Create.GetNodeItemData(Data1.pNode.Parent, Config.MainTree);
-      CatData2 := TVirtualTreeMethods.Create.GetNodeItemData(Data2.pNode.Parent, Config.MainTree);
+      CatData1 := TVirtualTreeMethods.GetNodeItemData(Data1.pNode.Parent, ASuiteInstance.MainTree);
+      CatData2 := TVirtualTreeMethods.GetNodeItemData(Data2.pNode.Parent, ASuiteInstance.MainTree);
       if Assigned(CatData1) then
         CatName1 := CatData1.Name
       else
@@ -812,13 +873,13 @@ end;
 
 procedure TVirtualTreeEvents.DoGetImageIndex(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-  var Ghosted: Boolean; var ImageIndex: TImageIndex);
+  var Ghosted: Boolean; var ImageIndex: Integer);
 var
   NodeData: TvBaseNodeData;
 begin
   if (Kind = ikNormal) or (Kind = ikSelected) then
   begin
-    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
+    NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
     if (Column = 0) or (Column = -1) then
       ImageIndex := NodeData.Icon.ImageIndex
     else
@@ -828,7 +889,7 @@ end;
 
 procedure TVirtualTreeEvents.DoGetImageIndexFrame(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-  var Ghosted: Boolean; var ImageIndex: TImageIndex);
+  var Ghosted: Boolean; var ImageIndex: Integer);
 var
   NodeData : PFramesNodeData;
 begin
@@ -842,23 +903,23 @@ end;
 
 procedure TVirtualTreeEvents.DoGetImageIndexHotkey(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-  var Ghosted: Boolean; var ImageIndex: TImageIndex);
+  var Ghosted: Boolean; var ImageIndex: Integer);
 var
   NodeData: TvBaseNodeData;
 begin
   if (Kind = ikNormal) or (Kind = ikSelected) then
   begin
-    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
+    NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
     if Assigned(NodeData) then
     begin
       case Column of
         0: ImageIndex := NodeData.Icon.ImageIndex;
         1:
         begin
-          if NodeData.DataType = vtdtCategory then
-            ImageIndex := Config.IconsManager.GetIconIndex('category')
+          if NodeData.IsCategoryItem then
+            ImageIndex := ASuiteManager.IconsManager.GetIconIndex('category')
           else
-            ImageIndex := Config.IconsManager.GetIconIndex('file');
+            ImageIndex := ASuiteManager.IconsManager.GetIconIndex('file');
         end;
       end;
     end;

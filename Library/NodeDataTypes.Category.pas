@@ -19,12 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit NodeDataTypes.Category;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  VirtualTrees, Menus, SysUtils, Dialogs, DateUtils, Kernel.Enumerations,
-  Winapi.Windows, NodeDataTypes.Base, NodeDataTypes.Custom, Kernel.Types,
-  UITypes;
+  VirtualTrees, SysUtils, Dialogs, Kernel.Enumerations, Controls,
+  LCLIntf, NodeDataTypes.Base, NodeDataTypes.Custom, Kernel.Types;
 
 type
   TvCategoryNodeData = class(TvCustomRealNodeData)
@@ -52,20 +53,20 @@ type
 implementation
 
 uses
-  NodeDataTypes.Files, VirtualTree.Methods, AppConfig.Main, DKLang;
+  NodeDataTypes.Files, VirtualTree.Methods, AppConfig.Main, Kernel.ResourceStrings,
+  Kernel.Instance, Kernel.Manager;
 
 procedure TvCategoryNodeData.CallBackExecuteNode(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
 var
   NodeData: TvBaseNodeData;
-  SingleInstance: PBoolean;
+  SingleInstance: Boolean absolute Data;
 begin
-  SingleInstance := Data;
-  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
-  if (Assigned(NodeData)) and (NodeData.DataType in [vtdtFile,vtdtFolder]) then
+  NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
+  if (Assigned(NodeData)) and (NodeData.IsFileItem) then
   begin
     if TvFileNodeData(NodeData).RunFromCategory then
-      TvFileNodeData(NodeData).Execute(False, True, Boolean(SingleInstance));
+      TvFileNodeData(NodeData).Execute(False, True, SingleInstance);
   end;
 end;
 
@@ -75,8 +76,8 @@ procedure TvCategoryNodeData.CallBackExecuteNodeAsAdmin(
 var
   NodeData: TvBaseNodeData;
 begin
-  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
-  if (Assigned(NodeData)) and (NodeData.DataType in [vtdtFile,vtdtFolder]) then
+  NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
+  if (Assigned(NodeData)) and (NodeData.IsFileItem) then
   begin
     if TvFileNodeData(NodeData).RunFromCategory then
       TvFileNodeData(NodeData).ExecuteAsAdmin(False, True);
@@ -89,9 +90,9 @@ var
   NodeData: TvBaseNodeData;
   UserData: pUserData;
 begin
-  NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
+  NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
   UserData := Data;
-  if (Assigned(NodeData)) and (NodeData.DataType in [vtdtFile,vtdtFolder]) then
+  if (Assigned(NodeData)) and (NodeData.IsFileItem) then
   begin
     if TvFileNodeData(NodeData).RunFromCategory then
       TvFileNodeData(NodeData).ExecuteAsUser(False, True, UserData^);
@@ -107,8 +108,8 @@ begin
   Node := Self.PNode.FirstChild;
   while Assigned(Node) do
   begin
-    ChildNodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Tree);
-    if (Assigned(ChildNodeData)) and (ChildNodeData.DataType in [vtdtFile,vtdtFolder]) then
+    ChildNodeData := TVirtualTreeMethods.GetNodeItemData(Node, Tree);
+    if (Assigned(ChildNodeData)) and (ChildNodeData.IsFileItem) then
     begin
       if (TvFileNodeData(ChildNodeData).RunFromCategory) then
       begin
@@ -132,8 +133,8 @@ begin
   Result := False;
   if (Config.ConfirmRunCat) then
   begin
-    if CheckRunnableSubItems(Config.MainTree) then
-      Result := (MessageDlg(Format(DKLangConstW('msgConfirmRunCat'), [Self.Name]), mtWarning, [mbYes, mbNo], 0) = mrYes);
+    if CheckRunnableSubItems(ASuiteInstance.MainTree) then
+      Result := (MessageDlg(Format(msgConfirmRunCat, [Self.Name]), mtWarning, [mbYes, mbNo], 0) = mrYes);
   end
   else
     Result := True;
@@ -144,7 +145,7 @@ begin
   Result := ConfirmRunCategory;
 
   if Result then
-    Config.MainTree.IterateSubtree(Self.PNode, CallBackExecuteNode, @ASingleInstance);
+    ASuiteInstance.MainTree.IterateSubtree(Self.PNode, CallBackExecuteNode, @ASingleInstance);
 end;
 
 function TvCategoryNodeData.InternalExecuteAsAdmin(
@@ -153,7 +154,7 @@ begin
   Result := ConfirmRunCategory;
 
   if Result then
-    Config.MainTree.IterateSubtree(Self.PNode, CallBackExecuteNodeAsAdmin, nil);
+    ASuiteInstance.MainTree.IterateSubtree(Self.PNode, CallBackExecuteNodeAsAdmin, nil);
 end;
 
 function TvCategoryNodeData.InternalExecuteAsUser(ARunFromCategory: Boolean;
@@ -162,7 +163,7 @@ begin
   Result := ConfirmRunCategory;
 
   if Result then
-    Config.MainTree.IterateSubtree(Self.PNode, CallBackExecuteNodeAsUser, @AUserData);
+    ASuiteInstance.MainTree.IterateSubtree(Self.PNode, CallBackExecuteNodeAsUser, @AUserData);
 end;
 
 end.

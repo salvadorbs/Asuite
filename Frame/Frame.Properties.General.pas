@@ -19,20 +19,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Properties.General;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, DKLang, Frame.Properties.Base,
-  Vcl.Mask, JvExMask, JvToolEdit;
+  LCLIntf, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, StdCtrls, Frame.Properties.Base,
+  EditBtn, DefaultTranslator;
 
 type
+
+  { TfrmBaseGeneralPropertyPage }
+
   TfrmBaseGeneralPropertyPage = class(TfrmBasePropertyPage)
+    edtPathIcon: TFileNameEdit;
     gbItem: TGroupBox;
     lbName: TLabel;
     edtName: TEdit;
     lbPathIcon: TLabel;
-    edtPathIcon: TJvFilenameEdit;
     procedure edtPathIconAfterDialog(Sender: TObject; var AName: string;
       var AAction: Boolean);
     procedure edtPathIconBeforeDialog(Sender: TObject; var AName: string;
@@ -49,7 +54,7 @@ type
     function InternalLoadData: Boolean; override;
     function InternalSaveData: Boolean; override;
 
-    function CheckPropertyPath(ASender: TJvFileDirEdit; APath: string = ''): Boolean;
+    function CheckPropertyPath(ASender: TCustomEditButton; APath: string = ''): Boolean;
   public
     { Public declarations }
   end;
@@ -60,10 +65,10 @@ var
 implementation
 
 uses
-  Utility.Misc, Kernel.Enumerations, NodeDataTypes.Files, AppConfig.Main,
-  Utility.System;
+  Utility.Misc, NodeDataTypes.Files, Utility.System, Kernel.ResourceStrings,
+  Kernel.Instance, Kernel.Manager;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmGeneralPropertyPage }
 
@@ -73,13 +78,13 @@ begin
   // Check if inserted name is empty, then
   if (Trim(Edit.Text) = '') then
   begin
-    ShowMessageEx(DKLangConstW('msgErrEmptyName'),true);
+    ShowMessageEx(msgErrEmptyName,true);
     Edit.Color := clYellow;
     Result := False;
   end;
 end;
 
-function TfrmBaseGeneralPropertyPage.CheckPropertyPath(ASender: TJvFileDirEdit;
+function TfrmBaseGeneralPropertyPage.CheckPropertyPath(ASender: TCustomEditButton;
   APath: string): Boolean;
 var
   cColor : TColor;
@@ -99,15 +104,15 @@ begin
   else begin
     //File not found - Change font color with red
     cColor := clRed;
-    sHint  := DKLangConstW('msgFileNotFound');
+    sHint  := msgFileNotFound;
   end;
   //Change ASender's properties Color and Hint in based of vars cColor and sHint
   ASender.Hint := sHint;
-  if (ASender is TJvFilenameEdit) then
-    TJvFilenameEdit(ASender).Font.Color := cColor
+  if (ASender is TFileNameEdit) then
+    TFileNameEdit(ASender).Font.Color := cColor
   else
-    if (ASender is TJvDirectoryEdit) then
-      TJvDirectoryEdit(ASender).Font.Color := cColor;
+    if (ASender is TDirectoryEdit) then
+      TDirectoryEdit(ASender).Font.Color := cColor;
 end;
 
 procedure TfrmBaseGeneralPropertyPage.edtNameEnter(Sender: TObject);
@@ -119,15 +124,15 @@ end;
 procedure TfrmBaseGeneralPropertyPage.edtPathIconAfterDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
-  AName := Config.Paths.AbsoluteToRelative(AName);
+  AName := ASuiteInstance.Paths.AbsoluteToRelative(AName);
   CheckPropertyPath(edtPathIcon, AName);
 end;
 
 procedure TfrmBaseGeneralPropertyPage.edtPathIconBeforeDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
-  edtPathIcon.Filter := DKLangConstW('msgFilterIconExe');
-  AName := Config.Paths.RelativeToAbsolute(AName);
+  edtPathIcon.Filter := msgFilterIconExe;
+  AName := ASuiteInstance.Paths.RelativeToAbsolute(AName);
 end;
 
 procedure TfrmBaseGeneralPropertyPage.edtPathIconChange(Sender: TObject);
@@ -142,12 +147,12 @@ end;
 
 function TfrmBaseGeneralPropertyPage.GetImageIndex: Integer;
 begin
-  Result := Config.IconsManager.GetIconIndex('property_general');
+  Result := ASuiteManager.IconsManager.GetIconIndex('property_general');
 end;
 
 function TfrmBaseGeneralPropertyPage.GetTitle: string;
 begin
-  Result := DKLangConstW('msgGeneral');
+  Result := msgGeneral;
 end;
 
 function TfrmBaseGeneralPropertyPage.InternalLoadData: Boolean;
@@ -168,7 +173,7 @@ begin
     if Assigned(CurrentNodeData) then
     begin
       //Delete desktop shortcut
-      if (CurrentNodeData.DataType = vtdtFile) then
+      if (CurrentNodeData.IsFileItem) then
         TvFileNodeData(CurrentNodeData).ShortcutDesktop := False;
       CurrentNodeData.Name     := edtName.Text;
       CurrentNodeData.PathIcon := edtPathIcon.Text;

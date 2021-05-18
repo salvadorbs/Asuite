@@ -19,12 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Lists.HotKey;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Classes, NodeDataTypes.Custom, Menus, SysUtils,
-  Windows, Kernel.Enumerations, NodeDataTypes.Base,
-  DateUtils, Dialogs, UITypes, Lists.Base;
+  NodeDataTypes.Custom, SysUtils, Hotkeys.Manager.Platform, LCLIntf, LCLType,
+  Lists.Base;
 
 type
   THotkeyItemsList = class(TBaseItemsList)
@@ -41,7 +42,7 @@ type
 implementation
 
 uses
-  AppConfig.Main, Utility.System;
+  AppConfig.Main, VirtualTree.Methods;
 
 function THotkeyItemsList.AddItem(AItem: TvCustomRealNodeData): Integer;
 begin
@@ -51,15 +52,16 @@ begin
 
   Result := inherited;
   if Config.HotKey then
-    RegisterHotKeyEx(AItem.ID, AItem.Hotkey);
+    HotkeyManager.RegisterNotify(AItem.Hotkey, TVirtualTreeMethods.HotKeyNotify, AItem.ID);
 end;
 
 procedure THotkeyItemsList.Clear;
 var
   I: Integer;
-begin
+begin 
   for I := 0 to FItems.Count - 1 do
-    UnregisterHotKeyEx(FItems[I].ID);
+    HotkeyManager.UnregisterNotify(TvCustomRealNodeData(FItems[I]).Hotkey);
+
   inherited;
 end;
 
@@ -86,12 +88,11 @@ begin
   //This method unregister and register hotkey again for every item
   for I := 0 to FItems.Count - 1 do
   begin
-    if FItems[I].DataType <> vtdtSeparator then
+    if not(FItems[I].IsSeparatorItem) then
     begin
       NodeData := TvCustomRealNodeData(FItems[I]);
-      UnregisterHotKeyEx(NodeData.ID);
-      if Config.HotKey then
-        RegisterHotKeyEx(NodeData.ID, NodeData.Hotkey);
+
+      HotkeyManager.RefreshNotify(NodeData.Hotkey);
     end;
   end;
 end;
@@ -100,7 +101,7 @@ function THotkeyItemsList.RemoveItem(AItem: TvCustomRealNodeData): Integer;
 begin
   Result := inherited;
   if (Config.HotKey) and (AItem.ID <> -1) then
-    UnregisterHotKeyEx(AItem.ID);
+    HotkeyManager.UnregisterNotify(AItem.Hotkey);
 end;
 
 end.

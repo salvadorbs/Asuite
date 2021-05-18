@@ -19,16 +19,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.Options;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Forms.Dialog.BaseEntity, VirtualTrees,
-  Vcl.ExtCtrls, Vcl.StdCtrls, DKLang, Frame.BaseEntity;
+  LCLIntf, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, Dialogs, Forms.Dialog.BaseEntity, VirtualTrees, DefaultTranslator,
+  ExtCtrls, Frame.BaseEntity;
 
 type
   TfrmOptions = class(TfrmDialogBase)
-    DKLanguageController1: TDKLanguageController;
+    
   private
     { Private declarations }
   strict protected
@@ -47,11 +49,12 @@ var
 implementation
 
 uses
-  Frame.Options.General, Frame.Options.Advanced, Frame.Options.TrayIcon,
+  Frame.Options.General, Frame.Options.Advanced, Frame.Options.Trayicon,
   Frame.Options.Stats, Frame.Options.Autorun, AppConfig.Main, Kernel.Logger,
-  Forms.Main, Frame.Options.Hotkey, Frame.Options.MainWindow;
+  Forms.Main, Frame.Options.Hotkey, Frame.Options.MainWindow, LCLTranslator,
+  Utility.Misc;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmOptions }
 
@@ -63,17 +66,24 @@ end;
 
 class function TfrmOptions.Execute(AOwner: TComponent;
   APage: TPageFrameClass): Integer;
-var
-  frm: TfrmOptions;
 begin
   TASuiteLogger.Info('Opening form Options', []);
 
   Result := mrCancel;
-  frm := TfrmOptions.Create(AOwner, APage);
+
+  if Assigned(frmOptions) then
+    Exit;
+
+  frmOptions := TfrmOptions.Create(AOwner, APage);
   try
-    Result := frm.ShowModal;
+    SetFormPositionFromConfig(frmOptions);
+
+    Result := frmOptions.ShowModal;
+
+    Config.SaveConfig;
+    Config.AfterUpdateConfig;
   finally
-    frm.Free;
+    FreeAndNil(frmOptions);
   end;
 end;
 
@@ -81,27 +91,33 @@ function TfrmOptions.InternalLoadData: Boolean;
 var
   FFrameAdvanced: PVirtualNode;
 begin
+  TASuiteLogger.Enter('InternalLoadData form Options', Self);
+
   Result := True;
   //General
-  FFrameGeneral  := AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmGeneralOptionsPage.Create(Self)));
-  AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmMainWindowOptionsPage.Create(Self)));
+  FFrameGeneral  := AddFrameNode(vstCategory, nil, TfrmGeneralOptionsPage.Create(Self));
+  AddFrameNode(vstCategory, nil, TfrmMainWindowOptionsPage.Create(Self));
   //Advanced
-  FFrameAdvanced := AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmAdvancedOptionsPage.Create(Self)));
-  AddFrameNode(vstCategory, FFrameAdvanced, TPageFrameClass(TfrmAutorunOptionsPage.Create(Self)));
-  AddFrameNode(vstCategory, FFrameAdvanced, TPageFrameClass(TfrmHotkeyOptionsPage.Create(Self)));
+  FFrameAdvanced := AddFrameNode(vstCategory, nil, TfrmAdvancedOptionsPage.Create(Self));
+  if Assigned(FFrameAdvanced) then
+  begin
+    AddFrameNode(vstCategory, FFrameAdvanced, TfrmAutorunOptionsPage.Create(Self));
+    AddFrameNode(vstCategory, FFrameAdvanced, TfrmHotkeyOptionsPage.Create(Self));
+  end;
   //TrayIcon
-  AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmTrayiconOptionsPage.Create(Self)));
+  AddFrameNode(vstCategory, nil, TfrmTrayiconOptionsPage.Create(Self));
   //Stats
-  AddFrameNode(vstCategory, nil, TPageFrameClass(TfrmStatsOptionsPage.Create(Self)));
+  AddFrameNode(vstCategory, nil, TfrmStatsOptionsPage.Create(Self));
 end;
 
 function TfrmOptions.InternalSaveData: Boolean;
 begin
+  TASuiteLogger.Enter('InternalSaveData form Options', Self);
+
   Result := True;
   Config.Changed := True;
   if frmMain.Visible then
     frmMain.FocusControl(frmMain.vstList);
-  LangManager.LanguageID := Config.LangID;
 end;
 
 end.

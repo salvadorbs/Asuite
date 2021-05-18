@@ -19,6 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Kernel.Consts;
 
+{$MODE DelphiUnicode}    
+
+{$I ASuite.inc}
+
 interface
 
 const
@@ -29,22 +33,14 @@ const
 
   VERSION_PRERELEASE = ''; //For Alpha and Beta version
 
-  BACKUP_DIR     = 'backup\';
-  CACHE_DIR      = 'cache\';
-  LOCALE_DIR     = 'locale\';
-  MENUTHEMES_DIR = 'themes\';
-  ICONS_DIR      = 'icons\';
-
-  // Caratteri speciali
-  LF                = #10;              { line feed }
-  CR                = #13;              { carriage return }
-  SLASH             = '/';              { forward slash }
-  BACKSLASH         = '\';              { back slash }
-  CRLF              = CR + LF;          { new line }
+  BACKUP_DIR     = 'backup';
+  CACHE_DIR      = 'cache';
+  LOCALE_DIR     = 'locale';
+  MENUTHEMES_DIR = 'themes';
+  ICONS_DIR      = 'icons';
+  BUTTONS_DIR    = 'buttons';
 
   //FileSystem
-  PATH_SEPARATOR    = BACKSLASH;  // Windows only, for now
-  SLASHES           = [SLASH, BACKSLASH];
   DriveLetters      = ['a'..'z', 'A'..'Z'];
 
   //Extensions
@@ -56,8 +52,13 @@ const
   EXT_LNK       = '.lnk';
   EXT_URL       = '.url';
   EXT_EXE       = '.exe';
+  EXT_PO        = '.po';
+  EXT_BAT       = '.bat';
+  EXT_CMD       = '.cmd';
+  EXT_BMP       = '.bmp';
 
-  EXT_PATH_MASK = '*';
+  EXT_PATH_MASK = '*';    
+  EXT_PATH_DOT = '.';
 
   //File
   DEBUG_FILE    = 'Debug.txt';
@@ -65,9 +66,23 @@ const
   BACKUP_FILE   = APP_NAME + '_%s' + EXT_SQLBCK;
 
   //Form
-  frmMainWidth  = 190;
-  frmMainHeight = 440;
-  frmMenuID     = 123456789;
+  frmMainID     = 294257584;
+  frmGMenuID    = 711285620;
+  frmCMenuID    = 459741425;
+
+  //Icons Size
+  ICON_SIZE_SMALL = 16;
+  ICON_SIZE_LARGE = 32;
+
+  {$IFDEF QT}
+  ICON_SIZE_TRAY = 22;
+  {$ELSE}
+  ICON_SIZE_TRAY = 16;
+  {$ENDIF}
+
+  //Node Heidht
+  NODE_HEIGHT_SMALL = 18;
+  NODE_HEIGHT_LARGE = 36;
 
   // PageControl Indexes
   PG_LIST       = 0;
@@ -80,14 +95,38 @@ const
   PG_MENUSEARCH = 3;
 
   //ASuite placeholders for path
-  CONST_PATH_ASUITE  = '$asuite';
-  CONST_PATH_DRIVE   = '$drive';
-  CONST_PATH_FOLDERICON = '%foldericon%';
-  CONST_PATH_URLICON = '%urlicon%';
+  CONST_PATH_ASUITE_old  = '$asuite'; //Deprecated
+  CONST_PATH_DRIVE_old   = '$drive'; //Deprecated
+  CONST_PATH_ASUITE      = '%asuite%';
+  CONST_PATH_DRIVE       = '%drive%';
+  CONST_PATH_FOLDERICON  = '%foldericon%';
+  CONST_PATH_URLICON     = '%urlicon%';
 
   //ASuite filename icons
-  FILEICON_Folder     = 'folder';
-  FILEICON_Url        = 'page_url';
+  FILEICON_Folder = 'folder';
+  FILEICON_Url    = 'page_url';
+
+  //ASuite files
+  LIST_SQLITE_FILENAME = 'asuite.sqlite';
+  LIST_XML_FILENAME = 'asuite.sqlite';
+  SETTINGS_FILENAME = 'settings.json';
+
+  //Modifier buttons for TfrmShortcutGrabber
+  FILENAME_CTRL   = 'ctrl.png';
+  FILENAME_ALT    = 'alt.png';
+  FILENAME_SHIFT  = 'shift.png';
+  FILENAME_WINKEY = 'winkey.png';
+
+  //Desktop file entries for Linux
+  DESKTOP_GROUP = 'Desktop Entry';
+  DESKTOP_KEY_NAME = 'Name';
+  DESKTOP_KEY_TYPE = 'Type';
+  DESKTOP_KEY_ICON = 'Icon';
+  DESKTOP_KEY_EXEC = 'Exec';
+  DESKTOP_KEY_STARTUPNOTIFY = 'StartupNotify';
+  DESKTOP_KEY_TERMINAL = 'Terminal';
+
+  DESKTOP_TYPE_APPLICATION = 'Application';
 
 implementation
 

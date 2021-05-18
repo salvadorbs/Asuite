@@ -19,30 +19,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.Dialog.BaseEntity;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.ComCtrls,
-  Vcl.StdCtrls, Frame.BaseEntity, VirtualTrees;
+  LCLIntf, LCLType, SysUtils, Classes, Controls, Forms, Dialogs, ExtCtrls, ComCtrls,
+  StdCtrls, Frame.BaseEntity, VirtualTrees, DefaultTranslator, ButtonPanel;
 
 type
+
+  { TfrmDialogBase }
+
   TfrmDialogBase = class(TForm)
-    btnOk: TButton;
-    btnCancel: TButton;
+    ButtonPanel1: TButtonPanel;
+    Panel1: TPanel;
     pnlDialogPage: TPanel;
     vstCategory: TVirtualStringTree;
-    btnApply: TButton;
     procedure btnOkClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
-    procedure btnApplyClick(Sender: TObject);
   private
     { Private declarations }
     procedure SaveNodeData(Sender: TBaseVirtualTree; Node: PVirtualNode;
                            Data: Pointer; var Abort: Boolean);
     function GetNodeByFrameClass(Tree: TBaseVirtualTree; AFramePage: TPageFrameClass;
                                  Node: PVirtualNode = nil): PVirtualNode;
+    procedure AdjustPanelSize;
   strict protected
     FCurrentPage: TfrmBaseEntityPage;
     FDefaultPage: TPageFrameClass;
@@ -50,14 +53,14 @@ type
     function InternalLoadData: Boolean; virtual;
     function InternalSaveData: Boolean; virtual;
     function AddFrameNode(Tree: TBaseVirtualTree; Parent: PVirtualNode;
-                          FramePage: TPageFrameClass): PVirtualNode;
+                          FramePage: TfrmBaseEntityPage): PVirtualNode;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
 
     property CurrentPage: TfrmBaseEntityPage read FCurrentPage write FCurrentPage;
 
-    procedure ChangePage(NewPage: TPageFrameClass);
+    procedure ChangePage(NewPage: TfrmBaseEntityPage);
   end;
 
 var
@@ -68,12 +71,12 @@ implementation
 uses
   VirtualTree.Events, Kernel.Types, Kernel.Logger;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmDialogBase }
 
 function TfrmDialogBase.AddFrameNode(Tree: TBaseVirtualTree;
-  Parent: PVirtualNode; FramePage: TPageFrameClass): PVirtualNode;
+  Parent: PVirtualNode; FramePage: TfrmBaseEntityPage): PVirtualNode;
 var
   NodeData: PFramesNodeData;
 begin
@@ -82,16 +85,15 @@ begin
   if Assigned(NodeData) then
   begin
     NodeData.Frame := FramePage;
-    NodeData.Title := TfrmBaseEntityPage(FramePage).Title;
-    NodeData.ImageIndex := TfrmBaseEntityPage(FramePage).ImageIndex;
-  end;
-end;
+    NodeData.Title := FramePage.Title;
+    NodeData.ImageIndex := FramePage.ImageIndex;
 
-procedure TfrmDialogBase.btnApplyClick(Sender: TObject);
-begin
-  //If IterateSubtree returns a value, something is wrong
-  if Not Assigned(vstCategory.IterateSubtree(nil, SaveNodeData, nil)) then
-    InternalSaveData;
+    FramePage.Parent := Self.pnlDialogPage;
+    FramePage.Visible := False;
+    FramePage.Align := alClient;
+
+    FramePage.LoadData;
+  end;
 end;
 
 procedure TfrmDialogBase.btnCancelClick(Sender: TObject);
@@ -100,12 +102,9 @@ begin
 end;
 
 procedure TfrmDialogBase.btnOkClick(Sender: TObject);
-var
-  ResultNode: PVirtualNode;
 begin
   //If IterateSubtree returns a value, something is wrong
-  ResultNode := vstCategory.IterateSubtree(nil, SaveNodeData, nil);
-  if Not Assigned(ResultNode) then
+  if Not Assigned(vstCategory.IterateSubtree(nil, SaveNodeData, nil)) then
   begin
     if InternalSaveData then
       ModalResult := mrOk;
@@ -114,19 +113,19 @@ begin
     ModalResult := mrNone;
 end;
 
-procedure TfrmDialogBase.ChangePage(NewPage: TPageFrameClass);
+procedure TfrmDialogBase.ChangePage(NewPage: TfrmBaseEntityPage);
 begin
   if Assigned(FCurrentPage) then
   begin
-    if FCurrentPage.ClassType = NewPage then
+    if FCurrentPage = NewPage then
       Exit
     else
      FCurrentPage.Visible := False;
   end;
   FCurrentPage := TfrmBaseEntityPage(NewPage);
-  FCurrentPage.Parent  := pnlDialogPage;
-  FCurrentPage.Align   := alClient;
   FCurrentPage.Visible := True;
+
+  AdjustPanelSize;
 end;
 
 constructor TfrmDialogBase.Create(AOwner: TComponent);
@@ -135,19 +134,28 @@ var
 begin
   inherited;
   TVirtualTreeEvents.Create.SetupVSTDialogFrame(vstCategory);
+  ButtonPanel1.OKButton.OnClick := btnOkClick;
+  ButtonPanel1.CancelButton.OnClick := btnCancelClick;
+
   //Load frames
   Self.InternalLoadData;
+
   //Set default page
   if not Assigned(FDefaultPage) then
     selNode := FFrameGeneral
   else
     selNode := GetNodeByFrameClass(Self.vstCategory, FDefaultPage);
+
   //Select node (automatically open frame using vst's AddToSelection event)
   Self.vstCategory.FocusedNode := selNode;
   Self.vstCategory.Selected[selNode] := True;
   Self.vstCategory.FullExpand;
-
   Self.pnlDialogPage.TabOrder := 0;
+
+  {$IFDEF UNIX}
+  //Workaround for form glitch in GTK2
+  BorderStyle := bsSizeable;
+  {$ENDIF}
 end;
 
 procedure TfrmDialogBase.FormKeyPress(Sender: TObject; var Key: Char);
@@ -173,7 +181,7 @@ begin
   begin
     NodeData := Tree.GetNodeData(Node);
 
-    if TfrmBaseEntityPage(NodeData.Frame).ClassName = AFramePage.ClassName then
+    if NodeData.Frame.ClassName = AFramePage.ClassName then
       Exit(Node);
 
     if Node.ChildCount > 0 then
@@ -181,6 +189,45 @@ begin
 
     Node := Tree.GetNextSibling(Node);
   end;
+end;
+
+procedure TfrmDialogBase.AdjustPanelSize;
+var
+  NodeData: PFramesNodeData;
+  Node: PVirtualNode;
+  intWidth, intHeight: Integer;
+begin
+  intWidth := pnlDialogPage.Constraints.MinWidth;
+  intHeight := pnlDialogPage.Constraints.MinHeight;
+  Node := vstCategory.GetFirst;
+
+  while Assigned(Node) do
+  begin
+    NodeData := vstCategory.GetNodeData(Node);
+
+    if Assigned(NodeData) then
+    begin
+      if NodeData.Frame.Height > intHeight then
+        intHeight := NodeData.Frame.Height;
+
+      if NodeData.Frame.Width > intWidth then
+        intWidth := NodeData.Frame.Width;
+    end;
+
+    Node := vstCategory.GetNext(Node);
+  end;
+
+  if pnlDialogPage.Height > intHeight then
+    intHeight := pnlDialogPage.Height;
+
+  if pnlDialogPage.Width > intWidth then
+    intWidth := pnlDialogPage.Width;
+
+  if intHeight > pnlDialogPage.Constraints.MinHeight then
+    pnlDialogPage.Constraints.MinHeight := intHeight;
+
+  if intWidth > pnlDialogPage.Constraints.MinWidth then
+    pnlDialogPage.Constraints.MinWidth := intWidth;
 end;
 
 function TfrmDialogBase.InternalLoadData: Boolean;

@@ -19,41 +19,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Icons.Node;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  SysUtils, Classes, Icons.Base, NodeDataTypes.Base, Kernel.Enumerations,
-  NodeDataTypes.Custom, Graphics, Controls, KIcon, CommCtrl, Windows, System.IOUtils;
+  SysUtils, Classes, Icons.Base, NodeDataTypes.Base, Graphics, Icons.Custom,
+  NodeDataTypes.Custom, Controls, LCLIntf, BGRABitmap;
 
 type
-  TNodeIcon = class(TBaseIcon)
+
+  { TNodeIcon }
+
+  TNodeIcon = class(Icons.Custom.TCustomIcon)
   private
     { private declarations }
     FNodeData: TvBaseNodeData;
     FCacheIconCRC: Integer;
-
-    function InternalLoadIcon: Integer;
-    function GetPathCacheIcon: string;
-    procedure SaveCacheIcon(const APath: string; const AImageIndex: Integer);
-    procedure ExtractAndAddIcon(AImageList: TImageList; AImageIndex: Integer; AIcon: TKIcon);
+  protected
+    function InternalLoadIcon: Integer; override;
+    function GetName: string; override;
+    function GetDefaultPathIcon: string; override;
   public
     { public declarations }
     constructor Create(ANodeData: TvBaseNodeData);
 
-    property PathCacheIcon: string read GetPathCacheIcon;
-    property CacheIconCRC: Integer read FCacheIconCRC;
-
     function LoadIcon: Integer; override;
     procedure ResetIcon; override;
-    procedure ResetCacheIcon;
-    procedure SetCacheCRC(ACRC: Integer);
   end;
 
 implementation
 
 uses
-  Utility.System, AppConfig.Main, NodeDataTypes.Files, Kernel.Consts,
-  Utility.FileFolder, DataModules.Icons;
+  NodeDataTypes.Files, ImgList, BGRABitmapTypes, Kernel.Instance, Kernel.Manager;
 
 { TNodeIcon }
 
@@ -62,145 +60,71 @@ begin
   inherited Create;
   FNodeData     := ANodeData;
   FCacheIconCRC := 0;
+  Self.TempItem := False;
 end;
 
-procedure TNodeIcon.ExtractAndAddIcon(AImageList: TImageList; AImageIndex: Integer; AIcon: TKIcon);
-var
-  KIcon: TKIcon;
-  hIcon: Windows.HICON;
-begin
-  Assert(Assigned(AIcon), 'Icon is not assigned!');
-
-  KIcon := TKIcon.Create;
-  try
-    //Bug: TBitmap doesn't support alpha format
-    //Workaround: Get HIcon from ImageList and load it in a TKIcon
-    hIcon := ImageList_GetIcon(AImageList.Handle, AImageIndex, ILD_NORMAL);
-    if hIcon <> 0 then
-    begin
-      KIcon.LoadFromHandle(hIcon);
-      DestroyIcon(hIcon);
-      //Add extracted icon in AIcon
-      if KIcon.IconCount > 0 then
-        AIcon.Add(KIcon.Handles[0]);
-    end;
-  finally
-    KIcon.Free;
-  end;
-end;
-
-function TNodeIcon.GetPathCacheIcon: string;
+function TNodeIcon.GetName: string;
 begin
   Result := '';
-  if FNodeData.ID <> -1 then
-    Result := Config.Paths.SuitePathCache + IntToStr(FNodeData.ID) + EXT_ICO;
+  if Assigned(FNodeData) and (FNodeData.ID <> -1) then
+    Result := IntToStr(FNodeData.ID);
+end;
+
+function TNodeIcon.GetDefaultPathIcon: string;
+var
+  sPathAbsoluteIcon: string;
+begin
+  Result := '';
+
+  //Get custom icon path
+  sPathAbsoluteIcon := TvCustomRealNodeData(FNodeData).PathAbsoluteIcon;
+  if FileExists(sPathAbsoluteIcon) then
+    Result := sPathAbsoluteIcon
+  else //Else absolute filename (if nodedata is a file item)
+    if FNodeData.IsFileItem then
+      Result := TvFileNodeData(FNodeData).PathAbsoluteFile;
 end;
 
 function TNodeIcon.InternalLoadIcon: Integer;
 var
-  sTempPath, sPathAbsoluteIcon: string;
+  oldCacheIconCRC: Integer;
 begin
   //Priority cache->icon->exe
-  sTempPath := '';
-  Result   := -1;
-  //Get cache icon path
-  if (Config.Cache) and (Config.ASuiteState <> lsImporting) then
-  begin
-    //Check CRC, if it fails reset cache icon
-    if (CacheIconCRC = GetFileCRC32(PathCacheIcon)) then
-      sTempPath := PathCacheIcon
-    else
-      ResetCacheIcon;
-  end;
-  //Icon or exe
-  if Not FileExists(sTempPath) then
-  begin
-    //Get custom icon path
-    sPathAbsoluteIcon := TvCustomRealNodeData(FNodeData).PathAbsoluteIcon;
-    if FileExists(sPathAbsoluteIcon) then
-      sTempPath := sPathAbsoluteIcon
-    else //Else exe (if nodedata is a file item)
-      if FNodeData.DataType = vtdtFile then
-        sTempPath := TvFileNodeData(FNodeData).PathAbsoluteFile;
-  end;
-  //Get image index
-  if (sTempPath <> '') then
-  begin
-    if IsPathExists(sTempPath) then
-      Result := InternalGetImageIndex(sTempPath);
-    //Save icon cache
-    if (Config.ASuiteState <> lsImporting) then
-      SaveCacheIcon(sTempPath, Result);
-  end;
+  oldCacheIconCRC := Self.CacheIconCRC;
+  Result := inherited;
+
+  if oldCacheIconCRC <> Self.CacheIconCRC then
+    FNodeData.Changed := True;
+
   //If it is a category, get directly cat icon
-  if (FNodeData.DataType = vtdtCategory) and (Result = -1) then
-    Result := Config.IconsManager.GetIconIndex('category');
+  if (FNodeData.IsCategoryItem) and (Result = -1) then
+    Result := ASuiteManager.IconsManager.GetIconIndex('category');
 end;
 
 function TNodeIcon.LoadIcon: Integer;
 begin
   Result := -1;
+  if FNodeData.IsSeparatorItem then
+    Exit;
+
   //Check file path and if it isn't found, get fileicon_error and exit
-  if FNodeData.DataType = vtdtFile then
+  if FNodeData.IsFileItem then
   begin
     if Not(TvFileNodeData(FNodeData).IsPathFileExists) then
-      Result := Config.IconsManager.GetIconIndex('file_error');
+      Result := ASuiteManager.IconsManager.GetIconIndex('file_error');
   end;
   //Get imageindex
   if (Result = -1) then
-    Result := InternalLoadIcon;
-end;
-
-procedure TNodeIcon.ResetCacheIcon;
-begin
-  //Small icon cache
-  if FileExists(PathCacheIcon) then
-    SysUtils.DeleteFile(PathCacheIcon);
-  FCacheIconCRC := 0;
-
-  FNodeData.Changed := True;
+    Result := inherited;
 end;
 
 procedure TNodeIcon.ResetIcon;
 begin
   inherited;
-  //Delete cache icon and reset CRC
-  ResetCacheIcon;
+
   //Force MainTree repaint node
   if Assigned(FNodeData.PNode) then
-    Config.MainTree.InvalidateNode(FNodeData.PNode);
-end;
-
-procedure TNodeIcon.SaveCacheIcon(const APath: string;
-  const AImageIndex: Integer);
-var
-  Icon: TKIcon;
-begin
-  if (Config.Cache) and (AImageIndex <> -1) then
-  begin
-    if (FNodeData.ID <> -1) and (LowerCase(ExtractFileExt(APath)) <>  EXT_ICO) then
-    begin
-      Icon := TKIcon.Create;
-      try
-        //Extract and insert icons in TKIcon
-        ExtractAndAddIcon(dmImages.ilSmallIcons, AImageIndex, Icon);
-        ExtractAndAddIcon(dmImages.ilLargeIcons, AImageIndex, Icon);
-        //Save file and get CRC from it
-        Icon.SaveToFile(PathCacheIcon);
-        FCacheIconCRC := GetFileCRC32(PathCacheIcon);
-
-        FNodeData.Changed := True;
-      finally
-        Icon.Free;
-      end;
-    end;
-  end;
-end;
-
-procedure TNodeIcon.SetCacheCRC(ACRC: Integer);
-begin
-  if ACRC <> 0 then
-    FCacheIconCRC := ACRC;
+    ASuiteInstance.MainTree.InvalidateNode(FNodeData.PNode);
 end;
 
 end.

@@ -19,28 +19,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Database.Manager;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Windows, SysUtils, Forms, Dialogs, VirtualTrees, DKLang, PJVersionInfo,
-  Classes, mORMot, SynCommons, mORMotSQLite3, Vcl.Controls;
+  LCLType, SysUtils, Dialogs, VirtualTrees, mORMot, SynCommons, mORMotSQLite3,
+  Controls, FileInfo;
 
 type
   TDBManager = class
   private
     FDBFileName : string;
-    FDBVersion  : TPJVersionNumber;
+    FDBVersion  : TProgramVersion;
     FDatabase   : TSQLRestServerDB;
     FSQLModel   : TSQLModel;
 
     procedure DoBackupList;
-    function  GetDateTimeAsString: String;
+    function  GetDateTimeAsString: AnsiString;
   public
     constructor Create;
     destructor Destroy; override;
 
     property DBFileName: string read FDBFileName write FDBFileName;
-    property DBVersion: TPJVersionNumber read FDBVersion write FDBVersion;
+    property DBVersion: TProgramVersion read FDBVersion write FDBVersion;
     property Database: TSQLRestServerDB read FDatabase;
 
     procedure Setup(const ADBFilePath: string);
@@ -54,19 +56,18 @@ type
     procedure ClearTable(SQLRecordClass:TSQLRecordClass);
 
     procedure ImportData(ATree: TBaseVirtualTree); //For frmImportList
-    procedure ImportOptions; //For frmImportList
   end;
 
 implementation
 
 uses
   Kernel.Consts, AppConfig.Main, Utility.FileFolder, Utility.Misc,
-  Database.Version, Database.Options, Database.List, Kernel.Logger,
-  VirtualTree.Methods, SynLog;
+  Database.Version, Database.List, Kernel.Logger,
+  VirtualTree.Methods, SynLog, Kernel.ResourceStrings, Kernel.Instance, Kernel.Manager;
 
 constructor TDBManager.Create;
 begin
-  FSQLModel := TSQLModel.Create([TSQLtbl_version, TSQLtbl_list, TSQLtbl_options]);
+  FSQLModel := TSQLModel.Create([TSQLtbl_version, TSQLtbl_list]);
 end;
 
 procedure TDBManager.RemoveItem(aID: Integer);
@@ -88,7 +89,7 @@ begin
       //Run actions (ex. remove node from MRU list) before delete nodes and
       //remove each selected items from sqlite database
       for I := High(ANodes) downto 0 do
-        ATree.IterateSubtree(ANodes[I], TVirtualTreeMethods.Create.BeforeDeleteNode, nil, [], False);
+        ATree.IterateSubtree(ANodes[I], TVirtualTreeMethods.BeforeDeleteNode, nil, [], False);
       //Commit database's updates
       FDatabase.Commit(1);
     except
@@ -112,12 +113,12 @@ begin
   if (Config.Backup) then
   begin
     CopyFile(PChar(FDBFileName),
-             PChar(Format(Config.Paths.SuitePathBackup + BACKUP_FILE,[GetDateTimeAsString])),false);
+             PChar(Format(ASuiteInstance.Paths.SuitePathBackup + BACKUP_FILE,[GetDateTimeAsString])),false);
     DeleteOldBackups(Config.BackupNumber);
   end;
 end;
 
-function TDBManager.GetDateTimeAsString: String;
+function TDBManager.GetDateTimeAsString: AnsiString;
 begin
   DateTimeToString(Result, 'yyyy-mm-dd-hh-mm-ss',now);
 end;
@@ -129,19 +130,9 @@ begin
     TSQLtbl_list.Load(Self, ATree, True);
   except
     on E : Exception do
-      ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message],True);
-  end;
-end;
-
-procedure TDBManager.ImportOptions;
-begin
-  TASuiteLogger.Enter('ImportOptions', Self);
-  TASuiteLogger.Info('Import options from SQLite Database %s', [Self.FDBFileName]);
-  try
-    TSQLtbl_options.Load(Self, Config);
-  except
-    on E : Exception do
-      ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName, E.Message], True);
+    begin
+      ShowMessageFmtEx(msgErrGeneric,[E.ClassName,E.Message],True);
+    end;
   end;
 end;
 
@@ -168,13 +159,11 @@ begin
     try
       //Load Database version
       TSQLtbl_version.Load(Self);
-      //Load Options
-      TSQLtbl_options.Load(Self, Config);
       //Load list
       TSQLtbl_list.Load(Self, ATree, False);
     except
       on E : Exception do
-        ShowMessageFmtEx(DKLangConstW('msgErrGeneric'),[E.ClassName,E.Message],True);
+        ShowMessageFmtEx(msgErrGeneric,[E.ClassName,E.Message],True);
     end;
   finally
     ATree.EndUpdate;
@@ -197,9 +186,6 @@ begin
       if FDatabase.TransactionBegin(TSQLtbl_list, 1) then
       begin
         TSQLtbl_list.Save(Self, ATree);
-        //If settings is changed, insert it else (if it exists) update it
-        if Config.Changed then
-          TSQLtbl_options.Save(Self, Config);
         //Save new version info
         TSQLtbl_version.Save(Self);
         //Commit data in sqlite database
@@ -207,7 +193,7 @@ begin
       end;
     except
       on E : Exception do begin
-        ShowMessageFmtEx(DKLangConstW('msgErrGeneric'), [E.ClassName,E.Message], True);
+        ShowMessageFmtEx(msgErrGeneric, [E.ClassName,E.Message], True);
         FDatabase.Rollback(1);
       end;
     end;

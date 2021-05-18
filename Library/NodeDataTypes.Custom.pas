@@ -19,13 +19,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit NodeDataTypes.Custom;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
   SysUtils, Kernel.Enumerations, NodeDataTypes.Base,
-  DateUtils, Menus, Classes, Kernel.Types;
+  Classes, Kernel.Types;
 
 type
+
+  { TvCustomRealNodeData }
+
   TvCustomRealNodeData = class(TvBaseNodeData)
   private
     FPathIcon    : String;
@@ -36,7 +41,7 @@ type
     FSchMode     : TSchedulerMode; //0 Disabled, 1 Once, 2 Hourly, 3 Daily, 4 Weekly
     FSchDateTime : TDateTime;
     FActiveHotkey : Boolean;
-    FHotkey      : TShortcut;
+    FHotkey      : Cardinal;
     FLastAccess  : Int64;
 
     procedure SetAutorun(value: TAutorunType);
@@ -44,6 +49,7 @@ type
     procedure SetSchDateTime(value: TDateTime);
     procedure SetActiveHotkey(const Value: Boolean);
     function GetPathAbsoluteIcon: String;
+    procedure RunActionOnExe(Action: TActionOnExecute);
   protected
     procedure SetLastAccess(const Value: Int64); virtual;
     procedure AfterExecute(ADoActionOnExe: Boolean); virtual;
@@ -70,15 +76,15 @@ type
     property SchMode: TSchedulerMode read FSchMode write SetSchMode;
     property SchDateTime: TDateTime read FSchDateTime write SetSchDateTime;
     property ActiveHotkey: Boolean read FActiveHotkey write SetActiveHotkey;
-    property Hotkey: TShortcut read FHotkey write FHotkey;
+    property Hotkey: Cardinal read FHotkey write FHotkey;
   end;
   PvCustomRealNodeData = ^TvCustomRealNodeData;
 
 implementation
 
 uses
-  AppConfig.Main, Lists.Manager, VirtualTree.Methods, Kernel.Logger,
-  Utility.Process;
+  AppConfig.Main, Kernel.Logger, Forms.Main,
+  Kernel.Instance, Kernel.Manager;
 
 procedure TvCustomRealNodeData.Copy(source: TvBaseNodeData);
 var
@@ -121,10 +127,10 @@ begin
   begin
     //Old value is true, remove it in HotKeyApp
     if (FActiveHotkey) then
-      Config.ListManager.HotKeyItemList.RemoveItem(Self);
+      ASuiteManager.ListManager.HotKeyItemList.RemoveItem(Self);
     //New value is true, add it in HotKeyApp
     if (value) then
-      Config.ListManager.HotKeyItemList.AddItem(Self);
+      ASuiteManager.ListManager.HotKeyItemList.AddItem(Self);
   end;
   FActiveHotkey := Value;
 end;
@@ -144,9 +150,9 @@ begin
     if (FSchMode <> value) then
     begin
       if (FSchMode <> smDisabled) and (value = smDisabled) then
-        Config.ListManager.SchedulerItemList.RemoveItem(Self);
+        ASuiteManager.ListManager.SchedulerItemList.RemoveItem(Self);
       if (FSchMode = smDisabled) and (value <> smDisabled) then
-        Config.ListManager.SchedulerItemList.AddItem(Self);
+        ASuiteManager.ListManager.SchedulerItemList.AddItem(Self);
     end;
   FSchMode := value;
 end;
@@ -162,7 +168,34 @@ end;
 
 function TvCustomRealNodeData.GetPathAbsoluteIcon: String;
 begin
-  Result := Config.Paths.RelativeToAbsolute(FPathIcon);
+  Result := ASuiteInstance.Paths.RelativeToAbsolute(FPathIcon);
+end;
+
+procedure TvCustomRealNodeData.RunActionOnExe(Action: TActionOnExecute);
+
+  procedure ActionOnExe(Action: TActionOnExecute);
+  begin
+    case Action of
+      aeRunAndHide:
+      begin
+        //Hide frmMain
+        frmMain.Close;
+      end;
+      aeRunAndClose:
+      begin
+        //Close application
+        Config.ASuiteState := lsShutdown;
+        frmMain.Close;
+      end;
+    end;
+  end;
+
+begin
+  //If Action is aeDefault, using launcher options
+  if Action = aeDefault then
+    ActionOnExe(TActionOnExecute(Ord(Config.ActionOnExe) + 1))
+  else //Else software options
+    ActionOnExe(Action);
 end;
 
 function TvCustomRealNodeData.Execute(ADoActionOnExe: Boolean;
@@ -213,23 +246,23 @@ begin
     begin
       if (FAutorun in [atAlwaysOnStart, atSingleInstance, atNever]) and (value in [atAlwaysOnClose]) then
       begin
-        Config.ListManager.StartupItemList.RemoveItem(Self);
-        Config.ListManager.ShutdownItemList.InsertItem(Self.FAutorunPos, Self)
+        ASuiteManager.ListManager.StartupItemList.RemoveItem(Self);
+        ASuiteManager.ListManager.ShutdownItemList.InsertItem(Self.FAutorunPos, Self)
       end
       else
         if (FAutorun in [atAlwaysOnClose, atNever]) and (value in [atAlwaysOnStart, atSingleInstance]) then
         begin
-          Config.ListManager.ShutdownItemList.RemoveItem(Self);
-          Config.ListManager.StartupItemList.InsertItem(Self.FAutorunPos, Self);
+          ASuiteManager.ListManager.ShutdownItemList.RemoveItem(Self);
+          ASuiteManager.ListManager.StartupItemList.InsertItem(Self.FAutorunPos, Self);
         end;
     end
     else begin
       //If it is changed, RemoveItem from old list
       if (FAutorun in [atAlwaysOnStart, atSingleInstance]) and (value in [atNever]) then
-        Config.ListManager.StartupItemList.RemoveItem(Self)
+        ASuiteManager.ListManager.StartupItemList.RemoveItem(Self)
       else
         if (FAutorun in [atAlwaysOnClose]) and (value in [atNever]) then
-          Config.ListManager.ShutdownItemList.RemoveItem(Self);
+          ASuiteManager.ListManager.ShutdownItemList.RemoveItem(Self);
     end;
   end;
   //Set new value

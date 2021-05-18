@@ -1,0 +1,180 @@
+inherited frmStatsOptionsPage: TfrmStatsOptionsPage
+  Height = 450
+  ChildSizing.LeftRightSpacing = 4
+  ChildSizing.TopBottomSpacing = 4
+  ChildSizing.EnlargeHorizontal = crsScaleChilds
+  ClientHeight = 450
+  DesignLeft = 1917
+  DesignTop = 257
+  object gbASuite: TGroupBox[0]
+    Left = 4
+    Height = 80
+    Top = 200
+    Width = 437
+    Align = alTop
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    Caption = 'ASuite'
+    ClientHeight = 60
+    ClientWidth = 433
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 2
+    object lbSoftware: TJppDoubleLineLabel
+      Left = 6
+      Height = 15
+      Top = 0
+      Width = 425
+      RightCaption = 'Value'
+      LinePeriod = 4
+      Anchors = [akTop, akLeft, akRight]
+      Caption = 'Software added'
+      ParentFont = False
+    end
+    object lbTotal: TJppDoubleLineLabel
+      Left = 6
+      Height = 15
+      Top = 38
+      Width = 425
+      RightCaption = 'Value'
+      LinePeriod = 4
+      Anchors = [akTop, akLeft, akRight]
+      Caption = 'Total'
+      Font.Style = [fsBold]
+      ParentFont = False
+      RightCaptionFont.Style = [fsBold]
+    end
+    object lbCat: TJppDoubleLineLabel
+      Left = 6
+      Height = 15
+      Top = 19
+      Width = 425
+      RightCaption = 'Value'
+      LinePeriod = 4
+      Anchors = [akTop, akLeft, akRight]
+      Caption = 'Categories added'
+      ParentFont = False
+    end
+  end
+  object gbSupport: TGroupBox[1]
+    Left = 4
+    Height = 76
+    Top = 120
+    Width = 437
+    Align = alTop
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    Caption = 'Drive %S'
+    ClientHeight = 56
+    ClientWidth = 433
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 1
+    object lbSize: TJppDoubleLineLabel
+      Left = 6
+      Height = 15
+      Top = 0
+      Width = 425
+      RightCaption = 'Value'
+      LinePeriod = 4
+      Anchors = [akTop, akLeft, akRight]
+      Caption = 'Size'
+      ParentFont = False
+    end
+    object lbSpaceFree: TJppDoubleLineLabel
+      Left = 6
+      Height = 15
+      Top = 38
+      Width = 425
+      RightCaption = 'Value'
+      LinePeriod = 4
+      Anchors = [akTop, akLeft, akRight]
+      Caption = 'Used space'
+      ParentFont = False
+    end
+    object lbSpaceUsed: TJppDoubleLineLabel
+      Left = 6
+      Height = 15
+      Top = 19
+      Width = 425
+      RightCaption = 'Value'
+      LinePeriod = 4
+      Anchors = [akTop, akLeft, akRight]
+      Caption = 'Free space'
+      ParentFont = False
+    end
+  end
+  object gbSystem: TGroupBox[2]
+    Left = 4
+    Height = 112
+    Top = 4
+    Width = 437
+    Align = alTop
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    Caption = 'System'
+    ClientHeight = 92
+    ClientWidth = 433
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 0
+    object lbOs: TJppDoubleLineLabel
+      Left = 6
+      Height = 15
+      Top = 0
+      Width = 425
+      RightCaption = 'Value'
+      LinePeriod = 4
+      Anchors = [akTop, akLeft, akRight]
+      Caption = 'Operating System'
+      ParentFont = False
+    end
+    object lbUser: TJppDoubleLineLabel
+      Left = 6
+      Height = 15
+      Top = 75
+      Width = 425
+      RightCaption = 'Value'
+      LinePeriod = 4
+      Anchors = [akTop, akLeft, akRight]
+      Caption = 'Current user'
+      ParentFont = False
+    end
+    object lblBuild: TJppDoubleLineLabel
+      Left = 6
+      Height = 15
+      Top = 19
+      Width = 425
+      RightCaption = 'Value'
+      LinePeriod = 4
+      Anchors = [akTop, akLeft, akRight]
+      Caption = 'Build Version'
+      ParentFont = False
+    end
+    object lblProcessor: TJppDoubleLineLabel
+      Left = 6
+      Height = 15
+      Top = 57
+      Width = 425
+      RightCaption = 'Value'
+      LinePeriod = 4
+      Anchors = [akTop, akLeft, akRight]
+      Caption = 'Processor'
+      ParentFont = False
+    end
+    object lblRam: TJppDoubleLineLabel
+      Left = 6
+      Height = 15
+      Top = 38
+      Width = 425
+      RightCaption = 'Value'
+      LinePeriod = 4
+      Anchors = [akTop, akLeft, akRight]
+      Caption = 'Total physical memory'
+      ParentFont = False
+    end
+  end
+end

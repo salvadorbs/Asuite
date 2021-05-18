@@ -19,6 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Icons.Thread;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
@@ -68,7 +70,7 @@ var
 begin
   if Config.ASuiteState = lsNormal then
   begin
-    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender);
+    NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
     if Assigned(NodeData) then
       NodeData.Icon.ImageIndex;
   end

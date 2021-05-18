@@ -19,22 +19,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.Main;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Windows, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
-  ComCtrls, VirtualTrees, ActiveX, Kernel.Consts, DataModules.Icons,
-  Kernel.BaseMainForm, StdCtrls, Buttons, System.UITypes,
-  Kernel.Enumerations, Vcl.ExtCtrls, XMLDoc, DKLang, Lists.Manager,
-  Database.Manager, System.Actions, Vcl.ActnList;
+  LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
+  ComCtrls, VirtualTrees, UniqueInstance, Kernel.Consts, DataModules.Icons,
+  Kernel.BaseMainForm, StdCtrls, UITypes, VirtualTree.Helper,
+  Kernel.Enumerations, ExtCtrls,
+  ButtonedEdit, {Actions,} ActnList, EditBtn;
 
 type
 
   { TfrmMain }
 
   TfrmMain = class(TBaseMainForm)
+    actSepEdit: TAction;
+    btnedtSearch: TButtonedEdit;
     miStatistics: TMenuItem;
     MenuItem2: TMenuItem;
+    mniOpenFolderItem: TMenuItem;
+    mniRunAsAdminItem: TMenuItem;
+    mniRunAsItem: TMenuItem;
+    mniRunItem: TMenuItem;
+    N9: TMenuItem;
+    UniqueInstance1: TUniqueInstance;
     vstList: TVirtualStringTree;
     pcList: TPageControl;
     tbList: TTabSheet;
@@ -74,9 +84,8 @@ type
     miSearchIconPath: TMenuItem;
     miSearchWorkingDirPath: TMenuItem;
     miSearchParameters: TMenuItem;
-    btnedtSearch: TButtonedEdit;
     mniScanFolder: TMenuItem;
-    DKLanguageController1: TDKLanguageController;
+    
     ActionList1: TActionList;
     actRunItem: TAction;
     actRunAsItem: TAction;
@@ -95,6 +104,7 @@ type
     tmrCheckItems: TTimer;
     actSortList: TAction;
     mniSortList: TMenuItem;
+    procedure actSepEditUpdate(Sender: TObject);
     procedure miOptionsClick(Sender: TObject);
     procedure miStatisticsClick(Sender: TObject);
     procedure miImportListClick(Sender: TObject);
@@ -104,7 +114,6 @@ type
     procedure miExitClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure miExportListClick(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
     procedure miInfoASuiteClick(Sender: TObject);
     procedure btnedtSearchRightButtonClick(Sender: TObject);
     procedure ChangeSearchTextHint(Sender: TObject);
@@ -131,14 +140,18 @@ type
     procedure actSortListExecute(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure btnedtSearchChange(Sender: TObject);
+    procedure UniqueInstance1OtherInstance(Sender: TObject; ParamCount: Integer;
+      const Parameters: array of AnsiString);
   private
     { Private declarations }
     function  GetActiveTree: TBaseVirtualTree;
     procedure PopulatePopUpMenuFromAnother(APopupMenu: TMenuItem; AParentMenuItem: TMenuItem);
+    procedure CloseProcessOpenByASuite;
+{$IFDEF UNIX}
+    procedure DoDropFiles(Sender: TObject; const FileNames: array of AnsiString);        
+{$ENDIF}
   public
     { Public declarations }
-    procedure ShowMainForm(Sender: TObject);
-    procedure HideMainForm;
     procedure DoSearchItem(const TreeSearch: TBaseVirtualTree; const Keyword: string;
                            const SearchType: TSearchType);
     procedure SetAllIcons;
@@ -152,11 +165,12 @@ implementation
 uses
   Forms.Options, Forms.About, Utility.Misc, Forms.ScanFolder,
   DataModules.TrayMenu, Forms.ImportList, AppConfig.Main, Utility.System,
-  VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base, Kernel.Scheduler,
-  Kernel.Types, NodeDataTypes.Files, VirtualTree.Events, Utility.Process,
-  Kernel.Logger, SynLog;
+  VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base,
+  Kernel.Types, NodeDataTypes.Files, VirtualTree.Events, Kernel.Manager,
+  Kernel.Logger, SynLog, FileUtil, Kernel.ResourceStrings, Kernel.Instance
+  {$IFDEF MSWINDOWS} , JwaWinBase, jwatlhelp32 {$ENDIF};
 
-{$R *.dfm}
+{$R *.lfm}
 
 procedure TfrmMain.actAddItemUpdate(Sender: TObject);
 begin
@@ -166,7 +180,12 @@ end;
 procedure TfrmMain.actCopyExecute(Sender: TObject);
 begin
   TASuiteLogger.Info('Copy nodes into clipboard', []);
+
+  {$IFDEF MSWINDOWS}
   vstList.CopyToClipBoard;
+  {$ELSE}
+  vstList.FakeCopyToClipBoard;
+  {$ENDIF}
 end;
 
 procedure TfrmMain.actCutCopyDeleteUpdate(Sender: TObject);
@@ -184,7 +203,12 @@ end;
 procedure TfrmMain.actCutExecute(Sender: TObject);
 begin
   TASuiteLogger.Info('Cut nodes into clipboard', []);
+
+  {$IFDEF MSWINDOWS}
   vstList.CutToClipBoard;
+  {$ELSE}
+  vstList.FakeCutToClipBoard;
+  {$ENDIF}
 end;
 
 procedure TfrmMain.actDeleteExecute(Sender: TObject);
@@ -196,15 +220,15 @@ begin
   Config.ASuiteState := lsDeleting;
   try
     Tree := GetActiveTree;
-    if (Tree.GetFirstSelected <> nil) and (MessageDlg((DKLangConstW('msgConfirm')), mtWarning, [mbYes,mbNo], 0) = mrYes) then
+    if (Tree.GetFirstSelected <> nil) and (Config.TVDisableConfirmDelete or (MessageDlg((msgConfirmDeleteItem), mtWarning, [mbYes,mbNo], 0) = mrYes)) then
     begin
       Nodes := Tree.GetSortedSelection(true);
       //Delete items
-      if Config.DBManager.DeleteItems(Tree, Nodes) then
+      if ASuiteManager.DBManager.DeleteItems(Tree, Nodes) then
       begin
         //Delete nodes and refresh list
         Tree.DeleteSelectedNodes;
-        TVirtualTreeMethods.Create.RefreshList(Tree);
+        TVirtualTreeMethods.RefreshList(Tree);
       end;
     end;
   finally
@@ -214,14 +238,14 @@ end;
 
 procedure TfrmMain.actRunItemExecute(Sender: TObject);
 begin
-  TVirtualTreeMethods.Create.ExecuteSelectedNodes(GetActiveTree, TRunMode(TAction(Sender).Tag), False);
+  TVirtualTreeMethods.ExecuteSelectedNodes(GetActiveTree, TRunMode(TAction(Sender).Tag), False);
 end;
 
 procedure TfrmMain.actAddItem(Sender: TObject);
 var
   NodeData: TvBaseNodeData;
 begin
-  NodeData := TVirtualTreeMethods.Create.AddChildNodeByGUI(vstList, vstList.GetFirstSelected,
+  NodeData := TVirtualTreeMethods.AddChildNodeByGUI(vstList, vstList.GetFirstSelected,
                                                            TvTreeDataType(TAction(Sender).Tag));
   if Assigned(NodeData) then
   begin
@@ -234,36 +258,52 @@ procedure TfrmMain.actPasteExecute(Sender: TObject);
 var
   NodeData: TvBaseNodeData;
   Tree: TVirtualStringTree;
+  res: Boolean = False;
 begin
   TASuiteLogger.Info('Paste clipboard content in ASuite', []);
+
   Tree := TVirtualStringTree(GetActiveTree);
   if Assigned(Tree) then
   begin
-    NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Tree.GetFirstSelected, Tree);
+    NodeData := TVirtualTreeMethods.GetNodeItemData(Tree.GetFirstSelected, Tree);
     if Assigned(NodeData) then
     begin
-      if NodeData.DataType = vtdtCategory then
+      if NodeData.IsCategoryItem then
         Tree.DefaultPasteMode := amAddChildLast
       else
         Tree.DefaultPasteMode := amInsertAfter;
       end
     else
-      Tree.DefaultPasteMode := amAddChildLast;
-    Tree.PasteFromClipboard;
-    Tree.Expanded[Tree.GetFirstSelected] := True;
-    TVirtualTreeMethods.Create.RefreshList(Tree);
+      Tree.DefaultPasteMode := amAddChildLast; 
+
+    {$IFDEF MSWINDOWS}
+    res := Tree.PasteFromClipboard;
+    {$ELSE}
+    res := vstList.FakePasteFromClipboard;
+    {$ENDIF}
+
+    if res then
+    begin
+      Tree.Expanded[Tree.GetFirstSelected] := True;
+      TVirtualTreeMethods.RefreshList(Tree);
+    end;
   end;
 end;
 
 procedure TfrmMain.actPasteUpdate(Sender: TObject);
-begin
+begin               
   if Assigned(Sender) then
+  {$IFDEF MSWINDOWS}
     TAction(Sender).Enabled := IsFormatInClipBoard(CF_VIRTUALTREE) and (GetActiveTree = vstList);
+  {$ELSE}
+    TAction(Sender).Enabled := (Length(vstList.GetSortedCutCopySet(True)) > 0) and (GetActiveTree = vstList);
+  {$ENDIF}
+
 end;
 
 procedure TfrmMain.actPropertyExecute(Sender: TObject);
 begin
-  TVirtualTreeMethods.Create.ShowItemProperty(Self, GetActiveTree, GetActiveTree.GetFirstSelected);
+  TVirtualTreeMethods.ShowItemProperty(Self, GetActiveTree, GetActiveTree.GetFirstSelected);
 end;
 
 procedure TfrmMain.actRunItemUpdate(Sender: TObject);
@@ -273,26 +313,28 @@ var
   I: Integer;
 begin
   Nodes := GetActiveTree.GetSortedSelection(True);
+
   TAction(Sender).Enabled := False;
-  if Length(Nodes) > 0 then
+
+  for I := Low(Nodes) to High(Nodes) do
   begin
-    for I := Low(Nodes) to High(Nodes) do
+    NodeData := TVirtualTreeMethods.GetNodeItemData(Nodes[I], GetActiveTree);
+
+    if not(NodeData.IsSeparatorItem) then
+      TAction(Sender).Enabled := True;
+
+    if ((TAction(Sender).Tag = 1) or (TAction(Sender).Tag = 2)) and (NodeData.IsFileItem) then
+      TAction(Sender).Enabled := IsExecutableFile(TvFileNodeData(NodeData).PathAbsoluteFile);
+
+    if (TAction(Sender).Tag = 3) then
     begin
-      NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Nodes[I], GetActiveTree);
-
-      if NodeData.DataType <> vtdtSeparator then
-        TAction(Sender).Enabled := True;
-
-      if (TAction(Sender).Tag = 3) then
+      if NodeData.IsFileItem then
       begin
-        if NodeData.DataType = vtdtFile then
-        begin
-          if IsValidURLProtocol(TvFileNodeData(NodeData).PathAbsoluteFile) then
-            TAction(Sender).Enabled := False
-        end
-        else
-          TAction(Sender).Enabled := False;
-      end;
+        if IsValidURLProtocol(TvFileNodeData(NodeData).PathAbsoluteFile) then
+          TAction(Sender).Enabled := False
+      end
+      else
+        TAction(Sender).Enabled := False;
     end;
   end;
 end;
@@ -308,7 +350,7 @@ begin
     for I := Low(Nodes) to High(Nodes) do
       vstList.Sort(Nodes[I], 0, sdAscending);
   end;
-  TVirtualTreeMethods.Create.RefreshList(vstList);
+  TVirtualTreeMethods.RefreshList(vstList);
 end;
 
 procedure TfrmMain.actSortCatItemsUpdate(Sender: TObject);
@@ -324,8 +366,8 @@ begin
   begin
     for I := Low(Nodes) to High(Nodes) do
     begin
-      NodeData := TVirtualTreeMethods.Create.GetNodeItemData(Nodes[I], GetActiveTree);
-      if NodeData.DataType = vtdtCategory then
+      NodeData := TVirtualTreeMethods.GetNodeItemData(Nodes[I], GetActiveTree);
+      if NodeData.IsCategoryItem then
         TAction(Sender).Enabled := True;
     end;
   end;
@@ -335,7 +377,7 @@ procedure TfrmMain.actSortListExecute(Sender: TObject);
 begin
   vstList.SortTree(-1, sdAscending);
 
-  TVirtualTreeMethods.Create.RefreshList(vstList);
+  TVirtualTreeMethods.RefreshList(vstList);
 end;
 
 procedure TfrmMain.actSortListUpdate(Sender: TObject);
@@ -349,13 +391,50 @@ begin
   if Config.SearchAsYouType then
   begin
     if btnedtSearch.Text <> '' then
-      btnedtSearch.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('cancel')
+      btnedtSearch.RightButton.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('cancel')
     else
-      btnedtSearch.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('search');
+      btnedtSearch.RightButton.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('search');
 
     DoSearchItem(vstSearch, btnedtSearch.Text, TSearchType(GetCheckedMenuItem(pmSearch).Tag));
   end;
 end;
+
+procedure TfrmMain.UniqueInstance1OtherInstance(Sender: TObject;
+  ParamCount: Integer; const Parameters: array of AnsiString);
+var
+  I: Integer;
+begin
+  TASuiteLogger.Info('Started another instance', []);
+
+  //Parse parameters
+  for I := 0 to ParamCount - 1 do
+    ASuiteInstance.HandleParam(Parameters[I], False);
+
+  if Config.ShowGraphicMenuAnotherInstance then
+    dmTrayMenu.ShowGraphicMenu
+  else
+    ShowMainForm(Sender);
+end;
+           
+{$IFDEF UNIX}
+procedure TfrmMain.DoDropFiles(Sender: TObject;
+  const FileNames: array of AnsiString);
+var
+  I: Integer;
+begin
+  if pcList.ActivePageIndex <> PG_LIST then
+    Exit;
+
+  //Filenames is not only files
+  for I := 0 to Length(Filenames) - 1 do
+  begin
+    if FileExists(FileNames[I]) or DirectoryExists(FileNames[I]) then
+      TVirtualTreeMethods.AddNodeByPathFile(vstList, nil, FileNames[I], amAddChildLast)
+    else
+      TVirtualTreeMethods.AddNodeByText(vstList, nil, FileNames[I], amAddChildLast)
+  end;
+end;
+{$ENDIF}
 
 procedure TfrmMain.btnedtSearchKeyPress(Sender: TObject; var Key: Char);
 begin
@@ -372,11 +451,11 @@ begin
 end;
 
 procedure TfrmMain.miSaveListClick(Sender: TObject);
-begin;
-  if Config.SaveList(True) then
-    ShowMessageEx(DKLangConstW('msgSaveCompleted'))
+begin
+  if ASuiteInstance.SaveList(True) then
+    ShowMessageEx(msgSaveCompleted)
   else
-    ShowMessageEx(DKLangConstW('msgErrSave'),true);
+    ShowMessageEx(msgErrSave,true);
 end;
 
 procedure TfrmMain.ChangeSearchTextHint(Sender: TObject);
@@ -392,7 +471,7 @@ end;
 procedure TfrmMain.miImportListClick(Sender: TObject);
 begin
   TfrmImportList.Execute(Self);
-  TVirtualTreeMethods.Create.RefreshList(GetActiveTree);
+  TVirtualTreeMethods.RefreshList(GetActiveTree);
 end;
 
 procedure TfrmMain.miInfoASuiteClick(Sender: TObject);
@@ -407,6 +486,11 @@ begin
   TfrmOptions.Execute(Self);
 end;
 
+procedure TfrmMain.actSepEditUpdate(Sender: TObject);
+begin
+  TAction(Sender).Visible := (GetActiveTree = vstList);
+end;
+
 procedure TfrmMain.miStatisticsClick(Sender: TObject);
 begin
   TfrmOptions.Execute(Self, TfrmStatsOptionsPage);
@@ -415,7 +499,8 @@ end;
 procedure TfrmMain.mniScanFolderClick(Sender: TObject);
 begin
   TfrmScanFolder.Execute(Self);
-  TVirtualTreeMethods.Create.RefreshList(GetActiveTree);
+  TVirtualTreeMethods.RefreshList(GetActiveTree);
+  Config.SaveConfig;
 end;
 
 procedure TfrmMain.pcListChange(Sender: TObject);
@@ -426,71 +511,58 @@ begin
     vstSearch.Clear;
     btnedtSearch.Text := '';
   end;
-  TVirtualTreeMethods.Create.CheckVisibleNodePathExe(GetActiveTree);
+  TVirtualTreeMethods.CheckVisibleNodePathExe(GetActiveTree);
 end;
 
 procedure TfrmMain.SetAllIcons;
 begin
   //Set IcoImages
   //Set submenuimages to three MainMenu's subitems
-  miFile.SubMenuImages := dmImages.ilSmallIcons;
-  miEdit.SubMenuImages := dmImages.ilSmallIcons;
-  miHelp.SubMenuImages := dmImages.ilSmallIcons;
-  pmSearch.Images      := dmImages.ilSmallIcons;
-  pmWindow.Images      := dmImages.ilSmallIcons;
-  pcList.Images        := dmImages.ilSmallIcons;
-  btnedtSearch.Images  := dmImages.ilSmallIcons;
+  miFile.SubMenuImages := dmImages.ilLargeIcons;
+  miFile.SubMenuImagesWidth := ICON_SIZE_SMALL;
+
+  miEdit.SubMenuImages := dmImages.ilLargeIcons;
+  miEdit.SubMenuImagesWidth := ICON_SIZE_SMALL;
+
+  miHelp.SubMenuImages := dmImages.ilLargeIcons;
+  miHelp.SubMenuImagesWidth := ICON_SIZE_SMALL;
+
+  pmSearch.Images      := dmImages.ilLargeIcons;
+  pmSearch.ImagesWidth := ICON_SIZE_SMALL;
+
+  pmWindow.Images      := dmImages.ilLargeIcons;
+  pmWindow.ImagesWidth := ICON_SIZE_SMALL;
+
+  pcList.Images        := dmImages.ilLargeIcons;
+  pcList.ImagesWidth := ICON_SIZE_SMALL;
+
+  btnedtSearch.RightButton.Images := dmImages.ilLargeIcons;
+  btnedtSearch.RightButton.ImagesWidth := ICON_SIZE_SMALL;
+
+  btnedtSearch.LeftButton.Images := dmImages.ilLargeIcons;
+  btnedtSearch.LeftButton.ImagesWidth := ICON_SIZE_SMALL;
+
   //Set pcList tabs' ImageIndexes
-  tbList.ImageIndex    := Config.IconsManager.GetIconIndex('tree_list');
-  tbSearch.ImageIndex  := Config.IconsManager.GetIconIndex('search');
+  tbList.ImageIndex    := ASuiteManager.IconsManager.GetIconIndex('tree_list');
+  tbSearch.ImageIndex  := ASuiteManager.IconsManager.GetIconIndex('search');
+
   //Set MainMenu's ImageIndexes
-  miSaveList1.ImageIndex   := Config.IconsManager.GetIconIndex('save');
-  miOptions1.ImageIndex    := Config.IconsManager.GetIconIndex('options');
-  actAddCat.ImageIndex     := Config.IconsManager.GetIconIndex('add_category');
-  actAddSoftware.ImageIndex := Config.IconsManager.GetIconIndex('add_software');
-  actAddFolder.ImageIndex  := Config.IconsManager.GetIconIndex('add_folder');
-  actCut.ImageIndex        := Config.IconsManager.GetIconIndex('cut');
-  actCopy.ImageIndex       := Config.IconsManager.GetIconIndex('copy');
-  actPaste.ImageIndex      := Config.IconsManager.GetIconIndex('paste');
-  actDelete.ImageIndex     := Config.IconsManager.GetIconIndex('delete');
-  actProperty.ImageIndex   := Config.IconsManager.GetIconIndex('property');
-  miInfoASuite.ImageIndex  := Config.IconsManager.GetIconIndex('help');
-  actRunItem.ImageIndex    := Config.IconsManager.GetIconIndex('run');
+  miSaveList1.ImageIndex   := ASuiteManager.IconsManager.GetIconIndex('save');
+  miOptions1.ImageIndex    := ASuiteManager.IconsManager.GetIconIndex('options');
+  actAddCat.ImageIndex     := ASuiteManager.IconsManager.GetIconIndex('add_category');
+  actAddSoftware.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('add_software');
+  actAddFolder.ImageIndex  := ASuiteManager.IconsManager.GetIconIndex('add_folder');
+  actCut.ImageIndex        := ASuiteManager.IconsManager.GetIconIndex('cut');
+  actCopy.ImageIndex       := ASuiteManager.IconsManager.GetIconIndex('copy');
+  actPaste.ImageIndex      := ASuiteManager.IconsManager.GetIconIndex('paste');
+  actDelete.ImageIndex     := ASuiteManager.IconsManager.GetIconIndex('delete');
+  actProperty.ImageIndex   := ASuiteManager.IconsManager.GetIconIndex('property');
+  miInfoASuite.ImageIndex  := ASuiteManager.IconsManager.GetIconIndex('help');
+  actRunItem.ImageIndex    := ASuiteManager.IconsManager.GetIconIndex('run');
+
   //Set Search's ImageIndexes
-  btnedtSearch.LeftButton.ImageIndex  := Config.IconsManager.GetIconIndex('search_type');
-  btnedtSearch.RightButton.ImageIndex := Config.IconsManager.GetIconIndex('search');
-end;
-
-procedure TfrmMain.ShowMainForm(Sender: TObject);
-begin
-  //From CoolTrayicon source
-  if Application.MainForm <> nil then
-  begin
-    // Restore the app, but don't automatically show its taskbar icon
-    // Show application's TASKBAR icon (not the tray icon)
-    ShowWindow(Application.Handle, SW_RESTORE);
-    Application.Restore;
-    // Show the form itself
-    if Application.MainForm.WindowState = wsMinimized then
-      Application.MainForm.WindowState := wsNormal;    // Override minimized state
-    Application.MainForm.Visible := True;
-    // Bring the main form (or its modal dialog) to the foreground
-    SetForegroundWindow(Application.Handle);
-  end;
-end;
-
-procedure TfrmMain.HideMainForm;
-begin
-  if Application.MainForm <> nil then
-  begin
-    // Hide the form itself (and thus any child windows)
-    Application.MainForm.Visible := False;
-    { Hide application's TASKBAR icon (not the tray icon). Do this AFTER
-        the main form is hidden, or any child windows will redisplay the
-        taskbar icon if they are visible. }
-    if IsWindowVisible(Application.Handle) then
-      ShowWindow(Application.Handle, SW_HIDE);
-  end;
+  btnedtSearch.LeftButton.ImageIndex  := ASuiteManager.IconsManager.GetIconIndex('search_type');
+  btnedtSearch.RightButton.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('search');
 end;
 
 procedure TfrmMain.PopulatePopUpMenuFromAnother(APopupMenu: TMenuItem; AParentMenuItem: TMenuItem);
@@ -513,6 +585,42 @@ begin
   end;
 end;
 
+procedure TfrmMain.CloseProcessOpenByASuite;
+{$IFDEF MSWINDOWS}
+var
+  hSnapShot, hProcess : THandle;
+  ProcInfo  : TProcessEntry32;
+  ContinueLoop: Boolean;
+const
+  PROCESS_TERMINATE = $0001;
+{$ENDIF}
+begin
+  //TODO: Add linux method
+  {$IFDEF MSWINDOWS}
+  TASuiteLogger.Info('Close processes opened by ASuite', []);
+  hSnapShot   := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+  //Check processes
+  if (hSnapShot <> THandle(-1)) then
+  begin
+    ProcInfo.dwSize := SizeOf(ProcInfo);
+    ContinueLoop := Process32First(hSnapshot, ProcInfo);
+    while ContinueLoop do
+    begin
+      //Close process with ParentID same as ASuite PID
+      if (ProcInfo.th32ParentProcessID = GetCurrentProcessId) and (ProcInfo.szExeFile <> LowerCase('Rundll32.exe')) then
+      begin
+        hProcess := OpenProcess(PROCESS_TERMINATE, False, ProcInfo.th32ProcessID);
+        TerminateProcess(hProcess, 0);
+        FileClose(hProcess);
+      end;
+
+      ContinueLoop := Process32Next(hSnapShot, ProcInfo);
+    end;
+  end;
+  FileClose(hSnapShot);
+  {$ENDIF}
+end;
+
 procedure TfrmMain.DoSearchItem(const TreeSearch: TBaseVirtualTree; const Keyword: string;
                                 const SearchType: TSearchType);
 var
@@ -528,10 +636,10 @@ begin
       LauncherSearch.Keyword    := LowerCase(Keyword);
       LauncherSearch.SearchType := SearchType;
       //Do search using LauncherSearch for parameters
-      Config.MainTree.IterateSubtree(nil, TVirtualTreeMethods.Create.FindNode, @LauncherSearch, [], True);
+      ASuiteInstance.MainTree.IterateSubtree(nil, TVirtualTreeMethods.FindNode, @LauncherSearch, [], True);
     finally
       TreeSearch.EndUpdate;
-      TVirtualTreeMethods.Create.CheckVisibleNodePathExe(TreeSearch);
+      TVirtualTreeMethods.CheckVisibleNodePathExe(TreeSearch);
     end;
   end;
 end;
@@ -548,7 +656,7 @@ end;
 procedure TfrmMain.tmrCheckItemsTimer(Sender: TObject);
 begin
   if Config.ASuiteState = lsNormal then
-    TVirtualTreeMethods.Create.CheckVisibleNodePathExe(GetActiveTree);
+    TVirtualTreeMethods.CheckVisibleNodePathExe(GetActiveTree);
 end;
 
 procedure TfrmMain.miExitClick(Sender: TObject);
@@ -561,23 +669,30 @@ procedure TfrmMain.miExportListClick(Sender: TObject);
 begin
   if (SaveDialog1.Execute) then
   begin
-    TVirtualTreeMethods.Create.RefreshList(GetActiveTree);
-    CopyFile(PChar(Config.DBManager.DBFileName), PChar(SaveDialog1.FileName), False);
+    TVirtualTreeMethods.RefreshList(GetActiveTree);
+    FileUtil.CopyFile(PChar(ASuiteManager.DBManager.DBFileName), PChar(SaveDialog1.FileName), False);
   end;
 end;
 
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   TASuiteLogger.Enter('FormClose', Self);
+
   //Close all process opened by ASuite
   if Config.AutoCloseProcess then
     CloseProcessOpenByASuite;
-  Config.ListManager.ExecuteAutorunList(amShutdown);
+
+  ASuiteManager.ListManager.ExecuteAutorunList(amShutdown);
+
   //Execute actions on ASuite's shutdown (inside vstList)
-  Config.MainTree.IterateSubtree(nil, TVirtualTreeMethods.Create.ActionsOnShutdown, nil);
+  ASuiteInstance.MainTree.IterateSubtree(nil, TVirtualTreeMethods.ActionsOnShutdown, nil);
+
   //Hotkey
-  Config.ListManager.HotKeyItemList.Clear;
-  TVirtualTreeMethods.Create.RefreshList(nil);
+  ASuiteManager.ListManager.HotKeyItemList.Clear;
+
+  Config.SaveConfig;
+
+  TVirtualTreeMethods.RefreshList(nil);
 end;
 
 procedure TfrmMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -595,38 +710,42 @@ procedure TfrmMain.FormCreate(Sender: TObject);
 var
   VSTEvents: TVirtualTreeEvents;
 begin
-  TASuiteLogger.Enter('FormCreate', Self);
+  TASuiteLogger.Enter('MainFormCreate', Self);
+
+  {$IFDEF UNIX}
+  Self.AllowDropFiles := True;
+  Self.OnDropFiles := DoDropFiles;
+
+  //Disable right click select for context menu issues
+  Self.vstList.TreeOptions.SelectionOptions := Self.vstList.TreeOptions.SelectionOptions - [toRightClickSelect];
+  {$ENDIF}
+
   //Set vstList as MainTree in Config
-  Config.MainTree := vstList;
+  ASuiteInstance.MainTree := vstList;
   Application.CreateForm(TdmImages, dmImages);
   Application.CreateForm(TdmTrayMenu, dmTrayMenu);
   pcList.ActivePageIndex := PG_LIST;
+
   //Setup events in vsts
   VSTEvents := TVirtualTreeEvents.Create;
   VSTEvents.SetupVSTList(vstList);
   VSTEvents.SetupVSTSearch(vstSearch);
-  //Check read only
-  if Config.CheckReadOnlyMode then
-  begin
-    miOptions1.Enabled  := False;
-    miSaveList1.Enabled := False;
-  end;
+
   //Load Database and get icons (only first level of tree)
-  Config.LoadList;
-  Config.ListManager.ExecuteAutorunList(amStartup);
+  Config.LoadConfig;
+  ASuiteInstance.LoadList;
+  ASuiteManager.ListManager.ExecuteAutorunList(amStartup);
+
   //Check missed scheduler tasks
-  TScheduler.Create.CheckMissedTasks;
-  TVirtualTreeMethods.Create.RefreshList(nil);
+  ASuiteInstance.Scheduler.CheckMissedTasks;
+  TVirtualTreeMethods.RefreshList(nil);
+
   //Get placeholder for edtSearch
   btnedtSearch.TextHint := StringReplace(miSearchName.Caption, '&', '', []);
   PopulatePopUpMenuFromAnother(miEdit, pmWindow.Items);
-  //Start threads
-  TVirtualTreeMethods.Create.GetAllIcons(vstList, nil);
-end;
 
-procedure TfrmMain.FormDestroy(Sender: TObject);
-begin
-  Config.Destroy;
+  //Start threads
+  TVirtualTreeMethods.GetAllIcons(vstList, nil);
 end;
 
 procedure TfrmMain.FormHide(Sender: TObject);
@@ -637,6 +756,7 @@ end;
 procedure TfrmMain.FormResize(Sender: TObject);
 begin
   GetActiveTree.Refresh;
+  Config.Changed := True;
 end;
 
 procedure TfrmMain.FormShow(Sender: TObject);

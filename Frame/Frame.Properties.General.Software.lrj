@@ -1,0 +1,9 @@
+{"version":1,"strings":[
+{"hash":354472,"name":"tfrmswgeneralpropertypage.grpsoftware.caption","sourcebytes":[80,97,116,104],"value":"Path"},
+{"hash":261107848,"name":"tfrmswgeneralpropertypage.lbpathexe.caption","sourcebytes":[69,120,101,99,117,116,97,98,108,101,47,102,111,108,100,101,114,47,119,101,98,32,112,97,103,101,32,112,97,116,104],"value":"Executable/folder/web page path"},
+{"hash":111937580,"name":"tfrmswgeneralpropertypage.edtpathexe.text","sourcebytes":[36,65,83,117,105,116,101,92],"value":"$ASuite\\"},
+{"hash":128270345,"name":"tfrmswgeneralpropertypage.lbworkingdir.caption","sourcebytes":[67,117,115,116,111,109,32,119,111,114,107,105,110,103,32,100,105,114,101,99,116,111,114,121,32,40,111,112,116,105,111,110,97,108,41],"value":"Custom working directory (optional)"},
+{"hash":111937580,"name":"tfrmswgeneralpropertypage.edtworkingdir.text","sourcebytes":[36,65,83,117,105,116,101,92],"value":"$ASuite\\"},
+{"hash":188075481,"name":"tfrmswgeneralpropertypage.lbparameters.caption","sourcebytes":[80,97,114,97,109,101,116,101,114,115,32,40,111,112,116,105,111,110,97,108,41],"value":"Parameters (optional)"},
+{"hash":128328681,"name":"tfrmswgeneralpropertypage.lbinfo2.caption","sourcebytes":[78,111,116,101,58,32,89,111,117,32,99,97,110,32,117,115,101,32,116,104,101,115,101,32,118,97,114,115,32,40,105,110,99,108,117,100,101,100,32,101,110,118,105,114,111,110,109,101,110,116,32,118,97,114,105,97,98,108,101,115,41,32,105,110,32,114,101,108,97,116,105,118,101,32,112,97,116,104,58,13,10,45,32,37,97,115,117,105,116,101,37,32,61,32,65,83,117,105,116,101,32,102,111,108,100,101,114,32,112,97,116,104,32,40,34,37,115,34,41,13,10,45,32,37,100,114,105,118,101,37,32,61,32,100,114,105,118,101,32,112,97,116,104,32,40,34,37,115,34,41],"value":"Note: You can use these vars (included environment variables) in relative path:\r\n- %asuite% = ASuite folder path (\"%s\")\r\n- %drive% = drive path (\"%s\")"}
+]}

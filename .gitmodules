@@ -1,0 +1,27 @@
+[submodule "3p/AsuiteComps"]
+	path = 3p/AsuiteComps
+	url = https://github.com/salvadorbs/AsuiteComps
+[submodule "3p/JPLib"]
+	path = 3p/JPLib
+	url = https://github.com/jackdp/JPLib.git
+[submodule "3p/JPPack"]
+	path = 3p/JPPack
+	url = https://github.com/jackdp/JPPack.git
+[submodule "3p/mORMot"]
+	path = 3p/mORMot
+	url = https://github.com/synopse/mORMot.git
+[submodule "3p/HashLib4Pascal"]
+	path = 3p/HashLib4Pascal
+	url = https://github.com/Xor-el/HashLib4Pascal.git
+[submodule "3p/bgrabitmap"]
+	path = 3p/bgrabitmap
+	url = https://github.com/bgrabitmap/bgrabitmap.git
+[submodule "3p/luipack"]
+	path = 3p/luipack
+	url = https://github.com/salvadorbs/luipack.git
+[submodule "3p/VirtualTreeView-Lazarus"]
+	path = 3p/VirtualTreeView-Lazarus
+	url = https://github.com/salvadorbs/VirtualTreeView-Lazarus.git
+[submodule "3p/bgracontrols"]
+	path = 3p/bgracontrols
+	url = https://github.com/bgrabitmap/bgracontrols.git

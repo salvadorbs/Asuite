@@ -19,19 +19,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Properties.General.Category;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, VirtualTrees, DKLang,
-  Frame.Properties.General, Vcl.Mask, JvExMask, JvToolEdit, DataModules.Icons;
+  LCLIntf, SysUtils, Controls, Dialogs, StdCtrls, VirtualTrees,
+  Frame.Properties.General, DefaultTranslator, EditBtn;
 
 type
+
+  { TfrmCatGeneralPropertyPage }
+
   TfrmCatGeneralPropertyPage = class(TfrmBaseGeneralPropertyPage)
     grpSubItems: TGroupBox;
-    vstCategoryItems: TVirtualStringTree;
     lblNote: TLabel;
-    DKLanguageController1: TDKLanguageController;
+    vstCategoryItems: TVirtualStringTree;
+    
   private
     { Private declarations }
     procedure GetCategoryItems(Sender: TBaseVirtualTree; Node: PVirtualNode;
@@ -51,11 +55,11 @@ var
 implementation
 
 uses
-  NodeDataTypes.Custom, NodeDataTypes.Files, NodeDataTypes.Base,
-  Kernel.Types, Kernel.Enumerations, Forms.Main,
+  NodeDataTypes.Custom, NodeDataTypes.Files,
+  Kernel.Types, Forms.Main,
   VirtualTree.Methods, VirtualTree.Events;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmCatGeneralPropertyPage }
 
@@ -66,8 +70,8 @@ var
   NewNode         : PVirtualNode;
   NewNodeData     : PTreeDataX;
 begin
-  CurrentFileData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender));
-  if (CurrentFileData.DataType in [vtdtFile,vtdtFolder]) and
+  CurrentFileData := TvCustomRealNodeData(TVirtualTreeMethods.GetNodeItemData(Node, Sender));
+  if (CurrentFileData.IsFileItem) and
      (Node.Parent = PVirtualNode(Data)) then
   begin
     //Add new checked node in vstCategoryItems
@@ -110,7 +114,7 @@ procedure TfrmCatGeneralPropertyPage.SetCategoryItems(Sender: TBaseVirtualTree;
 var
   FileNodeData : TvFileNodeData;
 begin
-  FileNodeData := TvFileNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node, Sender));
+  FileNodeData := TvFileNodeData(TVirtualTreeMethods.GetNodeItemData(Node, Sender));
   FileNodeData.RunFromCategory := (Node.CheckState = csCheckedNormal);
   FileNodeData.Changed := True;
 end;

@@ -1,0 +1,1529 @@
+# 
+# Translators:
+# Matteo Salvi <salvadorbs@gmail.com>, 2021
+# 
+msgid ""
+msgstr ""
+"Last-Translator: Matteo Salvi <salvadorbs@gmail.com>, 2021\n"
+"Language-Team: Italian (Italy) (https://www.transifex.com/asd-127/teams/112867/it_IT/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: it_IT\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: kernel.resourcestrings.cxactiononexeopt_item0
+msgctxt "kernel.resourcestrings.cxactiononexeopt_item0"
+msgid "Just run file"
+msgstr "Avvia solamente il file"
+
+#: kernel.resourcestrings.cxactiononexeopt_item1
+msgctxt "kernel.resourcestrings.cxactiononexeopt_item1"
+msgid "Run and hide ASuite"
+msgstr "Avvia e nascondi ASuite"
+
+#: kernel.resourcestrings.cxactiononexeopt_item2
+msgctxt "kernel.resourcestrings.cxactiononexeopt_item2"
+msgid "Run and close ASuite"
+msgstr "Avvia e chiudi ASuite"
+
+#: kernel.resourcestrings.cxactiononexe_item0
+msgid "Default (options)"
+msgstr "Default (opzioni)"
+
+#: kernel.resourcestrings.cxactiononexe_item1
+msgctxt "kernel.resourcestrings.cxactiononexe_item1"
+msgid "Just run file"
+msgstr "Avvia solamente il file"
+
+#: kernel.resourcestrings.cxactiononexe_item2
+msgctxt "kernel.resourcestrings.cxactiononexe_item2"
+msgid "Run and hide ASuite"
+msgstr "Avvia e nascondi ASuite"
+
+#: kernel.resourcestrings.cxactiononexe_item3
+msgctxt "kernel.resourcestrings.cxactiononexe_item3"
+msgid "Run and close ASuite"
+msgstr "Avvia e chiudi ASuite"
+
+#: kernel.resourcestrings.cxautoexecute_item0
+msgid "Never"
+msgstr "Mai"
+
+#: kernel.resourcestrings.cxautoexecute_item1
+msgid "Always on startup"
+msgstr "Sempre all'avvio"
+
+#: kernel.resourcestrings.cxautoexecute_item2
+msgid "Startup, only if no previous instances are running"
+msgstr "All'avvio, solo se non ci sono precedenti istanze in corso"
+
+#: kernel.resourcestrings.cxautoexecute_item3
+msgid "Always on shutdown"
+msgstr "Sempre alla chiusura"
+
+#: kernel.resourcestrings.cxmouseclick_item0
+msgid "No action"
+msgstr "Nessuna azione"
+
+#: kernel.resourcestrings.cxmouseclick_item1
+msgid "Show window"
+msgstr "Mostra finestra"
+
+#: kernel.resourcestrings.cxmouseclick_item2
+msgid "Show graphic menu"
+msgstr "Mostra Graphic Menu"
+
+#: kernel.resourcestrings.cxmouseclick_item3
+msgid "Show classic menu"
+msgstr "Mostra Classic Menu"
+
+#: kernel.resourcestrings.cxscheduler_item0
+msgid "Disabled"
+msgstr "Disabilitato"
+
+#: kernel.resourcestrings.cxscheduler_item1
+msgid "Once"
+msgstr "Una volta"
+
+#: kernel.resourcestrings.cxscheduler_item2
+msgid "Hourly"
+msgstr "Oraria"
+
+#: kernel.resourcestrings.cxscheduler_item3
+msgid "Daily"
+msgstr "Giornaliera"
+
+#: kernel.resourcestrings.cxwindowstate_item0
+msgid "Normal"
+msgstr "Normale"
+
+#: kernel.resourcestrings.cxwindowstate_item1
+msgid "Minimized"
+msgstr "Minimizzato"
+
+#: kernel.resourcestrings.cxwindowstate_item2
+msgid "Maximized"
+msgstr "Massimizzato"
+
+#: kernel.resourcestrings.msgadvanced
+msgid "Advanced"
+msgstr "Avanzate"
+
+#: kernel.resourcestrings.msgautorun
+msgctxt "kernel.resourcestrings.msgautorun"
+msgid "Autorun"
+msgstr "Autoavvio"
+
+#: kernel.resourcestrings.msgavailableversion
+msgid "There is a new version of ASuite available. Do you want download it?"
+msgstr "E' disponibile una nuova versione di ASuite. Vuoi scaricarla?"
+
+#: kernel.resourcestrings.msgbehavior
+msgid "Behavior"
+msgstr "Comportamento"
+
+#: kernel.resourcestrings.msgcancel
+msgctxt "kernel.resourcestrings.msgcancel"
+msgid "Cancel"
+msgstr "Annulla"
+
+#: kernel.resourcestrings.msgcancelscanfolder
+msgid "ScanFolder is still running. Are you sure you want to cancel it?"
+msgstr "ScanFolder è ancora in esecuzione. Sei sicuro di volerlo annullare?"
+
+#: kernel.resourcestrings.msgclose
+msgid "Close"
+msgstr "Chiudi"
+
+#: kernel.resourcestrings.msgcmopenfolder
+msgid "[Open this folder]"
+msgstr "[Apri questa cartella]"
+
+#: kernel.resourcestrings.msgconfirm
+msgid "Are you sure?"
+msgstr "Sei sicuro?"
+
+#: kernel.resourcestrings.msgconfirmdeleteitem
+msgid "Are you sure you want to delete it?"
+msgstr "Sei sicuro di volerlo eliminare?"
+
+#: kernel.resourcestrings.msgconfirmruncat
+msgid "Are you sure execute category %s?"
+msgstr "Sei sicuro di eseguire la categoria %s?"
+
+#: kernel.resourcestrings.msgcopy
+msgid "Copy_"
+msgstr "Copia_"
+
+#: kernel.resourcestrings.msgdefaultitemsettings
+msgid "Default (item's settings)"
+msgstr "Default (opzioni dell'elemento)"
+
+#: kernel.resourcestrings.msgejecthardware
+msgid "Safely remove hardware"
+msgstr "Rimozione sicura dell'hardware"
+
+#: kernel.resourcestrings.msgenvironmentvars
+msgid "Environment Vars"
+msgstr "Variabili d'ambiente"
+
+#: kernel.resourcestrings.msgerremptyname
+msgid "Application's name field is empty"
+msgstr "Il campo del nome dell'applicazione è vuoto"
+
+#: kernel.resourcestrings.msgerremptypath
+msgid "Path field is empty"
+msgstr "Il campo percorso è vuoto"
+
+#: kernel.resourcestrings.msgerremptyusername
+msgid "Username field is empty"
+msgstr "Il campo username è vuoto"
+
+#: kernel.resourcestrings.msgerrgeneric
+msgid "%s error raised, with message: %s"
+msgstr "Rilevato errore %s, con il seguente messaggio: %s"
+
+#: kernel.resourcestrings.msgerricon
+msgid "Cannot use icon %s"
+msgstr "Impossibile utilizzare l'icona %s"
+
+#: kernel.resourcestrings.msgerrnoicon
+msgid "Couldn't find icon file %s"
+msgstr "Non è stato trovata l'icona %s"
+
+#: kernel.resourcestrings.msgerrnothemeini
+msgid "Couldn't find file %s"
+msgstr "Non è stato trovata il file %s"
+
+#: kernel.resourcestrings.msgerrregcmhotkey
+msgid "Register Classic Menu's hotkey failed"
+msgstr "Registrazione hotkey del Classic Menu fallita"
+
+#: kernel.resourcestrings.msgerrreggmhotkey
+msgid "Register Graphic Menu's hotkey failed"
+msgstr "Registrazione hotkey del Graphic Menu fallita"
+
+#: kernel.resourcestrings.msgerrregwindowhotkey
+msgid "Register window's hotkey failed"
+msgstr "Registrazione hotkey della finestra principale fallita"
+
+#: kernel.resourcestrings.msgerrrun
+msgid "Cannot run %s"
+msgstr "Impossibile eseguire %s"
+
+#: kernel.resourcestrings.msgerrsave
+msgid "Save failed because of an error"
+msgstr "Salvataggio fallito a causa di un errore"
+
+#: kernel.resourcestrings.msgerrscanfolderemptypath
+msgid "You haven't select any folder!"
+msgstr "Non è stata selezionata nessuna cartella!"
+
+#: kernel.resourcestrings.msgerrscanfoldermissingtypes
+msgid "You haven't add any file types!"
+msgstr "Non è stato aggiunto nessun tipo di file!"
+
+#: kernel.resourcestrings.msgexit
+msgctxt "kernel.resourcestrings.msgexit"
+msgid "Exit"
+msgstr "Esci"
+
+#: kernel.resourcestrings.msgfilenotfound
+msgid "File not found"
+msgstr "File non trovato"
+
+#: kernel.resourcestrings.msgfilterbackground
+msgid "Files supported (*.png;*.bmp)|*.png;*.bmp|All files|*.*"
+msgstr "File supportati (*.png;*.bmp)|*.png;*.bmp|Tutti i file|*.*"
+
+#: kernel.resourcestrings.msgfilterexe
+msgid "Executables (*.exe)|*.exe|All files|*.*"
+msgstr "Eseguibile (*.exe)|*.exe|Tutti i file|*.*"
+
+#: kernel.resourcestrings.msgfiltericon
+msgid "Icons (*.ico)|*.ico"
+msgstr "Icone (*.ico)|*.ico"
+
+#: kernel.resourcestrings.msgfiltericonexe
+msgid "Files supported (*.ico;*.exe)|*.ico;*.exe|All files|*.*"
+msgstr "File supportati (*.ico;*.exe)|*.ico;*.exe|Tutti i file|*.*"
+
+#: kernel.resourcestrings.msgfilterpicture
+msgid "Personal Picture [48x48] (*.jpg, *.png)|*.jpg;*.png"
+msgstr "Foto personale [48x48] (*.jpg, *.png)|*.jpg;*.png"
+
+#: kernel.resourcestrings.msgfoldernotfound
+msgid "Folder not found"
+msgstr "Cartella non trovata"
+
+#: kernel.resourcestrings.msgfoundnumfiles
+msgid "Found and added %d files in list"
+msgstr "Trovato e aggiunto %d file nella lista"
+
+#: kernel.resourcestrings.msggeneral
+msgctxt "kernel.resourcestrings.msggeneral"
+msgid "General"
+msgstr "Generale"
+
+#: kernel.resourcestrings.msggmabout
+msgid "About"
+msgstr "About"
+
+#: kernel.resourcestrings.msggmdocuments
+msgid "Documents"
+msgstr "Documenti"
+
+#: kernel.resourcestrings.msggmdrivename
+msgid "Drive (%s)"
+msgstr "Drive (%s)"
+
+#: kernel.resourcestrings.msggmexplore
+msgid "Explore"
+msgstr "Esplora"
+
+#: kernel.resourcestrings.msggmharddiskspace
+msgid "%s free of %s"
+msgstr "%s libero di %s"
+
+#: kernel.resourcestrings.msggmmusic
+msgid "Music"
+msgstr "Musica"
+
+#: kernel.resourcestrings.msggmoptions
+msgctxt "kernel.resourcestrings.msggmoptions"
+msgid "Options"
+msgstr "Opzioni"
+
+#: kernel.resourcestrings.msggmpictures
+msgid "Pictures"
+msgstr "Immagini"
+
+#: kernel.resourcestrings.msggmshow
+msgid "Show %s"
+msgstr "Mostra %s"
+
+#: kernel.resourcestrings.msggmvideos
+msgid "Videos"
+msgstr "Video"
+
+#: kernel.resourcestrings.msghotkey
+msgctxt "kernel.resourcestrings.msghotkey"
+msgid "Hotkey"
+msgstr "Hotkey"
+
+#: kernel.resourcestrings.msghotkeynokey
+msgid "You haven't select any keys!"
+msgstr "Non hai scelto nessun tasto!"
+
+#: kernel.resourcestrings.msghotkeynomod
+msgid "You haven't select any modifier keys!"
+msgstr "Non hai scelto nessun tasto modificatore!"
+
+#: kernel.resourcestrings.msghotkeynotavailable
+msgid ""
+"This hotkey is being used already by another software or system itself. "
+"Please choose another one."
+msgstr ""
+"Questo hotkey è già stato utilizzato da un altro software o dal sistema "
+"stesso. Si prega di inserirne un altro."
+
+#: kernel.resourcestrings.msgimport
+msgid "Import"
+msgstr "Importa"
+
+#: kernel.resourcestrings.msgimportfailed
+msgid "Import failed because of an error"
+msgstr "Importazione fallita a causa di un errore"
+
+#: kernel.resourcestrings.msgimportprogress
+msgid "Import in progress..."
+msgstr "Importazione in corso..."
+
+#: kernel.resourcestrings.msgimporttitle2
+msgid "Select the location of file list to import in ASuite"
+msgstr "Seleziona la posizione della lista file da importare in ASuite"
+
+#: kernel.resourcestrings.msgimporttitle3
+msgid "Select which items to import"
+msgstr "Seleziona quali elementi importare"
+
+#: kernel.resourcestrings.msginputusername
+msgid "Please insert username"
+msgstr "Inserisci username"
+
+#: kernel.resourcestrings.msgitems
+msgid "Items"
+msgstr "Elementi"
+
+#: kernel.resourcestrings.msgitemsimported
+msgid "Import finished. %d items imported"
+msgstr "Importazione finita. %d elementi importati"
+
+#: kernel.resourcestrings.msgittaketime
+msgid "It may take time..."
+msgstr "Potrebbe volerci del tempo..."
+
+#: kernel.resourcestrings.msglist
+msgctxt "kernel.resourcestrings.msglist"
+msgid "List"
+msgstr "Lista"
+
+#: kernel.resourcestrings.msglongmfu
+msgid "Most Used"
+msgstr "Più usati"
+
+#: kernel.resourcestrings.msglongmru
+msgctxt "kernel.resourcestrings.msglongmru"
+msgid "Recents"
+msgstr "Recenti"
+
+#: kernel.resourcestrings.msgmainwindow
+msgid "Main Window"
+msgstr "Finestra principale"
+
+#: kernel.resourcestrings.msgmissedtask
+msgid ""
+"Seems scheduler didn't run the item %s as expected by options. Do you want "
+"execute it now?"
+msgstr ""
+"Sembra che lo scheduler non abbia eseguito l'elemtno %s come previsto dalle "
+"opzioni. Vuoi eseguirlo ora?"
+
+#: kernel.resourcestrings.msgmouse
+msgid "Mouse"
+msgstr "Mouse"
+
+#: kernel.resourcestrings.msgnext
+msgctxt "kernel.resourcestrings.msgnext"
+msgid "Next >"
+msgstr "Prossimo >"
+
+#: kernel.resourcestrings.msgnoavailableversion
+msgid "No new version available"
+msgstr "Nessuna versione disponibile"
+
+#: kernel.resourcestrings.msgnoname
+msgid "No name"
+msgstr "Nessun nome"
+
+#: kernel.resourcestrings.msgnotifydropfiles
+msgid "Added successfully %d files"
+msgstr "Aggiunti %d file con successo"
+
+#: kernel.resourcestrings.msgnotifydroplink
+msgid "Dropped text in list successfully"
+msgstr "Droppato testo nella lista con successo"
+
+#: kernel.resourcestrings.msgnotifyexecuteitem
+msgid "Execute %s"
+msgstr "Eseguito %s"
+
+#: kernel.resourcestrings.msgnotifyhotkey
+msgid "Execute %s using hotkey"
+msgstr "Eseguito %s usando hotkey"
+
+#: kernel.resourcestrings.msgnotifyscheduler
+msgid "Execute %s using scheduler"
+msgstr " Eseguito %s usando scheduler"
+
+#: kernel.resourcestrings.msgopenoptions
+msgid "Options..."
+msgstr "Opzioni..."
+
+#: kernel.resourcestrings.msgoperationcompleted
+msgid "Operation completed"
+msgstr "Operazione completata"
+
+#: kernel.resourcestrings.msgprocessingitems
+msgid "Processing items (%.0f%%): %d"
+msgstr "Processing items (%.0f %%):  %d"
+
+#: kernel.resourcestrings.msgrestartasuitechanges
+msgid "You must restart ASuite to apply these changes."
+msgstr "Devi riavviare ASuite per rendere effettive le modifiche."
+
+#: kernel.resourcestrings.msgrunastitle
+msgid "Run As..."
+msgstr "Avvia come..."
+
+#: kernel.resourcestrings.msgsavecompleted
+msgid "Save completed"
+msgstr "Salvataggio completato"
+
+#: kernel.resourcestrings.msgscanfolderextnotvalid
+msgid "Ext file not valid. Please check it and retry!"
+msgstr "Estensione del file non valida. Si prega di controllare e riprovare!"
+
+#: kernel.resourcestrings.msgscanningcancel
+msgctxt "kernel.resourcestrings.msgscanningcancel"
+msgid "Cancel"
+msgstr "Annulla"
+
+#: kernel.resourcestrings.msgscanningprogress
+msgid "Scanning in progress..."
+msgstr "Scan in corso..."
+
+#: kernel.resourcestrings.msgshortmfu
+msgid "MFU"
+msgstr "MFU"
+
+#: kernel.resourcestrings.msgshortmru
+msgid "MRU"
+msgstr "MRU"
+
+#: kernel.resourcestrings.msgshowasuite
+msgid "Show ASuite"
+msgstr "Mostra ASuite"
+
+#: kernel.resourcestrings.msgstats
+msgid "Stats"
+msgstr "Statistiche"
+
+#: kernel.resourcestrings.msgstop
+msgid "Stop"
+msgstr "Stop"
+
+#: kernel.resourcestrings.msgtrayicon
+msgid "Trayicon"
+msgstr "Trayicon"
+
+#: kernel.resourcestrings.msgusetriggersensors
+msgid "Active Sensors for %s"
+msgstr "Attiva sensori per %s"
+
+#: tdmtraymenu.action1.caption
+msgid "actCategory"
+msgstr "actCategory"
+
+#: tfrmabout.caption
+msgid "About %s"
+msgstr "About %s"
+
+#: tfrmabout.lblappname.caption
+msgid "%s"
+msgstr "%s"
+
+#: tfrmabout.lblcopyright.caption
+msgid "Copyright 2006-2020 Matteo Salvi"
+msgstr "Copyright 2006-2020 Matteo Salvi"
+
+#: tfrmabout.lblversion.caption
+msgid "%s (%s bit)"
+msgstr "%s (%s bit)"
+
+#: tfrmabout.lnklblwebsite.caption
+msgid "http://www.salvadorsoftware.com"
+msgstr "http://www.salvadorsoftware.com"
+
+#: tfrmadvancedoptionspage.btnclear.caption
+msgid "Clear"
+msgstr "Pulisci"
+
+#: tfrmadvancedoptionspage.cbbackup.caption
+msgid "Active automatic backup"
+msgstr "Attiva backup automatico"
+
+#: tfrmadvancedoptionspage.cbcache.caption
+msgid "Enable cache"
+msgstr "Abilita cache"
+
+#: tfrmadvancedoptionspage.cbclearbackup.caption
+msgid "Backups"
+msgstr "Backup"
+
+#: tfrmadvancedoptionspage.cbclearcache.caption
+msgid "Cache icons"
+msgstr "Icone cache"
+
+#: tfrmadvancedoptionspage.cbclearmfu.caption
+msgctxt "tfrmadvancedoptionspage.cbclearmfu.caption"
+msgid "Most Frequently Used"
+msgstr "Più usati"
+
+#: tfrmadvancedoptionspage.cbclearmru.caption
+msgctxt "tfrmadvancedoptionspage.cbclearmru.caption"
+msgid "Recents"
+msgstr "Recenti"
+
+#: tfrmadvancedoptionspage.cbmfu.caption
+msgid "Active MFU items"
+msgstr "Attiva gli elementi MFU"
+
+#: tfrmadvancedoptionspage.cbmru.caption
+msgid "Active recent items"
+msgstr "Attiva gli elementi recenti"
+
+#: tfrmadvancedoptionspage.cbscheduler.caption
+msgid "Enable scheduler"
+msgstr "Abilita scheduler"
+
+#: tfrmadvancedoptionspage.gbbackup.caption
+msgid "Backup"
+msgstr "Backup"
+
+#: tfrmadvancedoptionspage.gbmfu.caption
+msgctxt "tfrmadvancedoptionspage.gbmfu.caption"
+msgid "Most Frequently Used"
+msgstr "Più usati"
+
+#: tfrmadvancedoptionspage.gbotherfunctions.caption
+msgid "Other functions"
+msgstr "Altre funzioni"
+
+#: tfrmadvancedoptionspage.gbrecents.caption
+msgctxt "tfrmadvancedoptionspage.gbrecents.caption"
+msgid "Recents"
+msgstr "Recenti"
+
+#: tfrmadvancedoptionspage.grpclearelements.caption
+msgid "Clear elements"
+msgstr "Pulisci gli elementi"
+
+#: tfrmadvancedoptionspage.lbclearelements.caption
+msgid "Clear the following elements"
+msgstr "Pulisci i seguenti elementi"
+
+#: tfrmadvancedoptionspage.lbmaxbackup.caption
+msgid "Max number backup files"
+msgstr "Max numero di backup"
+
+#: tfrmadvancedoptionspage.lbmaxmfu.caption
+msgid "Max number MFU items"
+msgstr "Max numero di elementi più usati"
+
+#: tfrmadvancedoptionspage.lbmaxmru.caption
+msgid "Max number recent items"
+msgstr "Max numero di elementi recenti"
+
+#: tfrmadvancedpropertypage.cbdontinsertmfu.caption
+msgid "Don't insert this software in MFU"
+msgstr "Non inserire questo software nei elementi più usati (MFU)"
+
+#: tfrmadvancedpropertypage.cbdontinsertmru.caption
+msgid "Don't insert this software in recents (MRU)"
+msgstr "Non inserire questo software negli elementi recenti (MRU)"
+
+#: tfrmadvancedpropertypage.cbhidesoftware.caption
+msgid "Hide this software from menu"
+msgstr "Nascondi questo software nel menu"
+
+#: tfrmadvancedpropertypage.cbhotkey.caption
+msgid "Active hotkey"
+msgstr "Attiva hotkey"
+
+#: tfrmadvancedpropertypage.cbshortcutdesktop.caption
+msgid "Create shortcut on desktop when ASuite is running"
+msgstr "Crea shortcut sul desktop quando ASuite è in esecuzione"
+
+#: tfrmadvancedpropertypage.grphotkey.caption
+msgctxt "tfrmadvancedpropertypage.grphotkey.caption"
+msgid "Hotkey"
+msgstr "Hotkey"
+
+#: tfrmadvancedpropertypage.grpothers.caption
+msgid "Others"
+msgstr "Altro"
+
+#: tfrmadvancedpropertypage.grpscheduler.caption
+msgid "Scheduler"
+msgstr "Scheduler"
+
+#: tfrmautorunoptionspage.chkshutdown.caption
+msgid "Enable shutdown autorun"
+msgstr "Abilita autorun di spegnimento"
+
+#: tfrmautorunoptionspage.chkstartup.caption
+msgid "Enable startup autorun"
+msgstr "Abilita autorun di avvio"
+
+#: tfrmautorunoptionspage.grpshutdownorderitems.caption
+msgid "Shutdown"
+msgstr "Spegni"
+
+#: tfrmautorunoptionspage.grpstartuporderitems.caption
+msgctxt "tfrmautorunoptionspage.grpstartuporderitems.caption"
+msgid "Startup"
+msgstr "Avvio"
+
+#: tfrmautorunoptionspage.lblshutdowninfo.caption
+msgid "Order of shutdown autorun items in ASuite"
+msgstr "Ordine degli elementi da eseguire alla chiusura"
+
+#: tfrmautorunoptionspage.lblstartupinfo.caption
+msgid "Order of startup autorun items in ASuite"
+msgstr "Ordine degli elementi da eseguire all'avvio"
+
+#: tfrmautorunoptionspage.mniproperties.caption
+msgctxt "tfrmautorunoptionspage.mniproperties.caption"
+msgid "Properties"
+msgstr "Proprietà"
+
+#: tfrmautorunoptionspage.mniremoveautorun.caption
+msgid "Remove autorun"
+msgstr "Rimuovi autorun"
+
+#: tfrmautorunoptionspage.vstshutdownitems.header.columns[0].text
+msgctxt "tfrmautorunoptionspage.vstshutdownitems.header.columns[0].text"
+msgid "Name"
+msgstr "Nome"
+
+#: tfrmautorunoptionspage.vstshutdownitems.header.columns[1].text
+msgctxt "tfrmautorunoptionspage.vstshutdownitems.header.columns[1].text"
+msgid "Type"
+msgstr "Tipo"
+
+#: tfrmautorunoptionspage.vstshutdownitems.header.columns[2].text
+msgctxt "tfrmautorunoptionspage.vstshutdownitems.header.columns[2].text"
+msgid "Category"
+msgstr "Categoria"
+
+#: tfrmautorunoptionspage.vstshutdownitems.header.columns[3].text
+msgctxt "tfrmautorunoptionspage.vstshutdownitems.header.columns[3].text"
+msgid "Path executable"
+msgstr "Percorso dell'eseguibile"
+
+#: tfrmautorunoptionspage.vststartupitems.header.columns[0].text
+msgctxt "tfrmautorunoptionspage.vststartupitems.header.columns[0].text"
+msgid "Name"
+msgstr "Nome"
+
+#: tfrmautorunoptionspage.vststartupitems.header.columns[1].text
+msgctxt "tfrmautorunoptionspage.vststartupitems.header.columns[1].text"
+msgid "Type"
+msgstr "Tipo"
+
+#: tfrmautorunoptionspage.vststartupitems.header.columns[2].text
+msgctxt "tfrmautorunoptionspage.vststartupitems.header.columns[2].text"
+msgid "Category"
+msgstr "Categoria"
+
+#: tfrmautorunoptionspage.vststartupitems.header.columns[3].text
+msgctxt "tfrmautorunoptionspage.vststartupitems.header.columns[3].text"
+msgid "Path executable"
+msgstr "Percorso dell'eseguibile"
+
+#: tfrmbasegeneralpropertypage.edtpathicon.text
+msgctxt "tfrmbasegeneralpropertypage.edtpathicon.text"
+msgid "$ASuite\\"
+msgstr "$ASuite\\"
+
+#: tfrmbasegeneralpropertypage.gbitem.caption
+msgid "Item"
+msgstr "Elemento"
+
+#: tfrmbasegeneralpropertypage.lbname.caption
+msgctxt "tfrmbasegeneralpropertypage.lbname.caption"
+msgid "Name"
+msgstr "Nome"
+
+#: tfrmbasegeneralpropertypage.lbpathicon.caption
+msgid "Custom icon path (optional)"
+msgstr "Percorso dell'icona personalizzata (opzionale)"
+
+#: tfrmbehaviorpropertypage.btnchangeorder.caption
+msgid "Change autorun order"
+msgstr "Cambia ordine autorun"
+
+#: tfrmbehaviorpropertypage.grpautoexecute.caption
+msgctxt "tfrmbehaviorpropertypage.grpautoexecute.caption"
+msgid "Autorun"
+msgstr "Autorun"
+
+#: tfrmbehaviorpropertypage.grponexecute.caption
+msgid "On Execute"
+msgstr "All'esecuzione"
+
+#: tfrmbehaviorpropertypage.grpwindowstate.caption
+msgid "Window State"
+msgstr "Stato della finestra"
+
+#: tfrmcatgeneralpropertypage.grpsubitems.caption
+msgid "Software in this category"
+msgstr "Software in questa categoria"
+
+#: tfrmcatgeneralpropertypage.lblnote.caption
+msgid ""
+"Note: In this list you can find all software items of this category (only "
+"first level). Uncheck items who you don't want to start, when run this "
+"category."
+msgstr ""
+"Nota: In questa lista troverai tutti gli elementi software di questa "
+"categoria (solo del primo livello). Togli la spunta a quei elementi che non "
+"vuoi che vengano eseguiti, quando decidi di avviare questa categoria."
+
+#: tfrmdialogbase.caption
+msgid "frmDialogBase"
+msgstr "frmDialogBase"
+
+#: tfrmenvironmentvars.actadd.caption
+msgctxt "tfrmenvironmentvars.actadd.caption"
+msgid "Add"
+msgstr "Aggiungi"
+
+#: tfrmenvironmentvars.actcopy.caption
+msgctxt "tfrmenvironmentvars.actcopy.caption"
+msgid "Copy"
+msgstr "Copia"
+
+#: tfrmenvironmentvars.actdelete.caption
+msgctxt "tfrmenvironmentvars.actdelete.caption"
+msgid "Delete"
+msgstr "Elimina"
+
+#: tfrmenvironmentvars.actpaste.caption
+msgctxt "tfrmenvironmentvars.actpaste.caption"
+msgid "Paste"
+msgstr "Incolla"
+
+#: tfrmenvironmentvars.grpothers.caption
+msgid "Environment Variables"
+msgstr "Variabili d'ambiente"
+
+#: tfrmenvironmentvars.tbbuttons.caption
+msgid "tbButtons"
+msgstr "tbButtons"
+
+#: tfrmgeneraloptionspage.cbrunsingleclick.caption
+msgid "Execute with single click in main window"
+msgstr "Esegui con un click singolo nella finestra principale"
+
+#: tfrmgeneraloptionspage.cbsecondinstancegm.caption
+msgctxt "tfrmgeneraloptionspage.cbsecondinstancegm.caption"
+msgid "Show Graphic Menu, when run another ASuite instance"
+msgstr "Mostra Graphic Menu, quando avvii un altro istanza di ASuite"
+
+#: tfrmgeneraloptionspage.cbshowmenustartup.caption
+msgid "Show graphic menu on ASuite startup"
+msgstr "Mostra Graphic Menu all'avvio di ASuite"
+
+#: tfrmgeneraloptionspage.cbshowpanelstartup.caption
+msgid "Show window on ASuite startup"
+msgstr "Mostra la finestra principale all'avvio di ASuite"
+
+#: tfrmgeneraloptionspage.cbwindowsstartup.caption
+msgid "Start ASuite on Operating System startup"
+msgstr "Avvia ASuite all'avvio del sistema"
+
+#: tfrmgeneraloptionspage.chkautocloseprocess.caption
+msgid "Close all process opened by ASuite at launcher shutdown"
+msgstr "Chiudi tutti i processi aperti da ASuite alla sua chiusura"
+
+#: tfrmgeneraloptionspage.chkconfirmmessagecat.caption
+msgid "Ask to confirm before run a category"
+msgstr "Chiedi conferma prima di avviare una categoria"
+
+#: tfrmgeneraloptionspage.chkmissedschedulertask.caption
+msgid "Check missed scheduler task at ASuite startup"
+msgstr "Controllare i task non eseguiti all'avvio di ASuite"
+
+#: tfrmgeneraloptionspage.gbexecution.caption
+msgid "Execution"
+msgstr "Esecuzione"
+
+#: tfrmgeneraloptionspage.gbstartup.caption
+msgctxt "tfrmgeneraloptionspage.gbstartup.caption"
+msgid "Startup"
+msgstr "Avvio"
+
+#: tfrmgeneraloptionspage.grplanguage.caption
+msgid "Language"
+msgstr "Lingua"
+
+#: tfrmgeneraloptionspage.lbactiononexe.caption
+msgid "On execution"
+msgstr "All'esecuzione"
+
+#: tfrmgraphicmenu.caption
+msgid "ASuite Menu"
+msgstr "ASuite Menu"
+
+#: tfrmgraphicmenu.lbldrivespace.caption
+msgid "132Mb / 2Gb (6.6%)"
+msgstr "132Mb / 2Gb (6.6%)"
+
+#: tfrmgraphicmenu.mniopenfoldersw.caption
+msgctxt "tfrmgraphicmenu.mniopenfoldersw.caption"
+msgid "Show application's folder"
+msgstr "Mostra la cartella dell'applicazione"
+
+#: tfrmgraphicmenu.mniproperty.caption
+msgctxt "tfrmgraphicmenu.mniproperty.caption"
+msgid "Property"
+msgstr "Proprietà"
+
+#: tfrmgraphicmenu.mnirun.caption
+msgctxt "tfrmgraphicmenu.mnirun.caption"
+msgid "Run"
+msgstr "Avvia"
+
+#: tfrmgraphicmenu.mnirunas.caption
+msgctxt "tfrmgraphicmenu.mnirunas.caption"
+msgid "Run as..."
+msgstr "Avvia come..."
+
+#: tfrmgraphicmenu.mnirunasadmin.caption
+msgctxt "tfrmgraphicmenu.mnirunasadmin.caption"
+msgid "Run as admin"
+msgstr "Avvia come amministratore"
+
+#: tfrmhotkeyoptionspage.cbhotkey.caption
+msgid "Enable hotkey"
+msgstr "Abilita hotkey"
+
+#: tfrmhotkeyoptionspage.gbhotkey.caption
+msgctxt "tfrmhotkeyoptionspage.gbhotkey.caption"
+msgid "Hotkey"
+msgstr "Hotkey"
+
+#: tfrmhotkeyoptionspage.grpordersoftware.caption
+msgid "Hotkey list used"
+msgstr "Lista degli hotkey usati"
+
+#: tfrmhotkeyoptionspage.lblhotkeycm.caption
+msgid "Show classic menu when hotkey is pressed"
+msgstr "Mostra Classic Menu all'uso del hotkey"
+
+#: tfrmhotkeyoptionspage.lblhotkeygm.caption
+msgid "Show graphic menu when hotkey is pressed"
+msgstr "Mostra Graphic Menu all'uso del hotkey"
+
+#: tfrmhotkeyoptionspage.lblhotkeywindow.caption
+msgid "Show window when hotkey is pressed"
+msgstr "Mostra la finestra principale all'uso del hotkey"
+
+#: tfrmhotkeyoptionspage.mniedithotkey.caption
+msgid "Edit Hotkey"
+msgstr "Modifica hotkey"
+
+#: tfrmhotkeyoptionspage.mniproperties.caption
+msgctxt "tfrmhotkeyoptionspage.mniproperties.caption"
+msgid "Properties"
+msgstr "Proprietà"
+
+#: tfrmhotkeyoptionspage.mniremovehotkey.caption
+msgid "Remove Hotkey"
+msgstr "Rimuovi Hotkey"
+
+#: tfrmhotkeyoptionspage.vstitems.header.columns[0].text
+msgctxt "tfrmhotkeyoptionspage.vstitems.header.columns[0].text"
+msgid "Name"
+msgstr "Nome"
+
+#: tfrmhotkeyoptionspage.vstitems.header.columns[1].text
+msgctxt "tfrmhotkeyoptionspage.vstitems.header.columns[1].text"
+msgid "Type"
+msgstr "Tipo"
+
+#: tfrmhotkeyoptionspage.vstitems.header.columns[2].text
+msgctxt "tfrmhotkeyoptionspage.vstitems.header.columns[2].text"
+msgid "Category"
+msgstr "Categoria"
+
+#: tfrmhotkeyoptionspage.vstitems.header.columns[3].text
+msgctxt "tfrmhotkeyoptionspage.vstitems.header.columns[3].text"
+msgid "Hotkey"
+msgstr "Hotkey"
+
+#: tfrmimportlist.btnback.caption
+msgid "< Back"
+msgstr "< Annulla"
+
+#: tfrmimportlist.btncancel.caption
+msgctxt "tfrmimportlist.btncancel.caption"
+msgid "Cancel"
+msgstr "Annulla"
+
+#: tfrmimportlist.btndeselectall.caption
+msgid "Deselect all"
+msgstr "Deseleziona tutto"
+
+#: tfrmimportlist.btnnext.caption
+msgctxt "tfrmimportlist.btnnext.caption"
+msgid "Next >"
+msgstr "Prossimo >"
+
+#: tfrmimportlist.btnselectall.caption
+msgid "Select all"
+msgstr "Seleziona tutto"
+
+#: tfrmimportlist.caption
+msgid "Import list"
+msgstr "Importa lista"
+
+#: tfrmimportlist.gbfile.caption
+msgid "File List"
+msgstr "Lista file"
+
+#: tfrmimportlist.lblfile.caption
+msgid "Launcher File location:"
+msgstr "Locazione del file Launcher"
+
+#: tfrmimportlist.lbltitle.caption
+msgid "Placeholder text"
+msgstr "Placeholder text"
+
+#: tfrmimportlist.tsaskfilelist.caption
+msgid "tsAskFileList"
+msgstr "tsAskFileList"
+
+#: tfrmimportlist.tslist.caption
+msgid "tsItems"
+msgstr "tsItems"
+
+#: tfrmmain.actaddcat.caption
+msgid "Add category..."
+msgstr "Aggiungi categoria..."
+
+#: tfrmmain.actaddfolder.caption
+msgid "Add folder..."
+msgstr "Aggiungi cartella..."
+
+#: tfrmmain.actaddseparator.caption
+msgid "Add separator..."
+msgstr "Aggiungi separatore..."
+
+#: tfrmmain.actaddsoftware.caption
+msgid "Add software..."
+msgstr "Aggiungi software..."
+
+#: tfrmmain.actcopy.caption
+msgctxt "tfrmmain.actcopy.caption"
+msgid "Copy"
+msgstr "Copia"
+
+#: tfrmmain.actcut.caption
+msgid "Cut"
+msgstr "Taglia"
+
+#: tfrmmain.actdelete.caption
+msgctxt "tfrmmain.actdelete.caption"
+msgid "Delete"
+msgstr "Elimina"
+
+#: tfrmmain.actopenfolderitem.caption
+msgctxt "tfrmmain.actopenfolderitem.caption"
+msgid "Show application's folder"
+msgstr "Mostra la cartella dell'applicazione"
+
+#: tfrmmain.actpaste.caption
+msgctxt "tfrmmain.actpaste.caption"
+msgid "Paste"
+msgstr "Incolla"
+
+#: tfrmmain.actproperty.caption
+msgctxt "tfrmmain.actproperty.caption"
+msgid "Property"
+msgstr "Proprietà"
+
+#: tfrmmain.actrunasadminitem.caption
+msgctxt "tfrmmain.actrunasadminitem.caption"
+msgid "Run as admin"
+msgstr "Avvia come amministratore"
+
+#: tfrmmain.actrunasitem.caption
+msgctxt "tfrmmain.actrunasitem.caption"
+msgid "Run as..."
+msgstr "Avvia come..."
+
+#: tfrmmain.actrunitem.caption
+msgctxt "tfrmmain.actrunitem.caption"
+msgid "Run"
+msgstr "Avvia"
+
+#: tfrmmain.actsepedit.caption
+msgid "-"
+msgstr "-"
+
+#: tfrmmain.actsortcatitems.caption
+msgid "Sort category's items"
+msgstr "Ordina gli elementi della categoria"
+
+#: tfrmmain.actsortlist.caption
+msgid "Sort list"
+msgstr "Ordina lista"
+
+#: tfrmmain.btnedtsearch.texthint
+msgctxt "tfrmmain.btnedtsearch.texthint"
+msgid "Name"
+msgstr "Nome"
+
+#: tfrmmain.caption
+msgctxt "tfrmmain.caption"
+msgid "ASuite"
+msgstr "ASuite"
+
+#: tfrmmain.miedit.caption
+msgid "Edit"
+msgstr "Modifica"
+
+#: tfrmmain.miexit1.caption
+msgctxt "tfrmmain.miexit1.caption"
+msgid "Exit"
+msgstr "Esci"
+
+#: tfrmmain.miexportlist.caption
+msgid "Export list..."
+msgstr "Esporta lista..."
+
+#: tfrmmain.mifile.caption
+msgid "File"
+msgstr "File"
+
+#: tfrmmain.mihelp.caption
+msgid "Help"
+msgstr "Aiuto"
+
+#: tfrmmain.miimportlist.caption
+msgid "Import list..."
+msgstr "Importa lista..."
+
+#: tfrmmain.miinfoasuite.caption
+msgid "About ASuite"
+msgstr "About ASuite"
+
+#: tfrmmain.mioptions1.caption
+msgctxt "tfrmmain.mioptions1.caption"
+msgid "Options"
+msgstr "Opzioni"
+
+#: tfrmmain.misavelist1.caption
+msgid "Save list"
+msgstr "Salva lista"
+
+#: tfrmmain.misearchexepath.caption
+msgid "Executable path"
+msgstr "Percorso eseguibile"
+
+#: tfrmmain.misearchiconpath.caption
+msgid "Icon path"
+msgstr "Percorsa icona"
+
+#: tfrmmain.misearchname.caption
+msgctxt "tfrmmain.misearchname.caption"
+msgid "Name"
+msgstr "Nome"
+
+#: tfrmmain.misearchparameters.caption
+msgid "Parameters"
+msgstr "Parametri"
+
+#: tfrmmain.misearchworkingdirpath.caption
+msgid "Working directory path"
+msgstr "Percorso cartella di lavoro"
+
+#: tfrmmain.mistatistics.caption
+msgid "Statistics"
+msgstr "Statistiche"
+
+#: tfrmmain.mniscanfolder.caption
+msgid "Scan for files..."
+msgstr "Scan per files..."
+
+#: tfrmmain.tblist.caption
+msgctxt "tfrmmain.tblist.caption"
+msgid "List"
+msgstr "Lista"
+
+#: tfrmmain.tbsearch.caption
+msgid "Search"
+msgstr "Cerca"
+
+#: tfrmmain.vstsearch.header.columns[0].text
+msgctxt "tfrmmain.vstsearch.header.columns[0].text"
+msgid "Name"
+msgstr "Nome"
+
+#: tfrmmain.vstsearch.header.columns[1].text
+msgctxt "tfrmmain.vstsearch.header.columns[1].text"
+msgid "Category"
+msgstr "Categoria"
+
+#: tfrmmainwindowoptionspage.btnfontsettings.caption
+msgid "Font settings..."
+msgstr "Opzioni font..."
+
+#: tfrmmainwindowoptionspage.cbautoopclcat.caption
+msgid "Automatic opening/closing categories"
+msgstr "Apertura/chisusura automatica delle categorie"
+
+#: tfrmmainwindowoptionspage.cbautoopdragdrop.caption
+msgid "Automatic opening category, after drag&&drop an item in it"
+msgstr ""
+"Apertura automatica della categoria, dopo drag&&drop di un elemento in essa"
+
+#: tfrmmainwindowoptionspage.cbbackground.caption
+msgid "Active custom background"
+msgstr "Attiva sfondo personalizzato"
+
+#: tfrmmainwindowoptionspage.cbcustomtitle.caption
+msgid "Custom main window title"
+msgstr "Titolo personalizzato della finestra principale"
+
+#: tfrmmainwindowoptionspage.cbdialogcentermf.caption
+msgid "Open dialogs in the center of main window"
+msgstr "Apri finestre al centro di quella principale"
+
+#: tfrmmainwindowoptionspage.cbdisableconfirmdelete.caption
+msgid "Disable delete items confirmation dialog"
+msgstr "Disabilita messaggio di conferma per eliminazione degli elementi"
+
+#: tfrmmainwindowoptionspage.cbhidesearch.caption
+msgid "Hide tab Search in main window"
+msgstr "Nascondi il tab Cerca nella finestra principale"
+
+#: tfrmmainwindowoptionspage.cbholdsize.caption
+msgid "Hold main window size"
+msgstr "Mantieni le dimensioni della finestra principale"
+
+#: tfrmmainwindowoptionspage.cbsmallicon.caption
+msgid "Small icon size in main window"
+msgstr "Icona di piccole dimensioni nella finestra principale"
+
+#: tfrmmainwindowoptionspage.cbwindowontop.caption
+msgid "Main window always on top"
+msgstr "Finestra principale sempre in primo piano"
+
+#: tfrmmainwindowoptionspage.chksearchasyoutype.caption
+msgid "Search as you type"
+msgstr " Cerca durante la digitazione"
+
+#: tfrmmainwindowoptionspage.edtbackground.text
+msgctxt "tfrmmainwindowoptionspage.edtbackground.text"
+msgid "$ASuite\\"
+msgstr "$ASuite\\"
+
+#: tfrmmainwindowoptionspage.edtcustomtitle.text
+msgctxt "tfrmmainwindowoptionspage.edtcustomtitle.text"
+msgid "ASuite"
+msgstr "ASuite"
+
+#: tfrmmainwindowoptionspage.gbtreeview.caption
+msgid "Treeview"
+msgstr "Vista ad albero"
+
+#: tfrmmainwindowoptionspage.gbwindow.caption
+msgctxt "tfrmmainwindowoptionspage.gbwindow.caption"
+msgid "General"
+msgstr "Generale"
+
+#: tfrmoptions.caption
+msgctxt "tfrmoptions.caption"
+msgid "Options"
+msgstr "Opzioni"
+
+#: tfrmpropertyitem.caption
+msgctxt "tfrmpropertyitem.caption"
+msgid "Property"
+msgstr "Proprietà"
+
+#: tfrmpropertyseparator.btncancel.caption
+msgctxt "tfrmpropertyseparator.btncancel.caption"
+msgid "Cancel"
+msgstr "Annulla"
+
+#: tfrmpropertyseparator.btnok.caption
+msgctxt "tfrmpropertyseparator.btnok.caption"
+msgid "Ok"
+msgstr "Ok"
+
+#: tfrmpropertyseparator.caption
+msgctxt "tfrmpropertyseparator.caption"
+msgid "Properties"
+msgstr "Proprietà"
+
+#: tfrmpropertyseparator.lbname.caption
+msgctxt "tfrmpropertyseparator.lbname.caption"
+msgid "Name"
+msgstr "Nome"
+
+#: tfrmscanfolder.btnexcludeadd.caption
+msgctxt "tfrmscanfolder.btnexcludeadd.caption"
+msgid "Add"
+msgstr "Aggiungi"
+
+#: tfrmscanfolder.btnexcludedelete.caption
+msgctxt "tfrmscanfolder.btnexcludedelete.caption"
+msgid "Delete"
+msgstr "Elimina"
+
+#: tfrmscanfolder.btntypesadd.caption
+msgctxt "tfrmscanfolder.btntypesadd.caption"
+msgid "Add"
+msgstr "Aggiungi"
+
+#: tfrmscanfolder.btntypesdelete.caption
+msgctxt "tfrmscanfolder.btntypesdelete.caption"
+msgid "Delete"
+msgstr "Elimina"
+
+#: tfrmscanfolder.caption
+msgid "Scan folder"
+msgstr "Scan folder"
+
+#: tfrmscanfolder.chkextractname.caption
+msgid "Extract name automatically from executables (only *.exe)"
+msgstr "Estrai nome automaticamente dall'eseguibile (solo *.exe)"
+
+#: tfrmscanfolder.grpexclude.caption
+msgid "Exclude files"
+msgstr "Escludi file"
+
+#: tfrmscanfolder.grpfiletypes.caption
+msgid "File Types"
+msgstr "Tipi File"
+
+#: tfrmscanfolder.grpgeneralsettings.caption
+msgid "General settings"
+msgstr "Opzioni generali"
+
+#: tfrmscanfolder.pnlbuttons.okbutton.caption
+msgid "&Scan"
+msgstr "&Scansiona"
+
+#: tfrmshortcutgrabber.btncancel.caption
+msgctxt "tfrmshortcutgrabber.btncancel.caption"
+msgid "Cancel"
+msgstr "Annulla"
+
+#: tfrmshortcutgrabber.btnok.caption
+msgctxt "tfrmshortcutgrabber.btnok.caption"
+msgid "Ok"
+msgstr "Ok"
+
+#: tfrmshortcutgrabber.caption
+msgid "Choose hotkey..."
+msgstr "Scegli hotkey..."
+
+#: tfrmshortcutgrabber.lblinfo.caption
+msgid "Select modifiers above, then enter desired key:"
+msgstr ""
+"Seleziona i modificatori qua sopra, poi inserisci il tasto desiderato:"
+
+#: tfrmstatsoptionspage.gbasuite.caption
+msgctxt "tfrmstatsoptionspage.gbasuite.caption"
+msgid "ASuite"
+msgstr "ASuite"
+
+#: tfrmstatsoptionspage.gbsupport.caption
+msgid "Drive %S"
+msgstr "Drive %S"
+
+#: tfrmstatsoptionspage.gbsystem.caption
+msgid "System"
+msgstr "Sistema"
+
+#: tfrmstatsoptionspage.lbcat.caption
+msgid "Categories added"
+msgstr "Categorie aggiunte"
+
+#: tfrmstatsoptionspage.lbcat.rightcaption
+msgctxt "tfrmstatsoptionspage.lbcat.rightcaption"
+msgid "Value"
+msgstr "Valore"
+
+#: tfrmstatsoptionspage.lblbuild.caption
+msgid "Build Version"
+msgstr "Versione Build"
+
+#: tfrmstatsoptionspage.lblbuild.rightcaption
+msgctxt "tfrmstatsoptionspage.lblbuild.rightcaption"
+msgid "Value"
+msgstr "Valore"
+
+#: tfrmstatsoptionspage.lblprocessor.caption
+msgid "Processor"
+msgstr "Processore"
+
+#: tfrmstatsoptionspage.lblprocessor.rightcaption
+msgctxt "tfrmstatsoptionspage.lblprocessor.rightcaption"
+msgid "Value"
+msgstr "Valore"
+
+#: tfrmstatsoptionspage.lblram.caption
+msgid "Total physical memory"
+msgstr "Memoria totale fisica"
+
+#: tfrmstatsoptionspage.lblram.rightcaption
+msgctxt "tfrmstatsoptionspage.lblram.rightcaption"
+msgid "Value"
+msgstr "Valore"
+
+#: tfrmstatsoptionspage.lbos.caption
+msgid "Operating System"
+msgstr "Sistema operativo"
+
+#: tfrmstatsoptionspage.lbos.rightcaption
+msgctxt "tfrmstatsoptionspage.lbos.rightcaption"
+msgid "Value"
+msgstr "Valore"
+
+#: tfrmstatsoptionspage.lbsize.caption
+msgid "Size"
+msgstr "Dimensione"
+
+#: tfrmstatsoptionspage.lbsize.rightcaption
+msgctxt "tfrmstatsoptionspage.lbsize.rightcaption"
+msgid "Value"
+msgstr "Valore"
+
+#: tfrmstatsoptionspage.lbsoftware.caption
+msgid "Software added"
+msgstr "Software aggiunto"
+
+#: tfrmstatsoptionspage.lbsoftware.rightcaption
+msgctxt "tfrmstatsoptionspage.lbsoftware.rightcaption"
+msgid "Value"
+msgstr "Valore"
+
+#: tfrmstatsoptionspage.lbspacefree.caption
+msgid "Used space"
+msgstr "Spazio utilizzato"
+
+#: tfrmstatsoptionspage.lbspacefree.rightcaption
+msgctxt "tfrmstatsoptionspage.lbspacefree.rightcaption"
+msgid "Value"
+msgstr "Valore"
+
+#: tfrmstatsoptionspage.lbspaceused.caption
+msgid "Free space"
+msgstr "Spazio libero"
+
+#: tfrmstatsoptionspage.lbspaceused.rightcaption
+msgctxt "tfrmstatsoptionspage.lbspaceused.rightcaption"
+msgid "Value"
+msgstr "Valore"
+
+#: tfrmstatsoptionspage.lbtotal.caption
+msgid "Total"
+msgstr "Totale"
+
+#: tfrmstatsoptionspage.lbtotal.rightcaption
+msgctxt "tfrmstatsoptionspage.lbtotal.rightcaption"
+msgid "Value"
+msgstr "Valore"
+
+#: tfrmstatsoptionspage.lbuser.caption
+msgid "Current user"
+msgstr "Utente corrente"
+
+#: tfrmstatsoptionspage.lbuser.rightcaption
+msgctxt "tfrmstatsoptionspage.lbuser.rightcaption"
+msgid "Value"
+msgstr "Valore"
+
+#: tfrmswgeneralpropertypage.edtpathexe.text
+msgctxt "tfrmswgeneralpropertypage.edtpathexe.text"
+msgid "$ASuite\\"
+msgstr "$ASuite\\"
+
+#: tfrmswgeneralpropertypage.edtworkingdir.text
+msgctxt "tfrmswgeneralpropertypage.edtworkingdir.text"
+msgid "$ASuite\\"
+msgstr "$ASuite\\"
+
+#: tfrmswgeneralpropertypage.grpsoftware.caption
+msgid "Path"
+msgstr "Percorso"
+
+#: tfrmswgeneralpropertypage.lbinfo2.caption
+msgid ""
+"Note: You can use these vars (included environment variables) in relative path:\n"
+"- %asuite% = ASuite folder path (\"%s\")\n"
+"- %drive% = drive path (\"%s\")\n"
+msgstr ""
+"Nota: Puoi utilizzare le seguenti variabili (incluso quelle d'ambiente) nei percorsi relativi:\n"
+"- %asuite% = percorso della cartella di ASuite (%s)\n"
+"- %drive% = percorso del disco (%s)\n"
+
+#: tfrmswgeneralpropertypage.lbparameters.caption
+msgid "Parameters (optional)"
+msgstr "Parametri (opzionale)"
+
+#: tfrmswgeneralpropertypage.lbpathexe.caption
+msgid "Executable/folder/web page path"
+msgstr "Percorso dell'eseguibile/cartella/pagina web"
+
+#: tfrmswgeneralpropertypage.lbworkingdir.caption
+msgid "Custom working directory (optional)"
+msgstr "Cartella di lavoro personalizzata (opzionale)"
+
+#: tfrmtrayiconoptionspage.cbmenufade.caption
+msgid "Enable fade effect"
+msgstr "Abilita effetto dissolvenza"
+
+#: tfrmtrayiconoptionspage.cbsmallicon.caption
+msgid "Small TreeView's icon size"
+msgstr "Piccole dimensioni delle icone del TreeView"
+
+#: tfrmtrayiconoptionspage.cbsubmenumfu.caption
+msgid "Most Used items on trayicon submenu"
+msgstr "Elementi più usati in un sotto menu del Trayicon"
+
+#: tfrmtrayiconoptionspage.cbsubmenumru.caption
+msgid "Recent items on trayicon submenu"
+msgstr "Elementi recenti in un sotto menu del Trayicon"
+
+#: tfrmtrayiconoptionspage.cbtraycustomicon.caption
+msgid "Custom tray icon"
+msgstr "Trayicon personalizzata"
+
+#: tfrmtrayiconoptionspage.cbtrayicon.caption
+msgid "Enable the System Tray icon"
+msgstr "Abilita TrayIcon"
+
+#: tfrmtrayiconoptionspage.chkautoexpansion.caption
+msgid "Active autoexpansion folder"
+msgstr "Attiva autoespansione delle cartelle"
+
+#: tfrmtrayiconoptionspage.chkautomatichidemenu.caption
+msgid "Auto-hide menu"
+msgstr "Nascondi in automatico il menu"
+
+#: tfrmtrayiconoptionspage.chkuserpicture.caption
+msgid "Show user picture in menu"
+msgstr "Mostra l'immagine dell'utente nel menu"
+
+#: tfrmtrayiconoptionspage.edtcustomicon.text
+msgctxt "tfrmtrayiconoptionspage.edtcustomicon.text"
+msgid "$ASuite\\"
+msgstr "$ASuite\\"
+
+#: tfrmtrayiconoptionspage.gbtrayicon.caption
+msgid "System Tray"
+msgstr "Tray del sistema"
+
+#: tfrmtrayiconoptionspage.grpclassicmenu.caption
+msgid "Classic Menu"
+msgstr "Classic Menu"
+
+#: tfrmtrayiconoptionspage.grpgraphicmenu.caption
+msgid "Graphic Menu"
+msgstr "Graphic Menu"
+
+#: tfrmtrayiconoptionspage.lblmiddleclick.caption
+msgid "Middle click"
+msgstr "Click centrale"
+
+#: tfrmtrayiconoptionspage.lbmenutheme.caption
+msgctxt "tfrmtrayiconoptionspage.lbmenutheme.caption"
+msgid "Theme"
+msgstr "Tema"
+
+#: tfrmtrayiconoptionspage.lbtrayleftclick.caption
+msgid "Left click"
+msgstr "Click sinistro"
+
+#: tfrmtrayiconoptionspage.lbtrayrightclick.caption
+msgid "Right click"
+msgstr "Click destro"
+
+#: tfrmuilogin.lblinfo.caption
+msgid "Please insert username and password"
+msgstr "Inserisci nome utente e password"
+
+#: tfrmuilogin.lblpassword.caption
+msgid "&Password"
+msgstr "&Password"
+
+#: tfrmuilogin.lblusername.caption
+msgid "&User Name"
+msgstr "&Nome Utente"

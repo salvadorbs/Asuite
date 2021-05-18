@@ -1,0 +1,173 @@
+inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
+  Height = 450
+  ChildSizing.LeftRightSpacing = 4
+  ChildSizing.TopBottomSpacing = 4
+  ChildSizing.EnlargeHorizontal = crsScaleChilds
+  ClientHeight = 450
+  DesignLeft = 2030
+  DesignTop = 299
+  object gbStartup: TGroupBox[0]
+    Left = 4
+    Height = 123
+    Top = 4
+    Width = 437
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    Caption = 'Startup'
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.TopBottomSpacing = 4
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ClientHeight = 103
+    ClientWidth = 433
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 0
+    object cbWindowsStartup: TCheckBox
+      Left = 4
+      Height = 19
+      Top = 4
+      Width = 425
+      Caption = 'Start ASuite on Operating System startup'
+      ParentFont = False
+      TabOrder = 0
+    end
+    object cbShowPanelStartup: TCheckBox
+      Left = 4
+      Height = 19
+      Top = 23
+      Width = 425
+      Caption = 'Show window on ASuite startup'
+      ParentFont = False
+      TabOrder = 2
+    end
+    object cbShowMenuStartup: TCheckBox
+      Left = 4
+      Height = 19
+      Top = 42
+      Width = 425
+      Caption = 'Show graphic menu on ASuite startup'
+      ParentFont = False
+      TabOrder = 3
+    end
+    object chkMissedSchedulerTask: TCheckBox
+      Left = 4
+      Height = 19
+      Top = 61
+      Width = 425
+      Caption = 'Check missed scheduler task at ASuite startup'
+      ParentFont = False
+      TabOrder = 1
+    end
+    object cbSecondInstanceGM: TCheckBox
+      Left = 4
+      Height = 19
+      Top = 80
+      Width = 425
+      Caption = 'Show Graphic Menu, when run another ASuite instance'
+      ParentFont = False
+      TabOrder = 4
+    end
+  end
+  object gbExecution: TGroupBox[1]
+    Left = 4
+    Height = 131
+    Top = 131
+    Width = 437
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    Caption = 'Execution'
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.TopBottomSpacing = 4
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ClientHeight = 111
+    ClientWidth = 433
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 1
+    object cbRunSingleClick: TCheckBox
+      Left = 4
+      Height = 19
+      Top = 4
+      Width = 425
+      Caption = 'Execute with single click in main window'
+      ParentFont = False
+      TabOrder = 0
+    end
+    object chkConfirmMessageCat: TCheckBox
+      Left = 4
+      Height = 19
+      Top = 23
+      Width = 425
+      Caption = 'Ask to confirm before run a category'
+      ParentFont = False
+      TabOrder = 1
+    end
+    object chkAutoCloseProcess: TCheckBox
+      Left = 4
+      Height = 19
+      Top = 42
+      Width = 425
+      Caption = 'Close all process opened by ASuite at launcher shutdown'
+      ParentFont = False
+      TabOrder = 2
+    end
+    object lbActionOnExe: TLabel
+      Left = 4
+      Height = 15
+      Top = 65
+      Width = 425
+      BorderSpacing.Top = 4
+      BorderSpacing.Bottom = 4
+      Caption = 'On execution'
+      ParentColor = False
+      ParentFont = False
+    end
+    object cxActionOnExe: TComboBox
+      Left = 4
+      Height = 23
+      Top = 84
+      Width = 180
+      BorderSpacing.CellAlignHorizontal = ccaLeftTop
+      Constraints.MinWidth = 180
+      ItemHeight = 15
+      ParentFont = False
+      Style = csDropDownList
+      TabOrder = 3
+    end
+  end
+  object grpLanguage: TGroupBox[2]
+    Left = 4
+    Height = 51
+    Top = 266
+    Width = 150
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    BorderSpacing.CellAlignHorizontal = ccaLeftTop
+    Caption = 'Language'
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.TopBottomSpacing = 4
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ClientHeight = 31
+    ClientWidth = 146
+    Constraints.MinWidth = 150
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 2
+    object cxLanguage: TComboBox
+      Left = 4
+      Height = 23
+      Top = 4
+      Width = 138
+      ItemHeight = 15
+      ParentFont = False
+      Style = csDropDownList
+      TabOrder = 0
+    end
+  end
+end

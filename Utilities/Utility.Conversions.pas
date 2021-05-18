@@ -19,11 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Utility.Conversions;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Windows, SysUtils, Classes, Graphics, Forms, Dialogs, ComCtrls, Clipbrd,
-  StdCtrls, System.UITypes;
+  LCLIntf, LCLType, SysUtils, Classes, Graphics, Forms, Dialogs, Clipbrd,
+  TypInfo;
 
 { HTML }
 function RGBToHtml(iRGB: Cardinal): string;
@@ -63,6 +65,9 @@ procedure StrToFont(const s: string; AFont: TFont);
 var
   Strs : TStringList;
 begin
+  if s = '' then
+    Exit;
+
   if Assigned(AFont) then
   begin
     Strs  := TStringList.Create;
@@ -73,7 +78,7 @@ begin
         AFont.Name  := Strs[0];
         AFont.Size  := StrToInt(Strs[1]);
         AFont.Color := HtmlToColor(Strs[2]);
-        AFont.Style := TFontStyles(byte(StrToInt(Strs[3])));
+        AFont.Style := TFontStyles({byte}(StrToInt(Strs[3])));
       end;
     finally
       Strs.Free;
@@ -85,8 +90,8 @@ function FontToStr(Font: TFont): string;
 var
   sColor, sStyle : string;
 begin
-  sColor := ColorToHtml(Font.Color);
-  sStyle := IntToStr(byte(Font.Style));
+  sColor := ColorToHtml(Font.Color);  
+  sStyle := GetEnumName(TypeInfo(TFontStyles), integer(Font.Style));
   result := Font.Name + '|' + IntToStr(Font.Size) + '|' + sColor + '|' + sStyle;
 end;
 

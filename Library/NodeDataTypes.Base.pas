@@ -19,12 +19,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit NodeDataTypes.Base;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  VirtualTrees, SysUtils, DateUtils, Kernel.Enumerations, DKLang, Icons.Base;
+  VirtualTrees, SysUtils, DateUtils, Kernel.Enumerations, Icons.Base, LazUTF8,
+  Icons.Custom;
 
 type
+
+  { TvBaseNodeData }
+
   TvBaseNodeData = class
   private
     //Base private variables and functions
@@ -33,7 +39,7 @@ type
     FPosition    : Cardinal;
     FChanged     : boolean;
     FName        : String;
-    FIcon        : TBaseIcon;
+    FIcon        : TCustomIcon;
     FDataType    : TvTreeDataType;
     FPNode       : PVirtualNode; //Self PVirtualNode
     FAddDate     : Int64;
@@ -60,13 +66,16 @@ type
 
     procedure SetPointerNode(APNode: PVirtualNode);
     procedure Copy(source:TvBaseNodeData); virtual;
+    function IsFileItem: Boolean;
+    function IsSeparatorItem: Boolean;
+    function IsCategoryItem: Boolean;
 
     property ID : Int64 read FID write FID;
     property ParentID : Int64 read FParentID write FParentID;
     property Position : Cardinal read FPosition write FPosition;
     property Changed: boolean read FChanged write SetChanged;
     property Name: string read GetName write SetName;
-    property Icon: TBaseIcon read FIcon;
+    property Icon: TCustomIcon read FIcon;
     property DataType: TvTreeDataType read GetDataType write SetDataType;
     property ParentNode: PVirtualNode read GetParentNode;
     property PNode: PVirtualNode read FPNode;
@@ -81,7 +90,7 @@ type
 implementation
 
 uses
-  Icons.Node;
+  Icons.Node, Kernel.ResourceStrings;
 
 constructor TvBaseNodeData.Create(AType: TvTreeDataType);
 begin
@@ -93,7 +102,7 @@ begin
   FHideFromMenu := False;
   FAddDate     := DateTimeToUnix(Now);
   FEditDate    := FAddDate;
-  FIcon        := TBaseIcon(TNodeIcon.Create(Self));
+  FIcon        := TCustomIcon(TNodeIcon.Create(Self));
 end;
 
 destructor TvBaseNodeData.Destroy;
@@ -104,9 +113,24 @@ end;
 
 procedure TvBaseNodeData.Copy(source:TvBaseNodeData);
 begin
-  FName       := DKLangConstW('msgCopy') + source.Name;
+  FName       := msgCopy + source.Name;
   FDataType   := source.DataType;
   FHideFromMenu := source.HideFromMenu;
+end;
+
+function TvBaseNodeData.IsFileItem: Boolean;
+begin
+  Result := Self.DataType in [vtdtFile,vtdtFolder];
+end;
+
+function TvBaseNodeData.IsSeparatorItem: Boolean;
+begin
+  Result := (Self.DataType = vtdtSeparator);
+end;
+
+function TvBaseNodeData.IsCategoryItem: Boolean;
+begin
+  Result := (Self.DataType = vtdtCategory);
 end;
 
 function TvBaseNodeData.GetName: String;
@@ -121,7 +145,7 @@ end;
 
 procedure TvBaseNodeData.SetName(Value: String);
 begin
-  FName := StringReplace(Value, '&&', '&', [rfIgnoreCase,rfReplaceAll]);
+  FName := LazUTF8.UTF8StringReplace(Value, '&&', '&', [rfIgnoreCase,rfReplaceAll]);
   FName := StringReplace(FName, '&', '&&', [rfIgnoreCase,rfReplaceAll]);
 end;
 

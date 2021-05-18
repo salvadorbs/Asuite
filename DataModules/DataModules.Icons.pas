@@ -19,28 +19,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit DataModules.Icons;
 
+{$MODE DelphiUnicode}
+
 {$I ASuite.inc}
 
 interface
 
 uses
-  SysUtils, Classes, Controls, Windows, Graphics, Dialogs,
-  ShellApi, CommCtrl, Vcl.ImgList, System.ImageList;
+  SysUtils, Classes, Controls, LCLIntf, LCLType, Graphics, Dialogs,
+  BGRAImageList, {$IFDEF Windows}CommCtrl, Windows,{$ENDIF} DefaultTranslator;
 
 type
+
+  {$IFDEF MSWINDOWS}
+  THANDLE = Windows.THANDLE;
+  {$ENDIF}
+
+  { TdmImages }
+
   TdmImages = class(TDataModule)
+    ilLargeIcons: TBGRAImageList;
+    procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }
     procedure DrawTransparentBitmap(DC: HDC; hBmp: HBITMAP; xStart: integer;
                                     yStart : integer; cTransparentColor : COLORREF);
-    function getIlSmallIcons: TImageList;
-    function getIlLargeIcons: TImageList;
   public
-    { Public declarations }
-    property ilSmallIcons: TImageList read getIlSmallIcons;
-    property ilLargeIcons: TImageList read getIlLargeIcons;
+    procedure GetAlphaBitmapFromImageList(ABMP: Graphics.TBitmap; const AImageIndex: Integer);
+    procedure DrawIconInBitmap(const AGlyph: Graphics.TBitmap; const AImageIndex: Integer);
 
-    procedure DrawIconInBitmap(const AGlyph: TBitmap;const AImageIndex: Integer; ASmallIcon: Boolean = True);
+    function AddIcon(Images: Graphics.TBitmap): Integer;
+    function AddMultipleResolutions(Images: array of TCustomBitmap): Integer;
   end;
 
 var
@@ -49,28 +58,25 @@ var
 implementation
 
 uses
-  AppConfig.Main, MPCommonObjects;
+  ImgList, Kernel.Consts;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TdmImages }
 
-procedure TdmImages.DrawIconInBitmap(const AGlyph: TBitmap;
-  const AImageIndex: Integer; ASmallIcon: Boolean);
+procedure TdmImages.DrawIconInBitmap(const AGlyph: Graphics.TBitmap;
+  const AImageIndex: Integer);
 var
-  BMP: TBitmap;
+  BMP: Graphics.TBitmap;
 begin
   AGlyph.Assign(nil);
 
   if AImageIndex <> -1 then
   begin
     //Buttons' image
-    BMP := TBitmap.Create;
+    BMP := Graphics.TBitmap.Create;
     try
-      if ASmallIcon then
-        ilSmallIcons.GetBitmap(AImageIndex, BMP)
-      else
-        ilLargeIcons.GetBitmap(AImageIndex, BMP);
+      ilLargeIcons.GetBitmap(AImageIndex, BMP);
       AGlyph.Assign(BMP);
       DrawTransparentBitmap(AGlyph.Canvas.Handle, BMP.Handle, 0, 0, clWhite);
     finally
@@ -79,8 +85,46 @@ begin
   end;
 end;
 
-procedure TdmImages.DrawTransparentBitmap(DC: HDC; hBmp: HBITMAP; xStart,
-  yStart: integer; cTransparentColor: COLORREF);
+function TdmImages.AddIcon(Images: Graphics.TBitmap): Integer;
+begin
+  Result := -1;
+
+  if Assigned(Images) then
+    Result := ilLargeIcons.Add(Images, nil);
+end;
+
+function TdmImages.AddMultipleResolutions(Images: array of TCustomBitmap): Integer;
+begin
+  Result := ilLargeIcons.AddMultipleResolutions(Images);
+end;
+
+procedure TdmImages.GetAlphaBitmapFromImageList(ABMP: Graphics.TBitmap;
+  const AImageIndex: Integer);
+{$IFDEF MSWINDOWS}
+var
+  Images: TCustomImageListResolution;
+{$ENDIF}
+begin
+  {$IFDEF MSWINDOWS}
+  if AImageIndex <> -1 then
+  begin
+    //Button's image
+    ilLargeIcons.FindResolution(ICON_SIZE_SMALL, Images);
+
+    Images.GetBitmap(AImageIndex, ABMP);
+  end;
+  {$ENDIF}
+end;
+
+procedure TdmImages.DataModuleCreate(Sender: TObject);
+begin
+  //Small and large icons in a single ImageList
+  ilLargeIcons.RegisterResolutions([ICON_SIZE_SMALL, ICON_SIZE_LARGE]);
+  ilLargeIcons.Scaled := True;
+end;
+
+procedure TdmImages.DrawTransparentBitmap(DC: HDC; hBmp: HBITMAP;
+  xStart: integer; yStart: integer; cTransparentColor: COLORREF);
 var
       bm:                                                  BITMAP;
       cColor:                                              COLORREF;
@@ -178,16 +222,6 @@ begin
    DeleteDC(hdcObject);
    DeleteDC(hdcSave);
    DeleteDC(hdcTemp);
-end;
-
-function TdmImages.getIlSmallIcons: TImageList;
-begin
-  result := MPCommonObjects.SmallSysImages;
-end; 
-
-function TdmImages.getIlLargeIcons: TImageList;
-begin
-  result := MPCommonObjects.LargeSysImages;
 end;
 
 end.

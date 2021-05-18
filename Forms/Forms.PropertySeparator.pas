@@ -19,11 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.PropertySeparator;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  SysUtils, Classes, Controls, Forms, Dialogs, NodeDataTypes.Base, StdCtrls, ExtCtrls,
-  DKLang;
+  SysUtils, Classes, Controls, Forms, Dialogs, NodeDataTypes.Base, StdCtrls,
+  ExtCtrls, DefaultTranslator;
 
 type
   TfrmPropertySeparator = class(TForm)
@@ -32,7 +34,7 @@ type
     Panel1: TPanel;
     lbName: TLabel;
     edtName: TEdit;
-    DKLanguageController1: TDKLanguageController;
+    
   private
     { Private declarations }
     procedure LoadNodeData(AData: TvBaseNodeData);
@@ -48,9 +50,9 @@ var
 implementation
 
 uses
-  Kernel.Logger;
+  Kernel.Logger, Utility.Misc;
 
-{$R *.dfm}
+{$R *.lfm}
 
 class function TfrmPropertySeparator.Execute(AOwner: TComponent; NodeData: TvBaseNodeData): TModalResult;
 var
@@ -58,13 +60,17 @@ var
 begin
   TASuiteLogger.Info('Opening form Property Separator', []);
 
-  Result := mrCancel;
   frm := TfrmPropertySeparator.Create(AOwner);
   try
     frm.LoadNodeData(NodeData);
+
+    SetFormPositionFromConfig(frm);
+
     frm.ShowModal;
+
     if frm.ModalResult = mrOK then
       frm.SaveNodeData(NodeData);
+
     Result := frm.ModalResult;
   finally
     frm.Free;

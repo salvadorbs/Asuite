@@ -1,0 +1,70 @@
+inherited frmBaseGeneralPropertyPage: TfrmBaseGeneralPropertyPage
+  Height = 274
+  ClientHeight = 274
+  DesignLeft = 2130
+  DesignTop = 224
+  object gbItem: TGroupBox[0]
+    Left = 4
+    Height = 106
+    Top = 4
+    Width = 352
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    Caption = 'Item'
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.TopBottomSpacing = 4
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ClientHeight = 86
+    ClientWidth = 348
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 0
+    object lbName: TLabel
+      Left = 4
+      Height = 15
+      Top = 4
+      Width = 340
+      Caption = 'Name'
+      ParentColor = False
+      ParentFont = False
+    end
+    object edtName: TEdit
+      Left = 4
+      Height = 23
+      Top = 19
+      Width = 340
+      BorderSpacing.Bottom = 2
+      OnEnter = edtNameEnter
+      ParentFont = False
+      TabOrder = 0
+    end
+    object lbPathIcon: TLabel
+      Left = 4
+      Height = 15
+      Top = 44
+      Width = 340
+      Caption = 'Custom icon path (optional)'
+      ParentColor = False
+      ParentFont = False
+    end
+    object edtPathIcon: TFileNameEdit
+      Left = 4
+      Height = 23
+      Top = 59
+      Width = 340
+      DialogOptions = [ofHideReadOnly, ofEnableSizing]
+      FilterIndex = 0
+      HideDirectories = False
+      ButtonWidth = 23
+      NumGlyphs = 1
+      MaxLength = 0
+      ParentFont = False
+      TabOrder = 1
+      OnChange = edtPathIconChange
+      OnExit = edtPathIconExit
+      Text = '$ASuite\'
+    end
+  end
+end

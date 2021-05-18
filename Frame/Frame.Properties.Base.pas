@@ -19,11 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Properties.Base;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, NodeDataTypes.Custom, Frame.BaseEntity;
+  SysUtils, Classes, Controls, Dialogs, NodeDataTypes.Custom, Frame.BaseEntity,
+  DefaultTranslator;
 
 type
   TfrmBasePropertyPage = class(TfrmBaseEntityPage)
@@ -41,7 +43,7 @@ var
 
 implementation
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmBasePropertyPage }
 

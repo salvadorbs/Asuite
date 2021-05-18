@@ -19,35 +19,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Database.Version;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  mORMot, Database.Manager, PJVersionInfo, SynLog, SysUtils;
+  mORMot, Database.Manager, SynLog, SysUtils, FileInfo;
 
 type
+
+  { TSQLtbl_version }
+
   TSQLtbl_version = class(TSQLRecord) //Table tbl_version
   private
     FMajor   : Integer;
     FMinor   : Integer;
-    FRelease : Integer;
+    FRevision : Integer;
     FBuild   : Integer;
 
-    function ToVersionNumber: TPJVersionNumber;
+    function ToVersionNumber: TProgramVersion;
   public
+    constructor Create; override;
+
     class procedure Load(ADBManager: TDBManager);
     class procedure Save(ADBManager: TDBManager);
   published
-    //property FIELDNAME: TYPE read FFIELDNAME write FFIELDNAME;
     property Major   : Integer read FMajor write FMajor;
     property Minor   : Integer read FMinor write FMinor;
-    property Release : Integer read FRelease write FRelease;
+    property Revision : Integer read FRevision write FRevision;
     property Build   : Integer read FBuild write FBuild;
   end;
 
 implementation
 
 uses
-  AppConfig.Main, Kernel.Logger, Utility.Misc;
+  Kernel.Logger, Utility.Misc, Kernel.ResourceStrings;
 
 { TSQLtbl_version }
 
@@ -73,22 +79,21 @@ end;
 class procedure TSQLtbl_version.Save(ADBManager: TDBManager);
 var
   SQLVersionData: TSQLtbl_version;
-  VersionInfo: TPJVersionInfo;
+  ASuiteVersion  : TProgramVersion;
   IsDataExists: Boolean;
 begin
   TASuiteLogger.Info('Saving ASuite Version', []);
-  VersionInfo := TPJVersionInfo.Create(nil);
+  ASuiteVersion := GetASuiteVersion;
   try
-    VersionInfo.FileName := Config.Paths.SuiteFullFileName;
     //Select only file record by ID
     SQLVersionData := TSQLtbl_version.CreateAndFillPrepare(ADBManager.Database, '');
     try
       IsDataExists := SQLVersionData.FillOne;
 
-      SQLVersionData.Major   := VersionInfo.FileVersionNumber.V1;
-      SQLVersionData.Minor   := VersionInfo.FileVersionNumber.V2;
-      SQLVersionData.Release := VersionInfo.FileVersionNumber.V3;
-      SQLVersionData.Build   := VersionInfo.FileVersionNumber.V4;
+      SQLVersionData.Major    := ASuiteVersion.Major;
+      SQLVersionData.Minor    := ASuiteVersion.Minor;
+      SQLVersionData.Revision := ASuiteVersion.Revision;
+      SQLVersionData.Build    := ASuiteVersion.Build;
 
       if IsDataExists then
         ADBManager.Database.Update(SQLVersionData)
@@ -99,17 +104,28 @@ begin
     finally
       SQLVersionData.Free;
     end;
-  finally
-    VersionInfo.Free;
+  except
+    on E : Exception do
+      ShowMessageFmtEx(msgErrGeneric,[E.ClassName, E.Message], True);
   end;
 end;
 
-function TSQLtbl_version.ToVersionNumber: TPJVersionNumber;
+function TSQLtbl_version.ToVersionNumber: TProgramVersion;
 begin
-  Result.V1 := Major;
-  Result.V2 := Minor;
-  Result.V3 := Release;
-  Result.V4 := Build;
+  Result.Major := Major;
+  Result.Minor := Minor;
+  Result.Revision := Revision;
+  Result.Build := Build;
+end;
+
+constructor TSQLtbl_version.Create;
+begin
+  inherited Create;
+
+  Major := 0;
+  Minor := 0;
+  Revision := 0;
+  Build := 0;
 end;
 
 end.

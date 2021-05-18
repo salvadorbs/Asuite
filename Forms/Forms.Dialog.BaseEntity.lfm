@@ -1,0 +1,84 @@
+object frmDialogBase: TfrmDialogBase
+  Left = 1888
+  Height = 92
+  Top = 146
+  Width = 394
+  AutoSize = True
+  BorderStyle = bsDialog
+  Caption = 'frmDialogBase'
+  ChildSizing.EnlargeHorizontal = crsScaleChilds
+  ChildSizing.Layout = cclLeftToRightThenTopToBottom
+  ClientHeight = 92
+  ClientWidth = 394
+  KeyPreview = True
+  OnKeyPress = FormKeyPress
+  Position = poMainFormCenter
+  object Panel1: TPanel
+    Left = 4
+    Height = 50
+    Top = 4
+    Width = 386
+    Align = alClient
+    AutoSize = True
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    BevelOuter = bvNone
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ChildSizing.ControlsPerLine = 2
+    ClientHeight = 50
+    ClientWidth = 386
+    TabOrder = 0
+    object vstCategory: TVirtualStringTree
+      AnchorSideRight.Control = pnlDialogPage
+      Left = 0
+      Height = 50
+      Top = 0
+      Width = 180
+      Align = alLeft
+      Constraints.MaxWidth = 180
+      Constraints.MinHeight = 50
+      Constraints.MinWidth = 180
+      DefaultText = 'Node'
+      Header.AutoSizeIndex = 0
+      Header.Columns = <>
+      Header.MainColumn = -1
+      ParentFont = False
+      TabOrder = 0
+      TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowRoot, toShowTreeLines, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
+      TreeOptions.SelectionOptions = [toFullRowSelect]
+    end
+    object pnlDialogPage: TPanel
+      Left = 186
+      Height = 50
+      Top = 0
+      Width = 200
+      Align = alClient
+      BorderSpacing.Left = 6
+      Constraints.MinHeight = 50
+      Constraints.MinWidth = 200
+      ParentFont = False
+      TabOrder = 1
+    end
+  end
+  object ButtonPanel1: TButtonPanel
+    Left = 6
+    Height = 26
+    Top = 60
+    Width = 382
+    OKButton.Name = 'OKButton'
+    OKButton.DefaultCaption = True
+    HelpButton.Name = 'HelpButton'
+    HelpButton.DefaultCaption = True
+    CloseButton.Name = 'CloseButton'
+    CloseButton.DefaultCaption = True
+    CloseButton.OnClick = btnOkClick
+    CancelButton.Name = 'CancelButton'
+    CancelButton.DefaultCaption = True
+    CancelButton.OnClick = btnCancelClick
+    TabOrder = 1
+    ShowButtons = [pbOK, pbCancel]
+    ShowBevel = False
+  end
+end

@@ -19,31 +19,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Utility.Misc;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Windows, SysUtils, Classes, Graphics, Forms, Dialogs, ComCtrls, Clipbrd,
-  Kernel.Consts, StdCtrls, XMLIntf, System.UITypes, DKLang, Menus;
+  LCLIntf, LCLType, SysUtils, Classes, Graphics, Forms, Dialogs, ComCtrls, Clipbrd,
+  Kernel.Consts, StdCtrls, UITypes, Menus, FileInfo;
 
 { Forms }
 function  IsFormOpen(const FormName : string): Boolean;
-procedure SetFormPosition(Form: TForm; ListFormLeft, ListFormTop: Integer);
+procedure SetFormPositionFromConfig(AForm: TForm);
 
 { Misc }
 function CheckPropertyName(Edit: TEdit): Boolean;
-function  GetCheckedMenuItem(PopupMenu: TPopupMenu): TMenuItem;
-function GetASuiteVersion(ASimpleFormat: Boolean): string;
-function  IsFormatInClipBoard(format: Word): Boolean;
+function GetCheckedMenuItem(PopupMenu: TPopupMenu): TMenuItem;
+function GetASuiteVersion(ASimpleFormat: Boolean): string; overload;
+function GetASuiteVersion: TProgramVersion; overload;
+function IsFormatInClipBoard(format: Word): Boolean;
+function IsLightColor(const AColor: TColor): Boolean;
 function RemoveQuotes(const S: string; const QuoteChar: Char): string;
 function RemoveAllQuotes(const S: string): string;
-procedure ShowMessageEx(const Msg: string; Error: boolean=false);
-procedure ShowMessageFmtEx(const Msg: string; Params: array of const; Error: boolean=false);
+procedure ShowMessageEx(const Msg: string; Error: boolean = False);
+procedure ShowMessageFmtEx(const Msg: string; Params: array of const; Error: boolean = False);
 
 { Stats }
-function  DiskFloatToString(Number: double;Units: Boolean): string;
-function  DiskFreeString(Drive: Char;Units: Boolean): string;
-function  DiskSizeString(Drive: Char;Units: Boolean): string;
-function  DiskUsedString(Drive: Char;Units: Boolean): string;
+function  DiskFloatToString(Size: Int64; Units: Boolean): string;
+function  GetDiskFreeSpace(const Path : String; out FreeSize, TotalSize : Int64) : Boolean;
 
 { Integer }
 function  CompareInteger(int1, int2: Integer): Integer;
@@ -55,7 +57,12 @@ function  GetHotKeyMod(AShortcut: TShortcut) : Integer;
 implementation
 
 uses
-  Registry, SynTaskDialog, PJVersionInfo, AppConfig.Main, Kernel.Logger;
+  AppConfig.Main, Kernel.Logger, LCLProc, Kernel.ResourceStrings
+  {$IFDEF MSWINDOWS}
+  , Windows
+  {$ELSE}
+  , BaseUnix, Unix
+  {$ENDIF};
 
 function IsFormOpen(const FormName : string): Boolean;
 var
@@ -70,22 +77,14 @@ begin
     end;
 end;
 
-procedure SetFormPosition(Form: TForm; ListFormLeft, ListFormTop: Integer);
+procedure SetFormPositionFromConfig(AForm: TForm);
 begin
-  if (ListFormTop <> -1) and (ListFormLeft <> -1) then
+  if Assigned(AForm) then
   begin
-    if (ListFormTop + frmMainHeight) <= Screen.Height then
-      Form.Top  := ListFormTop
-    else
-      Form.Top  := Screen.Height - Form.Height - 30;
-    if (ListFormLeft + frmMainWidth) <= Screen.Width then
-      Form.Left := ListFormLeft
-    else
-      Form.Left := Screen.Width - Form.Width;
-    Form.Position := poDesigned;
-  end
-  else
-    Form.Position := poDesktopCenter;
+    AForm.Position := poMainFormCenter;
+    if Assigned(Config) and (not Config.DialogCenterMF) then
+      AForm.Position := poScreenCenter;
+  end;
 end;
 
 function CheckPropertyName(Edit: TEdit): Boolean;
@@ -94,7 +93,7 @@ begin
   // Check if inserted name is empty, then
   if (Trim(Edit.Text) = '') then
   begin
-    ShowMessageEx(DKLangConstW('msgErrEmptyName'),true);
+    ShowMessageEx(msgErrEmptyName,true);
     Edit.Color := clYellow;
     Result := False;
   end;
@@ -112,26 +111,40 @@ end;
 
 function GetASuiteVersion(ASimpleFormat: Boolean): string;
 var
-  VersionInfo: TPJVersionInfo;
+  Version: TProgramVersion;
 begin
-  VersionInfo := TPJVersionInfo.Create(nil);
+  Version := GetASuiteVersion;
   try
-    VersionInfo.FileName := Config.Paths.SuiteFullFileName;
     if ASimpleFormat then
     begin
       //Version format "Major.Minor Beta"
-      Result := Format('%d.%d', [VersionInfo.FileVersionNumber.V1,
-                                 VersionInfo.FileVersionNumber.V2]);
+      Result := Format('%d.%d', [Version.Major,
+                                 Version.Minor]);
     end
     else begin
       //Version format "Major.Minor.Revision.Build Beta"
-      Result := Format('%d.%d.%d.%d', [VersionInfo.FileVersionNumber.V1,
-                                       VersionInfo.FileVersionNumber.V2,
-                                       VersionInfo.FileVersionNumber.V3,
-                                       VersionInfo.FileVersionNumber.V4]);
+      Result := Format('%d.%d.%d.%d', [Version.Major,
+                                       Version.Minor,
+                                       Version.Revision,
+                                       Version.Build]);
     end;
-    if VERSION_PRERELEASE <> '' then
-      Result := Result + ' ' + VERSION_PRERELEASE;
+
+    Result := Result + ' ' + VERSION_PRERELEASE;
+  except
+    on E : Exception do
+      ShowMessageFmtEx(msgErrGeneric,[E.ClassName, E.Message], True);
+  end;
+end;
+
+function GetASuiteVersion: TProgramVersion;
+var
+  VersionInfo: TFileVersionInfo;
+begin
+  VersionInfo := TFileVersionInfo.Create(nil);
+  try
+    VersionInfo.ReadFileInfo;
+
+    Result := StrToProgramVersion(VersionInfo.VersionStrings.Values['FileVersion']);
   finally
     VersionInfo.Free;
   end;
@@ -139,22 +152,32 @@ end;
 
 function IsFormatInClipBoard(format: Word): Boolean;
 var
-  buf : array [0..60] of Char;
-  n   : Integer;
-  fmt : Word;
+  I: Integer;
 begin
   //Get clipboard format
   Result := False;
-  for n := 0 to Clipboard.FormatCount - 1 do
+  for I := 0 to Clipboard.FormatCount - 1 do
   begin
-    fmt := Clipboard.Formats[n];
-    GetClipboardFormatName(fmt, buf, Pred(SizeOf(buf)));
-    if fmt = format then
+    if Clipboard.Formats[I] = format then
     begin
       Result := True;
       Break;
     end;
   end;
+end;
+
+function IsLightColor(const AColor: TColor): Boolean;
+var
+  r, g, b, yiq: integer;
+begin
+  r := GetRValue(AColor);
+  g := GetGValue(AColor);
+  b := GetBValue(AColor);
+  yiq := ((r*299)+(g*587)+(b*114)) div 1000;
+  if (yiq >= 128) then
+    result := True
+  else
+    result := False;
 end;
 
 function RemoveQuotes(const S: string; const QuoteChar: Char): string;
@@ -169,8 +192,8 @@ begin
   if (Result[1] <> QuoteChar) then Exit;     //Text is not quoted
   if (Result[Len] <> QuoteChar) then Exit;   //Text is not quoted
 
-  System.Delete(Result, Len, 1);
-  System.Delete(Result, 1, 1);
+  Delete(Result, Len, 1);
+  Delete(Result, 1, 1);
 
   Result := StringReplace(Result, QuoteChar + QuoteChar, QuoteChar, [rfReplaceAll]);
 end;
@@ -181,27 +204,16 @@ begin
   Result := RemoveQuotes(Result, '"');
 end;
 
-procedure ShowMessageEx(const Msg: string; Error: boolean=false);
-const
-  IconError: array[boolean] of TTaskDialogIcon = (tiInformation, tiError);
-var
-  Task: TTaskDialog;
+procedure ShowMessageEx(const Msg: string; Error: boolean = False);
 begin
-  Task.Content := Msg;
-  Task.Execute([cbOK],mrOk,[],IconError[Error]);
-
-  if Error then
-    TASuiteLogger.Error(Msg, []);
+  ShowMessageFmtEx(Msg, [], error);
 end;
 
-procedure ShowMessageFmtEx(const Msg: string; Params: array of const; Error: boolean=false);
+procedure ShowMessageFmtEx(const Msg: string; Params: array of const; Error: boolean = False);
 const
-  IconError: array[boolean] of TTaskDialogIcon = (tiInformation, tiError);
-var
-  Task: TTaskDialog;
+  DlgType: array[boolean] of TMsgDlgType = (mtInformation, mtError);
 begin
-  Task.Content := Format(Msg, Params);
-  Task.Execute([cbOK],mrOk,[],IconError[Error]);
+  MessageDlg(Format(Msg, Params), DlgType[Error], [mbOK], 0);
 
   if Error then
     TASuiteLogger.Error(Msg, Params);
@@ -209,58 +221,57 @@ end;
 
 { Stats }
 
-function DiskFloatToString(Number: Double;Units: Boolean): string;
+function DiskFloatToString(Size: Int64; Units: Boolean): string;
 var
   TypeSpace : String;
+  dblSize: Double;
 begin
-  if Number >= 1024 then
+  //KiloBytes
+  dblSize := Size;
+  if dblSize >= 1024 then
   begin
-    //KiloBytes
-    Number    := Number / (1024);
+    dblSize    := dblSize / (1024);
     TypeSpace := ' KB';
-    if Number >= 1024 then
+
+    //MegaBytes
+    if dblSize >= 1024 then
     begin
-      //MegaBytes
-      Number    := Number / (1024);
+      dblSize    := dblSize / (1024);
       TypeSpace := ' MB';
-      if Number >= 1024 then
+
+      //GigaBytes
+      if dblSize >= 1024 then
       begin
-        //GigaBytes
-        Number    := Number / (1024);
+        dblSize    := dblSize / (1024);
         TypeSpace := ' GB';
       end;
     end;
   end;
-  Result := FormatFloat('0.00',Number);
+
+  Result := FormatFloat('0.00',dblSize);
+
   if Units then
     Result := Result + TypeSpace;
 end;
 
-function DiskFreeString(Drive: Char;Units: Boolean): string;
+//Warning: Code taken from DoubleCMD source (unit uOSUtils.pas)
+function GetDiskFreeSpace(const Path : String; out FreeSize, TotalSize : Int64) : Boolean;
+{$IFDEF UNIX}
 var
-  Free : Double;
+  sbfs: TStatFS;
 begin
-  Free   := DiskFree(Ord(Drive) - 64);
-  Result := DiskFloatToString(Free,Units);
+  Result:= (fpStatFS(PAnsiChar(Path), @sbfs) = 0);
+  if not Result then Exit;
+  FreeSize := (Int64(sbfs.bavail) * sbfs.bsize);
+  TotalSize := (Int64(sbfs.blocks) * sbfs.bsize);
 end;
-
-function DiskSizeString(Drive: Char;Units: Boolean): string;
-var
-  Size : Double;
+{$ELSE}
 begin
-  Size   := DiskSize(Ord(Drive) - 64);
-  Result := DiskFloatToString(Size,Units);
+  FreeSize := 0;
+  TotalSize := 0;
+  Result:= GetDiskFreeSpaceExW(PWideChar(Path), FreeSize, TotalSize, nil);
 end;
-
-function DiskUsedString(Drive: Char;Units: Boolean): string;
-var
-  Free : Double;
-  Size : Double;
-begin
-  Free   := (DiskFree(Ord(Drive) - 64));
-  Size   := (DiskSize(Ord(Drive) - 64));
-  Result := DiskFloatToString(Size - Free,Units);
-end;
+{$ENDIF}
 
 function CompareInteger(int1, int2: Integer): Integer;
 begin
@@ -277,7 +288,7 @@ begin
       Result := 0;
 end;
 
-Function GetHotKeyCode(AShortcut: TShortcut): Word;
+function GetHotKeyCode(AShortcut: TShortcut): Word;
 var
   Shift: TShiftState;
 begin
@@ -285,10 +296,14 @@ begin
   ShortCutToKey(AShortcut, Result, Shift);
 end;
 
-Function GetHotKeyMod(AShortcut: TShortcut): Integer;
+function GetHotKeyMod(AShortcut: TShortcut): Integer;
 var
   Shift: TShiftState;
   Key: Word;
+const
+  MOD_ALT = 1;
+  MOD_CONTROL = 2;
+  MOD_SHIFT = 4;
 begin
   Result := 0;
   ShortCutToKey(AShortcut, Key, Shift);

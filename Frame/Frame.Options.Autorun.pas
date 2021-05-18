@@ -19,34 +19,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Options.Autorun;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.Buttons,
-  DKLang, Frame.BaseEntity, Vcl.StdCtrls, VirtualTrees, Lists.Base, Vcl.Menus;
+  LCLIntf, SysUtils, Classes, Controls, Dialogs, Frame.BaseEntity,
+  StdCtrls, VirtualTrees, Lists.Base, Menus, DefaultTranslator, ExtCtrls, Buttons;
 
 type
+
+  { TfrmAutorunOptionsPage }
+
   TfrmAutorunOptionsPage = class(TfrmBaseEntityPage)
-    DKLanguageController1: TDKLanguageController;
-    grpStartupOrderItems: TGroupBox;
-    grpShutdownOrderItems: TGroupBox;
-    chkStartup: TCheckBox;
-    lblStartupInfo: TLabel;
+    btnShutdownDelete: TSpeedButton;
+    btnShutdownDown: TSpeedButton;
+    btnShutdownUp: TSpeedButton;
+    btnStartupDelete: TSpeedButton;
+    btnStartupDown: TSpeedButton;
+    btnStartupUp: TSpeedButton;
     chkShutdown: TCheckBox;
+    grpShutdownOrderItems: TGroupBox;
+    
+    grpStartupOrderItems: TGroupBox;
+    chkStartup: TCheckBox;
     lblShutdownInfo: TLabel;
-    vstStartupItems: TVirtualStringTree;
-    vstShutdownItems: TVirtualStringTree;
-    btnStartupUp: TBitBtn;
-    btnStartupDelete: TBitBtn;
-    btnStartupDown: TBitBtn;
-    btnShutdownDelete: TBitBtn;
-    btnShutdownDown: TBitBtn;
-    btnShutdownUp: TBitBtn;
+    lblStartupInfo: TLabel;
+    Panel1: TPanel;
+    Panel2: TPanel;
     pmAutorun: TPopupMenu;
     mniRemoveAutorun: TMenuItem;
     mniN1: TMenuItem;
     mniProperties: TMenuItem;
+    vstShutdownItems: TVirtualStringTree;
+    vstStartupItems: TVirtualStringTree;
     procedure btnStartupUpClick(Sender: TObject);
     procedure btnShutdownUpClick(Sender: TObject);
     procedure btnStartupDeleteClick(Sender: TObject);
@@ -67,6 +73,7 @@ type
     procedure SaveInAutorunItemList(const ATree: TBaseVirtualTree;const AutorunItemList: TBaseItemsList);
     function  GetActiveTree: TBaseVirtualTree;
     procedure LoadGlyphs;
+    procedure ChangeButtonGlyph(AButton: TSpeedButton; AImageKey: string);
   strict protected
     function GetTitle: string; override;
     function GetImageIndex: Integer; override;
@@ -82,11 +89,10 @@ var
 implementation
 
 uses
-  NodeDataTypes.Custom, AppConfig.Main, DataModules.Icons,
-  VirtualTree.Methods, NodeDataTypes.Base,
-  System.UITypes, Kernel.Enumerations, VirtualTree.Events;
+  NodeDataTypes.Custom, AppConfig.Main, DataModules.Icons, Graphics, Kernel.Manager,
+  VirtualTree.Methods, Kernel.ResourceStrings, Kernel.Enumerations, VirtualTree.Events;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmItemsOptionsPage }
 
@@ -127,12 +133,12 @@ end;
 
 function TfrmAutorunOptionsPage.GetImageIndex: Integer;
 begin
-  Result := Config.IconsManager.GetIconIndex('autorun');
+  Result := ASuiteManager.IconsManager.GetIconIndex('autorun');
 end;
 
 function TfrmAutorunOptionsPage.GetTitle: string;
 begin
-  Result := DKLangConstW('msgAutorun');
+  Result := msgAutorun;
 end;
 
 function TfrmAutorunOptionsPage.InternalLoadData: Boolean;
@@ -142,21 +148,19 @@ begin
   TVirtualTreeEvents.Create.SetupVSTAutorun(vstStartupItems);
   TVirtualTreeEvents.Create.SetupVSTAutorun(vstShutdownItems);
   //Startup
-  dmImages.DrawIconInBitmap(btnStartupUp.Glyph, Config.IconsManager.GetIconIndex('arrow_up'));
-  dmImages.DrawIconInBitmap(btnStartupDelete.Glyph, Config.IconsManager.GetIconIndex('delete'));
-  dmImages.DrawIconInBitmap(btnStartupDown.Glyph, Config.IconsManager.GetIconIndex('arrow_down'));
+  ChangeButtonGlyph(btnStartupUp, 'arrow_up');
+  ChangeButtonGlyph(btnStartupDelete, 'delete');
+  ChangeButtonGlyph(btnStartupDown, 'arrow_down');
   //Shutdown
-  dmImages.DrawIconInBitmap(btnShutdownUp.Glyph, Config.IconsManager.GetIconIndex('arrow_up'));
-  dmImages.DrawIconInBitmap(btnShutdownDelete.Glyph, Config.IconsManager.GetIconIndex('delete'));
-  dmImages.DrawIconInBitmap(btnShutdownDown.Glyph, Config.IconsManager.GetIconIndex('arrow_down'));
+  ChangeButtonGlyph(btnShutdownUp, 'arrow_up');
+  ChangeButtonGlyph(btnShutdownDelete, 'delete');
+  ChangeButtonGlyph(btnShutdownDown, 'arrow_down');
   //Autorun
   chkStartup.Checked  := Config.AutorunStartup;
   chkShutdown.Checked := Config.AutorunShutdown;
   //Populate lstStartUp and lstShutdown
-  TVirtualTreeMethods.Create.PopulateVSTItemList(vstStartupItems, Config.ListManager.StartupItemList);
-  TVirtualTreeMethods.Create.PopulateVSTItemList(vstShutdownItems, Config.ListManager.ShutdownItemList);
-  vstStartupItems.Header.AutoFitColumns;
-  vstShutdownItems.Header.AutoFitColumns;
+  TVirtualTreeMethods.PopulateVSTItemList(vstStartupItems, ASuiteManager.ListManager.StartupItemList);
+  TVirtualTreeMethods.PopulateVSTItemList(vstShutdownItems, ASuiteManager.ListManager.ShutdownItemList);
 
   LoadGlyphs;
 end;
@@ -168,23 +172,37 @@ begin
   Config.AutorunStartup  := chkStartup.Checked;
   Config.AutorunShutdown := chkShutdown.Checked;
   //Save Startup and Shutdown lists
-  SaveInAutorunItemList(vstStartupItems, Config.ListManager.StartupItemList);
-  SaveInAutorunItemList(vstShutdownItems, Config.ListManager.ShutdownItemList);
+  SaveInAutorunItemList(vstStartupItems, ASuiteManager.ListManager.StartupItemList);
+  SaveInAutorunItemList(vstShutdownItems, ASuiteManager.ListManager.ShutdownItemList);
+end;
+
+procedure TfrmAutorunOptionsPage.ChangeButtonGlyph(AButton: TSpeedButton;
+  AImageKey: string);
+var
+  ABMP: TBitmap;
+begin
+  ABMP := TBitmap.Create;
+  try
+    dmImages.GetAlphaBitmapFromImageList(ABMP, ASuiteManager.IconsManager.GetIconIndex(AImageKey));
+    AButton.Glyph := ABMP;
+  finally
+    ABMP.Free;
+  end;
 end;
 
 procedure TfrmAutorunOptionsPage.LoadGlyphs;
 begin
-  mniProperties.ImageIndex   := Config.IconsManager.GetIconIndex('property');
+  mniProperties.ImageIndex   := ASuiteManager.IconsManager.GetIconIndex('property');
 end;
 
 procedure TfrmAutorunOptionsPage.mniPropertiesClick(Sender: TObject);
 begin
-  TVirtualTreeMethods.Create.ShowItemProperty(Self, GetActiveTree, GetActiveTree.FocusedNode);
+  TVirtualTreeMethods.ShowItemProperty(Self, GetActiveTree, GetActiveTree.FocusedNode);
 end;
 
 procedure TfrmAutorunOptionsPage.mniRemoveAutorunClick(Sender: TObject);
 begin
-  if (MessageDlg((DKLangConstW('msgConfirm')),mtWarning, [mbYes,mbNo], 0) = mrYes) then
+  if (MessageDlg((msgConfirm),mtWarning, [mbYes,mbNo], 0) = mrYes) then
     if Assigned(GetActiveTree.FocusedNode) then
       GetActiveTree.IsVisible[GetActiveTree.FocusedNode] := False;
 end;
@@ -205,8 +223,8 @@ end;
 
 procedure TfrmAutorunOptionsPage.RemoveItem(const ATree: TBaseVirtualTree);
 begin
-  if (MessageDlg((DKLangConstW('msgConfirm')),mtWarning, [mbYes,mbNo], 0) = mrYes) then
-    if Assigned(ATree.FocusedNode) then
+  if Assigned(ATree.FocusedNode) then
+    if (MessageDlg((msgConfirm),mtWarning, [mbYes,mbNo], 0) = mrYes) then
       ATree.IsVisible[ATree.FocusedNode] := False;
 end;
 
@@ -220,7 +238,7 @@ begin
   Node := ATree.GetFirst;
   while Assigned(Node) do
   begin
-    NodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(Node, ATree));
+    NodeData := TvCustomRealNodeData(TVirtualTreeMethods.GetNodeItemData(Node, ATree));
     if Assigned(NodeData) then
     begin
       if ATree.IsVisible[Node] then

@@ -1,0 +1,9 @@
+{"version":1,"strings":[
+{"hash":171153493,"name":"tfrmgraphicmenu.caption","sourcebytes":[65,83,117,105,116,101,32,77,101,110,117],"value":"ASuite Menu"},
+{"hash":15599225,"name":"tfrmgraphicmenu.lbldrivespace.caption","sourcebytes":[49,51,50,77,98,32,47,32,50,71,98,32,40,54,46,54,37,41],"value":"132Mb / 2Gb (6.6%)"},
+{"hash":22974,"name":"tfrmgraphicmenu.mnirun.caption","sourcebytes":[82,117,110],"value":"Run"},
+{"hash":6822606,"name":"tfrmgraphicmenu.mnirunas.caption","sourcebytes":[82,117,110,32,97,115,46,46,46],"value":"Run as..."},
+{"hash":16495998,"name":"tfrmgraphicmenu.mnirunasadmin.caption","sourcebytes":[82,117,110,32,97,115,32,97,100,109,105,110],"value":"Run as admin"},
+{"hash":45632450,"name":"tfrmgraphicmenu.mniopenfoldersw.caption","sourcebytes":[83,104,111,119,32,97,112,112,108,105,99,97,116,105,111,110,39,115,32,102,111,108,100,101,114],"value":"Show application's folder"},
+{"hash":157732041,"name":"tfrmgraphicmenu.mniproperty.caption","sourcebytes":[80,114,111,112,101,114,116,121],"value":"Property"}
+]}

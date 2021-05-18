@@ -1,0 +1,8 @@
+inherited frmBasePropertyPage: TfrmBasePropertyPage
+  Width = 360
+  ChildSizing.LeftRightSpacing = 4
+  ChildSizing.TopBottomSpacing = 4
+  ChildSizing.EnlargeHorizontal = crsScaleChilds
+  DesignLeft = 135
+  DesignTop = 16
+end

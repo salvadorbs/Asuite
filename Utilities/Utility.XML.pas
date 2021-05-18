@@ -1,22 +1,23 @@
 unit Utility.XML;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, Kernel.Consts, System.UITypes,
-  XMLIntf, msxmldom, XMLDoc, Kernel.Enumerations, DateUtils, xmldom;
+  LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, StdCtrls,
+  ComCtrls, VirtualTrees, Kernel.Consts, DOM, XMLRead, Kernel.Enumerations;
 
 { Load list or settings from xml file }
 type
-  TImportListToTree = function(Tree: TVirtualStringTree;Node: IXMLNode;Parent: PVirtualNode): PVirtualNode of object;
+  TImportListToTree = function(Tree: TVirtualStringTree;Node: TDOMNode;Parent: PVirtualNode): PVirtualNode of object;
 
   TImportOldListProcs = class
-    class function ASuite1NodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
+    class function ASuite1NodeToTree(Tree: TVirtualStringTree;XMLNode: TDOMNode;
                                  Parent: PVirtualNode): PVirtualNode;
-    class function wppLauncherNodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
+    class function wppLauncherNodeToTree(Tree: TVirtualStringTree;XMLNode: TDOMNode;
                                      Parent: PVirtualNode): PVirtualNode;
-    class function PStartNodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
+    class function PStartNodeToTree(Tree: TVirtualStringTree;XMLNode: TDOMNode;
                                 Parent: PVirtualNode): PVirtualNode;
   end;
 
@@ -24,80 +25,80 @@ procedure XMLToTree(Tree: TVirtualStringTree;ListType: TListType;
                     XMLDoc: TXMLDocument);
 procedure LoadDatabaseFromXML(FileName: string);
 procedure LoadXMLSettings(XMLDoc: TXMLDocument);
-function XMLToShortcut(Node: IXMLNode; AFieldCode, AFieldMod: string): TShortcut;
+function XMLToShortcut(Node: TDOMNode; AFieldCode, AFieldMod: string): TShortcut;
 Function GetHotKeyCode(KeyCode: Integer): Integer;
 Function GetHotKeyMod(KeyMod: Integer): TShiftState;
 
 { Methods to get values }
-function GetStrPropertyXML(Node: IXMLNode; Name: String; Default: String): String;
-function GetIntPropertyXML(Node: IXMLNode; Name: String; Default: Integer): Integer;
-function GetBoolPropertyXML(Node: IXMLNode; Name: String; Default: Boolean): Boolean;
+function GetStrPropertyXML(Node: TDOMNode; Name: String; Default: String): String;
+function GetIntPropertyXML(Node: TDOMNode; Name: String; Default: Integer): Integer;
+function GetBoolPropertyXML(Node: TDOMNode; Name: String; Default: Boolean): Boolean;
 
 implementation
 
 uses
-  Forms.Main, NodeDataTypes.Custom, Utility.Misc, AppConfig.Main, Kernel.Types,
+  NodeDataTypes.Custom, AppConfig.Main, Kernel.Types, Kernel.Manager,
   Utility.Conversions, VirtualTree.Methods, NodeDataTypes.Files, Menus,
-  Kernel.Logger;
+  Kernel.Logger, Kernel.Instance, LCLProc;
 
-function GetStrPropertyXML(Node : IXMLNode;Name: String;Default: String): String;
+function GetStrPropertyXML(Node : TDOMNode;Name: String;Default: String): String;
 var
-  PropertyNode: IXMLNode;
+  PropertyNode: TDOMNode;
 begin
   Result := Default;
-  PropertyNode := Node.ChildNodes[Name];
+  PropertyNode := Node.FindNode(Name);
   //Check if PropertyNode exists
   if Assigned(PropertyNode) then
-    if PropertyNode.Text <> '' then
-      Result := PropertyNode.Text;
+    if PropertyNode.NodeValue <> '' then
+      Result := PropertyNode.NodeValue;
 end;
 
-function GetIntPropertyXML(Node : IXMLNode;Name: String;Default: Integer): Integer;
+function GetIntPropertyXML(Node : TDOMNode;Name: String;Default: Integer): Integer;
 var
-  PropertyNode: IXMLNode;
+  PropertyNode: TDOMNode;
 begin
   Result := Default;
-  PropertyNode := Node.ChildNodes[Name];
+  PropertyNode := Node.FindNode(Name);
   //Check if PropertyNode exists
   if Assigned(PropertyNode) then
-    if PropertyNode.Text <> '' then
-      Result := StrToInt(PropertyNode.Text);
+    if PropertyNode.NodeValue <> '' then
+      Result := StrToInt(PropertyNode.NodeValue);
 end;
 
-function GetBoolPropertyXML(Node : IXMLNode;Name: String;Default: Boolean): Boolean;
+function GetBoolPropertyXML(Node : TDOMNode;Name: String;Default: Boolean): Boolean;
 var
-  PropertyNode: IXMLNode;
+  PropertyNode: TDOMNode;
 begin
   Result := Default;
-  PropertyNode := Node.ChildNodes[Name];
+  PropertyNode := Node.FindNode(Name);
   //Check if PropertyNode exists
   if Assigned(PropertyNode) then
-    if PropertyNode.Text <> '' then
-      Result := Utility.Conversions.StrToBool(PropertyNode.Text);
+    if PropertyNode.NodeValue <> '' then
+      Result := Utility.Conversions.StrToBool(PropertyNode.NodeValue);
 end;
 
-class function TImportOldListProcs.ASuite1NodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
+class function TImportOldListProcs.ASuite1NodeToTree(Tree: TVirtualStringTree;XMLNode: TDOMNode;
                                           Parent: PVirtualNode): PVirtualNode;
 var
   NodeData : PBaseData;
-  schDate, schTime   : string;
+  schDate, schTime, sName : string;
   CustomRealNodeData : TvCustomRealNodeData;
 begin
   Result := nil;
-  if ((XMLNode.HasAttribute('name')) or (XMLNode.NodeName = 'Separator')) and
+  if ((XMLNode.HasAttributes) or (XMLNode.NodeName = 'Separator')) and
      ((XMLNode.NodeName = 'Software') or (XMLNode.NodeName = 'Category') or
       (XMLNode.NodeName = 'Separator')) then
   begin
     //Create a new XMLNode
     //Get item type
     if (XMLNode.NodeName = 'Category') then
-      Result := Tree.AddChild(Parent, TVirtualTreeMethods.Create.CreateNodeData(vtdtCategory))
+      Result := Tree.AddChild(Parent, TVirtualTreeMethods.CreateNodeData(vtdtCategory))
     else
       if (XMLNode.NodeName = 'Software') then
-        Result := Tree.AddChild(Parent, TVirtualTreeMethods.Create.CreateNodeData(vtdtFile))
+        Result := Tree.AddChild(Parent, TVirtualTreeMethods.CreateNodeData(vtdtFile))
       else
         if XMLNode.NodeName = 'Separator' then
-          Result := Tree.AddChild(Parent, TVirtualTreeMethods.Create.CreateNodeData(vtdtSeparator));
+          Result := Tree.AddChild(Parent, TVirtualTreeMethods.CreateNodeData(vtdtSeparator));
     //Add checkbox
     if Config.ASuiteState = lsImporting then
       Tree.CheckType[Result] := ctTriStateCheckBox;
@@ -105,9 +106,15 @@ begin
     NodeData.Data.SetPointerNode(Result);
     CustomRealNodeData   := TvCustomRealNodeData(NodeData.Data);
     //Get base properties
-    if (CustomRealNodeData.DataType <> vtdtSeparator) then
+    if not(CustomRealNodeData.IsSeparatorItem) then
     begin
-      CustomRealNodeData.Name     := String(XMLNode.Attributes['name']);
+      //Get name
+      if XMLNode.HasAttributes and (XMLNode.Attributes.Length > 0) then
+        sName := XMLNode.Attributes[0].NodeValue
+      else
+        sName := '';
+
+      CustomRealNodeData.Name     := sName;
       CustomRealNodeData.PathIcon := GetStrPropertyXML(XMLNode, 'PathIcon', '');
       CustomRealNodeData.HideFromMenu := GetBoolPropertyXML(XMLNode, 'HideSoftwareMenu', false);
       CustomRealNodeData.SchMode  := TSchedulerMode(GetIntPropertyXML (XMLNode, 'SchedulerMode',0));
@@ -137,7 +144,7 @@ begin
   end;
 end;
 
-function XMLToShortcut(Node: IXMLNode; AFieldCode, AFieldMod: string): TShortcut;
+function XMLToShortcut(Node: TDOMNode; AFieldCode, AFieldMod: string): TShortcut;
 var
   Key: Word;
   ShiftState: TShiftState;
@@ -150,35 +157,42 @@ begin
 end;
 
 class function TImportOldListProcs.PStartNodeToTree(Tree: TVirtualStringTree;
-  XMLNode: IXMLNode; Parent: PVirtualNode): PVirtualNode;
+  XMLNode: TDOMNode; Parent: PVirtualNode): PVirtualNode;
 var
   NodeData     : PBaseData;
+  sName: string;
   CustomRealNodeData : TvCustomRealNodeData;
 begin
   Result := nil;
-  if ((XMLNode.HasAttribute('name')) or (XMLNode.NodeName = 'separator')) and
+  if ((XMLNode.HasAttributes) or (XMLNode.NodeName = 'separator')) and
      ((XMLNode.NodeName = 'file') or (XMLNode.NodeName = 'files') or
       (XMLNode.NodeName = 'separator')) then
   begin
     //Create a new XMLNode
     //Get item type
     if (XMLNode.NodeName = 'files') then
-      Result := tree.AddChild(Parent, TVirtualTreeMethods.Create.CreateNodeData(vtdtCategory))
+      Result := tree.AddChild(Parent, TVirtualTreeMethods.CreateNodeData(vtdtCategory))
     else
       if (XMLNode.NodeName = 'file') then
-        Result := tree.AddChild(Parent, TVirtualTreeMethods.Create.CreateNodeData(vtdtFile))
+        Result := tree.AddChild(Parent, TVirtualTreeMethods.CreateNodeData(vtdtFile))
       else
         if XMLNode.NodeName = 'separator' then
-          Result := Tree.AddChild(Parent, TVirtualTreeMethods.Create.CreateNodeData(vtdtSeparator));
+          Result := Tree.AddChild(Parent, TVirtualTreeMethods.CreateNodeData(vtdtSeparator));
     //Add checkbox
     Tree.CheckType[Result] := ctTriStateCheckBox;
     NodeData := Tree.GetNodeData(Result);
     NodeData.Data.SetPointerNode(Result);
     CustomRealNodeData  := TvCustomRealNodeData(NodeData.Data);
     //Get base properties
-    if CustomRealNodeData.DataType <> vtdtSeparator then
+    if not(CustomRealNodeData.IsSeparatorItem) then
     begin
-      CustomRealNodeData.Name     := String(XMLNode.Attributes['name']);
+      //Get name
+      if XMLNode.HasAttributes and (XMLNode.Attributes.Length > 0) then
+        sName := XMLNode.Attributes[0].NodeValue
+      else
+        sName := '';
+
+      CustomRealNodeData.Name     := sName;
       CustomRealNodeData.PathIcon := GetStrPropertyXML(XMLNode,'icon','');
       //Check if it is a software, so get software properties
       if (CustomRealNodeData.DataType = vtdtFile) then
@@ -199,36 +213,43 @@ begin
   end;
 end;
 
-class function TImportOldListProcs.wppLauncherNodeToTree(Tree: TVirtualStringTree;XMLNode: IXMLNode;
+class function TImportOldListProcs.wppLauncherNodeToTree(Tree: TVirtualStringTree;XMLNode: TDOMNode;
                                                Parent: PVirtualNode): PVirtualNode;
 var
   NodeData     : PBaseData;
+  sName: string;
   CustomRealNodeData : TvCustomRealNodeData;
 begin
   Result := nil;
-  if ((XMLNode.HasAttribute('name')) or (XMLNode.NodeName = 'separator')) and
+  if ((XMLNode.HasAttributes) or (XMLNode.NodeName = 'separator')) and
      ((XMLNode.NodeName = 'file') or (XMLNode.NodeName = 'files') or
       (XMLNode.NodeName = 'separator')) then
   begin
     //Create a new XMLNode
     //Get item type
     if (XMLNode.NodeName = 'files') then
-      Result := tree.AddChild(Parent, TVirtualTreeMethods.Create.CreateNodeData(vtdtCategory))
+      Result := tree.AddChild(Parent, TVirtualTreeMethods.CreateNodeData(vtdtCategory))
     else
       if (XMLNode.NodeName = 'file') then
-        Result := tree.AddChild(Parent, TVirtualTreeMethods.Create.CreateNodeData(vtdtFile))
+        Result := tree.AddChild(Parent, TVirtualTreeMethods.CreateNodeData(vtdtFile))
       else
         if XMLNode.NodeName = 'separator' then
-          Result := Tree.AddChild(Parent, TVirtualTreeMethods.Create.CreateNodeData(vtdtSeparator));
+          Result := Tree.AddChild(Parent, TVirtualTreeMethods.CreateNodeData(vtdtSeparator));
     //Add checkbox
     Tree.CheckType[Result] := ctTriStateCheckBox;
     NodeData := Tree.GetNodeData(Result);
     NodeData.Data.SetPointerNode(Result);
     CustomRealNodeData  := TvCustomRealNodeData(NodeData.Data);
     //Get base properties
-    if CustomRealNodeData.DataType <> vtdtSeparator then
+    if not(CustomRealNodeData.IsSeparatorItem) then
     begin
-      CustomRealNodeData.Name     := String(XMLNode.Attributes['name']);
+      //Get name
+      if XMLNode.HasAttributes and (XMLNode.Attributes.Length > 0) then
+        sName := XMLNode.Attributes[0].NodeValue
+      else
+        sName := '';
+
+      CustomRealNodeData.Name     := sName;
       CustomRealNodeData.PathIcon := GetStrPropertyXML(XMLNode,'icon','');
       CustomRealNodeData.HideFromMenu := GetBoolPropertyXML(XMLNode, 'HideSoftwareMenu', false);
       //Check if it is a software, so get software properties
@@ -254,12 +275,12 @@ end;
 procedure XMLToTree(Tree: TVirtualStringTree; ListType: TListType;
   XMLDoc: TXMLDocument);
 var
-  cXMLNode : IXMLNode;
+  cXMLNode : TDOMNode;
   AConvMethod: TImportListToTree;
 
-  procedure ProcessNode(XMLNode : IXMLNode;TreeNode : PVirtualNode);
+  procedure ProcessNode(XMLNode : TDOMNode;TreeNode : PVirtualNode);
   var
-    cNode : IXMLNode;
+    cNode : TDOMNode;
   begin
     if XMLNode = nil then Exit;
 
@@ -267,7 +288,7 @@ var
     TreeNode := AConvMethod(Tree, XMLNode, TreeNode);
 
     //Next nodes
-    cNode := XMLNode.ChildNodes.First;
+    cNode := XMLNode.FirstChild;
     while Assigned(cNode) do
     begin
       ProcessNode(cNode,TreeNode);
@@ -279,17 +300,17 @@ begin
   case ListType of
     ltASuite1:
     begin
-      TASuiteLogger.Info('Found ASuite 1.x List (%s)', [XMLDoc.FileName]);
+      TASuiteLogger.Info('Found ASuite 1.x List (%s)', [XMLDoc.documentURI]);
       AConvMethod := TImportOldListProcs.ASuite1NodeToTree;
     end;
     ltwppLauncher1:
     begin
-      TASuiteLogger.Info('Found winPenPack Launcher 1.x List (%s)', [XMLDoc.FileName]);
+      TASuiteLogger.Info('Found winPenPack Launcher 1.x List (%s)', [XMLDoc.documentURI]);
       AConvMethod := TImportOldListProcs.wppLauncherNodeToTree;
     end;
     ltPStart1:
     begin
-      TASuiteLogger.Info('Found PStart 1.x List (%s)', [XMLDoc.FileName]);
+      TASuiteLogger.Info('Found PStart 1.x List (%s)', [XMLDoc.documentURI]);
       AConvMethod := TImportOldListProcs.PStartNodeToTree;
     end;
   end;
@@ -297,7 +318,7 @@ begin
   Tree.Clear;
   Tree.BeginUpdate;
   try
-    cXMLNode := XMLDoc.DocumentElement.ChildNodes.First;
+    cXMLNode := XMLDoc.DocumentElement.FirstChild;
 
     while Assigned(cXMLNode) do
     begin
@@ -315,17 +336,15 @@ var
 begin
   TASuiteLogger.Info('Load XML List', []);
   //Create XMLDoc
-  XMLDoc := TXMLDocument.Create(nil);
   try
-    XMLDoc.FileName := FileName;
-    XMLDoc.Active := True;
+    ReadXMLFile(XMLDoc, FileName);
     //Load list and settings
     if (XMLDoc.DocumentElement.NodeName = 'ASuite') then
     begin
       LoadXMLSettings(XMLDoc);
-      XMLToTree(Config.MainTree, ltASuite1, XMLDoc);
+      XMLToTree(ASuiteInstance.MainTree, ltASuite1, XMLDoc);
     end;
-    DeleteFile(FileName);
+    SysUtils.DeleteFile(FileName);
     Config.Changed := True;
   finally
     XMLDoc.Free;
@@ -334,14 +353,14 @@ end;
 
 procedure LoadXMLSettings(XMLDoc: TXMLDocument);
 var
-  Node, tvFontStyle : IXMLNode;
+  Node, tvFontStyle : TDOMNode;
 begin
-  if XMLDoc.Active then
+  if Assigned(XMLDoc.DocumentElement) then
   begin
     //ASuite 1.x
-    Node := XMLDoc.DocumentElement.ChildNodes['Option'];
+    Node := XMLDoc.DocumentElement.FindNode('Option');
     //Get GMTheme before everything (so ASuite know where icons folder)
-    Config.GMTheme        := GetStrPropertyXML(Node, 'MenuTheme','Default');
+    Config.GMTheme        := GetStrPropertyXML(Node, 'MenuTheme','default');
     //General
     Config.StartWithWindows   := GetBoolPropertyXML(Node, 'StartOnWindowsStartup', false);
     Config.ShowPanelAtStartUp := GetBoolPropertyXML(Node, 'StartUpShowPanel', true);
@@ -353,26 +372,19 @@ begin
     //Main Form - Position and size
     Config.HoldSize    := GetBoolPropertyXML(Node, 'HoldSize', false);
     Config.AlwaysOnTop := GetBoolPropertyXML(Node, 'MainOnTop', false);
-    //frmMain's size
-    frmMain.Width      := GetIntPropertyXML(Node,'ListFormWidth',frmMainWidth);
-    frmMain.Height     := GetIntPropertyXML(Node,'ListFormHeight',frmMainHeight);
     //Hotkey
     Config.HotKey      := GetBoolPropertyXML(Node, 'ActiveHotKey',true);
     //Window Hotkey
-    Config.WindowHotkey := XMLToShortcut(Node, 'HotKeyCode', 'HotKeyModifier');
+    Config.WindowHotkey := ShortCutToText(XMLToShortcut(Node, 'HotKeyCode', 'HotKeyModifier'));
     //Menu Hotkey
-    Config.MenuHotKey   := XMLToShortcut(Node, 'MenuHotKeyCode', 'MenuHotKeyModifier');
-    //frmMain position
-    SetFormPosition(frmMain, GetIntPropertyXML(Node,'ListFormLeft',frmMain.Left),
-                             GetIntPropertyXML(Node,'ListFormTop',frmMain.Top));
-    frmMain.Position := poDesigned;
+    Config.GraphicMenuHotKey := ShortCutToText(XMLToShortcut(Node, 'MenuHotKeyCode', 'MenuHotKeyModifier'));
     //Main Form - Treevew
     Config.TVBackgroundPath := GetStrPropertyXML(Node, 'BackgroundPath','');
     Config.TVBackground     := GetBoolPropertyXML(Node, 'Background',False);
     Config.TVAutoOpClCats   := GetBoolPropertyXML(Node, 'AutoOpClCategories',False);
     //Treeview Font
     Config.TVFont.Name      := GetStrPropertyXML(Node, 'TreeViewFontName','MS Sans Serif');
-    tvFontStyle             := Node.ChildNodes['TreeViewFontStyle'];
+    tvFontStyle             := Node.FindNode('TreeViewFontStyle');
     if Assigned(tvFontStyle) then
     begin
       if GetBoolPropertyXML(tvFontStyle,'fsBold',false) then
@@ -409,41 +421,40 @@ begin
     Config.UseCustomTitle     := GetBoolPropertyXML(Node, 'ClassicMenu',false);
     //Only default menu
     Config.GMFade         := GetBoolPropertyXML(Node, 'MenuFade',true);
-    Config.GMPersonalPicture := GetStrPropertyXML(Node, 'MenuPersonalPicture','Default');
+    Config.GMPersonalPicture := GetStrPropertyXML(Node, 'MenuPersonalPicture','default');
   end;
 end;
 
 Function GetHotKeyCode(KeyCode: Integer) : Integer;
 begin
-  //TODO: Rewrite this code
-  Result := -1;
+  Result := 0;
   case KeyCode of
-    0: Result := VkKeyScan('a');
-    1: Result := VkKeyScan('b');
-    2: Result := VkKeyScan('c');
-    3: Result := VkKeyScan('d');
-    4: Result := VkKeyScan('e');
-    5: Result := VkKeyScan('f');
-    6: Result := VkKeyScan('g');
-    7: Result := VkKeyScan('h');
-    8: Result := VkKeyScan('i');
-    9: Result := VkKeyScan('j');
-    10: Result := VkKeyScan('k');
-    11: Result := VkKeyScan('l');
-    12: Result := VkKeyScan('m');
-    13: Result := VkKeyScan('n');
-    14: Result := VkKeyScan('o');
-    15: Result := VkKeyScan('p');
-    16: Result := VkKeyScan('q');
-    17: Result := VkKeyScan('r');
-    18: Result := VkKeyScan('s');
-    19: Result := VkKeyScan('t');
-    20: Result := VkKeyScan('u');
-    21: Result := VkKeyScan('v');
-    22: Result := VkKeyScan('w');
-    23: Result := VkKeyScan('x');
-    24: Result := VkKeyScan('y');
-    25: Result := VkKeyScan('z');
+    0: Result := VK_A;
+    1: Result := VK_b;
+    2: Result := VK_c;
+    3: Result := VK_d;
+    4: Result := VK_e;
+    5: Result := VK_f;
+    6: Result := VK_g;
+    7: Result := VK_h;
+    8: Result := VK_i;
+    9: Result := VK_j;
+    10: Result := VK_k;
+    11: Result := VK_l;
+    12: Result := VK_m;
+    13: Result := VK_n;
+    14: Result := VK_o;
+    15: Result := VK_p;
+    16: Result := VK_q;
+    17: Result := VK_r;
+    18: Result := VK_s;
+    19: Result := VK_t;
+    20: Result := VK_u;
+    21: Result := VK_v;
+    22: Result := VK_w;
+    23: Result := VK_x;
+    24: Result := VK_y;
+    25: Result := VK_z;
     26: Result := Vk_F1;
     27: Result := Vk_F2;
     28: Result := Vk_F3;
@@ -456,16 +467,16 @@ begin
     35: Result := Vk_F10;
     36: Result := Vk_F11;
     37: Result := Vk_F12;
-    38: Result := VkKeyScan('1');
-    39: Result := VkKeyScan('2');
-    40: Result := VkKeyScan('3');
-    41: Result := VkKeyScan('4');
-    42: Result := VkKeyScan('5');
-    43: Result := VkKeyScan('6');
-    44: Result := VkKeyScan('7');
-    45: Result := VkKeyScan('8');
-    46: Result := VkKeyScan('9');
-    47: Result := VkKeyScan('0');
+    38: Result := VK_1;
+    39: Result := VK_2;
+    40: Result := VK_3;
+    41: Result := VK_4;
+    42: Result := VK_5;
+    43: Result := VK_6;
+    44: Result := VK_7;
+    45: Result := VK_8;
+    46: Result := VK_9;
+    47: Result := VK_0;
   end;
 end;
 

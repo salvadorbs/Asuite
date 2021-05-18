@@ -19,13 +19,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Forms.ImportList;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, Kernel.Consts, xmldom,
-  XMLIntf, msxmldom, XMLDoc, Kernel.Enumerations, DateUtils, DKLang, JvExMask,
-  Vcl.Mask, JvToolEdit;
+  LCLIntf, SysUtils, Classes, Graphics, Controls, Forms, DefaultTranslator,
+  Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, Kernel.Consts, DOM, XMLRead,
+  Kernel.Enumerations, EditBtn;
 
 type
   TfrmImportList = class(TForm)
@@ -44,9 +45,8 @@ type
     btnCancel: TButton;
     pnlHeader: TPanel;
     lblTitle: TLabel;
-    XMLDocument1: TXMLDocument;
-    DKLanguageController1: TDKLanguageController;
-    edtPathList: TJvFilenameEdit;
+    
+    edtPathList: TFileNameEdit;
     procedure btnDeselectAllClick(Sender: TObject);
     procedure btnSelectAllClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -74,12 +74,12 @@ var
 
 implementation
 
-{$R *.dfm}
+{$R *.lfm}
 
 uses
-  Forms.Main, Utility.Misc, AppConfig.Main, VirtualTree.Events, VirtualTree.Methods,
-  Utility.FileFolder, Utility.XML, Database.Manager, Kernel.Types, NodeDataTypes.Base,
-  DataModules.Icons, Kernel.Logger;
+  AppConfig.Main, VirtualTree.Events, VirtualTree.Methods, Kernel.Manager,
+  Utility.FileFolder, Utility.XML, Database.Manager, NodeDataTypes.Base,
+  Kernel.Logger, Kernel.ResourceStrings, Utility.Misc, Kernel.Instance;
 
 procedure TfrmImportList.btnBackClick(Sender: TObject);
 begin
@@ -122,17 +122,17 @@ begin
   if (ModalResult = mrOk) and (vstListImp.HasChildren[vstListImp.RootNode]) then
   begin
     try
-      if TreeImpToTree(vstListImp, Config.MainTree) then
+      if TreeImpToTree(vstListImp, ASuiteInstance.MainTree) then
       begin
-        ShowMessageFmtEx(DKLangConstW('msgItemsImported'), [GetNumberNodeImp(vstListImp)]);
-        TASuiteLogger.Info(DKLangConstW('msgItemsImported'), [GetNumberNodeImp(vstListImp)]);
+        ShowMessageFmtEx(msgItemsImported, [GetNumberNodeImp(vstListImp)]);
+        TASuiteLogger.Info(msgItemsImported, [GetNumberNodeImp(vstListImp)]);
       end;
-      TVirtualTreeMethods.Create.GetAllIcons(Config.MainTree, nil);
+      TVirtualTreeMethods.GetAllIcons(ASuiteInstance.MainTree, nil);
     except
       on E : Exception do
       begin
-        ShowMessageEx(DKLangConstW('msgImportFailed'), True);
-        TASuiteLogger.Error(DKLangConstW('msgErrGeneric'), [E.ClassName,E.Message]);
+        ShowMessageEx(msgImportFailed, True);
+        TASuiteLogger.Error(msgErrGeneric, [E.ClassName, E.Message]);
       end;
     end;
   end;
@@ -161,6 +161,8 @@ begin
 
   frmImportList := TfrmImportList.Create(AOwner);
   try
+    SetFormPositionFromConfig(frmImportList);
+
     frmImportList.ShowModal;
     frmImportList.vstListImp.Clear;
   finally
@@ -170,14 +172,14 @@ end;
 
 procedure TfrmImportList.tsListShow(Sender: TObject);
 begin
-  lblTitle.Caption := DKLangConstW('msgImportTitle3');
-  btnNext.Caption  := DKLangConstW('msgImport');
+  lblTitle.Caption := msgImportTitle3;
+  btnNext.Caption  := msgImport;
   btnNext.Enabled  := vstListImp.CheckedCount > 0;
   //Import list in temporary vst
   try
     PopulateTree(vstListImp, edtPathList.Text);
   finally
-    TVirtualTreeMethods.Create.GetAllIcons(vstListImp, nil);
+    TVirtualTreeMethods.GetAllIcons(vstListImp, nil);
   end;
 end;
 
@@ -190,9 +192,9 @@ end;
 procedure TfrmImportList.tsAskFileListShow(Sender: TObject);
 begin
   vstListImp.Clear;
-  lblTitle.Caption := DKLangConstW('msgImportTitle2');
+  lblTitle.Caption := msgImportTitle2;
   btnNext.Enabled  := (edtPathList.Text <> '') and FileExists(edtPathList.Text);
-  btnNext.Caption  := DKLangConstW('msgNext');
+  btnNext.Caption  := msgNext;
 end;
 
 function TfrmImportList.GetNumberNodeImp(Sender: TBaseVirtualTree): Integer;
@@ -200,7 +202,7 @@ var
   NumberNode : Integer;
 begin
   NumberNode := 0;
-  Sender.IterateSubtree(nil, TVirtualTreeMethods.Create.IncNumberNode, @NumberNode, [], True);
+  Sender.IterateSubtree(nil, TVirtualTreeMethods.IncNumberNode, @NumberNode, [], True);
   Result := NumberNode;
 end;
 
@@ -210,28 +212,31 @@ var
   DBImp : TDBManager;
   FileName : String;
   FileExt  : String;
+  XMLDoc   : TXMLDocument;
 begin
   TASuiteLogger.Enter('PopulateTree', Self);
+
+  XMLDoc := nil;
+
   vstListImp.BeginUpdate;
   try
     vstListImp.Clear;
     FileName := LowerCase(ExtractFileName(FilePath));
-    FileExt  := ExtractFileExt(FileName);
+    FileExt  := ExtractFileExtEx(FileName);
     //ASuite or wppLauncher
     if (FileExt = EXT_XML) or (FileExt = EXT_XMLBCK) then
     begin
-      XMLDocument1.FileName := FilePath;
-      XMLDocument1.Active   := True;
+      ReadXMLFile(XMLDoc, FilePath);
       //Identify launcher xml from first node
       //ASuite 1.x
-      if XMLDocument1.DocumentElement.NodeName = 'ASuite' then
-        XMLToTree(vstListImp, ltASuite1, XMLDocument1)
+      if XMLDoc.DocumentElement.NodeName = 'ASuite' then
+        XMLToTree(vstListImp, ltASuite1, XMLDoc)
       else //winPenPack Launcher 1.x
         if ChangeFileExt(FileName,'') = 'winpenpack' then
-          XMLToTree(vstListImp, ltwppLauncher1, XMLDocument1)
+          XMLToTree(vstListImp, ltwppLauncher1, XMLDoc)
         else //PStart 1.x
-          if XMLDocument1.DocumentElement.NodeName = 'start' then
-            XMLToTree(vstListImp, ltPStart1, XMLDocument1);
+          if XMLDoc.DocumentElement.NodeName = 'start' then
+            XMLToTree(vstListImp, ltPStart1, XMLDoc);
     end
     else //BSuite 2.x
       if (FileExt = EXT_SQL) or (FileExt = EXT_SQLBCK) then
@@ -247,6 +252,8 @@ begin
       end;
   finally
     vstListImp.EndUpdate;
+    if Assigned(XMLDoc) then
+      XMLDoc.Free;
   end;
 end;
 
@@ -260,17 +267,16 @@ var
     NodeData, NodeDataImp : TvBaseNodeData;
   begin
     if (tnImp = nil) then Exit;
-    NodeDataImp := TVirtualTreeMethods.Create.GetNodeItemData(tnImp, TreeImp);
+    NodeDataImp := TVirtualTreeMethods.GetNodeItemData(tnImp, TreeImp);
     //Import checked item in main list
     if (tnImp.CheckState = csCheckedNormal) or (tnImp.CheckState = csMixedNormal) then
     begin
       //Create new node in vstList
-      tn             := TVirtualTreeMethods.Create.AddChildNodeEx(Tree, tn, amInsertAfter, NodeDataImp.DataType, False);
-      NodeData       := TVirtualTreeMethods.Create.GetNodeItemData(tn, Tree);
+      tn             := TVirtualTreeMethods.AddChildNodeEx(Tree, tn, amInsertAfter, NodeDataImp.DataType, False);
+      NodeData       := TVirtualTreeMethods.GetNodeItemData(tn, Tree);
       //Copy from NodeDataImp
       NodeData.Copy(NodeDataImp);
       //Set some properties
-      RenameShortcutOnDesktop(NodeData.Name + EXT_LNK, NodeDataImp.Name + EXT_LNK);
       NodeData.Name     := NodeDataImp.Name;
       NodeData.Position := tn.Index;
     end;

@@ -19,15 +19,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Options.General;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DKLang, Frame.BaseEntity, Vcl.StdCtrls;
+  LCLIntf, SysUtils, Dialogs, Frame.BaseEntity, StdCtrls,
+  DefaultTranslator;
 
 type
+
+  { TfrmGeneralOptionsPage }
+
   TfrmGeneralOptionsPage = class(TfrmBaseEntityPage)
-    DKLanguageController1: TDKLanguageController;
+    cbSecondInstanceGM: TCheckBox;
+    
     gbStartup: TGroupBox;
     cbWindowsStartup: TCheckBox;
     cbShowPanelStartup: TCheckBox;
@@ -43,6 +49,7 @@ type
     chkAutoCloseProcess: TCheckBox;
   private
     { Private declarations }
+    procedure AddLanguages(AComboBox: TComboBox);
   strict protected
     function GetTitle: string; override;
     function GetImageIndex: Integer; override;
@@ -51,46 +58,91 @@ type
   public
     { Public declarations }
   end;
-  TfrmGeneralOptionsPageClass = class of TfrmGeneralOptionsPage;
+
 var
   frmGeneralOptionsPage: TfrmGeneralOptionsPage;
 
 implementation
 
 uses
-  AppConfig.Main, Kernel.Enumerations;
+  AppConfig.Main, Kernel.Enumerations, Kernel.ResourceStrings, FileUtil, LazFileUtils,
+  Kernel.Consts, Kernel.Instance, Kernel.Manager;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmGeneralOptionsPage }
 
 function TfrmGeneralOptionsPage.GetImageIndex: Integer;
 begin
-  Result := Config.IconsManager.GetIconIndex('general');
+  Result := ASuiteManager.IconsManager.GetIconIndex('general');
+end;
+
+procedure TfrmGeneralOptionsPage.AddLanguages(AComboBox: TComboBox);
+var
+  SearchMask: String;
+  strID: String;
+  FileInfo: TSearchRec;
+  idxDot: Integer;
+  I: Integer;
+begin
+  SearchMask := ASuiteInstance.Paths.SuitePathLocale + LowerCase(APP_NAME) + '.*' + EXT_PO;
+
+  if FindFirstUTF8(SearchMask, faAnyFile, FileInfo) = 0 then
+  begin
+    repeat
+      I := - 1;
+      if (FileInfo.Attr and (faDirectory or faVolumeId) = 0) then
+      begin
+        if (FileInfo.Name = '.') or (FileInfo.Name = '..') or (FileInfo.Name = '') then
+          continue;
+
+        strID := ExtractFileNameWithoutExt(FileInfo.Name);
+        idxDot := pos('.', strID);
+
+        if idxDot <> 0 then
+        begin
+          strID := copy(strID, idxDot + 1, Length(strID) - 1);
+          I := AComboBox.Items.Add(strID);
+        end;
+
+        if (strID = Config.LangID) and (I <> - 1 )then
+          AComboBox.ItemIndex  := I;
+      end;
+    until
+      FindNextUTF8(FileInfo) <> 0;
+  end;
+  FindCloseUTF8(FileInfo);
 end;
 
 function TfrmGeneralOptionsPage.GetTitle: string;
 begin
-  Result := DKLangConstW('msgGeneral');
+  Result := msgGeneral;
 end;
 
 function TfrmGeneralOptionsPage.InternalLoadData: Boolean;
-var
-  I: Integer;
 begin
   Result := inherited;
+
+  cxActionOnExe.Items.Add(cxActionOnExeOpt_item0);
+  cxActionOnExe.Items.Add(cxActionOnExeOpt_item1);
+  cxActionOnExe.Items.Add(cxActionOnExeOpt_item2);
+
   //Startup
   cbWindowsStartup.Checked   := Config.StartWithWindows;
   cbShowPanelStartup.Checked := Config.ShowPanelAtStartUp;
   cbShowMenuStartup.Checked  := Config.ShowGraphicMenuAtStartUp;
   chkMissedSchedulerTask.Checked := Config.MissedSchedulerTask;
+  cbSecondInstanceGM.Checked := Config.ShowGraphicMenuAnotherInstance;
+
   //Language
-  for I := 0 to LangManager.LanguageCount - 1 do
-  begin
-    cxLanguage.Items.Add(LangManager.LanguageNativeNames[I]);
-    if LangManager.LanguageIDs[I] = Config.LangID then
-      cxLanguage.ItemIndex  := I;
-  end;
+  //Search for all languages/xxx.po files
+
+  //Search existing translations
+  AddLanguages(cxLanguage);
+
+  if cxLanguage.ItemIndex = -1 then
+    cxLanguage.ItemIndex  := 0;
+
   //Execution options
   cxActionOnExe.ItemIndex   := Ord(Config.ActionOnExe);
   cbRunSingleClick.Checked  := Config.RunSingleClick;
@@ -101,13 +153,18 @@ end;
 function TfrmGeneralOptionsPage.InternalSaveData: Boolean;
 begin
   Result := inherited;
+
   //Startup
   Config.StartWithWindows    := cbWindowsStartup.Checked;
   Config.ShowPanelAtStartUp  := cbShowPanelStartup.Checked;
   Config.ShowGraphicMenuAtStartUp := cbShowMenuStartup.Checked;
   Config.MissedSchedulerTask := chkMissedSchedulerTask.Checked;
+  Config.ShowGraphicMenuAnotherInstance := cbSecondInstanceGM.Checked;
+
   //Language
-  Config.LangID := LangManager.LanguageIDs[cxLanguage.ItemIndex];
+  if cxLanguage.ItemIndex <> -1 then
+    Config.LangID := cxLanguage.Items[cxLanguage.ItemIndex];
+
   //Execution options
   Config.ActionOnExe    := TActionOnExecute(cxActionOnExe.ItemIndex);
   Config.RunSingleClick := cbRunSingleClick.Checked;

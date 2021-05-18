@@ -1,0 +1,6 @@
+{"version":1,"strings":[
+{"hash":114087587,"name":"tfrmpropertyseparator.caption","sourcebytes":[80,114,111,112,101,114,116,105,101,115],"value":"Properties"},
+{"hash":77089212,"name":"tfrmpropertyseparator.btncancel.caption","sourcebytes":[67,97,110,99,101,108],"value":"Cancel"},
+{"hash":1371,"name":"tfrmpropertyseparator.btnok.caption","sourcebytes":[79,107],"value":"Ok"},
+{"hash":346165,"name":"tfrmpropertyseparator.lbname.caption","sourcebytes":[78,97,109,101],"value":"Name"}
+]}

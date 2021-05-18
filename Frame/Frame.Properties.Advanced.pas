@@ -19,33 +19,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Properties.Advanced;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Frame.Properties.Base, Vcl.ComCtrls,
-  Vcl.StdCtrls, DKLang, DateUtils;
+  LCLIntf, SysUtils, Classes, Controls, Dialogs, Frame.Properties.Base,
+  ButtonedEdit, StdCtrls, DateUtils, DateTimePicker, DefaultTranslator,
+  ExtCtrls, EditBtn;
 
 type
+
+  { TfrmAdvancedPropertyPage }
+
   TfrmAdvancedPropertyPage = class(TfrmBasePropertyPage)
+    cbDontInsertMFU: TCheckBox;
+    cbDontInsertMRU: TCheckBox;
+    cbHideSoftware: TCheckBox;
     cbShortcutDesktop: TCheckBox;
+    edtHotkey: TButtonedEdit;
+    grpOthers: TGroupBox;
     grpScheduler: TGroupBox;
     cxScheduler: TComboBox;
     dtpSchDate: TDateTimePicker;
     dtpSchTime: TDateTimePicker;
     grpHotkey: TGroupBox;
-    GroupBox1: TGroupBox;
-    cbHideSoftware: TCheckBox;
-    cbDontInsertMRU: TCheckBox;
-    cbDontInsertMFU: TCheckBox;
-    DKLanguageController1: TDKLanguageController;
-    hkHotkey: THotKey;
+    
     cbHotKey: TCheckBox;
+    pnlTop: TPanel;
     procedure cxSchedulerChange(Sender: TObject);
     procedure cbHotKeyClick(Sender: TObject);
-    procedure hkHotkeyChange(Sender: TObject);
-    procedure hkHotkeyMouseUp(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
+    procedure edtHotkeyRightButtonClick(Sender: TObject);
+    procedure edtHotkeyChange(Sender: TObject);
+    procedure edtHotkeyClick(Sender: TObject);
   private
     { Private declarations }
   strict protected
@@ -63,16 +69,16 @@ var
 implementation
 
 uses
-  Kernel.Enumerations, NodeDataTypes.Files, Forms.ShortcutGrabber, AppConfig.Main;
+  Kernel.Enumerations, NodeDataTypes.Files, Forms.ShortcutGrabber, Kernel.Manager,
+  DataModules.Icons, Kernel.ResourceStrings, LCLProc, Kernel.Consts;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmAdvancedPropertyPage }
 
-
 procedure TfrmAdvancedPropertyPage.cbHotKeyClick(Sender: TObject);
 begin
-  hkHotkey.Enabled := cbHotKey.Checked;
+  edtHotkey.Enabled := cbHotKey.Checked;
 end;
 
 procedure TfrmAdvancedPropertyPage.cxSchedulerChange(Sender: TObject);
@@ -84,29 +90,23 @@ end;
 
 function TfrmAdvancedPropertyPage.GetImageIndex: Integer;
 begin
-  Result := Config.IconsManager.GetIconIndex('advanced');
+  Result := AsuiteManager.IconsManager.GetIconIndex('advanced');
 end;
 
 function TfrmAdvancedPropertyPage.GetTitle: string;
 begin
-  Result := DKLangConstW('msgAdvanced');
-end;
-
-procedure TfrmAdvancedPropertyPage.hkHotkeyChange(Sender: TObject);
-begin
-  if hkHotkey.Modifiers = [] then
-    hkHotkey.Modifiers := [hkAlt];
-end;
-
-procedure TfrmAdvancedPropertyPage.hkHotkeyMouseUp(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-begin
-  hkHotkey.HotKey := TShorcutGrabber.Execute(Self);
+  Result := msgAdvanced;
 end;
 
 function TfrmAdvancedPropertyPage.InternalLoadData: Boolean;
 begin
   Result := inherited;
+
+  cxScheduler.Items.Add(cxScheduler_item0);
+  cxScheduler.Items.Add(cxScheduler_item1);
+  cxScheduler.Items.Add(cxScheduler_item2);
+  cxScheduler.Items.Add(cxScheduler_item3);
+
   if Assigned(CurrentNodeData) then
   begin
     //Scheduler
@@ -116,24 +116,31 @@ begin
     cxSchedulerChange(Self);
     //Hotkey
     cbHotKey.Checked       := CurrentNodeData.ActiveHotkey;
-    hkHotkey.HotKey        := CurrentNodeData.Hotkey;
+    edtHotkey.Text         := ShortCutToText(CurrentNodeData.Hotkey);
     cbHotKeyClick(Self);
     //Specific file settings
     cbHideSoftware.Checked := CurrentNodeData.HideFromMenu;
-    if CurrentNodeData.DataType = vtdtFile then
+    if CurrentNodeData.IsFileItem then
     begin
       cbDontInsertMRU.Checked   := TvFileNodeData(CurrentNodeData).NoMRU;
       cbDontInsertMFU.Checked   := TvFileNodeData(CurrentNodeData).NoMFU;
       cbShortcutDesktop.Checked := TvFileNodeData(CurrentNodeData).ShortcutDesktop;
     end
     else
-      if CurrentNodeData.DataType = vtdtCategory then
+      if CurrentNodeData.IsCategoryItem then
       begin
-        cbDontInsertMRU.Enabled   := False;
-        cbDontInsertMFU.Enabled   := False;
-        cbShortcutDesktop.Enabled := False;
+        cbDontInsertMRU.Visible   := False;
+        cbDontInsertMFU.Visible   := False;
+        cbShortcutDesktop.Visible := False;
       end;
   end;
+
+  edtHotkey.RightButton.Images := dmImages.ilLargeIcons;
+  edtHotkey.RightButton.ImagesWidth := ICON_SIZE_SMALL;
+  edtHotkey.RightButton.ImageIndex := AsuiteManager.IconsManager.GetIconIndex('cancel');
+
+  //Hide caret in hotkey control
+  //HideCaret(edtHotkey.Handle);
 end;
 
 function TfrmAdvancedPropertyPage.InternalSaveData: Boolean;
@@ -146,17 +153,46 @@ begin
     CurrentNodeData.SchDateTime  := Int(dtpSchDate.Date) + Frac(dtpSchTime.Time);
     CurrentNodeData.SchDateTime  := RecodeSecond(CurrentNodeData.SchDateTime, 0);
     //Hotkey
-    CurrentNodeData.Hotkey       := hkHotkey.HotKey;
+    CurrentNodeData.Hotkey       := TextToShortCut(edtHotkey.Text);
     CurrentNodeData.ActiveHotkey := cbHotKey.Checked;
     //Specific file settings
     CurrentNodeData.HideFromMenu := cbHideSoftware.Checked;
-    if CurrentNodeData.DataType = vtdtFile then
+    if CurrentNodeData.IsFileItem then
     begin
       TvFileNodeData(CurrentNodeData).NoMRU := cbDontInsertMRU.Checked;
       TvFileNodeData(CurrentNodeData).NoMFU := cbDontInsertMFU.Checked;
       TvFileNodeData(CurrentNodeData).ShortcutDesktop := cbShortcutDesktop.Checked;
     end;
   end;
+end;
+
+procedure TfrmAdvancedPropertyPage.edtHotkeyChange(Sender: TObject);
+var
+  edtHotkey: TButtonedEdit;
+begin
+  if Sender is TButtonedEdit then
+  begin
+    edtHotkey := TButtonedEdit(Sender);
+    edtHotkey.RightButton.Visible := edtHotkey.Text <> '';
+  end;
+end;
+
+procedure TfrmAdvancedPropertyPage.edtHotkeyClick(Sender: TObject);
+var
+  strHotkey: string;
+begin
+  if Sender is TButtonedEdit then
+  begin
+    strHotkey := TfrmShortcutGrabber.Execute(Self, TButtonedEdit(Sender).Text);
+    if (strHotkey <> '') then
+      TButtonedEdit(Sender).Text := strHotkey;
+  end;
+end;
+
+procedure TfrmAdvancedPropertyPage.edtHotkeyRightButtonClick(Sender: TObject);
+begin
+  if Sender is TButtonedEdit then
+    TButtonedEdit(Sender).Text := '';
 end;
 
 end.

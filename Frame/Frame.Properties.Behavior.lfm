@@ -1,0 +1,114 @@
+inherited frmBehaviorPropertyPage: TfrmBehaviorPropertyPage
+  Height = 295
+  ClientHeight = 295
+  DesignLeft = 2074
+  DesignTop = 212
+  object grpAutoExecute: TGroupBox[0]
+    Left = 4
+    Height = 80
+    Top = 4
+    Width = 352
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    Caption = 'Autorun'
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.TopBottomSpacing = 4
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ClientHeight = 60
+    ClientWidth = 348
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 0
+    object cxAutoExecute: TComboBox
+      Left = 4
+      Height = 23
+      Top = 4
+      Width = 340
+      BorderSpacing.Bottom = 4
+      ItemHeight = 15
+      OnChange = cxAutoExecuteChange
+      ParentFont = False
+      Style = csDropDownList
+      TabOrder = 0
+    end
+    object btnChangeOrder: TButton
+      Left = 102
+      Height = 25
+      Top = 31
+      Width = 143
+      BorderSpacing.CellAlignHorizontal = ccaCenter
+      Caption = 'Change autorun order'
+      OnClick = btnChangeOrderClick
+      ParentFont = False
+      TabOrder = 1
+    end
+  end
+  object pnl1: TPanel[1]
+    Left = 4
+    Height = 59
+    Top = 84
+    Width = 352
+    BevelOuter = bvNone
+    ChildSizing.TopBottomSpacing = 4
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.Layout = cclTopToBottomThenLeftToRight
+    ClientHeight = 59
+    ClientWidth = 352
+    TabOrder = 1
+    object grpOnExecute: TGroupBox
+      Left = 0
+      Height = 51
+      Top = 4
+      Width = 174
+      Caption = 'On Execute'
+      ChildSizing.LeftRightSpacing = 4
+      ChildSizing.TopBottomSpacing = 4
+      ChildSizing.EnlargeHorizontal = crsScaleChilds
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ClientHeight = 31
+      ClientWidth = 170
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
+      object cxActionOnExe: TComboBox
+        Left = 4
+        Height = 23
+        Top = 4
+        Width = 162
+        ItemHeight = 15
+        ParentFont = False
+        Style = csDropDownList
+        TabOrder = 0
+      end
+    end
+    object grpWindowState: TGroupBox
+      Left = 178
+      Height = 51
+      Top = 4
+      Width = 174
+      BorderSpacing.Left = 4
+      Caption = 'Window State'
+      ChildSizing.LeftRightSpacing = 4
+      ChildSizing.TopBottomSpacing = 4
+      ChildSizing.EnlargeHorizontal = crsScaleChilds
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ClientHeight = 31
+      ClientWidth = 170
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 1
+      object cxWindowState: TComboBox
+        Left = 4
+        Height = 23
+        Top = 4
+        Width = 162
+        ItemHeight = 15
+        ParentFont = False
+        Style = csDropDownList
+        TabOrder = 0
+      end
+    end
+  end
+end

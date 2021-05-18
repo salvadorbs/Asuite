@@ -1,0 +1,8 @@
+{"version":1,"strings":[
+{"hash":262735651,"name":"tfrmenvironmentvars.grpothers.caption","sourcebytes":[69,110,118,105,114,111,110,109,101,110,116,32,86,97,114,105,97,98,108,101,115],"value":"Environment Variables"},
+{"hash":164360243,"name":"tfrmenvironmentvars.tbbuttons.caption","sourcebytes":[116,98,66,117,116,116,111,110,115],"value":"tbButtons"},
+{"hash":18340,"name":"tfrmenvironmentvars.actadd.caption","sourcebytes":[65,100,100],"value":"Add"},
+{"hash":78392485,"name":"tfrmenvironmentvars.actdelete.caption","sourcebytes":[68,101,108,101,116,101],"value":"Delete"},
+{"hash":304761,"name":"tfrmenvironmentvars.actcopy.caption","sourcebytes":[67,111,112,121],"value":"Copy"},
+{"hash":5671589,"name":"tfrmenvironmentvars.actpaste.caption","sourcebytes":[80,97,115,116,101],"value":"Paste"}
+]}

@@ -1,0 +1,21 @@
+{"version":1,"strings":[
+{"hash":146392547,"name":"tfrmadvancedoptionspage.gbrecents.caption","sourcebytes":[82,101,99,101,110,116,115],"value":"Recents"},
+{"hash":105919523,"name":"tfrmadvancedoptionspage.cbmru.caption","sourcebytes":[65,99,116,105,118,101,32,114,101,99,101,110,116,32,105,116,101,109,115],"value":"Active recent items"},
+{"hash":69940771,"name":"tfrmadvancedoptionspage.lbmaxmru.caption","sourcebytes":[77,97,120,32,110,117,109,98,101,114,32,114,101,99,101,110,116,32,105,116,101,109,115],"value":"Max number recent items"},
+{"hash":75997888,"name":"tfrmadvancedoptionspage.gbbackup.caption","sourcebytes":[66,97,99,107,117,112],"value":"Backup"},
+{"hash":210643488,"name":"tfrmadvancedoptionspage.cbbackup.caption","sourcebytes":[65,99,116,105,118,101,32,97,117,116,111,109,97,116,105,99,32,98,97,99,107,117,112],"value":"Active automatic backup"},
+{"hash":18572851,"name":"tfrmadvancedoptionspage.lbmaxbackup.caption","sourcebytes":[77,97,120,32,110,117,109,98,101,114,32,98,97,99,107,117,112,32,102,105,108,101,115],"value":"Max number backup files"},
+{"hash":161203396,"name":"tfrmadvancedoptionspage.gbmfu.caption","sourcebytes":[77,111,115,116,32,70,114,101,113,117,101,110,116,108,121,32,85,115,101,100],"value":"Most Frequently Used"},
+{"hash":129229123,"name":"tfrmadvancedoptionspage.cbmfu.caption","sourcebytes":[65,99,116,105,118,101,32,77,70,85,32,105,116,101,109,115],"value":"Active MFU items"},
+{"hash":118720243,"name":"tfrmadvancedoptionspage.lbmaxmfu.caption","sourcebytes":[77,97,120,32,110,117,109,98,101,114,32,77,70,85,32,105,116,101,109,115],"value":"Max number MFU items"},
+{"hash":1836947,"name":"tfrmadvancedoptionspage.grpclearelements.caption","sourcebytes":[67,108,101,97,114,32,101,108,101,109,101,110,116,115],"value":"Clear elements"},
+{"hash":30420115,"name":"tfrmadvancedoptionspage.lbclearelements.caption","sourcebytes":[67,108,101,97,114,32,116,104,101,32,102,111,108,108,111,119,105,110,103,32,101,108,101,109,101,110,116,115],"value":"Clear the following elements"},
+{"hash":161203396,"name":"tfrmadvancedoptionspage.cbclearmfu.caption","sourcebytes":[77,111,115,116,32,70,114,101,113,117,101,110,116,108,121,32,85,115,101,100],"value":"Most Frequently Used"},
+{"hash":142224435,"name":"tfrmadvancedoptionspage.cbclearbackup.caption","sourcebytes":[66,97,99,107,117,112,115],"value":"Backups"},
+{"hash":119995827,"name":"tfrmadvancedoptionspage.cbclearcache.caption","sourcebytes":[67,97,99,104,101,32,105,99,111,110,115],"value":"Cache icons"},
+{"hash":146392547,"name":"tfrmadvancedoptionspage.cbclearmru.caption","sourcebytes":[82,101,99,101,110,116,115],"value":"Recents"},
+{"hash":4860802,"name":"tfrmadvancedoptionspage.btnclear.caption","sourcebytes":[67,108,101,97,114],"value":"Clear"},
+{"hash":175038323,"name":"tfrmadvancedoptionspage.gbotherfunctions.caption","sourcebytes":[79,116,104,101,114,32,102,117,110,99,116,105,111,110,115],"value":"Other functions"},
+{"hash":61669573,"name":"tfrmadvancedoptionspage.cbcache.caption","sourcebytes":[69,110,97,98,108,101,32,99,97,99,104,101],"value":"Enable cache"},
+{"hash":127409954,"name":"tfrmadvancedoptionspage.cbscheduler.caption","sourcebytes":[69,110,97,98,108,101,32,115,99,104,101,100,117,108,101,114],"value":"Enable scheduler"}
+]}

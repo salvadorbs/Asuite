@@ -19,22 +19,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Options.MainWindow;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Frame.BaseEntity, DKLang, Vcl.StdCtrls,
-  Vcl.Mask, JvExMask, JvToolEdit;
+  LCLIntf, SysUtils, Classes, Graphics, Forms, Dialogs, Frame.BaseEntity, StdCtrls,
+  EditBtn, DefaultTranslator;
 
 type
+
+  { TfrmMainWindowOptionsPage }
+
   TfrmMainWindowOptionsPage = class(TfrmBaseEntityPage)
-    DKLanguageController1: TDKLanguageController;
-    gbTreeView: TGroupBox;
-    cbBackground: TCheckBox;
     btnFontSettings: TButton;
     cbAutoOpClCat: TCheckBox;
+    cbAutoOpDragDrop: TCheckBox;
+    cbDialogCenterMF: TCheckBox;
+    cbDisableConfirmDelete: TCheckBox;
     cbSmallIcon: TCheckBox;
-    edtBackground: TJvFilenameEdit;
+    gbTreeView: TGroupBox;
+    cbBackground: TCheckBox;
+    edtBackground: TFileNameEdit;
     gbWindow: TGroupBox;
     cbWindowOnTop: TCheckBox;
     cbHoldSize: TCheckBox;
@@ -42,7 +48,6 @@ type
     edtCustomTitle: TEdit;
     cbCustomTitle: TCheckBox;
     FontDialog1: TFontDialog;
-    cbAutoOpDragDrop: TCheckBox;
     chkSearchAsYouType: TCheckBox;
     procedure cbCustomTitleClick(Sender: TObject);
     procedure cbBackgroundClick(Sender: TObject);
@@ -68,9 +73,9 @@ var
 implementation
 
 uses
-  AppConfig.Main;
+  AppConfig.Main, Kernel.ResourceStrings, Kernel.Instance, Kernel.Manager;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmBaseEntityPage1 }
 
@@ -92,29 +97,30 @@ end;
 procedure TfrmMainWindowOptionsPage.edtBackgroundAfterDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
-  AName := Config.Paths.AbsoluteToRelative(AName);
+  AName := ASuiteInstance.Paths.AbsoluteToRelative(AName);
 end;
 
 procedure TfrmMainWindowOptionsPage.edtBackgroundBeforeDialog(Sender: TObject;
   var AName: string; var AAction: Boolean);
 begin
-  edtBackground.Filter := DKLangConstW('msgFilterBackground');
-  AName := Config.Paths.RelativeToAbsolute(AName);
+  edtBackground.Filter := msgFilterBackground;
+  AName := ASuiteInstance.Paths.RelativeToAbsolute(AName);
 end;
 
 function TfrmMainWindowOptionsPage.GetImageIndex: Integer;
 begin
-  Result := Config.IconsManager.GetIconIndex('mainwindow');
+  Result := ASuiteManager.IconsManager.GetIconIndex('mainwindow');
 end;
 
 function TfrmMainWindowOptionsPage.GetTitle: string;
 begin
-  Result := DKLangConstW('msgMainWindow');
+  Result := msgMainWindow;
 end;
 
 function TfrmMainWindowOptionsPage.InternalLoadData: Boolean;
 begin
   Result := inherited;
+
   //Window
   cbHoldSize.Checked         := Config.HoldSize;
   cbWindowOnTop.Checked      := Config.AlwaysOnTop;
@@ -123,12 +129,16 @@ begin
   cbCustomTitle.Checked      := Config.UseCustomTitle;
   edtCustomTitle.Text        := Config.CustomTitleString;
   edtCustomTitle.Enabled     := Config.UseCustomTitle;
+  cbDialogCenterMF.Checked   := Config.DialogCenterMF;
+
   //Treeview
   cbAutoOpClCat.Checked := Config.TVAutoOpClCats;
   cbAutoOpDragDrop.Checked := Config.TVAutoOpCatsDrag;
+  cbDisableConfirmDelete.Checked := Config.TVDisableConfirmDelete;
   cbSmallIcon.Checked   := Config.TVSmallIconSize;
   cbBackground.Checked  := Config.TVBackground;
   edtBackground.Text    := Config.TVBackgroundPath;
+
   //Treeview Font
   with FontDialog1.Font do
   begin
@@ -137,6 +147,7 @@ begin
     Size  := Config.TVFont.Size;
     Color := Config.TVFont.Color;
   end;
+
   //Update controls
   cbCustomTitleClick(Self);
   cbBackgroundClick(Self);
@@ -145,6 +156,7 @@ end;
 function TfrmMainWindowOptionsPage.InternalSaveData: Boolean;
 begin
   Result := inherited;
+
   //Window
   Config.HoldSize           := cbHoldSize.Checked;
   Config.AlwaysOnTop        := cbWindowOnTop.Checked;
@@ -152,13 +164,18 @@ begin
   Config.SearchAsYouType    := chkSearchAsYouType.Checked;
   Config.CustomTitleString  := edtCustomTitle.Text;
   Config.UseCustomTitle     := cbCustomTitle.Checked;
+  Config.DialogCenterMF     := cbDialogCenterMF.checked;
+
   //Treeview
   Config.TVAutoOpClCats     := cbAutoOpClCat.Checked;
   Config.TVAutoOpCatsDrag   := cbAutoOpDragDrop.Checked;
+  Config.TVDisableConfirmDelete := cbDisableConfirmDelete.Checked;
   Config.TVSmallIconSize    := cbSmallIcon.Checked;
+
   //Treeview
   Config.TVBackgroundPath   := edtBackground.Text;
   Config.TVBackground       := cbBackground.Checked;
+
   //Treeview Font
   Config.TVFont             := FontDialog1.Font;
 end;

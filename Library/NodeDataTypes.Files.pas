@@ -19,18 +19,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit NodeDataTypes.Files;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  SysUtils, Kernel.Enumerations, NodeDataTypes.Base, Kernel.Types,
-  NodeDataTypes.Custom, WinApi.Windows, WinApi.ShellApi, DateUtils;
+  SysUtils, Kernel.Enumerations, NodeDataTypes.Base, Kernel.Types, Classes,
+  NodeDataTypes.Custom, LCLIntf, LCLType, DateUtils, process, LazFileUtils;
 
 type
+
+  { TvFileNodeData }
+
   TvFileNodeData = class(TvCustomRealNodeData)
   private
     //Specific private variables and functions
     //Paths
-    FPathFile         : string;
+    FPathFile        : string;
     //Advanced
     FParameters      : string;
     FWorkingDir      : string;
@@ -40,6 +45,8 @@ type
     FNoMFU           : Boolean;
     FRunFromCategory : Boolean;
     FIsPathFileExists: Boolean;
+    FEnvironmentVars : TStringList;
+
     procedure SetPathFile(value:string);
     procedure SetWorkingDir(value:string);
     procedure SetNoMRU(value:Boolean);
@@ -48,8 +55,9 @@ type
     function GetPathAbsoluteFile: String;
     function GetWorkingDirAbsolute: string;
     procedure SetClickCount(const Value: Integer);
-    function GetWorkingDir(): string;
     function GetWindowState(ARunFromCategory: Boolean): Integer;
+    function ConvertWindowStateToSWOptions(AWindowState: Integer): TShowWindowOptions;
+    function  IsProcessExists(exeFileName: string): Boolean;
   protected
     procedure SetLastAccess(const Value: Int64); override;
     procedure AfterExecute(ADoActionOnExe: Boolean); override;
@@ -60,6 +68,7 @@ type
   public
     //Specific properties
     constructor Create(AType: TvTreeDataType); overload;
+    destructor Destroy; override;
 
     procedure Copy(source: TvBaseNodeData); override;
 
@@ -76,6 +85,7 @@ type
     property WorkingDirAbsolute: string read GetWorkingDirAbsolute;
     property ShortcutDesktop:Boolean read FShortcutDesktop write SetShortcutDesktop;
     property RunFromCategory: Boolean read FRunFromCategory write FRunFromCategory;
+    property EnvironmentVars: TStringList read FEnvironmentVars write FEnvironmentVars;
 
     procedure DeleteShortcutFile;
     procedure CheckPathFile;
@@ -85,9 +95,9 @@ type
 implementation
 
 uses
-  AppConfig.Main, Lists.Manager, Kernel.Consts, Utility.FileFolder, Lists.Special,
-  Lists.Base, Utility.System, Utility.Process, VirtualTree.Methods, Utility.Misc,
-  Kernel.Logger;
+  AppConfig.Main, Kernel.Consts, Utility.FileFolder, LazUTF8,
+  Utility.System, VirtualTree.Methods, Utility.Misc, Kernel.Instance, Kernel.Manager
+  {$IFDEF Windows}, JwaWindows, JwaWinBase, ShellApi{$ENDIF};
 
 constructor TvFileNodeData.Create(AType: TvTreeDataType);
 begin
@@ -96,7 +106,7 @@ begin
     Self.PathIcon := CONST_PATH_FOLDERICON;
   //Paths
   FPathFile         := '';
-  FIsPathFileExists := False;
+  FIsPathFileExists := True;
   //Advanced
   FParameters      := '';
   FWorkingDir      := '';
@@ -106,6 +116,15 @@ begin
   FShortcutDesktop := False;
   //Misc
   FRunFromCategory := False;
+  FEnvironmentVars := TStringList.Create;
+end;
+
+destructor TvFileNodeData.Destroy;
+begin
+  inherited Destroy;
+
+  FEnvironmentVars.Clear;
+  FEnvironmentVars.Free;
 end;
 
 procedure TvFileNodeData.DeleteShortcutFile;
@@ -117,41 +136,64 @@ end;
 function TvFileNodeData.GetPathAbsoluteFile: String;
 begin
   if FPathFile <> '' then
-    Result := Config.Paths.RelativeToAbsolute(FPathFile)
+    Result := ASuiteInstance.Paths.RelativeToAbsolute(FPathFile)
   else
     Result := '';
 end;
 
 function TvFileNodeData.GetWorkingDirAbsolute: string;
 begin
-  if FWorkingDir <> '' then
-    Result := Config.Paths.RelativeToAbsolute(FWorkingDir)
+  if FWorkingDir = '' then
+  begin
+    if IsDirectory(Self.PathAbsoluteFile) then
+      Result := Self.PathAbsoluteFile
+    else
+      Result := ExtractFileDir(Self.PathAbsoluteFile);
+  end
   else
-    Result := '';
+    Result := ASuiteInstance.Paths.RelativeToAbsolute(FWorkingDir);
 end;
 
 function TvFileNodeData.InternalExecute(ARunFromCategory: Boolean; ACheckSingleInstance: Boolean): boolean;
+var
+  Path: String;
 begin
   Result := False;
 
+  Path := PathAbsoluteFile;
+
   //If ACheckSingleInstance, we must check if process exists, and if yes, exit
   if (ACheckSingleInstance) and (Autorun = atSingleInstance) then
-    if (IsProcessExists(ExtractFileName(Self.PathAbsoluteFile))) then
+    if (IsProcessExists(ExtractFileName(Path))) then
       Exit;
 
-  //Execute
-  Result := ShellExecute(GetDesktopWindow, nil, PChar(PathAbsoluteFile),
-                         PChar(Config.Paths.RelativeToAbsolute(FParameters)),
-                         PChar(GetWorkingDir), GetWindowState(ARunFromCategory)) > 32;
+  //For url & documents, use OpenDocument (who uses xdg-open in Linux and ShellExecute in Windows)
+  //For executable (EXE, CMD, BAT for Windows, or files with permission Execute for Linux), use CreateProcess
+  if IsExecutableFile(Path) then
+    Result := CreateProcessEx(PathAbsoluteFile, ASuiteInstance.Paths.RelativeToAbsolute(FParameters),
+                              WorkingDirAbsolute, ConvertWindowStateToSWOptions(GetWindowState(ARunFromCategory)),
+                              EnvironmentVars) <> -1
+  else
+    Result := OpenDocument(Path);
+
+  //TODO bug: Oddly, using Lazarus opendocument, GetLastOSError does not work properly (detects no errors)
   //Error message
   if not Result then
-    ShowMessageEx(Format('%s [%s]', [SysErrorMessage(GetLastError), Self.Name]), True);
+    ShowMessageEx(Format('%s [%s]', [SysErrorMessage(GetLastOSError), Self.Name]), True);
 end;
 
 function TvFileNodeData.InternalExecuteAsAdmin(ARunFromCategory: Boolean): boolean;
+{$IFDEF MSWINDOWS}
 var
-  ShellExecuteInfo: TShellExecuteInfo;
+  ShellExecuteInfo: TShellExecuteInfoW;
+{$ENDIF}
 begin
+  Result := False;
+
+  if not(IsExecutableFile(PathAbsoluteFile)) then
+    Exit;
+
+  {$IFDEF MSWINDOWS}
   ZeroMemory(@ShellExecuteInfo, SizeOf(ShellExecuteInfo));
   ShellExecuteInfo.cbSize := SizeOf(TShellExecuteInfo);
   ShellExecuteInfo.Wnd    := GetDesktopWindow;
@@ -159,22 +201,34 @@ begin
   ShellExecuteInfo.lpVerb := PChar('runas');
   //Set process's path, working dir, parameters and window state
   ShellExecuteInfo.lpFile := PChar(PathAbsoluteFile);
-  ShellExecuteInfo.lpDirectory := PChar(GetWorkingDir);
+  ShellExecuteInfo.lpDirectory := PChar(GetWorkingDirAbsolute);
   if FParameters <> '' then
-    ShellExecuteInfo.lpParameters := PChar(Config.Paths.RelativeToAbsolute(FParameters));
+    ShellExecuteInfo.lpParameters := PChar(ASuiteInstance.Paths.RelativeToAbsolute(FParameters));
   ShellExecuteInfo.nShow := GetWindowState(ARunFromCategory);
   //Run process
-  Result := ShellExecuteEx(@ShellExecuteInfo);
+  Result := ShellExecuteExW(@ShellExecuteInfo);
 
   if not Result then
-    ShowMessageEx(SysErrorMessage(GetLastError), True);
+    ShowMessageEx(SysErrorMessage(GetLastOSError), True);
+  {$ELSE}
+  Result := CreateProcessEx('pkexec', Format('%s %s', [PathAbsoluteFile, Parameters]), WorkingDirAbsolute,
+                            ConvertWindowStateToSWOptions(GetWindowState(ARunFromCategory)), EnvironmentVars) <> -1;
+  {$ENDIF}
 end;
 
 function TvFileNodeData.InternalExecuteAsUser(ARunFromCategory: Boolean; AUserData: TUserData): boolean;
+{$IFDEF MSWINDOWS}
 var
-  StartupInfo : TStartupInfoW;
+  StartupInfo : JwaWinBase.TStartupInfoW;
   ProcInfo    : TProcessInformation;
+{$ENDIF}
 begin
+  Result := False;
+
+  if not(IsExecutableFile(PathAbsoluteFile)) then
+    Exit;
+
+  {$IFDEF MSWINDOWS}
   FillMemory(@StartupInfo, sizeof(StartupInfo), 0);
   FillMemory(@ProcInfo, sizeof(ProcInfo), 0);
   StartupInfo.cb := sizeof(TStartupInfoW);
@@ -185,26 +239,30 @@ begin
                                     LOGON_WITH_PROFILE,
                                     PWideChar(PathAbsoluteFile), nil,
                                     CREATE_UNICODE_ENVIRONMENT, nil,
-                                    PWideChar(GetWorkingDir),
+                                    PWideChar(GetWorkingDirAbsolute),
                                     StartupInfo, ProcInfo);
   //Close handles
   if Result then
   begin
-    CloseHandle(ProcInfo.hProcess);
-    CloseHandle(ProcInfo.hThread);
+    FileClose(ProcInfo.hProcess);
+    FileClose(ProcInfo.hThread);
   end
   else
-    ShowMessageEx(SysErrorMessage(GetLastError), True);
+    ShowMessageEx(SysErrorMessage(GetLastOSError), True);
+  {$ELSE}
+  Result := CreateProcessEx('pkexec', Format('%s %s %s', [AUserData.UserName, PathAbsoluteFile, Parameters]), WorkingDirAbsolute,
+                            ConvertWindowStateToSWOptions(GetWindowState(ARunFromCategory)), EnvironmentVars) <> -1;
+  {$ENDIF}
 end;
 
 procedure TvFileNodeData.AfterExecute(ADoActionOnExe: Boolean);
 begin
   //MFU
   SetClickCount(FClickCount + 1);
-  Config.ListManager.MFUList.Sort;
+  ASuiteManager.ListManager.MFUList.Sort;
   //MRU
   SetLastAccess(DateTimeToUnix(Now));
-  Config.ListManager.MRUList.Sort;
+  ASuiteManager.ListManager.MRUList.Sort;
   inherited;
 end;
 
@@ -229,9 +287,9 @@ begin
   //Window state
   if ARunFromCategory then
   begin
-    Assert(PNode.Parent <> Config.MainTree.RootNode, 'Parent''s item = Main tree root node (run from category mode)');
+    Assert(PNode.Parent <> ASuiteInstance.MainTree.RootNode, 'Parent''s item = Main tree root node (run from category mode)');
 
-    ParentNodeData := TvCustomRealNodeData(TVirtualTreeMethods.Create.GetNodeItemData(PNode.Parent, Config.MainTree));
+    ParentNodeData := TvCustomRealNodeData(TVirtualTreeMethods.GetNodeItemData(PNode.Parent, ASuiteInstance.MainTree));
     //Override child item's FWindowState
     case ParentNodeData.WindowState of
       1: Result := SW_SHOWDEFAULT;
@@ -248,21 +306,77 @@ begin
   end;
 end;
 
-function TvFileNodeData.GetWorkingDir(): string;
+function TvFileNodeData.ConvertWindowStateToSWOptions(AWindowState: Integer
+  ): TShowWindowOptions;
 begin
-  //Working directory
-  if FWorkingDir = '' then
-  begin
-    if IsDirectory(Self.PathAbsoluteFile) then
-      Result := Self.PathAbsoluteFile
-    else
-      Result := ExtractFileDir(Self.PathAbsoluteFile);
-  end
-  else
-    Result := Self.WorkingDirAbsolute;
+  Result := swoNone;
+  case AWindowState of
+    SW_SHOWDEFAULT: Result := swoShowDefault;
+    SW_SHOWMINNOACTIVE: Result := swoshowMinNOActive;
+    SW_SHOWMAXIMIZED: Result := swoShowMaximized;
+  end;
 end;
 
-procedure TvFileNodeData.Copy(Source: TvBaseNodeData);
+function TvFileNodeData.IsProcessExists(exeFileName: string): Boolean;
+var
+{$IFDEF MSWINDOWS}
+  hSnapShot : THandle;
+  ProcInfo  : TProcessEntry32;
+{$ELSE}
+  Process: TProcess;
+  Output: TStringList;
+  Index: Integer;
+{$ENDIF}
+begin
+  {$IFDEF MSWINDOWS}
+  Result      := False;
+  exeFileName := UpperCase(ExeFileName);
+  hSnapShot   := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+  //Check processes
+  if (hSnapShot <> THandle(-1)) then
+  begin
+    ProcInfo.dwSize := SizeOf(ProcInfo);
+    //First process
+    if (Process32First(hSnapshot, ProcInfo)) then
+    begin
+      //Compare first process with ExeFileName
+      if (UpperCase(ExtractFileName(ProcInfo.szExeFile)) = ExeFileName) then
+        Result := True;
+      while (Process32Next(hSnapShot, ProcInfo)) do
+        if (UpperCase(ExtractFileName(ProcInfo.szExeFile)) = ExeFileName) then
+          Result := True;
+    end;
+  end;
+  FileClose(hSnapShot);
+  {$ELSE}
+  Process := TProcess.Create(nil);
+  try
+    Process.Executable := 'ps';
+    Process.Parameters.Add('-C');
+    Process.Parameters.Add(ExeFileName);
+    Process.Options := [poUsePipes, poWaitOnExit];
+
+    Process.Execute;
+
+    Output := TStringList.Create;
+    try
+      Output.LoadFromStream(Process.Output);
+
+      repeat
+        Index := UTF8Pos(ExeFileName, Output.Text, Index + 1);
+        if Index <> 0 then
+          Result := True;
+      until Index = 0;
+    finally
+      Output.Free;
+    end;
+  finally
+    Process.Free;
+  end;
+  {$ENDIF}
+end;
+
+procedure TvFileNodeData.Copy(source: TvBaseNodeData);
 var
   SourceNodeData: TvFileNodeData;
 begin
@@ -285,9 +399,7 @@ function TvFileNodeData.ExplorePath: Boolean;
 begin
   Result := False;
   if Not(IsValidURLProtocol(Self.PathAbsoluteFile)) then
-    Result := ShellExecute(GetDesktopWindow, 'open',
-                           PChar(ExtractFileDir(Self.PathAbsoluteFile)),
-                           nil, nil, SW_NORMAL) > 32;
+    Result := OpenDocument(ExtractFileDir(Self.PathAbsoluteFile));
 end;
 
 procedure TvFileNodeData.SetPathFile(value:string);
@@ -307,10 +419,10 @@ begin
   begin
     //If value is true, delete it from list
     if (value and (FNoMRU <> value)) then
-      Config.ListManager.MRUList.RemoveItem(Self)
+      ASuiteManager.ListManager.MRUList.RemoveItem(Self)
     else //else add it in list
       if (not value and (FNoMRU <> value)) and (LastAccess > -1) then
-        Config.ListManager.MRUList.AddItem(Self);
+        ASuiteManager.ListManager.MRUList.AddItem(Self);
   end;
   FNoMRU := value;
 end;
@@ -320,7 +432,7 @@ begin
   FClickCount := Value;
   if (Config.ASuiteState <> lsImporting) then
     if (FClickCount > 0) and (not Self.FNoMFU) then
-      Config.ListManager.MFUList.AddItem(Self);
+      ASuiteManager.ListManager.MFUList.AddItem(Self);
 end;
 
 procedure TvFileNodeData.SetLastAccess(const Value: Int64);
@@ -328,7 +440,7 @@ begin
   inherited;
   if (Config.ASuiteState <> lsImporting) then
     if (Self.LastAccess > -1) and (not FNoMRU) then
-      Config.ListManager.MRUList.AddItem(Self);
+      ASuiteManager.ListManager.MRUList.AddItem(Self);
 end;
 
 procedure TvFileNodeData.SetNoMFU(value:Boolean);
@@ -337,10 +449,10 @@ begin
   begin
     //If value is true, delete it from list
     if (value and (FNoMFU <> value)) then
-      Config.ListManager.MFUList.RemoveItem(Self)
+      ASuiteManager.ListManager.MFUList.RemoveItem(Self)
     else //else add it in list
       if (not value and (FNoMFU <> value)) and (FClickCount > 0) then
-        Config.ListManager.MFUList.AddItem(Self);
+        ASuiteManager.ListManager.MFUList.AddItem(Self);
   end;
   FNoMFU := value;
 end;

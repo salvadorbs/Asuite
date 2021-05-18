@@ -19,6 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Kernel.Enumerations;
 
+{$MODE DelphiUnicode}
+
 interface
 
 type
@@ -115,6 +117,12 @@ type
       ltASuite2,
       ltwppLauncher1,
       ltPStart1
+  );
+
+  TASuiteTheme = (
+      atWindowsSystem,
+      atLight,
+      atDark
   );
 
 implementation

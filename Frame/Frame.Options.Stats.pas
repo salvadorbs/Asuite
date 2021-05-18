@@ -19,51 +19,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Frame.Options.Stats;
 
+{$MODE DelphiUnicode}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Frame.BaseEntity, Vcl.StdCtrls, DKLang,
-  Registry;
+  LCLIntf, SysUtils, Variants, Classes, DefaultTranslator, Controls,
+  Forms, Dialogs, Frame.BaseEntity, JPP.DoubleLineLabel, StdCtrls;
 
 type
+
+  { TfrmStatsOptionsPage }
+
   TfrmStatsOptionsPage = class(TfrmBaseEntityPage)
     gbASuite: TGroupBox;
-    lbSoftware: TLabel;
-    lbCat: TLabel;
-    lbTotal: TLabel;
-    lbSoftware2: TLabel;
-    lbCat2: TLabel;
-    lbTotal2: TLabel;
+    lbCat: TJppDoubleLineLabel;
+    lblBuild: TJppDoubleLineLabel;
+    lblProcessor: TJppDoubleLineLabel;
+    lblRam: TJppDoubleLineLabel;
+    lbOs: TJppDoubleLineLabel;
+    lbSize: TJppDoubleLineLabel;
+    lbSoftware: TJppDoubleLineLabel;
     gbSupport: TGroupBox;
-    lbSize: TLabel;
-    lbSpaceUsed: TLabel;
-    lbSpaceFree: TLabel;
-    lbSpaceFree2: TLabel;
-    lbSize2: TLabel;
-    lbSpaceUsed2: TLabel;
+    lbSpaceFree: TJppDoubleLineLabel;
     gbSystem: TGroupBox;
-    lbOs: TLabel;
-    lbNamePc: TLabel;
-    lbUser: TLabel;
-    lbOs2: TLabel;
-    lbUser2: TLabel;
-    lbNamePc2: TLabel;
-    DKLanguageController1: TDKLanguageController;
-    lblBuild2: TLabel;
-    lblBuild: TLabel;
-    lblProcessor: TLabel;
-    lblProcessor2: TLabel;
-    lblRam: TLabel;
-    lblRam2: TLabel;
+    lbSpaceUsed: TJppDoubleLineLabel;
+    lbTotal: TJppDoubleLineLabel;
+    lbUser: TJppDoubleLineLabel;
   private
     { Private declarations }
-    function GetTotalPhysMemory: Int64;
-    function BytesToGBStr(const Bytes: Int64; const DecimalPlaces: Byte;
-                          const SeparateThousands: Boolean): string;
-    function BytesToGB(const Bytes: Int64): Extended;
-    function FloatToFixed(const Value: Extended; const DecimalPlaces: Byte;
-                          const SeparateThousands: Boolean): string;
   strict protected
     function GetTitle: string; override;
     function GetImageIndex: Integer; override;
@@ -71,93 +55,79 @@ type
   public
     { Public declarations }
   end;
-  TfrmStatsOptionsPageClass = class of TfrmStatsOptionsPage;
 
 var
   frmStatsOptionsPage: TfrmStatsOptionsPage;
 
 implementation
 
-{$I ASuite.INC}
+{$I ASuite.inc}
 
 uses
-  PJSysInfo, Utility.Misc, AppConfig.Main, Kernel.Types, VirtualTree.Methods;
+  Utility.Misc, Kernel.Types, VirtualTree.Methods,
+  Kernel.ResourceStrings, BZSystem, Kernel.Instance, Kernel.Manager;
 
-{$R *.dfm}
+{$R *.lfm}
 
 { TfrmStatsOptionsPage }
 
 function TfrmStatsOptionsPage.GetImageIndex: Integer;
 begin
-  Result := Config.IconsManager.GetIconIndex('stats');
+  Result := ASuiteManager.IconsManager.GetIconIndex('stats');
 end;
 
 function TfrmStatsOptionsPage.GetTitle: string;
 begin
-  Result := DKLangConstW('msgStats');
-end;
-
-function TfrmStatsOptionsPage.GetTotalPhysMemory: Int64;var
-  MemoryEx: WinApi.Windows.TMemoryStatusEx;
-begin
-  begin
-    MemoryEx.dwLength := SizeOf(TMemoryStatusEx);
-    WinApi.Windows.GlobalMemoryStatusEx(MemoryEx);
-    Result := MemoryEx.ullTotalPhys;
-  end;
-end;
-
-function TfrmStatsOptionsPage.FloatToFixed(const Value: Extended; const DecimalPlaces: Byte;
-  const SeparateThousands: Boolean): string;
-const
-  // float format specifiers
-  cFmtSpec: array[Boolean] of Char = ('f', 'n');
-begin
-  Result := System.SysUtils.Format(
-    '%.*' + cFmtSpec[SeparateThousands], [DecimalPlaces, Value]
-  );
-end;
-
-function TfrmStatsOptionsPage.BytesToGB(const Bytes: Int64): Extended;
-const
-  cOneGB = 1024 * 1024 * 1024; // a gigabyte in bytes
-begin
-  Result := Bytes / cOneGB;
-end;
-
-function TfrmStatsOptionsPage.BytesToGBStr(const Bytes: Int64; const DecimalPlaces: Byte;
-  const SeparateThousands: Boolean): string;
-begin
-  Result := FloatToFixed(BytesToGB(Bytes), DecimalPlaces, SeparateThousands);
+  Result := msgStats;
 end;
 
 function TfrmStatsOptionsPage.InternalLoadData: Boolean;
 var
-  Drive: char;
+  Drive: String;
   ListStats: rListStats;
+  intDiskSize, intDiskFree: Int64;
+  {$IFDEF QT}
+  QTExtraSpace: Integer;
+  {$ENDIF}
 begin
-  GetTotalPhysMemory;
   Result := inherited;
+
+  {$IFDEF QT}
+  //Workaround: TJppDoubleLineLabel has not CalculatePreferredSize method
+  QTExtraSpace := Round((Screen.PixelsPerInch / 96.0) * 9);
+                                                    
+  gbSupport.Height := gbSupport.Height + QTExtraSpace;
+  gbSystem.Height := gbSystem.Height + QTExtraSpace;
+  gbASuite.Height := gbASuite.Height + QTExtraSpace;
+  {$ENDIF}
+
   //System
-  lbOs2.Caption := TPJOSInfo.ProductName + ' ' + TPJOSInfo.Edition;
-  lblBuild2.Caption := Format('%d.%d.%d', [TPJOSInfo.MajorVersion, TPJOSInfo.MinorVersion, TPJOSInfo.BuildNumber]);
-  lblProcessor2.Caption := TPJComputerInfo.ProcessorName;
-  lblRam2.Caption   := BytesToGBStr(GetTotalPhysMemory, 2, True) + ' GB';
-  lbNamePc2.Caption := TPJComputerInfo.ComputerName;
-  lbUser2.Caption   := TPJComputerInfo.UserName;
+  lbOs.RightCaption := GetplatformAsString;
+  lblBuild.RightCaption := GetPlatformInfo.Version;
+  lblProcessor.RightCaption := BZCPUInfos.BrandName;
+  lblRam.RightCaption   := FormatByteSize(GetMemoryStatus.TotalPhys);
+  lbUser.RightCaption   := GetCurrentUserName;
+
   //Drive
-  Drive := Config.Paths.SuiteDrive[1];
+  Drive := ASuiteInstance.Paths.SuiteDrive;
+
+  if Length(Drive) > 0 then
+  begin
+    GetDiskFreeSpace(Drive, intDiskFree, intDiskSize);
+    lbSize.RightCaption   := DiskFloatToString(intDiskSize, True);
+    lbSpaceFree.RightCaption := DiskFloatToString(intDiskFree, True);
+    lbSpaceUsed.RightCaption := DiskFloatToString((intDiskSize - intDiskFree), True);
+  end;
+
   gbSupport.Caption := Format(gbSupport.Caption, [Drive]);
-  lbSize2.Caption   := DiskSizeString(Drive, True);
-  lbSpaceFree2.Caption := DiskFreeString(Drive, True);
-  lbSpaceUsed2.Caption := DiskUsedString(Drive, True);
+
   //Launcher
   ListStats.SwCount  := 0;
   ListStats.CatCount := 0;
-  Config.MainTree.IterateSubtree(nil, TVirtualTreeMethods.Create.UpdateListItemCount, @ListStats);
-  lbSoftware2.Caption := IntToStr(ListStats.SwCount);
-  lbCat2.Caption      := IntToStr(ListStats.CatCount);
-  lbTotal2.Caption    := IntToStr(ListStats.SwCount + ListStats.CatCount);
+  ASuiteInstance.MainTree.IterateSubtree(nil, TVirtualTreeMethods.UpdateListItemCount, @ListStats);
+  lbSoftware.RightCaption := IntToStr(ListStats.SwCount);
+  lbCat.RightCaption      := IntToStr(ListStats.CatCount);
+  lbTotal.RightCaption    := IntToStr(ListStats.SwCount + ListStats.CatCount);
 end;
 
 end.
