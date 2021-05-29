@@ -29,15 +29,20 @@ uses
   Kernel.Singleton, Forms.GraphicMenu, Forms.Dialog.BaseEntity, Menus, Forms, Controls;
 
 type
+
+  { TVirtualTreeEvents }
+
   TVirtualTreeEvents = class(TSingleton)
   private
     FGraphicMenu: TfrmGraphicMenu;
 
     function ClickOnButtonTree(Sender: TBaseVirtualTree; const HitInfo: THitInfo): Boolean;
+    procedure DoGetHint(Sender: TBaseVirtualTree; Node: PVirtualNode;
+      Column: TColumnIndex; var LineBreakStyle: TVTTooltipLineBreakStyle;
+      var HintText: String);
     function GetNodeParentName(const ASender: TBaseVirtualTree; const ANode: PVirtualNode): string;
     procedure DrawSeparatorItem(const ASender: TBaseVirtualTree; const ANode: PVirtualNode;
                                 TargetCanvas: TCanvas; const CellRect: TRect; var DefaultDraw: Boolean);
-    //TODO: Linux - See https://forum.lazarus.freepascal.org/index.php?topic=40061.0
     {$IFDEF MSWINDOWS}
     procedure DragDropFiles(const ASender: TBaseVirtualTree; ADataObject: IDataObject;
                             AttachMode: TVTNodeAttachMode);
@@ -55,6 +60,7 @@ type
     procedure SetupVSTHotkey(ATree: TVirtualStringTree);
     procedure SetupVSTAutorun(ATree: TVirtualStringTree);
 
+    //TODO: Move in private section
     //Generic events
     procedure DoDragOver(Sender: TBaseVirtualTree; Source: TObject; Shift: TShiftState;
       State: TDragState; const Pt: TPoint; Mode: TDropMode; var Effect: LongWord;
@@ -206,6 +212,7 @@ begin
   ATree.OnMeasureItem   := DoMeasureItem;
   ATree.OnResize        := DoResizeGM;
   ATree.OnScroll        := DoScrollGM;
+  ATree.OnGetHint       := DoGetHint;
 end;
 
 procedure TVirtualTreeEvents.SetupVSTHotkey(ATree: TVirtualStringTree);
@@ -261,6 +268,7 @@ begin
   ATree.OnNewText      := DoNewText;
   ATree.OnSaveNode     := DoSaveNode;
   ATree.OnMeasureItem  := DoMeasureItem;
+  ATree.OnGetHint      := DoGetHint;
 end;
 
 procedure TVirtualTreeEvents.SetupVSTAutorun(ATree: TVirtualStringTree);
@@ -300,6 +308,7 @@ begin
   ATree.OnGetImageIndex   := DoGetImageIndex;
   ATree.OnGetNodeDataSize := DoGetNodeDataSizeSearch;
   ATree.OnKeyPress        := DoKeyPress;
+  ATree.OnGetHint         := DoGetHint;
 end;
 
 procedure TVirtualTreeEvents.SetupVSTSimple(ATree: TVirtualStringTree);
@@ -316,6 +325,17 @@ function TVirtualTreeEvents.ClickOnButtonTree(Sender: TBaseVirtualTree;
   const HitInfo: THitInfo): Boolean;
 begin
   Result := hiOnItemButton in HitInfo.HitPositions;
+end;
+
+procedure TVirtualTreeEvents.DoGetHint(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Column: TColumnIndex;
+  var LineBreakStyle: TVTTooltipLineBreakStyle; var HintText: String);
+var
+  NodeData: TvBaseNodeData;
+begin
+  NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
+  if Assigned(NodeData) and (NodeData.Description <> '') then
+    HintText := NodeData.Description;
 end;
 
 procedure TVirtualTreeEvents.DoAddToSelectionFrame(Sender: TBaseVirtualTree;

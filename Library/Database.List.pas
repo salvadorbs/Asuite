@@ -33,6 +33,7 @@ type
 
   TSQLtbl_list = class(TSQLRecord) //Table tbl_list
   private
+    Fdescription: RawUTF8;
     Ftype             : Integer;
     Fparent           : Integer;
     Fposition         : Integer;
@@ -82,6 +83,7 @@ type
     property parent: Integer read Fparent write Fparent;
     property position: Integer read Fposition write Fposition;
     property title: RawUTF8 read Ftitle write Ftitle;
+    property description: RawUTF8 read Fdescription write Fdescription;
     property path: RawUTF8 read Fpath write Fpath;
     property work_path: RawUTF8 read Fwork_path write Fwork_path;
     property parameters: RawUTF8 read Fparameters write Fparameters;
@@ -158,6 +160,7 @@ begin
         Tree.CheckType[Node] := ctTriStateCheckBox;
       // generic fields
       vData.Name          := UTF8DecodeToUnicodeString(SQLItemsData.title);
+      vData.Description   := UTF8DecodeToUnicodeString(SQLItemsData.description);
       vData.id            := SQLItemsData.ID;
       vData.ParentID      := id;
       vData.Position      := Node.Index;
@@ -250,6 +253,7 @@ begin
   Fparent   := AParentID;
   Fposition := AIndex;
   Ftitle    := UnicodeStringToUtf8(AData.Name);
+  Fdescription := UnicodeStringToUtf8(AData.Description);
   //Add specific category and file fields
   if not(AData.IsSeparatorItem) then
   begin

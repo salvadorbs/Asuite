@@ -33,10 +33,12 @@ type
   { TfrmBaseGeneralPropertyPage }
 
   TfrmBaseGeneralPropertyPage = class(TfrmBasePropertyPage)
+    edtDescription: TEdit;
     edtPathIcon: TFileNameEdit;
     gbItem: TGroupBox;
     lbName: TLabel;
     edtName: TEdit;
+    lbDescription: TLabel;
     lbPathIcon: TLabel;
     procedure edtPathIconAfterDialog(Sender: TObject; var AName: string;
       var AAction: Boolean);
@@ -161,6 +163,7 @@ begin
   if Assigned(CurrentNodeData) then
   begin
     edtName.Text     := CurrentNodeData.Name;
+    edtDescription.Text := CurrentNodeData.Description;
     edtPathIcon.Text := CurrentNodeData.PathIcon;
   end;
 end;
@@ -176,6 +179,7 @@ begin
       if (CurrentNodeData.IsFileItem) then
         TvFileNodeData(CurrentNodeData).ShortcutDesktop := False;
       CurrentNodeData.Name     := edtName.Text;
+      CurrentNodeData.Description := edtDescription.Text;
       CurrentNodeData.PathIcon := edtPathIcon.Text;
     end;
   end;
