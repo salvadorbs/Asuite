@@ -43,6 +43,7 @@ function RemoveAllQuotes(const S: string): string;
 procedure ShowMessageEx(const Msg: string; Error: boolean = False);
 procedure ShowMessageFmtEx(const Msg: string; Params: array of const; Error: boolean = False);
 function AskUserWarningMessage(const AMsg: string; Params: array of const): Boolean;
+function AskUserCloseApp: Boolean;
 
 { Stats }
 function  DiskFloatToString(Size: Int64; Units: Boolean): string;
@@ -224,6 +225,14 @@ function AskUserWarningMessage(const AMsg: string; Params: array of const): Bool
 begin
   //Returns true if user clicks on mbYes
   Result := (MessageDlg(Format(AMsg, Params), mtWarning, [mbYes, mbNo], 0) = mrYes);
+end;
+
+function AskUserCloseApp: Boolean;
+begin
+  if Config.ConfirmMsgCloseApp then
+    Result := AskUserWarningMessage(msgConfirm, [])
+  else
+    Result := True;
 end;
 
 { Stats }

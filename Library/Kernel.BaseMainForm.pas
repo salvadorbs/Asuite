@@ -104,7 +104,7 @@ end;
 
 procedure TBaseMainForm.CloseASuite(AForceExit: Boolean);
 begin
-  if AForceExit or AskUserWarningMessage(msgConfirm, []) then
+  if AForceExit or AskUserCloseApp then
   begin
     Config.ASuiteState := lsShutdown;
     Close;

@@ -139,35 +139,55 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
       TabOrder = 3
     end
   end
-  object grpLanguage: TGroupBox[2]
+  object gbOther: TGroupBox[2]
     Left = 4
-    Height = 51
+    Height = 93
     Top = 266
-    Width = 150
+    Width = 437
     BorderSpacing.Left = 4
     BorderSpacing.Top = 4
     BorderSpacing.Right = 4
-    BorderSpacing.CellAlignHorizontal = ccaLeftTop
-    Caption = 'Language'
+    Caption = 'Other'
     ChildSizing.LeftRightSpacing = 4
     ChildSizing.TopBottomSpacing = 4
     ChildSizing.EnlargeHorizontal = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
-    ClientHeight = 31
-    ClientWidth = 146
-    Constraints.MinWidth = 150
+    ClientHeight = 73
+    ClientWidth = 433
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 2
+    object chkConfirmMsgCloseApp: TCheckBox
+      Left = 4
+      Height = 19
+      Top = 4
+      Width = 425
+      Caption = 'Ask to confirm before close ASuite'
+      ParentFont = False
+      TabOrder = 0
+    end
+    object lbLanguage: TLabel
+      Left = 4
+      Height = 15
+      Top = 27
+      Width = 425
+      BorderSpacing.Top = 4
+      BorderSpacing.Bottom = 4
+      Caption = 'Language'
+      ParentColor = False
+      ParentFont = False
+    end
     object cxLanguage: TComboBox
       Left = 4
       Height = 23
-      Top = 4
-      Width = 138
+      Top = 46
+      Width = 180
+      BorderSpacing.CellAlignHorizontal = ccaLeftTop
+      Constraints.MinWidth = 180
       ItemHeight = 15
       ParentFont = False
       Style = csDropDownList
-      TabOrder = 0
+      TabOrder = 1
     end
   end
 end
