@@ -90,7 +90,8 @@ implementation
 
 uses
   NodeDataTypes.Custom, AppConfig.Main, DataModules.Icons, Graphics, Kernel.Manager,
-  VirtualTree.Methods, Kernel.ResourceStrings, Kernel.Enumerations, VirtualTree.Events;
+  VirtualTree.Methods, Kernel.ResourceStrings, Kernel.Enumerations, VirtualTree.Events,
+  Utility.Misc;
 
 {$R *.lfm}
 
@@ -202,9 +203,8 @@ end;
 
 procedure TfrmAutorunOptionsPage.mniRemoveAutorunClick(Sender: TObject);
 begin
-  if (MessageDlg((msgConfirm),mtWarning, [mbYes,mbNo], 0) = mrYes) then
-    if Assigned(GetActiveTree.FocusedNode) then
-      GetActiveTree.IsVisible[GetActiveTree.FocusedNode] := False;
+  if AskUserWarningMessage(msgConfirm, []) and Assigned(GetActiveTree.FocusedNode) then
+    GetActiveTree.IsVisible[GetActiveTree.FocusedNode] := False;
 end;
 
 procedure TfrmAutorunOptionsPage.MoveItemUp(const ATree: TBaseVirtualTree);
@@ -223,9 +223,8 @@ end;
 
 procedure TfrmAutorunOptionsPage.RemoveItem(const ATree: TBaseVirtualTree);
 begin
-  if Assigned(ATree.FocusedNode) then
-    if (MessageDlg((msgConfirm),mtWarning, [mbYes,mbNo], 0) = mrYes) then
-      ATree.IsVisible[ATree.FocusedNode] := False;
+  if Assigned(ATree.FocusedNode) and AskUserWarningMessage(msgConfirm, []) then
+    ATree.IsVisible[ATree.FocusedNode] := False;
 end;
 
 procedure TfrmAutorunOptionsPage.SaveInAutorunItemList(

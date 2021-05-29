@@ -179,13 +179,12 @@ procedure TvCustomRealNodeData.RunActionOnExe(Action: TActionOnExecute);
       aeRunAndHide:
       begin
         //Hide frmMain
-        frmMain.Close;
+        frmMain.HideMainForm;
       end;
       aeRunAndClose:
       begin
         //Close application
-        Config.ASuiteState := lsShutdown;
-        frmMain.Close;
+        frmMain.CloseASuite(True);
       end;
     end;
   end;

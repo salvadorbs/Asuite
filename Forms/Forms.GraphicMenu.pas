@@ -574,7 +574,7 @@ end;
 
 procedure TfrmGraphicMenu.sknbtnExitClick(Sender: TObject);
 begin
-  frmMain.miExitClick(Sender);
+  frmMain.CloseASuite(False);
 end;
 
 procedure TfrmGraphicMenu.sknbtnListClick(Sender: TObject);

@@ -118,7 +118,7 @@ procedure TfrmScanFolder.btnCancelClick(Sender: TObject);
 begin
   if Assigned(FThreadFindFiles) then
   begin
-    if MessageDlg((msgCancelScanFolder), mtWarning, [mbYes,mbNo], 0) = mrYes then
+    if AskUserWarningMessage(msgCancelScanFolder, []) then
     begin
       FThreadFindFiles.Stop;
       pnlButtons.CancelButton.Caption := msgCancel;

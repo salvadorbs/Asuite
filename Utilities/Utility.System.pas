@@ -176,7 +176,7 @@ begin
       ShowMessageEx(Format('%s [%s]', [SysErrorMessage(GetLastOSError), 'Rundll32']), True);
   end;
   //Close ASuite
-  frmMain.miExitClick(Sender);
+  frmMain.CloseASuite(False);
   {$ENDIF}
 end;
 
