@@ -77,7 +77,7 @@ implementation
 uses
   AppConfig.Main, VirtualTree.Events, VirtualTree.Methods, NodeDataTypes.Custom,
   Forms.ShortcutGrabber, DataModules.Icons, UITypes, Kernel.ResourceStrings,
-  LCLProc, Kernel.Consts, Kernel.Manager;
+  LCLProc, Kernel.Consts, Kernel.Manager, Utility.Misc;
 
 {$R *.lfm}
 
@@ -246,9 +246,8 @@ end;
 
 procedure TfrmHotkeyOptionsPage.mniRemoveHotkeyClick(Sender: TObject);
 begin
-  if (MessageDlg((msgConfirm),mtWarning, [mbYes,mbNo], 0) = mrYes) then
-    if Assigned(vstItems.FocusedNode) then
-      vstItems.IsVisible[vstItems.FocusedNode] := False;
+  if AskUserWarningMessage(msgConfirm, []) and Assigned(vstItems.FocusedNode) then
+    vstItems.IsVisible[vstItems.FocusedNode] := False;
 end;
 
 procedure TfrmHotkeyOptionsPage.SaveInHotkeyItemList(

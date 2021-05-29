@@ -42,6 +42,7 @@ function RemoveQuotes(const S: string; const QuoteChar: Char): string;
 function RemoveAllQuotes(const S: string): string;
 procedure ShowMessageEx(const Msg: string; Error: boolean = False);
 procedure ShowMessageFmtEx(const Msg: string; Params: array of const; Error: boolean = False);
+function AskUserWarningMessage(const AMsg: string; Params: array of const): Boolean;
 
 { Stats }
 function  DiskFloatToString(Size: Int64; Units: Boolean): string;
@@ -217,6 +218,12 @@ begin
 
   if Error then
     TASuiteLogger.Error(Msg, Params);
+end;
+
+function AskUserWarningMessage(const AMsg: string; Params: array of const): Boolean;
+begin
+  //Returns true if user clicks on mbYes
+  Result := (MessageDlg(Format(AMsg, Params), mtWarning, [mbYes, mbNo], 0) = mrYes);
 end;
 
 { Stats }

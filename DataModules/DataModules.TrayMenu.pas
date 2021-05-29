@@ -951,6 +951,7 @@ end;
 procedure TdmTrayMenu.tiTrayMenuMouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
+  {$IFDEF QT}
   if (Config.ASuiteState = lsStartUp) then
     Exit;
   case Button of
@@ -958,7 +959,7 @@ begin
     TMouseButton.mbMiddle : DoTrayIconButtonClick(Sender, Config.ActionClickMiddle);
     TMouseButton.mbRight  : DoTrayIconButtonClick(Sender, Config.ActionClickRight);
   end;
-
+  {$ENDIF}
 end;
 
 end.

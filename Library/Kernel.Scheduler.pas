@@ -47,7 +47,8 @@ type
 implementation
 
 uses
-  AppConfig.Main, Kernel.Enumerations, Kernel.ResourceStrings, Kernel.Manager;
+  AppConfig.Main, Kernel.Enumerations, Kernel.ResourceStrings, Kernel.Manager,
+  Utility.Misc;
 
 function ResetHourMinute(var ANow: TDateTime): TDateTime;
 begin
@@ -76,7 +77,7 @@ begin
         if (CompareDateTime(GetSchedulerTime(NodeData, dtNowDateTime, True), dtLastAccess) = 1) and (NodeData.SchMode <> smDisabled) then
         begin
           //Start process
-          if (MessageDlg(Format(msgMissedTask, [NodeData.Name]), mtWarning, [mbYes, mbNo], 0) = mrYes) then
+          if AskUserWarningMessage(msgMissedTask, [NodeData.Name]) then
             NodeData.Execute(True, NodeData.IsCategoryItem, False);
         end;
       end;

@@ -220,7 +220,7 @@ begin
   Config.ASuiteState := lsDeleting;
   try
     Tree := GetActiveTree;
-    if (Tree.GetFirstSelected <> nil) and (Config.TVDisableConfirmDelete or (MessageDlg((msgConfirmDeleteItem), mtWarning, [mbYes,mbNo], 0) = mrYes)) then
+    if (Tree.GetFirstSelected <> nil) and (Config.TVDisableConfirmDelete or AskUserWarningMessage(msgConfirmDeleteItem, [])) then
     begin
       Nodes := Tree.GetSortedSelection(true);
       //Delete items
@@ -661,8 +661,7 @@ end;
 
 procedure TfrmMain.miExitClick(Sender: TObject);
 begin
-  Config.ASuiteState := lsShutdown;
-  Close;
+  CloseASuite(False);
 end;
 
 procedure TfrmMain.miExportListClick(Sender: TObject);
