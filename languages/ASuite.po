@@ -788,12 +788,23 @@ msgstr ""
 msgid "Ask to confirm before run a category"
 msgstr ""
 
+#: tfrmgeneraloptionspage.chkconfirmmsgcloseapp.caption
+msgctxt "tfrmgeneraloptionspage.chkconfirmmsgcloseapp.caption"
+msgid "Ask to confirm before close ASuite"
+msgstr ""
+
 #: tfrmgeneraloptionspage.chkmissedschedulertask.caption
 msgid "Check missed scheduler task at ASuite startup"
 msgstr ""
 
 #: tfrmgeneraloptionspage.gbexecution.caption
+msgctxt "tfrmgeneraloptionspage.gbexecution.caption"
 msgid "Execution"
+msgstr ""
+
+#: tfrmgeneraloptionspage.gbother.caption
+msgctxt "tfrmgeneraloptionspage.gbother.caption"
+msgid "Other"
 msgstr ""
 
 #: tfrmgeneraloptionspage.gbstartup.caption
@@ -801,12 +812,13 @@ msgctxt "tfrmgeneraloptionspage.gbstartup.caption"
 msgid "Startup"
 msgstr ""
 
-#: tfrmgeneraloptionspage.grplanguage.caption
-msgid "Language"
-msgstr ""
-
 #: tfrmgeneraloptionspage.lbactiononexe.caption
 msgid "On execution"
+msgstr ""
+
+#: tfrmgeneraloptionspage.lblanguage.caption
+msgctxt "tfrmgeneraloptionspage.lblanguage.caption"
+msgid "Language"
 msgstr ""
 
 #: tfrmgraphicmenu.caption

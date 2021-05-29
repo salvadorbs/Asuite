@@ -37,6 +37,7 @@ type
     FShowPanelAtStartUp : Boolean;
     FShowGraphicMenuAtStartUp  : Boolean;
     FShowGraphicMenuAnotherInstance: Boolean;
+    FConfirmMsgCloseApp: Boolean;
     //Main Form
     FLangID             : String;
     FTVDisableConfirmDelete: Boolean;
@@ -159,6 +160,7 @@ type
     property ShowGraphicMenuAtStartUp: Boolean read FShowGraphicMenuAtStartUp write FShowGraphicMenuAtStartUp;
     property MissedSchedulerTask: Boolean read FMissedSchedulerTask write FMissedSchedulerTask;
     property ShowGraphicMenuAnotherInstance: Boolean read FShowGraphicMenuAnotherInstance write FShowGraphicMenuAnotherInstance;
+    property ConfirmMsgCloseApp: Boolean read FConfirmMsgCloseApp write FConfirmMsgCloseApp;
     // Main Form
     property LangID: String read FLangID write SetLangID;
     property UseCustomTitle: Boolean read FUseCustomTitle write SetUseCustomTitle;
@@ -268,6 +270,7 @@ begin
   FShowGraphicMenuAtStartUp  := False;
   FMissedSchedulerTask := True;
   FShowGraphicMenuAnotherInstance := True;
+  FConfirmMsgCloseApp := True;
 
   //Main Form
   FLangID             := 'en';
@@ -435,6 +438,7 @@ begin
     AJSONConfig.SetValue(CONFIG_SHOWMENUATSTARTUP, Self.ShowGraphicMenuAtStartUp);
     AJSONConfig.SetValue(CONFIG_MISSEDSCHEDULERTASK, Self.MissedSchedulerTask);
     AJSONConfig.SetValue(CONFIG_SECONDINSTANCEGM, Self.ShowGraphicMenuAnotherInstance);
+    AJSONConfig.SetValue(CONFIG_CONFIRMCLOSEASUITE, Self.ConfirmMsgCloseApp);
 
     // Main Form
     AJSONConfig.SetValue(CONFIG_LANGID, Self.LangID);
@@ -549,6 +553,7 @@ begin
   Self.ShowGraphicMenuAtStartUp  := AJSONConfig.GetValue(CONFIG_SHOWMENUATSTARTUP, Self.ShowGraphicMenuAtStartUp);
   Self.MissedSchedulerTask       := AJSONConfig.GetValue(CONFIG_MISSEDSCHEDULERTASK, Self.MissedSchedulerTask);
   Self.ShowGraphicMenuAnotherInstance := AJSONConfig.GetValue(CONFIG_SECONDINSTANCEGM, Self.ShowGraphicMenuAnotherInstance);
+  Self.ConfirmMsgCloseApp := AJSONConfig.GetValue(CONFIG_CONFIRMCLOSEASUITE, Self.ConfirmMsgCloseApp);
 
   // Main Form
   Self.LangID                    := AJSONConfig.GetValue(CONFIG_LANGID, Self.LangID);

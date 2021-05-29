@@ -162,6 +162,9 @@ var
 begin
   {$IFDEF MSWINDOWS}
 
+  if not AskUserCloseApp then
+    Exit;
+
   //Call "Safe Remove hardware" Dialog
   WindowsPath := SysUtils.GetEnvironmentVariable('WinDir');
   if FileExists(PChar(WindowsPath + '\System32\Rundll32.exe')) then
@@ -175,8 +178,8 @@ begin
     if not bShellExecute then
       ShowMessageEx(Format('%s [%s]', [SysErrorMessage(GetLastOSError), 'Rundll32']), True);
   end;
-  //Close ASuite
-  frmMain.CloseASuite(False);
+  //Force close ASuite (already asked the user for confirmation with method AskUserCloseApp)
+  frmMain.CloseASuite(True);
   {$ENDIF}
 end;
 

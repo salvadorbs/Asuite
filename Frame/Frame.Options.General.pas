@@ -32,21 +32,23 @@ type
   { TfrmGeneralOptionsPage }
 
   TfrmGeneralOptionsPage = class(TfrmBaseEntityPage)
+    chkConfirmMsgCloseApp: TCheckBox;
     cbSecondInstanceGM: TCheckBox;
+    cxLanguage: TComboBox;
+    gbOther: TGroupBox;
     
     gbStartup: TGroupBox;
     cbWindowsStartup: TCheckBox;
     cbShowPanelStartup: TCheckBox;
     cbShowMenuStartup: TCheckBox;
     chkMissedSchedulerTask: TCheckBox;
-    grpLanguage: TGroupBox;
-    cxLanguage: TComboBox;
     gbExecution: TGroupBox;
     lbActionOnExe: TLabel;
     cbRunSingleClick: TCheckBox;
     cxActionOnExe: TComboBox;
     chkConfirmMessageCat: TCheckBox;
     chkAutoCloseProcess: TCheckBox;
+    lbLanguage: TLabel;
   private
     { Private declarations }
     procedure AddLanguages(AComboBox: TComboBox);
@@ -148,6 +150,7 @@ begin
   cbRunSingleClick.Checked  := Config.RunSingleClick;
   chkConfirmMessageCat.Checked := Config.ConfirmRunCat;
   chkAutoCloseProcess.Checked  := Config.AutoCloseProcess;
+  chkConfirmMsgCloseApp.Checked := Config.ConfirmMsgCloseApp;
 end;
 
 function TfrmGeneralOptionsPage.InternalSaveData: Boolean;
@@ -170,6 +173,7 @@ begin
   Config.RunSingleClick := cbRunSingleClick.Checked;
   Config.ConfirmRunCat  := chkConfirmMessageCat.Checked;
   Config.AutoCloseProcess := chkAutoCloseProcess.Checked;
+  Config.ConfirmMsgCloseApp := chkConfirmMsgCloseApp.Checked;
 end;
 
 end.
