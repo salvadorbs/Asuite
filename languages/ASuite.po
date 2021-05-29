@@ -693,6 +693,10 @@ msgstr ""
 msgid "Item"
 msgstr ""
 
+#: tfrmbasegeneralpropertypage.lbdescription.caption
+msgid "Description"
+msgstr ""
+
 #: tfrmbasegeneralpropertypage.lbname.caption
 msgctxt "tfrmbasegeneralpropertypage.lbname.caption"
 msgid "Name"

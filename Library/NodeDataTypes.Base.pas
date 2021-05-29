@@ -39,6 +39,7 @@ type
     FPosition    : Cardinal;
     FChanged     : boolean;
     FName        : String;
+    FDescription : string;
     FIcon        : TCustomIcon;
     FDataType    : TvTreeDataType;
     FPNode       : PVirtualNode; //Self PVirtualNode
@@ -75,6 +76,7 @@ type
     property Position : Cardinal read FPosition write FPosition;
     property Changed: boolean read FChanged write SetChanged;
     property Name: string read GetName write SetName;
+    property Description: string read FDescription write FDescription;
     property Icon: TCustomIcon read FIcon;
     property DataType: TvTreeDataType read GetDataType write SetDataType;
     property ParentNode: PVirtualNode read GetParentNode;

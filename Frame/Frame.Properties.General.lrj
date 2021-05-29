@@ -1,6 +1,7 @@
 {"version":1,"strings":[
 {"hash":330429,"name":"tfrmbasegeneralpropertypage.gbitem.caption","sourcebytes":[73,116,101,109],"value":"Item"},
 {"hash":346165,"name":"tfrmbasegeneralpropertypage.lbname.caption","sourcebytes":[78,97,109,101],"value":"Name"},
+{"hash":156067838,"name":"tfrmbasegeneralpropertypage.lbdescription.caption","sourcebytes":[68,101,115,99,114,105,112,116,105,111,110],"value":"Description"},
 {"hash":78871337,"name":"tfrmbasegeneralpropertypage.lbpathicon.caption","sourcebytes":[67,117,115,116,111,109,32,105,99,111,110,32,112,97,116,104,32,40,111,112,116,105,111,110,97,108,41],"value":"Custom icon path (optional)"},
 {"hash":111937580,"name":"tfrmbasegeneralpropertypage.edtpathicon.text","sourcebytes":[36,65,83,117,105,116,101,92],"value":"$ASuite\\"}
 ]}
