@@ -28,6 +28,9 @@ uses
   Dialogs, NodeDataTypes.Custom;
 
 type
+
+  { TScheduler }
+
   TScheduler = class(TSingleton)
   private
     FTimer: TTimer;
@@ -35,6 +38,9 @@ type
     procedure DoTimer(Sender: TObject);
     function CompareSchDates(ANodeData: TvCustomRealNodeData; ANow: TDateTime): Boolean;
     function GetSchedulerTime(ANodeData: TvCustomRealNodeData; ANow: TDateTime; ADecDay: Boolean): TDateTime;
+    function CheckOnce(ANow, ASchedDateTime: TDateTime): Boolean;
+    function CheckDaily(ANow, ASchedTime: TDateTime): Boolean;
+    function CheckHourly(ANow: TDateTime): Boolean;
   public
     procedure Initialize; override;
     procedure Finalize; override;
@@ -48,7 +54,7 @@ implementation
 
 uses
   AppConfig.Main, Kernel.Enumerations, Kernel.ResourceStrings, Kernel.Manager,
-  Utility.Misc;
+  Utility.Misc, Kernel.Logger;
 
 function ResetHourMinute(var ANow: TDateTime): TDateTime;
 begin
@@ -120,11 +126,11 @@ begin
   begin
     case ANodeData.SchMode of
       smOnce:
-        Result := SameDateTime(ANow, ANodeData.SchDateTime);
+        Result := CheckOnce(ANow, ANodeData.SchDateTime);
       smHourly:
-        Result := SameTime(ResetHourMinute(ANow), ANodeData.SchDateTime);
+        Result := CheckHourly(ANow);
       smDaily:
-        Result := SameTime(ANow, ANodeData.SchDateTime);
+        Result := CheckDaily(ANow, ANodeData.SchDateTime);
     end;
   end;
 end;
@@ -150,6 +156,31 @@ begin
       end;
     end;
   end;
+end;
+
+function TScheduler.CheckOnce(ANow, ASchedDateTime: TDateTime): Boolean;
+begin
+  Result := SameDate(ANow, ASchedDateTime) and CheckDaily(ANow, ASchedDateTime);
+
+  if Result then
+    TASuiteLogger.Info('Scheduler - Check Once is true', []);
+end;
+
+function TScheduler.CheckDaily(ANow, ASchedTime: TDateTime): Boolean;
+begin
+  Result := (HourOf(ANow) = HourOf(ASchedTime)) and (MinuteOf(ANow) = MinuteOf(ASchedTime))
+            and (SecondOf(ANow) = 0);
+
+  if Result then
+    TASuiteLogger.Info('Scheduler - Check Daily is true', []);
+end;
+
+function TScheduler.CheckHourly(ANow: TDateTime): Boolean;
+begin
+  Result := (MinuteOf(ANow) = 0) and (SecondOf(ANow) = 0);
+
+  if Result then
+    TASuiteLogger.Info('Scheduler - Check Hourly is true', []);
 end;
 
 procedure TScheduler.Initialize;
