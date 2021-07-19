@@ -36,7 +36,7 @@ type
     FSQLModel   : TSQLModel;
 
     procedure DoBackupList;
-    function  GetDateTimeAsString: AnsiString;
+    function GetDateTimeAsString: AnsiString;
   public
     constructor Create;
     destructor Destroy; override;
@@ -110,17 +110,17 @@ end;
 procedure TDBManager.DoBackupList;
 begin
   //Backup list and old delete backup
-  if (Config.Backup) then
+  if FileExists(FDBFileName) and (Config.Backup) then
   begin
-    CopyFile(PChar(FDBFileName),
-             PChar(Format(ASuiteInstance.Paths.SuitePathBackup + BACKUP_FILE,[GetDateTimeAsString])),false);
+    CopyFile(FDBFileName,
+             Format(ASuiteInstance.Paths.SuitePathBackup + BACKUP_FILE,[GetDateTimeAsString]), False);
     DeleteOldBackups(Config.BackupNumber);
   end;
 end;
 
 function TDBManager.GetDateTimeAsString: AnsiString;
 begin
-  DateTimeToString(Result, 'yyyy-mm-dd-hh-mm-ss',now);
+  DateTimeToString(Result, 'yyyy-mm-dd-hh-mm-ss', now);
 end;
 
 procedure TDBManager.ImportData(ATree: TBaseVirtualTree);
@@ -207,6 +207,9 @@ end;
 procedure TDBManager.Setup(const ADBFilePath: string);
 begin
   FDBFileName := ADBFilePath;
+
+  DoBackupList;
+
   //Load sqlite3 database and create missing tables
   FDatabase := TSQLRestServerDB.Create(FSQLModel, FDBFileName);
   fDatabase.CreateMissingTables(0);
