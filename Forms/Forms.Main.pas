@@ -411,7 +411,10 @@ begin
     ASuiteInstance.HandleParam(Parameters[I], False);
 
   if Config.ShowGraphicMenuAnotherInstance then
-    dmTrayMenu.ShowGraphicMenu
+  begin                        
+    Application.Restore;
+    dmTrayMenu.ShowGraphicMenu;
+  end
   else
     ShowMainForm(Sender);
 end;
