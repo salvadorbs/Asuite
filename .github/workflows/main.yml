@@ -113,7 +113,7 @@ jobs:
         sudo make install
 
     - name: Generate Cache Hash
-      run: echo "${{ matrix.config.fpcup-url }}${{ matrix.config.fpcup-opt }}${{ matrix.config.fpc-url }}${{ matrix.config.laz-url }}${{ matrix.config.name }}" > .cache
+      run: echo "${{ matrix.config.fpcup-url }}${{ matrix.config.fpcup-opt }}${{ matrix.config.fpc-url }}${{ matrix.config.laz-url }}${{ matrix.config.lazpatch}}${{ matrix.config.name }}" > .cache
 
     - name: Cache
       id: cache
