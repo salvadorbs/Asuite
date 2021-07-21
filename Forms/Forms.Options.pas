@@ -29,6 +29,9 @@ uses
   ExtCtrls, Frame.BaseEntity;
 
 type
+
+  { TfrmOptions }
+
   TfrmOptions = class(TfrmDialogBase)
     
   private

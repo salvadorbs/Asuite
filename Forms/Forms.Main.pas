@@ -105,6 +105,7 @@ type
     actSortList: TAction;
     mniSortList: TMenuItem;
     procedure actSepEditUpdate(Sender: TObject);
+    procedure btnedtSearchLeftButtonClick(Sender: TObject);
     procedure miOptionsClick(Sender: TObject);
     procedure miStatisticsClick(Sender: TObject);
     procedure miImportListClick(Sender: TObject);
@@ -494,6 +495,11 @@ begin
   TAction(Sender).Visible := (GetActiveTree = vstList);
 end;
 
+procedure TfrmMain.btnedtSearchLeftButtonClick(Sender: TObject);
+begin
+  pmSearch.PopUp;
+end;
+
 procedure TfrmMain.miStatisticsClick(Sender: TObject);
 begin
   TfrmOptions.Execute(Self, TfrmStatsOptionsPage);
@@ -513,6 +519,7 @@ begin
   begin
     vstSearch.Clear;
     btnedtSearch.Text := '';
+    btnedtSearch.SetFocus;
   end;
   TVirtualTreeMethods.CheckVisibleNodePathExe(GetActiveTree);
 end;

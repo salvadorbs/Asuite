@@ -106,12 +106,14 @@ object frmMain: TfrmMain
         Top = 0
         Width = 193
         Align = alTop
+        LeftButton.Visible = True
         ParentFont = False
         RightButton.Visible = True
         ShowHint = True
         TabOrder = 0
         TextHint = 'Name'
         OnChange = btnedtSearchChange
+        OnLeftButtonClick = btnedtSearchLeftButtonClick
         OnRightButtonClick = btnedtSearchRightButtonClick
         OnKeyPress = btnedtSearchKeyPress
       end
