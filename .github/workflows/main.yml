@@ -149,6 +149,7 @@ jobs:
         ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/bgrabitmap/bglcontrols/bglcontrols.lpk" --skip-dependencies
         ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/bgracontrols/bgracontrols.lpk" --skip-dependencies
         ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/bgracontrols/bgrapascalscriptcomponent.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/IGDIPlusMod/packages/Lazarus/lazigdiplus.lpk" --skip-dependencies
         ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/JPLib/packages/Lazarus/jplib.lpk" --skip-dependencies
         ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/JPPack/packages/Lazarus/jppacklcl.lpk" --skip-dependencies
         ${{ matrix.config.lazbuild }} --add-package-link "${{ github.workspace }}/3p/mORMot/Packages/mormot_base.lpk" --skip-dependencies
