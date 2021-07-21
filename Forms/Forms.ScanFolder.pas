@@ -26,7 +26,7 @@ interface
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, DefaultTranslator, ShellCtrls,
-  ImgList, ButtonPanel, FileUtil, Thread.FindFiles;
+  ImgList, ButtonPanel, FileUtil, Thread.FindFiles, StrUtils, LazStringUtils;
 
 type
 
@@ -172,6 +172,7 @@ begin
       SetupThreadFinder;
 
       ASuiteInstance.MainTree.BeginUpdate;
+
       //Add parent node named as Form's caption
       FListNode := TVirtualTreeMethods.AddChildNodeEx(ASuiteInstance.MainTree, nil, amInsertAfter, vtdtCategory);
       ListNodeData := TVirtualTreeMethods.GetNodeItemData(FListNode, ASuiteInstance.MainTree);
@@ -192,17 +193,13 @@ var
   str: string;
   RegexObj: TRegExpr;
 begin
-  RegexObj := TRegExpr.Create('^\.[a-zA-Z0-9]+$');
+  RegexObj := TRegExpr.Create('^[\*]?[\.]?([a-zA-Z0-9.]+)$');
   try
     str := LowerCase(edtTypes.Text);
 
-    //Try add the dot, if user not insert it
-    if str[1] <> EXT_PATH_DOT then
-      str := EXT_PATH_DOT + str;
-
     if RegexObj.Exec(str) then
     begin
-      AddItem(vstTypes, str);
+      AddItem(vstTypes, EXT_PATH_MASK + EXT_PATH_DOT + RegexObj.Match[1]);
       edtTypes.Clear;
     end
     else
@@ -266,16 +263,6 @@ var
   Node: PVirtualNode;
   NodeData: PScanFolderData;
 begin
-  //Useless *, so I removed it - 14/08/2020
-  {
-  if AIsExtension then
-  begin
-    //Add . or * if user forget it
-    if AText[1] <> EXT_PATH_MASK then
-      AText := EXT_PATH_MASK + AText;
-  end;
-  }
-
   //Exit if found a node with same text
   if Assigned(FindNodeByText(AListView, AText)) then
     Exit;
@@ -371,8 +358,8 @@ end;
 procedure TfrmScanFolder.SetupThreadFinder;
 begin
   FThreadFindFiles.Directory := vstShell.Selected.GetTextPath;
-  PopulateStringList(vstTypes, FThreadFindFiles.SearchCriteriaFilename);
-  PopulateStringList(vstExclude, FThreadFindFiles.SearchExcludeFilename);
+  FThreadFindFiles.SearchCriteriaFilename.Assign(Config.ScanFolderFileTypes);
+  FThreadFindFiles.SearchExcludeFilename.Assign(Config.ScanFolderExcludeNames);
   FThreadFindFiles.OnFileFound := FileFound;
   FThreadFindFiles.OnSearchEnd := SearchEnd;
   FThreadFindFiles.OnTerminate := ThreadTerminate;
@@ -413,6 +400,7 @@ begin
   while Assigned(Node) do
   begin
     NodeData := AListView.GetNodeData(Node);
+
     AStringList.Add(LowerCase(NodeData.Text));
 
     Node := AListView.GetNext(Node);
