@@ -480,9 +480,7 @@ end;
 
 procedure TfrmMain.miInfoASuiteClick(Sender: TObject);
 begin
-  if not IsFormOpen('frmAbout') then
-    Application.CreateForm(TfrmAbout, frmAbout);
-  frmAbout.show;
+  TfrmAbout.Execute(Self);
 end;
 
 procedure TfrmMain.miOptionsClick(Sender: TObject);

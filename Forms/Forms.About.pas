@@ -48,7 +48,8 @@ type
   private
     { Private declarations }
   public
-    { Public declarations }
+    { Public declarations }   
+    class procedure Execute(AOwner: TComponent);
   end;
 
 var
@@ -81,6 +82,19 @@ end;
 procedure TfrmAbout.lnklblWebSiteClick(Sender: TObject);
 begin
   OpenURL(PChar('http://www.salvadorsoftware.com'));
+end;
+
+class procedure TfrmAbout.Execute(AOwner: TComponent);
+begin
+  if Assigned(frmAbout) then
+    Exit;
+
+  frmAbout := TfrmAbout.Create(AOwner);
+  try
+    frmAbout.ShowModal;
+  finally
+    FreeAndNil(frmAbout);
+  end;
 end;
 
 end.

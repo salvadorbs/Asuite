@@ -489,12 +489,7 @@ begin
     if (Sender = sknbtnExplore) then
       OpenFolder(Config.GMBtnExplore);
     if (Sender = sknbtnAbout) then
-    begin
-      if not IsFormOpen('frmAbout') then
-        Application.CreateForm(TfrmAbout, frmAbout);
-      frmAbout.Show;
-      frmAbout.SetFocus;
-    end;
+      TfrmAbout.Execute(Self);
   end;
 end;
 
