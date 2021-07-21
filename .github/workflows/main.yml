@@ -113,7 +113,7 @@ jobs:
         sudo make install
 
     - name: Generate Cache Hash
-      run: echo "${{ matrix.config.fpcup-url }}${{ matrix.config.fpcup-opt }}${{ matrix.config.fpc-url }}${{ matrix.config.laz-url }}${{ matrix.config.lazpatch}}${{ matrix.config.name }}" > .cache
+      run: echo "${{ matrix.config.fpcup-url }}${{ matrix.config.fpcup-opt }}${{ matrix.config.fpc-url }}${{ matrix.config.laz-url }}${{ matrix.config.lazpatch}}${{ matrix.config.name }}-v0" > .cache
 
     - name: Cache
       id: cache
@@ -130,7 +130,7 @@ jobs:
         curl --retry 5 -L -o fpcup ${{ matrix.config.fpcup-url }}
         chmod +x fpcup
         mkdir ${{ matrix.config.laz-dir }}
-        ./fpcup --installdir=${{ matrix.config.laz-dir }} --fpcURL=${{ matrix.config.fpc-url }} --lazURL=${{ matrix.config.laz-url }} --lazPATCH=${{ github.workspace}}${{ matrix.config.lazpatch}} ${{ matrix.config.fpcup-opt }} --only=docker --noconfirm --verbose
+        ./fpcup --installdir=${{ matrix.config.laz-dir }} --fpcURL=${{ matrix.config.fpc-url }} --lazURL=${{ matrix.config.laz-url }} --lazPATCH="${{ github.workspace}}${{ matrix.config.lazpatch}}" ${{ matrix.config.fpcup-opt }} --only=docker --noconfirm --verbose
    
     - name: Remove Sparta_Generics from jpLib.lpk requirements
       uses: Amadevus/pwsh-script@v2
