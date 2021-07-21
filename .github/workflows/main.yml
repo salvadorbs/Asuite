@@ -35,7 +35,7 @@ jobs:
             fpcup-opt: ''
             fpc-url: 'https://svn.freepascal.org/svn/fpc/tags/release_3_2_2/'
             laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_2_0_RC1/'
-            lazpatch: '${{ github.workspace}}/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
+            lazpatch: '/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
             laz-dir: 'fpcLaz'
             lazbuild: 'fpcLaz/lazarus/lazbuild.exe'
             build-mode: 'Debug'
@@ -49,7 +49,7 @@ jobs:
             fpcup-opt: ''
             fpc-url: 'https://svn.freepascal.org/svn/fpc/tags/release_3_2_2/'
             laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_2_0_RC1/'
-            lazpatch: '${{ github.workspace}}/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
+            lazpatch: '/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
             laz-dir: 'fpcLaz'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
             build-mode: 'Debug'
@@ -63,7 +63,7 @@ jobs:
             fpcup-opt: ''
             fpc-url: 'https://svn.freepascal.org/svn/fpc/tags/release_3_2_2/'
             laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_2_0_RC1/'
-            lazpatch: '${{ github.workspace}}/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
+            lazpatch: '/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
             laz-dir: 'fpcLaz'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
             build-mode: 'Debug'
@@ -77,7 +77,7 @@ jobs:
             fpcup-opt: ''
             fpc-url: 'https://svn.freepascal.org/svn/fpc/tags/release_3_2_2/'
             laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_2_0_RC1/'
-            lazpatch: '${{ github.workspace}}/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
+            lazpatch: '/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
             laz-dir: 'fpcLaz'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
             build-mode: 'Debug'
@@ -130,7 +130,7 @@ jobs:
         curl --retry 5 -L -o fpcup ${{ matrix.config.fpcup-url }}
         chmod +x fpcup
         mkdir ${{ matrix.config.laz-dir }}
-        ./fpcup --installdir=${{ matrix.config.laz-dir }} --fpcURL=${{ matrix.config.fpc-url }} --lazURL=${{ matrix.config.laz-url }} --lazPATCH=${{ matrix.config.lazpatch}} ${{ matrix.config.fpcup-opt }} --only=docker --noconfirm --verbose
+        ./fpcup --installdir=${{ matrix.config.laz-dir }} --fpcURL=${{ matrix.config.fpc-url }} --lazURL=${{ matrix.config.laz-url }} --lazPATCH=${{ github.workspace}}${{ matrix.config.lazpatch}} ${{ matrix.config.fpcup-opt }} --only=docker --noconfirm --verbose
    
     - name: Remove Sparta_Generics from jpLib.lpk requirements
       uses: Amadevus/pwsh-script@v2
