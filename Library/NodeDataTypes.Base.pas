@@ -122,7 +122,7 @@ end;
 
 function TvBaseNodeData.IsFileItem: Boolean;
 begin
-  Result := Self.DataType in [vtdtFile,vtdtFolder];
+  Result := Self.DataType in [vtdtFile, vtdtFolder];
 end;
 
 function TvBaseNodeData.IsSeparatorItem: Boolean;

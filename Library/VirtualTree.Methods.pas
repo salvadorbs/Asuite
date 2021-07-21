@@ -498,15 +498,20 @@ begin
   if Assigned(NodeData) then
   begin
     TASuiteLogger.Info('Deleting node "%s"', [NodeData.Name]);
+
     if not(NodeData.IsSeparatorItem) then
     begin
       //Delete desktop's shortcut
       if NodeData is TvFileNodeData then
         TvFileNodeData(NodeData).DeleteShortcutFile;
+
+      //Remove node from every list (scheduler, hotkeys and etc...)
       ASuiteManager.ListManager.RemoveItemFromLists(NodeData);
+
+      //Delete and reset cache icon
+      TNodeIcon(NodeData.Icon).ResetCacheIcon;
     end;
-    //Delete and reset cache icon
-    TNodeIcon(NodeData.Icon).ResetCacheIcon;
+
     //Remove item from sqlite database
     ASuiteManager.DBManager.RemoveItem(NodeData.ID);
   end;

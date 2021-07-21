@@ -61,7 +61,7 @@ type
 implementation
 
 uses
-  Utility.FileFolder;
+  Utility.FileFolder, Kernel.Consts;
 
 { TFindFiles }
 
@@ -90,7 +90,10 @@ begin
       sFileExt := ExtractFileExtEx(sPath);
       sShortName := ExtractFileName(sPath);
 
-      if (sPath <> '') and (SearchCriteriaFilename.IndexOf(sFileExt) <> -1) and (FindMatchText(FSearchExcludeFilename, sShortName) = -1) then
+      //TODO: If it is a lnk, get directly the data as drag&drop
+
+      if (sPath <> '') and (FindMatchText(FSearchExcludeFilename, sShortName) = -1) and
+         ((SearchCriteriaFilename.IndexOf(sFileExt) <> -1) or (SearchCriteriaFilename.IndexOf(EXT_PATH_MASK + sFileExt) <> -1)) then
       begin
         Inc(intFoundFiles);
 
