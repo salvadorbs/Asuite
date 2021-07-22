@@ -27,12 +27,16 @@ uses
   SysUtils, SynLog, SynCommons;
 
 type
+
+  { TASuiteLogger }
+
   TASuiteLogger = Class
   public
     class procedure Info(const AText: string; AParams: Array of const);
     class procedure Debug(const AText: string; AParams: Array of const);
     class procedure Error(const AText: string; AParams: Array of const);
-    class procedure LastError(const AText: string; AParams: Array of const);
+    class procedure LastError(const AText: string; AParams: Array of const);   
+    class procedure Exception(E: SysUtils.Exception);
 
     class function Enter(const AMethodName: PUTF8Char; AInstance: TObject): ISynLog;
   end;
@@ -40,11 +44,13 @@ type
 implementation
 
 uses
-  AppConfig.Main, Kernel.Instance, Kernel.Manager;
+  AppConfig.Main, Kernel.Instance, Kernel.Manager, Kernel.ResourceStrings,
+  Utility.Misc;
 
 { TASuiteLogger }
 
-class procedure TASuiteLogger.Debug(const AText: string; AParams: Array of const);
+class procedure TASuiteLogger.Debug(const AText: string;
+  AParams: array of const);
 begin
   TSynLog.Add.Log(sllDebug, Format(AText, AParams));
 end;
@@ -54,19 +60,29 @@ begin
   Result := TSynLog.Enter(AInstance, AMethodName);
 end;
 
-class procedure TASuiteLogger.Error(const AText: string; AParams: Array of const);
+class procedure TASuiteLogger.Error(const AText: string;
+  AParams: array of const);
 begin
   TSynLog.Add.Log(sllError, Format(AText, AParams));
 end;
 
-class procedure TASuiteLogger.Info(const AText: string; AParams: Array of const);
+class procedure TASuiteLogger.Info(const AText: string;
+  AParams: array of const);
 begin
   TSynLog.Add.Log(sllInfo, Format(AText, AParams));
 end;
 
-class procedure TASuiteLogger.LastError(const AText: string; AParams: Array of const);
+class procedure TASuiteLogger.LastError(const AText: string;
+  AParams: array of const);
 begin
   TSynLog.Add.Log(sllLastError, Format(AText, AParams));
+end;
+
+class procedure TASuiteLogger.Exception(E: SysUtils.Exception);
+begin
+  ShowMessageFmtEx(msgErrGeneric, [E.ClassName, E.Message], True);
+
+  TSynLog.Add.Log(sllStackTrace, E.Message, E);
 end;
 
 end.

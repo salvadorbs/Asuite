@@ -368,7 +368,7 @@ begin
     end;   
   except
     on E: Exception do
-      TASuiteLogger.Error(msgErrGeneric, [E.ClassName, E.Message]);
+      TASuiteLogger.Exception(E);
   end;
 end;
 
@@ -440,10 +440,7 @@ begin
     CreateFooterItems(Menu);
   except
     on E: Exception do
-    begin
-      //Or in case of error, rollback and log
-      TSynLog.Add.Log(sllStackTrace, 'Found exception in UpdateClassicMenu', E);
-    end;
+      TASuiteLogger.Exception(E);
   end;
 end;
 
@@ -478,7 +475,7 @@ begin
     end;
   except
     on E: Exception do
-      TASuiteLogger.Error(msgErrGeneric, [E.ClassName, E.Message]);
+      TASuiteLogger.Exception(E);
   end;
 end;
 
@@ -531,7 +528,7 @@ begin
     end;    
   except
     on E: Exception do
-      TASuiteLogger.Error(msgErrGeneric, [E.ClassName, E.Message]);
+      TASuiteLogger.Exception(E);
   end;
 end;
 
@@ -767,7 +764,7 @@ begin
     end;
   except
     on E: Exception do
-      TASuiteLogger.Error(msgErrGeneric, [E.ClassName, E.Message]);
+      TASuiteLogger.Exception(E);
   end;
 end;
 
@@ -898,7 +895,7 @@ begin
       UpdateSpecialList(ParentMenuItem, SList, MaxItems);  
   except
     on E: Exception do
-      TASuiteLogger.Error(msgErrGeneric, [E.ClassName, E.Message]);
+      TASuiteLogger.Exception(E);
   end;
 end;
 
@@ -946,7 +943,7 @@ begin
     end;    
   except
     on E: Exception do
-      TASuiteLogger.Error(msgErrGeneric, [E.ClassName, E.Message]);
+      TASuiteLogger.Exception(E);
   end;
 end;
 

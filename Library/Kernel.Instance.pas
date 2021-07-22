@@ -66,7 +66,7 @@ implementation
 
 uses
   Forms.ImportList, Kernel.Logger, Forms, Kernel.Consts, Utility.FileFolder,
-  Utility.Misc, Utility.XML, VirtualTree.Methods, SynLog, Kernel.Manager;
+  Utility.Misc, Utility.XML, VirtualTree.Methods, SynLog, Kernel.Manager, SynCommons;
 
 { TASuiteInstance }
 
@@ -113,6 +113,9 @@ begin
   begin
     DestinationPath := Self.Paths.SuitePathData;
     Level := LOG_VERBOSE;
+    {$IFNDEF DEBUG}
+    Level := LOG_VERBOSE - [sllStackTrace];
+    {$ENDIF}
     RotateFileCount := 1;
     RotateFileDailyAtHour := 0;
   end;
