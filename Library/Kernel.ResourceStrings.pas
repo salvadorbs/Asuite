@@ -119,6 +119,10 @@ resourcestring
   msgStop = 'Stop';             
   msgScanFolderExtNotValid = 'Ext file not valid. Please check it and retry!';
   msgInputUsername = 'Please insert username';
+  msgErrorExecute = 'Failed to execute "%s"';
+  msgErrorExecuteAdmin = 'Failed to execute item "%s" as admin';
+  msgErrorExecuteUser = 'Failed to execute item "%s" as user "%s"';
+  msgErrorOpenFolder = 'Failed to open folder "%s"';
 
   //ComboboxItems
   cxActionOnExeOpt_item0 = 'Just run file';

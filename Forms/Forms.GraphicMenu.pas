@@ -249,7 +249,7 @@ begin
   Result := OpenDocument(sPath);
 
   if not Result then
-    ShowMessageFmtEx(msgErrGeneric, ['OpenFolder()', SysErrorMessage(GetLastOSError)], True);
+    ShowMessageFmtEx(msgErrorOpenFolder, [sPath], True);
 end;
 
 procedure TfrmGraphicMenu.FormCreate(Sender: TObject);
