@@ -26,7 +26,7 @@ interface
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
   ComCtrls, VirtualTrees, UniqueInstance, Kernel.Consts, DataModules.Icons,
-  Kernel.BaseMainForm, StdCtrls, UITypes, VirtualTree.Helper,
+  Kernel.BaseMainForm, StdCtrls, UITypes, VirtualTree.Helper, SynCommons,
   Kernel.Enumerations, ExtCtrls,
   ButtonedEdit, {Actions,} ActnList, EditBtn;
 
@@ -677,7 +677,9 @@ begin
   if (SaveDialog1.Execute) then
   begin
     TVirtualTreeMethods.RefreshList(GetActiveTree);
-    FileUtil.CopyFile(PChar(ASuiteManager.DBManager.DBFileName), PChar(SaveDialog1.FileName), False);
+
+    if SaveDialog1.FileName <> '' then
+      SynCommons.CopyFile(ASuiteManager.DBManager.DBFileName, SaveDialog1.FileName, False);
   end;
 end;
 
