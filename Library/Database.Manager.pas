@@ -92,10 +92,15 @@ begin
         ATree.IterateSubtree(ANodes[I], TVirtualTreeMethods.BeforeDeleteNode, nil, [], False);
       //Commit database's updates
       FDatabase.Commit(1);
-    except
-      //Or in case of error, rollback
-      FDatabase.RollBack(1);
-      Result := False;
+    except                              
+      on E: Exception do
+      begin
+        //Or in case of error, rollback and log
+        TSynLog.Add.Log(sllStackTrace, 'Found exception in DeleteItems', E);
+
+        FDatabase.RollBack(1);
+        Result := False;
+      end;
     end;
   end;
 end;
