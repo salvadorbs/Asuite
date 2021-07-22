@@ -809,7 +809,7 @@ begin
     if Assigned(bmp) then
       dmTrayMenu.tiTrayMenu.Icon.Assign(bmp.Bitmap)
     else
-      dmTrayMenu.tiTrayMenu.Icon.AssignImage(Application.Icon);
+      dmTrayMenu.tiTrayMenu.Icon.Assign(Application.Icon);
   finally
     bmp.Free;
   end;
