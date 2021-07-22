@@ -363,8 +363,8 @@ begin
   //ScanFolder
   FScanFolderAutoExtractName := True;
   FScanFolderFileTypes  := TStringList.Create;
-  FScanFolderFileTypes.Add(EXT_LNK);
-  FScanFolderFileTypes.Add(EXT_EXE);
+  FScanFolderFileTypes.Add(EXT_PATH_MASK + EXT_LNK);
+  FScanFolderFileTypes.Add(EXT_PATH_MASK + EXT_EXE);
   FScanFolderExcludeNames := TStringList.Create;
   FScanFolderExcludeNames.Add('uninstall');
 end;
@@ -542,6 +542,7 @@ end;
 procedure TConfiguration.RestoreSettings(AJSONConfig: TJSONConfig);
 var
   nLeft, nTop, nWidth, nHeight: Integer;
+  tempTypes: TStringList;
 begin
   //Get GMTheme before everything (so ASuite know where icons folder)
   Self.GMTheme := AJSONConfig.GetValue(CONFIG_GMTHEME, Self.GMTheme);
@@ -654,8 +655,17 @@ begin
 
   // Misc
   Self.ScanFolderAutoExtractName := AJSONConfig.GetValue(CONFIG_SCANFOLDERAUTOEXTRACTNAME, Self.ScanFolderAutoExtractName);
-  AJSONConfig.GetValue(CONFIG_SCANFOLDERFILETYPES, Self.ScanFolderFileTypes, Self.ScanFolderFileTypes);
   AJSONConfig.GetValue(CONFIG_SCANFOLDEREXCLUDENAMES, Self.ScanFolderExcludeNames, Self.ScanFolderExcludeNames);
+
+  //Workaround for missing types
+  tempTypes := TStringList.Create;
+  try
+    AJSONConfig.GetValue(CONFIG_SCANFOLDERFILETYPES, tempTypes, tempTypes);
+    if tempTypes.count > 0 then
+      Self.ScanFolderFileTypes.Assign(tempTypes);
+  finally
+    tempTypes.Free;
+  end;
 
   Self.AfterUpdateConfig;
 end;
