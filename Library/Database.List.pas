@@ -229,7 +229,7 @@ begin
         TSQLtbl_list.SaveItemsByParentID(Tree, ADBManager, Node.FirstChild, vData.ID);
     except
       on E : Exception do
-        ShowMessageFmtEx(msgErrGeneric,[E.ClassName, E.Message], True);
+        TASuiteLogger.Exception(E);
     end;
     Node := Node.NextSibling;
   end;

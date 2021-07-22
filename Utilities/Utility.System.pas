@@ -146,7 +146,11 @@ begin
 
       Result := Process.ProcessID;
     except
-      Result := -1;
+      on E: Exception do
+      begin
+        TASuiteLogger.Exception(E);
+        Result := -1;
+      end;
     end;
   finally
     Process.Free;

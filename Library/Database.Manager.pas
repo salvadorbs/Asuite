@@ -96,7 +96,7 @@ begin
       on E: Exception do
       begin
         //Or in case of error, rollback and log
-        TSynLog.Add.Log(sllStackTrace, 'Found exception in DeleteItems', E);
+        TASuiteLogger.Exception(E);
 
         FDatabase.RollBack(1);
         Result := False;
@@ -135,9 +135,7 @@ begin
     TSQLtbl_list.Load(Self, ATree, True);
   except
     on E : Exception do
-    begin
-      ShowMessageFmtEx(msgErrGeneric,[E.ClassName,E.Message],True);
-    end;
+      TASuiteLogger.Exception(E);
   end;
 end;
 
@@ -168,7 +166,7 @@ begin
       TSQLtbl_list.Load(Self, ATree, False);
     except
       on E : Exception do
-        ShowMessageFmtEx(msgErrGeneric,[E.ClassName,E.Message],True);
+        TASuiteLogger.Exception(E);
     end;
   finally
     ATree.EndUpdate;
@@ -198,7 +196,7 @@ begin
       end;
     except
       on E : Exception do begin
-        ShowMessageFmtEx(msgErrGeneric, [E.ClassName,E.Message], True);
+        TASuiteLogger.Exception(E);
         FDatabase.Rollback(1);
       end;
     end;

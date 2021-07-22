@@ -132,7 +132,7 @@ begin
       on E : Exception do
       begin
         ShowMessageEx(msgImportFailed, True);
-        TASuiteLogger.Error(msgErrGeneric, [E.ClassName, E.Message]);
+        TASuiteLogger.Exception(E);
       end;
     end;
   end;
@@ -299,7 +299,11 @@ begin
       tnImp := tnImp.NextSibling;
     end;
   except
-    Result := False;
+    on E: Exception do
+    begin
+      TASuiteLogger.Exception(E);
+      Result := False;
+    end;
   end;
   Tree.EndUpdate;
 end;
