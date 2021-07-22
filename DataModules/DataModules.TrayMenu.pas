@@ -755,7 +755,9 @@ begin
       MenuItem.Caption    := '-';
       MenuItem.Hint       := Text;
 
-      Menu.Items.Add(MenuItem);
+      //Check the menuitem.Parent. If it is populated, it is already added in menu
+      if not Assigned(MenuItem.Parent) then
+        Menu.Items.Add(MenuItem);
 
       {$IFDEF MSWINDOWS}
       MenuItem.OnMeasureItem := MeasureCaptionedSeparator;
