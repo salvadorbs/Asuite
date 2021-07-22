@@ -31,11 +31,11 @@ jobs:
 
           - os: windows-latest
             name: 'Windows 64'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/1.8.2g/fpclazup-x86_64-win64.exe'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/1.8.2s1/fpclazup-x86_64-win64.exe'
             fpcup-opt: ''
-            fpc-url: 'https://svn.freepascal.org/svn/fpc/tags/release_3_2_0'
-            laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_0_12/'
-            #lazpatch: '${{ github.workspace}}/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
+            fpc-url: 'https://svn.freepascal.org/svn/fpc/tags/release_3_2_2/'
+            laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_2_0_RC1/'
+            lazpatch: '/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
             laz-dir: 'fpcLaz'
             lazbuild: 'fpcLaz/lazarus/lazbuild.exe'
             build-mode: 'Debug'
@@ -45,11 +45,11 @@ jobs:
 
           - os: ubuntu-latest
             name: 'Linux 64 GTK2'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/1.8.2g/fpclazup-x86_64-linux'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/1.8.2s1/fpclazup-x86_64-linux'
             fpcup-opt: ''
-            fpc-url: 'https://svn.freepascal.org/svn/fpc/tags/release_3_2_0'
-            laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_0_12/'
-            #lazpatch: '${{ github.workspace}}/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
+            fpc-url: 'https://svn.freepascal.org/svn/fpc/tags/release_3_2_2/'
+            laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_2_0_RC1/'
+            lazpatch: '/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
             laz-dir: 'fpcLaz'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
             build-mode: 'Debug'
@@ -59,11 +59,11 @@ jobs:
 
           - os: ubuntu-latest
             name: 'Linux 64 GTK3'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/1.8.2g/fpclazup-x86_64-linux'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/1.8.2s1/fpclazup-x86_64-linux'
             fpcup-opt: ''
-            fpc-url: 'https://svn.freepascal.org/svn/fpc/tags/release_3_2_0'
-            laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_0_12/'
-            #lazpatch: '${{ github.workspace}}/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
+            fpc-url: 'https://svn.freepascal.org/svn/fpc/tags/release_3_2_2/'
+            laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_2_0_RC1/'
+            lazpatch: '/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
             laz-dir: 'fpcLaz'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
             build-mode: 'Debug'
@@ -73,11 +73,11 @@ jobs:
           
           - os: ubuntu-20.04
             name: 'Linux 64 QT5'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/1.8.2g/fpclazup-x86_64-linux'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/1.8.2s1/fpclazup-x86_64-linux'
             fpcup-opt: ''
-            fpc-url: 'https://svn.freepascal.org/svn/fpc/tags/release_3_2_0'
-            laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_0_12/'
-            #lazpatch: '${{ github.workspace}}/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
+            fpc-url: 'https://svn.freepascal.org/svn/fpc/tags/release_3_2_2/'
+            laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_2_0_RC1/'
+            lazpatch: '/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
             laz-dir: 'fpcLaz'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
             build-mode: 'Debug'
@@ -113,13 +113,13 @@ jobs:
         sudo make install
 
     - name: Generate Cache Hash
-      run: echo "${{ matrix.config.fpcup-url }}${{ matrix.config.fpcup-opt }}${{ matrix.config.fpc-url }}${{ matrix.config.laz-url }}${{ matrix.config.name }}" > .cache
+      run: echo "${{ matrix.config.fpcup-url }}${{ matrix.config.fpcup-opt }}${{ matrix.config.fpc-url }}${{ matrix.config.laz-url }}${{ matrix.config.lazpatch}}${{ matrix.config.name }}" > .cache
 
     - name: Cache
       id: cache
       uses: actions/cache@v2.1.3
       env:
-        cache-name: cache-laz-v0.2.1
+        cache-name: cache-laz-v0.3.0
       with:
         path: ${{ matrix.config.laz-dir }}
         key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('.cache') }}     
@@ -130,7 +130,7 @@ jobs:
         curl --retry 5 -L -o fpcup ${{ matrix.config.fpcup-url }}
         chmod +x fpcup
         mkdir ${{ matrix.config.laz-dir }}
-        ./fpcup --installdir=${{ matrix.config.laz-dir }} --fpcURL=${{ matrix.config.fpc-url }} --lazURL=${{ matrix.config.laz-url }} ${{ matrix.config.fpcup-opt }} --only=docker --noconfirm --verbose
+        ./fpcup --installdir=${{ matrix.config.laz-dir }} --fpcURL=${{ matrix.config.fpc-url }} --lazURL=${{ matrix.config.laz-url }} --lazPATCH="${{ github.workspace}}${{ matrix.config.lazpatch}}" ${{ matrix.config.fpcup-opt }} --only=docker --noconfirm --verbose
    
     - name: Remove Sparta_Generics from jpLib.lpk requirements
       uses: Amadevus/pwsh-script@v2
@@ -149,6 +149,7 @@ jobs:
         ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/bgrabitmap/bglcontrols/bglcontrols.lpk" --skip-dependencies
         ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/bgracontrols/bgracontrols.lpk" --skip-dependencies
         ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/bgracontrols/bgrapascalscriptcomponent.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/IGDIPlusMod/packages/Lazarus/lazigdiplus.lpk" --skip-dependencies
         ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/JPLib/packages/Lazarus/jplib.lpk" --skip-dependencies
         ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/JPPack/packages/Lazarus/jppacklcl.lpk" --skip-dependencies
         ${{ matrix.config.lazbuild }} --add-package-link "${{ github.workspace }}/3p/mORMot/Packages/mormot_base.lpk" --skip-dependencies

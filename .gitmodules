@@ -25,3 +25,6 @@
 [submodule "3p/bgracontrols"]
 	path = 3p/bgracontrols
 	url = https://github.com/bgrabitmap/bgracontrols.git
+[submodule "3p/IGDIPlusMod"]
+	path = 3p/IGDIPlusMod
+	url = https://github.com/jackdp/IGDIPlusMod
