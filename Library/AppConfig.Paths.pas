@@ -267,36 +267,29 @@ begin
 end;
 
 function TConfigPaths.RelativeToAbsolute(const APath: String): string;
-var
-  sPath: string;
 begin
   Result := '';
   if APath <> '' then
   begin
-    sPath := APath;
+    Result := APath;
 
     //Replace old ASuite variables
     //Note: Unfortunately old asuite vars is not quoted, but in format $var.
     //      So these two vars are deprecated. This code remain for only backwards compatibility
     //CONST_PATH_ASuite_old = Launcher's path
-    sPath := StringReplace(sPath, CONST_PATH_ASuite_old, SuitePathWorking, [rfIgnoreCase,rfReplaceAll]);
+    Result := StringReplace(Result, CONST_PATH_ASuite_old, SuitePathWorking, [rfIgnoreCase,rfReplaceAll]);
     //CONST_PATH_DRIVE_old = Launcher's Drive (ex. ASuite in H:\Software\ASuite.exe, CONST_PATH_DRIVE is H: )
-    sPath := StringReplace(sPath, CONST_PATH_DRIVE_old, SUITEDRIVE, [rfIgnoreCase,rfReplaceAll]);
+    Result := StringReplace(Result, CONST_PATH_DRIVE_old, SUITEDRIVE, [rfIgnoreCase,rfReplaceAll]);
 
     //Replace ASuite variables
-    sPath := FASuiteVars.ExpandVars(sPath);
+    Result := FASuiteVars.ExpandVars(Result);
 
     //Replace environment variable
-    sPath := FEnvironmentVars.ExpandVars(sPath);
+    Result := FEnvironmentVars.ExpandVars(Result);
                                                                                 
-    //Remove double path delimiter and resolve dots
-    sPath := TrimFilename(sPath);
-
-    //If sPath exists, expand it in absolute path (to avoid the "..")
-    if (FileExists(sPath) or SysUtils.DirectoryExists(sPath)) and (Length(sPath) <> 2) then
-      Result := ExpandFileName(sPath)
-    else
-      Result := sPath;
+    //Remove double path delimiter, resolve dots and expand path
+    if not FilenameIsAbsolute(Result) then
+      Result := CleanAndExpandFilename(Result);
   end;
 end;
 
