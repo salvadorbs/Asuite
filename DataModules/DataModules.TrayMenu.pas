@@ -128,7 +128,7 @@ uses
   Utility.System, Forms.GraphicMenu, Kernel.Types, NodeDataTypes.Files,
   NodeDataTypes.Custom, NodeDataTypes.Base, Kernel.Consts, Kernel.Logger,
   Utility.Misc, Utility.FileFolder, Kernel.ResourceStrings, Kernel.Instance,
-  Kernel.Manager {$IFDEF MSWINDOWS} , Windows {$ENDIF}, SynLog, SynCommons;
+  Kernel.Manager, SynLog {$IFDEF MSWINDOWS} , Windows {$ENDIF};
 
 {$R *.lfm}
 
@@ -171,8 +171,9 @@ end;
 procedure TdmTrayMenu.ShowPopupMenu(const APopupMenu: TPopupMenu);
 var
   CursorPoint: TPoint;
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('ShowPopupMenu', Self);
+  log := TASuiteLogger.Enter('TdmTrayMenu.ShowPopupMenu', Self);
   //Get Mouse coordinates
   GetCursorPos(CursorPoint);
   SetForegroundWindow(Application.Handle);
@@ -398,8 +399,10 @@ begin
 end;
 
 procedure TdmTrayMenu.UpdateClassicMenu(Menu: TPopUpMenu);
+var
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('UpdateClassicMenu', Self);
+  log := TASuiteLogger.Enter('TdmTrayMenu.UpdateClassicMenu', Self);
 
   try
     Menu.Items.Clear;
@@ -950,8 +953,9 @@ end;
 procedure TdmTrayMenu.PopulateDirectory(Sender: TObject);
 var
   MI: TASMenuItem;
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('PopulateDirectory', Self);
+  log := TASuiteLogger.Enter('TdmTrayMenu.PopulateDirectory', Self);
 
   MI := TASMenuItem(Sender);
   try

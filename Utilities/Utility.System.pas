@@ -99,7 +99,9 @@ var
   PathTemp : String;
 begin
   PathTemp := ASuiteInstance.Paths.RelativeToAbsolute(Path);
-  Result := (PathTemp = 'shell:AppsFolder') or IsUNCPath(PathTemp) or IsValidURLProtocol(PathTemp) or FileExists(PathTemp) or SysUtils.DirectoryExists(PathTemp)
+  Result := (PathTemp = 'shell:AppsFolder') or IsUNCPath(PathTemp) or IsValidURLProtocol(PathTemp) or FileExists(PathTemp) or SysUtils.DirectoryExists(PathTemp);
+
+  TASuiteLogger.Debug('IsPathExists(%s) = %s', [PathTemp, BoolToStr(Result, True)]);
 end;
 
 function IsExecutableFile(APathFile: String): Boolean;

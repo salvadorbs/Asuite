@@ -84,7 +84,7 @@ implementation
 
 uses
   Kernel.Logger, FileUtil, LazFileUtils, Kernel.Instance, Kernel.Manager, ImgList,
-  Graphics, DataModules.Icons
+  Graphics, DataModules.Icons, SynLog
   {$IFDEF UNIX}
   , IniFiles, BaseUnix, StrUtils
     {$IFDEF LCLQT5}
@@ -332,8 +332,9 @@ var
   Icon: TBaseIcon;
   sPath: string;
   IconFiles: TStringList;
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('LoadAllIcons', Self);
+  log := TASuiteLogger.Enter('TIconsManager.LoadAllIcons', Self);
   TASuiteLogger.Info('Search and load all icons in folder "%s"', [FPathTheme + ICONS_DIR]);
 
   Clear(True);

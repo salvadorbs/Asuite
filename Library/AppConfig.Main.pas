@@ -114,7 +114,7 @@ type
     FScanFolderFileTypes  : TStringList;
     FScanFolderExcludeNames: TStringList;
 
-    function LoadIconFromFile(const APath: string): TBGRABitmap;
+    function LoadTrayIconFromFile(const APath: string): TBGRABitmap;
     procedure RestoreSettings(AJSONConfig: TJSONConfig);
     procedure SaveSettings(AJSONConfig: TJSONConfig);
     procedure SetHoldSize(value: Boolean);
@@ -252,7 +252,7 @@ implementation
 
 uses
   Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, Utility.Misc,
-  Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder,
+  Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder, SynLog,
   Utility.XML, GraphicMenu.ThemeEngine, LCLProc, BGRAIconCursor,
   TypInfo, Kernel.ResourceStrings, LCLTranslator, AppConfig.Consts, BGRABitmapTypes,
   Utility.Conversions, Hotkeys.Manager.Platform, Kernel.Instance, Kernel.Manager;
@@ -546,7 +546,7 @@ var
 begin
   //Get GMTheme before everything (so ASuite know where icons folder)
   Self.GMTheme := AJSONConfig.GetValue(CONFIG_GMTHEME, Self.GMTheme);
-  TASuiteLogger.Info('Loaded GraphicMenu theme = ', [Self.GMTheme]);
+  TASuiteLogger.Info('Loaded GraphicMenu theme = %s', [Self.GMTheme]);
 
   //General
   Self.StartWithWindows          := AJSONConfig.GetValue(CONFIG_STARTWITHWINDOWS, Self.StartWithWindows);
@@ -585,7 +585,6 @@ begin
   Self.TVFont.Name               := AJSONConfig.GetValue(CONFIG_TVFONTNAME, UnicodeString(Self.TVFont.Name));
   Self.TVFont.Color              := HtmlToColor(AJSONConfig.GetValue(CONFIG_TVFONTCOLOR, ColorToHtml(Self.TVFont.Color)));
   Self.TVFont.Size               := AJSONConfig.GetValue(CONFIG_TVFONTSIZE, Self.TVFont.Size);
-  //Self.TVFont.Style              := TFontStyles({byte}AJSONConfig.GetValue(CONFIG_TVFONTSIZE, 0));
   if AJSONConfig.GetValue(CONFIG_TVFONTSTYLE_BOLD, (fsBold in Self.TVFont.Style)) then
      Self.TVFont.Style := Self.TVFont.Style + [fsBold];
   if AJSONConfig.GetValue(CONFIG_TVFONTSTYLE_ITALIC, (fsItalic in Self.TVFont.Style)) then
@@ -670,7 +669,7 @@ begin
   Self.AfterUpdateConfig;
 end;
 
-function TConfiguration.LoadIconFromFile(const APath: string): TBGRABitmap;
+function TConfiguration.LoadTrayIconFromFile(const APath: string): TBGRABitmap;
 var
   Icon: TBGRAIconCursor;
 begin
@@ -701,8 +700,9 @@ end;
 procedure TConfiguration.LoadConfig;
 var
   JSONConfig: TJSONConfig;
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('Loading ASuite configuration', Self);
+  log := TASuiteLogger.Enter('TConfiguration.LoadConfig', Self);
 
   //if FileExists(ASuiteInstance.Paths.SuitePathSettings) then
   //begin
@@ -724,11 +724,12 @@ end;
 procedure TConfiguration.SaveConfig;  
 var
   JSONConfig: TJSONConfig;
+  {%H-}log: ISynLog;
 begin
   //If settings is changed, insert it else (if it exists) update it
   if Config.Changed then
   begin
-    TASuiteLogger.Enter('Saving ASuite Options', Self);
+    log := TASuiteLogger.Enter('TConfiguration.SaveConfig', Self);
     try
       JSONConfig := TJSONConfig.Create(nil);
       JSONConfig.Formatted := True;
@@ -804,7 +805,7 @@ begin
     sPath := AppendPathDelim(ASuiteInstance.Paths.SuitePathCurrentTheme + ICONS_DIR) + LowerCase(APP_NAME) + EXT_ICO;
 
   try
-    bmp := LoadIconFromFile(sPath);
+    bmp := LoadTrayIconFromFile(sPath);
 
     if Assigned(bmp) then
       dmTrayMenu.tiTrayMenu.Icon.Assign(bmp.Bitmap)

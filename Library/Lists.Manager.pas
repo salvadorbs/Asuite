@@ -25,7 +25,7 @@ interface
 
 uses
   SysUtils, Kernel.Singleton, Lists.Special, NodeDataTypes.Custom,
-  Lists.Base, Lists.HotKey, Kernel.Enumerations{, SynLog};
+  Lists.Base, Lists.HotKey, Kernel.Enumerations, SynLog;
 
 type
   TListManager = class(TSingleton)
@@ -92,8 +92,9 @@ procedure TListManager.ExecuteAutorunList(AutorunListMode: TAutorunListMode);
 var
   List : TBaseItemsList;
   I    : Integer;
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('ExecuteAutorunList', Self);
+  log := TASuiteLogger.Enter('TListManager.ExecuteAutorunList', Self);
   case AutorunListMode of
     amStartup: TASuiteLogger.Info('Execute Autorun List (Startup)', []);
     amShutdown: TASuiteLogger.Info('Execute Autorun List (Shutdown)', []);

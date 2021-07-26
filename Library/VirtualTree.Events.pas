@@ -404,8 +404,9 @@ var
   AttachMode : TVTNodeAttachMode;
   NodeCreated : Boolean;     
   Nodes: TNodeArray;
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('DoDragDrop', Self);
+  log := TASuiteLogger.Enter('TVirtualTreeEvents.DoDragDrop', Self);
 
   NodeCreated := False;
 

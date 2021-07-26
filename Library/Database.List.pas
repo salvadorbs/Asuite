@@ -236,7 +236,11 @@ begin
 end;
 
 class procedure TSQLtbl_list.Load(ADBManager: TDBManager; ATree: TBaseVirtualTree; IsImport: Boolean);
+var
+  log: ISynLog;
 begin
+  log := TASuiteLogger.Enter('TSQLtbl_list.Load', nil);
+
   if IsImport then
     TASuiteLogger.Info('Load ASuite List from Database in VirtualTree (Import mode)', [])
   else
@@ -299,8 +303,10 @@ begin
 end;
 
 class procedure TSQLtbl_list.Save(ADBManager: TDBManager; ATree: TBaseVirtualTree);
+var
+  log: ISynLog;
 begin
-  TASuiteLogger.Info('Saving ASuite List', []);
+  log := TASuiteLogger.Enter('TSQLtbl_list.Save', nil);
   TSQLtbl_list.SaveItemsByParentID(ATree, ADBManager, ATree.GetFirst, 0);
 end;
 

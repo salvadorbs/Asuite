@@ -79,8 +79,9 @@ end;
 function TDBManager.DeleteItems(ATree: TBaseVirtualTree; ANodes: TNodeArray): Boolean;
 var
   I: Integer;
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('DeleteItems', Self);
+  log := TASuiteLogger.Enter('TDBManager.DeleteItems', Self);
   Result := FDatabase.TransactionBegin(TSQLtbl_list, 1);
   //Begin transaction for remove data from sqlite database
   if Result then
@@ -129,8 +130,10 @@ begin
 end;
 
 procedure TDBManager.ImportData(ATree: TBaseVirtualTree);
+var
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('ImportData', Self);
+  log := TASuiteLogger.Enter('TDBManager.ImportData', Self);
   try
     TSQLtbl_list.Load(Self, ATree, True);
   except
@@ -153,8 +156,10 @@ begin
 end;
 
 procedure TDBManager.LoadData(ATree: TBaseVirtualTree);
+var
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('LoadData', Self);
+  log := TASuiteLogger.Enter('TDBManager.LoadData', Self);
   TASuiteLogger.Info('Found SQLite Database - Loading it', []);
   //List & Options
   ATree.BeginUpdate;
@@ -174,8 +179,10 @@ begin
 end;
 
 function TDBManager.SaveData(ATree: TBaseVirtualTree; DoBackup: Boolean): Boolean;
+var
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('SaveData', Self);
+  log := TASuiteLogger.Enter('TDBManager.SaveData', Self);
   TASuiteLogger.Info('Saving ASuite SQLite Database', []);
   //If launcher is in ReadOnlyMode, exit from this function
   if (Config.ReadOnlyMode) then

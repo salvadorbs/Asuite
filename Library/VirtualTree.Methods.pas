@@ -107,7 +107,12 @@ var
   ChildNode : PVirtualNode;
   NodeData  : TvBaseNodeData;
   FolderPath, sName : String;
+  DeleteNode: Boolean;
+  {%H-}log: ISynLog;
 begin
+  log := TASuiteLogger.Enter('TVirtualTreeMethods.AddChildNodeByGUI', ASender);
+  TASuiteLogger.Info('Add child node (type = %d)', [Ord(AType)]);
+
   FolderPath := '';
   Result     := nil;
   NodeData   := nil;
@@ -269,7 +274,10 @@ class procedure TVirtualTreeMethods.CheckVisibleNodePathExe(
 var
   Node: PVirtualNode;
   NodeData: TvBaseNodeData;
+  log: ISynLog;
 begin
+  log := TASuiteLogger.Enter('TVirtualTreeMethods.CheckVisibleNodePathExe', nil);
+
   Node := ASender.GetFirstVisible;
   while Assigned(Node) do
   begin

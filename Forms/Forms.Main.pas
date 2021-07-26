@@ -216,12 +216,16 @@ procedure TfrmMain.actDeleteExecute(Sender: TObject);
 var
   Nodes: TNodeArray;
   Tree: TBaseVirtualTree;
+  DeleteNode: Boolean;
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('actDeleteExecute', Self);
+  DeleteNode := Config.TVDisableConfirmDelete or AskUserWarningMessage(msgConfirmDeleteItem, []);
+
+  log := TASuiteLogger.Enter('TfrmMain.actDeleteExecute', Self);
   Config.ASuiteState := lsDeleting;
   try
     Tree := GetActiveTree;
-    if (Tree.GetFirstSelected <> nil) and (Config.TVDisableConfirmDelete or AskUserWarningMessage(msgConfirmDeleteItem, [])) then
+    if (Tree.GetFirstSelected <> nil) and (DeleteNode) then
     begin
       Nodes := Tree.GetSortedSelection(true);
       //Delete items
@@ -523,7 +527,11 @@ begin
 end;
 
 procedure TfrmMain.SetAllIcons;
+var
+  log: ISynLog;
 begin
+  log := TASuiteLogger.Enter('TfrmMain.SetAllIcons', Self);
+
   //Set IcoImages
   //Set submenuimages to three MainMenu's subitems
   miFile.SubMenuImages := dmImages.ilLargeIcons;
@@ -682,8 +690,10 @@ begin
 end;
 
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
+var
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('FormClose', Self);
+  log := TASuiteLogger.Enter('TfrmMain.FormClose', Self);
 
   //Close all process opened by ASuite
   if Config.AutoCloseProcess then
@@ -716,8 +726,9 @@ end;
 procedure TfrmMain.FormCreate(Sender: TObject);
 var
   VSTEvents: TVirtualTreeEvents;
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('MainFormCreate', Self);
+  log := TASuiteLogger.Enter('TfrmMain.MainFormCreate', Self);
 
   {$IFDEF UNIX}
   Self.AllowDropFiles := True;

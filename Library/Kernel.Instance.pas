@@ -114,7 +114,7 @@ begin
     DestinationPath := Self.Paths.SuitePathData;
     Level := LOG_VERBOSE;
     {$IFNDEF DEBUG}
-    Level := LOG_VERBOSE - [sllStackTrace];
+    Level := LOG_VERBOSE - [sllStackTrace, sllDebug];
     {$ENDIF}
     RotateFileCount := 1;
     RotateFileDailyAtHour := 0;
