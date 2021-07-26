@@ -603,48 +603,53 @@ var
   LineCaption : string;  
   TextSpace, CaptionLineItemHeight: Cardinal;
 begin
-  CaptionLineItemHeight := 0;
-  LineArea := ARect;
-  TextArea := LineArea;
-  Dec(TextArea.Bottom, 1);
-  TextSpace := 0;
-  if (Sender is TMenuItem) then
-  begin
-    CaptionLineItemHeight := ASuiteInstance.SmallHeightNode - 4;
-    //Don't highlight menu item
-    ACanvas.Brush.Style := bsClear;
-    ACanvas.Font.Color  := clWindowText;
-    if (Sender as TMenuItem).Hint <> '' then
+  try
+    CaptionLineItemHeight := 0;
+    LineArea := ARect;
+    TextArea := LineArea;
+    Dec(TextArea.Bottom, 1);
+    TextSpace := 0;
+    if (Sender is TMenuItem) then
     begin
-      LineCaption := Format(' %s ', [(Sender as TMenuItem).Hint]);
-      TextSpace   := 1;
-    end;
-  end
-  else
-    if (Sender is TBaseVirtualTree) then
-    begin
-      //Get Tree's Font
-      ACanvas.Font.Assign(TBaseVirtualTree(Sender).Font);
-      CaptionLineItemHeight := ASuiteInstance.SmallHeightNode;
-      if ACaption <> '' then
+      CaptionLineItemHeight := ASuiteInstance.SmallHeightNode - 4;
+      //Don't highlight menu item
+      ACanvas.Brush.Style := bsClear;
+      ACanvas.Font.Color  := clWindowText;
+      if (Sender as TMenuItem).Hint <> '' then
       begin
-        LineCaption := Format(' %s ', [ACaption]);
-        CaptionLineItemHeight := ACanvas.TextHeight(ACaption);
+        LineCaption := Format(' %s ', [(Sender as TMenuItem).Hint]);
         TextSpace   := 1;
       end;
-    end;
-  TextArea.Width := GetTextWidth(LineCaption, ACanvas.Font);
-  OffsetRect(TextArea, Round((RectWidth(LineArea) - RectWidth(TextArea)) / 2 - TextSpace), 0);
-  Inc(ARect.Top, (CaptionLineItemHeight div 2) + 1);
-  //Create first line
-  Inc(ARect.Top);
-  Inc(ARect.Bottom);
-  DrawFadeLine(ACanvas, TextArea, ARect, clBtnShadow, FadeLineWidth, True);
-  //Create second line
-  Inc(ARect.Top);
-  Inc(ARect.Bottom);
-  DrawFadeLine(ACanvas, TextArea, ARect, clBtnHighlight, FadeLineWidth, True);
-  ACanvas.TextOut(TextArea.Left, TextArea.Top, LineCaption);
+    end
+    else
+      if (Sender is TBaseVirtualTree) then
+      begin
+        //Get Tree's Font
+        ACanvas.Font.Assign(TBaseVirtualTree(Sender).Font);
+        CaptionLineItemHeight := ASuiteInstance.SmallHeightNode;
+        if ACaption <> '' then
+        begin
+          LineCaption := Format(' %s ', [ACaption]);
+          CaptionLineItemHeight := ACanvas.TextHeight(ACaption);
+          TextSpace   := 1;
+        end;
+      end;
+    TextArea.Width := GetTextWidth(LineCaption, ACanvas.Font);
+    OffsetRect(TextArea, Round((RectWidth(LineArea) - RectWidth(TextArea)) / 2 - TextSpace), 0);
+    Inc(ARect.Top, (CaptionLineItemHeight div 2) + 1);
+    //Create first line
+    Inc(ARect.Top);
+    Inc(ARect.Bottom);
+    DrawFadeLine(ACanvas, TextArea, ARect, clBtnShadow, FadeLineWidth, True);
+    //Create second line
+    Inc(ARect.Top);
+    Inc(ARect.Bottom);
+    DrawFadeLine(ACanvas, TextArea, ARect, clBtnHighlight, FadeLineWidth, True);
+    ACanvas.TextOut(TextArea.Left, TextArea.Top, LineCaption);
+  except
+    on E : Exception do
+      TASuiteLogger.Exception(E);
+  end;
 end;
 
 procedure TdmTrayMenu.DrawFadeLine(ACanvas: TCanvas; AClipRect, ALineRect: TRect; AColor: TColor; AFadeWidth: Integer; AClip: Boolean);
@@ -920,7 +925,10 @@ end;
 procedure TdmTrayMenu.PopulateCategoryItems(Sender: TObject);
 var
   Node: PVirtualNode;
+  {%H-}log: ISynLog;
 begin
+  log := TASuiteLogger.Enter('TdmTrayMenu.PopulateCategoryItems', Self);
+
   try
     //Get first node
     if Assigned(Sender) then
