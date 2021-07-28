@@ -237,7 +237,7 @@ end;
 
 class procedure TSQLtbl_list.Load(ADBManager: TDBManager; ATree: TBaseVirtualTree; IsImport: Boolean);
 var
-  log: ISynLog;
+  {%H-}log: ISynLog;
 begin
   log := TASuiteLogger.Enter('TSQLtbl_list.Load', nil);
 
@@ -304,7 +304,7 @@ end;
 
 class procedure TSQLtbl_list.Save(ADBManager: TDBManager; ATree: TBaseVirtualTree);
 var
-  log: ISynLog;
+  {%H-}log: ISynLog;
 begin
   log := TASuiteLogger.Enter('TSQLtbl_list.Save', nil);
   TSQLtbl_list.SaveItemsByParentID(ATree, ADBManager, ATree.GetFirst, 0);

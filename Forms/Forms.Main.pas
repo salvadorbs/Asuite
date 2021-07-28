@@ -528,7 +528,7 @@ end;
 
 procedure TfrmMain.SetAllIcons;
 var
-  log: ISynLog;
+  {%H-}log: ISynLog;
 begin
   log := TASuiteLogger.Enter('TfrmMain.SetAllIcons', Self);
 
