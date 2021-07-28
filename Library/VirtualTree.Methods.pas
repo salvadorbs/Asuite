@@ -42,7 +42,7 @@ type
     class function AddChildNodeByGUI(const ASender: TBaseVirtualTree; AParentNode: PVirtualNode;
                                 AType: TvTreeDataType): TvBaseNodeData;
     class procedure AddNodeByPathFile(const ASender: TBaseVirtualTree; AParentNode: PVirtualNode;
-                                const APathFile: string; AAttachMode: TVTNodeAttachMode);
+                                const APathFile: string; AAttachMode: TVTNodeAttachMode; AExtractName: Boolean = False);
     class function AddNodeByText(const ASender: TBaseVirtualTree; AParentNode: PVirtualNode;
                            const AText: string; AAttachMode: TVTNodeAttachMode): Boolean;
 
@@ -183,48 +183,60 @@ end;
 
 class procedure TVirtualTreeMethods.AddNodeByPathFile(
   const ASender: TBaseVirtualTree; AParentNode: PVirtualNode;
-  const APathFile: string; AAttachMode: TVTNodeAttachMode);
+  const APathFile: string; AAttachMode: TVTNodeAttachMode; AExtractName: Boolean
+  );
 var
   NodeData: TvFileNodeData;
   Node: PVirtualNode;
   sName: String;
 begin
-  TASuiteLogger.Info('Add node by File Path (%s)', [QuotedStr(APathFile)]);
+  TASuiteLogger.Debug('Add node by File Path (%s)', [QuotedStr(APathFile)]);
+
   Node := AddChildNodeEx(ASender, AParentNode, AAttachMode, vtdtFile);
-  NodeData := TvFileNodeData(GetNodeItemData(Node, ASender));
+  try
+    NodeData := TvFileNodeData(GetNodeItemData(Node, ASender));
 
-  //Set some node record's variables
-  sName := ChangeFileExt(ExtractFileName(APathFile), '');
-  if sName = '' then
-    sName := ExtractFileDrive(APathFile);
-  NodeData.Name := sName;
-
-  if ExtractFileExtEx(APathFile) = EXT_LNK then
-  begin
-    //Shortcut
-    NodeData.PathFile   := ASuiteInstance.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfPathFile));
-    {$IFDEF MSWINDOWS}
-    NodeData.Parameters := ASuiteInstance.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfParameter));
-    NodeData.WorkingDir := ASuiteInstance.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfWorkingDir));
-    {$ENDIF}
-  end
-  else begin
-    if ExtractFileExtEx(APathFile) = EXT_URL then
+    if ExtractFileExtEx(APathFile) = EXT_LNK then
     begin
       //Shortcut
-      NodeData.PathFile   := ASuiteInstance.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfPathFile));
-      NodeData.PathIcon   := ASuiteInstance.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfPathIcon));
-      if NodeData.PathIcon = '' then
-        NodeData.PathIcon := CONST_PATH_URLICON;
-      NodeData.Parameters := ASuiteInstance.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfParameter));
-      NodeData.WorkingDir := ASuiteInstance.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfWorkingDir));
+      NodeData.PathFile   := ASuiteInstance.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfPathFile));
+      {$IFDEF MSWINDOWS}
+      NodeData.Parameters := ASuiteInstance.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfParameter));
+      NodeData.WorkingDir := ASuiteInstance.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfWorkingDir));
+      {$ENDIF}
     end
-    else //Normal file
-      NodeData.PathFile := ASuiteInstance.Paths.AbsoluteToRelative(APathFile);
+    else begin
+      if ExtractFileExtEx(APathFile) = EXT_URL then
+      begin
+        //Shortcut
+        NodeData.PathFile   := ASuiteInstance.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfPathFile));
+        NodeData.PathIcon   := ASuiteInstance.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfPathIcon));
+        if NodeData.PathIcon = '' then
+          NodeData.PathIcon := CONST_PATH_URLICON;
+        NodeData.Parameters := ASuiteInstance.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfParameter));
+        NodeData.WorkingDir := ASuiteInstance.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfWorkingDir));
+      end
+      else //Normal file
+        NodeData.PathFile := ASuiteInstance.Paths.AbsoluteToRelative(APathFile);
+    end;          
+
+    //Set some node record's variables
+    if AExtractName then
+      sName := ExtractFileNameEx(NodeData.PathFile)
+    else begin
+      sName := ChangeFileExt(ExtractFileName(NodeData.PathFile), '');
+      if sName = '' then
+        sName := ExtractFileDrive(NodeData.PathFile);
+    end;
+    NodeData.Name := sName;
+
+    //If it is a directory, use folder icon
+    if DirectoryExists(NodeData.PathAbsoluteFile) then
+      NodeData.PathIcon := CONST_PATH_FOLDERICON;
+  except
+    on E: Exception do
+      TASuiteLogger.Exception(E);
   end;
-  //If it is a directory, use folder icon
-  if DirectoryExists(NodeData.PathAbsoluteFile) then
-    NodeData.PathIcon := CONST_PATH_FOLDERICON;
 end;
 
 class function TVirtualTreeMethods.AddNodeByText(
@@ -274,9 +286,9 @@ class procedure TVirtualTreeMethods.CheckVisibleNodePathExe(
 var
   Node: PVirtualNode;
   NodeData: TvBaseNodeData;
-  log: ISynLog;
+  {%H-}log: ISynLog;
 begin
-  log := TASuiteLogger.Enter('TVirtualTreeMethods.CheckVisibleNodePathExe', nil);
+  //log := TASuiteLogger.Enter('TVirtualTreeMethods.CheckVisibleNodePathExe', nil);
 
   Node := ASender.GetFirstVisible;
   while Assigned(Node) do

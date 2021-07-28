@@ -130,10 +130,7 @@ begin
       TVirtualTreeMethods.GetAllIcons(ASuiteInstance.MainTree, nil);
     except
       on E : Exception do
-      begin
-        ShowMessageEx(msgImportFailed, True);
-        TASuiteLogger.Exception(E);
-      end;
+        TASuiteLogger.Exception(E, msgImportFailed);
     end;
   end;
 end;

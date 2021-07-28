@@ -262,25 +262,28 @@ function GetShortcutTarget(const LinkFileName: String; ShortcutType: TShortcutFi
 var
   ISLink    : IShellLinkW;
   IPFile    : IPersistFile;
-  WidePath  : PChar;
   Info      : Array[0..MAX_PATH] of Char;
   wfs       : WIN32_FIND_DATAW;
-begin
-CoCreateInstance(CLSID_ShellLink, nil, CLSCTX_INPROC_SERVER, IShellLinkW, ISLink);
-  if ISLink.QueryInterface(IPersistFile, IPFile) = 0 then
-  begin
-    WidePath := PChar(LinkFileName);
-    //Get pathexe, parameters or working directory from shortcut
-    IPFile.Load(WidePath, STGM_READ);
-    case ShortcutType of
-     sfPathFile   : ISLink.GetPath(@info,MAX_PATH,@wfs,SLGP_UNCPRIORITY);
-     sfParameter  : ISLink.GetArguments(@info,MAX_PATH);
-     sfWorkingDir : ISLink.GetWorkingDirectory(@info,MAX_PATH);
-    end;
-    Result := info
-  end
-  else
+begin  
+  Result := LinkFileName;
+  try
+    if CoCreateInstance(CLSID_ShellLink, nil, CLSCTX_INPROC_SERVER, IShellLinkW, ISLink) = S_OK then
+      if ISLink.QueryInterface(IPersistFile, IPFile) = 0 then
+      begin
+        //Get pathexe, parameters or working directory from shortcut
+        IPFile.Load(PChar(LinkFileName), STGM_READ);
+        case ShortcutType of
+         sfPathFile   : ISLink.GetPath(@info,MAX_PATH,@wfs,SLGP_UNCPRIORITY);
+         sfParameter  : ISLink.GetArguments(@info,MAX_PATH);
+         sfWorkingDir : ISLink.GetWorkingDirectory(@info,MAX_PATH);
+        end;
+        Result := info
+      end
+      else
+        Result := LinkFileName;
+  except
     Result := LinkFileName;
+  end;
 end;
 {$ELSE}
 {$IFDEF UNIX}

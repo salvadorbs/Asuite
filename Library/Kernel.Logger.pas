@@ -35,8 +35,8 @@ type
     class procedure Info(const AText: string; AParams: Array of const);
     class procedure Debug(const AText: string; AParams: Array of const);
     class procedure Error(const AText: string; AParams: Array of const);
-    class procedure LastError(const AText: string; AParams: Array of const);   
-    class procedure Exception(E: SysUtils.Exception);
+    class procedure LastError(const AText: string; AParams: Array of const);
+    class procedure Exception(E: SysUtils.Exception; const AText: string = '');
 
     class function Enter(const AMethodName: PUTF8Char; AInstance: TObject): ISynLog;
   end;
@@ -78,9 +78,13 @@ begin
   TSynLog.Add.Log(sllLastError, Format(AText, AParams));
 end;
 
-class procedure TASuiteLogger.Exception(E: SysUtils.Exception);
+class procedure TASuiteLogger.Exception(E: SysUtils.Exception;
+  const AText: string);
 begin
-  ShowMessageFmtEx(msgErrGeneric, [E.ClassName, E.Message], True);
+  if AText = '' then
+    ShowMessageFmtEx(msgErrGeneric, [E.ClassName, E.Message], True)
+  else
+    ShowMessageEx(AText, True);
 
   TSynLog.Add.Log(sllStackTrace, E.Message, E);
 end;
