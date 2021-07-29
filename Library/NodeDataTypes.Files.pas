@@ -269,10 +269,7 @@ end;
 procedure TvFileNodeData.CheckPathFile;
 var
   bPathExists: Boolean;
-  //log: ISynLog;
 begin
-  //log := TASuiteLogger.Enter('TvFileNodeData.CheckPathFile', Self);
-
   bPathExists := IsPathExists(Self.PathAbsoluteFile);
   if FIsPathFileExists <> bPathExists then
   begin

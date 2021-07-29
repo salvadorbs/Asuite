@@ -119,6 +119,7 @@ resourcestring
   msgStop = 'Stop';             
   msgScanFolderExtNotValid = 'Ext file not valid. Please check it and retry!';
   msgInputUsername = 'Please insert username';
+  msgGenerateFileHashError = 'Generating hash file because of an error (file path = %s)';
 
   //ComboboxItems
   cxActionOnExeOpt_item0 = 'Just run file';

@@ -898,13 +898,18 @@ procedure TVirtualTreeEvents.DoGetImageIndex(Sender: TBaseVirtualTree;
 var
   NodeData: TvBaseNodeData;
 begin
-  if (Kind = ikNormal) or (Kind = ikSelected) then
-  begin
-    NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
-    if (Column = 0) or (Column = -1) then
-      ImageIndex := NodeData.Icon.ImageIndex
-    else
-      ImageIndex := -1;
+  try
+    if (Kind = ikNormal) or (Kind = ikSelected) then
+    begin
+      NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
+      if (Column = 0) or (Column = -1) then
+        ImageIndex := NodeData.Icon.ImageIndex
+      else
+        ImageIndex := -1;
+    end;
+  except
+    on E : Exception do
+      TASuiteLogger.Exception(E);
   end;
 end;
 

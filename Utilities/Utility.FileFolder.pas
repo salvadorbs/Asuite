@@ -32,7 +32,8 @@ function  GetUrlTarget(const AFileName: String; ShortcutType: TShortcutField): S
 implementation
 
 uses
-  AppConfig.Main, IniFiles, FileInfo, Kernel.Instance, Kernel.Manager {$IFDEF UNIX} , BaseUnix {$ENDIF};
+  AppConfig.Main, IniFiles, FileInfo, Kernel.Instance, Kernel.Manager, Kernel.Logger
+  {$IFDEF UNIX} , BaseUnix {$ENDIF}, Kernel.ResourceStrings;
 
 function BrowseForFolder(const InitialDir: String; const Caption: String): String;
 var
@@ -147,8 +148,13 @@ function GetFileXXHash32(const FileName: String): Integer;
 begin
   Result := 0;
 
-  if (FileName <> '') and FileExists(FileName) then
-    Result := THashFactory.THash32.CreateXXHash32().ComputeFile(FileName).GetInt32();
+  try
+    if (FileName <> '') and not IsUNCPath(FileName) and FileExists(FileName) then
+      Result := THashFactory.THash32.CreateXXHash32().ComputeFile(FileName).GetInt32();
+  except
+    on E : Exception do
+      TASuiteLogger.Exception(E, msgGenerateFileHashError);
+  end;
 end;
 
 function ExtractFileNameEx(const AFileName: String): string;

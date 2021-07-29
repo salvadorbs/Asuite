@@ -1,5 +1,6 @@
 object dmImages: TdmImages
   OnCreate = DataModuleCreate
+  OnDestroy = DataModuleDestroy
   OldCreateOrder = False
   Height = 120
   HorizontalOffset = 954
