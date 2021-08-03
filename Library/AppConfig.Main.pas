@@ -846,7 +846,7 @@ begin
   frmMain.SetAllIcons;
   //Refresh GraphicMenu
   if Assigned(frmGraphicMenu) then
-    TThemeEngine.Create.LoadTheme;
+    frmGraphicMenu.LoadTheme;
 end;
 
 procedure TConfiguration.SetTVAutoOpClCats(value: Boolean);

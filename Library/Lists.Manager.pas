@@ -24,11 +24,14 @@ unit Lists.Manager;
 interface
 
 uses
-  SysUtils, Kernel.Singleton, Lists.Special, NodeDataTypes.Custom,
-  Lists.Base, Lists.HotKey, Kernel.Enumerations{, SynLog};
+  SysUtils, Lists.Special, NodeDataTypes.Custom, Lists.Base, Lists.HotKey,
+  Kernel.Enumerations, SynLog;
 
 type
-  TListManager = class(TSingleton)
+
+  { TListManager }
+
+  TListManager = class
   private
     FMRUList : TSpecialItemsList;
     FMFUList : TSpecialItemsList;
@@ -37,8 +40,8 @@ type
     FSchedulerItemList : TBaseItemsList;
     FHotKeyItemList    : THotkeyItemsList;
   public
-    procedure Initialize; override;
-    procedure Finalize; override;
+    constructor Create;
+    destructor Destroy; override;
 
     procedure RemoveItemFromLists(AItemData: TvCustomRealNodeData);
     procedure ExecuteAutorunList(AutorunListMode: TAutorunListMode);
@@ -54,20 +57,33 @@ type
 implementation
 
 uses
-  LCLIntf, LCLType, AppConfig.Main, VirtualTree.Methods, Kernel.Logger, Kernel.Instance, Kernel.Manager;
+  LCLIntf, LCLType, AppConfig.Main, VirtualTree.Methods, Kernel.Logger, Kernel.Instance;
 
 { TLauncherLists }
 
-procedure TListManager.Initialize;
+constructor TListManager.Create;
 begin
   //Create special list
   FMRUList := TSpecialItemsList.Create(lmMRU);
   FMFUList := TSpecialItemsList.Create(lmMFU);
+
   //Create TNodeLists for autorun
   FStartupItemList   := TBaseItemsList.Create;
   FShutdownItemList  := TBaseItemsList.Create;
   FSchedulerItemList := TBaseItemsList.Create;
   FHotKeyItemList    := THotkeyItemsList.Create;
+end;
+
+destructor TListManager.Destroy;
+begin
+  FreeAndNil(FMRUList);
+  FreeAndNil(FMFUList);
+  FreeAndNil(FStartupItemList);
+  FreeAndNil(FShutdownItemList);
+  FreeAndNil(FSchedulerItemList);
+  FreeAndNil(FHotKeyItemList);
+
+  inherited;
 end;
 
 procedure TListManager.RemoveItemFromLists(AItemData: TvCustomRealNodeData);
@@ -120,17 +136,6 @@ begin
         TVirtualTreeMethods.ExecuteNode(ASuiteInstance.MainTree, List[I].pNode, rmNormal, True);
     end;
   end;
-end;
-
-procedure TListManager.Finalize;
-begin
-  FreeAndNil(FMRUList);
-  FreeAndNil(FMFUList);
-  FreeAndNil(FStartupItemList);
-  FreeAndNil(FShutdownItemList);
-  FreeAndNil(FSchedulerItemList);
-  FreeAndNil(FHotKeyItemList);
-  inherited;
 end;
 
 end.

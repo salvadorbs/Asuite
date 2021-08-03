@@ -26,13 +26,13 @@ interface
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, VirtualTrees, 
   {$IFDEF MSWINDOWS} ActiveX, {$ELSE} FakeActiveX, {$ENDIF}
-  Kernel.Singleton, Forms.GraphicMenu, Forms.Dialog.BaseEntity, Menus, Forms, Controls;
+  Forms.GraphicMenu, Forms.Dialog.BaseEntity, Menus, Forms, Controls;
 
 type
 
   { TVirtualTreeEvents }
 
-  TVirtualTreeEvents = class(TSingleton)
+  TVirtualTreeEvents = class
   private
     FGraphicMenu: TfrmGraphicMenu;
 
@@ -138,6 +138,9 @@ type
     procedure DoGetTextAutorun(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
   end;
+
+var
+  VirtualTreeEvents: TVirtualTreeEvents;
 
 implementation
 
@@ -951,5 +954,11 @@ procedure TVirtualTreeEvents.DoGetNodeDataSizeSearch(Sender: TBaseVirtualTree;
 begin
   NodeDataSize := SizeOf(rTreeDataX);
 end;
+
+initialization
+  VirtualTreeEvents := TVirtualTreeEvents.Create;
+
+finalization
+  VirtualTreeEvents.Free;
 
 end.
