@@ -229,7 +229,7 @@ type
     property GraphicMenuHotKey: string read FGraphicMenuHotKey write SetGraphicMenuHotKey;
     property ClassicMenuHotkey: string read FClassicMenuHotkey write SetClassicMenuHotkey;
     // Misc
-    property ReadOnlyMode: Boolean read FReadOnlyMode write FReadOnlyMode;
+    property ReadOnlyMode: Boolean read FReadOnlyMode write FReadOnlyMode;  //TODO: Remove it
     property Changed: Boolean read FChanged write SetChanged;
     property ASuiteState: TLauncherState read FASuiteState write SetASuiteState;
     property ScanFolderAutoExtractName: boolean read FScanFolderAutoExtractName write FScanFolderAutoExtractName;

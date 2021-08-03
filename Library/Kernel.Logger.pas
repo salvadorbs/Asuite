@@ -24,7 +24,7 @@ unit Kernel.Logger;
 interface
 
 uses
-  SysUtils, SynLog, SynCommons;
+  SysUtils, SynLog, SynCommons, Forms;
 
 type
 
@@ -41,11 +41,27 @@ type
     class function Enter(const AMethodName: PUTF8Char; AInstance: TObject): ISynLog;
   end;
 
+  { TEventContainer }
+
+  TEventContainer = class
+  public
+    procedure HandleApplicationException(Sender: TObject; E: Exception);
+  end;
+
 implementation
 
 uses
   AppConfig.Main, Kernel.Instance, Kernel.Manager, Kernel.ResourceStrings,
   Utility.Misc;
+
+{ TEventContainer }
+
+procedure TEventContainer.HandleApplicationException(Sender: TObject;
+  E: Exception);
+begin
+  if not (E is EAbort) then
+    TASuiteLogger.Exception(E);
+end;
 
 { TASuiteLogger }
 
@@ -88,5 +104,14 @@ begin
 
   TSynLog.Add.Log(sllStackTrace, E.Message, E);
 end;
+
+procedure HandleOnShowException(Msg: ShortString);
+begin
+  TSynLog.Add.Log(sllStackTrace, Msg);
+end;
+
+initialization
+  SysUtils.OnShowException := HandleOnShowException;
+  Application.OnException := TEventContainer(nil).HandleApplicationException;
 
 end.
