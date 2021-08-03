@@ -95,7 +95,7 @@ type
 implementation
 
 uses
-  AppConfig.Main, Kernel.Consts, Utility.FileFolder, LazUTF8,
+  AppConfig.Main, Kernel.Consts, Utility.FileFolder, LazUTF8, Kernel.ResourceStrings,
   Utility.System, VirtualTree.Methods, Utility.Misc, Kernel.Instance, Kernel.Manager
   {$IFDEF Windows}, JwaWindows, JwaWinBase, ShellApi{$ENDIF}, SynLog, Kernel.Logger;
 
@@ -176,10 +176,9 @@ begin
   else
     Result := OpenDocument(Path);
 
-  //TODO bug: Oddly, using Lazarus opendocument, GetLastOSError does not work properly (detects no errors)
   //Error message
   if not Result then
-    ShowMessageEx(Format('%s [%s]', [SysErrorMessage(GetLastOSError), Self.Name]), True);
+    ShowMessageFmtEx(msgErrorExecute, [Self.Name], True);
 end;
 
 function TvFileNodeData.InternalExecuteAsAdmin(ARunFromCategory: Boolean): boolean;
@@ -209,7 +208,7 @@ begin
   Result := ShellExecuteExW(@ShellExecuteInfo);
 
   if not Result then
-    ShowMessageEx(SysErrorMessage(GetLastOSError), True);
+    ShowMessageFmtEx(msgErrorExecuteAdmin, [Self.Name], True);
   {$ELSE}
   Result := CreateProcessEx('pkexec', Format('%s %s', [PathAbsoluteFile, Parameters]), WorkingDirAbsolute,
                             ConvertWindowStateToSWOptions(GetWindowState(ARunFromCategory)), EnvironmentVars) <> -1;
@@ -248,7 +247,7 @@ begin
     FileClose(ProcInfo.hThread);
   end
   else
-    ShowMessageEx(SysErrorMessage(GetLastOSError), True);
+    ShowMessageFmtEx(msgErrorExecuteUser, [Self.Name, AUserData.UserName], True);
   {$ELSE}
   Result := CreateProcessEx('pkexec', Format('%s %s %s', [AUserData.UserName, PathAbsoluteFile, Parameters]), WorkingDirAbsolute,
                             ConvertWindowStateToSWOptions(GetWindowState(ARunFromCategory)), EnvironmentVars) <> -1;

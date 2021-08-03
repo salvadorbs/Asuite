@@ -252,7 +252,7 @@ begin
   Result := OpenDocument(sPath);
 
   if not Result then
-    ShowMessageFmtEx(msgErrGeneric, ['OpenFolder()', SysErrorMessage(GetLastOSError)], True);
+    ShowMessageFmtEx(msgErrorOpenFolder, [sPath], True);
 end;
 
 procedure TfrmGraphicMenu.FormCreate(Sender: TObject);
@@ -500,14 +500,15 @@ procedure TfrmGraphicMenu.pmWindowPopup(Sender: TObject);
 var
   NodeData : TvBaseNodeData;
 begin
+  NodeData := nil;
   if Assigned(vstList.GetFirstSelected) then
-  begin
     NodeData := TVirtualTreeMethods.GetNodeItemData(vstList.GetFirstSelected, vstList);
-    mniRun.Enabled := not(NodeData.IsSeparatorItem);
-    mniRunAs.Enabled         := not(NodeData.IsSeparatorItem) and (NodeData.IsFileItem);
-    mniRunAsAdmin.Enabled    := not(NodeData.IsSeparatorItem) and (NodeData.IsFileItem);
-    mniOpenFolderSw.Enabled  := NodeData.IsFileItem;
-  end;
+
+  mniRun.Enabled := Assigned(NodeData) and not(NodeData.IsSeparatorItem);
+  mniRunAs.Enabled         := Assigned(NodeData) and not(NodeData.IsSeparatorItem) and (NodeData.IsFileItem);
+  mniRunAsAdmin.Enabled    := Assigned(NodeData) and not(NodeData.IsSeparatorItem) and (NodeData.IsFileItem);
+  mniOpenFolderSw.Enabled  := Assigned(NodeData) and NodeData.IsFileItem;
+  mniProperty.Enabled  := Assigned(NodeData);
 end;
 
 procedure TfrmGraphicMenu.PopulateListTree(const ATree: TVirtualStringTree);

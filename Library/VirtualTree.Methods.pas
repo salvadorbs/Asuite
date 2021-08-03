@@ -116,6 +116,8 @@ begin
   FolderPath := '';
   Result     := nil;
   NodeData   := nil;
+  DeleteNode := False;
+
   try
     ChildNode  := AddChildNodeEx(ASender, AParentNode, amInsertAfter, AType);
     //Set ChildNode's pNode and name (temporary)
@@ -127,18 +129,19 @@ begin
       FolderPath := BrowseForFolder();
       if FolderPath <> '' then
       begin
+        TASuiteLogger.Info('User selected folder "%s"', [FolderPath]);
         sName := ExtractDirectoryName(FolderPath + PathDelim);
         if sName <> '' then
           NodeData.Name := sName;
         TvFileNodeData(NodeData).PathFile := ASuiteInstance.Paths.AbsoluteToRelative(FolderPath + PathDelim);
       end
       else begin
-        ASender.DeleteNode(ChildNode);
-        Exit;
+        DeleteNode := True;
+        ShowMessageFmtEx(msgErrScanFolderEmptyPath,[], True);
       end;
     end;
     //ShowPropertyItem
-    if (ShowItemProperty(nil, ASender, ChildNode, True) <> mrOK) then
+    if (DeleteNode) or (ShowItemProperty(nil, ASender, ChildNode, True) <> mrOK) then
     begin
       ASender.DeleteNode(ChildNode);
       NodeData   := nil;
