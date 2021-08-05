@@ -55,7 +55,7 @@ var
 implementation
 
 uses
-  NodeDataTypes.Custom, NodeDataTypes.Files,
+  NodeDataTypes.Custom, NodeDataTypes.Files, Kernel.Instance,
   Kernel.Types, Forms.Main,
   VirtualTree.Methods, VirtualTree.Events;
 
@@ -93,7 +93,7 @@ var
   Node: PVirtualNode;
 begin
   Result := inherited;
-  TVirtualTreeEvents.Create.SetupVSTSimple(vstCategoryItems);
+  ASuiteInstance.VSTEvents.SetupVSTSimple(vstCategoryItems);
   if Assigned(CurrentNodeData) then
   begin
     Node := CurrentNodeData.pNode;

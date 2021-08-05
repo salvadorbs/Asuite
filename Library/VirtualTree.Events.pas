@@ -955,10 +955,4 @@ begin
   NodeDataSize := SizeOf(rTreeDataX);
 end;
 
-initialization
-  VirtualTreeEvents := TVirtualTreeEvents.Create;
-
-finalization
-  VirtualTreeEvents.Free;
-
 end.

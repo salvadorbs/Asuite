@@ -742,8 +742,6 @@ begin
 end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);
-var
-  VSTEvents: TVirtualTreeEvents;
 begin
   TASuiteLogger.Enter('MainFormCreate', Self);
 
@@ -762,9 +760,8 @@ begin
   pcList.ActivePageIndex := PG_LIST;
 
   //Setup events in vsts
-  VSTEvents := TVirtualTreeEvents.Create;
-  VSTEvents.SetupVSTList(vstList);
-  VSTEvents.SetupVSTSearch(vstSearch);
+  ASuiteInstance.VSTEvents.SetupVSTList(vstList);
+  ASuiteInstance.VSTEvents.SetupVSTSearch(vstSearch);
 
   //Load Database and get icons (only first level of tree)
   Config.LoadConfig;

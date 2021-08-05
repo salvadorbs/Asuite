@@ -77,7 +77,7 @@ implementation
 uses
   AppConfig.Main, VirtualTree.Events, VirtualTree.Methods, NodeDataTypes.Custom,
   Forms.ShortcutGrabber, DataModules.Icons, UITypes, Kernel.ResourceStrings,
-  LCLProc, Kernel.Consts, Kernel.Manager, Utility.Misc;
+  LCLProc, Kernel.Consts, Kernel.Manager, Utility.Misc, Kernel.Instance;
 
 {$R *.lfm}
 
@@ -143,7 +143,7 @@ end;
 function TfrmHotkeyOptionsPage.InternalLoadData: Boolean;
 begin
   Result := inherited;
-  TVirtualTreeEvents.Create.SetupVSTHotkey(vstItems);
+  ASuiteInstance.VSTEvents.SetupVSTHotkey(vstItems);
 
   //Hot Keys
   cbHotKey.Checked := Config.HotKey;

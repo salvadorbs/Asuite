@@ -72,6 +72,7 @@ type
     imgDragSpaceHidden: TImage;
     tmrCheckItems: TTimer;
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure imgDragSpaceHiddenMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure imgLogoMouseMove(Sender: TObject; Shift: TShiftState; X,
@@ -261,7 +262,7 @@ end;
 
 procedure TfrmGraphicMenu.FormCreate(Sender: TObject);
 begin
-  TVirtualTreeEvents.Create.SetupVSTGraphicMenu(vstList, Self);
+  ASuiteInstance.VSTEvents.SetupVSTGraphicMenu(vstList, Self);
 
   //Load graphics
   FThemeEngine := TThemeEngine.Create(Self);
@@ -294,6 +295,11 @@ begin
   {$IFDEF UNIX}
   sknbtnEject.Visible := False;
   {$ENDIF}
+end;
+
+procedure TfrmGraphicMenu.FormDestroy(Sender: TObject);
+begin
+  FThemeEngine.Free;
 end;
 
 procedure TfrmGraphicMenu.imgDragSpaceHiddenMouseUp(Sender: TObject;

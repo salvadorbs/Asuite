@@ -13,6 +13,7 @@ object frmGraphicMenu: TfrmGraphicMenu
   KeyPreview = True
   OnCreate = FormCreate
   OnDeactivate = FormDeactivate
+  OnDestroy = FormDestroy
   OnHide = FormHide
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress

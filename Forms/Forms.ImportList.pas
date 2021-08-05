@@ -112,7 +112,7 @@ end;
 procedure TfrmImportList.FormCreate(Sender: TObject);
 begin
   Config.ASuiteState := lsImporting;
-  TVirtualTreeEvents.Create.SetupVSTImportList(vstListImp);
+  ASuiteInstance.VSTEvents.SetupVSTImportList(vstListImp);
   pgcImport.ActivePageIndex := 0;
 end;
 

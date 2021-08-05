@@ -91,7 +91,7 @@ implementation
 uses
   NodeDataTypes.Custom, AppConfig.Main, DataModules.Icons, Graphics, Kernel.Manager,
   VirtualTree.Methods, Kernel.ResourceStrings, Kernel.Enumerations, VirtualTree.Events,
-  Utility.Misc;
+  Utility.Misc, Kernel.Instance;
 
 {$R *.lfm}
 
@@ -146,8 +146,8 @@ function TfrmAutorunOptionsPage.InternalLoadData: Boolean;
 begin
   Result := inherited;
   FActiveTree := vstStartupItems;
-  TVirtualTreeEvents.Create.SetupVSTAutorun(vstStartupItems);
-  TVirtualTreeEvents.Create.SetupVSTAutorun(vstShutdownItems);
+  ASuiteInstance.VSTEvents.SetupVSTAutorun(vstStartupItems);
+  ASuiteInstance.VSTEvents.SetupVSTAutorun(vstShutdownItems);
   //Startup
   ChangeButtonGlyph(btnStartupUp, 'arrow_up');
   ChangeButtonGlyph(btnStartupDelete, 'delete');
