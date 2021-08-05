@@ -236,7 +236,7 @@ type
     property ScanFolderFileTypes: TStringList read FScanFolderFileTypes write FScanFolderFileTypes;
     property ScanFolderExcludeNames: TStringList read FScanFolderExcludeNames write FScanFolderExcludeNames;
 
-    procedure AfterUpdateConfig();
+    procedure AfterUpdateConfig;
 
     //Update theme paths
     procedure UpdateGMTheme;
@@ -257,9 +257,11 @@ uses
   TypInfo, Kernel.ResourceStrings, LCLTranslator, AppConfig.Consts, BGRABitmapTypes,
   Utility.Conversions, Hotkeys.Manager.Platform, Kernel.Instance, Kernel.Manager;
 
-procedure TConfiguration.AfterUpdateConfig();
+procedure TConfiguration.AfterUpdateConfig;
 begin   
   TVirtualTreeMethods.UpdateItemColor(ASuiteInstance.MainTree);
+
+  SetDefaultLang(FLangID, ASuiteInstance.Paths.SuitePathLocale);
 end;
 
 constructor TConfiguration.Create;
@@ -1020,8 +1022,6 @@ begin
     FLangID := value
   else
     FLangID := 'en';
-
-  SetDefaultLang(value, ASuiteInstance.Paths.SuitePathLocale);
 end;
 
 procedure TConfiguration.SetGraphicMenuHotKey(const Value: string);
