@@ -382,15 +382,17 @@ begin
   inherited;
   if Source is TvFileNodeData then
   begin
-    SourceNodeData   := TvFileNodeData(Source);
+    SourceNodeData  := TvFileNodeData(Source);
+
     //Copy from Source
-    SetPathFile(SourceNodeData.PathFile);
-    FParameters      := SourceNodeData.Parameters;
-    FWorkingDir      := SourceNodeData.WorkingDir;
-    FNoMRU           := SourceNodeData.FNoMRU;
-    FNoMFU           := SourceNodeData.FNoMFU;
-    SetShortcutDesktop(SourceNodeData.ShortcutDesktop);
-    FRunFromCategory := SourceNodeData.FRunFromCategory;
+    Self.PathFile   := SourceNodeData.PathFile;
+    Self.Parameters := SourceNodeData.Parameters;
+    Self.WorkingDir := SourceNodeData.WorkingDir;
+    Self.NoMRU      := SourceNodeData.FNoMRU;
+    Self.NoMFU      := SourceNodeData.FNoMFU;
+    Self.ShortcutDesktop := SourceNodeData.ShortcutDesktop;
+    Self.RunFromCategory := SourceNodeData.FRunFromCategory;
+    Self.EnvironmentVars.Assign(SourceNodeData.EnvironmentVars);
   end;
 end;
 
