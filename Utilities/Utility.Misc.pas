@@ -134,7 +134,7 @@ begin
     Result := Result + ' ' + VERSION_PRERELEASE;
   except
     on E : Exception do
-      ShowMessageFmtEx(msgErrGeneric,[E.ClassName, E.Message], True);
+      TASuiteLogger.Exception(E);
   end;
 end;
 

@@ -99,7 +99,7 @@ var
   PathTemp : String;
 begin
   PathTemp := ASuiteInstance.Paths.RelativeToAbsolute(Path);
-  Result := (PathTemp = 'shell:AppsFolder') or IsUNCPath(PathTemp) or IsValidURLProtocol(PathTemp) or FileExists(PathTemp) or SysUtils.DirectoryExists(PathTemp)
+  Result := (PathTemp = 'shell:AppsFolder') or IsUNCPath(PathTemp) or IsValidURLProtocol(PathTemp) or FileExists(PathTemp) or SysUtils.DirectoryExists(PathTemp);
 end;
 
 function IsExecutableFile(APathFile: String): Boolean;
@@ -146,7 +146,11 @@ begin
 
       Result := Process.ProcessID;
     except
-      Result := -1;
+      on E: Exception do
+      begin
+        TASuiteLogger.Exception(E);
+        Result := -1;
+      end;
     end;
   finally
     Process.Free;

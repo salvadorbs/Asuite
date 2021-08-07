@@ -24,7 +24,7 @@ unit Icons.Manager;
 interface
 
 uses
-  SysUtils, Classes, Controls, Forms, Icons.Files, Generics.Collections,
+  SysUtils, Classes, Controls, Forms, Icons.Files, Generics.Collections, SyncObjs,
   Kernel.Consts, LCLIntf, Icons.Base, Icons.ExtFile, Contnrs, BGRABitmap;
 
 type
@@ -38,6 +38,7 @@ type
     FPathTheme: string;
     FItems: TBaseIcons;
     FExtItems: TBaseIcons;
+    FLock: SyncObjs.TCriticalSection;
     {$IFDEF UNIX}
     FExtToMimeIconName: TFPDataHashTable;
     {$ENDIF}
@@ -84,7 +85,7 @@ implementation
 
 uses
   Kernel.Logger, FileUtil, LazFileUtils, Kernel.Instance, Kernel.Manager, ImgList,
-  Graphics, DataModules.Icons
+  Graphics, DataModules.Icons, SynLog
   {$IFDEF UNIX}
   , IniFiles, BaseUnix, StrUtils
     {$IFDEF LCLQT5}
@@ -103,7 +104,8 @@ uses
 constructor TIconsManager.Create;
 begin
   FItems := TBaseIcons.Create(True);
-  FExtItems := TBaseIcons.Create(True);
+  FExtItems := TBaseIcons.Create(True);       
+  FLock := SyncObjs.TCriticalSection.Create;
 
   {$IFDEF UNIX}
   //Get mime and icons name from all extension in system
@@ -115,7 +117,8 @@ end;
 destructor TIconsManager.Destroy;
 begin
   FItems.Free;
-  FExtItems.Free;  
+  FExtItems.Free;   
+  FLock.Free;
 
   {$IFDEF UNIX}
   ClearExtToMimeList;
@@ -235,8 +238,13 @@ begin
       dmImages.ilLargeIcons.FindResolution(ICON_SIZE_SMALL, Images);
 
     Assert(Assigned(Images), 'Images is not assigned!');
-
-    Images.GetBitmap(AImageIndex, bmpTemp);
+         
+    FLock.Acquire;
+    try
+      Images.GetBitmap(AImageIndex, bmpTemp);
+    finally  
+      FLock.Release;
+    end;                                
 
     Result := TBGRABitmap.Create(bmpTemp);
   finally
@@ -332,8 +340,9 @@ var
   Icon: TBaseIcon;
   sPath: string;
   IconFiles: TStringList;
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('LoadAllIcons', Self);
+  log := TASuiteLogger.Enter('TIconsManager.LoadAllIcons', Self);
   TASuiteLogger.Info('Search and load all icons in folder "%s"', [FPathTheme + ICONS_DIR]);
 
   Clear(True);

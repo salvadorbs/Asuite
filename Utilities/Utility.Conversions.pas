@@ -37,7 +37,6 @@ procedure StrToFont(const s: string; AFont: TFont);
 function FontToStr(Font: TFont): string;
 
 { String }
-function  BoolToStr(Bool: Boolean): String;
 function  StrToBool(Str: string): boolean;
 procedure StrToStrings(Str, Sep: string; const List: TStrings);
 
@@ -93,14 +92,6 @@ begin
   sColor := ColorToHtml(Font.Color);  
   sStyle := GetEnumName(TypeInfo(TFontStyles), integer(Font.Style));
   result := Font.Name + '|' + IntToStr(Font.Size) + '|' + sColor + '|' + sStyle;
-end;
-
- function BoolToStr(Bool: Boolean):String;
-begin
-  if Bool = true then
-    result := '1'
-  else
-    result := '0';
 end;
 
 function StrToBool(Str: string): boolean;

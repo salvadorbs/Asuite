@@ -69,7 +69,7 @@ var
 implementation
 
 uses
-  VirtualTree.Events, Kernel.Types, Kernel.Logger, Kernel.Instance;
+  VirtualTree.Events, Kernel.Types, Kernel.Logger, SynLog, Kernel.Instance;
 
 {$R *.lfm}
 
@@ -231,14 +231,18 @@ begin
 end;
 
 function TfrmDialogBase.InternalLoadData: Boolean;
+var
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('InternalLoadData', Self);
+  log := TASuiteLogger.Enter('TfrmDialogBase.InternalLoadData', Self);
   Result := True;
 end;
 
 function TfrmDialogBase.InternalSaveData: Boolean;
+var
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('InternalSaveData', Self);
+  log := TASuiteLogger.Enter('TfrmDialogBase.InternalSaveData', Self);
   Result := True;
 end;
 

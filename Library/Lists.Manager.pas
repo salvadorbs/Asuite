@@ -108,8 +108,9 @@ procedure TListManager.ExecuteAutorunList(AutorunListMode: TAutorunListMode);
 var
   List : TBaseItemsList;
   I    : Integer;
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('ExecuteAutorunList', Self);
+  log := TASuiteLogger.Enter('TListManager.ExecuteAutorunList', Self);
   case AutorunListMode of
     amStartup: TASuiteLogger.Info('Execute Autorun List (Startup)', []);
     amShutdown: TASuiteLogger.Info('Execute Autorun List (Shutdown)', []);

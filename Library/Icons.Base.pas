@@ -28,8 +28,6 @@ uses
   BGRABitmap;
 
 type
-  //TODO: Add some logs in this and child class
-
   { TBaseIcon }
 
   TBaseIcon = class

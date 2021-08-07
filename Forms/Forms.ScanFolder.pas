@@ -26,7 +26,8 @@ interface
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, DefaultTranslator, ShellCtrls,
-  ImgList, ButtonPanel, FileUtil, Thread.FindFiles, StrUtils, LazStringUtils;
+  ImgList, ButtonPanel, FileUtil, Thread.FindFiles, SynLog, StrUtils,
+  LazStringUtils;
 
 type
 
@@ -152,16 +153,13 @@ end;
 procedure TfrmScanFolder.btnScanClick(Sender: TObject);
 var
   ListNodeData : TvBaseNodeData;
-begin             
+begin
   SaveSettings;
 
-  TASuiteLogger.Info('Start scanning folders to search files', []);
   if vstTypes.HasChildren[vstTypes.RootNode] then
   begin
     if Assigned(vstShell.Selected) then
     begin
-      TASuiteLogger.Info('Path: %s', [vstShell.Selected.GetTextPath]);
-
       pbScan.Style := pbstMarquee;
       pbScan.Position := 0;
 
@@ -416,19 +414,7 @@ begin
   sShortName := ExtractFileName(AFilePath);
 
   if Assigned(FListNode) then
-  begin
-    Node := TVirtualTreeMethods.AddChildNodeEx(ASuiteInstance.MainTree, FListNode, amInsertAfter, vtdtFile, False);
-    NodeData := TVirtualTreeMethods.GetNodeItemData(Node, ASuiteInstance.MainTree);
-
-    //Name
-    if chkExtractName.Checked then
-      NodeData.Name := ExtractFileNameEx(AFilePath)
-    else
-      NodeData.Name := sShortName;
-
-    //Path
-    TvFileNodeData(NodeData).PathFile := AFilePath;
-  end;
+    TVirtualTreeMethods.AddNodeByPathFile(ASuiteInstance.MainTree, FListNode, AFilePath, amInsertAfter, True);
 end;
 
 procedure TfrmScanFolder.vstTypesAddToSelection(Sender: TBaseVirtualTree;

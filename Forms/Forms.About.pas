@@ -41,7 +41,7 @@ type
     lblCopyright: TLabel;
     imgLogo: TImage;
     lnklblWebSite: TJppLinkLabel;
-    procedure FormShow(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
     procedure imgDonateClick(Sender: TObject);
     procedure imgLicenseClick(Sender: TObject);
     procedure lnklblWebSiteClick(Sender: TObject);
@@ -62,7 +62,7 @@ uses
 
 {$R *.lfm}
 
-procedure TfrmAbout.FormShow(Sender: TObject);
+procedure TfrmAbout.FormActivate(Sender: TObject);
 begin
   Self.Caption := Format(Self.Caption, [APP_NAME]);
   lblAppName.Caption := Format(lblAppName.Caption, [APP_NAME]);

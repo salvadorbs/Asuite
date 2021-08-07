@@ -225,7 +225,10 @@ begin
     if Not FileExists(sTempPath) then
       sTempPath := ASuiteInstance.Paths.SuitePathCurrentTheme + 'PersonalPicture.png';
   end;
-  imgPersonalPicture.Picture.LoadFromFile(sTempPath);
+
+  if FileExists(sTempPath) then
+    imgPersonalPicture.Picture.LoadFromFile(sTempPath);
+
   imgPersonalPicture.Visible := (FileExists(sTempPath));
   imgUserFrame.Visible := (FileExists(sTempPath));
 end;

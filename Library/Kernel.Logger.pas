@@ -24,27 +24,49 @@ unit Kernel.Logger;
 interface
 
 uses
-  SysUtils, SynLog, SynCommons;
+  SysUtils, SynLog, SynCommons, Forms;
 
 type
+
+  { TASuiteLogger }
+
   TASuiteLogger = Class
   public
     class procedure Info(const AText: string; AParams: Array of const);
     class procedure Debug(const AText: string; AParams: Array of const);
     class procedure Error(const AText: string; AParams: Array of const);
     class procedure LastError(const AText: string; AParams: Array of const);
+    class procedure Exception(E: SysUtils.Exception; const AText: string = '');
 
     class function Enter(const AMethodName: PUTF8Char; AInstance: TObject): ISynLog;
+  end;
+
+  { TEventContainer }
+
+  TEventContainer = class
+  public
+    procedure HandleApplicationException(Sender: TObject; E: Exception);
   end;
 
 implementation
 
 uses
-  AppConfig.Main, Kernel.Instance, Kernel.Manager;
+  AppConfig.Main, Kernel.Instance, Kernel.Manager, Kernel.ResourceStrings,
+  Utility.Misc;
+
+{ TEventContainer }
+
+procedure TEventContainer.HandleApplicationException(Sender: TObject;
+  E: Exception);
+begin
+  if not (E is EAbort) then
+    TASuiteLogger.Exception(E);
+end;
 
 { TASuiteLogger }
 
-class procedure TASuiteLogger.Debug(const AText: string; AParams: Array of const);
+class procedure TASuiteLogger.Debug(const AText: string;
+  AParams: array of const);
 begin
   TSynLog.Add.Log(sllDebug, Format(AText, AParams));
 end;
@@ -54,19 +76,42 @@ begin
   Result := TSynLog.Enter(AInstance, AMethodName);
 end;
 
-class procedure TASuiteLogger.Error(const AText: string; AParams: Array of const);
+class procedure TASuiteLogger.Error(const AText: string;
+  AParams: array of const);
 begin
   TSynLog.Add.Log(sllError, Format(AText, AParams));
 end;
 
-class procedure TASuiteLogger.Info(const AText: string; AParams: Array of const);
+class procedure TASuiteLogger.Info(const AText: string;
+  AParams: array of const);
 begin
   TSynLog.Add.Log(sllInfo, Format(AText, AParams));
 end;
 
-class procedure TASuiteLogger.LastError(const AText: string; AParams: Array of const);
+class procedure TASuiteLogger.LastError(const AText: string;
+  AParams: array of const);
 begin
   TSynLog.Add.Log(sllLastError, Format(AText, AParams));
 end;
+
+class procedure TASuiteLogger.Exception(E: SysUtils.Exception;
+  const AText: string);
+begin
+  if AText = '' then
+    ShowMessageFmtEx(msgErrGeneric, [E.ClassName, E.Message], True)
+  else
+    ShowMessageEx(AText, True);
+
+  TSynLog.Add.Log(sllStackTrace, E.Message, E);
+end;
+
+procedure HandleOnShowException(Msg: ShortString);
+begin
+  TSynLog.Add.Log(sllStackTrace, Msg);
+end;
+
+initialization
+  SysUtils.OnShowException := HandleOnShowException;
+  Application.OnException := TEventContainer(nil).HandleApplicationException;
 
 end.

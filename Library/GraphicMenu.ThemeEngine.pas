@@ -96,7 +96,7 @@ implementation
 uses
   Kernel.Consts, Utility.Conversions, Kernel.ResourceStrings, BGRABitmapTypes, Types,
   GraphicMenu.ThemeEngine.Consts, Kernel.Logger, Utility.Misc, Kernel.Instance,
-  Kernel.Manager, SynLog, Forms.GraphicMenu;
+  Kernel.Manager, SynLog;
 
 { TThemeEngineMethods }
 
@@ -405,10 +405,11 @@ var
   sTempPath: string;
   IniFile: TIniFile;
   strFont: string;
+  {%H-}log: ISynLog;
 begin
-  Assert(Assigned(FGraphicMenu), 'FGraphicMenu is not assigned!');        
+  Assert(Assigned(FGraphicMenu), 'FGraphicMenu is not assigned!');
   Assert((FGraphicMenu is TfrmGraphicMenu), 'FGraphicMenu is not a TfrmGraphicMenu!');
-  TASuiteLogger.Enter('LoadTheme', Self);
+  log := TASuiteLogger.Enter('TThemeEngine.LoadTheme', Self);
 
   //Load theme
   if FileExists(ASuiteInstance.Paths.SuitePathCurrentTheme + THEME_INI) then

@@ -26,7 +26,7 @@ unit DataModules.Icons;
 interface
 
 uses
-  SysUtils, Classes, Controls, LCLIntf, LCLType, Graphics, Dialogs,
+  SysUtils, Classes, Controls, LCLIntf, LCLType, Graphics, Dialogs, SyncObjs,
   BGRAImageList, {$IFDEF Windows}CommCtrl, Windows,{$ENDIF} DefaultTranslator;
 
 type
@@ -40,8 +40,11 @@ type
   TdmImages = class(TDataModule)
     ilLargeIcons: TBGRAImageList;
     procedure DataModuleCreate(Sender: TObject);
+    procedure DataModuleDestroy(Sender: TObject);
   private
-    { Private declarations }
+    { Private declarations }                          
+    FLock: SyncObjs.TCriticalSection;
+
     procedure DrawTransparentBitmap(DC: HDC; hBmp: HBITMAP; xStart: integer;
                                     yStart : integer; cTransparentColor : COLORREF);
   public
@@ -50,6 +53,8 @@ type
 
     function AddIcon(Images: Graphics.TBitmap): Integer;
     function AddMultipleResolutions(Images: array of TCustomBitmap): Integer;
+
+    property Lock: SyncObjs.TCriticalSection read FLock;
   end;
 
 var
@@ -94,8 +99,13 @@ begin
 end;
 
 function TdmImages.AddMultipleResolutions(Images: array of TCustomBitmap): Integer;
-begin
-  Result := ilLargeIcons.AddMultipleResolutions(Images);
+begin                    
+  FLock.Acquire;
+  try
+    Result := ilLargeIcons.AddMultipleResolutions(Images);
+  finally     
+    FLock.Release;
+  end;
 end;
 
 procedure TdmImages.GetAlphaBitmapFromImageList(ABMP: Graphics.TBitmap;
@@ -121,6 +131,13 @@ begin
   //Small and large icons in a single ImageList
   ilLargeIcons.RegisterResolutions([ICON_SIZE_SMALL, ICON_SIZE_LARGE]);
   ilLargeIcons.Scaled := True;
+
+  FLock := SyncObjs.TCriticalSection.Create;
+end;
+
+procedure TdmImages.DataModuleDestroy(Sender: TObject);
+begin
+  FLock.Free;
 end;
 
 procedure TdmImages.DrawTransparentBitmap(DC: HDC; hBmp: HBITMAP;

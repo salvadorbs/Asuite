@@ -79,8 +79,9 @@ end;
 function TDBManager.DeleteItems(ATree: TBaseVirtualTree; ANodes: TNodeArray): Boolean;
 var
   I: Integer;
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('DeleteItems', Self);
+  log := TASuiteLogger.Enter('TDBManager.DeleteItems', Self);
   Result := FDatabase.TransactionBegin(TSQLtbl_list, 1);
   //Begin transaction for remove data from sqlite database
   if Result then
@@ -92,10 +93,15 @@ begin
         ATree.IterateSubtree(ANodes[I], TVirtualTreeMethods.BeforeDeleteNode, nil, [], False);
       //Commit database's updates
       FDatabase.Commit(1);
-    except
-      //Or in case of error, rollback
-      FDatabase.RollBack(1);
-      Result := False;
+    except                              
+      on E: Exception do
+      begin
+        //Or in case of error, rollback and log
+        TASuiteLogger.Exception(E);
+
+        FDatabase.RollBack(1);
+        Result := False;
+      end;
     end;
   end;
 end;
@@ -124,15 +130,15 @@ begin
 end;
 
 procedure TDBManager.ImportData(ATree: TBaseVirtualTree);
+var
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('ImportData', Self);
+  log := TASuiteLogger.Enter('TDBManager.ImportData', Self);
   try
     TSQLtbl_list.Load(Self, ATree, True);
   except
     on E : Exception do
-    begin
-      ShowMessageFmtEx(msgErrGeneric,[E.ClassName,E.Message],True);
-    end;
+      TASuiteLogger.Exception(E);
   end;
 end;
 
@@ -150,8 +156,10 @@ begin
 end;
 
 procedure TDBManager.LoadData(ATree: TBaseVirtualTree);
+var
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('LoadData', Self);
+  log := TASuiteLogger.Enter('TDBManager.LoadData', Self);
   TASuiteLogger.Info('Found SQLite Database - Loading it', []);
   //List & Options
   ATree.BeginUpdate;
@@ -163,7 +171,7 @@ begin
       TSQLtbl_list.Load(Self, ATree, False);
     except
       on E : Exception do
-        ShowMessageFmtEx(msgErrGeneric,[E.ClassName,E.Message],True);
+        TASuiteLogger.Exception(E);
     end;
   finally
     ATree.EndUpdate;
@@ -171,8 +179,10 @@ begin
 end;
 
 function TDBManager.SaveData(ATree: TBaseVirtualTree; DoBackup: Boolean): Boolean;
+var
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('SaveData', Self);
+  log := TASuiteLogger.Enter('TDBManager.SaveData', Self);
   TASuiteLogger.Info('Saving ASuite SQLite Database', []);
   //If launcher is in ReadOnlyMode, exit from this function
   if (Config.ReadOnlyMode) then
@@ -193,7 +203,7 @@ begin
       end;
     except
       on E : Exception do begin
-        ShowMessageFmtEx(msgErrGeneric, [E.ClassName,E.Message], True);
+        TASuiteLogger.Exception(E);
         FDatabase.Rollback(1);
       end;
     end;

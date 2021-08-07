@@ -69,7 +69,7 @@ implementation
 
 uses
   Forms.ImportList, Kernel.Logger, Forms, Kernel.Consts, Utility.FileFolder,
-  Utility.Misc, Utility.XML, VirtualTree.Methods, SynLog, Kernel.Manager;
+  Utility.Misc, Utility.XML, VirtualTree.Methods, SynLog, Kernel.Manager, SynCommons;
 
 { TASuiteInstance }
 
@@ -117,6 +117,10 @@ begin
   begin
     DestinationPath := Self.Paths.SuitePathData;
     Level := LOG_VERBOSE;
+    {$IFNDEF DEBUG}
+    //TODO: Define log_level for release builds - No sql logs? No debug infos? Yes stacktrace?
+    Level := LOG_VERBOSE - [sllStackTrace, sllDebug];
+    {$ENDIF}
     RotateFileCount := 1;
     RotateFileDailyAtHour := 0;
   end;

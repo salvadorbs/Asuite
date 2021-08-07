@@ -407,8 +407,9 @@ var
   AttachMode : TVTNodeAttachMode;
   NodeCreated : Boolean;     
   Nodes: TNodeArray;
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('DoDragDrop', Self);
+  log := TASuiteLogger.Enter('TVirtualTreeEvents.DoDragDrop', Self);
 
   NodeCreated := False;
 
@@ -456,7 +457,7 @@ begin
         end;
       except
         on E : Exception do
-          ShowMessageFmtEx(msgErrGeneric,[E.ClassName,E.Message], True);
+          TASuiteLogger.Exception(E);
       end;
     end;
 
@@ -902,13 +903,18 @@ procedure TVirtualTreeEvents.DoGetImageIndex(Sender: TBaseVirtualTree;
 var
   NodeData: TvBaseNodeData;
 begin
-  if (Kind = ikNormal) or (Kind = ikSelected) then
-  begin
-    NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
-    if (Column = 0) or (Column = -1) then
-      ImageIndex := NodeData.Icon.ImageIndex
-    else
-      ImageIndex := -1;
+  try
+    if (Kind = ikNormal) or (Kind = ikSelected) then
+    begin
+      NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
+      if (Column = 0) or (Column = -1) then
+        ImageIndex := NodeData.Icon.ImageIndex
+      else
+        ImageIndex := -1;
+    end;
+  except
+    on E : Exception do
+      TASuiteLogger.Exception(E);
   end;
 end;
 

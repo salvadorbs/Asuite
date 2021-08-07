@@ -229,14 +229,18 @@ begin
         TSQLtbl_list.SaveItemsByParentID(Tree, ADBManager, Node.FirstChild, vData.ID);
     except
       on E : Exception do
-        ShowMessageFmtEx(msgErrGeneric,[E.ClassName, E.Message], True);
+        TASuiteLogger.Exception(E);
     end;
     Node := Node.NextSibling;
   end;
 end;
 
 class procedure TSQLtbl_list.Load(ADBManager: TDBManager; ATree: TBaseVirtualTree; IsImport: Boolean);
+var
+  {%H-}log: ISynLog;
 begin
+  log := TASuiteLogger.Enter('TSQLtbl_list.Load', nil);
+
   if IsImport then
     TASuiteLogger.Info('Load ASuite List from Database in VirtualTree (Import mode)', [])
   else
@@ -299,8 +303,10 @@ begin
 end;
 
 class procedure TSQLtbl_list.Save(ADBManager: TDBManager; ATree: TBaseVirtualTree);
+var
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Info('Saving ASuite List', []);
+  log := TASuiteLogger.Enter('TSQLtbl_list.Save', nil);
   TSQLtbl_list.SaveItemsByParentID(ATree, ADBManager, ATree.GetFirst, 0);
 end;
 

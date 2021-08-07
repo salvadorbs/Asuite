@@ -106,7 +106,7 @@ begin
     end;
   except
     on E : Exception do
-      ShowMessageFmtEx(msgErrGeneric,[E.ClassName, E.Message], True);
+      TASuiteLogger.Exception(E);
   end;
 end;
 
