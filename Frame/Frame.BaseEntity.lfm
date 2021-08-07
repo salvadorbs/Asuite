@@ -4,7 +4,6 @@ object frmBaseEntityPage: TfrmBaseEntityPage
   Top = 0
   Width = 445
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
-  LCLVersion = '2.0.10.0'
   ParentFont = False
   TabOrder = 0
   DesignLeft = 10

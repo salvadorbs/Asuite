@@ -29,7 +29,6 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       Top = 4
       Width = 425
       Caption = 'Order of startup autorun items in ASuite'
-      ParentColor = False
       ParentFont = False
     end
     object chkStartup: TCheckBox
@@ -167,7 +166,6 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       Top = 4
       Width = 425
       Caption = 'Order of shutdown autorun items in ASuite'
-      ParentColor = False
       ParentFont = False
     end
     object chkShutdown: TCheckBox

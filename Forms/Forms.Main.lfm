@@ -16,7 +16,7 @@ object frmMain: TfrmMain
   OnHide = FormHide
   OnResize = FormResize
   OnShow = FormShow
-  LCLVersion = '2.0.12.0'
+  LCLVersion = '2.2.0.2'
   object pcList: TPageControl
     Left = 0
     Height = 366

@@ -52,7 +52,6 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
         Top = 23
         Width = 234
         Caption = 'Max number recent items'
-        ParentColor = False
         ParentFont = False
       end
       object seRecents: TSpinEdit
@@ -101,7 +100,6 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
         Top = 23
         Width = 234
         Caption = 'Max number backup files'
-        ParentColor = False
         ParentFont = False
       end
       object seBackup: TSpinEdit
@@ -150,7 +148,6 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
         Top = 23
         Width = 234
         Caption = 'Max number MFU items'
-        ParentColor = False
         ParentFont = False
       end
       object seMFU: TSpinEdit
@@ -203,7 +200,6 @@ inherited frmAdvancedOptionsPage: TfrmAdvancedOptionsPage
         Width = 175
         BorderSpacing.Bottom = 3
         Caption = 'Clear the following elements'
-        ParentColor = False
         ParentFont = False
         WordWrap = True
       end

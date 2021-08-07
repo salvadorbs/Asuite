@@ -13,7 +13,7 @@ object frmShortcutGrabber: TfrmShortcutGrabber
   OnCreate = FormCreate
   OnKeyPress = FormKeyPress
   Position = poOwnerFormCenter
-  LCLVersion = '2.0.12.0'
+  LCLVersion = '2.2.0.2'
   object pnlDialogPage: TPanel
     Left = 8
     Height = 142
@@ -30,7 +30,6 @@ object frmShortcutGrabber: TfrmShortcutGrabber
       Top = 78
       Width = 244
       Caption = 'Select modifiers above, then enter desired key:'
-      ParentColor = False
       ParentFont = False
     end
     object hkKeys: THotKey

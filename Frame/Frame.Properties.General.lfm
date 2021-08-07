@@ -27,7 +27,6 @@ inherited frmBaseGeneralPropertyPage: TfrmBaseGeneralPropertyPage
       Top = 4
       Width = 340
       Caption = 'Name'
-      ParentColor = False
       ParentFont = False
     end
     object edtName: TEdit
@@ -46,7 +45,6 @@ inherited frmBaseGeneralPropertyPage: TfrmBaseGeneralPropertyPage
       Top = 44
       Width = 340
       Caption = 'Description'
-      ParentColor = False
       ParentFont = False
     end
     object edtDescription: TEdit
@@ -65,7 +63,6 @@ inherited frmBaseGeneralPropertyPage: TfrmBaseGeneralPropertyPage
       Top = 84
       Width = 340
       Caption = 'Custom icon path (optional)'
-      ParentColor = False
       ParentFont = False
     end
     object edtPathIcon: TFileNameEdit

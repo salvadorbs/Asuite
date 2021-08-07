@@ -8,7 +8,7 @@ object frmPropertySeparator: TfrmPropertySeparator
   ClientHeight = 103
   ClientWidth = 284
   Position = poMainFormCenter
-  LCLVersion = '2.0.10.0'
+  LCLVersion = '2.2.0.2'
   object btnCancel: TButton
     Left = 200
     Height = 25
@@ -50,7 +50,6 @@ object frmPropertySeparator: TfrmPropertySeparator
       Width = 253
       AutoSize = False
       Caption = 'Name'
-      ParentColor = False
       ParentFont = False
     end
     object edtName: TEdit

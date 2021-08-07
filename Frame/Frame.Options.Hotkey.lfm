@@ -43,7 +43,6 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       Top = 27
       Width = 425
       Caption = 'Show window when hotkey is pressed'
-      ParentColor = False
       ParentFont = False
     end
     object edtHotkeyMF: TButtonedEdit
@@ -71,7 +70,6 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       Top = 72
       Width = 425
       Caption = 'Show graphic menu when hotkey is pressed'
-      ParentColor = False
       ParentFont = False
     end
     object edtHotkeyGM: TButtonedEdit
@@ -98,7 +96,6 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       Top = 117
       Width = 425
       Caption = 'Show classic menu when hotkey is pressed'
-      ParentColor = False
       ParentFont = False
     end
     object edtHotkeyCM: TButtonedEdit

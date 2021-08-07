@@ -13,6 +13,7 @@ object frmDialogBase: TfrmDialogBase
   KeyPreview = True
   OnKeyPress = FormKeyPress
   Position = poMainFormCenter
+  LCLVersion = '2.2.0.2'
   object Panel1: TPanel
     Left = 4
     Height = 50

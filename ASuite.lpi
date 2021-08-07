@@ -31,7 +31,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="1342"/>
+      <BuildNr Value="1348"/>
     </VersionInfo>
     <BuildModes Count="4">
       <Item1 Name="Default" Default="True"/>
@@ -581,7 +581,7 @@
         <IsPartOfProject Value="True"/>
       </Unit66>
       <Unit67>
-        <Filename Value="Frame/frame.properties.environmentvars.pas"/>
+        <Filename Value="Frame/Frame.Properties.EnvironmentVars.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="frmEnvironmentVars"/>
         <HasResources Value="True"/>

@@ -123,7 +123,6 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
       BorderSpacing.Top = 4
       BorderSpacing.Bottom = 4
       Caption = 'On execution'
-      ParentColor = False
       ParentFont = False
     end
     object cxActionOnExe: TComboBox
@@ -174,7 +173,6 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
       BorderSpacing.Top = 4
       BorderSpacing.Bottom = 4
       Caption = 'Language'
-      ParentColor = False
       ParentFont = False
     end
     object cxLanguage: TComboBox

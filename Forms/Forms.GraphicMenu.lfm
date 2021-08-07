@@ -19,7 +19,7 @@ object frmGraphicMenu: TfrmGraphicMenu
   OnKeyPress = FormKeyPress
   OnMouseWheel = FormMouseWheel
   OnShow = FormShow
-  LCLVersion = '2.0.12.0'
+  LCLVersion = '2.2.0.2'
   Scaled = False
   object imgBackground: TImage
     Left = 0
@@ -75,7 +75,6 @@ object frmGraphicMenu: TfrmGraphicMenu
     Font.Color = clWhite
     Font.Height = -9
     Layout = tlCenter
-    ParentColor = False
     ParentFont = False
   end
   object lblDriveName: TLabel
@@ -88,7 +87,6 @@ object frmGraphicMenu: TfrmGraphicMenu
     Font.Height = -9
     Layout = tlCenter
     ParentBidiMode = False
-    ParentColor = False
     ParentFont = False
   end
   object imgDragSpaceHidden: TImage

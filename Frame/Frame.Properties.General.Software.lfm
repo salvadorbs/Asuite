@@ -24,7 +24,6 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Top = 4
       Width = 340
       Caption = 'Executable/folder/web page path'
-      ParentColor = False
       ParentFont = False
     end
     object edtPathExe: TFileNameEdit
@@ -50,7 +49,6 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Top = 44
       Width = 340
       Caption = 'Custom working directory (optional)'
-      ParentColor = False
       ParentFont = False
     end
     object edtWorkingDir: TDirectoryEdit
@@ -75,7 +73,6 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Top = 84
       Width = 340
       Caption = 'Parameters (optional)'
-      ParentColor = False
       ParentFont = False
     end
     object edtParameters: TEdit
@@ -99,7 +96,6 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Anchors = [akTop, akLeft, akRight]
       AutoSize = False
       Caption = 'Note: You can use these vars (included environment variables) in relative path:'#13#10'- %asuite% = ASuite folder path ("%s")'#13#10'- %drive% = drive path ("%s")'
-      ParentColor = False
       ParentFont = False
       WordWrap = True
     end

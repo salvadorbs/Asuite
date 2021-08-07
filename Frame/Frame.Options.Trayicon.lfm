@@ -92,7 +92,6 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
           Top = 0
           Width = 138
           Caption = 'Left click'
-          ParentColor = False
           ParentFont = False
         end
         object cxLeftClick: TComboBox
@@ -127,7 +126,6 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
           Top = 0
           Width = 141
           Caption = 'Middle click'
-          ParentColor = False
           ParentFont = False
         end
         object cxMiddleClick: TComboBox
@@ -161,7 +159,6 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
           Top = 0
           Width = 138
           Caption = 'Right click'
-          ParentColor = False
           ParentFont = False
         end
         object cxRightClick: TComboBox
@@ -289,7 +286,6 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
       Width = 425
       BorderSpacing.Bottom = 4
       Caption = 'Theme'
-      ParentColor = False
       ParentFont = False
     end
     object cxTheme: TComboBox
