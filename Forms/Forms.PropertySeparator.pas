@@ -25,7 +25,7 @@ interface
 
 uses
   SysUtils, Classes, Controls, Forms, Dialogs, NodeDataTypes.Base, StdCtrls,
-  ExtCtrls, DefaultTranslator;
+  ExtCtrls;
 
 type
   TfrmPropertySeparator = class(TForm)

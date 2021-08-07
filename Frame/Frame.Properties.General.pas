@@ -24,9 +24,9 @@ unit Frame.Properties.General;
 interface
 
 uses
-  LCLIntf, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, StdCtrls, Frame.Properties.Base,
-  EditBtn, DefaultTranslator;
+  LCLIntf, SysUtils, Classes, Graphics,
+  Forms, Dialogs, StdCtrls, Frame.Properties.Base,
+  EditBtn;
 
 type
 

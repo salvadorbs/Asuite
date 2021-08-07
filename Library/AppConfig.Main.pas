@@ -253,7 +253,7 @@ implementation
 uses
   Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, Utility.Misc,
   Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder, SynLog,
-  Utility.XML, GraphicMenu.ThemeEngine, LCLProc, BGRAIconCursor,
+  Utility.XML, LCLProc, BGRAIconCursor,
   TypInfo, Kernel.ResourceStrings, LCLTranslator, AppConfig.Consts, BGRABitmapTypes,
   Utility.Conversions, Hotkeys.Manager.Platform, Kernel.Instance, Kernel.Manager;
 

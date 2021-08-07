@@ -24,7 +24,7 @@ unit NodeDataTypes.Base;
 interface
 
 uses
-  VirtualTrees, SysUtils, DateUtils, Kernel.Enumerations, Icons.Base, LazUTF8,
+  VirtualTrees, SysUtils, DateUtils, Kernel.Enumerations, LazUTF8,
   Icons.Custom;
 
 type

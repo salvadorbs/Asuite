@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Classes, Controls, Forms, Dialogs, ExtCtrls, ComCtrls,
-  StdCtrls, Frame.BaseEntity, VirtualTrees, DefaultTranslator, ButtonPanel;
+  StdCtrls, Frame.BaseEntity, VirtualTrees, ButtonPanel;
 
 type
 
@@ -69,7 +69,7 @@ var
 implementation
 
 uses
-  VirtualTree.Events, Kernel.Types, Kernel.Logger, SynLog, Kernel.Instance;
+  Kernel.Types, Kernel.Logger, SynLog, Kernel.Instance;
 
 {$R *.lfm}
 

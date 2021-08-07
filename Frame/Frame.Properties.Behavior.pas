@@ -24,7 +24,7 @@ unit Frame.Properties.Behavior;
 interface
 
 uses
-  SysUtils, Dialogs, StdCtrls, Frame.Properties.Base, ExtCtrls, DefaultTranslator, Classes;
+  SysUtils, Dialogs, StdCtrls, Frame.Properties.Base, ExtCtrls, Classes;
 
 type
 

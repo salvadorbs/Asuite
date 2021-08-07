@@ -24,8 +24,7 @@ unit Frame.Properties.General.Software;
 interface
 
 uses
-  SysUtils, Graphics, Dialogs, StdCtrls, Frame.Properties.General, EditBtn,
-  DefaultTranslator, Classes;
+  SysUtils, Graphics, Dialogs, StdCtrls, Frame.Properties.General, EditBtn;
 
 type
 
@@ -68,7 +67,7 @@ implementation
 
 uses
   Kernel.Consts, NodeDataTypes.Files, Kernel.ResourceStrings,
-  Utility.FileFolder, Kernel.Instance, Kernel.Manager;
+  Utility.FileFolder, Kernel.Instance;
 
 {$R *.lfm}
 

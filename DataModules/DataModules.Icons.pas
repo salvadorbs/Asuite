@@ -27,7 +27,7 @@ interface
 
 uses
   SysUtils, Classes, Controls, LCLIntf, LCLType, Graphics, Dialogs, SyncObjs,
-  BGRAImageList, {$IFDEF Windows}CommCtrl, Windows,{$ENDIF} DefaultTranslator;
+  BGRAImageList, {$IFDEF Windows}CommCtrl, Windows{$ENDIF};
 
 type
 

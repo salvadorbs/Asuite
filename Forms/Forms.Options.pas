@@ -24,9 +24,9 @@ unit Forms.Options;
 interface
 
 uses
-  LCLIntf, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, Forms.Dialog.BaseEntity, VirtualTrees, DefaultTranslator,
-  ExtCtrls, Frame.BaseEntity;
+  LCLIntf, SysUtils, Classes,
+  Controls, Forms, Dialogs, Forms.Dialog.BaseEntity, VirtualTrees,
+  Frame.BaseEntity;
 
 type
 
@@ -54,7 +54,7 @@ implementation
 uses
   Frame.Options.General, Frame.Options.Advanced, Frame.Options.Trayicon,
   Frame.Options.Stats, Frame.Options.Autorun, AppConfig.Main, Kernel.Logger,
-  Forms.Main, Frame.Options.Hotkey, Frame.Options.MainWindow, LCLTranslator,
+  Forms.Main, Frame.Options.Hotkey, Frame.Options.MainWindow,
   Utility.Misc, SynLog;
 
 {$R *.lfm}

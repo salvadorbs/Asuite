@@ -27,7 +27,7 @@ interface
 
 uses
   LCLIntf, SysUtils, Classes, Graphics, Forms, Dialogs, Frame.BaseEntity, StdCtrls,
-  EditBtn, DefaultTranslator, ExtCtrls;
+  EditBtn, ExtCtrls;
 
 type
 

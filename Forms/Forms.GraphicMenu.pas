@@ -26,7 +26,7 @@ interface
 uses
   LCLIntf, LCLType, Classes, Forms, StdCtrls, ExtCtrls, ComCtrls, Controls,
   Graphics, Dialogs, SysUtils, VirtualTrees, Menus, Lists.Base,
-  BCImageTab, ButtonedEdit, BCImageButton, DefaultTranslator, GraphicMenu.ThemeEngine;
+  BCImageTab, ButtonedEdit, BCImageButton, GraphicMenu.ThemeEngine;
 
 type
 
@@ -132,7 +132,7 @@ implementation
 uses
   Forms.Main, Utility.System, Kernel.Consts, AppConfig.Main, DataModules.Icons,
   Forms.About, NodeDataTypes.Base, Kernel.Enumerations, Forms.Options, LazVersion,
-  Utility.Misc, VirtualTree.Events, VirtualTree.Methods, Kernel.Types,
+  Utility.Misc, VirtualTree.Methods, Kernel.Types,
   NodeDataTypes.Custom, Kernel.ResourceStrings, Kernel.Instance, Kernel.Manager
   {$IFDEF MSWINDOWS} , Windows {$ENDIF};
 

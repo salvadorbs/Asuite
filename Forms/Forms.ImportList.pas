@@ -24,7 +24,7 @@ unit Forms.ImportList;
 interface
 
 uses
-  LCLIntf, SysUtils, Classes, Graphics, Controls, Forms, DefaultTranslator,
+  LCLIntf, SysUtils, Classes, Graphics, Controls, Forms,
   Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, Kernel.Consts, DOM, XMLRead,
   Kernel.Enumerations, EditBtn;
 
@@ -77,7 +77,7 @@ implementation
 {$R *.lfm}
 
 uses
-  AppConfig.Main, VirtualTree.Events, VirtualTree.Methods, Kernel.Manager,
+  AppConfig.Main, VirtualTree.Methods,
   Utility.FileFolder, Utility.XML, Database.Manager, NodeDataTypes.Base,
   Kernel.Logger, Kernel.ResourceStrings, Utility.Misc, Kernel.Instance, SynLog;
 

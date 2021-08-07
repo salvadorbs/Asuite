@@ -24,9 +24,9 @@ unit Frame.Options.Hotkey;
 interface
 
 uses
-  LCLIntf, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, Frame.BaseEntity, VirtualTrees, DefaultTranslator,
-  ComCtrls, StdCtrls, Lists.Base, ButtonedEdit, Menus, ExtCtrls;
+  LCLIntf, SysUtils, Graphics,
+  Controls, Dialogs, Frame.BaseEntity, VirtualTrees,
+  ComCtrls, StdCtrls, Lists.Base, ButtonedEdit, Menus;
 
 type
 
@@ -75,8 +75,8 @@ var
 implementation
 
 uses
-  AppConfig.Main, VirtualTree.Events, VirtualTree.Methods, NodeDataTypes.Custom,
-  Forms.ShortcutGrabber, DataModules.Icons, UITypes, Kernel.ResourceStrings,
+  AppConfig.Main, VirtualTree.Methods, NodeDataTypes.Custom,
+  Forms.ShortcutGrabber, DataModules.Icons, Kernel.ResourceStrings,
   LCLProc, Kernel.Consts, Kernel.Manager, Utility.Misc, Kernel.Instance;
 
 {$R *.lfm}

@@ -63,7 +63,7 @@ implementation
 uses
   Kernel.Consts, AppConfig.Main, Utility.FileFolder, Utility.Misc,
   Database.Version, Database.List, Kernel.Logger,
-  VirtualTree.Methods, SynLog, Kernel.ResourceStrings, Kernel.Instance, Kernel.Manager;
+  VirtualTree.Methods, SynLog, Kernel.Instance;
 
 constructor TDBManager.Create;
 begin

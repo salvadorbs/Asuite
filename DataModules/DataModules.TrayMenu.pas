@@ -31,7 +31,7 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  Menus, ExtCtrls, VirtualTrees, ImgList, LazFileUtils, Process,
+  Menus, ExtCtrls, VirtualTrees, LazFileUtils, Process,
   Kernel.ASMenuItem, Lists.Base, Kernel.Enumerations
   {$IFDEF LINUX}
   , x, xlib

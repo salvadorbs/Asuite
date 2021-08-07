@@ -24,7 +24,7 @@ unit AppConfig.Paths;
 interface
 
 uses
-  LCLIntf, LCLType, SysUtils, Graphics, Forms, Controls, Classes, LazFileUtils, Dialogs,
+  LCLIntf, LCLType, SysUtils, Forms, Controls, Classes, LazFileUtils, Dialogs,
   LazUTF8, AppConfig.PathList;
 
 type

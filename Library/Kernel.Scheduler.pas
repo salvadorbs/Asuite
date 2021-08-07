@@ -24,7 +24,7 @@ unit Kernel.Scheduler;
 interface
 
 uses
-  Classes, ExtCtrls, UITypes, DateUtils, SysUtils, Dialogs, NodeDataTypes.Custom;
+  Classes, ExtCtrls, DateUtils, SysUtils, NodeDataTypes.Custom;
 
 type
 

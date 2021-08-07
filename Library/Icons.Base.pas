@@ -24,7 +24,7 @@ unit Icons.Base;
 interface
 
 uses
-  SysUtils, Controls, SyncObjs, LCLIntf, LCLType, Graphics, BGRAIconCursor,
+  SysUtils, Controls, SyncObjs, LCLIntf, LCLType, BGRAIconCursor,
   BGRABitmap;
 
 type
@@ -71,7 +71,7 @@ implementation
 
 uses
    DataModules.Icons, Kernel.Consts, BGRABitmapTypes, Utility.FileFolder,
-   AppConfig.Main, Kernel.Enumerations, Utility.System, ImgList, Kernel.Instance,
+   AppConfig.Main, Kernel.Enumerations, Utility.System, Kernel.Instance,
    Kernel.Manager;
 
 { TBaseIcon }

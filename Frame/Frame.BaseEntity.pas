@@ -24,7 +24,7 @@ unit Frame.BaseEntity;
 interface
 
 uses
-  SysUtils, Classes, Controls, Forms, Dialogs, DefaultTranslator;
+  SysUtils, Classes, Controls, Forms, Dialogs;
 
 type
 

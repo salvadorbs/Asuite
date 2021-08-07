@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, SysUtils, Classes, Controls, Dialogs, Frame.BaseEntity,
-  StdCtrls, VirtualTrees, Lists.Base, Menus, DefaultTranslator, ExtCtrls, Buttons;
+  StdCtrls, VirtualTrees, Lists.Base, Menus, ExtCtrls, Buttons;
 
 type
 
@@ -90,7 +90,7 @@ implementation
 
 uses
   NodeDataTypes.Custom, AppConfig.Main, DataModules.Icons, Graphics, Kernel.Manager,
-  VirtualTree.Methods, Kernel.ResourceStrings, Kernel.Enumerations, VirtualTree.Events,
+  VirtualTree.Methods, Kernel.ResourceStrings, Kernel.Enumerations,
   Utility.Misc, Kernel.Instance;
 
 {$R *.lfm}

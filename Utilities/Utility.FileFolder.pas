@@ -32,7 +32,7 @@ function  GetUrlTarget(const AFileName: String; ShortcutType: TShortcutField): S
 implementation
 
 uses
-  AppConfig.Main, IniFiles, FileInfo, Kernel.Instance, Kernel.Manager, Kernel.Logger
+  IniFiles, FileInfo, Kernel.Instance, Kernel.Logger
   {$IFDEF UNIX} , BaseUnix {$ENDIF}, Kernel.ResourceStrings;
 
 function BrowseForFolder(const InitialDir: String; const Caption: String): String;

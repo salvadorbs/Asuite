@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, SysUtils, Forms, Dialogs, StdCtrls, ExtCtrls, JPP.LinkLabel,
-  DefaultTranslator, Classes;
+  Classes;
 
 type
 
@@ -58,7 +58,7 @@ var
 implementation
 
 uses
-  Utility.Misc, Kernel.Consts, LazFileUtils, Kernel.Instance, Kernel.Manager;
+  Utility.Misc, Kernel.Consts, LazFileUtils, Kernel.Instance;
 
 {$R *.lfm}
 

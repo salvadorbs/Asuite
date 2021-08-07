@@ -24,9 +24,8 @@ unit Forms.ShortcutGrabber;
 interface
 
 uses
-  LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, Menus, ComCtrls, BCImageButton, ExtCtrls, HotKey, LCLProc,
-  DefaultTranslator, LazFileUtils;
+  LCLIntf, LCLType, SysUtils, Classes, Controls, Forms, Dialogs,
+  StdCtrls, Menus, ComCtrls, BCImageButton, ExtCtrls, HotKey, LCLProc, LazFileUtils;
 
 type
 
@@ -78,7 +77,7 @@ implementation
 
 uses
   Kernel.Logger, Utility.Misc, Kernel.Consts, Kernel.ResourceStrings,
-  Hotkeys.Manager.Platform, Kernel.Instance, Kernel.Manager;
+  Hotkeys.Manager.Platform, Kernel.Instance;
 
 {$R *.lfm}
 

@@ -24,8 +24,8 @@ unit Forms.UILogin;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  ButtonPanel, Kernel.Types, DefaultTranslator;
+  Classes, SysUtils, Forms, Controls, Dialogs, ExtCtrls, StdCtrls,
+  ButtonPanel, Kernel.Types;
 
 type
 

@@ -8,7 +8,7 @@ object frmAbout: TfrmAbout
   Caption = 'About %s'
   ClientHeight = 170
   ClientWidth = 371
-  OnShow = FormShow
+  OnActivate = FormActivate
   Position = poOwnerFormCenter
   object GroupBox3: TGroupBox
     Left = 4

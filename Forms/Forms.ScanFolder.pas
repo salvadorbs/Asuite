@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, DefaultTranslator, ShellCtrls,
+  StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, ShellCtrls,
   ImgList, ButtonPanel, FileUtil, Thread.FindFiles, SynLog, StrUtils,
   LazStringUtils;
 
@@ -110,7 +110,7 @@ implementation
 uses
   AppConfig.Main, Kernel.Types, Kernel.Logger, Kernel.Consts,
   DataModules.Icons, NodeDataTypes.Base, VirtualTree.Methods, Kernel.Enumerations,
-  Utility.FileFolder, NodeDataTypes.Files, Utility.Misc, Kernel.ResourceStrings,
+  Utility.FileFolder, Utility.Misc, Kernel.ResourceStrings,
   RegExpr, Kernel.Instance, Kernel.Manager;
 
 {$R *.lfm}

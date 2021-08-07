@@ -84,7 +84,7 @@ type
 implementation
 
 uses
-  Kernel.Logger, FileUtil, LazFileUtils, Kernel.Instance, Kernel.Manager, ImgList,
+  Kernel.Logger, FileUtil, LazFileUtils, Kernel.Instance, ImgList,
   Graphics, DataModules.Icons, SynLog
   {$IFDEF UNIX}
   , IniFiles, BaseUnix, StrUtils

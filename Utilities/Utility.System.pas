@@ -49,9 +49,9 @@ function ExtractDirectoryName(const Filename: string): string;
 implementation
 
 uses
-  Utility.Conversions, Forms.Main, Utility.Misc, Kernel.Logger, IniFiles,
+  Utility.Conversions, Forms.Main, Utility.Misc, Kernel.Logger,
   LazFileUtils{$IFDEF MSWINDOWS} , ShellApi {$ENDIF}, LazUTF8,
-  Utility.FileFolder, Kernel.Instance, Kernel.Manager;
+  Utility.FileFolder, Kernel.Instance;
 
 function HasDriveLetter(const Path: String): Boolean;
 var P: PChar;

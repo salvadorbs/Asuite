@@ -24,9 +24,9 @@ unit Frame.Properties.Advanced;
 interface
 
 uses
-  LCLIntf, SysUtils, Classes, Controls, Dialogs, Frame.Properties.Base,
-  ButtonedEdit, StdCtrls, DateUtils, DateTimePicker, DefaultTranslator,
-  ExtCtrls, EditBtn;
+  LCLIntf, SysUtils, Classes, Dialogs, Frame.Properties.Base,
+  ButtonedEdit, StdCtrls, DateUtils, DateTimePicker,
+  ExtCtrls;
 
 type
 

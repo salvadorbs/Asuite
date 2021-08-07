@@ -51,7 +51,7 @@ type
 implementation
 
 uses
-  AppConfig.Main, Kernel.Instance, Kernel.Manager, Kernel.ResourceStrings,
+  Kernel.Instance, Kernel.Manager, Kernel.ResourceStrings,
   Utility.Misc;
 
 { TEventContainer }

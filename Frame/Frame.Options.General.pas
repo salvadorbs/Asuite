@@ -24,8 +24,7 @@ unit Frame.Options.General;
 interface
 
 uses
-  LCLIntf, SysUtils, Dialogs, Frame.BaseEntity, StdCtrls,
-  DefaultTranslator;
+  LCLIntf, SysUtils, Dialogs, Frame.BaseEntity, StdCtrls;
 
 type
 

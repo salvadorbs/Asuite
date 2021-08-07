@@ -24,8 +24,8 @@ unit Icons.Node;
 interface
 
 uses
-  SysUtils, Classes, Icons.Base, NodeDataTypes.Base, Graphics, Icons.Custom,
-  NodeDataTypes.Custom, Controls, LCLIntf, BGRABitmap;
+  SysUtils, Icons.Base, NodeDataTypes.Base, Graphics, Icons.Custom,
+  NodeDataTypes.Custom, Controls, LCLIntf;
 
 type
 
@@ -51,7 +51,7 @@ type
 implementation
 
 uses
-  NodeDataTypes.Files, ImgList, BGRABitmapTypes, Kernel.Instance, Kernel.Manager;
+  NodeDataTypes.Files, BGRABitmapTypes, Kernel.Instance, Kernel.Manager;
 
 { TNodeIcon }
 

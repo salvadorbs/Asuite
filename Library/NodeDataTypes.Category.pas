@@ -54,7 +54,7 @@ implementation
 
 uses
   NodeDataTypes.Files, VirtualTree.Methods, AppConfig.Main, Kernel.ResourceStrings,
-  Kernel.Instance, Kernel.Manager, Utility.Misc;
+  Kernel.Instance, Utility.Misc;
 
 procedure TvCategoryNodeData.CallBackExecuteNode(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
