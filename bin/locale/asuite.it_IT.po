@@ -147,6 +147,7 @@ msgid "Are you sure you want to delete it?"
 msgstr "Sei sicuro di volerlo eliminare?"
 
 #: kernel.resourcestrings.msgconfirmruncat
+#, object-pascal-format
 msgid "Are you sure execute category %s?"
 msgstr "Sei sicuro di eseguire la categoria %s?"
 
@@ -179,20 +180,44 @@ msgid "Username field is empty"
 msgstr "Il campo username è vuoto"
 
 #: kernel.resourcestrings.msgerrgeneric
+#, object-pascal-format
 msgid "%s error raised, with message: %s"
 msgstr "Rilevato errore %s, con il seguente messaggio: %s"
 
 #: kernel.resourcestrings.msgerricon
+#, object-pascal-format
 msgid "Cannot use icon %s"
 msgstr "Impossibile utilizzare l'icona %s"
 
 #: kernel.resourcestrings.msgerrnoicon
+#, object-pascal-format
 msgid "Couldn't find icon file %s"
 msgstr "Non è stato trovata l'icona %s"
 
 #: kernel.resourcestrings.msgerrnothemeini
+#, object-pascal-format
 msgid "Couldn't find file %s"
 msgstr "Non è stato trovata il file %s"
+
+#: kernel.resourcestrings.msgerrorexecute
+#, object-pascal-format
+msgid "Failed to execute \"%s\""
+msgstr "Impossibile eseguire \"%s\""
+
+#: kernel.resourcestrings.msgerrorexecuteadmin
+#, object-pascal-format
+msgid "Failed to execute item \"%s\" as admin"
+msgstr "Impossibile eseguire \"%s\" come amministratore"
+
+#: kernel.resourcestrings.msgerrorexecuteuser
+#, object-pascal-format
+msgid "Failed to execute item \"%s\" as user \"%s\""
+msgstr "Impossibile eseguire \"%s\" come utente \"%s\""
+
+#: kernel.resourcestrings.msgerroropenfolder
+#, object-pascal-format
+msgid "Failed to open folder \"%s\""
+msgstr "Impossibile aprire la cartella \"%s\""
 
 #: kernel.resourcestrings.msgerrregcmhotkey
 msgid "Register Classic Menu's hotkey failed"
@@ -207,6 +232,7 @@ msgid "Register window's hotkey failed"
 msgstr "Registrazione hotkey della finestra principale fallita"
 
 #: kernel.resourcestrings.msgerrrun
+#, object-pascal-format
 msgid "Cannot run %s"
 msgstr "Impossibile eseguire %s"
 
@@ -256,6 +282,7 @@ msgid "Folder not found"
 msgstr "Cartella non trovata"
 
 #: kernel.resourcestrings.msgfoundnumfiles
+#, object-pascal-format
 msgid "Found and added %d files in list"
 msgstr "Trovato e aggiunto %d file nella lista"
 
@@ -263,6 +290,12 @@ msgstr "Trovato e aggiunto %d file nella lista"
 msgctxt "kernel.resourcestrings.msggeneral"
 msgid "General"
 msgstr "Generale"
+
+#: kernel.resourcestrings.msggeneratefilehasherror
+#, object-pascal-format
+msgid "Generating hash file because of an error (file path = %s)"
+msgstr ""
+"Generazione dell'hash file fallita a causa di un errore (percorso = %s)"
 
 #: kernel.resourcestrings.msggmabout
 msgid "About"
@@ -273,6 +306,7 @@ msgid "Documents"
 msgstr "Documenti"
 
 #: kernel.resourcestrings.msggmdrivename
+#, object-pascal-format
 msgid "Drive (%s)"
 msgstr "Drive (%s)"
 
@@ -281,6 +315,7 @@ msgid "Explore"
 msgstr "Esplora"
 
 #: kernel.resourcestrings.msggmharddiskspace
+#, object-pascal-format
 msgid "%s free of %s"
 msgstr "%s libero di %s"
 
@@ -298,6 +333,7 @@ msgid "Pictures"
 msgstr "Immagini"
 
 #: kernel.resourcestrings.msggmshow
+#, object-pascal-format
 msgid "Show %s"
 msgstr "Mostra %s"
 
@@ -355,6 +391,7 @@ msgid "Items"
 msgstr "Elementi"
 
 #: kernel.resourcestrings.msgitemsimported
+#, object-pascal-format
 msgid "Import finished. %d items imported"
 msgstr "Importazione finita. %d elementi importati"
 
@@ -381,6 +418,7 @@ msgid "Main Window"
 msgstr "Finestra principale"
 
 #: kernel.resourcestrings.msgmissedtask
+#, object-pascal-format
 msgid ""
 "Seems scheduler didn't run the item %s as expected by options. Do you want "
 "execute it now?"
@@ -406,6 +444,7 @@ msgid "No name"
 msgstr "Nessun nome"
 
 #: kernel.resourcestrings.msgnotifydropfiles
+#, object-pascal-format
 msgid "Added successfully %d files"
 msgstr "Aggiunti %d file con successo"
 
@@ -414,14 +453,17 @@ msgid "Dropped text in list successfully"
 msgstr "Droppato testo nella lista con successo"
 
 #: kernel.resourcestrings.msgnotifyexecuteitem
+#, object-pascal-format
 msgid "Execute %s"
 msgstr "Eseguito %s"
 
 #: kernel.resourcestrings.msgnotifyhotkey
+#, object-pascal-format
 msgid "Execute %s using hotkey"
 msgstr "Eseguito %s usando hotkey"
 
 #: kernel.resourcestrings.msgnotifyscheduler
+#, object-pascal-format
 msgid "Execute %s using scheduler"
 msgstr " Eseguito %s usando scheduler"
 
@@ -434,6 +476,7 @@ msgid "Operation completed"
 msgstr "Operazione completata"
 
 #: kernel.resourcestrings.msgprocessingitems
+#, object-pascal-format
 msgid "Processing items (%.0f%%): %d"
 msgstr "Processing items (%.0f %%):  %d"
 
@@ -487,6 +530,7 @@ msgid "Trayicon"
 msgstr "Trayicon"
 
 #: kernel.resourcestrings.msgusetriggersensors
+#, object-pascal-format
 msgid "Active Sensors for %s"
 msgstr "Attiva sensori per %s"
 
@@ -495,10 +539,12 @@ msgid "actCategory"
 msgstr "actCategory"
 
 #: tfrmabout.caption
+#, object-pascal-format
 msgid "About %s"
 msgstr "About %s"
 
 #: tfrmabout.lblappname.caption
+#, object-pascal-format
 msgid "%s"
 msgstr "%s"
 
@@ -507,6 +553,7 @@ msgid "Copyright 2006-2020 Matteo Salvi"
 msgstr "Copyright 2006-2020 Matteo Salvi"
 
 #: tfrmabout.lblversion.caption
+#, object-pascal-format
 msgid "%s (%s bit)"
 msgstr "%s (%s bit)"
 
@@ -614,6 +661,16 @@ msgstr "Attiva hotkey"
 msgid "Create shortcut on desktop when ASuite is running"
 msgstr "Crea shortcut sul desktop quando ASuite è in esecuzione"
 
+#: tfrmadvancedpropertypage.dtpschdate.textfornulldate
+msgctxt "tfrmadvancedpropertypage.dtpschdate.textfornulldate"
+msgid "NULL"
+msgstr "NULL"
+
+#: tfrmadvancedpropertypage.dtpschtime.textfornulldate
+msgctxt "tfrmadvancedpropertypage.dtpschtime.textfornulldate"
+msgid "NULL"
+msgstr "NULL"
+
 #: tfrmadvancedpropertypage.grphotkey.caption
 msgctxt "tfrmadvancedpropertypage.grphotkey.caption"
 msgid "Hotkey"
@@ -710,6 +767,10 @@ msgstr "$ASuite\\"
 msgid "Item"
 msgstr "Elemento"
 
+#: tfrmbasegeneralpropertypage.lbdescription.caption
+msgid "Description"
+msgstr "Descrizione"
+
 #: tfrmbasegeneralpropertypage.lbname.caption
 msgctxt "tfrmbasegeneralpropertypage.lbname.caption"
 msgid "Name"
@@ -787,9 +848,8 @@ msgid "Execute with single click in main window"
 msgstr "Esegui con un click singolo nella finestra principale"
 
 #: tfrmgeneraloptionspage.cbsecondinstancegm.caption
-msgctxt "tfrmgeneraloptionspage.cbsecondinstancegm.caption"
 msgid "Show Graphic Menu, when run another ASuite instance"
-msgstr "Mostra Graphic Menu, quando avvii un altro istanza di ASuite"
+msgstr "Mostra GraphicMenu, quando si avvia un altra istanza di ASuite"
 
 #: tfrmgeneraloptionspage.cbshowmenustartup.caption
 msgid "Show graphic menu on ASuite startup"
@@ -811,6 +871,10 @@ msgstr "Chiudi tutti i processi aperti da ASuite alla sua chiusura"
 msgid "Ask to confirm before run a category"
 msgstr "Chiedi conferma prima di avviare una categoria"
 
+#: tfrmgeneraloptionspage.chkconfirmmsgcloseapp.caption
+msgid "Ask to confirm before close ASuite"
+msgstr "Chiedi conferma prima di chiudere ASuite"
+
 #: tfrmgeneraloptionspage.chkmissedschedulertask.caption
 msgid "Check missed scheduler task at ASuite startup"
 msgstr "Controllare i task non eseguiti all'avvio di ASuite"
@@ -819,18 +883,22 @@ msgstr "Controllare i task non eseguiti all'avvio di ASuite"
 msgid "Execution"
 msgstr "Esecuzione"
 
+#: tfrmgeneraloptionspage.gbother.caption
+msgid "Other"
+msgstr "Altro"
+
 #: tfrmgeneraloptionspage.gbstartup.caption
 msgctxt "tfrmgeneraloptionspage.gbstartup.caption"
 msgid "Startup"
 msgstr "Avvio"
 
-#: tfrmgeneraloptionspage.grplanguage.caption
-msgid "Language"
-msgstr "Lingua"
-
 #: tfrmgeneraloptionspage.lbactiononexe.caption
 msgid "On execution"
 msgstr "All'esecuzione"
+
+#: tfrmgeneraloptionspage.lblanguage.caption
+msgid "Language"
+msgstr "Lingua"
 
 #: tfrmgraphicmenu.caption
 msgid "ASuite Menu"
@@ -842,12 +910,12 @@ msgstr "132Mb / 2Gb (6.6%)"
 
 #: tfrmgraphicmenu.mniopenfoldersw.caption
 msgctxt "tfrmgraphicmenu.mniopenfoldersw.caption"
-msgid "Show application's folder"
-msgstr "Mostra la cartella dell'applicazione"
+msgid "Open file location"
+msgstr "Apri percorso file"
 
 #: tfrmgraphicmenu.mniproperty.caption
 msgctxt "tfrmgraphicmenu.mniproperty.caption"
-msgid "Property"
+msgid "Properties"
 msgstr "Proprietà"
 
 #: tfrmgraphicmenu.mnirun.caption
@@ -1001,8 +1069,8 @@ msgstr "Elimina"
 
 #: tfrmmain.actopenfolderitem.caption
 msgctxt "tfrmmain.actopenfolderitem.caption"
-msgid "Show application's folder"
-msgstr "Mostra la cartella dell'applicazione"
+msgid "Open file location"
+msgstr "Apri percorso file"
 
 #: tfrmmain.actpaste.caption
 msgctxt "tfrmmain.actpaste.caption"
@@ -1011,7 +1079,7 @@ msgstr "Incolla"
 
 #: tfrmmain.actproperty.caption
 msgctxt "tfrmmain.actproperty.caption"
-msgid "Property"
+msgid "Properties"
 msgstr "Proprietà"
 
 #: tfrmmain.actrunasadminitem.caption
@@ -1304,6 +1372,7 @@ msgid "ASuite"
 msgstr "ASuite"
 
 #: tfrmstatsoptionspage.gbsupport.caption
+#, object-pascal-format
 msgid "Drive %S"
 msgstr "Drive %S"
 
@@ -1428,11 +1497,11 @@ msgstr "Percorso"
 msgid ""
 "Note: You can use these vars (included environment variables) in relative path:\n"
 "- %asuite% = ASuite folder path (\"%s\")\n"
-"- %drive% = drive path (\"%s\")\n"
+"- %drive% = drive path (\"%s\")"
 msgstr ""
 "Nota: Puoi utilizzare le seguenti variabili (incluso quelle d'ambiente) nei percorsi relativi:\n"
 "- %asuite% = percorso della cartella di ASuite (%s)\n"
-"- %drive% = percorso del disco (%s)\n"
+"- %drive% = percorso del disco (%s)"
 
 #: tfrmswgeneralpropertypage.lbparameters.caption
 msgid "Parameters (optional)"
@@ -1504,7 +1573,6 @@ msgid "Middle click"
 msgstr "Click centrale"
 
 #: tfrmtrayiconoptionspage.lbmenutheme.caption
-msgctxt "tfrmtrayiconoptionspage.lbmenutheme.caption"
 msgid "Theme"
 msgstr "Tema"
 
