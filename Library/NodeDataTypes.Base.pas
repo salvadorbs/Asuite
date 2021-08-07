@@ -113,11 +113,12 @@ begin
   inherited;
 end;
 
-procedure TvBaseNodeData.Copy(source:TvBaseNodeData);
+procedure TvBaseNodeData.Copy(Source:TvBaseNodeData);
 begin
-  FName       := msgCopy + source.Name;
-  FDataType   := source.DataType;
-  FHideFromMenu := source.HideFromMenu;
+  Self.Name         := msgCopy + Source.Name;
+  Self.DataType     := Source.DataType;
+  Self.HideFromMenu := Source.HideFromMenu;
+  Self.Description  := Source.Description;
 end;
 
 function TvBaseNodeData.IsFileItem: Boolean;

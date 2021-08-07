@@ -315,7 +315,7 @@ object frmMain: TfrmMain
     end
     object actOpenFolderItem: TAction
       Tag = 3
-      Caption = 'Show application''s folder'
+      Caption = 'Open file location'
       OnExecute = actRunItemExecute
       OnUpdate = actRunItemUpdate
     end
@@ -350,7 +350,7 @@ object frmMain: TfrmMain
       OnUpdate = actCutCopyDeleteUpdate
     end
     object actProperty: TAction
-      Caption = 'Property'
+      Caption = 'Properties'
       OnExecute = actPropertyExecute
       OnUpdate = actCutCopyDeleteUpdate
     end

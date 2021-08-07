@@ -26,7 +26,7 @@ interface
 uses
   LCLIntf, LCLType, Classes, Forms, StdCtrls, ExtCtrls, ComCtrls, Controls,
   Graphics, Dialogs, SysUtils, VirtualTrees, Menus, Lists.Base,
-  BCImageTab, ButtonedEdit, BCImageButton, DefaultTranslator;
+  BCImageTab, ButtonedEdit, BCImageButton, DefaultTranslator, GraphicMenu.ThemeEngine;
 
 type
 
@@ -72,6 +72,7 @@ type
     imgDragSpaceHidden: TImage;
     tmrCheckItems: TTimer;
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure imgDragSpaceHiddenMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure imgLogoMouseMove(Sender: TObject; Shift: TShiftState; X,
@@ -103,6 +104,7 @@ type
   private
     { Private declarations }
     FOpening : Boolean;
+    FThemeEngine: TThemeEngine;
 
     procedure OpenFolder(FolderPath: string);
     procedure UpdateDriveStats;
@@ -116,6 +118,7 @@ type
     { Public declarations }
     procedure OpenMenu;
     procedure CloseMenu;
+    procedure LoadTheme;
   end;
 
 var
@@ -130,7 +133,7 @@ uses
   Forms.Main, Utility.System, Kernel.Consts, AppConfig.Main, DataModules.Icons,
   Forms.About, NodeDataTypes.Base, Kernel.Enumerations, Forms.Options, LazVersion,
   Utility.Misc, VirtualTree.Events, VirtualTree.Methods, Kernel.Types,
-  NodeDataTypes.Custom, GraphicMenu.ThemeEngine, Kernel.ResourceStrings, Kernel.Instance, Kernel.Manager
+  NodeDataTypes.Custom, Kernel.ResourceStrings, Kernel.Instance, Kernel.Manager
   {$IFDEF MSWINDOWS} , Windows {$ENDIF};
 
 procedure TfrmGraphicMenu.ApplicationEvents1Deactivate(Sender: TObject);
@@ -150,7 +153,7 @@ begin
   try
     if edtSearch.Text <> '' then
     begin
-      edtSearch.RightButton.ImageIndex := TThemeEngine.Create.CancelIcon;
+      edtSearch.RightButton.ImageIndex := FThemeEngine.CancelIcon;
 
       //Do search
       //Change node height and imagelist
@@ -164,7 +167,7 @@ begin
         vstList.HotNode := Node;
     end
     else begin
-      edtSearch.RightButton.ImageIndex := TThemeEngine.Create.SearchIcon;
+      edtSearch.RightButton.ImageIndex := FThemeEngine.SearchIcon;
 
       //Change node height and imagelist
       TVirtualTreeMethods.ChangeTreeIconSize(vstList, Config.GMSmallIconSize);
@@ -185,6 +188,11 @@ begin
   //Fade in out
   FOpening := False;
   tmrFader.Enabled:= True;
+end;
+
+procedure TfrmGraphicMenu.LoadTheme;
+begin
+  FThemeEngine.LoadTheme;
 end;
 
 procedure TfrmGraphicMenu.SavePositionForm;
@@ -257,11 +265,11 @@ end;
 
 procedure TfrmGraphicMenu.FormCreate(Sender: TObject);
 begin
-  TVirtualTreeEvents.Create.SetupVSTGraphicMenu(vstList, Self);
+  ASuiteInstance.VSTEvents.SetupVSTGraphicMenu(vstList, Self);
 
   //Load graphics
-  TThemeEngine.Create.SetupThemeEngine(Self);
-  TThemeEngine.Create.LoadTheme;
+  FThemeEngine := TThemeEngine.Create(Self);
+  FThemeEngine.LoadTheme;
 
   //Set PopUpMenu's ImageIndexes
   pmWindow.Images := dmImages.ilLargeIcons;
@@ -284,12 +292,17 @@ begin
 
   edtSearch.RightButton.Images := dmImages.ilLargeIcons;
   edtSearch.RightButton.ImagesWidth := ICON_SIZE_SMALL;
-  edtSearch.RightButton.ImageIndex := TThemeEngine.Create.SearchIcon;
+  edtSearch.RightButton.ImageIndex := FThemeEngine.SearchIcon;
 
   //TODO win32: Disable eject button if asuite runs on normal hd and not usb pen (ejectable devices)
   {$IFDEF UNIX}
   sknbtnEject.Visible := False;
   {$ENDIF}
+end;
+
+procedure TfrmGraphicMenu.FormDestroy(Sender: TObject);
+begin
+  FThemeEngine.Free;
 end;
 
 procedure TfrmGraphicMenu.imgDragSpaceHiddenMouseUp(Sender: TObject;

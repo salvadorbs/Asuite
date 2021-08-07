@@ -69,7 +69,7 @@ var
 implementation
 
 uses
-  VirtualTree.Events, Kernel.Types, Kernel.Logger, SynLog;
+  VirtualTree.Events, Kernel.Types, Kernel.Logger, SynLog, Kernel.Instance;
 
 {$R *.lfm}
 
@@ -133,7 +133,7 @@ var
   selNode: PVirtualNode;
 begin
   inherited;
-  TVirtualTreeEvents.Create.SetupVSTDialogFrame(vstCategory);
+  ASuiteInstance.VSTEvents.SetupVSTDialogFrame(vstCategory);
   ButtonPanel1.OKButton.OnClick := btnOkClick;
   ButtonPanel1.CancelButton.OnClick := btnCancelClick;
 

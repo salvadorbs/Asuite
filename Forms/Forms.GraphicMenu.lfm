@@ -13,6 +13,7 @@ object frmGraphicMenu: TfrmGraphicMenu
   KeyPreview = True
   OnCreate = FormCreate
   OnDeactivate = FormDeactivate
+  OnDestroy = FormDestroy
   OnHide = FormHide
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
@@ -297,14 +298,14 @@ object frmGraphicMenu: TfrmGraphicMenu
     end
     object mniOpenFolderSw: TMenuItem
       Tag = 3
-      Caption = 'Show application''s folder'
+      Caption = 'Open file location'
       OnClick = mniRunClick
     end
     object N6: TMenuItem
       Caption = '-'
     end
     object mniProperty: TMenuItem
-      Caption = 'Property'
+      Caption = 'Properties'
       ShortCut = 116
       OnClick = mniPropertyClick
     end

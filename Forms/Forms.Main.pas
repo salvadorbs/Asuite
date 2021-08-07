@@ -145,6 +145,7 @@ type
       const Parameters: array of AnsiString);
   private
     { Private declarations }
+    procedure EmptyClipboard;
     function  GetActiveTree: TBaseVirtualTree;
     procedure PopulatePopUpMenuFromAnother(APopupMenu: TMenuItem; AParentMenuItem: TMenuItem);
     procedure CloseProcessOpenByASuite;
@@ -164,12 +165,12 @@ var
 implementation
 
 uses
-  Forms.Options, Forms.About, Utility.Misc, Forms.ScanFolder,
+  Forms.Options, Forms.About, Utility.Misc, Forms.ScanFolder, Clipbrd,
   DataModules.TrayMenu, Forms.ImportList, AppConfig.Main, Utility.System,
   VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base,
   Kernel.Types, NodeDataTypes.Files, VirtualTree.Events, Kernel.Manager,
   Kernel.Logger, SynLog, FileUtil, Kernel.ResourceStrings, Kernel.Instance
-  {$IFDEF MSWINDOWS} , JwaWinBase, jwatlhelp32 {$ENDIF};
+  {$IFDEF MSWINDOWS} , JwaWinBase, jwatlhelp32, Windows {$ENDIF};
 
 {$R *.lfm}
 
@@ -423,6 +424,25 @@ begin
   else
     ShowMainForm(Sender);
 end;
+
+procedure TfrmMain.EmptyClipboard;
+begin                  
+  TASuiteLogger.Enter('Clearing clipboard', Self);
+
+  {$IFDEF MSWINDOWS}
+  if IsFormatInClipBoard(CF_VIRTUALTREE) then
+  begin
+    Windows.OpenClipboard(0);
+    try
+      Windows.EmptyClipboard;
+    finally
+      Windows.CloseClipboard;
+    end;
+  end;
+  {$ENDIF}
+
+  Clipboard.Clear;
+end;
            
 {$IFDEF UNIX}
 procedure TfrmMain.DoDropFiles(Sender: TObject;
@@ -596,6 +616,9 @@ begin
       MenuItem.Action := AParentMenuItem.Items[I].Action
     else
       MenuItem.Caption := '-';
+
+    //TODO: Add other levels
+
     //Add new menu item in APopupMenu
     APopupMenu.Add(MenuItem) ;
   end;
@@ -697,6 +720,9 @@ var
 begin
   log := TASuiteLogger.Enter('TfrmMain.FormClose', Self);
 
+  //Clear clipboard before closing asuite (prevent fake memory leak)
+  EmptyClipboard;
+
   //Close all process opened by ASuite
   if Config.AutoCloseProcess then
     CloseProcessOpenByASuite;
@@ -747,9 +773,8 @@ begin
   pcList.ActivePageIndex := PG_LIST;
 
   //Setup events in vsts
-  VSTEvents := TVirtualTreeEvents.Create;
-  VSTEvents.SetupVSTList(vstList);
-  VSTEvents.SetupVSTSearch(vstSearch);
+  ASuiteInstance.VSTEvents.SetupVSTList(vstList);
+  ASuiteInstance.VSTEvents.SetupVSTSearch(vstSearch);
 
   //Load Database and get icons (only first level of tree)
   Config.LoadConfig;
@@ -760,8 +785,6 @@ begin
   ASuiteInstance.Scheduler.CheckMissedTasks;
   TVirtualTreeMethods.RefreshList(nil);
 
-  //Get placeholder for edtSearch
-  btnedtSearch.TextHint := StringReplace(miSearchName.Caption, '&', '', []);
   PopulatePopUpMenuFromAnother(miEdit, pmWindow.Items);
 
   //Start threads

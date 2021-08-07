@@ -24,14 +24,13 @@ unit Kernel.Scheduler;
 interface
 
 uses
-  Classes, Kernel.Singleton, ExtCtrls, UITypes, DateUtils, SysUtils,
-  Dialogs, NodeDataTypes.Custom;
+  Classes, ExtCtrls, UITypes, DateUtils, SysUtils, Dialogs, NodeDataTypes.Custom;
 
 type
 
   { TScheduler }
 
-  TScheduler = class(TSingleton)
+  TScheduler = class
   private
     FTimer: TTimer;
 
@@ -42,8 +41,8 @@ type
     function CheckDaily(ANow, ASchedTime: TDateTime): Boolean;
     function CheckHourly(ANow: TDateTime): Boolean;
   public
-    procedure Initialize; override;
-    procedure Finalize; override;
+    constructor Create;
+    destructor Destroy; override;
 
     procedure CheckMissedTasks;
 
@@ -113,10 +112,18 @@ begin
   end;
 end;
 
-procedure TScheduler.Finalize;
+constructor TScheduler.Create;
 begin
-  inherited;
+  FTimer := TTimer.Create(nil);
+  FTimer.Enabled := False;
+  FTimer.OnTimer := DoTimer;
+end;
+
+destructor TScheduler.Destroy;
+begin
   FTimer.Free;
+
+  inherited;
 end;
 
 function TScheduler.CompareSchDates(ANodeData: TvCustomRealNodeData; ANow: TDateTime): Boolean;
@@ -181,14 +188,6 @@ begin
 
   if Result then
     TASuiteLogger.Info('Scheduler - Check Hourly is true', []);
-end;
-
-procedure TScheduler.Initialize;
-begin
-  inherited;
-  FTimer := TTimer.Create(nil);
-  FTimer.Enabled := False;
-  FTimer.OnTimer := DoTimer;
 end;
 
 end.

@@ -26,13 +26,13 @@ interface
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, VirtualTrees, 
   {$IFDEF MSWINDOWS} ActiveX, {$ELSE} FakeActiveX, {$ENDIF}
-  Kernel.Singleton, Forms.GraphicMenu, Forms.Dialog.BaseEntity, Menus, Forms, Controls;
+  Forms.GraphicMenu, Forms.Dialog.BaseEntity, Menus, Forms, Controls;
 
 type
 
   { TVirtualTreeEvents }
 
-  TVirtualTreeEvents = class(TSingleton)
+  TVirtualTreeEvents = class
   private
     FGraphicMenu: TfrmGraphicMenu;
 
@@ -138,6 +138,9 @@ type
     procedure DoGetTextAutorun(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
   end;
+
+var
+  VirtualTreeEvents: TVirtualTreeEvents;
 
 implementation
 
@@ -639,14 +642,14 @@ procedure TVirtualTreeEvents.DoLoadNode(Sender: TBaseVirtualTree; Node: PVirtual
 var
   DataDest, DataSource: PBaseData;
 begin
-  //TODO: Add new fields!
-
   //Create a new PBaseData as source
   New(DataSource);
   Stream.ReadBuffer(DataSource^,SizeOf(rBaseData));
+
   //Copy source's properties in DataDest
   DataDest := Sender.GetNodeData(Node);
   DataDest.Data := TVirtualTreeMethods.CreateNodeData(DataSource.Data.DataType);
+
   //Copy DataSource in DataDest
   case DataSource.Data.DataType of
     vtdtCategory  : TvCategoryNodeData(DataDest.Data).Copy(DataSource.Data);
@@ -654,12 +657,14 @@ begin
     vtdtFolder    : TvFileNodeData(DataDest.Data).Copy(DataSource.Data);
     vtdtSeparator : TvSeparatorNodeData(DataDest.Data).Copy(DataSource.Data);
   end;
+
   //New node can't use same hotkey of old node
   if DataDest.Data is TvCustomRealNodeData then
   begin
     TvCustomRealNodeData(DataDest.Data).ActiveHotkey := False;
     TvCustomRealNodeData(DataDest.Data).Hotkey := 0;
   end;
+
   //Set some personal record fields
   DataDest.Data.SetPointerNode(Node);
 

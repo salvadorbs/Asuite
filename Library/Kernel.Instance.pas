@@ -24,7 +24,8 @@ unit Kernel.Instance;
 interface
 
 uses
-  Classes, SysUtils, VirtualTrees, AppConfig.Paths, Kernel.Scheduler;
+  Classes, SysUtils, VirtualTrees, AppConfig.Paths, Kernel.Scheduler,
+  VirtualTree.Events;
 
 type
 
@@ -35,6 +36,7 @@ type
     FMainTree: TVirtualStringTree;
     FPaths: TConfigPaths;
     FScheduler: TScheduler;
+    FVSTEvents: TVirtualTreeEvents;
 
     function GetBigHeightNode: Integer;
     function GetImportTree: TVirtualStringTree;
@@ -48,6 +50,7 @@ type
     property ImportTree: TVirtualStringTree read GetImportTree;
     property Paths: TConfigPaths read FPaths;
     property Scheduler: TScheduler read FScheduler;
+    property VSTEvents: TVirtualTreeEvents read FVSTEvents;
 
     property SmallHeightNode: Integer read GetSmallHeightNode;
     property BigHeightNode: Integer read GetBigHeightNode;
@@ -100,6 +103,7 @@ var
   I: Integer;
 begin
   FScheduler := TScheduler.Create;
+  FVSTEvents := TVirtualTreeEvents.Create;
 
   //Params
   for I := 1 to ParamCount do
@@ -127,6 +131,8 @@ begin
   inherited Destroy;
 
   FPaths.Destroy;
+  FVSTEvents.Destroy;
+  FScheduler.Destroy;
 end;
 
 procedure TASuiteInstance.HandleParam(const Param: string;
