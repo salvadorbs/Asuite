@@ -917,9 +917,8 @@ end;
 procedure TdmTrayMenu.MeasureCaptionedSeparator(Sender: TObject;
   ACanvas: TCanvas; var Width, Height: Integer);
 begin
-  //TODO: Fix me about DPI
   //Change separator's height
-  Height := 15; //CaptionLineItemHeight + 1;
+  Height := Round((Screen.PixelsPerInch / 96.0) * CAPTION_LINE_ITEM_HEIGHT);
 end;
 
 procedure TdmTrayMenu.PopulateCategoryItems(Sender: TObject);

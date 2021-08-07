@@ -96,7 +96,7 @@ implementation
 uses
   Kernel.Consts, Utility.Conversions, Kernel.ResourceStrings, BGRABitmapTypes, Types,
   GraphicMenu.ThemeEngine.Consts, Kernel.Logger, Utility.Misc, Kernel.Instance,
-  Kernel.Manager, SynLog;
+  Kernel.Manager, SynLog, Forms.GraphicMenu;
 
 { TThemeEngineMethods }
 

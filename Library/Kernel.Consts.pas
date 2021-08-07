@@ -83,6 +83,7 @@ const
   //Node Heidht
   NODE_HEIGHT_SMALL = 18;
   NODE_HEIGHT_LARGE = 36;
+  CAPTION_LINE_ITEM_HEIGHT = 15;
 
   // PageControl Indexes
   PG_LIST       = 0;
