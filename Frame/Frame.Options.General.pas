@@ -91,7 +91,7 @@ begin
   if FindFirstUTF8(SearchMask, faAnyFile, FileInfo) = 0 then
   begin
     repeat
-      I := - 1;
+      I := -1;
       if (FileInfo.Attr and (faDirectory or faVolumeId) = 0) then
       begin
         if (FileInfo.Name = '.') or (FileInfo.Name = '..') or (FileInfo.Name = '') then

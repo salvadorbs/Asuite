@@ -1,15 +1,100 @@
 # 
 msgid ""
-msgstr ""
-"Project-Id-Version: \n"
-"POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4\n"
+msgstr "Content-Type: text/plain; charset=UTF-8\n"
+
+#: kernel.resourcestrings.cxactiononexeopt_item0
+msgctxt "kernel.resourcestrings.cxactiononexeopt_item0"
+msgid "Just run file"
+msgstr "Just run file"
+
+#: kernel.resourcestrings.cxactiononexeopt_item1
+msgctxt "kernel.resourcestrings.cxactiononexeopt_item1"
+msgid "Run and hide ASuite"
+msgstr "Run and hide ASuite"
+
+#: kernel.resourcestrings.cxactiononexeopt_item2
+msgctxt "kernel.resourcestrings.cxactiononexeopt_item2"
+msgid "Run and close ASuite"
+msgstr "Run and close ASuite"
+
+#: kernel.resourcestrings.cxactiononexe_item0
+msgid "Default (options)"
+msgstr "Default (options)"
+
+#: kernel.resourcestrings.cxactiononexe_item1
+msgctxt "kernel.resourcestrings.cxactiononexe_item1"
+msgid "Just run file"
+msgstr "Just run file"
+
+#: kernel.resourcestrings.cxactiononexe_item2
+msgctxt "kernel.resourcestrings.cxactiononexe_item2"
+msgid "Run and hide ASuite"
+msgstr "Run and hide ASuite"
+
+#: kernel.resourcestrings.cxactiononexe_item3
+msgctxt "kernel.resourcestrings.cxactiononexe_item3"
+msgid "Run and close ASuite"
+msgstr "Run and close ASuite"
+
+#: kernel.resourcestrings.cxautoexecute_item0
+msgid "Never"
+msgstr "Never"
+
+#: kernel.resourcestrings.cxautoexecute_item1
+msgid "Always on startup"
+msgstr "Always on startup"
+
+#: kernel.resourcestrings.cxautoexecute_item2
+msgid "Startup, only if no previous instances are running"
+msgstr "Startup, only if no previous instances are running"
+
+#: kernel.resourcestrings.cxautoexecute_item3
+msgid "Always on shutdown"
+msgstr "Always on shutdown"
+
+#: kernel.resourcestrings.cxmouseclick_item0
+msgid "No action"
+msgstr "No action"
+
+#: kernel.resourcestrings.cxmouseclick_item1
+msgid "Show window"
+msgstr "Show window"
+
+#: kernel.resourcestrings.cxmouseclick_item2
+msgid "Show graphic menu"
+msgstr "Show graphic menu"
+
+#: kernel.resourcestrings.cxmouseclick_item3
+msgid "Show classic menu"
+msgstr "Show classic menu"
+
+#: kernel.resourcestrings.cxscheduler_item0
+msgid "Disabled"
+msgstr "Disabled"
+
+#: kernel.resourcestrings.cxscheduler_item1
+msgid "Once"
+msgstr "Once"
+
+#: kernel.resourcestrings.cxscheduler_item2
+msgid "Hourly"
+msgstr "Hourly"
+
+#: kernel.resourcestrings.cxscheduler_item3
+msgid "Daily"
+msgstr "Daily"
+
+#: kernel.resourcestrings.cxwindowstate_item0
+msgid "Normal"
+msgstr "Normal"
+
+#: kernel.resourcestrings.cxwindowstate_item1
+msgid "Minimized"
+msgstr "Minimized"
+
+#: kernel.resourcestrings.cxwindowstate_item2
+msgid "Maximized"
+msgstr "Maximized"
 
 #: kernel.resourcestrings.msgadvanced
 msgid "Advanced"
@@ -70,6 +155,10 @@ msgstr "Default (item's settings)"
 msgid "Safely remove hardware"
 msgstr "Safely remove hardware"
 
+#: kernel.resourcestrings.msgenvironmentvars
+msgid "Environment Vars"
+msgstr "Environment Vars"
+
 #: kernel.resourcestrings.msgerremptyname
 msgid "Application's name field is empty"
 msgstr "Application's name field is empty"
@@ -101,6 +190,26 @@ msgstr "Couldn't find icon file %s"
 #, object-pascal-format
 msgid "Couldn't find file %s"
 msgstr "Couldn't find file %s"
+
+#: kernel.resourcestrings.msgerrorexecute
+#, object-pascal-format
+msgid "Failed to execute \"%s\""
+msgstr "Failed to execute \"%s\""
+
+#: kernel.resourcestrings.msgerrorexecuteadmin
+#, object-pascal-format
+msgid "Failed to execute item \"%s\" as admin"
+msgstr "Failed to execute item \"%s\" as admin"
+
+#: kernel.resourcestrings.msgerrorexecuteuser
+#, object-pascal-format
+msgid "Failed to execute item \"%s\" as user \"%s\""
+msgstr "Failed to execute item \"%s\" as user \"%s\""
+
+#: kernel.resourcestrings.msgerroropenfolder
+#, object-pascal-format
+msgid "Failed to open folder \"%s\""
+msgstr "Failed to open folder \"%s\""
 
 #: kernel.resourcestrings.msgerrregcmhotkey
 msgid "Register Classic Menu's hotkey failed"
@@ -173,6 +282,11 @@ msgstr "Found and added %d files in list"
 msgctxt "kernel.resourcestrings.msggeneral"
 msgid "General"
 msgstr "General"
+
+#: kernel.resourcestrings.msggeneratefilehasherror
+#, object-pascal-format
+msgid "Generating hash file because of an error (file path = %s)"
+msgstr "Generating hash file because of an error (file path = %s)"
 
 #: kernel.resourcestrings.msggmabout
 msgid "About"
@@ -258,6 +372,10 @@ msgstr "Select the location of file list to import in ASuite"
 #: kernel.resourcestrings.msgimporttitle3
 msgid "Select which items to import"
 msgstr "Select which items to import"
+
+#: kernel.resourcestrings.msginputusername
+msgid "Please insert username"
+msgstr "Please insert username"
 
 #: kernel.resourcestrings.msgitems
 msgid "Items"
@@ -365,6 +483,10 @@ msgstr "Run As..."
 msgid "Save completed"
 msgstr "Save completed"
 
+#: kernel.resourcestrings.msgscanfolderextnotvalid
+msgid "Ext file not valid. Please check it and retry!"
+msgstr "Ext file not valid. Please check it and retry!"
+
 #: kernel.resourcestrings.msgscanningcancel
 msgctxt "kernel.resourcestrings.msgscanningcancel"
 msgid "Cancel"
@@ -402,6 +524,10 @@ msgstr "Trayicon"
 #, object-pascal-format
 msgid "Active Sensors for %s"
 msgstr "Active Sensors for %s"
+
+#: tdmtraymenu.action1.caption
+msgid "actCategory"
+msgstr "actCategory"
 
 #: tfrmabout.caption
 #, object-pascal-format
@@ -457,8 +583,8 @@ msgid "Recents"
 msgstr "Recents"
 
 #: tfrmadvancedoptionspage.cbmfu.caption
-msgid "Active Most Frequently Used items"
-msgstr "Active Most Frequently Used items"
+msgid "Active MFU items"
+msgstr "Active MFU items"
 
 #: tfrmadvancedoptionspage.cbmru.caption
 msgid "Active recent items"
@@ -526,15 +652,24 @@ msgstr "Active hotkey"
 msgid "Create shortcut on desktop when ASuite is running"
 msgstr "Create shortcut on desktop when ASuite is running"
 
+#: tfrmadvancedpropertypage.dtpschdate.textfornulldate
+msgctxt "tfrmadvancedpropertypage.dtpschdate.textfornulldate"
+msgid "NULL"
+msgstr "NULL"
+
+#: tfrmadvancedpropertypage.dtpschtime.textfornulldate
+msgctxt "tfrmadvancedpropertypage.dtpschtime.textfornulldate"
+msgid "NULL"
+msgstr "NULL"
+
 #: tfrmadvancedpropertypage.grphotkey.caption
 msgctxt "tfrmadvancedpropertypage.grphotkey.caption"
 msgid "Hotkey"
 msgstr "Hotkey"
 
-#: tfrmadvancedpropertypage.grpmenu.caption
-msgctxt "tfrmadvancedpropertypage.grpmenu.caption"
-msgid "Menu"
-msgstr "Menu"
+#: tfrmadvancedpropertypage.grpothers.caption
+msgid "Others"
+msgstr "Others"
 
 #: tfrmadvancedpropertypage.grpscheduler.caption
 msgid "Scheduler"
@@ -623,6 +758,10 @@ msgstr "$ASuite\\"
 msgid "Item"
 msgstr "Item"
 
+#: tfrmbasegeneralpropertypage.lbdescription.caption
+msgid "Description"
+msgstr "Description"
+
 #: tfrmbasegeneralpropertypage.lbname.caption
 msgctxt "tfrmbasegeneralpropertypage.lbname.caption"
 msgid "Name"
@@ -663,27 +802,45 @@ msgstr ""
 "first level). Uncheck items who you don't want to start, when run this "
 "category."
 
-#: tfrmdialogbase.btnapply.caption
-msgid "Apply"
-msgstr "Apply"
-
-#: tfrmdialogbase.btncancel.caption
-msgctxt "tfrmdialogbase.btncancel.caption"
-msgid "Cancel"
-msgstr "Cancel"
-
-#: tfrmdialogbase.btnok.caption
-msgctxt "tfrmdialogbase.btnok.caption"
-msgid "Ok"
-msgstr "Ok"
-
 #: tfrmdialogbase.caption
 msgid "frmDialogBase"
 msgstr "frmDialogBase"
 
+#: tfrmenvironmentvars.actadd.caption
+msgctxt "tfrmenvironmentvars.actadd.caption"
+msgid "Add"
+msgstr "Add"
+
+#: tfrmenvironmentvars.actcopy.caption
+msgctxt "tfrmenvironmentvars.actcopy.caption"
+msgid "Copy"
+msgstr "Copy"
+
+#: tfrmenvironmentvars.actdelete.caption
+msgctxt "tfrmenvironmentvars.actdelete.caption"
+msgid "Delete"
+msgstr "Delete"
+
+#: tfrmenvironmentvars.actpaste.caption
+msgctxt "tfrmenvironmentvars.actpaste.caption"
+msgid "Paste"
+msgstr "Paste"
+
+#: tfrmenvironmentvars.grpothers.caption
+msgid "Environment Variables"
+msgstr "Environment Variables"
+
+#: tfrmenvironmentvars.tbbuttons.caption
+msgid "tbButtons"
+msgstr "tbButtons"
+
 #: tfrmgeneraloptionspage.cbrunsingleclick.caption
 msgid "Execute with single click in main window"
 msgstr "Execute with single click in main window"
+
+#: tfrmgeneraloptionspage.cbsecondinstancegm.caption
+msgid "Show Graphic Menu, when run another ASuite instance"
+msgstr "Show Graphic Menu, when run another ASuite instance"
 
 #: tfrmgeneraloptionspage.cbshowmenustartup.caption
 msgid "Show graphic menu on ASuite startup"
@@ -694,8 +851,8 @@ msgid "Show window on ASuite startup"
 msgstr "Show window on ASuite startup"
 
 #: tfrmgeneraloptionspage.cbwindowsstartup.caption
-msgid "Start ASuite on Windows system startup"
-msgstr "Start ASuite on Windows system startup"
+msgid "Start ASuite on Operating System startup"
+msgstr "Start ASuite on Operating System startup"
 
 #: tfrmgeneraloptionspage.chkautocloseprocess.caption
 msgid "Close all process opened by ASuite at launcher shutdown"
@@ -705,6 +862,10 @@ msgstr "Close all process opened by ASuite at launcher shutdown"
 msgid "Ask to confirm before run a category"
 msgstr "Ask to confirm before run a category"
 
+#: tfrmgeneraloptionspage.chkconfirmmsgcloseapp.caption
+msgid "Ask to confirm before close ASuite"
+msgstr "Ask to confirm before close ASuite"
+
 #: tfrmgeneraloptionspage.chkmissedschedulertask.caption
 msgid "Check missed scheduler task at ASuite startup"
 msgstr "Check missed scheduler task at ASuite startup"
@@ -713,18 +874,22 @@ msgstr "Check missed scheduler task at ASuite startup"
 msgid "Execution"
 msgstr "Execution"
 
+#: tfrmgeneraloptionspage.gbother.caption
+msgid "Other"
+msgstr "Other"
+
 #: tfrmgeneraloptionspage.gbstartup.caption
 msgctxt "tfrmgeneraloptionspage.gbstartup.caption"
 msgid "Startup"
 msgstr "Startup"
 
-#: tfrmgeneraloptionspage.grplanguage.caption
-msgid "Language"
-msgstr "Language"
-
 #: tfrmgeneraloptionspage.lbactiononexe.caption
 msgid "On execution"
 msgstr "On execution"
+
+#: tfrmgeneraloptionspage.lblanguage.caption
+msgid "Language"
+msgstr "Language"
 
 #: tfrmgraphicmenu.caption
 msgid "ASuite Menu"
@@ -736,13 +901,13 @@ msgstr "132Mb / 2Gb (6.6%)"
 
 #: tfrmgraphicmenu.mniopenfoldersw.caption
 msgctxt "tfrmgraphicmenu.mniopenfoldersw.caption"
-msgid "Show application's folder"
-msgstr "Show application's folder"
+msgid "Open file location"
+msgstr "Open file location"
 
 #: tfrmgraphicmenu.mniproperty.caption
 msgctxt "tfrmgraphicmenu.mniproperty.caption"
-msgid "Property"
-msgstr "Property"
+msgid "Properties"
+msgstr "Properties"
 
 #: tfrmgraphicmenu.mnirun.caption
 msgctxt "tfrmgraphicmenu.mnirun.caption"
@@ -880,6 +1045,7 @@ msgid "Add software..."
 msgstr "Add software..."
 
 #: tfrmmain.actcopy.caption
+msgctxt "tfrmmain.actcopy.caption"
 msgid "Copy"
 msgstr "Copy"
 
@@ -894,17 +1060,18 @@ msgstr "Delete"
 
 #: tfrmmain.actopenfolderitem.caption
 msgctxt "tfrmmain.actopenfolderitem.caption"
-msgid "Show application's folder"
-msgstr "Show application's folder"
+msgid "Open file location"
+msgstr "Open file location"
 
 #: tfrmmain.actpaste.caption
+msgctxt "tfrmmain.actpaste.caption"
 msgid "Paste"
 msgstr "Paste"
 
 #: tfrmmain.actproperty.caption
 msgctxt "tfrmmain.actproperty.caption"
-msgid "Property"
-msgstr "Property"
+msgid "Properties"
+msgstr "Properties"
 
 #: tfrmmain.actrunasadminitem.caption
 msgctxt "tfrmmain.actrunasadminitem.caption"
@@ -1049,6 +1216,10 @@ msgstr "Active custom background"
 msgid "Custom main window title"
 msgstr "Custom main window title"
 
+#: tfrmmainwindowoptionspage.cbdialogcentermf.caption
+msgid "Open dialogs in the center of main window"
+msgstr "Open dialogs in the center of main window"
+
 #: tfrmmainwindowoptionspage.cbdisableconfirmdelete.caption
 msgid "Disable delete items confirmation dialog"
 msgstr "Disable delete items confirmation dialog"
@@ -1122,11 +1293,6 @@ msgctxt "tfrmpropertyseparator.lbname.caption"
 msgid "Name"
 msgstr "Name"
 
-#: tfrmscanfolder.btncancel.caption
-msgctxt "tfrmscanfolder.btncancel.caption"
-msgid "Cancel"
-msgstr "Cancel"
-
 #: tfrmscanfolder.btnexcludeadd.caption
 msgctxt "tfrmscanfolder.btnexcludeadd.caption"
 msgid "Add"
@@ -1136,10 +1302,6 @@ msgstr "Add"
 msgctxt "tfrmscanfolder.btnexcludedelete.caption"
 msgid "Delete"
 msgstr "Delete"
-
-#: tfrmscanfolder.btnscan.caption
-msgid "Scan"
-msgstr "Scan"
 
 #: tfrmscanfolder.btntypesadd.caption
 msgctxt "tfrmscanfolder.btntypesadd.caption"
@@ -1171,6 +1333,10 @@ msgstr "File Types"
 msgid "General settings"
 msgstr "General settings"
 
+#: tfrmscanfolder.pnlbuttons.okbutton.caption
+msgid "&Scan"
+msgstr "&Scan"
+
 #: tfrmshortcutgrabber.btncancel.caption
 msgctxt "tfrmshortcutgrabber.btncancel.caption"
 msgid "Cancel"
@@ -1196,8 +1362,8 @@ msgstr "ASuite"
 
 #: tfrmstatsoptionspage.gbsupport.caption
 #, object-pascal-format
-msgid "Drive %S:"
-msgstr "Drive %S:"
+msgid "Drive %S"
+msgstr "Drive %S"
 
 #: tfrmstatsoptionspage.gbsystem.caption
 msgid "System"
@@ -1236,15 +1402,6 @@ msgstr "Total physical memory"
 
 #: tfrmstatsoptionspage.lblram.rightcaption
 msgctxt "tfrmstatsoptionspage.lblram.rightcaption"
-msgid "Value"
-msgstr "Value"
-
-#: tfrmstatsoptionspage.lbnamepc.caption
-msgid "Computer name"
-msgstr "Computer name"
-
-#: tfrmstatsoptionspage.lbnamepc.rightcaption
-msgctxt "tfrmstatsoptionspage.lbnamepc.rightcaption"
 msgid "Value"
 msgstr "Value"
 
@@ -1311,10 +1468,6 @@ msgctxt "tfrmstatsoptionspage.lbuser.rightcaption"
 msgid "Value"
 msgstr "Value"
 
-#: tfrmswgeneralpropertypage.btnextractname.caption
-msgid "Extract name from exe"
-msgstr "Extract name from exe"
-
 #: tfrmswgeneralpropertypage.edtpathexe.text
 msgctxt "tfrmswgeneralpropertypage.edtpathexe.text"
 msgid "$ASuite\\"
@@ -1330,15 +1483,14 @@ msgid "Path"
 msgstr "Path"
 
 #: tfrmswgeneralpropertypage.lbinfo2.caption
-#, object-pascal-format
 msgid ""
 "Note: You can use these vars (included environment variables) in relative path:\n"
-"- $asuite = ASuite folder path (\"%s\")\n"
-"- $drive = drive path (\"%s\")"
+"- %asuite% = ASuite folder path (\"%s\")\n"
+"- %drive% = drive path (\"%s\")"
 msgstr ""
 "Note: You can use these vars (included environment variables) in relative path:\n"
-"- $asuite = ASuite folder path (\"%s\")\n"
-"- $drive = drive path (\"%s\")"
+"- %asuite% = ASuite folder path (\"%s\")\n"
+"- %drive% = drive path (\"%s\")"
 
 #: tfrmswgeneralpropertypage.lbparameters.caption
 msgid "Parameters (optional)"
@@ -1410,7 +1562,6 @@ msgid "Middle click"
 msgstr "Middle click"
 
 #: tfrmtrayiconoptionspage.lbmenutheme.caption
-msgctxt "tfrmtrayiconoptionspage.lbmenutheme.caption"
 msgid "Theme"
 msgstr "Theme"
 
@@ -1423,16 +1574,13 @@ msgid "Right click"
 msgstr "Right click"
 
 #: tfrmuilogin.lblinfo.caption
-msgctxt "tfrmuilogin.lblinfo.caption"
 msgid "Please insert username and password"
 msgstr "Please insert username and password"
 
 #: tfrmuilogin.lblpassword.caption
-msgctxt "tfrmuilogin.lblpassword.caption"
 msgid "&Password"
 msgstr "&Password"
 
 #: tfrmuilogin.lblusername.caption
-msgctxt "tfrmuilogin.lblusername.caption"
 msgid "&User Name"
 msgstr "&User Name"
