@@ -26,9 +26,8 @@ interface
 uses
   LCLIntf, LCLType, SysUtils, Classes, Controls, Forms, Dialogs, Menus,
   ComCtrls, VirtualTrees, UniqueInstance, Kernel.Consts, DataModules.Icons,
-  Kernel.BaseMainForm, StdCtrls, SynCommons,
-  Kernel.Enumerations, ExtCtrls,
-  ButtonedEdit, {Actions,} ActnList;
+  Kernel.BaseMainForm, StdCtrls, SynCommons, {$IFDEF UNIX}VirtualTree.Helper, {$ENDIF}
+  Kernel.Enumerations, ExtCtrls, ButtonedEdit, {Actions,} ActnList;
 
 type
 

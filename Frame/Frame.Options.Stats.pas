@@ -24,7 +24,7 @@ unit Frame.Options.Stats;
 interface
 
 uses
-  LCLIntf, SysUtils,
+  LCLIntf, SysUtils, Forms,
   Dialogs, Frame.BaseEntity, JPP.DoubleLineLabel, StdCtrls;
 
 type

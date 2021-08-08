@@ -13,6 +13,17 @@ on:
       - master
       - develop
       - releases/*
+        
+env:
+  FPC_URL: 'gitlab'
+  FPC_BRANCH: 'release_3_2_2'
+  LAZ_URL: 'gitlab'
+  LAZ_BRANCH: 'release_2_2_0_rc1'
+  LAZ_DIR: 'fpcLaz'
+  BUILD_MODE: 'Debug'   
+  FPCUP_OPT: '--fpcopt="-g -gl" --lazopt="-g -gl" --verbose'
+  LAZ_PATCH: '/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
+  ASUITE_SOURCE: 'asuite_src'
 
 jobs:
   build:
@@ -22,7 +33,7 @@ jobs:
     
     defaults:
       run:
-        shell: bash
+        shell: bash 
         
     strategy:
       fail-fast: false
@@ -31,56 +42,32 @@ jobs:
 
           - os: windows-latest
             name: 'Windows 64'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/1.8.2s1/fpclazup-x86_64-win64.exe'
-            fpcup-opt: ''
-            fpc-url: 'https://svn.freepascal.org/svn/fpc/tags/release_3_2_2/'
-            laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_2_0_RC1/'
-            lazpatch: '/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
-            laz-dir: 'fpcLaz'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.0.0e/fpclazup-x86_64-win64.exe'
             lazbuild: 'fpcLaz/lazarus/lazbuild.exe'
-            build-mode: 'Debug'
             build-widgetset: 'win32'
             build-os: 'win64'
             binary: 'ASuite.exe'
 
           - os: ubuntu-latest
             name: 'Linux 64 GTK2'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/1.8.2s1/fpclazup-x86_64-linux'
-            fpcup-opt: ''
-            fpc-url: 'https://svn.freepascal.org/svn/fpc/tags/release_3_2_2/'
-            laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_2_0_RC1/'
-            lazpatch: '/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
-            laz-dir: 'fpcLaz'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.0.0e/fpclazup-x86_64-linux'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
-            build-mode: 'Debug'
             build-widgetset: 'gtk2'
             build-os: 'linux'
             binary: 'ASuite'
 
           - os: ubuntu-latest
             name: 'Linux 64 GTK3'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/1.8.2s1/fpclazup-x86_64-linux'
-            fpcup-opt: ''
-            fpc-url: 'https://svn.freepascal.org/svn/fpc/tags/release_3_2_2/'
-            laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_2_0_RC1/'
-            lazpatch: '/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
-            laz-dir: 'fpcLaz'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.0.0e/fpclazup-x86_64-linux'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
-            build-mode: 'Debug'
             build-widgetset: 'gtk3'
             build-os: 'linux'
             binary: 'ASuite'
           
           - os: ubuntu-20.04
             name: 'Linux 64 QT5'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/1.8.2s1/fpclazup-x86_64-linux'
-            fpcup-opt: ''
-            fpc-url: 'https://svn.freepascal.org/svn/fpc/tags/release_3_2_2/'
-            laz-url: 'https://svn.freepascal.org/svn/lazarus/tags/lazarus_2_2_0_RC1/'
-            lazpatch: '/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
-            laz-dir: 'fpcLaz'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.0.0e/fpclazup-x86_64-linux'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
-            build-mode: 'Debug'
             build-widgetset: 'qt5'
             build-os: 'linux'
             binary: 'ASuite'
@@ -91,6 +78,7 @@ jobs:
     - uses: actions/checkout@v2
       with:
         submodules: true
+        path: '${{ env.ASUITE_SOURCE }}'
         
     - name: Install Dependencies (Ubuntu)
       if: matrix.config.os == 'ubuntu-latest' || matrix.config.os == 'ubuntu-20.04'
@@ -107,21 +95,21 @@ jobs:
       if: (matrix.config.os == 'ubuntu-latest' || matrix.config.os == 'ubuntu-20.04') && matrix.config.build-widgetset == 'qt5'
       run: |
         sudo apt-get -m -y install libqt5pas-dev libqt5pas1 qt5-qmake qtbase5-dev qt5-default libqt5x11extras5-dev libxcb-keysyms1-dev
-        cd ${{ github.workspace }}/3p/AsuiteComps/library/platform/unix/QGHotkeyHookPas
+        cd ${{ env.ASUITE_SOURCE }}/3p/AsuiteComps/library/platform/unix/QGHotkeyHookPas
         qmake
         make
         sudo make install
 
     - name: Generate Cache Hash
-      run: echo "${{ matrix.config.fpcup-url }}${{ matrix.config.fpcup-opt }}${{ matrix.config.fpc-url }}${{ matrix.config.laz-url }}${{ matrix.config.lazpatch}}${{ matrix.config.name }}" > .cache
+      run: echo "${{ matrix.config.fpcup-url }}${{ env.FPCUP_OPT }}${{ env.FPC_URL }}${{ env.LAZ_URL }}${{ env.LAZ_PATCH}}${{ matrix.config.name }}" > .cache
 
     - name: Cache
       id: cache
       uses: actions/cache@v2.1.3
       env:
-        cache-name: cache-laz-v0.3.0
+        cache-name: cache-laz-v0.4.0
       with:
-        path: ${{ matrix.config.laz-dir }}
+        path: ${{ env.LAZ_DIR }}
         key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('.cache') }}     
 
     - name: Install Lazarus
@@ -129,14 +117,14 @@ jobs:
       run: |
         curl --retry 5 -L -o fpcup ${{ matrix.config.fpcup-url }}
         chmod +x fpcup
-        mkdir ${{ matrix.config.laz-dir }}
-        ./fpcup --installdir=${{ matrix.config.laz-dir }} --fpcURL=${{ matrix.config.fpc-url }} --lazURL=${{ matrix.config.laz-url }} --lazPATCH="${{ github.workspace}}${{ matrix.config.lazpatch}}" ${{ matrix.config.fpcup-opt }} --only=docker --noconfirm --verbose
+        mkdir ${{ env.LAZ_DIR }}
+        ./fpcup --installdir=${{ env.LAZ_DIR }} --fpcURL=${{ env.FPC_URL }} --lazURL=${{ env.LAZ_URL }} --lazPATCH="${{ env.ASUITE_SOURCE}}${{ env.LAZ_PATCH}}" ${{ env.FPCUP_OPT }} --only=docker --noconfirm --verbose
    
     - name: Remove Sparta_Generics from jpLib.lpk requirements
       uses: Amadevus/pwsh-script@v2
       with:
         script: |
-          $file = gi ${{ github.workspace }}/3p/JPLib/packages/Lazarus/jplib.lpk
+          $file = gi ${{ env.ASUITE_SOURCE }}/3p/JPLib/packages/Lazarus/jplib.lpk
           [xml]$xml=Get-Content -Path $file
           $node=$xml.SelectSingleNode('CONFIG/Package/RequiredPkgs/Item1')
           $node.ParentNode.RemoveChild($node)
@@ -145,32 +133,32 @@ jobs:
     - name: Install packages
       if: steps.cache.outputs.cache-hit != 'true'
       run: |
-        ${{ matrix.config.lazbuild }} --add-package-link "${{ github.workspace }}/3p/bgrabitmap/bgrabitmap/bgrabitmappack.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/bgrabitmap/bglcontrols/bglcontrols.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/bgracontrols/bgracontrols.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/bgracontrols/bgrapascalscriptcomponent.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/IGDIPlusMod/packages/Lazarus/lazigdiplus.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/JPLib/packages/Lazarus/jplib.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/JPPack/packages/Lazarus/jppacklcl.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package-link "${{ github.workspace }}/3p/mORMot/Packages/mormot_base.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package-link "${{ github.workspace }}/3p/mORMot/Packages/mormot_cross.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package-link "${{ github.workspace }}/3p/HashLib4Pascal/HashLib/src/Packages/FPC/HashLib4PascalPackage.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/luipack/uniqueinstance/uniqueinstance_package.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package-link "${{ github.workspace }}/3p/luipack/lclextensions/lclextensions_package.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/VirtualTreeView-Lazarus/Source/virtualtreeview_package.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package "${{ github.workspace }}/3p/AsuiteComps/ASuiteComps.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package-link "${{ env.ASUITE_SOURCE }}/3p/bgrabitmap/bgrabitmap/bgrabitmappack.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package "${{ env.ASUITE_SOURCE }}/3p/bgrabitmap/bglcontrols/bglcontrols.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package "${{ env.ASUITE_SOURCE }}/3p/bgracontrols/bgracontrols.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package "${{ env.ASUITE_SOURCE }}/3p/bgracontrols/bgrapascalscriptcomponent.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package "${{ env.ASUITE_SOURCE }}/3p/IGDIPlusMod/packages/Lazarus/lazigdiplus.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package "${{ env.ASUITE_SOURCE }}/3p/JPLib/packages/Lazarus/jplib.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package "${{ env.ASUITE_SOURCE }}/3p/JPPack/packages/Lazarus/jppacklcl.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package-link "${{ env.ASUITE_SOURCE }}/3p/mORMot/Packages/mormot_base.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package-link "${{ env.ASUITE_SOURCE }}/3p/mORMot/Packages/mormot_cross.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package-link "${{ env.ASUITE_SOURCE }}/3p/HashLib4Pascal/HashLib/src/Packages/FPC/HashLib4PascalPackage.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package "${{ env.ASUITE_SOURCE }}/3p/luipack/uniqueinstance/uniqueinstance_package.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package-link "${{ env.ASUITE_SOURCE }}/3p/luipack/lclextensions/lclextensions_package.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package "${{ env.ASUITE_SOURCE }}/3p/VirtualTreeView-Lazarus/Source/virtualtreeview_package.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package "${{ env.ASUITE_SOURCE }}/3p/AsuiteComps/ASuiteComps.lpk" --skip-dependencies
 
     - name: Validate Cache
       if: steps.cache.outputs.cache-hit == 'true'
       run: ${{ matrix.config.lazbuild }} --version && echo "::set-output name=success::true" || echo "::set-output name=success::false"
 
-    - name: Build ASuite (${{ matrix.config.build-mode }})
-      run: ${{ matrix.config.lazbuild }} "${{ github.workspace }}/ASuite.lpi" --no-write-project --build-mode="${{ matrix.config.build-mode }}" --widgetset=${{ matrix.config.build-widgetset }} --operating-system=${{ matrix.config.build-os }}
+    - name: Build ASuite (${{ env.BUILD_MODE }})
+      run: ${{ matrix.config.lazbuild }} "${{ env.ASUITE_SOURCE }}/ASuite.lpi" --no-write-project --build-mode="${{ env.BUILD_MODE }}" --widgetset=${{ matrix.config.build-widgetset }} --operating-system=${{ matrix.config.build-os }}
 
     - name: Upload the Build Artifact
       uses: actions/upload-artifact@v2.2.2
       with:
-        name: ASuite ${{ matrix.config.build-mode }} build - ${{ matrix.config.build-widgetset }}
+        name: ASuite ${{ env.BUILD_MODE }} build - ${{ matrix.config.build-widgetset }}
         path: |
-          ${{ github.workspace}}/bin
-          ${{ github.workspace }}/3p/AsuiteComps/library/platform/unix/QGHotkeyHookPas/libQGHotkeyHookPas.so*
+          ${{ env.ASUITE_SOURCE}}/bin
+          ${{ env.ASUITE_SOURCE }}/3p/AsuiteComps/library/platform/unix/QGHotkeyHookPas/libQGHotkeyHookPas.so*

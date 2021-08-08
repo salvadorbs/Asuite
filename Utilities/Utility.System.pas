@@ -50,7 +50,7 @@ implementation
 
 uses
   Utility.Conversions, Forms.Main, Utility.Misc, Kernel.Logger,
-  LazFileUtils{$IFDEF MSWINDOWS} , ShellApi {$ENDIF}, LazUTF8,
+  LazFileUtils{$IFDEF MSWINDOWS} , ShellApi {$ELSE}, IniFiles {$ENDIF}, LazUTF8,
   Utility.FileFolder, Kernel.Instance;
 
 function HasDriveLetter(const Path: String): Boolean;
