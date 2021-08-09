@@ -18,7 +18,7 @@ env:
   FPC_URL: 'gitlab'
   FPC_BRANCH: 'release_3_2_2'
   LAZ_URL: 'gitlab'
-  LAZ_BRANCH: 'release_2_2_0_rc1'
+  LAZ_BRANCH: 'lazarus_2_2_0_RC1'
   LAZ_DIR: 'fpcLaz'
   BUILD_MODE: 'Debug'   
   FPCUP_OPT: '--fpcopt="-g -gl" --lazopt="-g -gl" --verbose'
@@ -101,7 +101,7 @@ jobs:
         sudo make install
 
     - name: Generate Cache Hash
-      run: echo "${{ matrix.config.fpcup-url }}${{ env.FPCUP_OPT }}${{ env.FPC_URL }}${{ env.LAZ_URL }}${{ env.LAZ_PATCH}}${{ matrix.config.name }}" > .cache
+      run: echo "${{ matrix.config.fpcup-url }}${{ env.FPCUP_OPT }}${{ env.FPC_URL }}${{ env.FPC_BRANCH }}${{ env.LAZ_URL }}${{ env.LAZ_BRANCH }}${{ env.LAZ_PATCH}}${{ matrix.config.name }}" > .cache
 
     - name: Cache
       id: cache
@@ -118,7 +118,7 @@ jobs:
         curl --retry 5 -L -o fpcup ${{ matrix.config.fpcup-url }}
         chmod +x fpcup
         mkdir ${{ env.LAZ_DIR }}
-        ./fpcup --installdir=${{ env.LAZ_DIR }} --fpcURL=${{ env.FPC_URL }} --lazURL=${{ env.LAZ_URL }} --lazPATCH="${{ env.ASUITE_SOURCE}}${{ env.LAZ_PATCH}}" ${{ env.FPCUP_OPT }} --only=docker --noconfirm --verbose
+        ./fpcup --installdir=${{ env.LAZ_DIR }} --fpcURL=${{ env.FPC_URL }} --fpcBranch=${{ env.FPC_BRANCH }} --lazURL=${{ env.LAZ_URL }} --lazBranch=${{ env.LAZ_BRANCH }} --lazPATCH="${{ env.ASUITE_SOURCE}}${{ env.LAZ_PATCH}}" ${{ env.FPCUP_OPT }} --only=docker --noconfirm --verbose
    
     - name: Remove Sparta_Generics from jpLib.lpk requirements
       uses: Amadevus/pwsh-script@v2
