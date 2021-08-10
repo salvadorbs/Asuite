@@ -91,13 +91,14 @@ type
     procedure ShowPopupMenu(const APopupMenu: TPopupMenu);
     procedure RunFromTrayMenu(Sender: TObject);
     function GetTextWidth(const AText: string; AFont: Graphics.TFont): Integer;
+    procedure CreateAndAddSeparator(var Menu: TPopUpMenu;Text: String = '');
   public
     { Public declarations }
     procedure ShowClassicMenu;
     procedure ShowGraphicMenu;
     procedure DoDrawCaptionedSeparator(Sender: TObject; ACanvas: TCanvas; ARect: TRect;
       ACaption: string = '');
-    procedure CreateSeparator(Menu: TPopupMenu;Text: String = '';ListMenuItem: TMenuItem = nil);
+    function CreateSeparator(Menu: TPopupMenu;Text: String = ''): TMenuItem;
     procedure RefreshClassicMenu;
 
     //These functions come from the Tomboy-NG project https://github.com/tomboy-notes/tomboy-ng
@@ -309,28 +310,12 @@ begin
       NodeData := TVirtualTreeMethods.GetNodeDataEx(Node, Sender);
       ItemNodeData := NodeData.Data;
 
-      //Create a menu item and add it in trayicon menu
-      MenuItem := TASMenuItem.Create(Application.MainForm);
-
-      MenuItem.Data    := ItemNodeData;
-      MenuItem.pNode   := ItemNodeData.pNode;
-      MenuItem.Visible := not(ItemNodeData.HideFromMenu);
-
-      //Set NodeData's MenuItem
-      NodeData.MenuItem   := MenuItem;
-
-      if (Node.Parent <> Sender.RootNode) then
-      begin
-        ParentNodeData := TVirtualTreeMethods.GetNodeDataEx(Node.Parent, Sender);
-        AddItem(ParentNodeData.MenuItem, MenuItem);
-      end
-      else
-        AddItem(pmTrayicon.Items, MenuItem);
-
       //Set MenuItem properties
       if (ItemNodeData.IsSeparatorItem) then
-        CreateSeparator(pmTrayicon, ItemNodeData.Name, MenuItem)
+        MenuItem := TASMenuItem(CreateSeparator(pmTrayicon, ItemNodeData.Name))
       else begin
+        MenuItem := TASMenuItem.Create(Application.MainForm);
+
         MenuItem.Caption    := ItemNodeData.Name;
         MenuItem.ImageIndex := ItemNodeData.Icon.ImageIndex;
         if (ItemNodeData.IsFileItem) then
@@ -366,7 +351,25 @@ begin
           end;
         end;
       end;
-    end;   
+
+      if Assigned(MenuItem) then
+      begin
+        MenuItem.Data    := ItemNodeData;
+        MenuItem.pNode   := ItemNodeData.pNode;
+        MenuItem.Visible := not(ItemNodeData.HideFromMenu);
+
+        //Set NodeData's MenuItem
+        NodeData.MenuItem   := MenuItem;
+
+        if (Node.Parent <> Sender.RootNode) then
+        begin
+          ParentNodeData := TVirtualTreeMethods.GetNodeDataEx(Node.Parent, Sender);
+          AddItem(ParentNodeData.MenuItem, MenuItem);
+        end
+        else
+          AddItem(pmTrayicon.Items, MenuItem);
+      end;
+    end;
   except
     on E: Exception do
       TASuiteLogger.Exception(E);
@@ -414,15 +417,15 @@ begin
     begin
       if Config.SubMenuMFU then
       begin
-        CreateSeparator(Menu);
+        CreateAndAddSeparator(Menu);
         CreateSpecialList(Menu, ASuiteManager.ListManager.MFUList, Config.MFUNumber, msgLongMFU);
       end
       else begin
-        CreateSeparator(Menu, msgLongMFU);
+        CreateAndAddSeparator(Menu, msgLongMFU);
         CreateSpecialList(Menu, ASuiteManager.ListManager.MFUList, Config.MFUNumber);
       end;
     end;
-    CreateSeparator(Menu,msgList);
+    CreateAndAddSeparator(Menu, msgList);
     //List
     PopulateCategoryItems(nil);
     //MRU
@@ -430,15 +433,15 @@ begin
     begin
       if Config.SubMenuMRU then
       begin
-        CreateSeparator(Menu);
+        CreateAndAddSeparator(Menu);
         CreateSpecialList(Menu, ASuiteManager.ListManager.MRUList, Config.MRUNumber, msgLongMRU);
       end
       else begin
-        CreateSeparator(Menu,msgLongMRU);
+        CreateAndAddSeparator(Menu, msgLongMRU);
         CreateSpecialList(Menu, ASuiteManager.ListManager.MRUList, Config.MRUNumber,'');
       end;
     end;
-    CreateSeparator(Menu);
+    CreateAndAddSeparator(Menu);
     //Footer
     CreateFooterItems(Menu);
   except
@@ -738,10 +741,10 @@ begin
   Utility.System.EjectDialog(Sender);
 end;
 
-procedure TdmTrayMenu.CreateSeparator(Menu: TPopupMenu;Text: String;ListMenuItem: TMenuItem);
-var
-  MenuItem: TMenuItem;
+function TdmTrayMenu.CreateSeparator(Menu: TPopupMenu; Text: String): TMenuItem;
 begin
+  Result := nil;
+
   try
     //If last MenuItem is a captioned separator (two separators in succession are useless)
     if IsCaptionedSeparator(Menu.Items[Menu.Items.Count - 1]) then
@@ -750,24 +753,16 @@ begin
       Menu.Items[Menu.Items.Count - 1].Hint := Text;
     end
     else begin
-      //Else create a new captioned separator
-      if Assigned(ListMenuItem) then
-        MenuItem := ListMenuItem
-      else
-        MenuItem := TMenuItem.Create(Application.MainForm);
+      Result := TASMenuItem.Create(Application.MainForm);
 
-      MenuItem.Enabled    := False;
-      MenuItem.Caption    := '-';
-      MenuItem.Hint       := Text;
-
-      //Check the menuitem.Parent. If it is populated, it is already added in menu
-      if not Assigned(MenuItem.Parent) then
-        Menu.Items.Add(MenuItem);
+      Result.Enabled    := False;
+      Result.Caption    := '-';
+      Result.Hint       := Text;
 
       {$IFDEF MSWINDOWS}
-      MenuItem.OnMeasureItem := MeasureCaptionedSeparator;
       //OnDrawItem is a windows-only feature
-      MenuItem.OnDrawItem := DrawCaptionedSeparator;
+      Result.OnMeasureItem := MeasureCaptionedSeparator;
+      Result.OnDrawItem := DrawCaptionedSeparator;
       {$ENDIF}
     end;
   except
@@ -1006,6 +1001,15 @@ begin
     TMouseButton.mbRight  : DoTrayIconButtonClick(Sender, Config.ActionClickRight);
   end;
   {$ENDIF}
+end;
+
+procedure TdmTrayMenu.CreateAndAddSeparator(var Menu: TPopUpMenu; Text: String);
+var
+  MenuItem: TMenuItem;
+begin
+  MenuItem := CreateSeparator(Menu, Text);
+  if Assigned(MenuItem) then
+    Menu.Items.Add(MenuItem);
 end;
 
 end.
