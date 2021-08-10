@@ -81,7 +81,7 @@ type
 implementation
 
 uses
-  Kernel.Consts, Utility.FileFolder, SynCommons;
+  Kernel.Consts, Utility.FileFolder, SynCommons, Utility.System;
 
 { TConfigPaths }
 
@@ -289,7 +289,7 @@ begin
     Result := FEnvironmentVars.ExpandVars(Result);
                                                                                 
     //Remove double path delimiter, resolve dots and expand path
-    if not FilenameIsAbsolute(Result) then
+    if not IsValidURLProtocol(Result) and not FilenameIsAbsolute(Result) then
       Result := CleanAndExpandFilename(Result);
   end;
 end;
