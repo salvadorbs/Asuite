@@ -62,10 +62,7 @@ type
     Panel4: TPanel;
     procedure cbTrayiconClick(Sender: TObject);
     procedure cbTrayCustomIconClick(Sender: TObject);
-    procedure edtCustomIconAfterDialog(Sender: TObject; var AName: string;
-      var AAction: Boolean);
-    procedure edtCustomIconBeforeDialog(Sender: TObject; var AName: string;
-      var AAction: Boolean);
+    procedure edtCustomIconAcceptFileName(Sender: TObject; var Value: String);
   private
     { Private declarations }
     procedure LoadComboMouseClickItems(AComboBox: TComboBox);
@@ -103,6 +100,12 @@ begin
   edtCustomIcon.Enabled := cbTrayCustomIcon.Checked;
 end;
 
+procedure TfrmTrayiconOptionsPage.edtCustomIconAcceptFileName(Sender: TObject;
+  var Value: String);
+begin
+  Value := ASuiteInstance.Paths.AbsoluteToRelative(Value);
+end;
+
 procedure TfrmTrayiconOptionsPage.cbTrayiconClick(Sender: TObject);
 begin
   cbTrayCustomIcon.Enabled := cbTrayicon.Checked;
@@ -120,19 +123,6 @@ begin
   {$ENDIF}
 end;
 
-procedure TfrmTrayiconOptionsPage.edtCustomIconAfterDialog(Sender: TObject;
-  var AName: string; var AAction: Boolean);
-begin
-  AName := ASuiteInstance.Paths.AbsoluteToRelative(AName);
-end;
-
-procedure TfrmTrayiconOptionsPage.edtCustomIconBeforeDialog(Sender: TObject;
-  var AName: string; var AAction: Boolean);
-begin
-  AName := ASuiteInstance.Paths.RelativeToAbsolute(AName);
-  edtCustomIcon.Filter := msgFilterIcon;
-end;
-
 function TfrmTrayiconOptionsPage.GetImageIndex: Integer;
 begin
   Result := ASuiteManager.IconsManager.GetIconIndex('trayicon');
@@ -148,6 +138,8 @@ var
   searchResult : TSearchRec;
 begin
   Result := inherited;
+
+  edtCustomIcon.Filter := msgFilterIcon;
 
   LoadComboMouseClickItems(cxLeftClick);
   LoadComboMouseClickItems(cxMiddleClick);

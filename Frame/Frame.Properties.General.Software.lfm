@@ -31,6 +31,7 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Height = 23
       Top = 19
       Width = 340
+      OnAcceptFileName = edtPathExeAcceptFileName
       DialogOptions = [ofHideReadOnly, ofEnableSizing]
       FilterIndex = 0
       HideDirectories = False
@@ -40,7 +41,6 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       MaxLength = 0
       ParentFont = False
       TabOrder = 0
-      OnChange = edtPathExeChange
       Text = '$ASuite\'
     end
     object lbWorkingDir: TLabel
@@ -57,6 +57,7 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Top = 59
       Width = 340
       Directory = '$ASuite\'
+      OnAcceptDirectory = edtWorkingDirAcceptDirectory
       ShowHidden = False
       ButtonWidth = 23
       NumGlyphs = 1

@@ -50,6 +50,7 @@ inherited frmTrayiconOptionsPage: TfrmTrayiconOptionsPage
       Height = 23
       Top = 46
       Width = 425
+      OnAcceptFileName = edtCustomIconAcceptFileName
       DialogOptions = [ofHideReadOnly, ofEnableSizing]
       FilterIndex = 0
       HideDirectories = False

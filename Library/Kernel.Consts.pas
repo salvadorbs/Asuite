@@ -56,6 +56,7 @@ const
   EXT_BAT       = '.bat';
   EXT_CMD       = '.cmd';
   EXT_BMP       = '.bmp';
+  EXT_PNG       = '.png';
 
   EXT_PATH_MASK = '*';    
   EXT_PATH_DOT = '.';

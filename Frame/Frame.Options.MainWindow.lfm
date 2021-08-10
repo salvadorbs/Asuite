@@ -38,6 +38,7 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       Height = 23
       Top = 23
       Width = 425
+      OnAcceptFileName = edtBackgroundAcceptFileName
       DialogOptions = [ofHideReadOnly, ofEnableSizing]
       FilterIndex = 0
       HideDirectories = False

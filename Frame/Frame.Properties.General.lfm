@@ -70,6 +70,7 @@ inherited frmBaseGeneralPropertyPage: TfrmBaseGeneralPropertyPage
       Height = 23
       Top = 99
       Width = 340
+      OnAcceptFileName = edtPathIconAcceptFileName
       DialogOptions = [ofHideReadOnly, ofEnableSizing]
       FilterIndex = 0
       HideDirectories = False

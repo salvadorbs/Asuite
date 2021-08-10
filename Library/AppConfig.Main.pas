@@ -114,6 +114,7 @@ type
     FScanFolderFileTypes  : TStringList;
     FScanFolderExcludeNames: TStringList;
 
+    function LoadPngAndConvertBMP(const APath: String): TBitmap;
     function LoadTrayIconFromFile(const APath: string): TBGRABitmap;
     procedure RestoreSettings(AJSONConfig: TJSONConfig);
     procedure SaveSettings(AJSONConfig: TJSONConfig);
@@ -121,6 +122,7 @@ type
     procedure SetAlwaysOnTop(value: Boolean);
     procedure SetTrayIcon(value: Boolean);
     procedure SetTrayUseCustomIcon(value: Boolean);
+    procedure SetTVBackgroundPath(AValue: String);
     procedure SetUseCustomTitle(value: Boolean);
     procedure SetTVAutoOpClCats(value: Boolean);
     procedure SetHideTabSearch(value: Boolean);
@@ -174,7 +176,7 @@ type
     // Main Form - Treevew
     property TVBackground: Boolean read FTVBackground write SetTVBackground;
     property TVSmallIconSize: Boolean read FTVSmallIconSize write SetTVSmallIconSize;
-    property TVBackgroundPath: String read FTVBackgroundPath write FTVBackgroundPath;
+    property TVBackgroundPath: String read FTVBackgroundPath write SetTVBackgroundPath;
     property TVAutoOpClCats: Boolean read FTVAutoOpClCats write SetTVAutoOpClCats;
     property TVAutoOpCatsDrag: Boolean read FTVAutoOpCatsDrag write FTVAutoOpCatsDrag;
     property TVDisableConfirmDelete: Boolean read FTVDisableConfirmDelete write FTVDisableConfirmDelete;
@@ -258,10 +260,35 @@ uses
   Utility.Conversions, Hotkeys.Manager.Platform, Kernel.Instance, Kernel.Manager;
 
 procedure TConfiguration.AfterUpdateConfig;
+var
+  BackgroundBMP : Graphics.TBitmap;
+  BackgroundPNG : TPortableNetworkGraphic;
+  sBackgroundPath: String;
+
 begin   
   TVirtualTreeMethods.UpdateItemColor(ASuiteInstance.MainTree);
 
   SetDefaultLang(FLangID, ASuiteInstance.Paths.SuitePathLocale);
+
+  //Update background
+  sBackgroundPath := ASuiteInstance.Paths.RelativeToAbsolute(FTVBackgroundPath);
+  if (FTVBackground) and (FTVBackgroundPath <> '') and (FileExists(sBackgroundPath)) then
+  begin
+    if ExtractFileExtEx(sBackgroundPath) = EXT_PNG then
+    begin
+      BackgroundBMP := LoadPngAndConvertBMP(sBackgroundPath);
+      try
+        ASuiteInstance.MainTree.Background.Bitmap := BackgroundBMP;
+      finally
+        BackgroundBMP.Free;
+      end;
+    end
+    else
+      if ExtractFileExtEx(sBackgroundPath) = EXT_BMP then
+        ASuiteInstance.MainTree.Background.LoadFromFile(sBackgroundPath);
+  end;
+
+  ASuiteInstance.MainTree.Update;
 end;
 
 constructor TConfiguration.Create;
@@ -823,6 +850,14 @@ begin
     dmTrayMenu.tiTrayMenu.Show;
 end;
 
+procedure TConfiguration.SetTVBackgroundPath(AValue: String);
+begin
+  if FTVBackgroundPath = AValue then Exit;
+  FTVBackgroundPath := AValue;
+
+  Self.TVBackground := FTVBackground;
+end;
+
 procedure TConfiguration.SetUseCustomTitle(value: Boolean);
 begin
   FUseCustomTitle := value;
@@ -878,35 +913,28 @@ begin
 end;
 
 procedure TConfiguration.SetTVBackground(value: Boolean);
-var
-  BackgroundBMP : Graphics.TBitmap;
-  BackgroundPNG : TPortableNetworkGraphic;
 begin
   FTVBackground := value;
-  ASuiteInstance.MainTree.TreeOptions.PaintOptions := ASuiteInstance.MainTree.TreeOptions.PaintOptions - [toShowBackground];
-  if (FTVBackground) and (FTVBackgroundPath <> '') and
-     (FileExists(ASuiteInstance.Paths.RelativeToAbsolute(FTVBackgroundPath))) then
-  begin
-    if ExtractFileExtEx(ASuiteInstance.Paths.RelativeToAbsolute(FTVBackgroundPath)) <> EXT_BMP then
-    begin
-      BackgroundBMP := Graphics.TBitmap.Create;
-      BackgroundPNG := TPortableNetworkGraphic.Create;
-      try
-        BackgroundPNG.LoadFromFile(ASuiteInstance.Paths.RelativeToAbsolute(FTVBackgroundPath));
-        BackgroundBMP.Assign(BackgroundPNG);
-        ASuiteInstance.MainTree.Background.Bitmap := BackgroundBMP;
-      finally
-        BackgroundBMP.Free;
-        BackgroundPNG.Free;
-      end;
-    end
-    else
-      ASuiteInstance.MainTree.Background.LoadFromFile(ASuiteInstance.Paths.RelativeToAbsolute(FTVBackgroundPath));
-    ASuiteInstance.MainTree.TreeOptions.PaintOptions := ASuiteInstance.MainTree.TreeOptions.PaintOptions + [toShowBackground];
-  end
+
+  if FTVBackground then
+    ASuiteInstance.MainTree.TreeOptions.PaintOptions := ASuiteInstance.MainTree.TreeOptions.PaintOptions + [toShowBackground]
   else
     ASuiteInstance.MainTree.TreeOptions.PaintOptions := ASuiteInstance.MainTree.TreeOptions.PaintOptions - [toShowBackground];
-  ASuiteInstance.MainTree.Update;
+end;
+
+function TConfiguration.LoadPngAndConvertBMP(const APath: String): TBitmap;
+var
+  BackgroundPNG: TPortableNetworkGraphic;
+begin
+  Result := Graphics.TBitmap.Create;
+
+  BackgroundPNG := TPortableNetworkGraphic.Create;
+  try
+    BackgroundPNG.LoadFromFile(APath);
+    Result.Assign(BackgroundPNG);
+  finally
+    BackgroundPNG.Free;
+  end;
 end;
 
 procedure TConfiguration.SetTVFont(value: TFont);

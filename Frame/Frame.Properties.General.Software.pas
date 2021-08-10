@@ -40,16 +40,9 @@ type
     lbPathExe: TLabel;
     lbWorkingDir: TLabel;
 
-    procedure edtPathExeAfterDialog(Sender: TObject; var AName: string;
-      var AAction: Boolean);
-    procedure edtPathExeBeforeDialog(Sender: TObject; var AName: string;
-      var AAction: Boolean);
-    procedure edtPathExeChange(Sender: TObject);
+    procedure edtPathExeAcceptFileName(Sender: TObject; var Value: String);
     procedure btnExtractNameClick(Sender: TObject);
-    procedure edtWorkingDirAfterDialog(Sender: TObject; var AName: string;
-      var AAction: Boolean);
-    procedure edtWorkingDirBeforeDialog(Sender: TObject; var AName: string;
-      var AAction: Boolean);
+    procedure edtWorkingDirAcceptDirectory(Sender: TObject; var Value: String);
     procedure edtWorkingDirChange(Sender: TObject);
   private
     { Private declarations }
@@ -76,35 +69,18 @@ begin
   edtName.Text := ExtractFileNameEx(edtPathExe.text);
 end;
 
-procedure TfrmSWGeneralPropertyPage.edtPathExeAfterDialog(Sender: TObject;
-  var AName: string; var AAction: Boolean);
+procedure TfrmSWGeneralPropertyPage.edtWorkingDirAcceptDirectory(
+  Sender: TObject; var Value: String);
 begin
-  AName := ASuiteInstance.Paths.AbsoluteToRelative(AName);
+  Value := ASuiteInstance.Paths.AbsoluteToRelative(Value);
+  CheckPropertyPath(edtWorkingDir, Value);
 end;
 
-procedure TfrmSWGeneralPropertyPage.edtPathExeBeforeDialog(Sender: TObject;
-  var AName: string; var AAction: Boolean);
+procedure TfrmSWGeneralPropertyPage.edtPathExeAcceptFileName(Sender: TObject;
+  var Value: String);
 begin
-  edtPathExe.Filter := msgFilterExe;
-  AName := ASuiteInstance.Paths.RelativeToAbsolute(AName);
-end;
-
-procedure TfrmSWGeneralPropertyPage.edtPathExeChange(Sender: TObject);
-begin
-  //btnExtractName.Enabled := CheckPropertyPath(edtPathExe);
-end;
-
-procedure TfrmSWGeneralPropertyPage.edtWorkingDirAfterDialog(Sender: TObject;
-  var AName: string; var AAction: Boolean);
-begin
-  AName := ASuiteInstance.Paths.AbsoluteToRelative(AName);
-  CheckPropertyPath(edtWorkingDir, AName);
-end;
-
-procedure TfrmSWGeneralPropertyPage.edtWorkingDirBeforeDialog(Sender: TObject;
-  var AName: string; var AAction: Boolean);
-begin
-  AName := ASuiteInstance.Paths.RelativeToAbsolute(AName);
+  Value := ASuiteInstance.Paths.AbsoluteToRelative(Value);
+  CheckPropertyPath(edtWorkingDir);
 end;
 
 procedure TfrmSWGeneralPropertyPage.edtWorkingDirChange(Sender: TObject);
@@ -117,6 +93,8 @@ var
   FileNodeData: TvFileNodeData;
 begin
   Result := inherited;
+
+  edtPathExe.Filter := msgFilterExe;
 
   //lbInfo2.Caption := Format(lbInfo2.Caption, [ASuiteInstance.Paths.SuitePathWorking, ASuiteInstance.Paths.SuiteDrive]);
 

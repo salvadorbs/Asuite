@@ -52,10 +52,7 @@ type
     procedure cbCustomTitleClick(Sender: TObject);
     procedure cbBackgroundClick(Sender: TObject);
     procedure btnFontSettingsClick(Sender: TObject);
-    procedure edtBackgroundAfterDialog(Sender: TObject; var AName: string;
-      var AAction: Boolean);
-    procedure edtBackgroundBeforeDialog(Sender: TObject; var AName: string;
-      var AAction: Boolean);
+    procedure edtBackgroundAcceptFileName(Sender: TObject; var Value: String);
   private
     { Private declarations }
   strict protected
@@ -84,6 +81,12 @@ begin
   FontDialog1.Execute;
 end;
 
+procedure TfrmMainWindowOptionsPage.edtBackgroundAcceptFileName(
+  Sender: TObject; var Value: String);
+begin
+  Value := ASuiteInstance.Paths.AbsoluteToRelative(Value);
+end;
+
 procedure TfrmMainWindowOptionsPage.cbBackgroundClick(Sender: TObject);
 begin
   edtBackground.Enabled := cbBackground.Checked;
@@ -92,19 +95,6 @@ end;
 procedure TfrmMainWindowOptionsPage.cbCustomTitleClick(Sender: TObject);
 begin
   edtCustomTitle.Enabled := cbCustomTitle.Checked;
-end;
-
-procedure TfrmMainWindowOptionsPage.edtBackgroundAfterDialog(Sender: TObject;
-  var AName: string; var AAction: Boolean);
-begin
-  AName := ASuiteInstance.Paths.AbsoluteToRelative(AName);
-end;
-
-procedure TfrmMainWindowOptionsPage.edtBackgroundBeforeDialog(Sender: TObject;
-  var AName: string; var AAction: Boolean);
-begin
-  edtBackground.Filter := msgFilterBackground;
-  AName := ASuiteInstance.Paths.RelativeToAbsolute(AName);
 end;
 
 function TfrmMainWindowOptionsPage.GetImageIndex: Integer;
@@ -120,6 +110,8 @@ end;
 function TfrmMainWindowOptionsPage.InternalLoadData: Boolean;
 begin
   Result := inherited;
+
+  edtBackground.Filter := msgFilterBackground;
 
   //Window
   cbHoldSize.Checked         := Config.HoldSize;

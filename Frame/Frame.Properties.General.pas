@@ -40,10 +40,7 @@ type
     edtName: TEdit;
     lbDescription: TLabel;
     lbPathIcon: TLabel;
-    procedure edtPathIconAfterDialog(Sender: TObject; var AName: string;
-      var AAction: Boolean);
-    procedure edtPathIconBeforeDialog(Sender: TObject; var AName: string;
-      var AAction: Boolean);
+    procedure edtPathIconAcceptFileName(Sender: TObject; var Value: String);
     procedure edtPathIconExit(Sender: TObject);
     procedure edtNameEnter(Sender: TObject);
     procedure edtPathIconChange(Sender: TObject);
@@ -123,18 +120,10 @@ begin
     TEdit(Sender).Color := clWindow;
 end;
 
-procedure TfrmBaseGeneralPropertyPage.edtPathIconAfterDialog(Sender: TObject;
-  var AName: string; var AAction: Boolean);
+procedure TfrmBaseGeneralPropertyPage.edtPathIconAcceptFileName(
+  Sender: TObject; var Value: String);
 begin
-  AName := ASuiteInstance.Paths.AbsoluteToRelative(AName);
-  CheckPropertyPath(edtPathIcon, AName);
-end;
-
-procedure TfrmBaseGeneralPropertyPage.edtPathIconBeforeDialog(Sender: TObject;
-  var AName: string; var AAction: Boolean);
-begin
-  edtPathIcon.Filter := msgFilterIconExe;
-  AName := ASuiteInstance.Paths.RelativeToAbsolute(AName);
+  Value := ASuiteInstance.Paths.AbsoluteToRelative(Value);
 end;
 
 procedure TfrmBaseGeneralPropertyPage.edtPathIconChange(Sender: TObject);
@@ -160,6 +149,9 @@ end;
 function TfrmBaseGeneralPropertyPage.InternalLoadData: Boolean;
 begin
   Result := inherited;
+
+  edtPathIcon.Filter := msgFilterIconExe;
+
   if Assigned(CurrentNodeData) then
   begin
     edtName.Text     := CurrentNodeData.Name;
