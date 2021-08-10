@@ -153,7 +153,7 @@ begin
       Result := THashFactory.THash32.CreateXXHash32().ComputeFile(FileName).GetInt32();
   except
     on E : Exception do
-      TASuiteLogger.Exception(E, msgGenerateFileHashError);
+      TASuiteLogger.Exception(E, Format(msgGenerateFileHashError, [FileName]));
   end;
 end;
 

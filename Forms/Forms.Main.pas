@@ -614,7 +614,7 @@ begin
     if Assigned(AParentMenuItem.Items[I].Action) then
       MenuItem.Action := AParentMenuItem.Items[I].Action
     else
-      MenuItem.Caption := '-';
+      MenuItem.Caption := cLineCaption;
 
     //TODO: Add other levels
 

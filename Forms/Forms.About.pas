@@ -71,17 +71,17 @@ end;
 
 procedure TfrmAbout.imgDonateClick(Sender: TObject);
 begin
-  OpenURL(PChar('https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QYASG6DPAYSXW'));
+  OpenURL('https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QYASG6DPAYSXW');
 end;
 
 procedure TfrmAbout.imgLicenseClick(Sender: TObject);
 begin
-   OpenDocument(PChar(AppendPathDelim(ASuiteInstance.Paths.SuitePathWorking) + 'docs' + PathDelim +  'license.txt'));
+   OpenDocument(AppendPathDelim(ASuiteInstance.Paths.SuitePathWorking) + 'docs' + PathDelim +  'license.txt');
 end;
 
 procedure TfrmAbout.lnklblWebSiteClick(Sender: TObject);
 begin
-  OpenURL(PChar('http://www.salvadorsoftware.com'));
+  OpenURL('http://www.salvadorsoftware.com');
 end;
 
 class procedure TfrmAbout.Execute(AOwner: TComponent);
