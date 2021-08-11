@@ -24,14 +24,14 @@ unit Database.List;
 interface
 
 uses
-  mORMot, SynCommons, Database.Manager, VirtualTrees, SysUtils,
-  Dialogs, Classes, NodeDataTypes.Base, SynLog;
+  mormot.orm.core, Database.Manager, VirtualTrees, SysUtils,
+  Dialogs, Classes, NodeDataTypes.Base, mormot.core.log, mormot.core.base;
 
 type
 
   { TSQLtbl_list }
 
-  TSQLtbl_list = class(TSQLRecord) //Table tbl_list
+  TSQLtbl_list = class(TOrm) //Table tbl_list
   private
     Fdescription: RawUTF8;
     Ftype             : Integer;
@@ -113,7 +113,7 @@ implementation
 
 uses
   Kernel.Enumerations, Utility.Misc, VirtualTree.Methods, NodeDataTypes.Custom,
-  NodeDataTypes.Files, Icons.Node, Kernel.Logger,
+  NodeDataTypes.Files, Icons.Node, Kernel.Logger, mormot.core.unicode,
   Kernel.Manager;
 
 { TSQLtbl_files }
@@ -148,7 +148,7 @@ var
   Node     : PVirtualNode;
 begin
   //Get files from DBTable and order them by parent, position
-  SQLItemsData := TSQLtbl_list.CreateAndFillPrepare(ADBManager.Database, 'parent=? ORDER BY parent, position',[ID]);
+  SQLItemsData := TSQLtbl_list.CreateAndFillPrepare(ADBManager.Database.orm, 'parent=? ORDER BY parent, position',[ID]);
   try
     //Get files and its properties
     while SQLItemsData.FillOne do
@@ -316,7 +316,7 @@ var
   SQLFilesData : TSQLtbl_list;
 begin
   //Select only file record by ID
-  SQLFilesData := TSQLtbl_list.CreateAndFillPrepare(ADBManager.Database,'id=?',[AData.ID]);
+  SQLFilesData := TSQLtbl_list.CreateAndFillPrepare(ADBManager.Database.orm,'id=?',[AData.ID]);
   try
     if SQLFilesData.FillOne then
       SQLFilesData.LoadDataFromNode(AData, AIndex, AParentID);

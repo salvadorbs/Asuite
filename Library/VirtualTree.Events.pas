@@ -148,7 +148,7 @@ uses
   AppConfig.Main, NodeDataTypes.Base, NodeDataTypes.Category,
   NodeDataTypes.Files, NodeDataTypes.Custom, NodeDataTypes.Separator, Kernel.Types,
   Kernel.Enumerations, VirtualTree.Methods, DataModules.TrayMenu, LCLProc, Kernel.Consts,
-  DataModules.Icons, Kernel.Logger, SynLog, Kernel.Instance, Kernel.Manager
+  DataModules.Icons, Kernel.Logger, mormot.core.log, Kernel.Instance, Kernel.Manager
   {$IFDEF Windows}, comobj, Windows{$ENDIF};
 
 { TVirtualTreeEvents }

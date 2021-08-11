@@ -97,7 +97,7 @@ implementation
 uses
   AppConfig.Main, Kernel.Consts, Utility.FileFolder, LazUTF8, Kernel.ResourceStrings,
   Utility.System, VirtualTree.Methods, Utility.Misc, Kernel.Instance, Kernel.Manager
-  {$IFDEF Windows}, JwaWindows, JwaWinBase, ShellApi{$ENDIF}, SynLog;
+  {$IFDEF Windows}, JwaWindows, JwaWinBase, ShellApi{$ENDIF}, mormot.core.log;
 
 constructor TvFileNodeData.Create(AType: TvTreeDataType);
 begin

@@ -31,7 +31,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="1381"/>
+      <BuildNr Value="1383"/>
     </VersionInfo>
     <BuildModes Count="4">
       <Item1 Name="Default" Default="True"/>
@@ -192,43 +192,40 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
-    <RequiredPackages Count="12">
+    <RequiredPackages Count="11">
       <Item1>
-        <PackageName Value="jppacklcl"/>
+        <PackageName Value="mormot2"/>
       </Item1>
       <Item2>
-        <PackageName Value="ASuiteComps"/>
+        <PackageName Value="jppacklcl"/>
       </Item2>
       <Item3>
-        <PackageName Value="bgracontrols"/>
+        <PackageName Value="ASuiteComps"/>
       </Item3>
       <Item4>
-        <PackageName Value="FCL"/>
+        <PackageName Value="bgracontrols"/>
       </Item4>
       <Item5>
-        <PackageName Value="mormot_cross"/>
+        <PackageName Value="FCL"/>
       </Item5>
       <Item6>
-        <PackageName Value="mormot_base"/>
+        <PackageName Value="HashLib4PascalPackage"/>
       </Item6>
       <Item7>
-        <PackageName Value="HashLib4PascalPackage"/>
+        <PackageName Value="uniqueinstance_package"/>
       </Item7>
       <Item8>
-        <PackageName Value="uniqueinstance_package"/>
+        <PackageName Value="virtualtreeview_package"/>
       </Item8>
       <Item9>
-        <PackageName Value="virtualtreeview_package"/>
+        <PackageName Value="DateTimeCtrls"/>
       </Item9>
       <Item10>
-        <PackageName Value="DateTimeCtrls"/>
+        <PackageName Value="lclextensions_package"/>
       </Item10>
       <Item11>
-        <PackageName Value="lclextensions_package"/>
-      </Item11>
-      <Item12>
         <PackageName Value="LCL"/>
-      </Item12>
+      </Item11>
     </RequiredPackages>
     <Units Count="72">
       <Unit0>
@@ -586,7 +583,6 @@
         <ComponentName Value="frmEnvironmentVars"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <UnitName Value="Frame.Properties.EnvironmentVars"/>
       </Unit67>
       <Unit68>
         <Filename Value="Library/Icons.ExtFile.pas"/>

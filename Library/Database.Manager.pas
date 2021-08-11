@@ -24,7 +24,7 @@ unit Database.Manager;
 interface
 
 uses
-  LCLType, SysUtils, Dialogs, VirtualTrees, mORMot, SynCommons, mORMotSQLite3,
+  LCLType, SysUtils, Dialogs, VirtualTrees, mormot.rest.sqlite3, mormot.orm.core,
   Controls, FileInfo;
 
 type
@@ -33,7 +33,7 @@ type
     FDBFileName : string;
     FDBVersion  : TProgramVersion;
     FDatabase   : TSQLRestServerDB;
-    FSQLModel   : TSQLModel;
+    FSQLModel   : TOrmModel;
 
     procedure DoBackupList;
     function GetDateTimeAsString: AnsiString;
@@ -62,8 +62,8 @@ implementation
 
 uses
   Kernel.Consts, AppConfig.Main, Utility.FileFolder, Utility.Misc,
-  Database.Version, Database.List, Kernel.Logger,
-  VirtualTree.Methods, SynLog, Kernel.Instance;
+  Database.Version, Database.List, Kernel.Logger, FileUtil,
+  VirtualTree.Methods, mormot.core.log, Kernel.Instance;
 
 constructor TDBManager.Create;
 begin
@@ -118,8 +118,8 @@ begin
   //Backup list and old delete backup
   if FileExists(FDBFileName) and (Config.Backup) then
   begin
-    CopyFile(FDBFileName,
-             Format(ASuiteInstance.Paths.SuitePathBackup + BACKUP_FILE,[GetDateTimeAsString]), False);
+    FileUtil.CopyFile(FDBFileName,
+                      Format(ASuiteInstance.Paths.SuitePathBackup + BACKUP_FILE,[GetDateTimeAsString]), False);
     DeleteOldBackups(Config.BackupNumber);
   end;
 end;
@@ -146,7 +146,7 @@ procedure TDBManager.ClearTable(SQLRecordClass: TSQLRecordClass);
 var
   SQLData: TSQLRecord;
 begin
-  SQLData := SQLRecordClass.CreateAndFillPrepare(FDatabase, '');
+  SQLData := SQLRecordClass.CreateAndFillPrepare(FDatabase.Orm, '');
   try
     while SQLData.FillOne do
       FDatabase.Delete(SQLRecordClass, SQLData.ID);

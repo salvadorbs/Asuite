@@ -24,7 +24,7 @@ unit Kernel.Logger;
 interface
 
 uses
-  SysUtils, SynLog, SynCommons, Forms;
+  SysUtils, mormot.core.log, Forms, mormot.core.base;
 
 type
 

@@ -81,7 +81,7 @@ type
 implementation
 
 uses
-  Kernel.Consts, Utility.FileFolder, SynCommons, Utility.System;
+  Kernel.Consts, Utility.FileFolder, Utility.System, mormot.core.os;
 
 { TConfigPaths }
 

@@ -69,7 +69,7 @@ var
 implementation
 
 uses
-  Kernel.Types, Kernel.Logger, SynLog, Kernel.Instance;
+  Kernel.Types, Kernel.Logger, mormot.core.log, Kernel.Instance;
 
 {$R *.lfm}
 

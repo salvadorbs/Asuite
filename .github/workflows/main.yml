@@ -42,7 +42,7 @@ jobs:
 
           - os: windows-latest
             name: 'Windows 64'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.0.0e/fpclazup-x86_64-win64.exe'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.0.1/fpclazup-x86_64-win64.exe'
             lazbuild: 'fpcLaz/lazarus/lazbuild.exe'
             build-widgetset: 'win32'
             build-os: 'win64'
@@ -50,7 +50,7 @@ jobs:
 
           - os: ubuntu-latest
             name: 'Linux 64 GTK2'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.0.0e/fpclazup-x86_64-linux'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.0.1/fpclazup-x86_64-linux'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
             build-widgetset: 'gtk2'
             build-os: 'linux'
@@ -58,7 +58,7 @@ jobs:
 
           - os: ubuntu-latest
             name: 'Linux 64 GTK3'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.0.0e/fpclazup-x86_64-linux'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.0.1/fpclazup-x86_64-linux'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
             build-widgetset: 'gtk3'
             build-os: 'linux'
@@ -66,7 +66,7 @@ jobs:
           
           - os: ubuntu-20.04
             name: 'Linux 64 QT5'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.0.0e/fpclazup-x86_64-linux'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.0.1/fpclazup-x86_64-linux'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
             build-widgetset: 'qt5'
             build-os: 'linux'
@@ -107,7 +107,7 @@ jobs:
       id: cache
       uses: actions/cache@v2.1.3
       env:
-        cache-name: cache-laz-v0.4.0
+        cache-name: cache-laz-v0.4.1
       with:
         path: ${{ env.LAZ_DIR }}
         key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('.cache') }}     
@@ -140,13 +140,27 @@ jobs:
         ${{ matrix.config.lazbuild }} --add-package "${{ env.ASUITE_SOURCE }}/3p/IGDIPlusMod/packages/Lazarus/lazigdiplus.lpk" --skip-dependencies
         ${{ matrix.config.lazbuild }} --add-package "${{ env.ASUITE_SOURCE }}/3p/JPLib/packages/Lazarus/jplib.lpk" --skip-dependencies
         ${{ matrix.config.lazbuild }} --add-package "${{ env.ASUITE_SOURCE }}/3p/JPPack/packages/Lazarus/jppacklcl.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package-link "${{ env.ASUITE_SOURCE }}/3p/mORMot/Packages/mormot_base.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package-link "${{ env.ASUITE_SOURCE }}/3p/mORMot/Packages/mormot_cross.lpk" --skip-dependencies
+        ${{ matrix.config.lazbuild }} --add-package-link "${{ env.ASUITE_SOURCE }}/3p/mORMot2/packages/lazarus/mormot2.lpk" --skip-dependencies
         ${{ matrix.config.lazbuild }} --add-package-link "${{ env.ASUITE_SOURCE }}/3p/HashLib4Pascal/HashLib/src/Packages/FPC/HashLib4PascalPackage.lpk" --skip-dependencies
         ${{ matrix.config.lazbuild }} --add-package "${{ env.ASUITE_SOURCE }}/3p/luipack/uniqueinstance/uniqueinstance_package.lpk" --skip-dependencies
         ${{ matrix.config.lazbuild }} --add-package-link "${{ env.ASUITE_SOURCE }}/3p/luipack/lclextensions/lclextensions_package.lpk" --skip-dependencies
         ${{ matrix.config.lazbuild }} --add-package "${{ env.ASUITE_SOURCE }}/3p/VirtualTreeView-Lazarus/Source/virtualtreeview_package.lpk" --skip-dependencies
         ${{ matrix.config.lazbuild }} --add-package "${{ env.ASUITE_SOURCE }}/3p/AsuiteComps/ASuiteComps.lpk" --skip-dependencies
+
+    - name: Download a file
+      if: steps.cache.outputs.cache-hit != 'true'
+      uses: carlosperate/download-file-action@v1.0.3
+      with:
+        file-url: 'https://github.com/synopse/mORMot2/releases/download/sqlite.3.36.0/mormot2static.7z'
+        file-name: 'sqlite3fpc.7z'
+        location: '${{ env.ASUITE_SOURCE }}/3p/mORMot2/'
+
+    - name: extract-7z-action
+      if: steps.cache.outputs.cache-hit != 'true'
+      uses: DuckSoft/extract-7z-action@v1.0
+      with:
+        pathSource: '${{ env.ASUITE_SOURCE }}/3p/mORMot2/sqlite3fpc.7z'
+        pathTarget: '${{ env.ASUITE_SOURCE }}/3p/mORMot2/'
 
     - name: Validate Cache
       if: steps.cache.outputs.cache-hit == 'true'

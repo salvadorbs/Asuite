@@ -24,7 +24,7 @@ unit Thread.FindFiles;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, SynLog, StrUtils;
+  Classes, SysUtils, FileUtil, mormot.core.log, StrUtils;
 
 type
   TFileFoundEvent = procedure(AFilePath: String) of Object;
