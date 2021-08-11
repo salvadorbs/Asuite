@@ -7,9 +7,6 @@
 [submodule "3p/JPPack"]
 	path = 3p/JPPack
 	url = https://github.com/jackdp/JPPack.git
-[submodule "3p/mORMot"]
-	path = 3p/mORMot
-	url = https://github.com/synopse/mORMot.git
 [submodule "3p/HashLib4Pascal"]
 	path = 3p/HashLib4Pascal
 	url = https://github.com/Xor-el/HashLib4Pascal.git
