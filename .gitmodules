@@ -25,3 +25,6 @@
 [submodule "3p/IGDIPlusMod"]
 	path = 3p/IGDIPlusMod
 	url = https://github.com/jackdp/IGDIPlusMod
+[submodule "3p/mORMot2"]
+	path = 3p/mORMot2
+	url = https://github.com/synopse/mORMot2.git
