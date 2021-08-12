@@ -129,7 +129,7 @@ uses
   Utility.System, Forms.GraphicMenu, Kernel.Types, NodeDataTypes.Files,
   NodeDataTypes.Custom, NodeDataTypes.Base, Kernel.Consts, Kernel.Logger,
   Utility.Misc, Utility.FileFolder, Kernel.ResourceStrings, Kernel.Instance,
-  Kernel.Manager, SynLog {$IFDEF MSWINDOWS} , Windows {$ENDIF};
+  Kernel.Manager, mormot.core.log {$IFDEF MSWINDOWS} , Windows {$ENDIF};
 
 {$R *.lfm}
 

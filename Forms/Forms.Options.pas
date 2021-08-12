@@ -55,7 +55,7 @@ uses
   Frame.Options.General, Frame.Options.Advanced, Frame.Options.Trayicon,
   Frame.Options.Stats, Frame.Options.Autorun, AppConfig.Main, Kernel.Logger,
   Forms.Main, Frame.Options.Hotkey, Frame.Options.MainWindow,
-  Utility.Misc, SynLog;
+  Utility.Misc, mormot.core.log;
 
 {$R *.lfm}
 

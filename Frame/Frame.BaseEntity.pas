@@ -55,7 +55,7 @@ TPageFrameClass = class of TfrmBaseEntityPage;
 implementation
 
 uses
-  Kernel.Logger, SynLog;
+  Kernel.Logger, mormot.core.log;
 
 {$R *.lfm}
 

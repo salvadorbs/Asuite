@@ -25,7 +25,7 @@ interface
 
 uses
   SysUtils, Lists.Special, NodeDataTypes.Custom, Lists.Base, Lists.HotKey,
-  Kernel.Enumerations, SynLog;
+  Kernel.Enumerations, mormot.core.log;
 
 type
 

@@ -11,7 +11,7 @@ uses
   Forms,
   SysUtils,
   LCLIntf, Interfaces,
-  SynSQLite3Static,
+  mormot.db.raw.sqlite3.static,
   Kernel.Instance in 'Library\Kernel.Instance.pas',
   Kernel.Manager in 'Library\Kernel.Manager.pas',
   AppConfig.Main in 'Library\AppConfig.Main.pas',

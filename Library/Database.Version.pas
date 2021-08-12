@@ -24,13 +24,13 @@ unit Database.Version;
 interface
 
 uses
-  mORMot, Database.Manager, SynLog, SysUtils, FileInfo;
+  Database.Manager, mormot.core.log, SysUtils, FileInfo, mormot.orm.core;
 
 type
 
   { TSQLtbl_version }
 
-  TSQLtbl_version = class(TSQLRecord) //Table tbl_version
+  TSQLtbl_version = class(TOrm) //Table tbl_version
   private
     FMajor   : Integer;
     FMinor   : Integer;
@@ -64,7 +64,7 @@ begin
   if ADBManager.Database.TableHasRows(TSQLtbl_version) then
   begin
     //Get sql data
-    SQLVersionData := TSQLtbl_version.CreateAndFillPrepare(ADBManager.Database,'');
+    SQLVersionData := TSQLtbl_version.CreateAndFillPrepare(ADBManager.Database.Orm,'');
     try
       SQLVersionData.FillOne;
 
@@ -86,7 +86,7 @@ begin
   ASuiteVersion := GetASuiteVersion;
   try
     //Select only file record by ID
-    SQLVersionData := TSQLtbl_version.CreateAndFillPrepare(ADBManager.Database, '');
+    SQLVersionData := TSQLtbl_version.CreateAndFillPrepare(ADBManager.Database.Orm, '');
     try
       IsDataExists := SQLVersionData.FillOne;
 

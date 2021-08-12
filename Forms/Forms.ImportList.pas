@@ -79,7 +79,8 @@ implementation
 uses
   AppConfig.Main, VirtualTree.Methods,
   Utility.FileFolder, Utility.XML, Database.Manager, NodeDataTypes.Base,
-  Kernel.Logger, Kernel.ResourceStrings, Utility.Misc, Kernel.Instance, SynLog;
+  Kernel.Logger, Kernel.ResourceStrings, Utility.Misc, Kernel.Instance,
+  mormot.core.log;
 
 procedure TfrmImportList.btnBackClick(Sender: TObject);
 begin

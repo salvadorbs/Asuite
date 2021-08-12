@@ -42,7 +42,7 @@ implementation
 
 uses
   VirtualTree.Methods, NodeDataTypes.Base, AppConfig.Main, Kernel.Enumerations,
-  Kernel.Logger, SynLog;
+  Kernel.Logger, mormot.core.log;
 
 { TTreeIconsThread }
 

@@ -26,7 +26,7 @@ interface
 uses
   LCLIntf, LCLType, SysUtils, Classes, Controls, Forms, Dialogs, Menus,
   ComCtrls, VirtualTrees, UniqueInstance, Kernel.Consts, DataModules.Icons,
-  Kernel.BaseMainForm, StdCtrls, SynCommons, {$IFDEF UNIX}VirtualTree.Helper, {$ENDIF}
+  Kernel.BaseMainForm, StdCtrls, {$IFDEF UNIX}VirtualTree.Helper, {$ENDIF}
   Kernel.Enumerations, ExtCtrls, ButtonedEdit, {Actions,} ActnList;
 
 type
@@ -168,7 +168,7 @@ uses
   DataModules.TrayMenu, Forms.ImportList, AppConfig.Main, Utility.System,
   VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base,
   Kernel.Types, NodeDataTypes.Files, VirtualTree.Events, Kernel.Manager,
-  Kernel.Logger, SynLog, FileUtil, Kernel.ResourceStrings, Kernel.Instance
+  Kernel.Logger, mormot.core.log, FileUtil, Kernel.ResourceStrings, Kernel.Instance
   {$IFDEF MSWINDOWS} , JwaWinBase, jwatlhelp32, Windows {$ENDIF};
 
 {$R *.lfm}
@@ -709,7 +709,7 @@ begin
     TVirtualTreeMethods.RefreshList(GetActiveTree);
 
     if SaveDialog1.FileName <> '' then
-      SynCommons.CopyFile(ASuiteManager.DBManager.DBFileName, SaveDialog1.FileName, False);
+      FileUtil.CopyFile(ASuiteManager.DBManager.DBFileName, SaveDialog1.FileName);
   end;
 end;
 

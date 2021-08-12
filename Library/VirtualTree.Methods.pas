@@ -26,7 +26,7 @@ interface
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, VirtualTrees, UITypes,
   Kernel.Enumerations, NodeDataTypes.Base, Kernel.Types, Lists.Base,
-  SynLog, Forms.UILogin, Hotkeys.ShortcutEx;
+  mormot.core.log, Forms.UILogin, Hotkeys.ShortcutEx;
 
 type
 

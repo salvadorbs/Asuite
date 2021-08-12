@@ -26,7 +26,7 @@ interface
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, ShellCtrls,
-  ImgList, ButtonPanel, FileUtil, Thread.FindFiles, SynLog, StrUtils,
+  ImgList, ButtonPanel, FileUtil, Thread.FindFiles, mormot.core.log, StrUtils,
   LazStringUtils;
 
 type
