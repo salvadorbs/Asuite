@@ -31,10 +31,10 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="1392"/>
+      <BuildNr Value="1407"/>
     </VersionInfo>
     <BuildModes Count="3">
-      <Item1 Name="Release" Default="True"/>
+      <Item1 Name="Debug" Default="True"/>
       <Item2 Name="Debug_GH_Action">
         <CompilerOptions>
           <Version Value="11"/>
@@ -82,16 +82,11 @@
             <CompilerMessages>
               <IgnoredMessages idx5026="True" idx5024="True" idx4105="True" idx4104="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dBorland
--dVer150
--dDelphi7
--dCompiler6_Up
--dPUREPASCAL
--dDebug"/>
+            <CustomOptions Value="-dDebug"/>
           </Other>
         </CompilerOptions>
       </Item2>
-      <Item3 Name="Debug">
+      <Item3 Name="Release">
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -110,6 +105,7 @@
             </SyntaxOptions>
           </Parsing>
           <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
             <Checks>
               <IOChecks Value="True"/>
               <RangeChecks Value="True"/>
@@ -118,15 +114,18 @@
             </Checks>
             <TargetCPU Value="x86_64"/>
             <Optimizations>
-              <OptimizationLevel Value="0"/>
+              <OptimizationLevel Value="2"/>
             </Optimizations>
+            <SmallerCode Value="True"/>
           </CodeGeneration>
           <Linking>
             <Debugging>
-              <DebugInfoType Value="dsDwarf2Set"/>
               <UseHeaptrc Value="True"/>
               <TrashVariables Value="True"/>
+              <StripSymbols Value="True"/>
+              <UseExternalDbgSyms Value="True"/>
             </Debugging>
+            <LinkSmart Value="True"/>
             <Options>
               <Win32>
                 <GraphicApplication Value="True"/>
@@ -137,12 +136,6 @@
             <CompilerMessages>
               <IgnoredMessages idx5026="True" idx5024="True" idx4105="True" idx4104="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dBorland
--dVer150
--dDelphi7
--dCompiler6_Up
--dPUREPASCAL
--dDebug"/>
           </Other>
         </CompilerOptions>
       </Item3>
@@ -578,13 +571,19 @@
     <Parsing>
       <SyntaxOptions>
         <SyntaxMode Value="Delphi"/>
+        <IncludeAssertionCode Value="True"/>
       </SyntaxOptions>
     </Parsing>
     <CodeGeneration>
-      <SmartLinkUnit Value="True"/>
+      <Checks>
+        <IOChecks Value="True"/>
+        <RangeChecks Value="True"/>
+        <OverflowChecks Value="True"/>
+        <StackChecks Value="True"/>
+      </Checks>
       <TargetCPU Value="x86_64"/>
       <Optimizations>
-        <OptimizationLevel Value="2"/>
+        <OptimizationLevel Value="0"/>
       </Optimizations>
     </CodeGeneration>
     <Linking>
@@ -592,10 +591,7 @@
         <DebugInfoType Value="dsDwarf2Set"/>
         <UseHeaptrc Value="True"/>
         <TrashVariables Value="True"/>
-        <StripSymbols Value="True"/>
-        <UseExternalDbgSyms Value="True"/>
       </Debugging>
-      <LinkSmart Value="True"/>
       <Options>
         <Win32>
           <GraphicApplication Value="True"/>
@@ -606,12 +602,7 @@
       <CompilerMessages>
         <IgnoredMessages idx5026="True" idx5024="True" idx4105="True" idx4104="True"/>
       </CompilerMessages>
-      <CustomOptions Value="-dBorland
--dVer150
--dDelphi7
--dCompiler6_Up
--dPUREPASCAL
--dDebug"/>
+      <CustomOptions Value="-dDebug"/>
     </Other>
   </CompilerOptions>
   <Debugging>

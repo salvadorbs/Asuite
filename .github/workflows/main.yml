@@ -179,6 +179,7 @@ jobs:
       run: ${{ matrix.config.lazbuild }} "${{ env.ASUITE_SOURCE }}/3p/dbg2mab/dbg2mab.lpi" --no-write-project --widgetset=${{ matrix.config.build-widgetset }} --operating-system=${{ matrix.config.build-os }}
 
     - name: Embedded debug info in asuite executable
+      if: matrix.config.build-widgetset != 'gtk2'
       run: ${{ env.ASUITE_SOURCE }}/bin/${{ matrix.config.dbg2mab }} ${{ env.ASUITE_SOURCE }}/bin/${{ matrix.config.debug_file }}
 
     - name: Upload the Build Artifact
