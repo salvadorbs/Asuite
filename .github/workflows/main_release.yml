@@ -5,14 +5,11 @@ name: Build push events (release mode)
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the develop branch
 on:
-  pull_request:
   push:
     paths-ignore:
     - "README.md"
-    branches:
-      - master
-      - develop
-      - releases/*
+    tags:
+      - v**
         
 env:
   FPC_URL: 'gitlab'
