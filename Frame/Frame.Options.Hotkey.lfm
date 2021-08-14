@@ -16,7 +16,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     BorderSpacing.Left = 4
     BorderSpacing.Top = 4
     BorderSpacing.Right = 4
-    Caption = 'Hotkey'
+    Caption = 'Hotkeys'
     ChildSizing.LeftRightSpacing = 4
     ChildSizing.TopBottomSpacing = 4
     ChildSizing.EnlargeHorizontal = crsScaleChilds
@@ -32,7 +32,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       Top = 4
       Width = 425
       BorderSpacing.Bottom = 4
-      Caption = 'Enable hotkey'
+      Caption = 'Enable hotkeys'
       OnClick = cbHotKeyClick
       ParentFont = False
       TabOrder = 0
@@ -126,7 +126,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     BorderSpacing.Top = 4
     BorderSpacing.Right = 4
     BorderSpacing.Bottom = 4
-    Caption = 'Hotkey list used'
+    Caption = 'Hotkeys list'
     ChildSizing.LeftRightSpacing = 4
     ChildSizing.TopBottomSpacing = 4
     ChildSizing.EnlargeHorizontal = crsScaleChilds

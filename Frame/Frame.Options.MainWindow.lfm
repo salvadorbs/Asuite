@@ -132,7 +132,7 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       Height = 19
       Top = 23
       Width = 425
-      Caption = 'Hold main window size'
+      Caption = 'Disable window resize'
       ParentFont = False
       TabOrder = 0
     end
@@ -141,7 +141,7 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       Height = 19
       Top = 42
       Width = 425
-      Caption = 'Hide tab Search in main window'
+      Caption = 'Hide tab Search'
       ParentFont = False
       TabOrder = 2
     end

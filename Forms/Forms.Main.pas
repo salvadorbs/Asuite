@@ -388,7 +388,7 @@ end;
 procedure TfrmMain.actSortListUpdate(Sender: TObject);
 begin
   TAction(Sender).Visible := (GetActiveTree = vstList);
-  TAction(Sender).Enabled := (vstList.RootNode.ChildCount > 0) and (GetActiveTree = vstList);
+  TAction(Sender).Enabled := (vstList.RootNode.ChildCount > 1) and (GetActiveTree = vstList);
 end;
 
 procedure TfrmMain.btnedtSearchChange(Sender: TObject);

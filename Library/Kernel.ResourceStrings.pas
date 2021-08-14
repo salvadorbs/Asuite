@@ -75,7 +75,7 @@ resourcestring
   msgGMShow = 'Show %s';
   msgGMVideos = 'Videos';
   msgGeneral = 'General';
-  msgHotkey = 'Hotkey';
+  msgHotkey = 'Hotkeys';
   msgImport = 'Import';
   msgImportFailed = 'Import failed because of an error';
   msgImportProgress = 'Import in progress...';

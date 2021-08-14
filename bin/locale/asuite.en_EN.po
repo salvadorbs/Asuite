@@ -1,6 +1,17 @@
-# 
+#
 msgid ""
-msgstr "Content-Type: text/plain; charset=UTF-8\n"
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.0\n"
 
 #: kernel.resourcestrings.cxactiononexeopt_item0
 msgctxt "kernel.resourcestrings.cxactiononexeopt_item0"
@@ -334,8 +345,8 @@ msgstr "Videos"
 
 #: kernel.resourcestrings.msghotkey
 msgctxt "kernel.resourcestrings.msghotkey"
-msgid "Hotkey"
-msgstr "Hotkey"
+msgid "Hotkeys"
+msgstr "Hotkeys"
 
 #: kernel.resourcestrings.msghotkeynokey
 msgid "You haven't select any keys!"
@@ -925,17 +936,17 @@ msgid "Run as admin"
 msgstr "Run as admin"
 
 #: tfrmhotkeyoptionspage.cbhotkey.caption
-msgid "Enable hotkey"
-msgstr "Enable hotkey"
+msgid "Enable hotkeys"
+msgstr "Enable hotkeys"
 
 #: tfrmhotkeyoptionspage.gbhotkey.caption
 msgctxt "tfrmhotkeyoptionspage.gbhotkey.caption"
-msgid "Hotkey"
-msgstr "Hotkey"
+msgid "Hotkeys"
+msgstr "Hotkeys"
 
 #: tfrmhotkeyoptionspage.grpordersoftware.caption
-msgid "Hotkey list used"
-msgstr "Hotkey list used"
+msgid "Hotkeys list"
+msgstr "Hotkeys list"
 
 #: tfrmhotkeyoptionspage.lblhotkeycm.caption
 msgid "Show classic menu when hotkey is pressed"
@@ -1229,8 +1240,8 @@ msgid "Hide tab Search in main window"
 msgstr "Hide tab Search in main window"
 
 #: tfrmmainwindowoptionspage.cbholdsize.caption
-msgid "Hold main window size"
-msgstr "Hold main window size"
+msgid "Disable window resize"
+msgstr "Disable window resize"
 
 #: tfrmmainwindowoptionspage.cbsmallicon.caption
 msgid "Small icon size in main window"
@@ -1484,11 +1495,13 @@ msgstr "Path"
 
 #: tfrmswgeneralpropertypage.lbinfo2.caption
 msgid ""
-"Note: You can use these vars (included environment variables) in relative path:\n"
+"Note: You can use these vars (included environment variables) in relative "
+"path:\n"
 "- %asuite% = ASuite folder path (\"%s\")\n"
 "- %drive% = drive path (\"%s\")"
 msgstr ""
-"Note: You can use these vars (included environment variables) in relative path:\n"
+"Note: You can use these vars (included environment variables) in relative "
+"path:\n"
 "- %asuite% = ASuite folder path (\"%s\")\n"
 "- %drive% = drive path (\"%s\")"
 

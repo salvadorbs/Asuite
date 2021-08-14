@@ -333,7 +333,7 @@ msgstr ""
 
 #: kernel.resourcestrings.msghotkey
 msgctxt "kernel.resourcestrings.msghotkey"
-msgid "Hotkey"
+msgid "Hotkeys"
 msgstr ""
 
 #: kernel.resourcestrings.msghotkeynokey
@@ -910,16 +910,16 @@ msgid "Run as admin"
 msgstr ""
 
 #: tfrmhotkeyoptionspage.cbhotkey.caption
-msgid "Enable hotkey"
+msgid "Enable hotkeys"
 msgstr ""
 
 #: tfrmhotkeyoptionspage.gbhotkey.caption
 msgctxt "tfrmhotkeyoptionspage.gbhotkey.caption"
-msgid "Hotkey"
+msgid "Hotkeys"
 msgstr ""
 
 #: tfrmhotkeyoptionspage.grpordersoftware.caption
-msgid "Hotkey list used"
+msgid "Hotkeys list"
 msgstr ""
 
 #: tfrmhotkeyoptionspage.lblhotkeycm.caption
@@ -1214,7 +1214,7 @@ msgid "Hide tab Search in main window"
 msgstr ""
 
 #: tfrmmainwindowoptionspage.cbholdsize.caption
-msgid "Hold main window size"
+msgid "Disable window resize"
 msgstr ""
 
 #: tfrmmainwindowoptionspage.cbsmallicon.caption
