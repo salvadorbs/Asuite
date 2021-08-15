@@ -149,7 +149,7 @@ begin
   Result := 0;
 
   try
-    if (FileName <> '') and not IsUNCPath(FileName) and FileExists(FileName) then
+    if (FileName <> '') and not IsUNCPath(FileName) and FileExists(FileName) and (FileSize(FileName) > 0) then
       Result := THashFactory.THash32.CreateXXHash32().ComputeFile(FileName).GetInt32();
   except
     on E : Exception do
