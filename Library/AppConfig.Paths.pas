@@ -183,7 +183,7 @@ begin
   strFolderIcon := AppendPathDelim(FSuitePathCurrentTheme + ICONS_DIR);
 
   //CONST_PATH_ASuite = Launcher's path
-  FASuiteVars.Add(DeQuotedStr(CONST_PATH_ASUITE), SuitePathWorking);
+  FASuiteVars.Add(DeQuotedStr(CONST_PATH_ASUITE), ExcludeTrailingPathDelimiter(SuitePathWorking));
 
   //CONST_PATH_DRIVE = Launcher's Drive (ex. ASuite in H:\Software\ASuite.exe, CONST_PATH_DRIVE is H: )
   FASuiteVars.Add(DeQuotedStr(CONST_PATH_DRIVE), SUITEDRIVE);
