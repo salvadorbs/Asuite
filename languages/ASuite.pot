@@ -828,11 +828,11 @@ msgid "Show Graphic Menu, when run another ASuite instance"
 msgstr ""
 
 #: tfrmgeneraloptionspage.cbshowmenustartup.caption
-msgid "Show graphic menu on ASuite startup"
+msgid "Show Graphic Menu"
 msgstr ""
 
 #: tfrmgeneraloptionspage.cbshowpanelstartup.caption
-msgid "Show window on ASuite startup"
+msgid "Show main window"
 msgstr ""
 
 #: tfrmgeneraloptionspage.cbwindowsstartup.caption
@@ -844,27 +844,28 @@ msgid "Close all process opened by ASuite at launcher shutdown"
 msgstr ""
 
 #: tfrmgeneraloptionspage.chkconfirmmessagecat.caption
-msgid "Ask to confirm before run a category"
+msgid "Ask confirm before run a category"
 msgstr ""
 
 #: tfrmgeneraloptionspage.chkconfirmmsgcloseapp.caption
-msgid "Ask to confirm before close ASuite"
+msgid "Ask confirm before exiting"
 msgstr ""
 
 #: tfrmgeneraloptionspage.chkmissedschedulertask.caption
-msgid "Check missed scheduler task at ASuite startup"
+msgid "Check missed scheduler task"
 msgstr ""
 
 #: tfrmgeneraloptionspage.gbexecution.caption
 msgid "Execution"
 msgstr ""
 
-#: tfrmgeneraloptionspage.gbother.caption
-msgid "Other"
-msgstr ""
-
 #: tfrmgeneraloptionspage.gbstartup.caption
 msgctxt "tfrmgeneraloptionspage.gbstartup.caption"
+msgid "General"
+msgstr ""
+
+#: tfrmgeneraloptionspage.gbstartup1.caption
+msgctxt "tfrmgeneraloptionspage.gbstartup1.caption"
 msgid "Startup"
 msgstr ""
 
@@ -1210,7 +1211,7 @@ msgid "Disable delete items confirmation dialog"
 msgstr ""
 
 #: tfrmmainwindowoptionspage.cbhidesearch.caption
-msgid "Hide tab Search in main window"
+msgid "Hide tab Search"
 msgstr ""
 
 #: tfrmmainwindowoptionspage.cbholdsize.caption
@@ -1516,6 +1517,10 @@ msgstr ""
 
 #: tfrmtrayiconoptionspage.chkautomatichidemenu.caption
 msgid "Auto-hide menu"
+msgstr ""
+
+#: tfrmtrayiconoptionspage.chkhideejectbutton.caption
+msgid "Hide Eject USB Disk button"
 msgstr ""
 
 #: tfrmtrayiconoptionspage.chkuserpicture.caption

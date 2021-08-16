@@ -854,12 +854,12 @@ msgid "Show Graphic Menu, when run another ASuite instance"
 msgstr "Show Graphic Menu, when run another ASuite instance"
 
 #: tfrmgeneraloptionspage.cbshowmenustartup.caption
-msgid "Show graphic menu on ASuite startup"
-msgstr "Show graphic menu on ASuite startup"
+msgid "Show Graphic Menu"
+msgstr "Show Graphic Menu"
 
 #: tfrmgeneraloptionspage.cbshowpanelstartup.caption
-msgid "Show window on ASuite startup"
-msgstr "Show window on ASuite startup"
+msgid "Show main window"
+msgstr "Show main window"
 
 #: tfrmgeneraloptionspage.cbwindowsstartup.caption
 msgid "Start ASuite on Operating System startup"
@@ -870,29 +870,30 @@ msgid "Close all process opened by ASuite at launcher shutdown"
 msgstr "Close all process opened by ASuite at launcher shutdown"
 
 #: tfrmgeneraloptionspage.chkconfirmmessagecat.caption
-msgid "Ask to confirm before run a category"
-msgstr "Ask to confirm before run a category"
+#| msgid "Ask to confirm before run a category"
+msgid "Ask confirm before run a category"
+msgstr "Ask confirm before run a category"
 
 #: tfrmgeneraloptionspage.chkconfirmmsgcloseapp.caption
-msgid "Ask to confirm before close ASuite"
-msgstr "Ask to confirm before close ASuite"
+msgid "Ask confirm before exiting"
+msgstr "Ask confirm before exiting"
 
 #: tfrmgeneraloptionspage.chkmissedschedulertask.caption
-msgid "Check missed scheduler task at ASuite startup"
-msgstr "Check missed scheduler task at ASuite startup"
+msgid "Check missed scheduler task"
+msgstr "Check missed scheduler task"
 
 #: tfrmgeneraloptionspage.gbexecution.caption
 msgid "Execution"
 msgstr "Execution"
 
-#: tfrmgeneraloptionspage.gbother.caption
-msgid "Other"
-msgstr "Other"
-
 #: tfrmgeneraloptionspage.gbstartup.caption
 msgctxt "tfrmgeneraloptionspage.gbstartup.caption"
-msgid "Startup"
-msgstr "Startup"
+msgid "General"
+msgstr "General"
+
+#: tfrmgeneraloptionspage.gbstartup1.caption
+msgid "ASuite Startup"
+msgstr "ASuite Startup"
 
 #: tfrmgeneraloptionspage.lbactiononexe.caption
 msgid "On execution"
@@ -1236,8 +1237,8 @@ msgid "Disable delete items confirmation dialog"
 msgstr "Disable delete items confirmation dialog"
 
 #: tfrmmainwindowoptionspage.cbhidesearch.caption
-msgid "Hide tab Search in main window"
-msgstr "Hide tab Search in main window"
+msgid "Hide tab Search"
+msgstr "Hide tab Search"
 
 #: tfrmmainwindowoptionspage.cbholdsize.caption
 msgid "Disable window resize"
@@ -1597,3 +1598,16 @@ msgstr "&Password"
 #: tfrmuilogin.lblusername.caption
 msgid "&User Name"
 msgstr "&User Name"
+
+#~ msgid "Show graphic menu on ASuite startup"
+#~ msgstr "Show graphic menu on ASuite startup"
+
+#~ msgid "Show window on ASuite startup"
+#~ msgstr "Show window on ASuite startup"
+
+#~ msgid "Other"
+#~ msgstr "Other"
+
+#~ msgctxt "tfrmgeneraloptionspage.gbstartup.caption"
+#~ msgid "Startup"
+#~ msgstr "Startup"

@@ -31,22 +31,22 @@ type
   { TfrmGeneralOptionsPage }
 
   TfrmGeneralOptionsPage = class(TfrmBaseEntityPage)
-    chkConfirmMsgCloseApp: TCheckBox;
+    cbRunSingleClick: TCheckBox;
     cbSecondInstanceGM: TCheckBox;
+    cbShowMenuStartup: TCheckBox;
+    cbShowPanelStartup: TCheckBox;
+    chkAutoCloseProcess: TCheckBox;
+    chkConfirmMessageCat: TCheckBox;
+    chkConfirmMsgCloseApp: TCheckBox;
+    chkMissedSchedulerTask: TCheckBox;
+    cxActionOnExe: TComboBox;
     cxLanguage: TComboBox;
-    gbOther: TGroupBox;
+    gbExecution: TGroupBox;
     
     gbStartup: TGroupBox;
     cbWindowsStartup: TCheckBox;
-    cbShowPanelStartup: TCheckBox;
-    cbShowMenuStartup: TCheckBox;
-    chkMissedSchedulerTask: TCheckBox;
-    gbExecution: TGroupBox;
+    gbStartup1: TGroupBox;
     lbActionOnExe: TLabel;
-    cbRunSingleClick: TCheckBox;
-    cxActionOnExe: TComboBox;
-    chkConfirmMessageCat: TCheckBox;
-    chkAutoCloseProcess: TCheckBox;
     lbLanguage: TLabel;
   private
     { Private declarations }

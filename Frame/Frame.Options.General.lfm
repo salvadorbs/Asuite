@@ -8,18 +8,18 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
   DesignTop = 299
   object gbStartup: TGroupBox[0]
     Left = 4
-    Height = 123
+    Height = 131
     Top = 4
     Width = 437
     BorderSpacing.Left = 4
     BorderSpacing.Top = 4
     BorderSpacing.Right = 4
-    Caption = 'Startup'
+    Caption = 'General'
     ChildSizing.LeftRightSpacing = 4
     ChildSizing.TopBottomSpacing = 4
     ChildSizing.EnlargeHorizontal = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
-    ClientHeight = 103
+    ClientHeight = 111
     ClientWidth = 433
     Font.Style = [fsBold]
     ParentFont = False
@@ -33,47 +33,97 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
       ParentFont = False
       TabOrder = 0
     end
-    object cbShowPanelStartup: TCheckBox
+    object cbSecondInstanceGM: TCheckBox
       Left = 4
       Height = 19
       Top = 23
       Width = 425
-      Caption = 'Show window on ASuite startup'
+      Caption = 'Show Graphic Menu, when run another ASuite instance'
       ParentFont = False
-      TabOrder = 2
+      TabOrder = 1
     end
-    object cbShowMenuStartup: TCheckBox
+    object chkConfirmMsgCloseApp: TCheckBox
       Left = 4
       Height = 19
       Top = 42
       Width = 425
-      Caption = 'Show graphic menu on ASuite startup'
+      Caption = 'Ask confirm before exiting'
       ParentFont = False
+      TabOrder = 2
+    end
+    object lbLanguage: TLabel
+      Left = 4
+      Height = 15
+      Top = 65
+      Width = 425
+      BorderSpacing.Top = 4
+      BorderSpacing.Bottom = 4
+      Caption = 'Language'
+      ParentFont = False
+    end
+    object cxLanguage: TComboBox
+      Left = 4
+      Height = 23
+      Top = 84
+      Width = 180
+      BorderSpacing.CellAlignHorizontal = ccaLeftTop
+      Constraints.MinWidth = 180
+      ItemHeight = 15
+      ParentFont = False
+      Style = csDropDownList
       TabOrder = 3
     end
+  end
+  object gbStartup1: TGroupBox[1]
+    Left = 4
+    Height = 85
+    Top = 139
+    Width = 437
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    Caption = 'Startup'
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.TopBottomSpacing = 4
+    ChildSizing.EnlargeHorizontal = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ClientHeight = 65
+    ClientWidth = 433
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 1
     object chkMissedSchedulerTask: TCheckBox
       Left = 4
       Height = 19
-      Top = 61
+      Top = 4
       Width = 425
-      Caption = 'Check missed scheduler task at ASuite startup'
+      Caption = 'Check missed scheduler task'
+      ParentFont = False
+      TabOrder = 0
+    end
+    object cbShowMenuStartup: TCheckBox
+      Left = 4
+      Height = 19
+      Top = 23
+      Width = 425
+      Caption = 'Show Graphic Menu'
       ParentFont = False
       TabOrder = 1
     end
-    object cbSecondInstanceGM: TCheckBox
+    object cbShowPanelStartup: TCheckBox
       Left = 4
       Height = 19
-      Top = 80
+      Top = 42
       Width = 425
-      Caption = 'Show Graphic Menu, when run another ASuite instance'
+      Caption = 'Show main window'
       ParentFont = False
-      TabOrder = 4
+      TabOrder = 2
     end
   end
-  object gbExecution: TGroupBox[1]
+  object gbExecution: TGroupBox[2]
     Left = 4
     Height = 131
-    Top = 131
+    Top = 228
     Width = 437
     BorderSpacing.Left = 4
     BorderSpacing.Top = 4
@@ -87,7 +137,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
     ClientWidth = 433
     Font.Style = [fsBold]
     ParentFont = False
-    TabOrder = 1
+    TabOrder = 2
     object cbRunSingleClick: TCheckBox
       Left = 4
       Height = 19
@@ -102,7 +152,7 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
       Height = 19
       Top = 23
       Width = 425
-      Caption = 'Ask to confirm before run a category'
+      Caption = 'Ask confirm before run a category'
       ParentFont = False
       TabOrder = 1
     end
@@ -136,56 +186,6 @@ inherited frmGeneralOptionsPage: TfrmGeneralOptionsPage
       ParentFont = False
       Style = csDropDownList
       TabOrder = 3
-    end
-  end
-  object gbOther: TGroupBox[2]
-    Left = 4
-    Height = 93
-    Top = 266
-    Width = 437
-    BorderSpacing.Left = 4
-    BorderSpacing.Top = 4
-    BorderSpacing.Right = 4
-    Caption = 'Other'
-    ChildSizing.LeftRightSpacing = 4
-    ChildSizing.TopBottomSpacing = 4
-    ChildSizing.EnlargeHorizontal = crsScaleChilds
-    ChildSizing.Layout = cclLeftToRightThenTopToBottom
-    ClientHeight = 73
-    ClientWidth = 433
-    Font.Style = [fsBold]
-    ParentFont = False
-    TabOrder = 2
-    object chkConfirmMsgCloseApp: TCheckBox
-      Left = 4
-      Height = 19
-      Top = 4
-      Width = 425
-      Caption = 'Ask to confirm before close ASuite'
-      ParentFont = False
-      TabOrder = 0
-    end
-    object lbLanguage: TLabel
-      Left = 4
-      Height = 15
-      Top = 27
-      Width = 425
-      BorderSpacing.Top = 4
-      BorderSpacing.Bottom = 4
-      Caption = 'Language'
-      ParentFont = False
-    end
-    object cxLanguage: TComboBox
-      Left = 4
-      Height = 23
-      Top = 46
-      Width = 180
-      BorderSpacing.CellAlignHorizontal = ccaLeftTop
-      Constraints.MinWidth = 180
-      ItemHeight = 15
-      ParentFont = False
-      Style = csDropDownList
-      TabOrder = 1
     end
   end
 end
