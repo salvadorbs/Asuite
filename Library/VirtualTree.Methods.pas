@@ -96,7 +96,8 @@ uses
   Utility.FileFolder, Forms.PropertySeparator, Kernel.ResourceStrings,
   NodeDataTypes.Category, NodeDataTypes.Separator, Forms.PropertyItem, Icons.Thread,
   NodeDataTypes.Custom, Kernel.Consts, Icons.Node, Kernel.Logger, Utility.Misc,
-  Forms.Main, DataModules.TrayMenu, Kernel.Instance, Kernel.Manager;
+  Forms.Main, DataModules.TrayMenu, Kernel.Instance, Kernel.Manager,
+  Kernel.ShellLink, LazFileUtils;
 
 { TVirtualTreeMethods }
 
@@ -192,6 +193,7 @@ var
   NodeData: TvFileNodeData;
   Node: PVirtualNode;
   sName: String;
+  ShellLink: TShellLinkFile;
 begin
   TASuiteLogger.Debug('Add node by File Path (%s)', [QuotedStr(APathFile)]);
 
@@ -202,11 +204,19 @@ begin
     if ExtractFileExtEx(APathFile) = EXT_LNK then
     begin
       //Shortcut
-      NodeData.PathFile   := ASuiteInstance.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfPathFile));
-      {$IFDEF MSWINDOWS}
-      NodeData.Parameters := ASuiteInstance.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfParameter));
-      NodeData.WorkingDir := ASuiteInstance.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfWorkingDir));
-      {$ENDIF}
+      ShellLink := TShellLinkFile.Create(APathFile);
+      try
+        if ShellLink.Path <> '' then
+        begin
+          NodeData.PathFile   := ASuiteInstance.Paths.AbsoluteToRelative(ShellLink.Path);
+          NodeData.Parameters := ASuiteInstance.Paths.AbsoluteToRelative(ShellLink.Parameters);
+          NodeData.WorkingDir := ASuiteInstance.Paths.AbsoluteToRelative(ShellLink.WorkingDir);
+        end
+        else
+          NodeData.PathFile := ASuiteInstance.Paths.AbsoluteToRelative(APathFile);
+      finally
+        ShellLink.Free;
+      end;
     end
     else begin
       if ExtractFileExtEx(APathFile) = EXT_URL then

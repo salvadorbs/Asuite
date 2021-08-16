@@ -6,7 +6,7 @@ interface
 
 uses
   Kernel.Consts, LCLIntf, LCLType, SysUtils, Classes, Kernel.Enumerations,
-  FileUtil, {$IFDEF Windows}ComObj, ActiveX, ShlObj, Windows,{$ELSE} FakeActiveX, {$ENDIF} Dialogs,
+  FileUtil, {$IFDEF Windows}ComObj, ShlObj, {$ELSE} FakeActiveX, {$ENDIF} Dialogs,
   LazFileUtils, HlpHashFactory;
 
 { Folders }
@@ -24,16 +24,16 @@ function ExtractFileNameEx(const AFileName: String): string;
 function ExtractFileExtEx(const AFileName: String): string;
 
 { Desktop shortcut }
+function GetDesktopDir: String;
 procedure CreateShortcutOnDesktop(const FileName, TargetFilePath, Params, WorkingDir: String);
 procedure DeleteShortcutOnDesktop(const FileName: String);
-function  GetShortcutTarget(const LinkFileName: String; ShortcutType: TShortcutField):String;
 function  GetUrlTarget(const AFileName: String; ShortcutType: TShortcutField): String;
 
 implementation
 
 uses
-  IniFiles, FileInfo, Kernel.Instance, Kernel.Logger
-  {$IFDEF UNIX} , BaseUnix {$ENDIF}, Kernel.ResourceStrings;
+  IniFiles, FileInfo, Kernel.Instance, Kernel.Logger, Kernel.ResourceStrings
+  {$IFDEF UNIX}, BaseUnix{$ENDIF}, Kernel.ShellLink;
 
 function BrowseForFolder(const InitialDir: String; const Caption: String): String;
 var
@@ -207,98 +207,39 @@ begin
   BackupList.Free;
 end;
 
+function GetDesktopDir: String;
+begin
 {$IFDEF MSWINDOWS}
+  Result := SHGetFolderPathUTF8(CSIDL_DESKTOPDIRECTORY);
+{$ELSE}
+  Result := GetUserDir + 'Desktop';
+{$ENDIF}
+end;
+
 procedure CreateShortcutOnDesktop(const FileName, TargetFilePath, Params, WorkingDir: String);
 var
-  IObject  : IUnknown;
-  ISLink   : IShellLinkW;
-  IPFile   : IPersistFile;
-  PIDL     : PItemIDList;
-  InFolder : array[0..MAX_PATH] of Char;
+  ShellLink: TShellLinkFile;
 begin
-  //Create objects
-  IObject := CreateComObject(CLSID_ShellLink);
-  ISLink  := IObject as IShellLinkW;
-  IPFile  := IObject as IPersistFile;
-  PIDL := nil;
-  //Create link
-  ISLink.SetPath(pChar(TargetFilePath));
-  ISLink.SetArguments(pChar(Params));
-  if WorkingDir = '' then
-    ISLink.SetWorkingDirectory(pChar(ExtractFilePath(TargetFilePath)))
-  else
-    ISLink.SetWorkingDirectory(pChar(WorkingDir));
-  //DesktopPath
-  SHGetSpecialFolderLocation(0, CSIDL_DESKTOPDIRECTORY, PIDL);
-  SHGetPathFromIDListW(PIDL, InFolder);
-  //Save link
-  IPFile.Save(PWChar(AppendPathDelim(InFolder) + FileName), false);
+  ShellLink := TShellLinkFile.Create;
+  try
+    ShellLink.Path := TargetFilePath;
+    ShellLink.Parameters := Params;
+    ShellLink.WorkingDir := WorkingDir;
+
+    ShellLink.SaveShellLink(AppendPathDelim(GetDesktopDir) + FileName);
+  finally
+    ShellLink.Free;
+  end;
 end;
-{$ELSE}
-{$IFDEF UNIX}
-procedure CreateShortcutOnDesktop(const FileName, TargetFilePath, Params, WorkingDir: String);
-begin
-  fpSymlink(PAnsiChar(TargetFilePath), PAnsiChar(AppendPathDelim(GetUserDir + 'Desktop') + Filename));
-end;
-{$ENDIF UNIX}
-{$ENDIF MSWINDOWS}
 
 procedure DeleteShortcutOnDesktop(const FileName: String);
 var
-  {$IFDEF MSWINDOWS}
-  PIDL        : PItemIDList;
-  {$ENDIF}
-  DesktopPath : array[0..MAX_PATH] of Char;
-  LinkName    : String;
+  LinkName: String;
 begin
-  {$IFDEF MSWINDOWS}
-  PIDL := nil;
-  SHGetSpecialFolderLocation(0, CSIDL_DESKTOPDIRECTORY, PIDL);
-  SHGetPathFromIDListW(PIDL, DesktopPath);
-  {$ELSE}
-  DesktopPath := AppendPathDelim(GetUserDir + 'Desktop');
-  {$ENDIF}
-  LinkName := PChar(AppendPathDelim(DesktopPath) + FileName);
+  LinkName := AppendPathDelim(GetDesktopDir) + FileName;
   if (FileExists(LinkName)) then
     SysUtils.DeleteFile(LinkName);
 end;
-
-{$IFDEF MSWINDOWS}
-function GetShortcutTarget(const LinkFileName: String; ShortcutType: TShortcutField):String;
-var
-  ISLink    : IShellLinkW;
-  IPFile    : IPersistFile;
-  Info      : Array[0..MAX_PATH] of Char;
-  wfs       : WIN32_FIND_DATAW;
-begin  
-  Result := LinkFileName;
-  try
-    if CoCreateInstance(CLSID_ShellLink, nil, CLSCTX_INPROC_SERVER, IShellLinkW, ISLink) = S_OK then
-      if ISLink.QueryInterface(IPersistFile, IPFile) = 0 then
-      begin
-        //Get pathexe, parameters or working directory from shortcut
-        IPFile.Load(PChar(LinkFileName), STGM_READ);
-        case ShortcutType of
-         sfPathFile   : ISLink.GetPath(@info,MAX_PATH,@wfs,SLGP_UNCPRIORITY);
-         sfParameter  : ISLink.GetArguments(@info,MAX_PATH);
-         sfWorkingDir : ISLink.GetWorkingDirectory(@info,MAX_PATH);
-        end;
-        Result := info
-      end
-      else
-        Result := LinkFileName;
-  except
-    Result := LinkFileName;
-  end;
-end;
-{$ELSE}
-{$IFDEF UNIX}
-function GetShortcutTarget(const LinkFileName: String; ShortcutType: TShortcutField):String;
-begin
-  Result := ReadAllLinks(LinkFileName, False);
-end;
-{$ENDIF UNIX}
-{$ENDIF}
 
 function GetUrlTarget(const AFileName: String; ShortcutType: TShortcutField): String;
 var

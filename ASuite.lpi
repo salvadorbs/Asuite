@@ -31,7 +31,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="1468"/>
+      <BuildNr Value="1501"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Debug" Default="True"/>
@@ -182,7 +182,7 @@
         <PackageName Value="LCL"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="72">
+    <Units Count="73">
       <Unit0>
         <Filename Value="ASuite.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -555,6 +555,10 @@
         <Filename Value="Library/VirtualTree.Helper.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit71>
+      <Unit72>
+        <Filename Value="Library/Kernel.ShellLink.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit72>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
