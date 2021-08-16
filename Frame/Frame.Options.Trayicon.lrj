@@ -15,5 +15,6 @@
 {"hash":148562261,"name":"tfrmtrayiconoptionspage.cbsmallicon.caption","sourcebytes":[83,109,97,108,108,32,84,114,101,101,86,105,101,119,39,115,32,105,99,111,110,32,115,105,122,101],"value":"Small TreeView's icon size"},
 {"hash":113574437,"name":"tfrmtrayiconoptionspage.chkautomatichidemenu.caption","sourcebytes":[65,117,116,111,45,104,105,100,101,32,109,101,110,117],"value":"Auto-hide menu"},
 {"hash":109665877,"name":"tfrmtrayiconoptionspage.chkuserpicture.caption","sourcebytes":[83,104,111,119,32,117,115,101,114,32,112,105,99,116,117,114,101,32,105,110,32,109,101,110,117],"value":"Show user picture in menu"},
+{"hash":114342430,"name":"tfrmtrayiconoptionspage.chkhideejectbutton.caption","sourcebytes":[72,105,100,101,32,69,106,101,99,116,32,85,83,66,32,68,105,115,107,32,98,117,116,116,111,110],"value":"Hide Eject USB Disk button"},
 {"hash":5958709,"name":"tfrmtrayiconoptionspage.lbmenutheme.caption","sourcebytes":[84,104,101,109,101],"value":"Theme"}
 ]}

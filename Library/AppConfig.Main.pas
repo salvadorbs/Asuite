@@ -32,6 +32,7 @@ type
   { TConfiguration }
   TConfiguration = class
   private
+    FGMHideEjectButton: Boolean;
     //General
     FStartWithWindows   : Boolean;
     FShowPanelAtStartUp : Boolean;
@@ -219,6 +220,7 @@ type
     property GMPositionLeft: Integer read FGMPositionLeft write FGMPositionLeft;
     property GMAutomaticHideMenu: Boolean read FGMAutomaticHideMenu write FGMAutomaticHideMenu;
     property GMShowUserPicture: Boolean read FGMShowUserPicture write FGMShowUserPicture;
+    property GMHideEjectButton: Boolean read FGMHideEjectButton write FGMHideEjectButton;
     //Right buttons
     property GMBtnDocuments: string read FGMBtnDocuments write SetGMBtnDocuments;
     property GMBtnPictures: string read FGMBtnPictures write SetGMBtnPictures;
@@ -369,7 +371,8 @@ begin
   FGMPositionTop      := -1;
   FGMPositionLeft     := -1;
   FGMAutomaticHideMenu := True;
-  FGMShowUserPicture   := True;
+  FGMShowUserPicture  := True;
+  FGMHideEjectButton  := False;
 
   //Right buttons
   FGMBtnDocuments     := '%USERPROFILE%\Documents';
@@ -547,6 +550,7 @@ begin
     AJSONConfig.SetValue(CONFIG_GMPOSITIONLEFT, Self.GMPositionLeft);
     AJSONConfig.SetValue(CONFIG_GMAUTOHIDEMENU, Self.GMAutomaticHideMenu);
     AJSONConfig.SetValue(CONFIG_GMSHOWUSERPICTURE, Self.GMShowUserPicture);
+    AJSONConfig.SetValue(CONFIG_GMHIDEEJECTBUTTON, Self.GMHideEjectButton);
 
     //Right buttons
     AJSONConfig.SetValue(CONFIG_GMBTNDOCUMENTS, Self.GMBtnDocuments);
@@ -671,6 +675,7 @@ begin
   Self.GMPositionLeft            := AJSONConfig.GetValue(CONFIG_GMPOSITIONLEFT, Self.GMPositionLeft);
   Self.GMAutomaticHideMenu       := AJSONConfig.GetValue(CONFIG_GMAUTOHIDEMENU, Self.GMAutomaticHideMenu);
   Self.GMShowUserPicture         := AJSONConfig.GetValue(CONFIG_GMSHOWUSERPICTURE, Self.GMShowUserPicture);
+  Self.GMHideEjectButton         := AJSONConfig.GetValue(CONFIG_GMHIDEEJECTBUTTON, Self.GMHideEjectButton);
 
   //Right buttons
   Self.GMBtnDocuments            := AJSONConfig.GetValue(CONFIG_GMBTNDOCUMENTS, Self.GMBtnDocuments);

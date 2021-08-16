@@ -34,6 +34,8 @@ type
   { TfrmTrayiconOptionsPage }
 
   TfrmTrayiconOptionsPage = class(TfrmBaseEntityPage)
+    chkUserPicture: TCheckBox;
+    chkHideEjectButton: TCheckBox;
     cxLeftClick: TComboBox;
     cxMiddleClick: TComboBox;
     cxRightClick: TComboBox;
@@ -54,7 +56,6 @@ type
     cbMenuFade: TCheckBox;
     cbSmallIcon: TCheckBox;
     chkAutomaticHideMenu: TCheckBox;
-    chkUserPicture: TCheckBox;
     lbTrayRightClick: TLabel;
     Panel1: TPanel;
     Panel2: TPanel;
@@ -158,6 +159,7 @@ begin
   cbSmallIcon.Checked := Config.GMSmallIconSize;
   chkAutomaticHideMenu.Checked := Config.GMAutomaticHideMenu;
   chkUserPicture.Checked := Config.GMShowUserPicture;
+  chkHideEjectButton.Checked := Config.GMHideEjectButton;
 
   //Get GM theme list
   if FindFirst(ASuiteInstance.Paths.SuitePathMenuThemes + '*.*', faDirectory, searchResult) = 0 then
@@ -179,6 +181,10 @@ begin
   //Enable/disable visual components
   cbTrayiconClick(Self);
   cbTrayCustomIconClick(Self);
+
+  {$IFDEF UNIX}
+  chkHideEjectButton.Enabled := False;
+  {$ENDIF}
 end;
 
 function TfrmTrayiconOptionsPage.InternalSaveData: Boolean;
@@ -191,13 +197,17 @@ begin
   Config.ActionClickLeft    := TTrayiconActionClick(cxLeftClick.ItemIndex);
   Config.ActionClickMiddle  := TTrayiconActionClick(cxMiddleClick.ItemIndex);
   Config.ActionClickRight   := TTrayiconActionClick(cxRightClick.ItemIndex);
+
   //Graphic Menu
   if cxTheme.ItemIndex <> -1 then
     Config.GMTheme         := cxTheme.Items[cxTheme.ItemIndex];
+
   Config.GMFade          := cbMenuFade.Checked;
   Config.GMSmallIconSize := cbSmallIcon.Checked;
   Config.GMAutomaticHideMenu := chkAutomaticHideMenu.Checked;
   Config.GMShowUserPicture := chkUserPicture.Checked;
+  Config.GMHideEjectButton := chkHideEjectButton.Checked;
+
   //Submenu
   Config.AutoExpansionFolder := chkAutoExpansion.Checked;
   Config.SubMenuMRU := cbSubMenuMRU.Checked;

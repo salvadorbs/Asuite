@@ -293,11 +293,6 @@ begin
   edtSearch.RightButton.Images := dmImages.ilLargeIcons;
   edtSearch.RightButton.ImagesWidth := ICON_SIZE_SMALL;
   edtSearch.RightButton.ImageIndex := FThemeEngine.SearchIcon;
-
-  //TODO win32: Disable eject button if asuite runs on normal hd and not usb pen (ejectable devices)
-  {$IFDEF UNIX}
-  sknbtnEject.Visible := False;
-  {$ENDIF}
 end;
 
 procedure TfrmGraphicMenu.FormDestroy(Sender: TObject);
@@ -429,19 +424,31 @@ procedure TfrmGraphicMenu.FormShow(Sender: TObject);
 begin
   CheckUserPicture;
   sknbtnList.Pressed := True;
+
   //Clear edtSearch and focus it
   edtSearch.Text := '';
   Self.FocusControl(edtSearch);
+
   //Change node height and imagelist
   TVirtualTreeMethods.ChangeTreeIconSize(vstList, Config.GMSmallIconSize);
+
   //Clear and populate virtualtree
   PopulateListTree(vstList);
   UpdateDriveStats;
+
   //Enable or disable tabs
   sknbtnRecents.Visible := Config.MRU;
   sknbtnMFU.Visible := Config.MFU;
+
   //Timer
   tmrCheckItems.Enabled := True;
+
+  //TODO win32: Disable eject button if asuite runs on normal hd and not usb pen (ejectable devices)
+  //Eject button visibility (in Linux always not visible, in Windows user can choose if hiding it or not)
+  sknbtnEject.Visible := not(Config.GMHideEjectButton);
+  {$IFDEF UNIX}
+  sknbtnEject.Visible := False;
+  {$ENDIF}
 end;
 
 procedure TfrmGraphicMenu.imgLogoMouseDown(Sender: TObject;

@@ -493,10 +493,8 @@ end;
 function TThemeEngine.IsRightButton(
   ButtonType: TGraphicMenuElement): Boolean;
 begin
-  Result := False;
-  if ButtonType in [gmbASuite,gmbOptions,gmbDocuments,gmbMusic,gmbPictures,
-                    gmbVideos,gmbExplore,gmbAbout] then
-    Result := True;
+  Result := ButtonType in [gmbASuite,gmbOptions,gmbDocuments,gmbMusic,gmbPictures,
+                    gmbVideos,gmbExplore,gmbAbout];
 end;
 
 end.

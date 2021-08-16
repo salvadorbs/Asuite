@@ -109,6 +109,7 @@ const
   CONFIG_GMPOSITIONTOP = 'graphicmenu/position/top';
   CONFIG_GMAUTOHIDEMENU = 'graphicmenu/auto_hide_menu';
   CONFIG_GMSHOWUSERPICTURE = 'graphicmenu/show_user_picture';
+  CONFIG_GMHIDEEJECTBUTTON = 'graphicmenu/hide_eject_button';
 
   //RIGHT BUTTONS
   CONFIG_GMBTNDOCUMENTS = 'graphicmenu/path/documents';
