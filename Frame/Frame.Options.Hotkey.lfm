@@ -152,30 +152,26 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       Header.AutoSizeIndex = 0
       Header.Columns = <      
         item
-          MinWidth = 50
           Position = 0
           Text = 'Name'
         end      
         item
           MaxWidth = 100
-          MinWidth = 36
           Position = 1
           Text = 'Type'
           Width = 36
         end      
         item
-          MinWidth = 60
           Position = 2
           Text = 'Category'
           Width = 100
         end      
         item
-          MinWidth = 100
           Position = 3
           Text = 'Hotkey'
           Width = 200
         end>
-      Header.Options = [hoColumnResize, hoDblClickResize, hoDrag, hoVisible, hoHeaderClickAutoSort]
+      Header.Options = [hoColumnResize, hoDblClickResize, hoDrag, hoVisible, hoHeaderClickAutoSort, hoAutoResizeInclCaption]
       ParentFont = False
       PopupMenu = pmHotkey
       TabOrder = 0

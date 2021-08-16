@@ -475,6 +475,8 @@ begin
     AJSONConfig.SetValue(CONFIG_CUSTOMTITLESTRING, Self.CustomTitleString);
     AJSONConfig.SetValue(CONFIG_HIDETABSEARCH, Self.HideTabSearch);
     AJSONConfig.SetValue(CONFIG_SEARCHASYOUTYPE, Self.SearchAsYouType);
+    AJSONConfig.SetValue(CONFIG_SEARCH_NAME_WIDTH, frmMain.vstSearch.Header.Columns[0].Width);
+    AJSONConfig.SetValue(CONFIG_SEARCH_CATEGORY_WIDTH, frmMain.vstSearch.Header.Columns[1].Width);
     AJSONConfig.SetValue(CONFIG_HOLDSIZE, Self.HoldSize);
     AJSONConfig.SetValue(CONFIG_ALWAYSONTOP, Self.AlwaysOnTop);
     AJSONConfig.SetValue(CONFIG_MAINFORM_DIALOGS_CENTER, Self.DialogCenterMF);
@@ -591,6 +593,8 @@ begin
   Self.CustomTitleString         := AJSONConfig.GetValue(CONFIG_CUSTOMTITLESTRING, Self.CustomTitleString);
   Self.HideTabSearch             := AJSONConfig.GetValue(CONFIG_HIDETABSEARCH, Self.HideTabSearch);
   Self.SearchAsYouType           := AJSONConfig.GetValue(CONFIG_SEARCHASYOUTYPE, Self.SearchAsYouType);
+  frmMain.vstSearch.Header.Columns[0].Width := AJSONConfig.GetValue(CONFIG_SEARCH_NAME_WIDTH, frmMain.vstSearch.Header.Columns[0].Width);
+  frmMain.vstSearch.Header.Columns[1].Width := AJSONConfig.GetValue(CONFIG_SEARCH_CATEGORY_WIDTH, frmMain.vstSearch.Header.Columns[1].Width);
   Self.HoldSize                  := AJSONConfig.GetValue(CONFIG_HOLDSIZE, Self.HoldSize);
   Self.AlwaysOnTop               := AJSONConfig.GetValue(CONFIG_ALWAYSONTOP, Self.AlwaysOnTop);
   Self.DialogCenterMF            := AJSONConfig.GetValue(CONFIG_MAINFORM_DIALOGS_CENTER, Self.DialogCenterMF);

@@ -38,6 +38,8 @@ const
   CONFIG_CUSTOMTITLESTRING = 'mainform/customtitle/string';
   CONFIG_HIDETABSEARCH = 'mainform/hide_tab_search';
   CONFIG_SEARCHASYOUTYPE = 'mainform/search_as_you_type';
+  CONFIG_SEARCH_NAME_WIDTH = 'mainform/search/columns/name/width';
+  CONFIG_SEARCH_CATEGORY_WIDTH = 'mainform/search/columns/category/width';
 
   //MAIN FORM - POSITION AND SIZE
   CONFIG_HOLDSIZE = 'mainform/hold_size';

@@ -90,7 +90,7 @@ object frmMain: TfrmMain
             Width = 90
           end>
         Header.Height = 21
-        Header.Options = [hoColumnResize, hoDblClickResize, hoDrag, hoVisible, hoHeaderClickAutoSort]
+        Header.Options = [hoColumnResize, hoDblClickResize, hoDrag, hoVisible, hoHeaderClickAutoSort, hoAutoResizeInclCaption]
         HintMode = hmHint
         ParentFont = False
         ParentShowHint = False

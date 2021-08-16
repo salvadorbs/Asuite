@@ -66,30 +66,26 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
         Header.AutoSizeIndex = 0
         Header.Columns = <        
           item
-            MinWidth = 50
             Position = 0
             Text = 'Name'
           end        
           item
             MaxWidth = 100
-            MinWidth = 36
             Position = 1
             Text = 'Type'
             Width = 36
           end        
           item
-            MinWidth = 50
             Position = 2
             Text = 'Category'
             Width = 60
           end        
           item
-            MinWidth = 100
             Position = 3
             Text = 'Path executable'
             Width = 200
           end>
-        Header.Options = [hoColumnResize, hoVisible]
+        Header.Options = [hoColumnResize, hoDblClickResize, hoVisible, hoAutoResizeInclCaption]
         ParentFont = False
         PopupMenu = pmAutorun
         TabOrder = 0
@@ -203,29 +199,25 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
         Header.AutoSizeIndex = 0
         Header.Columns = <        
           item
-            MinWidth = 50
             Position = 0
             Text = 'Name'
           end        
           item
             MaxWidth = 100
-            MinWidth = 36
             Position = 1
             Text = 'Type'
             Width = 36
           end        
           item
-            MinWidth = 50
             Position = 2
             Text = 'Category'
           end        
           item
-            MinWidth = 100
             Position = 3
             Text = 'Path executable'
             Width = 200
           end>
-        Header.Options = [hoColumnResize, hoVisible]
+        Header.Options = [hoColumnResize, hoDblClickResize, hoVisible, hoAutoResizeInclCaption]
         ParentFont = False
         PopupMenu = pmAutorun
         TabOrder = 0
