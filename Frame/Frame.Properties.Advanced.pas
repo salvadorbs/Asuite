@@ -135,7 +135,7 @@ begin
       end;
   end;
 
-  edtHotkey.RightButton.Images := dmImages.ilLargeIcons;
+  edtHotkey.RightButton.Images := dmImages.ilIcons;
   edtHotkey.RightButton.ImagesWidth := ICON_SIZE_SMALL;
   edtHotkey.RightButton.ImageIndex := AsuiteManager.IconsManager.GetIconIndex('cancel');
 

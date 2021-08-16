@@ -278,10 +278,10 @@ begin
 
   LoadSettings;
 
-  vstShell.Images := dmImages.ilLargeIcons;
+  vstShell.Images := dmImages.ilIcons;
   vstShell.ImagesWidth := ICON_SIZE_SMALL;
 
-  vstTypes.Images := dmImages.ilLargeIcons;
+  vstTypes.Images := dmImages.ilIcons;
   vstTypes.ImagesWidth := ICON_SIZE_SMALL;
 end;
 

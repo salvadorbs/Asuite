@@ -283,11 +283,14 @@ begin
 
     //TODO: Expand only if string has %
     //Replace ASuite variables
-    Result := FASuiteVars.ExpandVars(Result);
+    if Pos('%', Result) > 0 then
+    begin
+      Result := FASuiteVars.ExpandVars(Result);
 
-    //Replace environment variable
-    Result := FEnvironmentVars.ExpandVars(Result);
-                                                                                
+      //Replace environment variable
+      Result := FEnvironmentVars.ExpandVars(Result);
+    end;
+
     //Remove double path delimiter, resolve dots and expand path
     if not IsValidURLProtocol(Result) and not FilenameIsAbsolute(Result) then
       Result := CleanAndExpandFilename(Result);

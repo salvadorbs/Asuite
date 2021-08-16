@@ -227,15 +227,15 @@ var
 begin
   Result := nil;
 
-  if not Assigned(dmImages.ilLargeIcons) then
+  if not Assigned(dmImages.ilIcons) then
     Exit;
 
   bmpTemp := Graphics.TBitmap.Create;
   try
     if ALargeIcon then
-      dmImages.ilLargeIcons.FindResolution(ICON_SIZE_LARGE, Images)
+      dmImages.ilIcons.FindResolution(ICON_SIZE_LARGE, Images)
     else
-      dmImages.ilLargeIcons.FindResolution(ICON_SIZE_SMALL, Images);
+      dmImages.ilIcons.FindResolution(ICON_SIZE_SMALL, Images);
 
     Assert(Assigned(Images), 'Images is not assigned!');
          

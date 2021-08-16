@@ -153,7 +153,7 @@ begin
   //Align right border with vleVars
   tbButtons.Constraints.MinWidth := vleVars.Width + 1;
 
-  tbButtons.Images      := dmImages.ilLargeIcons;
+  tbButtons.Images      := dmImages.ilIcons;
   tbButtons.ImagesWidth := ICON_SIZE_SMALL;
 
   actAdd.ImageIndex    := ASuiteManager.IconsManager.GetIconIndex('add');

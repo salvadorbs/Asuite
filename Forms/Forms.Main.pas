@@ -553,28 +553,28 @@ begin
 
   //Set IcoImages
   //Set submenuimages to three MainMenu's subitems
-  miFile.SubMenuImages := dmImages.ilLargeIcons;
+  miFile.SubMenuImages := dmImages.ilIcons;
   miFile.SubMenuImagesWidth := ICON_SIZE_SMALL;
 
-  miEdit.SubMenuImages := dmImages.ilLargeIcons;
+  miEdit.SubMenuImages := dmImages.ilIcons;
   miEdit.SubMenuImagesWidth := ICON_SIZE_SMALL;
 
-  miHelp.SubMenuImages := dmImages.ilLargeIcons;
+  miHelp.SubMenuImages := dmImages.ilIcons;
   miHelp.SubMenuImagesWidth := ICON_SIZE_SMALL;
 
-  pmSearch.Images      := dmImages.ilLargeIcons;
+  pmSearch.Images      := dmImages.ilIcons;
   pmSearch.ImagesWidth := ICON_SIZE_SMALL;
 
-  pmWindow.Images      := dmImages.ilLargeIcons;
+  pmWindow.Images      := dmImages.ilIcons;
   pmWindow.ImagesWidth := ICON_SIZE_SMALL;
 
-  pcList.Images        := dmImages.ilLargeIcons;
+  pcList.Images        := dmImages.ilIcons;
   pcList.ImagesWidth := ICON_SIZE_SMALL;
 
-  btnedtSearch.RightButton.Images := dmImages.ilLargeIcons;
+  btnedtSearch.RightButton.Images := dmImages.ilIcons;
   btnedtSearch.RightButton.ImagesWidth := ICON_SIZE_SMALL;
 
-  btnedtSearch.LeftButton.Images := dmImages.ilLargeIcons;
+  btnedtSearch.LeftButton.Images := dmImages.ilIcons;
   btnedtSearch.LeftButton.ImagesWidth := ICON_SIZE_SMALL;
 
   //Set pcList tabs' ImageIndexes
@@ -752,7 +752,6 @@ end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);
 var
-  VSTEvents: TVirtualTreeEvents;
   {%H-}log: ISynLog;
 begin
   log := TASuiteLogger.Enter('TfrmMain.MainFormCreate', Self);

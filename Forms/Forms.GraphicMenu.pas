@@ -272,7 +272,7 @@ begin
   FThemeEngine.LoadTheme;
 
   //Set PopUpMenu's ImageIndexes
-  pmWindow.Images := dmImages.ilLargeIcons;
+  pmWindow.Images := dmImages.ilIcons;
   pmWindow.ImagesWidth := ICON_SIZE_SMALL;
 
   mniRun.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('run');
@@ -290,7 +290,7 @@ begin
     Self.Left  := Screen.WorkAreaRect.Right - Width;
   {$ENDIF}
 
-  edtSearch.RightButton.Images := dmImages.ilLargeIcons;
+  edtSearch.RightButton.Images := dmImages.ilIcons;
   edtSearch.RightButton.ImagesWidth := ICON_SIZE_SMALL;
   edtSearch.RightButton.ImageIndex := FThemeEngine.SearchIcon;
 end;

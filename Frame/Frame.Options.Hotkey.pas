@@ -195,19 +195,19 @@ end;
 
 procedure TfrmHotkeyOptionsPage.LoadGlyphs;
 begin
-  edtHotkeyMF.RightButton.Images := dmImages.ilLargeIcons;
+  edtHotkeyMF.RightButton.Images := dmImages.ilIcons;
   edtHotkeyMF.RightButton.ImagesWidth := ICON_SIZE_SMALL;
   SetProperHotkeyIcon(edtHotkeyMF);
 
-  edtHotkeyGM.RightButton.Images := dmImages.ilLargeIcons;
+  edtHotkeyGM.RightButton.Images := dmImages.ilIcons;
   edtHotkeyGM.RightButton.ImagesWidth := ICON_SIZE_SMALL;
   SetProperHotkeyIcon(edtHotkeyGM);
 
-  edtHotkeyCM.RightButton.Images := dmImages.ilLargeIcons;
+  edtHotkeyCM.RightButton.Images := dmImages.ilIcons;
   edtHotkeyCM.RightButton.ImagesWidth := ICON_SIZE_SMALL;
   SetProperHotkeyIcon(edtHotkeyCM);
 
-  pmHotkey.Images := dmImages.ilLargeIcons;
+  pmHotkey.Images := dmImages.ilIcons;
   pmHotkey.ImagesWidth := ICON_SIZE_SMALL;
 
   mniRemoveHotkey.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('hotkey_delete');

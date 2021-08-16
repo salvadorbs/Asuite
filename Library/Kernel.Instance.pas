@@ -118,9 +118,12 @@ begin
   begin
     DestinationPath := Self.Paths.SuitePathData;
     Level := LOG_VERBOSE;
-    {$IFNDEF DEBUG}
-    //TODO: Define log_level for release builds - No sql logs? No debug infos? Yes stacktrace?
-    Level := LOG_VERBOSE - [sllStackTrace, sllDebug];
+    EchoToConsole := LOG_VERBOSE;
+    {$IFDEF DEBUG}
+    Level := LOG_VERBOSE;
+    EchoToConsole := LOG_VERBOSE;
+    {$ELSE}
+    Level := LOG_VERBOSE - [sllDebug];
     {$ENDIF}
     RotateFileCount := 1;
     RotateFileDailyAtHour := 0;

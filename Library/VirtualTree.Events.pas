@@ -50,18 +50,7 @@ type
     function GetTextFromDataObject(DataObject: IDataObject): string;
     procedure GetFileListFromDataObject(const DataObj: IDataObject; FileList: TStringList);
     {$ENDIF}
-  public
-    //Methods to set events in vsts
-    procedure SetupVSTList(ATree: TVirtualStringTree);
-    procedure SetupVSTSimple(ATree: TVirtualStringTree);
-    procedure SetupVSTSearch(ATree: TVirtualStringTree);
-    procedure SetupVSTGraphicMenu(ATree: TVirtualStringTree; AGraphicMenu: TfrmGraphicMenu);
-    procedure SetupVSTImportList(ATree: TVirtualStringTree);
-    procedure SetupVSTDialogFrame(ATree: TVirtualStringTree);
-    procedure SetupVSTHotkey(ATree: TVirtualStringTree);
-    procedure SetupVSTAutorun(ATree: TVirtualStringTree);
 
-    //TODO: Move in private section
     //Generic events
     procedure DoDragOver(Sender: TBaseVirtualTree; Source: TObject; Shift: TShiftState;
       State: TDragState; const Pt: TPoint; Mode: TDropMode; var Effect: LongWord;
@@ -141,6 +130,16 @@ type
     //Autorun events
     procedure DoGetTextAutorun(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+  public
+    //Methods to set events in vsts
+    procedure SetupVSTList(ATree: TVirtualStringTree);
+    procedure SetupVSTSimple(ATree: TVirtualStringTree);
+    procedure SetupVSTSearch(ATree: TVirtualStringTree);
+    procedure SetupVSTGraphicMenu(ATree: TVirtualStringTree; AGraphicMenu: TfrmGraphicMenu);
+    procedure SetupVSTImportList(ATree: TVirtualStringTree);
+    procedure SetupVSTDialogFrame(ATree: TVirtualStringTree);
+    procedure SetupVSTHotkey(ATree: TVirtualStringTree);
+    procedure SetupVSTAutorun(ATree: TVirtualStringTree);
   end;
 
 var
@@ -207,7 +206,7 @@ procedure TVirtualTreeEvents.SetupVSTGraphicMenu(ATree: TVirtualStringTree; AGra
 begin
   FGraphicMenu := AGraphicMenu;
 
-  ATree.Images := dmImages.ilLargeIcons;
+  ATree.Images := dmImages.ilIcons;
 
   ATree.OnClick         := DoSingleClickGM;
   ATree.OnCompareNodes  := DoCompareNodesList;
@@ -224,7 +223,7 @@ end;
 
 procedure TVirtualTreeEvents.SetupVSTHotkey(ATree: TVirtualStringTree);
 begin
-  ATree.Images := dmImages.ilLargeIcons;
+  ATree.Images := dmImages.ilIcons;
   ATree.ImagesWidth := ICON_SIZE_LARGE;
   ATree.DefaultNodeHeight := ASuiteInstance.BigHeightNode;
 
@@ -237,7 +236,7 @@ end;
 
 procedure TVirtualTreeEvents.SetupVSTImportList(ATree: TVirtualStringTree);
 begin
-  ATree.Images := dmImages.ilLargeIcons;
+  ATree.Images := dmImages.ilIcons;
   ATree.ImagesWidth := ICON_SIZE_SMALL;
 
   ATree.OnDrawText  := DoDrawText;
@@ -249,7 +248,7 @@ end;
 
 procedure TVirtualTreeEvents.SetupVSTList(ATree: TVirtualStringTree);
 begin
-  ATree.Images := dmImages.ilLargeIcons;
+  ATree.Images := dmImages.ilIcons;
   ATree.ImagesWidth := ICON_SIZE_SMALL;
 
   {$IFDEF MSWINDOWS}
@@ -281,7 +280,7 @@ end;
 
 procedure TVirtualTreeEvents.SetupVSTAutorun(ATree: TVirtualStringTree);
 begin
-  ATree.Images := dmImages.ilLargeIcons;
+  ATree.Images := dmImages.ilIcons;
   ATree.ImagesWidth := ICON_SIZE_LARGE;
   ATree.DefaultNodeHeight := ASuiteInstance.BigHeightNode;
 
@@ -294,7 +293,7 @@ end;
 procedure TVirtualTreeEvents.SetupVSTDialogFrame(ATree: TVirtualStringTree);
 begin
   ATree.Clear;
-  ATree.Images := dmImages.ilLargeIcons;
+  ATree.Images := dmImages.ilIcons;
   ATree.ImagesWidth := ICON_SIZE_LARGE;
   ATree.DefaultNodeHeight := ASuiteInstance.BigHeightNode;
 
@@ -307,7 +306,7 @@ end;
 
 procedure TVirtualTreeEvents.SetupVSTSearch(ATree: TVirtualStringTree);
 begin
-  ATree.Images := dmImages.ilLargeIcons;
+  ATree.Images := dmImages.ilIcons;
   ATree.ImagesWidth := ICON_SIZE_SMALL;
 
   ATree.OnNodeClick       := DoNodeSingleClick;
@@ -323,7 +322,7 @@ end;
 
 procedure TVirtualTreeEvents.SetupVSTSimple(ATree: TVirtualStringTree);
 begin
-  ATree.Images := dmImages.ilLargeIcons;
+  ATree.Images := dmImages.ilIcons;
   ATree.ImagesWidth := ICON_SIZE_SMALL;
 
   ATree.OnGetText         := DoGetText;
