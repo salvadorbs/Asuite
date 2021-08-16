@@ -59,10 +59,11 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       Constraints.MinWidth = 200
       ParentFont = False
       ReadOnly = True
+      RightButton.Visible = True
       TabOrder = 1
       OnChange = edtHotkeyChange
       OnClick = edtHotkeyClick
-      OnRightButtonClick = edtHotkeyClear
+      OnRightButtonClick = edtHotkeyRightClick
     end
     object lblHotkeyGM: TLabel
       Left = 4
@@ -85,10 +86,11 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       Constraints.MinWidth = 200
       ParentFont = False
       ReadOnly = True
+      RightButton.Visible = True
       TabOrder = 2
       OnChange = edtHotkeyChange
       OnClick = edtHotkeyClick
-      OnRightButtonClick = edtHotkeyClear
+      OnRightButtonClick = edtHotkeyRightClick
     end
     object lblHotkeyCM: TLabel
       Left = 4
@@ -110,10 +112,11 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       Constraints.MinWidth = 200
       ParentFont = False
       ReadOnly = True
+      RightButton.Visible = True
       TabOrder = 3
       OnChange = edtHotkeyChange
       OnClick = edtHotkeyClick
-      OnRightButtonClick = edtHotkeyClear
+      OnRightButtonClick = edtHotkeyRightClick
     end
   end
   object grpOrderSoftware: TGroupBox[1]

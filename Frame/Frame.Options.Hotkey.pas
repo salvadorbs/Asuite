@@ -26,7 +26,7 @@ interface
 uses
   LCLIntf, SysUtils, Graphics,
   Controls, Dialogs, Frame.BaseEntity, VirtualTrees,
-  ComCtrls, StdCtrls, Lists.Base, ButtonedEdit, Menus;
+  ComCtrls, StdCtrls, Lists.Base, ButtonedEdit, Menus, Classes;
 
 type
 
@@ -55,11 +55,12 @@ type
     procedure mniPropertiesClick(Sender: TObject);
     procedure edtHotkeyClick(Sender: TObject);
     procedure edtHotkeyChange(Sender: TObject);
-    procedure edtHotkeyClear(Sender: TObject);
+    procedure edtHotkeyRightClick(Sender: TObject);
   private
     { Private declarations }
     procedure LoadGlyphs;
     procedure SaveInHotkeyItemList(const ATree: TBaseVirtualTree;const AItemList: TBaseItemsList);
+    procedure SetProperHotkeyIcon(AHotkeyComp: TButtonedEdit);
   strict protected
     function GetTitle: string; override;
     function GetImageIndex: Integer; override;
@@ -114,20 +115,23 @@ begin
 end;
 
 procedure TfrmHotkeyOptionsPage.edtHotkeyChange(Sender: TObject);
+begin
+  if Sender is TButtonedEdit then
+    SetProperHotkeyIcon(TButtonedEdit(Sender));
+end;
+
+procedure TfrmHotkeyOptionsPage.edtHotkeyRightClick(Sender: TObject);
 var
   edtHotkey: TButtonedEdit;
 begin
-  if Sender is TButtonedEdit then
-  begin
-    edtHotkey := TButtonedEdit(Sender);
-    edtHotkey.RightButton.Visible := edtHotkey.Text <> '';
-  end;
-end;
-
-procedure TfrmHotkeyOptionsPage.edtHotkeyClear(Sender: TObject);
-begin
   if Sender is TCustomGlyphButton then
-    TButtonedEdit(TCustomGlyphButton(Sender).Parent).Text := '';
+  begin
+    edtHotkey := TButtonedEdit(TCustomGlyphButton(Sender).Parent);
+    if edtHotkey.Text <> '' then
+      edtHotkey.Text := ''
+    else
+      edtHotkeyClick(edtHotkey);
+  end;
 end;
 
 function TfrmHotkeyOptionsPage.GetImageIndex: Integer;
@@ -193,20 +197,22 @@ procedure TfrmHotkeyOptionsPage.LoadGlyphs;
 begin
   edtHotkeyMF.RightButton.Images := dmImages.ilLargeIcons;
   edtHotkeyMF.RightButton.ImagesWidth := ICON_SIZE_SMALL;
+  SetProperHotkeyIcon(edtHotkeyMF);
 
   edtHotkeyGM.RightButton.Images := dmImages.ilLargeIcons;
   edtHotkeyGM.RightButton.ImagesWidth := ICON_SIZE_SMALL;
+  SetProperHotkeyIcon(edtHotkeyGM);
 
   edtHotkeyCM.RightButton.Images := dmImages.ilLargeIcons;
   edtHotkeyCM.RightButton.ImagesWidth := ICON_SIZE_SMALL;
+  SetProperHotkeyIcon(edtHotkeyCM);
 
-  mniRemoveHotkey.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('keyboard_delete');
-  mniEditHotkey.ImageIndex   := ASuiteManager.IconsManager.GetIconIndex('keyboard_edit');
+  pmHotkey.Images := dmImages.ilLargeIcons;
+  pmHotkey.ImagesWidth := ICON_SIZE_SMALL;
+
+  mniRemoveHotkey.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('hotkey_delete');
+  mniEditHotkey.ImageIndex   := ASuiteManager.IconsManager.GetIconIndex('hotkey_edit');
   mniProperties.ImageIndex   := ASuiteManager.IconsManager.GetIconIndex('property');
-
-  edtHotkeyMF.RightButton.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('cancel');
-  edtHotkeyGM.RightButton.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('cancel');
-  edtHotkeyCM.RightButton.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('cancel');
 end;
 
 procedure TfrmHotkeyOptionsPage.mniEditHotkeyClick(Sender: TObject);
@@ -271,6 +277,14 @@ begin
     end;
     Node := ATree.GetNext(Node);
   end;
+end;
+
+procedure TfrmHotkeyOptionsPage.SetProperHotkeyIcon(AHotkeyComp: TButtonedEdit);
+begin
+  if AHotkeyComp.Text <> '' then
+    AHotkeyComp.RightButton.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('hotkey_delete')
+  else
+    AHotkeyComp.RightButton.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('hotkey_add');
 end;
 
 end.

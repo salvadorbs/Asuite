@@ -2,26 +2,25 @@ object frmShortcutGrabber: TfrmShortcutGrabber
   Left = 2012
   Height = 189
   Top = 275
-  Width = 396
+  Width = 376
   ActiveControl = hkKeys
   BorderStyle = bsToolWindow
   Caption = 'Choose hotkey...'
   ClientHeight = 189
-  ClientWidth = 396
+  ClientWidth = 376
   KeyPreview = True
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnKeyPress = FormKeyPress
   Position = poOwnerFormCenter
-  LCLVersion = '2.2.0.2'
   object pnlDialogPage: TPanel
     Left = 8
     Height = 142
     Top = 8
-    Width = 380
+    Width = 360
     Anchors = [akTop, akLeft, akRight, akBottom]
     ClientHeight = 142
-    ClientWidth = 380
+    ClientWidth = 360
     ParentFont = False
     TabOrder = 0
     object lblInfo: TLabel
@@ -71,7 +70,7 @@ object frmShortcutGrabber: TfrmShortcutGrabber
       Toggle = True
     end
     object btnWinKey: TBCImageButton
-      Left = 303
+      Left = 301
       Height = 48
       Top = 14
       Width = 46
@@ -81,7 +80,7 @@ object frmShortcutGrabber: TfrmShortcutGrabber
     end
   end
   object btnOk: TButton
-    Left = 232
+    Left = 212
     Height = 25
     Top = 156
     Width = 75
@@ -94,7 +93,7 @@ object frmShortcutGrabber: TfrmShortcutGrabber
     TabOrder = 1
   end
   object btnCancel: TButton
-    Left = 313
+    Left = 293
     Height = 25
     Top = 156
     Width = 75
