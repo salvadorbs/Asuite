@@ -24,7 +24,7 @@ unit Utility.Conversions;
 interface
 
 uses
-  LCLIntf, LCLType, SysUtils, Classes, Graphics, Forms, Dialogs, Clipbrd,
+  LCLIntf, SysUtils, Classes, Graphics, Forms, Dialogs,
   TypInfo;
 
 { HTML }

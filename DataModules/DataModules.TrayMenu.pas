@@ -138,7 +138,7 @@ begin
   pmTrayicon.Images := dmImages.ilIcons;
   pmTrayicon.ImagesWidth := ICON_SIZE_SMALL;
 
-  tiTrayMenu.Hint := Format('%s %s (%s)',[APP_NAME, GetASuiteVersion(True),
+  tiTrayMenu.Hint := Format('%s %s (%s)',[APP_NAME, TASuiteInstance.GetASuiteVersion(True),
                                           UpperCase(ASuiteInstance.Paths.SuiteDrive)]);
   {$IFNDEF MSWINDOWS}
   tiTrayMenu.PopUpMenu := pmTrayicon;

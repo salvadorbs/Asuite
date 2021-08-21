@@ -25,19 +25,17 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Forms, Dialogs, ComCtrls, Clipbrd,
-  Kernel.Consts, StdCtrls, UITypes, Menus, FileInfo;
+  UITypes, Menus;
 
 { Forms }
 procedure SetFormPositionFromConfig(AForm: TForm);
 
 { Misc }
-function CheckPropertyName(Edit: TEdit): Boolean;
 function GetCheckedMenuItem(PopupMenu: TPopupMenu): TMenuItem;
-function GetASuiteVersion(ASimpleFormat: Boolean): string; overload;
-function GetASuiteVersion: TProgramVersion; overload;
 function IsFormatInClipBoard(format: Word): Boolean;
-function RemoveQuotes(const S: string; const QuoteChar: Char): string;
 function RemoveAllQuotes(const S: string): string;
+
+{ Dialogs }
 procedure ShowMessageEx(const Msg: string; Error: boolean = False);
 procedure ShowMessageFmtEx(const Msg: string; Params: array of const; Error: boolean = False);
 function AskUserWarningMessage(const AMsg: string; Params: array of const): Boolean;
@@ -74,18 +72,6 @@ begin
   end;
 end;
 
-function CheckPropertyName(Edit: TEdit): Boolean;
-begin
-  Result := True;
-  // Check if inserted name is empty, then
-  if (Trim(Edit.Text) = '') then
-  begin
-    ShowMessageEx(msgErrEmptyName,true);
-    Edit.Color := clYellow;
-    Result := False;
-  end;
-end;
-
 function GetCheckedMenuItem(PopupMenu: TPopupMenu): TMenuItem;
 var
   I: Integer;
@@ -94,47 +80,6 @@ begin
   for I := 0 to PopupMenu.Items.Count - 1 do
     if PopupMenu.Items[I].Checked then
       Result := PopupMenu.Items[I];
-end;
-
-function GetASuiteVersion(ASimpleFormat: Boolean): string;
-var
-  Version: TProgramVersion;
-begin
-  Version := GetASuiteVersion;
-  try
-    if ASimpleFormat then
-    begin
-      //Version format "Major.Minor Beta"
-      Result := Format('%d.%d', [Version.Major,
-                                 Version.Minor]);
-    end
-    else begin
-      //Version format "Major.Minor.Revision.Build Beta"
-      Result := Format('%d.%d.%d.%d', [Version.Major,
-                                       Version.Minor,
-                                       Version.Revision,
-                                       Version.Build]);
-    end;
-
-    Result := Result + ' ' + VERSION_PRERELEASE;
-  except
-    on E : Exception do
-      TASuiteLogger.Exception(E);
-  end;
-end;
-
-function GetASuiteVersion: TProgramVersion;
-var
-  VersionInfo: TFileVersionInfo;
-begin
-  VersionInfo := TFileVersionInfo.Create(nil);
-  try
-    VersionInfo.ReadFileInfo;
-
-    Result := StrToProgramVersion(VersionInfo.VersionStrings.Values['FileVersion']);
-  finally
-    VersionInfo.Free;
-  end;
 end;
 
 function IsFormatInClipBoard(format: Word): Boolean;
@@ -153,28 +98,10 @@ begin
   end;
 end;
 
-function RemoveQuotes(const S: string; const QuoteChar: Char): string;
-var
-  Len: Integer;
-begin
-  Result := S;
-
-  Len := Length(Result);
-
-  if (Len < 2) then Exit;                    //Quoted text must have at least 2 chars
-  if (Result[1] <> QuoteChar) then Exit;     //Text is not quoted
-  if (Result[Len] <> QuoteChar) then Exit;   //Text is not quoted
-
-  Delete(Result, Len, 1);
-  Delete(Result, 1, 1);
-
-  Result := StringReplace(Result, QuoteChar + QuoteChar, QuoteChar, [rfReplaceAll]);
-end;
-
 function RemoveAllQuotes(const S: string): string;
 begin
-  Result := RemoveQuotes(S, '''');
-  Result := RemoveQuotes(Result, '"');
+  Result := AnsiDequotedStr(S, '''');
+  Result := AnsiDequotedStr(Result, '"');
 end;
 
 procedure ShowMessageEx(const Msg: string; Error: boolean = False);
@@ -205,8 +132,6 @@ begin
   else
     Result := True;
 end;
-
-{ Stats }
 
 function DiskFloatToString(Size: Int64; Units: Boolean): string;
 var

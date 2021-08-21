@@ -6,8 +6,8 @@ interface
 
 uses
   Kernel.Consts, LCLIntf, LCLType, SysUtils, Classes, Kernel.Enumerations,
-  FileUtil, {$IFDEF Windows}ComObj, ShlObj, {$ELSE} FakeActiveX, {$ENDIF} Dialogs,
-  LazFileUtils, HlpHashFactory;
+  FileUtil, {$IFDEF Windows}ComObj, {$ELSE} FakeActiveX, {$ENDIF} Dialogs,
+  LazFileUtils;
 
 { Folders }
 function IsDirectory(const DirName: string): Boolean;
@@ -25,8 +25,7 @@ function  GetUrlTarget(const AFileName: String; ShortcutType: TShortcutField): S
 implementation
 
 uses
-  IniFiles, FileInfo, Kernel.Instance, Kernel.Logger, Kernel.ResourceStrings
-  {$IFDEF UNIX}, BaseUnix{$ENDIF}, Kernel.ShellLink;
+  IniFiles, FileInfo, Kernel.Instance;
 
 function IsDirectory(const DirName: string): Boolean;
 {$IFDEF MSWINDOWS}
