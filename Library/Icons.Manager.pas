@@ -84,7 +84,7 @@ implementation
 
 uses
   Kernel.Logger, FileUtil, LazFileUtils, Kernel.Instance, ImgList,
-  Graphics, DataModules.Icons, mormot.core.log, Utility.FileFolder
+  Graphics, DataModules.Icons, mormot.core.log
   {$IFDEF UNIX}
   , IniFiles, BaseUnix, StrUtils
     {$IFDEF LCLQT5}

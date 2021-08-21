@@ -128,7 +128,7 @@ uses
   DataModules.Icons, Forms.Main, AppConfig.Main, VirtualTree.Methods,
   Utility.System, Forms.GraphicMenu, Kernel.Types, NodeDataTypes.Files,
   NodeDataTypes.Custom, NodeDataTypes.Base, Kernel.Consts, Kernel.Logger,
-  Utility.Misc, Utility.FileFolder, Kernel.ResourceStrings, Kernel.Instance,
+  Utility.FileFolder, Kernel.ResourceStrings, Kernel.Instance,
   Kernel.Manager, mormot.core.log {$IFDEF MSWINDOWS} , Windows {$ENDIF};
 
 {$R *.lfm}
@@ -475,7 +475,6 @@ begin
             MenuItem.Caption := msgOpenOptions;
             MenuItem.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('options');
             MenuItem.OnClick := frmMain.miOptionsClick;
-            MenuItem.Enabled := Not(Config.ReadOnlyMode);
           end;
       end;
     end;

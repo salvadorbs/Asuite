@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Forms, Dialogs, ComCtrls, Clipbrd,
-  UITypes, Menus;
+  System.UITypes, Menus;
 
 { Forms }
 procedure SetFormPositionFromConfig(AForm: TForm);

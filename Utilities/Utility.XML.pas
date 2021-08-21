@@ -5,7 +5,7 @@ unit Utility.XML;
 interface
 
 uses
-  LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, StdCtrls,
+  LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   ComCtrls, VirtualTrees, Kernel.Consts, DOM, XMLRead, Kernel.Enumerations;
 
 { Load list or settings from xml file }
@@ -38,7 +38,7 @@ implementation
 
 uses
   NodeDataTypes.Custom, AppConfig.Main, Kernel.Types,
-  Utility.Conversions, VirtualTree.Methods, NodeDataTypes.Files, Menus,
+  VirtualTree.Methods, NodeDataTypes.Files, Menus,
   Kernel.Logger, Kernel.Instance, LCLProc;
 
 function GetStrPropertyXML(Node : TDOMNode;Name: String;Default: String): String;

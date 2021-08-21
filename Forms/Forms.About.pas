@@ -58,7 +58,7 @@ var
 implementation
 
 uses
-  Utility.Misc, Kernel.Consts, LazFileUtils, Kernel.Instance;
+  Kernel.Consts, LazFileUtils, Kernel.Instance;
 
 {$R *.lfm}
 

@@ -24,7 +24,7 @@ unit Frame.Properties.General.Software;
 interface
 
 uses
-  SysUtils, Graphics, Dialogs, StdCtrls, Frame.Properties.General, EditBtn;
+  SysUtils, Dialogs, StdCtrls, Frame.Properties.General, EditBtn;
 
 type
 
@@ -58,8 +58,7 @@ var
 implementation
 
 uses
-  Kernel.Consts, NodeDataTypes.Files, Kernel.ResourceStrings,
-  Utility.FileFolder, Kernel.Instance;
+  Kernel.Consts, NodeDataTypes.Files, Kernel.ResourceStrings, Kernel.Instance;
 
 {$R *.lfm}
 

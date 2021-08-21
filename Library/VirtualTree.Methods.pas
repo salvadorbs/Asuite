@@ -24,7 +24,7 @@ unit VirtualTree.Methods;
 interface
 
 uses
-  LCLIntf, LCLType, SysUtils, Classes, Graphics, VirtualTrees, UITypes,
+  LCLIntf, LCLType, SysUtils, Classes, Graphics, VirtualTrees, System.UITypes,
   Kernel.Enumerations, NodeDataTypes.Base, Kernel.Types, Lists.Base,
   mormot.core.log, Forms.UILogin, Hotkeys.ShortcutEx;
 

@@ -26,8 +26,7 @@ interface
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, VirtualTrees, ComCtrls, ShellCtrls,
-  ImgList, ButtonPanel, FileUtil, Thread.FindFiles, mormot.core.log, StrUtils,
-  LazStringUtils;
+  ImgList, ButtonPanel, FileUtil, Thread.FindFiles, mormot.core.log;
 
 type
 
@@ -110,8 +109,7 @@ implementation
 uses
   AppConfig.Main, Kernel.Types, Kernel.Logger, Kernel.Consts,
   DataModules.Icons, NodeDataTypes.Base, VirtualTree.Methods, Kernel.Enumerations,
-  Utility.FileFolder, Utility.Misc, Kernel.ResourceStrings,
-  RegExpr, Kernel.Instance, Kernel.Manager;
+  Utility.Misc, Kernel.ResourceStrings, RegExpr, Kernel.Instance, Kernel.Manager;
 
 {$R *.lfm}
 
@@ -406,13 +404,7 @@ begin
 end;
 
 procedure TfrmScanFolder.FileFound(AFilePath: String);
-var
-  sShortName: String;
-  Node: PVirtualNode;
-  NodeData: TvBaseNodeData;
 begin
-  sShortName := ExtractFileName(AFilePath);
-
   if Assigned(FListNode) then
     TVirtualTreeMethods.AddNodeByPathFile(ASuiteInstance.MainTree, FListNode, AFilePath, amInsertAfter, True);
 end;

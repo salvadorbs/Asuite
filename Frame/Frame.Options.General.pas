@@ -92,7 +92,7 @@ begin
   begin
     repeat
       I := -1;
-      if (FileInfo.Attr and (faDirectory or faVolumeId) = 0) then
+      if (FileInfo.Attr and faDirectory = 0) then
       begin
         if (FileInfo.Name = '.') or (FileInfo.Name = '..') or (FileInfo.Name = '') then
           continue;

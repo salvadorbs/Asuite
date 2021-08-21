@@ -53,7 +53,7 @@ type
 implementation
 
 uses
-  Kernel.Logger, Utility.Misc, Kernel.Instance;
+  Kernel.Logger, Kernel.Instance;
 
 { TSQLtbl_version }
 

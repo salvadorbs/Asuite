@@ -288,7 +288,6 @@ begin
     //CONST_PATH_DRIVE_old = Launcher's Drive (ex. ASuite in H:\Software\ASuite.exe, CONST_PATH_DRIVE is H: )
     Result := StringReplace(Result, CONST_PATH_DRIVE_old, SUITEDRIVE, [rfIgnoreCase,rfReplaceAll]);
 
-    //TODO: Expand only if string has %
     //Replace ASuite variables
     if Pos('%', Result) > 0 then
     begin

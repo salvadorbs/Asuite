@@ -47,8 +47,7 @@ type
 implementation
 
 uses
-   DataModules.Icons, Kernel.Consts, BGRABitmapTypes, Utility.FileFolder,
-   Utility.System;
+   DataModules.Icons, Kernel.Consts, BGRABitmapTypes, Utility.FileFolder;
 
 { TWin32CustomIcon }
 
