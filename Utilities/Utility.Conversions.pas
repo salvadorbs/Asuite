@@ -28,36 +28,31 @@ uses
   TypInfo;
 
 { HTML }
-function RGBToHtml(iRGB: Cardinal): string;
 function ColorToHtml(Color:TColor): string;
 function HtmlToColor(const Color: string): TColor;
 
 { Font }
 procedure StrToFont(const s: string; AFont: TFont);
-function FontToStr(Font: TFont): string;
-
-{ String }
-function  StrToBool(Str: string): boolean;
-procedure StrToStrings(Str, Sep: string; const List: TStrings);
 
 implementation
 
-function RGBToHtml(iRGB: Cardinal): string;
-begin
-  Result:=Format('#%.2x%.2x%.2x',
-                 [Byte(iRGB),          //GetRValue(vRGB)
-                  Byte(iRGB shr 8),    //GetGValue(vRGB)
-                  Byte(iRGB shr 16)]); //GetBValue(vRGB)
-end;
+uses
+  BGRABitmapTypes;
 
 function ColorToHtml(Color:TColor): string;
+var
+  p: TBGRAPixel;
 begin
-  Result := RGBToHtml(ColorToRGB(Color));
+  p.FromColor(Color);
+  Result := p.ToString;
 end;
 
 function HtmlToColor(const Color: string): TColor;
+var
+  p: TBGRAPixel;
 begin
-  Result := StringToColor('$' + Copy(Color, 6, 2) + Copy(Color, 4, 2) + Copy(Color, 2, 2));
+  p.FromString(Color);
+  Result := p.ToColor;
 end;
 
 procedure StrToFont(const s: string; AFont: TFont);
@@ -82,51 +77,6 @@ begin
     finally
       Strs.Free;
     end;
-  end;
-end;
-
-function FontToStr(Font: TFont): string;
-var
-  sColor, sStyle : string;
-begin
-  sColor := ColorToHtml(Font.Color);  
-  sStyle := GetEnumName(TypeInfo(TFontStyles), integer(Font.Style));
-  result := Font.Name + '|' + IntToStr(Font.Size) + '|' + sColor + '|' + sStyle;
-end;
-
-function StrToBool(Str: string): boolean;
-begin
-  if (Str = '1') then
-    result := True
-  else
-    result := false;
-end;
-
-procedure StrToStrings(Str, Sep: string; const List: TStrings);
-var
-  I        : Integer;
-  PieceStr : string;
-begin
-  Assert(Assigned(List));
-  List.BeginUpdate;
-  try
-    List.Clear;
-    I := Pos(Sep, Str);
-    while I > 0 do
-    begin
-      //Copy first part of Str and add it in List
-      PieceStr := Copy(Str, 1, I - 1);
-      if (PieceStr <> '') then
-        List.Add(PieceStr);
-      //Delete first part in Str and begin again
-      Delete(Str, 1, I);
-      I := Pos(Sep, Str);
-    end;
-    //Last piece of string
-    if Str <> '' then
-      List.Add(Str);
-  finally
-    List.EndUpdate;
   end;
 end;
 
