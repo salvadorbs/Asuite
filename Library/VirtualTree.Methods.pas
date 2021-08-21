@@ -206,9 +206,9 @@ begin
       //Shortcut
       ShellLink := TShellLinkFile.Create(APathFile);
       try
-        if ShellLink.Path <> '' then
+        if ShellLink.TargetPath <> '' then
         begin
-          NodeData.PathFile   := ASuiteInstance.Paths.AbsoluteToRelative(ShellLink.Path);
+          NodeData.PathFile   := ASuiteInstance.Paths.AbsoluteToRelative(ShellLink.TargetPath);
           NodeData.Parameters := ASuiteInstance.Paths.AbsoluteToRelative(ShellLink.Parameters);
           NodeData.WorkingDir := ASuiteInstance.Paths.AbsoluteToRelative(ShellLink.WorkingDir);
         end
@@ -226,7 +226,6 @@ begin
         NodeData.PathIcon   := ASuiteInstance.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfPathIcon));
         if NodeData.PathIcon = '' then
           NodeData.PathIcon := CONST_PATH_URLICON;
-        NodeData.Parameters := ASuiteInstance.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfParameter));
         NodeData.WorkingDir := ASuiteInstance.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfWorkingDir));
       end
       else //Normal file
@@ -609,7 +608,7 @@ begin
     if TvFileNodeData(NodeData).ShortcutDesktop then
     begin
       TASuiteLogger.Info('Delete %s desktop shortcut', [NodeData.Name]);
-      DeleteShortcutOnDesktop(NodeData.Name + EXT_LNK);
+      TShellLinkFile.DeleteShortcutOnDesktop(NodeData.Name + EXT_LNK);
     end;
   end;
 end;

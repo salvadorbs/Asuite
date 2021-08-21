@@ -24,9 +24,6 @@ function ExtractFileNameEx(const AFileName: String): string;
 function ExtractFileExtEx(const AFileName: String): string;
 
 { Desktop shortcut }
-function GetDesktopDir: String;
-procedure CreateShortcutOnDesktop(const FileName, TargetFilePath, Params, WorkingDir: String);
-procedure DeleteShortcutOnDesktop(const FileName: String);
 function  GetUrlTarget(const AFileName: String; ShortcutType: TShortcutField): String;
 
 implementation
@@ -205,40 +202,6 @@ begin
   for I := 1 to BackupList.Count - MaxNumber do
     SysUtils.DeleteFile(ASuiteInstance.Paths.SuitePathBackup + BackupList[I - 1]);
   BackupList.Free;
-end;
-
-function GetDesktopDir: String;
-begin
-{$IFDEF MSWINDOWS}
-  Result := SHGetFolderPathUTF8(CSIDL_DESKTOPDIRECTORY);
-{$ELSE}
-  Result := GetUserDir + 'Desktop';
-{$ENDIF}
-end;
-
-procedure CreateShortcutOnDesktop(const FileName, TargetFilePath, Params, WorkingDir: String);
-var
-  ShellLink: TShellLinkFile;
-begin
-  ShellLink := TShellLinkFile.Create;
-  try
-    ShellLink.Path := TargetFilePath;
-    ShellLink.Parameters := Params;
-    ShellLink.WorkingDir := WorkingDir;
-
-    ShellLink.SaveShellLink(AppendPathDelim(GetDesktopDir) + FileName);
-  finally
-    ShellLink.Free;
-  end;
-end;
-
-procedure DeleteShortcutOnDesktop(const FileName: String);
-var
-  LinkName: String;
-begin
-  LinkName := AppendPathDelim(GetDesktopDir) + FileName;
-  if (FileExists(LinkName)) then
-    SysUtils.DeleteFile(LinkName);
 end;
 
 function GetUrlTarget(const AFileName: String; ShortcutType: TShortcutField): String;
