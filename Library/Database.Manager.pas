@@ -61,7 +61,7 @@ type
 implementation
 
 uses
-  Kernel.Consts, AppConfig.Main, Utility.FileFolder, Utility.Misc,
+  Kernel.Consts, AppConfig.Main, Utility.FileFolder,
   Database.Version, Database.List, Kernel.Logger, FileUtil,
   VirtualTree.Methods, mormot.core.log, Kernel.Instance;
 
@@ -184,9 +184,6 @@ var
 begin
   log := TASuiteLogger.Enter('TDBManager.SaveData', Self);
   TASuiteLogger.Info('Saving ASuite SQLite Database', []);
-  //If launcher is in ReadOnlyMode, exit from this function
-  if (Config.ReadOnlyMode) then
-    Exit(True);
 
   //List & Options
   try

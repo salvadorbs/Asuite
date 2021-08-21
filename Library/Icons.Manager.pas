@@ -52,7 +52,6 @@ type
     {$IFDEF UNIX}
     procedure LoadMimeIconNames;
     function GetIconByDesktopFile(AFileName: String): String;
-    function IsDirectory(AFilename: String): Boolean;
     procedure ClearExtToMimeList;
     {$ENDIF}
   public
@@ -87,7 +86,7 @@ uses
   Kernel.Logger, FileUtil, LazFileUtils, Kernel.Instance, ImgList,
   Graphics, DataModules.Icons, mormot.core.log
   {$IFDEF UNIX}
-  , IniFiles, BaseUnix, StrUtils
+  , IniFiles, BaseUnix, StrUtils, Utility.FileFolder
     {$IFDEF LCLQT5}
     , qt5
     {$ELSE}     
@@ -278,8 +277,8 @@ begin
 
   if IsDirectory(AFileName) then
   begin
-    if FileExists(AFileName + PathDelim + '.directory') then
-      Result := GetIconByDesktopFile(AFileName + PathDelim + '.directory')
+    if FileExists(AppendPathDelim(AFileName) + '.directory') then
+      Result := GetIconByDesktopFile(AppendPathDelim(AFileName) + '.directory')
     else
       Result := 'folder';
   end
@@ -452,15 +451,6 @@ begin
              FileExists(AIconName)));     
 end;
 {$ENDIF}
-
-function TIconsManager.IsDirectory(AFilename: String): Boolean;
-var
-  Info: BaseUnix.Stat;
-begin
-  Result := False;
-  if fpStat(AFilename, Info) >= 0 then
-    Result := fpS_ISDIR(Info.st_mode);
-end;
 
 procedure TIconsManager.ClearExtToMimeList;
 var

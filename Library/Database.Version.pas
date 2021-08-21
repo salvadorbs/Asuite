@@ -53,7 +53,7 @@ type
 implementation
 
 uses
-  Kernel.Logger, Utility.Misc;
+  Kernel.Logger, Kernel.Instance;
 
 { TSQLtbl_version }
 
@@ -69,7 +69,7 @@ begin
       SQLVersionData.FillOne;
 
       ADBManager.DBVersion := SQLVersionData.ToVersionNumber;
-      TASuiteLogger.Info('Load Database Version (%s)', [GetASuiteVersion(False)]);
+      TASuiteLogger.Info('Load Database Version (%s)', [TASuiteInstance.GetASuiteVersion(False)]);
     finally
       SQLVersionData.Free;
     end;
@@ -83,7 +83,7 @@ var
   IsDataExists: Boolean;
 begin
   TASuiteLogger.Info('Saving ASuite Version', []);
-  ASuiteVersion := GetASuiteVersion;
+  ASuiteVersion := TASuiteInstance.GetASuiteVersion;
   try
     //Select only file record by ID
     SQLVersionData := TSQLtbl_version.CreateAndFillPrepare(ADBManager.Database.Orm, '');

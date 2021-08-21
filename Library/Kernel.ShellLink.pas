@@ -32,22 +32,30 @@ type
 
   TShellLinkFile = class
   private
-    FPath: String;
+    FLinkPath: String;
+    FTargetPath: String;
     FWorkingDir: String;
     FParameters: String;
 
     procedure ClearProps;
     function GetWorkingDir: String;
+
+    class function GetDesktopDir: String;
+    function IsShellLink(var APath: String): Boolean;
   public
     constructor Create; overload;
     constructor Create(APath: String); overload;
 
-    property Path: String read FPath write FPath;
+    property TargetPath: String read FTargetPath write FTargetPath;
     property WorkingDir: String read GetWorkingDir write FWorkingDir;
     property Parameters: String read FParameters write FParameters;
+    property LinkPath: String read FLinkPath write FLinkPath;
 
-    procedure LoadShellLink(APath: String);
+    procedure LoadShellLink(APathFile: String);
     function SaveShellLink(APathFile: String): Boolean;
+
+    class procedure CreateShortcutOnDesktop(const FileName, TargetFilePath, Params, WorkingDir: String);
+    class procedure DeleteShortcutOnDesktop(const FileName: String);
   end;
 
 implementation
@@ -60,7 +68,7 @@ uses
 
 procedure TShellLinkFile.ClearProps;
 begin
-  FPath := '';
+  FTargetPath := '';
   FWorkingDir := '';
   FParameters := '';
 end;
@@ -71,6 +79,33 @@ begin
     Result := ExtractFilePath(FWorkingDir)
   else
     Result := FWorkingDir;
+end;
+
+class function TShellLinkFile.GetDesktopDir: String;
+begin
+{$IFDEF MSWINDOWS}
+  Result := SHGetFolderPathUTF8(CSIDL_DESKTOPDIRECTORY);
+{$ELSE}
+  Result := GetUserDir + 'Desktop';
+{$ENDIF}
+end;
+
+function TShellLinkFile.IsShellLink(var APath: String): Boolean;
+{$IFDEF UNIX}
+var
+  Info : Stat;
+{$ENDIF}
+begin
+  Result := False;
+
+  if not FileExists(APath) then
+    Exit;
+
+  {$IFDEF MSWINDOWS}
+  Result := (ExtractLowerFileExt(APath) = EXT_LNK);
+  {$ELSE}
+  Result := (fplstat(APath, Info)>=0) and fpS_ISLNK(Info.st_mode);
+  {$ENDIF}
 end;
 
 constructor TShellLinkFile.Create;
@@ -85,7 +120,7 @@ begin
   LoadShellLink(APath);
 end;
 
-procedure TShellLinkFile.LoadShellLink(APath: String);
+procedure TShellLinkFile.LoadShellLink(APathFile: String);
 {$IFDEF MSWINDOWS}
 var
   Obj: IUnknown;
@@ -102,8 +137,10 @@ var
 begin
   ClearProps;
 
-  if (not FileExists(APath)) and (ExtractFileExtEx(APath) <> EXT_LNK) then
+  if not IsShellLink(APathFile) then
     Exit;
+
+  FLinkPath := APathFile;
 
 {$IFDEF MSWINDOWS}
   CoInitialize(nil);
@@ -112,13 +149,13 @@ begin
     ISLink := Obj as IShellLinkW;
     PersistFile := Obj as IPersistFile;
 
-    if PersistFile.Load(PChar(APath), STGM_READ) <> S_OK then
+    if PersistFile.Load(PChar(APathFile), STGM_READ) <> S_OK then
       Exit;
 
 
     FillBuffer;
     if ISLink.GetPath(Buffer, SizeOf(Buffer), @wfs, SLGP_UNCPRIORITY) = S_OK then
-      Self.Path := Buffer;
+      Self.TargetPath := Buffer;
 
     FillBuffer;
     if ISLink.GetArguments(Buffer, SizeOf(Buffer)) = S_OK then
@@ -133,7 +170,7 @@ begin
   end;
 {$ELSE}
   try
-    Self.Path := ReadAllLinks(APath, False);
+    Self.LinkPath := ReadAllLinks(APathFile, False);
   except
     on E: Exception do
       TASuiteLogger.Exception(E);
@@ -151,8 +188,10 @@ var
 begin
   Result := False;
 
-  if Self.Path = '' then
+  if Self.TargetPath = '' then
     Exit;
+
+  FLinkPath := APathFile;
 
 {$IFDEF MSWINDOWS}
   CoInitialize(nil);
@@ -161,7 +200,7 @@ begin
     ShellLink := Obj as IShellLinkW;
     PersistFile := Obj as IPersistFile;
 
-    ShellLink.SetPath(PChar(Self.Path));
+    ShellLink.SetPath(PChar(Self.TargetPath));
     ShellLink.SetArguments(PChar(Self.Parameters));
     ShellLink.SetWorkingDirectory(PChar(Self.WorkingDir));
 
@@ -171,11 +210,37 @@ begin
   end;
 {$ELSE}
   try
-    fpSymlink(PAnsiChar(Self.Path), PAnsiChar(APathFile));
+    fpSymlink(PAnsiChar(Self.LinkPath), PAnsiChar(APathFile));
   finally
     Result := True;
   end;
 {$ENDIF}
+end;
+
+class procedure TShellLinkFile.CreateShortcutOnDesktop(const FileName,
+  TargetFilePath, Params, WorkingDir: String);
+var
+  ShellLink: TShellLinkFile;
+begin
+  ShellLink := TShellLinkFile.Create;
+  try
+    ShellLink.TargetPath := TargetFilePath;
+    ShellLink.Parameters := Params;
+    ShellLink.WorkingDir := WorkingDir;
+
+    ShellLink.SaveShellLink(AppendPathDelim(TShellLinkFile.GetDesktopDir) + FileName);
+  finally
+    ShellLink.Free;
+  end;
+end;
+
+class procedure TShellLinkFile.DeleteShortcutOnDesktop(const FileName: String);
+var
+  LinkName: String;
+begin
+  LinkName := AppendPathDelim(TShellLinkFile.GetDesktopDir) + FileName;
+  if (FileExists(LinkName)) then
+    SysUtils.DeleteFile(LinkName);
 end;
 
 end.

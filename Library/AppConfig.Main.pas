@@ -105,7 +105,6 @@ type
     FGraphicMenuHotKey  : string;
     FClassicMenuHotkey  : string;
     //Misc
-    FReadOnlyMode         : Boolean;
     FChanged              : Boolean;
     FASuiteState          : TLauncherState;
     FMissedSchedulerTask  : Boolean;
@@ -233,7 +232,6 @@ type
     property GraphicMenuHotKey: string read FGraphicMenuHotKey write SetGraphicMenuHotKey;
     property ClassicMenuHotkey: string read FClassicMenuHotkey write SetClassicMenuHotkey;
     // Misc
-    property ReadOnlyMode: Boolean read FReadOnlyMode write FReadOnlyMode;  //TODO: Remove it
     property Changed: Boolean read FChanged write SetChanged;
     property ASuiteState: TLauncherState read FASuiteState write SetASuiteState;
     property ScanFolderAutoExtractName: boolean read FScanFolderAutoExtractName write FScanFolderAutoExtractName;
@@ -257,14 +255,13 @@ implementation
 uses
   Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, Utility.Misc,
   Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder, mormot.core.log,
-  Utility.XML, LCLProc, BGRAIconCursor,
+  LCLProc, BGRAIconCursor,
   TypInfo, Kernel.ResourceStrings, LCLTranslator, AppConfig.Consts, BGRABitmapTypes,
   Utility.Conversions, Hotkeys.Manager.Platform, Kernel.Instance, Kernel.Manager;
 
 procedure TConfiguration.AfterUpdateConfig;
 var
   BackgroundBMP : Graphics.TBitmap;
-  BackgroundPNG : TPortableNetworkGraphic;
   sBackgroundPath: String;
 
 begin   
@@ -276,7 +273,7 @@ begin
   sBackgroundPath := ASuiteInstance.Paths.RelativeToAbsolute(FTVBackgroundPath);
   if (FTVBackground) and (FTVBackgroundPath <> '') and (FileExists(sBackgroundPath)) then
   begin
-    if ExtractFileExtEx(sBackgroundPath) = EXT_PNG then
+    if ExtractLowerFileExt(sBackgroundPath) = EXT_PNG then
     begin
       BackgroundBMP := LoadPngAndConvertBMP(sBackgroundPath);
       try
@@ -286,7 +283,7 @@ begin
       end;
     end
     else
-      if ExtractFileExtEx(sBackgroundPath) = EXT_BMP then
+      if ExtractLowerFileExt(sBackgroundPath) = EXT_BMP then
         ASuiteInstance.MainTree.Background.LoadFromFile(sBackgroundPath);
   end;
 
@@ -382,7 +379,6 @@ begin
   FGMBtnExplore       := '$drive';
 
   //Misc
-  FReadOnlyMode       := False;
   FChanged            := False;
   FASuiteState        := lsStartUp;
   FHotKey             := True;

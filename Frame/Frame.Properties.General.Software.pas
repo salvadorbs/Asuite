@@ -24,7 +24,7 @@ unit Frame.Properties.General.Software;
 interface
 
 uses
-  SysUtils, Graphics, Dialogs, StdCtrls, Frame.Properties.General, EditBtn;
+  SysUtils, Dialogs, StdCtrls, Frame.Properties.General, EditBtn;
 
 type
 
@@ -41,7 +41,6 @@ type
     lbWorkingDir: TLabel;
 
     procedure edtPathExeAcceptFileName(Sender: TObject; var Value: String);
-    procedure btnExtractNameClick(Sender: TObject);
     procedure edtWorkingDirAcceptDirectory(Sender: TObject; var Value: String);
     procedure edtWorkingDirChange(Sender: TObject);
   private
@@ -59,15 +58,9 @@ var
 implementation
 
 uses
-  Kernel.Consts, NodeDataTypes.Files, Kernel.ResourceStrings,
-  Utility.FileFolder, Kernel.Instance;
+  Kernel.Consts, NodeDataTypes.Files, Kernel.ResourceStrings, Kernel.Instance;
 
 {$R *.lfm}
-
-procedure TfrmSWGeneralPropertyPage.btnExtractNameClick(Sender: TObject);
-begin
-  edtName.Text := ExtractFileNameEx(edtPathExe.text);
-end;
 
 procedure TfrmSWGeneralPropertyPage.edtWorkingDirAcceptDirectory(
   Sender: TObject; var Value: String);

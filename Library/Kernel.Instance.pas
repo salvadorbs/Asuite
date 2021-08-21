@@ -25,7 +25,7 @@ interface
 
 uses
   Classes, SysUtils, VirtualTrees, AppConfig.Paths, Kernel.Scheduler,
-  VirtualTree.Events;
+  VirtualTree.Events, FileInfo;
 
 type
 
@@ -60,6 +60,9 @@ type
     //Database
     procedure LoadList;
     function SaveList(DoBackup: Boolean): Boolean;
+
+    class function GetASuiteVersion(ASimpleFormat: Boolean): string; overload;
+    class function GetASuiteVersion: TProgramVersion; overload;
   end;
 
 var
@@ -182,7 +185,7 @@ begin
   Assert(Assigned(ASuiteInstance.MainTree), 'ASuiteInstance.MainTree is not assigned!');
   try
     //List
-    if ExtractFileExtEx(ASuiteInstance.Paths.SuitePathList) = EXT_XML then
+    if ExtractLowerFileExt(ASuiteInstance.Paths.SuitePathList) = EXT_XML then
     begin
       sFilePath := ASuiteInstance.Paths.SuitePathList;
       ASuiteInstance.Paths.SuitePathList := ChangeFileExt(ASuiteInstance.Paths.SuitePathList, EXT_SQL);
@@ -202,6 +205,47 @@ end;
 function TASuiteInstance.SaveList(DoBackup: Boolean): Boolean;
 begin
   Result := ASuiteManager.DBManager.SaveData(ASuiteInstance.MainTree, DoBackup);
+end;
+
+class function TASuiteInstance.GetASuiteVersion(ASimpleFormat: Boolean): string;
+var
+  Version: TProgramVersion;
+begin
+  Version := GetASuiteVersion;
+  try
+    if ASimpleFormat then
+    begin
+      //Version format "Major.Minor Beta"
+      Result := Format('%d.%d', [Version.Major,
+                                 Version.Minor]);
+    end
+    else begin
+      //Version format "Major.Minor.Revision.Build Beta"
+      Result := Format('%d.%d.%d.%d', [Version.Major,
+                                       Version.Minor,
+                                       Version.Revision,
+                                       Version.Build]);
+    end;
+
+    Result := Result + ' ' + VERSION_PRERELEASE;
+  except
+    on E : Exception do
+      TASuiteLogger.Exception(E);
+  end;
+end;
+
+class function TASuiteInstance.GetASuiteVersion: TProgramVersion;
+var
+  VersionInfo: TFileVersionInfo;
+begin
+  VersionInfo := TFileVersionInfo.Create(nil);
+  try
+    VersionInfo.ReadFileInfo;
+
+    Result := StrToProgramVersion(VersionInfo.VersionStrings.Values['FileVersion']);
+  finally
+    VersionInfo.Free;
+  end;
 end;
 
 initialization

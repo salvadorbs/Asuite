@@ -50,7 +50,7 @@ type
 implementation
 
 uses
-  AppConfig.Main, Kernel.Enumerations, Utility.Misc, Kernel.ResourceStrings;
+  AppConfig.Main, Kernel.Enumerations, Utility.Misc;
 
 constructor TBaseMainForm.Create(AOwner: TComponent);
 begin

@@ -128,7 +128,7 @@ uses
   DataModules.Icons, Forms.Main, AppConfig.Main, VirtualTree.Methods,
   Utility.System, Forms.GraphicMenu, Kernel.Types, NodeDataTypes.Files,
   NodeDataTypes.Custom, NodeDataTypes.Base, Kernel.Consts, Kernel.Logger,
-  Utility.Misc, Utility.FileFolder, Kernel.ResourceStrings, Kernel.Instance,
+  Utility.FileFolder, Kernel.ResourceStrings, Kernel.Instance,
   Kernel.Manager, mormot.core.log {$IFDEF MSWINDOWS} , Windows {$ENDIF};
 
 {$R *.lfm}
@@ -138,7 +138,7 @@ begin
   pmTrayicon.Images := dmImages.ilIcons;
   pmTrayicon.ImagesWidth := ICON_SIZE_SMALL;
 
-  tiTrayMenu.Hint := Format('%s %s (%s)',[APP_NAME, GetASuiteVersion(True),
+  tiTrayMenu.Hint := Format('%s %s (%s)',[APP_NAME, TASuiteInstance.GetASuiteVersion(True),
                                           UpperCase(ASuiteInstance.Paths.SuiteDrive)]);
   {$IFNDEF MSWINDOWS}
   tiTrayMenu.PopUpMenu := pmTrayicon;
@@ -206,7 +206,7 @@ begin
           AMI.Items[0].Visible := False;
         //Create new menuitem and add base properties
         NMI             := TASMenuItem.Create(AMI);
-        NMI.Path        := sPath + SR.Name + PathDelim;
+        NMI.Path        := AppendPathDelim(sPath + SR.Name);
         NMI.ImageIndex  := ASuiteManager.IconsManager.GetPathIconIndex(ASuiteInstance.Paths.RelativeToAbsolute(CONST_PATH_FOLDERICON)); // folder image
         //Add item in traymenu
         AddItem(AMI, NMI);
@@ -475,7 +475,6 @@ begin
             MenuItem.Caption := msgOpenOptions;
             MenuItem.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('options');
             MenuItem.OnClick := frmMain.miOptionsClick;
-            MenuItem.Enabled := Not(Config.ReadOnlyMode);
           end;
       end;
     end;

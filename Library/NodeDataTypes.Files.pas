@@ -97,7 +97,8 @@ implementation
 uses
   AppConfig.Main, Kernel.Consts, Utility.FileFolder, LazUTF8, Kernel.ResourceStrings,
   Utility.System, VirtualTree.Methods, Utility.Misc, Kernel.Instance, Kernel.Manager
-  {$IFDEF Windows}, JwaWindows, JwaWinBase, ShellApi{$ENDIF}, mormot.core.log;
+  {$IFDEF Windows}, JwaWindows, JwaWinBase, ShellApi{$ENDIF}, mormot.core.log,
+  Kernel.ShellLink;
 
 constructor TvFileNodeData.Create(AType: TvTreeDataType);
 begin
@@ -130,7 +131,7 @@ end;
 procedure TvFileNodeData.DeleteShortcutFile;
 begin
   if (FShortcutDesktop) then
-    DeleteShortcutOnDesktop(Self.Name + EXT_LNK);
+    TShellLinkFile.DeleteShortcutOnDesktop(Self.Name + EXT_LNK);
 end;
 
 function TvFileNodeData.GetPathAbsoluteFile: String;
@@ -464,10 +465,10 @@ begin
   begin
     //If value is true, create shortcut in desktop
     if (value and (FShortcutDesktop <> value)) then
-      CreateShortcutOnDesktop(Name + EXT_LNK, Self.PathAbsoluteFile, FParameters, Self.WorkingDirAbsolute)
+      TShellLinkFile.CreateShortcutOnDesktop(Name + EXT_LNK, Self.PathAbsoluteFile, FParameters, Self.WorkingDirAbsolute)
     else //else delete it from desktop
       if (not value and (FShortcutDesktop <> value)) then
-        DeleteShortcutOnDesktop(Self.Name + EXT_LNK);
+        TShellLinkFile.DeleteShortcutOnDesktop(Self.Name + EXT_LNK);
   end;
   FShortcutDesktop := value;
 end;

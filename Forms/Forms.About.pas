@@ -58,7 +58,7 @@ var
 implementation
 
 uses
-  Utility.Misc, Kernel.Consts, LazFileUtils, Kernel.Instance;
+  Kernel.Consts, LazFileUtils, Kernel.Instance;
 
 {$R *.lfm}
 
@@ -66,7 +66,7 @@ procedure TfrmAbout.FormActivate(Sender: TObject);
 begin
   Self.Caption := Format(Self.Caption, [APP_NAME]);
   lblAppName.Caption := Format(lblAppName.Caption, [APP_NAME]);
-  lblVersion.Caption := Format(lblVersion.Caption, [GetASuiteVersion(True), {$IFDEF Win32}'32'{$ELSE}'64'{$ENDIF}]);
+  lblVersion.Caption := Format(lblVersion.Caption, [TASuiteInstance.GetASuiteVersion(True), {$IFDEF Win32}'32'{$ELSE}'64'{$ENDIF}]);
 end;
 
 procedure TfrmAbout.imgDonateClick(Sender: TObject);

@@ -6,70 +6,42 @@ interface
 
 uses
   Kernel.Consts, LCLIntf, LCLType, SysUtils, Classes, Kernel.Enumerations,
-  FileUtil, {$IFDEF Windows}ComObj, ShlObj, {$ELSE} FakeActiveX, {$ENDIF} Dialogs,
-  LazFileUtils, HlpHashFactory;
+  FileUtil, {$IFDEF Windows}ComObj, {$ELSE} FakeActiveX, {$ENDIF} Dialogs,
+  LazFileUtils, Kernel.Types;
 
 { Folders }
-function BrowseForFolder(const InitialDir: String = ''; const Caption: String = ''): String;
-function DirToPath(const Dir: string): string;
 function IsDirectory(const DirName: string): Boolean;
-function IsFlagSet(const Flags, Mask: Integer): Boolean;
 
 { Files }
 procedure DeleteOldBackups(const MaxNumber: Integer);
 function DeleteFiles(const Dir, Wildcard: string): Integer;
 function ListFiles(const Dir, Wildcard: string; const List: Classes.TStrings): Boolean;
-function GetFileXXHash32(const FileName: String): Integer;
 function ExtractFileNameEx(const AFileName: String): string;
-function ExtractFileExtEx(const AFileName: String): string;
+function ExtractLowerFileExt(const AFileName: String): string;
 
 { Desktop shortcut }
-function GetDesktopDir: String;
-procedure CreateShortcutOnDesktop(const FileName, TargetFilePath, Params, WorkingDir: String);
-procedure DeleteShortcutOnDesktop(const FileName: String);
-function  GetUrlTarget(const AFileName: String; ShortcutType: TShortcutField): String;
+function  GetUrlTarget(const AFileName: String): TUrlFile;
 
 implementation
 
 uses
-  IniFiles, FileInfo, Kernel.Instance, Kernel.Logger, Kernel.ResourceStrings
-  {$IFDEF UNIX}, BaseUnix{$ENDIF}, Kernel.ShellLink;
-
-function BrowseForFolder(const InitialDir: String; const Caption: String): String;
-var
-  Dialog: TSelectDirectoryDialog;
-begin
-  Result := '';
-  //Call Browse for folder dialog and get new path
-  Dialog := TSelectDirectoryDialog.Create(nil);
-  try
-    Dialog.InitialDir := ExcludeTrailingPathDelimiter(InitialDir);
-    if Dialog.Execute then
-      Result := Dialog.FileName;
-  finally
-    Dialog.Free;
-  end;
-end;
-
-function DirToPath(const Dir: string): string;
-begin
-  if (Dir <> '') and (Dir[Length(Dir)] <> '\') then
-    Result := Dir + '\'
-  else
-    Result := Dir;
-end;
+  IniFiles, FileInfo, Kernel.Instance {$IFDEF UNIX}, BaseUnix{$ENDIF};
 
 function IsDirectory(const DirName: string): Boolean;
+{$IFDEF MSWINDOWS}
 var
   Attr: Integer;  // directory's file attributes
 begin
   Attr := SysUtils.FileGetAttr(DirName);
-  Result := (Attr <> -1) and IsFlagSet(Attr, SysUtils.faDirectory);
-end;
-
-function IsFlagSet(const Flags, Mask: Integer): Boolean;
+  Result := (Attr <> -1) and (SysUtils.faDirectory = (Attr and SysUtils.faDirectory));
+{$ELSE}
+var
+  Info: BaseUnix.Stat;
 begin
-  Result := Mask = (Flags and Mask);
+  Result := False;
+  if fpStat(DirName, Info) >= 0 then
+    Result := fpS_ISDIR(Info.st_mode);
+{$ENDIF}
 end;
 
 function DeleteFiles(const Dir, Wildcard: string): Integer;
@@ -88,7 +60,7 @@ begin
     if not ListFiles(Dir, Wildcard, Files) then
       Exit;
     // Get path of directory containing files
-    Path := DirToPath(Dir);
+    Path := AppendPathDelim(Dir);
     // Loop through all files
     for I := 0 to Pred(Files.Count) do
     begin
@@ -121,7 +93,7 @@ begin
   if not Result then
     Exit;
   // Build file spec from directory and wildcard
-  FileSpec := DirToPath(Dir);
+  FileSpec := AppendPathDelim(Dir);
   if Wildcard = '' then
     FileSpec := FileSpec + '*.*'
   else
@@ -141,19 +113,6 @@ begin
   finally
     // Tidy up
     SysUtils.FindClose(SR);
-  end;
-end;
-
-function GetFileXXHash32(const FileName: String): Integer;
-begin
-  Result := 0;
-
-  try
-    if (FileName <> '') and not IsUNCPath(FileName) and FileExists(FileName) and (FileSize(FileName) > 0) then
-      Result := THashFactory.THash32.CreateXXHash32().ComputeFile(FileName).GetInt32();
-  except
-    on E : Exception do
-      TASuiteLogger.Exception(E, Format(msgGenerateFileHashError, [FileName]));
   end;
 end;
 
@@ -181,7 +140,7 @@ begin
   end;
 end;
 
-function ExtractFileExtEx(const AFileName: String): string;
+function ExtractLowerFileExt(const AFileName: String): string;
 begin
   Result := LowerCase(ExtractFileExt(AFileName));
 end;
@@ -193,66 +152,35 @@ var
   I            : Integer;
 begin
   BackupList := TStringList.Create;
-  if FindFirst(ASuiteInstance.Paths.SuitePathBackup + APP_NAME + '_*' + EXT_SQLBCK, faAnyFile, BackupSearch) = 0 then
-  begin
-    repeat
-      BackupList.Add(BackupSearch.Name);
-    until
-      SysUtils.FindNext(BackupSearch) <> 0;
-    SysUtils.FindClose(BackupSearch);
-  end;
-  BackupList.Sort;
-  for I := 1 to BackupList.Count - MaxNumber do
-    SysUtils.DeleteFile(ASuiteInstance.Paths.SuitePathBackup + BackupList[I - 1]);
-  BackupList.Free;
-end;
-
-function GetDesktopDir: String;
-begin
-{$IFDEF MSWINDOWS}
-  Result := SHGetFolderPathUTF8(CSIDL_DESKTOPDIRECTORY);
-{$ELSE}
-  Result := GetUserDir + 'Desktop';
-{$ENDIF}
-end;
-
-procedure CreateShortcutOnDesktop(const FileName, TargetFilePath, Params, WorkingDir: String);
-var
-  ShellLink: TShellLinkFile;
-begin
-  ShellLink := TShellLinkFile.Create;
   try
-    ShellLink.Path := TargetFilePath;
-    ShellLink.Parameters := Params;
-    ShellLink.WorkingDir := WorkingDir;
+    if FindFirst(ASuiteInstance.Paths.SuitePathBackup + APP_NAME + '_*' + EXT_SQLBCK, faAnyFile, BackupSearch) = 0 then
+    begin
+      repeat
+        BackupList.Add(BackupSearch.Name);
+      until
+        SysUtils.FindNext(BackupSearch) <> 0;
+      SysUtils.FindClose(BackupSearch);
+    end;
 
-    ShellLink.SaveShellLink(AppendPathDelim(GetDesktopDir) + FileName);
+    BackupList.Sort;
+
+    for I := 1 to BackupList.Count - MaxNumber do
+      SysUtils.DeleteFile(ASuiteInstance.Paths.SuitePathBackup + BackupList[I - 1]);
   finally
-    ShellLink.Free;
+    BackupList.Free;
   end;
 end;
 
-procedure DeleteShortcutOnDesktop(const FileName: String);
-var
-  LinkName: String;
-begin
-  LinkName := AppendPathDelim(GetDesktopDir) + FileName;
-  if (FileExists(LinkName)) then
-    SysUtils.DeleteFile(LinkName);
-end;
-
-function GetUrlTarget(const AFileName: String; ShortcutType: TShortcutField): String;
+function GetUrlTarget(const AFileName: String): TUrlFile;
 var
   IniFile: TIniFile;
 begin
   //.url files exists only in Windows
   IniFile := TIniFile.Create(AFileName);
   try
-    case ShortcutType of
-      sfPathFile   : Result := IniFile.ReadString('InternetShortcut','URL', AFileName);
-      sfWorkingDir : Result := IniFile.ReadString('InternetShortcut','WorkingDirectory', '');
-      sfPathIcon   : Result := IniFile.ReadString('InternetShortcut','IconFile', '');
-    end;
+    Result.TargetFile := IniFile.ReadString('InternetShortcut','URL', AFileName);
+    Result.WorkingDir := IniFile.ReadString('InternetShortcut','WorkingDirectory', '');
+    Result.PathIcon := IniFile.ReadString('InternetShortcut','IconFile', '');
   finally
     IniFile.Free;
   end;

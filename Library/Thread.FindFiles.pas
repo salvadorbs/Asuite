@@ -89,7 +89,7 @@ begin
         break;
 
       sPath := foundList[I];
-      sFileExt := ExtractFileExtEx(sPath);
+      sFileExt := ExtractLowerFileExt(sPath);
       sShortName := ExtractFileName(sPath);
 
       if (sPath <> '') and (FindMatchText(FSearchExcludeFilename, sShortName) = -1) and
