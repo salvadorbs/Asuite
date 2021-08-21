@@ -197,11 +197,14 @@ end;
 
 constructor TConfigPaths.Create;
 var
-  strPathExe: String;
+  strPathExe, strFileListSql, strFileListXml: String;
 begin
   //Default paths
   strPathExe := Application.ExeName;
   FSuitePathWorking  := ExtractFilePath(strPathExe);
+
+  strFileListSql := ExtractFileNameOnly(strPathExe) + EXT_SQL;
+  strFileListXml := ExtractFileNameOnly(strPathExe) + EXT_XML;
 
   {$IFDEF MSWINDOWS}
   FSuiteDrive        := LowerCase(ExtractFileDrive(strPathExe));
@@ -211,20 +214,24 @@ begin
   {$ENDIF}
   SetCurrentDir(FSuitePathWorking);
 
-  if Not(IsDirectoryWritable(FSuitePathWorking)) then
-  begin
+  //If ASuite is started from a hard linked folder, it will be falsely unwritable
+  //The user is unlikely to create a hard link for ASuite unless they use Scoop
+  //In this case, however, the .sqlite files will already exist and you can
+  //safely use them
+  if (IsDirectoryWritable(FSuitePathWorking)) or FileExists(FSuitePathWorking + strFileListXml) or
+     FileExists(FSuitePathWorking + strFileListSql) then
+    FSuitePathData := FSuitePathWorking
+  else begin
     //FSuitePathWorking = ASuite.exe folder (ex C:\path\to\asuite_folder\)
     //FSuitePathData    = ASuite config folder (ex. C:\Users\user\AppData\Roaming\asuite\)
     FSuitePathData := GetAppConfigDir(True);
     SysUtils.ForceDirectories(FSuitePathData);
-  end
-  else
-    FSuitePathData := FSuitePathWorking;
+  end;
 
   //Check if xml list exists, else get sqlite list
-  FSuitePathList := FSuitePathData + LIST_XML_FILENAME;
+  FSuitePathList := FSuitePathData + strFileListXml;
   if not FileExists(FSuitePathList) then
-    FSuitePathList := FSuitePathData + LIST_SQLITE_FILENAME;
+    FSuitePathList := FSuitePathData + strFileListSql;
 
   FSuitePathSettings := FSuitePathData + SETTINGS_FILENAME;
 

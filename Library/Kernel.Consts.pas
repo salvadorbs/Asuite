@@ -62,7 +62,6 @@ const
   EXT_PATH_DOT = '.';
 
   //File
-  DEBUG_FILE    = 'Debug.txt';
   THEME_INI     = 'theme.ini';
   BACKUP_FILE   = APP_NAME + '_%s' + EXT_SQLBCK;
 
@@ -109,8 +108,6 @@ const
   FILEICON_Url    = 'page_url';
 
   //ASuite files
-  LIST_SQLITE_FILENAME = 'asuite.sqlite';
-  LIST_XML_FILENAME = 'asuite.sqlite';
   SETTINGS_FILENAME = 'settings.json';
 
   //Modifier buttons for TfrmShortcutGrabber
