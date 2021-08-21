@@ -199,6 +199,7 @@ var
   Node: PVirtualNode;
   sName: String;
   ShellLink: TShellLinkFile;
+  Url: TUrlFile;
 begin
   TASuiteLogger.Debug('Add node by File Path (%s)', [QuotedStr(APathFile)]);
 
@@ -226,12 +227,13 @@ begin
     else begin
       if ExtractFileExtEx(APathFile) = EXT_URL then
       begin
+        Url := GetUrlTarget(APathFile);
         //Shortcut
-        NodeData.PathFile   := ASuiteInstance.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfPathFile));
-        NodeData.PathIcon   := ASuiteInstance.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfPathIcon));
+        NodeData.PathFile   := ASuiteInstance.Paths.AbsoluteToRelative(Url.TargetFile);
+        NodeData.PathIcon   := ASuiteInstance.Paths.AbsoluteToRelative(Url.PathIcon);
         if NodeData.PathIcon = '' then
           NodeData.PathIcon := CONST_PATH_URLICON;
-        NodeData.WorkingDir := ASuiteInstance.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfWorkingDir));
+        NodeData.WorkingDir := ASuiteInstance.Paths.AbsoluteToRelative(Url.WorkingDir);
       end
       else //Normal file
         NodeData.PathFile := ASuiteInstance.Paths.AbsoluteToRelative(APathFile);
@@ -241,7 +243,12 @@ begin
     if AExtractName then
       sName := ExtractFileNameEx(NodeData.PathFile)
     else begin
-      sName := ChangeFileExt(ExtractFileName(NodeData.PathFile), '');
+      if IsValidURLProtocol(NodeData.PathFile) then
+        sName := 'Link';
+
+      if sName = '' then
+        sName := ChangeFileExt(ExtractFileName(NodeData.PathFile), '');
+
       if sName = '' then
         sName := ExtractFileDrive(NodeData.PathFile);
     end;

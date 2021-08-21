@@ -7,7 +7,7 @@ interface
 uses
   Kernel.Consts, LCLIntf, LCLType, SysUtils, Classes, Kernel.Enumerations,
   FileUtil, {$IFDEF Windows}ComObj, {$ELSE} FakeActiveX, {$ENDIF} Dialogs,
-  LazFileUtils;
+  LazFileUtils, Kernel.Types;
 
 { Folders }
 function IsDirectory(const DirName: string): Boolean;
@@ -20,7 +20,7 @@ function ExtractFileNameEx(const AFileName: String): string;
 function ExtractFileExtEx(const AFileName: String): string;
 
 { Desktop shortcut }
-function  GetUrlTarget(const AFileName: String; ShortcutType: TShortcutField): String;
+function  GetUrlTarget(const AFileName: String): TUrlFile;
 
 implementation
 
@@ -171,19 +171,16 @@ begin
   end;
 end;
 
-function GetUrlTarget(const AFileName: String; ShortcutType: TShortcutField): String;
+function GetUrlTarget(const AFileName: String): TUrlFile;
 var
   IniFile: TIniFile;
 begin
-  //TODO: Transform in class
   //.url files exists only in Windows
   IniFile := TIniFile.Create(AFileName);
   try
-    case ShortcutType of
-      sfPathFile   : Result := IniFile.ReadString('InternetShortcut','URL', AFileName);
-      sfWorkingDir : Result := IniFile.ReadString('InternetShortcut','WorkingDirectory', '');
-      sfPathIcon   : Result := IniFile.ReadString('InternetShortcut','IconFile', '');
-    end;
+    Result.TargetFile := IniFile.ReadString('InternetShortcut','URL', AFileName);
+    Result.WorkingDir := IniFile.ReadString('InternetShortcut','WorkingDirectory', '');
+    Result.PathIcon := IniFile.ReadString('InternetShortcut','IconFile', '');
   finally
     IniFile.Free;
   end;

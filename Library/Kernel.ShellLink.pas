@@ -41,6 +41,7 @@ type
     function GetWorkingDir: String;
 
     class function GetDesktopDir: String;
+    function IsShellLink(var APath: String): Boolean;
   public
     constructor Create; overload;
     constructor Create(APath: String); overload;
@@ -50,7 +51,7 @@ type
     property Parameters: String read FParameters write FParameters;
     property LinkPath: String read FLinkPath write FLinkPath;
 
-    procedure LoadShellLink(APath: String);
+    procedure LoadShellLink(APathFile: String);
     function SaveShellLink(APathFile: String): Boolean;
 
     class procedure CreateShortcutOnDesktop(const FileName, TargetFilePath, Params, WorkingDir: String);
@@ -89,6 +90,24 @@ begin
 {$ENDIF}
 end;
 
+function TShellLinkFile.IsShellLink(var APath: String): Boolean;
+{$IFDEF UNIX}
+var
+  Info : Stat;
+{$ENDIF}
+begin
+  Result := False;
+
+  if not FileExists(APath) then
+    Exit;
+
+  {$IFDEF MSWINDOWS}
+  Result := (ExtractFileExtEx(APath) = EXT_LNK);
+  {$ELSE}
+  Result := (fplstat(APath, Info)>=0) and fpS_ISLNK(Info.st_mode);
+  {$ENDIF}
+end;
+
 constructor TShellLinkFile.Create;
 begin
   ClearProps;
@@ -101,7 +120,7 @@ begin
   LoadShellLink(APath);
 end;
 
-procedure TShellLinkFile.LoadShellLink(APath: String);
+procedure TShellLinkFile.LoadShellLink(APathFile: String);
 {$IFDEF MSWINDOWS}
 var
   Obj: IUnknown;
@@ -118,10 +137,10 @@ var
 begin
   ClearProps;
 
-  if (not FileExists(APath)) and (ExtractFileExtEx(APath) <> EXT_LNK) then //TODO: On linux!? .lnk <> shell link!
+  if not IsShellLink(APathFile) then
     Exit;
 
-  FLinkPath := APath;
+  FLinkPath := APathFile;
 
 {$IFDEF MSWINDOWS}
   CoInitialize(nil);
@@ -130,7 +149,7 @@ begin
     ISLink := Obj as IShellLinkW;
     PersistFile := Obj as IPersistFile;
 
-    if PersistFile.Load(PChar(APath), STGM_READ) <> S_OK then
+    if PersistFile.Load(PChar(APathFile), STGM_READ) <> S_OK then
       Exit;
 
 
@@ -151,7 +170,7 @@ begin
   end;
 {$ELSE}
   try
-    Self.Path := ReadAllLinks(APath, False);
+    Self.Path := ReadAllLinks(APathFile, False);
   except
     on E: Exception do
       TASuiteLogger.Exception(E);
@@ -171,6 +190,8 @@ begin
 
   if Self.TargetPath = '' then
     Exit;
+
+  FLinkPath := APathFile;
 
 {$IFDEF MSWINDOWS}
   CoInitialize(nil);
