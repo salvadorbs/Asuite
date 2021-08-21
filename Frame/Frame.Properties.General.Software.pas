@@ -41,7 +41,6 @@ type
     lbWorkingDir: TLabel;
 
     procedure edtPathExeAcceptFileName(Sender: TObject; var Value: String);
-    procedure btnExtractNameClick(Sender: TObject);
     procedure edtWorkingDirAcceptDirectory(Sender: TObject; var Value: String);
     procedure edtWorkingDirChange(Sender: TObject);
   private
@@ -63,11 +62,6 @@ uses
   Utility.FileFolder, Kernel.Instance;
 
 {$R *.lfm}
-
-procedure TfrmSWGeneralPropertyPage.btnExtractNameClick(Sender: TObject);
-begin
-  edtName.Text := ExtractFileNameEx(edtPathExe.text);
-end;
 
 procedure TfrmSWGeneralPropertyPage.edtWorkingDirAcceptDirectory(
   Sender: TObject; var Value: String);

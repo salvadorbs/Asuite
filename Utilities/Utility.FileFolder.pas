@@ -11,9 +11,7 @@ uses
 
 { Folders }
 function BrowseForFolder(const InitialDir: String = ''; const Caption: String = ''): String;
-function DirToPath(const Dir: string): string;
 function IsDirectory(const DirName: string): Boolean;
-function IsFlagSet(const Flags, Mask: Integer): Boolean;
 
 { Files }
 procedure DeleteOldBackups(const MaxNumber: Integer);
@@ -48,25 +46,13 @@ begin
   end;
 end;
 
-function DirToPath(const Dir: string): string;
-begin
-  if (Dir <> '') and (Dir[Length(Dir)] <> '\') then
-    Result := Dir + '\'
-  else
-    Result := Dir;
-end;
-
 function IsDirectory(const DirName: string): Boolean;
 var
   Attr: Integer;  // directory's file attributes
 begin
   Attr := SysUtils.FileGetAttr(DirName);
-  Result := (Attr <> -1) and IsFlagSet(Attr, SysUtils.faDirectory);
-end;
-
-function IsFlagSet(const Flags, Mask: Integer): Boolean;
+  Result := (Attr <> -1) and (SysUtils.faDirectory = (Attr and SysUtils.faDirectory));
 begin
-  Result := Mask = (Flags and Mask);
 end;
 
 function DeleteFiles(const Dir, Wildcard: string): Integer;

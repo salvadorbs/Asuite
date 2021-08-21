@@ -28,7 +28,6 @@ uses
   Kernel.Consts, StdCtrls, UITypes, Menus, FileInfo;
 
 { Forms }
-function  IsFormOpen(const FormName : string): Boolean;
 procedure SetFormPositionFromConfig(AForm: TForm);
 
 { Misc }
@@ -37,7 +36,6 @@ function GetCheckedMenuItem(PopupMenu: TPopupMenu): TMenuItem;
 function GetASuiteVersion(ASimpleFormat: Boolean): string; overload;
 function GetASuiteVersion: TProgramVersion; overload;
 function IsFormatInClipBoard(format: Word): Boolean;
-function IsLightColor(const AColor: TColor): Boolean;
 function RemoveQuotes(const S: string; const QuoteChar: Char): string;
 function RemoveAllQuotes(const S: string): string;
 procedure ShowMessageEx(const Msg: string; Error: boolean = False);
@@ -65,19 +63,6 @@ uses
   {$ELSE}
   , BaseUnix, Unix
   {$ENDIF};
-
-function IsFormOpen(const FormName : string): Boolean;
-var
-  I: Integer;
-begin
-  Result := False;
-  for i := Screen.FormCount - 1 DownTo 0 do
-    if (Screen.Forms[i].Name = FormName) then
-    begin
-      Result := True;
-      Break;
-    end;
-end;
 
 procedure SetFormPositionFromConfig(AForm: TForm);
 begin
@@ -166,20 +151,6 @@ begin
       Break;
     end;
   end;
-end;
-
-function IsLightColor(const AColor: TColor): Boolean;
-var
-  r, g, b, yiq: integer;
-begin
-  r := GetRValue(AColor);
-  g := GetGValue(AColor);
-  b := GetBValue(AColor);
-  yiq := ((r*299)+(g*587)+(b*114)) div 1000;
-  if (yiq >= 128) then
-    result := True
-  else
-    result := False;
 end;
 
 function RemoveQuotes(const S: string; const QuoteChar: Char): string;
