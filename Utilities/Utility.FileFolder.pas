@@ -25,7 +25,7 @@ function  GetUrlTarget(const AFileName: String): TUrlFile;
 implementation
 
 uses
-  IniFiles, FileInfo, Kernel.Instance;
+  IniFiles, FileInfo, Kernel.Instance {$IFDEF UNIX}, BaseUnix{$ENDIF};
 
 function IsDirectory(const DirName: string): Boolean;
 {$IFDEF MSWINDOWS}

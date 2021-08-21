@@ -33,7 +33,7 @@ type
   TShellLinkFile = class
   private
     FLinkPath: String;
-    FPath: String;
+    FTargetPath: String;
     FWorkingDir: String;
     FParameters: String;
 
@@ -46,7 +46,7 @@ type
     constructor Create; overload;
     constructor Create(APath: String); overload;
 
-    property TargetPath: String read FPath write FPath;
+    property TargetPath: String read FTargetPath write FTargetPath;
     property WorkingDir: String read GetWorkingDir write FWorkingDir;
     property Parameters: String read FParameters write FParameters;
     property LinkPath: String read FLinkPath write FLinkPath;
@@ -68,7 +68,7 @@ uses
 
 procedure TShellLinkFile.ClearProps;
 begin
-  FPath := '';
+  FTargetPath := '';
   FWorkingDir := '';
   FParameters := '';
 end;
@@ -170,7 +170,7 @@ begin
   end;
 {$ELSE}
   try
-    Self.Path := ReadAllLinks(APathFile, False);
+    Self.LinkPath := ReadAllLinks(APathFile, False);
   except
     on E: Exception do
       TASuiteLogger.Exception(E);
@@ -210,7 +210,7 @@ begin
   end;
 {$ELSE}
   try
-    fpSymlink(PAnsiChar(Self.Path), PAnsiChar(APathFile));
+    fpSymlink(PAnsiChar(Self.LinkPath), PAnsiChar(APathFile));
   finally
     Result := True;
   end;
