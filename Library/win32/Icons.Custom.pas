@@ -91,7 +91,7 @@ function TWin32CustomIcon.GetIconFromFile(const APathFile: string;
 begin
   Result := nil;
 
-  if ExtractFileExtEx(APathFile) = EXT_ICO then
+  if ExtractLowerFileExt(APathFile) = EXT_ICO then
     Result := LoadFromFileIcon(APathFile, AWantLargeIcon)
   else
     Result := ExtractIconFromSysImageList(APathFile, AWantLargeIcon);

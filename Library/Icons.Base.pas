@@ -119,7 +119,7 @@ begin
   //Get cache icon path
   if (Config.Cache) and (Config.ASuiteState <> lsImporting) then
   begin
-    isExeFile := (ExtractFileExtEx(sDefaultPath) = EXT_EXE);
+    isExeFile := (ExtractLowerFileExt(sDefaultPath) = EXT_EXE);
     if isExeFile then
       intHash := GetFileXXHash32(sDefaultPath);
 
@@ -152,7 +152,7 @@ var
 begin
   Result := '';
 
-  sExt := ExtractFileExtEx(GetDefaultPathIcon);
+  sExt := ExtractLowerFileExt(GetDefaultPathIcon);
   if ((sExt = EXT_EXE) or (sExt = EXT_ICO) or (sExt = '')) then
     sNameFile := Self.Name
   else
@@ -176,8 +176,8 @@ var
 begin
   if (Config.Cache) and (AImageIndex <> -1) then
   begin
-    if (Self.Name <> '') and (ExtractFileExtEx(APath) <> EXT_ICO) and
-       ((not FTempItem) or (FTempItem and (ExtractFileExtEx(APath) <> EXT_EXE))) then
+    if (Self.Name <> '') and (ExtractLowerFileExt(APath) <> EXT_ICO) and
+       ((not FTempItem) or (FTempItem and (ExtractLowerFileExt(APath) <> EXT_EXE))) then
     begin
       Icon := TBGRAIconCursor.Create(ifIco);
       try
@@ -220,7 +220,7 @@ var
 begin
   Result := nil;
 
-  if not FileExists(APathFile) and (ExtractFileExtEx(APathFile) = EXT_ICO) then
+  if not FileExists(APathFile) and (ExtractLowerFileExt(APathFile) = EXT_ICO) then
     Exit;
 
   Icon := TBGRAIconCursor.Create(ifIco);

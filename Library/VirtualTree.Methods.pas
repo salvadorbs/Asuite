@@ -207,7 +207,7 @@ begin
   try
     NodeData := TvFileNodeData(GetNodeItemData(Node, ASender));
 
-    if ExtractFileExtEx(APathFile) = EXT_LNK then
+    if ExtractLowerFileExt(APathFile) = EXT_LNK then
     begin
       //Shortcut
       ShellLink := TShellLinkFile.Create(APathFile);
@@ -225,7 +225,7 @@ begin
       end;
     end
     else begin
-      if ExtractFileExtEx(APathFile) = EXT_URL then
+      if ExtractLowerFileExt(APathFile) = EXT_URL then
       begin
         Url := GetUrlTarget(APathFile);
         //Shortcut

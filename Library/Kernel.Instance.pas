@@ -185,7 +185,7 @@ begin
   Assert(Assigned(ASuiteInstance.MainTree), 'ASuiteInstance.MainTree is not assigned!');
   try
     //List
-    if ExtractFileExtEx(ASuiteInstance.Paths.SuitePathList) = EXT_XML then
+    if ExtractLowerFileExt(ASuiteInstance.Paths.SuitePathList) = EXT_XML then
     begin
       sFilePath := ASuiteInstance.Paths.SuitePathList;
       ASuiteInstance.Paths.SuitePathList := ChangeFileExt(ASuiteInstance.Paths.SuitePathList, EXT_SQL);

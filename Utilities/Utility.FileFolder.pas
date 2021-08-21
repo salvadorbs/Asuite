@@ -17,7 +17,7 @@ procedure DeleteOldBackups(const MaxNumber: Integer);
 function DeleteFiles(const Dir, Wildcard: string): Integer;
 function ListFiles(const Dir, Wildcard: string; const List: Classes.TStrings): Boolean;
 function ExtractFileNameEx(const AFileName: String): string;
-function ExtractFileExtEx(const AFileName: String): string;
+function ExtractLowerFileExt(const AFileName: String): string;
 
 { Desktop shortcut }
 function  GetUrlTarget(const AFileName: String): TUrlFile;
@@ -140,7 +140,7 @@ begin
   end;
 end;
 
-function ExtractFileExtEx(const AFileName: String): string; //TODO: Change name to ExtractLowerFileExt
+function ExtractLowerFileExt(const AFileName: String): string;
 begin
   Result := LowerCase(ExtractFileExt(AFileName));
 end;

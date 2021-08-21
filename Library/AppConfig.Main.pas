@@ -273,7 +273,7 @@ begin
   sBackgroundPath := ASuiteInstance.Paths.RelativeToAbsolute(FTVBackgroundPath);
   if (FTVBackground) and (FTVBackgroundPath <> '') and (FileExists(sBackgroundPath)) then
   begin
-    if ExtractFileExtEx(sBackgroundPath) = EXT_PNG then
+    if ExtractLowerFileExt(sBackgroundPath) = EXT_PNG then
     begin
       BackgroundBMP := LoadPngAndConvertBMP(sBackgroundPath);
       try
@@ -283,7 +283,7 @@ begin
       end;
     end
     else
-      if ExtractFileExtEx(sBackgroundPath) = EXT_BMP then
+      if ExtractLowerFileExt(sBackgroundPath) = EXT_BMP then
         ASuiteInstance.MainTree.Background.LoadFromFile(sBackgroundPath);
   end;
 

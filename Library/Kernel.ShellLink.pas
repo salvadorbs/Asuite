@@ -102,7 +102,7 @@ begin
     Exit;
 
   {$IFDEF MSWINDOWS}
-  Result := (ExtractFileExtEx(APath) = EXT_LNK);
+  Result := (ExtractLowerFileExt(APath) = EXT_LNK);
   {$ELSE}
   Result := (fplstat(APath, Info)>=0) and fpS_ISLNK(Info.st_mode);
   {$ENDIF}

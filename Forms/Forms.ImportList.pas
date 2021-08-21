@@ -221,7 +221,7 @@ begin
   try
     vstListImp.Clear;
     FileName := LowerCase(ExtractFileName(FilePath));
-    FileExt  := ExtractFileExtEx(FileName);
+    FileExt  := ExtractLowerFileExt(FileName);
     //ASuite or wppLauncher
     if (FileExt = EXT_XML) or (FileExt = EXT_XMLBCK) then
     begin

@@ -88,7 +88,7 @@ var
 {$ENDIF}
 begin
   {$IFDEF MSWINDOWS}
-  lowerStrPath := ExtractFileExtEx(APathFile);
+  lowerStrPath := ExtractLowerFileExt(APathFile);
   Result := (lowerStrPath = EXT_EXE) or (lowerStrPath = EXT_BAT) or (lowerStrPath = EXT_CMD);
   {$ELSE}
   //TODO: Insert check if file has not extension or .desktop (or command file -b)
