@@ -107,7 +107,8 @@ class function TVirtualTreeMethods.AddChildNodeByGUI(
 var
   ChildNode : PVirtualNode;
   NodeData  : TvBaseNodeData;
-  FolderPath, sName : String;
+  FolderPath: AnsiString;
+  sName : String;
   DeleteNode: Boolean;
   {%H-}log: ISynLog;
 begin
@@ -127,23 +128,27 @@ begin
     //If AType is a vtdtFolder, asuite must ask to user the folder
     if AType = vtdtFolder then
     begin
-      FolderPath := BrowseForFolder();
-      if FolderPath <> '' then
+      DeleteNode := not(SelectDirectory('', '', FolderPath, False) and (FolderPath <> ''));
+      if not DeleteNode then
       begin
         TASuiteLogger.Info('User selected folder "%s"', [FolderPath]);
-        sName := ExtractDirectoryName(FolderPath + PathDelim);
+        sName := ExtractDirectoryName(FolderPath);
         if sName <> '' then
           NodeData.Name := sName;
-        TvFileNodeData(NodeData).PathFile := ASuiteInstance.Paths.AbsoluteToRelative(FolderPath + PathDelim);
+        TvFileNodeData(NodeData).PathFile := ASuiteInstance.Paths.AbsoluteToRelative(AppendPathDelim(FolderPath));
       end
       else begin
-        DeleteNode := True;
-        ShowMessageFmtEx(msgErrScanFolderEmptyPath,[], True);
+        if FolderPath = '' then
+        begin
+          TASuiteLogger.Info('User didn''t select any folder', []);
+          ShowMessageFmtEx(msgErrScanFolderEmptyPath,[], True);
+        end;
       end;
     end;
     //ShowPropertyItem
     if (DeleteNode) or (ShowItemProperty(nil, ASender, ChildNode, True) <> mrOK) then
     begin
+      TASuiteLogger.Info('User canceled adding node', []);
       ASender.DeleteNode(ChildNode);
       NodeData   := nil;
     end;

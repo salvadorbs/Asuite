@@ -42,6 +42,7 @@ type
     function GetPathCacheIcon: string;
     procedure SetCacheIconCRC(AValue: Integer);
     procedure SaveCacheIcon(const APath: string; const AImageIndex: Integer; const AHash: Integer);
+    function GetFileXXHash32(const FileName: String): Integer;
   protected
     function InternalGetImageIndex(const APathFile: string): Integer;
     function InternalLoadIcon: Integer; virtual;
@@ -72,7 +73,8 @@ implementation
 uses
    DataModules.Icons, Kernel.Consts, BGRABitmapTypes, Utility.FileFolder,
    AppConfig.Main, Kernel.Enumerations, Utility.System, Kernel.Instance,
-   Kernel.Manager;
+   Kernel.Manager, LazFileUtils, HlpHashFactory, Kernel.Logger, FileUtil,
+   Kernel.ResourceStrings;
 
 { TBaseIcon }
 
@@ -195,6 +197,19 @@ begin
         bmpSmallIcon.Free;
       end;
     end;
+  end;
+end;
+
+function TBaseIcon.GetFileXXHash32(const FileName: String): Integer;
+begin
+  Result := 0;
+
+  try
+    if (FileName <> '') and not IsUNCPath(FileName) and FileExists(FileName) and (FileUtil.FileSize(FileName) > 0) then
+      Result := THashFactory.THash32.CreateXXHash32().ComputeFile(FileName).GetInt32();
+  except
+    on E : Exception do
+      TASuiteLogger.Exception(E, Format(msgGenerateFileHashError, [FileName]));
   end;
 end;
 

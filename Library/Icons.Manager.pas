@@ -277,8 +277,8 @@ begin
 
   if IsDirectory(AFileName) then
   begin
-    if FileExists(AFileName + PathDelim + '.directory') then
-      Result := GetIconByDesktopFile(AFileName + PathDelim + '.directory')
+    if FileExists(AppendPathDelim(AFileName) + '.directory') then
+      Result := GetIconByDesktopFile(AppendPathDelim(AFileName) + '.directory')
     else
       Result := 'folder';
   end

@@ -74,7 +74,7 @@ begin
   //Check if PropertyNode exists
   if Assigned(PropertyNode) then
     if PropertyNode.NodeValue <> '' then
-      Result := Utility.Conversions.StrToBool(PropertyNode.NodeValue);
+      Result := (PropertyNode.NodeValue = '1');
 end;
 
 class function TImportOldListProcs.ASuite1NodeToTree(Tree: TVirtualStringTree;XMLNode: TDOMNode;

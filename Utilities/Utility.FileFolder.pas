@@ -10,14 +10,12 @@ uses
   LazFileUtils, HlpHashFactory;
 
 { Folders }
-function BrowseForFolder(const InitialDir: String = ''; const Caption: String = ''): String;
 function IsDirectory(const DirName: string): Boolean;
 
 { Files }
 procedure DeleteOldBackups(const MaxNumber: Integer);
 function DeleteFiles(const Dir, Wildcard: string): Integer;
 function ListFiles(const Dir, Wildcard: string; const List: Classes.TStrings): Boolean;
-function GetFileXXHash32(const FileName: String): Integer;
 function ExtractFileNameEx(const AFileName: String): string;
 function ExtractFileExtEx(const AFileName: String): string;
 
@@ -30,29 +28,21 @@ uses
   IniFiles, FileInfo, Kernel.Instance, Kernel.Logger, Kernel.ResourceStrings
   {$IFDEF UNIX}, BaseUnix{$ENDIF}, Kernel.ShellLink;
 
-function BrowseForFolder(const InitialDir: String; const Caption: String): String;
-var
-  Dialog: TSelectDirectoryDialog;
-begin
-  Result := '';
-  //Call Browse for folder dialog and get new path
-  Dialog := TSelectDirectoryDialog.Create(nil);
-  try
-    Dialog.InitialDir := ExcludeTrailingPathDelimiter(InitialDir);
-    if Dialog.Execute then
-      Result := Dialog.FileName;
-  finally
-    Dialog.Free;
-  end;
-end;
-
 function IsDirectory(const DirName: string): Boolean;
+{$IFDEF MSWINDOWS}
 var
   Attr: Integer;  // directory's file attributes
 begin
   Attr := SysUtils.FileGetAttr(DirName);
   Result := (Attr <> -1) and (SysUtils.faDirectory = (Attr and SysUtils.faDirectory));
+{$ELSE}
+var
+  Info: BaseUnix.Stat;
 begin
+  Result := False;
+  if fpStat(DirName, Info) >= 0 then
+    Result := fpS_ISDIR(Info.st_mode);
+{$ENDIF}
 end;
 
 function DeleteFiles(const Dir, Wildcard: string): Integer;
@@ -71,7 +61,7 @@ begin
     if not ListFiles(Dir, Wildcard, Files) then
       Exit;
     // Get path of directory containing files
-    Path := DirToPath(Dir);
+    Path := AppendPathDelim(Dir);
     // Loop through all files
     for I := 0 to Pred(Files.Count) do
     begin
@@ -104,7 +94,7 @@ begin
   if not Result then
     Exit;
   // Build file spec from directory and wildcard
-  FileSpec := DirToPath(Dir);
+  FileSpec := AppendPathDelim(Dir);
   if Wildcard = '' then
     FileSpec := FileSpec + '*.*'
   else
@@ -124,19 +114,6 @@ begin
   finally
     // Tidy up
     SysUtils.FindClose(SR);
-  end;
-end;
-
-function GetFileXXHash32(const FileName: String): Integer;
-begin
-  Result := 0;
-
-  try
-    if (FileName <> '') and not IsUNCPath(FileName) and FileExists(FileName) and (FileSize(FileName) > 0) then
-      Result := THashFactory.THash32.CreateXXHash32().ComputeFile(FileName).GetInt32();
-  except
-    on E : Exception do
-      TASuiteLogger.Exception(E, Format(msgGenerateFileHashError, [FileName]));
   end;
 end;
 
@@ -164,7 +141,7 @@ begin
   end;
 end;
 
-function ExtractFileExtEx(const AFileName: String): string;
+function ExtractFileExtEx(const AFileName: String): string; //TODO: Change name to ExtractLowerFileExt
 begin
   Result := LowerCase(ExtractFileExt(AFileName));
 end;
@@ -176,24 +153,30 @@ var
   I            : Integer;
 begin
   BackupList := TStringList.Create;
-  if FindFirst(ASuiteInstance.Paths.SuitePathBackup + APP_NAME + '_*' + EXT_SQLBCK, faAnyFile, BackupSearch) = 0 then
-  begin
-    repeat
-      BackupList.Add(BackupSearch.Name);
-    until
-      SysUtils.FindNext(BackupSearch) <> 0;
-    SysUtils.FindClose(BackupSearch);
+  try
+    if FindFirst(ASuiteInstance.Paths.SuitePathBackup + APP_NAME + '_*' + EXT_SQLBCK, faAnyFile, BackupSearch) = 0 then
+    begin
+      repeat
+        BackupList.Add(BackupSearch.Name);
+      until
+        SysUtils.FindNext(BackupSearch) <> 0;
+      SysUtils.FindClose(BackupSearch);
+    end;
+
+    BackupList.Sort;
+
+    for I := 1 to BackupList.Count - MaxNumber do
+      SysUtils.DeleteFile(ASuiteInstance.Paths.SuitePathBackup + BackupList[I - 1]);
+  finally
+    BackupList.Free;
   end;
-  BackupList.Sort;
-  for I := 1 to BackupList.Count - MaxNumber do
-    SysUtils.DeleteFile(ASuiteInstance.Paths.SuitePathBackup + BackupList[I - 1]);
-  BackupList.Free;
 end;
 
 function GetUrlTarget(const AFileName: String; ShortcutType: TShortcutField): String;
 var
   IniFile: TIniFile;
 begin
+  //TODO: Transform in class
   //.url files exists only in Windows
   IniFile := TIniFile.Create(AFileName);
   try

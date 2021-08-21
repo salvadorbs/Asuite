@@ -206,7 +206,7 @@ begin
           AMI.Items[0].Visible := False;
         //Create new menuitem and add base properties
         NMI             := TASMenuItem.Create(AMI);
-        NMI.Path        := sPath + SR.Name + PathDelim;
+        NMI.Path        := AppendPathDelim(sPath + SR.Name);
         NMI.ImageIndex  := ASuiteManager.IconsManager.GetPathIconIndex(ASuiteInstance.Paths.RelativeToAbsolute(CONST_PATH_FOLDERICON)); // folder image
         //Add item in traymenu
         AddItem(AMI, NMI);

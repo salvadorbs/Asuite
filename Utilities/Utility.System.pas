@@ -28,8 +28,6 @@ uses
   Forms, Dialogs;
 
 { Check functions }
-function HasDriveLetter(const Path: String): Boolean;
-function IsDriveRoot(const Path: String): Boolean;
 function IsValidURLProtocol(const URL: string): Boolean;
 function IsPathExists(const Path: String): Boolean;
 function IsExecutableFile(APathFile: String): Boolean;
@@ -44,7 +42,7 @@ function GetAutoStartFolder: String;
 
 { Misc }
 procedure EjectDialog(Sender: TObject);
-function ExtractDirectoryName(const Filename: string): string;
+function ExtractDirectoryName(const APath: string): string;
 
 implementation
 
@@ -52,25 +50,6 @@ uses
   Utility.Conversions, Forms.Main, Utility.Misc, Kernel.Logger,
   LazFileUtils{$IFDEF MSWINDOWS} , ShellApi {$ELSE}, IniFiles {$ENDIF}, LazUTF8,
   Utility.FileFolder, Kernel.Instance;
-
-function HasDriveLetter(const Path: String): Boolean;
-var P: PChar;
-begin
-  if Length(Path) < 2 then
-    Exit(False);
-  P := Pointer(Path);
-  if not CharInSet(P^, DriveLetters) then
-    Exit(False);
-  Inc(P);
-  if not CharInSet(P^, [':']) then
-    Exit(False);
-  Result := True;
-end;
-
-function IsDriveRoot(const Path: String): Boolean;
-begin
-  Result := (Length(Path) = 3) and HasDriveLetter(Path) and (Path[3] = PathDelim);
-end;
 
 function IsValidURLProtocol(const URL: string): Boolean;
   {Checks if the given URL is valid per RFC1738. Returns True if valid and False
@@ -112,7 +91,8 @@ begin
   lowerStrPath := ExtractFileExtEx(APathFile);
   Result := (lowerStrPath = EXT_EXE) or (lowerStrPath = EXT_BAT) or (lowerStrPath = EXT_CMD);
   {$ELSE}
-  //TODO: Insert check if file has not extension or .desktop
+  //TODO: Insert check if file has not extension or .desktop (or command file -b)
+  //      https://ostoday.org/other/how-executable-files-are-identified-in-linux-and-unix.html
   Result := FileIsExecutable(APathFile);
   {$ENDIF}
 end;
@@ -187,20 +167,9 @@ begin
   {$ENDIF}
 end;
 
-function ExtractDirectoryName(const Filename: string): string;
-var
-  AList : TStringList;
+function ExtractDirectoryName(const APath: string): string;
 begin
-  AList := TStringList.create;
-  try
-    StrToStrings(Filename,PathDelim,AList);
-    if AList.Count > 1 then
-      Result := AList[AList.Count - 1]
-    else
-      Result := '';
-  finally
-    AList.Free;
-  end;
+  Result := ExtractFileName(ExcludeTrailingPathDelimiter(APath));
 end;
 
 procedure SetASuiteAtOsStartup;
