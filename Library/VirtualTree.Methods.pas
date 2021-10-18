@@ -87,6 +87,7 @@ type
                               const ANode: PVirtualNode; ANewNode: Boolean = False): Integer;
     class procedure RefreshList(const ATree: TBaseVirtualTree);
     class procedure PopulateVSTItemList(const ATree: TBaseVirtualTree; const ABaseItemsList: TBaseItemsList);
+    class function HasSelectedNodes(const ATree: TBaseVirtualTree): Boolean;
   end;
 
 implementation
@@ -660,6 +661,15 @@ begin
   finally
     ATree.EndUpdate;
   end;
+end;
+
+class function TVirtualTreeMethods.HasSelectedNodes(
+  const ATree: TBaseVirtualTree): Boolean;
+var
+  Nodes: TNodeArray;
+begin
+  Nodes := ATree.GetSortedSelection(True);
+  Result := Length(Nodes) > 0;
 end;
 
 class procedure TVirtualTreeMethods.UpdateItemColor(

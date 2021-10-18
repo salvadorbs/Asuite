@@ -666,6 +666,16 @@ msgstr ""
 msgid "Scheduler"
 msgstr ""
 
+#: tfrmautorunoptionspage.actproperties.caption
+msgctxt "tfrmautorunoptionspage.actproperties.caption"
+msgid "Properties"
+msgstr ""
+
+#: tfrmautorunoptionspage.actremoveautorun.caption
+msgctxt "tfrmautorunoptionspage.actremoveautorun.caption"
+msgid "Remove autorun"
+msgstr ""
+
 #: tfrmautorunoptionspage.chkshutdown.caption
 msgid "Enable shutdown autorun"
 msgstr ""
@@ -689,15 +699,6 @@ msgstr ""
 
 #: tfrmautorunoptionspage.lblstartupinfo.caption
 msgid "Order of startup autorun items in ASuite"
-msgstr ""
-
-#: tfrmautorunoptionspage.mniproperties.caption
-msgctxt "tfrmautorunoptionspage.mniproperties.caption"
-msgid "Properties"
-msgstr ""
-
-#: tfrmautorunoptionspage.mniremoveautorun.caption
-msgid "Remove autorun"
 msgstr ""
 
 #: tfrmautorunoptionspage.vstshutdownitems.header.columns[0].text
@@ -910,6 +911,21 @@ msgctxt "tfrmgraphicmenu.mnirunasadmin.caption"
 msgid "Run as admin"
 msgstr ""
 
+#: tfrmhotkeyoptionspage.actedithotkey.caption
+msgctxt "tfrmhotkeyoptionspage.actedithotkey.caption"
+msgid "Edit Hotkey"
+msgstr ""
+
+#: tfrmhotkeyoptionspage.actproperties.caption
+msgctxt "tfrmhotkeyoptionspage.actproperties.caption"
+msgid "Properties"
+msgstr ""
+
+#: tfrmhotkeyoptionspage.actremovehotkey.caption
+msgctxt "tfrmhotkeyoptionspage.actremovehotkey.caption"
+msgid "Remove Hotkey"
+msgstr ""
+
 #: tfrmhotkeyoptionspage.cbhotkey.caption
 msgid "Enable hotkeys"
 msgstr ""
@@ -933,19 +949,6 @@ msgstr ""
 
 #: tfrmhotkeyoptionspage.lblhotkeywindow.caption
 msgid "Show window when hotkey is pressed"
-msgstr ""
-
-#: tfrmhotkeyoptionspage.mniedithotkey.caption
-msgid "Edit Hotkey"
-msgstr ""
-
-#: tfrmhotkeyoptionspage.mniproperties.caption
-msgctxt "tfrmhotkeyoptionspage.mniproperties.caption"
-msgid "Properties"
-msgstr ""
-
-#: tfrmhotkeyoptionspage.mniremovehotkey.caption
-msgid "Remove Hotkey"
 msgstr ""
 
 #: tfrmhotkeyoptionspage.vstitems.header.columns[0].text

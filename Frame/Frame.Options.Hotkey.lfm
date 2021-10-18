@@ -187,19 +187,35 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     Left = 264
     Top = 200
     object mniEditHotkey: TMenuItem
-      Caption = 'Edit Hotkey'
-      OnClick = mniEditHotkeyClick
+      Action = actEditHotkey
     end
     object mniRemoveHotkey: TMenuItem
-      Caption = 'Remove Hotkey'
-      OnClick = mniRemoveHotkeyClick
+      Action = actRemoveHotkey
     end
     object mniN1: TMenuItem
       Caption = '-'
     end
     object mniProperties: TMenuItem
+      Action = actProperties
+    end
+  end
+  object ActionList1: TActionList[3]
+    Left = 304
+    Top = 200
+    object actProperties: TAction
       Caption = 'Properties'
-      OnClick = mniPropertiesClick
+      OnExecute = actPropertiesExecute
+      OnUpdate = actMenuItemUpdate
+    end
+    object actRemoveHotkey: TAction
+      Caption = 'Remove Hotkey'
+      OnExecute = actRemoveHotkeyExecute
+      OnUpdate = actMenuItemUpdate
+    end
+    object actEditHotkey: TAction
+      Caption = 'Edit Hotkey'
+      OnExecute = actEditHotkeyExecute
+      OnUpdate = actMenuItemUpdate
     end
   end
 end

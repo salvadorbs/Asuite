@@ -194,6 +194,8 @@ var
   Nodes: TNodeArray;
 begin
   TAction(Sender).Enabled := False;
+
+  //TODO: Why Editing!?
   if not(tsEditing in GetActiveTree.TreeStates) then
   begin
     Nodes := GetActiveTree.GetSortedSelection(True);
@@ -303,7 +305,6 @@ begin
   {$ELSE}
     TAction(Sender).Enabled := (Length(vstList.GetSortedCutCopySet(True)) > 0) and (GetActiveTree = vstList);
   {$ENDIF}
-
 end;
 
 procedure TfrmMain.actPropertyExecute(Sender: TObject);

@@ -25,13 +25,16 @@ interface
 
 uses
   LCLIntf, SysUtils, Classes, Controls, Dialogs, Frame.BaseEntity,
-  StdCtrls, VirtualTrees, Lists.Base, Menus, ExtCtrls, Buttons;
+  StdCtrls, VirtualTrees, Lists.Base, Menus, ExtCtrls, Buttons, ActnList;
 
 type
 
   { TfrmAutorunOptionsPage }
 
   TfrmAutorunOptionsPage = class(TfrmBaseEntityPage)
+    actRemoveAutorun: TAction;
+    actProperties: TAction;
+    ActionList1: TActionList;
     btnShutdownDelete: TSpeedButton;
     btnShutdownDown: TSpeedButton;
     btnShutdownUp: TSpeedButton;
@@ -53,17 +56,18 @@ type
     mniProperties: TMenuItem;
     vstShutdownItems: TVirtualStringTree;
     vstStartupItems: TVirtualStringTree;
+    procedure actPropertiesExecute(Sender: TObject);
+    procedure actRemoveAutorunExecute(Sender: TObject);
+    procedure actMenuItemUpdate(Sender: TObject);
     procedure btnStartupUpClick(Sender: TObject);
     procedure btnShutdownUpClick(Sender: TObject);
     procedure btnStartupDeleteClick(Sender: TObject);
     procedure btnShutdownDeleteClick(Sender: TObject);
     procedure btnStartupDownClick(Sender: TObject);
     procedure btnShutdownDownClick(Sender: TObject);
-    procedure mniPropertiesClick(Sender: TObject);
     procedure vstGetPopupMenu(Sender: TBaseVirtualTree;
       Node: PVirtualNode; Column: TColumnIndex; const P: TPoint;
       var AskParent: Boolean; var PopupMenu: TPopupMenu);
-    procedure mniRemoveAutorunClick(Sender: TObject);
   private
     { Private declarations }
     FActiveTree: TBaseVirtualTree;
@@ -125,6 +129,22 @@ end;
 procedure TfrmAutorunOptionsPage.btnStartupUpClick(Sender: TObject);
 begin
   MoveItemUp(vstStartupItems);
+end;
+
+procedure TfrmAutorunOptionsPage.actPropertiesExecute(Sender: TObject);
+begin
+  TVirtualTreeMethods.ShowItemProperty(Self, GetActiveTree, GetActiveTree.FocusedNode);
+end;
+
+procedure TfrmAutorunOptionsPage.actRemoveAutorunExecute(Sender: TObject);
+begin
+  if AskUserWarningMessage(msgConfirm, []) and Assigned(GetActiveTree.FocusedNode) then
+    GetActiveTree.IsVisible[GetActiveTree.FocusedNode] := False;
+end;
+
+procedure TfrmAutorunOptionsPage.actMenuItemUpdate(Sender: TObject);
+begin
+  TAction(Sender).Enabled := TVirtualTreeMethods.HasSelectedNodes(GetActiveTree);
 end;
 
 function TfrmAutorunOptionsPage.GetActiveTree: TBaseVirtualTree;
@@ -196,17 +216,6 @@ begin
   mniProperties.ImageIndex   := ASuiteManager.IconsManager.GetIconIndex('property');
 end;
 
-procedure TfrmAutorunOptionsPage.mniPropertiesClick(Sender: TObject);
-begin
-  TVirtualTreeMethods.ShowItemProperty(Self, GetActiveTree, GetActiveTree.FocusedNode);
-end;
-
-procedure TfrmAutorunOptionsPage.mniRemoveAutorunClick(Sender: TObject);
-begin
-  if AskUserWarningMessage(msgConfirm, []) and Assigned(GetActiveTree.FocusedNode) then
-    GetActiveTree.IsVisible[GetActiveTree.FocusedNode] := False;
-end;
-
 procedure TfrmAutorunOptionsPage.MoveItemUp(const ATree: TBaseVirtualTree);
 begin
   if Assigned(ATree.FocusedNode) then
@@ -255,6 +264,7 @@ procedure TfrmAutorunOptionsPage.vstGetPopupMenu(
   const P: TPoint; var AskParent: Boolean; var PopupMenu: TPopupMenu);
 begin
   FActiveTree := Sender;
+  PopupMenu := pmAutorun;
 end;
 
 end.
