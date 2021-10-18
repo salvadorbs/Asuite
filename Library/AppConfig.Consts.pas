@@ -102,22 +102,22 @@ const
   CONFIG_CMHIDEEJECTMENUITEM = 'trayicon/classicmenu/hide_eject_button';
 
   //GRAPHIC MENU
-  CONFIG_GMTHEME = 'graphicmenu/theme';
-  CONFIG_GMFADE = 'graphicmenu/fade';
-  CONFIG_GMPERSONALPICTURE = 'graphicmenu/personalpicture/path';
-  CONFIG_GMSMALLICONSIZE = 'graphicmenu/treeview/small_icon';
-  CONFIG_GMPOSITIONLEFT = 'graphicmenu/position/left';
-  CONFIG_GMPOSITIONTOP = 'graphicmenu/position/top';
-  CONFIG_GMAUTOHIDEMENU = 'graphicmenu/auto_hide_menu';
-  CONFIG_GMSHOWUSERPICTURE = 'graphicmenu/show_user_picture';
-  CONFIG_GMHIDEEJECTBUTTON = 'graphicmenu/hide_eject_button';
+  CONFIG_GMTHEME = 'trayicon/graphicmenu/theme';
+  CONFIG_GMFADE = 'trayicon/graphicmenu/fade';
+  CONFIG_GMPERSONALPICTURE = 'trayicon/graphicmenu/personalpicture/path';
+  CONFIG_GMSMALLICONSIZE = 'trayicon/graphicmenu/treeview/small_icon';
+  CONFIG_GMPOSITIONLEFT = 'trayicon/graphicmenu/position/left';
+  CONFIG_GMPOSITIONTOP = 'trayicon/graphicmenu/position/top';
+  CONFIG_GMAUTOHIDEMENU = 'trayicon/graphicmenu/auto_hide_menu';
+  CONFIG_GMSHOWUSERPICTURE = 'trayicon/graphicmenu/show_user_picture';
+  CONFIG_GMHIDEEJECTBUTTON = 'trayicon/graphicmenu/hide_eject_button';
 
   //RIGHT BUTTONS
-  CONFIG_GMBTNDOCUMENTS = 'graphicmenu/path/documents';
-  CONFIG_GMBTNPICTURES = 'graphicmenu/path/pictures';
-  CONFIG_GMBTNMUSIC = 'graphicmenu/path/music';
-  CONFIG_GMBTNVIDEOS = 'graphicmenu/path/videos';
-  CONFIG_GMBTNEXPLORE = 'graphicmenu/path/explore';
+  CONFIG_GMBTNDOCUMENTS = 'trayicon/graphicmenu/path/documents';
+  CONFIG_GMBTNPICTURES = 'trayicon/graphicmenu/path/pictures';
+  CONFIG_GMBTNMUSIC = 'trayicon/graphicmenu/path/music';
+  CONFIG_GMBTNVIDEOS = 'trayicon/graphicmenu/path/videos';
+  CONFIG_GMBTNEXPLORE = 'trayicon/graphicmenu/path/explore';
 
   //HOT KEYS
   CONFIG_HOTKEY = 'application/hotkey/active';
