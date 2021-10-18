@@ -99,6 +99,7 @@ const
   CONFIG_ACTIONCLICKMIDDLE = 'trayicon/classicmenu/click_middle';
   CONFIG_ACTIONCLICKRIGHT = 'trayicon/classicmenu/click_right';
   CONFIG_AUTOEXPANSIONFOLDER = 'trayicon/classicmenu/autoexpansion_folder';
+  CONFIG_CMHIDEEJECTMENUITEM = 'trayicon/classicmenu/hide_eject_button';
 
   //GRAPHIC MENU
   CONFIG_GMTHEME = 'graphicmenu/theme';

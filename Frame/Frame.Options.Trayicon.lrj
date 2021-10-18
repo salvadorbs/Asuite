@@ -10,6 +10,7 @@
 {"hash":74693413,"name":"tfrmtrayiconoptionspage.cbsubmenumfu.caption","sourcebytes":[77,111,115,116,32,85,115,101,100,32,105,116,101,109,115,32,111,110,32,116,114,97,121,105,99,111,110,32,115,117,98,109,101,110,117],"value":"Most Used items on trayicon submenu"},
 {"hash":175191557,"name":"tfrmtrayiconoptionspage.cbsubmenumru.caption","sourcebytes":[82,101,99,101,110,116,32,105,116,101,109,115,32,111,110,32,116,114,97,121,105,99,111,110,32,115,117,98,109,101,110,117],"value":"Recent items on trayicon submenu"},
 {"hash":120993410,"name":"tfrmtrayiconoptionspage.chkautoexpansion.caption","sourcebytes":[65,99,116,105,118,101,32,97,117,116,111,101,120,112,97,110,115,105,111,110,32,102,111,108,100,101,114],"value":"Active autoexpansion folder"},
+{"hash":88309053,"name":"tfrmtrayiconoptionspage.chkhideejectmenuitem.caption","sourcebytes":[72,105,100,101,32,69,106,101,99,116,32,85,83,66,32,68,105,115,107,32,109,101,110,117,32,105,116,101,109],"value":"Hide Eject USB Disk menu item"},
 {"hash":196984501,"name":"tfrmtrayiconoptionspage.grpgraphicmenu.caption","sourcebytes":[71,114,97,112,104,105,99,32,77,101,110,117],"value":"Graphic Menu"},
 {"hash":85248244,"name":"tfrmtrayiconoptionspage.cbmenufade.caption","sourcebytes":[69,110,97,98,108,101,32,102,97,100,101,32,101,102,102,101,99,116],"value":"Enable fade effect"},
 {"hash":148562261,"name":"tfrmtrayiconoptionspage.cbsmallicon.caption","sourcebytes":[83,109,97,108,108,32,84,114,101,101,86,105,101,119,39,115,32,105,99,111,110,32,115,105,122,101],"value":"Small TreeView's icon size"},

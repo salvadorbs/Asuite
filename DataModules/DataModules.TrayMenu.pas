@@ -521,6 +521,7 @@ begin
             {$IFDEF UNIX}
             MenuItem.Visible := False;
             {$ENDIF}
+            MenuItem.Visible := not(Config.CMHideEjectMenuItem);
             MenuItem.Caption := msgEjectHardware;
             MenuItem.OnClick := EjectDialog;
           end;

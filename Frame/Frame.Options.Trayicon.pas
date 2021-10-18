@@ -34,6 +34,7 @@ type
   { TfrmTrayiconOptionsPage }
 
   TfrmTrayiconOptionsPage = class(TfrmBaseEntityPage)
+    chkHideEjectMenuItem: TCheckBox;
     chkUserPicture: TCheckBox;
     chkHideEjectButton: TCheckBox;
     cxLeftClick: TComboBox;
@@ -160,6 +161,7 @@ begin
   chkAutomaticHideMenu.Checked := Config.GMAutomaticHideMenu;
   chkUserPicture.Checked := Config.GMShowUserPicture;
   chkHideEjectButton.Checked := Config.GMHideEjectButton;
+  chkHideEjectMenuItem.Checked := Config.CMHideEjectMenuItem;
 
   //Get GM theme list
   if FindFirst(ASuiteInstance.Paths.SuitePathMenuThemes + '*.*', faDirectory, searchResult) = 0 then
@@ -184,6 +186,7 @@ begin
 
   {$IFDEF UNIX}
   chkHideEjectButton.Enabled := False;
+  chkHideEjectMenuItem.Enabled := False;
   {$ENDIF}
 end;
 
@@ -207,6 +210,7 @@ begin
   Config.GMAutomaticHideMenu := chkAutomaticHideMenu.Checked;
   Config.GMShowUserPicture := chkUserPicture.Checked;
   Config.GMHideEjectButton := chkHideEjectButton.Checked;
+  Config.CMHideEjectMenuItem := chkHideEjectMenuItem.Checked;
 
   //Submenu
   Config.AutoExpansionFolder := chkAutoExpansion.Checked;

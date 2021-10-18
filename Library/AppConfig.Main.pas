@@ -32,6 +32,7 @@ type
   { TConfiguration }
   TConfiguration = class
   private
+    FCMHideEjectMenuItem: Boolean;
     FGMHideEjectButton: Boolean;
     //General
     FStartWithWindows   : Boolean;
@@ -210,6 +211,7 @@ type
     property ActionClickMiddle: TTrayiconActionClick read FActionClickMiddle write FActionClickMiddle;
     property ActionClickRight: TTrayiconActionClick read FActionClickRight write FActionClickRight;
     property AutoExpansionFolder: Boolean read FAutoExpansionFolder write FAutoExpansionFolder;
+    property CMHideEjectMenuItem: Boolean read FCMHideEjectMenuItem write FCMHideEjectMenuItem;
     //Graphic Menu
     property GMTheme: string read FGMTheme write SetGMTheme;
     property GMFade: Boolean read FGMFade write FGMFade;
@@ -360,6 +362,7 @@ begin
   FActionClickMiddle  := tcNone;
   FActionClickRight   := tcShowGraphicMenu;
   FAutoExpansionFolder := True;
+  FCMHideEjectMenuItem := False;
 
   //Graphic Menu
   FGMTheme            := 'default';
@@ -537,6 +540,7 @@ begin
     AJSONConfig.SetValue(CONFIG_ACTIONCLICKMIDDLE, Integer(Self.ActionClickMiddle));
     AJSONConfig.SetValue(CONFIG_ACTIONCLICKRIGHT, Integer(Self.ActionClickRight));
     AJSONConfig.SetValue(CONFIG_AUTOEXPANSIONFOLDER, Self.AutoExpansionFolder);
+    AJSONConfig.SetValue(CONFIG_CMHIDEEJECTMENUITEM, Self.CMHideEjectMenuItem);
 
     //Graphic Menu
     AJSONConfig.SetValue(CONFIG_GMFADE, Self.GMFade);
@@ -662,6 +666,7 @@ begin
   Self.ActionClickMiddle         := TTrayiconActionClick(AJSONConfig.GetValue(CONFIG_ACTIONCLICKMIDDLE, Integer(Self.ActionClickMiddle)));
   Self.ActionClickRight          := TTrayiconActionClick(AJSONConfig.GetValue(CONFIG_ACTIONCLICKRIGHT, Integer(Self.ActionClickRight)));
   Self.AutoExpansionFolder       := AJSONConfig.GetValue(CONFIG_AUTOEXPANSIONFOLDER, Self.AutoExpansionFolder);
+  Self.CMHideEjectMenuItem       := AJSONConfig.GetValue(CONFIG_CMHIDEEJECTMENUITEM, Self.CMHideEjectMenuItem);
 
   //Graphic Menu
   Self.GMFade                    := AJSONConfig.GetValue(CONFIG_GMFADE, Self.GMFade);

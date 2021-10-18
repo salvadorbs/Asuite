@@ -1526,6 +1526,10 @@ msgstr ""
 msgid "Hide Eject USB Disk button"
 msgstr ""
 
+#: tfrmtrayiconoptionspage.chkhideejectmenuitem.caption
+msgid "Hide Eject USB Disk menu item"
+msgstr ""
+
 #: tfrmtrayiconoptionspage.chkuserpicture.caption
 msgid "Show user picture in menu"
 msgstr ""
