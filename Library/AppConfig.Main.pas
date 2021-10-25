@@ -92,7 +92,6 @@ type
     FGMPositionTop      : Integer;
     FGMPositionLeft     : Integer;
     FGMSmallIconSize    : Boolean;
-    FGMAutomaticHideMenu : Boolean;
     FGMShowUserPicture   : Boolean;
     //Right buttons
     FGMBtnDocuments     : string;
@@ -219,7 +218,6 @@ type
     property GMPersonalPicture: string read FGMPersonalPicture write FGMPersonalPicture;
     property GMPositionTop: Integer read FGMPositionTop write FGMPositionTop;
     property GMPositionLeft: Integer read FGMPositionLeft write FGMPositionLeft;
-    property GMAutomaticHideMenu: Boolean read FGMAutomaticHideMenu write FGMAutomaticHideMenu;
     property GMShowUserPicture: Boolean read FGMShowUserPicture write FGMShowUserPicture;
     property GMHideEjectButton: Boolean read FGMHideEjectButton write FGMHideEjectButton;
     //Right buttons
@@ -370,7 +368,6 @@ begin
   FGMPersonalPicture  := 'PersonalPicture.png';
   FGMPositionTop      := -1;
   FGMPositionLeft     := -1;
-  FGMAutomaticHideMenu := True;
   FGMShowUserPicture  := True;
   FGMHideEjectButton  := False;
 
@@ -548,7 +545,6 @@ begin
     AJSONConfig.SetValue(CONFIG_GMPERSONALPICTURE, Self.GMPersonalPicture);
     AJSONConfig.SetValue(CONFIG_GMPOSITIONTOP, Self.GMPositionTop);
     AJSONConfig.SetValue(CONFIG_GMPOSITIONLEFT, Self.GMPositionLeft);
-    AJSONConfig.SetValue(CONFIG_GMAUTOHIDEMENU, Self.GMAutomaticHideMenu);
     AJSONConfig.SetValue(CONFIG_GMSHOWUSERPICTURE, Self.GMShowUserPicture);
     AJSONConfig.SetValue(CONFIG_GMHIDEEJECTBUTTON, Self.GMHideEjectButton);
 
@@ -674,7 +670,6 @@ begin
   Self.GMPersonalPicture         := AJSONConfig.GetValue(CONFIG_GMPERSONALPICTURE, Self.GMPersonalPicture);
   Self.GMPositionTop             := AJSONConfig.GetValue(CONFIG_GMPOSITIONTOP, Self.GMPositionTop);
   Self.GMPositionLeft            := AJSONConfig.GetValue(CONFIG_GMPOSITIONLEFT, Self.GMPositionLeft);
-  Self.GMAutomaticHideMenu       := AJSONConfig.GetValue(CONFIG_GMAUTOHIDEMENU, Self.GMAutomaticHideMenu);
   Self.GMShowUserPicture         := AJSONConfig.GetValue(CONFIG_GMSHOWUSERPICTURE, Self.GMShowUserPicture);
   Self.GMHideEjectButton         := AJSONConfig.GetValue(CONFIG_GMHIDEEJECTBUTTON, Self.GMHideEjectButton);
 

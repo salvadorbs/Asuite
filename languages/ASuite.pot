@@ -1518,10 +1518,6 @@ msgstr ""
 msgid "Active autoexpansion folder"
 msgstr ""
 
-#: tfrmtrayiconoptionspage.chkautomatichidemenu.caption
-msgid "Auto-hide menu"
-msgstr ""
-
 #: tfrmtrayiconoptionspage.chkhideejectbutton.caption
 msgid "Hide Eject USB Disk button"
 msgstr ""

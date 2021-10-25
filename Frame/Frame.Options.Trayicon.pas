@@ -56,7 +56,6 @@ type
     grpGraphicMenu: TGroupBox;
     cbMenuFade: TCheckBox;
     cbSmallIcon: TCheckBox;
-    chkAutomaticHideMenu: TCheckBox;
     lbTrayRightClick: TLabel;
     Panel1: TPanel;
     Panel2: TPanel;
@@ -158,7 +157,6 @@ begin
   //Graphic Menu
   cbMenuFade.Checked  := Config.GMFade;
   cbSmallIcon.Checked := Config.GMSmallIconSize;
-  chkAutomaticHideMenu.Checked := Config.GMAutomaticHideMenu;
   chkUserPicture.Checked := Config.GMShowUserPicture;
   chkHideEjectButton.Checked := Config.GMHideEjectButton;
   chkHideEjectMenuItem.Checked := Config.CMHideEjectMenuItem;
@@ -207,7 +205,6 @@ begin
 
   Config.GMFade          := cbMenuFade.Checked;
   Config.GMSmallIconSize := cbSmallIcon.Checked;
-  Config.GMAutomaticHideMenu := chkAutomaticHideMenu.Checked;
   Config.GMShowUserPicture := chkUserPicture.Checked;
   Config.GMHideEjectButton := chkHideEjectButton.Checked;
   Config.CMHideEjectMenuItem := chkHideEjectMenuItem.Checked;

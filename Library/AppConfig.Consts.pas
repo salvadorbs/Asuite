@@ -108,7 +108,6 @@ const
   CONFIG_GMSMALLICONSIZE = 'trayicon/graphicmenu/treeview/small_icon';
   CONFIG_GMPOSITIONLEFT = 'trayicon/graphicmenu/position/left';
   CONFIG_GMPOSITIONTOP = 'trayicon/graphicmenu/position/top';
-  CONFIG_GMAUTOHIDEMENU = 'trayicon/graphicmenu/auto_hide_menu';
   CONFIG_GMSHOWUSERPICTURE = 'trayicon/graphicmenu/show_user_picture';
   CONFIG_GMHIDEEJECTBUTTON = 'trayicon/graphicmenu/hide_eject_button';
 
