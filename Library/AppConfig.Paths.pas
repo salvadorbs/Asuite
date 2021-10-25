@@ -55,7 +55,7 @@ type
     destructor Destroy; override;
 
     function AbsoluteToRelative(const APath: String): string;
-    function RelativeToAbsolute(const APath: String): string;
+    function RelativeToAbsolute(const APath: String; AExpandFileName: Boolean = True): string;
 
     procedure CheckBackupFolder;
     procedure CheckCacheFolders;
@@ -273,7 +273,8 @@ begin
   end;
 end;
 
-function TConfigPaths.RelativeToAbsolute(const APath: String): string;
+function TConfigPaths.RelativeToAbsolute(const APath: String;
+  AExpandFileName: Boolean): string;
 begin
   Result := '';
   if APath <> '' then
@@ -298,7 +299,7 @@ begin
     end;
 
     //Remove double path delimiter, resolve dots and expand path
-    if not IsValidURLProtocol(Result) and not FilenameIsAbsolute(Result) then
+    if AExpandFileName and (not IsValidURLProtocol(Result) and not FilenameIsAbsolute(Result)) then
       Result := CleanAndExpandFilename(Result);
   end;
 end;
