@@ -423,6 +423,8 @@ end;
 procedure TfrmGraphicMenu.FormShow(Sender: TObject);
 begin
   CheckUserPicture;
+  imgPersonalPicture.Visible := Config.GMShowUserPicture;
+  imgUserFrame.Visible := Config.GMShowUserPicture;
   sknbtnList.Pressed := True;
 
   //Clear edtSearch and focus it
