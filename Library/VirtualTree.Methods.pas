@@ -537,9 +537,9 @@ end;
 class procedure TVirtualTreeMethods.BeforeDeleteNode(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
 var
-  NodeData : TvCustomRealNodeData;
+  NodeData : TvBaseNodeData;
 begin
-  NodeData := TvCustomRealNodeData(GetNodeItemData(Node, Sender));
+  NodeData := GetNodeItemData(Node, Sender);
   if Assigned(NodeData) then
   begin
     TASuiteLogger.Info('Deleting node "%s"', [NodeData.Name]);
@@ -551,7 +551,8 @@ begin
         TvFileNodeData(NodeData).DeleteShortcutFile;
 
       //Remove node from every list (scheduler, hotkeys and etc...)
-      ASuiteManager.ListManager.RemoveItemFromLists(NodeData);
+      if NodeData is TvCustomRealNodeData then
+        ASuiteManager.ListManager.RemoveItemFromLists(TvCustomRealNodeData(NodeData));
 
       //Delete and reset cache icon
       TNodeIcon(NodeData.Icon).ResetCacheIcon;
