@@ -213,6 +213,7 @@ end;
 
 procedure TDBManager.Setup(const ADBFilePath: string);
 begin
+  TASuiteLogger.Info('Setup DBManager using sqlite file "%s"', [ADBFilePath]);
   FDBFileName := ADBFilePath;
 
   DoBackupList;

@@ -57,8 +57,6 @@ type
     tiTrayMenu: TTrayIcon;
     pmTrayicon: TPopupMenu;
     procedure DataModuleCreate(Sender: TObject);
-    procedure tiTrayMenuMouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
     procedure tiTrayMenuDblClick(Sender: TObject);
     procedure ShowMainForm(Sender: TObject);
     procedure EjectDialog(Sender: TObject);
@@ -148,20 +146,6 @@ end;
 procedure TdmTrayMenu.tiTrayMenuDblClick(Sender: TObject);
 begin
   ShowMainForm(Sender);
-end;
-
-procedure TdmTrayMenu.tiTrayMenuMouseDown(Sender: TObject; Button: TMouseButton;
-  Shift: TShiftState; X, Y: Integer);
-begin
-  {$IFNDEF QT}
-  if (Config.ASuiteState = lsStartUp) then
-    Exit;
-  case Button of
-    TMouseButton.mbLeft   : DoTrayIconButtonClick(Sender, Config.ActionClickLeft);
-    TMouseButton.mbMiddle : DoTrayIconButtonClick(Sender, Config.ActionClickMiddle);
-    TMouseButton.mbRight  : DoTrayIconButtonClick(Sender, Config.ActionClickRight);
-  end;
-  {$ENDIF}
 end;
 
 procedure TdmTrayMenu.ShowMainForm(Sender: TObject);
@@ -992,7 +976,6 @@ end;
 procedure TdmTrayMenu.tiTrayMenuMouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
-  {$IFDEF QT}
   if (Config.ASuiteState = lsStartUp) then
     Exit;
   case Button of
@@ -1000,7 +983,6 @@ begin
     TMouseButton.mbMiddle : DoTrayIconButtonClick(Sender, Config.ActionClickMiddle);
     TMouseButton.mbRight  : DoTrayIconButtonClick(Sender, Config.ActionClickRight);
   end;
-  {$ENDIF}
 end;
 
 procedure TdmTrayMenu.CreateAndAddSeparator(var Menu: TPopUpMenu; Text: String);

@@ -737,6 +737,7 @@ var
   {%H-}log: ISynLog;
 begin
   log := TASuiteLogger.Enter('TConfiguration.LoadConfig', Self);
+  TASuiteLogger.Debug('Settings file = %s', [ASuiteInstance.Paths.SuitePathSettings]);
 
   //if FileExists(ASuiteInstance.Paths.SuitePathSettings) then
   //begin
