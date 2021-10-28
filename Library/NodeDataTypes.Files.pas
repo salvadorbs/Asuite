@@ -56,7 +56,6 @@ type
     function GetWorkingDirAbsolute: string;
     procedure SetClickCount(const Value: Integer);
     function GetWindowState(ARunFromCategory: Boolean): Integer;
-    function ConvertWindowStateToSWOptions(AWindowState: Integer): TShowWindowOptions;
     function  IsProcessExists(exeFileName: string): Boolean;
   protected
     procedure SetLastAccess(const Value: Int64); override;
@@ -172,7 +171,7 @@ begin
   //For executable (EXE, CMD, BAT for Windows, or files with permission Execute for Linux), use CreateProcess
   if IsExecutableFile(Path) then
     Result := CreateProcessEx(PathAbsoluteFile, ASuiteInstance.Paths.RelativeToAbsolute(FParameters, False),
-                              WorkingDirAbsolute, ConvertWindowStateToSWOptions(GetWindowState(ARunFromCategory)),
+                              WorkingDirAbsolute, GetWindowState(ARunFromCategory),
                               EnvironmentVars) <> -1
   else
     Result := OpenDocument(Path);
@@ -212,7 +211,7 @@ begin
     ShowMessageFmtEx(msgErrorExecuteAdmin, [Self.Name], True);
   {$ELSE}
   Result := CreateProcessEx('pkexec', Format('%s %s', [PathAbsoluteFile, Parameters]), WorkingDirAbsolute,
-                            ConvertWindowStateToSWOptions(GetWindowState(ARunFromCategory)), EnvironmentVars) <> -1;
+                            GetWindowState(ARunFromCategory), EnvironmentVars) <> -1;
   {$ENDIF}
 end;
 
@@ -251,7 +250,7 @@ begin
     ShowMessageFmtEx(msgErrorExecuteUser, [Self.Name, AUserData.UserName], True);
   {$ELSE}
   Result := CreateProcessEx('pkexec', Format('%s %s %s', [AUserData.UserName, PathAbsoluteFile, Parameters]), WorkingDirAbsolute,
-                            ConvertWindowStateToSWOptions(GetWindowState(ARunFromCategory)), EnvironmentVars) <> -1;
+                            GetWindowState(ARunFromCategory), EnvironmentVars) <> -1;
   {$ENDIF}
 end;
 
@@ -303,17 +302,6 @@ begin
       1: Result := SW_SHOWMINNOACTIVE;
       2: Result := SW_SHOWMAXIMIZED;
     end;
-  end;
-end;
-
-function TvFileNodeData.ConvertWindowStateToSWOptions(AWindowState: Integer
-  ): TShowWindowOptions;
-begin
-  Result := swoNone;
-  case AWindowState of
-    SW_SHOWDEFAULT: Result := swoShowDefault;
-    SW_SHOWMINNOACTIVE: Result := swoshowMinNOActive;
-    SW_SHOWMAXIMIZED: Result := swoShowMaximized;
   end;
 end;
 

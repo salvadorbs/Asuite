@@ -32,7 +32,7 @@ function IsValidURLProtocol(const URL: string): Boolean;
 function IsPathExists(const Path: String): Boolean;
 function IsExecutableFile(APathFile: String): Boolean;
 function CreateProcessEx(APathFile: String; AParameters: String = ''; AWorkingDir: String = '';
-                         AWindowState: TShowWindowOptions = swoShowDefault;
+                         AWindowState: Integer = 1;
                          AEnvironmentVars: TStringList = nil): Integer;
 
 { Registry }
@@ -41,6 +41,7 @@ procedure DeleteASuiteAtOsStartup;
 function GetAutoStartFolder: String;
 
 { Misc }
+function ConvertWindowStateToSWOptions(AWindowState: Integer): TShowWindowOptions;
 procedure EjectDialog(Sender: TObject);
 function ExtractDirectoryName(const APath: string): string;
 
@@ -48,7 +49,7 @@ implementation
 
 uses
   Forms.Main, Utility.Misc, Kernel.Logger,
-  LazFileUtils{$IFDEF MSWINDOWS} , ShellApi {$ELSE}, IniFiles {$ENDIF}, LazUTF8,
+  LazFileUtils{$IFDEF MSWINDOWS} , ShellApi, Windows {$ELSE}, IniFiles {$ENDIF}, LazUTF8,
   Utility.FileFolder, Kernel.Instance;
 
 function IsValidURLProtocol(const URL: string): Boolean;
@@ -98,17 +99,19 @@ begin
 end;
 
 function CreateProcessEx(APathFile: String; AParameters: String;
-  AWorkingDir: String; AWindowState: TShowWindowOptions;
+  AWorkingDir: String; AWindowState: Integer;
   AEnvironmentVars: TStringList): Integer;
 var
   Process: TProcess;
   I: Integer;
 begin
+  Result := -1;
+
   Process := TProcess.Create(nil);
   try
     try
       Process.Executable := APathFile;
-      Process.ShowWindow := AWindowState;
+      Process.ShowWindow := ConvertWindowStateToSWOptions(AWindowState);
       Process.StartupOptions := [suoUseShowWindow];
       Process.CurrentDirectory := AWorkingDir;
       Process.Parameters.Text := AParameters;
@@ -126,14 +129,28 @@ begin
 
       Result := Process.ProcessID;
     except
-      on E: Exception do
+      on E: EProcess do
       begin
+        {$IFDEF MSWINDOWS}
+        if not ShellExecuteW(GetDesktopWindow, nil, PChar(APathFile), PChar(AParameters),
+           PChar(AWorkingDir), AWindowState) > 32 then
+        {$ENDIF}
         TASuiteLogger.Exception(E);
-        Result := -1;
       end;
     end;
   finally
     Process.Free;
+  end;
+end;
+
+function ConvertWindowStateToSWOptions(AWindowState: Integer
+  ): TShowWindowOptions;
+begin
+  Result := swoNone;
+  case AWindowState of
+    SW_SHOWDEFAULT: Result := swoShowDefault;
+    SW_SHOWMINNOACTIVE: Result := swoshowMinNOActive;
+    SW_SHOWMAXIMIZED: Result := swoShowMaximized;
   end;
 end;
 
