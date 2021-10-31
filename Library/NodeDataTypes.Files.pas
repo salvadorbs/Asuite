@@ -172,7 +172,7 @@ begin
   if IsExecutableFile(Path) then
     Result := CreateProcessEx(PathAbsoluteFile, ASuiteInstance.Paths.RelativeToAbsolute(FParameters, False),
                               WorkingDirAbsolute, GetWindowState(ARunFromCategory),
-                              EnvironmentVars) <> -1
+                              EnvironmentVars)
   else
     Result := OpenDocument(Path);
 
@@ -184,7 +184,7 @@ end;
 function TvFileNodeData.InternalExecuteAsAdmin(ARunFromCategory: Boolean): boolean;
 {$IFDEF MSWINDOWS}
 var
-  ShellExecuteInfo: TShellExecuteInfoW;
+  ErrShell: Int64;
 {$ENDIF}
 begin
   Result := False;
@@ -193,25 +193,15 @@ begin
     Exit;
 
   {$IFDEF MSWINDOWS}
-  ZeroMemory(@ShellExecuteInfo, SizeOf(ShellExecuteInfo));
-  ShellExecuteInfo.cbSize := SizeOf(TShellExecuteInfo);
-  ShellExecuteInfo.Wnd    := GetDesktopWindow;
-  ShellExecuteInfo.fMask  := SEE_MASK_FLAG_DDEWAIT or SEE_MASK_FLAG_NO_UI;
-  ShellExecuteInfo.lpVerb := PChar('runas');
-  //Set process's path, working dir, parameters and window state
-  ShellExecuteInfo.lpFile := PChar(PathAbsoluteFile);
-  ShellExecuteInfo.lpDirectory := PChar(GetWorkingDirAbsolute);
-  if FParameters <> '' then
-    ShellExecuteInfo.lpParameters := PChar(ASuiteInstance.Paths.RelativeToAbsolute(FParameters, False));
-  ShellExecuteInfo.nShow := GetWindowState(ARunFromCategory);
-  //Run process
-  Result := ShellExecuteExW(@ShellExecuteInfo);
+  Result := ExecWithShell(ErrShell, PathAbsoluteFile, True,
+                          ASuiteInstance.Paths.RelativeToAbsolute(FParameters, False),
+                          GetWorkingDirAbsolute, GetWindowState(ARunFromCategory));
 
   if not Result then
     ShowMessageFmtEx(msgErrorExecuteAdmin, [Self.Name], True);
   {$ELSE}
   Result := CreateProcessEx('pkexec', Format('%s %s', [PathAbsoluteFile, Parameters]), WorkingDirAbsolute,
-                            GetWindowState(ARunFromCategory), EnvironmentVars) <> -1;
+                            GetWindowState(ARunFromCategory), EnvironmentVars);
   {$ENDIF}
 end;
 
@@ -250,7 +240,7 @@ begin
     ShowMessageFmtEx(msgErrorExecuteUser, [Self.Name, AUserData.UserName], True);
   {$ELSE}
   Result := CreateProcessEx('pkexec', Format('%s %s %s', [AUserData.UserName, PathAbsoluteFile, Parameters]), WorkingDirAbsolute,
-                            GetWindowState(ARunFromCategory), EnvironmentVars) <> -1;
+                            GetWindowState(ARunFromCategory), EnvironmentVars);
   {$ENDIF}
 end;
 

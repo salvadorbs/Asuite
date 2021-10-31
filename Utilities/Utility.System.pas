@@ -31,10 +31,15 @@ uses
 function IsValidURLProtocol(const URL: string): Boolean;
 function IsPathExists(const Path: String): Boolean;
 function IsExecutableFile(APathFile: String): Boolean;
-function CreateProcessEx(APathFile: String; AParameters: String = ''; AWorkingDir: String = '';
-                         AWindowState: Integer = 1;
-                         AEnvironmentVars: TStringList = nil): Integer;
 
+{ Process }
+function CreateProcessEx(APathFile: String; AParameters: String = ''; AWorkingDir: String = '';
+                         AWindowState: Integer = 1; AEnvironmentVars: TStringList = nil): Boolean;
+{$IFDEF MSWINDOWS}
+function ExecWithShell(var iErr: Int64; APathFile: String; ARunAsAdmin: Boolean = False;
+                       AParameters: String = ''; AWorkingDir: String = '';
+                       AWindowState: Integer = 1; AEnvironmentVars: TStringList = nil): Boolean;
+{$ENDIF}
 { Registry }
 procedure SetASuiteAtOsStartup;
 procedure DeleteASuiteAtOsStartup;
@@ -99,13 +104,19 @@ begin
 end;
 
 function CreateProcessEx(APathFile: String; AParameters: String;
-  AWorkingDir: String; AWindowState: Integer;
-  AEnvironmentVars: TStringList): Integer;
+  AWorkingDir: String; AWindowState: Integer; AEnvironmentVars: TStringList
+  ): Boolean;
 var
   Process: TProcess;
   I: Integer;
+  {$IFDEF MSWINDOWS}
+  ErrShell: Int64;
+  {$ENDIF}
 begin
-  Result := -1;
+  TASuiteLogger.Info('CreateProcessEx (Exe = "%s", Params = "%s", WorkDir = "%s")',
+                     [APathFile, AParameters, AWorkingDir]);
+
+  Result := False;
 
   Process := TProcess.Create(nil);
   try
@@ -127,13 +138,14 @@ begin
 
       Process.Execute;
 
-      Result := Process.ProcessID;
+      Result := Process.ProcessID <> -1;
     except
       on E: EProcess do
       begin
         {$IFDEF MSWINDOWS}
-        if not ShellExecuteW(GetDesktopWindow, nil, PChar(APathFile), PChar(AParameters),
-           PChar(AWorkingDir), AWindowState) > 32 then
+        TASuiteLogger.Info('CreateProcessEx failed. Fallback ShellExecute', []);
+        Result := ExecWithShell(ErrShell, APathFile, False, AParameters, AWorkingDir, AWindowState, AEnvironmentVars);
+        if not Result then
         {$ENDIF}
         TASuiteLogger.Exception(E);
       end;
@@ -159,6 +171,7 @@ procedure EjectDialog(Sender: TObject);
 var
   WindowsPath : string;
   bShellExecute: Boolean;
+  ErrShell: Int64;
 {$ENDIF}
 begin
   {$IFDEF MSWINDOWS}
@@ -171,10 +184,11 @@ begin
   if FileExists(PChar(WindowsPath + '\System32\Rundll32.exe')) then
   begin
     TASuiteLogger.Info('Call Eject Dialog', []);
-    bShellExecute := ShellExecuteW(0,'open',
-                     PChar(WindowsPath + '\System32\Rundll32.exe'),
-                     PChar('Shell32,Control_RunDLL hotplug.dll'),
-                     PChar(WindowsPath + '\System32'),SW_SHOWNORMAL) > 32;
+
+    bShellExecute := ExecWithShell(ErrShell, WindowsPath + '\System32\Rundll32.exe',
+                                   False, 'Shell32,Control_RunDLL hotplug.dll',
+                                   PChar(WindowsPath + '\System32'), SW_SHOWNORMAL);
+
     //Error message
     if not bShellExecute then
       ShowMessageEx(Format('%s [%s]', [SysErrorMessage(GetLastOSError), 'Rundll32']), True);
@@ -188,6 +202,41 @@ function ExtractDirectoryName(const APath: string): string;
 begin
   Result := ExtractFileName(ExcludeTrailingPathDelimiter(APath));
 end;
+
+{$IFDEF MSWINDOWS}
+function ExecWithShell(var iErr: Int64; APathFile: String;
+  ARunAsAdmin: Boolean; AParameters: String; AWorkingDir: String;
+  AWindowState: Integer; AEnvironmentVars: TStringList): Boolean;
+var
+  ShExecInfo: TShellExecuteInfoW;
+begin
+  TASuiteLogger.Info('ExecWithShell (Exe = "%s", Params = "%s", WorkDir = "%s", ARunAsAdmin = "%s")',
+                     [APathFile, AParameters, AWorkingDir, BoolToStr(ARunAsAdmin)]);
+  Result := False;
+
+  ZeroMemory(@ShExecInfo, SizeOf(ShExecInfo));
+
+  ShExecInfo.cbSize := sizeof(ShExecInfo);
+  ShExecInfo.Wnd    := GetDesktopWindow;
+  ShExecInfo.fMask := SEE_MASK_NOCLOSEPROCESS;
+
+  if not ARunAsAdmin then
+    ShExecInfo.lpVerb := nil
+  else
+    ShExecInfo.lpVerb := PWideChar('runas');
+
+  ShExecInfo.lpFile := PWideChar(APathFile);
+  ShExecInfo.lpParameters := PWideChar(AParameters);
+  ShExecInfo.lpDirectory := PWideChar(AWorkingDir);
+  ShExecInfo.nShow := AWindowState;
+  ShExecInfo.hInstApp := 0;
+
+  if ShellExecuteExW(@ShExecInfo) then
+    Result := ShExecInfo.hProcess > 0
+  else
+    iErr := GetLastError;
+end;
+{$ENDIF}
 
 procedure SetASuiteAtOsStartup;
 var
