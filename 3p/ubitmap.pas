@@ -348,6 +348,7 @@ var
   IconInfo: TIconInfo;
   ARawImage: TRawImage;
   AImage: TLazIntfImage;
+  BitmapHandle, MaskHandle: HBitmap;
 begin
   Result := Graphics.TBitmap.Create;
   IconInfo := Default(TICONINFO);
@@ -377,7 +378,9 @@ begin
         AImage.Free;
       end;
     end;
-    Result.LoadFromRawImage(ARawImage, True);
+    RawImage_CreateBitmaps(ARawImage, BitmapHandle, MaskHandle, False);
+    Result.Handle := BitmapHandle;
+    Result.MaskHandle := MaskHandle;
   end;
   Windows.DeleteObject(IconInfo.hbmMask);
   Windows.DeleteObject(IconInfo.hbmColor);
