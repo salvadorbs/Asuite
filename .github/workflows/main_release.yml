@@ -108,7 +108,7 @@ jobs:
       id: cache
       uses: actions/cache@v2.1.3
       env:
-        cache-name: cache-laz-v0.5.0
+        cache-name: cache-laz-v0.5.1
       with:
         path: |
           ${{ env.LAZ_DIR }}
@@ -125,9 +125,8 @@ jobs:
    
     - name: Install Lazarus Packages
       if: steps.cache.outputs.cache-hit != 'true'
-      uses: Amadevus/pwsh-script@v2
-      with:
-        script: ${{ env.ASUITE_SOURCE }}/utils/installPackages.ps1 -ASuiteSource:"${{ env.ASUITE_SOURCE }}" -LazBuildPath:"${{ matrix.config.lazbuild }}" -BuildIde:$false -RemoveSparta:$true
+      shell: pwsh
+      run: ${{ env.ASUITE_SOURCE }}/utils/installPackages.ps1 -ASuiteSource:"${{ env.ASUITE_SOURCE }}" -LazBuildPath:"${{ matrix.config.lazbuild }}" -BuildIde:$false -RemoveSparta:$true
 
     - name: Validate Cache
       if: steps.cache.outputs.cache-hit == 'true'
