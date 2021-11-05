@@ -108,7 +108,7 @@ jobs:
       id: cache
       uses: actions/cache@v2.1.3
       env:
-        cache-name: cache-laz-v0.4.2
+        cache-name: cache-laz-v0.5.1
       with:
         path: |
           ${{ env.LAZ_DIR }}
@@ -123,47 +123,10 @@ jobs:
         mkdir ${{ env.LAZ_DIR }}
         ./fpcup --installdir=${{ env.LAZ_DIR }} --fpcURL=${{ env.FPC_URL }} --fpcBranch=${{ env.FPC_BRANCH }} --lazURL=${{ env.LAZ_URL }} --lazBranch=${{ env.LAZ_BRANCH }} --lazPATCH="${{ env.ASUITE_SOURCE}}${{ env.LAZ_PATCH}}" ${{ env.FPCUP_OPT }} --only=docker --noconfirm --verbose
    
-    - name: Remove Sparta_Generics from jpLib.lpk requirements
-      uses: Amadevus/pwsh-script@v2
-      with:
-        script: |
-          $file = gi ${{ env.ASUITE_SOURCE }}/3p/JPLib/packages/Lazarus/jplib.lpk
-          [xml]$xml=Get-Content -Path $file
-          $node=$xml.SelectSingleNode('CONFIG/Package/RequiredPkgs/Item1')
-          $node.ParentNode.RemoveChild($node)
-          $xml.Save($file.Fullname)
-      
-    - name: Install packages
+    - name: Install Lazarus Packages
       if: steps.cache.outputs.cache-hit != 'true'
-      run: |
-        ${{ matrix.config.lazbuild }} --add-package-link "${{ env.ASUITE_SOURCE }}/3p/bgrabitmap/bgrabitmap/bgrabitmappack.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package "${{ env.ASUITE_SOURCE }}/3p/bgrabitmap/bglcontrols/bglcontrols.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package "${{ env.ASUITE_SOURCE }}/3p/bgracontrols/bgracontrols.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package "${{ env.ASUITE_SOURCE }}/3p/bgracontrols/bgrapascalscriptcomponent.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package "${{ env.ASUITE_SOURCE }}/3p/IGDIPlusMod/packages/Lazarus/lazigdiplus.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package "${{ env.ASUITE_SOURCE }}/3p/JPLib/packages/Lazarus/jplib.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package "${{ env.ASUITE_SOURCE }}/3p/JPPack/packages/Lazarus/jppacklcl.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package-link "${{ env.ASUITE_SOURCE }}/3p/mORMot2/packages/lazarus/mormot2.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package-link "${{ env.ASUITE_SOURCE }}/3p/HashLib4Pascal/HashLib/src/Packages/FPC/HashLib4PascalPackage.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package "${{ env.ASUITE_SOURCE }}/3p/luipack/uniqueinstance/uniqueinstance_package.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package-link "${{ env.ASUITE_SOURCE }}/3p/luipack/lclextensions/lclextensions_package.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package "${{ env.ASUITE_SOURCE }}/3p/VirtualTreeView-Lazarus/Source/virtualtreeview_package.lpk" --skip-dependencies
-        ${{ matrix.config.lazbuild }} --add-package "${{ env.ASUITE_SOURCE }}/3p/AsuiteComps/ASuiteComps.lpk" --skip-dependencies
-
-    - name: Download a file
-      if: steps.cache.outputs.cache-hit != 'true'
-      uses: carlosperate/download-file-action@v1.0.3
-      with:
-        file-url: 'https://github.com/synopse/mORMot2/releases/download/sqlite.3.36.0/mormot2static.7z'
-        file-name: 'sqlite3fpc.7z'
-        location: '${{ env.ASUITE_SOURCE }}/3p/mORMot2/'
-
-    - name: extract-7z-action
-      if: steps.cache.outputs.cache-hit != 'true'
-      uses: DuckSoft/extract-7z-action@v1.0
-      with:
-        pathSource: '${{ env.ASUITE_SOURCE }}/3p/mORMot2/sqlite3fpc.7z'
-        pathTarget: '${{ env.ASUITE_SOURCE }}/3p/mORMot2/'
+      shell: pwsh
+      run: ${{ env.ASUITE_SOURCE }}/utils/installPackages.ps1 -ASuiteSource:"${{ env.ASUITE_SOURCE }}" -LazBuildPath:"${{ matrix.config.lazbuild }}" -BuildIde:$false -RemoveSparta:$true
 
     - name: Validate Cache
       if: steps.cache.outputs.cache-hit == 'true'
