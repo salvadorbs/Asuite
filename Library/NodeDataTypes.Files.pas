@@ -169,12 +169,9 @@ begin
 
   //For url & documents, use OpenDocument (who uses xdg-open in Linux and ShellExecute in Windows)
   //For executable (EXE, CMD, BAT for Windows, or files with permission Execute for Linux), use CreateProcess
-  if IsExecutableFile(Path) then
-    Result := CreateProcessEx(PathAbsoluteFile, ASuiteInstance.Paths.RelativeToAbsolute(FParameters, False),
-                              WorkingDirAbsolute, GetWindowState(ARunFromCategory),
-                              EnvironmentVars)
-  else
-    Result := OpenDocument(Path);
+  Result := RunFile(PathAbsoluteFile, ASuiteInstance.Paths.RelativeToAbsolute(FParameters, False),
+                    WorkingDirAbsolute, GetWindowState(ARunFromCategory),
+                    EnvironmentVars);
 
   //Error message
   if not Result then

@@ -969,10 +969,7 @@ end;
 
 procedure TdmTrayMenu.OpenFile(Sender: TObject);
 begin
-  if IsExecutableFile(TASMenuItem(Sender).Path) then
-    CreateProcessEx(TASMenuItem(Sender).Path)
-  else
-    OpenDocument(TASMenuItem(Sender).Path);
+  RunFile(TASMenuItem(Sender).Path);
 end;
 
 procedure TdmTrayMenu.tiTrayMenuMouseUp(Sender: TObject; Button: TMouseButton;
