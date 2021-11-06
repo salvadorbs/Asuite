@@ -33,6 +33,8 @@ function IsPathExists(const Path: String): Boolean;
 function IsExecutableFile(APathFile: String): Boolean;
 
 { Process }
+function RunFile(APathFile: String; AParameters: String = ''; AWorkingDir: String = '';
+                 AWindowState: Integer = 1; AEnvironmentVars: TStringList = nil): Boolean;
 function CreateProcessEx(APathFile: String; AParameters: String = ''; AWorkingDir: String = '';
                          AWindowState: Integer = 1; AEnvironmentVars: TStringList = nil): Boolean;
 {$IFDEF MSWINDOWS}
@@ -103,15 +105,29 @@ begin
   {$ENDIF}
 end;
 
+function RunFile(APathFile: String; AParameters: String; AWorkingDir: String;
+  AWindowState: Integer; AEnvironmentVars: TStringList): Boolean;
+var
+  ErrShell: Int64;
+begin
+  {$IFDEF MSWINDOWS}
+  Result := ExecWithShell(ErrShell, APathFile, False, AParameters, AWorkingDir, AWindowState, AEnvironmentVars)
+{$ELSE}
+  if IsExecutableFile(APathFile) then
+    Result := CreateProcessEx(APathFile, AParameters, AWorkingDir, AWindowState, AEnvironmentVars)
+  else begin
+    TASuiteLogger.Info('OpenDocument (File = "%s")', [APathFile]);
+    Result := OpenDocument(APathFile);
+  end;
+{$ENDIF}
+end;
+
 function CreateProcessEx(APathFile: String; AParameters: String;
   AWorkingDir: String; AWindowState: Integer; AEnvironmentVars: TStringList
   ): Boolean;
 var
   Process: TProcess;
   I: Integer;
-  {$IFDEF MSWINDOWS}
-  ErrShell: Int64;
-  {$ENDIF}
 begin
   TASuiteLogger.Info('CreateProcessEx (Exe = "%s", Params = "%s", WorkDir = "%s")',
                      [APathFile, AParameters, AWorkingDir]);
@@ -127,14 +143,17 @@ begin
       Process.CurrentDirectory := AWorkingDir;
       Process.Parameters.Text := AParameters;
 
-      //Add custom environment vars
-      if Assigned(AEnvironmentVars) then
+      //If no custom envVars, use ASuite process envVars
+      if Assigned(AEnvironmentVars) and (AEnvironmentVars.Count > 0) then
+      begin
+        //Add custom environment vars
         for I := 0 to AEnvironmentVars.Count - 1 do
           Process.Environment.Add(AEnvironmentVars[I]);
 
-      //Add actual environment vars
-      for I := 0 to GetEnvironmentVariableCountUTF8 - 1 do
-        Process.Environment.Add(GetEnvironmentStringUTF8(I));
+        //Add actual environment vars
+        for I := 0 to GetEnvironmentVariableCountUTF8 - 1 do
+          Process.Environment.Add(GetEnvironmentStringUTF8(I));
+      end;
 
       Process.Execute;
 
@@ -142,11 +161,6 @@ begin
     except
       on E: EProcess do
       begin
-        {$IFDEF MSWINDOWS}
-        TASuiteLogger.Info('CreateProcessEx failed. Fallback ShellExecute', []);
-        Result := ExecWithShell(ErrShell, APathFile, False, AParameters, AWorkingDir, AWindowState, AEnvironmentVars);
-        if not Result then
-        {$ENDIF}
         TASuiteLogger.Exception(E);
       end;
     end;
