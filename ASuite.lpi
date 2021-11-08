@@ -17,6 +17,7 @@
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
       <XPManifest>
+        <DpiAware Value="True"/>
         <TextName Value="ASuite"/>
         <TextDesc Value="Portable Launcher"/>
       </XPManifest>
