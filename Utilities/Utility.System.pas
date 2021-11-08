@@ -40,7 +40,7 @@ function CreateProcessEx(APathFile: String; AParameters: String = ''; AWorkingDi
 {$IFDEF MSWINDOWS}
 function ExecWithShell(var iErr: Int64; APathFile: String; ARunAsAdmin: Boolean = False;
                        AParameters: String = ''; AWorkingDir: String = '';
-                       AWindowState: Integer = 1; AEnvironmentVars: TStringList = nil): Boolean;
+                       AWindowState: Integer = 1): Boolean;
 {$ENDIF}
 { Registry }
 procedure SetASuiteAtOsStartup;
@@ -55,7 +55,7 @@ function ExtractDirectoryName(const APath: string): string;
 implementation
 
 uses
-  Forms.Main, Utility.Misc, Kernel.Logger,
+  Forms.Main, Utility.Misc, Kernel.Logger, StrUtils, LazStringUtils,
   LazFileUtils{$IFDEF MSWINDOWS} , ShellApi, Windows {$ELSE}, IniFiles {$ENDIF}, LazUTF8,
   Utility.FileFolder, Kernel.Instance;
 
@@ -109,9 +109,39 @@ function RunFile(APathFile: String; AParameters: String; AWorkingDir: String;
   AWindowState: Integer; AEnvironmentVars: TStringList): Boolean;
 var
   ErrShell: Int64;
-begin
+  str: AnsiString;
+  arrString: TStringArray;
+
   {$IFDEF MSWINDOWS}
-  Result := ExecWithShell(ErrShell, APathFile, False, AParameters, AWorkingDir, AWindowState, AEnvironmentVars)
+  procedure SetEnvVariable(AStringList: TStringList; ARemove: Boolean);
+  var
+    I: Integer;
+  begin
+    for I := 0 to AStringList.Count - 1 do
+    begin
+      str := AStringList[I];
+      if str[1] <> '=' then
+      begin
+        arrString := str.Split('=', 2);
+        if Length(arrString) = 2 then
+        begin
+          if ARemove then
+            SetEnvironmentVariable(PAnsiChar(arrString[0]), nil)
+          else
+            SetEnvironmentVariable(PAnsiChar(arrString[0]), PAnsiChar(arrString[1]))
+        end;
+      end;
+    end;
+  end;
+  {$ENDIF}
+
+begin
+{$IFDEF MSWINDOWS}
+  SetEnvVariable(AEnvironmentVars, False);
+
+  Result := ExecWithShell(ErrShell, APathFile, False, AParameters, AWorkingDir, AWindowState);
+
+  SetEnvVariable(AEnvironmentVars, True);
 {$ELSE}
   if IsExecutableFile(APathFile) then
     Result := CreateProcessEx(APathFile, AParameters, AWorkingDir, AWindowState, AEnvironmentVars)
@@ -220,7 +250,7 @@ end;
 {$IFDEF MSWINDOWS}
 function ExecWithShell(var iErr: Int64; APathFile: String;
   ARunAsAdmin: Boolean; AParameters: String; AWorkingDir: String;
-  AWindowState: Integer; AEnvironmentVars: TStringList): Boolean;
+  AWindowState: Integer): Boolean;
 var
   ShExecInfo: TShellExecuteInfoW;
 begin
