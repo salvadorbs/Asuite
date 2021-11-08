@@ -18,7 +18,7 @@ env:
   FPC_URL: 'gitlab'
   FPC_BRANCH: 'release_3_2_2'
   LAZ_URL: 'gitlab'
-  LAZ_BRANCH: 'lazarus_2_2_0_RC1'
+  LAZ_BRANCH: 'lazarus_2_2_0_RC2'
   LAZ_DIR: 'fpcLaz'
   BUILD_MODE: 'Debug_GH_Action'   
   FPCUP_OPT: '--lazopt="-g -gl" --verbose' # Removed --fpcopt="-g -gl" - bug with mORMot 2 debug info
