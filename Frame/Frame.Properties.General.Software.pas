@@ -41,7 +41,9 @@ type
     lbWorkingDir: TLabel;
 
     procedure edtPathExeAcceptFileName(Sender: TObject; var Value: String);
+    procedure edtPathExeButtonClick(Sender: TObject);
     procedure edtWorkingDirAcceptDirectory(Sender: TObject; var Value: String);
+    procedure edtWorkingDirButtonClick(Sender: TObject);
     procedure edtWorkingDirChange(Sender: TObject);
   private
     { Private declarations }
@@ -69,11 +71,23 @@ begin
   CheckPropertyPath(edtWorkingDir, Value);
 end;
 
+procedure TfrmSWGeneralPropertyPage.edtWorkingDirButtonClick(Sender: TObject);
+begin
+  if edtWorkingDir.Text <> '' then
+    edtWorkingDir.RootDir := ExtractFileDir(ASuiteInstance.Paths.RelativeToAbsolute(edtWorkingDir.Text));
+end;
+
 procedure TfrmSWGeneralPropertyPage.edtPathExeAcceptFileName(Sender: TObject;
   var Value: String);
 begin
   Value := ASuiteInstance.Paths.AbsoluteToRelative(Value);
   CheckPropertyPath(edtWorkingDir);
+end;
+
+procedure TfrmSWGeneralPropertyPage.edtPathExeButtonClick(Sender: TObject);
+begin
+  if edtPathExe.Text <> '' then
+    edtPathExe.InitialDir := ExtractFileDir(ASuiteInstance.Paths.RelativeToAbsolute(edtPathExe.Text));
 end;
 
 procedure TfrmSWGeneralPropertyPage.edtWorkingDirChange(Sender: TObject);

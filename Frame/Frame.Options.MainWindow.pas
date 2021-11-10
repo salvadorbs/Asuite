@@ -53,6 +53,7 @@ type
     procedure cbBackgroundClick(Sender: TObject);
     procedure btnFontSettingsClick(Sender: TObject);
     procedure edtBackgroundAcceptFileName(Sender: TObject; var Value: String);
+    procedure edtBackgroundButtonClick(Sender: TObject);
   private
     { Private declarations }
   strict protected
@@ -85,6 +86,12 @@ procedure TfrmMainWindowOptionsPage.edtBackgroundAcceptFileName(
   Sender: TObject; var Value: String);
 begin
   Value := ASuiteInstance.Paths.AbsoluteToRelative(Value);
+end;
+
+procedure TfrmMainWindowOptionsPage.edtBackgroundButtonClick(Sender: TObject);
+begin
+  if edtBackground.Text <> '' then
+    edtBackground.InitialDir := ExtractFileDir(ASuiteInstance.Paths.RelativeToAbsolute(edtBackground.Text));
 end;
 
 procedure TfrmMainWindowOptionsPage.cbBackgroundClick(Sender: TObject);

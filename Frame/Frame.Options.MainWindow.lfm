@@ -47,6 +47,7 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       MaxLength = 0
       ParentFont = False
       TabOrder = 1
+      OnButtonClick = edtBackgroundButtonClick
       Text = '$ASuite\'
     end
     object cbAutoOpClCat: TCheckBox

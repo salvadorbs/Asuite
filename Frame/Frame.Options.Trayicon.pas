@@ -64,6 +64,7 @@ type
     procedure cbTrayiconClick(Sender: TObject);
     procedure cbTrayCustomIconClick(Sender: TObject);
     procedure edtCustomIconAcceptFileName(Sender: TObject; var Value: String);
+    procedure edtCustomIconButtonClick(Sender: TObject);
   private
     { Private declarations }
     procedure LoadComboMouseClickItems(AComboBox: TComboBox);
@@ -105,6 +106,12 @@ procedure TfrmTrayiconOptionsPage.edtCustomIconAcceptFileName(Sender: TObject;
   var Value: String);
 begin
   Value := ASuiteInstance.Paths.AbsoluteToRelative(Value);
+end;
+
+procedure TfrmTrayiconOptionsPage.edtCustomIconButtonClick(Sender: TObject);
+begin
+  if edtCustomIcon.Text <> '' then
+    edtCustomIcon.InitialDir := ExtractFileDir(ASuiteInstance.Paths.RelativeToAbsolute(edtCustomIcon.Text));
 end;
 
 procedure TfrmTrayiconOptionsPage.cbTrayiconClick(Sender: TObject);
