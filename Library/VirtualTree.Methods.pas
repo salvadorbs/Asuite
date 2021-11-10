@@ -734,7 +734,7 @@ begin
       // Show frmMain
       frmMainID:
         begin
-          if frmMain.Showing then
+          if (frmMain.Showing) and (frmMain.Active) then
             frmMain.HideMainForm
           else
             frmMain.ShowMainForm(Sender);
