@@ -126,13 +126,11 @@ object frmGraphicMenu: TfrmGraphicMenu
     BorderStyle = bsNone
     Color = clWhite
     DefaultNodeHeight = 35
-    Font.Color = clBlack
     Header.AutoSizeIndex = 0
     Header.Columns = <>
     Header.MainColumn = -1
     Header.Options = [hoColumnResize, hoDrag]
     HintMode = hmHint
-    ParentFont = False
     ParentShowHint = False
     PopupMenu = pmWindow
     ScrollBarOptions.ScrollBars = ssVertical
