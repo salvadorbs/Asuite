@@ -9,6 +9,7 @@ object frmUILogin: TfrmUILogin
   ClientWidth = 316
   Font.Color = clWindowText
   Font.Height = -12
+  OnCloseQuery = FormCloseQuery
   Position = poScreenCenter
   LCLVersion = '2.2.0.2'
   object imgTop: TImage
