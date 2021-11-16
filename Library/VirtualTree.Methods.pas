@@ -580,15 +580,18 @@ class procedure TVirtualTreeMethods.FindNode(Sender: TBaseVirtualTree;
 var
   LauncherSearch  : ^TLauncherSearch;
   CurrentFileData : TvFileNodeData;
+  NodeData        : TvBaseNodeData;
   SearchNodeData  : PTreeDataX;
   SearchNode      : PVirtualNode;
   Found           : Boolean;
 begin
   LauncherSearch  := Data;
-  CurrentFileData := TvFileNodeData(GetNodeItemData(Node, Sender));
-  if Assigned(CurrentFileData) then
-    if (CurrentFileData.IsFileItem) then
+  NodeData := GetNodeItemData(Node, Sender);
+  if Assigned(NodeData) then
+    if (NodeData.IsFileItem) then
     begin
+      CurrentFileData := TvFileNodeData(NodeData);
+
       Found := False;
       //Search Keyword in user specified field
       case LauncherSearch.SearchType of
@@ -732,7 +735,7 @@ begin
       // Show frmMain
       frmMainID:
         begin
-          if frmMain.Showing then
+          if (frmMain.Showing) and (frmMain.Active) then
             frmMain.HideMainForm
           else
             frmMain.ShowMainForm(Sender);

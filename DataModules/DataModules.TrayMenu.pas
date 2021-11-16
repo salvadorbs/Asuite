@@ -126,7 +126,7 @@ uses
   DataModules.Icons, Forms.Main, AppConfig.Main, VirtualTree.Methods,
   Utility.System, Forms.GraphicMenu, Kernel.Types, NodeDataTypes.Files,
   NodeDataTypes.Custom, NodeDataTypes.Base, Kernel.Consts, Kernel.Logger,
-  Utility.FileFolder, Kernel.ResourceStrings, Kernel.Instance,
+  Utility.FileFolder, Kernel.ResourceStrings, Kernel.Instance, LazVersion,
   Kernel.Manager, mormot.core.log {$IFDEF MSWINDOWS} , Windows {$ENDIF};
 
 {$R *.lfm}
@@ -257,7 +257,9 @@ begin
   //QT5Trayicon's contextMenu broken after recreating popup's handle
   //So hide trayicon before PopUpMethod and after it, show again
   {$IFDEF QT}
+  {$IF laz_fullversion<2020000}
   tiTrayMenu.Hide;
+  {$ENDIF}
   {$ENDIF}
 
   //Populate classic menu at runtime
@@ -268,8 +270,10 @@ begin
   //Show classic menu
   ShowPopupMenu(pmTrayicon);
 
-  {$IFDEF UNIX and QT}
+  {$IFDEF QT}
+  {$IF laz_fullversion<2020000}
   tiTrayMenu.Show;
+  {$ENDIF}
   {$ENDIF}
 end;
 

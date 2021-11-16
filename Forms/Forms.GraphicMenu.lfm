@@ -75,6 +75,7 @@ object frmGraphicMenu: TfrmGraphicMenu
     Font.Color = clWhite
     Font.Height = -9
     Layout = tlCenter
+    ParentColor = False
     ParentFont = False
   end
   object lblDriveName: TLabel
@@ -87,6 +88,7 @@ object frmGraphicMenu: TfrmGraphicMenu
     Font.Height = -9
     Layout = tlCenter
     ParentBidiMode = False
+    ParentColor = False
     ParentFont = False
   end
   object imgDragSpaceHidden: TImage
@@ -122,6 +124,7 @@ object frmGraphicMenu: TfrmGraphicMenu
     Top = 97
     Width = 240
     BorderStyle = bsNone
+    Color = clWhite
     DefaultNodeHeight = 35
     Header.AutoSizeIndex = 0
     Header.Columns = <>
@@ -253,6 +256,8 @@ object frmGraphicMenu: TfrmGraphicMenu
     Height = 23
     Top = 467
     Width = 240
+    Color = clWhite
+    Font.Color = clBlack
     ParentFont = False
     PopupMenu = frmMain.pmSearch
     RightButton.Visible = True

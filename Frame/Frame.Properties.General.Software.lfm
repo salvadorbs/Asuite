@@ -41,6 +41,7 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       MaxLength = 0
       ParentFont = False
       TabOrder = 0
+      OnButtonClick = edtPathExeButtonClick
       Text = '$ASuite\'
     end
     object lbWorkingDir: TLabel
@@ -65,6 +66,7 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       MaxLength = 0
       ParentFont = False
       TabOrder = 1
+      OnButtonClick = edtWorkingDirButtonClick
       OnChange = edtWorkingDirChange
       Text = '$ASuite\'
     end

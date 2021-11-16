@@ -41,6 +41,7 @@ type
     lbDescription: TLabel;
     lbPathIcon: TLabel;
     procedure edtPathIconAcceptFileName(Sender: TObject; var Value: String);
+    procedure edtPathIconButtonClick(Sender: TObject);
     procedure edtPathIconExit(Sender: TObject);
     procedure edtNameEnter(Sender: TObject);
     procedure edtPathIconChange(Sender: TObject);
@@ -124,6 +125,12 @@ procedure TfrmBaseGeneralPropertyPage.edtPathIconAcceptFileName(
   Sender: TObject; var Value: String);
 begin
   Value := ASuiteInstance.Paths.AbsoluteToRelative(Value);
+end;
+
+procedure TfrmBaseGeneralPropertyPage.edtPathIconButtonClick(Sender: TObject);
+begin
+  if edtPathIcon.Text <> '' then
+    edtPathIcon.InitialDir := ExtractFileDir(ASuiteInstance.Paths.RelativeToAbsolute(edtPathIcon.Text));
 end;
 
 procedure TfrmBaseGeneralPropertyPage.edtPathIconChange(Sender: TObject);
