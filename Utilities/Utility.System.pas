@@ -38,7 +38,7 @@ function RunFile(APathFile: String; AParameters: String = ''; AWorkingDir: Strin
 function CreateProcessEx(APathFile: String; AParameters: String = ''; AWorkingDir: String = '';
                          AWindowState: Integer = 1; AEnvironmentVars: TStringList = nil): Boolean;
 {$IFDEF MSWINDOWS}
-function ExecWithShell(var iErr: Int64; APathFile: String; ARunAsAdmin: Boolean = False;
+function ExecWithShell(APathFile: String; ARunAsAdmin: Boolean = False;
                        AParameters: String = ''; AWorkingDir: String = '';
                        AWindowState: Integer = 1): Boolean;
 {$ENDIF}
@@ -55,7 +55,7 @@ function ExtractDirectoryName(const APath: string): string;
 implementation
 
 uses
-  Forms.Main, Utility.Misc, Kernel.Logger, StrUtils, LazStringUtils,
+  Forms.Main, Utility.Misc, Kernel.Logger, StrUtils, LazStringUtils, Kernel.ResourceStrings,
   LazFileUtils{$IFDEF MSWINDOWS} , ShellApi, Windows {$ELSE}, IniFiles {$ENDIF}, LazUTF8,
   Utility.FileFolder, Kernel.Instance;
 
@@ -108,7 +108,6 @@ end;
 function RunFile(APathFile: String; AParameters: String; AWorkingDir: String;
   AWindowState: Integer; AEnvironmentVars: TStringList): Boolean;
 var
-  ErrShell: Int64;
   str: AnsiString;
   arrString: TStringArray;
 
@@ -139,7 +138,7 @@ begin
 {$IFDEF MSWINDOWS}
   SetEnvVariable(AEnvironmentVars, False);
 
-  Result := ExecWithShell(ErrShell, APathFile, False, AParameters, AWorkingDir, AWindowState);
+  Result := ExecWithShell(APathFile, False, AParameters, AWorkingDir, AWindowState);
 
   SetEnvVariable(AEnvironmentVars, True);
 {$ELSE}
@@ -188,6 +187,10 @@ begin
       Process.Execute;
 
       Result := Process.ProcessID <> -1;
+
+      //Error message
+      if not Result then
+        ShowMessageFmtEx(msgErrorExecute, [APathFile], True);
     except
       on E: EProcess do
       begin
@@ -215,7 +218,6 @@ procedure EjectDialog(Sender: TObject);
 var
   WindowsPath : string;
   bShellExecute: Boolean;
-  ErrShell: Int64;
 {$ENDIF}
 begin
   {$IFDEF MSWINDOWS}
@@ -229,7 +231,7 @@ begin
   begin
     TASuiteLogger.Info('Call Eject Dialog', []);
 
-    bShellExecute := ExecWithShell(ErrShell, WindowsPath + '\System32\Rundll32.exe',
+    bShellExecute := ExecWithShell(WindowsPath + '\System32\Rundll32.exe',
                                    False, 'Shell32,Control_RunDLL hotplug.dll',
                                    PChar(WindowsPath + '\System32'), SW_SHOWNORMAL);
 
@@ -248,21 +250,22 @@ begin
 end;
 
 {$IFDEF MSWINDOWS}
-function ExecWithShell(var iErr: Int64; APathFile: String;
-  ARunAsAdmin: Boolean; AParameters: String; AWorkingDir: String;
-  AWindowState: Integer): Boolean;
+function ExecWithShell(APathFile: String; ARunAsAdmin: Boolean;
+  AParameters: String; AWorkingDir: String; AWindowState: Integer): Boolean;
 var
   ShExecInfo: TShellExecuteInfoW;
+  iErr: Integer;
 begin
   TASuiteLogger.Info('ExecWithShell (Exe = "%s", Params = "%s", WorkDir = "%s", ARunAsAdmin = "%s")',
                      [APathFile, AParameters, AWorkingDir, BoolToStr(ARunAsAdmin)]);
   Result := False;
+  iErr := -1;
 
   ZeroMemory(@ShExecInfo, SizeOf(ShExecInfo));
 
   ShExecInfo.cbSize := sizeof(ShExecInfo);
   ShExecInfo.Wnd    := GetDesktopWindow;
-  ShExecInfo.fMask := SEE_MASK_NOCLOSEPROCESS;
+  ShExecInfo.fMask  := SEE_MASK_NOCLOSEPROCESS or SEE_MASK_FLAG_NO_UI;
 
   if not ARunAsAdmin then
     ShExecInfo.lpVerb := nil
@@ -279,6 +282,9 @@ begin
     Result := ShExecInfo.hProcess > 0
   else
     iErr := GetLastError;
+
+  if iErr > -1 then
+    ShowMessageEx(SysErrorMessageUTF8(iErr), True);
 end;
 {$ENDIF}
 

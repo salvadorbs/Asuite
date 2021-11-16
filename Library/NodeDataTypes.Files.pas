@@ -172,16 +172,10 @@ begin
   Result := RunFile(PathAbsoluteFile, ASuiteInstance.Paths.RelativeToAbsolute(FParameters, False),
                     WorkingDirAbsolute, GetWindowState(ARunFromCategory),
                     EnvironmentVars);
-
-  //Error message
-  if not Result then
-    ShowMessageFmtEx(msgErrorExecute, [Self.Name], True);
 end;
 
 function TvFileNodeData.InternalExecuteAsAdmin(ARunFromCategory: Boolean): boolean;
 {$IFDEF MSWINDOWS}
-var
-  ErrShell: Int64;
 {$ENDIF}
 begin
   Result := False;
@@ -190,12 +184,9 @@ begin
     Exit;
 
   {$IFDEF MSWINDOWS}
-  Result := ExecWithShell(ErrShell, PathAbsoluteFile, True,
+  Result := ExecWithShell(PathAbsoluteFile, True,
                           ASuiteInstance.Paths.RelativeToAbsolute(FParameters, False),
                           GetWorkingDirAbsolute, GetWindowState(ARunFromCategory));
-
-  if not Result then
-    ShowMessageFmtEx(msgErrorExecuteAdmin, [Self.Name], True);
   {$ELSE}
   Result := CreateProcessEx('pkexec', Format('%s %s', [PathAbsoluteFile, Parameters]), WorkingDirAbsolute,
                             GetWindowState(ARunFromCategory), EnvironmentVars);
