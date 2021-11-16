@@ -364,9 +364,7 @@ begin
           UserData.UserName := InputBox('Username', msgInputUsername, '');
           {$ENDIF}
           if UserData.UserName <> '' then
-            NodeData.ExecuteAsUser(True, NodeData.IsCategoryItem, UserData)
-          else
-            ShowMessageEx(msgErrEmptyUserName, true);
+            NodeData.ExecuteAsUser(True, NodeData.IsCategoryItem, UserData);
         end;
       //Execute as Admin
       rmAsAdmin: NodeData.ExecuteAsAdmin(True, NodeData.IsCategoryItem);
