@@ -145,7 +145,7 @@ object frmMain: TfrmMain
       end
       object miImportList: TMenuItem
         Caption = 'Import list...'
-        ShortCut = 113
+        ShortCut = 24644
         OnClick = miImportListClick
       end
       object miExportList: TMenuItem
@@ -185,13 +185,14 @@ object frmMain: TfrmMain
     object mniRunItem: TMenuItem
       Action = actRunItem
       Default = True
-      ShortCut = 120
+      ShortCut = 13
     end
     object mniRunAsItem: TMenuItem
       Action = actRunAsItem
     end
     object mniRunAsAdminItem: TMenuItem
       Action = actRunAsAdminItem
+      ShortCut = 16397
     end
     object mniOpenFolderItem: TMenuItem
       Action = actOpenFolderItem
@@ -210,16 +211,17 @@ object frmMain: TfrmMain
     end
     object mniAddCat: TMenuItem
       Action = actAddCat
-      ShortCut = 114
+      ShortCut = 24654
     end
     object mniAddSoftware: TMenuItem
       Tag = 1
       Action = actAddSoftware
-      ShortCut = 115
+      ShortCut = 16462
     end
     object mniAddFolder: TMenuItem
       Tag = 2
       Action = actAddFolder
+      ShortCut = 49230
     end
     object mniAddSeparator: TMenuItem
       Tag = 3
@@ -249,7 +251,7 @@ object frmMain: TfrmMain
     end
     object mniProperty: TMenuItem
       Action = actProperty
-      ShortCut = 116
+      ShortCut = 32781
     end
   end
   object SaveDialog1: TSaveDialog
