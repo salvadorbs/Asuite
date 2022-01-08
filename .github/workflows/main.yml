@@ -18,7 +18,7 @@ env:
   FPC_URL: 'gitlab'
   FPC_BRANCH: 'release_3_2_2'
   LAZ_URL: 'gitlab'
-  LAZ_BRANCH: 'lazarus_2_2_0_RC2'
+  LAZ_BRANCH: 'lazarus_2_2_0'
   LAZ_DIR: 'fpcLaz'
   BUILD_MODE: 'Debug_GH_Action'   
   FPCUP_OPT: '--lazopt="-g -gl" --verbose' # Removed --fpcopt="-g -gl" - bug with mORMot 2 debug info
@@ -42,7 +42,7 @@ jobs:
 
           - os: windows-latest
             name: 'Windows 64'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.0.1/fpclazup-x86_64-win64.exe'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0h/fpclazup-x86_64-win64.exe'
             lazbuild: 'fpcLaz/lazarus/lazbuild.exe'
             dbg2mab: 'dbg2mab.exe'
             build-widgetset: 'win32'
@@ -51,7 +51,7 @@ jobs:
 
           - os: ubuntu-latest
             name: 'Linux 64 GTK2'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.0.1/fpclazup-x86_64-linux'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0h/fpclazup-x86_64-linux'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
             dbg2mab: 'dbg2mab'
             build-widgetset: 'gtk2'
@@ -60,7 +60,7 @@ jobs:
 
           - os: ubuntu-latest
             name: 'Linux 64 GTK3'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.0.1/fpclazup-x86_64-linux'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0h/fpclazup-x86_64-linux'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
             dbg2mab: 'dbg2mab'
             build-widgetset: 'gtk3'
@@ -69,7 +69,7 @@ jobs:
           
           - os: ubuntu-20.04
             name: 'Linux 64 QT5'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.0.1/fpclazup-x86_64-linux'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0h/fpclazup-x86_64-linux'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
             dbg2mab: 'dbg2mab'
             build-widgetset: 'qt5'
