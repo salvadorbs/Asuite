@@ -24,7 +24,7 @@ unit Thread.FindFiles;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, StrUtils;
+  Classes, SysUtils, FileUtil, mormot.core.log, StrUtils;
 
 type
   TFileFoundEvent = procedure(AFilePath: String) of Object;
@@ -61,7 +61,7 @@ type
 implementation
 
 uses
-  Utility.FileFolder;
+  Utility.FileFolder, Kernel.Consts, Kernel.Logger;
 
 { TFindFiles }
 
@@ -72,6 +72,8 @@ var
   StartTime: Cardinal;
   sPath, sFileExt, sShortName: String;
 begin
+  TASuiteLogger.Info('Start scanning folders to search files (path = %s)', [FDirectory]);
+
   if FDirectory = '' then
     Exit;
 
@@ -87,10 +89,11 @@ begin
         break;
 
       sPath := foundList[I];
-      sFileExt := ExtractFileExtEx(sPath);
+      sFileExt := ExtractLowerFileExt(sPath);
       sShortName := ExtractFileName(sPath);
 
-      if (sPath <> '') and (SearchCriteriaFilename.IndexOf(sFileExt) <> -1) and (FindMatchText(FSearchExcludeFilename, sShortName) = -1) then
+      if (sPath <> '') and (FindMatchText(FSearchExcludeFilename, sShortName) = -1) and
+         ((SearchCriteriaFilename.IndexOf(sFileExt) <> -1) or (SearchCriteriaFilename.IndexOf(EXT_PATH_MASK + sFileExt) <> -1)) then
       begin
         Inc(intFoundFiles);
 

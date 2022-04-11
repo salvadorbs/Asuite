@@ -42,6 +42,7 @@ type
 
     procedure ShowMainForm(const Sender: TObject);
     procedure HideMainForm;
+    procedure CloseASuite(AForceExit: Boolean);
 
     property SessionEnding: Boolean read FSessionEnding write FSessionEnding;
   end;
@@ -49,7 +50,7 @@ type
 implementation
 
 uses
-  AppConfig.Main, Kernel.Enumerations;
+  AppConfig.Main, Kernel.Enumerations, Utility.Misc;
 
 constructor TBaseMainForm.Create(AOwner: TComponent);
 begin
@@ -101,6 +102,15 @@ begin
   end;
 end;
 
+procedure TBaseMainForm.CloseASuite(AForceExit: Boolean);
+begin
+  if AForceExit or AskUserCloseApp then
+  begin
+    Config.ASuiteState := lsShutdown;
+    Close;
+  end;
+end;
+
 procedure TBaseMainForm.ApplicationMinimize(Sender: TObject);
 begin
   if Config.TrayIcon then
@@ -114,9 +124,8 @@ end;
 
 procedure TBaseMainForm.ApplicationEndSession(Sender: TObject);
 begin
-  //Close ASuite on Windows shutdown
-  Config.ASuiteState := lsShutdown;
-  Close;
+  //Force close ASuite on Windows shutdown
+  CloseASuite(True);
 end;
 
 end.

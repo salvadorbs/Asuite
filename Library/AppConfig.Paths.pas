@@ -24,7 +24,7 @@ unit AppConfig.Paths;
 interface
 
 uses
-  LCLIntf, LCLType, SysUtils, Graphics, Forms, Controls, Classes, LazFileUtils, Dialogs,
+  LCLIntf, LCLType, SysUtils, Forms, Controls, Classes, LazFileUtils, Dialogs,
   LazUTF8, AppConfig.PathList;
 
 type
@@ -55,7 +55,7 @@ type
     destructor Destroy; override;
 
     function AbsoluteToRelative(const APath: String): string;
-    function RelativeToAbsolute(const APath: String): string;
+    function RelativeToAbsolute(const APath: String; AExpandFileName: Boolean = True): string;
 
     procedure CheckBackupFolder;
     procedure CheckCacheFolders;
@@ -81,7 +81,7 @@ type
 implementation
 
 uses
-  Kernel.Consts, Utility.FileFolder, SynCommons;
+  Kernel.Consts, Utility.FileFolder, Utility.System, mormot.core.os;
 
 { TConfigPaths }
 
@@ -183,7 +183,7 @@ begin
   strFolderIcon := AppendPathDelim(FSuitePathCurrentTheme + ICONS_DIR);
 
   //CONST_PATH_ASuite = Launcher's path
-  FASuiteVars.Add(DeQuotedStr(CONST_PATH_ASUITE), SuitePathWorking);
+  FASuiteVars.Add(DeQuotedStr(CONST_PATH_ASUITE), ExcludeTrailingPathDelimiter(SuitePathWorking));
 
   //CONST_PATH_DRIVE = Launcher's Drive (ex. ASuite in H:\Software\ASuite.exe, CONST_PATH_DRIVE is H: )
   FASuiteVars.Add(DeQuotedStr(CONST_PATH_DRIVE), SUITEDRIVE);
@@ -197,11 +197,14 @@ end;
 
 constructor TConfigPaths.Create;
 var
-  strPathExe: String;
+  strPathExe, strFileListSql, strFileListXml: String;
 begin
   //Default paths
   strPathExe := Application.ExeName;
   FSuitePathWorking  := ExtractFilePath(strPathExe);
+
+  strFileListSql := ExtractFileNameOnly(strPathExe) + EXT_SQL;
+  strFileListXml := ExtractFileNameOnly(strPathExe) + EXT_XML;
 
   {$IFDEF MSWINDOWS}
   FSuiteDrive        := LowerCase(ExtractFileDrive(strPathExe));
@@ -211,20 +214,24 @@ begin
   {$ENDIF}
   SetCurrentDir(FSuitePathWorking);
 
-  if Not(IsDirectoryWritable(FSuitePathWorking)) then
-  begin
+  //If ASuite is started from a hard linked folder, it will be falsely unwritable
+  //The user is unlikely to create a hard link for ASuite unless they use Scoop
+  //In this case, however, the .sqlite files will already exist and you can
+  //safely use them
+  if (IsDirectoryWritable(FSuitePathWorking)) or FileExists(FSuitePathWorking + strFileListXml) or
+     FileExists(FSuitePathWorking + strFileListSql) then
+    FSuitePathData := FSuitePathWorking
+  else begin
     //FSuitePathWorking = ASuite.exe folder (ex C:\path\to\asuite_folder\)
     //FSuitePathData    = ASuite config folder (ex. C:\Users\user\AppData\Roaming\asuite\)
     FSuitePathData := GetAppConfigDir(True);
     SysUtils.ForceDirectories(FSuitePathData);
-  end
-  else
-    FSuitePathData := FSuitePathWorking;
+  end;
 
   //Check if xml list exists, else get sqlite list
-  FSuitePathList := FSuitePathData + LIST_XML_FILENAME;
+  FSuitePathList := FSuitePathData + strFileListXml;
   if not FileExists(FSuitePathList) then
-    FSuitePathList := FSuitePathData + LIST_SQLITE_FILENAME;
+    FSuitePathList := FSuitePathData + strFileListSql;
 
   FSuitePathSettings := FSuitePathData + SETTINGS_FILENAME;
 
@@ -266,37 +273,34 @@ begin
   end;
 end;
 
-function TConfigPaths.RelativeToAbsolute(const APath: String): string;
-var
-  sPath: string;
+function TConfigPaths.RelativeToAbsolute(const APath: String;
+  AExpandFileName: Boolean): string;
 begin
   Result := '';
   if APath <> '' then
   begin
-    sPath := APath;
+    Result := APath;
 
     //Replace old ASuite variables
     //Note: Unfortunately old asuite vars is not quoted, but in format $var.
     //      So these two vars are deprecated. This code remain for only backwards compatibility
     //CONST_PATH_ASuite_old = Launcher's path
-    sPath := StringReplace(sPath, CONST_PATH_ASuite_old, SuitePathWorking, [rfIgnoreCase,rfReplaceAll]);
+    Result := StringReplace(Result, CONST_PATH_ASuite_old, SuitePathWorking, [rfIgnoreCase,rfReplaceAll]);
     //CONST_PATH_DRIVE_old = Launcher's Drive (ex. ASuite in H:\Software\ASuite.exe, CONST_PATH_DRIVE is H: )
-    sPath := StringReplace(sPath, CONST_PATH_DRIVE_old, SUITEDRIVE, [rfIgnoreCase,rfReplaceAll]);
+    Result := StringReplace(Result, CONST_PATH_DRIVE_old, SUITEDRIVE, [rfIgnoreCase,rfReplaceAll]);
 
     //Replace ASuite variables
-    sPath := FASuiteVars.ExpandVars(sPath);
+    if Pos('%', Result) > 0 then
+    begin
+      Result := FASuiteVars.ExpandVars(Result);
 
-    //Replace environment variable
-    sPath := FEnvironmentVars.ExpandVars(sPath);
-                                                                                
-    //Remove double path delimiter and resolve dots
-    sPath := TrimFilename(sPath);
+      //Replace environment variable
+      Result := FEnvironmentVars.ExpandVars(Result);
+    end;
 
-    //If sPath exists, expand it in absolute path (to avoid the "..")
-    if (FileExists(sPath) or SysUtils.DirectoryExists(sPath)) and (Length(sPath) <> 2) then
-      Result := ExpandFileName(sPath)
-    else
-      Result := sPath;
+    //Remove double path delimiter, resolve dots and expand path
+    if AExpandFileName and (not IsValidURLProtocol(Result) and not FilenameIsAbsolute(Result)) then
+      Result := CleanAndExpandFilename(Result);
   end;
 end;
 

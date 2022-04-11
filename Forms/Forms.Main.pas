@@ -24,11 +24,10 @@ unit Forms.Main;
 interface
 
 uses
-  LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Menus,
+  LCLIntf, LCLType, SysUtils, Classes, Controls, Forms, Dialogs, Menus,
   ComCtrls, VirtualTrees, UniqueInstance, Kernel.Consts, DataModules.Icons,
-  Kernel.BaseMainForm, StdCtrls, UITypes, VirtualTree.Helper,
-  Kernel.Enumerations, ExtCtrls,
-  ButtonedEdit, {Actions,} ActnList, EditBtn;
+  Kernel.BaseMainForm, {$IFDEF UNIX}VirtualTree.Helper, {$ENDIF}
+  Kernel.Enumerations, ExtCtrls, ButtonedEdit, {Actions,} ActnList;
 
 type
 
@@ -105,6 +104,7 @@ type
     actSortList: TAction;
     mniSortList: TMenuItem;
     procedure actSepEditUpdate(Sender: TObject);
+    procedure btnedtSearchLeftButtonClick(Sender: TObject);
     procedure miOptionsClick(Sender: TObject);
     procedure miStatisticsClick(Sender: TObject);
     procedure miImportListClick(Sender: TObject);
@@ -144,6 +144,7 @@ type
       const Parameters: array of AnsiString);
   private
     { Private declarations }
+    procedure EmptyClipboard;
     function  GetActiveTree: TBaseVirtualTree;
     procedure PopulatePopUpMenuFromAnother(APopupMenu: TMenuItem; AParentMenuItem: TMenuItem);
     procedure CloseProcessOpenByASuite;
@@ -163,12 +164,12 @@ var
 implementation
 
 uses
-  Forms.Options, Forms.About, Utility.Misc, Forms.ScanFolder,
+  Forms.Options, Forms.About, Utility.Misc, Forms.ScanFolder, Clipbrd,
   DataModules.TrayMenu, Forms.ImportList, AppConfig.Main, Utility.System,
   VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base,
-  Kernel.Types, NodeDataTypes.Files, VirtualTree.Events, Kernel.Manager,
-  Kernel.Logger, SynLog, FileUtil, Kernel.ResourceStrings, Kernel.Instance
-  {$IFDEF MSWINDOWS} , JwaWinBase, jwatlhelp32 {$ENDIF};
+  Kernel.Types, NodeDataTypes.Files, Kernel.Manager,
+  Kernel.Logger, mormot.core.log, FileUtil, Kernel.ResourceStrings, Kernel.Instance
+  {$IFDEF MSWINDOWS} , jwatlhelp32, Windows {$ENDIF};
 
 {$R *.lfm}
 
@@ -193,6 +194,8 @@ var
   Nodes: TNodeArray;
 begin
   TAction(Sender).Enabled := False;
+
+  //TODO: Why Editing!?
   if not(tsEditing in GetActiveTree.TreeStates) then
   begin
     Nodes := GetActiveTree.GetSortedSelection(True);
@@ -215,12 +218,16 @@ procedure TfrmMain.actDeleteExecute(Sender: TObject);
 var
   Nodes: TNodeArray;
   Tree: TBaseVirtualTree;
+  DeleteNode: Boolean;
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('actDeleteExecute', Self);
+  DeleteNode := Config.TVDisableConfirmDelete or AskUserWarningMessage(msgConfirmDeleteItem, []);
+
+  log := TASuiteLogger.Enter('TfrmMain.actDeleteExecute', Self);
   Config.ASuiteState := lsDeleting;
   try
     Tree := GetActiveTree;
-    if (Tree.GetFirstSelected <> nil) and (Config.TVDisableConfirmDelete or (MessageDlg((msgConfirmDeleteItem), mtWarning, [mbYes,mbNo], 0) = mrYes)) then
+    if (Tree.GetFirstSelected <> nil) and (DeleteNode) then
     begin
       Nodes := Tree.GetSortedSelection(true);
       //Delete items
@@ -298,7 +305,6 @@ begin
   {$ELSE}
     TAction(Sender).Enabled := (Length(vstList.GetSortedCutCopySet(True)) > 0) and (GetActiveTree = vstList);
   {$ENDIF}
-
 end;
 
 procedure TfrmMain.actPropertyExecute(Sender: TObject);
@@ -383,7 +389,7 @@ end;
 procedure TfrmMain.actSortListUpdate(Sender: TObject);
 begin
   TAction(Sender).Visible := (GetActiveTree = vstList);
-  TAction(Sender).Enabled := (vstList.HasChildren[vstList.RootNode]) and (GetActiveTree = vstList);
+  TAction(Sender).Enabled := (vstList.RootNode.ChildCount > 1) and (GetActiveTree = vstList);
 end;
 
 procedure TfrmMain.btnedtSearchChange(Sender: TObject);
@@ -411,9 +417,31 @@ begin
     ASuiteInstance.HandleParam(Parameters[I], False);
 
   if Config.ShowGraphicMenuAnotherInstance then
-    dmTrayMenu.ShowGraphicMenu
+  begin                        
+    Application.Restore;
+    dmTrayMenu.ShowGraphicMenu;
+  end
   else
     ShowMainForm(Sender);
+end;
+
+procedure TfrmMain.EmptyClipboard;
+begin                  
+  TASuiteLogger.Enter('Clearing clipboard', Self);
+
+  {$IFDEF MSWINDOWS}
+  if IsFormatInClipBoard(CF_VIRTUALTREE) then
+  begin
+    Windows.OpenClipboard(0);
+    try
+      Windows.EmptyClipboard;
+    finally
+      Windows.CloseClipboard;
+    end;
+  end;
+  {$ENDIF}
+
+  Clipboard.Clear;
 end;
            
 {$IFDEF UNIX}
@@ -476,9 +504,7 @@ end;
 
 procedure TfrmMain.miInfoASuiteClick(Sender: TObject);
 begin
-  if not IsFormOpen('frmAbout') then
-    Application.CreateForm(TfrmAbout, frmAbout);
-  frmAbout.show;
+  TfrmAbout.Execute(Self);
 end;
 
 procedure TfrmMain.miOptionsClick(Sender: TObject);
@@ -489,6 +515,11 @@ end;
 procedure TfrmMain.actSepEditUpdate(Sender: TObject);
 begin
   TAction(Sender).Visible := (GetActiveTree = vstList);
+end;
+
+procedure TfrmMain.btnedtSearchLeftButtonClick(Sender: TObject);
+begin
+  pmSearch.PopUp;
 end;
 
 procedure TfrmMain.miStatisticsClick(Sender: TObject);
@@ -510,36 +541,41 @@ begin
   begin
     vstSearch.Clear;
     btnedtSearch.Text := '';
+    btnedtSearch.SetFocus;
   end;
   TVirtualTreeMethods.CheckVisibleNodePathExe(GetActiveTree);
 end;
 
 procedure TfrmMain.SetAllIcons;
+var
+  {%H-}log: ISynLog;
 begin
+  log := TASuiteLogger.Enter('TfrmMain.SetAllIcons', Self);
+
   //Set IcoImages
   //Set submenuimages to three MainMenu's subitems
-  miFile.SubMenuImages := dmImages.ilLargeIcons;
+  miFile.SubMenuImages := dmImages.ilIcons;
   miFile.SubMenuImagesWidth := ICON_SIZE_SMALL;
 
-  miEdit.SubMenuImages := dmImages.ilLargeIcons;
+  miEdit.SubMenuImages := dmImages.ilIcons;
   miEdit.SubMenuImagesWidth := ICON_SIZE_SMALL;
 
-  miHelp.SubMenuImages := dmImages.ilLargeIcons;
+  miHelp.SubMenuImages := dmImages.ilIcons;
   miHelp.SubMenuImagesWidth := ICON_SIZE_SMALL;
 
-  pmSearch.Images      := dmImages.ilLargeIcons;
+  pmSearch.Images      := dmImages.ilIcons;
   pmSearch.ImagesWidth := ICON_SIZE_SMALL;
 
-  pmWindow.Images      := dmImages.ilLargeIcons;
+  pmWindow.Images      := dmImages.ilIcons;
   pmWindow.ImagesWidth := ICON_SIZE_SMALL;
 
-  pcList.Images        := dmImages.ilLargeIcons;
+  pcList.Images        := dmImages.ilIcons;
   pcList.ImagesWidth := ICON_SIZE_SMALL;
 
-  btnedtSearch.RightButton.Images := dmImages.ilLargeIcons;
+  btnedtSearch.RightButton.Images := dmImages.ilIcons;
   btnedtSearch.RightButton.ImagesWidth := ICON_SIZE_SMALL;
 
-  btnedtSearch.LeftButton.Images := dmImages.ilLargeIcons;
+  btnedtSearch.LeftButton.Images := dmImages.ilIcons;
   btnedtSearch.LeftButton.ImagesWidth := ICON_SIZE_SMALL;
 
   //Set pcList tabs' ImageIndexes
@@ -579,7 +615,10 @@ begin
     if Assigned(AParentMenuItem.Items[I].Action) then
       MenuItem.Action := AParentMenuItem.Items[I].Action
     else
-      MenuItem.Caption := '-';
+      MenuItem.Caption := cLineCaption;
+
+    //TODO: Add other levels
+
     //Add new menu item in APopupMenu
     APopupMenu.Add(MenuItem) ;
   end;
@@ -661,8 +700,7 @@ end;
 
 procedure TfrmMain.miExitClick(Sender: TObject);
 begin
-  Config.ASuiteState := lsShutdown;
-  Close;
+  CloseASuite(False);
 end;
 
 procedure TfrmMain.miExportListClick(Sender: TObject);
@@ -670,13 +708,20 @@ begin
   if (SaveDialog1.Execute) then
   begin
     TVirtualTreeMethods.RefreshList(GetActiveTree);
-    FileUtil.CopyFile(PChar(ASuiteManager.DBManager.DBFileName), PChar(SaveDialog1.FileName), False);
+
+    if SaveDialog1.FileName <> '' then
+      FileUtil.CopyFile(ASuiteManager.DBManager.DBFileName, SaveDialog1.FileName);
   end;
 end;
 
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
+var
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('FormClose', Self);
+  log := TASuiteLogger.Enter('TfrmMain.FormClose', Self);
+
+  //Clear clipboard before closing asuite (prevent fake memory leak)
+  EmptyClipboard;
 
   //Close all process opened by ASuite
   if Config.AutoCloseProcess then
@@ -708,9 +753,9 @@ end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);
 var
-  VSTEvents: TVirtualTreeEvents;
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('MainFormCreate', Self);
+  log := TASuiteLogger.Enter('TfrmMain.MainFormCreate', Self);
 
   {$IFDEF UNIX}
   Self.AllowDropFiles := True;
@@ -727,9 +772,8 @@ begin
   pcList.ActivePageIndex := PG_LIST;
 
   //Setup events in vsts
-  VSTEvents := TVirtualTreeEvents.Create;
-  VSTEvents.SetupVSTList(vstList);
-  VSTEvents.SetupVSTSearch(vstSearch);
+  ASuiteInstance.VSTEvents.SetupVSTList(vstList);
+  ASuiteInstance.VSTEvents.SetupVSTSearch(vstSearch);
 
   //Load Database and get icons (only first level of tree)
   Config.LoadConfig;
@@ -740,8 +784,6 @@ begin
   ASuiteInstance.Scheduler.CheckMissedTasks;
   TVirtualTreeMethods.RefreshList(nil);
 
-  //Get placeholder for edtSearch
-  btnedtSearch.TextHint := StringReplace(miSearchName.Caption, '&', '', []);
   PopulatePopUpMenuFromAnother(miEdit, pmWindow.Items);
 
   //Start threads

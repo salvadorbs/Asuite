@@ -40,7 +40,6 @@ inherited frmCatGeneralPropertyPage: TfrmCatGeneralPropertyPage
       Top = 123
       Width = 340
       Caption = 'Note: In this list you can find all software items of this category (only first level). Uncheck items who you don''t want to start, when run this category.'
-      ParentColor = False
       ParentFont = False
       WordWrap = True
     end

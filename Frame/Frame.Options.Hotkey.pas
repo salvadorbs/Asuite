@@ -24,15 +24,19 @@ unit Frame.Options.Hotkey;
 interface
 
 uses
-  LCLIntf, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, Frame.BaseEntity, VirtualTrees, DefaultTranslator,
-  ComCtrls, StdCtrls, Lists.Base, ButtonedEdit, Menus, ExtCtrls;
+  LCLIntf, SysUtils, Graphics,
+  Controls, Dialogs, Frame.BaseEntity, VirtualTrees,
+  ComCtrls, StdCtrls, Lists.Base, ButtonedEdit, Menus, ActnList, Classes;
 
 type
 
   { TfrmHotkeyOptionsPage }
 
   TfrmHotkeyOptionsPage = class(TfrmBaseEntityPage)
+    actProperties: TAction;
+    actRemoveHotkey: TAction;
+    actEditHotkey: TAction;
+    ActionList1: TActionList;
     edtHotkeyCM: TButtonedEdit;
     edtHotkeyGM: TButtonedEdit;
     edtHotkeyMF: TButtonedEdit;
@@ -49,17 +53,19 @@ type
     mniRemoveHotkey: TMenuItem;
     mniN1: TMenuItem;
     mniProperties: TMenuItem;
+    procedure actEditHotkeyExecute(Sender: TObject);
+    procedure actPropertiesExecute(Sender: TObject);
+    procedure actMenuItemUpdate(Sender: TObject);
+    procedure actRemoveHotkeyExecute(Sender: TObject);
     procedure cbHotKeyClick(Sender: TObject);
-    procedure mniEditHotkeyClick(Sender: TObject);
-    procedure mniRemoveHotkeyClick(Sender: TObject);
-    procedure mniPropertiesClick(Sender: TObject);
     procedure edtHotkeyClick(Sender: TObject);
     procedure edtHotkeyChange(Sender: TObject);
-    procedure edtHotkeyClear(Sender: TObject);
+    procedure edtHotkeyRightClick(Sender: TObject);
   private
     { Private declarations }
     procedure LoadGlyphs;
     procedure SaveInHotkeyItemList(const ATree: TBaseVirtualTree;const AItemList: TBaseItemsList);
+    procedure SetProperHotkeyIcon(AHotkeyComp: TButtonedEdit);
   strict protected
     function GetTitle: string; override;
     function GetImageIndex: Integer; override;
@@ -75,9 +81,9 @@ var
 implementation
 
 uses
-  AppConfig.Main, VirtualTree.Events, VirtualTree.Methods, NodeDataTypes.Custom,
-  Forms.ShortcutGrabber, DataModules.Icons, UITypes, Kernel.ResourceStrings,
-  LCLProc, Kernel.Consts, Kernel.Manager;
+  AppConfig.Main, VirtualTree.Methods, NodeDataTypes.Custom,
+  Forms.ShortcutGrabber, DataModules.Icons, Kernel.ResourceStrings,
+  LCLProc, Kernel.Consts, Kernel.Manager, Utility.Misc, Kernel.Instance;
 
 {$R *.lfm}
 
@@ -88,6 +94,52 @@ begin
   edtHotkeyMF.Enabled := cbHotKey.Checked;
   edtHotkeyGM.Enabled := cbHotKey.Checked;
   edtHotkeyCM.Enabled := cbHotKey.Checked;
+end;
+
+procedure TfrmHotkeyOptionsPage.actEditHotkeyExecute(Sender: TObject);
+var
+  ShortCut: string;
+  NodeData: TvCustomRealNodeData;
+begin
+  if Assigned(vstItems.FocusedNode) then
+  begin
+    NodeData := TvCustomRealNodeData(TVirtualTreeMethods.GetNodeItemData(vstItems.FocusedNode, vstItems));
+    if Assigned(NodeData) then
+    begin
+      ShortCut := TfrmShortcutGrabber.Execute(Self, ShortCutToText(NodeData.Hotkey));
+      if (ShortCut <> '') then
+      begin
+        NodeData.Hotkey  := TextToShortCut(ShortCut);
+        NodeData.ActiveHotkey := True;
+        NodeData.Changed := True;
+
+        if (edtHotkeyMF.Text = ShortCut) then
+          edtHotkeyMF.Text := '';
+
+        if (edtHotkeyGM.Text = ShortCut) then
+          edtHotkeyGM.Text := '';
+
+        if (edtHotkeyCM.Text = ShortCut) then
+          edtHotkeyCM.Text := '';
+      end;
+    end;
+  end;
+end;
+
+procedure TfrmHotkeyOptionsPage.actPropertiesExecute(Sender: TObject);
+begin
+  TVirtualTreeMethods.ShowItemProperty(Self, vstItems, vstItems.FocusedNode, False);
+end;
+
+procedure TfrmHotkeyOptionsPage.actMenuItemUpdate(Sender: TObject);
+begin
+  TAction(Sender).Enabled := TVirtualTreeMethods.HasSelectedNodes(vstItems);
+end;
+
+procedure TfrmHotkeyOptionsPage.actRemoveHotkeyExecute(Sender: TObject);
+begin
+  if AskUserWarningMessage(msgConfirm, []) and Assigned(vstItems.FocusedNode) then
+    vstItems.IsVisible[vstItems.FocusedNode] := False;
 end;
 
 procedure TfrmHotkeyOptionsPage.edtHotkeyClick(Sender: TObject);
@@ -114,20 +166,23 @@ begin
 end;
 
 procedure TfrmHotkeyOptionsPage.edtHotkeyChange(Sender: TObject);
+begin
+  if Sender is TButtonedEdit then
+    SetProperHotkeyIcon(TButtonedEdit(Sender));
+end;
+
+procedure TfrmHotkeyOptionsPage.edtHotkeyRightClick(Sender: TObject);
 var
   edtHotkey: TButtonedEdit;
 begin
-  if Sender is TButtonedEdit then
-  begin
-    edtHotkey := TButtonedEdit(Sender);
-    edtHotkey.RightButton.Visible := edtHotkey.Text <> '';
-  end;
-end;
-
-procedure TfrmHotkeyOptionsPage.edtHotkeyClear(Sender: TObject);
-begin
   if Sender is TCustomGlyphButton then
-    TButtonedEdit(TCustomGlyphButton(Sender).Parent).Text := '';
+  begin
+    edtHotkey := TButtonedEdit(TCustomGlyphButton(Sender).Parent);
+    if edtHotkey.Text <> '' then
+      edtHotkey.Text := ''
+    else
+      edtHotkeyClick(edtHotkey);
+  end;
 end;
 
 function TfrmHotkeyOptionsPage.GetImageIndex: Integer;
@@ -143,7 +198,7 @@ end;
 function TfrmHotkeyOptionsPage.InternalLoadData: Boolean;
 begin
   Result := inherited;
-  TVirtualTreeEvents.Create.SetupVSTHotkey(vstItems);
+  ASuiteInstance.VSTEvents.SetupVSTHotkey(vstItems);
 
   //Hot Keys
   cbHotKey.Checked := Config.HotKey;
@@ -191,64 +246,24 @@ end;
 
 procedure TfrmHotkeyOptionsPage.LoadGlyphs;
 begin
-  edtHotkeyMF.RightButton.Images := dmImages.ilLargeIcons;
+  edtHotkeyMF.RightButton.Images := dmImages.ilIcons;
   edtHotkeyMF.RightButton.ImagesWidth := ICON_SIZE_SMALL;
+  SetProperHotkeyIcon(edtHotkeyMF);
 
-  edtHotkeyGM.RightButton.Images := dmImages.ilLargeIcons;
+  edtHotkeyGM.RightButton.Images := dmImages.ilIcons;
   edtHotkeyGM.RightButton.ImagesWidth := ICON_SIZE_SMALL;
+  SetProperHotkeyIcon(edtHotkeyGM);
 
-  edtHotkeyCM.RightButton.Images := dmImages.ilLargeIcons;
+  edtHotkeyCM.RightButton.Images := dmImages.ilIcons;
   edtHotkeyCM.RightButton.ImagesWidth := ICON_SIZE_SMALL;
+  SetProperHotkeyIcon(edtHotkeyCM);
 
-  mniRemoveHotkey.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('keyboard_delete');
-  mniEditHotkey.ImageIndex   := ASuiteManager.IconsManager.GetIconIndex('keyboard_edit');
+  pmHotkey.Images := dmImages.ilIcons;
+  pmHotkey.ImagesWidth := ICON_SIZE_SMALL;
+
+  mniRemoveHotkey.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('hotkey_delete');
+  mniEditHotkey.ImageIndex   := ASuiteManager.IconsManager.GetIconIndex('hotkey_edit');
   mniProperties.ImageIndex   := ASuiteManager.IconsManager.GetIconIndex('property');
-
-  edtHotkeyMF.RightButton.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('cancel');
-  edtHotkeyGM.RightButton.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('cancel');
-  edtHotkeyCM.RightButton.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('cancel');
-end;
-
-procedure TfrmHotkeyOptionsPage.mniEditHotkeyClick(Sender: TObject);
-var
-  ShortCut: string;
-  NodeData: TvCustomRealNodeData;
-begin
-  if Assigned(vstItems.FocusedNode) then
-  begin
-    NodeData := TvCustomRealNodeData(TVirtualTreeMethods.GetNodeItemData(vstItems.FocusedNode, vstItems));
-    if Assigned(NodeData) then
-    begin
-      ShortCut := TfrmShortcutGrabber.Execute(Self, ShortCutToText(NodeData.Hotkey));
-      if (ShortCut <> '') then
-      begin
-        NodeData.Hotkey  := TextToShortCut(ShortCut);
-        NodeData.ActiveHotkey := True;
-        NodeData.Changed := True;
-
-        if (edtHotkeyMF.Text = ShortCut) then
-          edtHotkeyMF.Text := '';
-
-        if (edtHotkeyGM.Text = ShortCut) then
-          edtHotkeyGM.Text := '';
-
-        if (edtHotkeyCM.Text = ShortCut) then
-          edtHotkeyCM.Text := '';
-      end;
-    end;
-  end;
-end;
-
-procedure TfrmHotkeyOptionsPage.mniPropertiesClick(Sender: TObject);
-begin
-  TVirtualTreeMethods.ShowItemProperty(Self, vstItems, vstItems.FocusedNode, False);
-end;
-
-procedure TfrmHotkeyOptionsPage.mniRemoveHotkeyClick(Sender: TObject);
-begin
-  if (MessageDlg((msgConfirm),mtWarning, [mbYes,mbNo], 0) = mrYes) then
-    if Assigned(vstItems.FocusedNode) then
-      vstItems.IsVisible[vstItems.FocusedNode] := False;
 end;
 
 procedure TfrmHotkeyOptionsPage.SaveInHotkeyItemList(
@@ -272,6 +287,14 @@ begin
     end;
     Node := ATree.GetNext(Node);
   end;
+end;
+
+procedure TfrmHotkeyOptionsPage.SetProperHotkeyIcon(AHotkeyComp: TButtonedEdit);
+begin
+  if AHotkeyComp.Text <> '' then
+    AHotkeyComp.RightButton.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('hotkey_delete')
+  else
+    AHotkeyComp.RightButton.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('hotkey_add');
 end;
 
 end.

@@ -16,7 +16,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     BorderSpacing.Left = 4
     BorderSpacing.Top = 4
     BorderSpacing.Right = 4
-    Caption = 'Hotkey'
+    Caption = 'Hotkeys'
     ChildSizing.LeftRightSpacing = 4
     ChildSizing.TopBottomSpacing = 4
     ChildSizing.EnlargeHorizontal = crsScaleChilds
@@ -32,7 +32,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       Top = 4
       Width = 425
       BorderSpacing.Bottom = 4
-      Caption = 'Enable hotkey'
+      Caption = 'Enable hotkeys'
       OnClick = cbHotKeyClick
       ParentFont = False
       TabOrder = 0
@@ -43,7 +43,6 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       Top = 27
       Width = 425
       Caption = 'Show window when hotkey is pressed'
-      ParentColor = False
       ParentFont = False
     end
     object edtHotkeyMF: TButtonedEdit
@@ -60,10 +59,11 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       Constraints.MinWidth = 200
       ParentFont = False
       ReadOnly = True
+      RightButton.Visible = True
       TabOrder = 1
       OnChange = edtHotkeyChange
       OnClick = edtHotkeyClick
-      OnRightButtonClick = edtHotkeyClear
+      OnRightButtonClick = edtHotkeyRightClick
     end
     object lblHotkeyGM: TLabel
       Left = 4
@@ -71,7 +71,6 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       Top = 72
       Width = 425
       Caption = 'Show graphic menu when hotkey is pressed'
-      ParentColor = False
       ParentFont = False
     end
     object edtHotkeyGM: TButtonedEdit
@@ -87,10 +86,11 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       Constraints.MinWidth = 200
       ParentFont = False
       ReadOnly = True
+      RightButton.Visible = True
       TabOrder = 2
       OnChange = edtHotkeyChange
       OnClick = edtHotkeyClick
-      OnRightButtonClick = edtHotkeyClear
+      OnRightButtonClick = edtHotkeyRightClick
     end
     object lblHotkeyCM: TLabel
       Left = 4
@@ -98,7 +98,6 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       Top = 117
       Width = 425
       Caption = 'Show classic menu when hotkey is pressed'
-      ParentColor = False
       ParentFont = False
     end
     object edtHotkeyCM: TButtonedEdit
@@ -113,10 +112,11 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       Constraints.MinWidth = 200
       ParentFont = False
       ReadOnly = True
+      RightButton.Visible = True
       TabOrder = 3
       OnChange = edtHotkeyChange
       OnClick = edtHotkeyClick
-      OnRightButtonClick = edtHotkeyClear
+      OnRightButtonClick = edtHotkeyRightClick
     end
   end
   object grpOrderSoftware: TGroupBox[1]
@@ -129,7 +129,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     BorderSpacing.Top = 4
     BorderSpacing.Right = 4
     BorderSpacing.Bottom = 4
-    Caption = 'Hotkey list used'
+    Caption = 'Hotkeys list'
     ChildSizing.LeftRightSpacing = 4
     ChildSizing.TopBottomSpacing = 4
     ChildSizing.EnlargeHorizontal = crsScaleChilds
@@ -155,30 +155,26 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       Header.AutoSizeIndex = 0
       Header.Columns = <      
         item
-          MinWidth = 50
           Position = 0
           Text = 'Name'
         end      
         item
           MaxWidth = 100
-          MinWidth = 36
           Position = 1
           Text = 'Type'
           Width = 36
         end      
         item
-          MinWidth = 60
           Position = 2
           Text = 'Category'
           Width = 100
         end      
         item
-          MinWidth = 100
           Position = 3
           Text = 'Hotkey'
           Width = 200
         end>
-      Header.Options = [hoColumnResize, hoDblClickResize, hoDrag, hoVisible, hoHeaderClickAutoSort]
+      Header.Options = [hoColumnResize, hoDblClickResize, hoDrag, hoVisible, hoHeaderClickAutoSort, hoAutoResizeInclCaption]
       ParentFont = False
       PopupMenu = pmHotkey
       TabOrder = 0
@@ -191,19 +187,35 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     Left = 264
     Top = 200
     object mniEditHotkey: TMenuItem
-      Caption = 'Edit Hotkey'
-      OnClick = mniEditHotkeyClick
+      Action = actEditHotkey
     end
     object mniRemoveHotkey: TMenuItem
-      Caption = 'Remove Hotkey'
-      OnClick = mniRemoveHotkeyClick
+      Action = actRemoveHotkey
     end
     object mniN1: TMenuItem
       Caption = '-'
     end
     object mniProperties: TMenuItem
+      Action = actProperties
+    end
+  end
+  object ActionList1: TActionList[3]
+    Left = 304
+    Top = 200
+    object actProperties: TAction
       Caption = 'Properties'
-      OnClick = mniPropertiesClick
+      OnExecute = actPropertiesExecute
+      OnUpdate = actMenuItemUpdate
+    end
+    object actRemoveHotkey: TAction
+      Caption = 'Remove Hotkey'
+      OnExecute = actRemoveHotkeyExecute
+      OnUpdate = actMenuItemUpdate
+    end
+    object actEditHotkey: TAction
+      Caption = 'Edit Hotkey'
+      OnExecute = actEditHotkeyExecute
+      OnUpdate = actMenuItemUpdate
     end
   end
 end

@@ -1,17 +1,8 @@
----
-name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: bug
-assignees: ''
-
----
-
+**Is this a bug report or feature request?**
+* Bug Report
+* 
 **Describe the bug**
 A clear and concise description of what the bug is.
-
-**ASuite.log**
-If it is an error or 
 
 **To Reproduce**
 Steps to reproduce the behavior:
@@ -26,8 +17,13 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
+**Logs**
+Can you upload ASuite.log and/or your ASuite.sqlite?
+
 **Desktop (please complete the following information):**
- - Windows Version: [e.g. Win10]
+ - OS: [e.g. Win10, Ubuntu]
+ - WidgetSet: [e.g. win64, gtk2, gtk3, QT5]
+ - ASuite Version: [e.g. 2.0.0]
 
 **Additional context**
 Add any other context about the problem here.

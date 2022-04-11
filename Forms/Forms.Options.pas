@@ -24,11 +24,14 @@ unit Forms.Options;
 interface
 
 uses
-  LCLIntf, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, Dialogs, Forms.Dialog.BaseEntity, VirtualTrees, DefaultTranslator,
-  ExtCtrls, Frame.BaseEntity;
+  LCLIntf, SysUtils, Classes,
+  Controls, Forms, Dialogs, Forms.Dialog.BaseEntity, VirtualTrees,
+  Frame.BaseEntity;
 
 type
+
+  { TfrmOptions }
+
   TfrmOptions = class(TfrmDialogBase)
     
   private
@@ -51,8 +54,8 @@ implementation
 uses
   Frame.Options.General, Frame.Options.Advanced, Frame.Options.Trayicon,
   Frame.Options.Stats, Frame.Options.Autorun, AppConfig.Main, Kernel.Logger,
-  Forms.Main, Frame.Options.Hotkey, Frame.Options.MainWindow, LCLTranslator,
-  Utility.Misc;
+  Forms.Main, Frame.Options.Hotkey, Frame.Options.MainWindow,
+  Utility.Misc, mormot.core.log;
 
 {$R *.lfm}
 
@@ -90,8 +93,9 @@ end;
 function TfrmOptions.InternalLoadData: Boolean;
 var
   FFrameAdvanced: PVirtualNode;
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('InternalLoadData form Options', Self);
+  log := TASuiteLogger.Enter('TfrmOptions.InternalLoadData', Self);
 
   Result := True;
   //General
@@ -111,8 +115,10 @@ begin
 end;
 
 function TfrmOptions.InternalSaveData: Boolean;
+var
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('InternalSaveData form Options', Self);
+  log := TASuiteLogger.Enter('TfrmOptions.InternalSaveData', Self);
 
   Result := True;
   Config.Changed := True;

@@ -75,7 +75,7 @@ resourcestring
   msgGMShow = 'Show %s';
   msgGMVideos = 'Videos';
   msgGeneral = 'General';
-  msgHotkey = 'Hotkey';
+  msgHotkey = 'Hotkeys';
   msgImport = 'Import';
   msgImportFailed = 'Import failed because of an error';
   msgImportProgress = 'Import in progress...';
@@ -119,6 +119,11 @@ resourcestring
   msgStop = 'Stop';             
   msgScanFolderExtNotValid = 'Ext file not valid. Please check it and retry!';
   msgInputUsername = 'Please insert username';
+  msgGenerateFileHashError = 'Generating hash file because of an error (file path = %s)';
+  msgErrorExecute = 'Failed to execute "%s"';
+  msgErrorExecuteAdmin = 'Failed to execute item "%s" as admin';
+  msgErrorExecuteUser = 'Failed to execute item "%s" as user "%s"';
+  msgErrorOpenFolder = 'Failed to open folder "%s"';
 
   //ComboboxItems
   cxActionOnExeOpt_item0 = 'Just run file';

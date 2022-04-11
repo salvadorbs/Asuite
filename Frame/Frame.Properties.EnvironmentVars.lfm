@@ -40,7 +40,7 @@ inherited frmEnvironmentVars: TfrmEnvironmentVars
       )
       ColWidths = (
         64
-        272
+        276
       )
     end
     object tbButtons: TToolBar

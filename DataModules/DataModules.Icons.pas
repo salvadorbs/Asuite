@@ -26,8 +26,8 @@ unit DataModules.Icons;
 interface
 
 uses
-  SysUtils, Classes, Controls, LCLIntf, LCLType, Graphics, Dialogs,
-  BGRAImageList, {$IFDEF Windows}CommCtrl, Windows,{$ENDIF} DefaultTranslator;
+  SysUtils, Classes, Controls, LCLIntf, LCLType, Graphics, Dialogs, SyncObjs,
+  BGRAImageList{$IFDEF Windows}, CommCtrl, Windows{$ENDIF};
 
 type
 
@@ -38,10 +38,13 @@ type
   { TdmImages }
 
   TdmImages = class(TDataModule)
-    ilLargeIcons: TBGRAImageList;
+    ilIcons: TBGRAImageList;
     procedure DataModuleCreate(Sender: TObject);
+    procedure DataModuleDestroy(Sender: TObject);
   private
-    { Private declarations }
+    { Private declarations }                          
+    FLock: SyncObjs.TCriticalSection;
+
     procedure DrawTransparentBitmap(DC: HDC; hBmp: HBITMAP; xStart: integer;
                                     yStart : integer; cTransparentColor : COLORREF);
   public
@@ -50,6 +53,8 @@ type
 
     function AddIcon(Images: Graphics.TBitmap): Integer;
     function AddMultipleResolutions(Images: array of TCustomBitmap): Integer;
+
+    property Lock: SyncObjs.TCriticalSection read FLock;
   end;
 
 var
@@ -76,7 +81,7 @@ begin
     //Buttons' image
     BMP := Graphics.TBitmap.Create;
     try
-      ilLargeIcons.GetBitmap(AImageIndex, BMP);
+      ilIcons.GetBitmap(AImageIndex, BMP);
       AGlyph.Assign(BMP);
       DrawTransparentBitmap(AGlyph.Canvas.Handle, BMP.Handle, 0, 0, clWhite);
     finally
@@ -90,12 +95,17 @@ begin
   Result := -1;
 
   if Assigned(Images) then
-    Result := ilLargeIcons.Add(Images, nil);
+    Result := ilIcons.Add(Images, nil);
 end;
 
 function TdmImages.AddMultipleResolutions(Images: array of TCustomBitmap): Integer;
-begin
-  Result := ilLargeIcons.AddMultipleResolutions(Images);
+begin                    
+  FLock.Acquire;
+  try
+    Result := ilIcons.AddMultipleResolutions(Images);
+  finally     
+    FLock.Release;
+  end;
 end;
 
 procedure TdmImages.GetAlphaBitmapFromImageList(ABMP: Graphics.TBitmap;
@@ -109,7 +119,7 @@ begin
   if AImageIndex <> -1 then
   begin
     //Button's image
-    ilLargeIcons.FindResolution(ICON_SIZE_SMALL, Images);
+    ilIcons.FindResolution(ICON_SIZE_SMALL, Images);
 
     Images.GetBitmap(AImageIndex, ABMP);
   end;
@@ -119,8 +129,15 @@ end;
 procedure TdmImages.DataModuleCreate(Sender: TObject);
 begin
   //Small and large icons in a single ImageList
-  ilLargeIcons.RegisterResolutions([ICON_SIZE_SMALL, ICON_SIZE_LARGE]);
-  ilLargeIcons.Scaled := True;
+  ilIcons.RegisterResolutions([ICON_SIZE_SMALL, ICON_SIZE_LARGE]);
+  ilIcons.Scaled := True;
+
+  FLock := SyncObjs.TCriticalSection.Create;
+end;
+
+procedure TdmImages.DataModuleDestroy(Sender: TObject);
+begin
+  FLock.Free;
 end;
 
 procedure TdmImages.DrawTransparentBitmap(DC: HDC; hBmp: HBITMAP;

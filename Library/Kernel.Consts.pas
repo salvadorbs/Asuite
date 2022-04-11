@@ -31,7 +31,7 @@ const
   APP_NAME  = 'ASuite';
   APP_TITLE = APP_NAME;
 
-  VERSION_PRERELEASE = 'Alpha 1'; //For Alpha and Beta version
+  VERSION_PRERELEASE = 'Alpha 2'; //For Alpha and Beta version
 
   BACKUP_DIR     = 'backup';
   CACHE_DIR      = 'cache';
@@ -56,12 +56,12 @@ const
   EXT_BAT       = '.bat';
   EXT_CMD       = '.cmd';
   EXT_BMP       = '.bmp';
+  EXT_PNG       = '.png';
 
   EXT_PATH_MASK = '*';    
   EXT_PATH_DOT = '.';
 
   //File
-  DEBUG_FILE    = 'Debug.txt';
   THEME_INI     = 'theme.ini';
   BACKUP_FILE   = APP_NAME + '_%s' + EXT_SQLBCK;
 
@@ -83,6 +83,7 @@ const
   //Node Heidht
   NODE_HEIGHT_SMALL = 18;
   NODE_HEIGHT_LARGE = 36;
+  CAPTION_LINE_ITEM_HEIGHT = 15;
 
   // PageControl Indexes
   PG_LIST       = 0;
@@ -107,8 +108,6 @@ const
   FILEICON_Url    = 'page_url';
 
   //ASuite files
-  LIST_SQLITE_FILENAME = 'asuite.sqlite';
-  LIST_XML_FILENAME = 'asuite.sqlite';
   SETTINGS_FILENAME = 'settings.json';
 
   //Modifier buttons for TfrmShortcutGrabber

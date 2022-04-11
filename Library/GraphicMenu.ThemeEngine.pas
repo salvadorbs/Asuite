@@ -24,8 +24,8 @@ unit GraphicMenu.ThemeEngine;
 interface
 
 uses
-  Classes, Kernel.Singleton, IniFiles, ExtCtrls, LCLIntf, LCLType,
-  Graphics, SysUtils, VirtualTrees, Controls, Forms.GraphicMenu, BGRABitmap,
+  Classes, IniFiles, ExtCtrls, LCLIntf, LCLType,
+  Graphics, SysUtils, VirtualTrees, Controls, BGRABitmap, Forms,
   BCImageButton, LazFileUtils;
 
 type
@@ -57,9 +57,9 @@ type
 
   { TThemeEngine }
 
-  TThemeEngine = class(TSingleton)
+  TThemeEngine = class
   private
-    FGraphicMenu: TfrmGraphicMenu;
+    FGraphicMenu: TForm;
     FSearchIcon: Integer;
     FCancelIcon: Integer;
 
@@ -83,11 +83,9 @@ type
     procedure CopyImageInVst(Source:TImage; Tree: TVirtualStringTree);
     procedure CopySelectedRectInBitmap(Source:TImage;Comp: TControl;bmp: Graphics.TBitmap);
   public
-    procedure Initialize; override;
+    constructor Create(AGraphicMenu: TForm);
 
     procedure LoadTheme;
-
-    procedure SetupThemeEngine(AGraphicMenu: TfrmGraphicMenu);
 
     property SearchIcon: Integer read FSearchIcon write FSearchIcon;
     property CancelIcon: Integer read FCancelIcon write FCancelIcon;
@@ -98,7 +96,7 @@ implementation
 uses
   Kernel.Consts, Utility.Conversions, Kernel.ResourceStrings, BGRABitmapTypes, Types,
   GraphicMenu.ThemeEngine.Consts, Kernel.Logger, Utility.Misc, Kernel.Instance,
-  Kernel.Manager;
+  Kernel.Manager, mormot.core.log, Forms.GraphicMenu;
 
 { TThemeEngineMethods }
 
@@ -159,6 +157,13 @@ begin
   end;
 end;
 
+constructor TThemeEngine.Create(AGraphicMenu: TForm);
+begin
+  FSearchIcon := -1;
+  FCancelIcon := -1;           
+  FGraphicMenu := AGraphicMenu;
+end;
+
 procedure TThemeEngine.DrawButton(IniFile: TIniFile;
   Button: TBCCustomImageButton; ButtonType: TGraphicMenuElement);
 var
@@ -183,7 +188,7 @@ begin
     if FileExists(strButtonFile) then
       PNGButton.LoadFromFile(strButtonFile)
     else
-      DrawEmptyButton(PNGButton, Button, FGraphicMenu.imgBackground);
+      DrawEmptyButton(PNGButton, Button, TfrmGraphicMenu(FGraphicMenu).imgBackground);
 
     //Draw caption and icon in PNGImage_*, if button is a RightButton
     DrawTextInPNGImage(IniFile, PNGButton, ButtonType, IsRightButton(ButtonType));
@@ -400,9 +405,11 @@ var
   sTempPath: string;
   IniFile: TIniFile;
   strFont: string;
+  {%H-}log: ISynLog;
 begin
   Assert(Assigned(FGraphicMenu), 'FGraphicMenu is not assigned!');
-  TASuiteLogger.Enter('LoadTheme', Self);
+  Assert((FGraphicMenu is TfrmGraphicMenu), 'FGraphicMenu is not a TfrmGraphicMenu!');
+  log := TASuiteLogger.Enter('TThemeEngine.LoadTheme', Self);
 
   //Load theme
   if FileExists(ASuiteInstance.Paths.SuitePathCurrentTheme + THEME_INI) then
@@ -414,41 +421,41 @@ begin
       //Background
       BackgroundPath := GetPathFromIni(IniFile, INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGEBACKGROUND, '');
       if FileExists(BackgroundPath) then
-        FGraphicMenu.imgBackground.Picture.LoadFromFile(BackgroundPath);
+        TfrmGraphicMenu(FGraphicMenu).imgBackground.Picture.LoadFromFile(BackgroundPath);
 
       //User frame
       sTempPath := GetPathFromIni(IniFile, INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGEUSERFRAME, '');
       if FileExists(sTempPath) then
-        FGraphicMenu.imgUserFrame.Picture.LoadFromFile(sTempPath);
+        TfrmGraphicMenu(FGraphicMenu).imgUserFrame.Picture.LoadFromFile(sTempPath);
 
       //Logo
       sTempPath := GetPathFromIni(IniFile, INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGELOGO, '');
       if FileExists(sTempPath) then
-        FGraphicMenu.imgLogo.Picture.LoadFromFile(sTempPath);
+        TfrmGraphicMenu(FGraphicMenu).imgLogo.Picture.LoadFromFile(sTempPath);
 
       //Separator
       sTempPath := GetPathFromIni(IniFile, INIFILE_SECTION_GENERAL, INIFILE_KEY_IMAGESEPARATOR, '');
-      FGraphicMenu.imgDivider1.Picture.LoadFromFile(sTempPath);
-      FGraphicMenu.imgDivider2.Picture.LoadFromFile(sTempPath);
+      TfrmGraphicMenu(FGraphicMenu).imgDivider1.Picture.LoadFromFile(sTempPath);
+      TfrmGraphicMenu(FGraphicMenu).imgDivider2.Picture.LoadFromFile(sTempPath);
 
       //Tabs
-      DrawButton(IniFile, FGraphicMenu.sknbtnList, gmbList);
-      DrawButton(IniFile, FGraphicMenu.sknbtnRecents, gmbMRU);
-      DrawButton(IniFile, FGraphicMenu.sknbtnMFU, gmbMFU);
+      DrawButton(IniFile, TfrmGraphicMenu(FGraphicMenu).sknbtnList, gmbList);
+      DrawButton(IniFile, TfrmGraphicMenu(FGraphicMenu).sknbtnRecents, gmbMRU);
+      DrawButton(IniFile, TfrmGraphicMenu(FGraphicMenu).sknbtnMFU, gmbMFU);
 
       //Right Buttons
-      DrawButton(IniFile, FGraphicMenu.sknbtnASuite, gmbASuite);
-      DrawButton(IniFile, FGraphicMenu.sknbtnOptions, gmbOptions);
-      DrawButton(IniFile, FGraphicMenu.sknbtnDocuments, gmbDocuments);
-      DrawButton(IniFile, FGraphicMenu.sknbtnMusic, gmbMusic);
-      DrawButton(IniFile, FGraphicMenu.sknbtnPictures, gmbPictures);
-      DrawButton(IniFile, FGraphicMenu.sknbtnVideos, gmbVideos);
-      DrawButton(IniFile, FGraphicMenu.sknbtnExplore, gmbExplore);
-      DrawButton(IniFile, FGraphicMenu.sknbtnAbout, gmbAbout);
+      DrawButton(IniFile, TfrmGraphicMenu(FGraphicMenu).sknbtnASuite, gmbASuite);
+      DrawButton(IniFile, TfrmGraphicMenu(FGraphicMenu).sknbtnOptions, gmbOptions);
+      DrawButton(IniFile, TfrmGraphicMenu(FGraphicMenu).sknbtnDocuments, gmbDocuments);
+      DrawButton(IniFile, TfrmGraphicMenu(FGraphicMenu).sknbtnMusic, gmbMusic);
+      DrawButton(IniFile, TfrmGraphicMenu(FGraphicMenu).sknbtnPictures, gmbPictures);
+      DrawButton(IniFile, TfrmGraphicMenu(FGraphicMenu).sknbtnVideos, gmbVideos);
+      DrawButton(IniFile, TfrmGraphicMenu(FGraphicMenu).sknbtnExplore, gmbExplore);
+      DrawButton(IniFile, TfrmGraphicMenu(FGraphicMenu).sknbtnAbout, gmbAbout);
 
       //Eject and Close Buttons
-      DrawButton(IniFile, FGraphicMenu.sknbtnEject, gmbEject);
-      DrawButton(IniFile, FGraphicMenu.sknbtnExit, gmbExit);
+      DrawButton(IniFile, TfrmGraphicMenu(FGraphicMenu).sknbtnEject, gmbEject);
+      DrawButton(IniFile, TfrmGraphicMenu(FGraphicMenu).sknbtnExit, gmbExit);
 
       //Search
       sTempPath := GetPathFromIni(IniFile, INIFILE_SECTION_SEARCH, INIFILE_KEY_ICONSEARCH, '');
@@ -459,22 +466,22 @@ begin
       if FileExists(sTempPath) then
         FCancelIcon := ASuiteManager.IconsManager.GetPathIconIndex(sTempPath);
 
-      FGraphicMenu.edtSearch.RightButton.ImageIndex := FSearchIcon;
+      TfrmGraphicMenu(FGraphicMenu).edtSearch.RightButton.ImageIndex := FSearchIcon;
 
       //Hard Disk
-      DrawHardDiskSpace(IniFile, FGraphicMenu.imgDriveBackground, FGraphicMenu.imgDriveSpace);
-      FGraphicMenu.lblDriveName.Caption := format(msgGMDriveName, [UpperCase(ASuiteInstance.Paths.SuiteDrive)]);
+      DrawHardDiskSpace(IniFile, TfrmGraphicMenu(FGraphicMenu).imgDriveBackground, TfrmGraphicMenu(FGraphicMenu).imgDriveSpace);
+      TfrmGraphicMenu(FGraphicMenu).lblDriveName.Caption := format(msgGMDriveName, [UpperCase(ASuiteInstance.Paths.SuiteDrive)]);
 
       //Fonts
       strFont := IniFile.ReadString(INIFILE_SECTION_HARDDISK, INIFILE_KEY_FONT, '');
-      StrToFont(strFont, FGraphicMenu.lblDriveName.Font);
-      StrToFont(strFont, FGraphicMenu.lblDriveSpace.Font);
+      StrToFont(strFont, TfrmGraphicMenu(FGraphicMenu).lblDriveName.Font);
+      StrToFont(strFont, TfrmGraphicMenu(FGraphicMenu).lblDriveSpace.Font);
 
       //VirtualTrees
-      StrToFont(IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_FONTTREE, ''), FGraphicMenu.vstList.Font);
+      StrToFont(IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_FONTTREE, ''), TfrmGraphicMenu(FGraphicMenu).vstList.Font);
 
       //Workaround for vst trasparent
-      CopyImageInVst(FGraphicMenu.imgBackground, FGraphicMenu.vstList);
+      CopyImageInVst(TfrmGraphicMenu(FGraphicMenu).imgBackground, TfrmGraphicMenu(FGraphicMenu).vstList);
     finally
       IniFile.Free;
     end;
@@ -483,25 +490,11 @@ begin
     ShowMessageFmtEx(msgErrNoThemeIni, [ASuiteInstance.Paths.SuitePathCurrentTheme + THEME_INI], True);
 end;
 
-procedure TThemeEngine.SetupThemeEngine(AGraphicMenu: TfrmGraphicMenu);
-begin
-  FGraphicMenu := AGraphicMenu;
-end;
-
-procedure TThemeEngine.Initialize;
-begin
-  inherited;
-  FSearchIcon := -1;
-  FCancelIcon := -1;
-end;
-
 function TThemeEngine.IsRightButton(
   ButtonType: TGraphicMenuElement): Boolean;
 begin
-  Result := False;
-  if ButtonType in [gmbASuite,gmbOptions,gmbDocuments,gmbMusic,gmbPictures,
-                    gmbVideos,gmbExplore,gmbAbout] then
-    Result := True;
+  Result := ButtonType in [gmbASuite,gmbOptions,gmbDocuments,gmbMusic,gmbPictures,
+                    gmbVideos,gmbExplore,gmbAbout];
 end;
 
 end.

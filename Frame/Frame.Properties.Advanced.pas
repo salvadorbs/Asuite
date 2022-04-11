@@ -24,9 +24,9 @@ unit Frame.Properties.Advanced;
 interface
 
 uses
-  LCLIntf, SysUtils, Classes, Controls, Dialogs, Frame.Properties.Base,
-  ButtonedEdit, StdCtrls, DateUtils, DateTimePicker, DefaultTranslator,
-  ExtCtrls, EditBtn;
+  LCLIntf, SysUtils, Classes, Dialogs, Frame.Properties.Base,
+  ButtonedEdit, StdCtrls, DateUtils, DateTimePicker,
+  ExtCtrls;
 
 type
 
@@ -135,7 +135,7 @@ begin
       end;
   end;
 
-  edtHotkey.RightButton.Images := dmImages.ilLargeIcons;
+  edtHotkey.RightButton.Images := dmImages.ilIcons;
   edtHotkey.RightButton.ImagesWidth := ICON_SIZE_SMALL;
   edtHotkey.RightButton.ImageIndex := AsuiteManager.IconsManager.GetIconIndex('cancel');
 

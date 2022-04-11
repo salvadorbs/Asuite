@@ -54,7 +54,7 @@ implementation
 
 uses
   NodeDataTypes.Files, VirtualTree.Methods, AppConfig.Main, Kernel.ResourceStrings,
-  Kernel.Instance, Kernel.Manager;
+  Kernel.Instance, Utility.Misc;
 
 procedure TvCategoryNodeData.CallBackExecuteNode(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
@@ -134,7 +134,7 @@ begin
   if (Config.ConfirmRunCat) then
   begin
     if CheckRunnableSubItems(ASuiteInstance.MainTree) then
-      Result := (MessageDlg(Format(msgConfirmRunCat, [Self.Name]), mtWarning, [mbYes, mbNo], 0) = mrYes);
+      Result := AskUserWarningMessage(msgConfirmRunCat, [Self.Name]);
   end
   else
     Result := True;

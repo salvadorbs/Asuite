@@ -25,7 +25,7 @@ interface
 
 uses
   SysUtils, Classes, Controls, Forms, Dialogs, Forms.Dialog.BaseEntity,
-  NodeDataTypes.Custom, DefaultTranslator;
+  NodeDataTypes.Custom;
 
 type
   TfrmPropertyItem = class(TfrmDialogBase)

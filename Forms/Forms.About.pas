@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, SysUtils, Forms, Dialogs, StdCtrls, ExtCtrls, JPP.LinkLabel,
-  DefaultTranslator, Classes;
+  Classes;
 
 type
 
@@ -41,14 +41,15 @@ type
     lblCopyright: TLabel;
     imgLogo: TImage;
     lnklblWebSite: TJppLinkLabel;
-    procedure FormShow(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
     procedure imgDonateClick(Sender: TObject);
     procedure imgLicenseClick(Sender: TObject);
     procedure lnklblWebSiteClick(Sender: TObject);
   private
     { Private declarations }
   public
-    { Public declarations }
+    { Public declarations }   
+    class procedure Execute(AOwner: TComponent);
   end;
 
 var
@@ -57,30 +58,43 @@ var
 implementation
 
 uses
-  Utility.Misc, Kernel.Consts, LazFileUtils, Kernel.Instance, Kernel.Manager;
+  Kernel.Consts, LazFileUtils, Kernel.Instance;
 
 {$R *.lfm}
 
-procedure TfrmAbout.FormShow(Sender: TObject);
+procedure TfrmAbout.FormActivate(Sender: TObject);
 begin
   Self.Caption := Format(Self.Caption, [APP_NAME]);
   lblAppName.Caption := Format(lblAppName.Caption, [APP_NAME]);
-  lblVersion.Caption := Format(lblVersion.Caption, [GetASuiteVersion(True), {$IFDEF Win32}'32'{$ELSE}'64'{$ENDIF}]);
+  lblVersion.Caption := Format(lblVersion.Caption, [TASuiteInstance.GetASuiteVersion(True), {$IFDEF Win32}'32'{$ELSE}'64'{$ENDIF}]);
 end;
 
 procedure TfrmAbout.imgDonateClick(Sender: TObject);
 begin
-  OpenURL(PChar('https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QYASG6DPAYSXW'));
+  OpenURL('https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QYASG6DPAYSXW');
 end;
 
 procedure TfrmAbout.imgLicenseClick(Sender: TObject);
 begin
-   OpenDocument(PChar(AppendPathDelim(ASuiteInstance.Paths.SuitePathWorking) + 'docs' + PathDelim +  'license.txt'));
+   OpenDocument(AppendPathDelim(ASuiteInstance.Paths.SuitePathWorking) + 'docs' + PathDelim +  'license.txt');
 end;
 
 procedure TfrmAbout.lnklblWebSiteClick(Sender: TObject);
 begin
-  OpenURL(PChar('http://www.salvadorsoftware.com'));
+  OpenURL('http://www.salvadorsoftware.com');
+end;
+
+class procedure TfrmAbout.Execute(AOwner: TComponent);
+begin
+  if Assigned(frmAbout) then
+    Exit;
+
+  frmAbout := TfrmAbout.Create(AOwner);
+  try
+    frmAbout.ShowModal;
+  finally
+    FreeAndNil(frmAbout);
+  end;
 end;
 
 end.

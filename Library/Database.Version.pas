@@ -24,13 +24,13 @@ unit Database.Version;
 interface
 
 uses
-  mORMot, Database.Manager, SynLog, SysUtils, FileInfo;
+  Database.Manager, mormot.core.log, SysUtils, FileInfo, mormot.orm.core;
 
 type
 
   { TSQLtbl_version }
 
-  TSQLtbl_version = class(TSQLRecord) //Table tbl_version
+  TSQLtbl_version = class(TOrm) //Table tbl_version
   private
     FMajor   : Integer;
     FMinor   : Integer;
@@ -53,7 +53,7 @@ type
 implementation
 
 uses
-  Kernel.Logger, Utility.Misc, Kernel.ResourceStrings;
+  Kernel.Logger, Kernel.Instance;
 
 { TSQLtbl_version }
 
@@ -64,12 +64,12 @@ begin
   if ADBManager.Database.TableHasRows(TSQLtbl_version) then
   begin
     //Get sql data
-    SQLVersionData := TSQLtbl_version.CreateAndFillPrepare(ADBManager.Database,'');
+    SQLVersionData := TSQLtbl_version.CreateAndFillPrepare(ADBManager.Database.Orm,'');
     try
       SQLVersionData.FillOne;
 
       ADBManager.DBVersion := SQLVersionData.ToVersionNumber;
-      TASuiteLogger.Info('Load Database Version (%s)', [GetASuiteVersion(False)]);
+      TASuiteLogger.Info('Load Database Version (%s)', [TASuiteInstance.GetASuiteVersion(False)]);
     finally
       SQLVersionData.Free;
     end;
@@ -83,10 +83,10 @@ var
   IsDataExists: Boolean;
 begin
   TASuiteLogger.Info('Saving ASuite Version', []);
-  ASuiteVersion := GetASuiteVersion;
+  ASuiteVersion := TASuiteInstance.GetASuiteVersion;
   try
     //Select only file record by ID
-    SQLVersionData := TSQLtbl_version.CreateAndFillPrepare(ADBManager.Database, '');
+    SQLVersionData := TSQLtbl_version.CreateAndFillPrepare(ADBManager.Database.Orm, '');
     try
       IsDataExists := SQLVersionData.FillOne;
 
@@ -106,7 +106,7 @@ begin
     end;
   except
     on E : Exception do
-      ShowMessageFmtEx(msgErrGeneric,[E.ClassName, E.Message], True);
+      TASuiteLogger.Exception(E);
   end;
 end;
 

@@ -15,6 +15,7 @@ object frmScanFolder: TfrmScanFolder
   OnCreate = FormCreate
   OnKeyPress = FormKeyPress
   Position = poMainFormCenter
+  LCLVersion = '2.2.0.2'
   object pnlButtons: TButtonPanel
     Left = 6
     Height = 26

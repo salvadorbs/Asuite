@@ -24,7 +24,7 @@ unit NodeDataTypes.Base;
 interface
 
 uses
-  VirtualTrees, SysUtils, DateUtils, Kernel.Enumerations, Icons.Base, LazUTF8,
+  VirtualTrees, SysUtils, DateUtils, Kernel.Enumerations, LazUTF8,
   Icons.Custom;
 
 type
@@ -39,6 +39,7 @@ type
     FPosition    : Cardinal;
     FChanged     : boolean;
     FName        : String;
+    FDescription : string;
     FIcon        : TCustomIcon;
     FDataType    : TvTreeDataType;
     FPNode       : PVirtualNode; //Self PVirtualNode
@@ -75,6 +76,7 @@ type
     property Position : Cardinal read FPosition write FPosition;
     property Changed: boolean read FChanged write SetChanged;
     property Name: string read GetName write SetName;
+    property Description: string read FDescription write FDescription;
     property Icon: TCustomIcon read FIcon;
     property DataType: TvTreeDataType read GetDataType write SetDataType;
     property ParentNode: PVirtualNode read GetParentNode;
@@ -111,16 +113,17 @@ begin
   inherited;
 end;
 
-procedure TvBaseNodeData.Copy(source:TvBaseNodeData);
+procedure TvBaseNodeData.Copy(Source:TvBaseNodeData);
 begin
-  FName       := msgCopy + source.Name;
-  FDataType   := source.DataType;
-  FHideFromMenu := source.HideFromMenu;
+  Self.Name         := msgCopy + Source.Name;
+  Self.DataType     := Source.DataType;
+  Self.HideFromMenu := Source.HideFromMenu;
+  Self.Description  := Source.Description;
 end;
 
 function TvBaseNodeData.IsFileItem: Boolean;
 begin
-  Result := Self.DataType in [vtdtFile,vtdtFolder];
+  Result := Self.DataType in [vtdtFile, vtdtFolder];
 end;
 
 function TvBaseNodeData.IsSeparatorItem: Boolean;

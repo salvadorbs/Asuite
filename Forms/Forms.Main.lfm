@@ -16,7 +16,7 @@ object frmMain: TfrmMain
   OnHide = FormHide
   OnResize = FormResize
   OnShow = FormShow
-  LCLVersion = '2.0.10.0'
+  LCLVersion = '2.2.0.2'
   object pcList: TPageControl
     Left = 0
     Height = 366
@@ -90,7 +90,7 @@ object frmMain: TfrmMain
             Width = 90
           end>
         Header.Height = 21
-        Header.Options = [hoColumnResize, hoDblClickResize, hoDrag, hoVisible, hoHeaderClickAutoSort]
+        Header.Options = [hoColumnResize, hoDblClickResize, hoDrag, hoVisible, hoHeaderClickAutoSort, hoAutoResizeInclCaption]
         HintMode = hmHint
         ParentFont = False
         ParentShowHint = False
@@ -106,12 +106,14 @@ object frmMain: TfrmMain
         Top = 0
         Width = 193
         Align = alTop
+        LeftButton.Visible = True
         ParentFont = False
         RightButton.Visible = True
         ShowHint = True
         TabOrder = 0
         TextHint = 'Name'
         OnChange = btnedtSearchChange
+        OnLeftButtonClick = btnedtSearchLeftButtonClick
         OnRightButtonClick = btnedtSearchRightButtonClick
         OnKeyPress = btnedtSearchKeyPress
       end
@@ -143,7 +145,7 @@ object frmMain: TfrmMain
       end
       object miImportList: TMenuItem
         Caption = 'Import list...'
-        ShortCut = 113
+        ShortCut = 24644
         OnClick = miImportListClick
       end
       object miExportList: TMenuItem
@@ -183,13 +185,14 @@ object frmMain: TfrmMain
     object mniRunItem: TMenuItem
       Action = actRunItem
       Default = True
-      ShortCut = 120
+      ShortCut = 13
     end
     object mniRunAsItem: TMenuItem
       Action = actRunAsItem
     end
     object mniRunAsAdminItem: TMenuItem
       Action = actRunAsAdminItem
+      ShortCut = 16397
     end
     object mniOpenFolderItem: TMenuItem
       Action = actOpenFolderItem
@@ -208,16 +211,17 @@ object frmMain: TfrmMain
     end
     object mniAddCat: TMenuItem
       Action = actAddCat
-      ShortCut = 114
+      ShortCut = 24654
     end
     object mniAddSoftware: TMenuItem
       Tag = 1
       Action = actAddSoftware
-      ShortCut = 115
+      ShortCut = 16462
     end
     object mniAddFolder: TMenuItem
       Tag = 2
       Action = actAddFolder
+      ShortCut = 49230
     end
     object mniAddSeparator: TMenuItem
       Tag = 3
@@ -247,7 +251,7 @@ object frmMain: TfrmMain
     end
     object mniProperty: TMenuItem
       Action = actProperty
-      ShortCut = 116
+      ShortCut = 32781
     end
   end
   object SaveDialog1: TSaveDialog
@@ -313,7 +317,7 @@ object frmMain: TfrmMain
     end
     object actOpenFolderItem: TAction
       Tag = 3
-      Caption = 'Show application''s folder'
+      Caption = 'Open file location'
       OnExecute = actRunItemExecute
       OnUpdate = actRunItemUpdate
     end
@@ -348,7 +352,7 @@ object frmMain: TfrmMain
       OnUpdate = actCutCopyDeleteUpdate
     end
     object actProperty: TAction
-      Caption = 'Property'
+      Caption = 'Properties'
       OnExecute = actPropertyExecute
       OnUpdate = actCutCopyDeleteUpdate
     end

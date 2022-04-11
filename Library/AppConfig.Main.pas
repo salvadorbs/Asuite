@@ -32,11 +32,14 @@ type
   { TConfiguration }
   TConfiguration = class
   private
+    FCMHideEjectMenuItem: Boolean;
+    FGMHideEjectButton: Boolean;
     //General
     FStartWithWindows   : Boolean;
     FShowPanelAtStartUp : Boolean;
     FShowGraphicMenuAtStartUp  : Boolean;
     FShowGraphicMenuAnotherInstance: Boolean;
+    FConfirmMsgCloseApp: Boolean;
     //Main Form
     FLangID             : String;
     FTVDisableConfirmDelete: Boolean;
@@ -89,7 +92,6 @@ type
     FGMPositionTop      : Integer;
     FGMPositionLeft     : Integer;
     FGMSmallIconSize    : Boolean;
-    FGMAutomaticHideMenu : Boolean;
     FGMShowUserPicture   : Boolean;
     //Right buttons
     FGMBtnDocuments     : string;
@@ -103,7 +105,6 @@ type
     FGraphicMenuHotKey  : string;
     FClassicMenuHotkey  : string;
     //Misc
-    FReadOnlyMode         : Boolean;
     FChanged              : Boolean;
     FASuiteState          : TLauncherState;
     FMissedSchedulerTask  : Boolean;
@@ -113,13 +114,15 @@ type
     FScanFolderFileTypes  : TStringList;
     FScanFolderExcludeNames: TStringList;
 
-    function LoadIconFromFile(const APath: string): TBGRABitmap;
+    function LoadPngAndConvertBMP(const APath: String): TBitmap;
+    function LoadTrayIconFromFile(const APath: string): TBGRABitmap;
     procedure RestoreSettings(AJSONConfig: TJSONConfig);
     procedure SaveSettings(AJSONConfig: TJSONConfig);
     procedure SetHoldSize(value: Boolean);
     procedure SetAlwaysOnTop(value: Boolean);
     procedure SetTrayIcon(value: Boolean);
     procedure SetTrayUseCustomIcon(value: Boolean);
+    procedure SetTVBackgroundPath(AValue: String);
     procedure SetUseCustomTitle(value: Boolean);
     procedure SetTVAutoOpClCats(value: Boolean);
     procedure SetHideTabSearch(value: Boolean);
@@ -159,6 +162,7 @@ type
     property ShowGraphicMenuAtStartUp: Boolean read FShowGraphicMenuAtStartUp write FShowGraphicMenuAtStartUp;
     property MissedSchedulerTask: Boolean read FMissedSchedulerTask write FMissedSchedulerTask;
     property ShowGraphicMenuAnotherInstance: Boolean read FShowGraphicMenuAnotherInstance write FShowGraphicMenuAnotherInstance;
+    property ConfirmMsgCloseApp: Boolean read FConfirmMsgCloseApp write FConfirmMsgCloseApp;
     // Main Form
     property LangID: String read FLangID write SetLangID;
     property UseCustomTitle: Boolean read FUseCustomTitle write SetUseCustomTitle;
@@ -172,7 +176,7 @@ type
     // Main Form - Treevew
     property TVBackground: Boolean read FTVBackground write SetTVBackground;
     property TVSmallIconSize: Boolean read FTVSmallIconSize write SetTVSmallIconSize;
-    property TVBackgroundPath: String read FTVBackgroundPath write FTVBackgroundPath;
+    property TVBackgroundPath: String read FTVBackgroundPath write SetTVBackgroundPath;
     property TVAutoOpClCats: Boolean read FTVAutoOpClCats write SetTVAutoOpClCats;
     property TVAutoOpCatsDrag: Boolean read FTVAutoOpCatsDrag write FTVAutoOpCatsDrag;
     property TVDisableConfirmDelete: Boolean read FTVDisableConfirmDelete write FTVDisableConfirmDelete;
@@ -206,6 +210,7 @@ type
     property ActionClickMiddle: TTrayiconActionClick read FActionClickMiddle write FActionClickMiddle;
     property ActionClickRight: TTrayiconActionClick read FActionClickRight write FActionClickRight;
     property AutoExpansionFolder: Boolean read FAutoExpansionFolder write FAutoExpansionFolder;
+    property CMHideEjectMenuItem: Boolean read FCMHideEjectMenuItem write FCMHideEjectMenuItem;
     //Graphic Menu
     property GMTheme: string read FGMTheme write SetGMTheme;
     property GMFade: Boolean read FGMFade write FGMFade;
@@ -213,8 +218,8 @@ type
     property GMPersonalPicture: string read FGMPersonalPicture write FGMPersonalPicture;
     property GMPositionTop: Integer read FGMPositionTop write FGMPositionTop;
     property GMPositionLeft: Integer read FGMPositionLeft write FGMPositionLeft;
-    property GMAutomaticHideMenu: Boolean read FGMAutomaticHideMenu write FGMAutomaticHideMenu;
     property GMShowUserPicture: Boolean read FGMShowUserPicture write FGMShowUserPicture;
+    property GMHideEjectButton: Boolean read FGMHideEjectButton write FGMHideEjectButton;
     //Right buttons
     property GMBtnDocuments: string read FGMBtnDocuments write SetGMBtnDocuments;
     property GMBtnPictures: string read FGMBtnPictures write SetGMBtnPictures;
@@ -227,14 +232,13 @@ type
     property GraphicMenuHotKey: string read FGraphicMenuHotKey write SetGraphicMenuHotKey;
     property ClassicMenuHotkey: string read FClassicMenuHotkey write SetClassicMenuHotkey;
     // Misc
-    property ReadOnlyMode: Boolean read FReadOnlyMode write FReadOnlyMode;
     property Changed: Boolean read FChanged write SetChanged;
     property ASuiteState: TLauncherState read FASuiteState write SetASuiteState;
     property ScanFolderAutoExtractName: boolean read FScanFolderAutoExtractName write FScanFolderAutoExtractName;
     property ScanFolderFileTypes: TStringList read FScanFolderFileTypes write FScanFolderFileTypes;
     property ScanFolderExcludeNames: TStringList read FScanFolderExcludeNames write FScanFolderExcludeNames;
 
-    procedure AfterUpdateConfig();
+    procedure AfterUpdateConfig;
 
     //Update theme paths
     procedure UpdateGMTheme;
@@ -250,14 +254,40 @@ implementation
 
 uses
   Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, Utility.Misc,
-  Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder,
-  Utility.XML, GraphicMenu.ThemeEngine, LCLProc, BGRAIconCursor,
+  Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder, mormot.core.log,
+  LCLProc, BGRAIconCursor,
   TypInfo, Kernel.ResourceStrings, LCLTranslator, AppConfig.Consts, BGRABitmapTypes,
   Utility.Conversions, Hotkeys.Manager.Platform, Kernel.Instance, Kernel.Manager;
 
-procedure TConfiguration.AfterUpdateConfig();
+procedure TConfiguration.AfterUpdateConfig;
+var
+  BackgroundBMP : Graphics.TBitmap;
+  sBackgroundPath: String;
+
 begin   
   TVirtualTreeMethods.UpdateItemColor(ASuiteInstance.MainTree);
+
+  SetDefaultLang(FLangID, ASuiteInstance.Paths.SuitePathLocale);
+
+  //Update background
+  sBackgroundPath := ASuiteInstance.Paths.RelativeToAbsolute(FTVBackgroundPath);
+  if (FTVBackground) and (FTVBackgroundPath <> '') and (FileExists(sBackgroundPath)) then
+  begin
+    if ExtractLowerFileExt(sBackgroundPath) = EXT_PNG then
+    begin
+      BackgroundBMP := LoadPngAndConvertBMP(sBackgroundPath);
+      try
+        ASuiteInstance.MainTree.Background.Bitmap := BackgroundBMP;
+      finally
+        BackgroundBMP.Free;
+      end;
+    end
+    else
+      if ExtractLowerFileExt(sBackgroundPath) = EXT_BMP then
+        ASuiteInstance.MainTree.Background.LoadFromFile(sBackgroundPath);
+  end;
+
+  ASuiteInstance.MainTree.Update;
 end;
 
 constructor TConfiguration.Create;
@@ -268,6 +298,7 @@ begin
   FShowGraphicMenuAtStartUp  := False;
   FMissedSchedulerTask := True;
   FShowGraphicMenuAnotherInstance := True;
+  FConfirmMsgCloseApp := True;
 
   //Main Form
   FLangID             := 'en';
@@ -329,6 +360,7 @@ begin
   FActionClickMiddle  := tcNone;
   FActionClickRight   := tcShowGraphicMenu;
   FAutoExpansionFolder := True;
+  FCMHideEjectMenuItem := False;
 
   //Graphic Menu
   FGMTheme            := 'default';
@@ -336,8 +368,8 @@ begin
   FGMPersonalPicture  := 'PersonalPicture.png';
   FGMPositionTop      := -1;
   FGMPositionLeft     := -1;
-  FGMAutomaticHideMenu := True;
-  FGMShowUserPicture   := True;
+  FGMShowUserPicture  := True;
+  FGMHideEjectButton  := False;
 
   //Right buttons
   FGMBtnDocuments     := '%USERPROFILE%\Documents';
@@ -347,7 +379,6 @@ begin
   FGMBtnExplore       := '$drive';
 
   //Misc
-  FReadOnlyMode       := False;
   FChanged            := False;
   FASuiteState        := lsStartUp;
   FHotKey             := True;
@@ -360,8 +391,8 @@ begin
   //ScanFolder
   FScanFolderAutoExtractName := True;
   FScanFolderFileTypes  := TStringList.Create;
-  FScanFolderFileTypes.Add(EXT_LNK);
-  FScanFolderFileTypes.Add(EXT_EXE);
+  FScanFolderFileTypes.Add(EXT_PATH_MASK + EXT_LNK);
+  FScanFolderFileTypes.Add(EXT_PATH_MASK + EXT_EXE);
   FScanFolderExcludeNames := TStringList.Create;
   FScanFolderExcludeNames.Add('uninstall');
 end;
@@ -435,6 +466,7 @@ begin
     AJSONConfig.SetValue(CONFIG_SHOWMENUATSTARTUP, Self.ShowGraphicMenuAtStartUp);
     AJSONConfig.SetValue(CONFIG_MISSEDSCHEDULERTASK, Self.MissedSchedulerTask);
     AJSONConfig.SetValue(CONFIG_SECONDINSTANCEGM, Self.ShowGraphicMenuAnotherInstance);
+    AJSONConfig.SetValue(CONFIG_CONFIRMCLOSEASUITE, Self.ConfirmMsgCloseApp);
 
     // Main Form
     AJSONConfig.SetValue(CONFIG_LANGID, Self.LangID);
@@ -442,6 +474,8 @@ begin
     AJSONConfig.SetValue(CONFIG_CUSTOMTITLESTRING, Self.CustomTitleString);
     AJSONConfig.SetValue(CONFIG_HIDETABSEARCH, Self.HideTabSearch);
     AJSONConfig.SetValue(CONFIG_SEARCHASYOUTYPE, Self.SearchAsYouType);
+    AJSONConfig.SetValue(CONFIG_SEARCH_NAME_WIDTH, frmMain.vstSearch.Header.Columns[0].Width);
+    AJSONConfig.SetValue(CONFIG_SEARCH_CATEGORY_WIDTH, frmMain.vstSearch.Header.Columns[1].Width);
     AJSONConfig.SetValue(CONFIG_HOLDSIZE, Self.HoldSize);
     AJSONConfig.SetValue(CONFIG_ALWAYSONTOP, Self.AlwaysOnTop);
     AJSONConfig.SetValue(CONFIG_MAINFORM_DIALOGS_CENTER, Self.DialogCenterMF);
@@ -503,6 +537,7 @@ begin
     AJSONConfig.SetValue(CONFIG_ACTIONCLICKMIDDLE, Integer(Self.ActionClickMiddle));
     AJSONConfig.SetValue(CONFIG_ACTIONCLICKRIGHT, Integer(Self.ActionClickRight));
     AJSONConfig.SetValue(CONFIG_AUTOEXPANSIONFOLDER, Self.AutoExpansionFolder);
+    AJSONConfig.SetValue(CONFIG_CMHIDEEJECTMENUITEM, Self.CMHideEjectMenuItem);
 
     //Graphic Menu
     AJSONConfig.SetValue(CONFIG_GMFADE, Self.GMFade);
@@ -510,8 +545,8 @@ begin
     AJSONConfig.SetValue(CONFIG_GMPERSONALPICTURE, Self.GMPersonalPicture);
     AJSONConfig.SetValue(CONFIG_GMPOSITIONTOP, Self.GMPositionTop);
     AJSONConfig.SetValue(CONFIG_GMPOSITIONLEFT, Self.GMPositionLeft);
-    AJSONConfig.SetValue(CONFIG_GMAUTOHIDEMENU, Self.GMAutomaticHideMenu);
     AJSONConfig.SetValue(CONFIG_GMSHOWUSERPICTURE, Self.GMShowUserPicture);
+    AJSONConfig.SetValue(CONFIG_GMHIDEEJECTBUTTON, Self.GMHideEjectButton);
 
     //Right buttons
     AJSONConfig.SetValue(CONFIG_GMBTNDOCUMENTS, Self.GMBtnDocuments);
@@ -538,10 +573,11 @@ end;
 procedure TConfiguration.RestoreSettings(AJSONConfig: TJSONConfig);
 var
   nLeft, nTop, nWidth, nHeight: Integer;
+  tempTypes: TStringList;
 begin
   //Get GMTheme before everything (so ASuite know where icons folder)
   Self.GMTheme := AJSONConfig.GetValue(CONFIG_GMTHEME, Self.GMTheme);
-  TASuiteLogger.Info('Loaded GraphicMenu theme = ', [Self.GMTheme]);
+  TASuiteLogger.Info('Loaded GraphicMenu theme = %s', [Self.GMTheme]);
 
   //General
   Self.StartWithWindows          := AJSONConfig.GetValue(CONFIG_STARTWITHWINDOWS, Self.StartWithWindows);
@@ -549,6 +585,7 @@ begin
   Self.ShowGraphicMenuAtStartUp  := AJSONConfig.GetValue(CONFIG_SHOWMENUATSTARTUP, Self.ShowGraphicMenuAtStartUp);
   Self.MissedSchedulerTask       := AJSONConfig.GetValue(CONFIG_MISSEDSCHEDULERTASK, Self.MissedSchedulerTask);
   Self.ShowGraphicMenuAnotherInstance := AJSONConfig.GetValue(CONFIG_SECONDINSTANCEGM, Self.ShowGraphicMenuAnotherInstance);
+  Self.ConfirmMsgCloseApp := AJSONConfig.GetValue(CONFIG_CONFIRMCLOSEASUITE, Self.ConfirmMsgCloseApp);
 
   // Main Form
   Self.LangID                    := AJSONConfig.GetValue(CONFIG_LANGID, Self.LangID);
@@ -556,6 +593,8 @@ begin
   Self.CustomTitleString         := AJSONConfig.GetValue(CONFIG_CUSTOMTITLESTRING, Self.CustomTitleString);
   Self.HideTabSearch             := AJSONConfig.GetValue(CONFIG_HIDETABSEARCH, Self.HideTabSearch);
   Self.SearchAsYouType           := AJSONConfig.GetValue(CONFIG_SEARCHASYOUTYPE, Self.SearchAsYouType);
+  frmMain.vstSearch.Header.Columns[0].Width := AJSONConfig.GetValue(CONFIG_SEARCH_NAME_WIDTH, frmMain.vstSearch.Header.Columns[0].Width);
+  frmMain.vstSearch.Header.Columns[1].Width := AJSONConfig.GetValue(CONFIG_SEARCH_CATEGORY_WIDTH, frmMain.vstSearch.Header.Columns[1].Width);
   Self.HoldSize                  := AJSONConfig.GetValue(CONFIG_HOLDSIZE, Self.HoldSize);
   Self.AlwaysOnTop               := AJSONConfig.GetValue(CONFIG_ALWAYSONTOP, Self.AlwaysOnTop);
   Self.DialogCenterMF            := AJSONConfig.GetValue(CONFIG_MAINFORM_DIALOGS_CENTER, Self.DialogCenterMF);
@@ -579,7 +618,6 @@ begin
   Self.TVFont.Name               := AJSONConfig.GetValue(CONFIG_TVFONTNAME, UnicodeString(Self.TVFont.Name));
   Self.TVFont.Color              := HtmlToColor(AJSONConfig.GetValue(CONFIG_TVFONTCOLOR, ColorToHtml(Self.TVFont.Color)));
   Self.TVFont.Size               := AJSONConfig.GetValue(CONFIG_TVFONTSIZE, Self.TVFont.Size);
-  //Self.TVFont.Style              := TFontStyles({byte}AJSONConfig.GetValue(CONFIG_TVFONTSIZE, 0));
   if AJSONConfig.GetValue(CONFIG_TVFONTSTYLE_BOLD, (fsBold in Self.TVFont.Style)) then
      Self.TVFont.Style := Self.TVFont.Style + [fsBold];
   if AJSONConfig.GetValue(CONFIG_TVFONTSTYLE_ITALIC, (fsItalic in Self.TVFont.Style)) then
@@ -624,6 +662,7 @@ begin
   Self.ActionClickMiddle         := TTrayiconActionClick(AJSONConfig.GetValue(CONFIG_ACTIONCLICKMIDDLE, Integer(Self.ActionClickMiddle)));
   Self.ActionClickRight          := TTrayiconActionClick(AJSONConfig.GetValue(CONFIG_ACTIONCLICKRIGHT, Integer(Self.ActionClickRight)));
   Self.AutoExpansionFolder       := AJSONConfig.GetValue(CONFIG_AUTOEXPANSIONFOLDER, Self.AutoExpansionFolder);
+  Self.CMHideEjectMenuItem       := AJSONConfig.GetValue(CONFIG_CMHIDEEJECTMENUITEM, Self.CMHideEjectMenuItem);
 
   //Graphic Menu
   Self.GMFade                    := AJSONConfig.GetValue(CONFIG_GMFADE, Self.GMFade);
@@ -631,8 +670,8 @@ begin
   Self.GMPersonalPicture         := AJSONConfig.GetValue(CONFIG_GMPERSONALPICTURE, Self.GMPersonalPicture);
   Self.GMPositionTop             := AJSONConfig.GetValue(CONFIG_GMPOSITIONTOP, Self.GMPositionTop);
   Self.GMPositionLeft            := AJSONConfig.GetValue(CONFIG_GMPOSITIONLEFT, Self.GMPositionLeft);
-  Self.GMAutomaticHideMenu       := AJSONConfig.GetValue(CONFIG_GMAUTOHIDEMENU, Self.GMAutomaticHideMenu);
   Self.GMShowUserPicture         := AJSONConfig.GetValue(CONFIG_GMSHOWUSERPICTURE, Self.GMShowUserPicture);
+  Self.GMHideEjectButton         := AJSONConfig.GetValue(CONFIG_GMHIDEEJECTBUTTON, Self.GMHideEjectButton);
 
   //Right buttons
   Self.GMBtnDocuments            := AJSONConfig.GetValue(CONFIG_GMBTNDOCUMENTS, Self.GMBtnDocuments);
@@ -649,13 +688,22 @@ begin
 
   // Misc
   Self.ScanFolderAutoExtractName := AJSONConfig.GetValue(CONFIG_SCANFOLDERAUTOEXTRACTNAME, Self.ScanFolderAutoExtractName);
-  AJSONConfig.GetValue(CONFIG_SCANFOLDERFILETYPES, Self.ScanFolderFileTypes, Self.ScanFolderFileTypes);
   AJSONConfig.GetValue(CONFIG_SCANFOLDEREXCLUDENAMES, Self.ScanFolderExcludeNames, Self.ScanFolderExcludeNames);
+
+  //Workaround for missing types
+  tempTypes := TStringList.Create;
+  try
+    AJSONConfig.GetValue(CONFIG_SCANFOLDERFILETYPES, tempTypes, tempTypes);
+    if tempTypes.count > 0 then
+      Self.ScanFolderFileTypes.Assign(tempTypes);
+  finally
+    tempTypes.Free;
+  end;
 
   Self.AfterUpdateConfig;
 end;
 
-function TConfiguration.LoadIconFromFile(const APath: string): TBGRABitmap;
+function TConfiguration.LoadTrayIconFromFile(const APath: string): TBGRABitmap;
 var
   Icon: TBGRAIconCursor;
 begin
@@ -686,8 +734,10 @@ end;
 procedure TConfiguration.LoadConfig;
 var
   JSONConfig: TJSONConfig;
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('Loading ASuite configuration', Self);
+  log := TASuiteLogger.Enter('TConfiguration.LoadConfig', Self);
+  TASuiteLogger.Debug('Settings file = %s', [ASuiteInstance.Paths.SuitePathSettings]);
 
   //if FileExists(ASuiteInstance.Paths.SuitePathSettings) then
   //begin
@@ -709,11 +759,12 @@ end;
 procedure TConfiguration.SaveConfig;  
 var
   JSONConfig: TJSONConfig;
+  {%H-}log: ISynLog;
 begin
   //If settings is changed, insert it else (if it exists) update it
   if Config.Changed then
   begin
-    TASuiteLogger.Enter('Saving ASuite Options', Self);
+    log := TASuiteLogger.Enter('TConfiguration.SaveConfig', Self);
     try
       JSONConfig := TJSONConfig.Create(nil);
       JSONConfig.Formatted := True;
@@ -789,12 +840,12 @@ begin
     sPath := AppendPathDelim(ASuiteInstance.Paths.SuitePathCurrentTheme + ICONS_DIR) + LowerCase(APP_NAME) + EXT_ICO;
 
   try
-    bmp := LoadIconFromFile(sPath);
+    bmp := LoadTrayIconFromFile(sPath);
 
     if Assigned(bmp) then
       dmTrayMenu.tiTrayMenu.Icon.Assign(bmp.Bitmap)
     else
-      dmTrayMenu.tiTrayMenu.Icon.AssignImage(Application.Icon);
+      dmTrayMenu.tiTrayMenu.Icon.Assign(Application.Icon);
   finally
     bmp.Free;
   end;
@@ -803,6 +854,14 @@ begin
   dmTrayMenu.tiTrayMenu.Visible := FTrayIcon;
   if dmTrayMenu.tiTrayMenu.Visible then
     dmTrayMenu.tiTrayMenu.Show;
+end;
+
+procedure TConfiguration.SetTVBackgroundPath(AValue: String);
+begin
+  if FTVBackgroundPath = AValue then Exit;
+  FTVBackgroundPath := AValue;
+
+  Self.TVBackground := FTVBackground;
 end;
 
 procedure TConfiguration.SetUseCustomTitle(value: Boolean);
@@ -831,7 +890,7 @@ begin
   frmMain.SetAllIcons;
   //Refresh GraphicMenu
   if Assigned(frmGraphicMenu) then
-    TThemeEngine.Create.LoadTheme;
+    frmGraphicMenu.LoadTheme;
 end;
 
 procedure TConfiguration.SetTVAutoOpClCats(value: Boolean);
@@ -860,35 +919,28 @@ begin
 end;
 
 procedure TConfiguration.SetTVBackground(value: Boolean);
-var
-  BackgroundBMP : Graphics.TBitmap;
-  BackgroundPNG : TPortableNetworkGraphic;
 begin
   FTVBackground := value;
-  ASuiteInstance.MainTree.TreeOptions.PaintOptions := ASuiteInstance.MainTree.TreeOptions.PaintOptions - [toShowBackground];
-  if (FTVBackground) and (FTVBackgroundPath <> '') and
-     (FileExists(ASuiteInstance.Paths.RelativeToAbsolute(FTVBackgroundPath))) then
-  begin
-    if ExtractFileExtEx(ASuiteInstance.Paths.RelativeToAbsolute(FTVBackgroundPath)) <> EXT_BMP then
-    begin
-      BackgroundBMP := Graphics.TBitmap.Create;
-      BackgroundPNG := TPortableNetworkGraphic.Create;
-      try
-        BackgroundPNG.LoadFromFile(ASuiteInstance.Paths.RelativeToAbsolute(FTVBackgroundPath));
-        BackgroundBMP.Assign(BackgroundPNG);
-        ASuiteInstance.MainTree.Background.Bitmap := BackgroundBMP;
-      finally
-        BackgroundBMP.Free;
-        BackgroundPNG.Free;
-      end;
-    end
-    else
-      ASuiteInstance.MainTree.Background.LoadFromFile(ASuiteInstance.Paths.RelativeToAbsolute(FTVBackgroundPath));
-    ASuiteInstance.MainTree.TreeOptions.PaintOptions := ASuiteInstance.MainTree.TreeOptions.PaintOptions + [toShowBackground];
-  end
+
+  if FTVBackground then
+    ASuiteInstance.MainTree.TreeOptions.PaintOptions := ASuiteInstance.MainTree.TreeOptions.PaintOptions + [toShowBackground]
   else
     ASuiteInstance.MainTree.TreeOptions.PaintOptions := ASuiteInstance.MainTree.TreeOptions.PaintOptions - [toShowBackground];
-  ASuiteInstance.MainTree.Update;
+end;
+
+function TConfiguration.LoadPngAndConvertBMP(const APath: String): TBitmap;
+var
+  BackgroundPNG: TPortableNetworkGraphic;
+begin
+  Result := Graphics.TBitmap.Create;
+
+  BackgroundPNG := TPortableNetworkGraphic.Create;
+  try
+    BackgroundPNG.LoadFromFile(APath);
+    Result.Assign(BackgroundPNG);
+  finally
+    BackgroundPNG.Free;
+  end;
 end;
 
 procedure TConfiguration.SetTVFont(value: TFont);
@@ -1005,8 +1057,6 @@ begin
     FLangID := value
   else
     FLangID := 'en';
-
-  SetDefaultLang(value, ASuiteInstance.Paths.SuitePathLocale);
 end;
 
 procedure TConfiguration.SetGraphicMenuHotKey(const Value: string);

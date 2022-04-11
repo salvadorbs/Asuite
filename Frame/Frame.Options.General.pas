@@ -24,29 +24,30 @@ unit Frame.Options.General;
 interface
 
 uses
-  LCLIntf, SysUtils, Dialogs, Frame.BaseEntity, StdCtrls,
-  DefaultTranslator;
+  LCLIntf, SysUtils, Dialogs, Frame.BaseEntity, StdCtrls;
 
 type
 
   { TfrmGeneralOptionsPage }
 
   TfrmGeneralOptionsPage = class(TfrmBaseEntityPage)
+    cbRunSingleClick: TCheckBox;
     cbSecondInstanceGM: TCheckBox;
+    cbShowMenuStartup: TCheckBox;
+    cbShowPanelStartup: TCheckBox;
+    chkAutoCloseProcess: TCheckBox;
+    chkConfirmMessageCat: TCheckBox;
+    chkConfirmMsgCloseApp: TCheckBox;
+    chkMissedSchedulerTask: TCheckBox;
+    cxActionOnExe: TComboBox;
+    cxLanguage: TComboBox;
+    gbExecution: TGroupBox;
     
     gbStartup: TGroupBox;
     cbWindowsStartup: TCheckBox;
-    cbShowPanelStartup: TCheckBox;
-    cbShowMenuStartup: TCheckBox;
-    chkMissedSchedulerTask: TCheckBox;
-    grpLanguage: TGroupBox;
-    cxLanguage: TComboBox;
-    gbExecution: TGroupBox;
+    gbStartup1: TGroupBox;
     lbActionOnExe: TLabel;
-    cbRunSingleClick: TCheckBox;
-    cxActionOnExe: TComboBox;
-    chkConfirmMessageCat: TCheckBox;
-    chkAutoCloseProcess: TCheckBox;
+    lbLanguage: TLabel;
   private
     { Private declarations }
     procedure AddLanguages(AComboBox: TComboBox);
@@ -90,8 +91,8 @@ begin
   if FindFirstUTF8(SearchMask, faAnyFile, FileInfo) = 0 then
   begin
     repeat
-      I := - 1;
-      if (FileInfo.Attr and (faDirectory or faVolumeId) = 0) then
+      I := -1;
+      if (FileInfo.Attr and faDirectory = 0) then
       begin
         if (FileInfo.Name = '.') or (FileInfo.Name = '..') or (FileInfo.Name = '') then
           continue;
@@ -148,6 +149,7 @@ begin
   cbRunSingleClick.Checked  := Config.RunSingleClick;
   chkConfirmMessageCat.Checked := Config.ConfirmRunCat;
   chkAutoCloseProcess.Checked  := Config.AutoCloseProcess;
+  chkConfirmMsgCloseApp.Checked := Config.ConfirmMsgCloseApp;
 end;
 
 function TfrmGeneralOptionsPage.InternalSaveData: Boolean;
@@ -170,6 +172,7 @@ begin
   Config.RunSingleClick := cbRunSingleClick.Checked;
   Config.ConfirmRunCat  := chkConfirmMessageCat.Checked;
   Config.AutoCloseProcess := chkAutoCloseProcess.Checked;
+  Config.ConfirmMsgCloseApp := chkConfirmMsgCloseApp.Checked;
 end;
 
 end.

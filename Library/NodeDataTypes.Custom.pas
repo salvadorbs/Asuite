@@ -95,14 +95,14 @@ begin
   begin
     SourceNodeData := TvCustomRealNodeData(source);
     //Copy from source
-    FPathIcon     := SourceNodeData.PathIcon;
-    FWindowState  := SourceNodeData.WindowState;
-    FActionOnExe  := SourceNodeData.ActionOnExe;
-    FHotkey       := SourceNodeData.Hotkey;
-    SetActiveHotkey(SourceNodeData.ActiveHotkey);
-    SetAutorun(SourceNodeData.Autorun);
-    SetSchMode(SourceNodeData.SchMode);
-    SetSchDateTime(SourceNodeData.SchDateTime);
+    Self.PathIcon    := SourceNodeData.PathIcon;
+    Self.WindowState := SourceNodeData.WindowState;
+    Self.ActionOnExe := SourceNodeData.ActionOnExe;
+    Self.Hotkey      := SourceNodeData.Hotkey;
+    Self.ActiveHotkey :=SourceNodeData.ActiveHotkey;
+    Self.Autorun := SourceNodeData.Autorun;
+    Self.SchMode := SourceNodeData.SchMode;
+    Self.SchDateTime := SourceNodeData.SchDateTime;
   end;
 end;
 
@@ -179,13 +179,12 @@ procedure TvCustomRealNodeData.RunActionOnExe(Action: TActionOnExecute);
       aeRunAndHide:
       begin
         //Hide frmMain
-        frmMain.Close;
+        frmMain.HideMainForm;
       end;
       aeRunAndClose:
       begin
         //Close application
-        Config.ASuiteState := lsShutdown;
-        frmMain.Close;
+        frmMain.CloseASuite(True);
       end;
     end;
   end;

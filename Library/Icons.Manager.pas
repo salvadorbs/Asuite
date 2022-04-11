@@ -24,7 +24,7 @@ unit Icons.Manager;
 interface
 
 uses
-  SysUtils, Classes, Controls, Forms, Icons.Files, Generics.Collections,
+  SysUtils, Classes, Controls, Forms, Icons.Files, Generics.Collections, SyncObjs,
   Kernel.Consts, LCLIntf, Icons.Base, Icons.ExtFile, Contnrs, BGRABitmap;
 
 type
@@ -38,6 +38,7 @@ type
     FPathTheme: string;
     FItems: TBaseIcons;
     FExtItems: TBaseIcons;
+    FLock: SyncObjs.TCriticalSection;
     {$IFDEF UNIX}
     FExtToMimeIconName: TFPDataHashTable;
     {$ENDIF}
@@ -51,7 +52,6 @@ type
     {$IFDEF UNIX}
     procedure LoadMimeIconNames;
     function GetIconByDesktopFile(AFileName: String): String;
-    function IsDirectory(AFilename: String): Boolean;
     procedure ClearExtToMimeList;
     {$ENDIF}
   public
@@ -83,10 +83,10 @@ type
 implementation
 
 uses
-  Kernel.Logger, FileUtil, LazFileUtils, Kernel.Instance, Kernel.Manager, ImgList,
-  Graphics, DataModules.Icons
+  Kernel.Logger, FileUtil, LazFileUtils, Kernel.Instance, ImgList,
+  Graphics, DataModules.Icons, mormot.core.log
   {$IFDEF UNIX}
-  , IniFiles, BaseUnix, StrUtils
+  , IniFiles, BaseUnix, StrUtils, Utility.FileFolder
     {$IFDEF LCLQT5}
     , qt5
     {$ELSE}     
@@ -103,7 +103,8 @@ uses
 constructor TIconsManager.Create;
 begin
   FItems := TBaseIcons.Create(True);
-  FExtItems := TBaseIcons.Create(True);
+  FExtItems := TBaseIcons.Create(True);       
+  FLock := SyncObjs.TCriticalSection.Create;
 
   {$IFDEF UNIX}
   //Get mime and icons name from all extension in system
@@ -115,7 +116,8 @@ end;
 destructor TIconsManager.Destroy;
 begin
   FItems.Free;
-  FExtItems.Free;  
+  FExtItems.Free;   
+  FLock.Free;
 
   {$IFDEF UNIX}
   ClearExtToMimeList;
@@ -224,19 +226,24 @@ var
 begin
   Result := nil;
 
-  if not Assigned(dmImages.ilLargeIcons) then
+  if not Assigned(dmImages.ilIcons) then
     Exit;
 
   bmpTemp := Graphics.TBitmap.Create;
   try
     if ALargeIcon then
-      dmImages.ilLargeIcons.FindResolution(ICON_SIZE_LARGE, Images)
+      dmImages.ilIcons.FindResolution(ICON_SIZE_LARGE, Images)
     else
-      dmImages.ilLargeIcons.FindResolution(ICON_SIZE_SMALL, Images);
+      dmImages.ilIcons.FindResolution(ICON_SIZE_SMALL, Images);
 
     Assert(Assigned(Images), 'Images is not assigned!');
-
-    Images.GetBitmap(AImageIndex, bmpTemp);
+         
+    FLock.Acquire;
+    try
+      Images.GetBitmap(AImageIndex, bmpTemp);
+    finally  
+      FLock.Release;
+    end;                                
 
     Result := TBGRABitmap.Create(bmpTemp);
   finally
@@ -270,8 +277,8 @@ begin
 
   if IsDirectory(AFileName) then
   begin
-    if FileExists(AFileName + PathDelim + '.directory') then
-      Result := GetIconByDesktopFile(AFileName + PathDelim + '.directory')
+    if FileExists(AppendPathDelim(AFileName) + '.directory') then
+      Result := GetIconByDesktopFile(AppendPathDelim(AFileName) + '.directory')
     else
       Result := 'folder';
   end
@@ -332,8 +339,9 @@ var
   Icon: TBaseIcon;
   sPath: string;
   IconFiles: TStringList;
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('LoadAllIcons', Self);
+  log := TASuiteLogger.Enter('TIconsManager.LoadAllIcons', Self);
   TASuiteLogger.Info('Search and load all icons in folder "%s"', [FPathTheme + ICONS_DIR]);
 
   Clear(True);
@@ -443,15 +451,6 @@ begin
              FileExists(AIconName)));     
 end;
 {$ENDIF}
-
-function TIconsManager.IsDirectory(AFilename: String): Boolean;
-var
-  Info: BaseUnix.Stat;
-begin
-  Result := False;
-  if fpStat(AFilename, Info) >= 0 then
-    Result := fpS_ISDIR(Info.st_mode);
-end;
 
 procedure TIconsManager.ClearExtToMimeList;
 var

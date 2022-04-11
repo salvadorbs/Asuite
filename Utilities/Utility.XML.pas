@@ -5,7 +5,7 @@ unit Utility.XML;
 interface
 
 uses
-  LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, StdCtrls,
+  LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   ComCtrls, VirtualTrees, Kernel.Consts, DOM, XMLRead, Kernel.Enumerations;
 
 { Load list or settings from xml file }
@@ -37,8 +37,8 @@ function GetBoolPropertyXML(Node: TDOMNode; Name: String; Default: Boolean): Boo
 implementation
 
 uses
-  NodeDataTypes.Custom, AppConfig.Main, Kernel.Types, Kernel.Manager,
-  Utility.Conversions, VirtualTree.Methods, NodeDataTypes.Files, Menus,
+  NodeDataTypes.Custom, AppConfig.Main, Kernel.Types,
+  VirtualTree.Methods, NodeDataTypes.Files, Menus,
   Kernel.Logger, Kernel.Instance, LCLProc;
 
 function GetStrPropertyXML(Node : TDOMNode;Name: String;Default: String): String;
@@ -74,7 +74,7 @@ begin
   //Check if PropertyNode exists
   if Assigned(PropertyNode) then
     if PropertyNode.NodeValue <> '' then
-      Result := Utility.Conversions.StrToBool(PropertyNode.NodeValue);
+      Result := (PropertyNode.NodeValue = '1');
 end;
 
 class function TImportOldListProcs.ASuite1NodeToTree(Tree: TVirtualStringTree;XMLNode: TDOMNode;

@@ -82,6 +82,12 @@ type
   end;
   PUserData = ^TUserData;
 
+  TUrlFile = record
+    TargetFile : String;
+    WorkingDir : String;
+    PathIcon   : String;
+  end;
+
 implementation
 
 end.

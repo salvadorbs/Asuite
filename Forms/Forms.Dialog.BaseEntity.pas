@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Classes, Controls, Forms, Dialogs, ExtCtrls, ComCtrls,
-  StdCtrls, Frame.BaseEntity, VirtualTrees, DefaultTranslator, ButtonPanel;
+  Frame.BaseEntity, VirtualTrees, ButtonPanel;
 
 type
 
@@ -69,7 +69,7 @@ var
 implementation
 
 uses
-  VirtualTree.Events, Kernel.Types, Kernel.Logger;
+  Kernel.Types, Kernel.Logger, mormot.core.log, Kernel.Instance;
 
 {$R *.lfm}
 
@@ -133,7 +133,7 @@ var
   selNode: PVirtualNode;
 begin
   inherited;
-  TVirtualTreeEvents.Create.SetupVSTDialogFrame(vstCategory);
+  ASuiteInstance.VSTEvents.SetupVSTDialogFrame(vstCategory);
   ButtonPanel1.OKButton.OnClick := btnOkClick;
   ButtonPanel1.CancelButton.OnClick := btnCancelClick;
 
@@ -231,14 +231,18 @@ begin
 end;
 
 function TfrmDialogBase.InternalLoadData: Boolean;
+var
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('InternalLoadData', Self);
+  log := TASuiteLogger.Enter('TfrmDialogBase.InternalLoadData', Self);
   Result := True;
 end;
 
 function TfrmDialogBase.InternalSaveData: Boolean;
+var
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('InternalSaveData', Self);
+  log := TASuiteLogger.Enter('TfrmDialogBase.InternalSaveData', Self);
   Result := True;
 end;
 

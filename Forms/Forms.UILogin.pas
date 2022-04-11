@@ -24,8 +24,8 @@ unit Forms.UILogin;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  ButtonPanel, Kernel.Types, DefaultTranslator;
+  Classes, SysUtils, Forms, Controls, Dialogs, ExtCtrls, StdCtrls,
+  ButtonPanel, Kernel.Types;
 
 type
 
@@ -40,6 +40,7 @@ type
     lblUserName: TLabel;
     lblPassword: TLabel;
     lblInfo: TLabel;
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   private
 
   public
@@ -52,11 +53,18 @@ var
 implementation
 
 uses
-  Kernel.Logger, Utility.Misc;
+  Kernel.Logger, Utility.Misc, Kernel.ResourceStrings;
 
 {$R *.lfm}
 
 { TfrmUILogin }
+
+procedure TfrmUILogin.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+  CanClose := ((frmUILogin.edtUserName.Text <> '') and (ModalResult = mrOk)) or (ModalResult = mrCancel);
+  if not CanClose then
+    ShowMessageEx(msgErrEmptyUserName, True);
+end;
 
 class function TfrmUILogin.Execute(AOwner: TComponent; ACaption: String
   ): TUserData;

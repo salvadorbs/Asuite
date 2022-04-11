@@ -24,7 +24,7 @@ unit Database.Manager;
 interface
 
 uses
-  LCLType, SysUtils, Dialogs, VirtualTrees, mORMot, SynCommons, mORMotSQLite3,
+  LCLType, SysUtils, Dialogs, VirtualTrees, mormot.rest.sqlite3, mormot.orm.core,
   Controls, FileInfo;
 
 type
@@ -33,10 +33,10 @@ type
     FDBFileName : string;
     FDBVersion  : TProgramVersion;
     FDatabase   : TSQLRestServerDB;
-    FSQLModel   : TSQLModel;
+    FSQLModel   : TOrmModel;
 
     procedure DoBackupList;
-    function  GetDateTimeAsString: AnsiString;
+    function GetDateTimeAsString: AnsiString;
   public
     constructor Create;
     destructor Destroy; override;
@@ -61,9 +61,9 @@ type
 implementation
 
 uses
-  Kernel.Consts, AppConfig.Main, Utility.FileFolder, Utility.Misc,
-  Database.Version, Database.List, Kernel.Logger,
-  VirtualTree.Methods, SynLog, Kernel.ResourceStrings, Kernel.Instance, Kernel.Manager;
+  Kernel.Consts, AppConfig.Main, Utility.FileFolder,
+  Database.Version, Database.List, Kernel.Logger, FileUtil,
+  VirtualTree.Methods, mormot.core.log, Kernel.Instance;
 
 constructor TDBManager.Create;
 begin
@@ -79,8 +79,9 @@ end;
 function TDBManager.DeleteItems(ATree: TBaseVirtualTree; ANodes: TNodeArray): Boolean;
 var
   I: Integer;
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('DeleteItems', Self);
+  log := TASuiteLogger.Enter('TDBManager.DeleteItems', Self);
   Result := FDatabase.TransactionBegin(TSQLtbl_list, 1);
   //Begin transaction for remove data from sqlite database
   if Result then
@@ -92,10 +93,15 @@ begin
         ATree.IterateSubtree(ANodes[I], TVirtualTreeMethods.BeforeDeleteNode, nil, [], False);
       //Commit database's updates
       FDatabase.Commit(1);
-    except
-      //Or in case of error, rollback
-      FDatabase.RollBack(1);
-      Result := False;
+    except                              
+      on E: Exception do
+      begin
+        //Or in case of error, rollback and log
+        TASuiteLogger.Exception(E);
+
+        FDatabase.RollBack(1);
+        Result := False;
+      end;
     end;
   end;
 end;
@@ -110,29 +116,29 @@ end;
 procedure TDBManager.DoBackupList;
 begin
   //Backup list and old delete backup
-  if (Config.Backup) then
+  if FileExists(FDBFileName) and (Config.Backup) then
   begin
-    CopyFile(PChar(FDBFileName),
-             PChar(Format(ASuiteInstance.Paths.SuitePathBackup + BACKUP_FILE,[GetDateTimeAsString])),false);
+    FileUtil.CopyFile(FDBFileName,
+                      Format(ASuiteInstance.Paths.SuitePathBackup + BACKUP_FILE,[GetDateTimeAsString]), False);
     DeleteOldBackups(Config.BackupNumber);
   end;
 end;
 
 function TDBManager.GetDateTimeAsString: AnsiString;
 begin
-  DateTimeToString(Result, 'yyyy-mm-dd-hh-mm-ss',now);
+  DateTimeToString(Result, 'yyyy-mm-dd-hh-mm-ss', now);
 end;
 
 procedure TDBManager.ImportData(ATree: TBaseVirtualTree);
+var
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('ImportData', Self);
+  log := TASuiteLogger.Enter('TDBManager.ImportData', Self);
   try
     TSQLtbl_list.Load(Self, ATree, True);
   except
     on E : Exception do
-    begin
-      ShowMessageFmtEx(msgErrGeneric,[E.ClassName,E.Message],True);
-    end;
+      TASuiteLogger.Exception(E);
   end;
 end;
 
@@ -140,7 +146,7 @@ procedure TDBManager.ClearTable(SQLRecordClass: TSQLRecordClass);
 var
   SQLData: TSQLRecord;
 begin
-  SQLData := SQLRecordClass.CreateAndFillPrepare(FDatabase, '');
+  SQLData := SQLRecordClass.CreateAndFillPrepare(FDatabase.Orm, '');
   try
     while SQLData.FillOne do
       FDatabase.Delete(SQLRecordClass, SQLData.ID);
@@ -150,8 +156,10 @@ begin
 end;
 
 procedure TDBManager.LoadData(ATree: TBaseVirtualTree);
+var
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('LoadData', Self);
+  log := TASuiteLogger.Enter('TDBManager.LoadData', Self);
   TASuiteLogger.Info('Found SQLite Database - Loading it', []);
   //List & Options
   ATree.BeginUpdate;
@@ -163,7 +171,7 @@ begin
       TSQLtbl_list.Load(Self, ATree, False);
     except
       on E : Exception do
-        ShowMessageFmtEx(msgErrGeneric,[E.ClassName,E.Message],True);
+        TASuiteLogger.Exception(E);
     end;
   finally
     ATree.EndUpdate;
@@ -171,12 +179,11 @@ begin
 end;
 
 function TDBManager.SaveData(ATree: TBaseVirtualTree; DoBackup: Boolean): Boolean;
+var
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('SaveData', Self);
+  log := TASuiteLogger.Enter('TDBManager.SaveData', Self);
   TASuiteLogger.Info('Saving ASuite SQLite Database', []);
-  //If launcher is in ReadOnlyMode, exit from this function
-  if (Config.ReadOnlyMode) then
-    Exit(True);
 
   //List & Options
   try
@@ -193,7 +200,7 @@ begin
       end;
     except
       on E : Exception do begin
-        ShowMessageFmtEx(msgErrGeneric, [E.ClassName,E.Message], True);
+        TASuiteLogger.Exception(E);
         FDatabase.Rollback(1);
       end;
     end;
@@ -206,7 +213,11 @@ end;
 
 procedure TDBManager.Setup(const ADBFilePath: string);
 begin
+  TASuiteLogger.Info('Setup DBManager using sqlite file "%s"', [ADBFilePath]);
   FDBFileName := ADBFilePath;
+
+  DoBackupList;
+
   //Load sqlite3 database and create missing tables
   FDatabase := TSQLRestServerDB.Create(FSQLModel, FDBFileName);
   fDatabase.CreateMissingTables(0);

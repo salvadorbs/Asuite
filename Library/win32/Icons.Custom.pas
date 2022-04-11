@@ -25,7 +25,7 @@ interface
 
 uses
   SysUtils, Controls, LCLIntf, LCLType, Graphics, BGRABitmap, ShellApi,
-  CommCtrl, uBitmap, Icons.Base;
+  CommCtrl, Icons.Base;
 
 type
 
@@ -47,8 +47,7 @@ type
 implementation
 
 uses
-   DataModules.Icons, Kernel.Consts, BGRABitmapTypes, Utility.FileFolder,
-   Utility.System;
+   DataModules.Icons, Kernel.Consts, BGRABitmapTypes, Utility.FileFolder, Windows;
 
 { TWin32CustomIcon }
 
@@ -77,13 +76,20 @@ end;
 
 function TWin32CustomIcon.BGRABitmapCreateFromHICON(AHIcon: HICON): TBGRABitmap;
 var
-  bmpTemp: Graphics.TBitmap;
+  IconInfo: TIconInfo;
 begin
-  bmpTemp := BitmapCreateFromHICON(AHIcon);
+  IconInfo := Default(TICONINFO);
+
+  Result := TBGRABitmap.Create;
+
+  if Windows.GetIconInfo(AHIcon, IconInfo) = False then
+    Exit;
+
   try
-    Result := TBGRABitmap.Create(bmpTemp);
+    Result.Bitmap.LoadFromBitmapHandles(IconInfo.hbmColor, IconInfo.hbmMask);
   finally
-    FreeAndNil(bmpTemp);
+    Windows.DeleteObject(IconInfo.hbmMask);
+    Windows.DeleteObject(IconInfo.hbmColor);
   end;
 end;
 
@@ -92,7 +98,7 @@ function TWin32CustomIcon.GetIconFromFile(const APathFile: string;
 begin
   Result := nil;
 
-  if ExtractFileExtEx(APathFile) = EXT_ICO then
+  if ExtractLowerFileExt(APathFile) = EXT_ICO then
     Result := LoadFromFileIcon(APathFile, AWantLargeIcon)
   else
     Result := ExtractIconFromSysImageList(APathFile, AWantLargeIcon);

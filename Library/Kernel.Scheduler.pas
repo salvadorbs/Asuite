@@ -24,20 +24,25 @@ unit Kernel.Scheduler;
 interface
 
 uses
-  Classes, Kernel.Singleton, ExtCtrls, UITypes, DateUtils, SysUtils,
-  Dialogs, NodeDataTypes.Custom;
+  Classes, ExtCtrls, DateUtils, SysUtils, NodeDataTypes.Custom;
 
 type
-  TScheduler = class(TSingleton)
+
+  { TScheduler }
+
+  TScheduler = class
   private
     FTimer: TTimer;
 
     procedure DoTimer(Sender: TObject);
     function CompareSchDates(ANodeData: TvCustomRealNodeData; ANow: TDateTime): Boolean;
     function GetSchedulerTime(ANodeData: TvCustomRealNodeData; ANow: TDateTime; ADecDay: Boolean): TDateTime;
+    function CheckOnce(ANow, ASchedDateTime: TDateTime): Boolean;
+    function CheckDaily(ANow, ASchedTime: TDateTime): Boolean;
+    function CheckHourly(ANow: TDateTime): Boolean;
   public
-    procedure Initialize; override;
-    procedure Finalize; override;
+    constructor Create;
+    destructor Destroy; override;
 
     procedure CheckMissedTasks;
 
@@ -47,7 +52,8 @@ type
 implementation
 
 uses
-  AppConfig.Main, Kernel.Enumerations, Kernel.ResourceStrings, Kernel.Manager;
+  AppConfig.Main, Kernel.Enumerations, Kernel.ResourceStrings, Kernel.Manager,
+  Utility.Misc, Kernel.Logger;
 
 function ResetHourMinute(var ANow: TDateTime): TDateTime;
 begin
@@ -76,7 +82,7 @@ begin
         if (CompareDateTime(GetSchedulerTime(NodeData, dtNowDateTime, True), dtLastAccess) = 1) and (NodeData.SchMode <> smDisabled) then
         begin
           //Start process
-          if (MessageDlg(Format(msgMissedTask, [NodeData.Name]), mtWarning, [mbYes, mbNo], 0) = mrYes) then
+          if AskUserWarningMessage(msgMissedTask, [NodeData.Name]) then
             NodeData.Execute(True, NodeData.IsCategoryItem, False);
         end;
       end;
@@ -106,10 +112,18 @@ begin
   end;
 end;
 
-procedure TScheduler.Finalize;
+constructor TScheduler.Create;
 begin
-  inherited;
+  FTimer := TTimer.Create(nil);
+  FTimer.Enabled := False;
+  FTimer.OnTimer := DoTimer;
+end;
+
+destructor TScheduler.Destroy;
+begin
   FTimer.Free;
+
+  inherited;
 end;
 
 function TScheduler.CompareSchDates(ANodeData: TvCustomRealNodeData; ANow: TDateTime): Boolean;
@@ -119,11 +133,11 @@ begin
   begin
     case ANodeData.SchMode of
       smOnce:
-        Result := SameDateTime(ANow, ANodeData.SchDateTime);
+        Result := CheckOnce(ANow, ANodeData.SchDateTime);
       smHourly:
-        Result := SameTime(ResetHourMinute(ANow), ANodeData.SchDateTime);
+        Result := CheckHourly(ANow);
       smDaily:
-        Result := SameTime(ANow, ANodeData.SchDateTime);
+        Result := CheckDaily(ANow, ANodeData.SchDateTime);
     end;
   end;
 end;
@@ -151,12 +165,29 @@ begin
   end;
 end;
 
-procedure TScheduler.Initialize;
+function TScheduler.CheckOnce(ANow, ASchedDateTime: TDateTime): Boolean;
 begin
-  inherited;
-  FTimer := TTimer.Create(nil);
-  FTimer.Enabled := False;
-  FTimer.OnTimer := DoTimer;
+  Result := SameDate(ANow, ASchedDateTime) and CheckDaily(ANow, ASchedDateTime);
+
+  if Result then
+    TASuiteLogger.Info('Scheduler - Check Once is true', []);
+end;
+
+function TScheduler.CheckDaily(ANow, ASchedTime: TDateTime): Boolean;
+begin
+  Result := (HourOf(ANow) = HourOf(ASchedTime)) and (MinuteOf(ANow) = MinuteOf(ASchedTime))
+            and (SecondOf(ANow) = 0);
+
+  if Result then
+    TASuiteLogger.Info('Scheduler - Check Daily is true', []);
+end;
+
+function TScheduler.CheckHourly(ANow: TDateTime): Boolean;
+begin
+  Result := (MinuteOf(ANow) = 0) and (SecondOf(ANow) = 0);
+
+  if Result then
+    TASuiteLogger.Info('Scheduler - Check Hourly is true', []);
 end;
 
 end.

@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, SysUtils, Variants, Controls, Dialogs, Frame.BaseEntity, VirtualTrees,
-  StdCtrls, ExtCtrls, Spin, DefaultTranslator;
+  StdCtrls, ExtCtrls, Spin;
 
 type
 

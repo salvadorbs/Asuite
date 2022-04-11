@@ -24,12 +24,10 @@ unit Icons.Base;
 interface
 
 uses
-  SysUtils, Controls, SyncObjs, LCLIntf, LCLType, Graphics, BGRAIconCursor,
+  SysUtils, Controls, SyncObjs, LCLIntf, LCLType, BGRAIconCursor,
   BGRABitmap;
 
 type
-  //TODO: Add some logs in this and child class
-
   { TBaseIcon }
 
   TBaseIcon = class
@@ -44,6 +42,7 @@ type
     function GetPathCacheIcon: string;
     procedure SetCacheIconCRC(AValue: Integer);
     procedure SaveCacheIcon(const APath: string; const AImageIndex: Integer; const AHash: Integer);
+    function GetFileXXHash32(const FileName: String): Integer;
   protected
     function InternalGetImageIndex(const APathFile: string): Integer;
     function InternalLoadIcon: Integer; virtual;
@@ -73,8 +72,9 @@ implementation
 
 uses
    DataModules.Icons, Kernel.Consts, BGRABitmapTypes, Utility.FileFolder,
-   AppConfig.Main, Kernel.Enumerations, Utility.System, ImgList, Kernel.Instance,
-   Kernel.Manager;
+   AppConfig.Main, Kernel.Enumerations, Utility.System, Kernel.Instance,
+   Kernel.Manager, LazFileUtils, HlpHashFactory, Kernel.Logger, FileUtil,
+   Kernel.ResourceStrings;
 
 { TBaseIcon }
 
@@ -119,7 +119,7 @@ begin
   //Get cache icon path
   if (Config.Cache) and (Config.ASuiteState <> lsImporting) then
   begin
-    isExeFile := (ExtractFileExtEx(sDefaultPath) = EXT_EXE);
+    isExeFile := (ExtractLowerFileExt(sDefaultPath) = EXT_EXE);
     if isExeFile then
       intHash := GetFileXXHash32(sDefaultPath);
 
@@ -152,7 +152,7 @@ var
 begin
   Result := '';
 
-  sExt := ExtractFileExtEx(GetDefaultPathIcon);
+  sExt := ExtractLowerFileExt(GetDefaultPathIcon);
   if ((sExt = EXT_EXE) or (sExt = EXT_ICO) or (sExt = '')) then
     sNameFile := Self.Name
   else
@@ -176,8 +176,8 @@ var
 begin
   if (Config.Cache) and (AImageIndex <> -1) then
   begin
-    if (Self.Name <> '') and (ExtractFileExtEx(APath) <> EXT_ICO) and
-       ((not FTempItem) or (FTempItem and (ExtractFileExtEx(APath) <> EXT_EXE))) then
+    if (Self.Name <> '') and (ExtractLowerFileExt(APath) <> EXT_ICO) and
+       ((not FTempItem) or (FTempItem and (ExtractLowerFileExt(APath) <> EXT_EXE))) then
     begin
       Icon := TBGRAIconCursor.Create(ifIco);
       try
@@ -200,6 +200,19 @@ begin
   end;
 end;
 
+function TBaseIcon.GetFileXXHash32(const FileName: String): Integer;
+begin
+  Result := 0;
+
+  try
+    if (FileName <> '') and not IsUNCPath(FileName) and FileExists(FileName) and (FileUtil.FileSize(FileName) > 0) then
+      Result := THashFactory.THash32.CreateXXHash32().ComputeFile(FileName).GetInt32();
+  except
+    on E : Exception do
+      TASuiteLogger.Exception(E, Format(msgGenerateFileHashError, [FileName]));
+  end;
+end;
+
 function TBaseIcon.LoadFromFileIcon(const APathFile: string;
   const AWantLargeIcon: Boolean): TBGRABitmap;
 var
@@ -207,7 +220,7 @@ var
 begin
   Result := nil;
 
-  if not FileExists(APathFile) and (ExtractFileExtEx(APathFile) = EXT_ICO) then
+  if not FileExists(APathFile) and (ExtractLowerFileExt(APathFile) = EXT_ICO) then
     Exit;
 
   Icon := TBGRAIconCursor.Create(ifIco);

@@ -8,8 +8,9 @@ object frmAbout: TfrmAbout
   Caption = 'About %s'
   ClientHeight = 170
   ClientWidth = 371
-  OnShow = FormShow
+  OnActivate = FormActivate
   Position = poOwnerFormCenter
+  LCLVersion = '2.2.0.2'
   object GroupBox3: TGroupBox
     Left = 4
     Height = 162
@@ -508,7 +509,6 @@ object frmAbout: TfrmAbout
       Width = 15
       Caption = '%s'
       Font.Style = [fsBold]
-      ParentColor = False
       ParentFont = False
     end
     object lblVersion: TLabel
@@ -517,7 +517,6 @@ object frmAbout: TfrmAbout
       Top = 35
       Width = 58
       Caption = '%s (%s bit)'
-      ParentColor = False
       ParentFont = False
     end
     object lblCopyright: TLabel
@@ -526,7 +525,6 @@ object frmAbout: TfrmAbout
       Top = 52
       Width = 177
       Caption = 'Copyright 2006-2020 Matteo Salvi'
-      ParentColor = False
       ParentFont = False
     end
     object imgLogo: TImage
@@ -852,7 +850,6 @@ object frmAbout: TfrmAbout
       FontVisitedHot.Color = clPurple
       FontVisitedHot.Style = [fsUnderline]
       Caption = 'http://www.salvadorsoftware.com'
-      ParentColor = False
       ParentShowHint = False
       ShowHint = True
       OnClick = lnklblWebSiteClick

@@ -11,7 +11,7 @@ uses
   Forms,
   SysUtils,
   LCLIntf, Interfaces,
-  SynSQLite3Static,
+  mormot.db.raw.sqlite3.static,
   Kernel.Instance in 'Library\Kernel.Instance.pas',
   Kernel.Manager in 'Library\Kernel.Manager.pas',
   AppConfig.Main in 'Library\AppConfig.Main.pas',
@@ -27,16 +27,17 @@ uses
 var
   hash, identifier: string;
 
-begin            
+begin                  
+  {$IFDEF DEBUG}
+  globalSkipIfNoLeaks := True;
+  {$ENDIF}
+
   hash := THashFactory.THash32.CreateXXHash32().ComputeString(Application.ExeName, TEncoding.UTF8).ToString();
   identifier := 'ASuite.SingleInstance.' + hash;
 
   if not(InstanceRunning(identifier, True)) then
   begin
     {$IFDEF DEBUG}
-
-      globalSkipIfNoLeaks := true;
-
       // Set up -gh output for the Leakview package:
       if FileExists('heap.trc') then
         DeleteFile('heap.trc');

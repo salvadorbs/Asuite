@@ -60,6 +60,7 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
         BorderSpacing.Top = 4
         BorderSpacing.Bottom = 4
         TrailingSeparator = False
+        TextForNullDate = 'NULL'
         LeadingZeros = True
         Kind = dtkDate
         TimeFormat = tf24
@@ -83,6 +84,7 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
         TabOrder = 2
         BorderSpacing.Bottom = 6
         TrailingSeparator = False
+        TextForNullDate = 'NULL'
         LeadingZeros = True
         Kind = dtkTime
         TimeFormat = tf24

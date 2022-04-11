@@ -25,34 +25,37 @@ interface
 
 const
   //GENERAL
-  CONFIG_STARTWITHWINDOWS = 'application/startwithwindows';
-  CONFIG_SHOWPANELATSTARTUP = 'startup/showpanel';
-  CONFIG_SHOWMENUATSTARTUP = 'startup/showmenu';
-  CONFIG_MISSEDSCHEDULERTASK = 'startup/checkmissedschedulertask';
-  CONFIG_SECONDINSTANCEGM = 'startup/singleinstance/showgraphicmenu';
+  CONFIG_STARTWITHWINDOWS = 'application/start_with_windows';
+  CONFIG_SHOWPANELATSTARTUP = 'startup/showp_anel';
+  CONFIG_SHOWMENUATSTARTUP = 'startup/show_menu';
+  CONFIG_MISSEDSCHEDULERTASK = 'startup/check_missed_scheduler_task';
+  CONFIG_SECONDINSTANCEGM = 'startup/singleinstance/show_graphicmenu';
+  CONFIG_CONFIRMCLOSEASUITE = 'application/other/confirm_close_asuite';
 
   //MAIN FORM
   CONFIG_LANGID = 'application/langid';
   CONFIG_USECUSTOMTITLE = 'mainform/customtitle/active';
   CONFIG_CUSTOMTITLESTRING = 'mainform/customtitle/string';
-  CONFIG_HIDETABSEARCH = 'mainform/hidetabsearch';
-  CONFIG_SEARCHASYOUTYPE = 'mainform/searchasyoutype';
+  CONFIG_HIDETABSEARCH = 'mainform/hide_tab_search';
+  CONFIG_SEARCHASYOUTYPE = 'mainform/search_as_you_type';
+  CONFIG_SEARCH_NAME_WIDTH = 'mainform/search/columns/name/width';
+  CONFIG_SEARCH_CATEGORY_WIDTH = 'mainform/search/columns/category/width';
 
   //MAIN FORM - POSITION AND SIZE
-  CONFIG_HOLDSIZE = 'mainform/holdsize';
-  CONFIG_ALWAYSONTOP = 'mainform/alwaysontop';
+  CONFIG_HOLDSIZE = 'mainform/hold_size';
+  CONFIG_ALWAYSONTOP = 'mainform/always_on_top';
   CONFIG_MAINFORM_LEFT = 'mainform/pos/left';
   CONFIG_MAINFORM_TOP = 'mainform/pos/top';
   CONFIG_MAINFORM_WIDTH = 'mainform/pos/width';
   CONFIG_MAINFORM_HEIGHT = 'mainform/pos/height';
-  CONFIG_MAINFORM_DIALOGS_CENTER = 'mainform/opendialogcenter';
+  CONFIG_MAINFORM_DIALOGS_CENTER = 'mainform/open_dialog_center';
 
   //MAIN FORM - TREEVEW
   CONFIG_TVBACKGROUND = 'mainform/treeview/background/active';
   CONFIG_TVBACKGROUNDPATH = 'mainform/treeview/background/path';
-  CONFIG_TVAUTOOPCLCATS = 'mainform/treeview/autoopencategory/active';
-  CONFIG_TVAUTOOPCATSDRAG = 'mainform/treeview/autoopencategory/drag';
-  CONFIG_TVDISABLECONFIRMDELETE = 'mainform/treeview/disableconfirmdelete';
+  CONFIG_TVAUTOOPCLCATS = 'mainform/treeview/auto_open_category/active';
+  CONFIG_TVAUTOOPCATSDRAG = 'mainform/treeview/auto_open_category/drag';
+  CONFIG_TVDISABLECONFIRMDELETE = 'mainform/treeview/disable_confirm_delete';
   CONFIG_TVFONTNAME = 'mainform/treeview/font/name';
   CONFIG_TVFONTSIZE = 'mainform/treeview/font/size';
   CONFIG_TVFONTCOLOR = 'mainform/treeview/font/color';
@@ -60,7 +63,7 @@ const
   CONFIG_TVFONTSTYLE_ITALIC = 'mainform/treeview/font/style/italic';
   CONFIG_TVFONTSTYLE_UNDERLINE = 'mainform/treeview/font/style/underline';
   CONFIG_TVFONTSTYLE_STRIKEOUT = 'mainform/treeview/font/style/strikeout';
-  CONFIG_TVSMALLICONSIZE = 'mainform/treeview/icons/smallsize';
+  CONFIG_TVSMALLICONSIZE = 'mainform/treeview/icons/small_size';
 
   //MRU
   CONFIG_MRU = 'application/mru/active';
@@ -84,35 +87,36 @@ const
 
   //EXECUTION
   CONFIG_ACTIONONEXE = 'application/execute/action';
-  CONFIG_RUNSINGLECLICK = 'application/execute/runsingleclick';
-  CONFIG_CONFIRMMESSAGECAT = 'application/execute/confirmcat';
-  CONFIG_AUTOCLOSEPROCESS = 'application/shutdown/autocloseprocess';
+  CONFIG_RUNSINGLECLICK = 'application/execute/run_single_click';
+  CONFIG_CONFIRMMESSAGECAT = 'application/execute/confirm_cat';
+  CONFIG_AUTOCLOSEPROCESS = 'application/shutdown/auto_close_process';
 
   //TRAYICON
   CONFIG_TRAYICON = 'trayicon/active';
-  CONFIG_TRAYUSECUSTOMICON = 'trayicon/classicmenu/customicon/active';
-  CONFIG_TRAYCUSTOMICONPATH = 'trayicon/classicmenu/customicon/path';
-  CONFIG_ACTIONCLICKLEFT = 'trayicon/classicmenu/clickleft';
-  CONFIG_ACTIONCLICKMIDDLE = 'trayicon/classicmenu/clickmiddle';
-  CONFIG_ACTIONCLICKRIGHT = 'trayicon/classicmenu/clickright';
-  CONFIG_AUTOEXPANSIONFOLDER = 'trayicon/classicmenu/autoexpansionfolder';
+  CONFIG_TRAYUSECUSTOMICON = 'trayicon/classicmenu/custom_icon/active';
+  CONFIG_TRAYCUSTOMICONPATH = 'trayicon/classicmenu/custom_icon/path';
+  CONFIG_ACTIONCLICKLEFT = 'trayicon/classicmenu/click_left';
+  CONFIG_ACTIONCLICKMIDDLE = 'trayicon/classicmenu/click_middle';
+  CONFIG_ACTIONCLICKRIGHT = 'trayicon/classicmenu/click_right';
+  CONFIG_AUTOEXPANSIONFOLDER = 'trayicon/classicmenu/autoexpansion_folder';
+  CONFIG_CMHIDEEJECTMENUITEM = 'trayicon/classicmenu/hide_eject_button';
 
   //GRAPHIC MENU
-  CONFIG_GMTHEME = 'graphicmenu/theme';
-  CONFIG_GMFADE = 'graphicmenu/fade';
-  CONFIG_GMPERSONALPICTURE = 'graphicmenu/personalpicture/path';
-  CONFIG_GMSMALLICONSIZE = 'graphicmenu/treeview/smallicon';
-  CONFIG_GMPOSITIONLEFT = 'graphicmenu/position/left';
-  CONFIG_GMPOSITIONTOP = 'graphicmenu/position/top';
-  CONFIG_GMAUTOHIDEMENU = 'graphicmenu/autohidemenu';
-  CONFIG_GMSHOWUSERPICTURE = 'graphicmenu/showuserpicture';
+  CONFIG_GMTHEME = 'trayicon/graphicmenu/theme';
+  CONFIG_GMFADE = 'trayicon/graphicmenu/fade';
+  CONFIG_GMPERSONALPICTURE = 'trayicon/graphicmenu/personalpicture/path';
+  CONFIG_GMSMALLICONSIZE = 'trayicon/graphicmenu/treeview/small_icon';
+  CONFIG_GMPOSITIONLEFT = 'trayicon/graphicmenu/position/left';
+  CONFIG_GMPOSITIONTOP = 'trayicon/graphicmenu/position/top';
+  CONFIG_GMSHOWUSERPICTURE = 'trayicon/graphicmenu/show_user_picture';
+  CONFIG_GMHIDEEJECTBUTTON = 'trayicon/graphicmenu/hide_eject_button';
 
   //RIGHT BUTTONS
-  CONFIG_GMBTNDOCUMENTS = 'graphicmenu/path/documents';
-  CONFIG_GMBTNPICTURES = 'graphicmenu/path/pictures';
-  CONFIG_GMBTNMUSIC = 'graphicmenu/path/music';
-  CONFIG_GMBTNVIDEOS = 'graphicmenu/path/videos';
-  CONFIG_GMBTNEXPLORE = 'graphicmenu/path/explore';
+  CONFIG_GMBTNDOCUMENTS = 'trayicon/graphicmenu/path/documents';
+  CONFIG_GMBTNPICTURES = 'trayicon/graphicmenu/path/pictures';
+  CONFIG_GMBTNMUSIC = 'trayicon/graphicmenu/path/music';
+  CONFIG_GMBTNVIDEOS = 'trayicon/graphicmenu/path/videos';
+  CONFIG_GMBTNEXPLORE = 'trayicon/graphicmenu/path/explore';
 
   //HOT KEYS
   CONFIG_HOTKEY = 'application/hotkey/active';
@@ -121,9 +125,9 @@ const
   CONFIG_CLASSICMENUHOTKEY = 'application/hotkey/classicmenu';
 
   //SCAN FOLDER
-  CONFIG_SCANFOLDERAUTOEXTRACTNAME = 'scanfolder/autoextractname';
-  CONFIG_SCANFOLDERFILETYPES = 'scanfolder/filetypes';
-  CONFIG_SCANFOLDEREXCLUDENAMES = 'scanfolder/excludenames';
+  CONFIG_SCANFOLDERAUTOEXTRACTNAME = 'scanfolder/autoextract_name';
+  CONFIG_SCANFOLDERFILETYPES = 'scanfolder/file_types';
+  CONFIG_SCANFOLDEREXCLUDENAMES = 'scanfolder/exclude_names';
 
 implementation
 

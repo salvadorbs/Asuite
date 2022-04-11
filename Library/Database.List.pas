@@ -24,15 +24,16 @@ unit Database.List;
 interface
 
 uses
-  mORMot, SynCommons, Database.Manager, VirtualTrees, SysUtils,
-  Dialogs, Classes, NodeDataTypes.Base, SynLog;
+  mormot.orm.core, Database.Manager, VirtualTrees, SysUtils,
+  Dialogs, Classes, NodeDataTypes.Base, mormot.core.log, mormot.core.base;
 
 type
 
   { TSQLtbl_list }
 
-  TSQLtbl_list = class(TSQLRecord) //Table tbl_list
+  TSQLtbl_list = class(TOrm) //Table tbl_list
   private
+    Fdescription: RawUTF8;
     Ftype             : Integer;
     Fparent           : Integer;
     Fposition         : Integer;
@@ -82,6 +83,7 @@ type
     property parent: Integer read Fparent write Fparent;
     property position: Integer read Fposition write Fposition;
     property title: RawUTF8 read Ftitle write Ftitle;
+    property description: RawUTF8 read Fdescription write Fdescription;
     property path: RawUTF8 read Fpath write Fpath;
     property work_path: RawUTF8 read Fwork_path write Fwork_path;
     property parameters: RawUTF8 read Fparameters write Fparameters;
@@ -110,8 +112,8 @@ type
 implementation
 
 uses
-  Kernel.Enumerations, Utility.Misc, VirtualTree.Methods, NodeDataTypes.Custom,
-  NodeDataTypes.Files, Icons.Node, Kernel.Logger, Kernel.ResourceStrings,
+  Kernel.Enumerations, VirtualTree.Methods, NodeDataTypes.Custom,
+  NodeDataTypes.Files, Icons.Node, Kernel.Logger, mormot.core.unicode,
   Kernel.Manager;
 
 { TSQLtbl_files }
@@ -146,7 +148,7 @@ var
   Node     : PVirtualNode;
 begin
   //Get files from DBTable and order them by parent, position
-  SQLItemsData := TSQLtbl_list.CreateAndFillPrepare(ADBManager.Database, 'parent=? ORDER BY parent, position',[ID]);
+  SQLItemsData := TSQLtbl_list.CreateAndFillPrepare(ADBManager.Database.orm, 'parent=? ORDER BY parent, position',[ID]);
   try
     //Get files and its properties
     while SQLItemsData.FillOne do
@@ -158,6 +160,7 @@ begin
         Tree.CheckType[Node] := ctTriStateCheckBox;
       // generic fields
       vData.Name          := UTF8DecodeToUnicodeString(SQLItemsData.title);
+      vData.Description   := UTF8DecodeToUnicodeString(SQLItemsData.description);
       vData.id            := SQLItemsData.ID;
       vData.ParentID      := id;
       vData.Position      := Node.Index;
@@ -226,14 +229,18 @@ begin
         TSQLtbl_list.SaveItemsByParentID(Tree, ADBManager, Node.FirstChild, vData.ID);
     except
       on E : Exception do
-        ShowMessageFmtEx(msgErrGeneric,[E.ClassName, E.Message], True);
+        TASuiteLogger.Exception(E);
     end;
     Node := Node.NextSibling;
   end;
 end;
 
 class procedure TSQLtbl_list.Load(ADBManager: TDBManager; ATree: TBaseVirtualTree; IsImport: Boolean);
+var
+  {%H-}log: ISynLog;
 begin
+  log := TASuiteLogger.Enter('TSQLtbl_list.Load', nil);
+
   if IsImport then
     TASuiteLogger.Info('Load ASuite List from Database in VirtualTree (Import mode)', [])
   else
@@ -250,6 +257,7 @@ begin
   Fparent   := AParentID;
   Fposition := AIndex;
   Ftitle    := UnicodeStringToUtf8(AData.Name);
+  Fdescription := UnicodeStringToUtf8(AData.Description);
   //Add specific category and file fields
   if not(AData.IsSeparatorItem) then
   begin
@@ -295,8 +303,10 @@ begin
 end;
 
 class procedure TSQLtbl_list.Save(ADBManager: TDBManager; ATree: TBaseVirtualTree);
+var
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Info('Saving ASuite List', []);
+  log := TASuiteLogger.Enter('TSQLtbl_list.Save', nil);
   TSQLtbl_list.SaveItemsByParentID(ATree, ADBManager, ATree.GetFirst, 0);
 end;
 
@@ -306,7 +316,7 @@ var
   SQLFilesData : TSQLtbl_list;
 begin
   //Select only file record by ID
-  SQLFilesData := TSQLtbl_list.CreateAndFillPrepare(ADBManager.Database,'id=?',[AData.ID]);
+  SQLFilesData := TSQLtbl_list.CreateAndFillPrepare(ADBManager.Database.orm,'id=?',[AData.ID]);
   try
     if SQLFilesData.FillOne then
       SQLFilesData.LoadDataFromNode(AData, AIndex, AParentID);

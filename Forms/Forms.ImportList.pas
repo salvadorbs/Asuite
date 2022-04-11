@@ -24,7 +24,7 @@ unit Forms.ImportList;
 interface
 
 uses
-  LCLIntf, SysUtils, Classes, Graphics, Controls, Forms, DefaultTranslator,
+  LCLIntf, SysUtils, Classes, Graphics, Controls, Forms,
   Dialogs, ExtCtrls, StdCtrls, ComCtrls, VirtualTrees, Kernel.Consts, DOM, XMLRead,
   Kernel.Enumerations, EditBtn;
 
@@ -77,9 +77,10 @@ implementation
 {$R *.lfm}
 
 uses
-  AppConfig.Main, VirtualTree.Events, VirtualTree.Methods, Kernel.Manager,
+  AppConfig.Main, VirtualTree.Methods,
   Utility.FileFolder, Utility.XML, Database.Manager, NodeDataTypes.Base,
-  Kernel.Logger, Kernel.ResourceStrings, Utility.Misc, Kernel.Instance;
+  Kernel.Logger, Kernel.ResourceStrings, Utility.Misc, Kernel.Instance,
+  mormot.core.log;
 
 procedure TfrmImportList.btnBackClick(Sender: TObject);
 begin
@@ -112,7 +113,7 @@ end;
 procedure TfrmImportList.FormCreate(Sender: TObject);
 begin
   Config.ASuiteState := lsImporting;
-  TVirtualTreeEvents.Create.SetupVSTImportList(vstListImp);
+  ASuiteInstance.VSTEvents.SetupVSTImportList(vstListImp);
   pgcImport.ActivePageIndex := 0;
 end;
 
@@ -130,10 +131,7 @@ begin
       TVirtualTreeMethods.GetAllIcons(ASuiteInstance.MainTree, nil);
     except
       on E : Exception do
-      begin
-        ShowMessageEx(msgImportFailed, True);
-        TASuiteLogger.Error(msgErrGeneric, [E.ClassName, E.Message]);
-      end;
+        TASuiteLogger.Exception(E, msgImportFailed);
     end;
   end;
 end;
@@ -213,8 +211,9 @@ var
   FileName : String;
   FileExt  : String;
   XMLDoc   : TXMLDocument;
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter('PopulateTree', Self);
+  log := TASuiteLogger.Enter('TfrmImportList.PopulateTree', Self);
 
   XMLDoc := nil;
 
@@ -222,7 +221,7 @@ begin
   try
     vstListImp.Clear;
     FileName := LowerCase(ExtractFileName(FilePath));
-    FileExt  := ExtractFileExtEx(FileName);
+    FileExt  := ExtractLowerFileExt(FileName);
     //ASuite or wppLauncher
     if (FileExt = EXT_XML) or (FileExt = EXT_XMLBCK) then
     begin
@@ -299,7 +298,11 @@ begin
       tnImp := tnImp.NextSibling;
     end;
   except
-    Result := False;
+    on E: Exception do
+    begin
+      TASuiteLogger.Exception(E);
+      Result := False;
+    end;
   end;
   Tree.EndUpdate;
 end;

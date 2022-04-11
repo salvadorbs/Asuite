@@ -9,8 +9,9 @@ object frmUILogin: TfrmUILogin
   ClientWidth = 316
   Font.Color = clWindowText
   Font.Height = -12
+  OnCloseQuery = FormCloseQuery
   Position = poScreenCenter
-  LCLVersion = '2.0.10.0'
+  LCLVersion = '2.2.0.2'
   object imgTop: TImage
     Left = 0
     Height = 60
@@ -232,7 +233,6 @@ object frmUILogin: TfrmUILogin
     Top = 112
     Width = 58
     Caption = '&User Name'
-    ParentColor = False
     ParentFont = False
   end
   object lblPassword: TLabel
@@ -241,7 +241,6 @@ object frmUILogin: TfrmUILogin
     Top = 144
     Width = 50
     Caption = '&Password'
-    ParentColor = False
     ParentFont = False
   end
   object lblInfo: TLabel
@@ -254,7 +253,6 @@ object frmUILogin: TfrmUILogin
     Caption = 'Please insert username and password'
     Font.Color = 8912896
     Font.Height = -13
-    ParentColor = False
     ParentFont = False
   end
   object Bevel1: TBevel

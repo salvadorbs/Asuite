@@ -24,7 +24,6 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Top = 4
       Width = 340
       Caption = 'Executable/folder/web page path'
-      ParentColor = False
       ParentFont = False
     end
     object edtPathExe: TFileNameEdit
@@ -32,6 +31,7 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Height = 23
       Top = 19
       Width = 340
+      OnAcceptFileName = edtPathExeAcceptFileName
       DialogOptions = [ofHideReadOnly, ofEnableSizing]
       FilterIndex = 0
       HideDirectories = False
@@ -41,7 +41,7 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       MaxLength = 0
       ParentFont = False
       TabOrder = 0
-      OnChange = edtPathExeChange
+      OnButtonClick = edtPathExeButtonClick
       Text = '$ASuite\'
     end
     object lbWorkingDir: TLabel
@@ -50,7 +50,6 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Top = 44
       Width = 340
       Caption = 'Custom working directory (optional)'
-      ParentColor = False
       ParentFont = False
     end
     object edtWorkingDir: TDirectoryEdit
@@ -59,6 +58,7 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Top = 59
       Width = 340
       Directory = '$ASuite\'
+      OnAcceptDirectory = edtWorkingDirAcceptDirectory
       ShowHidden = False
       ButtonWidth = 23
       NumGlyphs = 1
@@ -66,6 +66,7 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       MaxLength = 0
       ParentFont = False
       TabOrder = 1
+      OnButtonClick = edtWorkingDirButtonClick
       OnChange = edtWorkingDirChange
       Text = '$ASuite\'
     end
@@ -75,7 +76,6 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Top = 84
       Width = 340
       Caption = 'Parameters (optional)'
-      ParentColor = False
       ParentFont = False
     end
     object edtParameters: TEdit
@@ -99,7 +99,6 @@ inherited frmSWGeneralPropertyPage: TfrmSWGeneralPropertyPage
       Anchors = [akTop, akLeft, akRight]
       AutoSize = False
       Caption = 'Note: You can use these vars (included environment variables) in relative path:'#13#10'- %asuite% = ASuite folder path ("%s")'#13#10'- %drive% = drive path ("%s")'
-      ParentColor = False
       ParentFont = False
       WordWrap = True
     end

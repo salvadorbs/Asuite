@@ -38,6 +38,7 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       Height = 23
       Top = 23
       Width = 425
+      OnAcceptFileName = edtBackgroundAcceptFileName
       DialogOptions = [ofHideReadOnly, ofEnableSizing]
       FilterIndex = 0
       HideDirectories = False
@@ -46,6 +47,7 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       MaxLength = 0
       ParentFont = False
       TabOrder = 1
+      OnButtonClick = edtBackgroundButtonClick
       Text = '$ASuite\'
     end
     object cbAutoOpClCat: TCheckBox
@@ -131,7 +133,7 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       Height = 19
       Top = 23
       Width = 425
-      Caption = 'Hold main window size'
+      Caption = 'Disable window resize'
       ParentFont = False
       TabOrder = 0
     end
@@ -140,7 +142,7 @@ inherited frmMainWindowOptionsPage: TfrmMainWindowOptionsPage
       Height = 19
       Top = 42
       Width = 425
-      Caption = 'Hide tab Search in main window'
+      Caption = 'Hide tab Search'
       ParentFont = False
       TabOrder = 2
     end

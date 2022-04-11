@@ -29,7 +29,6 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       Top = 4
       Width = 425
       Caption = 'Order of startup autorun items in ASuite'
-      ParentColor = False
       ParentFont = False
     end
     object chkStartup: TCheckBox
@@ -67,36 +66,31 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
         Header.AutoSizeIndex = 0
         Header.Columns = <        
           item
-            MinWidth = 50
             Position = 0
             Text = 'Name'
           end        
           item
             MaxWidth = 100
-            MinWidth = 36
             Position = 1
             Text = 'Type'
             Width = 36
           end        
           item
-            MinWidth = 50
             Position = 2
             Text = 'Category'
             Width = 60
           end        
           item
-            MinWidth = 100
             Position = 3
             Text = 'Path executable'
             Width = 200
           end>
-        Header.Options = [hoColumnResize, hoVisible]
+        Header.Options = [hoColumnResize, hoDblClickResize, hoVisible, hoAutoResizeInclCaption]
         ParentFont = False
-        PopupMenu = pmAutorun
         TabOrder = 0
         TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
         TreeOptions.PaintOptions = [toPopupMode, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
-        TreeOptions.SelectionOptions = [toFullRowSelect]
+        TreeOptions.SelectionOptions = [toFullRowSelect, toRightClickSelect]
         OnGetPopupMenu = vstGetPopupMenu
       end
       object btnStartupUp: TSpeedButton
@@ -167,7 +161,6 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
       Top = 4
       Width = 425
       Caption = 'Order of shutdown autorun items in ASuite'
-      ParentColor = False
       ParentFont = False
     end
     object chkShutdown: TCheckBox
@@ -205,35 +198,30 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
         Header.AutoSizeIndex = 0
         Header.Columns = <        
           item
-            MinWidth = 50
             Position = 0
             Text = 'Name'
           end        
           item
             MaxWidth = 100
-            MinWidth = 36
             Position = 1
             Text = 'Type'
             Width = 36
           end        
           item
-            MinWidth = 50
             Position = 2
             Text = 'Category'
           end        
           item
-            MinWidth = 100
             Position = 3
             Text = 'Path executable'
             Width = 200
           end>
-        Header.Options = [hoColumnResize, hoVisible]
+        Header.Options = [hoColumnResize, hoDblClickResize, hoVisible, hoAutoResizeInclCaption]
         ParentFont = False
-        PopupMenu = pmAutorun
         TabOrder = 0
         TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
         TreeOptions.PaintOptions = [toPopupMode, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
-        TreeOptions.SelectionOptions = [toFullRowSelect]
+        TreeOptions.SelectionOptions = [toFullRowSelect, toRightClickSelect]
         OnGetPopupMenu = vstGetPopupMenu
       end
       object btnShutdownUp: TSpeedButton
@@ -283,15 +271,27 @@ inherited frmAutorunOptionsPage: TfrmAutorunOptionsPage
     Left = 304
     Top = 24
     object mniRemoveAutorun: TMenuItem
-      Caption = 'Remove autorun'
-      OnClick = mniRemoveAutorunClick
+      Action = actRemoveAutorun
     end
     object mniN1: TMenuItem
       Caption = '-'
     end
     object mniProperties: TMenuItem
+      Action = actProperties
+    end
+  end
+  object ActionList1: TActionList[3]
+    Left = 344
+    Top = 24
+    object actProperties: TAction
       Caption = 'Properties'
-      OnClick = mniPropertiesClick
+      OnExecute = actPropertiesExecute
+      OnUpdate = actMenuItemUpdate
+    end
+    object actRemoveAutorun: TAction
+      Caption = 'Remove autorun'
+      OnExecute = actRemoveAutorunExecute
+      OnUpdate = actMenuItemUpdate
     end
   end
 end

@@ -28,49 +28,36 @@ uses
   Forms, Dialogs;
 
 { Check functions }
-function HasDriveLetter(const Path: String): Boolean;
-function IsDriveRoot(const Path: String): Boolean;
 function IsValidURLProtocol(const URL: string): Boolean;
 function IsPathExists(const Path: String): Boolean;
 function IsExecutableFile(APathFile: String): Boolean;
-function CreateProcessEx(APathFile: String; AParameters: String = ''; AWorkingDir: String = '';
-                         AWindowState: TShowWindowOptions = swoShowDefault;
-                         AEnvironmentVars: TStringList = nil): Integer;
 
+{ Process }
+function RunFile(APathFile: String; AParameters: String = ''; AWorkingDir: String = '';
+                 AWindowState: Integer = 1; AEnvironmentVars: TStringList = nil): Boolean;
+function CreateProcessEx(APathFile: String; AParameters: String = ''; AWorkingDir: String = '';
+                         AWindowState: Integer = 1; AEnvironmentVars: TStringList = nil): Boolean;
+{$IFDEF MSWINDOWS}
+function ExecWithShell(APathFile: String; ARunAsAdmin: Boolean = False;
+                       AParameters: String = ''; AWorkingDir: String = '';
+                       AWindowState: Integer = 1): Boolean;
+{$ENDIF}
 { Registry }
 procedure SetASuiteAtOsStartup;
 procedure DeleteASuiteAtOsStartup;
 function GetAutoStartFolder: String;
 
 { Misc }
+function ConvertWindowStateToSWOptions(AWindowState: Integer): TShowWindowOptions;
 procedure EjectDialog(Sender: TObject);
-function ExtractDirectoryName(const Filename: string): string;
+function ExtractDirectoryName(const APath: string): string;
 
 implementation
 
 uses
-  Utility.Conversions, Forms.Main, Utility.Misc, Kernel.Logger, IniFiles,
-  LazFileUtils{$IFDEF MSWINDOWS} , ShellApi {$ENDIF}, LazUTF8,
-  Utility.FileFolder, Kernel.Instance, Kernel.Manager;
-
-function HasDriveLetter(const Path: String): Boolean;
-var P: PChar;
-begin
-  if Length(Path) < 2 then
-    Exit(False);
-  P := Pointer(Path);
-  if not CharInSet(P^, DriveLetters) then
-    Exit(False);
-  Inc(P);
-  if not CharInSet(P^, [':']) then
-    Exit(False);
-  Result := True;
-end;
-
-function IsDriveRoot(const Path: String): Boolean;
-begin
-  Result := (Length(Path) = 3) and HasDriveLetter(Path) and (Path[3] = PathDelim);
-end;
+  Forms.Main, Utility.Misc, Kernel.Logger, StrUtils, LazStringUtils, Kernel.ResourceStrings,
+  LazFileUtils{$IFDEF MSWINDOWS} , ShellApi, Windows {$ELSE}, IniFiles {$ENDIF}, LazUTF8,
+  Utility.FileFolder, Kernel.Instance;
 
 function IsValidURLProtocol(const URL: string): Boolean;
   {Checks if the given URL is valid per RFC1738. Returns True if valid and False
@@ -99,7 +86,7 @@ var
   PathTemp : String;
 begin
   PathTemp := ASuiteInstance.Paths.RelativeToAbsolute(Path);
-  Result := (PathTemp = 'shell:AppsFolder') or IsUNCPath(PathTemp) or IsValidURLProtocol(PathTemp) or FileExists(PathTemp) or SysUtils.DirectoryExists(PathTemp)
+  Result := (PathTemp = 'shell:AppsFolder') or IsUNCPath(PathTemp) or IsValidURLProtocol(PathTemp) or FileExists(PathTemp) or SysUtils.DirectoryExists(PathTemp);
 end;
 
 function IsExecutableFile(APathFile: String): Boolean;
@@ -109,47 +96,120 @@ var
 {$ENDIF}
 begin
   {$IFDEF MSWINDOWS}
-  lowerStrPath := ExtractFileExtEx(APathFile);
+  lowerStrPath := ExtractLowerFileExt(APathFile);
   Result := (lowerStrPath = EXT_EXE) or (lowerStrPath = EXT_BAT) or (lowerStrPath = EXT_CMD);
   {$ELSE}
-  //TODO: Insert check if file has not extension or .desktop
+  //TODO: Insert check if file has not extension or .desktop (or command file -b)
+  //      https://ostoday.org/other/how-executable-files-are-identified-in-linux-and-unix.html
   Result := FileIsExecutable(APathFile);
   {$ENDIF}
 end;
 
+function RunFile(APathFile: String; AParameters: String; AWorkingDir: String;
+  AWindowState: Integer; AEnvironmentVars: TStringList): Boolean;
+var
+  str: AnsiString;
+  arrString: TStringArray;
+
+  {$IFDEF MSWINDOWS}
+  procedure SetEnvVariable(AStringList: TStringList; ARemove: Boolean);
+  var
+    I: Integer;
+  begin
+    for I := 0 to AStringList.Count - 1 do
+    begin
+      str := AStringList[I];
+      if str[1] <> '=' then
+      begin
+        arrString := str.Split('=', 2);
+        if Length(arrString) = 2 then
+        begin
+          if ARemove then
+            SetEnvironmentVariable(PAnsiChar(arrString[0]), nil)
+          else
+            SetEnvironmentVariable(PAnsiChar(arrString[0]), PAnsiChar(arrString[1]))
+        end;
+      end;
+    end;
+  end;
+  {$ENDIF}
+
+begin
+{$IFDEF MSWINDOWS}
+  SetEnvVariable(AEnvironmentVars, False);
+
+  Result := ExecWithShell(APathFile, False, AParameters, AWorkingDir, AWindowState);
+
+  SetEnvVariable(AEnvironmentVars, True);
+{$ELSE}
+  if IsExecutableFile(APathFile) then
+    Result := CreateProcessEx(APathFile, AParameters, AWorkingDir, AWindowState, AEnvironmentVars)
+  else begin
+    TASuiteLogger.Info('OpenDocument (File = "%s")', [APathFile]);
+    Result := OpenDocument(APathFile);
+  end;
+{$ENDIF}
+end;
+
 function CreateProcessEx(APathFile: String; AParameters: String;
-  AWorkingDir: String; AWindowState: TShowWindowOptions;
-  AEnvironmentVars: TStringList): Integer;
+  AWorkingDir: String; AWindowState: Integer; AEnvironmentVars: TStringList
+  ): Boolean;
 var
   Process: TProcess;
   I: Integer;
 begin
+  TASuiteLogger.Info('CreateProcessEx (Exe = "%s", Params = "%s", WorkDir = "%s")',
+                     [APathFile, AParameters, AWorkingDir]);
+
+  Result := False;
+
   Process := TProcess.Create(nil);
   try
     try
       Process.Executable := APathFile;
-      Process.ShowWindow := AWindowState;
+      Process.ShowWindow := ConvertWindowStateToSWOptions(AWindowState);
       Process.StartupOptions := [suoUseShowWindow];
       Process.CurrentDirectory := AWorkingDir;
       Process.Parameters.Text := AParameters;
 
-      //Add custom environment vars
-      if Assigned(AEnvironmentVars) then
+      //If no custom envVars, use ASuite process envVars
+      if Assigned(AEnvironmentVars) and (AEnvironmentVars.Count > 0) then
+      begin
+        //Add custom environment vars
         for I := 0 to AEnvironmentVars.Count - 1 do
           Process.Environment.Add(AEnvironmentVars[I]);
 
-      //Add actual environment vars
-      for I := 0 to GetEnvironmentVariableCountUTF8 - 1 do
-        Process.Environment.Add(GetEnvironmentStringUTF8(I));
+        //Add actual environment vars
+        for I := 0 to GetEnvironmentVariableCountUTF8 - 1 do
+          Process.Environment.Add(GetEnvironmentStringUTF8(I));
+      end;
 
       Process.Execute;
 
-      Result := Process.ProcessID;
+      Result := Process.ProcessID <> -1;
+
+      //Error message
+      if not Result then
+        ShowMessageFmtEx(msgErrorExecute, [APathFile], True);
     except
-      Result := -1;
+      on E: EProcess do
+      begin
+        TASuiteLogger.Exception(E);
+      end;
     end;
   finally
     Process.Free;
+  end;
+end;
+
+function ConvertWindowStateToSWOptions(AWindowState: Integer
+  ): TShowWindowOptions;
+begin
+  Result := swoNone;
+  case AWindowState of
+    SW_SHOWDEFAULT: Result := swoShowDefault;
+    SW_SHOWMINNOACTIVE: Result := swoshowMinNOActive;
+    SW_SHOWMAXIMIZED: Result := swoShowMaximized;
   end;
 end;
 
@@ -162,39 +222,71 @@ var
 begin
   {$IFDEF MSWINDOWS}
 
+  if not AskUserCloseApp then
+    Exit;
+
   //Call "Safe Remove hardware" Dialog
   WindowsPath := SysUtils.GetEnvironmentVariable('WinDir');
   if FileExists(PChar(WindowsPath + '\System32\Rundll32.exe')) then
   begin
     TASuiteLogger.Info('Call Eject Dialog', []);
-    bShellExecute := ShellExecuteW(0,'open',
-                     PChar(WindowsPath + '\System32\Rundll32.exe'),
-                     PChar('Shell32,Control_RunDLL hotplug.dll'),
-                     PChar(WindowsPath + '\System32'),SW_SHOWNORMAL) > 32;
+
+    bShellExecute := ExecWithShell(WindowsPath + '\System32\Rundll32.exe',
+                                   False, 'Shell32,Control_RunDLL hotplug.dll',
+                                   PChar(WindowsPath + '\System32'), SW_SHOWNORMAL);
+
     //Error message
     if not bShellExecute then
       ShowMessageEx(Format('%s [%s]', [SysErrorMessage(GetLastOSError), 'Rundll32']), True);
   end;
-  //Close ASuite
-  frmMain.miExitClick(Sender);
+  //Force close ASuite (already asked the user for confirmation with method AskUserCloseApp)
+  frmMain.CloseASuite(True);
   {$ENDIF}
 end;
 
-function ExtractDirectoryName(const Filename: string): string;
-var
-  AList : TStringList;
+function ExtractDirectoryName(const APath: string): string;
 begin
-  AList := TStringList.create;
-  try
-    StrToStrings(Filename,PathDelim,AList);
-    if AList.Count > 1 then
-      Result := AList[AList.Count - 1]
-    else
-      Result := '';
-  finally
-    AList.Free;
-  end;
+  Result := ExtractFileName(ExcludeTrailingPathDelimiter(APath));
 end;
+
+{$IFDEF MSWINDOWS}
+function ExecWithShell(APathFile: String; ARunAsAdmin: Boolean;
+  AParameters: String; AWorkingDir: String; AWindowState: Integer): Boolean;
+var
+  ShExecInfo: TShellExecuteInfoW;
+  iErr: Integer;
+begin
+  TASuiteLogger.Info('ExecWithShell (Exe = "%s", Params = "%s", WorkDir = "%s", ARunAsAdmin = "%s")',
+                     [APathFile, AParameters, AWorkingDir, BoolToStr(ARunAsAdmin)]);
+  Result := False;
+  iErr := -1;
+
+  ZeroMemory(@ShExecInfo, SizeOf(ShExecInfo));
+
+  ShExecInfo.cbSize := sizeof(ShExecInfo);
+  ShExecInfo.Wnd    := GetDesktopWindow;
+  ShExecInfo.fMask  := SEE_MASK_NOCLOSEPROCESS or SEE_MASK_FLAG_NO_UI;
+
+  if not ARunAsAdmin then
+    ShExecInfo.lpVerb := nil
+  else
+    ShExecInfo.lpVerb := PWideChar('runas');
+
+  ShExecInfo.lpFile := PWideChar(APathFile);
+  ShExecInfo.lpParameters := PWideChar(AParameters);
+  ShExecInfo.lpDirectory := PWideChar(AWorkingDir);
+  ShExecInfo.nShow := AWindowState;
+  ShExecInfo.hInstApp := 0;
+
+  if ShellExecuteExW(@ShExecInfo) then
+    Result := ShExecInfo.hProcess > 0
+  else
+    iErr := GetLastError;
+
+  if iErr > -1 then
+    ShowMessageEx(SysErrorMessageUTF8(iErr), True);
+end;
+{$ENDIF}
 
 procedure SetASuiteAtOsStartup;
 var

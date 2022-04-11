@@ -24,9 +24,9 @@ unit VirtualTree.Methods;
 interface
 
 uses
-  LCLIntf, LCLType, SysUtils, Classes, Graphics, VirtualTrees, UITypes,
+  LCLIntf, LCLType, SysUtils, Classes, Graphics, VirtualTrees, System.UITypes,
   Kernel.Enumerations, NodeDataTypes.Base, Kernel.Types, Lists.Base,
-  SynLog, Forms.UILogin, Hotkeys.ShortcutEx;
+  mormot.core.log, Forms.UILogin, Hotkeys.ShortcutEx;
 
 type
 
@@ -42,7 +42,7 @@ type
     class function AddChildNodeByGUI(const ASender: TBaseVirtualTree; AParentNode: PVirtualNode;
                                 AType: TvTreeDataType): TvBaseNodeData;
     class procedure AddNodeByPathFile(const ASender: TBaseVirtualTree; AParentNode: PVirtualNode;
-                                const APathFile: string; AAttachMode: TVTNodeAttachMode);
+                                const APathFile: string; AAttachMode: TVTNodeAttachMode; AExtractName: Boolean = False);
     class function AddNodeByText(const ASender: TBaseVirtualTree; AParentNode: PVirtualNode;
                            const AText: string; AAttachMode: TVTNodeAttachMode): Boolean;
 
@@ -87,6 +87,7 @@ type
                               const ANode: PVirtualNode; ANewNode: Boolean = False): Integer;
     class procedure RefreshList(const ATree: TBaseVirtualTree);
     class procedure PopulateVSTItemList(const ATree: TBaseVirtualTree; const ABaseItemsList: TBaseItemsList);
+    class function HasSelectedNodes(const ATree: TBaseVirtualTree): Boolean;
   end;
 
 implementation
@@ -96,7 +97,8 @@ uses
   Utility.FileFolder, Forms.PropertySeparator, Kernel.ResourceStrings,
   NodeDataTypes.Category, NodeDataTypes.Separator, Forms.PropertyItem, Icons.Thread,
   NodeDataTypes.Custom, Kernel.Consts, Icons.Node, Kernel.Logger, Utility.Misc,
-  Forms.Main, DataModules.TrayMenu, Kernel.Instance, Kernel.Manager;
+  Forms.Main, DataModules.TrayMenu, Kernel.Instance, Kernel.Manager,
+  Kernel.ShellLink, LazFileUtils;
 
 { TVirtualTreeMethods }
 
@@ -106,11 +108,19 @@ class function TVirtualTreeMethods.AddChildNodeByGUI(
 var
   ChildNode : PVirtualNode;
   NodeData  : TvBaseNodeData;
-  FolderPath, sName : String;
+  FolderPath: AnsiString;
+  sName : String;
+  DeleteNode: Boolean;
+  {%H-}log: ISynLog;
 begin
+  log := TASuiteLogger.Enter('TVirtualTreeMethods.AddChildNodeByGUI', ASender);
+  TASuiteLogger.Info('Add child node (type = %d)', [Ord(AType)]);
+
   FolderPath := '';
   Result     := nil;
   NodeData   := nil;
+  DeleteNode := False;
+
   try
     ChildNode  := AddChildNodeEx(ASender, AParentNode, amInsertAfter, AType);
     //Set ChildNode's pNode and name (temporary)
@@ -119,22 +129,27 @@ begin
     //If AType is a vtdtFolder, asuite must ask to user the folder
     if AType = vtdtFolder then
     begin
-      FolderPath := BrowseForFolder();
-      if FolderPath <> '' then
+      DeleteNode := not(SelectDirectory('', '', FolderPath, False) and (FolderPath <> ''));
+      if not DeleteNode then
       begin
-        sName := ExtractDirectoryName(FolderPath + PathDelim);
+        TASuiteLogger.Info('User selected folder "%s"', [FolderPath]);
+        sName := ExtractDirectoryName(FolderPath);
         if sName <> '' then
           NodeData.Name := sName;
-        TvFileNodeData(NodeData).PathFile := ASuiteInstance.Paths.AbsoluteToRelative(FolderPath + PathDelim);
+        TvFileNodeData(NodeData).PathFile := ASuiteInstance.Paths.AbsoluteToRelative(AppendPathDelim(FolderPath));
       end
       else begin
-        ASender.DeleteNode(ChildNode);
-        Exit;
+        if FolderPath = '' then
+        begin
+          TASuiteLogger.Info('User didn''t select any folder', []);
+          ShowMessageFmtEx(msgErrScanFolderEmptyPath,[], True);
+        end;
       end;
     end;
     //ShowPropertyItem
-    if (ShowItemProperty(nil, ASender, ChildNode, True) <> mrOK) then
+    if (DeleteNode) or (ShowItemProperty(nil, ASender, ChildNode, True) <> mrOK) then
     begin
+      TASuiteLogger.Info('User canceled adding node', []);
       ASender.DeleteNode(ChildNode);
       NodeData   := nil;
     end;
@@ -178,48 +193,75 @@ end;
 
 class procedure TVirtualTreeMethods.AddNodeByPathFile(
   const ASender: TBaseVirtualTree; AParentNode: PVirtualNode;
-  const APathFile: string; AAttachMode: TVTNodeAttachMode);
+  const APathFile: string; AAttachMode: TVTNodeAttachMode; AExtractName: Boolean
+  );
 var
   NodeData: TvFileNodeData;
   Node: PVirtualNode;
   sName: String;
+  ShellLink: TShellLinkFile;
+  Url: TUrlFile;
 begin
-  TASuiteLogger.Info('Add node by File Path (%s)', [QuotedStr(APathFile)]);
+  TASuiteLogger.Debug('Add node by File Path (%s)', [QuotedStr(APathFile)]);
+
   Node := AddChildNodeEx(ASender, AParentNode, AAttachMode, vtdtFile);
-  NodeData := TvFileNodeData(GetNodeItemData(Node, ASender));
+  try
+    NodeData := TvFileNodeData(GetNodeItemData(Node, ASender));
 
-  //Set some node record's variables
-  sName := ChangeFileExt(ExtractFileName(APathFile), '');
-  if sName = '' then
-    sName := ExtractFileDrive(APathFile);
-  NodeData.Name := sName;
-
-  if ExtractFileExtEx(APathFile) = EXT_LNK then
-  begin
-    //Shortcut
-    NodeData.PathFile   := ASuiteInstance.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfPathFile));
-    {$IFDEF MSWINDOWS}
-    NodeData.Parameters := ASuiteInstance.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfParameter));
-    NodeData.WorkingDir := ASuiteInstance.Paths.AbsoluteToRelative(GetShortcutTarget(APathFile, sfWorkingDir));
-    {$ENDIF}
-  end
-  else begin
-    if ExtractFileExtEx(APathFile) = EXT_URL then
+    if ExtractLowerFileExt(APathFile) = EXT_LNK then
     begin
       //Shortcut
-      NodeData.PathFile   := ASuiteInstance.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfPathFile));
-      NodeData.PathIcon   := ASuiteInstance.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfPathIcon));
-      if NodeData.PathIcon = '' then
-        NodeData.PathIcon := CONST_PATH_URLICON;
-      NodeData.Parameters := ASuiteInstance.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfParameter));
-      NodeData.WorkingDir := ASuiteInstance.Paths.AbsoluteToRelative(GetUrlTarget(APathFile, sfWorkingDir));
+      ShellLink := TShellLinkFile.Create(APathFile);
+      try
+        if ShellLink.TargetPath <> '' then
+        begin
+          NodeData.PathFile   := ASuiteInstance.Paths.AbsoluteToRelative(ShellLink.TargetPath);
+          NodeData.Parameters := ASuiteInstance.Paths.AbsoluteToRelative(ShellLink.Parameters);
+          NodeData.WorkingDir := ASuiteInstance.Paths.AbsoluteToRelative(ShellLink.WorkingDir);
+        end
+        else
+          NodeData.PathFile := ASuiteInstance.Paths.AbsoluteToRelative(APathFile);
+      finally
+        ShellLink.Free;
+      end;
     end
-    else //Normal file
-      NodeData.PathFile := ASuiteInstance.Paths.AbsoluteToRelative(APathFile);
+    else begin
+      if ExtractLowerFileExt(APathFile) = EXT_URL then
+      begin
+        Url := GetUrlTarget(APathFile);
+        //Shortcut
+        NodeData.PathFile   := ASuiteInstance.Paths.AbsoluteToRelative(Url.TargetFile);
+        NodeData.PathIcon   := ASuiteInstance.Paths.AbsoluteToRelative(Url.PathIcon);
+        if NodeData.PathIcon = '' then
+          NodeData.PathIcon := CONST_PATH_URLICON;
+        NodeData.WorkingDir := ASuiteInstance.Paths.AbsoluteToRelative(Url.WorkingDir);
+      end
+      else //Normal file
+        NodeData.PathFile := ASuiteInstance.Paths.AbsoluteToRelative(APathFile);
+    end;          
+
+    //Set some node record's variables
+    if AExtractName then
+      sName := ExtractFileNameEx(NodeData.PathFile)
+    else begin
+      if IsValidURLProtocol(NodeData.PathFile) then
+        sName := 'Link';
+
+      if sName = '' then
+        sName := ChangeFileExt(ExtractFileName(NodeData.PathFile), '');
+
+      if sName = '' then
+        sName := ExtractFileDrive(NodeData.PathFile);
+    end;
+    NodeData.Name := sName;
+
+    //If it is a directory, use folder icon
+    if DirectoryExists(NodeData.PathAbsoluteFile) then
+      NodeData.PathIcon := CONST_PATH_FOLDERICON;
+  except
+    on E: Exception do
+      TASuiteLogger.Exception(E);
   end;
-  //If it is a directory, use folder icon
-  if DirectoryExists(NodeData.PathAbsoluteFile) then
-    NodeData.PathIcon := CONST_PATH_FOLDERICON;
 end;
 
 class function TVirtualTreeMethods.AddNodeByText(
@@ -269,7 +311,10 @@ class procedure TVirtualTreeMethods.CheckVisibleNodePathExe(
 var
   Node: PVirtualNode;
   NodeData: TvBaseNodeData;
+  {%H-}log: ISynLog;
 begin
+  //log := TASuiteLogger.Enter('TVirtualTreeMethods.CheckVisibleNodePathExe', nil);
+
   Node := ASender.GetFirstVisible;
   while Assigned(Node) do
   begin
@@ -319,9 +364,7 @@ begin
           UserData.UserName := InputBox('Username', msgInputUsername, '');
           {$ENDIF}
           if UserData.UserName <> '' then
-            NodeData.ExecuteAsUser(True, NodeData.IsCategoryItem, UserData)
-          else
-            ShowMessageEx(msgErrEmptyUserName, true);
+            NodeData.ExecuteAsUser(True, NodeData.IsCategoryItem, UserData);
         end;
       //Execute as Admin
       rmAsAdmin: NodeData.ExecuteAsAdmin(True, NodeData.IsCategoryItem);
@@ -492,21 +535,27 @@ end;
 class procedure TVirtualTreeMethods.BeforeDeleteNode(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
 var
-  NodeData : TvCustomRealNodeData;
+  NodeData : TvBaseNodeData;
 begin
-  NodeData := TvCustomRealNodeData(GetNodeItemData(Node, Sender));
+  NodeData := GetNodeItemData(Node, Sender);
   if Assigned(NodeData) then
   begin
     TASuiteLogger.Info('Deleting node "%s"', [NodeData.Name]);
+
     if not(NodeData.IsSeparatorItem) then
     begin
       //Delete desktop's shortcut
       if NodeData is TvFileNodeData then
         TvFileNodeData(NodeData).DeleteShortcutFile;
-      ASuiteManager.ListManager.RemoveItemFromLists(NodeData);
+
+      //Remove node from every list (scheduler, hotkeys and etc...)
+      if NodeData is TvCustomRealNodeData then
+        ASuiteManager.ListManager.RemoveItemFromLists(TvCustomRealNodeData(NodeData));
+
+      //Delete and reset cache icon
+      TNodeIcon(NodeData.Icon).ResetCacheIcon;
     end;
-    //Delete and reset cache icon
-    TNodeIcon(NodeData.Icon).ResetCacheIcon;
+
     //Remove item from sqlite database
     ASuiteManager.DBManager.RemoveItem(NodeData.ID);
   end;
@@ -531,15 +580,18 @@ class procedure TVirtualTreeMethods.FindNode(Sender: TBaseVirtualTree;
 var
   LauncherSearch  : ^TLauncherSearch;
   CurrentFileData : TvFileNodeData;
+  NodeData        : TvBaseNodeData;
   SearchNodeData  : PTreeDataX;
   SearchNode      : PVirtualNode;
   Found           : Boolean;
 begin
   LauncherSearch  := Data;
-  CurrentFileData := TvFileNodeData(GetNodeItemData(Node, Sender));
-  if Assigned(CurrentFileData) then
-    if (CurrentFileData.IsFileItem) then
+  NodeData := GetNodeItemData(Node, Sender);
+  if Assigned(NodeData) then
+    if (NodeData.IsFileItem) then
     begin
+      CurrentFileData := TvFileNodeData(NodeData);
+
       Found := False;
       //Search Keyword in user specified field
       case LauncherSearch.SearchType of
@@ -571,7 +623,7 @@ begin
     if TvFileNodeData(NodeData).ShortcutDesktop then
     begin
       TASuiteLogger.Info('Delete %s desktop shortcut', [NodeData.Name]);
-      DeleteShortcutOnDesktop(NodeData.Name + EXT_LNK);
+      TShellLinkFile.DeleteShortcutOnDesktop(NodeData.Name + EXT_LNK);
     end;
   end;
 end;
@@ -611,6 +663,15 @@ begin
   finally
     ATree.EndUpdate;
   end;
+end;
+
+class function TVirtualTreeMethods.HasSelectedNodes(
+  const ATree: TBaseVirtualTree): Boolean;
+var
+  Nodes: TNodeArray;
+begin
+  Nodes := ATree.GetSortedSelection(True);
+  Result := Length(Nodes) > 0;
 end;
 
 class procedure TVirtualTreeMethods.UpdateItemColor(
@@ -674,7 +735,7 @@ begin
       // Show frmMain
       frmMainID:
         begin
-          if frmMain.Showing then
+          if (frmMain.Showing) and (frmMain.Active) then
             frmMain.HideMainForm
           else
             frmMain.ShowMainForm(Sender);

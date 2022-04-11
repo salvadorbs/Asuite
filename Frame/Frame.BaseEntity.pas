@@ -24,7 +24,7 @@ unit Frame.BaseEntity;
 interface
 
 uses
-  SysUtils, Classes, Controls, Forms, Dialogs, DefaultTranslator;
+  SysUtils, Classes, Controls, Forms, Dialogs;
 
 type
 
@@ -32,6 +32,7 @@ type
 
   TfrmBaseEntityPage = class(TFrame)
   private
+    function GetName: UnicodeString;
     { Private declarations }
   strict protected
     function GetTitle: string; virtual;
@@ -43,6 +44,8 @@ type
     constructor Create(AOwner: TComponent); override;
     function SaveData: Boolean;
     function LoadData: Boolean;
+
+    property Name: UnicodeString read GetName;
     property Title: string read GetTitle;
     property ImageIndex: integer read GetImageIndex;
   end;
@@ -52,7 +55,7 @@ TPageFrameClass = class of TfrmBaseEntityPage;
 implementation
 
 uses
-  Kernel.Logger;
+  Kernel.Logger, mormot.core.log;
 
 {$R *.lfm}
 
@@ -69,20 +72,29 @@ begin
   Result := -1;
 end;
 
+function TfrmBaseEntityPage.GetName: UnicodeString;
+begin
+  Result := Self.ClassName;
+end;
+
 function TfrmBaseEntityPage.GetTitle: string;
 begin
   Result := '';
 end;
 
 function TfrmBaseEntityPage.InternalLoadData: Boolean;
+var
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter(PUTF8Char('InternalLoadData frame ' + Self.ClassName), Self);
+  log := TASuiteLogger.Enter(PUTF8Char(Format('TfrmBaseEntityPage.InternalLoadData(%s)', [Self.Name])), Self);
   Result := True;
 end;
 
 function TfrmBaseEntityPage.InternalSaveData: Boolean;
+var
+  {%H-}log: ISynLog;
 begin
-  TASuiteLogger.Enter(PUTF8Char('InternalSaveData frame ' + Self.ClassName), Self);
+  log := TASuiteLogger.Enter(PUTF8Char(Format('TfrmBaseEntityPage.InternalSaveData(%s)', [Self.Name])), Self);
   Result := True;
 end;
 

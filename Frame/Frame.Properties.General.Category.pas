@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, SysUtils, Controls, Dialogs, StdCtrls, VirtualTrees,
-  Frame.Properties.General, DefaultTranslator, EditBtn;
+  Frame.Properties.General;
 
 type
 
@@ -55,9 +55,9 @@ var
 implementation
 
 uses
-  NodeDataTypes.Custom, NodeDataTypes.Files,
+  NodeDataTypes.Custom, NodeDataTypes.Files, Kernel.Instance,
   Kernel.Types, Forms.Main,
-  VirtualTree.Methods, VirtualTree.Events;
+  VirtualTree.Methods;
 
 {$R *.lfm}
 
@@ -93,7 +93,7 @@ var
   Node: PVirtualNode;
 begin
   Result := inherited;
-  TVirtualTreeEvents.Create.SetupVSTSimple(vstCategoryItems);
+  ASuiteInstance.VSTEvents.SetupVSTSimple(vstCategoryItems);
   if Assigned(CurrentNodeData) then
   begin
     Node := CurrentNodeData.pNode;

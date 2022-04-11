@@ -56,7 +56,6 @@ type
     function GetWorkingDirAbsolute: string;
     procedure SetClickCount(const Value: Integer);
     function GetWindowState(ARunFromCategory: Boolean): Integer;
-    function ConvertWindowStateToSWOptions(AWindowState: Integer): TShowWindowOptions;
     function  IsProcessExists(exeFileName: string): Boolean;
   protected
     procedure SetLastAccess(const Value: Int64); override;
@@ -95,9 +94,10 @@ type
 implementation
 
 uses
-  AppConfig.Main, Kernel.Consts, Utility.FileFolder, LazUTF8,
+  AppConfig.Main, Kernel.Consts, Utility.FileFolder, LazUTF8, Kernel.ResourceStrings,
   Utility.System, VirtualTree.Methods, Utility.Misc, Kernel.Instance, Kernel.Manager
-  {$IFDEF Windows}, JwaWindows, JwaWinBase, ShellApi{$ENDIF};
+  {$IFDEF Windows}, JwaWindows, JwaWinBase, ShellApi{$ENDIF}, mormot.core.log,
+  Kernel.ShellLink;
 
 constructor TvFileNodeData.Create(AType: TvTreeDataType);
 begin
@@ -130,7 +130,7 @@ end;
 procedure TvFileNodeData.DeleteShortcutFile;
 begin
   if (FShortcutDesktop) then
-    DeleteShortcutOnDesktop(Self.Name + EXT_LNK);
+    TShellLinkFile.DeleteShortcutOnDesktop(Self.Name + EXT_LNK);
 end;
 
 function TvFileNodeData.GetPathAbsoluteFile: String;
@@ -169,23 +169,13 @@ begin
 
   //For url & documents, use OpenDocument (who uses xdg-open in Linux and ShellExecute in Windows)
   //For executable (EXE, CMD, BAT for Windows, or files with permission Execute for Linux), use CreateProcess
-  if IsExecutableFile(Path) then
-    Result := CreateProcessEx(PathAbsoluteFile, ASuiteInstance.Paths.RelativeToAbsolute(FParameters),
-                              WorkingDirAbsolute, ConvertWindowStateToSWOptions(GetWindowState(ARunFromCategory)),
-                              EnvironmentVars) <> -1
-  else
-    Result := OpenDocument(Path);
-
-  //TODO bug: Oddly, using Lazarus opendocument, GetLastOSError does not work properly (detects no errors)
-  //Error message
-  if not Result then
-    ShowMessageEx(Format('%s [%s]', [SysErrorMessage(GetLastOSError), Self.Name]), True);
+  Result := RunFile(PathAbsoluteFile, ASuiteInstance.Paths.RelativeToAbsolute(FParameters, False),
+                    WorkingDirAbsolute, GetWindowState(ARunFromCategory),
+                    EnvironmentVars);
 end;
 
 function TvFileNodeData.InternalExecuteAsAdmin(ARunFromCategory: Boolean): boolean;
 {$IFDEF MSWINDOWS}
-var
-  ShellExecuteInfo: TShellExecuteInfoW;
 {$ENDIF}
 begin
   Result := False;
@@ -194,25 +184,12 @@ begin
     Exit;
 
   {$IFDEF MSWINDOWS}
-  ZeroMemory(@ShellExecuteInfo, SizeOf(ShellExecuteInfo));
-  ShellExecuteInfo.cbSize := SizeOf(TShellExecuteInfo);
-  ShellExecuteInfo.Wnd    := GetDesktopWindow;
-  ShellExecuteInfo.fMask  := SEE_MASK_FLAG_DDEWAIT or SEE_MASK_FLAG_NO_UI;
-  ShellExecuteInfo.lpVerb := PChar('runas');
-  //Set process's path, working dir, parameters and window state
-  ShellExecuteInfo.lpFile := PChar(PathAbsoluteFile);
-  ShellExecuteInfo.lpDirectory := PChar(GetWorkingDirAbsolute);
-  if FParameters <> '' then
-    ShellExecuteInfo.lpParameters := PChar(ASuiteInstance.Paths.RelativeToAbsolute(FParameters));
-  ShellExecuteInfo.nShow := GetWindowState(ARunFromCategory);
-  //Run process
-  Result := ShellExecuteExW(@ShellExecuteInfo);
-
-  if not Result then
-    ShowMessageEx(SysErrorMessage(GetLastOSError), True);
+  Result := ExecWithShell(PathAbsoluteFile, True,
+                          ASuiteInstance.Paths.RelativeToAbsolute(FParameters, False),
+                          GetWorkingDirAbsolute, GetWindowState(ARunFromCategory));
   {$ELSE}
   Result := CreateProcessEx('pkexec', Format('%s %s', [PathAbsoluteFile, Parameters]), WorkingDirAbsolute,
-                            ConvertWindowStateToSWOptions(GetWindowState(ARunFromCategory)), EnvironmentVars) <> -1;
+                            GetWindowState(ARunFromCategory), EnvironmentVars);
   {$ENDIF}
 end;
 
@@ -248,10 +225,10 @@ begin
     FileClose(ProcInfo.hThread);
   end
   else
-    ShowMessageEx(SysErrorMessage(GetLastOSError), True);
+    ShowMessageFmtEx(msgErrorExecuteUser, [Self.Name, AUserData.UserName], True);
   {$ELSE}
   Result := CreateProcessEx('pkexec', Format('%s %s %s', [AUserData.UserName, PathAbsoluteFile, Parameters]), WorkingDirAbsolute,
-                            ConvertWindowStateToSWOptions(GetWindowState(ARunFromCategory)), EnvironmentVars) <> -1;
+                            GetWindowState(ARunFromCategory), EnvironmentVars);
   {$ENDIF}
 end;
 
@@ -303,17 +280,6 @@ begin
       1: Result := SW_SHOWMINNOACTIVE;
       2: Result := SW_SHOWMAXIMIZED;
     end;
-  end;
-end;
-
-function TvFileNodeData.ConvertWindowStateToSWOptions(AWindowState: Integer
-  ): TShowWindowOptions;
-begin
-  Result := swoNone;
-  case AWindowState of
-    SW_SHOWDEFAULT: Result := swoShowDefault;
-    SW_SHOWMINNOACTIVE: Result := swoshowMinNOActive;
-    SW_SHOWMAXIMIZED: Result := swoShowMaximized;
   end;
 end;
 
@@ -383,15 +349,17 @@ begin
   inherited;
   if Source is TvFileNodeData then
   begin
-    SourceNodeData   := TvFileNodeData(Source);
+    SourceNodeData  := TvFileNodeData(Source);
+
     //Copy from Source
-    SetPathFile(SourceNodeData.PathFile);
-    FParameters      := SourceNodeData.Parameters;
-    FWorkingDir      := SourceNodeData.WorkingDir;
-    FNoMRU           := SourceNodeData.FNoMRU;
-    FNoMFU           := SourceNodeData.FNoMFU;
-    SetShortcutDesktop(SourceNodeData.ShortcutDesktop);
-    FRunFromCategory := SourceNodeData.FRunFromCategory;
+    Self.PathFile   := SourceNodeData.PathFile;
+    Self.Parameters := SourceNodeData.Parameters;
+    Self.WorkingDir := SourceNodeData.WorkingDir;
+    Self.NoMRU      := SourceNodeData.FNoMRU;
+    Self.NoMFU      := SourceNodeData.FNoMFU;
+    Self.ShortcutDesktop := SourceNodeData.ShortcutDesktop;
+    Self.RunFromCategory := SourceNodeData.FRunFromCategory;
+    Self.EnvironmentVars.Assign(SourceNodeData.EnvironmentVars);
   end;
 end;
 
@@ -463,10 +431,10 @@ begin
   begin
     //If value is true, create shortcut in desktop
     if (value and (FShortcutDesktop <> value)) then
-      CreateShortcutOnDesktop(Name + EXT_LNK, Self.PathAbsoluteFile, FParameters, Self.WorkingDirAbsolute)
+      TShellLinkFile.CreateShortcutOnDesktop(Name + EXT_LNK, Self.PathAbsoluteFile, FParameters, Self.WorkingDirAbsolute)
     else //else delete it from desktop
       if (not value and (FShortcutDesktop <> value)) then
-        DeleteShortcutOnDesktop(Self.Name + EXT_LNK);
+        TShellLinkFile.DeleteShortcutOnDesktop(Self.Name + EXT_LNK);
   end;
   FShortcutDesktop := value;
 end;
