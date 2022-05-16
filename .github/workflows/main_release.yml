@@ -15,7 +15,7 @@ env:
   FPC_URL: 'gitlab'
   FPC_BRANCH: 'release_3_2_2'
   LAZ_URL: 'gitlab'
-  LAZ_BRANCH: 'lazarus_2_2_0'
+  LAZ_BRANCH: 'lazarus_2_2_2'
   LAZ_DIR: 'fpcLaz'
   BUILD_MODE: 'Release'   
   FPCUP_OPT: '--verbose'
@@ -108,7 +108,7 @@ jobs:
       id: cache
       uses: actions/cache@v2.1.3
       env:
-        cache-name: cache-laz-v0.5.1
+        cache-name: cache-laz-v0.5.2
       with:
         path: |
           ${{ env.LAZ_DIR }}
@@ -126,7 +126,7 @@ jobs:
     - name: Install Lazarus Packages
       if: steps.cache.outputs.cache-hit != 'true'
       shell: pwsh
-      run: ${{ env.ASUITE_SOURCE }}/utils/installPackages.ps1 -ASuiteSource:"${{ env.ASUITE_SOURCE }}" -LazBuildPath:"${{ matrix.config.lazbuild }}" -BuildIde:$false -RemoveSparta:$true
+      run: ${{ env.ASUITE_SOURCE }}/utils/installPackages.ps1 -ASuiteSource:"${{ env.ASUITE_SOURCE }}" -LazBuildPath:"${{ matrix.config.lazbuild }}" -BuildIde:$false -RemoveSparta:$false
 
     - name: Validate Cache
       if: steps.cache.outputs.cache-hit == 'true'

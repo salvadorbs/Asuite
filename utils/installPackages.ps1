@@ -58,9 +58,9 @@ InstallPackage $LazBuildPath "$ASuiteSource/3p/VirtualTreeView-Lazarus/Source/vi
 InstallPackage $LazBuildPath "$ASuiteSource/3p/AsuiteComps/ASuiteComps.lpk"
 
 # Download mORMot 2 Static files and extract them in proper directory
-$Url = 'https://github.com/synopse/mORMot2/releases/download/sqlite.3.36.0/mormot2static.7z' 
+$Url = 'https://github.com/synopse/mORMot2/releases/download/2.0.3306/mormot2static.7z' 
 $ZipFile = $(Split-Path -Path $Url -Leaf) 
-$Destination = $ASuiteSource + '/3p/mORMot2/'
+$Destination = $ASuiteSource + '/3p/mORMot2/static/'
 $pwd = Get-Location
 
 write-output "Downloading $ZipFile for mORMot2"
