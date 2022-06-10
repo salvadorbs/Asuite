@@ -121,7 +121,6 @@ type
     procedure SetHoldSize(value: Boolean);
     procedure SetAlwaysOnTop(value: Boolean);
     procedure SetTrayIcon(value: Boolean);
-    procedure SetTrayUseCustomIcon(value: Boolean);
     procedure SetTVBackgroundPath(AValue: String);
     procedure SetUseCustomTitle(value: Boolean);
     procedure SetTVAutoOpClCats(value: Boolean);
@@ -151,6 +150,7 @@ type
     procedure SetASuiteState(const Value: TLauncherState);
     function UpdateHotkey(OldValue, NewValue: String; Tag: Integer): Boolean;
     function isValidHotkeyString(AValue: String): Boolean;
+    procedure UpdateTrayIcon;
   public
     { public declarations }
     constructor Create; overload;
@@ -204,7 +204,7 @@ type
     property AutoCloseProcess: Boolean read FAutoCloseProcess write FAutoCloseProcess;
     // Trayicon
     property TrayIcon: Boolean read FTrayIcon write SetTrayIcon;
-    property TrayUseCustomIcon: Boolean read FTrayUseCustomIcon write SetTrayUseCustomIcon;
+    property TrayUseCustomIcon: Boolean read FTrayUseCustomIcon write FTrayUseCustomIcon;
     property TrayCustomIconPath: String read FTrayCustomIconPath write FTrayCustomIconPath;
     property ActionClickLeft: TTrayiconActionClick read FActionClickLeft write FActionClickLeft;
     property ActionClickMiddle: TTrayiconActionClick read FActionClickMiddle write FActionClickMiddle;
@@ -286,6 +286,8 @@ begin
       if ExtractLowerFileExt(sBackgroundPath) = EXT_BMP then
         ASuiteInstance.MainTree.Background.LoadFromFile(sBackgroundPath);
   end;
+
+  UpdateTrayIcon;
 
   ASuiteInstance.MainTree.Update;
 end;
@@ -439,6 +441,35 @@ end;
 function TConfiguration.isValidHotkeyString(AValue: String): Boolean;
 begin
   Result := (TextToShortCut(AValue) <> 0);
+end;
+
+procedure TConfiguration.UpdateTrayIcon;
+var
+  bmp: TBGRABitmap;
+  sPath: string;
+begin
+  dmTrayMenu.tiTrayMenu.Visible := False;
+
+  sPath := ASuiteInstance.Paths.RelativeToAbsolute(FTrayCustomIconPath);
+  if not((FTrayUseCustomIcon) and (FileExists(sPath))) then
+    sPath := AppendPathDelim(ASuiteInstance.Paths.SuitePathCurrentTheme +
+      ICONS_DIR) + LowerCase(APP_NAME) + EXT_ICO;
+
+  try
+    bmp := LoadTrayIconFromFile(sPath);
+
+    if Assigned(bmp) then
+      dmTrayMenu.tiTrayMenu.Icon.Assign(bmp.Bitmap)
+    else
+      dmTrayMenu.tiTrayMenu.Icon.Assign(Application.Icon);
+  finally
+    bmp.Free;
+  end;
+
+  //If you can't change trayicon's property visible, it will use old icon
+  dmTrayMenu.tiTrayMenu.Visible := FTrayIcon;
+  if dmTrayMenu.tiTrayMenu.Visible then
+    dmTrayMenu.tiTrayMenu.Show;
 end;
 
 procedure TConfiguration.SetHoldSize(value: Boolean);
@@ -825,35 +856,6 @@ begin
 
   if (not(FShowPanelAtStartUp)) and (not(FTrayicon)) then
     FShowPanelAtStartUp := True;
-end;
-
-procedure TConfiguration.SetTrayUseCustomIcon(value: Boolean);
-var
-  sPath: string;
-  bmp: TBGRABitmap;
-begin
-  FTrayUseCustomIcon := value;
-  dmTrayMenu.tiTrayMenu.Visible := False;
-
-  sPath := ASuiteInstance.Paths.RelativeToAbsolute(FTrayCustomIconPath);
-  if not((FTrayUseCustomIcon) and (FileExists(sPath))) then
-    sPath := AppendPathDelim(ASuiteInstance.Paths.SuitePathCurrentTheme + ICONS_DIR) + LowerCase(APP_NAME) + EXT_ICO;
-
-  try
-    bmp := LoadTrayIconFromFile(sPath);
-
-    if Assigned(bmp) then
-      dmTrayMenu.tiTrayMenu.Icon.Assign(bmp.Bitmap)
-    else
-      dmTrayMenu.tiTrayMenu.Icon.Assign(Application.Icon);
-  finally
-    bmp.Free;
-  end;
-
-  //If you can't change trayicon's property visible, it will use old icon
-  dmTrayMenu.tiTrayMenu.Visible := FTrayIcon;
-  if dmTrayMenu.tiTrayMenu.Visible then
-    dmTrayMenu.tiTrayMenu.Show;
 end;
 
 procedure TConfiguration.SetTVBackgroundPath(AValue: String);
