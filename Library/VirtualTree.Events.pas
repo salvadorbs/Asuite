@@ -813,6 +813,9 @@ end;
 {$IFDEF MSWINDOWS}
 procedure TVirtualTreeEvents.GetFileListFromDataObject(
   const DataObj: IDataObject; FileList: TStringList);
+const
+  FormatEtc: TFormatEtc = (cfFormat: CF_HDROP; ptd: nil;
+    dwAspect: DVASPECT_CONTENT; lindex: -1; tymed: TYMED_HGLOBAL);
 var
   FmtEtc: TFormatEtc;                   // specifies required data format
   Medium: TStgMedium;                   // storage medium containing file list
@@ -823,24 +826,21 @@ var
 begin
   // Get required storage medium from data object
   FileName := '';
-  FmtEtc.cfFormat := CF_HDROP;
-  FmtEtc.ptd := nil;
-  FmtEtc.dwAspect := DVASPECT_CONTENT;
-  FmtEtc.lindex := -1;
-  FmtEtc.tymed := TYMED_HGLOBAL;
-  OleCheck(DataObj.GetData(FmtEtc, Medium));
-  try
-    // Get count of files dropped
-    DroppedFileCount := DragQueryFile(Medium.hGlobal, $FFFFFFFF, nil, 0);
-    // Get name of each file dropped and process it
-    for I := 0 to Pred(DroppedFileCount) do
+  try   
+    if DataObj.GetData(FormatEtc, Medium) = S_OK then
     begin
-      // get length of file name, then name itself
-      FileNameLength := DragQueryFile(Medium.hGlobal, I, nil, 0);
-      SetLength(FileName, FileNameLength);
-      DragQueryFile(Medium.hGlobal, I, PChar(FileName), FileNameLength + 1);
-      // add file name to list
-      FileList.Append(FileName);
+      // Get count of files dropped
+      DroppedFileCount := DragQueryFile(Medium.hGlobal, $FFFFFFFF, nil, 0);
+      // Get name of each file dropped and process it
+      for I := 0 to Pred(DroppedFileCount) do
+      begin
+        // get length of file name, then name itself
+        FileNameLength := DragQueryFile(Medium.hGlobal, I, nil, 0);
+        SetLength(FileName, FileNameLength);
+        DragQueryFile(Medium.hGlobal, I, PChar(FileName), FileNameLength + 1);
+        // add file name to list
+        FileList.Append(FileName);
+      end;
     end;
   finally
     // Tidy up - release the drop handle
