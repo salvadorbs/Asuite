@@ -467,6 +467,7 @@ begin
         FCancelIcon := ASuiteManager.IconsManager.GetPathIconIndex(sTempPath);
 
       TfrmGraphicMenu(FGraphicMenu).edtSearch.RightButton.ImageIndex := FSearchIcon;
+      StrToFont(IniFile.ReadString(INIFILE_SECTION_SEARCH, INIFILE_KEY_FONT, ''), TfrmGraphicMenu(FGraphicMenu).edtSearch.Font);
 
       //Hard Disk
       DrawHardDiskSpace(IniFile, TfrmGraphicMenu(FGraphicMenu).imgDriveBackground, TfrmGraphicMenu(FGraphicMenu).imgDriveSpace);

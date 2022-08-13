@@ -947,12 +947,13 @@ end;
 
 procedure TConfiguration.SetTVFont(value: TFont);
 begin
-  if FTVFont <> value then
+  if FTVFont.IsEqual(value) then
   begin
     FTVFont.Name  := value.Name;
     FTVFont.Style := value.Style;
     FTVFont.Size  := value.Size;
     FTVFont.Color := value.Color;
+
     ASuiteInstance.MainTree.Font.Assign(FTVFont);
   end;
 end;

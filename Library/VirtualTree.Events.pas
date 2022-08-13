@@ -98,9 +98,6 @@ type
       var NodeDataSize: Integer);
 
     //Graphic Menu Events
-    procedure DoPaintTextGM(Sender: TBaseVirtualTree;
-      const TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
-      TextType: TVSTTextType);
     procedure DoResizeGM(Sender: TObject);
     procedure DoScrollGM(Sender: TBaseVirtualTree; DeltaX,
       DeltaY: Integer);
@@ -222,7 +219,7 @@ begin
   ATree.OnResize        := DoResizeGM;
   ATree.OnScroll        := DoScrollGM;
   ATree.OnGetHint       := DoGetHint;
-  ATree.OnPaintText     := DoPaintTextGM;
+  ATree.OnPaintText     := DoPaintText;
 end;
 
 procedure TVirtualTreeEvents.SetupVSTHotkey(ATree: TVirtualStringTree);
@@ -725,7 +722,10 @@ procedure TVirtualTreeEvents.DoPaintText(Sender: TBaseVirtualTree;
   TextType: TVSTTextType);
 var
   NodeData: TvBaseNodeData;
-begin
+begin                          
+  //Workaround for dark theme in Linux KDE
+  TargetCanvas.Font.Color := Sender.Font.Color;
+
   //Get data and check if AbsoluteExe path exists
   NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
   if Assigned(NodeData) and NodeData.IsFileItem then
@@ -988,13 +988,6 @@ procedure TVirtualTreeEvents.DoGetNodeDataSizeSearch(Sender: TBaseVirtualTree;
   var NodeDataSize: Integer);
 begin
   NodeDataSize := SizeOf(rTreeDataX);
-end;
-
-procedure TVirtualTreeEvents.DoPaintTextGM(Sender: TBaseVirtualTree;
-  const TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
-  TextType: TVSTTextType);
-begin
-  TargetCanvas.Font.Color := clBlack;
 end;
 
 end.
