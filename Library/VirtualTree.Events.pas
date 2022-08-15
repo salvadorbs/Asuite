@@ -191,7 +191,7 @@ begin
     if Assigned(NodeData) and (NodeData.IsCategoryItem) then
     begin
       Tree.Expanded[Tree.GetFirstSelected] := Not(Tree.Expanded[Tree.GetFirstSelected]);
-      FGraphicMenu.FocusControl(FGraphicMenu.edtSearch);
+      FGraphicMenu.edtSearch.SetFocus;
     end
     else
       if NodeData.IsFileItem then

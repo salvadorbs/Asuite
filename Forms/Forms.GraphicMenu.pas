@@ -158,7 +158,7 @@ begin
       //Do search
       //Change node height and imagelist
       TVirtualTreeMethods.ChangeTreeIconSize(vstList, False);
-      frmMain.DoSearchItem(vstList, edtSearch.Text, stName);
+      frmMain.DoSearchItem(vstList, edtSearch.Text, TSearchType(GetCheckedMenuItem(frmMain.pmSearch).Tag));
       vstList.SortTree(-1, sdAscending);
 
       //Set first node as HotNode
@@ -401,6 +401,10 @@ begin
         if Assigned(CurrentNode) then
           vstList.Expanded[CurrentNode] := True;
       end;
+    VK_ESCAPE:
+      begin
+        CloseMenu;
+      end;
   end;
 
   if Assigned(CurrentNode) then
@@ -427,9 +431,8 @@ begin
   imgUserFrame.Visible := Config.GMShowUserPicture;
   sknbtnList.Pressed := True;
 
-  //Clear edtSearch and focus it
+  //Clear edtSearch
   edtSearch.Text := '';
-  Self.FocusControl(edtSearch);
 
   //Change node height and imagelist
   TVirtualTreeMethods.ChangeTreeIconSize(vstList, Config.GMSmallIconSize);
