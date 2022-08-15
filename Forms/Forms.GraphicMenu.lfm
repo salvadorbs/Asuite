@@ -138,7 +138,7 @@ object frmGraphicMenu: TfrmGraphicMenu
     TabOrder = 0
     TreeOptions.AutoOptions = [toAutoScrollOnExpand, toAutoTristateTracking, toAutoDeleteMovedNodes, toAutoChangeScale]
     TreeOptions.MiscOptions = [toInitOnSave, toToggleOnDblClick, toWheelPanning, toVariableNodeHeight, toEditOnClick]
-    TreeOptions.PaintOptions = [toHideFocusRect, toHotTrack, toPopupMode, toShowBackground, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
+    TreeOptions.PaintOptions = [toHideFocusRect, toHotTrack, toPopupMode, toShowBackground, toShowDropmark, toThemeAware, toUseBlendedImages, toAlwaysHideSelection, toUseExplorerTheme]
     TreeOptions.SelectionOptions = [toFullRowSelect, toRightClickSelect]
   end
   object sknbtnASuite: TBCImageButton
