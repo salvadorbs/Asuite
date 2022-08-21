@@ -290,6 +290,8 @@ begin
   UpdateTrayIcon;
 
   ASuiteInstance.MainTree.Update;
+
+  UpdateGMTheme;
 end;
 
 constructor TConfiguration.Create;
@@ -514,8 +516,8 @@ begin
     // Main Form - Position and size
     AJSONConfig.SetValue(CONFIG_MAINFORM_LEFT, frmMain.Left);
     AJSONConfig.SetValue(CONFIG_MAINFORM_TOP, frmMain.Top);
-    AJSONConfig.SetValue(CONFIG_MAINFORM_WIDTH, frmMain.Width);
-    AJSONConfig.SetValue(CONFIG_MAINFORM_HEIGHT, frmMain.Height);
+    AJSONConfig.SetValue(CONFIG_MAINFORM_WIDTH, frmMain.ScaleFormTo96(frmMain.Width));
+    AJSONConfig.SetValue(CONFIG_MAINFORM_HEIGHT, frmMain.ScaleFormTo96(frmMain.Height));
 
     // Main Form - Treevew
     AJSONConfig.SetValue(CONFIG_TVBACKGROUND, Self.TVBackground);
@@ -1042,7 +1044,6 @@ begin
     FGMTheme := 'default'
   else
     FGMTheme := value;
-  UpdateGMTheme;
 end;
 
 procedure TConfiguration.SetStartWithWindows(value: boolean);
