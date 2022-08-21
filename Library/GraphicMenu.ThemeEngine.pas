@@ -70,18 +70,23 @@ type
     function GetPathFromIni(IniFile: TIniFile; Section, Key, DefaultValue: String; InitialPath: String = ''): AnsiString;
 
     //Draw methods
-    procedure DrawEmptyButton(PNGImage: TBGRABitmap; Button: TBCCustomImageButton; imgBackground: TImage);
-    procedure DrawIconInPNGImage(IniFile: TIniFile; PNGImage: TBGRABitmap;
-                                 ButtonType: TGraphicMenuElement);
-    procedure DrawTextInPNGImage(IniFile: TIniFile; PNGImage: TBGRABitmap; ButtonType: TGraphicMenuElement; SpaceForIcon: Boolean = True);
+    procedure DrawEmptyButton(PNGImage: TBGRABitmap; Button: TBCCustomImageButton;
+      Background: TBitmap; IsDPIChanged: Boolean);
+    function DrawIconInPNGImage(IniFile: TIniFile; PNGImage: TBGRABitmap;
+                                 ButtonType: TGraphicMenuElement): Integer;
+    procedure DrawTextInPNGImage(IniFile: TIniFile; PNGImage: TBGRABitmap; ButtonType: TGraphicMenuElement; IconHeight: Integer);
     procedure DrawButton(IniFile: TIniFile;Button: TBCCustomImageButton;
                          ButtonType: TGraphicMenuElement);
     procedure DrawHardDiskSpace(IniFile: TIniFile; DriveBackGround, DriveSpace: TImage);
 
     //Misc
+    function IsDPIChanged: Boolean;
     function IsRightButton(ButtonType: TGraphicMenuElement): Boolean;
-    procedure CopyImageInVst(Source:TImage; Tree: TVirtualStringTree);
-    procedure CopySelectedRectInBitmap(Source:TImage;Comp: TControl;bmp: Graphics.TBitmap);
+    function IsTabElement(ButtonType: TGraphicMenuElement): Boolean;
+    procedure CopyImageInVst(Source: Graphics.TBitmap; Tree: TVirtualStringTree;
+      IsDPIChanged: Boolean);
+    procedure CopySelectedRectInBitmap(Source: Graphics.TBitmap; Comp: TControl;
+      bmp: Graphics.TBitmap; IsDPIChanged: Boolean);
   public
     constructor Create(AGraphicMenu: TForm);
 
@@ -110,50 +115,59 @@ begin
   ForcePathDelims(Result);
 end;
 
-procedure TThemeEngine.CopyImageInVst(Source: TImage;
-  Tree: TVirtualStringTree);
+procedure TThemeEngine.CopyImageInVst(Source: Graphics.TBitmap;
+  Tree: TVirtualStringTree; IsDPIChanged: Boolean);
 var
   bmpTempImage : Graphics.TBitmap;
 begin
   bmpTempImage := Graphics.TBitmap.Create;
   try
-    CopySelectedRectInBitmap(Source, Tree, bmpTempImage);
+    CopySelectedRectInBitmap(Source, Tree, bmpTempImage, IsDPIChanged);
     Tree.Background.Bitmap := bmpTempImage;
   finally
     bmpTempImage.Free;
   end;
 end;
 
-procedure TThemeEngine.CopySelectedRectInBitmap(Source: TImage;
-  Comp: TControl; bmp: Graphics.TBitmap);
+procedure TThemeEngine.CopySelectedRectInBitmap(Source: Graphics.TBitmap;
+  Comp: TControl; bmp: Graphics.TBitmap; IsDPIChanged: Boolean);
 var
   RectSource, RectDest : TRect;
-  bmpTempBG : Graphics.TBitmap;
+  iLeft, iTop, iWidth, iHeight: Integer;
 begin
   if Assigned(bmp) then
   begin
-    bmpTempBG    := Graphics.TBitmap.Create;
-    try
-      bmp.Height := Comp.Height;
-      bmp.Width  := Comp.Width;
-      //Set RectSource size
-      RectSource.Left     := Comp.Left;
-      RectSource.Top      := Comp.Top;
-      RectSource.Right    := Comp.Left + Comp.Width;
-      RectSource.Bottom   := Comp.Top + Comp.Height;
-      //Set RectDest size
-      RectDest.Left       := 0;
-      RectDest.Top        := 0;
-      RectDest.Right      := Comp.Width;
-      RectDest.Bottom     := Comp.Height;
-      //CopyRect in bmpTempImage
-      bmpTempBG.Width := Source.Picture.Width;
-      bmpTempBG.Height := Source.Picture.Height;
-      bmpTempBG.Canvas.Draw(0, 0, Source.Picture.Graphic);
-      bmp.Canvas.CopyRect(RectDest, bmpTempBG.Canvas, RectSource);
-    finally
-      bmpTempBG.Free;
+    //Get original (dpi 96) Comp size
+    if IsDPIChanged then
+    begin
+      iLeft   := Comp.ScaleFormTo96(Comp.Left);
+      iTop    := Comp.ScaleFormTo96(Comp.Top);
+      iWidth  := Comp.ScaleFormTo96(Comp.Width);
+      iHeight := Comp.ScaleFormTo96(Comp.Height);
+    end
+    else begin
+      iLeft   := Comp.Left;
+      iTop    := Comp.Top;
+      iWidth  := Comp.Width;
+      iHeight := Comp.Height;
     end;
+
+    bmp.Height := iHeight;
+    bmp.Width  := iWidth;
+
+    //Set RectSource size
+    RectSource.Left     := iLeft;
+    RectSource.Top      := iTop;
+    RectSource.Right    := iLeft + iWidth;
+    RectSource.Bottom   := iTop + iHeight;
+
+    //Set RectDest size
+    RectDest.Left       := 0;
+    RectDest.Top        := 0;
+    RectDest.Right      := iWidth;
+    RectDest.Bottom     := iHeight;
+
+    bmp.Canvas.CopyRect(RectDest, Source.Canvas, RectSource);
   end;
 end;
 
@@ -169,13 +183,10 @@ procedure TThemeEngine.DrawButton(IniFile: TIniFile;
 var
   PNGButton: TBGRABitmap;
   strButtonFile, IniFile_Section: string;
-
-  function IsTabElement(ButtonType: TGraphicMenuElement): Boolean;
-  begin
-    Result := ButtonType in [gmbList, gmbMRU, gmbMFU];
-  end;
-
+  iIconHeight: Integer;
 begin
+  iIconHeight := -1;
+
   PNGButton := TBGRABitmap.Create;
   try
     IniFile_Section := GetIniFileSection(ButtonType);
@@ -184,16 +195,16 @@ begin
     strButtonFile := GetPathFromIni(IniFile, IniFile_Section, INIFILE_KEY_IMAGEBUTTON, '');
 
     //Load png button states
-    //Normal state
     if FileExists(strButtonFile) then
       PNGButton.LoadFromFile(strButtonFile)
     else
-      DrawEmptyButton(PNGButton, Button, TfrmGraphicMenu(FGraphicMenu).imgBackground);
+      DrawEmptyButton(PNGButton, Button, TfrmGraphicMenu(FGraphicMenu).imgBackground.Picture.Bitmap, IsDPIChanged);
 
-    //Draw caption and icon in PNGImage_*, if button is a RightButton
-    DrawTextInPNGImage(IniFile, PNGButton, ButtonType, IsRightButton(ButtonType));
+    //Draw caption and icon in PNGImage_*, if button is a RightButton 
     if IsRightButton(ButtonType) then
-      DrawIconInPNGImage(IniFile, PNGButton, ButtonType);
+      iIconHeight := DrawIconInPNGImage(IniFile, PNGButton, ButtonType);
+
+    DrawTextInPNGImage(IniFile, PNGButton, ButtonType, iIconHeight);
   finally
     if Assigned(Button.BitmapOptions.Bitmap) then
       Button.BitmapOptions.Bitmap.Free;
@@ -202,13 +213,13 @@ begin
 end;
 
 procedure TThemeEngine.DrawEmptyButton(PNGImage: TBGRABitmap;
-  Button: TBCCustomImageButton; imgBackground: TImage);
+  Button: TBCCustomImageButton; Background: TBitmap; IsDPIChanged: Boolean);
 var
   bmp: Graphics.TBitmap;
 begin
   bmp := Graphics.TBitmap.Create;
   try
-    CopySelectedRectInBitmap(imgBackground, Button, bmp);
+    CopySelectedRectInBitmap(Background, Button, bmp, IsDPIChanged);
     PNGImage.Assign(bmp);
   finally
     bmp.Free;
@@ -230,13 +241,20 @@ begin
     DriveSpace.Picture.LoadFromFile(HDSpacePath);
 end;
 
-procedure TThemeEngine.DrawIconInPNGImage(IniFile: TIniFile;
-  PNGImage: TBGRABitmap; ButtonType: TGraphicMenuElement);
+function TThemeEngine.IsDPIChanged: Boolean;
+begin
+  Result := TfrmGraphicMenu(FGraphicMenu).DesignTimePPI <>
+            TfrmGraphicMenu(FGraphicMenu).PixelsPerInch;
+end;
+
+function TThemeEngine.DrawIconInPNGImage(IniFile: TIniFile;
+  PNGImage: TBGRABitmap; ButtonType: TGraphicMenuElement): Integer;
 var
   Icon : TBGRABitmap;
   IconPath: string;
   I, buttonHeight, iSpace: Integer;
 begin
+  Result := -1;
   if Not Assigned(PNGImage) then
     Exit;
 
@@ -247,6 +265,7 @@ begin
     if FileExists(ASuiteInstance.Paths.SuitePathCurrentTheme + IconPath) then
     begin
       Icon.LoadFromFile(ASuiteInstance.Paths.SuitePathCurrentTheme + IconPath);
+      Result := Icon.Height;
       buttonHeight := (PNGImage.Height div 4);
       iSpace := (buttonHeight - Icon.Height) div 2;
 
@@ -259,8 +278,7 @@ begin
 end;
 
 procedure TThemeEngine.DrawTextInPNGImage(IniFile: TIniFile;
-  PNGImage: TBGRABitmap; ButtonType: TGraphicMenuElement; SpaceForIcon: Boolean
-  );
+  PNGImage: TBGRABitmap; ButtonType: TGraphicMenuElement; IconHeight: Integer);
 var
   ButtonHeight, I : Integer;
   FontNormal, FontHover, FontClicked : TFont;
@@ -297,9 +315,9 @@ begin
   try
     IniFile_Section := GetIniFileSection(ButtonType);
     //Get font
-    StrToFont(IniFile.ReadString(IniFile_Section, INIFILE_KEY_FONTNORMAL, 'Segoe UI|9|#000000|1'), FontNormal);
-    StrToFont(IniFile.ReadString(IniFile_Section, INIFILE_KEY_FONTHOVER, 'Segoe UI|9|#000000|1'), FontHover);
-    StrToFont(IniFile.ReadString(IniFile_Section, INIFILE_KEY_FONTCLICKED, 'Segoe UI|9|#000000|1'), FontClicked);
+    StrToFont(IniFile.ReadString(IniFile_Section, INIFILE_KEY_FONTNORMAL, 'default|0|#000000|0'), FontNormal);
+    StrToFont(IniFile.ReadString(IniFile_Section, INIFILE_KEY_FONTHOVER, 'default|0|#000000|0'), FontHover);
+    StrToFont(IniFile.ReadString(IniFile_Section, INIFILE_KEY_FONTCLICKED, 'default|0|#000000|0'), FontClicked);
     //Get caption and draw it
     Caption := GetButtonCaption(IniFile, ButtonType);
     if Caption <> '' then
@@ -314,8 +332,8 @@ begin
           bsDisabled: AssignFont(PNGImage, FontNormal);
         end;
 
-        if SpaceForIcon then
-          PNGImage.TextRect(Rect(35, (ButtonHeight * I), PNGImage.Width, (ButtonHeight * (I + 1))), Caption, taLeftJustify, tlCenter, TextColor)
+        if IconHeight <> -1 then
+          PNGImage.TextRect(Rect(IconHeight + 10, (ButtonHeight * I), PNGImage.Width, (ButtonHeight * (I + 1))), Caption, taLeftJustify, tlCenter, TextColor)
         else
           PNGImage.TextRect(Rect(0, (ButtonHeight * I), PNGImage.Width, (ButtonHeight * (I + 1))), Caption, taCenter, tlCenter, TextColor)
       end;
@@ -482,7 +500,7 @@ begin
       StrToFont(IniFile.ReadString(INIFILE_SECTION_GENERAL, INIFILE_KEY_FONTTREE, ''), TfrmGraphicMenu(FGraphicMenu).vstList.Font);
 
       //Workaround for vst trasparent
-      CopyImageInVst(TfrmGraphicMenu(FGraphicMenu).imgBackground, TfrmGraphicMenu(FGraphicMenu).vstList);
+      CopyImageInVst(TfrmGraphicMenu(FGraphicMenu).imgBackground.Picture.Bitmap, TfrmGraphicMenu(FGraphicMenu).vstList, IsDPIChanged);
     finally
       IniFile.Free;
     end;
@@ -496,6 +514,11 @@ function TThemeEngine.IsRightButton(
 begin
   Result := ButtonType in [gmbASuite,gmbOptions,gmbDocuments,gmbMusic,gmbPictures,
                     gmbVideos,gmbExplore,gmbAbout];
+end;
+
+function TThemeEngine.IsTabElement(ButtonType: TGraphicMenuElement): Boolean;
+begin
+  Result := ButtonType in [gmbList, gmbMRU, gmbMFU];
 end;
 
 end.
