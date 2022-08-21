@@ -287,11 +287,11 @@ begin
         ASuiteInstance.MainTree.Background.LoadFromFile(sBackgroundPath);
   end;
 
-  UpdateTrayIcon;
-
   ASuiteInstance.MainTree.Update;
 
   UpdateGMTheme;
+
+  UpdateTrayIcon;
 end;
 
 constructor TConfiguration.Create;
