@@ -19,36 +19,27 @@ object frmGraphicMenu: TfrmGraphicMenu
   OnKeyPress = FormKeyPress
   OnMouseWheel = FormMouseWheel
   OnShow = FormShow
-  LCLVersion = '2.2.0.2'
-  Scaled = False
   object imgBackground: TImage
     Left = 0
     Height = 530
     Top = 0
     Width = 406
     Align = alClient
+    Stretch = True
   end
   object imgDivider2: TImage
     Left = 271
     Height = 2
     Top = 332
     Width = 128
-  end
-  object imgLogo: TImage
-    Cursor = crSizeAll
-    Left = 15
-    Height = 50
-    Top = 9
-    Width = 200
-    OnMouseDown = imgLogoMouseDown
-    OnMouseMove = imgLogoMouseMove
-    OnMouseUp = imgDragSpaceHiddenMouseUp
+    Stretch = True
   end
   object imgDivider1: TImage
     Left = 271
     Height = 2
     Top = 144
     Width = 128
+    Stretch = True
   end
   object imgDriveBackground: TImage
     Left = 8
@@ -108,6 +99,7 @@ object frmGraphicMenu: TfrmGraphicMenu
     Top = 9
     Width = 56
     OnClick = imgPersonalPictureClick
+    Stretch = True
   end
   object imgPersonalPicture: TImage
     Cursor = crHandPoint
@@ -264,6 +256,17 @@ object frmGraphicMenu: TfrmGraphicMenu
     TabOrder = 0
     OnChange = edtSearchChange
     OnRightButtonClick = edtSearchRightButtonClick
+  end
+  object imgLogo: TBCRoundedImage
+    Cursor = crSizeAll
+    Left = 15
+    Height = 50
+    Top = 9
+    Width = 200
+    Style = isSquare
+    BorderStyle = []
+    Rounding = 10
+    Quality = rfBestQuality
   end
   object tmrFader: TTimer
     Interval = 20

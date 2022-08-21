@@ -25,8 +25,8 @@ interface
 
 uses
   LCLIntf, LCLType, Classes, Forms, StdCtrls, ExtCtrls, ComCtrls, Controls,
-  Graphics, Dialogs, SysUtils, VirtualTrees, Menus, Lists.Base,
-  BCImageTab, ButtonedEdit, BCImageButton, GraphicMenu.ThemeEngine;
+  Graphics, Dialogs, SysUtils, VirtualTrees, Menus, Lists.Base, BCImageTab,
+  ButtonedEdit, BCImageButton, BCRoundedImage, GraphicMenu.ThemeEngine;
 
 type
 
@@ -36,6 +36,7 @@ type
     edtSearch: TButtonedEdit;
     imgDriveSpace: TImage;
     imgDivider2: TImage;
+    imgLogo: TBCRoundedImage;
     lblDriveName: TLabel;
     lblDriveSpace: TLabel;
     sknbtnAbout: TBCImageButton;
@@ -52,7 +53,6 @@ type
     sknbtnRecents: TBCImageTab;
     sknbtnVideos: TBCImageButton;
     tmrFader: TTimer;
-    imgLogo: TImage;
     imgPersonalPicture: TImage;
     vstList: TVirtualStringTree;
     OpenDialog1: TOpenDialog;
