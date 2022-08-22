@@ -43,12 +43,14 @@ begin
         DeleteFile('heap.trc');
       SetHeapTraceOutput('heap.trc');
     {$ENDIF}
-
+                                    
+    Application.Scaled := True;
     Application.Initialize;
-  Application.Title := APP_TITLE;
+    Application.Title := APP_TITLE;
 
     Application.CreateForm(TfrmMain, frmMain);
-  Application.CreateForm(TfrmGraphicMenu, frmGraphicMenu);
+    Application.CreateForm(TfrmGraphicMenu, frmGraphicMenu);
+
   //Show MainForm and/or TrayMenu
     Application.ShowMainForm := Config.ShowPanelAtStartUp;
     if (Config.ShowGraphicMenuAtStartUp) then
