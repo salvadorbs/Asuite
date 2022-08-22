@@ -652,30 +652,31 @@ procedure TdmTrayMenu.DrawFadeLine(ACanvas: TCanvas; AClipRect, ALineRect: TRect
   All Rights Reserved
 }
 
-function Min(Value1, Value2: Integer): Integer;
-begin
-  if Value1 > Value2 then
-    Result := Value2
-  else
-    Result := Value1;
-end;
+  function Min(Value1, Value2: Integer): Integer;
+  begin
+    if Value1 > Value2 then
+      Result := Value2
+    else
+      Result := Value1;
+  end;
 
-function Max(Value1, Value2: Integer): Integer;
-begin
-  if Value1 < Value2 then
-    Result := Value2
-  else
-    Result := Value1;
-end;
+  function Max(Value1, Value2: Integer): Integer;
+  begin
+    if Value1 < Value2 then
+      Result := Value2
+    else
+      Result := Value1;
+  end;
 
-function RGB(Red, Green, Blue: Byte; Alpha: Byte = $00): TColor;
-begin
-  Result := (Alpha shl 24) or (Blue shl 16) or (Green shl 8) or Red;
-end;
+  function RGB(Red, Green, Blue: Byte; Alpha: Byte = $00): TColor;
+  begin
+    Result := (Alpha shl 24) or (Blue shl 16) or (Green shl 8) or Red;
+  end;
 
 var
-  I, AToDiv2, ATo, AFrom, ATop, R1, G1, B1, R2, G2, B2: Integer;
-  C: TColor;
+  I, AToDiv2, ATo, AFrom, ATop: Integer;
+  //, R1, G1, B1, R2, G2, B2: Integer;
+  //C: TColor;
 begin
   AToDiv2 := ALineRect.Left - (ALineRect.Left - ALineRect.Right) div 2;
   ATop := Max(ALineRect.Top, AClipRect.Top);
@@ -689,39 +690,39 @@ begin
     AFrom := AToDiv2;
   end;
   AColor := ColorToRGB(AColor);
-  R1 := TColorQuad(AColor).Red;
-  G1 := TColorQuad(AColor).Green;
-  B1 := TColorQuad(AColor).Blue;
+  //R1 := TColorQuad(AColor).Red;
+  //G1 := TColorQuad(AColor).Green;
+  //B1 := TColorQuad(AColor).Blue;
   for I := ALineRect.Left to ATo do
   begin
-    if I < (ALineRect.Left + AFadeWidth) then
-    begin
-      C := ACanvas.Pixels[I, ATop];
-      R2 := TColorQuad(C).Red;
-      G2 := TColorQuad(C).Green;
-      B2 := TColorQuad(C).Blue;
-      R2 := R2 + (((R1 - R2) * (I - ALineRect.Left)) div AFadeWidth);
-      G2 := G2 + (((G1 - G2) * (I - ALineRect.Left)) div AFadeWidth);
-      B2 := B2 + (((B1 - B2) * (I - ALineRect.Left)) div AFadeWidth);
-      C := RGB(R2, G2, B2, 0);
-      ACanvas.Pixels[I, ATop] := C;
-    end else
+    //if I < (ALineRect.Left + AFadeWidth) then
+    //begin
+    //  C := ACanvas.Pixels[I, ATop];
+    //  R2 := TColorQuad(C).Red;
+    //  G2 := TColorQuad(C).Green;
+    //  B2 := TColorQuad(C).Blue;
+    //  R2 := R2 + (((R1 - R2) * (I - ALineRect.Left)) div AFadeWidth);
+    //  G2 := G2 + (((G1 - G2) * (I - ALineRect.Left)) div AFadeWidth);
+    //  B2 := B2 + (((B1 - B2) * (I - ALineRect.Left)) div AFadeWidth);
+    //  C := RGB(R2, G2, B2, 0);
+    //  ACanvas.Pixels[I, ATop] := C;
+    //end else
       ACanvas.Pixels[I, ATop] := AColor;
   end;
   for I := AFrom to ALineRect.Right do
   begin
-    if I > (ALineRect.Right - AFadeWidth) then
-    begin
-      C := ACanvas.Pixels[I, ATop];
-      R2 := TColorQuad(C).Red;
-      G2 := TColorQuad(C).Green;
-      B2 := TColorQuad(C).Blue;
-      R2 := R2 + (((R1 - R2) * (ALineRect.Right - I)) div AFadeWidth);
-      G2 := G2 + (((G1 - G2) * (ALineRect.Right - I)) div AFadeWidth);
-      B2 := B2 + (((B1 - B2) * (ALineRect.Right - I)) div AFadeWidth);
-      C := RGB(R2, G2, B2, 0);
-      ACanvas.Pixels[I, ATop] := C;
-    end else
+    //if I > (ALineRect.Right - AFadeWidth) then
+    //begin
+    //  C := ACanvas.Pixels[I, ATop];
+    //  R2 := TColorQuad(C).Red;
+    //  G2 := TColorQuad(C).Green;
+    //  B2 := TColorQuad(C).Blue;
+    //  R2 := R2 + (((R1 - R2) * (ALineRect.Right - I)) div AFadeWidth);
+    //  G2 := G2 + (((G1 - G2) * (ALineRect.Right - I)) div AFadeWidth);
+    //  B2 := B2 + (((B1 - B2) * (ALineRect.Right - I)) div AFadeWidth);
+    //  C := RGB(R2, G2, B2, 0);
+    //  ACanvas.Pixels[I, ATop] := C;
+    //end else
       ACanvas.Pixels[I, ATop] := AColor;
   end;
 end;
