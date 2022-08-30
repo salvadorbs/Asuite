@@ -51,7 +51,7 @@ type
     procedure UpdateEnvironmentVars;
     procedure UpdateASuiteVars;
   public
-    constructor Create;
+    constructor Create(APathExecutable: string);
     destructor Destroy; override;
 
     function AbsoluteToRelative(const APath: String): string;
@@ -195,12 +195,12 @@ begin
   FASuiteVars.Add(DeQuotedStr(CONST_PATH_URLICON), strFolderIcon + FILEICON_Url + EXT_ICO);
 end;
 
-constructor TConfigPaths.Create;
+constructor TConfigPaths.Create(APathExecutable: string);
 var
   strPathExe, strFileListSql, strFileListXml: String;
 begin
   //Default paths
-  strPathExe := Application.ExeName;
+  strPathExe := APathExecutable;
   FSuitePathWorking  := ExtractFilePath(strPathExe);
 
   strFileListSql := ExtractFileNameOnly(strPathExe) + EXT_SQL;
@@ -285,7 +285,7 @@ begin
     //Note: Unfortunately old asuite vars is not quoted, but in format $var.
     //      So these two vars are deprecated. This code remain for only backwards compatibility
     //CONST_PATH_ASuite_old = Launcher's path
-    Result := StringReplace(Result, CONST_PATH_ASuite_old, SuitePathWorking, [rfIgnoreCase,rfReplaceAll]);
+    Result := StringReplace(Result, CONST_PATH_ASuite_old, ExcludeTrailingPathDelimiter(SuitePathWorking), [rfIgnoreCase,rfReplaceAll]);
     //CONST_PATH_DRIVE_old = Launcher's Drive (ex. ASuite in H:\Software\ASuite.exe, CONST_PATH_DRIVE is H: )
     Result := StringReplace(Result, CONST_PATH_DRIVE_old, SUITEDRIVE, [rfIgnoreCase,rfReplaceAll]);
 
