@@ -79,8 +79,7 @@ implementation
 uses
   AppConfig.Main, VirtualTree.Methods,
   Utility.FileFolder, Utility.XML, Database.Manager, NodeDataTypes.Base,
-  Kernel.Logger, Kernel.ResourceStrings, Utility.Misc, Kernel.Instance,
-  mormot.core.log;
+  Kernel.Logger, Kernel.ResourceStrings, Utility.Misc, Kernel.Instance;
 
 procedure TfrmImportList.btnBackClick(Sender: TObject);
 begin
@@ -211,9 +210,8 @@ var
   FileName : String;
   FileExt  : String;
   XMLDoc   : TXMLDocument;
-  {%H-}log: ISynLog;
 begin
-  log := TASuiteLogger.Enter('TfrmImportList.PopulateTree', Self);
+  TASuiteLogger.Enter('TfrmImportList.PopulateTree', Self);
 
   XMLDoc := nil;
 

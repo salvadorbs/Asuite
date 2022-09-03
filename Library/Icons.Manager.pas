@@ -84,7 +84,7 @@ implementation
 
 uses
   Kernel.Logger, FileUtil, LazFileUtils, Kernel.Instance, ImgList,
-  Graphics, DataModules.Icons, mormot.core.log
+  Graphics, DataModules.Icons
   {$IFDEF UNIX}
   , IniFiles, BaseUnix, StrUtils, Utility.FileFolder
     {$IFDEF LCLQT5}
@@ -339,9 +339,8 @@ var
   Icon: TBaseIcon;
   sPath: string;
   IconFiles: TStringList;
-  {%H-}log: ISynLog;
 begin
-  log := TASuiteLogger.Enter('TIconsManager.LoadAllIcons', Self);
+  TASuiteLogger.Enter('TIconsManager.LoadAllIcons', Self);
   TASuiteLogger.Info('Search and load all icons in folder "%s"', [FPathTheme + ICONS_DIR]);
 
   Clear(True);

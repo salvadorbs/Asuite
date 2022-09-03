@@ -168,7 +168,7 @@ uses
   DataModules.TrayMenu, Forms.ImportList, AppConfig.Main, Utility.System,
   VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base,
   Kernel.Types, NodeDataTypes.Files, Kernel.Manager,
-  Kernel.Logger, mormot.core.log, FileUtil, Kernel.ResourceStrings, Kernel.Instance
+  Kernel.Logger, FileUtil, Kernel.ResourceStrings, Kernel.Instance
   {$IFDEF MSWINDOWS} , jwatlhelp32, Windows {$ENDIF};
 
 {$R *.lfm}
@@ -219,11 +219,10 @@ var
   Nodes: TNodeArray;
   Tree: TBaseVirtualTree;
   DeleteNode: Boolean;
-  {%H-}log: ISynLog;
 begin
   DeleteNode := Config.TVDisableConfirmDelete or AskUserWarningMessage(msgConfirmDeleteItem, []);
 
-  log := TASuiteLogger.Enter('TfrmMain.actDeleteExecute', Self);
+  TASuiteLogger.Enter('TfrmMain.actDeleteExecute', Self);
   Config.ASuiteState := lsDeleting;
   try
     Tree := GetActiveTree;
@@ -547,10 +546,8 @@ begin
 end;
 
 procedure TfrmMain.SetAllIcons;
-var
-  {%H-}log: ISynLog;
 begin
-  log := TASuiteLogger.Enter('TfrmMain.SetAllIcons', Self);
+  TASuiteLogger.Enter('TfrmMain.SetAllIcons', Self);
 
   //Set IcoImages
   //Set submenuimages to three MainMenu's subitems
@@ -715,10 +712,8 @@ begin
 end;
 
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
-var
-  {%H-}log: ISynLog;
 begin
-  log := TASuiteLogger.Enter('TfrmMain.FormClose', Self);
+  TASuiteLogger.Enter('TfrmMain.FormClose', Self);
 
   //Clear clipboard before closing asuite (prevent fake memory leak)
   EmptyClipboard;
@@ -752,10 +747,8 @@ begin
 end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);
-var
-  {%H-}log: ISynLog;
 begin
-  log := TASuiteLogger.Enter('TfrmMain.MainFormCreate', Self);
+  TASuiteLogger.Enter('TfrmMain.MainFormCreate', Self);
 
   {$IFDEF UNIX}
   Self.AllowDropFiles := True;

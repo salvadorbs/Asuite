@@ -69,7 +69,7 @@ var
 implementation
 
 uses
-  Kernel.Types, Kernel.Logger, mormot.core.log, Kernel.Instance;
+  Kernel.Types, Kernel.Logger, Kernel.Instance;
 
 {$R *.lfm}
 
@@ -231,18 +231,14 @@ begin
 end;
 
 function TfrmDialogBase.InternalLoadData: Boolean;
-var
-  {%H-}log: ISynLog;
 begin
-  log := TASuiteLogger.Enter('TfrmDialogBase.InternalLoadData', Self);
+  TASuiteLogger.Enter('TfrmDialogBase.InternalLoadData', Self);
   Result := True;
 end;
 
 function TfrmDialogBase.InternalSaveData: Boolean;
-var
-  {%H-}log: ISynLog;
 begin
-  log := TASuiteLogger.Enter('TfrmDialogBase.InternalSaveData', Self);
+  TASuiteLogger.Enter('TfrmDialogBase.InternalSaveData', Self);
   Result := True;
 end;
 

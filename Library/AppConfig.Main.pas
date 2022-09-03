@@ -254,7 +254,7 @@ implementation
 
 uses
   Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, Utility.Misc,
-  Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder, mormot.core.log,
+  Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder,
   LCLProc, BGRAIconCursor,
   TypInfo, Kernel.ResourceStrings, LCLTranslator, AppConfig.Consts, BGRABitmapTypes,
   Utility.Conversions, Hotkeys.Manager.Platform, Kernel.Instance, Kernel.Manager;
@@ -767,9 +767,8 @@ end;
 procedure TConfiguration.LoadConfig;
 var
   JSONConfig: TJSONConfig;
-  {%H-}log: ISynLog;
 begin
-  log := TASuiteLogger.Enter('TConfiguration.LoadConfig', Self);
+  TASuiteLogger.Enter('TConfiguration.LoadConfig', Self);
   TASuiteLogger.Debug('Settings file = %s', [ASuiteInstance.Paths.SuitePathSettings]);
 
   //if FileExists(ASuiteInstance.Paths.SuitePathSettings) then
@@ -792,12 +791,11 @@ end;
 procedure TConfiguration.SaveConfig;  
 var
   JSONConfig: TJSONConfig;
-  {%H-}log: ISynLog;
 begin
   //If settings is changed, insert it else (if it exists) update it
   if Config.Changed then
   begin
-    log := TASuiteLogger.Enter('TConfiguration.SaveConfig', Self);
+    TASuiteLogger.Enter('TConfiguration.SaveConfig', Self);
     try
       JSONConfig := TJSONConfig.Create(nil);
       JSONConfig.Formatted := True;

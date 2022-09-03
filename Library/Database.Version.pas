@@ -24,7 +24,7 @@ unit Database.Version;
 interface
 
 uses
-  Database.Manager, mormot.core.log, SysUtils, FileInfo, mormot.orm.core;
+  Database.Manager, SysUtils, FileInfo, mormot.orm.core;
 
 type
 

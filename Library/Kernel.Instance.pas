@@ -72,7 +72,7 @@ implementation
 
 uses
   Forms.ImportList, Kernel.Logger, Forms, Kernel.Consts, Utility.FileFolder,
-  Utility.Misc, Utility.XML, VirtualTree.Methods, mormot.core.log, Kernel.Manager,
+  Utility.Misc, Utility.XML, VirtualTree.Methods, Kernel.Manager,
   mormot.core.base;
 
 { TASuiteInstance }
@@ -117,20 +117,20 @@ begin
   FPaths  := TConfigPaths.Create;
 
   //Setup logger
-  with TSynLog.Family do
-  begin
-    DestinationPath := Self.Paths.SuitePathData;
-    Level := LOG_VERBOSE;
-    EchoToConsole := LOG_VERBOSE;
-    {$IFDEF DEBUG}
-    Level := LOG_VERBOSE;
-    EchoToConsole := LOG_VERBOSE;
-    {$ELSE}
-    Level := LOG_VERBOSE - [sllDebug];
-    {$ENDIF}
-    RotateFileCount := 1;
-    RotateFileDailyAtHour := 0;
-  end;
+  //with TSynLog.Family do
+  //begin
+  //  DestinationPath := Self.Paths.SuitePathData;
+  //  Level := LOG_VERBOSE;
+  //  EchoToConsole := LOG_VERBOSE;
+  //  {$IFDEF DEBUG}
+  //  Level := LOG_VERBOSE;
+  //  EchoToConsole := LOG_VERBOSE;
+  //  {$ELSE}
+  //  Level := LOG_VERBOSE - [sllDebug];
+  //  {$ENDIF}
+  //  RotateFileCount := 1;
+  //  RotateFileDailyAtHour := 0;
+  //end;
 end;
 
 destructor TASuiteInstance.Destroy;

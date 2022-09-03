@@ -24,7 +24,7 @@ unit Kernel.Logger;
 interface
 
 uses
-  SysUtils, mormot.core.log, Forms, mormot.core.base;
+  SysUtils, Forms;
 
 type
 
@@ -38,7 +38,7 @@ type
     class procedure LastError(const AText: string; AParams: Array of const);
     class procedure Exception(E: SysUtils.Exception; const AText: string = '');
 
-    class function Enter(const AMethodName: PUTF8Char; AInstance: TObject): ISynLog;
+    class function Enter(const AMethodName: PUTF8Char; AInstance: TObject): Cardinal;
   end;
 
   { TEventContainer }
@@ -68,30 +68,31 @@ end;
 class procedure TASuiteLogger.Debug(const AText: string;
   AParams: array of const);
 begin
-  TSynLog.Add.Log(sllDebug, Format(AText, AParams));
+  //TSynLog.Add.Log(sllDebug, Format(AText, AParams));
 end;
 
-class function TASuiteLogger.Enter(const AMethodName: PUTF8Char; AInstance: TObject): ISynLog;
+class function TASuiteLogger.Enter(const AMethodName: PUTF8Char;
+  AInstance: TObject): Cardinal;
 begin
-  Result := TSynLog.Enter(AInstance, AMethodName);
+  //Result := TSynLog.Enter(AInstance, AMethodName);
 end;
 
 class procedure TASuiteLogger.Error(const AText: string;
   AParams: array of const);
 begin
-  TSynLog.Add.Log(sllError, Format(AText, AParams));
+  //TSynLog.Add.Log(sllError, Format(AText, AParams));
 end;
 
 class procedure TASuiteLogger.Info(const AText: string;
   AParams: array of const);
 begin
-  TSynLog.Add.Log(sllInfo, Format(AText, AParams));
+  //TSynLog.Add.Log(sllInfo, Format(AText, AParams));
 end;
 
 class procedure TASuiteLogger.LastError(const AText: string;
   AParams: array of const);
 begin
-  TSynLog.Add.Log(sllLastError, Format(AText, AParams));
+  //TSynLog.Add.Log(sllLastError, Format(AText, AParams));
 end;
 
 class procedure TASuiteLogger.Exception(E: SysUtils.Exception;
@@ -102,12 +103,12 @@ begin
   else
     ShowMessageEx(AText, True);
 
-  TSynLog.Add.Log(sllStackTrace, E.Message, E);
+  //TSynLog.Add.Log(sllStackTrace, E.Message, E);
 end;
 
 procedure HandleOnShowException(Msg: ShortString);
 begin
-  TSynLog.Add.Log(sllStackTrace, Msg);
+  //TSynLog.Add.Log(sllStackTrace, Msg);
 end;
 
 initialization

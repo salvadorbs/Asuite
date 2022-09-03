@@ -42,7 +42,7 @@ implementation
 
 uses
   VirtualTree.Methods, NodeDataTypes.Base, AppConfig.Main, Kernel.Enumerations,
-  Kernel.Logger, mormot.core.log;
+  Kernel.Logger;
 
 { TTreeIconsThread }
 
@@ -58,10 +58,8 @@ begin
 end;
 
 procedure TTreeIconsThread.Execute;
-var
-  {%H-}log: ISynLog;
 begin
-  log := TASuiteLogger.Enter('TTreeIconsThread.Execute', Self);
+  TASuiteLogger.Enter('TTreeIconsThread.Execute', Self);
   FSenderTree.IterateSubtree(FParentNode, GetImageIndex, nil);
 end;
 

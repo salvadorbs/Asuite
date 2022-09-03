@@ -25,7 +25,7 @@ interface
 
 uses
   SysUtils, Lists.Special, NodeDataTypes.Custom, Lists.Base, Lists.HotKey,
-  Kernel.Enumerations, mormot.core.log;
+  Kernel.Enumerations;
 
 type
 
@@ -108,9 +108,8 @@ procedure TListManager.ExecuteAutorunList(AutorunListMode: TAutorunListMode);
 var
   List : TBaseItemsList;
   I    : Integer;
-  {%H-}log: ISynLog;
 begin
-  log := TASuiteLogger.Enter('TListManager.ExecuteAutorunList', Self);
+  TASuiteLogger.Enter('TListManager.ExecuteAutorunList', Self);
   case AutorunListMode of
     amStartup: TASuiteLogger.Info('Execute Autorun List (Startup)', []);
     amShutdown: TASuiteLogger.Info('Execute Autorun List (Shutdown)', []);

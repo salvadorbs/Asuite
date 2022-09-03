@@ -55,7 +55,7 @@ TPageFrameClass = class of TfrmBaseEntityPage;
 implementation
 
 uses
-  Kernel.Logger, mormot.core.log;
+  Kernel.Logger;
 
 {$R *.lfm}
 
@@ -83,18 +83,14 @@ begin
 end;
 
 function TfrmBaseEntityPage.InternalLoadData: Boolean;
-var
-  {%H-}log: ISynLog;
 begin
-  log := TASuiteLogger.Enter(PUTF8Char(Format('TfrmBaseEntityPage.InternalLoadData(%s)', [Self.Name])), Self);
+  TASuiteLogger.Enter(PUTF8Char(Format('TfrmBaseEntityPage.InternalLoadData(%s)', [Self.Name])), Self);
   Result := True;
 end;
 
 function TfrmBaseEntityPage.InternalSaveData: Boolean;
-var
-  {%H-}log: ISynLog;
 begin
-  log := TASuiteLogger.Enter(PUTF8Char(Format('TfrmBaseEntityPage.InternalSaveData(%s)', [Self.Name])), Self);
+  TASuiteLogger.Enter(PUTF8Char(Format('TfrmBaseEntityPage.InternalSaveData(%s)', [Self.Name])), Self);
   Result := True;
 end;
 

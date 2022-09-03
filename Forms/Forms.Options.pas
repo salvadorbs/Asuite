@@ -55,7 +55,7 @@ uses
   Frame.Options.General, Frame.Options.Advanced, Frame.Options.Trayicon,
   Frame.Options.Stats, Frame.Options.Autorun, AppConfig.Main, Kernel.Logger,
   Forms.Main, Frame.Options.Hotkey, Frame.Options.MainWindow,
-  Utility.Misc, mormot.core.log;
+  Utility.Misc;
 
 {$R *.lfm}
 
@@ -93,9 +93,8 @@ end;
 function TfrmOptions.InternalLoadData: Boolean;
 var
   FFrameAdvanced: PVirtualNode;
-  {%H-}log: ISynLog;
 begin
-  log := TASuiteLogger.Enter('TfrmOptions.InternalLoadData', Self);
+  TASuiteLogger.Enter('TfrmOptions.InternalLoadData', Self);
 
   Result := True;
   //General
@@ -115,10 +114,8 @@ begin
 end;
 
 function TfrmOptions.InternalSaveData: Boolean;
-var
-  {%H-}log: ISynLog;
 begin
-  log := TASuiteLogger.Enter('TfrmOptions.InternalSaveData', Self);
+  TASuiteLogger.Enter('TfrmOptions.InternalSaveData', Self);
 
   Result := True;
   Config.Changed := True;

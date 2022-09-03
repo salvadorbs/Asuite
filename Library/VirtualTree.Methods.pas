@@ -26,7 +26,7 @@ interface
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, VirtualTrees, System.UITypes,
   Kernel.Enumerations, NodeDataTypes.Base, Kernel.Types, Lists.Base,
-  mormot.core.log, Forms.UILogin, Hotkeys.ShortcutEx;
+  Forms.UILogin, Hotkeys.ShortcutEx;
 
 type
 
@@ -111,9 +111,8 @@ var
   FolderPath: AnsiString;
   sName : String;
   DeleteNode: Boolean;
-  {%H-}log: ISynLog;
 begin
-  log := TASuiteLogger.Enter('TVirtualTreeMethods.AddChildNodeByGUI', ASender);
+  TASuiteLogger.Enter('TVirtualTreeMethods.AddChildNodeByGUI', ASender);
   TASuiteLogger.Info('Add child node (type = %d)', [Ord(AType)]);
 
   FolderPath := '';
@@ -311,9 +310,8 @@ class procedure TVirtualTreeMethods.CheckVisibleNodePathExe(
 var
   Node: PVirtualNode;
   NodeData: TvBaseNodeData;
-  {%H-}log: ISynLog;
 begin
-  //log := TASuiteLogger.Enter('TVirtualTreeMethods.CheckVisibleNodePathExe', nil);
+  //TASuiteLogger.Enter('TVirtualTreeMethods.CheckVisibleNodePathExe', nil);
 
   Node := ASender.GetFirstVisible;
   while Assigned(Node) do

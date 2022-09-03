@@ -63,7 +63,7 @@ implementation
 uses
   Kernel.Consts, AppConfig.Main, Utility.FileFolder,
   Database.Version, Database.List, Kernel.Logger, FileUtil,
-  VirtualTree.Methods, mormot.core.log, Kernel.Instance;
+  VirtualTree.Methods, Kernel.Instance;
 
 constructor TDBManager.Create;
 begin
@@ -79,9 +79,8 @@ end;
 function TDBManager.DeleteItems(ATree: TBaseVirtualTree; ANodes: TNodeArray): Boolean;
 var
   I: Integer;
-  {%H-}log: ISynLog;
 begin
-  log := TASuiteLogger.Enter('TDBManager.DeleteItems', Self);
+  TASuiteLogger.Enter('TDBManager.DeleteItems', Self);
   Result := FDatabase.TransactionBegin(TSQLtbl_list, 1);
   //Begin transaction for remove data from sqlite database
   if Result then
@@ -130,10 +129,8 @@ begin
 end;
 
 procedure TDBManager.ImportData(ATree: TBaseVirtualTree);
-var
-  {%H-}log: ISynLog;
 begin
-  log := TASuiteLogger.Enter('TDBManager.ImportData', Self);
+  TASuiteLogger.Enter('TDBManager.ImportData', Self);
   try
     TSQLtbl_list.Load(Self, ATree, True);
   except
@@ -156,10 +153,8 @@ begin
 end;
 
 procedure TDBManager.LoadData(ATree: TBaseVirtualTree);
-var
-  {%H-}log: ISynLog;
 begin
-  log := TASuiteLogger.Enter('TDBManager.LoadData', Self);
+  TASuiteLogger.Enter('TDBManager.LoadData', Self);
   TASuiteLogger.Info('Found SQLite Database - Loading it', []);
   //List & Options
   ATree.BeginUpdate;
@@ -179,10 +174,8 @@ begin
 end;
 
 function TDBManager.SaveData(ATree: TBaseVirtualTree; DoBackup: Boolean): Boolean;
-var
-  {%H-}log: ISynLog;
 begin
-  log := TASuiteLogger.Enter('TDBManager.SaveData', Self);
+  TASuiteLogger.Enter('TDBManager.SaveData', Self);
   TASuiteLogger.Info('Saving ASuite SQLite Database', []);
 
   //List & Options

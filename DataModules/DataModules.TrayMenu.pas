@@ -127,7 +127,7 @@ uses
   Utility.System, Forms.GraphicMenu, Kernel.Types, NodeDataTypes.Files,
   NodeDataTypes.Custom, NodeDataTypes.Base, Kernel.Consts, Kernel.Logger,
   Utility.FileFolder, Kernel.ResourceStrings, Kernel.Instance, LazVersion,
-  Kernel.Manager, mormot.core.log {$IFDEF MSWINDOWS} , Windows {$ENDIF};
+  Kernel.Manager {$IFDEF MSWINDOWS} , Windows {$ENDIF};
 
 {$R *.lfm}
 
@@ -158,9 +158,8 @@ end;
 procedure TdmTrayMenu.ShowPopupMenu(const APopupMenu: TPopupMenu);
 var
   CursorPoint: TPoint;
-  {%H-}log: ISynLog;
 begin
-  log := TASuiteLogger.Enter('TdmTrayMenu.ShowPopupMenu', Self);
+  TASuiteLogger.Enter('TdmTrayMenu.ShowPopupMenu', Self);
   //Get Mouse coordinates
   GetCursorPos(CursorPoint);
   SetForegroundWindow(Application.Handle);
@@ -392,10 +391,8 @@ begin
 end;
 
 procedure TdmTrayMenu.UpdateClassicMenu(Menu: TPopUpMenu);
-var
-  {%H-}log: ISynLog;
 begin
-  log := TASuiteLogger.Enter('TdmTrayMenu.UpdateClassicMenu', Self);
+  TASuiteLogger.Enter('TdmTrayMenu.UpdateClassicMenu', Self);
 
   try
     Menu.Items.Clear;
@@ -910,9 +907,8 @@ end;
 procedure TdmTrayMenu.PopulateCategoryItems(Sender: TObject);
 var
   Node: PVirtualNode;
-  {%H-}log: ISynLog;
 begin
-  log := TASuiteLogger.Enter('TdmTrayMenu.PopulateCategoryItems', Self);
+  TASuiteLogger.Enter('TdmTrayMenu.PopulateCategoryItems', Self);
 
   try
     //Get first node
@@ -946,9 +942,8 @@ end;
 procedure TdmTrayMenu.PopulateDirectory(Sender: TObject);
 var
   MI: TASMenuItem;
-  {%H-}log: ISynLog;
 begin
-  log := TASuiteLogger.Enter('TdmTrayMenu.PopulateDirectory', Self);
+  TASuiteLogger.Enter('TdmTrayMenu.PopulateDirectory', Self);
 
   MI := TASMenuItem(Sender);
   try
