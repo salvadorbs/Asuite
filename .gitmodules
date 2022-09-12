@@ -28,3 +28,6 @@
 [submodule "3p/mORMot2"]
 	path = 3p/mORMot2
 	url = https://github.com/synopse/mORMot2.git
+[submodule "3p/multilog"]
+	path = 3p/multilog
+	url = https://github.com/blikblum/multilog.git

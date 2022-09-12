@@ -232,13 +232,11 @@ end;
 
 function TfrmDialogBase.InternalLoadData: Boolean;
 begin
-  TASuiteLogger.Enter('TfrmDialogBase.InternalLoadData', Self);
   Result := True;
 end;
 
 function TfrmDialogBase.InternalSaveData: Boolean;
 begin
-  TASuiteLogger.Enter('TfrmDialogBase.InternalSaveData', Self);
   Result := True;
 end;
 

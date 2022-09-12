@@ -108,33 +108,38 @@ procedure TListManager.ExecuteAutorunList(AutorunListMode: TAutorunListMode);
 var
   List : TBaseItemsList;
   I    : Integer;
+  StartTime: Cardinal;
 begin
-  TASuiteLogger.Enter('TListManager.ExecuteAutorunList', Self);
-  case AutorunListMode of
-    amStartup: TASuiteLogger.Info('Execute Autorun List (Startup)', []);
-    amShutdown: TASuiteLogger.Info('Execute Autorun List (Shutdown)', []);
-  end;
-  List := nil;
-  if (Config.AutorunStartup) or (Config.AutorunShutdown) then
-  begin
+  StartTime := TASuiteLogger.EnterMethod('TListManager.ExecuteAutorunList', Self);
+  try
     case AutorunListMode of
-      amStartup:
-        begin
-          if Config.AutorunStartup then
-            List := FStartupItemList;
-        end;
-      amShutdown:
-        begin
-          if Config.AutorunShutdown then
-            List := FShutdownItemList;
-        end;
+      amStartup: TASuiteLogger.Info('Execute Autorun List (Startup)', []);
+      amShutdown: TASuiteLogger.Info('Execute Autorun List (Shutdown)', []);
     end;
-
-    if Assigned(List) then
+    List := nil;
+    if (Config.AutorunStartup) or (Config.AutorunShutdown) then
     begin
-      for I := 0 to List.Count - 1 do
-        TVirtualTreeMethods.ExecuteNode(ASuiteInstance.MainTree, List[I].pNode, rmNormal, True);
+      case AutorunListMode of
+        amStartup:
+          begin
+            if Config.AutorunStartup then
+              List := FStartupItemList;
+          end;
+        amShutdown:
+          begin
+            if Config.AutorunShutdown then
+              List := FShutdownItemList;
+          end;
+      end;
+
+      if Assigned(List) then
+      begin
+        for I := 0 to List.Count - 1 do
+          TVirtualTreeMethods.ExecuteNode(ASuiteInstance.MainTree, List[I].pNode, rmNormal, True);
+      end;
     end;
+  finally
+    TASuiteLogger.ExitMethod('TListManager.ExecuteAutorunList', Self, StartTime);
   end;
 end;
 

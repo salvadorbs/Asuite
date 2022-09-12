@@ -24,7 +24,7 @@ unit Kernel.Logger;
 interface
 
 uses
-  SysUtils, Forms;
+  SysUtils, Forms, LCLIntf;
 
 type
 
@@ -35,10 +35,11 @@ type
     class procedure Info(const AText: string; AParams: Array of const);
     class procedure Debug(const AText: string; AParams: Array of const);
     class procedure Error(const AText: string; AParams: Array of const);
-    class procedure LastError(const AText: string; AParams: Array of const);
     class procedure Exception(E: SysUtils.Exception; const AText: string = '');
 
-    class function Enter(const AMethodName: PUTF8Char; AInstance: TObject): Cardinal;
+    class function EnterMethod(const AMethodName: PUTF8Char; AInstance: TObject): Cardinal;
+    class procedure ExitMethod(const AMethodName: PUTF8Char; AInstance: TObject;
+      AStartTime: Cardinal);
   end;
 
   { TEventContainer }
@@ -51,8 +52,7 @@ type
 implementation
 
 uses
-  Kernel.Instance, Kernel.Manager, Kernel.ResourceStrings,
-  Utility.Misc;
+  Kernel.Instance, Kernel.Manager, Kernel.ResourceStrings, MultiLog, Utility.Misc;
 
 { TEventContainer }
 
@@ -68,31 +68,26 @@ end;
 class procedure TASuiteLogger.Debug(const AText: string;
   AParams: array of const);
 begin
-  //TSynLog.Add.Log(sllDebug, Format(AText, AParams));
+  Logger.Send('DEBUG - ' + Format(AText, AParams));
 end;
 
-class function TASuiteLogger.Enter(const AMethodName: PUTF8Char;
+class function TASuiteLogger.EnterMethod(const AMethodName: PUTF8Char;
   AInstance: TObject): Cardinal;
 begin
-  //Result := TSynLog.Enter(AInstance, AMethodName);
+  Logger.EnterMethod(AMethodName, 'METHOD - ' + AMethodName);
+  Result := GetTickCount64;
 end;
 
 class procedure TASuiteLogger.Error(const AText: string;
   AParams: array of const);
 begin
-  //TSynLog.Add.Log(sllError, Format(AText, AParams));
+  Logger.SendError('ERROR - ' + Format(AText, AParams));
 end;
 
 class procedure TASuiteLogger.Info(const AText: string;
   AParams: array of const);
 begin
-  //TSynLog.Add.Log(sllInfo, Format(AText, AParams));
-end;
-
-class procedure TASuiteLogger.LastError(const AText: string;
-  AParams: array of const);
-begin
-  //TSynLog.Add.Log(sllLastError, Format(AText, AParams));
+  Logger.Send('INFO - ' + Format(AText,AParams));
 end;
 
 class procedure TASuiteLogger.Exception(E: SysUtils.Exception;
@@ -103,12 +98,21 @@ begin
   else
     ShowMessageEx(AText, True);
 
-  //TSynLog.Add.Log(sllStackTrace, E.Message, E);
+  Logger.SendException(E.Message, E);
+end;
+
+class procedure TASuiteLogger.ExitMethod(const AMethodName: PUTF8Char;
+  AInstance: TObject; AStartTime: Cardinal);
+var
+  Timing: Double;
+begin
+  Timing := (GetTickCount64 - AStartTime) / MSecsPerDay;
+  Logger.ExitMethod(AMethodName, Format('EXIT - %s (%s)', [AMethodName, FormatDateTime('nn:ss:zzz', Timing)]));
 end;
 
 procedure HandleOnShowException(Msg: ShortString);
 begin
-  //TSynLog.Add.Log(sllStackTrace, Msg);
+  Logger.SendCallStack(Msg);
 end;
 
 initialization

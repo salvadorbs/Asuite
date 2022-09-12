@@ -56,6 +56,7 @@ InstallPackage $LazBuildPath "$ASuiteSource/3p/luipack/uniqueinstance/uniqueinst
 InstallPackageLink $LazBuildPath "$ASuiteSource/3p/luipack/lclextensions/lclextensions_package.lpk"
 InstallPackage $LazBuildPath "$ASuiteSource/3p/VirtualTreeView-Lazarus/Source/virtualtreeview_package.lpk"
 InstallPackage $LazBuildPath "$ASuiteSource/3p/AsuiteComps/ASuiteComps.lpk"
+InstallPackage $LazBuildPath "$ASuiteSource/3p/multilog/multiloglaz.lpk"
 
 # Download mORMot 2 Static files and extract them in proper directory
 $Url = 'https://github.com/synopse/mORMot2/releases/download/2.0.3306/mormot2static.7z' 

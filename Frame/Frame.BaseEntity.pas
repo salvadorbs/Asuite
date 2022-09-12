@@ -84,13 +84,13 @@ end;
 
 function TfrmBaseEntityPage.InternalLoadData: Boolean;
 begin
-  TASuiteLogger.Enter(PUTF8Char(Format('TfrmBaseEntityPage.InternalLoadData(%s)', [Self.Name])), Self);
+  //StartTime := TASuiteLogger.EnterMethod(PUTF8Char(Format('TfrmBaseEntityPage.InternalLoadData(%s)', [Self.Name])), Self);
   Result := True;
 end;
 
 function TfrmBaseEntityPage.InternalSaveData: Boolean;
 begin
-  TASuiteLogger.Enter(PUTF8Char(Format('TfrmBaseEntityPage.InternalSaveData(%s)', [Self.Name])), Self);
+  //StartTime := TASuiteLogger.EnterMethod(PUTF8Char(Format('TfrmBaseEntityPage.InternalSaveData(%s)', [Self.Name])), Self);
   Result := True;
 end;
 

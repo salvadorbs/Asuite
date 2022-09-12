@@ -111,8 +111,9 @@ var
   FolderPath: AnsiString;
   sName : String;
   DeleteNode: Boolean;
+  StartTime: Cardinal;
 begin
-  TASuiteLogger.Enter('TVirtualTreeMethods.AddChildNodeByGUI', ASender);
+  StartTime := TASuiteLogger.EnterMethod('TVirtualTreeMethods.AddChildNodeByGUI', ASender);
   TASuiteLogger.Info('Add child node (type = %d)', [Ord(AType)]);
 
   FolderPath := '';
@@ -156,6 +157,7 @@ begin
     if Assigned(NodeData) then
       Result := NodeData;
     RefreshList(ASender);
+    TASuiteLogger.ExitMethod('TVirtualTreeMethods.AddChildNodeByGUI', ASender, StartTime);
   end;
 end;
 

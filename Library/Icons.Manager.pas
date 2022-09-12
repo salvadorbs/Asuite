@@ -339,27 +339,32 @@ var
   Icon: TBaseIcon;
   sPath: string;
   IconFiles: TStringList;
+  StartTime: Cardinal;
 begin
-  TASuiteLogger.Enter('TIconsManager.LoadAllIcons', Self);
-  TASuiteLogger.Info('Search and load all icons in folder "%s"', [FPathTheme + ICONS_DIR]);
+  StartTime := TASuiteLogger.EnterMethod('TIconsManager.LoadAllIcons', Self);
+  try
+    TASuiteLogger.Info('Search and load all icons in folder "%s"', [FPathTheme + ICONS_DIR]);
 
-  Clear(True);
-  //Load all icons in FPathTheme + ICONS_DIR
-  if DirectoryExists(FPathTheme + ICONS_DIR) then
-  begin
-    IconFiles := FileUtil.FindAllFiles(FPathTheme + ICONS_DIR, '*' + EXT_ICO);
-    try
-      //Add new icon in FItems
-      for sPath in IconFiles do
-      begin
-        Icon := FindByName(ExtractFileNameOnly(sPath));
+    Clear(True);
+    //Load all icons in FPathTheme + ICONS_DIR
+    if DirectoryExists(FPathTheme + ICONS_DIR) then
+    begin
+      IconFiles := FileUtil.FindAllFiles(FPathTheme + ICONS_DIR, '*' + EXT_ICO);
+      try
+        //Add new icon in FItems
+        for sPath in IconFiles do
+        begin
+          Icon := FindByName(ExtractFileNameOnly(sPath));
 
-        if not(Assigned(Icon)) then
-          AddIcon(TFileIcon.Create(sPath, True));
+          if not(Assigned(Icon)) then
+            AddIcon(TFileIcon.Create(sPath, True));
+        end;
+      finally
+        IconFiles.Free;
       end;
-    finally
-      IconFiles.Free;
     end;
+  finally
+    TASuiteLogger.ExitMethod('TIconsManager.LoadAllIcons', Self, StartTime);
   end;
 end;
 

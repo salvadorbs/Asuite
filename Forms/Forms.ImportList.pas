@@ -210,10 +210,12 @@ var
   FileName : String;
   FileExt  : String;
   XMLDoc   : TXMLDocument;
+  StartTime: Cardinal;
 begin
-  TASuiteLogger.Enter('TfrmImportList.PopulateTree', Self);
+  StartTime := TASuiteLogger.EnterMethod('TfrmImportList.PopulateTree', Self);
 
   XMLDoc := nil;
+
 
   vstListImp.BeginUpdate;
   try
@@ -251,6 +253,8 @@ begin
     vstListImp.EndUpdate;
     if Assigned(XMLDoc) then
       XMLDoc.Free;
+
+    TASuiteLogger.ExitMethod('TfrmImportList.PopulateTree', Self, StartTime);
   end;
 end;
 

@@ -236,15 +236,21 @@ begin
 end;
 
 class procedure TSQLtbl_list.Load(ADBManager: TDBManager; ATree: TBaseVirtualTree; IsImport: Boolean);
+var
+  StartTime: Cardinal;
 begin
-  TASuiteLogger.Enter('TSQLtbl_list.Load', nil);
+  StartTime := TASuiteLogger.EnterMethod('TSQLtbl_list.Load', ADBManager);
 
-  if IsImport then
-    TASuiteLogger.Info('Load ASuite List from Database in VirtualTree (Import mode)', [])
-  else
-    TASuiteLogger.Info('Load ASuite List from Database in VirtualTree', []);
+  try
+    if IsImport then
+      TASuiteLogger.Info('Load ASuite List from Database in VirtualTree (Import mode)', [])
+    else
+      TASuiteLogger.Info('Load ASuite List from Database in VirtualTree', []);
 
-  TSQLtbl_list.LoadItemsByParentID(ATree, ADBManager, 0, nil, IsImport);
+    TSQLtbl_list.LoadItemsByParentID(ATree, ADBManager, 0, nil, IsImport);
+  finally
+    TASuiteLogger.ExitMethod('TSQLtbl_list.Load', ADBManager, StartTime);
+  end;
 end;
 
 procedure TSQLtbl_list.LoadDataFromNode(AData: TvBaseNodeData; AIndex, AParentID: Integer);
@@ -301,9 +307,15 @@ begin
 end;
 
 class procedure TSQLtbl_list.Save(ADBManager: TDBManager; ATree: TBaseVirtualTree);
+var
+  StarTime: Cardinal;
 begin
-  TASuiteLogger.Enter('TSQLtbl_list.Save', nil);
-  TSQLtbl_list.SaveItemsByParentID(ATree, ADBManager, ATree.GetFirst, 0);
+  StarTime := TASuiteLogger.EnterMethod('TSQLtbl_list.Save', ADBManager);
+  try
+    TSQLtbl_list.SaveItemsByParentID(ATree, ADBManager, ATree.GetFirst, 0);
+  finally
+    TASuiteLogger.ExitMethod('TSQLtbl_list.Save', ADBManager, StarTime);
+  end;
 end;
 
 class procedure TSQLtbl_list.UpdateFileRecord(AData: TvBaseNodeData; ADBManager: TDBManager;

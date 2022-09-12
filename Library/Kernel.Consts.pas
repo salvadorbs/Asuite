@@ -57,6 +57,7 @@ const
   EXT_CMD       = '.cmd';
   EXT_BMP       = '.bmp';
   EXT_PNG       = '.png';
+  EXT_LOG       = '.log';
 
   EXT_PATH_MASK = '*';    
   EXT_PATH_DOT = '.';

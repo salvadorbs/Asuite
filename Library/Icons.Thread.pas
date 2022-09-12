@@ -58,9 +58,15 @@ begin
 end;
 
 procedure TTreeIconsThread.Execute;
+var
+  StartTime: Cardinal;
 begin
-  TASuiteLogger.Enter('TTreeIconsThread.Execute', Self);
-  FSenderTree.IterateSubtree(FParentNode, GetImageIndex, nil);
+  StartTime := TASuiteLogger.EnterMethod('TTreeIconsThread.Execute', Self);
+  try
+    FSenderTree.IterateSubtree(FParentNode, GetImageIndex, nil);
+  finally
+    TASuiteLogger.ExitMethod('TTreeIconsThread.Execute', Self, StartTime);
+  end;
 end;
 
 procedure TTreeIconsThread.GetImageIndex(Sender: TBaseVirtualTree;

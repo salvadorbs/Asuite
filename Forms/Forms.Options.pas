@@ -93,34 +93,45 @@ end;
 function TfrmOptions.InternalLoadData: Boolean;
 var
   FFrameAdvanced: PVirtualNode;
+  StartTime: Cardinal;
 begin
-  TASuiteLogger.Enter('TfrmOptions.InternalLoadData', Self);
+  StartTime := TASuiteLogger.EnterMethod('TfrmOptions.InternalLoadData', Self);
 
-  Result := True;
-  //General
-  FFrameGeneral  := AddFrameNode(vstCategory, nil, TfrmGeneralOptionsPage.Create(Self));
-  AddFrameNode(vstCategory, nil, TfrmMainWindowOptionsPage.Create(Self));
-  //Advanced
-  FFrameAdvanced := AddFrameNode(vstCategory, nil, TfrmAdvancedOptionsPage.Create(Self));
-  if Assigned(FFrameAdvanced) then
-  begin
-    AddFrameNode(vstCategory, FFrameAdvanced, TfrmAutorunOptionsPage.Create(Self));
-    AddFrameNode(vstCategory, FFrameAdvanced, TfrmHotkeyOptionsPage.Create(Self));
+  try
+    Result := True;
+    //General
+    FFrameGeneral  := AddFrameNode(vstCategory, nil, TfrmGeneralOptionsPage.Create(Self));
+    AddFrameNode(vstCategory, nil, TfrmMainWindowOptionsPage.Create(Self));
+    //Advanced
+    FFrameAdvanced := AddFrameNode(vstCategory, nil, TfrmAdvancedOptionsPage.Create(Self));
+    if Assigned(FFrameAdvanced) then
+    begin
+      AddFrameNode(vstCategory, FFrameAdvanced, TfrmAutorunOptionsPage.Create(Self));
+      AddFrameNode(vstCategory, FFrameAdvanced, TfrmHotkeyOptionsPage.Create(Self));
+    end;
+    //TrayIcon
+    AddFrameNode(vstCategory, nil, TfrmTrayiconOptionsPage.Create(Self));
+    //Stats
+    AddFrameNode(vstCategory, nil, TfrmStatsOptionsPage.Create(Self));
+  finally
+    TASuiteLogger.ExitMethod('TfrmOptions.InternalLoadData', Self, StartTime);
   end;
-  //TrayIcon
-  AddFrameNode(vstCategory, nil, TfrmTrayiconOptionsPage.Create(Self));
-  //Stats
-  AddFrameNode(vstCategory, nil, TfrmStatsOptionsPage.Create(Self));
 end;
 
 function TfrmOptions.InternalSaveData: Boolean;
+var
+  StartTime: Cardinal;
 begin
-  TASuiteLogger.Enter('TfrmOptions.InternalSaveData', Self);
+  StartTime := TASuiteLogger.EnterMethod('TfrmOptions.InternalSaveData', Self);
 
-  Result := True;
-  Config.Changed := True;
-  if frmMain.Visible then
-    frmMain.FocusControl(frmMain.vstList);
+  try
+    Result := True;
+    Config.Changed := True;
+    if frmMain.Visible then
+      frmMain.FocusControl(frmMain.vstList);
+  finally
+    TASuiteLogger.ExitMethod('TfrmOptions.InternalSaveData', Self, StartTime);
+  end;
 end;
 
 end.

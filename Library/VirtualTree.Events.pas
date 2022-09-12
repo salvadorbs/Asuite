@@ -443,8 +443,9 @@ var
   AttachMode : TVTNodeAttachMode;
   NodeCreated : Boolean;     
   Nodes: TNodeArray;
+  StartTime: Cardinal;
 begin
-  TASuiteLogger.Enter('TVirtualTreeEvents.DoDragDrop', Self);
+  StartTime := TASuiteLogger.EnterMethod('TVirtualTreeEvents.DoDragDrop', Self);
 
   NodeCreated := False;
 
@@ -517,6 +518,7 @@ begin
   finally
     TVirtualTreeMethods.RefreshList(Sender);
     Sender.EndUpdate;
+    TASuiteLogger.ExitMethod('TVirtualTreeEvents.DoDragDrop', Self, StartTime);
   end;
 end;
 

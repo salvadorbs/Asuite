@@ -79,29 +79,34 @@ end;
 function TDBManager.DeleteItems(ATree: TBaseVirtualTree; ANodes: TNodeArray): Boolean;
 var
   I: Integer;
+  StartTime: Cardinal;
 begin
-  TASuiteLogger.Enter('TDBManager.DeleteItems', Self);
-  Result := FDatabase.TransactionBegin(TSQLtbl_list, 1);
-  //Begin transaction for remove data from sqlite database
-  if Result then
-  begin
-    try
-      //Run actions (ex. remove node from MRU list) before delete nodes and
-      //remove each selected items from sqlite database
-      for I := High(ANodes) downto 0 do
-        ATree.IterateSubtree(ANodes[I], TVirtualTreeMethods.BeforeDeleteNode, nil, [], False);
-      //Commit database's updates
-      FDatabase.Commit(1);
-    except                              
-      on E: Exception do
-      begin
-        //Or in case of error, rollback and log
-        TASuiteLogger.Exception(E);
+  StartTime := TASuiteLogger.EnterMethod('TDBManager.DeleteItems', Self);
+  try
+    Result := FDatabase.TransactionBegin(TSQLtbl_list, 1);
+    //Begin transaction for remove data from sqlite database
+    if Result then
+    begin
+      try
+        //Run actions (ex. remove node from MRU list) before delete nodes and
+        //remove each selected items from sqlite database
+        for I := High(ANodes) downto 0 do
+          ATree.IterateSubtree(ANodes[I], TVirtualTreeMethods.BeforeDeleteNode, nil, [], False);
+        //Commit database's updates
+        FDatabase.Commit(1);
+      except
+        on E: Exception do
+        begin
+          //Or in case of error, rollback and log
+          TASuiteLogger.Exception(E);
 
-        FDatabase.RollBack(1);
-        Result := False;
+          FDatabase.RollBack(1);
+          Result := False;
+        end;
       end;
     end;
+  finally
+    TASuiteLogger.ExitMethod('TDBManager.DeleteItems', Self, StartTime);
   end;
 end;
 
@@ -129,13 +134,19 @@ begin
 end;
 
 procedure TDBManager.ImportData(ATree: TBaseVirtualTree);
+var
+  StartTime: Cardinal;
 begin
-  TASuiteLogger.Enter('TDBManager.ImportData', Self);
+  StartTime := TASuiteLogger.EnterMethod('TDBManager.ImportData', Self);
   try
-    TSQLtbl_list.Load(Self, ATree, True);
-  except
-    on E : Exception do
-      TASuiteLogger.Exception(E);
+    try
+      TSQLtbl_list.Load(Self, ATree, True);
+    except
+      on E : Exception do
+        TASuiteLogger.Exception(E);
+    end;
+  finally
+    TASuiteLogger.ExitMethod('TDBManager.ImportData', Self, StartTime);
   end;
 end;
 
@@ -153,8 +164,10 @@ begin
 end;
 
 procedure TDBManager.LoadData(ATree: TBaseVirtualTree);
+var
+  StartTime: Cardinal;
 begin
-  TASuiteLogger.Enter('TDBManager.LoadData', Self);
+  StartTime := TASuiteLogger.EnterMethod('TDBManager.LoadData', Self);
   TASuiteLogger.Info('Found SQLite Database - Loading it', []);
   //List & Options
   ATree.BeginUpdate;
@@ -170,12 +183,15 @@ begin
     end;
   finally
     ATree.EndUpdate;
+    TASuiteLogger.ExitMethod('TDBManager.LoadData', Self, StartTime);
   end;
 end;
 
 function TDBManager.SaveData(ATree: TBaseVirtualTree; DoBackup: Boolean): Boolean;
+var
+  StartTime: Cardinal;
 begin
-  TASuiteLogger.Enter('TDBManager.SaveData', Self);
+  StartTime := TASuiteLogger.EnterMethod('TDBManager.SaveData', Self);
   TASuiteLogger.Info('Saving ASuite SQLite Database', []);
 
   //List & Options
@@ -201,6 +217,8 @@ begin
     Result := True;
     if Result and DoBackup then
       DoBackupList;
+
+    TASuiteLogger.ExitMethod('TDBManager.SaveData', Self, StartTime);
   end;
 end;
 

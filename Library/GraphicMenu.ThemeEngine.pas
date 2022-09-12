@@ -423,10 +423,11 @@ var
   sTempPath: string;
   IniFile: TIniFile;
   strFont: string;
+  StartTime: Cardinal;
 begin
   Assert(Assigned(FGraphicMenu), 'FGraphicMenu is not assigned!');
   Assert((FGraphicMenu is TfrmGraphicMenu), 'FGraphicMenu is not a TfrmGraphicMenu!');
-  TASuiteLogger.Enter('TThemeEngine.LoadTheme', Self);
+  StartTime := TASuiteLogger.EnterMethod('TThemeEngine.LoadTheme', Self);
 
   //Load theme
   if FileExists(ASuiteInstance.Paths.SuitePathCurrentTheme + THEME_INI) then
@@ -502,6 +503,7 @@ begin
       CopyImageInVst(TfrmGraphicMenu(FGraphicMenu).imgBackground.Picture.Bitmap, TfrmGraphicMenu(FGraphicMenu).vstList, IsDPIChanged);
     finally
       IniFile.Free;
+      TASuiteLogger.ExitMethod('TThemeEngine.LoadTheme', Self, StartTime);
     end;
   end
   else

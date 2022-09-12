@@ -767,8 +767,9 @@ end;
 procedure TConfiguration.LoadConfig;
 var
   JSONConfig: TJSONConfig;
+  StartTime: Cardinal;
 begin
-  TASuiteLogger.Enter('TConfiguration.LoadConfig', Self);
+  StartTime := TASuiteLogger.EnterMethod('TConfiguration.LoadConfig', Self);
   TASuiteLogger.Debug('Settings file = %s', [ASuiteInstance.Paths.SuitePathSettings]);
 
   //if FileExists(ASuiteInstance.Paths.SuitePathSettings) then
@@ -782,6 +783,7 @@ begin
       RestoreSettings(JSONConfig);
     finally
       JSONConfig.Free;
+      TASuiteLogger.ExitMethod('TConfiguration.LoadConfig', Self, StartTime);
     end;
   //end
   //else   
@@ -791,11 +793,12 @@ end;
 procedure TConfiguration.SaveConfig;  
 var
   JSONConfig: TJSONConfig;
+  StartTime: Cardinal;
 begin
   //If settings is changed, insert it else (if it exists) update it
   if Config.Changed then
   begin
-    TASuiteLogger.Enter('TConfiguration.SaveConfig', Self);
+    StartTime := TASuiteLogger.EnterMethod('TConfiguration.SaveConfig', Self);
     try
       JSONConfig := TJSONConfig.Create(nil);
       JSONConfig.Formatted := True;
@@ -805,6 +808,7 @@ begin
       SaveSettings(JSONConfig);
     finally
       JSONConfig.Free;
+      TASuiteLogger.ExitMethod('TConfiguration.SaveConfig', Self, StartTime);
     end;
   end;
 end;

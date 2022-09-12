@@ -219,10 +219,12 @@ var
   Nodes: TNodeArray;
   Tree: TBaseVirtualTree;
   DeleteNode: Boolean;
+  StartTime: Cardinal;
 begin
+  StartTime := TASuiteLogger.EnterMethod('TfrmMain.actDeleteExecute', Self);
+
   DeleteNode := Config.TVDisableConfirmDelete or AskUserWarningMessage(msgConfirmDeleteItem, []);
 
-  TASuiteLogger.Enter('TfrmMain.actDeleteExecute', Self);
   Config.ASuiteState := lsDeleting;
   try
     Tree := GetActiveTree;
@@ -239,6 +241,7 @@ begin
     end;
   finally
     Config.ASuiteState := lsNormal;
+    TASuiteLogger.ExitMethod('TfrmMain.actDeleteExecute', Self, StartTime);
   end;
 end;
 
@@ -425,22 +428,28 @@ begin
 end;
 
 procedure TfrmMain.EmptyClipboard;
-begin                  
-  TASuiteLogger.Enter('Clearing clipboard', Self);
+var
+  StartTime: Cardinal;
+begin
+  StartTime := TASuiteLogger.EnterMethod('TfrmMain.EmptyClipboard', Self);
 
-  {$IFDEF MSWINDOWS}
-  if IsFormatInClipBoard(CF_VIRTUALTREE) then
-  begin
-    Windows.OpenClipboard(0);
-    try
-      Windows.EmptyClipboard;
-    finally
-      Windows.CloseClipboard;
+  try
+    {$IFDEF MSWINDOWS}
+    if IsFormatInClipBoard(CF_VIRTUALTREE) then
+    begin
+      Windows.OpenClipboard(0);
+      try
+        Windows.EmptyClipboard;
+      finally
+        Windows.CloseClipboard;
+      end;
     end;
-  end;
-  {$ENDIF}
+    {$ENDIF}
 
-  Clipboard.Clear;
+    Clipboard.Clear;
+  finally
+    TASuiteLogger.ExitMethod('TfrmMain.EmptyClipboard', Self, StartTime);
+  end;
 end;
            
 {$IFDEF UNIX}
@@ -546,56 +555,62 @@ begin
 end;
 
 procedure TfrmMain.SetAllIcons;
+var
+  StartTime: Cardinal;
 begin
-  TASuiteLogger.Enter('TfrmMain.SetAllIcons', Self);
+  StartTime := TASuiteLogger.EnterMethod('TfrmMain.SetAllIcons', Self);
 
-  //Set IcoImages
-  //Set submenuimages to three MainMenu's subitems
-  miFile.SubMenuImages := dmImages.ilIcons;
-  miFile.SubMenuImagesWidth := ICON_SIZE_SMALL;
+  try
+    //Set IcoImages
+    //Set submenuimages to three MainMenu's subitems
+    miFile.SubMenuImages := dmImages.ilIcons;
+    miFile.SubMenuImagesWidth := ICON_SIZE_SMALL;
 
-  miEdit.SubMenuImages := dmImages.ilIcons;
-  miEdit.SubMenuImagesWidth := ICON_SIZE_SMALL;
+    miEdit.SubMenuImages := dmImages.ilIcons;
+    miEdit.SubMenuImagesWidth := ICON_SIZE_SMALL;
 
-  miHelp.SubMenuImages := dmImages.ilIcons;
-  miHelp.SubMenuImagesWidth := ICON_SIZE_SMALL;
+    miHelp.SubMenuImages := dmImages.ilIcons;
+    miHelp.SubMenuImagesWidth := ICON_SIZE_SMALL;
 
-  pmSearch.Images      := dmImages.ilIcons;
-  pmSearch.ImagesWidth := ICON_SIZE_SMALL;
+    pmSearch.Images      := dmImages.ilIcons;
+    pmSearch.ImagesWidth := ICON_SIZE_SMALL;
 
-  pmWindow.Images      := dmImages.ilIcons;
-  pmWindow.ImagesWidth := ICON_SIZE_SMALL;
+    pmWindow.Images      := dmImages.ilIcons;
+    pmWindow.ImagesWidth := ICON_SIZE_SMALL;
 
-  pcList.Images        := dmImages.ilIcons;
-  pcList.ImagesWidth := ICON_SIZE_SMALL;
+    pcList.Images        := dmImages.ilIcons;
+    pcList.ImagesWidth := ICON_SIZE_SMALL;
 
-  btnedtSearch.RightButton.Images := dmImages.ilIcons;
-  btnedtSearch.RightButton.ImagesWidth := ICON_SIZE_SMALL;
+    btnedtSearch.RightButton.Images := dmImages.ilIcons;
+    btnedtSearch.RightButton.ImagesWidth := ICON_SIZE_SMALL;
 
-  btnedtSearch.LeftButton.Images := dmImages.ilIcons;
-  btnedtSearch.LeftButton.ImagesWidth := ICON_SIZE_SMALL;
+    btnedtSearch.LeftButton.Images := dmImages.ilIcons;
+    btnedtSearch.LeftButton.ImagesWidth := ICON_SIZE_SMALL;
 
-  //Set pcList tabs' ImageIndexes
-  tbList.ImageIndex    := ASuiteManager.IconsManager.GetIconIndex('tree_list');
-  tbSearch.ImageIndex  := ASuiteManager.IconsManager.GetIconIndex('search');
+    //Set pcList tabs' ImageIndexes
+    tbList.ImageIndex    := ASuiteManager.IconsManager.GetIconIndex('tree_list');
+    tbSearch.ImageIndex  := ASuiteManager.IconsManager.GetIconIndex('search');
 
-  //Set MainMenu's ImageIndexes
-  miSaveList1.ImageIndex   := ASuiteManager.IconsManager.GetIconIndex('save');
-  miOptions1.ImageIndex    := ASuiteManager.IconsManager.GetIconIndex('options');
-  actAddCat.ImageIndex     := ASuiteManager.IconsManager.GetIconIndex('add_category');
-  actAddSoftware.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('add_software');
-  actAddFolder.ImageIndex  := ASuiteManager.IconsManager.GetIconIndex('add_folder');
-  actCut.ImageIndex        := ASuiteManager.IconsManager.GetIconIndex('cut');
-  actCopy.ImageIndex       := ASuiteManager.IconsManager.GetIconIndex('copy');
-  actPaste.ImageIndex      := ASuiteManager.IconsManager.GetIconIndex('paste');
-  actDelete.ImageIndex     := ASuiteManager.IconsManager.GetIconIndex('delete');
-  actProperty.ImageIndex   := ASuiteManager.IconsManager.GetIconIndex('property');
-  miInfoASuite.ImageIndex  := ASuiteManager.IconsManager.GetIconIndex('help');
-  actRunItem.ImageIndex    := ASuiteManager.IconsManager.GetIconIndex('run');
+    //Set MainMenu's ImageIndexes
+    miSaveList1.ImageIndex   := ASuiteManager.IconsManager.GetIconIndex('save');
+    miOptions1.ImageIndex    := ASuiteManager.IconsManager.GetIconIndex('options');
+    actAddCat.ImageIndex     := ASuiteManager.IconsManager.GetIconIndex('add_category');
+    actAddSoftware.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('add_software');
+    actAddFolder.ImageIndex  := ASuiteManager.IconsManager.GetIconIndex('add_folder');
+    actCut.ImageIndex        := ASuiteManager.IconsManager.GetIconIndex('cut');
+    actCopy.ImageIndex       := ASuiteManager.IconsManager.GetIconIndex('copy');
+    actPaste.ImageIndex      := ASuiteManager.IconsManager.GetIconIndex('paste');
+    actDelete.ImageIndex     := ASuiteManager.IconsManager.GetIconIndex('delete');
+    actProperty.ImageIndex   := ASuiteManager.IconsManager.GetIconIndex('property');
+    miInfoASuite.ImageIndex  := ASuiteManager.IconsManager.GetIconIndex('help');
+    actRunItem.ImageIndex    := ASuiteManager.IconsManager.GetIconIndex('run');
 
-  //Set Search's ImageIndexes
-  btnedtSearch.LeftButton.ImageIndex  := ASuiteManager.IconsManager.GetIconIndex('search_type');
-  btnedtSearch.RightButton.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('search');
+    //Set Search's ImageIndexes
+    btnedtSearch.LeftButton.ImageIndex  := ASuiteManager.IconsManager.GetIconIndex('search_type');
+    btnedtSearch.RightButton.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('search');
+  finally
+    TASuiteLogger.ExitMethod('TfrmMain.SetAllIcons', Self, StartTime);
+  end;
 end;
 
 procedure TfrmMain.PopulatePopUpMenuFromAnother(APopupMenu: TMenuItem; AParentMenuItem: TMenuItem);
@@ -712,27 +727,33 @@ begin
 end;
 
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
+var
+  StartTime: Cardinal;
 begin
-  TASuiteLogger.Enter('TfrmMain.FormClose', Self);
+  StartTime := TASuiteLogger.EnterMethod('TfrmMain.FormClose', Self);
 
-  //Clear clipboard before closing asuite (prevent fake memory leak)
-  EmptyClipboard;
+  try
+    //Clear clipboard before closing asuite (prevent fake memory leak)
+    EmptyClipboard;
 
-  //Close all process opened by ASuite
-  if Config.AutoCloseProcess then
-    CloseProcessOpenByASuite;
+    //Close all process opened by ASuite
+    if Config.AutoCloseProcess then
+      CloseProcessOpenByASuite;
 
-  ASuiteManager.ListManager.ExecuteAutorunList(amShutdown);
+    ASuiteManager.ListManager.ExecuteAutorunList(amShutdown);
 
-  //Execute actions on ASuite's shutdown (inside vstList)
-  ASuiteInstance.MainTree.IterateSubtree(nil, TVirtualTreeMethods.ActionsOnShutdown, nil);
+    //Execute actions on ASuite's shutdown (inside vstList)
+    ASuiteInstance.MainTree.IterateSubtree(nil, TVirtualTreeMethods.ActionsOnShutdown, nil);
 
-  //Hotkey
-  ASuiteManager.ListManager.HotKeyItemList.Clear;
+    //Hotkey
+    ASuiteManager.ListManager.HotKeyItemList.Clear;
 
-  Config.SaveConfig;
+    Config.SaveConfig;
 
-  TVirtualTreeMethods.RefreshList(nil);
+    TVirtualTreeMethods.RefreshList(nil);
+  finally
+    TASuiteLogger.ExitMethod('TfrmMain.FormClose', Self, StartTime);
+  end;
 end;
 
 procedure TfrmMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -747,40 +768,46 @@ begin
 end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);
+var
+  StartTime: Cardinal;
 begin
-  TASuiteLogger.Enter('TfrmMain.MainFormCreate', Self);
+  StartTime := TASuiteLogger.EnterMethod('TfrmMain.FormCreate', Self);
 
-  {$IFDEF UNIX}
-  Self.AllowDropFiles := True;
-  Self.OnDropFiles := DoDropFiles;
+  try
+    {$IFDEF UNIX}
+    Self.AllowDropFiles := True;
+    Self.OnDropFiles := DoDropFiles;
 
-  //Disable right click select for context menu issues
-  Self.vstList.TreeOptions.SelectionOptions := Self.vstList.TreeOptions.SelectionOptions - [toRightClickSelect];
-  {$ENDIF}
+    //Disable right click select for context menu issues
+    Self.vstList.TreeOptions.SelectionOptions := Self.vstList.TreeOptions.SelectionOptions - [toRightClickSelect];
+    {$ENDIF}
 
-  //Set vstList as MainTree in Config
-  ASuiteInstance.MainTree := vstList;
-  Application.CreateForm(TdmImages, dmImages);
-  Application.CreateForm(TdmTrayMenu, dmTrayMenu);
-  pcList.ActivePageIndex := PG_LIST;
+    //Set vstList as MainTree in Config
+    ASuiteInstance.MainTree := vstList;
+    Application.CreateForm(TdmImages, dmImages);
+    Application.CreateForm(TdmTrayMenu, dmTrayMenu);
+    pcList.ActivePageIndex := PG_LIST;
 
-  //Setup events in vsts
-  ASuiteInstance.VSTEvents.SetupVSTList(vstList);
-  ASuiteInstance.VSTEvents.SetupVSTSearch(vstSearch);
+    //Setup events in vsts
+    ASuiteInstance.VSTEvents.SetupVSTList(vstList);
+    ASuiteInstance.VSTEvents.SetupVSTSearch(vstSearch);
 
-  //Load Database and get icons (only first level of tree)
-  Config.LoadConfig;
-  ASuiteInstance.LoadList;
-  ASuiteManager.ListManager.ExecuteAutorunList(amStartup);
+    //Load Database and get icons (only first level of tree)
+    Config.LoadConfig;
+    ASuiteInstance.LoadList;
+    ASuiteManager.ListManager.ExecuteAutorunList(amStartup);
 
-  //Check missed scheduler tasks
-  ASuiteInstance.Scheduler.CheckMissedTasks;
-  TVirtualTreeMethods.RefreshList(nil);
+    //Check missed scheduler tasks
+    ASuiteInstance.Scheduler.CheckMissedTasks;
+    TVirtualTreeMethods.RefreshList(nil);
 
-  PopulatePopUpMenuFromAnother(miEdit, pmWindow.Items);
+    PopulatePopUpMenuFromAnother(miEdit, pmWindow.Items);
 
-  //Start threads
-  TVirtualTreeMethods.GetAllIcons(vstList, nil);
+    //Start threads
+    TVirtualTreeMethods.GetAllIcons(vstList, nil);
+  finally
+    TASuiteLogger.ExitMethod('TfrmMain.FormCreate', Self, StartTime);
+  end;
 end;
 
 procedure TfrmMain.FormHide(Sender: TObject);

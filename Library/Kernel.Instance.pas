@@ -25,7 +25,7 @@ interface
 
 uses
   Classes, SysUtils, VirtualTrees, AppConfig.Paths, Kernel.Scheduler,
-  VirtualTree.Events, FileInfo;
+  VirtualTree.Events, FileInfo, FileChannel;
 
 type
 
@@ -72,7 +72,7 @@ implementation
 
 uses
   Forms.ImportList, Kernel.Logger, Forms, Kernel.Consts, Utility.FileFolder,
-  Utility.Misc, Utility.XML, VirtualTree.Methods, Kernel.Manager,
+  Utility.Misc, Utility.XML, VirtualTree.Methods, Kernel.Manager, MultiLog,
   mormot.core.base;
 
 { TASuiteInstance }
@@ -117,6 +117,7 @@ begin
   FPaths  := TConfigPaths.Create;
 
   //Setup logger
+  Logger.Channels.Add(TFileChannel.Create(APP_NAME + EXT_LOG));
   //with TSynLog.Family do
   //begin
   //  DestinationPath := Self.Paths.SuitePathData;

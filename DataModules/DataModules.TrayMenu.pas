@@ -158,16 +158,21 @@ end;
 procedure TdmTrayMenu.ShowPopupMenu(const APopupMenu: TPopupMenu);
 var
   CursorPoint: TPoint;
+  StartTime: Cardinal;
 begin
-  TASuiteLogger.Enter('TdmTrayMenu.ShowPopupMenu', Self);
-  //Get Mouse coordinates
-  GetCursorPos(CursorPoint);
-  SetForegroundWindow(Application.Handle);
-  Application.ProcessMessages;
-  APopupMenu.AutoPopup := False;
-  APopupMenu.PopupComponent := tiTrayMenu.Owner;
-  //Show menu
-  APopupMenu.Popup(CursorPoint.X, CursorPoint.Y);
+  StartTime := TASuiteLogger.EnterMethod('TdmTrayMenu.ShowPopupMenu', Self);
+  try
+    //Get Mouse coordinates
+    GetCursorPos(CursorPoint);
+    SetForegroundWindow(Application.Handle);
+    Application.ProcessMessages;
+    APopupMenu.AutoPopup := False;
+    APopupMenu.PopupComponent := tiTrayMenu.Owner;
+    //Show menu
+    APopupMenu.Popup(CursorPoint.X, CursorPoint.Y);
+  finally
+    TASuiteLogger.ExitMethod('TdmTrayMenu.ShowPopupMenu', Self, StartTime);
+  end;
 end;
 
 procedure TdmTrayMenu.SearchAddDirectory(AMI: TASMenuItem; FolderPath: string);
@@ -391,49 +396,55 @@ begin
 end;
 
 procedure TdmTrayMenu.UpdateClassicMenu(Menu: TPopUpMenu);
+var
+  StartTime: Cardinal;
 begin
-  TASuiteLogger.Enter('TdmTrayMenu.UpdateClassicMenu', Self);
+  StartTime := TASuiteLogger.EnterMethod('TdmTrayMenu.UpdateClassicMenu', Self);
 
   try
-    Menu.Items.Clear;
-    //Create MenuItems's TrayMenu
-    //Header
-    CreateHeaderItems(Menu);
-    //MFU
-    if (Config.MFU) and (ASuiteManager.ListManager.MFUList.Count > 0) then
-    begin
-      if Config.SubMenuMFU then
+    try
+      Menu.Items.Clear;
+      //Create MenuItems's TrayMenu
+      //Header
+      CreateHeaderItems(Menu);
+      //MFU
+      if (Config.MFU) and (ASuiteManager.ListManager.MFUList.Count > 0) then
       begin
-        CreateAndAddSeparator(Menu);
-        CreateSpecialList(Menu, ASuiteManager.ListManager.MFUList, Config.MFUNumber, msgLongMFU);
-      end
-      else begin
-        CreateAndAddSeparator(Menu, msgLongMFU);
-        CreateSpecialList(Menu, ASuiteManager.ListManager.MFUList, Config.MFUNumber);
+        if Config.SubMenuMFU then
+        begin
+          CreateAndAddSeparator(Menu);
+          CreateSpecialList(Menu, ASuiteManager.ListManager.MFUList, Config.MFUNumber, msgLongMFU);
+        end
+        else begin
+          CreateAndAddSeparator(Menu, msgLongMFU);
+          CreateSpecialList(Menu, ASuiteManager.ListManager.MFUList, Config.MFUNumber);
+        end;
       end;
-    end;
-    CreateAndAddSeparator(Menu, msgList);
-    //List
-    PopulateCategoryItems(nil);
-    //MRU
-    if (Config.MRU) and (ASuiteManager.ListManager.MRUList.Count > 0) then
-    begin
-      if Config.SubMenuMRU then
+      CreateAndAddSeparator(Menu, msgList);
+      //List
+      PopulateCategoryItems(nil);
+      //MRU
+      if (Config.MRU) and (ASuiteManager.ListManager.MRUList.Count > 0) then
       begin
-        CreateAndAddSeparator(Menu);
-        CreateSpecialList(Menu, ASuiteManager.ListManager.MRUList, Config.MRUNumber, msgLongMRU);
-      end
-      else begin
-        CreateAndAddSeparator(Menu, msgLongMRU);
-        CreateSpecialList(Menu, ASuiteManager.ListManager.MRUList, Config.MRUNumber,'');
+        if Config.SubMenuMRU then
+        begin
+          CreateAndAddSeparator(Menu);
+          CreateSpecialList(Menu, ASuiteManager.ListManager.MRUList, Config.MRUNumber, msgLongMRU);
+        end
+        else begin
+          CreateAndAddSeparator(Menu, msgLongMRU);
+          CreateSpecialList(Menu, ASuiteManager.ListManager.MRUList, Config.MRUNumber,'');
+        end;
       end;
+      CreateAndAddSeparator(Menu);
+      //Footer
+      CreateFooterItems(Menu);
+    except
+      on E: Exception do
+        TASuiteLogger.Exception(E);
     end;
-    CreateAndAddSeparator(Menu);
-    //Footer
-    CreateFooterItems(Menu);
-  except
-    on E: Exception do
-      TASuiteLogger.Exception(E);
+  finally
+    TASuiteLogger.ExitMethod('TdmTrayMenu.UpdateClassicMenu', Self, StartTime);
   end;
 end;
 
@@ -907,43 +918,49 @@ end;
 procedure TdmTrayMenu.PopulateCategoryItems(Sender: TObject);
 var
   Node: PVirtualNode;
+  StartTime: Cardinal;
 begin
-  TASuiteLogger.Enter('TdmTrayMenu.PopulateCategoryItems', Self);
+  StartTime := TASuiteLogger.EnterMethod('TdmTrayMenu.PopulateCategoryItems', Self);
 
   try
-    //Get first node
-    if Assigned(Sender) then
-    begin
-      Node := ASuiteInstance.MainTree.GetFirstChild(TASMenuItem(Sender).pNode);
-      if TASMenuItem(Sender).Count > 0 then
-        TASMenuItem(Sender).Items[0].Visible := False;
-    end
-    else
-      Node := ASuiteInstance.MainTree.GetFirst;
-
     try
-      //Iterate time (only child level)
-      while Assigned(Node) do
-      begin
-        CreateListItems(ASuiteInstance.MainTree, Node);
-
-        Node := ASuiteInstance.MainTree.GetNextSibling(Node);
-      end;
-    finally
+      //Get first node
       if Assigned(Sender) then
-        TASMenuItem(Sender).OnClick := nil;
-    end;    
-  except
-    on E: Exception do
-      TASuiteLogger.Exception(E);
+      begin
+        Node := ASuiteInstance.MainTree.GetFirstChild(TASMenuItem(Sender).pNode);
+        if TASMenuItem(Sender).Count > 0 then
+          TASMenuItem(Sender).Items[0].Visible := False;
+      end
+      else
+        Node := ASuiteInstance.MainTree.GetFirst;
+
+      try
+        //Iterate time (only child level)
+        while Assigned(Node) do
+        begin
+          CreateListItems(ASuiteInstance.MainTree, Node);
+
+          Node := ASuiteInstance.MainTree.GetNextSibling(Node);
+        end;
+      finally
+        if Assigned(Sender) then
+          TASMenuItem(Sender).OnClick := nil;
+      end;
+    except
+      on E: Exception do
+        TASuiteLogger.Exception(E);
+    end;
+  finally
+    TASuiteLogger.ExitMethod('TdmTrayMenu.PopulateCategoryItems', Self, StartTime);
   end;
 end;
 
 procedure TdmTrayMenu.PopulateDirectory(Sender: TObject);
 var
   MI: TASMenuItem;
+  StartTime: Cardinal;
 begin
-  TASuiteLogger.Enter('TdmTrayMenu.PopulateDirectory', Self);
+  StartTime := TASuiteLogger.EnterMethod('TdmTrayMenu.PopulateDirectory', Self);
 
   MI := TASMenuItem(Sender);
   try
@@ -959,6 +976,7 @@ begin
       MI.Items[MI.Count - 1].Visible := False;
   finally
     MI.OnClick := nil;
+    TASuiteLogger.ExitMethod('TdmTrayMenu.PopulateDirectory', Self, StartTime);
   end;
 end;
 
