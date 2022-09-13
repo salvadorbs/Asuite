@@ -18,7 +18,7 @@ env:
   LAZ_BRANCH: 'lazarus_2_2_2'
   LAZ_DIR: 'fpcLaz'
   BUILD_MODE: 'Release'   
-  FPCUP_OPT: '--verbose'
+  FPCUP_OPT: ''
   LAZ_PATCH: '/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
   ASUITE_SOURCE: 'asuite_src'
 

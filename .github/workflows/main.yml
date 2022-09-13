@@ -22,7 +22,7 @@ env:
   LAZ_BRANCH: 'lazarus_2_2_2'
   LAZ_DIR: 'fpcLaz'
   BUILD_MODE: 'Debug_GH_Action'   
-  FPCUP_OPT: '--lazopt="-g -gl" --verbose' # Removed --fpcopt="-g -gl" - bug with mORMot 2 debug info
+  FPCUP_OPT: '--lazopt="-g -gl" --fpcopt="-g -gl"'
   LAZ_PATCH: '/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
   ASUITE_SOURCE: 'asuite_src'
 
