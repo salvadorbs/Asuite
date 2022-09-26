@@ -27,22 +27,18 @@ uses
 var
   hash, identifier: string;
 
-begin                  
-  {$IFDEF DEBUG}
+begin
   globalSkipIfNoLeaks := True;
-  {$ENDIF}
 
   hash := THashFactory.THash32.CreateXXHash32().ComputeString(Application.ExeName, TEncoding.UTF8).ToString();
   identifier := 'ASuite.SingleInstance.' + hash;
 
   if not(InstanceRunning(identifier, True)) then
   begin
-    {$IFDEF DEBUG}
-      // Set up -gh output for the Leakview package:
-      if FileExists('heap.trc') then
-        DeleteFile('heap.trc');
-      SetHeapTraceOutput('heap.trc');
-    {$ENDIF}
+    // Set up -gh output for the Leakview package:
+    if FileExists('heap.trc') then
+      DeleteFile('heap.trc');
+    SetHeapTraceOutput('heap.trc');
                                     
     Application.Scaled := True;
     Application.Initialize;
