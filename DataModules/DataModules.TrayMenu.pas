@@ -145,9 +145,8 @@ end;
 
 procedure TdmTrayMenu.tiTrayMenuDblClick(Sender: TObject);
 begin
-  if (Config.ActionClickLeft = tcNone) and (Config.ActionClickMiddle = tcNone)
-     and (Config.ActionClickRight = tcNone) then
-  ShowMainForm(Sender);
+  if (Config.ActionClickLeft = tcNone) then
+    ShowMainForm(Sender);
 end;
 
 procedure TdmTrayMenu.ShowMainForm(Sender: TObject);
