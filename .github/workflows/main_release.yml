@@ -15,7 +15,7 @@ env:
   FPC_URL: 'gitlab'
   FPC_BRANCH: 'release_3_2_2'
   LAZ_URL: 'gitlab'
-  LAZ_BRANCH: 'lazarus_2_2_2'
+  LAZ_BRANCH: 'lazarus_2_2_4'
   LAZ_DIR: 'fpcLaz'
   BUILD_MODE: 'Release'   
   FPCUP_OPT: ''
