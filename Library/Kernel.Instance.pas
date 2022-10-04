@@ -122,10 +122,7 @@ begin
     DestinationPath := Self.Paths.SuitePathData;
     Level := LOG_VERBOSE;
     EchoToConsole := LOG_VERBOSE;
-    {$IFDEF DEBUG}
-    Level := LOG_VERBOSE;
-    EchoToConsole := LOG_VERBOSE;
-    {$ELSE}
+    {$IFNDEF DEBUG}
     Level := LOG_VERBOSE - [sllDebug];
     {$ENDIF}
     RotateFileCount := 1;
