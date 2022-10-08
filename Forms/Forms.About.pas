@@ -76,7 +76,7 @@ end;
 
 procedure TfrmAbout.imgLicenseClick(Sender: TObject);
 begin
-   OpenDocument(AppendPathDelim(ASuiteInstance.Paths.SuitePathWorking) + 'docs' + PathDelim +  'license.txt');
+   OpenDocument(AppendPathDelim(ASuiteInstance.Paths.SuitePathDocs) + 'license.txt');
 end;
 
 procedure TfrmAbout.lnklblWebSiteClick(Sender: TObject);

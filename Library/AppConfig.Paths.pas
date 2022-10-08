@@ -33,11 +33,11 @@ type
   TConfigPaths = class
   private
     FSuitePathCurrentTheme: String;
-    FSuitePathList       : String;
-    FSuiteDrive          : String;
-    FSuitePathData       : String;
-    FSuitePathSettings: String;
-    FSuitePathWorking    : String;
+    FSuitePathASuiteFolder: String;
+    FSuitePathList     : String;
+    FSuiteDrive        : String;
+    FSuitePathData     : String;
+    FSuitePathSettings : String;
 
     FEnvironmentVars : TPathList;
     FASuiteVars      : TPathList;
@@ -45,6 +45,7 @@ type
     function DeQuotedStr(AVar: AnsiString): AnsiString;
     function GetSuitePathBackup: String;
     function GetSuitePathCache: String;
+    function GetSuitePathDocs: String;
     function GetSuitePathLocale: String;
     function GetSuitePathMenuThemes: String;
     procedure SetSuitePathCurrentTheme(AValue: String);
@@ -63,15 +64,16 @@ type
     procedure RemoveCacheFolders;
     procedure UpdatePathVariables;
 
-    property SuitePathList: String read FSuitePathList write FSuitePathList;     
-    property SuitePathSettings: String read FSuitePathSettings write FSuitePathSettings;
-    property SuiteDrive: String read FSuiteDrive write FSuiteDrive;
-    property SuitePathData: String read FSuitePathData write FSuitePathData;
-    property SuitePathWorking: String read FSuitePathWorking write FSuitePathWorking;
+    property SuitePathList: String read FSuitePathList write FSuitePathList;     //Path to list
+    property SuitePathSettings: String read FSuitePathSettings; //Path to settings
+    property SuiteDrive: String read FSuiteDrive;
+    property SuitePathData: String read FSuitePathData; //Path to folder data
+    property SuitePathASuiteFolder: String read FSuitePathASuiteFolder; //Path to asuite.exe
     property SuitePathLocale: String read GetSuitePathLocale;
     property SuitePathCache: String read GetSuitePathCache;
     property SuitePathBackup: String read GetSuitePathBackup;
     property SuitePathMenuThemes: String read GetSuitePathMenuThemes;
+    property SuitePathDocs: String read GetSuitePathDocs;
     property SuitePathCurrentTheme: String read FSuitePathCurrentTheme write SetSuitePathCurrentTheme;
 
     property EnvironmentVars: TPathList read FEnvironmentVars;
@@ -164,14 +166,19 @@ begin
   Result := AppendPathDelim(FSuitePathData + CACHE_DIR);
 end;
 
+function TConfigPaths.GetSuitePathDocs: String;
+begin
+  Result := AppendPathDelim(FSuitePathASuiteFolder + DOCS_DIR);
+end;
+
 function TConfigPaths.GetSuitePathLocale: String;
 begin
-  Result := AppendPathDelim(FSuitePathWorking + LOCALE_DIR);
+  Result := AppendPathDelim(FSuitePathASuiteFolder + LOCALE_DIR);
 end;
 
 function TConfigPaths.GetSuitePathMenuThemes: String;
 begin
-  Result := AppendPathDelim(FSuitePathWorking + MENUTHEMES_DIR);
+  Result := AppendPathDelim(FSuitePathASuiteFolder + MENUTHEMES_DIR);
 end;
 
 procedure TConfigPaths.UpdateASuiteVars;
@@ -183,7 +190,7 @@ begin
   strFolderIcon := AppendPathDelim(FSuitePathCurrentTheme + ICONS_DIR);
 
   //CONST_PATH_ASuite = Launcher's path
-  FASuiteVars.Add(DeQuotedStr(CONST_PATH_ASUITE), ExcludeTrailingPathDelimiter(SuitePathWorking));
+  FASuiteVars.Add(DeQuotedStr(CONST_PATH_ASUITE), ExcludeTrailingPathDelimiter(FSuitePathASuiteFolder));
 
   //CONST_PATH_DRIVE = Launcher's Drive (ex. ASuite in H:\Software\ASuite.exe, CONST_PATH_DRIVE is H: )
   FASuiteVars.Add(DeQuotedStr(CONST_PATH_DRIVE), SUITEDRIVE);
@@ -201,7 +208,7 @@ var
 begin
   //Default paths
   strPathExe := APathExecutable;
-  FSuitePathWorking  := ExtractFilePath(strPathExe);
+  FSuitePathASuiteFolder  := ExtractFilePath(strPathExe);
 
   strFileListSql := ExtractFileNameOnly(strPathExe) + EXT_SQL;
   strFileListXml := ExtractFileNameOnly(strPathExe) + EXT_XML;
@@ -210,20 +217,20 @@ begin
   FSuiteDrive        := LowerCase(ExtractFileDrive(strPathExe));
   {$ELSE}
   //In Linux, use the folder path of asuite
-  FSuiteDrive        := FSuitePathWorking;
+  FSuiteDrive        := FSuitePathASuiteFolder;
   {$ENDIF}
-  SetCurrentDir(FSuitePathWorking);
+  SetCurrentDir(FSuitePathASuiteFolder);
 
   //If ASuite is started from a hard linked folder, it will be falsely unwritable
   //The user is unlikely to create a hard link for ASuite unless they use Scoop
   //In this case, however, the .sqlite files will already exist and you can
   //safely use them
-  if (IsDirectoryWritable(FSuitePathWorking)) or FileExists(FSuitePathWorking + strFileListXml) or
-     FileExists(FSuitePathWorking + strFileListSql) then
-    FSuitePathData := FSuitePathWorking
+  if (IsDirectoryWritable(FSuitePathASuiteFolder)) or FileExists(FSuitePathASuiteFolder + strFileListXml) or
+     FileExists(FSuitePathASuiteFolder + strFileListSql) then
+    FSuitePathData := FSuitePathASuiteFolder
   else begin
-    //FSuitePathWorking = ASuite.exe folder (ex C:\path\to\asuite_folder\)
-    //FSuitePathData    = ASuite config folder (ex. C:\Users\user\AppData\Roaming\asuite\)
+    //FSuitePathASuiteFolder  = ASuite.exe folder (ex C:\path\to\asuite_folder\)
+    //FSuitePathData = ASuite config folder (ex. C:\Users\user\AppData\Roaming\asuite\)
     FSuitePathData := GetAppConfigDir(True);
     SysUtils.ForceDirectories(FSuitePathData);
   end;
@@ -285,7 +292,7 @@ begin
     //Note: Unfortunately old asuite vars is not quoted, but in format $var.
     //      So these two vars are deprecated. This code remain for only backwards compatibility
     //CONST_PATH_ASuite_old = Launcher's path
-    Result := StringReplace(Result, CONST_PATH_ASuite_old, ExcludeTrailingPathDelimiter(SuitePathWorking), [rfIgnoreCase,rfReplaceAll]);
+    Result := StringReplace(Result, CONST_PATH_ASuite_old, ExcludeTrailingPathDelimiter(FSuitePathASuiteFolder), [rfIgnoreCase,rfReplaceAll]);
     //CONST_PATH_DRIVE_old = Launcher's Drive (ex. ASuite in H:\Software\ASuite.exe, CONST_PATH_DRIVE is H: )
     Result := StringReplace(Result, CONST_PATH_DRIVE_old, SUITEDRIVE, [rfIgnoreCase,rfReplaceAll]);
 
