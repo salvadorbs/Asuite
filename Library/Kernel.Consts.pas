@@ -39,6 +39,7 @@ const
   MENUTHEMES_DIR = 'themes';
   ICONS_DIR      = 'icons';
   BUTTONS_DIR    = 'buttons';
+  DOCS_DIR       = 'docs';
 
   //FileSystem
   DriveLetters      = ['a'..'z', 'A'..'Z'];

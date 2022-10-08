@@ -106,7 +106,7 @@ begin
   //lbInfo2.Caption := Format(lbInfo2.Caption, [ASuiteInstance.Paths.SuitePathWorking, ASuiteInstance.Paths.SuiteDrive]);
 
   //Strange bug. %asuite% and %drive% causing error "Invalid argument index in format...", so I'm using a workaround
-  lbInfo2.Caption := StringReplace(lbInfo2.Caption, '%s', ASuiteInstance.Paths.SuitePathWorking, [rfIgnoreCase]);
+  lbInfo2.Caption := StringReplace(lbInfo2.Caption, '%s', ASuiteInstance.Paths.SuitePathASuiteFolder, [rfIgnoreCase]);
   lbInfo2.Caption := StringReplace(lbInfo2.Caption, '%s', ASuiteInstance.Paths.SuiteDrive, [rfIgnoreCase]);
 
   if Assigned(CurrentNodeData) then
