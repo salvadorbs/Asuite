@@ -31,7 +31,7 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  Menus, ExtCtrls, VirtualTrees, LazFileUtils, Process,
+  Menus, ExtCtrls, VirtualTrees, LazFileUtils, Process, NodeDataTypes.Base, Kernel.Types,
   Kernel.ASMenuItem, Lists.Base, Kernel.Enumerations
   {$IFDEF LINUX}
   , x, xlib
@@ -66,6 +66,8 @@ type
   private
     { Private declarations }
     procedure CreateListItems(Sender: TBaseVirtualTree; Node: PVirtualNode);
+    procedure SetupASMenuItem(const NodeData: PBaseData;
+      const ItemNodeData: TvBaseNodeData; MenuItem: TASMenuItem);
     procedure UpdateClassicMenu(Menu: TPopUpMenu);
     procedure CreateHeaderItems(Menu: TPopupMenu);
     procedure CreateFooterItems(Menu: TPopupMenu);
@@ -124,8 +126,8 @@ implementation
 
 uses
   DataModules.Icons, Forms.Main, AppConfig.Main, VirtualTree.Methods,
-  Utility.System, Forms.GraphicMenu, Kernel.Types, NodeDataTypes.Files,
-  NodeDataTypes.Custom, NodeDataTypes.Base, Kernel.Consts, Kernel.Logger,
+  Utility.System, Forms.GraphicMenu, NodeDataTypes.Files,
+  NodeDataTypes.Custom, Kernel.Consts, Kernel.Logger,
   Utility.FileFolder, Kernel.ResourceStrings, Kernel.Instance, LazVersion,
   Kernel.Manager, mormot.core.log {$IFDEF MSWINDOWS} , Windows {$ENDIF};
 
@@ -301,9 +303,13 @@ begin
 
       //Set MenuItem properties
       if (ItemNodeData.IsSeparatorItem) then
-        MenuItem := TASMenuItem(CreateSeparator(pmTrayicon, ItemNodeData.Name))
+      begin
+        MenuItem := TASMenuItem(CreateSeparator(pmTrayicon, ItemNodeData.Name));
+        SetupASMenuItem(NodeData, ItemNodeData, MenuItem);
+      end
       else begin
-        MenuItem := TASMenuItem.Create(Application.MainForm);
+        MenuItem := TASMenuItem.Create(Application.MainForm);    
+        SetupASMenuItem(NodeData, ItemNodeData, MenuItem);
 
         MenuItem.Caption    := ItemNodeData.Name;
         MenuItem.ImageIndex := ItemNodeData.Icon.ImageIndex;
@@ -343,13 +349,6 @@ begin
 
       if Assigned(MenuItem) then
       begin
-        MenuItem.Data    := ItemNodeData;
-        MenuItem.pNode   := ItemNodeData.pNode;
-        MenuItem.Visible := not(ItemNodeData.HideFromMenu);
-
-        //Set NodeData's MenuItem
-        NodeData.MenuItem   := MenuItem;
-
         if (Node.Parent <> Sender.RootNode) then
         begin
           ParentNodeData := TVirtualTreeMethods.GetNodeDataEx(Node.Parent, Sender);
@@ -363,6 +362,15 @@ begin
     on E: Exception do
       TASuiteLogger.Exception(E);
   end;
+end;
+
+procedure TdmTrayMenu.SetupASMenuItem(const NodeData: PBaseData;
+  const ItemNodeData: TvBaseNodeData; MenuItem: TASMenuItem);
+begin
+  MenuItem.Data    := ItemNodeData;
+  MenuItem.pNode   := ItemNodeData.pNode;
+  NodeData.MenuItem := MenuItem;
+  MenuItem.Visible := not(ItemNodeData.HideFromMenu);
 end;
 
 procedure TdmTrayMenu.GetItemsIcons(Sender: TObject);
