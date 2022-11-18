@@ -20,6 +20,7 @@ env:
   FPC_BRANCH: 'release_3_2_2'
   LAZ_URL: 'gitlab'
   LAZ_BRANCH: 'lazarus_2_2_4'
+  LAZ_REVISION_2_4: '0a3429053c0dfcae2359e3b0b62e1763d5e6a319'
   LAZ_DIR: 'fpcLaz'
   BUILD_MODE: 'Debug_GH_Action'   
   FPCUP_OPT: '--lazopt="-g -gl" --fpcopt="-g -gl"'
@@ -43,25 +44,25 @@ jobs:
 
           - os: windows-latest
             name: 'Windows 64'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0h/fpclazup-x86_64-win64.exe'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0nf/fpclazup-x86_64-win64.exe'
             lazbuild: 'fpcLaz/lazarus/lazbuild.exe'
             dbg2mab: 'dbg2mab.exe'
             build-widgetset: 'win32'
             build-os: 'win64'
             debug_file: 'ASuite.dbg'
 
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             name: 'Linux 64 GTK2'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0h/fpclazup-x86_64-linux'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0nf/fpclazup-x86_64-linux'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
             dbg2mab: 'dbg2mab'
             build-widgetset: 'gtk2'
             build-os: 'linux'
             debug_file: 'ASuite.dbg'
 
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             name: 'Linux 64 GTK3'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0h/fpclazup-x86_64-linux'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0nf/fpclazup-x86_64-linux'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
             dbg2mab: 'dbg2mab'
             build-widgetset: 'gtk3'
@@ -70,10 +71,19 @@ jobs:
           
           - os: ubuntu-20.04
             name: 'Linux 64 QT5'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0h/fpclazup-x86_64-linux'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0nf/fpclazup-x86_64-linux'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
             dbg2mab: 'dbg2mab'
             build-widgetset: 'qt5'
+            build-os: 'linux'
+            debug_file: 'ASuite.dbg'
+          
+          - os: ubuntu-22.04
+            name: 'Linux 64 QT6'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0nf/fpclazup-x86_64-linux'
+            lazbuild: 'fpcLaz/lazarus/lazbuild'
+            dbg2mab: 'dbg2mab'
+            build-widgetset: 'qt6'
             build-os: 'linux'
             debug_file: 'ASuite.dbg'
 
@@ -86,14 +96,14 @@ jobs:
         path: '${{ env.ASUITE_SOURCE }}'
         
     - name: Install Dependencies (Ubuntu)
-      if: matrix.config.os == 'ubuntu-latest' || matrix.config.os == 'ubuntu-20.04'
+      if: matrix.config.os == 'ubuntu-latest' || matrix.config.os == 'ubuntu-22.04' && matrix.config.build-widgetset == 'gtk2'
       run: |
         sudo apt-get update
         sudo apt-get -m -y install libgtk2.0-dev libpango1.0-dev libffi-dev libxtst-dev xvfb
         Xvfb :1 &
         
     - name: Install Dependencies (Ubuntu - only GTK3)
-      if: (matrix.config.os == 'ubuntu-latest' || matrix.config.os == 'ubuntu-20.04') && matrix.config.build-widgetset == 'gtk3'
+      if: (matrix.config.os == 'ubuntu-latest' || matrix.config.os == 'ubuntu-22.04') && matrix.config.build-widgetset == 'gtk3'
       run: sudo apt-get -m -y install libgtk-3-dev
         
     - name: Install Dependencies (Ubuntu - only QT5)
@@ -104,9 +114,22 @@ jobs:
         qmake
         make
         sudo make install
+        
+    - name: Install Dependencies (Ubuntu - only QT6)
+      if: (matrix.config.os == 'ubuntu-latest' || matrix.config.os == 'ubuntu-22.04') && matrix.config.build-widgetset == 'qt6'
+      run: |
+        wget https://github.com/davidbannon/libqt6pas/releases/download/v6.2.2/libqt6pas6_2_2-1_amd64.deb
+        wget https://github.com/davidbannon/libqt6pas/releases/download/v6.2.2/libqt6pas-dev_2_2-1_amd64.deb
+        sudo apt-get -m -y install qt6-base-dev libxcb-keysyms1-dev libgl-dev
+        sudo dpkg -i libqt6pas6_2_2-1_amd64.deb
+        sudo dpkg -i libqt6pas-dev_2_2-1_amd64.deb
+        cd ${{ env.ASUITE_SOURCE }}/3p/AsuiteComps/library/platform/unix/QGHotkeyHookPas
+        qmake6
+        make
+        sudo make install
 
     - name: Generate Cache Hash
-      run: echo "${{ matrix.config.fpcup-url }}${{ env.FPCUP_OPT }}${{ env.FPC_URL }}${{ env.FPC_BRANCH }}${{ env.LAZ_URL }}${{ env.LAZ_BRANCH }}${{ env.LAZ_PATCH}}${{ matrix.config.name }}" > .cache
+      run: echo "${{ matrix.config.fpcup-url }}${{ env.FPCUP_OPT }}${{ env.FPC_URL }}${{ env.FPC_BRANCH }}${{ env.LAZ_URL }}${{ env.LAZ_BRANCH }}${{ env.LAZ_REVISION_2_4 }}${{ env.LAZ_PATCH}}${{ matrix.config.name }}" > .cache
 
     - name: Cache
       id: cache
@@ -120,7 +143,15 @@ jobs:
         key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('.cache') }}     
 
     - name: Install Lazarus
-      if: steps.cache.outputs.cache-hit != 'true'
+      if: steps.cache.outputs.cache-hit != 'true' && matrix.config.build-widgetset == 'qt6'
+      run: |
+        curl --retry 5 -L -o fpcup ${{ matrix.config.fpcup-url }}
+        chmod +x fpcup
+        mkdir ${{ env.LAZ_DIR }}
+        ./fpcup --installdir=${{ env.LAZ_DIR }} --fpcURL=${{ env.FPC_URL }} --fpcBranch=${{ env.FPC_BRANCH }} --lazURL=${{ env.LAZ_URL }} --lazRevision=${{ env.LAZ_REVISION_2_4 }} --lazPATCH="${{ env.ASUITE_SOURCE}}${{ env.LAZ_PATCH}}" ${{ env.FPCUP_OPT }} --only=docker --noconfirm --verbose
+
+    - name: Install Lazarus
+      if: steps.cache.outputs.cache-hit != 'true' && matrix.config.build-widgetset != 'qt6'
       run: |
         curl --retry 5 -L -o fpcup ${{ matrix.config.fpcup-url }}
         chmod +x fpcup
