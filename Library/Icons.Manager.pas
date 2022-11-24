@@ -21,6 +21,8 @@ unit Icons.Manager;
 
 {$MODE DelphiUnicode}
 
+{$I ASuite.inc}
+
 interface
 
 uses
@@ -68,13 +70,13 @@ type
     function GetIconFromImgList(AImageIndex: Integer; ALargeIcon: Boolean
       ): TBGRABitmap;
     {$IFDEF UNIX}
-    {$IFDEF LCLQT5}  
-    function GetSystemIconName(const AFileName: String): String;
-    function CheckSystemIconName(const AIconName: String): Boolean;
-    {$ELSE}                                                          
-    function GetSystemIconName(const AFileName: AnsiString): AnsiString;
-    function CheckSystemIconName(const AIconName: AnsiString): Boolean;
-    {$ENDIF}
+      {$IFDEF QT}
+      function GetSystemIconName(const AFileName: String): String;
+      function CheckSystemIconName(const AIconName: String): Boolean;
+      {$ELSE}
+      function GetSystemIconName(const AFileName: AnsiString): AnsiString;
+      function CheckSystemIconName(const AIconName: AnsiString): Boolean;
+      {$ENDIF}
     {$ENDIF}
 
     property PathTheme: string read GetPathTheme write SetPathTheme;
@@ -87,9 +89,13 @@ uses
   Graphics, DataModules.Icons, mormot.core.log
   {$IFDEF UNIX}
   , IniFiles, BaseUnix, StrUtils, Utility.FileFolder
-    {$IFDEF LCLQT5}
-    , qt5
-    {$ELSE}     
+    {$IFDEF QT}
+      {$IFDEF LCLQT5}
+      , qt5
+      {$ELSE}
+      , qt6
+      {$ENDIF}
+    {$ELSE}   
       {$IFDEF LCLGTK2}
       , gtk2
       {$ELSE}
@@ -252,7 +258,7 @@ begin
 end;
 
 {$IFDEF UNIX}     
-{$IFDEF LCLQT5}  
+{$IFDEF QT}
 function TIconsManager.GetSystemIconName(const AFileName: String): String;
 {$ELSE}       
 function TIconsManager.GetSystemIconName(const AFileName: AnsiString): AnsiString;
@@ -302,7 +308,7 @@ begin
           begin
             Result := iconList.Strings[I];
 
-            {$IFDEF LCLQT5}
+            {$IFDEF QT}
             if QIcon_hasThemeIcon(@Result) then break;
             {$ELSE}
             if gtk_icon_theme_has_icon(gtk_icon_theme_get_default, PAnsiChar(Result)) then break;
@@ -438,7 +444,7 @@ begin
   end;
 end;
                  
-{$IFDEF LCLQT5}
+{$IFDEF QT}
 function TIconsManager.CheckSystemIconName(const AIconName: String): Boolean;
 begin
   //QIcon_fromTheme can load icon name and absolute filepath, too

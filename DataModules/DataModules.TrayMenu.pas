@@ -36,16 +36,18 @@ uses
   {$IFDEF LINUX}
   , x, xlib
 
-    {$IFDEF LCLGTK2}
-  , gdk2, gdk2x
-    {$ENDIF}
-
-    {$IFDEF LCLGTK3}
-  , LazGdk3, LazGLib2
-    {$ENDIF}
-
     {$IFDEF QT}
-  , qt5
+      {$IFDEF LCLQT5}
+      , qt5
+      {$ELSE}
+      , qt6, qtint
+      {$ENDIF}
+    {$ELSE}
+      {$IFDEF LCLGTK2}
+      , gdk2, gdk2x
+      {$ELSE}
+      , LazGdk3, LazGLib2
+      {$ENDIF}
     {$ENDIF}
   {$ENDIF};
 
@@ -857,14 +859,22 @@ begin
 
     {$IFDEF LCLQT5}
   XDisplay := QX11Info_display;
+    {$ENDIF}     
+
+    {$IFDEF LCLQT6}
+  XDisplay := QtWidgetSet.x11Display;
     {$ENDIF}
 
     {$IFDEF LCLGTK3}
   XDisplay := gdk_x11_display_get_xdisplay(gdk_window_get_display(gdk_get_default_root_window));
     {$ENDIF}
 
+  Result := False;
+  if XDisplay <> nil then
+  begin
     A := XInternAtom(XDisplay, '_NET_SYSTEM_TRAY_S0', False);
     Result := (XGetSelectionOwner(XDisplay, A) <> 0);
+  end;
 
   if not Result then
     Result := TdmTrayMenu.CheckGnomeExtras; // Thats libappindicator3 and an installed and enabled gnome-shell-extension-appindicator

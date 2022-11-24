@@ -41,5 +41,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   {$IFDEF LCLQT5}
 	{$DEFINE QT}
+  {$ENDIF}     
+
+  {$IFDEF LCLQT6}
+	{$DEFINE QT}
   {$ENDIF}
 {$ENDIF}
