@@ -24,8 +24,8 @@ unit VirtualTree.Events;
 interface
 
 uses
-  LCLIntf, LCLType, SysUtils, Classes, Graphics, VirtualTrees, 
-  {$IFDEF MSWINDOWS} ActiveX, {$ELSE} FakeActiveX, {$ENDIF}
+  LCLIntf, LCLType, SysUtils, Classes, Graphics, VirtualTrees, VirtualTrees.Header, VirtualTrees.Types,
+  {$IFDEF MSWINDOWS} ActiveX, {$ELSE} FakeActiveX, {$ENDIF} VirtualTrees.BaseTree,
   Forms.GraphicMenu, Forms.Dialog.BaseEntity, Menus, Forms, Controls;
 
 type
@@ -38,6 +38,8 @@ type
 
     function ClickOnButtonTree(Sender: TBaseVirtualTree; const HitInfo: THitInfo): Boolean;
     procedure DoColumnResize(Sender: TVTHeader; Column: TColumnIndex);
+    procedure DoEditing(Sender: TBaseVirtualTree; Node: PVirtualNode;
+      Column: TColumnIndex; var Allowed: Boolean);
     procedure DoGetHint(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex; var LineBreakStyle: TVTTooltipLineBreakStyle;
       var HintText: String);
@@ -52,14 +54,14 @@ type
     {$ENDIF}
 
     //Generic events
-    procedure DoDragOver(Sender: TBaseVirtualTree; Source: TObject; Shift: TShiftState;
-      State: TDragState; const Pt: TPoint; Mode: TDropMode; var Effect: LongWord;
-      var Accept: Boolean);
+    procedure DoDragOver(Sender: TBaseVirtualTree; Source: TObject;
+      Shift: TShiftState; State: TDragState; Pt: TPoint; Mode: TDropMode;
+      var Effect: Integer; var Accept: Boolean);
     procedure DoGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
-    procedure DoGetImageIndex(Sender: TBaseVirtualTree;
-      Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-      var Ghosted: Boolean; var ImageIndex: Integer);
+    procedure DoGetImageIndex(Sender: TBaseVirtualTree; Node: PVirtualNode;
+      Kind: TVTImageKind; Column: TColumnIndex; var Ghosted: Boolean;
+      var ImageIndex: TImageIndex);
     procedure DoPaintText(Sender: TBaseVirtualTree;
       const TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
       TextType: TVSTTextType);
@@ -69,11 +71,9 @@ type
       Stream: TStream);
     procedure DoFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure DoNewText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;
-      const NewText: String);
-    procedure DoDragDrop(Sender: TBaseVirtualTree; Source: TObject; DataObject: IDataObject;
-      Formats: TFormatArray; Shift: TShiftState; const Pt: TPoint; var Effect: LongWord; Mode: TDropMode);
-    procedure DoEditing(Sender: TBaseVirtualTree; Node: PVirtualNode;
-      Column: TColumnIndex; var Allowed: Boolean);
+      NewText: string);
+    procedure DoDragDrop(Sender: TBaseVirtualTree; Source: TObject; DataObject: TVTDragDataObject;
+      Formats: TFormatArray; Shift: TShiftState; Pt: TPoint; var Effect: Integer; Mode: TDropMode);
     procedure DoDrawText(Sender: TBaseVirtualTree; TargetCanvas: TCanvas;
       Node: PVirtualNode; Column: TColumnIndex; const Text: string;
       const CellRect: TRect; var DefaultDraw: Boolean);
@@ -108,9 +108,9 @@ type
       var NodeDataSize: Integer);
     procedure DoGetTextFrame(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
-    procedure DoGetImageIndexFrame(Sender: TBaseVirtualTree;
-      Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-      var Ghosted: Boolean; var ImageIndex: Integer);
+    procedure DoGetImageIndexFrame(Sender: TBaseVirtualTree; Node: PVirtualNode;
+      Kind: TVTImageKind; Column: TColumnIndex; var Ghosted: Boolean;
+      var ImageIndex: TImageIndex);
     procedure DoFreeNodeFrame(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure DoAddToSelectionFrame(Sender: TBaseVirtualTree;
       Node: PVirtualNode);
@@ -120,9 +120,9 @@ type
       Node2: PVirtualNode; Column: TColumnIndex; var Result: Integer);
     procedure DoGetTextHotkey(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
-    procedure DoGetImageIndexHotkey(Sender: TBaseVirtualTree;
-      Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-      var Ghosted: Boolean; var ImageIndex: Integer);
+    procedure DoGetImageIndexHotkey(Sender: TBaseVirtualTree; Node: PVirtualNode;
+      Kind: TVTImageKind; Column: TColumnIndex; var Ghosted: Boolean;
+      var ImageIndex: TImageIndex);
     procedure DoBeforeCellPaintHotkey(Sender: TBaseVirtualTree;
       TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
       CellPaintMode: TVTCellPaintMode; CellRect: TRect; var ContentRect: TRect);
@@ -148,7 +148,7 @@ var
 implementation
 
 uses
-  AppConfig.Main, NodeDataTypes.Base, NodeDataTypes.Category,
+  AppConfig.Main, NodeDataTypes.Base, NodeDataTypes.Category, VirtualTrees.clipboard,
   NodeDataTypes.Files, NodeDataTypes.Custom, NodeDataTypes.Separator, Kernel.Types,
   Kernel.Enumerations, VirtualTree.Methods, DataModules.TrayMenu, LCLProc, Kernel.Consts,
   DataModules.Icons, Kernel.Logger, mormot.core.log, Kernel.Instance, Kernel.Manager
@@ -435,8 +435,9 @@ begin
       Result := CompareText(Data1.Name, Data2.Name);
 end;
 
-procedure TVirtualTreeEvents.DoDragDrop(Sender: TBaseVirtualTree; Source: TObject; DataObject: IDataObject;
-      Formats: TFormatArray; Shift: TShiftState; const Pt: TPoint; var Effect: LongWord; Mode: TDropMode);
+procedure TVirtualTreeEvents.DoDragDrop(Sender: TBaseVirtualTree;
+  Source: TObject; DataObject: TVTDragDataObject; Formats: TFormatArray;
+  Shift: TShiftState; Pt: TPoint; var Effect: Integer; Mode: TDropMode);
 var         
   I          : integer;
   NodeData   : TvBaseNodeData;
@@ -521,9 +522,9 @@ begin
   end;
 end;
 
-procedure TVirtualTreeEvents.DoDragOver(Sender: TBaseVirtualTree; Source: TObject;
-  Shift: TShiftState; State: TDragState; const Pt: TPoint; Mode: TDropMode;
-  var Effect: LongWord; var Accept: Boolean);
+procedure TVirtualTreeEvents.DoDragOver(Sender: TBaseVirtualTree;
+  Source: TObject; Shift: TShiftState; State: TDragState; Pt: TPoint;
+  Mode: TDropMode; var Effect: Integer; var Accept: Boolean);
 begin
   Accept := True;
 end;
@@ -706,8 +707,8 @@ begin
   FreeMem(DataSource);
 end;
 
-procedure TVirtualTreeEvents.DoNewText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;
-    const NewText: String);
+procedure TVirtualTreeEvents.DoNewText(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Column: TColumnIndex; NewText: string);
 var
   NodeData : TvBaseNodeData;
 begin
@@ -937,7 +938,7 @@ end;
 
 procedure TVirtualTreeEvents.DoGetImageIndex(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-  var Ghosted: Boolean; var ImageIndex: Integer);
+  var Ghosted: Boolean; var ImageIndex: TImageIndex);
 var
   NodeData: TvBaseNodeData;
 begin
@@ -958,7 +959,7 @@ end;
 
 procedure TVirtualTreeEvents.DoGetImageIndexFrame(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-  var Ghosted: Boolean; var ImageIndex: Integer);
+  var Ghosted: Boolean; var ImageIndex: TImageIndex);
 var
   NodeData : PFramesNodeData;
 begin
@@ -972,7 +973,7 @@ end;
 
 procedure TVirtualTreeEvents.DoGetImageIndexHotkey(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
-  var Ghosted: Boolean; var ImageIndex: Integer);
+  var Ghosted: Boolean; var ImageIndex: TImageIndex);
 var
   NodeData: TvBaseNodeData;
 begin

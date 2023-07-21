@@ -54,7 +54,7 @@ InstallPackageLink $LazBuildPath "$ASuiteSource/3p/mORMot2/packages/lazarus/morm
 InstallPackageLink $LazBuildPath "$ASuiteSource/3p/HashLib4Pascal/HashLib/src/Packages/FPC/HashLib4PascalPackage.lpk"
 InstallPackage $LazBuildPath "$ASuiteSource/3p/luipack/uniqueinstance/uniqueinstance_package.lpk"
 InstallPackageLink $LazBuildPath "$ASuiteSource/3p/luipack/lclextensions/lclextensions_package.lpk"
-InstallPackage $LazBuildPath "$ASuiteSource/3p/VirtualTreeView-Lazarus/Source/virtualtreeview_package.lpk"
+InstallPackage $LazBuildPath "$ASuiteSource/3p/VirtualTreeView-Lazarus/Packages/Lazarus/virtualtreeview_package.lpk"
 InstallPackage $LazBuildPath "$ASuiteSource/3p/AsuiteComps/ASuiteComps.lpk"
 
 # Download mORMot 2 Static files and extract them in proper directory

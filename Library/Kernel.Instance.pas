@@ -73,7 +73,7 @@ implementation
 uses
   Forms.ImportList, Kernel.Logger, Forms, Kernel.Consts, Utility.FileFolder,
   Utility.Misc, Utility.XML, VirtualTree.Methods, mormot.core.log, Kernel.Manager,
-  mormot.core.base;
+  mormot.core.base, VirtualTrees.Types;
 
 { TASuiteInstance }
 

@@ -81,7 +81,7 @@ var
 implementation
 
 uses
-  AppConfig.Main, VirtualTree.Methods, NodeDataTypes.Custom,
+  AppConfig.Main, VirtualTree.Methods, NodeDataTypes.Custom, VirtualTrees.Types,
   Forms.ShortcutGrabber, DataModules.Icons, Kernel.ResourceStrings,
   LCLProc, Kernel.Consts, Kernel.Manager, Utility.Misc, Kernel.Instance;
 
@@ -214,7 +214,7 @@ begin
 
   //Populate VST with HotKeyItemList's items
   TVirtualTreeMethods.PopulateVSTItemList(vstItems, ASuiteManager.ListManager.HotKeyItemList);
-  vstItems.SortTree(0, VirtualTrees.sdAscending);
+  vstItems.SortTree(0, VirtualTrees.Types.sdAscending);
 
   //Enable/disable visual components
   cbHotKeyClick(Self);

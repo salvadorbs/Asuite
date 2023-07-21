@@ -167,9 +167,9 @@ uses
   Forms.Options, Forms.About, Utility.Misc, Forms.ScanFolder, Clipbrd,
   DataModules.TrayMenu, Forms.ImportList, AppConfig.Main, Utility.System,
   VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base,
-  Kernel.Types, NodeDataTypes.Files, Kernel.Manager,
-  Kernel.Logger, mormot.core.log, FileUtil, Kernel.ResourceStrings, Kernel.Instance
-  {$IFDEF MSWINDOWS} , jwatlhelp32, Windows {$ENDIF};
+  Kernel.Types, NodeDataTypes.Files, Kernel.Manager, VirtualTrees.Types,
+  Kernel.Logger, mormot.core.log, FileUtil, Kernel.ResourceStrings, Kernel.Instance,
+  VirtualTrees.ClipBoard {$IFDEF MSWINDOWS} , jwatlhelp32, Windows {$ENDIF};
 
 {$R *.lfm}
 

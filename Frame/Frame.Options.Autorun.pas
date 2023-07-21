@@ -24,7 +24,7 @@ unit Frame.Options.Autorun;
 interface
 
 uses
-  LCLIntf, SysUtils, Classes, Controls, Dialogs, Frame.BaseEntity,
+  LCLIntf, SysUtils, Classes, Controls, Dialogs, Frame.BaseEntity, VirtualTrees.Types,
   StdCtrls, VirtualTrees, Lists.Base, Menus, ExtCtrls, Buttons, ActnList;
 
 type

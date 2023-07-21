@@ -15,7 +15,8 @@ env:
   FPC_URL: 'gitlab'
   FPC_BRANCH: 'release_3_2_2'
   LAZ_URL: 'gitlab'
-  LAZ_BRANCH: 'lazarus_2_2_4'
+  LAZ_BRANCH: 'lazarus_3_0_RC1'
+  LAZ_REVISION_2_4: ''
   LAZ_DIR: 'fpcLaz'
   BUILD_MODE: 'Release'   
   FPCUP_OPT: ''
@@ -39,25 +40,25 @@ jobs:
 
           - os: windows-latest
             name: 'Windows 64'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0h/fpclazup-x86_64-win64.exe'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0s/fpclazup-x86_64-win64.exe'
             lazbuild: 'fpcLaz/lazarus/lazbuild.exe'
             dbg2mab: 'dbg2mab.exe'
             build-widgetset: 'win32'
             build-os: 'win64'
             debug_file: 'ASuite.dbg'
 
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             name: 'Linux 64 GTK2'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0h/fpclazup-x86_64-linux'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0s/fpclazup-x86_64-linux'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
             dbg2mab: 'dbg2mab'
             build-widgetset: 'gtk2'
             build-os: 'linux'
             debug_file: 'ASuite.dbg'
 
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             name: 'Linux 64 GTK3'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0h/fpclazup-x86_64-linux'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0s/fpclazup-x86_64-linux'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
             dbg2mab: 'dbg2mab'
             build-widgetset: 'gtk3'
@@ -66,54 +67,80 @@ jobs:
           
           - os: ubuntu-20.04
             name: 'Linux 64 QT5'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0h/fpclazup-x86_64-linux'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0s/fpclazup-x86_64-linux'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
             dbg2mab: 'dbg2mab'
             build-widgetset: 'qt5'
             build-os: 'linux'
             debug_file: 'ASuite.dbg'
 
+          - os: ubuntu-22.04
+            name: 'Linux 64 QT6'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0s/fpclazup-x86_64-linux'
+            lazbuild: 'fpcLaz/lazarus/lazbuild'
+            dbg2mab: 'dbg2mab'
+            build-widgetset: 'qt6'
+            build-os: 'linux'
+            debug_file: 'ASuite.dbg'
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         submodules: true
         path: '${{ env.ASUITE_SOURCE }}'
         
     - name: Install Dependencies (Ubuntu)
-      if: matrix.config.os == 'ubuntu-latest' || matrix.config.os == 'ubuntu-20.04'
+      if: matrix.config.os == 'ubuntu-latest' || matrix.config.os == 'ubuntu-22.04' && matrix.config.build-widgetset == 'gtk2'
       run: |
         sudo apt-get update
         sudo apt-get -m -y install libgtk2.0-dev libpango1.0-dev libffi-dev libxtst-dev xvfb
         Xvfb :1 &
         
     - name: Install Dependencies (Ubuntu - only GTK3)
-      if: (matrix.config.os == 'ubuntu-latest' || matrix.config.os == 'ubuntu-20.04') && matrix.config.build-widgetset == 'gtk3'
+      if: (matrix.config.os == 'ubuntu-latest' || matrix.config.os == 'ubuntu-22.04') && matrix.config.build-widgetset == 'gtk3'
       run: sudo apt-get -m -y install libgtk-3-dev
         
     - name: Install Dependencies (Ubuntu - only QT5)
       if: (matrix.config.os == 'ubuntu-latest' || matrix.config.os == 'ubuntu-20.04') && matrix.config.build-widgetset == 'qt5'
       run: |
-        sudo apt-get -m -y install libqt5pas-dev libqt5pas1 qt5-qmake qtbase5-dev qt5-default libqt5x11extras5-dev libxcb-keysyms1-dev
+        wget https://github.com/davidbannon/libqt5pas/releases/download/v1.2.13/libqt5pas1_2.13-1_amd64.deb
+        wget https://github.com/davidbannon/libqt5pas/releases/download/v1.2.13/libqt5pas-dev_2.13-1_amd64.deb
+        sudo apt-get -m -y install qt5-qmake qtbase5-dev qt5-default libqt5x11extras5-dev libxcb-keysyms1-dev
+        sudo dpkg -i libqt5pas1_2.13-1_amd64.deb
+        sudo dpkg -i libqt5pas-dev_2.13-1_amd64.deb
         cd ${{ env.ASUITE_SOURCE }}/3p/AsuiteComps/library/platform/unix/QGHotkeyHookPas
         qmake
         make
         sudo make install
 
+    - name: Install Dependencies (Ubuntu - only QT6)
+      if: (matrix.config.os == 'ubuntu-latest' || matrix.config.os == 'ubuntu-22.04') && matrix.config.build-widgetset == 'qt6'
+      run: |
+        wget https://github.com/davidbannon/libqt6pas/releases/download/v6.2.2/libqt6pas6_6.2.2-2_amd64.deb
+        wget https://github.com/davidbannon/libqt6pas/releases/download/v6.2.2/libqt6pas6-dev_6.2.2-2_amd64.deb
+        sudo apt-get -m -y install qt6-base-dev libxcb-keysyms1-dev libgl-dev qt6-base-private-dev
+        sudo dpkg -i libqt6pas6_6.2.2-2_amd64.deb
+        sudo dpkg -i libqt6pas6-dev_6.2.2-2_amd64.deb
+        cd ${{ env.ASUITE_SOURCE }}/3p/AsuiteComps/library/platform/unix/QGHotkeyHookPas
+        qmake6
+        make
+        sudo make install
+
     - name: Generate Cache Hash
-      run: echo "${{ matrix.config.fpcup-url }}${{ env.FPCUP_OPT }}${{ env.FPC_URL }}${{ env.FPC_BRANCH }}${{ env.LAZ_URL }}${{ env.LAZ_BRANCH }}${{ env.LAZ_PATCH}}${{ matrix.config.name }}" > .cache
+      run: echo "${{ matrix.config.fpcup-url }}${{ env.FPCUP_OPT }}${{ env.FPC_URL }}${{ env.FPC_BRANCH }}${{ env.LAZ_URL }}${{ env.LAZ_BRANCH }}${{ env.LAZ_REVISION_2_4 }}${{ env.LAZ_PATCH}}${{ matrix.config.name }}" > .cache
 
     - name: Cache
       id: cache
-      uses: actions/cache@v2.1.3
+      uses: actions/cache@v3.0.11
       env:
-        cache-name: cache-laz-v0.5.4
+        cache-name: cache-laz-v0.6.1
       with:
         path: |
           ${{ env.LAZ_DIR }}
           ${{ env.ASUITE_SOURCE }}/3p/mORMot2/static
-        key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('.cache') }}     
+        key: ${{ runner.os }}-${{ env.cache-name }}_${{ matrix.config.build-widgetset }}-${{ hashFiles('.cache') }}     
 
     - name: Install Lazarus
       if: steps.cache.outputs.cache-hit != 'true'
@@ -130,19 +157,20 @@ jobs:
 
     - name: Validate Cache
       if: steps.cache.outputs.cache-hit == 'true'
-      run: ${{ matrix.config.lazbuild }} --version && echo "::set-output name=success::true" || echo "::set-output name=success::false"
+      run: ${{ matrix.config.lazbuild }} --version && echo "success=true" >> $GITHUB_OUTPUT || echo "success=false" >> $GITHUB_OUTPUT
 
     - name: Build ASuite (${{ env.BUILD_MODE }})
-      run: ${{ matrix.config.lazbuild }} "${{ env.ASUITE_SOURCE }}/ASuite.lpi" --no-write-project --build-mode="${{ env.BUILD_MODE }}" --widgetset=${{ matrix.config.build-widgetset }} --operating-system=${{ matrix.config.build-os }}
+      run: ${{ matrix.config.lazbuild }} "${{ env.ASUITE_SOURCE }}/ASuite.lpi" --no-write-project --build-mode="${{ env.BUILD_MODE }}" --widgetset=${{ matrix.config.build-widgetset }}
 
     - name: Build dbg2mab
-      run: ${{ matrix.config.lazbuild }} "${{ env.ASUITE_SOURCE }}/3p/dbg2mab/dbg2mab.lpi" --no-write-project --widgetset=${{ matrix.config.build-widgetset }} --operating-system=${{ matrix.config.build-os }}
+      run: ${{ matrix.config.lazbuild }} "${{ env.ASUITE_SOURCE }}/3p/dbg2mab/dbg2mab.lpi" --no-write-project --widgetset=${{ matrix.config.build-widgetset }}
 
     - name: Embedded debug info in asuite executable
+      #if: matrix.config.build-widgetset != 'gtk2'
       run: ${{ env.ASUITE_SOURCE }}/bin/${{ matrix.config.dbg2mab }} ${{ env.ASUITE_SOURCE }}/bin/${{ matrix.config.debug_file }}
 
     - name: Upload the Build Artifact
-      uses: actions/upload-artifact@v2.2.2
+      uses: actions/upload-artifact@v3.1.1
       with:
         name: ASuite ${{ env.BUILD_MODE }} build - ${{ matrix.config.build-widgetset }}
         path: |

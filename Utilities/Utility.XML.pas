@@ -37,7 +37,7 @@ function GetBoolPropertyXML(Node: TDOMNode; Name: String; Default: Boolean): Boo
 implementation
 
 uses
-  NodeDataTypes.Custom, AppConfig.Main, Kernel.Types,
+  NodeDataTypes.Custom, AppConfig.Main, Kernel.Types, VirtualTrees.Types,
   VirtualTree.Methods, NodeDataTypes.Files, Menus,
   Kernel.Logger, Kernel.Instance, LCLProc;
 
