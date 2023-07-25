@@ -122,15 +122,11 @@ jobs:
     - name: Install Dependencies (Ubuntu - only QT6)
       if: (matrix.config.os == 'ubuntu-latest' || matrix.config.os == 'ubuntu-22.04') && matrix.config.build-widgetset == 'qt6'
       run: |
-        wget https://github.com/davidbannon/libqt6pas/releases/download/v6.2.2/libqt6pas6_6.2.2-2_amd64.deb
-        wget https://github.com/davidbannon/libqt6pas/releases/download/v6.2.2/libqt6pas6-dev_6.2.2-2_amd64.deb
+        wget https://github.com/davidbannon/libqt6pas/releases/download/v6.2.6/libqt6pas6_6.2.6-1_amd64.deb
+        wget https://github.com/davidbannon/libqt6pas/releases/download/v6.2.6/libqt6pas6-dev_6.2.6-1_amd64.deb
         sudo apt-get -m -y install qt6-base-dev libxcb-keysyms1-dev libgl-dev qt6-base-private-dev
-        sudo dpkg -i libqt6pas6_6.2.2-2_amd64.deb
-        sudo dpkg -i libqt6pas6-dev_6.2.2-2_amd64.deb
-        cd ${{ env.ASUITE_SOURCE }}/3p/AsuiteComps/library/platform/unix/QGHotkeyHookPas
-        qmake6
-        make
-        sudo make install
+        sudo dpkg -i libqt6pas6_6.2.6-1_amd64.deb
+        sudo dpkg -i libqt6pas6-dev_6.2.6-1_amd64.deb
 
     - name: Generate Cache Hash
       run: echo "${{ matrix.config.fpcup-url }}${{ env.FPCUP_OPT }}${{ env.FPC_URL }}${{ env.FPC_BRANCH }}${{ env.LAZ_URL }}${{ env.LAZ_BRANCH }}${{ env.LAZ_REVISION_2_4 }}${{ env.LAZ_PATCH}}${{ matrix.config.name }}" > .cache
