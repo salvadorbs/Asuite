@@ -15,12 +15,12 @@ env:
   FPC_URL: 'gitlab'
   FPC_BRANCH: 'release_3_2_2'
   LAZ_URL: 'gitlab'
-  LAZ_BRANCH: 'lazarus_3_0_RC1'
+  LAZ_BRANCH: 'lazarus_3_0'
   LAZ_REVISION_2_4: ''
   LAZ_DIR: 'fpcLaz'
   BUILD_MODE: 'Release'   
   FPCUP_OPT: ''
-  LAZ_PATCH: '/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
+  LAZ_PATCH: '' #'/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
   ASUITE_SOURCE: 'asuite_src'
 
 jobs:
@@ -40,16 +40,34 @@ jobs:
 
           - os: windows-latest
             name: 'Windows 64'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0s/fpclazup-x86_64-win64.exe'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0nf/fpclazup-x86_64-win64.exe'
             lazbuild: 'fpcLaz/lazarus/lazbuild.exe'
             dbg2mab: 'dbg2mab.exe'
             build-widgetset: 'win32'
             build-os: 'win64'
             debug_file: 'ASuite.dbg'
 
+          - os: windows-latest
+            name: 'Windows 64 QT5'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0nf/fpclazup-x86_64-win64.exe'
+            lazbuild: 'fpcLaz/lazarus/lazbuild.exe'
+            dbg2mab: 'dbg2mab.exe'
+            build-widgetset: 'qt5'
+            build-os: 'win64'
+            debug_file: 'ASuite.dbg'
+
+          - os: windows-latest
+            name: 'Windows 64 QT6'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0nf/fpclazup-x86_64-win64.exe'
+            lazbuild: 'fpcLaz/lazarus/lazbuild.exe'
+            dbg2mab: 'dbg2mab.exe'
+            build-widgetset: 'qt6'
+            build-os: 'win64'
+            debug_file: 'ASuite.dbg'
+
           - os: ubuntu-22.04
             name: 'Linux 64 GTK2'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0s/fpclazup-x86_64-linux'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0nf/fpclazup-x86_64-linux'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
             dbg2mab: 'dbg2mab'
             build-widgetset: 'gtk2'
@@ -58,7 +76,7 @@ jobs:
 
           - os: ubuntu-22.04
             name: 'Linux 64 GTK3'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0s/fpclazup-x86_64-linux'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0nf/fpclazup-x86_64-linux'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
             dbg2mab: 'dbg2mab'
             build-widgetset: 'gtk3'
@@ -67,7 +85,7 @@ jobs:
           
           - os: ubuntu-20.04
             name: 'Linux 64 QT5'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0s/fpclazup-x86_64-linux'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0nf/fpclazup-x86_64-linux'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
             dbg2mab: 'dbg2mab'
             build-widgetset: 'qt5'
@@ -76,7 +94,7 @@ jobs:
 
           - os: ubuntu-22.04
             name: 'Linux 64 QT6'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0s/fpclazup-x86_64-linux'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0nf/fpclazup-x86_64-linux'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
             dbg2mab: 'dbg2mab'
             build-widgetset: 'qt6'
@@ -105,28 +123,22 @@ jobs:
     - name: Install Dependencies (Ubuntu - only QT5)
       if: (matrix.config.os == 'ubuntu-latest' || matrix.config.os == 'ubuntu-20.04') && matrix.config.build-widgetset == 'qt5'
       run: |
-        wget https://github.com/davidbannon/libqt5pas/releases/download/v1.2.13/libqt5pas1_2.13-1_amd64.deb
-        wget https://github.com/davidbannon/libqt5pas/releases/download/v1.2.13/libqt5pas-dev_2.13-1_amd64.deb
+        wget https://github.com/davidbannon/libqt5pas/releases/download/v1.2.15/libqt5pas1_2.15-1_amd64.deb
+        wget https://github.com/davidbannon/libqt5pas/releases/download/v1.2.15/libqt5pas-dev_2.15-1_amd64.deb
+        sudo apt-get update
         sudo apt-get -m -y install qt5-qmake qtbase5-dev qt5-default libqt5x11extras5-dev libxcb-keysyms1-dev
-        sudo dpkg -i libqt5pas1_2.13-1_amd64.deb
-        sudo dpkg -i libqt5pas-dev_2.13-1_amd64.deb
-        cd ${{ env.ASUITE_SOURCE }}/3p/AsuiteComps/library/platform/unix/QGHotkeyHookPas
-        qmake
-        make
-        sudo make install
-
+        sudo apt-get -m -y install ./libqt5pas1_2.15-1_amd64.deb
+        sudo apt-get -m -y install ./libqt5pas-dev_2.15-1_amd64.deb
+        
     - name: Install Dependencies (Ubuntu - only QT6)
       if: (matrix.config.os == 'ubuntu-latest' || matrix.config.os == 'ubuntu-22.04') && matrix.config.build-widgetset == 'qt6'
       run: |
-        wget https://github.com/davidbannon/libqt6pas/releases/download/v6.2.2/libqt6pas6_6.2.2-2_amd64.deb
-        wget https://github.com/davidbannon/libqt6pas/releases/download/v6.2.2/libqt6pas6-dev_6.2.2-2_amd64.deb
+        wget https://github.com/davidbannon/libqt6pas/releases/download/v6.2.7/libqt6pas6_6.2.7-1_amd64.deb
+        wget https://github.com/davidbannon/libqt6pas/releases/download/v6.2.7/libqt6pas6-dev_6.2.7-1_amd64.deb
+        sudo apt-get update
         sudo apt-get -m -y install qt6-base-dev libxcb-keysyms1-dev libgl-dev qt6-base-private-dev
-        sudo dpkg -i libqt6pas6_6.2.2-2_amd64.deb
-        sudo dpkg -i libqt6pas6-dev_6.2.2-2_amd64.deb
-        cd ${{ env.ASUITE_SOURCE }}/3p/AsuiteComps/library/platform/unix/QGHotkeyHookPas
-        qmake6
-        make
-        sudo make install
+        sudo apt-get -m -y install ./libqt6pas6_6.2.7-1_amd64.deb
+        sudo apt-get -m -y install ./libqt6pas6-dev_6.2.7-1_amd64.deb
 
     - name: Generate Cache Hash
       run: echo "${{ matrix.config.fpcup-url }}${{ env.FPCUP_OPT }}${{ env.FPC_URL }}${{ env.FPC_BRANCH }}${{ env.LAZ_URL }}${{ env.LAZ_BRANCH }}${{ env.LAZ_REVISION_2_4 }}${{ env.LAZ_PATCH}}${{ matrix.config.name }}" > .cache
@@ -175,4 +187,3 @@ jobs:
         name: ASuite ${{ env.BUILD_MODE }} build - ${{ matrix.config.build-widgetset }}
         path: |
           ${{ env.ASUITE_SOURCE}}/bin
-          ${{ env.ASUITE_SOURCE }}/3p/AsuiteComps/library/platform/unix/QGHotkeyHookPas/libQGHotkeyHookPas.so*
