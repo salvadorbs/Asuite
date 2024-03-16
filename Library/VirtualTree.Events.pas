@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, VirtualTrees, VirtualTrees.Header, VirtualTrees.Types,
-  {$IFDEF MSWINDOWS} ActiveX, {$ELSE} FakeActiveX, {$ENDIF} VirtualTrees.BaseTree,
+  {$ifdef lclwin32}ActiveX,{$endif} virtualdragmanager, VirtualTrees.BaseTree,
   Forms.GraphicMenu, Forms.Dialog.BaseEntity, Menus, Forms, Controls;
 
 type
@@ -847,7 +847,7 @@ begin
     // Tidy up - release the drop handle
     // don't use DropH again after this
     DragFinish(Medium.hGlobal);
-    ReleaseStgMedium(Medium);
+    ReleaseStgMedium(@Medium);
   end;
 end;
 {$ENDIF}
@@ -902,7 +902,7 @@ begin
         GlobalUnlock(Medium.hGlobal);
       end;
     finally
-      ReleaseStgMedium(Medium);
+      ReleaseStgMedium(@Medium);
     end;
   end;
 end;

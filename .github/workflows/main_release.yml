@@ -15,11 +15,11 @@ env:
   FPC_URL: 'gitlab'
   FPC_BRANCH: 'release_3_2_2'
   LAZ_URL: 'gitlab'
-  LAZ_BRANCH: 'lazarus_3_0'
+  LAZ_BRANCH: 'lazarus_3_2'
   LAZ_REVISION_2_4: ''
   LAZ_DIR: 'fpcLaz'
-  BUILD_MODE: 'Release'   
-  FPCUP_OPT: ''
+  BUILD_MODE: 'Debug_GH_Action'   
+  FPCUP_OPT: '--lazopt="-g -gl" --fpcopt="-g -gl"'
   LAZ_PATCH: '' #'/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
   ASUITE_SOURCE: 'asuite_src'
 
@@ -40,34 +40,16 @@ jobs:
 
           - os: windows-latest
             name: 'Windows 64'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0nf/fpclazup-x86_64-win64.exe'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.4.0c/fpclazup-x86_64-win64.exe'
             lazbuild: 'fpcLaz/lazarus/lazbuild.exe'
             dbg2mab: 'dbg2mab.exe'
             build-widgetset: 'win32'
             build-os: 'win64'
             debug_file: 'ASuite.dbg'
 
-          - os: windows-latest
-            name: 'Windows 64 QT5'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0nf/fpclazup-x86_64-win64.exe'
-            lazbuild: 'fpcLaz/lazarus/lazbuild.exe'
-            dbg2mab: 'dbg2mab.exe'
-            build-widgetset: 'qt5'
-            build-os: 'win64'
-            debug_file: 'ASuite.dbg'
-
-          - os: windows-latest
-            name: 'Windows 64 QT6'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0nf/fpclazup-x86_64-win64.exe'
-            lazbuild: 'fpcLaz/lazarus/lazbuild.exe'
-            dbg2mab: 'dbg2mab.exe'
-            build-widgetset: 'qt6'
-            build-os: 'win64'
-            debug_file: 'ASuite.dbg'
-
           - os: ubuntu-22.04
             name: 'Linux 64 GTK2'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0nf/fpclazup-x86_64-linux'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.4.0c/fpclazup-x86_64-linux'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
             dbg2mab: 'dbg2mab'
             build-widgetset: 'gtk2'
@@ -76,7 +58,7 @@ jobs:
 
           - os: ubuntu-22.04
             name: 'Linux 64 GTK3'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0nf/fpclazup-x86_64-linux'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.4.0c/fpclazup-x86_64-linux'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
             dbg2mab: 'dbg2mab'
             build-widgetset: 'gtk3'
@@ -85,7 +67,7 @@ jobs:
           
           - os: ubuntu-20.04
             name: 'Linux 64 QT5'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0nf/fpclazup-x86_64-linux'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.4.0c/fpclazup-x86_64-linux'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
             dbg2mab: 'dbg2mab'
             build-widgetset: 'qt5'
@@ -94,7 +76,7 @@ jobs:
 
           - os: ubuntu-22.04
             name: 'Linux 64 QT6'
-            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.2.0nf/fpclazup-x86_64-linux'
+            fpcup-url: 'https://github.com/LongDirtyAnimAlf/Reiniero-fpcup/releases/download/v2.4.0c/fpclazup-x86_64-linux'
             lazbuild: 'fpcLaz/lazarus/lazbuild'
             dbg2mab: 'dbg2mab'
             build-widgetset: 'qt6'
