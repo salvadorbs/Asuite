@@ -42,6 +42,8 @@ type
 
 implementation
 
+uses
+  VirtualTrees.Types;
 
 { VirtualTreeHelper }
 

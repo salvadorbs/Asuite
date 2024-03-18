@@ -6,7 +6,7 @@ interface
 
 uses
   Kernel.Consts, LCLIntf, LCLType, SysUtils, Classes, Kernel.Enumerations,
-  FileUtil, {$IFDEF Windows}ComObj, {$ELSE} FakeActiveX, {$ENDIF} Dialogs,
+  FileUtil, {$IFDEF Windows}ComObj, {$ENDIF} Dialogs,
   LazFileUtils, Kernel.Types;
 
 { Folders }

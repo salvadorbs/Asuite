@@ -132,7 +132,7 @@ implementation
 uses
   Forms.Main, Utility.System, Kernel.Consts, AppConfig.Main, DataModules.Icons,
   Forms.About, NodeDataTypes.Base, Kernel.Enumerations, Forms.Options, LazVersion,
-  Utility.Misc, VirtualTree.Methods, Kernel.Types,
+  Utility.Misc, VirtualTree.Methods, Kernel.Types, VirtualTrees.Types,
   NodeDataTypes.Custom, Kernel.ResourceStrings, Kernel.Instance, Kernel.Manager
   {$IFDEF MSWINDOWS} , Windows {$ENDIF};
 

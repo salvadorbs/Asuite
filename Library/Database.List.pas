@@ -112,7 +112,7 @@ type
 implementation
 
 uses
-  Kernel.Enumerations, VirtualTree.Methods, NodeDataTypes.Custom,
+  Kernel.Enumerations, VirtualTree.Methods, NodeDataTypes.Custom, VirtualTrees.Types,
   NodeDataTypes.Files, Icons.Node, Kernel.Logger, mormot.core.unicode,
   Kernel.Manager;
 

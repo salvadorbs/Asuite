@@ -93,7 +93,7 @@ type
 implementation
 
 uses
-  Utility.System, AppConfig.Main, NodeDataTypes.Files, Dialogs,
+  Utility.System, AppConfig.Main, NodeDataTypes.Files, Dialogs, VirtualTrees.Types,
   Utility.FileFolder, Forms.PropertySeparator, Kernel.ResourceStrings,
   NodeDataTypes.Category, NodeDataTypes.Separator, Forms.PropertyItem, Icons.Thread,
   NodeDataTypes.Custom, Kernel.Consts, Icons.Node, Kernel.Logger, Utility.Misc,

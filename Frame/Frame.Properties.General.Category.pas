@@ -56,7 +56,7 @@ implementation
 
 uses
   NodeDataTypes.Custom, NodeDataTypes.Files, Kernel.Instance,
-  Kernel.Types, Forms.Main,
+  Kernel.Types, Forms.Main, VirtualTrees.Types,
   VirtualTree.Methods;
 
 {$R *.lfm}

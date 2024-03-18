@@ -255,7 +255,7 @@ implementation
 uses
   Forms.Main, DataModules.TrayMenu, Utility.System, Kernel.Consts, Utility.Misc,
   Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder, mormot.core.log,
-  LCLProc, BGRAIconCursor,
+  LCLProc, BGRAIconCursor, VirtualTrees.Types,
   TypInfo, Kernel.ResourceStrings, LCLTranslator, AppConfig.Consts, BGRABitmapTypes,
   Utility.Conversions, Hotkeys.Manager.Platform, Kernel.Instance, Kernel.Manager;
 

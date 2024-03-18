@@ -137,7 +137,7 @@ begin
       if FileExists(sIconName) then
         pbPicture := gdk_pixbuf_new_from_file_at_size(PAnsiChar(sIconName), Size, Size, nil)
       else
-        pbPicture := gtk_icon_theme_load_icon(gtk_icon_theme_get_for_screen(gdk_screen_get_default), Pgchar(sIconName), Size, GTK_ICON_LOOKUP_USE_BUILTIN, nil);
+        pbPicture := gtk_icon_theme_load_icon(gtk_icon_theme_get_for_screen(gdk_screen_get_default), Pgchar(sIconName), Size, [GTK_ICON_LOOKUP_USE_BUILTIN], nil);
     end;
 
     if Assigned(pbPicture) then
