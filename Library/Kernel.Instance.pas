@@ -114,7 +114,7 @@ begin
     HandleParam(ParamStr(I));
 
   //Create some classes
-  FPaths  := TConfigPaths.Create;
+  FPaths  := TConfigPaths.Create(Application.ExeName);
 
   //Setup logger
   with TSynLog.Family do
