@@ -44,10 +44,8 @@ if ($RemoveSparta) {
 # Install Lazarus Components
 write-output "Installing Lazarus Components for building ASuite"
 InstallPackageLink $LazBuildPath "$ASuiteSource/3p/bgrabitmap/bgrabitmap/bgrabitmappack.lpk"
-InstallPackage $LazBuildPath "$ASuiteSource/3p/bgrabitmap/bglcontrols/bglcontrols.lpk"
 InstallPackage $LazBuildPath "$ASuiteSource/3p/bgracontrols/bgracontrols.lpk"
-InstallPackage $LazBuildPath "$ASuiteSource/3p/bgracontrols/bgrapascalscriptcomponent.lpk"
-InstallPackage $LazBuildPath "$ASuiteSource/3p/IGDIPlusMod/packages/Lazarus/lazigdiplus.lpk"
+InstallPackage $LazBuildPath "$ASuiteSource/3p/GDIPlus-Library-for-Delphi-and-Lazarus/packages/Lazarus/lazgdiplus.lpk"
 InstallPackage $LazBuildPath "$ASuiteSource/3p/JPLib/packages/Lazarus/jplib.lpk"
 InstallPackage $LazBuildPath "$ASuiteSource/3p/JPPack/packages/Lazarus/jppacklcl.lpk"
 InstallPackageLink $LazBuildPath "$ASuiteSource/3p/mORMot2/packages/lazarus/mormot2.lpk"

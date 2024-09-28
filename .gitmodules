@@ -22,9 +22,9 @@
 [submodule "3p/bgracontrols"]
 	path = 3p/bgracontrols
 	url = https://github.com/bgrabitmap/bgracontrols.git
-[submodule "3p/IGDIPlusMod"]
-	path = 3p/IGDIPlusMod
-	url = https://github.com/jackdp/IGDIPlusMod
 [submodule "3p/mORMot2"]
 	path = 3p/mORMot2
 	url = https://github.com/synopse/mORMot2.git
+[submodule "3p/GDIPlus-Library-for-Delphi-and-Lazarus"]
+	path = 3p/GDIPlus-Library-for-Delphi-and-Lazarus
+	url = https://github.com/jackdp/GDIPlus-Library-for-Delphi-and-Lazarus
