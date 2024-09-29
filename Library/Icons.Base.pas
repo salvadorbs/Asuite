@@ -267,7 +267,12 @@ begin
 end;
 
 procedure TBaseIcon.ResetCacheIcon;
+var
+  strPathCacheIcon: String;
 begin
+  strPathCacheIcon := PathCacheIcon;
+  TASuiteLogger.Debug('Reset cache icon %s', [PathCacheIcon]);
+
   //Small icon cache
   if FileExists(PathCacheIcon) then
     SysUtils.DeleteFile(PathCacheIcon);
