@@ -24,7 +24,7 @@ unit NodeDataTypes.Base;
 interface
 
 uses
-  VirtualTrees, SysUtils, DateUtils, Kernel.Enumerations, LazUTF8,
+  VirtualTrees, SysUtils, DateUtils, Kernel.Enumerations,
   Icons.Custom;
 
 type
@@ -35,6 +35,7 @@ type
   private
     //Base private variables and functions
     FID          : Int64;
+    FMenuCaption : string;
     FParentID    : Int64;
     FPosition    : Cardinal;
     FChanged     : boolean;
@@ -76,6 +77,7 @@ type
     property Position : Cardinal read FPosition write FPosition;
     property Changed: boolean read FChanged write SetChanged;
     property Name: string read GetName write SetName;
+    property MenuCaption: string read FMenuCaption;
     property Description: string read FDescription write FDescription;
     property Icon: TCustomIcon read FIcon;
     property DataType: TvTreeDataType read GetDataType write SetDataType;
@@ -92,7 +94,7 @@ type
 implementation
 
 uses
-  Icons.Node, Kernel.ResourceStrings;
+  Icons.Node, Kernel.ResourceStrings, Utility.Misc;
 
 constructor TvBaseNodeData.Create(AType: TvTreeDataType);
 begin
@@ -148,8 +150,8 @@ end;
 
 procedure TvBaseNodeData.SetName(Value: String);
 begin
-  FName := LazUTF8.UTF8StringReplace(Value, '&&', '&', [rfIgnoreCase,rfReplaceAll]);
-  FName := StringReplace(FName, '&', '&&', [rfIgnoreCase,rfReplaceAll]);
+  FName := Value;
+  FMenuCaption := DoubleAmpersands(Value);
 end;
 
 procedure TvBaseNodeData.SetPointerNode(APNode: PVirtualNode);

@@ -313,7 +313,7 @@ begin
         MenuItem := TASMenuItem.Create(Application.MainForm);    
         SetupASMenuItem(NodeData, ItemNodeData, MenuItem);
 
-        MenuItem.Caption    := ItemNodeData.Name;
+        MenuItem.Caption    := ItemNodeData.MenuCaption;
         MenuItem.ImageIndex := ItemNodeData.Icon.ImageIndex;
         if (ItemNodeData.IsFileItem) then
         begin

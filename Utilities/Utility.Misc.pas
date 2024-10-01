@@ -34,6 +34,7 @@ procedure SetFormPositionFromConfig(AForm: TForm);
 function GetCheckedMenuItem(PopupMenu: TPopupMenu): TMenuItem;
 function IsFormatInClipBoard(format: Word): Boolean;
 function RemoveAllQuotes(const S: string): string;
+function DoubleAmpersands(const str: string): string;
 
 { Dialogs }
 procedure ShowMessageEx(const Msg: string; Error: boolean = False);
@@ -102,6 +103,11 @@ function RemoveAllQuotes(const S: string): string;
 begin
   Result := AnsiDequotedStr(S, '''');
   Result := AnsiDequotedStr(Result, '"');
+end;
+
+function DoubleAmpersands(const str: string): string;
+begin
+  Result := StringReplace(str, '&', '&&', [rfReplaceAll]);
 end;
 
 procedure ShowMessageEx(const Msg: string; Error: boolean = False);
