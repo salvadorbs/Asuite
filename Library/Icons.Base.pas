@@ -59,6 +59,7 @@ type
 
     procedure ResetIcon; virtual;
     procedure ResetCacheIcon;
+    function CheckImageIndex: Boolean;
 
     property Name: string read GetName;
     property ImageIndex: Integer read GetImageIndex;
@@ -127,8 +128,10 @@ begin
     sPathCacheIcon := PathCacheIcon;
     if (FileExists(sPathCacheIcon)) and (CacheIconCRC = intHash) then
       sTempPath := sPathCacheIcon
-    else
+    else begin
+      TASuiteLogger.Debug('sPathCacheIcon = %s - CacheIconCRC = %d - intHash = %d', [sPathCacheIcon, CacheIconCRC, intHash]);
       ResetCacheIcon;
+    end;
   end;
 
   //Icon or exe
@@ -234,6 +237,11 @@ begin
   finally
     Icon.Free;
   end;
+end;
+
+function TBaseIcon.CheckImageIndex: Boolean;
+begin
+  Result := FImageIndex <> -1;
 end;
 
 function TBaseIcon.InternalGetImageIndex(const APathFile: string): Integer;

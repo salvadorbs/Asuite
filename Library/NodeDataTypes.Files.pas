@@ -251,7 +251,7 @@ begin
   if FIsPathFileExists <> bPathExists then
   begin
     FIsPathFileExists := bPathExists;
-    if Config.ASuiteState = lsNormal then
+    if (Config.ASuiteState = lsNormal) and (Icon.CheckImageIndex) then
       Icon.ResetIcon;
   end;
 end;
