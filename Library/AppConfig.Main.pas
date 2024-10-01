@@ -261,7 +261,6 @@ uses
 
 procedure TConfiguration.AfterUpdateConfig;
 var
-  BackgroundBMP : Graphics.TBitmap;
   sBackgroundPath: String;
 
 begin   
@@ -273,18 +272,9 @@ begin
   sBackgroundPath := ASuiteInstance.Paths.RelativeToAbsolute(FTVBackgroundPath);
   if (FTVBackground) and (FTVBackgroundPath <> '') and (FileExists(sBackgroundPath)) then
   begin
-    if ExtractLowerFileExt(sBackgroundPath) = EXT_PNG then
-    begin
-      BackgroundBMP := LoadPngAndConvertBMP(sBackgroundPath);
-      try
-        ASuiteInstance.MainTree.Background.Bitmap := BackgroundBMP;
-      finally
-        BackgroundBMP.Free;
-      end;
-    end
-    else
-      if ExtractLowerFileExt(sBackgroundPath) = EXT_BMP then
-        ASuiteInstance.MainTree.Background.LoadFromFile(sBackgroundPath);
+    if ((ExtractLowerFileExt(sBackgroundPath) = EXT_PNG) or
+        (ExtractLowerFileExt(sBackgroundPath) = EXT_BMP)) then
+      ASuiteInstance.MainTree.Background.LoadFromFile(sBackgroundPath);
   end;
 
   ASuiteInstance.MainTree.Update;
@@ -949,7 +939,7 @@ end;
 
 procedure TConfiguration.SetTVFont(value: TFont);
 begin
-  if FTVFont.IsEqual(value) then
+  if not FTVFont.IsEqual(value) then
   begin
     FTVFont.Name  := value.Name;
     FTVFont.Style := value.Style;

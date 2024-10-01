@@ -206,6 +206,8 @@ procedure TVirtualTreeEvents.SetupVSTGraphicMenu(ATree: TVirtualStringTree; AGra
 begin
   FGraphicMenu := AGraphicMenu;
 
+  ATree.TreeOptions.AutoOptions := ATree.TreeOptions.AutoOptions - [toAutoChangeScale];
+
   ATree.Images := dmImages.ilIcons;
 
   ATree.OnClick         := DoSingleClickGM;
@@ -227,6 +229,8 @@ begin
   ATree.Images := dmImages.ilIcons;
   ATree.ImagesWidth := ICON_SIZE_LARGE;
   ATree.DefaultNodeHeight := ASuiteInstance.BigHeightNode;
+
+  ATree.TreeOptions.AutoOptions := ATree.TreeOptions.AutoOptions - [toAutoChangeScale];
 
   ATree.OnGetNodeDataSize := DoGetNodeDataSizeSearch;
   ATree.OnCompareNodes    := DoCompareNodesHotkey;
@@ -251,6 +255,7 @@ procedure TVirtualTreeEvents.SetupVSTList(ATree: TVirtualStringTree);
 begin
   ATree.Images := dmImages.ilIcons;
   ATree.ImagesWidth := ICON_SIZE_SMALL;
+  ATree.TreeOptions.AutoOptions := ATree.TreeOptions.AutoOptions - [toAutoChangeScale];
 
   {$IFDEF MSWINDOWS}
   ATree.TreeOptions.MiscOptions := ATree.TreeOptions.MiscOptions + [toAcceptOLEDrop];  
@@ -285,6 +290,8 @@ begin
   ATree.ImagesWidth := ICON_SIZE_LARGE;
   ATree.DefaultNodeHeight := ASuiteInstance.BigHeightNode;
 
+  ATree.TreeOptions.AutoOptions := ATree.TreeOptions.AutoOptions - [toAutoChangeScale];
+
   ATree.OnGetNodeDataSize := DoGetNodeDataSizeSearch;
   ATree.OnGetText         := DoGetTextAutorun;
   ATree.OnGetImageIndex   := DoGetImageIndexHotkey;
@@ -297,6 +304,8 @@ begin
   ATree.Images := dmImages.ilIcons;
   ATree.ImagesWidth := ICON_SIZE_LARGE;
   ATree.DefaultNodeHeight := ASuiteInstance.BigHeightNode;
+
+  ATree.TreeOptions.AutoOptions := ATree.TreeOptions.AutoOptions - [toAutoChangeScale];
 
   ATree.OnAddToSelection  := DoAddToSelectionFrame;
   ATree.OnFreeNode        := DoFreeNodeFrame;
@@ -360,8 +369,9 @@ begin
       else
         ImageIndex := ASuiteManager.IconsManager.GetIconIndex('file');
 
-      TVirtualStringTree(Sender).Images.Draw(TargetCanvas, CellRect.Left +
-                      ((CellRect.Width - TVirtualStringTree(Sender).Images.Width) div 2), CellRect.Top, ImageIndex);
+      TVirtualStringTree(Sender).Images.Draw(TargetCanvas,
+              CellRect.Left + ((CellRect.Width - TVirtualStringTree(Sender).Images.Width) div 2),
+              CellRect.Top + ((CellRect.Height - TVirtualStringTree(Sender).Images.Height) div 2), ImageIndex);
     end;
   end;
 end;
