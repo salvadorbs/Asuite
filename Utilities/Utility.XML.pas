@@ -372,8 +372,6 @@ begin
     //Main Form - Position and size
     Config.HoldSize    := GetBoolPropertyXML(Node, 'HoldSize', false);
     Config.AlwaysOnTop := GetBoolPropertyXML(Node, 'MainOnTop', false);
-    //Hotkey
-    Config.HotKey      := GetBoolPropertyXML(Node, 'ActiveHotKey',true);
     //Window Hotkey
     Config.WindowHotkey := ShortCutToText(XMLToShortcut(Node, 'HotKeyCode', 'HotKeyModifier'));
     //Menu Hotkey

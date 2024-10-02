@@ -110,7 +110,6 @@ begin
       if (ShortCut <> '') then
       begin
         NodeData.Hotkey  := TextToShortCut(ShortCut);
-        NodeData.ActiveHotkey := True;
         NodeData.Changed := True;
 
         if (edtHotkeyMF.Text = ShortCut) then
@@ -278,8 +277,7 @@ begin
     NodeData := TvCustomRealNodeData(TVirtualTreeMethods.GetNodeItemData(Node, ATree));
     if Assigned(NodeData) then
     begin
-      NodeData.ActiveHotkey := ATree.IsVisible[Node];
-      if NodeData.ActiveHotkey then
+      if ATree.IsVisible[Node] then
         AItemList.AddItem(NodeData)
       else
         AItemList.RemoveItem(NodeData);
