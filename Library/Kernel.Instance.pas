@@ -71,7 +71,7 @@ var
 implementation
 
 uses
-  Forms.ImportList, Kernel.Logger, Forms, Kernel.Consts, Utility.FileFolder,
+  Forms.ImportList, Kernel.Logger, Forms, Kernel.Consts, Utility.FileFolder, LazFileUtils,
   Utility.Misc, Utility.XML, VirtualTree.Methods, mormot.core.log, Kernel.Manager,
   mormot.core.base, VirtualTrees.Types;
 
@@ -105,16 +105,31 @@ end;
 constructor TASuiteInstance.Create;
 var
   I: Integer;
+  strFileListSql, strFileListXml: String;
 begin
   FScheduler := TScheduler.Create;
   FVSTEvents := TVirtualTreeEvents.Create;
+
+  //Create some classes
+  FPaths  := TConfigPaths.Create(Application.ExeName);
 
   //Params
   for I := 1 to ParamCount do
     HandleParam(ParamStr(I));
 
-  //Create some classes
-  FPaths  := TConfigPaths.Create(Application.ExeName);
+  strFileListSql := ExtractFileNameOnly(Application.ExeName) + EXT_SQL;
+  strFileListXml := ExtractFileNameOnly(Application.ExeName) + EXT_XML;
+
+  // Check if FSuitePathList is a empty string
+  if (FPaths.SuitePathList = '') then
+  begin
+    //Check if xml list exists, else get sqlite list
+    FPaths.SuitePathList := FPaths.SuitePathData + strFileListXml;
+    if not FileExists(FPaths.SuitePathList) then
+      FPaths.SuitePathList := FPaths.SuitePathData + strFileListSql;
+  end
+  else
+    FPaths.SuitePathList := FPaths.RelativeToAbsolute(FPaths.SuitePathList);
 
   //Setup logger
   with TSynLog.Family do
@@ -166,7 +181,7 @@ begin
   if sName <> '' then
   begin
     if (CompareText(sName, 'list') = 0) and (FirstInstance) then
-      FPaths.SuitePathList := FPaths.RelativeToAbsolute(RemoveAllQuotes(sValue));
+      FPaths.SuitePathList := RemoveAllQuotes(sValue);
 
     //Add new node
     if (CompareText(sName, 'additem') = 0) and (Assigned(ASuiteManager.DBManager)) then

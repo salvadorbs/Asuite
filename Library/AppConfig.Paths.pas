@@ -210,8 +210,8 @@ begin
   strPathExe := APathExecutable;
   FSuitePathASuiteFolder  := ExtractFilePath(strPathExe);
 
-  strFileListSql := ExtractFileNameOnly(strPathExe) + EXT_SQL;
-  strFileListXml := ExtractFileNameOnly(strPathExe) + EXT_XML;
+  strFileListSql := ExtractFileNameOnly(Application.ExeName) + EXT_SQL;
+  strFileListXml := ExtractFileNameOnly(Application.ExeName) + EXT_XML;
 
   {$IFDEF MSWINDOWS}
   FSuiteDrive        := LowerCase(ExtractFileDrive(strPathExe));
@@ -234,11 +234,6 @@ begin
     FSuitePathData := GetAppConfigDir(True);
     SysUtils.ForceDirectories(FSuitePathData);
   end;
-
-  //Check if xml list exists, else get sqlite list
-  FSuitePathList := FSuitePathData + strFileListXml;
-  if not FileExists(FSuitePathList) then
-    FSuitePathList := FSuitePathData + strFileListSql;
 
   FSuitePathSettings := FSuitePathData + SETTINGS_FILENAME;
 
