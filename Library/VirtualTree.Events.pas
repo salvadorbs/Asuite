@@ -428,21 +428,60 @@ procedure TVirtualTreeEvents.DoCompareNodesList(Sender: TBaseVirtualTree; Node1,
   Node2: PVirtualNode; Column: TColumnIndex; var Result: Integer);
 var
   Data1, Data2: TvBaseNodeData;
+  NodeIter1, NodeIter2: PVirtualNode;
+  IsInSameBlock: Boolean;
+
+  function FindPreviousSeparator(Node: PVirtualNode): PVirtualNode;
+  var
+    Data: TvBaseNodeData;
+  begin
+    Result := Node;
+
+    while (Assigned(Result)) do
+    begin
+      Data := TVirtualTreeMethods.GetNodeItemData(Result, Sender);
+
+      Assert(Assigned(Data));
+
+      if Data.IsSeparatorItem then
+        Exit;
+
+      Result := Result.PrevSibling;
+    end;
+
+    Result := nil;
+  end;
+
 begin
   Data1 := TVirtualTreeMethods.GetNodeItemData(Node1, Sender);
   Data2 := TVirtualTreeMethods.GetNodeItemData(Node2, Sender);
-  if (Not Assigned(Data1)) or (Not Assigned(Data2)) then
+
+  Assert(Assigned(Data1));
+  Assert(Assigned(Data2));
+
+  if Data1.IsSeparatorItem or Data2.IsSeparatorItem then
     Result := 0
-  else
-    if (Data1.IsCategoryItem) <> (Data2.IsCategoryItem) then
+  else begin
+    NodeIter1 := FindPreviousSeparator(Node1);
+    NodeIter2 := FindPreviousSeparator(Node2);
+
+    IsInSameBlock := (NodeIter1 = NodeIter2);
+
+    if IsInSameBlock then
     begin
-      if Data1.IsCategoryItem then
-        Result := -1
+      if (Data1.IsCategoryItem) <> (Data2.IsCategoryItem) then
+      begin
+        if Data1.IsCategoryItem then
+          Result := -1
+        else
+          Result := 1;
+      end
       else
-        Result := 1
+        Result := CompareText(Data1.Name, Data2.Name);
     end
     else
-      Result := CompareText(Data1.Name, Data2.Name);
+      Result := 0;
+  end;
 end;
 
 procedure TVirtualTreeEvents.DoDragDrop(Sender: TBaseVirtualTree;
