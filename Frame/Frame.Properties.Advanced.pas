@@ -108,7 +108,7 @@ begin
     dtpSchTime.Time        := CurrentNodeData.SchDateTime;
     cxSchedulerChange(Self);
     //Hotkey
-    if (CurrentNodeData.Hotkey <> 0) then
+    if (CurrentNodeData.IsHotkeyActive) then
       edtHotkey.Text         := ShortCutToText(CurrentNodeData.Hotkey);
     //Specific file settings
     cbHideSoftware.Checked := CurrentNodeData.HideFromMenu;

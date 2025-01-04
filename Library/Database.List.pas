@@ -130,7 +130,7 @@ begin
 
     //If enabled, register item's hotkey with new ID
     if AData is TvCustomRealNodeData then
-      if TvCustomRealNodeData(AData).Hotkey <> 0 then
+      if TvCustomRealNodeData(AData).IsHotkeyActive then
         ASuiteManager.ListManager.HotKeyItemList.AddItem(TvCustomRealNodeData(AData));
 
     SQLFilesData.Free;

@@ -43,6 +43,7 @@ type
     FHotkey      : TShortCut;
     FLastAccess  : Int64;
 
+    function GetIsHotkeyActive: Boolean;
     procedure SetAutorun(value: TAutorunType);
     procedure SetHotkey(AValue: TShortCut);
     procedure SetSchMode(value: TSchedulerMode);
@@ -75,6 +76,7 @@ type
     property SchMode: TSchedulerMode read FSchMode write SetSchMode;
     property SchDateTime: TDateTime read FSchDateTime write SetSchDateTime;
     property Hotkey: TShortCut read FHotkey write SetHotkey;
+    property IsHotkeyActive: Boolean read GetIsHotkeyActive;
   end;
   PvCustomRealNodeData = ^TvCustomRealNodeData;
 
@@ -250,12 +252,17 @@ begin
   FAutorun := value;
 end;
 
+function TvCustomRealNodeData.GetIsHotkeyActive: Boolean;
+begin
+  Result := Self.Hotkey <> 0;
+end;
+
 procedure TvCustomRealNodeData.SetHotkey(AValue: TShortCut);
 begin
   if (Config.ASuiteState <> lsImporting) then
   begin
     //Old value is true, remove it in HotKeyApp
-    if (FHotkey <> 0) then
+    if (Self.IsHotkeyActive) then
       ASuiteManager.ListManager.HotKeyItemList.RemoveItem(Self);
     //New value is true, add it in HotKeyApp
     if (AValue <> 0) then
