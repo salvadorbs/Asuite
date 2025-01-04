@@ -746,7 +746,6 @@ begin
   //New node can't use same hotkey of old node
   if DataDest.Data is TvCustomRealNodeData then
   begin
-    TvCustomRealNodeData(DataDest.Data).ActiveHotkey := False;
     TvCustomRealNodeData(DataDest.Data).Hotkey := 0;
   end;
 

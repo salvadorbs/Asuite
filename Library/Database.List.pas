@@ -58,7 +58,6 @@ type
     Fscheduler_mode   : Byte;
     Fscheduler_datetime : TDateTime;
     Frun_from_category  : Boolean;
-    FActiveHotkey       : Boolean;
     Fhotkey             : Word;
     Fenvironment_vars   : RawUTF8;
 
@@ -103,7 +102,6 @@ type
     property autorun_position: Integer read Fautorun_position write Fautorun_position;
     property scheduler_mode: Byte read Fscheduler_mode write Fscheduler_mode;
     property scheduler_datetime: TDateTime read Fscheduler_datetime write Fscheduler_datetime;
-    property activehotkey: Boolean read FActiveHotkey write FActiveHotkey;
     property hotkey: Word read Fhotkey write Fhotkey;
     property run_from_category: Boolean read Frun_from_category write Frun_from_category;
     property environment_vars: RawUTF8 read Fenvironment_vars write Fenvironment_vars;
@@ -132,7 +130,7 @@ begin
 
     //If enabled, register item's hotkey with new ID
     if AData is TvCustomRealNodeData then
-      if TvCustomRealNodeData(AData).ActiveHotkey then
+      if TvCustomRealNodeData(AData).IsHotkeyActive then
         ASuiteManager.ListManager.HotKeyItemList.AddItem(TvCustomRealNodeData(AData));
 
     SQLFilesData.Free;
@@ -178,7 +176,6 @@ begin
           SchMode     := TSchedulerMode(SQLItemsData.scheduler_mode);
           SchDateTime := SQLItemsData.scheduler_datetime;
           Hotkey      := SQLItemsData.hotkey;
-          ActiveHotkey := SQLItemsData.activehotkey;
           WindowState := SQLItemsData.window_state;
           ActionOnExe := TActionOnExecute(SQLItemsData.onlaunch);
         end;
@@ -276,7 +273,6 @@ begin
       Fonlaunch       := Ord(ActionOnExe);
       Fscheduler_mode := Ord(SchMode);
       Fscheduler_datetime := SchDateTime;
-      FActiveHotkey   := ActiveHotkey;
       Fhotkey         := Hotkey;
     end;
     //Add file fields

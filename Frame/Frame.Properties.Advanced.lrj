@@ -3,7 +3,6 @@
 {"hash":342540,"name":"tfrmadvancedpropertypage.dtpschdate.textfornulldate","sourcebytes":[78,85,76,76],"value":"NULL"},
 {"hash":342540,"name":"tfrmadvancedpropertypage.dtpschtime.textfornulldate","sourcebytes":[78,85,76,76],"value":"NULL"},
 {"hash":83276233,"name":"tfrmadvancedpropertypage.grphotkey.caption","sourcebytes":[72,111,116,107,101,121],"value":"Hotkey"},
-{"hash":22920697,"name":"tfrmadvancedpropertypage.cbhotkey.caption","sourcebytes":[65,99,116,105,118,101,32,104,111,116,107,101,121],"value":"Active hotkey"},
 {"hash":90893459,"name":"tfrmadvancedpropertypage.grpothers.caption","sourcebytes":[79,116,104,101,114,115],"value":"Others"},
 {"hash":227251173,"name":"tfrmadvancedpropertypage.cbhidesoftware.caption","sourcebytes":[72,105,100,101,32,116,104,105,115,32,115,111,102,116,119,97,114,101,32,102,114,111,109,32,109,101,110,117],"value":"Hide this software from menu"},
 {"hash":153613577,"name":"tfrmadvancedpropertypage.cbdontinsertmru.caption","sourcebytes":[68,111,110,39,116,32,105,110,115,101,114,116,32,116,104,105,115,32,115,111,102,116,119,97,114,101,32,105,110,32,114,101,99,101,110,116,115,32,40,77,82,85,41],"value":"Don't insert this software in recents (MRU)"},

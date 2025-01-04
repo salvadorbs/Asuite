@@ -92,7 +92,7 @@ begin
   FMRUList.RemoveItem(AItemData);
   FMFUList.RemoveItem(AItemData);
   //Remove item from hotkey list
-  if AItemData.ActiveHotkey then
+  if AItemData.IsHotkeyActive then
     FHotKeyItemList.RemoveItem(AItemData);
   //Remove item from scheduler list
   if AItemData.SchMode <> smDisabled then

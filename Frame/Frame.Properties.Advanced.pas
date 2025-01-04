@@ -44,11 +44,9 @@ type
     dtpSchDate: TDateTimePicker;
     dtpSchTime: TDateTimePicker;
     grpHotkey: TGroupBox;
-    
-    cbHotKey: TCheckBox;
+
     pnlTop: TPanel;
     procedure cxSchedulerChange(Sender: TObject);
-    procedure cbHotKeyClick(Sender: TObject);
     procedure edtHotkeyRightButtonClick(Sender: TObject);
     procedure edtHotkeyChange(Sender: TObject);
     procedure edtHotkeyClick(Sender: TObject);
@@ -75,11 +73,6 @@ uses
 {$R *.lfm}
 
 { TfrmAdvancedPropertyPage }
-
-procedure TfrmAdvancedPropertyPage.cbHotKeyClick(Sender: TObject);
-begin
-  edtHotkey.Enabled := cbHotKey.Checked;
-end;
 
 procedure TfrmAdvancedPropertyPage.cxSchedulerChange(Sender: TObject);
 begin
@@ -115,9 +108,8 @@ begin
     dtpSchTime.Time        := CurrentNodeData.SchDateTime;
     cxSchedulerChange(Self);
     //Hotkey
-    cbHotKey.Checked       := CurrentNodeData.ActiveHotkey;
-    edtHotkey.Text         := ShortCutToText(CurrentNodeData.Hotkey);
-    cbHotKeyClick(Self);
+    if (CurrentNodeData.IsHotkeyActive) then
+      edtHotkey.Text         := ShortCutToText(CurrentNodeData.Hotkey);
     //Specific file settings
     cbHideSoftware.Checked := CurrentNodeData.HideFromMenu;
     if CurrentNodeData.IsFileItem then
@@ -154,7 +146,6 @@ begin
     CurrentNodeData.SchDateTime  := RecodeSecond(CurrentNodeData.SchDateTime, 0);
     //Hotkey
     CurrentNodeData.Hotkey       := TextToShortCut(edtHotkey.Text);
-    CurrentNodeData.ActiveHotkey := cbHotKey.Checked;
     //Specific file settings
     CurrentNodeData.HideFromMenu := cbHideSoftware.Checked;
     if CurrentNodeData.IsFileItem then
@@ -191,8 +182,7 @@ end;
 
 procedure TfrmAdvancedPropertyPage.edtHotkeyRightButtonClick(Sender: TObject);
 begin
-  if Sender is TButtonedEdit then
-    TButtonedEdit(Sender).Text := '';
+  edtHotkey.Text := '';
 end;
 
 end.

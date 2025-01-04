@@ -40,14 +40,14 @@ type
     FAutorunPos  : Integer; //Position for ASuiteStartUpApp and ASuiteShutdownApp
     FSchMode     : TSchedulerMode; //0 Disabled, 1 Once, 2 Hourly, 3 Daily, 4 Weekly
     FSchDateTime : TDateTime;
-    FActiveHotkey : Boolean;
-    FHotkey      : Cardinal;
+    FHotkey      : TShortCut;
     FLastAccess  : Int64;
 
+    function GetIsHotkeyActive: Boolean;
     procedure SetAutorun(value: TAutorunType);
+    procedure SetHotkey(AValue: TShortCut);
     procedure SetSchMode(value: TSchedulerMode);
     procedure SetSchDateTime(value: TDateTime);
-    procedure SetActiveHotkey(const Value: Boolean);
     function GetPathAbsoluteIcon: String;
     procedure RunActionOnExe(Action: TActionOnExecute);
   protected
@@ -75,8 +75,8 @@ type
     property AutorunPos: Integer read FAutorunPos write FAutorunPos;
     property SchMode: TSchedulerMode read FSchMode write SetSchMode;
     property SchDateTime: TDateTime read FSchDateTime write SetSchDateTime;
-    property ActiveHotkey: Boolean read FActiveHotkey write SetActiveHotkey;
-    property Hotkey: Cardinal read FHotkey write FHotkey;
+    property Hotkey: TShortCut read FHotkey write SetHotkey;
+    property IsHotkeyActive: Boolean read GetIsHotkeyActive;
   end;
   PvCustomRealNodeData = ^TvCustomRealNodeData;
 
@@ -99,7 +99,6 @@ begin
     Self.WindowState := SourceNodeData.WindowState;
     Self.ActionOnExe := SourceNodeData.ActionOnExe;
     Self.Hotkey      := SourceNodeData.Hotkey;
-    Self.ActiveHotkey :=SourceNodeData.ActiveHotkey;
     Self.Autorun := SourceNodeData.Autorun;
     Self.SchMode := SourceNodeData.SchMode;
     Self.SchDateTime := SourceNodeData.SchDateTime;
@@ -112,27 +111,12 @@ begin
   FPathIcon    := '';
   FSchMode     := smDisabled;
   FSchDateTime := Now;
-  FActiveHotkey := False;
   FHotkey      := 0;
   FWindowState := 0;
   FActionOnExe := aeDefault;
   FAutorun     := atNever;
   FAutorunPos  := 0;
   FLastAccess  := -1;
-end;
-
-procedure TvCustomRealNodeData.SetActiveHotkey(const Value: Boolean);
-begin
-  if (Config.ASuiteState <> lsImporting) then
-  begin
-    //Old value is true, remove it in HotKeyApp
-    if (FActiveHotkey) then
-      ASuiteManager.ListManager.HotKeyItemList.RemoveItem(Self);
-    //New value is true, add it in HotKeyApp
-    if (value) then
-      ASuiteManager.ListManager.HotKeyItemList.AddItem(Self);
-  end;
-  FActiveHotkey := Value;
 end;
 
 procedure TvCustomRealNodeData.SetSchDateTime(value: TDateTime);
@@ -266,6 +250,25 @@ begin
   end;
   //Set new value
   FAutorun := value;
+end;
+
+function TvCustomRealNodeData.GetIsHotkeyActive: Boolean;
+begin
+  Result := Self.Hotkey <> 0;
+end;
+
+procedure TvCustomRealNodeData.SetHotkey(AValue: TShortCut);
+begin
+  if (Config.ASuiteState <> lsImporting) then
+  begin
+    //Old value is true, remove it in HotKeyApp
+    if (Self.IsHotkeyActive) then
+      ASuiteManager.ListManager.HotKeyItemList.RemoveItem(Self);
+    //New value is true, add it in HotKeyApp
+    if (AValue <> 0) then
+      ASuiteManager.ListManager.HotKeyItemList.AddItem(Self);
+  end;
+  FHotkey := AValue;
 end;
 
 procedure TvCustomRealNodeData.SetLastAccess(const Value: Int64);
