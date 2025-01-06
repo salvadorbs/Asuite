@@ -130,7 +130,7 @@ uses
   DataModules.Icons, Forms.Main, AppConfig.Main, VirtualTree.Methods,
   Utility.System, Forms.GraphicMenu, NodeDataTypes.Files,
   NodeDataTypes.Custom, Kernel.Consts, Kernel.Logger,
-  Utility.FileFolder, Kernel.ResourceStrings, Kernel.Instance, LazVersion,
+  Utility.FileFolder, Kernel.ResourceStrings, Kernel.Instance, {%H-}LazVersion,
   Kernel.Manager, mormot.core.log {$IFDEF MSWINDOWS} , Windows {$ENDIF};
 
 {$R *.lfm}
@@ -166,7 +166,7 @@ begin
   log := TASuiteLogger.Enter('TdmTrayMenu.ShowPopupMenu', Self);
   //Get Mouse coordinates
   GetCursorPos(CursorPoint);
-  SetForegroundWindow(Application.Handle);
+  frmMain.BringToFront;
   Application.ProcessMessages;
   APopupMenu.AutoPopup := False;
   APopupMenu.PopupComponent := tiTrayMenu.Owner;

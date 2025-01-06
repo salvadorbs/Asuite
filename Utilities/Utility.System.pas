@@ -55,7 +55,7 @@ function ExtractDirectoryName(const APath: string): string;
 implementation
 
 uses
-  Forms.Main, Utility.Misc, Kernel.Logger, StrUtils, LazStringUtils, Kernel.ResourceStrings,
+  Forms.Main, Utility.Misc, Kernel.Logger, Kernel.ResourceStrings,
   LazFileUtils{$IFDEF MSWINDOWS} , ShellApi, Windows {$ELSE}, IniFiles {$ENDIF}, LazUTF8,
   Utility.FileFolder, Kernel.Instance;
 

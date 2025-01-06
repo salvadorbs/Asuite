@@ -609,7 +609,7 @@
         <ShowHintsForUnusedUnitsInMainSrc Value="True"/>
       </Verbosity>
       <CompilerMessages>
-        <IgnoredMessages idx5026="True" idx5024="True" idx4105="True" idx4104="True"/>
+        <IgnoredMessages idx6058="True" idx5026="True" idx5024="True" idx4105="True" idx4104="True"/>
       </CompilerMessages>
       <CustomOptions Value="-dDebug"/>
     </Other>
