@@ -85,7 +85,7 @@ var
 implementation
 
 uses
-  AppConfig.Main, Utility.FileFolder, Kernel.Consts, VirtualTree.Methods,
+  AppConfig.Main, Utility.FileFolder, Kernel.Consts, VirtualTree.Methods, Kernel.Logger, NodeDataTypes.Base,
   NodeDataTypes.Files, NodeDataTypes.Custom, Kernel.ResourceStrings,
   Utility.Misc, Kernel.Instance, Kernel.Manager;
 
@@ -148,12 +148,17 @@ end;
 procedure TfrmAdvancedOptionsPage.ClearCache(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
 var
-  CurrentNodeData : TvCustomRealNodeData;
+  CurrentNodeData : TvBaseNodeData;
 begin
-  CurrentNodeData := TvCustomRealNodeData(TVirtualTreeMethods.GetNodeItemData(Node, Sender));
-  if not(CurrentNodeData.IsSeparatorItem) then
-    CurrentNodeData.Icon.ResetIcon;
-  CurrentNodeData.Changed := True;
+  try
+    CurrentNodeData := TvBaseNodeData(TVirtualTreeMethods.GetNodeItemData(Node, Sender));
+    if not(CurrentNodeData.IsSeparatorItem) then
+      TvCustomRealNodeData(CurrentNodeData).Icon.ResetIcon;
+    CurrentNodeData.Changed := True;
+  except
+    on E : Exception do
+      TASuiteLogger.Error(E.ToString, []);
+  end;
 end;
 
 procedure TfrmAdvancedOptionsPage.ClearMFU(Sender: TBaseVirtualTree;
