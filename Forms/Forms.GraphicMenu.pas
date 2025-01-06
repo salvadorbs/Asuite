@@ -131,7 +131,7 @@ implementation
 
 uses
   Forms.Main, Utility.System, Kernel.Consts, AppConfig.Main, DataModules.Icons,
-  Forms.About, NodeDataTypes.Base, Kernel.Enumerations, Forms.Options, LazVersion,
+  Forms.About, NodeDataTypes.Base, Kernel.Enumerations, Forms.Options, {%H-}LazVersion,
   Utility.Misc, VirtualTree.Methods, Kernel.Types, VirtualTrees.Types,
   NodeDataTypes.Custom, Kernel.ResourceStrings, Kernel.Instance, Kernel.Manager
   {$IFDEF MSWINDOWS} , Windows {$ENDIF};
@@ -626,9 +626,10 @@ begin
   tmrFader.Enabled:= True;
   //Show frmMenu
   Self.Show;
+  Self.BringToFront;
   SetForegroundWindow(Self.Handle);
-  if Not(IsWindowVisible(frmMain.Handle)) then
-    ShowWindow(Application.Handle, SW_HIDE);
+  if Not(frmMain.Visible) then
+    frmMain.Hide;
 end;
 
 procedure TfrmGraphicMenu.tmrCheckItemsTimer(Sender: TObject);

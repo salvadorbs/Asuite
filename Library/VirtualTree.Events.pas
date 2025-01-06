@@ -491,8 +491,10 @@ var
   I          : integer;
   NodeData   : TvBaseNodeData;
   AttachMode : TVTNodeAttachMode;
-  NodeCreated : Boolean;     
+  NodeCreated : Boolean;
+{$IFNDEF MSWINDOWS}
   Nodes: TNodeArray;
+{$ENDIF}
   {%H-}log: ISynLog;
 begin
   log := TASuiteLogger.Enter('TVirtualTreeEvents.DoDragDrop', Self);
@@ -866,7 +868,6 @@ const
   FormatEtc: TFormatEtc = (cfFormat: CF_HDROP; ptd: nil;
     dwAspect: DVASPECT_CONTENT; lindex: -1; tymed: TYMED_HGLOBAL);
 var
-  FmtEtc: TFormatEtc;                   // specifies required data format
   Medium: TStgMedium;                   // storage medium containing file list
   DroppedFileCount: Integer;            // number of dropped files
   I: Integer;                           // loops thru dropped files

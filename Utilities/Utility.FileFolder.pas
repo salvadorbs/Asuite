@@ -5,7 +5,7 @@ unit Utility.FileFolder;
 interface
 
 uses
-  Kernel.Consts, LCLIntf, LCLType, SysUtils, Classes, Kernel.Enumerations,
+  Kernel.Consts, LCLIntf, LCLType, SysUtils, Classes,
   FileUtil, {$IFDEF Windows}ComObj, {$ENDIF} Dialogs,
   LazFileUtils, Kernel.Types;
 
