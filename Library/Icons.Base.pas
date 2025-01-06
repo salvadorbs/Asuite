@@ -120,17 +120,19 @@ begin
   //Get cache icon path
   if (Config.Cache) and (Config.ASuiteState <> lsImporting) then
   begin
+    //Check CRC for only .exe, if it fails reset cache icon
     isExeFile := (ExtractLowerFileExt(sDefaultPath) = EXT_EXE);
-    if isExeFile then
+    sPathCacheIcon := PathCacheIcon;
+    if isExeFile and FileExists(sPathCacheIcon) then
+    begin
       intHash := GetFileXXHash32(sDefaultPath);
 
-    //Check CRC for only .exe, if it fails reset cache icon
-    sPathCacheIcon := PathCacheIcon;
-    if (FileExists(sPathCacheIcon)) and (CacheIconCRC = intHash) then
-      sTempPath := sPathCacheIcon
-    else begin
-      TASuiteLogger.Debug('sPathCacheIcon = %s - CacheIconCRC = %d - intHash = %d', [sPathCacheIcon, CacheIconCRC, intHash]);
-      ResetCacheIcon;
+      if (CacheIconCRC = intHash) then
+        sTempPath := sPathCacheIcon
+      else begin
+        TASuiteLogger.Debug('sPathCacheIcon = %s - CacheIconCRC = %d - intHash = %d', [sPathCacheIcon, CacheIconCRC, intHash]);
+        ResetCacheIcon;
+      end;
     end;
   end;
 
@@ -279,11 +281,11 @@ var
   strPathCacheIcon: String;
 begin
   strPathCacheIcon := PathCacheIcon;
-  TASuiteLogger.Debug('Reset cache icon %s', [PathCacheIcon]);
+  TASuiteLogger.Debug('Reset cache icon %s', [strPathCacheIcon]);
 
   //Small icon cache
-  if FileExists(PathCacheIcon) then
-    SysUtils.DeleteFile(PathCacheIcon);
+  if FileExists(strPathCacheIcon) then
+    SysUtils.DeleteFile(strPathCacheIcon);
 
   FCacheIconCRC := 0;
 end;
