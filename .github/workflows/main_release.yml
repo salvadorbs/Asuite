@@ -164,7 +164,7 @@ jobs:
       run: ${{ env.ASUITE_SOURCE }}/bin/${{ matrix.config.dbg2mab }} ${{ env.ASUITE_SOURCE }}/bin/${{ matrix.config.debug_file }}
 
     - name: Upload the Build Artifact
-      uses: actions/upload-artifact@v4.5.0
+      uses: actions/upload-artifact@v4.6.0
       with:
         name: ASuite ${{ env.BUILD_MODE }} build - ${{ matrix.config.name }}
         path: |
