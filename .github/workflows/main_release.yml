@@ -127,7 +127,7 @@ jobs:
 
     - name: Cache
       id: cache
-      uses: actions/cache@v4.2.2
+      uses: actions/cache@v4.2.3
       env:
         cache-name: cache-laz-v0.6.1
       with:
@@ -164,7 +164,7 @@ jobs:
       run: ${{ env.ASUITE_SOURCE }}/bin/${{ matrix.config.dbg2mab }} ${{ env.ASUITE_SOURCE }}/bin/${{ matrix.config.debug_file }}
 
     - name: Upload the Build Artifact
-      uses: actions/upload-artifact@v4.6.1
+      uses: actions/upload-artifact@v4.6.2
       with:
         name: ASuite ${{ env.BUILD_MODE }} build - ${{ matrix.config.name }}
         path: |
