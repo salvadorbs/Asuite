@@ -279,11 +279,11 @@ var
   strPathCacheIcon: String;
 begin
   strPathCacheIcon := PathCacheIcon;
-  TASuiteLogger.Debug('Reset cache icon %s', [PathCacheIcon]);
+  TASuiteLogger.Debug('Reset cache icon %s', [strPathCacheIcon]);
 
   //Small icon cache
-  if FileExists(PathCacheIcon) then
-    SysUtils.DeleteFile(PathCacheIcon);
+  if FileExists(strPathCacheIcon) then
+    SysUtils.DeleteFile(strPathCacheIcon);
 
   FCacheIconCRC := 0;
 end;
