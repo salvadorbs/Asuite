@@ -25,7 +25,12 @@ interface
 
 uses
   SysUtils, Kernel.Enumerations, NodeDataTypes.Base, Kernel.Types, Classes,
-  NodeDataTypes.Custom, LCLIntf, LCLType, DateUtils, LazFileUtils;
+  NodeDataTypes.Custom, LCLIntf, LCLType, DateUtils, LazFileUtils
+  
+{$IFDEF UNIX}
+  , process
+{$ENDIF}
+  ;
 
 type
 
