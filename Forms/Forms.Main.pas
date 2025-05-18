@@ -27,13 +27,14 @@ uses
   LCLIntf, LCLType, SysUtils, Classes, Controls, Forms, Dialogs, Menus,
   ComCtrls, VirtualTrees, UniqueInstance, Kernel.Consts, DataModules.Icons,
   Kernel.BaseMainForm, {$IFDEF UNIX}VirtualTree.Helper, {$ENDIF}
-  Kernel.Enumerations, ExtCtrls, ButtonedEdit, {Actions,} ActnList;
+  Kernel.Enumerations, ExtCtrls, ButtonedEdit, {Actions,} ActnList,
+  AppConfig.Observer, AppConfig.Main;
 
 type
 
   { TfrmMain }
 
-  TfrmMain = class(TBaseMainForm)
+  TfrmMain = class(TBaseMainForm, IConfigObserver)
     actSepEdit: TAction;
     btnedtSearch: TButtonedEdit;
     miStatistics: TMenuItem;
@@ -105,6 +106,7 @@ type
     mniSortList: TMenuItem;
     procedure actSepEditUpdate(Sender: TObject);
     procedure btnedtSearchLeftButtonClick(Sender: TObject);
+    procedure FormChangeBounds(Sender: TObject);
     procedure miOptionsClick(Sender: TObject);
     procedure miStatisticsClick(Sender: TObject);
     procedure miImportListClick(Sender: TObject);
@@ -138,12 +140,12 @@ type
     procedure actRunItemExecute(Sender: TObject);
     procedure actSortListUpdate(Sender: TObject);
     procedure actSortListExecute(Sender: TObject);
-    procedure FormResize(Sender: TObject);
     procedure btnedtSearchChange(Sender: TObject);
     procedure UniqueInstance1OtherInstance(Sender: TObject; ParamCount: Integer;
       const Parameters: array of AnsiString);
   private
     { Private declarations }
+    FRestoringSettings: Boolean;
     procedure EmptyClipboard;
     function  GetActiveTree: TBaseVirtualTree;
     procedure PopulatePopUpMenuFromAnother(APopupMenu: TMenuItem; AParentMenuItem: TMenuItem);
@@ -151,11 +153,15 @@ type
 {$IFDEF UNIX}
     procedure DoDropFiles(Sender: TObject; const FileNames: array of AnsiString);        
 {$ENDIF}
+    procedure ConfigChanged(const PropertyName: string);
+    procedure RestoreSettings;
   public
     { Public declarations }
     procedure DoSearchItem(const TreeSearch: TBaseVirtualTree; const Keyword: string;
                            const SearchType: TSearchType);
     procedure SetAllIcons;
+    procedure AfterConstruction; override;
+    procedure BeforeDestruction; override;
   end;
 
 var
@@ -165,11 +171,12 @@ implementation
 
 uses
   Forms.Options, Forms.About, Utility.Misc, Forms.ScanFolder, Clipbrd,
-  DataModules.TrayMenu, Forms.ImportList, AppConfig.Main, Utility.System,
-  VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base,
+  DataModules.TrayMenu, Forms.ImportList, Utility.System, LCLTranslator,
+  VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base, Utility.FileFolder,
   Kernel.Types, NodeDataTypes.Files, Kernel.Manager, VirtualTrees.Types,
   Kernel.Logger, mormot.core.log, FileUtil, Kernel.ResourceStrings, Kernel.Instance,
-  VirtualTrees.ClipBoard {$IFDEF MSWINDOWS} , jwatlhelp32, Windows {$ENDIF};
+  VirtualTrees.ClipBoard, Forms.GraphicMenu
+  {$IFDEF MSWINDOWS} , jwatlhelp32, Windows {$ENDIF};
 
 {$R *.lfm}
 
@@ -522,6 +529,27 @@ begin
   pmSearch.PopUp;
 end;
 
+procedure TfrmMain.FormChangeBounds(Sender: TObject);
+begin
+  if FRestoringSettings then
+    Exit;
+
+  GetActiveTree.Refresh;
+
+  // Use batching to avoid redundant observer notifications when updating form bounds
+  Config.BeginUpdate;
+  try
+    Config.MainFormLeft   := Self.Left;
+    Config.MainFormTop    := Self.Top;
+    Config.MainFormWidth  := ScaleFormTo96(Self.Width);
+    Config.MainFormHeight := ScaleFormTo96(Self.Height);
+  finally
+    Config.EndUpdate;
+  end;
+
+  Config.Changed := True;
+end;
+
 procedure TfrmMain.miStatisticsClick(Sender: TObject);
 begin
   TfrmOptions.Execute(Self, TfrmStatsOptionsPage);
@@ -599,6 +627,12 @@ begin
   //Set Search's ImageIndexes
   btnedtSearch.LeftButton.ImageIndex  := ASuiteManager.IconsManager.GetIconIndex('search_type');
   btnedtSearch.RightButton.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('search');
+end;
+
+procedure TfrmMain.AfterConstruction;
+begin
+  inherited AfterConstruction;
+  FRestoringSettings := False;
 end;
 
 procedure TfrmMain.PopulatePopUpMenuFromAnother(APopupMenu: TMenuItem; AParentMenuItem: TMenuItem);
@@ -757,6 +791,8 @@ var
 begin
   log := TASuiteLogger.Enter('TfrmMain.MainFormCreate', Self);
 
+  FRestoringSettings := True;
+
   {$IFDEF UNIX}
   Self.AllowDropFiles := True;
   Self.OnDropFiles := DoDropFiles;
@@ -769,6 +805,7 @@ begin
   ASuiteInstance.MainTree := vstList;
   Application.CreateForm(TdmImages, dmImages);
   Application.CreateForm(TdmTrayMenu, dmTrayMenu);
+  Application.CreateForm(TfrmGraphicMenu, frmGraphicMenu);
   pcList.ActivePageIndex := PG_LIST;
 
   //Setup events in vsts
@@ -776,9 +813,13 @@ begin
   ASuiteInstance.VSTEvents.SetupVSTSearch(vstSearch);
 
   //Load Database and get icons (only first level of tree)
+  Config.AddObserver(Self);
   Config.LoadConfig;
   ASuiteInstance.LoadList;
   ASuiteManager.ListManager.ExecuteAutorunList(amStartup);
+
+  //Restore window and UI settings
+  RestoreSettings;
 
   //Check missed scheduler tasks
   ASuiteInstance.Scheduler.CheckMissedTasks;
@@ -795,15 +836,151 @@ begin
   tmrCheckItems.Enabled := False;
 end;
 
-procedure TfrmMain.FormResize(Sender: TObject);
-begin
-  GetActiveTree.Refresh;
-  Config.Changed := True;
-end;
-
 procedure TfrmMain.FormShow(Sender: TObject);
 begin
   tmrCheckItems.Enabled := True;
+end;
+
+procedure TfrmMain.BeforeDestruction;
+begin
+  Config.RemoveObserver(Self);
+  inherited BeforeDestruction;
+end;
+
+procedure TfrmMain.ConfigChanged(const PropertyName: string);
+var
+  sBackgroundPath: String;
+begin
+  if (PropertyName = '') or (PropertyName = 'HoldSize') then
+  begin
+    Self.BorderStyle := bsSingle;
+    Self.BorderIcons := [biSystemMenu, biMinimize];
+    if not Config.HoldSize then
+    begin
+      Self.BorderStyle := bsSizeable;
+      Self.BorderIcons := [biSystemMenu, biMinimize, biMaximize];
+    end;
+  end;
+
+  if (PropertyName = '') or (PropertyName = 'AlwaysOnTop') then
+  begin
+    if Config.AlwaysOnTop then
+      Self.FormStyle := fsStayOnTop
+    else
+      Self.FormStyle := fsNormal;
+  end;
+
+  if (PropertyName = '') or (PropertyName = 'UseCustomTitle') then
+  begin
+    if Config.UseCustomTitle and (Config.CustomTitleString <> '') then
+      Self.Caption := Config.CustomTitleString
+    else
+      Self.Caption := APP_TITLE;
+  end;
+
+  if (PropertyName = '') or (PropertyName = 'HideTabSearch') then
+  begin
+    with frmMain do
+    begin
+      tbSearch.TabVisible    := Not(Config.HideTabSearch);
+      tbList.TabVisible      := Not(Config.HideTabSearch);
+      pcList.ActivePageIndex := 0;
+    end;
+  end;
+
+  if (PropertyName = '') or (PropertyName = 'SearchNameColWidth') then
+    vstSearch.Header.Columns[0].Width := Config.SearchNameColWidth;
+
+  if (PropertyName = '') or (PropertyName = 'SearchCategoryColWidth') then
+    vstSearch.Header.Columns[1].Width := Config.SearchCategoryColWidth;
+
+  if (PropertyName = '') or (PropertyName = 'TVAutoOpClCats') then
+  begin
+    if Config.TVAutoOpClCats then
+      ASuiteInstance.MainTree.TreeOptions.AutoOptions := ASuiteInstance.MainTree.TreeOptions.AutoOptions + [toAutoExpand]
+    else
+      ASuiteInstance.MainTree.TreeOptions.AutoOptions := ASuiteInstance.MainTree.TreeOptions.AutoOptions - [toAutoExpand];
+  end;
+
+  if (PropertyName = '') or (PropertyName = 'TVFont') then
+  begin
+    ASuiteInstance.MainTree.Font.Assign(Config.TVFont);
+  end;
+
+  if (PropertyName = '') or (PropertyName = 'TVBackground') then
+  begin
+    if Config.TVBackground then
+      ASuiteInstance.MainTree.TreeOptions.PaintOptions := ASuiteInstance.MainTree.TreeOptions.PaintOptions + [toShowBackground]
+    else
+      ASuiteInstance.MainTree.TreeOptions.PaintOptions := ASuiteInstance.MainTree.TreeOptions.PaintOptions - [toShowBackground];
+  end;
+
+  if (PropertyName = '') or (PropertyName = 'TVSmallIconSize') then
+  begin
+    //Change node height and imagelist
+    TVirtualTreeMethods.ChangeTreeIconSize(ASuiteInstance.MainTree, Config.TVSmallIconSize);
+    if ASuiteInstance.MainTree.HasChildren[ASuiteInstance.MainTree.RootNode] then
+    begin
+      ASuiteInstance.MainTree.FullCollapse;
+      TVirtualTreeMethods.ChangeAllNodeHeight(ASuiteInstance.MainTree, ASuiteInstance.MainTree.DefaultNodeHeight);
+    end;
+  end;
+
+  if (PropertyName = '') or (PropertyName = 'AfterUpdateConfig') then
+  begin
+    SetDefaultLang(Config.LangID, ASuiteInstance.Paths.SuitePathLocale);
+
+    //Loading icons
+    frmMain.SetAllIcons;
+
+    TVirtualTreeMethods.UpdateItemColor(ASuiteInstance.MainTree);
+
+    //Update background
+    sBackgroundPath := ASuiteInstance.Paths.RelativeToAbsolute(Config.TVBackgroundPath);
+    if (Config.TVBackground) and (Config.TVBackgroundPath <> '') and (FileExists(sBackgroundPath)) then
+    begin
+      if ((ExtractLowerFileExt(sBackgroundPath) = EXT_PNG) or
+          (ExtractLowerFileExt(sBackgroundPath) = EXT_BMP)) then
+        ASuiteInstance.MainTree.Background.LoadFromFile(sBackgroundPath);
+    end;
+
+    ASuiteInstance.MainTree.Update;
+  end;
+
+  // Handle grouped notification for form bounds
+  if (PropertyName = 'MainFormBounds') then
+  begin
+    Self.Left   := Config.MainFormLeft;
+    Self.Top    := Config.MainFormTop;
+    Self.Width  := Scale96ToForm(Config.MainFormWidth);
+    Self.Height := Scale96ToForm(Config.MainFormHeight);
+  end;
+
+  // Retain compatibility with individual property notifications
+  if (PropertyName = '') or (PropertyName = 'MainFormLeft') then
+    Self.Left := Config.MainFormLeft;
+
+  if (PropertyName = '') or (PropertyName = 'MainFormTop') then
+    Self.Top := Config.MainFormTop;
+
+  if (PropertyName = '') or (PropertyName = 'MainFormWidth') then
+    Self.Width  := Scale96ToForm(Config.MainFormWidth);
+
+  if (PropertyName = '') or (PropertyName = 'MainFormHeight') then
+    Self.Height := Scale96ToForm(Config.MainFormHeight);
+end;
+
+procedure TfrmMain.RestoreSettings;
+begin
+  FRestoringSettings := True;
+  try
+    Self.Left   := Config.MainFormLeft;
+    Self.Top    := Config.MainFormTop;
+    Self.Width  := Scale96ToForm(Config.MainFormWidth);
+    Self.Height := Scale96ToForm(Config.MainFormHeight);
+  finally
+    FRestoringSettings := False;
+  end;
 end;
 
 end.
