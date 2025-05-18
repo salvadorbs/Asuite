@@ -10,11 +10,11 @@ object frmMain: TfrmMain
   Constraints.MinHeight = 370
   Constraints.MinWidth = 200
   Menu = MainMenu
+  OnChangeBounds = FormChangeBounds
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnHide = FormHide
-  OnResize = FormResize
   OnShow = FormShow
   LCLVersion = '2.2.0.2'
   object pcList: TPageControl
