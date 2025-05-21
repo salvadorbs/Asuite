@@ -32,22 +32,13 @@ interface
 uses
   LCLIntf, LCLType, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   Menus, ExtCtrls, VirtualTrees, LazFileUtils, Process, NodeDataTypes.Base, Kernel.Types,
-  Kernel.ASMenuItem, Lists.Base, Kernel.Enumerations
+  Kernel.ASMenuItem, Lists.Base, Kernel.Enumerations, AppConfig.Observer,
+  BGRABitmap
   {$IFDEF LINUX}
   , x, xlib
 
-    {$IFDEF QT}
-      {$IFDEF LCLQT5}
-      , qt5
-      {$ELSE}
-      , qt6, qtint
-      {$ENDIF}
-    {$ELSE}
-      {$IFDEF LCLGTK2}
-      , gdk2, gdk2x
-      {$ELSE}
-      , LazGdk3, LazGLib2
-      {$ENDIF}
+    {$IFDEF LCLGTK3}
+    , LazGdk3, LazGLib2
     {$ENDIF}
   {$ENDIF};
 
@@ -55,7 +46,7 @@ type
 
   { TdmTrayMenu }
 
-  TdmTrayMenu = class(TDataModule)
+  TdmTrayMenu = class(TDataModule, IConfigObserver)
     tiTrayMenu: TTrayIcon;
     pmTrayicon: TPopupMenu;
     procedure DataModuleCreate(Sender: TObject);
@@ -94,6 +85,8 @@ type
     procedure RunFromTrayMenu(Sender: TObject);
     function GetTextWidth(const AText: string; AFont: Graphics.TFont): Integer;
     procedure CreateAndAddSeparator(var Menu: TPopUpMenu;Text: String = '');
+    procedure ConfigChanged(const PropertyName: string);
+    function LoadTrayIconFromFile(const APath: string): TBGRABitmap;
   public
     { Public declarations }
     procedure ShowClassicMenu;
@@ -103,9 +96,7 @@ type
     function CreateSeparator(Menu: TPopupMenu;Text: String = ''): TMenuItem;
     procedure RefreshClassicMenu;
 
-    //These functions come from the Tomboy-NG project https://github.com/tomboy-notes/tomboy-ng
-    class function CheckGnomeExtras: Boolean;
-    class function CheckSysTray: Boolean;
+    procedure BeforeDestruction; override;
   end;
 
 {$IFDEF LCLGTK3}
@@ -128,8 +119,8 @@ implementation
 
 uses
   DataModules.Icons, Forms.Main, AppConfig.Main, VirtualTree.Methods,
-  Utility.System, Forms.GraphicMenu, NodeDataTypes.Files,
-  NodeDataTypes.Custom, Kernel.Consts, Kernel.Logger,
+  Utility.System, Forms.GraphicMenu, NodeDataTypes.Files, BGRABitmapTypes,
+  NodeDataTypes.Custom, Kernel.Consts, Kernel.Logger, BGRAIconCursor,
   Utility.FileFolder, Kernel.ResourceStrings, Kernel.Instance, LazVersion,
   Kernel.Manager, mormot.core.log {$IFDEF MSWINDOWS} , Windows {$ENDIF};
 
@@ -137,6 +128,8 @@ uses
 
 procedure TdmTrayMenu.DataModuleCreate(Sender: TObject);
 begin
+  Config.AddObserver(dmTrayMenu);
+
   pmTrayicon.Images := dmImages.ilIcons;
   pmTrayicon.ImagesWidth := ICON_SIZE_SMALL;
 
@@ -776,112 +769,10 @@ begin
   UpdateClassicMenu(pmTrayicon);
 end;
 
-class function TdmTrayMenu.CheckGnomeExtras: Boolean;
-var
-  H : TLibHandle;
-
-  function FindInStringList(aList: TStringList; aString: String): Integer;
-  var
-    I: Integer = 0;
-  begin
-    while I < aList.Count do
-    begin
-      if pos(aString, AList.Strings[I]) > 0 then
-        Exit(I);
-
-      Inc(I);
-    end;
-
-    Result := -1;
-  end;
-
-  function CheckPlugIn(PlugInName : string) : boolean;
-  var
-    AProcess: TProcess;
-    List : TStringList = nil;
-  begin
-    result := false;
-
-    AProcess := TProcess.Create(nil);
-    try
-      AProcess.Executable:= 'gnome-extensions';
-      AProcess.Parameters.Add('info');
-      AProcess.Parameters.Add(PlugInName);
-
-      AProcess.Options := AProcess.Options + [poWaitOnExit, poUsePipes];
-
-      AProcess.Execute;
-
-      if (AProcess.ExitStatus = 0) then
-      begin
-        List := TStringList.Create;
-        List.LoadFromStream(AProcess.Output);
-
-        if FindInStringList(List, 'ENABLED') > -1 then
-          result := true;
-      end;
-    finally
-      freeandnil(List);
-      freeandnil(AProcess);
-    end;
-  end;
-
+procedure TdmTrayMenu.BeforeDestruction;
 begin
-  Result := false;
-
-  H := LoadLibrary('libappindicator3.so.1');
-  if H = NilHandle then
-  begin
-    TASuiteLogger.Info('Failed to Find libappindicator3, SysTray may not work.', []);
-    exit(False);
-  end;
-  unloadLibrary(H);
-
-  if CheckPlugIn('ubuntu-appindicators@ubuntu.com') or            // Ubuntu, Debian
-     CheckPlugIn('appindicatorsupport@rgcjonas.gmail.com') then  // Fedora
-    Result := True;
-
-  if not Result then
-    TASuiteLogger.Info('Failed to Find an enabled appindicator plugin, SysTray may not work.', []);
-end;
-
-class function TdmTrayMenu.CheckSysTray: Boolean;
-{$IFDEF LINUX}
-var
-  A : TAtom;
-  XDisplay: PDisplay;
-{$ENDIF}
-begin
-  {$IFDEF LINUX}
-    {$IFDEF LCLGTK2}
-  XDisplay := gdk_display;
-    {$ENDIF}
-
-    {$IFDEF LCLQT5}
-  XDisplay := QX11Info_display;
-    {$ENDIF}     
-
-    {$IFDEF LCLQT6}
-  XDisplay := QtWidgetSet.x11Display;
-    {$ENDIF}
-
-    {$IFDEF LCLGTK3}
-  XDisplay := gdk_x11_display_get_xdisplay(gdk_window_get_display(gdk_get_default_root_window));
-    {$ENDIF}
-
-  Result := False;
-  if XDisplay <> nil then
-  begin
-    A := XInternAtom(XDisplay, '_NET_SYSTEM_TRAY_S0', False);
-    Result := (XGetSelectionOwner(XDisplay, A) <> 0);
-  end;
-
-  if not Result then
-    Result := TdmTrayMenu.CheckGnomeExtras; // Thats libappindicator3 and an installed and enabled gnome-shell-extension-appindicator
-  {$ELSE}
-  //Windows is always true!
-  Result := True;
-  {$ENDIF}
+  Config.RemoveObserver(Self);
+  inherited BeforeDestruction;
 end;
 
 procedure TdmTrayMenu.CreateSpecialList(Menu: TPopupMenu;SList: TBaseItemsList;
@@ -1013,6 +904,64 @@ begin
   MenuItem := CreateSeparator(Menu, Text);
   if Assigned(MenuItem) then
     Menu.Items.Add(MenuItem);
+end;
+
+procedure TdmTrayMenu.ConfigChanged(const PropertyName: string);
+var
+  bmp: TBGRABitmap;
+  sPath: string;
+begin
+  if (PropertyName = '') or (PropertyName = 'AfterUpdateConfig') then
+  begin
+    tiTrayMenu.Visible := False;
+
+    sPath := ASuiteInstance.Paths.RelativeToAbsolute(Config.TrayCustomIconPath);
+    if not((Config.TrayUseCustomIcon) and (FileExists(sPath))) then
+      sPath := AppendPathDelim(ASuiteInstance.Paths.SuitePathCurrentTheme +
+        ICONS_DIR) + LowerCase(APP_NAME) + EXT_ICO;
+
+    try
+      bmp := LoadTrayIconFromFile(sPath);
+
+      if Assigned(bmp) then
+        tiTrayMenu.Icon.Assign(bmp.Bitmap)
+      else
+        tiTrayMenu.Icon.Assign(Application.Icon);
+    finally
+      bmp.Free;
+    end;
+
+    //If you can't change trayicon's property visible, it will use old icon
+    tiTrayMenu.Visible := Config.TrayIcon;
+    if tiTrayMenu.Visible then
+      tiTrayMenu.Show;
+  end;
+
+  if (PropertyName = '') or (PropertyName = 'TrayIcon') then
+  begin
+    //Workaround for bug in GTK3 (unit gtk3wstrayicon - line 128)
+    if (dmTrayMenu.tiTrayMenu.Icon.Handle <> 0) then
+      dmTrayMenu.tiTrayMenu.Visible := Config.TrayIcon;
+  end;
+end;
+
+function TdmTrayMenu.LoadTrayIconFromFile(const APath: string): TBGRABitmap;
+var
+  Icon: TBGRAIconCursor;
+begin
+  Result := nil;
+
+  if not FileExists(APath) then
+    Exit;
+
+  Icon := TBGRAIconCursor.Create(ifIco);
+  try
+    Icon.LoadFromFile(APath);
+
+    Result := (Icon.GetBestFitBitmap(ICON_SIZE_TRAY, ICON_SIZE_TRAY) as TBGRABitmap);
+  finally
+    Icon.Free;
+  end;
 end;
 
 end.

@@ -32,7 +32,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="1"/>
-      <BuildNr Value="1661"/>
+      <BuildNr Value="1709"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Debug" Default="True"/>
@@ -183,7 +183,7 @@
         <PackageName Value="LCL"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="73">
+    <Units Count="74">
       <Unit0>
         <Filename Value="ASuite.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -560,6 +560,10 @@
         <Filename Value="Library/Kernel.ShellLink.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit72>
+      <Unit73>
+        <Filename Value="Library/AppConfig.Observer.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit73>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

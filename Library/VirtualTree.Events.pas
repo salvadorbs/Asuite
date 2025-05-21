@@ -349,6 +349,8 @@ end;
 procedure TVirtualTreeEvents.DoColumnResize(Sender: TVTHeader;
   Column: TColumnIndex);
 begin
+  Config.SearchNameColWidth     := Sender.Columns[0].Width;
+  Config.SearchCategoryColWidth := Sender.Columns[1].Width;
   Config.Changed := True;
 end;
 
