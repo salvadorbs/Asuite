@@ -1,0 +1,31 @@
+name: Update Git Submodules to Latest Tag
+
+on:
+  schedule:
+    - cron: '0 3 * * 1' # Every Monday at 03:00 UTC
+  workflow_dispatch:
+
+jobs:
+  update-submodules:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          submodules: "recursive"
+          fetch-depth: 0
+
+      - name: Update submodules to latest tag
+        uses: sgoudham/update-git-submodules@v2.1.3
+        with:
+          strategy: tag
+
+      - name: Create or update Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          title: "Update Git submodules to latest tag"
+          body: ${{ steps.submodules.outputs.prBody }}
+          commit-message: "build: update all submodules"
+          base: develop
+          branch: update-submodules
