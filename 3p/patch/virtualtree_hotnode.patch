@@ -1,43 +1,26 @@
-From 4e952ae17601b8195b48a14c754a7d0d9b7d8318 Mon Sep 17 00:00:00 2001
+From 407238ebf207693431e7c49b6856cd7339b00b87 Mon Sep 17 00:00:00 2001
 From: Matteo Salvi <salvadorbs@gmail.com>
-Date: Thu, 7 Jan 2021 18:26:34 +0100
-Subject: [PATCH] Added SetCurrentHotNode
+Date: Fri, 19 Jan 2024 00:39:20 +0100
+Subject: [PATCH] Custom patch (sethotnode) for ASuite
 
 ---
- Source/VirtualTrees.pas | 34 +++++++++++++++++++++++++++++++++-
- 1 file changed, 33 insertions(+), 1 deletion(-)
+ asuite_src/3p/VirtualTreeView-Lazarus/Source/VirtualTrees.BaseTree.pas | 28 +++++++++++++++++++++++++++-
+ 1 file changed, 27 insertions(+), 1 deletion(-)
 
-diff --git a/Source/VirtualTrees.pas b/Source/VirtualTrees.pas
-index 0d48b14..bb2adf7 100644
---- a/Source/VirtualTrees.pas
-+++ b/Source/VirtualTrees.pas
-@@ -2475,6 +2475,7 @@ type
-     procedure SetChildCount(Node: PVirtualNode; NewChildCount: Cardinal);
-     procedure SetClipboardFormats(const Value: TClipboardFormats);
-     procedure SetColors(const Value: TVTColors);
-+    procedure SetCurrentHotNode(const Value: PVirtualNode);
-     procedure SetCustomCheckImages(const Value: TCustomImageList);
-     procedure SetDefaultNodeHeight(Value: Cardinal);
-     procedure SetDisabled(Node: PVirtualNode; Value: Boolean);
-@@ -3283,7 +3284,7 @@ type
-     property Font;
-     property FullyVisible[Node: PVirtualNode]: Boolean read GetFullyVisible write SetFullyVisible;
-     property HasChildren[Node: PVirtualNode]: Boolean read GetHasChildren write SetHasChildren;
--    property HotNode: PVirtualNode read FCurrentHotNode;
-+    property HotNode: PVirtualNode read FCurrentHotNode write SetCurrentHotNode;
-     property IsDisabled[Node: PVirtualNode]: Boolean read GetDisabled write SetDisabled;
-     property IsEffectivelyFiltered[Node: PVirtualNode]: Boolean read GetEffectivelyFiltered;
-     property IsEffectivelyVisible[Node: PVirtualNode]: Boolean read GetEffectivelyVisible;
-@@ -14824,6 +14825,37 @@ begin
-   FColors.Assign(Value);
- end;
+diff --git a/asuite_src/3p/VirtualTreeView-Lazarus/Source/VirtualTrees.BaseTree.pas b/asuite_src/3p/VirtualTreeView-Lazarus/Source/VirtualTrees.BaseTree.pas
+index 97faff6..9feb32c 100644
+--- a/asuite_src/3p/VirtualTreeView-Lazarus/Source/VirtualTrees.BaseTree.pas
++++ b/asuite_src/3p/VirtualTreeView-Lazarus/Source/VirtualTrees.BaseTree.pas
+@@ -5250,8 +5250,34 @@ end;
  
-+procedure TBaseVirtualTree.SetCurrentHotNode(const Value: PVirtualNode);
+ procedure TBaseVirtualTree.SetHotNode(Value: PVirtualNode);
+ 
 +var
 +  DoInvalidate: Boolean;
 +const
 +  MouseButtonDown = [tsLeftButtonDown, tsMiddleButtonDown, tsRightButtonDown];
-+begin
+ begin
+-  FCurrentHotNode := Value;
 +  with Self do begin
 +    if FCurrentHotNode <> Value then
 +    begin
@@ -61,11 +44,9 @@ index 0d48b14..bb2adf7 100644
 +          not(toFullRowSelect in FOptions.SelectionOptions));
 +    end;
 +  end;
-+end;
-+
- //----------------------------------------------------------------------------------------------------------------------
+ end;
  
- procedure TBaseVirtualTree.SetCustomCheckImages(const Value: TCustomImageList);
+ 
 -- 
-2.18.0.windows.1
+2.49.0.windows.1
 

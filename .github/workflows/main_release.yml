@@ -15,7 +15,7 @@ env:
   FPC_URL: 'gitlab'
   FPC_BRANCH: 'release_3_2_2'
   LAZ_URL: 'gitlab'
-  LAZ_BRANCH: 'lazarus_3_6'
+  LAZ_BRANCH: 'lazarus_4_0'
   LAZ_REVISION_2_4: ''
   LAZ_DIR: 'fpcLaz'
   BUILD_MODE: 'Debug_GH_Action'   
@@ -90,6 +90,10 @@ jobs:
       with:
         submodules: true
         path: '${{ env.ASUITE_SOURCE }}'
+
+    - name: Apply patch
+      run: |
+          git apply --check ${{ env.ASUITE_SOURCE }}/3p/patch/virtualtree_hotnode.patch && git apply ${{ env.ASUITE_SOURCE }}/3p/patch/virtualtree_hotnode.patch || echo "Patch not applied"
         
     - name: Install Dependencies (Ubuntu)
       if: matrix.config.os == 'ubuntu-latest' || matrix.config.os == 'ubuntu-22.04' && matrix.config.build-widgetset == 'gtk2'
