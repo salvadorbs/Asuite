@@ -283,11 +283,11 @@ begin
   if Config.GMPositionTop <> -1 then
     Self.Top  := Config.GMPositionTop
   else
-    Self.Top  := Screen.WorkAreaRect.Bottom - Height;
+    Self.Top  := Screen.WorkAreaRect.Bottom - Self.Scale96ToScreen(Height);
   if Config.GMPositionLeft <> -1 then
     Self.Left  := Config.GMPositionLeft
   else
-    Self.Left  := Screen.WorkAreaRect.Right - Width;
+    Self.Left  := Screen.WorkAreaRect.Right - Self.Scale96ToScreen(Width);
   {$ENDIF}
 
   edtSearch.RightButton.Images := dmImages.ilIcons;
