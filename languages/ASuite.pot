@@ -540,7 +540,7 @@ msgid "%s (%s bit)"
 msgstr ""
 
 #: tfrmabout.lnklblwebsite.caption
-msgid "http://www.salvadorsoftware.com"
+msgid "https://github.com/salvadorbs/asuite"
 msgstr ""
 
 #: tfrmadvancedoptionspage.btnclear.caption

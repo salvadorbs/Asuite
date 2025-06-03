@@ -849,7 +849,7 @@ object frmAbout: TfrmAbout
       FontVisitedNormal.Color = clPurple
       FontVisitedHot.Color = clPurple
       FontVisitedHot.Style = [fsUnderline]
-      Caption = 'http://www.salvadorsoftware.com'
+      Caption = 'https://github.com/salvadorbs/asuite'
       ParentShowHint = False
       ShowHint = True
       OnClick = lnklblWebSiteClick

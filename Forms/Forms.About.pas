@@ -81,7 +81,7 @@ end;
 
 procedure TfrmAbout.lnklblWebSiteClick(Sender: TObject);
 begin
-  OpenURL('http://www.salvadorsoftware.com');
+  OpenURL('https://github.com/salvadorbs/asuite');
 end;
 
 class procedure TfrmAbout.Execute(AOwner: TComponent);

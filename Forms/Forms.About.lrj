@@ -3,5 +3,5 @@
 {"hash":707,"name":"tfrmabout.lblappname.caption","sourcebytes":[37,115],"value":"%s"},
 {"hash":209380041,"name":"tfrmabout.lblversion.caption","sourcebytes":[37,115,32,40,37,115,32,98,105,116,41],"value":"%s (%s bit)"},
 {"hash":109524009,"name":"tfrmabout.lblcopyright.caption","sourcebytes":[67,111,112,121,114,105,103,104,116,32,50,48,48,54,45,50,48,50,48,32,77,97,116,116,101,111,32,83,97,108,118,105],"value":"Copyright 2006-2020 Matteo Salvi"},
-{"hash":260854525,"name":"tfrmabout.lnklblwebsite.caption","sourcebytes":[104,116,116,112,58,47,47,119,119,119,46,115,97,108,118,97,100,111,114,115,111,102,116,119,97,114,101,46,99,111,109],"value":"http://www.salvadorsoftware.com"}
+{"hash":236877237,"name":"tfrmabout.lnklblwebsite.caption","sourcebytes":[104,116,116,112,115,58,47,47,103,105,116,104,117,98,46,99,111,109,47,115,97,108,118,97,100,111,114,98,115,47,97,115,117,105,116,101],"value":"https://github.com/salvadorbs/asuite"}
 ]}
