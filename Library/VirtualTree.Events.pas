@@ -36,8 +36,8 @@ type
   private
     FGraphicMenu: TfrmGraphicMenu;
 
-    function ClickOnButtonTree(Sender: TBaseVirtualTree; const HitInfo: THitInfo): Boolean;
-    procedure DoColumnResize(Sender: TVTHeader; Column: TColumnIndex);
+    function ClickOnButtonTree(Sender: TBaseVirtualTree; const HitInfo: THitInfo): Boolean; inline;
+    procedure DoColumnResize(Sender: TVTHeader; Column: TColumnIndex); inline;
     procedure DoEditing(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex; var Allowed: Boolean);
     procedure DoGetHint(Sender: TBaseVirtualTree; Node: PVirtualNode;

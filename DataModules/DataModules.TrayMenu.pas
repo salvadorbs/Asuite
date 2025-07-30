@@ -77,7 +77,7 @@ type
     procedure MeasureCaptionedSeparator(Sender: TObject; ACanvas: TCanvas; var Width,
       Height: Integer);
     procedure DrawFadeLine(ACanvas: TCanvas; AClipRect, ALineRect: TRect; AColor: TColor; AFadeWidth: Integer; AClip: Boolean);
-    function  IsCaptionedSeparator(MenuItem: TMenuItem): Boolean;
+    function  IsCaptionedSeparator(MenuItem: TMenuItem): Boolean; inline;
     procedure CreateSpecialList(Menu: TPopupMenu; SList: TBaseItemsList;
                                MaxItems: Integer; SubMenuCaption: String = '');
     procedure AddItem(TargetItem, AMenuItem: TMenuItem);
