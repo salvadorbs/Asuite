@@ -213,18 +213,18 @@ begin
     if ASimpleFormat then
     begin
       //Version format "Major.Minor Beta"
-      Result := Format('%d.%d', [Version.Major,
-                                 Version.Minor]);
+      Result := Format('%d.%d %s', [Version.Major,
+                                    Version.Minor,
+                                    VERSION_PRERELEASE]);
     end
     else begin
       //Version format "Major.Minor.Revision.Build Beta"
-      Result := Format('%d.%d.%d.%d', [Version.Major,
-                                       Version.Minor,
-                                       Version.Revision,
-                                       Version.Build]);
+      Result := Format('%d.%d.%d.%d %s', [Version.Major,
+                                          Version.Minor,
+                                          Version.Revision,
+                                          Version.Build,
+                                          VERSION_PRERELEASE]);
     end;
-
-    Result := Result + ' ' + VERSION_PRERELEASE;
   except
     on E : Exception do
       TASuiteLogger.Exception(E);

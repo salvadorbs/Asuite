@@ -40,9 +40,6 @@ const
   ICONS_DIR      = 'icons';
   BUTTONS_DIR    = 'buttons';
 
-  //FileSystem
-  DriveLetters      = ['a'..'z', 'A'..'Z'];
-
   //Extensions
   EXT_XML       = '.xml';
   EXT_SQL       = '.sqlite';
@@ -88,12 +85,6 @@ const
   // PageControl Indexes
   PG_LIST       = 0;
   PG_SEARCH     = 1;
-
-  // PageControl Indexes
-  PG_MENULIST   = 0;
-  PG_MENUMRU    = 1;
-  PG_MENUMFU    = 2;
-  PG_MENUSEARCH = 3;
 
   //ASuite placeholders for path
   CONST_PATH_ASUITE_old  = '$asuite'; //Deprecated

@@ -21,8 +21,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // Build options for ASuite
 //------------------------------------------------------------------------------
 
+// Performance optimizations
+{$OPTIMIZATION ON}
+{$SMARTLINK ON}
+{$INLINE ON}
+
 //Enable hack for a faster popupmenu
-{.$DEFINE FASTHACK}
+{$DEFINE FASTHACK}
 
 {$IFDEF UNIX}
   {$DEFINE UseCThreads}

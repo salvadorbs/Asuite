@@ -166,10 +166,10 @@ begin
     end;
   end;
 
-  Result := FormatFloat('0.00',dblSize);
-
   if Units then
-    Result := Result + TypeSpace;
+    Result := FormatFloat('0.00',dblSize) + TypeSpace
+  else
+    Result := FormatFloat('0.00',dblSize);
 end;
 
 //Warning: Code taken from DoubleCMD source (unit uOSUtils.pas)
