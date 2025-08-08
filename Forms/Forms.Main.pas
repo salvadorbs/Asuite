@@ -146,6 +146,11 @@ type
   private
     { Private declarations }
     FRestoringSettings: Boolean;
+    // Controllers
+    FSearch: TSearchController;
+    FClipboard: TClipboardController;
+    FRun: TRunController;
+    FSort: TSortController;
     procedure EmptyClipboard;
     function  GetActiveTree: TBaseVirtualTree;
     procedure PopulatePopUpMenuFromAnother(APopupMenu: TMenuItem; AParentMenuItem: TMenuItem);
@@ -176,7 +181,9 @@ uses
   Kernel.Types, NodeDataTypes.Files, Kernel.Manager, VirtualTrees.Types,
   Kernel.Logger, mormot.core.log, FileUtil, Kernel.ResourceStrings, Kernel.Instance,
   VirtualTrees.ClipBoard, Forms.GraphicMenu
-  {$IFDEF MSWINDOWS} , jwatlhelp32, Windows {$ENDIF};
+  {$IFDEF MSWINDOWS} , jwatlhelp32, Windows {$ENDIF}
+  , Utility.SearchController, Utility.ClipboardController, Utility.MenuUtils
+  , Utility.RunController, Utility.SortController;
 
 {$R *.lfm}
 
@@ -187,13 +194,8 @@ end;
 
 procedure TfrmMain.actCopyExecute(Sender: TObject);
 begin
-  TASuiteLogger.Info('Copy nodes into clipboard', []);
-
-  {$IFDEF MSWINDOWS}
-  vstList.CopyToClipBoard;
-  {$ELSE}
-  vstList.FakeCopyToClipBoard;
-  {$ENDIF}
+  if Assigned(FClipboard) then
+    FClipboard.DoCopy;
 end;
 
 procedure TfrmMain.actCutCopyDeleteUpdate(Sender: TObject);
@@ -212,13 +214,8 @@ end;
 
 procedure TfrmMain.actCutExecute(Sender: TObject);
 begin
-  TASuiteLogger.Info('Cut nodes into clipboard', []);
-
-  {$IFDEF MSWINDOWS}
-  vstList.CutToClipBoard;
-  {$ELSE}
-  vstList.FakeCutToClipBoard;
-  {$ENDIF}
+  if Assigned(FClipboard) then
+    FClipboard.DoCut;
 end;
 
 procedure TfrmMain.actDeleteExecute(Sender: TObject);
@@ -252,7 +249,8 @@ end;
 
 procedure TfrmMain.actRunItemExecute(Sender: TObject);
 begin
-  TVirtualTreeMethods.ExecuteSelectedNodes(GetActiveTree, TRunMode(TAction(Sender).Tag), False);
+  if Assigned(FRun) then
+    FRun.ExecuteRun(GetActiveTree, TRunMode(TAction(Sender).Tag));
 end;
 
 procedure TfrmMain.actAddItem(Sender: TObject);
@@ -269,49 +267,21 @@ begin
 end;
 
 procedure TfrmMain.actPasteExecute(Sender: TObject);
-var
-  NodeData: TvBaseNodeData;
-  Tree: TVirtualStringTree;
-  res: Boolean = False;
 begin
-  TASuiteLogger.Info('Paste clipboard content in ASuite', []);
-
-  Tree := TVirtualStringTree(GetActiveTree);
-  if Assigned(Tree) then
-  begin
-    NodeData := TVirtualTreeMethods.GetNodeItemData(Tree.GetFirstSelected, Tree);
-    if Assigned(NodeData) then
-    begin
-      if NodeData.IsCategoryItem then
-        Tree.DefaultPasteMode := amAddChildLast
-      else
-        Tree.DefaultPasteMode := amInsertAfter;
-      end
-    else
-      Tree.DefaultPasteMode := amAddChildLast; 
-
-    {$IFDEF MSWINDOWS}
-    res := Tree.PasteFromClipboard;
-    {$ELSE}
-    res := vstList.FakePasteFromClipboard;
-    {$ENDIF}
-
-    if res then
-    begin
-      Tree.Expanded[Tree.GetFirstSelected] := True;
-      TVirtualTreeMethods.RefreshList(Tree);
-    end;
-  end;
+  if Assigned(FClipboard) then
+    FClipboard.DoPaste;
 end;
 
 procedure TfrmMain.actPasteUpdate(Sender: TObject);
+var
+  Enabled: Boolean;
 begin               
-  if Assigned(Sender) then
-  {$IFDEF MSWINDOWS}
-    TAction(Sender).Enabled := IsFormatInClipBoard(CF_VIRTUALTREE) and (GetActiveTree = vstList);
-  {$ELSE}
-    TAction(Sender).Enabled := (Length(vstList.GetSortedCutCopySet(True)) > 0) and (GetActiveTree = vstList);
-  {$ENDIF}
+  if Assigned(Sender) and Assigned(FClipboard) then
+  begin
+    Enabled := False;
+    TClipboardController(FClipboard).UpdatePasteEnabled(Enabled, GetActiveTree = vstList);
+    TAction(Sender).Enabled := Enabled;
+  end;
 end;
 
 procedure TfrmMain.actPropertyExecute(Sender: TObject);
@@ -320,50 +290,15 @@ begin
 end;
 
 procedure TfrmMain.actRunItemUpdate(Sender: TObject);
-var
-  Nodes: TNodeArray;
-  NodeData: TvBaseNodeData;
-  I: Integer;
 begin
-  Nodes := GetActiveTree.GetSortedSelection(True);
-
-  TAction(Sender).Enabled := False;
-
-  for I := Low(Nodes) to High(Nodes) do
-  begin
-    NodeData := TVirtualTreeMethods.GetNodeItemData(Nodes[I], GetActiveTree);
-
-    if not(NodeData.IsSeparatorItem) then
-      TAction(Sender).Enabled := True;
-
-    if ((TAction(Sender).Tag = 1) or (TAction(Sender).Tag = 2)) and (NodeData.IsFileItem) then
-      TAction(Sender).Enabled := IsExecutableFile(TvFileNodeData(NodeData).PathAbsoluteFile);
-
-    if (TAction(Sender).Tag = 3) then
-    begin
-      if NodeData.IsFileItem then
-      begin
-        if IsValidURLProtocol(TvFileNodeData(NodeData).PathAbsoluteFile) then
-          TAction(Sender).Enabled := False
-      end
-      else
-        TAction(Sender).Enabled := False;
-    end;
-  end;
+  if Assigned(FRun) then
+    FRun.UpdateRunAction(TAction(Sender), GetActiveTree);
 end;
 
 procedure TfrmMain.actSortCatItemsExecute(Sender: TObject);
-var
-  Nodes: TNodeArray;
-  I: Integer;
 begin
-  Nodes := GetActiveTree.GetSortedSelection(True);
-  if Length(Nodes) > 0 then
-  begin
-    for I := Low(Nodes) to High(Nodes) do
-      vstList.Sort(Nodes[I], 0, sdAscending);
-  end;
-  TVirtualTreeMethods.RefreshList(vstList);
+  if Assigned(FSort) then
+    FSort.SortSelectedCategories(GetActiveTree, vstList);
 end;
 
 procedure TfrmMain.actSortCatItemsUpdate(Sender: TObject);
@@ -388,28 +323,20 @@ end;
 
 procedure TfrmMain.actSortListExecute(Sender: TObject);
 begin
-  vstList.SortTree(-1, sdAscending);
-
-  TVirtualTreeMethods.RefreshList(vstList);
+  if Assigned(FSort) then
+    FSort.SortListTree(vstList);
 end;
 
 procedure TfrmMain.actSortListUpdate(Sender: TObject);
 begin
-  TAction(Sender).Visible := (GetActiveTree = vstList);
-  TAction(Sender).Enabled := (vstList.RootNode.ChildCount > 1) and (GetActiveTree = vstList);
+  if Assigned(FSort) then
+    FSort.UpdateSortListAction(TAction(Sender), vstList, GetActiveTree);
 end;
 
 procedure TfrmMain.btnedtSearchChange(Sender: TObject);
 begin
-  if Config.SearchAsYouType then
-  begin
-    if btnedtSearch.Text <> '' then
-      btnedtSearch.RightButton.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('cancel')
-    else
-      btnedtSearch.RightButton.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('search');
-
-    DoSearchItem(vstSearch, btnedtSearch.Text, TSearchType(GetCheckedMenuItem(pmSearch).Tag));
-  end;
+  if Assigned(FSearch) then
+    FSearch.OnTextChange(Sender);
 end;
 
 procedure TfrmMain.UniqueInstance1OtherInstance(Sender: TObject;
@@ -433,22 +360,9 @@ begin
 end;
 
 procedure TfrmMain.EmptyClipboard;
-begin                  
-  TASuiteLogger.Enter('Clearing clipboard', Self);
-
-  {$IFDEF MSWINDOWS}
-  if IsFormatInClipBoard(CF_VIRTUALTREE) then
-  begin
-    Windows.OpenClipboard(0);
-    try
-      Windows.EmptyClipboard;
-    finally
-      Windows.CloseClipboard;
-    end;
-  end;
-  {$ENDIF}
-
-  Clipboard.Clear;
+begin
+  if Assigned(FClipboard) then
+    FClipboard.EmptyClipboard;
 end;
            
 {$IFDEF UNIX}
@@ -473,16 +387,14 @@ end;
 
 procedure TfrmMain.btnedtSearchKeyPress(Sender: TObject; var Key: Char);
 begin
-  if Ord(Key) = VK_RETURN then
-    btnedtSearchRightButtonClick(Sender);
+  if Assigned(FSearch) then
+    FSearch.OnKeyPress(Sender, Key);
 end;
 
 procedure TfrmMain.btnedtSearchRightButtonClick(Sender: TObject);
 begin
-  if Config.SearchAsYouType then
-    btnedtSearch.Text := ''
-  else
-    DoSearchItem(vstSearch, btnedtSearch.Text, TSearchType(GetCheckedMenuItem(pmSearch).Tag));
+  if Assigned(FSearch) then
+    FSearch.OnRightButtonClick(Sender);
 end;
 
 procedure TfrmMain.miSaveListClick(Sender: TObject);
@@ -526,7 +438,8 @@ end;
 
 procedure TfrmMain.btnedtSearchLeftButtonClick(Sender: TObject);
 begin
-  pmSearch.PopUp;
+  if Assigned(FSearch) then
+    FSearch.OnLeftButtonClick(Sender);
 end;
 
 procedure TfrmMain.FormChangeBounds(Sender: TObject);
@@ -625,8 +538,8 @@ begin
   actRunItem.ImageIndex    := ASuiteManager.IconsManager.GetIconIndex('run');
 
   //Set Search's ImageIndexes
-  btnedtSearch.LeftButton.ImageIndex  := ASuiteManager.IconsManager.GetIconIndex('search_type');
-  btnedtSearch.RightButton.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('search');
+  if Assigned(FSearch) then
+    FSearch.InitIcons;
 end;
 
 procedure TfrmMain.AfterConstruction;
@@ -636,26 +549,8 @@ begin
 end;
 
 procedure TfrmMain.PopulatePopUpMenuFromAnother(APopupMenu: TMenuItem; AParentMenuItem: TMenuItem);
-var
-  I: Integer;
-  MenuItem : TMenuItem;
 begin
-  APopupMenu.Clear;
-
-  for I := 0 to AParentMenuItem.Count - 1 do
-  begin
-    //Create menuitem and set it
-    MenuItem := TMenuItem.Create(APopupMenu);
-    if Assigned(AParentMenuItem.Items[I].Action) then
-      MenuItem.Action := AParentMenuItem.Items[I].Action
-    else
-      MenuItem.Caption := cLineCaption;
-
-    //TODO: Add other levels
-
-    //Add new menu item in APopupMenu
-    APopupMenu.Add(MenuItem) ;
-  end;
+  Utility.MenuUtils.PopulatePopUpMenuFromAnother(APopupMenu, AParentMenuItem);
 end;
 
 procedure TfrmMain.CloseProcessOpenByASuite;
@@ -696,25 +591,9 @@ end;
 
 procedure TfrmMain.DoSearchItem(const TreeSearch: TBaseVirtualTree; const Keyword: string;
                                 const SearchType: TSearchType);
-var
-  LauncherSearch: TLauncherSearch;
 begin
-  TreeSearch.Clear;
-  if Length(Keyword) > 0 then
-  begin
-    TreeSearch.BeginUpdate;
-    try
-      //Set record LauncherSearch for search
-      LauncherSearch.Tree       := TreeSearch;
-      LauncherSearch.Keyword    := LowerCase(Keyword);
-      LauncherSearch.SearchType := SearchType;
-      //Do search using LauncherSearch for parameters
-      ASuiteInstance.MainTree.IterateSubtree(nil, TVirtualTreeMethods.FindNode, @LauncherSearch, [], True);
-    finally
-      TreeSearch.EndUpdate;
-      TVirtualTreeMethods.CheckVisibleNodePathExe(TreeSearch);
-    end;
-  end;
+  if Assigned(FSearch) then
+    FSearch.ExecuteOn(TreeSearch, Keyword, SearchType);
 end;
 
 function TfrmMain.GetActiveTree: TBaseVirtualTree;
@@ -812,6 +691,12 @@ begin
   ASuiteInstance.VSTEvents.SetupVSTList(vstList);
   ASuiteInstance.VSTEvents.SetupVSTSearch(vstSearch);
 
+  // Initialize controllers
+  FSearch := TSearchController.Create(vstSearch, btnedtSearch, pmSearch);
+  FClipboard := TClipboardController.Create(vstList);
+  FRun := TRunController.Create;
+  FSort := TSortController.Create;
+
   //Load Database and get icons (only first level of tree)
   Config.AddObserver(Self);
   Config.LoadConfig;
@@ -843,6 +728,10 @@ end;
 
 procedure TfrmMain.BeforeDestruction;
 begin
+  FreeAndNil(FSearch);
+  FreeAndNil(FClipboard);
+  FreeAndNil(FRun);
+  FreeAndNil(FSort);
   Config.RemoveObserver(Self);
   inherited BeforeDestruction;
 end;
