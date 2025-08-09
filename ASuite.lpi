@@ -183,7 +183,7 @@
         <PackageName Value="LCL"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="74">
+    <Units Count="79">
       <Unit0>
         <Filename Value="ASuite.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -564,6 +564,26 @@
         <Filename Value="Library/AppConfig.Observer.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit73>
+      <Unit74>
+        <Filename Value="Utilities/Utility.ClipboardController.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit74>
+      <Unit75>
+        <Filename Value="Utilities/Utility.MenuUtils.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit75>
+      <Unit76>
+        <Filename Value="Utilities/Utility.RunController.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit76>
+      <Unit77>
+        <Filename Value="Utilities/Utility.SearchController.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit77>
+      <Unit78>
+        <Filename Value="Utilities/Utility.SortController.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit78>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
