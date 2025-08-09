@@ -28,7 +28,8 @@ uses
   ComCtrls, VirtualTrees, UniqueInstance, Kernel.Consts, DataModules.Icons,
   Kernel.BaseMainForm, {$IFDEF UNIX}VirtualTree.Helper, {$ENDIF}
   Kernel.Enumerations, ExtCtrls, ButtonedEdit, {Actions,} ActnList,
-  AppConfig.Observer, AppConfig.Main;
+  AppConfig.Observer, AppConfig.Main, Utility.SearchController,
+  Utility.ClipboardController, Utility.RunController, Utility.SortController;
 
 type
 
@@ -160,6 +161,20 @@ type
 {$ENDIF}
     procedure ConfigChanged(const PropertyName: string);
     procedure RestoreSettings;
+    // ConfigChanged helpers
+    function  ShouldApply(const Prop, Target: string): Boolean; inline;
+    procedure ApplyHoldSize(const PropertyName: string);
+    procedure ApplyAlwaysOnTop(const PropertyName: string);
+    procedure ApplyCustomTitle(const PropertyName: string);
+    procedure ApplyHideTabSearch(const PropertyName: string);
+    procedure ApplySearchColumns(const PropertyName: string);
+    procedure ApplyTreeAutoExpand(const PropertyName: string);
+    procedure ApplyTreeFont(const PropertyName: string);
+    procedure ApplyTreeBackgroundFlag(const PropertyName: string);
+    procedure ApplySmallIconSize(const PropertyName: string);
+    procedure ApplyAfterUpdateConfig(const PropertyName: string);
+    procedure ApplyBoundsGroup(const PropertyName: string);
+    procedure ApplyBoundsIndividual(const PropertyName: string);
   public
     { Public declarations }
     procedure DoSearchItem(const TreeSearch: TBaseVirtualTree; const Keyword: string;
@@ -181,9 +196,8 @@ uses
   Kernel.Types, NodeDataTypes.Files, Kernel.Manager, VirtualTrees.Types,
   Kernel.Logger, mormot.core.log, FileUtil, Kernel.ResourceStrings, Kernel.Instance,
   VirtualTrees.ClipBoard, Forms.GraphicMenu
-  {$IFDEF MSWINDOWS} , jwatlhelp32, Windows {$ENDIF}
-  , Utility.SearchController, Utility.ClipboardController, Utility.MenuUtils
-  , Utility.RunController, Utility.SortController;
+  {$IFDEF MSWINDOWS} , jwatlhelp32, Windows {$ENDIF},
+  Utility.MenuUtils;
 
 {$R *.lfm}
 
@@ -201,13 +215,18 @@ end;
 procedure TfrmMain.actCutCopyDeleteUpdate(Sender: TObject);
 var
   Nodes: TNodeArray;
+  Tree: TBaseVirtualTree;
 begin
   TAction(Sender).Enabled := False;
 
   //TODO: Why Editing!?
-  if not(tsEditing in GetActiveTree.TreeStates) then
+  Tree := GetActiveTree;
+  if (Tree = nil) then
+    Exit;
+
+  if not (tsEditing in Tree.TreeStates) then
   begin
-    Nodes := GetActiveTree.GetSortedSelection(True);
+    Nodes := Tree.GetSortedSelection(True);
     TAction(Sender).Enabled := Length(Nodes) > 0;
   end;
 end;
@@ -736,127 +755,174 @@ begin
   inherited BeforeDestruction;
 end;
 
-procedure TfrmMain.ConfigChanged(const PropertyName: string);
-var
-  sBackgroundPath: String;
+function TfrmMain.ShouldApply(const Prop, Target: string): Boolean;
 begin
-  if (PropertyName = '') or (PropertyName = 'HoldSize') then
-  begin
-    Self.BorderStyle := bsSingle;
-    Self.BorderIcons := [biSystemMenu, biMinimize];
-    if not Config.HoldSize then
-    begin
-      Self.BorderStyle := bsSizeable;
-      Self.BorderIcons := [biSystemMenu, biMinimize, biMaximize];
-    end;
-  end;
+  Result := (Prop = '') or (Prop = Target);
+end;
 
-  if (PropertyName = '') or (PropertyName = 'AlwaysOnTop') then
-  begin
-    if Config.AlwaysOnTop then
-      Self.FormStyle := fsStayOnTop
-    else
-      Self.FormStyle := fsNormal;
-  end;
+procedure TfrmMain.ApplyHoldSize(const PropertyName: string);
+begin
+  if not ShouldApply(PropertyName, 'HoldSize') then
+    Exit;
 
-  if (PropertyName = '') or (PropertyName = 'UseCustomTitle') then
+  Self.BorderStyle := bsSingle;
+  Self.BorderIcons := [biSystemMenu, biMinimize];
+  if not Config.HoldSize then
   begin
-    if Config.UseCustomTitle and (Config.CustomTitleString <> '') then
-      Self.Caption := Config.CustomTitleString
-    else
-      Self.Caption := APP_TITLE;
+    Self.BorderStyle := bsSizeable;
+    Self.BorderIcons := [biSystemMenu, biMinimize, biMaximize];
   end;
+end;
 
-  if (PropertyName = '') or (PropertyName = 'HideTabSearch') then
-  begin
-    with frmMain do
-    begin
-      tbSearch.TabVisible    := Not(Config.HideTabSearch);
-      tbList.TabVisible      := Not(Config.HideTabSearch);
-      pcList.ActivePageIndex := 0;
-    end;
-  end;
+procedure TfrmMain.ApplyAlwaysOnTop(const PropertyName: string);
+begin
+  if not ShouldApply(PropertyName, 'AlwaysOnTop') then
+    Exit;
 
-  if (PropertyName = '') or (PropertyName = 'SearchNameColWidth') then
+  if Config.AlwaysOnTop then
+    Self.FormStyle := fsStayOnTop
+  else
+    Self.FormStyle := fsNormal;
+end;
+
+procedure TfrmMain.ApplyCustomTitle(const PropertyName: string);
+begin
+  if not ShouldApply(PropertyName, 'UseCustomTitle') then
+    Exit;
+
+  if Config.UseCustomTitle and (Config.CustomTitleString <> '') then
+    Self.Caption := Config.CustomTitleString
+  else
+    Self.Caption := APP_TITLE;
+end;
+
+procedure TfrmMain.ApplyHideTabSearch(const PropertyName: string);
+begin
+  if not ShouldApply(PropertyName, 'HideTabSearch') then
+    Exit;
+
+  tbSearch.TabVisible    := not Config.HideTabSearch;
+  tbList.TabVisible      := not Config.HideTabSearch;
+  pcList.ActivePageIndex := 0;
+end;
+
+procedure TfrmMain.ApplySearchColumns(const PropertyName: string);
+begin
+  if ShouldApply(PropertyName, 'SearchNameColWidth') then
     vstSearch.Header.Columns[0].Width := Config.SearchNameColWidth;
 
-  if (PropertyName = '') or (PropertyName = 'SearchCategoryColWidth') then
+  if ShouldApply(PropertyName, 'SearchCategoryColWidth') then
     vstSearch.Header.Columns[1].Width := Config.SearchCategoryColWidth;
+end;
 
-  if (PropertyName = '') or (PropertyName = 'TVAutoOpClCats') then
+procedure TfrmMain.ApplyTreeAutoExpand(const PropertyName: string);
+begin
+  if not ShouldApply(PropertyName, 'TVAutoOpClCats') then
+    Exit;
+
+  if Config.TVAutoOpClCats then
+    ASuiteInstance.MainTree.TreeOptions.AutoOptions := ASuiteInstance.MainTree.TreeOptions.AutoOptions + [toAutoExpand]
+  else
+    ASuiteInstance.MainTree.TreeOptions.AutoOptions := ASuiteInstance.MainTree.TreeOptions.AutoOptions - [toAutoExpand];
+end;
+
+procedure TfrmMain.ApplyTreeFont(const PropertyName: string);
+begin
+  if not ShouldApply(PropertyName, 'TVFont') then
+    Exit;
+
+  ASuiteInstance.MainTree.Font.Assign(Config.TVFont);
+end;
+
+procedure TfrmMain.ApplyTreeBackgroundFlag(const PropertyName: string);
+begin
+  if not ShouldApply(PropertyName, 'TVBackground') then
+    Exit;
+
+  if Config.TVBackground then
+    ASuiteInstance.MainTree.TreeOptions.PaintOptions := ASuiteInstance.MainTree.TreeOptions.PaintOptions + [toShowBackground]
+  else
+    ASuiteInstance.MainTree.TreeOptions.PaintOptions := ASuiteInstance.MainTree.TreeOptions.PaintOptions - [toShowBackground];
+end;
+
+procedure TfrmMain.ApplySmallIconSize(const PropertyName: string);
+begin
+  if not ShouldApply(PropertyName, 'TVSmallIconSize') then
+    Exit;
+
+  TVirtualTreeMethods.ChangeTreeIconSize(ASuiteInstance.MainTree, Config.TVSmallIconSize);
+  if ASuiteInstance.MainTree.HasChildren[ASuiteInstance.MainTree.RootNode] then
   begin
-    if Config.TVAutoOpClCats then
-      ASuiteInstance.MainTree.TreeOptions.AutoOptions := ASuiteInstance.MainTree.TreeOptions.AutoOptions + [toAutoExpand]
-    else
-      ASuiteInstance.MainTree.TreeOptions.AutoOptions := ASuiteInstance.MainTree.TreeOptions.AutoOptions - [toAutoExpand];
+    ASuiteInstance.MainTree.FullCollapse;
+    TVirtualTreeMethods.ChangeAllNodeHeight(ASuiteInstance.MainTree, ASuiteInstance.MainTree.DefaultNodeHeight);
+  end;
+end;
+
+procedure TfrmMain.ApplyAfterUpdateConfig(const PropertyName: string);
+var
+  sBackgroundPath: string;
+begin
+  if not ShouldApply(PropertyName, 'AfterUpdateConfig') then
+    Exit;
+
+  SetDefaultLang(Config.LangID, ASuiteInstance.Paths.SuitePathLocale);
+
+  // Reload icons and item colors
+  SetAllIcons;
+  TVirtualTreeMethods.UpdateItemColor(ASuiteInstance.MainTree);
+
+  // Update background image
+  sBackgroundPath := ASuiteInstance.Paths.RelativeToAbsolute(Config.TVBackgroundPath);
+  if Config.TVBackground and (Config.TVBackgroundPath <> '') and FileExists(sBackgroundPath) then
+  begin
+    if (ExtractLowerFileExt(sBackgroundPath) = EXT_PNG) or
+       (ExtractLowerFileExt(sBackgroundPath) = EXT_BMP) then
+      ASuiteInstance.MainTree.Background.LoadFromFile(sBackgroundPath);
   end;
 
-  if (PropertyName = '') or (PropertyName = 'TVFont') then
-  begin
-    ASuiteInstance.MainTree.Font.Assign(Config.TVFont);
-  end;
+  ASuiteInstance.MainTree.Update;
+end;
 
-  if (PropertyName = '') or (PropertyName = 'TVBackground') then
-  begin
-    if Config.TVBackground then
-      ASuiteInstance.MainTree.TreeOptions.PaintOptions := ASuiteInstance.MainTree.TreeOptions.PaintOptions + [toShowBackground]
-    else
-      ASuiteInstance.MainTree.TreeOptions.PaintOptions := ASuiteInstance.MainTree.TreeOptions.PaintOptions - [toShowBackground];
-  end;
+procedure TfrmMain.ApplyBoundsGroup(const PropertyName: string);
+begin
+  if PropertyName <> 'MainFormBounds' then
+    Exit;
 
-  if (PropertyName = '') or (PropertyName = 'TVSmallIconSize') then
-  begin
-    //Change node height and imagelist
-    TVirtualTreeMethods.ChangeTreeIconSize(ASuiteInstance.MainTree, Config.TVSmallIconSize);
-    if ASuiteInstance.MainTree.HasChildren[ASuiteInstance.MainTree.RootNode] then
-    begin
-      ASuiteInstance.MainTree.FullCollapse;
-      TVirtualTreeMethods.ChangeAllNodeHeight(ASuiteInstance.MainTree, ASuiteInstance.MainTree.DefaultNodeHeight);
-    end;
-  end;
+  Self.Left   := Config.MainFormLeft;
+  Self.Top    := Config.MainFormTop;
+  Self.Width  := Scale96ToForm(Config.MainFormWidth);
+  Self.Height := Scale96ToForm(Config.MainFormHeight);
+end;
 
-  if (PropertyName = '') or (PropertyName = 'AfterUpdateConfig') then
-  begin
-    SetDefaultLang(Config.LangID, ASuiteInstance.Paths.SuitePathLocale);
-
-    //Loading icons
-    frmMain.SetAllIcons;
-
-    TVirtualTreeMethods.UpdateItemColor(ASuiteInstance.MainTree);
-
-    //Update background
-    sBackgroundPath := ASuiteInstance.Paths.RelativeToAbsolute(Config.TVBackgroundPath);
-    if (Config.TVBackground) and (Config.TVBackgroundPath <> '') and (FileExists(sBackgroundPath)) then
-    begin
-      if ((ExtractLowerFileExt(sBackgroundPath) = EXT_PNG) or
-          (ExtractLowerFileExt(sBackgroundPath) = EXT_BMP)) then
-        ASuiteInstance.MainTree.Background.LoadFromFile(sBackgroundPath);
-    end;
-
-    ASuiteInstance.MainTree.Update;
-  end;
-
-  // Handle grouped notification for form bounds
-  if (PropertyName = 'MainFormBounds') then
-  begin
-    Self.Left   := Config.MainFormLeft;
-    Self.Top    := Config.MainFormTop;
-    Self.Width  := Scale96ToForm(Config.MainFormWidth);
-    Self.Height := Scale96ToForm(Config.MainFormHeight);
-  end;
-
-  // Retain compatibility with individual property notifications
-  if (PropertyName = '') or (PropertyName = 'MainFormLeft') then
+procedure TfrmMain.ApplyBoundsIndividual(const PropertyName: string);
+begin
+  if ShouldApply(PropertyName, 'MainFormLeft') then
     Self.Left := Config.MainFormLeft;
 
-  if (PropertyName = '') or (PropertyName = 'MainFormTop') then
+  if ShouldApply(PropertyName, 'MainFormTop') then
     Self.Top := Config.MainFormTop;
 
-  if (PropertyName = '') or (PropertyName = 'MainFormWidth') then
-    Self.Width  := Scale96ToForm(Config.MainFormWidth);
+  if ShouldApply(PropertyName, 'MainFormWidth') then
+    Self.Width := Scale96ToForm(Config.MainFormWidth);
 
-  if (PropertyName = '') or (PropertyName = 'MainFormHeight') then
+  if ShouldApply(PropertyName, 'MainFormHeight') then
     Self.Height := Scale96ToForm(Config.MainFormHeight);
+end;
+
+procedure TfrmMain.ConfigChanged(const PropertyName: string);
+begin
+  ApplyHoldSize(PropertyName);
+  ApplyAlwaysOnTop(PropertyName);
+  ApplyCustomTitle(PropertyName);
+  ApplyHideTabSearch(PropertyName);
+  ApplySearchColumns(PropertyName);
+  ApplyTreeAutoExpand(PropertyName);
+  ApplyTreeFont(PropertyName);
+  ApplyTreeBackgroundFlag(PropertyName);
+  ApplySmallIconSize(PropertyName);
+  ApplyAfterUpdateConfig(PropertyName);
+  ApplyBoundsGroup(PropertyName);
+  ApplyBoundsIndividual(PropertyName);
 end;
 
 procedure TfrmMain.RestoreSettings;
