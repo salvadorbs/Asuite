@@ -152,7 +152,7 @@ uses
   NodeDataTypes.Files, NodeDataTypes.Custom, NodeDataTypes.Separator, Kernel.Types,
   Kernel.Enumerations, VirtualTree.Methods, DataModules.TrayMenu, LCLProc, Kernel.Consts,
   DataModules.Icons, Kernel.Logger, mormot.core.log, Kernel.Instance, Kernel.Manager
-  {$IFDEF Windows}, comobj, Windows{$ENDIF};
+  {$IFDEF Windows}, comobj, Windows{$ENDIF}, LazUTF8;
 
 { TVirtualTreeEvents }
 
@@ -865,37 +865,45 @@ end;
 procedure TVirtualTreeEvents.GetFileListFromDataObject(
   const DataObj: IDataObject; FileList: TStringList);
 const
+  // Request file drop (HDROP) data in a global memory block
   FormatEtc: TFormatEtc = (cfFormat: CF_HDROP; ptd: nil;
     dwAspect: DVASPECT_CONTENT; lindex: -1; tymed: TYMED_HGLOBAL);
 var
   Medium: TStgMedium;                   // storage medium containing file list
-  DroppedFileCount: Integer;            // number of dropped files
-  I: Integer;                           // loops thru dropped files
-  FileNameLength: Integer;              // length of a dropped file name
-  FileName: string;                 // name of a dropped file
+  DroppedFileCount: UINT;               // number of dropped files
+  I: UINT;                              // loops thru dropped files
+  FileNameLength: UINT;                 // length (in WideChar) of a dropped file name (excluding terminator)
+  WideFileName: UnicodeString;          // Unicode file name
+  Success: HResult;
 begin
-  // Get required storage medium from data object
-  FileName := '';
-  try   
-    if DataObj.GetData(FormatEtc, Medium) = S_OK then
+  // Initialize Medium to avoid releasing uninitialized data
+  FillChar(Medium, SizeOf(Medium), 0);
+  Success := DataObj.GetData(FormatEtc, Medium);
+  if Success <> S_OK then
+    Exit; // nothing to release
+  try
+    if Medium.tymed = TYMED_HGLOBAL then
     begin
-      // Get count of files dropped
-      DroppedFileCount := DragQueryFile(Medium.hGlobal, $FFFFFFFF, nil, 0);
-      // Get name of each file dropped and process it
-      for I := 0 to Pred(DroppedFileCount) do
+      // Use the UNICODE version of DragQueryFile to properly retrieve non-ASCII names (e.g. Korean)
+      DroppedFileCount := DragQueryFileW(Medium.hGlobal, $FFFFFFFF, nil, 0);
+      for I := 0 to DroppedFileCount - 1 do
       begin
-        // get length of file name, then name itself
-        FileNameLength := DragQueryFile(Medium.hGlobal, I, nil, 0);
-        SetLength(FileName, FileNameLength);
-        DragQueryFile(Medium.hGlobal, I, PChar(FileName), FileNameLength + 1);
-        // add file name to list
-        FileList.Append(FileName);
+        // Query required length (without terminating #0)
+        FileNameLength := DragQueryFileW(Medium.hGlobal, I, nil, 0);
+        if FileNameLength > 0 then
+        begin
+          SetLength(WideFileName, FileNameLength);
+          // Retrieve the file name (add 1 for terminating #0)
+          DragQueryFileW(Medium.hGlobal, I, PWideChar(WideFileName), FileNameLength + 1);
+          // Convert UTF-16 (Windows) -> UTF-8 (Lazarus default) and add to list
+          FileList.Append(UTF16ToUTF8(WideFileName));
+        end;
       end;
     end;
   finally
-    // Tidy up - release the drop handle
-    // don't use DropH again after this
-    DragFinish(Medium.hGlobal);
+    // Release HDROP handle and storage medium
+    if Medium.hGlobal <> 0 then
+      DragFinish(Medium.hGlobal);
     ReleaseStgMedium(@Medium);
   end;
 end;
