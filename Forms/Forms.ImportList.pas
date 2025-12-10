@@ -29,6 +29,9 @@ uses
   Kernel.Enumerations, EditBtn;
 
 type
+
+  { TfrmImportList }
+
   TfrmImportList = class(TForm)
     bvl1: TBevel;
     bvl2: TBevel;
@@ -64,6 +67,10 @@ type
     procedure CheckAllItems(State: TCheckState);
     procedure PopulateTree(Tree: TVirtualStringTree; FilePath: String);
     function  TreeImpToTree(TreeImp, Tree: TVirtualStringTree): Boolean;
+    procedure MassRelativeToAbsolutePath(Sender: TBaseVirtualTree;
+      Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
+    procedure MassAbsoluteToRelativePath(Sender: TBaseVirtualTree;
+      Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
   public
     { Public declarations }
     class procedure Execute(AOwner: TComponent);
@@ -77,10 +84,10 @@ implementation
 {$R *.lfm}
 
 uses
-  AppConfig.Main, VirtualTree.Methods,
+  AppConfig.Main, VirtualTree.Methods, NodeDataTypes.Files,
   Utility.FileFolder, Utility.XML, Database.Manager, NodeDataTypes.Base,
   Kernel.Logger, Kernel.ResourceStrings, Utility.Misc, Kernel.Instance,
-  mormot.core.log;
+  mormot.core.log, AppConfig.Paths;
 
 procedure TfrmImportList.btnBackClick(Sender: TObject);
 begin
@@ -118,16 +125,27 @@ begin
 end;
 
 procedure TfrmImportList.FormClose(Sender: TObject; var Action: TCloseAction);
+var
+  ImportPaths: TConfigPaths;
 begin
   Config.ASuiteState := lsNormal;
   if (ModalResult = mrOk) and (vstListImp.HasChildren[vstListImp.RootNode]) then
   begin
     try
+
+      ImportPaths := TConfigPaths.Create(edtPathList.Text);
+      try
+        vstListImp.IterateSubtree(nil, MassAbsoluteToRelativePath, @ImportPaths, [], True);
+      finally
+        ImportPaths.Free;
+      end;
+
       if TreeImpToTree(vstListImp, ASuiteInstance.MainTree) then
       begin
         ShowMessageFmtEx(msgItemsImported, [GetNumberNodeImp(vstListImp)]);
         TASuiteLogger.Info(msgItemsImported, [GetNumberNodeImp(vstListImp)]);
       end;
+
       TVirtualTreeMethods.GetAllIcons(ASuiteInstance.MainTree, nil);
     except
       on E : Exception do
@@ -169,13 +187,24 @@ begin
 end;
 
 procedure TfrmImportList.tsListShow(Sender: TObject);
+var
+  AsuiteSqlPath: String;
+  ImportPaths: TConfigPaths;
 begin
   lblTitle.Caption := msgImportTitle3;
   btnNext.Caption  := msgImport;
   btnNext.Enabled  := vstListImp.CheckedCount > 0;
+  AsuiteSqlPath    := edtPathList.Text;
   //Import list in temporary vst
   try
-    PopulateTree(vstListImp, edtPathList.Text);
+    PopulateTree(vstListImp, AsuiteSqlPath);
+
+    ImportPaths := TConfigPaths.Create(AsuiteSqlPath);
+    try
+      vstListImp.IterateSubtree(nil, MassRelativeToAbsolutePath, @ImportPaths, [], True);
+    finally
+      ImportPaths.Free;
+    end;
   finally
     TVirtualTreeMethods.GetAllIcons(vstListImp, nil);
   end;
@@ -305,6 +334,44 @@ begin
     end;
   end;
   Tree.EndUpdate;
+end;
+
+procedure TfrmImportList.MassRelativeToAbsolutePath(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
+var
+  ImportPath: TConfigPaths;
+  NodeData: TvBaseNodeData;
+begin
+  ImportPath := TConfigPaths(Data^);
+  NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
+  if not(NodeData.IsSeparatorItem) then
+  begin
+    TvFileNodeData(NodeData).PathIcon := ImportPath.RelativeToAbsolute(TvFileNodeData(NodeData).PathIcon);
+    if NodeData.IsFileItem then
+    begin
+      TvFileNodeData(NodeData).PathFile := ImportPath.RelativeToAbsolute(TvFileNodeData(NodeData).PathFile);
+      TvFileNodeData(NodeData).WorkingDir := ImportPath.RelativeToAbsolute(TvFileNodeData(NodeData).WorkingDir);
+    end;
+  end;
+end;
+
+procedure TfrmImportList.MassAbsoluteToRelativePath(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
+var
+  ImportPath: TConfigPaths;
+  NodeData: TvBaseNodeData;
+begin
+  ImportPath := TConfigPaths(Data^);
+  NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
+  if not(NodeData.IsSeparatorItem) then
+  begin
+    TvFileNodeData(NodeData).PathIcon := ImportPath.AbsoluteToRelative(TvFileNodeData(NodeData).PathIcon);
+    if NodeData.IsFileItem then
+    begin
+      TvFileNodeData(NodeData).PathFile := ImportPath.AbsoluteToRelative(TvFileNodeData(NodeData).PathFile);
+      TvFileNodeData(NodeData).WorkingDir := ImportPath.AbsoluteToRelative(TvFileNodeData(NodeData).WorkingDir);
+    end;
+  end;
 end;
 
 end.

@@ -42,7 +42,7 @@ implementation
 
 uses
   VirtualTree.Methods, NodeDataTypes.Base, AppConfig.Main, Kernel.Enumerations,
-  Kernel.Logger, mormot.core.log;
+  Kernel.Logger, mormot.core.log, Kernel.Instance;
 
 { TTreeIconsThread }
 
@@ -70,7 +70,7 @@ procedure TTreeIconsThread.GetImageIndex(Sender: TBaseVirtualTree;
 var
   NodeData: TvBaseNodeData;
 begin
-  if Config.ASuiteState = lsNormal then
+  if (Config.ASuiteState = lsNormal) or ((Config.ASuiteState = lsImporting) and (Sender = ASuiteInstance.ImportTree)) then
   begin
     NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
     if Assigned(NodeData) then
