@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, LCLType, SysUtils, Graphics, Forms, Controls, VirtualTrees, Kernel.Enumerations,
-  Classes, jsonConf, LazFileUtils, Kernel.Logger, BGRABitmap, Dialogs;
+  Classes, jsonConf, LazFileUtils, Kernel.Logger, BGRABitmap, Dialogs, Menus;
 
 type
 
@@ -106,6 +106,7 @@ type
     FClassicMenuHotkey  : string;
     //Misc
     FChanged              : Boolean;
+    FOnHotkeysUpdated     : TNotifyEvent;
     FASuiteState          : TLauncherState;
     FMissedSchedulerTask  : Boolean;
     FAutoExpansionFolder  : Boolean;
@@ -150,6 +151,9 @@ type
     procedure SetASuiteState(const Value: TLauncherState);
     function UpdateHotkey(OldValue, NewValue: String; Tag: Integer): Boolean;
     function isValidHotkeyString(AValue: String): Boolean;
+    function ShortcutAvailable(AShortcut: TShortCut): Boolean;
+    procedure LoadShortcutGrabberImages;
+    procedure LoadShortcutGrabberImage(APicture: TPicture; const AFileName: string);
     procedure UpdateTrayIcon;
   public
     { public declarations }
@@ -233,10 +237,19 @@ type
     property ClassicMenuHotkey: string read FClassicMenuHotkey write SetClassicMenuHotkey;
     // Misc
     property Changed: Boolean read FChanged write SetChanged;
+    { Raised when the desktop changed one of the hotkeys and the stored value
+      was updated; the options UI can reload itself. }
+    property OnHotkeysUpdated: TNotifyEvent
+      read FOnHotkeysUpdated write FOnHotkeysUpdated;
     property ASuiteState: TLauncherState read FASuiteState write SetASuiteState;
     property ScanFolderAutoExtractName: boolean read FScanFolderAutoExtractName write FScanFolderAutoExtractName;
     property ScanFolderFileTypes: TStringList read FScanFolderFileTypes write FScanFolderFileTypes;
     property ScanFolderExcludeNames: TStringList read FScanFolderExcludeNames write FScanFolderExcludeNames;
+
+    { Stores a launcher hotkey assigned by the desktop (Wayland portal)
+      without re-registering it. Returns True when the value changed. }
+    function UpdateLauncherHotkeyFromDesktop(Tag: Integer;
+      AValue: TShortCut): Boolean;
 
     procedure AfterUpdateConfig;
 
@@ -257,13 +270,19 @@ uses
   Forms.GraphicMenu, VirtualTree.Methods, Utility.FileFolder, mormot.core.log,
   LCLProc, BGRAIconCursor, VirtualTrees.Types,
   TypInfo, Kernel.ResourceStrings, LCLTranslator, AppConfig.Consts, BGRABitmapTypes,
-  Utility.Conversions, Hotkeys.Manager.Platform, Kernel.Instance, Kernel.Manager;
+  Utility.Conversions, Hotkeys.Manager.Platform, Kernel.Instance, Kernel.Manager,
+  ShortcutGrabber;
 
 procedure TConfiguration.AfterUpdateConfig;
 var
+  {%H-}log: ISynLog;
   sBackgroundPath: String;
 
-begin   
+begin
+  //Debug marker for issue #149 (AV after closing options form)
+  log := TASuiteLogger.Enter('TConfiguration.AfterUpdateConfig', Self);
+  TASuiteLogger.Info('AfterUpdateConfig: ActionClickLeft=%d TrayIcon=%s', [Ord(FActionClickLeft), BoolToStr(FTrayIcon, True)]);
+
   TVirtualTreeMethods.UpdateItemColor(ASuiteInstance.MainTree);
 
   SetDefaultLang(FLangID, ASuiteInstance.Paths.SuitePathLocale);
@@ -279,9 +298,12 @@ begin
 
   ASuiteInstance.MainTree.Update;
 
+  TASuiteLogger.Info('AfterUpdateConfig: UpdateGMTheme enter', []);
   UpdateGMTheme;
+  TASuiteLogger.Info('AfterUpdateConfig: UpdateGMTheme exit, UpdateTrayIcon enter', []);
 
   UpdateTrayIcon;
+  TASuiteLogger.Info('AfterUpdateConfig: UpdateTrayIcon exit', []);
 end;
 
 constructor TConfiguration.Create;
@@ -419,15 +441,60 @@ begin
     oldShortcut := TextToShortCut(OldValue);
     newShortcut := TextToShortCut(NewValue);
 
-    //Unregister hotkey (if actived)
-    HotkeyManager.UnregisterNotify(oldShortcut);
+    //Unregister+register are a single change: on Wayland the portal binds the
+    //set once, and the id of the action stays the same so the desktop keeps
+    //the user's configuration.
+    HotkeyManager.BeginHotkeyUpdate;
+    try
+      //Unregister hotkey (if actived)
+      HotkeyManager.UnregisterNotify(oldShortcut);
 
-    //Register hotkey
-    if (newShortcut <> 0) then
-      Result := HotkeyManager.RegisterNotify(newShortcut, TVirtualTreeMethods.HotKeyNotify, Tag)
-    else
-      Result := True;
+      //Register hotkey. The ActionId is the stable string form of the Tag
+      //(form/action id), so the desktop keeps the user's configuration when
+      //the shortcut changes and the action can be resolved without relying on
+      //the runtime Tag alone.
+      if (newShortcut <> 0) then
+        Result := HotkeyManager.RegisterNotifyEx(newShortcut,
+          TVirtualTreeMethods.HotKeyNotify, Tag, IntToStr(Tag))
+      else
+        Result := True;
+    finally
+      if not HotkeyManager.EndHotkeyUpdate then
+        Result := False;
+    end;
   end;
+end;
+
+function TConfiguration.UpdateLauncherHotkeyFromDesktop(Tag: Integer;
+  AValue: TShortCut): Boolean;
+var
+  NewText: String;
+begin
+  Result := False;
+  NewText := ShortCutToText(AValue);
+  case Tag of
+    frmMainID:
+      if FWindowHotKey <> NewText then
+      begin
+        FWindowHotKey := NewText;
+        Result := True;
+      end;
+    frmGMenuID:
+      if FGraphicMenuHotKey <> NewText then
+      begin
+        FGraphicMenuHotKey := NewText;
+        Result := True;
+      end;
+    frmCMenuID:
+      if FClassicMenuHotkey <> NewText then
+      begin
+        FClassicMenuHotkey := NewText;
+        Result := True;
+      end;
+  end;
+
+  if Result and Assigned(FOnHotkeysUpdated) then
+    FOnHotkeysUpdated(Self);
 end;
 
 function TConfiguration.isValidHotkeyString(AValue: String): Boolean;
@@ -435,17 +502,60 @@ begin
   Result := (TextToShortCut(AValue) <> 0);
 end;
 
+function TConfiguration.ShortcutAvailable(AShortcut: TShortCut): Boolean;
+begin
+  Result := HotkeyManager.IsHotkeyAvailable(AShortcut);
+end;
+
+procedure TConfiguration.LoadShortcutGrabberImage(APicture: TPicture;
+  const AFileName: string);
+begin
+  // A missing, unreadable or unsupported image must never abort the theme
+  // setup: UpdateGMTheme calls this before loading the icons and the graphic
+  // menu, so an exception here would leave the whole theme unloaded.
+  try
+    if FileExists(AFileName) then
+      APicture.LoadFromFile(AFileName)
+    else
+      APicture.Clear;
+  except
+    APicture.Clear;
+  end;
+end;
+
+procedure TConfiguration.LoadShortcutGrabberImages;
+var
+  Path: string;
+begin
+  //The application owns the images: feed the grabber with the current theme.
+  //If a file is missing the picture stays empty and the component falls back
+  //to its embedded default.
+  Path := AppendPathDelim(ASuiteInstance.Paths.SuitePathCurrentTheme + BUTTONS_DIR);
+  ShortcutGrabberDefaults.Images.Clear;
+  LoadShortcutGrabberImage(ShortcutGrabberDefaults.Images.Ctrl, Path + SHORTCUT_CTRL_FILE);
+  LoadShortcutGrabberImage(ShortcutGrabberDefaults.Images.Alt, Path + SHORTCUT_ALT_FILE);
+  LoadShortcutGrabberImage(ShortcutGrabberDefaults.Images.Shift, Path + SHORTCUT_SHIFT_FILE);
+  LoadShortcutGrabberImage(ShortcutGrabberDefaults.Images.WinKey, Path + SHORTCUT_WINKEY_FILE);
+end;
+
 procedure TConfiguration.UpdateTrayIcon;
 var
+  {%H-}log: ISynLog;
   bmp: TBGRABitmap;
   sPath: string;
 begin
+  //Debug marker for issue #149 (AV after closing options form)
+  log := TASuiteLogger.Enter('TConfiguration.UpdateTrayIcon', Self);
+  bmp := nil;
+
   dmTrayMenu.tiTrayMenu.Visible := False;
 
   sPath := ASuiteInstance.Paths.RelativeToAbsolute(FTrayCustomIconPath);
   if not((FTrayUseCustomIcon) and (FileExists(sPath))) then
     sPath := AppendPathDelim(ASuiteInstance.Paths.SuitePathCurrentTheme +
       ICONS_DIR) + LowerCase(APP_NAME) + EXT_ICO;
+
+  TASuiteLogger.Info('UpdateTrayIcon: icon path="%s" tray visible=%s', [sPath, BoolToStr(FTrayIcon, True)]);
 
   try
     bmp := LoadTrayIconFromFile(sPath);
@@ -880,6 +990,16 @@ begin
   //Set Paths
   ASuiteInstance.Paths.SuitePathCurrentTheme := AppendPathDelim(ASuiteInstance.Paths.SuitePathMenuThemes + FGMTheme);
   ASuiteManager.IconsManager.PathTheme       := ASuiteInstance.Paths.SuitePathCurrentTheme;
+  //Keep the shared Shortcut Grabber in sync with the current theme and language
+  ShortcutGrabberDefaults.MessageNoKey        := msgHotkeyNoKey;
+  ShortcutGrabberDefaults.MessageNoModifier   := msgHotkeyNoMod;
+  ShortcutGrabberDefaults.MessageNotAvailable := msgHotkeyNotAvailable;
+  ShortcutGrabberDefaults.Caption             := msgShortcutGrabberCaption;
+  ShortcutGrabberDefaults.InfoText            := msgShortcutGrabberInfo;
+  ShortcutGrabberDefaults.OkCaption           := msgShortcutGrabberOk;
+  ShortcutGrabberDefaults.CancelCaption       := msgShortcutGrabberCancel;
+  ShortcutGrabberDefaults.OnValidateHotkey := Self.ShortcutAvailable;
+  LoadShortcutGrabberImages;
   //Loading icons
   frmMain.SetAllIcons;
   //Refresh GraphicMenu

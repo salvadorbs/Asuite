@@ -487,6 +487,24 @@ msgstr ""
 msgid "Scanning in progress..."
 msgstr ""
 
+#: kernel.resourcestrings.msgshortcutgrabbercancel
+msgctxt "kernel.resourcestrings.msgshortcutgrabbercancel"
+msgid "Cancel"
+msgstr ""
+
+#: kernel.resourcestrings.msgshortcutgrabbercaption
+msgid "Choose hotkey..."
+msgstr ""
+
+#: kernel.resourcestrings.msgshortcutgrabberinfo
+msgid "Select modifiers above, then enter desired key:"
+msgstr ""
+
+#: kernel.resourcestrings.msgshortcutgrabberok
+msgctxt "kernel.resourcestrings.msgshortcutgrabberok"
+msgid "Ok"
+msgstr ""
+
 #: kernel.resourcestrings.msgshortmfu
 msgid "MFU"
 msgstr ""
@@ -947,23 +965,23 @@ msgstr ""
 msgid "Show window when hotkey is pressed"
 msgstr ""
 
-#: tfrmhotkeyoptionspage.vstitems.header.columns[0].text
-msgctxt "tfrmhotkeyoptionspage.vstitems.header.columns[0].text"
+#: tfrmhotkeyoptionspage.vstitems.columns[0].text
+msgctxt "tfrmhotkeyoptionspage.vstitems.columns[0].text"
 msgid "Name"
 msgstr ""
 
-#: tfrmhotkeyoptionspage.vstitems.header.columns[1].text
-msgctxt "tfrmhotkeyoptionspage.vstitems.header.columns[1].text"
+#: tfrmhotkeyoptionspage.vstitems.columns[1].text
+msgctxt "tfrmhotkeyoptionspage.vstitems.columns[1].text"
 msgid "Type"
 msgstr ""
 
-#: tfrmhotkeyoptionspage.vstitems.header.columns[2].text
-msgctxt "tfrmhotkeyoptionspage.vstitems.header.columns[2].text"
+#: tfrmhotkeyoptionspage.vstitems.columns[2].text
+msgctxt "tfrmhotkeyoptionspage.vstitems.columns[2].text"
 msgid "Category"
 msgstr ""
 
-#: tfrmhotkeyoptionspage.vstitems.header.columns[3].text
-msgctxt "tfrmhotkeyoptionspage.vstitems.header.columns[3].text"
+#: tfrmhotkeyoptionspage.vstitems.columns[3].text
+msgctxt "tfrmhotkeyoptionspage.vstitems.columns[3].text"
 msgid "Hotkey"
 msgstr ""
 
@@ -1171,13 +1189,13 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: tfrmmain.vstsearch.header.columns[0].text
-msgctxt "tfrmmain.vstsearch.header.columns[0].text"
+#: tfrmmain.vstsearch.columns[0].text
+msgctxt "tfrmmain.vstsearch.columns[0].text"
 msgid "Name"
 msgstr ""
 
-#: tfrmmain.vstsearch.header.columns[1].text
-msgctxt "tfrmmain.vstsearch.header.columns[1].text"
+#: tfrmmain.vstsearch.columns[1].text
+msgctxt "tfrmmain.vstsearch.columns[1].text"
 msgid "Category"
 msgstr ""
 
@@ -1320,24 +1338,6 @@ msgstr ""
 
 #: tfrmscanfolder.pnlbuttons.okbutton.caption
 msgid "&Scan"
-msgstr ""
-
-#: tfrmshortcutgrabber.btncancel.caption
-msgctxt "tfrmshortcutgrabber.btncancel.caption"
-msgid "Cancel"
-msgstr ""
-
-#: tfrmshortcutgrabber.btnok.caption
-msgctxt "tfrmshortcutgrabber.btnok.caption"
-msgid "Ok"
-msgstr ""
-
-#: tfrmshortcutgrabber.caption
-msgid "Choose hotkey..."
-msgstr ""
-
-#: tfrmshortcutgrabber.lblinfo.caption
-msgid "Select modifiers above, then enter desired key:"
 msgstr ""
 
 #: tfrmstatsoptionspage.gbasuite.caption

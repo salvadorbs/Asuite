@@ -21,8 +21,8 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     ChildSizing.TopBottomSpacing = 4
     ChildSizing.EnlargeHorizontal = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
-    ClientHeight = 162
-    ClientWidth = 433
+    ClientHeight = 170
+    ClientWidth = 425
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 0
@@ -45,7 +45,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       Caption = 'Show window when hotkey is pressed'
       ParentFont = False
     end
-    object edtHotkeyMF: TButtonedEdit
+    object edtHotkeyMF: THotKeyEdit
       AnchorSideLeft.Side = asrCenter
       AnchorSideTop.Side = asrCenter
       Left = 116
@@ -58,12 +58,9 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       CharCase = ecUppercase
       Constraints.MinWidth = 200
       ParentFont = False
-      ReadOnly = True
       RightButton.Visible = True
       TabOrder = 1
-      OnChange = edtHotkeyChange
-      OnClick = edtHotkeyClick
-      OnRightButtonClick = edtHotkeyRightClick
+      OnHotkeyChange = edtHotkeyChange
     end
     object lblHotkeyGM: TLabel
       Left = 4
@@ -73,7 +70,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       Caption = 'Show graphic menu when hotkey is pressed'
       ParentFont = False
     end
-    object edtHotkeyGM: TButtonedEdit
+    object edtHotkeyGM: THotKeyEdit
       AnchorSideTop.Side = asrCenter
       Left = 116
       Height = 22
@@ -85,12 +82,9 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       CharCase = ecUppercase
       Constraints.MinWidth = 200
       ParentFont = False
-      ReadOnly = True
       RightButton.Visible = True
       TabOrder = 2
-      OnChange = edtHotkeyChange
-      OnClick = edtHotkeyClick
-      OnRightButtonClick = edtHotkeyRightClick
+      OnHotkeyChange = edtHotkeyChange
     end
     object lblHotkeyCM: TLabel
       Left = 4
@@ -100,7 +94,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       Caption = 'Show classic menu when hotkey is pressed'
       ParentFont = False
     end
-    object edtHotkeyCM: TButtonedEdit
+    object edtHotkeyCM: THotKeyEdit
       AnchorSideTop.Side = asrCenter
       Left = 116
       Height = 22
@@ -111,12 +105,9 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       CharCase = ecUppercase
       Constraints.MinWidth = 200
       ParentFont = False
-      ReadOnly = True
       RightButton.Visible = True
       TabOrder = 3
-      OnChange = edtHotkeyChange
-      OnClick = edtHotkeyClick
-      OnRightButtonClick = edtHotkeyRightClick
+      OnHotkeyChange = edtHotkeyChange
     end
   end
   object grpOrderSoftware: TGroupBox[1]
@@ -134,8 +125,8 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
     ChildSizing.TopBottomSpacing = 4
     ChildSizing.EnlargeHorizontal = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
-    ClientHeight = 235
-    ClientWidth = 433
+    ClientHeight = 243
+    ClientWidth = 425
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 1
@@ -158,7 +149,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       ParentFont = False
       PopupMenu = pmHotkey
       TabOrder = 0
-      TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
+      TreeOptions.MiscOptions = [toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
       TreeOptions.PaintOptions = [toPopupMode, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
       TreeOptions.SelectionOptions = [toFullRowSelect, toRightClickSelect]
       Columns = <      

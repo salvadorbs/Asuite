@@ -115,6 +115,10 @@ resourcestring
   msgHotkeyNoMod = 'You haven''t select any modifier keys!';
   msgHotkeyNoKey = 'You haven''t select any keys!';
   msgHotkeyNotAvailable = 'This hotkey is being used already by another software or system itself. Please choose another one.';
+  msgShortcutGrabberCaption = 'Choose hotkey...';
+  msgShortcutGrabberInfo = 'Select modifiers above, then enter desired key:';
+  msgShortcutGrabberOk = 'Ok';
+  msgShortcutGrabberCancel = 'Cancel';
   msgCancel = 'Cancel';
   msgStop = 'Stop';             
   msgScanFolderExtNotValid = 'Ext file not valid. Please check it and retry!';
