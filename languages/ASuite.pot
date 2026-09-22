@@ -487,6 +487,24 @@ msgstr ""
 msgid "Scanning in progress..."
 msgstr ""
 
+#: kernel.resourcestrings.msgshortcutgrabbercancel
+msgctxt "kernel.resourcestrings.msgshortcutgrabbercancel"
+msgid "Cancel"
+msgstr ""
+
+#: kernel.resourcestrings.msgshortcutgrabbercaption
+msgid "Choose hotkey..."
+msgstr ""
+
+#: kernel.resourcestrings.msgshortcutgrabberinfo
+msgid "Select modifiers above, then enter desired key:"
+msgstr ""
+
+#: kernel.resourcestrings.msgshortcutgrabberok
+msgctxt "kernel.resourcestrings.msgshortcutgrabberok"
+msgid "Ok"
+msgstr ""
+
 #: kernel.resourcestrings.msgshortmfu
 msgid "MFU"
 msgstr ""
@@ -1320,24 +1338,6 @@ msgstr ""
 
 #: tfrmscanfolder.pnlbuttons.okbutton.caption
 msgid "&Scan"
-msgstr ""
-
-#: tfrmshortcutgrabber.btncancel.caption
-msgctxt "tfrmshortcutgrabber.btncancel.caption"
-msgid "Cancel"
-msgstr ""
-
-#: tfrmshortcutgrabber.btnok.caption
-msgctxt "tfrmshortcutgrabber.btnok.caption"
-msgid "Ok"
-msgstr ""
-
-#: tfrmshortcutgrabber.caption
-msgid "Choose hotkey..."
-msgstr ""
-
-#: tfrmshortcutgrabber.lblinfo.caption
-msgid "Select modifiers above, then enter desired key:"
 msgstr ""
 
 #: tfrmstatsoptionspage.gbasuite.caption
