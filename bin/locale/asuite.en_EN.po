@@ -364,6 +364,22 @@ msgstr ""
 "This hotkey is being used already by another software or system itself. "
 "Please choose another one."
 
+#: kernel.resourcestrings.msgshortcutgrabbercaption
+msgid "Choose hotkey..."
+msgstr "Choose hotkey..."
+
+#: kernel.resourcestrings.msgshortcutgrabberinfo
+msgid "Select modifiers above, then enter desired key:"
+msgstr "Select modifiers above, then enter desired key:"
+
+#: kernel.resourcestrings.msgshortcutgrabberok
+msgid "Ok"
+msgstr "Ok"
+
+#: kernel.resourcestrings.msgshortcutgrabbercancel
+msgid "Cancel"
+msgstr "Cancel"
+
 #: kernel.resourcestrings.msgimport
 msgid "Import"
 msgstr "Import"
@@ -1348,24 +1364,6 @@ msgstr "General settings"
 #: tfrmscanfolder.pnlbuttons.okbutton.caption
 msgid "&Scan"
 msgstr "&Scan"
-
-#: tfrmshortcutgrabber.btncancel.caption
-msgctxt "tfrmshortcutgrabber.btncancel.caption"
-msgid "Cancel"
-msgstr "Cancel"
-
-#: tfrmshortcutgrabber.btnok.caption
-msgctxt "tfrmshortcutgrabber.btnok.caption"
-msgid "Ok"
-msgstr "Ok"
-
-#: tfrmshortcutgrabber.caption
-msgid "Choose hotkey..."
-msgstr "Choose hotkey..."
-
-#: tfrmshortcutgrabber.lblinfo.caption
-msgid "Select modifiers above, then enter desired key:"
-msgstr "Select modifiers above, then enter desired key:"
 
 #: tfrmstatsoptionspage.gbasuite.caption
 msgctxt "tfrmstatsoptionspage.gbasuite.caption"

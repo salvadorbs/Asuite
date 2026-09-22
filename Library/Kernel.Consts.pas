@@ -110,12 +110,6 @@ const
   //ASuite files
   SETTINGS_FILENAME = 'settings.json';
 
-  //Modifier buttons for TfrmShortcutGrabber
-  FILENAME_CTRL   = 'ctrl.png';
-  FILENAME_ALT    = 'alt.png';
-  FILENAME_SHIFT  = 'shift.png';
-  FILENAME_WINKEY = 'winkey.png';
-
   //Desktop file entries for Linux
   DESKTOP_GROUP = 'Desktop Entry';
   DESKTOP_KEY_NAME = 'Name';

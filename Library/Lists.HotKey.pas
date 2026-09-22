@@ -24,12 +24,24 @@ unit Lists.HotKey;
 interface
 
 uses
-  NodeDataTypes.Custom, SysUtils, Hotkeys.Manager.Platform, LCLIntf, LCLType,
-  Lists.Base;
+  NodeDataTypes.Custom, SysUtils, Classes, Hotkeys.Manager.Platform,
+  Hotkeys.Manager, LCLIntf, LCLType, Lists.Base;
 
 type
   THotkeyItemsList = class(TBaseItemsList)
+  private
+    { Called when the backend (Wayland portal) reports the trigger it actually
+      assigned to an action. ASuite uses IntToStr(Tag) as the stable ActionId,
+      so the action can be identified even when the desktop reassigned the
+      shortcut. The value is stored without re-registering anything.
+      ActionId is AnsiString because the component is compiled in Delphi mode
+      (AnsiString), while ASuite uses DelphiUnicode. }
+    procedure HotkeyTriggerChangedEx(Sender: TObject; const ActionId: AnsiString;
+      Tag: Integer; Trigger: TShortCut);
   public
+    constructor Create;
+    destructor Destroy; override;
+
     function AddItem(AItem: TvCustomRealNodeData): Integer; override;
     function RemoveItem(AItem: TvCustomRealNodeData): Integer; override;
 
@@ -37,12 +49,65 @@ type
 
     function IndexOfID(ID: Integer): TvCustomRealNodeData;
     procedure RefreshRegs;
+
+    { Groups every registration/removal between BeginUpdate and EndUpdate into
+      a single backend update. On Wayland the portal binds the whole set only
+      once instead of once per item. }
+    procedure BeginUpdate;
+    procedure EndUpdate;
   end;
 
 implementation
 
 uses
-  AppConfig.Main, VirtualTree.Methods;
+  AppConfig.Main, VirtualTree.Methods, Kernel.Consts, Kernel.Logger;
+
+constructor THotkeyItemsList.Create;
+begin
+  inherited Create;
+  HotkeyManager.OnTriggerChangedEx := HotkeyTriggerChangedEx;
+end;
+
+destructor THotkeyItemsList.Destroy;
+begin
+  if Assigned(InternalManager) then
+    InternalManager.OnTriggerChangedEx := nil;
+  inherited Destroy;
+end;
+
+procedure THotkeyItemsList.HotkeyTriggerChangedEx(Sender: TObject;
+  const ActionId: AnsiString; Tag: Integer; Trigger: TShortCut);
+var
+  NodeData: TvCustomRealNodeData;
+  Changed: Boolean;
+  ActionTag: Integer;
+begin
+  // 0 means the desktop reported a trigger we cannot represent: keep the
+  // value ASuite had configured.
+  if (not Config.HotKey) or (Trigger = 0) then
+    Exit;
+
+  // ASuite registers each action with ActionId = IntToStr(Tag), so the
+  // ActionId is authoritative and lets the action be resolved even if the
+  // callback Tag is not meaningful for every backend.
+  ActionTag := StrToIntDef(ActionId, Tag);
+
+  Changed := False;
+  case ActionTag of
+    frmMainID, frmGMenuID, frmCMenuID:
+      Changed := Config.UpdateLauncherHotkeyFromDesktop(ActionTag, Trigger);
+  else
+    NodeData := IndexOfID(ActionTag);
+    if (NodeData <> nil) and (NodeData.Hotkey <> Trigger) then
+    begin
+      NodeData.UpdateHotkeyFromDesktop(Trigger);
+      Changed := True;
+    end;
+  end;
+
+  if Changed then
+    Config.Changed := True;
+end;
 
 function THotkeyItemsList.AddItem(AItem: TvCustomRealNodeData): Integer;
 begin
@@ -52,7 +117,16 @@ begin
 
   Result := inherited;
   if Config.HotKey then
-    HotkeyManager.RegisterNotify(AItem.Hotkey, TVirtualTreeMethods.HotKeyNotify, AItem.ID);
+  begin
+    // The item ID is stable in the database, so it is the natural ActionId:
+    // changing the shortcut keeps the same desktop action and the user's
+    // configuration. The result is the bind verdict: log it when the backend
+    // refused the registration instead of silently dropping it.
+    if not HotkeyManager.RegisterNotifyEx(AItem.Hotkey,
+      TVirtualTreeMethods.HotKeyNotify, AItem.ID, IntToStr(AItem.ID)) then
+      TASuiteLogger.Error('Failed to register hotkey for item "%s" (id %d)',
+        [AItem.Name, AItem.ID]);
+  end;
 end;
 
 procedure THotkeyItemsList.Clear;
@@ -80,20 +154,37 @@ begin
   end;
 end;
 
+procedure THotkeyItemsList.BeginUpdate;
+begin
+  HotkeyManager.BeginHotkeyUpdate;
+end;
+
+procedure THotkeyItemsList.EndUpdate;
+begin
+  HotkeyManager.EndHotkeyUpdate;
+end;
+
 procedure THotkeyItemsList.RefreshRegs;
 var
   I: Integer;
   NodeData: TvCustomRealNodeData;
 begin
-  //This method unregister and register hotkey again for every item
-  for I := 0 to FItems.Count - 1 do
-  begin
-    if not(FItems[I].IsSeparatorItem) then
+  //This method re-applies the hotkey of every item as a single backend
+  //update. On X11/Windows RefreshNotify re-registers each shortcut; on the
+  //Wayland portal it is a no-op and EndUpdate does not rebind.
+  BeginUpdate;
+  try
+    for I := 0 to FItems.Count - 1 do
     begin
-      NodeData := TvCustomRealNodeData(FItems[I]);
+      if not(FItems[I].IsSeparatorItem) then
+      begin
+        NodeData := TvCustomRealNodeData(FItems[I]);
 
-      HotkeyManager.RefreshNotify(NodeData.Hotkey);
+        HotkeyManager.RefreshNotify(NodeData.Hotkey);
+      end;
     end;
+  finally
+    EndUpdate;
   end;
 end;
 

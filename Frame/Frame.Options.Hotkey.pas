@@ -26,7 +26,7 @@ interface
 uses
   LCLIntf, SysUtils, Graphics,
   Controls, Dialogs, Frame.BaseEntity, VirtualTrees,
-  ComCtrls, StdCtrls, Lists.Base, ButtonedEdit, Menus, ActnList, Classes;
+  ComCtrls, StdCtrls, Lists.Base, HotKeyEdit, Menus, ActnList, Classes;
 
 type
 
@@ -37,9 +37,9 @@ type
     actRemoveHotkey: TAction;
     actEditHotkey: TAction;
     ActionList1: TActionList;
-    edtHotkeyCM: TButtonedEdit;
-    edtHotkeyGM: TButtonedEdit;
-    edtHotkeyMF: TButtonedEdit;
+    edtHotkeyCM: THotKeyEdit;
+    edtHotkeyGM: THotKeyEdit;
+    edtHotkeyMF: THotKeyEdit;
     
     gbHotkey: TGroupBox;
     cbHotKey: TCheckBox;
@@ -58,14 +58,14 @@ type
     procedure actMenuItemUpdate(Sender: TObject);
     procedure actRemoveHotkeyExecute(Sender: TObject);
     procedure cbHotKeyClick(Sender: TObject);
-    procedure edtHotkeyClick(Sender: TObject);
     procedure edtHotkeyChange(Sender: TObject);
-    procedure edtHotkeyRightClick(Sender: TObject);
   private
     { Private declarations }
+    FUpdating: Boolean;
     procedure LoadGlyphs;
     procedure SaveInHotkeyItemList(const ATree: TBaseVirtualTree;const AItemList: TBaseItemsList);
-    procedure SetProperHotkeyIcon(AHotkeyComp: TButtonedEdit);
+    { The desktop changed a hotkey: reload the editors without re-registering. }
+    procedure HotkeysUpdated(Sender: TObject);
   strict protected
     function GetTitle: string; override;
     function GetImageIndex: Integer; override;
@@ -73,6 +73,7 @@ type
     function InternalSaveData: Boolean; override;
   public
     { Public declarations }
+    destructor Destroy; override;
   end;
 
 var
@@ -82,12 +83,37 @@ implementation
 
 uses
   AppConfig.Main, VirtualTree.Methods, NodeDataTypes.Custom, VirtualTrees.Types,
-  Forms.ShortcutGrabber, DataModules.Icons, Kernel.ResourceStrings,
+  ShortcutGrabber, DataModules.Icons, Kernel.ResourceStrings,
   LCLProc, Kernel.Consts, Kernel.Manager, Utility.Misc, Kernel.Instance;
 
 {$R *.lfm}
 
 { TfrmHotkeyOptionsPage }
+
+destructor TfrmHotkeyOptionsPage.Destroy;
+begin
+  if Assigned(Config) then
+    Config.OnHotkeysUpdated := nil;
+  inherited Destroy;
+end;
+
+procedure TfrmHotkeyOptionsPage.HotkeysUpdated(Sender: TObject);
+begin
+  if not Visible then
+    Exit;
+
+  FUpdating := True;
+  try
+    edtHotkeyMF.Hotkey := TextToShortCut(Config.WindowHotKey);
+    edtHotkeyGM.Hotkey := TextToShortCut(Config.GraphicMenuHotkey);
+    edtHotkeyCM.Hotkey := TextToShortCut(Config.ClassicMenuHotkey);
+  finally
+    FUpdating := False;
+  end;
+
+  //The item shortcuts were updated in place; just repaint the list.
+  vstItems.Repaint;
+end;
 
 procedure TfrmHotkeyOptionsPage.cbHotKeyClick(Sender: TObject);
 begin
@@ -98,7 +124,7 @@ end;
 
 procedure TfrmHotkeyOptionsPage.actEditHotkeyExecute(Sender: TObject);
 var
-  ShortCut: string;
+  NewHotkey: TShortCut;
   NodeData: TvCustomRealNodeData;
 begin
   if Assigned(vstItems.FocusedNode) then
@@ -106,20 +132,21 @@ begin
     NodeData := TvCustomRealNodeData(TVirtualTreeMethods.GetNodeItemData(vstItems.FocusedNode, vstItems));
     if Assigned(NodeData) then
     begin
-      ShortCut := TfrmShortcutGrabber.Execute(Self, ShortCutToText(NodeData.Hotkey));
-      if (ShortCut <> '') then
+      NewHotkey := TfrmShortcutGrabber.Execute(Self, NodeData.Hotkey);
+      if (NewHotkey <> 0) then
       begin
-        NodeData.Hotkey  := TextToShortCut(ShortCut);
+        NodeData.Hotkey  := NewHotkey;
         NodeData.Changed := True;
 
-        if (edtHotkeyMF.Text = ShortCut) then
-          edtHotkeyMF.Text := '';
+        //Avoid duplicates with the launcher hotkeys
+        if (edtHotkeyMF.Hotkey = NewHotkey) then
+          edtHotkeyMF.Hotkey := 0;
 
-        if (edtHotkeyGM.Text = ShortCut) then
-          edtHotkeyGM.Text := '';
+        if (edtHotkeyGM.Hotkey = NewHotkey) then
+          edtHotkeyGM.Hotkey := 0;
 
-        if (edtHotkeyCM.Text = ShortCut) then
-          edtHotkeyCM.Text := '';
+        if (edtHotkeyCM.Hotkey = NewHotkey) then
+          edtHotkeyCM.Hotkey := 0;
       end;
     end;
   end;
@@ -141,47 +168,26 @@ begin
     vstItems.IsVisible[vstItems.FocusedNode] := False;
 end;
 
-procedure TfrmHotkeyOptionsPage.edtHotkeyClick(Sender: TObject);
-var
-  strHotkey: string;
-begin
-  if Sender is TButtonedEdit then
-  begin
-    strHotkey := TfrmShortcutGrabber.Execute(Self, TButtonedEdit(Sender).Text);
-    if (strHotkey <> '') and (strHotkey <> TButtonedEdit(Sender).Text) then
-    begin
-      TButtonedEdit(Sender).Text := strHotkey;
-
-      if (Sender <> edtHotkeyMF) and (edtHotkeyMF.Text = strHotkey) then
-        edtHotkeyMF.Text := '';
-
-      if (Sender <> edtHotkeyGM) and (edtHotkeyGM.Text = strHotkey) then
-        edtHotkeyGM.Text := '';
-
-      if (Sender <> edtHotkeyCM) and (edtHotkeyCM.Text = strHotkey) then
-        edtHotkeyCM.Text := '';
-    end;
-  end;
-end;
-
 procedure TfrmHotkeyOptionsPage.edtHotkeyChange(Sender: TObject);
-begin
-  if Sender is TButtonedEdit then
-    SetProperHotkeyIcon(TButtonedEdit(Sender));
-end;
-
-procedure TfrmHotkeyOptionsPage.edtHotkeyRightClick(Sender: TObject);
 var
-  edtHotkey: TButtonedEdit;
+  edtHotkey: THotKeyEdit;
 begin
-  if Sender is TCustomGlyphButton then
-  begin
-    edtHotkey := TButtonedEdit(TCustomGlyphButton(Sender).Parent);
-    if edtHotkey.Text <> '' then
-      edtHotkey.Text := ''
-    else
-      edtHotkeyClick(edtHotkey);
-  end;
+  if FUpdating or (not (Sender is THotKeyEdit)) then
+    Exit;
+
+  edtHotkey := THotKeyEdit(Sender);
+  if edtHotkey.Hotkey = 0 then
+    Exit;
+
+  //Avoid duplicates between the three launcher hotkeys
+  if (Sender <> edtHotkeyMF) and (edtHotkeyMF.Hotkey = edtHotkey.Hotkey) then
+    edtHotkeyMF.Hotkey := 0;
+
+  if (Sender <> edtHotkeyGM) and (edtHotkeyGM.Hotkey = edtHotkey.Hotkey) then
+    edtHotkeyGM.Hotkey := 0;
+
+  if (Sender <> edtHotkeyCM) and (edtHotkeyCM.Hotkey = edtHotkey.Hotkey) then
+    edtHotkeyCM.Hotkey := 0;
 end;
 
 function TfrmHotkeyOptionsPage.GetImageIndex: Integer;
@@ -202,14 +208,17 @@ begin
   //Hot Keys
   cbHotKey.Checked := Config.HotKey;
 
-  if Config.WindowHotKey <> '' then
-    edtHotkeyMF.Text := Config.WindowHotKey;
+  FUpdating := True;
+  try
+    edtHotkeyMF.Hotkey := TextToShortCut(Config.WindowHotKey);
+    edtHotkeyGM.Hotkey := TextToShortCut(Config.GraphicMenuHotkey);
+    edtHotkeyCM.Hotkey := TextToShortCut(Config.ClassicMenuHotkey);
+  finally
+    FUpdating := False;
+  end;
 
-  if Config.GraphicMenuHotkey <> '' then
-    edtHotkeyGM.Text := Config.GraphicMenuHotkey;
-
-  if Config.ClassicMenuHotkey <> '' then
-    edtHotkeyCM.Text := Config.ClassicMenuHotkey;
+  //Reload the editors if the desktop changes a hotkey while we are open
+  Config.OnHotkeysUpdated := HotkeysUpdated;
 
   //Populate VST with HotKeyItemList's items
   TVirtualTreeMethods.PopulateVSTItemList(vstItems, ASuiteManager.ListManager.HotKeyItemList);
@@ -235,9 +244,9 @@ begin
 
   //Hot Keys
   Config.HotKey       := cbHotKey.Checked;
-  Config.WindowHotKey := edtHotkeyMF.Text;
-  Config.GraphicMenuHotkey := edtHotkeyGM.Text;
-  Config.ClassicMenuHotkey := edtHotkeyCM.Text;
+  Config.WindowHotKey := ShortCutToText(edtHotkeyMF.Hotkey);
+  Config.GraphicMenuHotkey := ShortCutToText(edtHotkeyGM.Hotkey);
+  Config.ClassicMenuHotkey := ShortCutToText(edtHotkeyCM.Hotkey);
 
   //Save vst items in HotKeyItemList
   SaveInHotkeyItemList(vstItems, ASuiteManager.ListManager.HotKeyItemList);
@@ -247,15 +256,18 @@ procedure TfrmHotkeyOptionsPage.LoadGlyphs;
 begin
   edtHotkeyMF.RightButton.Images := dmImages.ilIcons;
   edtHotkeyMF.RightButton.ImagesWidth := ICON_SIZE_SMALL;
-  SetProperHotkeyIcon(edtHotkeyMF);
+  edtHotkeyMF.ClearImageIndex := ASuiteManager.IconsManager.GetIconIndex('hotkey_delete');
+  edtHotkeyMF.ChooseImageIndex := ASuiteManager.IconsManager.GetIconIndex('hotkey_add');
 
   edtHotkeyGM.RightButton.Images := dmImages.ilIcons;
   edtHotkeyGM.RightButton.ImagesWidth := ICON_SIZE_SMALL;
-  SetProperHotkeyIcon(edtHotkeyGM);
+  edtHotkeyGM.ClearImageIndex := ASuiteManager.IconsManager.GetIconIndex('hotkey_delete');
+  edtHotkeyGM.ChooseImageIndex := ASuiteManager.IconsManager.GetIconIndex('hotkey_add');
 
   edtHotkeyCM.RightButton.Images := dmImages.ilIcons;
   edtHotkeyCM.RightButton.ImagesWidth := ICON_SIZE_SMALL;
-  SetProperHotkeyIcon(edtHotkeyCM);
+  edtHotkeyCM.ClearImageIndex := ASuiteManager.IconsManager.GetIconIndex('hotkey_delete');
+  edtHotkeyCM.ChooseImageIndex := ASuiteManager.IconsManager.GetIconIndex('hotkey_add');
 
   pmHotkey.Images := dmImages.ilIcons;
   pmHotkey.ImagesWidth := ICON_SIZE_SMALL;
@@ -285,14 +297,6 @@ begin
     end;
     Node := ATree.GetNext(Node);
   end;
-end;
-
-procedure TfrmHotkeyOptionsPage.SetProperHotkeyIcon(AHotkeyComp: TButtonedEdit);
-begin
-  if AHotkeyComp.Text <> '' then
-    AHotkeyComp.RightButton.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('hotkey_delete')
-  else
-    AHotkeyComp.RightButton.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('hotkey_add');
 end;
 
 end.

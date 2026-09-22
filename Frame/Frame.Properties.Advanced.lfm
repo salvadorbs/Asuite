@@ -114,19 +114,16 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 1
-      object edtHotkey: TButtonedEdit
+      object edtHotkey: THotKeyEdit
         Left = 4
         Height = 20
         Top = 4
         Width = 194
         BorderSpacing.Top = 2
+        ButtonVisibleOnlyWithHotkey = True
         CharCase = ecUppercase
         ParentFont = False
-        ReadOnly = True
         TabOrder = 0
-        OnChange = edtHotkeyChange
-        OnClick = edtHotkeyClick
-        OnRightButtonClick = edtHotkeyRightButtonClick
       end
     end
   end
