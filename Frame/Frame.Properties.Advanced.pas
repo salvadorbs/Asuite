@@ -25,7 +25,7 @@ interface
 
 uses
   LCLIntf, SysUtils, Classes, Dialogs, Frame.Properties.Base,
-  ButtonedEdit, StdCtrls, DateUtils, DateTimePicker,
+  HotKeyEdit, StdCtrls, DateUtils, DateTimePicker,
   ExtCtrls;
 
 type
@@ -37,7 +37,7 @@ type
     cbDontInsertMRU: TCheckBox;
     cbHideSoftware: TCheckBox;
     cbShortcutDesktop: TCheckBox;
-    edtHotkey: TButtonedEdit;
+    edtHotkey: THotKeyEdit;
     grpOthers: TGroupBox;
     grpScheduler: TGroupBox;
     cxScheduler: TComboBox;
@@ -47,9 +47,6 @@ type
 
     pnlTop: TPanel;
     procedure cxSchedulerChange(Sender: TObject);
-    procedure edtHotkeyRightButtonClick(Sender: TObject);
-    procedure edtHotkeyChange(Sender: TObject);
-    procedure edtHotkeyClick(Sender: TObject);
   private
     { Private declarations }
   strict protected
@@ -67,7 +64,7 @@ var
 implementation
 
 uses
-  Kernel.Enumerations, NodeDataTypes.Files, Forms.ShortcutGrabber, Kernel.Manager,
+  Kernel.Enumerations, NodeDataTypes.Files, Kernel.Manager,
   DataModules.Icons, Kernel.ResourceStrings, LCLProc, Kernel.Consts;
 
 {$R *.lfm}
@@ -109,7 +106,7 @@ begin
     cxSchedulerChange(Self);
     //Hotkey
     if (CurrentNodeData.IsHotkeyActive) then
-      edtHotkey.Text         := ShortCutToText(CurrentNodeData.Hotkey);
+      edtHotkey.Hotkey       := CurrentNodeData.Hotkey;
     //Specific file settings
     cbHideSoftware.Checked := CurrentNodeData.HideFromMenu;
     if CurrentNodeData.IsFileItem then
@@ -129,7 +126,7 @@ begin
 
   edtHotkey.RightButton.Images := dmImages.ilIcons;
   edtHotkey.RightButton.ImagesWidth := ICON_SIZE_SMALL;
-  edtHotkey.RightButton.ImageIndex := AsuiteManager.IconsManager.GetIconIndex('cancel');
+  edtHotkey.ClearImageIndex := AsuiteManager.IconsManager.GetIconIndex('cancel');
 
   //Hide caret in hotkey control
   //HideCaret(edtHotkey.Handle);
@@ -145,7 +142,7 @@ begin
     CurrentNodeData.SchDateTime  := Int(dtpSchDate.Date) + Frac(dtpSchTime.Time);
     CurrentNodeData.SchDateTime  := RecodeSecond(CurrentNodeData.SchDateTime, 0);
     //Hotkey
-    CurrentNodeData.Hotkey       := TextToShortCut(edtHotkey.Text);
+    CurrentNodeData.Hotkey       := edtHotkey.Hotkey;
     //Specific file settings
     CurrentNodeData.HideFromMenu := cbHideSoftware.Checked;
     if CurrentNodeData.IsFileItem then
@@ -155,34 +152,6 @@ begin
       TvFileNodeData(CurrentNodeData).ShortcutDesktop := cbShortcutDesktop.Checked;
     end;
   end;
-end;
-
-procedure TfrmAdvancedPropertyPage.edtHotkeyChange(Sender: TObject);
-var
-  edtHotkey: TButtonedEdit;
-begin
-  if Sender is TButtonedEdit then
-  begin
-    edtHotkey := TButtonedEdit(Sender);
-    edtHotkey.RightButton.Visible := edtHotkey.Text <> '';
-  end;
-end;
-
-procedure TfrmAdvancedPropertyPage.edtHotkeyClick(Sender: TObject);
-var
-  strHotkey: string;
-begin
-  if Sender is TButtonedEdit then
-  begin
-    strHotkey := TfrmShortcutGrabber.Execute(Self, TButtonedEdit(Sender).Text);
-    if (strHotkey <> '') then
-      TButtonedEdit(Sender).Text := strHotkey;
-  end;
-end;
-
-procedure TfrmAdvancedPropertyPage.edtHotkeyRightButtonClick(Sender: TObject);
-begin
-  edtHotkey.Text := '';
 end;
 
 end.

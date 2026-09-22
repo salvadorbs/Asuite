@@ -243,7 +243,14 @@ begin
   else
     TASuiteLogger.Info('Load ASuite List from Database in VirtualTree', []);
 
-  TSQLtbl_list.LoadItemsByParentID(ATree, ADBManager, 0, nil, IsImport);
+  // Register every item's hotkey in one backend update: on Wayland the portal
+  // would otherwise bind once per item while the list is loaded.
+  ASuiteManager.ListManager.HotKeyItemList.BeginUpdate;
+  try
+    TSQLtbl_list.LoadItemsByParentID(ATree, ADBManager, 0, nil, IsImport);
+  finally
+    ASuiteManager.ListManager.HotKeyItemList.EndUpdate;
+  end;
 end;
 
 procedure TSQLtbl_list.LoadDataFromNode(AData: TvBaseNodeData; AIndex, AParentID: Integer);

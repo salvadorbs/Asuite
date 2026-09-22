@@ -77,6 +77,11 @@ type
     property SchDateTime: TDateTime read FSchDateTime write SetSchDateTime;
     property Hotkey: TShortCut read FHotkey write SetHotkey;
     property IsHotkeyActive: Boolean read GetIsHotkeyActive;
+
+    { Stores the shortcut assigned by the desktop (Wayland portal) without
+      re-registering it: the binding is already active and re-applying it
+      would only cause more churn. }
+    procedure UpdateHotkeyFromDesktop(AValue: TShortCut);
   end;
   PvCustomRealNodeData = ^TvCustomRealNodeData;
 
@@ -261,13 +266,25 @@ procedure TvCustomRealNodeData.SetHotkey(AValue: TShortCut);
 begin
   if (Config.ASuiteState <> lsImporting) then
   begin
-    //Old value is true, remove it in HotKeyApp
-    if (Self.IsHotkeyActive) then
-      ASuiteManager.ListManager.HotKeyItemList.RemoveItem(Self);
-    //New value is true, add it in HotKeyApp
-    if (AValue <> 0) then
-      ASuiteManager.ListManager.HotKeyItemList.AddItem(Self);
+    //Remove+add are one logical change: on Wayland the portal must not bind
+    //twice (once for the removal and once for the addition).
+    ASuiteManager.ListManager.HotKeyItemList.BeginUpdate;
+    try
+      //Old value is true, remove it in HotKeyApp
+      if (Self.IsHotkeyActive) then
+        ASuiteManager.ListManager.HotKeyItemList.RemoveItem(Self);
+      //New value is true, add it in HotKeyApp
+      if (AValue <> 0) then
+        ASuiteManager.ListManager.HotKeyItemList.AddItem(Self);
+    finally
+      ASuiteManager.ListManager.HotKeyItemList.EndUpdate;
+    end;
   end;
+  FHotkey := AValue;
+end;
+
+procedure TvCustomRealNodeData.UpdateHotkeyFromDesktop(AValue: TShortCut);
+begin
   FHotkey := AValue;
 end;
 
