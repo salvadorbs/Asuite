@@ -1154,6 +1154,55 @@ begin
 end;
 {$ENDIF}
 
+{$IFDEF UNIX}
+// Fills AMajor/AMinor/ARevision from a dotted version string.
+// Missing or non-numeric components become 0: rolling distributions report
+// strings such as 'rolling' or 'Tumbleweed' instead of '10.04', and
+// /etc/lsb-release may quote the value (e.g. DISTRIB_RELEASE="rolling").
+procedure ParseVersionString(const AVersion: String; out AMajor, AMinor,
+  ARevision: DWORD);
+var
+  S: String;
+  Parts: array[0..2] of String;
+  I, P: Integer;
+begin
+  AMajor := 0;
+  AMinor := 0;
+  ARevision := 0;
+
+  S := Trim(AVersion);
+  if (Length(S) >= 2) and
+     (((S[1] = '"') and (S[Length(S)] = '"')) or
+      ((S[1] = '''') and (S[Length(S)] = ''''))) then
+    S := Trim(Copy(S, 2, Length(S) - 2));
+
+  if S = '' then
+    Exit;
+
+  // Split into at most three dot-separated components.
+  Parts[0] := '';
+  Parts[1] := '';
+  Parts[2] := '';
+  P := 0;
+  for I := 1 to Length(S) do
+  begin
+    if S[I] = '.' then
+    begin
+      if P < 2 then
+        Inc(P)
+      else
+        Break;
+    end
+    else
+      Parts[P] := Parts[P] + S[I];
+  end;
+
+  AMajor := DWORD(StrToIntDef(Trim(Parts[0]), 0));
+  AMinor := DWORD(StrToIntDef(Trim(Parts[1]), 0));
+  ARevision := DWORD(StrToIntDef(Trim(Parts[2]), 0));
+end;
+{$ENDIF}
+
 function GetPlatformInfo: TBZPlatformInfo;
 var
   {$IFDEF WINDOWS}
@@ -1164,7 +1213,6 @@ var
     {$IFNDEF DARWIN}
       ReleseList: TStringList;
     {$ENDIF}
-    str: String;
     {$IFDEF DARWIN}
     Documento: TXMLDocument;
     Child: TDOMNode;
@@ -1240,24 +1288,7 @@ begin
   end;
   {$ENDIF}
   //Major.Minor.Revision
-  str:=Result.Version;
-  if str='' then Exit;
-  Result.Major:=StrtoInt( Utf8Copy(str, 1, Utf8Pos('.',str)-1) );
-  Utf8Delete(str, 1, Utf8Pos('.', str) );
-
-  //10.04
-  if Utf8Pos('.', str) = 0 then
-  begin
-    Result.Minor:=StrtoInt( Utf8Copy(str, 1, Utf8Length(str)) );
-    Result.Revision:=0;
-  end
-  else
-  //10.6.5
-  begin
-     Result.Minor:=StrtoInt( Utf8Copy(str, 1, Utf8Pos('.',str)-1) );
-     Utf8Delete(str, 1, Utf8Pos('.', str) );
-     Result.Revision:=StrtoInt( Utf8Copy(str, 1, Utf8Length(str)) );
-  end;
+  ParseVersionString(Result.Version, Result.Major, Result.Minor, Result.Revision);
   {$ENDIF}
 end;
 
