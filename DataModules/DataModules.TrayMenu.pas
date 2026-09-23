@@ -256,6 +256,17 @@ end;
 
 procedure TdmTrayMenu.ShowClassicMenu;
 begin
+  {$IFDEF LINUX}
+  //Mirror Tomboy-NG (2024): tray popup menus misbehave on Wayland (double menus
+  //with xcb, AVs). Skip the popup instead of risking a crash, unless explicitly
+  //allowed via ASUITE_ALLOW_LEFTCLICK env var (like Tomboy-NG --allow-leftclick).
+  if (GetEnvironmentVariable('WAYLAND_DISPLAY') <> '') and
+     (GetEnvironmentVariable('ASUITE_ALLOW_LEFTCLICK') = '') then
+  begin
+    TASuiteLogger.Info('ShowClassicMenu: tray popup skipped on Wayland session.', []);
+    Exit;
+  end;
+  {$ENDIF}
   //Workaround for Lazarus bug https://bugs.freepascal.org/view.php?id=38849
   //QT5Trayicon's contextMenu broken after recreating popup's handle
   //So hide trayicon before PopUpMethod and after it, show again
@@ -393,6 +404,8 @@ end;
 
 procedure TdmTrayMenu.DoTrayIconButtonClick(ASender: TObject; ATrayiconAction: TTrayiconActionClick);
 begin
+  //Debug marker for issue #149 (AV after closing options form)
+  TASuiteLogger.Info('DoTrayIconButtonClick: action=%d graphicmenu assigned=%s', [Ord(ATrayiconAction), BoolToStr(Assigned(frmGraphicMenu), True)]);
   case ATrayiconAction of
     tcShowWindow: ShowMainForm(ASender);
     tcShowGraphicMenu: ShowGraphicMenu;
@@ -829,17 +842,35 @@ var
 begin
   Result := false;
 
+  //Mirror Tomboy-NG: try Canonical's libappindicator3 first, then Ayatana's
+  //replacement (needed on newer distros/Lazarus).
   H := LoadLibrary('libappindicator3.so.1');
   if H = NilHandle then
+    H := LoadLibrary('libayatana-appindicator3.so.1');
+  //Like LCL trunk ayatana_appindicator.Gtk3AppIndicatorInit: a present library
+  //is not enough, its symbols must resolve too.
+  if (H <> NilHandle) and (GetProcAddress(H, 'app_indicator_new') = nil) then
   begin
-    TASuiteLogger.Info('Failed to Find libappindicator3, SysTray may not work.', []);
+    unloadLibrary(H);
+    H := NilHandle;
+  end;
+  if H = NilHandle then
+  begin
+    TASuiteLogger.Info('Failed to Find libappindicator3 (or libayatana-appindicator3), SysTray may not work.', []);
     exit(False);
   end;
   unloadLibrary(H);
 
-  if CheckPlugIn('ubuntu-appindicators@ubuntu.com') or            // Ubuntu, Debian
-     CheckPlugIn('appindicatorsupport@rgcjonas.gmail.com') then  // Fedora
-    Result := True;
+  //Mirror Tomboy-NG: gnome-extensions may not exist (non-GNOME desktops);
+  //a missing helper must not raise out of the tray check.
+  try
+    if CheckPlugIn('ubuntu-appindicators@ubuntu.com') or            // Ubuntu, Debian
+       CheckPlugIn('appindicatorsupport@rgcjonas.gmail.com') then  // Fedora
+      Result := True;
+  except
+    on E: EProcess do
+      TASuiteLogger.Info('CheckGnomeExtras: gnome-extensions helper not available, SysTray may not work.', []);
+  end;
 
   if not Result then
     TASuiteLogger.Info('Failed to Find an enabled appindicator plugin, SysTray may not work.', []);
@@ -853,31 +884,30 @@ var
 {$ENDIF}
 begin
   {$IFDEF LINUX}
-    {$IFDEF LCLGTK2}
-  XDisplay := gdk_display;
-    {$ENDIF}
-
-    {$IFDEF LCLQT5}
-  XDisplay := QX11Info_display;
-    {$ENDIF}     
-
-    {$IFDEF LCLQT6}
-  XDisplay := QtWidgetSet.x11Display;
-    {$ENDIF}
-
-    {$IFDEF LCLGTK3}
-  XDisplay := gdk_x11_display_get_xdisplay(gdk_window_get_display(gdk_get_default_root_window));
-    {$ENDIF}
-
   Result := False;
-  if XDisplay <> nil then
-  begin
-    A := XInternAtom(XDisplay, '_NET_SYSTEM_TRAY_S0', False);
-    Result := (XGetSelectionOwner(XDisplay, A) <> 0);
-  end;
+  //Always run the X11 tray test (retrocompatible with the old behavior on X11
+  //sessions, on any desktop and widgetset). Unlike the old code, do NOT use the
+  //widgetset display (gdk_display, QX11Info_display, QtWidgetSet.x11Display):
+  //QtWidgetSet.x11Display): Qt/GTK getters AV when the app runs on Wayland
+  //without X11 (QX11Application native interface is nil, like Tomboy-NG
+  //found on Gnome/Qt in 2021). Open our own X connection instead (same as
+  //Tomboy-NG for Qt5/Qt6) and skip X11 checks if there is no X server.
+  XDisplay := XOpenDisplay(nil);
+  try
+    if XDisplay <> nil then
+    begin
+      A := XInternAtom(XDisplay, '_NET_SYSTEM_TRAY_S0', False);
+      Result := (XGetSelectionOwner(XDisplay, A) <> 0);
+    end
+    else
+      TASuiteLogger.Info('CheckSysTray: no X11 display found, skipping X11 systray check.', []);
 
-  if not Result then
-    Result := TdmTrayMenu.CheckGnomeExtras; // Thats libappindicator3 and an installed and enabled gnome-shell-extension-appindicator
+    if not Result then
+      Result := TdmTrayMenu.CheckGnomeExtras; // Thats libappindicator3 and an installed and enabled gnome-shell-extension-appindicator
+  finally
+    if XDisplay <> nil then
+      XCloseDisplay(XDisplay);
+  end;
   {$ELSE}
   //Windows is always true!
   Result := True;
