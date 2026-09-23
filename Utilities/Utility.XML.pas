@@ -41,40 +41,61 @@ uses
   VirtualTree.Methods, NodeDataTypes.Files, Menus,
   Kernel.Logger, Kernel.Instance, LCLProc;
 
+function GetNodeTextContent(Node: TDOMNode): String;
+begin
+  //FPC DOM (unlike MSXML used by Delphi): TDOMElement.NodeValue is always '',
+  //element text lives in child text nodes, exposed via TextContent
+  Result := Node.TextContent;
+  if Result = '' then
+    Result := Node.NodeValue;
+end;
+
 function GetStrPropertyXML(Node : TDOMNode;Name: String;Default: String): String;
 var
   PropertyNode: TDOMNode;
+  sValue: String;
 begin
   Result := Default;
   PropertyNode := Node.FindNode(Name);
   //Check if PropertyNode exists
   if Assigned(PropertyNode) then
-    if PropertyNode.NodeValue <> '' then
-      Result := PropertyNode.NodeValue;
+  begin
+    sValue := GetNodeTextContent(PropertyNode);
+    if sValue <> '' then
+      Result := sValue;
+  end;
 end;
 
 function GetIntPropertyXML(Node : TDOMNode;Name: String;Default: Integer): Integer;
 var
   PropertyNode: TDOMNode;
+  sValue: String;
 begin
   Result := Default;
   PropertyNode := Node.FindNode(Name);
   //Check if PropertyNode exists
   if Assigned(PropertyNode) then
-    if PropertyNode.NodeValue <> '' then
-      Result := StrToInt(PropertyNode.NodeValue);
+  begin
+    sValue := GetNodeTextContent(PropertyNode);
+    if sValue <> '' then
+      Result := StrToInt(sValue);
+  end;
 end;
 
 function GetBoolPropertyXML(Node : TDOMNode;Name: String;Default: Boolean): Boolean;
 var
   PropertyNode: TDOMNode;
+  sValue: String;
 begin
   Result := Default;
   PropertyNode := Node.FindNode(Name);
   //Check if PropertyNode exists
   if Assigned(PropertyNode) then
-    if PropertyNode.NodeValue <> '' then
-      Result := (PropertyNode.NodeValue = '1');
+  begin
+    sValue := GetNodeTextContent(PropertyNode);
+    if sValue <> '' then
+      Result := (sValue = '1');
+  end;
 end;
 
 class function TImportOldListProcs.ASuite1NodeToTree(Tree: TVirtualStringTree;XMLNode: TDOMNode;
@@ -85,8 +106,9 @@ var
   CustomRealNodeData : TvCustomRealNodeData;
 begin
   Result := nil;
-  if ((XMLNode.HasAttributes) or (XMLNode.NodeName = 'Separator')) and
-     ((XMLNode.NodeName = 'Software') or (XMLNode.NodeName = 'Category') or
+  //Note: old list formats (e.g. 1.5.x) may have Category nodes without attributes,
+  //so accept known node names regardless of attributes (name then defaults to '')
+  if ((XMLNode.NodeName = 'Software') or (XMLNode.NodeName = 'Category') or
       (XMLNode.NodeName = 'Separator')) then
   begin
     //Create a new XMLNode
