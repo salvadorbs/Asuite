@@ -17,6 +17,7 @@ uses
   AppConfig.Main in 'Library\AppConfig.Main.pas',
   Forms.GraphicMenu in 'Forms\Forms.GraphicMenu.pas' {frmGraphicMenu},
   Forms.Main in 'Forms\Forms.Main.pas' {frmMain},
+  DataModules.Icons in 'DataModules\DataModules.Icons.pas' {dmImages: TDataModule},
   DataModules.TrayMenu in 'DataModules\DataModules.TrayMenu.pas' {dmTrayMenu: TDataModule},
   Kernel.Consts in 'Library\Kernel.Consts.pas',
   UniqueInstanceRaw,
@@ -44,6 +45,12 @@ begin
     Application.Initialize;
     Application.Title := APP_TITLE;
 
+    //The data modules must be created BEFORE the forms that use their
+    //ImageLists (frmMain, frmGraphicMenu): Application frees owned
+    //components in reverse creation order, so this keeps dmImages alive
+    //until every control that references dmImages.ilIcons is gone.
+    Application.CreateForm(TdmImages, dmImages);
+    Application.CreateForm(TdmTrayMenu, dmTrayMenu);
     Application.CreateForm(TfrmMain, frmMain);
     Application.CreateForm(TfrmGraphicMenu, frmGraphicMenu);
 

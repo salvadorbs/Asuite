@@ -767,8 +767,8 @@ begin
 
   //Set vstList as MainTree in Config
   ASuiteInstance.MainTree := vstList;
-  Application.CreateForm(TdmImages, dmImages);
-  Application.CreateForm(TdmTrayMenu, dmTrayMenu);
+  //dmImages/dmTrayMenu are created in ASuite.lpr before the forms, so they
+  //are destroyed after them (Application frees in reverse creation order).
   pcList.ActivePageIndex := PG_LIST;
 
   //Setup events in vsts
