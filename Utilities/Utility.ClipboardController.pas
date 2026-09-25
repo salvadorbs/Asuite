@@ -24,8 +24,8 @@ implementation
 
 uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
-  Clipbrd, Kernel.Logger, VirtualTree.Methods, NodeDataTypes.Base, Utility.System,
-  VirtualTrees.ClipBoard, VirtualTrees.Types, Utility.Misc, VirtualTree.Helper;
+  Clipbrd, Kernel.Logger, VirtualTree.Methods, NodeDataTypes.Base,
+  VirtualTrees.ClipBoard, VirtualTrees.Types, VirtualTree.Helper;
 
 constructor TClipboardController.Create(ATree: TVirtualStringTree);
 begin
@@ -35,6 +35,9 @@ end;
 
 procedure TClipboardController.DoCopy;
 begin
+  if not Assigned(FTree) then
+    Exit;
+
   TASuiteLogger.Info('Copy nodes into clipboard', []);
   {$IFDEF MSWINDOWS}
   FTree.CopyToClipBoard;
@@ -45,6 +48,9 @@ end;
 
 procedure TClipboardController.DoCut;
 begin
+  if not Assigned(FTree) then
+    Exit;
+
   TASuiteLogger.Info('Cut nodes into clipboard', []);
   {$IFDEF MSWINDOWS}
   FTree.CutToClipBoard;
