@@ -323,6 +323,10 @@ type
     procedure SaveConfig;
     procedure AddObserver(const Observer: IConfigObserver);
     procedure RemoveObserver(const Observer: IConfigObserver);
+    { Notifies a single observer with the current state. Call it right after
+      AddObserver for observers created after LoadConfig, so they apply the
+      configuration they missed. }
+    procedure SyncObserver(const Observer: IConfigObserver);
     procedure BeginUpdate;
     procedure EndUpdate;
   end;
@@ -339,6 +343,11 @@ uses
   TypInfo, Kernel.ResourceStrings, AppConfig.Consts, BGRABitmapTypes,
   Utility.Conversions, Hotkeys.Manager.Platform, Kernel.Instance, Kernel.Manager,
   ShortcutGrabber;
+
+const
+  MAINFORM_BOUNDS_GROUP = 'MainFormBounds';
+  MAINFORM_BOUNDS_PROPERTIES: array[0..3] of string =
+    ('MainFormLeft', 'MainFormTop', 'MainFormWidth', 'MainFormHeight');
 
 procedure TConfiguration.AfterUpdateConfig;
 begin
@@ -463,8 +472,7 @@ begin
   FScanFolderExcludeNames.Add('uninstall');
 
   FNotifier := TConfigNotifier.Create;
-  FNotifier.AddGroup('MainFormBounds', ['MainFormLeft', 'MainFormTop',
-    'MainFormWidth', 'MainFormHeight']);
+  FNotifier.AddGroup(MAINFORM_BOUNDS_GROUP, MAINFORM_BOUNDS_PROPERTIES);
 end;
 
 destructor TConfiguration.Destroy;
@@ -1235,6 +1243,11 @@ end;
 procedure TConfiguration.AddObserver(const Observer: IConfigObserver);
 begin
   FNotifier.AddObserver(Observer);
+end;
+
+procedure TConfiguration.SyncObserver(const Observer: IConfigObserver);
+begin
+  FNotifier.NotifyObserver(Observer, '');
 end;
 
 procedure TConfiguration.RemoveObserver(const Observer: IConfigObserver);
