@@ -12,7 +12,8 @@ uses
   cthreads,
   {$ENDIF}
   consoletestrunner,
-  Tests.AppConfigObserver;
+  Tests.AppConfigObserver,
+  Tests.RunActionLogic;
 
 var
   Application: TTestRunner;
