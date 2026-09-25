@@ -16,7 +16,9 @@ type
     FNames: TStringList;
     FOwner: TConfigNotifier;
     FRemoveOnNotify: Boolean;
+    FRaiseOnce: Boolean;
     FAddOnNotify: TRecordingObserver;
+    FRemoveOther: TRecordingObserver;
   public
     constructor Create;
     destructor Destroy; override;
@@ -24,7 +26,9 @@ type
     property Names: TStringList read FNames;
     property Owner: TConfigNotifier read FOwner write FOwner;
     property RemoveOnNotify: Boolean read FRemoveOnNotify write FRemoveOnNotify;
+    property RaiseOnce: Boolean read FRaiseOnce write FRaiseOnce;
     property AddOnNotify: TRecordingObserver read FAddOnNotify write FAddOnNotify;
+    property RemoveOtherOnNotify: TRecordingObserver read FRemoveOther write FRemoveOther;
   end;
 
   TTestConfigNotifier = class(TTestCase)
@@ -66,7 +70,11 @@ type
 
     // Reentrancy
     procedure TestRemoveObserverDuringNotificationKeepsDispatch;
+    procedure TestRemoveOtherObserverDuringNotification;
     procedure TestAddObserverDuringNotificationAppliesToNextNotification;
+
+    // Error handling
+    procedure TestExceptionInCallbackDoesNotLeakBatch;
   end;
 
 implementation
@@ -87,7 +95,16 @@ end;
 
 procedure TRecordingObserver.ConfigChanged(const PropertyName: UnicodeString);
 begin
+  if FRaiseOnce then
+  begin
+    FRaiseOnce := False;
+    raise Exception.Create('observer failure');
+  end;
+
   FNames.Add(PropertyName);
+
+  if Assigned(FRemoveOther) and Assigned(FOwner) then
+    FOwner.RemoveObserver(FRemoveOther);
 
   if FRemoveOnNotify and Assigned(FOwner) then
     FOwner.RemoveObserver(Self);
@@ -331,6 +348,44 @@ begin
   AssertEquals('', NamesOf(FO3));
   FNotifier.Notify('Y');
   AssertEquals('Y', NamesOf(FO3));
+end;
+
+procedure TTestConfigNotifier.TestRemoveOtherObserverDuringNotification;
+begin
+  FNotifier.AddObserver(FO1);
+  FNotifier.AddObserver(FO2);
+  FO1.RemoveOtherOnNotify := FO2;
+  FNotifier.Notify('X');
+  // The in-flight notification still reaches the removed observer.
+  AssertEquals('X', NamesOf(FO1));
+  AssertEquals('X', NamesOf(FO2));
+  FNotifier.Notify('Y');
+  AssertEquals('X,Y', NamesOf(FO1));
+  AssertEquals('X', NamesOf(FO2));
+end;
+
+procedure TTestConfigNotifier.TestExceptionInCallbackDoesNotLeakBatch;
+begin
+  FNotifier.AddObserver(FO1);
+  FO1.RaiseOnce := True;
+
+  FNotifier.BeginUpdate;
+  FNotifier.Notify('A');
+  try
+    FNotifier.EndUpdate;
+    Fail('The observer exception should propagate');
+  except
+    on E: Exception do
+      ; // expected
+  end;
+
+  AssertEquals('nothing recorded before the failure', 0, FO1.Names.Count);
+
+  // The stale 'A' must not be replayed by the next batch.
+  FNotifier.BeginUpdate;
+  FNotifier.Notify('B');
+  FNotifier.EndUpdate;
+  AssertEquals('B', NamesOf(FO1));
 end;
 
 initialization
