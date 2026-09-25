@@ -14,6 +14,7 @@ type
     FSearchEdit: TButtonedEdit;
     FSearchMenu: TPopupMenu;
     function GetCheckedMenuItem(AMenu: TPopupMenu): TMenuItem;
+    procedure DoSearchItemOn(const ATree: TBaseVirtualTree; const Keyword: string; const SearchType: TSearchType);
     procedure DoSearchItem(const Keyword: string; const SearchType: TSearchType);
   public
     constructor Create(ATreeSearch: TBaseVirtualTree; ASearchEdit: TButtonedEdit; ASearchMenu: TPopupMenu);
@@ -64,27 +65,33 @@ begin
     Result := AMenu.Items[0];
 end;
 
-procedure TSearchController.DoSearchItem(const Keyword: string; const SearchType: TSearchType);
+procedure TSearchController.DoSearchItemOn(const ATree: TBaseVirtualTree;
+  const Keyword: string; const SearchType: TSearchType);
 var
   LauncherSearch: TLauncherSearch;
 begin
-  if not Assigned(FTreeSearch) then
+  if not Assigned(ATree) then
     Exit;
 
-  FTreeSearch.Clear;
+  ATree.Clear;
   if Length(Keyword) > 0 then
   begin
-    FTreeSearch.BeginUpdate;
+    ATree.BeginUpdate;
     try
-      LauncherSearch.Tree       := FTreeSearch;
+      LauncherSearch.Tree       := ATree;
       LauncherSearch.Keyword    := LowerCase(Keyword);
       LauncherSearch.SearchType := SearchType;
       ASuiteInstance.MainTree.IterateSubtree(nil, TVirtualTreeMethods.FindNode, @LauncherSearch, [], True);
     finally
-      FTreeSearch.EndUpdate;
-      TVirtualTreeMethods.CheckVisibleNodePathExe(FTreeSearch);
+      ATree.EndUpdate;
+      TVirtualTreeMethods.CheckVisibleNodePathExe(ATree);
     end;
   end;
+end;
+
+procedure TSearchController.DoSearchItem(const Keyword: string; const SearchType: TSearchType);
+begin
+  DoSearchItemOn(FTreeSearch, Keyword, SearchType);
 end;
 
 procedure TSearchController.OnTextChange(Sender: TObject);
@@ -139,8 +146,8 @@ end;
 
 procedure TSearchController.ExecuteOn(ATree: TBaseVirtualTree; const Keyword: string; const SearchType: TSearchType);
 begin
-  FTreeSearch := ATree;
-  DoSearchItem(Keyword, SearchType);
+  // Search on the given tree without rebinding the controller's own tree.
+  DoSearchItemOn(ATree, Keyword, SearchType);
 end;
 
 end.
