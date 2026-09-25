@@ -73,6 +73,12 @@ type
     procedure TestRemoveOtherObserverDuringNotification;
     procedure TestAddObserverDuringNotificationAppliesToNextNotification;
 
+    // Direct (single observer) notification
+    procedure TestNotifyObserverReachesOnlyTarget;
+    procedure TestNotifyObserverNilIsSafe;
+    procedure TestNotifyObserverWithEmptyName;
+    procedure TestNotifyWithoutObserversIsSafe;
+
     // Error handling
     procedure TestExceptionInCallbackDoesNotLeakBatch;
   end;
@@ -362,6 +368,33 @@ begin
   FNotifier.Notify('Y');
   AssertEquals('X,Y', NamesOf(FO1));
   AssertEquals('X', NamesOf(FO2));
+end;
+
+procedure TTestConfigNotifier.TestNotifyObserverReachesOnlyTarget;
+begin
+  FNotifier.AddObserver(FO2);
+  FNotifier.NotifyObserver(FO1, 'AfterUpdateConfig');
+  AssertEquals('AfterUpdateConfig', NamesOf(FO1));
+  AssertEquals('', NamesOf(FO2));
+end;
+
+procedure TTestConfigNotifier.TestNotifyObserverNilIsSafe;
+begin
+  // Must not raise.
+  FNotifier.NotifyObserver(nil, 'X');
+end;
+
+procedure TTestConfigNotifier.TestNotifyObserverWithEmptyName;
+begin
+  FNotifier.NotifyObserver(FO1);
+  AssertEquals(1, FO1.Names.Count);
+  AssertEquals('', FO1.Names[0]);
+end;
+
+procedure TTestConfigNotifier.TestNotifyWithoutObserversIsSafe;
+begin
+  // Must not raise.
+  FNotifier.Notify('X');
 end;
 
 procedure TTestConfigNotifier.TestExceptionInCallbackDoesNotLeakBatch;

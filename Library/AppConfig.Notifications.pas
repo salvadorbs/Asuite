@@ -72,6 +72,12 @@ type
     procedure EndUpdate;
     procedure Notify(const PropertyName: string = '');
 
+    { Delivers a notification to a single observer, bypassing the list. Used to
+      synchronize an observer right after it registered (it missed the previous
+      notifications). An empty name means "apply everything". }
+    procedure NotifyObserver(const Observer: IConfigObserver;
+      const PropertyName: string = '');
+
     property ObserverCount: Integer read GetObserverCount;
   end;
 
@@ -225,13 +231,34 @@ begin
   DoNotify(PropertyName);
 end;
 
+procedure TConfigNotifier.NotifyObserver(const Observer: IConfigObserver;
+  const PropertyName: string = '');
+begin
+  if Assigned(Observer) then
+    Observer.ConfigChanged(PropertyName);
+end;
+
 procedure TConfigNotifier.DoNotify(const PropertyName: string);
 var
   I: Integer;
   Snapshot: array of IConfigObserver;
+  Observer: IConfigObserver;
 begin
-  // Take a snapshot so an observer can add/remove observers (including itself)
-  // from within its callback without disturbing the dispatch loop.
+  if FObservers.Count = 0 then
+    Exit;
+
+  // Fast path for the common single-observer case: capturing the interface
+  // reference keeps it alive even if the callback removes it, and it stays
+  // reentrancy-safe because there is no shared buffer.
+  if FObservers.Count = 1 then
+  begin
+    if Supports(FObservers[0], IConfigObserver, Observer) then
+      Observer.ConfigChanged(PropertyName);
+    Exit;
+  end;
+
+  // Several observers: take a snapshot so an observer can add/remove observers
+  // (including itself) from within its callback without disturbing the loop.
   SetLength(Snapshot, FObservers.Count);
   for I := 0 to FObservers.Count - 1 do
     Supports(FObservers[I], IConfigObserver, Snapshot[I]);
