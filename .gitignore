@@ -12,6 +12,9 @@ asuite*.7z
 asuite*.zip
 bin/settings.json
 
+#unit test output
+tests/ASuiteTests
+
 #compiled
 *.exe
 *.compiled
