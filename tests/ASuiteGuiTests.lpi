@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="11"/>
+    <PathDelim Value="\"/>
+    <General>
+      <SessionStorage Value="InProjectDir"/>
+      <MainUnit Value="0"/>
+      <Title Value="ASuiteGuiTests"/>
+      <Scaled Value="True"/>
+      <ResourceType Value="res"/>
+      <UseXPManifest Value="True"/>
+      <UseAppBundle Value="False"/>
+    </General>
+    <BuildModes Count="1">
+      <Item1 Name="Default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+      <UseFileFilters Value="True"/>
+    </PublishOptions>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="0"/>
+    </RunParams>
+    <RequiredPackages Count="11">
+      <Item1>
+        <PackageName Value="mormot2"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="jppacklcl"/>
+      </Item2>
+      <Item3>
+        <PackageName Value="ASuiteComps"/>
+      </Item3>
+      <Item4>
+        <PackageName Value="bgracontrols"/>
+      </Item4>
+      <Item5>
+        <PackageName Value="FCL"/>
+      </Item5>
+      <Item6>
+        <PackageName Value="HashLib4PascalPackage"/>
+      </Item6>
+      <Item7>
+        <PackageName Value="uniqueinstance_package"/>
+      </Item7>
+      <Item8>
+        <PackageName Value="virtualtreeview_package"/>
+      </Item8>
+      <Item9>
+        <PackageName Value="DateTimeCtrls"/>
+      </Item9>
+      <Item10>
+        <PackageName Value="lclextensions_package"/>
+      </Item10>
+      <Item11>
+        <PackageName Value="LCL"/>
+      </Item11>
+    </RequiredPackages>
+    <Units Count="3">
+      <Unit0>
+        <Filename Value="ASuiteGuiTests.lpr"/>
+        <IsPartOfProject Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="Tests.MenuUtils.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.MenuUtils"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="Tests.SortController.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.SortController"/>
+      </Unit2>
+    </Units>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <PathDelim Value="\"/>
+    <Target>
+      <Filename Value="ASuiteGuiTests"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="$(ProjOutDir);.."/>
+      <OtherUnitFiles Value="../Forms;../DataModules;../Library;../Utilities;../Frame;../3p;../Library/$(LCLWidgetType)"/>
+      <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)-$(LCLWidgetType)"/>
+    </SearchPaths>
+    <Linking>
+      <Options>
+        <Win32>
+          <GraphicApplication Value="False"/>
+        </Win32>
+      </Options>
+    </Linking>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="3">
+      <Item1>
+        <Name Value="EAbort"/>
+      </Item1>
+      <Item2>
+        <Name Value="ECodetoolError"/>
+      </Item2>
+      <Item3>
+        <Name Value="EFOpenError"/>
+      </Item3>
+    </Exceptions>
+  </Debugging>
+</CONFIG>
