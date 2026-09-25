@@ -171,11 +171,15 @@ jobs:
       #if: matrix.config.build-widgetset != 'gtk2'
       run: ${{ env.ASUITE_SOURCE }}/bin/${{ matrix.config.dbg2mab }} ${{ env.ASUITE_SOURCE }}/bin/${{ matrix.config.debug_file }}
 
-    - name: Build and run unit tests
+    - name: Run unit tests
       if: matrix.config.build-widgetset == 'gtk2'
+      env:
+        DISPLAY: ':1'
       run: |
         ${{ matrix.config.lazbuild }} "${{ env.ASUITE_SOURCE }}/tests/ASuiteTests.lpi" --no-write-project
         "${{ env.ASUITE_SOURCE }}/tests/ASuiteTests" --all --format=plain
+        ${{ matrix.config.lazbuild }} "${{ env.ASUITE_SOURCE }}/tests/ASuiteGuiTests.lpi" --no-write-project --widgetset=${{ matrix.config.build-widgetset }}
+        "${{ env.ASUITE_SOURCE }}/tests/ASuiteGuiTests" --all --format=plain
 
     - name: Upload the Build Artifact
       uses: actions/upload-artifact@v7.0.1
