@@ -27,5 +27,16 @@ Once Lazarus is installed, you need to install these components from OPM (Online
 
 You need a last component, ASuiteComps, who you will find in subfolder https://github.com/salvadorbs/Asuite/tree/develop/3p/ASuiteComps. Install it and rebuild the IDE.
 
+## Unit tests
+The configuration observer/notification logic has FPCUnit tests under `tests/`.
+They are plain FCL tests (no display server or widgetset required):
+
+```
+$ cd tests
+$ ./run_tests.sh
+```
+
+The test suite is also executed by CI on the Linux GTK2 job.
+
 ## Help?
 Open an issue, if you can't find a component or you can't build correctly the project.

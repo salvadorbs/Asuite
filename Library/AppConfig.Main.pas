@@ -32,7 +32,7 @@ interface
 uses
   LCLIntf, LCLType, SysUtils, Graphics, Forms, Controls, VirtualTrees, Kernel.Enumerations,
   Classes, jsonConf, LazFileUtils, Kernel.Logger, BGRABitmap, Dialogs, Menus,
-  AppConfig.Observer;
+  AppConfig.Observer, AppConfig.Notifications;
 
 type
 
@@ -129,10 +129,7 @@ type
     FScanFolderAutoExtractName : boolean;
     FScanFolderFileTypes  : TStringList;
     FScanFolderExcludeNames: TStringList;
-    FObservers: TInterfaceList;
-    // Batching notification support
-    FNotificationBatchCount: Integer;
-    FBatchedProperties: TStringList;
+    FNotifier: TConfigNotifier;
 
     function LoadPngAndConvertBMP(const APath: String): TBitmap;
     procedure RestoreSettings(AJSONConfig: TJSONConfig);
@@ -465,68 +462,28 @@ begin
   FScanFolderExcludeNames := TStringList.Create;
   FScanFolderExcludeNames.Add('uninstall');
 
-  FObservers := TInterfaceList.Create;
-  FNotificationBatchCount := 0;
-  FBatchedProperties := TStringList.Create;
+  FNotifier := TConfigNotifier.Create;
+  FNotifier.AddGroup('MainFormBounds', ['MainFormLeft', 'MainFormTop',
+    'MainFormWidth', 'MainFormHeight']);
 end;
 
 destructor TConfiguration.Destroy;
 begin
-  FBatchedProperties.Free;
+  FNotifier.Free;
   FTVFont.Free;
   FScanFolderFileTypes.Free;
   FScanFolderExcludeNames.Free;
-  FObservers.Free;
   inherited Destroy;
 end;
 
 procedure TConfiguration.BeginUpdate;
 begin
-  // Increments the batch counter. While >0, notifications are batched.
-  Inc(FNotificationBatchCount);
+  FNotifier.BeginUpdate;
 end;
 
 procedure TConfiguration.EndUpdate;
-var
-  Excluded: TStringList;
-  I: Integer;
 begin
-  // Decrements the batch counter. When it reaches 0, send notifications for all batched properties.
-  if FNotificationBatchCount = 0 then Exit;
-  Dec(FNotificationBatchCount);
-  if FNotificationBatchCount = 0 then
-  begin
-    Excluded := TStringList.Create;
-    try
-      // If any of the MainForm bounds properties were changed, group as 'MainFormBounds'.
-      // This avoids redundant notifications for each property when setting bounds together.
-      if (FBatchedProperties.IndexOf('MainFormLeft') >= 0) or
-         (FBatchedProperties.IndexOf('MainFormTop') >= 0) or
-         (FBatchedProperties.IndexOf('MainFormWidth') >= 0) or
-         (FBatchedProperties.IndexOf('MainFormHeight') >= 0) then
-      begin
-        NotifyObservers('MainFormBounds');
-        // Exclude grouped properties from individual notification
-        Excluded.Add('MainFormLeft');
-        Excluded.Add('MainFormTop');
-        Excluded.Add('MainFormWidth');
-        Excluded.Add('MainFormHeight');
-      end;
-      // Notify for each property changed during the batch, except those grouped
-      I := 0;
-      while i < FBatchedProperties.Count do
-      begin
-        if Excluded.IndexOf(FBatchedProperties[i]) = -1 then
-        begin
-          NotifyObservers(FBatchedProperties[i]);
-        end;
-        Inc(i);
-      end;
-      FBatchedProperties.Clear;
-    finally
-      Excluded.Free;
-    end;
-  end;
+  FNotifier.EndUpdate;
 end;
 
 procedure TConfiguration.SetASuiteState(const Value: TLauncherState);
@@ -1278,32 +1235,17 @@ end;
 
 procedure TConfiguration.AddObserver(const Observer: IConfigObserver);
 begin
-  if (FObservers.IndexOf(Observer) = -1) then
-    FObservers.Add(Observer);
+  FNotifier.AddObserver(Observer);
 end;
 
 procedure TConfiguration.RemoveObserver(const Observer: IConfigObserver);
 begin
-  FObservers.Remove(Observer);
+  FNotifier.RemoveObserver(Observer);
 end;
 
 procedure TConfiguration.NotifyObservers(const PropertyName: string = '');
-var
-  I: Integer;
-  Observer: IConfigObserver;
 begin
-  // If batching, just record the property name (if not already present)
-  if FNotificationBatchCount > 0 then
-  begin
-    if (PropertyName <> '') and (FBatchedProperties.IndexOf(PropertyName) = -1) then
-      FBatchedProperties.Add(PropertyName);
-    Exit;
-  end;
-
-  // Otherwise, notify all observers immediately
-  for I := 0 to FObservers.Count - 1 do
-    if Supports(FObservers[i], IConfigObserver, Observer) then
-      Observer.ConfigChanged(PropertyName);
+  FNotifier.Notify(PropertyName);
 end;
 
 procedure TConfiguration.SetShowGraphicMenuAtStartUp(const Value: Boolean);
