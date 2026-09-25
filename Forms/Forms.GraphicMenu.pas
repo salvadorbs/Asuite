@@ -137,8 +137,7 @@ uses
   Forms.Main, Utility.System, Kernel.Consts, AppConfig.Main, DataModules.Icons,
   Forms.About, NodeDataTypes.Base, Kernel.Enumerations, Forms.Options, {%H-}LazVersion,
   Utility.Misc, VirtualTree.Methods, Kernel.Types, VirtualTrees.Types, Kernel.Logger,
-  NodeDataTypes.Custom, Kernel.ResourceStrings, Kernel.Instance, Kernel.Manager,
-  LazFileUtils
+  NodeDataTypes.Custom, Kernel.ResourceStrings, Kernel.Instance, Kernel.Manager
   {$IFDEF MSWINDOWS} , Windows {$ENDIF};
 
 procedure TfrmGraphicMenu.ApplicationEvents1Deactivate(Sender: TObject);
@@ -228,13 +227,9 @@ procedure TfrmGraphicMenu.ConfigChanged(const PropertyName: string);
 begin
   if (PropertyName = '') or (PropertyName = 'AfterUpdateConfig') then
   begin
-    TASuiteLogger.Info('Change Current Theme path to "%s"', [ASuiteInstance.Paths.SuitePathMenuThemes + Config.GMTheme]);
-
-    //Set Paths
-    ASuiteInstance.Paths.SuitePathCurrentTheme := AppendPathDelim(ASuiteInstance.Paths.SuitePathMenuThemes + Config.GMTheme);
-    ASuiteManager.IconsManager.PathTheme       := ASuiteInstance.Paths.SuitePathCurrentTheme;
-
-    //Refresh GraphicMenu
+    // TConfiguration.UpdateGMTheme already set SuitePathCurrentTheme and
+    // IconsManager.PathTheme before notifying observers; here we only refresh
+    // the menu itself.
     Self.LoadTheme;
 
     //Position

@@ -26,8 +26,7 @@ interface
 uses
   LCLIntf, LCLType, SysUtils, Classes, Controls, Forms, Dialogs, Menus,
   ComCtrls, VirtualTrees, UniqueInstance, Kernel.Consts, DataModules.Icons,
-  Kernel.BaseMainForm, {$IFDEF UNIX}VirtualTree.Helper, {$ENDIF}
-  Kernel.Enumerations, ExtCtrls, ButtonedEdit, {Actions,} ActnList,
+  Kernel.BaseMainForm, Kernel.Enumerations, ExtCtrls, ButtonedEdit, {Actions,} ActnList,
   AppConfig.Observer, AppConfig.Main, Utility.SearchController,
   Utility.ClipboardController, Utility.RunController, Utility.SortController;
 
@@ -191,11 +190,11 @@ implementation
 
 uses
   Forms.Options, Forms.About, Utility.Misc, Forms.ScanFolder, Clipbrd,
-  DataModules.TrayMenu, Forms.ImportList, Utility.System, LCLTranslator,
+  DataModules.TrayMenu, Forms.ImportList, LCLTranslator,
   VirtualTree.Methods, Frame.Options.Stats, NodeDataTypes.Base, Utility.FileFolder,
-  Kernel.Types, NodeDataTypes.Files, Kernel.Manager, VirtualTrees.Types,
+  Kernel.Manager, VirtualTrees.Types,
   Kernel.Logger, mormot.core.log, FileUtil, Kernel.ResourceStrings, Kernel.Instance,
-  VirtualTrees.ClipBoard, Forms.GraphicMenu
+  VirtualTrees.ClipBoard
   {$IFDEF MSWINDOWS} , jwatlhelp32, Windows {$ENDIF},
   Utility.MenuUtils;
 
@@ -321,23 +320,9 @@ begin
 end;
 
 procedure TfrmMain.actSortCatItemsUpdate(Sender: TObject);
-var
-  Nodes: TNodeArray;
-  NodeData: TvBaseNodeData;
-  I: Integer;
 begin
-  Nodes := GetActiveTree.GetSortedSelection(True);
-  TAction(Sender).Visible := (GetActiveTree = vstList);
-  TAction(Sender).Enabled := False;
-  if (Length(Nodes) > 0) and (GetActiveTree = vstList) then
-  begin
-    for I := Low(Nodes) to High(Nodes) do
-    begin
-      NodeData := TVirtualTreeMethods.GetNodeItemData(Nodes[I], GetActiveTree);
-      if NodeData.IsCategoryItem then
-        TAction(Sender).Enabled := True;
-    end;
-  end;
+  if Assigned(FSort) then
+    FSort.UpdateSortCategoriesAction(TAction(Sender), vstList, GetActiveTree);
 end;
 
 procedure TfrmMain.actSortListExecute(Sender: TObject);

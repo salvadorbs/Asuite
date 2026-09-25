@@ -11,7 +11,7 @@ type
   TSortController = class
   public
     procedure SortSelectedCategories(const Tree: TBaseVirtualTree; ListTree: TVirtualStringTree);
-    procedure UpdateSortCategoriesAction(Action: TAction; const Tree: TBaseVirtualTree);
+    procedure UpdateSortCategoriesAction(Action: TAction; const Tree: TBaseVirtualTree; const ActiveTree: TBaseVirtualTree);
     procedure SortListTree(ListTree: TVirtualStringTree);
     procedure UpdateSortListAction(Action: TAction; ListTree: TVirtualStringTree; const ActiveTree: TBaseVirtualTree);
   end;
@@ -36,26 +36,27 @@ begin
   TVirtualTreeMethods.RefreshList(ListTree);
 end;
 
-procedure TSortController.UpdateSortCategoriesAction(Action: TAction; const Tree: TBaseVirtualTree);
+procedure TSortController.UpdateSortCategoriesAction(Action: TAction;
+  const Tree: TBaseVirtualTree; const ActiveTree: TBaseVirtualTree);
 var
   Nodes: TNodeArray;
   NodeData: TvBaseNodeData;
   I: Integer;
 begin
-  if not Assigned(Action) or not Assigned(Tree) then Exit;
-  Nodes := Tree.GetSortedSelection(True);
-  Action.Visible := True;
+  if not Assigned(Action) then Exit;
+
+  Action.Visible := (ActiveTree = Tree);
   Action.Enabled := False;
-  if Length(Nodes) > 0 then
+  if not Action.Visible or not Assigned(Tree) then Exit;
+
+  Nodes := Tree.GetSortedSelection(True);
+  for I := Low(Nodes) to High(Nodes) do
   begin
-    for I := Low(Nodes) to High(Nodes) do
+    NodeData := TVirtualTreeMethods.GetNodeItemData(Nodes[I], Tree);
+    if Assigned(NodeData) and NodeData.IsCategoryItem then
     begin
-      NodeData := TVirtualTreeMethods.GetNodeItemData(Nodes[I], Tree);
-      if Assigned(NodeData) and NodeData.IsCategoryItem then
-      begin
-        Action.Enabled := True;
-        Break;
-      end;
+      Action.Enabled := True;
+      Break;
     end;
   end;
 end;

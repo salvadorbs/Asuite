@@ -30,7 +30,7 @@ unit AppConfig.Main;
 interface
 
 uses
-  LCLIntf, LCLType, SysUtils, Graphics, Forms, Controls, VirtualTrees, Kernel.Enumerations,
+  LCLIntf, LCLType, SysUtils, Graphics, Forms, Controls, Kernel.Enumerations,
   Classes, jsonConf, LazFileUtils, Kernel.Logger, BGRABitmap, Dialogs, Menus,
   AppConfig.Observer, AppConfig.Notifications;
 
@@ -335,7 +335,7 @@ implementation
 uses
   Utility.System, Kernel.Consts, Utility.Misc, DataModules.TrayMenu,
   VirtualTree.Methods, Utility.FileFolder, mormot.core.log,
-  LCLProc, VirtualTrees.Types, Process,
+  LCLProc, Process,
   TypInfo, Kernel.ResourceStrings, AppConfig.Consts, BGRABitmapTypes,
   Utility.Conversions, Hotkeys.Manager.Platform, Kernel.Instance, Kernel.Manager,
   ShortcutGrabber;
@@ -726,7 +726,6 @@ end;
 
 procedure TConfiguration.RestoreSettings(AJSONConfig: TJSONConfig);
 var
-  nLeft, nTop, nWidth, nHeight: Integer;
   tempTypes: TStringList;
   tempFont: Graphics.TFont;
 begin
