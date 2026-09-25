@@ -204,9 +204,10 @@ begin
     for I := 0 to FBatchedProperties.Count - 1 do
       if Excluded.IndexOf(FBatchedProperties[I]) = -1 then
         DoNotify(FBatchedProperties[I]);
-
-    FBatchedProperties.Clear;
   finally
+    // Always drop the recorded properties: if an observer raised, a later
+    // EndUpdate must not replay the stale batch.
+    FBatchedProperties.Clear;
     Excluded.Free;
   end;
 end;
