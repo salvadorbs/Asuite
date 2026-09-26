@@ -125,6 +125,9 @@ var
   I: Integer;
 begin
   Result := False;
+  if not Assigned(ABatched) then
+    Exit;
+
   for I := 0 to FMembers.Count - 1 do
   begin
     if ABatched.IndexOf(FMembers[I]) >= 0 then
