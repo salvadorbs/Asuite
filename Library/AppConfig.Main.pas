@@ -131,7 +131,6 @@ type
     FScanFolderExcludeNames: TStringList;
     FNotifier: TConfigNotifier;
 
-    function LoadPngAndConvertBMP(const APath: String): TBitmap;
     procedure RestoreSettings(AJSONConfig: TJSONConfig);
     procedure SaveSettings(AJSONConfig: TJSONConfig);
     procedure SetHoldSize(value: Boolean);
@@ -874,6 +873,8 @@ begin
     Self.AfterUpdateConfig;
   finally
     Self.EndUpdate;
+    // Loading the configuration is not a change: start with a clean flag.
+    Self.Changed := False;
   end;
 end;
 
@@ -1041,21 +1042,6 @@ procedure TConfiguration.SetTVBackground(value: Boolean);
 begin
   FTVBackground := value;
   NotifyObservers('TVBackground');
-end;
-
-function TConfiguration.LoadPngAndConvertBMP(const APath: String): TBitmap;
-var
-  BackgroundPNG: TPortableNetworkGraphic;
-begin
-  Result := Graphics.TBitmap.Create;
-
-  BackgroundPNG := TPortableNetworkGraphic.Create;
-  try
-    BackgroundPNG.LoadFromFile(APath);
-    Result.Assign(BackgroundPNG);
-  finally
-    BackgroundPNG.Free;
-  end;
 end;
 
 procedure TConfiguration.SetTVFont(value: Graphics.TFont);
@@ -1257,6 +1243,13 @@ end;
 
 procedure TConfiguration.NotifyObservers(const PropertyName: string = '');
 begin
+  // Any persisted property change marks the configuration dirty; saving no
+  // longer depends on every caller remembering to set Config.Changed.
+  // Transient (ASuiteState) and meta (AfterUpdateConfig) notifications do not.
+  if (PropertyName <> '') and (PropertyName <> 'ASuiteState') and
+     (PropertyName <> 'AfterUpdateConfig') then
+    FChanged := True;
+
   FNotifier.Notify(PropertyName);
 end;
 
