@@ -349,6 +349,11 @@ end;
 procedure TVirtualTreeEvents.DoColumnResize(Sender: TVTHeader;
   Column: TColumnIndex);
 begin
+  // This handler is wired to the search tree only, but guard the column count
+  // so a future change of tree options cannot index out of range.
+  if not Assigned(Sender) or (Sender.Columns.Count < 2) then
+    Exit;
+
   Config.SearchNameColWidth     := Sender.Columns[0].Width;
   Config.SearchCategoryColWidth := Sender.Columns[1].Width;
   Config.Changed := True;
