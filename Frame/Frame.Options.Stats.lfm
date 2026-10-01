@@ -91,7 +91,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       RightCaption = 'Value'
       LinePeriod = 4
       Anchors = [akTop, akLeft, akRight]
-      Caption = 'Used space'
+      Caption = 'Free space'
       ParentFont = False
     end
     object lbSpaceUsed: TJppDoubleLineLabel
@@ -102,7 +102,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       RightCaption = 'Value'
       LinePeriod = 4
       Anchors = [akTop, akLeft, akRight]
-      Caption = 'Free space'
+      Caption = 'Used space'
       ParentFont = False
     end
   end

@@ -316,8 +316,8 @@ msgstr "Esplora"
 
 #: kernel.resourcestrings.msggmharddiskspace
 #, object-pascal-format
-msgid "%s free of %s"
-msgstr "%s libero di %s"
+msgid "%s free | %s used"
+msgstr "%s liberi | %s usati"
 
 #: kernel.resourcestrings.msggmmusic
 msgid "Music"
@@ -1444,8 +1444,8 @@ msgid "Value"
 msgstr "Valore"
 
 #: tfrmstatsoptionspage.lbspacefree.caption
-msgid "Used space"
-msgstr "Spazio utilizzato"
+msgid "Free space"
+msgstr "Spazio libero"
 
 #: tfrmstatsoptionspage.lbspacefree.rightcaption
 msgctxt "tfrmstatsoptionspage.lbspacefree.rightcaption"
@@ -1453,8 +1453,8 @@ msgid "Value"
 msgstr "Valore"
 
 #: tfrmstatsoptionspage.lbspaceused.caption
-msgid "Free space"
-msgstr "Spazio libero"
+msgid "Used space"
+msgstr "Spazio utilizzato"
 
 #: tfrmstatsoptionspage.lbspaceused.rightcaption
 msgctxt "tfrmstatsoptionspage.lbspaceused.rightcaption"
