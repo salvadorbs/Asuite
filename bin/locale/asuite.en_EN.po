@@ -560,8 +560,8 @@ msgid "%s (%s bit)"
 msgstr "%s (%s bit)"
 
 #: tfrmabout.lnklblwebsite.caption
-msgid "http://www.salvadorsoftware.com"
-msgstr "http://www.salvadorsoftware.com"
+msgid "https://github.com/salvadorbs/asuite"
+msgstr "https://github.com/salvadorbs/asuite"
 
 #: tfrmadvancedoptionspage.btnclear.caption
 msgid "Clear"
@@ -655,10 +655,6 @@ msgstr "Don't insert this software in recents (MRU)"
 msgid "Hide this software from menu"
 msgstr "Hide this software from menu"
 
-#: tfrmadvancedpropertypage.cbhotkey.caption
-msgid "Active hotkey"
-msgstr "Active hotkey"
-
 #: tfrmadvancedpropertypage.cbshortcutdesktop.caption
 msgid "Create shortcut on desktop when ASuite is running"
 msgstr "Create shortcut on desktop when ASuite is running"
@@ -686,6 +682,16 @@ msgstr "Others"
 msgid "Scheduler"
 msgstr "Scheduler"
 
+#: tfrmautorunoptionspage.actproperties.caption
+msgctxt "tfrmautorunoptionspage.actproperties.caption"
+msgid "Properties"
+msgstr "Properties"
+
+#: tfrmautorunoptionspage.actremoveautorun.caption
+msgctxt "tfrmautorunoptionspage.actremoveautorun.caption"
+msgid "Remove autorun"
+msgstr "Remove autorun"
+
 #: tfrmautorunoptionspage.chkshutdown.caption
 msgid "Enable shutdown autorun"
 msgstr "Enable shutdown autorun"
@@ -710,15 +716,6 @@ msgstr "Order of shutdown autorun items in ASuite"
 #: tfrmautorunoptionspage.lblstartupinfo.caption
 msgid "Order of startup autorun items in ASuite"
 msgstr "Order of startup autorun items in ASuite"
-
-#: tfrmautorunoptionspage.mniproperties.caption
-msgctxt "tfrmautorunoptionspage.mniproperties.caption"
-msgid "Properties"
-msgstr "Properties"
-
-#: tfrmautorunoptionspage.mniremoveautorun.caption
-msgid "Remove autorun"
-msgstr "Remove autorun"
 
 #: tfrmautorunoptionspage.vstshutdownitems.header.columns[0].text
 msgctxt "tfrmautorunoptionspage.vstshutdownitems.header.columns[0].text"
@@ -870,7 +867,6 @@ msgid "Close all process opened by ASuite at launcher shutdown"
 msgstr "Close all process opened by ASuite at launcher shutdown"
 
 #: tfrmgeneraloptionspage.chkconfirmmessagecat.caption
-#| msgid "Ask to confirm before run a category"
 msgid "Ask confirm before run a category"
 msgstr "Ask confirm before run a category"
 
@@ -892,8 +888,9 @@ msgid "General"
 msgstr "General"
 
 #: tfrmgeneraloptionspage.gbstartup1.caption
-msgid "ASuite Startup"
-msgstr "ASuite Startup"
+msgctxt "tfrmgeneraloptionspage.gbstartup1.caption"
+msgid "Startup"
+msgstr "Startup"
 
 #: tfrmgeneraloptionspage.lbactiononexe.caption
 msgid "On execution"
@@ -936,6 +933,21 @@ msgctxt "tfrmgraphicmenu.mnirunasadmin.caption"
 msgid "Run as admin"
 msgstr "Run as admin"
 
+#: tfrmhotkeyoptionspage.actedithotkey.caption
+msgctxt "tfrmhotkeyoptionspage.actedithotkey.caption"
+msgid "Edit Hotkey"
+msgstr "Edit Hotkey"
+
+#: tfrmhotkeyoptionspage.actproperties.caption
+msgctxt "tfrmhotkeyoptionspage.actproperties.caption"
+msgid "Properties"
+msgstr "Properties"
+
+#: tfrmhotkeyoptionspage.actremovehotkey.caption
+msgctxt "tfrmhotkeyoptionspage.actremovehotkey.caption"
+msgid "Remove Hotkey"
+msgstr "Remove Hotkey"
+
 #: tfrmhotkeyoptionspage.cbhotkey.caption
 msgid "Enable hotkeys"
 msgstr "Enable hotkeys"
@@ -960,19 +972,6 @@ msgstr "Show graphic menu when hotkey is pressed"
 #: tfrmhotkeyoptionspage.lblhotkeywindow.caption
 msgid "Show window when hotkey is pressed"
 msgstr "Show window when hotkey is pressed"
-
-#: tfrmhotkeyoptionspage.mniedithotkey.caption
-msgid "Edit Hotkey"
-msgstr "Edit Hotkey"
-
-#: tfrmhotkeyoptionspage.mniproperties.caption
-msgctxt "tfrmhotkeyoptionspage.mniproperties.caption"
-msgid "Properties"
-msgstr "Properties"
-
-#: tfrmhotkeyoptionspage.mniremovehotkey.caption
-msgid "Remove Hotkey"
-msgstr "Remove Hotkey"
 
 #: tfrmhotkeyoptionspage.vstitems.header.columns[0].text
 msgctxt "tfrmhotkeyoptionspage.vstitems.header.columns[0].text"
@@ -1546,9 +1545,13 @@ msgstr "Enable the System Tray icon"
 msgid "Active autoexpansion folder"
 msgstr "Active autoexpansion folder"
 
-#: tfrmtrayiconoptionspage.chkautomatichidemenu.caption
-msgid "Auto-hide menu"
-msgstr "Auto-hide menu"
+#: tfrmtrayiconoptionspage.chkhideejectbutton.caption
+msgid "Hide Eject USB Disk button"
+msgstr "Hide Eject USB Disk button"
+
+#: tfrmtrayiconoptionspage.chkhideejectmenuitem.caption
+msgid "Hide Eject USB Disk menu item"
+msgstr "Hide Eject USB Disk menu item"
 
 #: tfrmtrayiconoptionspage.chkuserpicture.caption
 msgid "Show user picture in menu"
@@ -1598,16 +1601,3 @@ msgstr "&Password"
 #: tfrmuilogin.lblusername.caption
 msgid "&User Name"
 msgstr "&User Name"
-
-#~ msgid "Show graphic menu on ASuite startup"
-#~ msgstr "Show graphic menu on ASuite startup"
-
-#~ msgid "Show window on ASuite startup"
-#~ msgstr "Show window on ASuite startup"
-
-#~ msgid "Other"
-#~ msgstr "Other"
-
-#~ msgctxt "tfrmgeneraloptionspage.gbstartup.caption"
-#~ msgid "Startup"
-#~ msgstr "Startup"
