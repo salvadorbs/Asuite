@@ -29,7 +29,7 @@ inherited frmStatsOptionsPage: TfrmStatsOptionsPage
       RightCaption = 'Value'
       LinePeriod = 4
       Anchors = [akTop, akLeft, akRight]
-      Caption = 'Software added'
+      Caption = 'Items added'
       ParentFont = False
     end
     object lbTotal: TJppDoubleLineLabel

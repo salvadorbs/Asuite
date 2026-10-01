@@ -317,7 +317,7 @@ object frmMain: TfrmMain
     end
     object actOpenFolderItem: TAction
       Tag = 3
-      Caption = 'Open file location'
+      Caption = 'Open path'
       OnExecute = actRunItemExecute
       OnUpdate = actRunItemUpdate
     end
@@ -358,7 +358,7 @@ object frmMain: TfrmMain
     end
     object actAddSoftware: TAction
       Tag = 1
-      Caption = 'Add software...'
+      Caption = 'Add item...'
       OnExecute = actAddItem
       OnUpdate = actAddItemUpdate
     end

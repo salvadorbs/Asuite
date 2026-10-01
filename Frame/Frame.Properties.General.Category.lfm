@@ -8,7 +8,7 @@ inherited frmCatGeneralPropertyPage: TfrmCatGeneralPropertyPage
     BorderSpacing.Left = 4
     BorderSpacing.Top = 4
     BorderSpacing.Right = 4
-    Caption = 'Software in this category'
+    Caption = 'Items in this category'
     ChildSizing.LeftRightSpacing = 4
     ChildSizing.TopBottomSpacing = 4
     ChildSizing.EnlargeHorizontal = crsScaleChilds
@@ -39,7 +39,7 @@ inherited frmCatGeneralPropertyPage: TfrmCatGeneralPropertyPage
       Height = 45
       Top = 123
       Width = 340
-      Caption = 'Note: In this list you can find all software items of this category (only first level). Uncheck items who you don''t want to start, when run this category.'
+      Caption = 'Note: In this list you can find all items of this category (only first level). Uncheck items who you don''t want to start, when run this category.'
       ParentFont = False
       WordWrap = True
     end
