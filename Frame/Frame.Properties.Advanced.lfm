@@ -154,7 +154,7 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       Height = 19
       Top = 4
       Width = 340
-      Caption = 'Hide this software from menu'
+      Caption = 'Hide this item from menu'
       ParentFont = False
       TabOrder = 0
     end
@@ -163,7 +163,7 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       Height = 19
       Top = 23
       Width = 340
-      Caption = 'Don''t insert this software in recents (MRU)'
+      Caption = 'Don''t insert this item in recents (MRU)'
       ParentFont = False
       TabOrder = 1
     end
@@ -172,7 +172,7 @@ inherited frmAdvancedPropertyPage: TfrmAdvancedPropertyPage
       Height = 19
       Top = 42
       Width = 340
-      Caption = 'Don''t insert this software in MFU'
+      Caption = 'Don''t insert this item in MFU'
       ParentFont = False
       TabOrder = 2
     end

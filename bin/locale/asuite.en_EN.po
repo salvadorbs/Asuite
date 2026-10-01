@@ -644,16 +644,16 @@ msgid "Max number recent items"
 msgstr "Max number recent items"
 
 #: tfrmadvancedpropertypage.cbdontinsertmfu.caption
-msgid "Don't insert this software in MFU"
-msgstr "Don't insert this software in MFU"
+msgid "Don't insert this item in MFU"
+msgstr "Don't insert this item in MFU"
 
 #: tfrmadvancedpropertypage.cbdontinsertmru.caption
-msgid "Don't insert this software in recents (MRU)"
-msgstr "Don't insert this software in recents (MRU)"
+msgid "Don't insert this item in recents (MRU)"
+msgstr "Don't insert this item in recents (MRU)"
 
 #: tfrmadvancedpropertypage.cbhidesoftware.caption
-msgid "Hide this software from menu"
-msgstr "Hide this software from menu"
+msgid "Hide this item from menu"
+msgstr "Hide this item from menu"
 
 #: tfrmadvancedpropertypage.cbshortcutdesktop.caption
 msgid "Create shortcut on desktop when ASuite is running"
@@ -797,18 +797,14 @@ msgid "Window State"
 msgstr "Window State"
 
 #: tfrmcatgeneralpropertypage.grpsubitems.caption
-msgid "Software in this category"
-msgstr "Software in this category"
+msgid "Items in this category"
+msgstr "Items in this category"
 
 #: tfrmcatgeneralpropertypage.lblnote.caption
 msgid ""
-"Note: In this list you can find all software items of this category (only "
-"first level). Uncheck items who you don't want to start, when run this "
-"category."
-msgstr ""
-"Note: In this list you can find all software items of this category (only "
-"first level). Uncheck items who you don't want to start, when run this "
-"category."
+"Note: In this list you can find all items of this category (only first "
+"level). Uncheck items who you don't want to start, when run this category."
+msgstr "Note: In this list you can find all items of this category (only first level). Uncheck items who you don't want to start, when run this category."
 
 #: tfrmdialogbase.caption
 msgid "frmDialogBase"
@@ -910,8 +906,8 @@ msgstr "132Mb / 2Gb (6.6%)"
 
 #: tfrmgraphicmenu.mniopenfoldersw.caption
 msgctxt "tfrmgraphicmenu.mniopenfoldersw.caption"
-msgid "Open file location"
-msgstr "Open file location"
+msgid "Open path"
+msgstr "Open path"
 
 #: tfrmgraphicmenu.mniproperty.caption
 msgctxt "tfrmgraphicmenu.mniproperty.caption"
@@ -1052,8 +1048,8 @@ msgid "Add separator..."
 msgstr "Add separator..."
 
 #: tfrmmain.actaddsoftware.caption
-msgid "Add software..."
-msgstr "Add software..."
+msgid "Add item..."
+msgstr "Add item..."
 
 #: tfrmmain.actcopy.caption
 msgctxt "tfrmmain.actcopy.caption"
@@ -1071,8 +1067,8 @@ msgstr "Delete"
 
 #: tfrmmain.actopenfolderitem.caption
 msgctxt "tfrmmain.actopenfolderitem.caption"
-msgid "Open file location"
-msgstr "Open file location"
+msgid "Open path"
+msgstr "Open path"
 
 #: tfrmmain.actpaste.caption
 msgctxt "tfrmmain.actpaste.caption"
@@ -1435,8 +1431,8 @@ msgid "Value"
 msgstr "Value"
 
 #: tfrmstatsoptionspage.lbsoftware.caption
-msgid "Software added"
-msgstr "Software added"
+msgid "Items added"
+msgstr "Items added"
 
 #: tfrmstatsoptionspage.lbsoftware.rightcaption
 msgctxt "tfrmstatsoptionspage.lbsoftware.rightcaption"

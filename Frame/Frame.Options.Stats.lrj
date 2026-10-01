@@ -1,7 +1,7 @@
 {"version":1,"strings":[
 {"hash":74104997,"name":"tfrmstatsoptionspage.gbasuite.caption","sourcebytes":[65,83,117,105,116,101],"value":"ASuite"},
 {"hash":6063029,"name":"tfrmstatsoptionspage.lbsoftware.rightcaption","sourcebytes":[86,97,108,117,101],"value":"Value"},
-{"hash":45905812,"name":"tfrmstatsoptionspage.lbsoftware.caption","sourcebytes":[83,111,102,116,119,97,114,101,32,97,100,100,101,100],"value":"Software added"},
+{"hash":87492340,"name":"tfrmstatsoptionspage.lbsoftware.caption","sourcebytes":[73,116,101,109,115,32,97,100,100,101,100],"value":"Items added"},
 {"hash":6063029,"name":"tfrmstatsoptionspage.lbtotal.rightcaption","sourcebytes":[86,97,108,117,101],"value":"Value"},
 {"hash":5991036,"name":"tfrmstatsoptionspage.lbtotal.caption","sourcebytes":[84,111,116,97,108],"value":"Total"},
 {"hash":6063029,"name":"tfrmstatsoptionspage.lbcat.rightcaption","sourcebytes":[86,97,108,117,101],"value":"Value"},

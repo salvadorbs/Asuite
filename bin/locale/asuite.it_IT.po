@@ -14,36 +14,36 @@ msgstr ""
 #: kernel.resourcestrings.cxactiononexeopt_item0
 msgctxt "kernel.resourcestrings.cxactiononexeopt_item0"
 msgid "Just run file"
-msgstr "Avvia solamente il file"
+msgstr "Esegui solo il file"
 
 #: kernel.resourcestrings.cxactiononexeopt_item1
 msgctxt "kernel.resourcestrings.cxactiononexeopt_item1"
 msgid "Run and hide ASuite"
-msgstr "Avvia e nascondi ASuite"
+msgstr "Esegui e nascondi ASuite"
 
 #: kernel.resourcestrings.cxactiononexeopt_item2
 msgctxt "kernel.resourcestrings.cxactiononexeopt_item2"
 msgid "Run and close ASuite"
-msgstr "Avvia e chiudi ASuite"
+msgstr "Esegui e chiudi ASuite"
 
 #: kernel.resourcestrings.cxactiononexe_item0
 msgid "Default (options)"
-msgstr "Default (opzioni)"
+msgstr "Predefinito (opzioni)"
 
 #: kernel.resourcestrings.cxactiononexe_item1
 msgctxt "kernel.resourcestrings.cxactiononexe_item1"
 msgid "Just run file"
-msgstr "Avvia solamente il file"
+msgstr "Esegui solo il file"
 
 #: kernel.resourcestrings.cxactiononexe_item2
 msgctxt "kernel.resourcestrings.cxactiononexe_item2"
 msgid "Run and hide ASuite"
-msgstr "Avvia e nascondi ASuite"
+msgstr "Esegui e nascondi ASuite"
 
 #: kernel.resourcestrings.cxactiononexe_item3
 msgctxt "kernel.resourcestrings.cxactiononexe_item3"
 msgid "Run and close ASuite"
-msgstr "Avvia e chiudi ASuite"
+msgstr "Esegui e chiudi ASuite"
 
 #: kernel.resourcestrings.cxautoexecute_item0
 msgid "Never"
@@ -55,7 +55,7 @@ msgstr "Sempre all'avvio"
 
 #: kernel.resourcestrings.cxautoexecute_item2
 msgid "Startup, only if no previous instances are running"
-msgstr "All'avvio, solo se non ci sono precedenti istanze in corso"
+msgstr "All'avvio, solo se non ci sono altre istanze in esecuzione"
 
 #: kernel.resourcestrings.cxautoexecute_item3
 msgid "Always on shutdown"
@@ -67,15 +67,15 @@ msgstr "Nessuna azione"
 
 #: kernel.resourcestrings.cxmouseclick_item1
 msgid "Show window"
-msgstr "Mostra finestra"
+msgstr "Mostra la finestra"
 
 #: kernel.resourcestrings.cxmouseclick_item2
 msgid "Show graphic menu"
-msgstr "Mostra Graphic Menu"
+msgstr "Mostra il menu grafico"
 
 #: kernel.resourcestrings.cxmouseclick_item3
 msgid "Show classic menu"
-msgstr "Mostra Classic Menu"
+msgstr "Mostra il menu classico"
 
 #: kernel.resourcestrings.cxscheduler_item0
 msgid "Disabled"
@@ -87,11 +87,11 @@ msgstr "Una volta"
 
 #: kernel.resourcestrings.cxscheduler_item2
 msgid "Hourly"
-msgstr "Oraria"
+msgstr "Ogni ora"
 
 #: kernel.resourcestrings.cxscheduler_item3
 msgid "Daily"
-msgstr "Giornaliera"
+msgstr "Ogni giorno"
 
 #: kernel.resourcestrings.cxwindowstate_item0
 msgid "Normal"
@@ -99,11 +99,11 @@ msgstr "Normale"
 
 #: kernel.resourcestrings.cxwindowstate_item1
 msgid "Minimized"
-msgstr "Minimizzato"
+msgstr "Minimizzata"
 
 #: kernel.resourcestrings.cxwindowstate_item2
 msgid "Maximized"
-msgstr "Massimizzato"
+msgstr "Massimizzata"
 
 #: kernel.resourcestrings.msgadvanced
 msgid "Advanced"
@@ -112,11 +112,11 @@ msgstr "Avanzate"
 #: kernel.resourcestrings.msgautorun
 msgctxt "kernel.resourcestrings.msgautorun"
 msgid "Autorun"
-msgstr "Autoavvio"
+msgstr "Esecuzione automatica"
 
 #: kernel.resourcestrings.msgavailableversion
 msgid "There is a new version of ASuite available. Do you want download it?"
-msgstr "E' disponibile una nuova versione di ASuite. Vuoi scaricarla?"
+msgstr "È disponibile una nuova versione di ASuite. Vuoi scaricarla?"
 
 #: kernel.resourcestrings.msgbehavior
 msgid "Behavior"
@@ -129,7 +129,7 @@ msgstr "Annulla"
 
 #: kernel.resourcestrings.msgcancelscanfolder
 msgid "ScanFolder is still running. Are you sure you want to cancel it?"
-msgstr "ScanFolder è ancora in esecuzione. Sei sicuro di volerlo annullare?"
+msgstr "La scansione della cartella è ancora in corso. Sei sicuro di volerla annullare?"
 
 #: kernel.resourcestrings.msgclose
 msgid "Close"
@@ -145,12 +145,12 @@ msgstr "Sei sicuro?"
 
 #: kernel.resourcestrings.msgconfirmdeleteitem
 msgid "Are you sure you want to delete it?"
-msgstr "Sei sicuro di volerlo eliminare?"
+msgstr "Sei sicuro di voler eliminare l'elemento?"
 
 #: kernel.resourcestrings.msgconfirmruncat
 #, object-pascal-format
 msgid "Are you sure execute category %s?"
-msgstr "Sei sicuro di eseguire la categoria %s?"
+msgstr "Sei sicuro di voler eseguire la categoria %s?"
 
 #: kernel.resourcestrings.msgcopy
 msgid "Copy_"
@@ -158,7 +158,7 @@ msgstr "Copia_"
 
 #: kernel.resourcestrings.msgdefaultitemsettings
 msgid "Default (item's settings)"
-msgstr "Default (opzioni dell'elemento)"
+msgstr "Predefinito (impostazioni dell'elemento)"
 
 #: kernel.resourcestrings.msgejecthardware
 msgid "Safely remove hardware"
@@ -174,16 +174,16 @@ msgstr "Il campo del nome dell'applicazione è vuoto"
 
 #: kernel.resourcestrings.msgerremptypath
 msgid "Path field is empty"
-msgstr "Il campo percorso è vuoto"
+msgstr "Il campo del percorso è vuoto"
 
 #: kernel.resourcestrings.msgerremptyusername
 msgid "Username field is empty"
-msgstr "Il campo username è vuoto"
+msgstr "Il campo del nome utente è vuoto"
 
 #: kernel.resourcestrings.msgerrgeneric
 #, object-pascal-format
 msgid "%s error raised, with message: %s"
-msgstr "Rilevato errore %s, con il seguente messaggio: %s"
+msgstr "Si è verificato l'errore %s, con messaggio: %s"
 
 #: kernel.resourcestrings.msgerricon
 #, object-pascal-format
@@ -193,12 +193,12 @@ msgstr "Impossibile utilizzare l'icona %s"
 #: kernel.resourcestrings.msgerrnoicon
 #, object-pascal-format
 msgid "Couldn't find icon file %s"
-msgstr "Non è stato trovata l'icona %s"
+msgstr "Impossibile trovare il file icona %s"
 
 #: kernel.resourcestrings.msgerrnothemeini
 #, object-pascal-format
 msgid "Couldn't find file %s"
-msgstr "Non è stato trovata il file %s"
+msgstr "Impossibile trovare il file %s"
 
 #: kernel.resourcestrings.msgerrorexecute
 #, object-pascal-format
@@ -208,12 +208,12 @@ msgstr "Impossibile eseguire \"%s\""
 #: kernel.resourcestrings.msgerrorexecuteadmin
 #, object-pascal-format
 msgid "Failed to execute item \"%s\" as admin"
-msgstr "Impossibile eseguire \"%s\" come amministratore"
+msgstr "Impossibile eseguire l'elemento \"%s\" come amministratore"
 
 #: kernel.resourcestrings.msgerrorexecuteuser
 #, object-pascal-format
 msgid "Failed to execute item \"%s\" as user \"%s\""
-msgstr "Impossibile eseguire \"%s\" come utente \"%s\""
+msgstr "Impossibile eseguire l'elemento \"%s\" come utente \"%s\""
 
 #: kernel.resourcestrings.msgerroropenfolder
 #, object-pascal-format
@@ -222,15 +222,15 @@ msgstr "Impossibile aprire la cartella \"%s\""
 
 #: kernel.resourcestrings.msgerrregcmhotkey
 msgid "Register Classic Menu's hotkey failed"
-msgstr "Registrazione hotkey del Classic Menu fallita"
+msgstr "Registrazione della scorciatoia del menu classico non riuscita"
 
 #: kernel.resourcestrings.msgerrreggmhotkey
 msgid "Register Graphic Menu's hotkey failed"
-msgstr "Registrazione hotkey del Graphic Menu fallita"
+msgstr "Registrazione della scorciatoia del menu grafico non riuscita"
 
 #: kernel.resourcestrings.msgerrregwindowhotkey
 msgid "Register window's hotkey failed"
-msgstr "Registrazione hotkey della finestra principale fallita"
+msgstr "Registrazione della scorciatoia della finestra principale non riuscita"
 
 #: kernel.resourcestrings.msgerrrun
 #, object-pascal-format
@@ -239,15 +239,15 @@ msgstr "Impossibile eseguire %s"
 
 #: kernel.resourcestrings.msgerrsave
 msgid "Save failed because of an error"
-msgstr "Salvataggio fallito a causa di un errore"
+msgstr "Salvataggio non riuscito a causa di un errore"
 
 #: kernel.resourcestrings.msgerrscanfolderemptypath
 msgid "You haven't select any folder!"
-msgstr "Non è stata selezionata nessuna cartella!"
+msgstr "Non hai selezionato alcuna cartella!"
 
 #: kernel.resourcestrings.msgerrscanfoldermissingtypes
 msgid "You haven't add any file types!"
-msgstr "Non è stato aggiunto nessun tipo di file!"
+msgstr "Non hai aggiunto alcun tipo di file!"
 
 #: kernel.resourcestrings.msgexit
 msgctxt "kernel.resourcestrings.msgexit"
@@ -264,7 +264,7 @@ msgstr "File supportati (*.png;*.bmp)|*.png;*.bmp|Tutti i file|*.*"
 
 #: kernel.resourcestrings.msgfilterexe
 msgid "Executables (*.exe)|*.exe|All files|*.*"
-msgstr "Eseguibile (*.exe)|*.exe|Tutti i file|*.*"
+msgstr "Eseguibili (*.exe)|*.exe|Tutti i file|*.*"
 
 #: kernel.resourcestrings.msgfiltericon
 msgid "Icons (*.ico)|*.ico"
@@ -276,7 +276,7 @@ msgstr "File supportati (*.ico;*.exe)|*.ico;*.exe|Tutti i file|*.*"
 
 #: kernel.resourcestrings.msgfilterpicture
 msgid "Personal Picture [48x48] (*.jpg, *.png)|*.jpg;*.png"
-msgstr "Foto personale [48x48] (*.jpg, *.png)|*.jpg;*.png"
+msgstr "Immagine personale [48x48] (*.jpg, *.png)|*.jpg;*.png"
 
 #: kernel.resourcestrings.msgfoldernotfound
 msgid "Folder not found"
@@ -285,7 +285,7 @@ msgstr "Cartella non trovata"
 #: kernel.resourcestrings.msgfoundnumfiles
 #, object-pascal-format
 msgid "Found and added %d files in list"
-msgstr "Trovato e aggiunto %d file nella lista"
+msgstr "Trovati e aggiunti %d file alla lista"
 
 #: kernel.resourcestrings.msggeneral
 msgctxt "kernel.resourcestrings.msggeneral"
@@ -295,12 +295,11 @@ msgstr "Generale"
 #: kernel.resourcestrings.msggeneratefilehasherror
 #, object-pascal-format
 msgid "Generating hash file because of an error (file path = %s)"
-msgstr ""
-"Generazione dell'hash file fallita a causa di un errore (percorso = %s)"
+msgstr "Impossibile generare il file hash a causa di un errore (percorso file = %s)"
 
 #: kernel.resourcestrings.msggmabout
 msgid "About"
-msgstr "About"
+msgstr "Informazioni"
 
 #: kernel.resourcestrings.msggmdocuments
 msgid "Documents"
@@ -309,7 +308,7 @@ msgstr "Documenti"
 #: kernel.resourcestrings.msggmdrivename
 #, object-pascal-format
 msgid "Drive (%s)"
-msgstr "Drive (%s)"
+msgstr "Unità (%s)"
 
 #: kernel.resourcestrings.msggmexplore
 msgid "Explore"
@@ -318,7 +317,7 @@ msgstr "Esplora"
 #: kernel.resourcestrings.msggmharddiskspace
 #, object-pascal-format
 msgid "%s free | %s used"
-msgstr "%s liberi | %s usati"
+msgstr "%s liberi | %s occupati"
 
 #: kernel.resourcestrings.msggmmusic
 msgid "Music"
@@ -345,23 +344,21 @@ msgstr "Video"
 #: kernel.resourcestrings.msghotkey
 msgctxt "kernel.resourcestrings.msghotkey"
 msgid "Hotkeys"
-msgstr "Hotkey"
+msgstr "Scorciatoie da tastiera"
 
 #: kernel.resourcestrings.msghotkeynokey
 msgid "You haven't select any keys!"
-msgstr "Non hai scelto nessun tasto!"
+msgstr "Non hai selezionato alcun tasto!"
 
 #: kernel.resourcestrings.msghotkeynomod
 msgid "You haven't select any modifier keys!"
-msgstr "Non hai scelto nessun tasto modificatore!"
+msgstr "Non hai selezionato alcun tasto modificatore!"
 
 #: kernel.resourcestrings.msghotkeynotavailable
 msgid ""
 "This hotkey is being used already by another software or system itself. "
 "Please choose another one."
-msgstr ""
-"Questo hotkey è già stato utilizzato da un altro software o dal sistema "
-"stesso. Si prega di inserirne un altro."
+msgstr "Questa combinazione di tasti è già utilizzata da un altro programma o dal sistema. Scegline un'altra."
 
 #: kernel.resourcestrings.msgimport
 msgid "Import"
@@ -369,7 +366,7 @@ msgstr "Importa"
 
 #: kernel.resourcestrings.msgimportfailed
 msgid "Import failed because of an error"
-msgstr "Importazione fallita a causa di un errore"
+msgstr "Importazione non riuscita a causa di un errore"
 
 #: kernel.resourcestrings.msgimportprogress
 msgid "Import in progress..."
@@ -377,15 +374,15 @@ msgstr "Importazione in corso..."
 
 #: kernel.resourcestrings.msgimporttitle2
 msgid "Select the location of file list to import in ASuite"
-msgstr "Seleziona la posizione della lista file da importare in ASuite"
+msgstr "Seleziona la posizione del file lista da importare in ASuite"
 
 #: kernel.resourcestrings.msgimporttitle3
 msgid "Select which items to import"
-msgstr "Seleziona quali elementi importare"
+msgstr "Seleziona gli elementi da importare"
 
 #: kernel.resourcestrings.msginputusername
 msgid "Please insert username"
-msgstr "Inserisci username"
+msgstr "Inserisci il nome utente"
 
 #: kernel.resourcestrings.msgitems
 msgid "Items"
@@ -394,7 +391,7 @@ msgstr "Elementi"
 #: kernel.resourcestrings.msgitemsimported
 #, object-pascal-format
 msgid "Import finished. %d items imported"
-msgstr "Importazione finita. %d elementi importati"
+msgstr "Importazione completata. %d elementi importati"
 
 #: kernel.resourcestrings.msgittaketime
 msgid "It may take time..."
@@ -407,7 +404,7 @@ msgstr "Lista"
 
 #: kernel.resourcestrings.msglongmfu
 msgid "Most Used"
-msgstr "Più usati"
+msgstr "Più utilizzati"
 
 #: kernel.resourcestrings.msglongmru
 msgctxt "kernel.resourcestrings.msglongmru"
@@ -423,9 +420,7 @@ msgstr "Finestra principale"
 msgid ""
 "Seems scheduler didn't run the item %s as expected by options. Do you want "
 "execute it now?"
-msgstr ""
-"Sembra che lo scheduler non abbia eseguito l'elemtno %s come previsto dalle "
-"opzioni. Vuoi eseguirlo ora?"
+msgstr "Sembra che l'elemento %s non sia stato eseguito come previsto dalla pianificazione. Vuoi eseguirlo ora?"
 
 #: kernel.resourcestrings.msgmouse
 msgid "Mouse"
@@ -434,39 +429,39 @@ msgstr "Mouse"
 #: kernel.resourcestrings.msgnext
 msgctxt "kernel.resourcestrings.msgnext"
 msgid "Next >"
-msgstr "Prossimo >"
+msgstr "Avanti >"
 
 #: kernel.resourcestrings.msgnoavailableversion
 msgid "No new version available"
-msgstr "Nessuna versione disponibile"
+msgstr "Nessuna nuova versione disponibile"
 
 #: kernel.resourcestrings.msgnoname
 msgid "No name"
-msgstr "Nessun nome"
+msgstr "Senza nome"
 
 #: kernel.resourcestrings.msgnotifydropfiles
 #, object-pascal-format
 msgid "Added successfully %d files"
-msgstr "Aggiunti %d file con successo"
+msgstr "%d file aggiunti correttamente"
 
 #: kernel.resourcestrings.msgnotifydroplink
 msgid "Dropped text in list successfully"
-msgstr "Droppato testo nella lista con successo"
+msgstr "Testo trascinato nella lista correttamente"
 
 #: kernel.resourcestrings.msgnotifyexecuteitem
 #, object-pascal-format
 msgid "Execute %s"
-msgstr "Eseguito %s"
+msgstr "Esecuzione di %s"
 
 #: kernel.resourcestrings.msgnotifyhotkey
 #, object-pascal-format
 msgid "Execute %s using hotkey"
-msgstr "Eseguito %s usando hotkey"
+msgstr "Esecuzione di %s tramite scorciatoia da tastiera"
 
 #: kernel.resourcestrings.msgnotifyscheduler
 #, object-pascal-format
 msgid "Execute %s using scheduler"
-msgstr " Eseguito %s usando scheduler"
+msgstr "Esecuzione di %s tramite pianificazione"
 
 #: kernel.resourcestrings.msgopenoptions
 msgid "Options..."
@@ -479,7 +474,7 @@ msgstr "Operazione completata"
 #: kernel.resourcestrings.msgprocessingitems
 #, object-pascal-format
 msgid "Processing items (%.0f%%): %d"
-msgstr "Processing items (%.0f %%):  %d"
+msgstr "Elaborazione elementi in corso (%.0f%%): %d"
 
 #: kernel.resourcestrings.msgrestartasuitechanges
 msgid "You must restart ASuite to apply these changes."
@@ -487,7 +482,7 @@ msgstr "Devi riavviare ASuite per rendere effettive le modifiche."
 
 #: kernel.resourcestrings.msgrunastitle
 msgid "Run As..."
-msgstr "Avvia come..."
+msgstr "Esegui come..."
 
 #: kernel.resourcestrings.msgsavecompleted
 msgid "Save completed"
@@ -495,7 +490,7 @@ msgstr "Salvataggio completato"
 
 #: kernel.resourcestrings.msgscanfolderextnotvalid
 msgid "Ext file not valid. Please check it and retry!"
-msgstr "Estensione del file non valida. Si prega di controllare e riprovare!"
+msgstr "Estensione file non valida. Controlla e riprova!"
 
 #: kernel.resourcestrings.msgscanningcancel
 msgctxt "kernel.resourcestrings.msgscanningcancel"
@@ -504,7 +499,7 @@ msgstr "Annulla"
 
 #: kernel.resourcestrings.msgscanningprogress
 msgid "Scanning in progress..."
-msgstr "Scan in corso..."
+msgstr "Scansione in corso..."
 
 #: kernel.resourcestrings.msgshortmfu
 msgid "MFU"
@@ -524,16 +519,16 @@ msgstr "Statistiche"
 
 #: kernel.resourcestrings.msgstop
 msgid "Stop"
-msgstr "Stop"
+msgstr "Interrompi"
 
 #: kernel.resourcestrings.msgtrayicon
 msgid "Trayicon"
-msgstr "Trayicon"
+msgstr "Icona di sistema"
 
 #: kernel.resourcestrings.msgusetriggersensors
 #, object-pascal-format
 msgid "Active Sensors for %s"
-msgstr "Attiva sensori per %s"
+msgstr "Sensori attivi per %s"
 
 #: tdmtraymenu.action1.caption
 msgid "actCategory"
@@ -542,7 +537,7 @@ msgstr "actCategory"
 #: tfrmabout.caption
 #, object-pascal-format
 msgid "About %s"
-msgstr "About %s"
+msgstr "Informazioni su %s"
 
 #: tfrmabout.lblappname.caption
 #, object-pascal-format
@@ -564,15 +559,15 @@ msgstr "https://github.com/salvadorbs/asuite"
 
 #: tfrmadvancedoptionspage.btnclear.caption
 msgid "Clear"
-msgstr "Pulisci"
+msgstr "Cancella"
 
 #: tfrmadvancedoptionspage.cbbackup.caption
 msgid "Active automatic backup"
-msgstr "Attiva backup automatico"
+msgstr "Abilita backup automatico"
 
 #: tfrmadvancedoptionspage.cbcache.caption
 msgid "Enable cache"
-msgstr "Abilita cache"
+msgstr "Abilita la cache"
 
 #: tfrmadvancedoptionspage.cbclearbackup.caption
 msgid "Backups"
@@ -580,29 +575,29 @@ msgstr "Backup"
 
 #: tfrmadvancedoptionspage.cbclearcache.caption
 msgid "Cache icons"
-msgstr "Icone cache"
+msgstr "Cache delle icone"
 
 #: tfrmadvancedoptionspage.cbclearmfu.caption
 msgctxt "tfrmadvancedoptionspage.cbclearmfu.caption"
 msgid "Most Frequently Used"
-msgstr "Più usati"
+msgstr "Elementi più utilizzati"
 
 #: tfrmadvancedoptionspage.cbclearmru.caption
 msgctxt "tfrmadvancedoptionspage.cbclearmru.caption"
 msgid "Recents"
-msgstr "Recenti"
+msgstr "Elementi recenti"
 
 #: tfrmadvancedoptionspage.cbmfu.caption
 msgid "Active MFU items"
-msgstr "Attiva gli elementi MFU"
+msgstr "Abilita elementi MFU"
 
 #: tfrmadvancedoptionspage.cbmru.caption
 msgid "Active recent items"
-msgstr "Attiva gli elementi recenti"
+msgstr "Abilita elementi recenti"
 
 #: tfrmadvancedoptionspage.cbscheduler.caption
 msgid "Enable scheduler"
-msgstr "Abilita scheduler"
+msgstr "Abilita pianificazione"
 
 #: tfrmadvancedoptionspage.gbbackup.caption
 msgid "Backup"
@@ -611,7 +606,7 @@ msgstr "Backup"
 #: tfrmadvancedoptionspage.gbmfu.caption
 msgctxt "tfrmadvancedoptionspage.gbmfu.caption"
 msgid "Most Frequently Used"
-msgstr "Più usati"
+msgstr "Elementi più utilizzati"
 
 #: tfrmadvancedoptionspage.gbotherfunctions.caption
 msgid "Other functions"
@@ -620,43 +615,43 @@ msgstr "Altre funzioni"
 #: tfrmadvancedoptionspage.gbrecents.caption
 msgctxt "tfrmadvancedoptionspage.gbrecents.caption"
 msgid "Recents"
-msgstr "Recenti"
+msgstr "Elementi recenti"
 
 #: tfrmadvancedoptionspage.grpclearelements.caption
 msgid "Clear elements"
-msgstr "Pulisci gli elementi"
+msgstr "Cancella elementi"
 
 #: tfrmadvancedoptionspage.lbclearelements.caption
 msgid "Clear the following elements"
-msgstr "Pulisci i seguenti elementi"
+msgstr "Cancella i seguenti elementi"
 
 #: tfrmadvancedoptionspage.lbmaxbackup.caption
 msgid "Max number backup files"
-msgstr "Max numero di backup"
+msgstr "Numero massimo di backup"
 
 #: tfrmadvancedoptionspage.lbmaxmfu.caption
 msgid "Max number MFU items"
-msgstr "Max numero di elementi più usati"
+msgstr "Numero massimo di elementi più utilizzati"
 
 #: tfrmadvancedoptionspage.lbmaxmru.caption
 msgid "Max number recent items"
-msgstr "Max numero di elementi recenti"
+msgstr "Numero massimo di elementi recenti"
 
 #: tfrmadvancedpropertypage.cbdontinsertmfu.caption
-msgid "Don't insert this software in MFU"
-msgstr "Non inserire questo software nei elementi più usati (MFU)"
+msgid "Don't insert this item in MFU"
+msgstr "Non inserire questo elemento tra i più utilizzati (MFU)"
 
 #: tfrmadvancedpropertypage.cbdontinsertmru.caption
-msgid "Don't insert this software in recents (MRU)"
-msgstr "Non inserire questo software negli elementi recenti (MRU)"
+msgid "Don't insert this item in recents (MRU)"
+msgstr "Non inserire questo elemento tra i recenti (MRU)"
 
 #: tfrmadvancedpropertypage.cbhidesoftware.caption
-msgid "Hide this software from menu"
-msgstr "Nascondi questo software nel menu"
+msgid "Hide this item from menu"
+msgstr "Nascondi questo elemento dal menu"
 
 #: tfrmadvancedpropertypage.cbshortcutdesktop.caption
 msgid "Create shortcut on desktop when ASuite is running"
-msgstr "Crea shortcut sul desktop quando ASuite è in esecuzione"
+msgstr "Crea un collegamento sul desktop quando ASuite è in esecuzione"
 
 #: tfrmadvancedpropertypage.dtpschdate.textfornulldate
 msgctxt "tfrmadvancedpropertypage.dtpschdate.textfornulldate"
@@ -671,15 +666,15 @@ msgstr "NULL"
 #: tfrmadvancedpropertypage.grphotkey.caption
 msgctxt "tfrmadvancedpropertypage.grphotkey.caption"
 msgid "Hotkey"
-msgstr "Hotkey"
+msgstr "Scorciatoia da tastiera"
 
 #: tfrmadvancedpropertypage.grpothers.caption
 msgid "Others"
-msgstr "Altro"
+msgstr "Altre opzioni"
 
 #: tfrmadvancedpropertypage.grpscheduler.caption
 msgid "Scheduler"
-msgstr "Scheduler"
+msgstr "Pianificazione"
 
 #: tfrmautorunoptionspage.actproperties.caption
 msgctxt "tfrmautorunoptionspage.actproperties.caption"
@@ -689,19 +684,19 @@ msgstr "Proprietà"
 #: tfrmautorunoptionspage.actremoveautorun.caption
 msgctxt "tfrmautorunoptionspage.actremoveautorun.caption"
 msgid "Remove autorun"
-msgstr "Rimuovi autorun"
+msgstr "Rimuovi esecuzione automatica"
 
 #: tfrmautorunoptionspage.chkshutdown.caption
 msgid "Enable shutdown autorun"
-msgstr "Abilita autorun di spegnimento"
+msgstr "Abilita esecuzione automatica alla chiusura"
 
 #: tfrmautorunoptionspage.chkstartup.caption
 msgid "Enable startup autorun"
-msgstr "Abilita autorun di avvio"
+msgstr "Abilita esecuzione automatica all'avvio"
 
 #: tfrmautorunoptionspage.grpshutdownorderitems.caption
 msgid "Shutdown"
-msgstr "Spegni"
+msgstr "Chiusura"
 
 #: tfrmautorunoptionspage.grpstartuporderitems.caption
 msgctxt "tfrmautorunoptionspage.grpstartuporderitems.caption"
@@ -710,11 +705,11 @@ msgstr "Avvio"
 
 #: tfrmautorunoptionspage.lblshutdowninfo.caption
 msgid "Order of shutdown autorun items in ASuite"
-msgstr "Ordine degli elementi da eseguire alla chiusura"
+msgstr "Ordine degli elementi eseguiti alla chiusura di ASuite"
 
 #: tfrmautorunoptionspage.lblstartupinfo.caption
 msgid "Order of startup autorun items in ASuite"
-msgstr "Ordine degli elementi da eseguire all'avvio"
+msgstr "Ordine degli elementi eseguiti all'avvio di ASuite"
 
 #: tfrmautorunoptionspage.vstshutdownitems.header.columns[0].text
 msgctxt "tfrmautorunoptionspage.vstshutdownitems.header.columns[0].text"
@@ -776,16 +771,16 @@ msgstr "Nome"
 
 #: tfrmbasegeneralpropertypage.lbpathicon.caption
 msgid "Custom icon path (optional)"
-msgstr "Percorso dell'icona personalizzata (opzionale)"
+msgstr "Percorso icona personalizzata (facoltativo)"
 
 #: tfrmbehaviorpropertypage.btnchangeorder.caption
 msgid "Change autorun order"
-msgstr "Cambia ordine autorun"
+msgstr "Cambia ordine di esecuzione automatica"
 
 #: tfrmbehaviorpropertypage.grpautoexecute.caption
 msgctxt "tfrmbehaviorpropertypage.grpautoexecute.caption"
 msgid "Autorun"
-msgstr "Autorun"
+msgstr "Esecuzione automatica"
 
 #: tfrmbehaviorpropertypage.grponexecute.caption
 msgid "On Execute"
@@ -796,18 +791,14 @@ msgid "Window State"
 msgstr "Stato della finestra"
 
 #: tfrmcatgeneralpropertypage.grpsubitems.caption
-msgid "Software in this category"
-msgstr "Software in questa categoria"
+msgid "Items in this category"
+msgstr "Elementi in questa categoria"
 
 #: tfrmcatgeneralpropertypage.lblnote.caption
 msgid ""
-"Note: In this list you can find all software items of this category (only "
-"first level). Uncheck items who you don't want to start, when run this "
-"category."
-msgstr ""
-"Nota: In questa lista troverai tutti gli elementi software di questa "
-"categoria (solo del primo livello). Togli la spunta a quei elementi che non "
-"vuoi che vengano eseguiti, quando decidi di avviare questa categoria."
+"Note: In this list you can find all items of this category (only first "
+"level). Uncheck items who you don't want to start, when run this category."
+msgstr "Nota: in questa lista sono presenti tutti gli elementi di questa categoria (solo primo livello). Deseleziona gli elementi che non vuoi avviare quando esegui questa categoria."
 
 #: tfrmdialogbase.caption
 msgid "frmDialogBase"
@@ -843,39 +834,39 @@ msgstr "tbButtons"
 
 #: tfrmgeneraloptionspage.cbrunsingleclick.caption
 msgid "Execute with single click in main window"
-msgstr "Esegui con un click singolo nella finestra principale"
+msgstr "Esegui con un singolo clic nella finestra principale"
 
 #: tfrmgeneraloptionspage.cbsecondinstancegm.caption
 msgid "Show Graphic Menu, when run another ASuite instance"
-msgstr "Mostra GraphicMenu, quando si avvia un altra istanza di ASuite"
+msgstr "Mostra il menu grafico quando viene avviata un'altra istanza di ASuite"
 
 #: tfrmgeneraloptionspage.cbshowmenustartup.caption
 msgid "Show Graphic Menu"
-msgstr "Mostra Graphic Menu"
+msgstr "Mostra il menu grafico"
 
 #: tfrmgeneraloptionspage.cbshowpanelstartup.caption
 msgid "Show main window"
-msgstr "Mostra finestra principale"
+msgstr "Mostra la finestra principale"
 
 #: tfrmgeneraloptionspage.cbwindowsstartup.caption
 msgid "Start ASuite on Operating System startup"
-msgstr "Avvia ASuite all'avvio del sistema"
+msgstr "Avvia ASuite all'avvio del sistema operativo"
 
 #: tfrmgeneraloptionspage.chkautocloseprocess.caption
 msgid "Close all process opened by ASuite at launcher shutdown"
-msgstr "Chiudi tutti i processi aperti da ASuite alla sua chiusura"
+msgstr "Chiudi tutti i processi avviati da ASuite alla chiusura"
 
 #: tfrmgeneraloptionspage.chkconfirmmessagecat.caption
 msgid "Ask confirm before run a category"
-msgstr "Chiedi conferma prima di avviare una categoria"
+msgstr "Chiedi conferma prima di eseguire una categoria"
 
 #: tfrmgeneraloptionspage.chkconfirmmsgcloseapp.caption
 msgid "Ask confirm before exiting"
-msgstr "Chiedi conferma prima di chiudere ASuite"
+msgstr "Chiedi conferma prima di uscire"
 
 #: tfrmgeneraloptionspage.chkmissedschedulertask.caption
 msgid "Check missed scheduler task"
-msgstr "Controlla i task non eseguiti"
+msgstr "Controlla le attività pianificate non eseguite"
 
 #: tfrmgeneraloptionspage.gbexecution.caption
 msgid "Execution"
@@ -901,7 +892,7 @@ msgstr "Lingua"
 
 #: tfrmgraphicmenu.caption
 msgid "ASuite Menu"
-msgstr "ASuite Menu"
+msgstr "Menu di ASuite"
 
 #: tfrmgraphicmenu.lbldrivespace.caption
 msgid "132Mb / 2Gb (6.6%)"
@@ -909,8 +900,8 @@ msgstr "132Mb / 2Gb (6.6%)"
 
 #: tfrmgraphicmenu.mniopenfoldersw.caption
 msgctxt "tfrmgraphicmenu.mniopenfoldersw.caption"
-msgid "Open file location"
-msgstr "Apri percorso file"
+msgid "Open path"
+msgstr "Apri il percorso"
 
 #: tfrmgraphicmenu.mniproperty.caption
 msgctxt "tfrmgraphicmenu.mniproperty.caption"
@@ -920,22 +911,22 @@ msgstr "Proprietà"
 #: tfrmgraphicmenu.mnirun.caption
 msgctxt "tfrmgraphicmenu.mnirun.caption"
 msgid "Run"
-msgstr "Avvia"
+msgstr "Esegui"
 
 #: tfrmgraphicmenu.mnirunas.caption
 msgctxt "tfrmgraphicmenu.mnirunas.caption"
 msgid "Run as..."
-msgstr "Avvia come..."
+msgstr "Esegui come..."
 
 #: tfrmgraphicmenu.mnirunasadmin.caption
 msgctxt "tfrmgraphicmenu.mnirunasadmin.caption"
 msgid "Run as admin"
-msgstr "Avvia come amministratore"
+msgstr "Esegui come amministratore"
 
 #: tfrmhotkeyoptionspage.actedithotkey.caption
 msgctxt "tfrmhotkeyoptionspage.actedithotkey.caption"
 msgid "Edit Hotkey"
-msgstr "Modifica hotkey"
+msgstr "Modifica scorciatoia"
 
 #: tfrmhotkeyoptionspage.actproperties.caption
 msgctxt "tfrmhotkeyoptionspage.actproperties.caption"
@@ -945,32 +936,32 @@ msgstr "Proprietà"
 #: tfrmhotkeyoptionspage.actremovehotkey.caption
 msgctxt "tfrmhotkeyoptionspage.actremovehotkey.caption"
 msgid "Remove Hotkey"
-msgstr "Rimuovi Hotkey"
+msgstr "Rimuovi scorciatoia"
 
 #: tfrmhotkeyoptionspage.cbhotkey.caption
 msgid "Enable hotkeys"
-msgstr "Abilita hotkey"
+msgstr "Abilita scorciatoie da tastiera"
 
 #: tfrmhotkeyoptionspage.gbhotkey.caption
 msgctxt "tfrmhotkeyoptionspage.gbhotkey.caption"
 msgid "Hotkeys"
-msgstr "Hotkey"
+msgstr "Scorciatoie da tastiera"
 
 #: tfrmhotkeyoptionspage.grpordersoftware.caption
 msgid "Hotkeys list"
-msgstr "Lista degli hotkey"
+msgstr "Elenco scorciatoie"
 
 #: tfrmhotkeyoptionspage.lblhotkeycm.caption
 msgid "Show classic menu when hotkey is pressed"
-msgstr "Mostra Classic Menu all'uso del hotkey"
+msgstr "Mostra il menu classico quando viene premuta la scorciatoia"
 
 #: tfrmhotkeyoptionspage.lblhotkeygm.caption
 msgid "Show graphic menu when hotkey is pressed"
-msgstr "Mostra Graphic Menu all'uso del hotkey"
+msgstr "Mostra il menu grafico quando viene premuta la scorciatoia"
 
 #: tfrmhotkeyoptionspage.lblhotkeywindow.caption
 msgid "Show window when hotkey is pressed"
-msgstr "Mostra la finestra principale all'uso del hotkey"
+msgstr "Mostra la finestra quando viene premuta la scorciatoia"
 
 #: tfrmhotkeyoptionspage.vstitems.header.columns[0].text
 msgctxt "tfrmhotkeyoptionspage.vstitems.header.columns[0].text"
@@ -990,11 +981,11 @@ msgstr "Categoria"
 #: tfrmhotkeyoptionspage.vstitems.header.columns[3].text
 msgctxt "tfrmhotkeyoptionspage.vstitems.header.columns[3].text"
 msgid "Hotkey"
-msgstr "Hotkey"
+msgstr "Scorciatoia"
 
 #: tfrmimportlist.btnback.caption
 msgid "< Back"
-msgstr "< Annulla"
+msgstr "< Indietro"
 
 #: tfrmimportlist.btncancel.caption
 msgctxt "tfrmimportlist.btncancel.caption"
@@ -1008,7 +999,7 @@ msgstr "Deseleziona tutto"
 #: tfrmimportlist.btnnext.caption
 msgctxt "tfrmimportlist.btnnext.caption"
 msgid "Next >"
-msgstr "Prossimo >"
+msgstr "Avanti >"
 
 #: tfrmimportlist.btnselectall.caption
 msgid "Select all"
@@ -1024,7 +1015,7 @@ msgstr "Lista file"
 
 #: tfrmimportlist.lblfile.caption
 msgid "Launcher File location:"
-msgstr "Locazione del file Launcher"
+msgstr "Posizione del file del launcher:"
 
 #: tfrmimportlist.lbltitle.caption
 msgid "Placeholder text"
@@ -1051,8 +1042,8 @@ msgid "Add separator..."
 msgstr "Aggiungi separatore..."
 
 #: tfrmmain.actaddsoftware.caption
-msgid "Add software..."
-msgstr "Aggiungi software..."
+msgid "Add item..."
+msgstr "Aggiungi elemento..."
 
 #: tfrmmain.actcopy.caption
 msgctxt "tfrmmain.actcopy.caption"
@@ -1070,8 +1061,8 @@ msgstr "Elimina"
 
 #: tfrmmain.actopenfolderitem.caption
 msgctxt "tfrmmain.actopenfolderitem.caption"
-msgid "Open file location"
-msgstr "Apri percorso file"
+msgid "Open path"
+msgstr "Apri il percorso"
 
 #: tfrmmain.actpaste.caption
 msgctxt "tfrmmain.actpaste.caption"
@@ -1086,17 +1077,17 @@ msgstr "Proprietà"
 #: tfrmmain.actrunasadminitem.caption
 msgctxt "tfrmmain.actrunasadminitem.caption"
 msgid "Run as admin"
-msgstr "Avvia come amministratore"
+msgstr "Esegui come amministratore"
 
 #: tfrmmain.actrunasitem.caption
 msgctxt "tfrmmain.actrunasitem.caption"
 msgid "Run as..."
-msgstr "Avvia come..."
+msgstr "Esegui come..."
 
 #: tfrmmain.actrunitem.caption
 msgctxt "tfrmmain.actrunitem.caption"
 msgid "Run"
-msgstr "Avvia"
+msgstr "Esegui"
 
 #: tfrmmain.actsepedit.caption
 msgid "-"
@@ -1108,7 +1099,7 @@ msgstr "Ordina gli elementi della categoria"
 
 #: tfrmmain.actsortlist.caption
 msgid "Sort list"
-msgstr "Ordina lista"
+msgstr "Ordina la lista"
 
 #: tfrmmain.btnedtsearch.texthint
 msgctxt "tfrmmain.btnedtsearch.texthint"
@@ -1147,7 +1138,7 @@ msgstr "Importa lista..."
 
 #: tfrmmain.miinfoasuite.caption
 msgid "About ASuite"
-msgstr "About ASuite"
+msgstr "Informazioni su ASuite"
 
 #: tfrmmain.mioptions1.caption
 msgctxt "tfrmmain.mioptions1.caption"
@@ -1164,7 +1155,7 @@ msgstr "Percorso eseguibile"
 
 #: tfrmmain.misearchiconpath.caption
 msgid "Icon path"
-msgstr "Percorsa icona"
+msgstr "Percorso icona"
 
 #: tfrmmain.misearchname.caption
 msgctxt "tfrmmain.misearchname.caption"
@@ -1177,7 +1168,7 @@ msgstr "Parametri"
 
 #: tfrmmain.misearchworkingdirpath.caption
 msgid "Working directory path"
-msgstr "Percorso cartella di lavoro"
+msgstr "Percorso della cartella di lavoro"
 
 #: tfrmmain.mistatistics.caption
 msgid "Statistics"
@@ -1185,7 +1176,7 @@ msgstr "Statistiche"
 
 #: tfrmmain.mniscanfolder.caption
 msgid "Scan for files..."
-msgstr "Scan per files..."
+msgstr "Scansiona cartella per file..."
 
 #: tfrmmain.tblist.caption
 msgctxt "tfrmmain.tblist.caption"
@@ -1208,20 +1199,19 @@ msgstr "Categoria"
 
 #: tfrmmainwindowoptionspage.btnfontsettings.caption
 msgid "Font settings..."
-msgstr "Opzioni font..."
+msgstr "Impostazioni carattere..."
 
 #: tfrmmainwindowoptionspage.cbautoopclcat.caption
 msgid "Automatic opening/closing categories"
-msgstr "Apertura/chisusura automatica delle categorie"
+msgstr "Apertura/chiusura automatica delle categorie"
 
 #: tfrmmainwindowoptionspage.cbautoopdragdrop.caption
 msgid "Automatic opening category, after drag&&drop an item in it"
-msgstr ""
-"Apertura automatica della categoria, dopo drag&&drop di un elemento in essa"
+msgstr "Apertura automatica della categoria dopo avervi trascinato un elemento"
 
 #: tfrmmainwindowoptionspage.cbbackground.caption
 msgid "Active custom background"
-msgstr "Attiva sfondo personalizzato"
+msgstr "Abilita sfondo personalizzato"
 
 #: tfrmmainwindowoptionspage.cbcustomtitle.caption
 msgid "Custom main window title"
@@ -1229,15 +1219,15 @@ msgstr "Titolo personalizzato della finestra principale"
 
 #: tfrmmainwindowoptionspage.cbdialogcentermf.caption
 msgid "Open dialogs in the center of main window"
-msgstr "Apri finestre al centro di quella principale"
+msgstr "Apri le finestre di dialogo al centro della finestra principale"
 
 #: tfrmmainwindowoptionspage.cbdisableconfirmdelete.caption
 msgid "Disable delete items confirmation dialog"
-msgstr "Disabilita messaggio di conferma per eliminazione degli elementi"
+msgstr "Disabilita la conferma prima di eliminare gli elementi"
 
 #: tfrmmainwindowoptionspage.cbhidesearch.caption
 msgid "Hide tab Search"
-msgstr "Nascondi il tab Cerca"
+msgstr "Nascondi la scheda Cerca"
 
 #: tfrmmainwindowoptionspage.cbholdsize.caption
 msgid "Disable window resize"
@@ -1245,7 +1235,7 @@ msgstr "Disabilita il ridimensionamento della finestra"
 
 #: tfrmmainwindowoptionspage.cbsmallicon.caption
 msgid "Small icon size in main window"
-msgstr "Icona di piccole dimensioni nella finestra principale"
+msgstr "Icone piccole nella finestra principale"
 
 #: tfrmmainwindowoptionspage.cbwindowontop.caption
 msgid "Main window always on top"
@@ -1253,7 +1243,7 @@ msgstr "Finestra principale sempre in primo piano"
 
 #: tfrmmainwindowoptionspage.chksearchasyoutype.caption
 msgid "Search as you type"
-msgstr " Cerca durante la digitazione"
+msgstr "Cerca durante la digitazione"
 
 #: tfrmmainwindowoptionspage.edtbackground.text
 msgctxt "tfrmmainwindowoptionspage.edtbackground.text"
@@ -1326,27 +1316,27 @@ msgstr "Elimina"
 
 #: tfrmscanfolder.caption
 msgid "Scan folder"
-msgstr "Scan folder"
+msgstr "Scansiona cartella"
 
 #: tfrmscanfolder.chkextractname.caption
 msgid "Extract name automatically from executables (only *.exe)"
-msgstr "Estrai nome automaticamente dall'eseguibile (solo *.exe)"
+msgstr "Estrai il nome automaticamente dagli eseguibili (solo *.exe)"
 
 #: tfrmscanfolder.grpexclude.caption
 msgid "Exclude files"
-msgstr "Escludi file"
+msgstr "File esclusi"
 
 #: tfrmscanfolder.grpfiletypes.caption
 msgid "File Types"
-msgstr "Tipi File"
+msgstr "Tipi di file"
 
 #: tfrmscanfolder.grpgeneralsettings.caption
 msgid "General settings"
-msgstr "Opzioni generali"
+msgstr "Impostazioni generali"
 
 #: tfrmscanfolder.pnlbuttons.okbutton.caption
 msgid "&Scan"
-msgstr "&Scansiona"
+msgstr "&Avvia scansione"
 
 #: tfrmshortcutgrabber.btncancel.caption
 msgctxt "tfrmshortcutgrabber.btncancel.caption"
@@ -1360,11 +1350,11 @@ msgstr "Ok"
 
 #: tfrmshortcutgrabber.caption
 msgid "Choose hotkey..."
-msgstr "Scegli hotkey..."
+msgstr "Scegli scorciatoia..."
 
 #: tfrmshortcutgrabber.lblinfo.caption
 msgid "Select modifiers above, then enter desired key:"
-msgstr "Seleziona i modificatori qua sopra, poi inserisci il tasto desiderato:"
+msgstr "Seleziona i modificatori qui sopra, quindi premi il tasto desiderato:"
 
 #: tfrmstatsoptionspage.gbasuite.caption
 msgctxt "tfrmstatsoptionspage.gbasuite.caption"
@@ -1374,7 +1364,7 @@ msgstr "ASuite"
 #: tfrmstatsoptionspage.gbsupport.caption
 #, object-pascal-format
 msgid "Drive %S"
-msgstr "Drive %S"
+msgstr "Unità %S"
 
 #: tfrmstatsoptionspage.gbsystem.caption
 msgid "System"
@@ -1391,7 +1381,7 @@ msgstr "Valore"
 
 #: tfrmstatsoptionspage.lblbuild.caption
 msgid "Build Version"
-msgstr "Versione Build"
+msgstr "Versione build"
 
 #: tfrmstatsoptionspage.lblbuild.rightcaption
 msgctxt "tfrmstatsoptionspage.lblbuild.rightcaption"
@@ -1409,7 +1399,7 @@ msgstr "Valore"
 
 #: tfrmstatsoptionspage.lblram.caption
 msgid "Total physical memory"
-msgstr "Memoria totale fisica"
+msgstr "Memoria fisica totale"
 
 #: tfrmstatsoptionspage.lblram.rightcaption
 msgctxt "tfrmstatsoptionspage.lblram.rightcaption"
@@ -1435,8 +1425,8 @@ msgid "Value"
 msgstr "Valore"
 
 #: tfrmstatsoptionspage.lbsoftware.caption
-msgid "Software added"
-msgstr "Software aggiunto"
+msgid "Items added"
+msgstr "Elementi aggiunti"
 
 #: tfrmstatsoptionspage.lbsoftware.rightcaption
 msgctxt "tfrmstatsoptionspage.lbsoftware.rightcaption"
@@ -1499,15 +1489,13 @@ msgid ""
 "path:\n"
 "- %asuite% = ASuite folder path (\"%s\")\n"
 "- %drive% = drive path (\"%s\")"
-msgstr ""
-"Nota: Puoi utilizzare le seguenti variabili (incluso quelle d'ambiente) nei "
-"percorsi relativi:\n"
-"- %asuite% = percorso della cartella di ASuite (%s)\n"
-"- %drive% = percorso del disco (%s)"
+msgstr "Nota: puoi usare queste variabili (incluse le variabili d'ambiente) nei percorsi relativi:\n"
+"- %asuite% = percorso della cartella di ASuite (\"%s\")\n"
+"- %drive% = percorso dell'unità (\"%s\")"
 
 #: tfrmswgeneralpropertypage.lbparameters.caption
 msgid "Parameters (optional)"
-msgstr "Parametri (opzionale)"
+msgstr "Parametri (facoltativi)"
 
 #: tfrmswgeneralpropertypage.lbpathexe.caption
 msgid "Executable/folder/web page path"
@@ -1515,7 +1503,7 @@ msgstr "Percorso dell'eseguibile/cartella/pagina web"
 
 #: tfrmswgeneralpropertypage.lbworkingdir.caption
 msgid "Custom working directory (optional)"
-msgstr "Cartella di lavoro personalizzata (opzionale)"
+msgstr "Cartella di lavoro personalizzata (facoltativa)"
 
 #: tfrmtrayiconoptionspage.cbmenufade.caption
 msgid "Enable fade effect"
@@ -1523,35 +1511,35 @@ msgstr "Abilita effetto dissolvenza"
 
 #: tfrmtrayiconoptionspage.cbsmallicon.caption
 msgid "Small TreeView's icon size"
-msgstr "Piccole dimensioni delle icone del TreeView"
+msgstr "Icone piccole nel TreeView"
 
 #: tfrmtrayiconoptionspage.cbsubmenumfu.caption
 msgid "Most Used items on trayicon submenu"
-msgstr "Elementi più usati in un sotto menu del Trayicon"
+msgstr "Elementi più utilizzati nel sottomenu dell'icona di sistema"
 
 #: tfrmtrayiconoptionspage.cbsubmenumru.caption
 msgid "Recent items on trayicon submenu"
-msgstr "Elementi recenti in un sotto menu del Trayicon"
+msgstr "Elementi recenti nel sottomenu dell'icona di sistema"
 
 #: tfrmtrayiconoptionspage.cbtraycustomicon.caption
 msgid "Custom tray icon"
-msgstr "Trayicon personalizzata"
+msgstr "Icona di sistema personalizzata"
 
 #: tfrmtrayiconoptionspage.cbtrayicon.caption
 msgid "Enable the System Tray icon"
-msgstr "Abilita TrayIcon"
+msgstr "Abilita l'icona di sistema"
 
 #: tfrmtrayiconoptionspage.chkautoexpansion.caption
 msgid "Active autoexpansion folder"
-msgstr "Attiva autoespansione delle cartelle"
+msgstr "Abilita espansione automatica delle cartelle"
 
 #: tfrmtrayiconoptionspage.chkhideejectbutton.caption
 msgid "Hide Eject USB Disk button"
-msgstr "Nascondi il pulsante Espelli disco USB"
+msgstr "Nascondi il pulsante di espulsione del disco USB"
 
 #: tfrmtrayiconoptionspage.chkhideejectmenuitem.caption
 msgid "Hide Eject USB Disk menu item"
-msgstr "Nascondi la voce di menu Espelli disco USB"
+msgstr "Nascondi la voce di menu di espulsione del disco USB"
 
 #: tfrmtrayiconoptionspage.chkuserpicture.caption
 msgid "Show user picture in menu"
@@ -1564,19 +1552,19 @@ msgstr "$ASuite\\"
 
 #: tfrmtrayiconoptionspage.gbtrayicon.caption
 msgid "System Tray"
-msgstr "Tray del sistema"
+msgstr "Area di notifica"
 
 #: tfrmtrayiconoptionspage.grpclassicmenu.caption
 msgid "Classic Menu"
-msgstr "Classic Menu"
+msgstr "Menu classico"
 
 #: tfrmtrayiconoptionspage.grpgraphicmenu.caption
 msgid "Graphic Menu"
-msgstr "Graphic Menu"
+msgstr "Menu grafico"
 
 #: tfrmtrayiconoptionspage.lblmiddleclick.caption
 msgid "Middle click"
-msgstr "Click centrale"
+msgstr "Clic centrale"
 
 #: tfrmtrayiconoptionspage.lbmenutheme.caption
 msgid "Theme"
@@ -1584,11 +1572,11 @@ msgstr "Tema"
 
 #: tfrmtrayiconoptionspage.lbtrayleftclick.caption
 msgid "Left click"
-msgstr "Click sinistro"
+msgstr "Clic sinistro"
 
 #: tfrmtrayiconoptionspage.lbtrayrightclick.caption
 msgid "Right click"
-msgstr "Click destro"
+msgstr "Clic destro"
 
 #: tfrmuilogin.lblinfo.caption
 msgid "Please insert username and password"
@@ -1600,4 +1588,4 @@ msgstr "&Password"
 
 #: tfrmuilogin.lblusername.caption
 msgid "&User Name"
-msgstr "&Nome Utente"
+msgstr "&Nome utente"

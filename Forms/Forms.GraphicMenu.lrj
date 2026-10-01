@@ -4,6 +4,6 @@
 {"hash":22974,"name":"tfrmgraphicmenu.mnirun.caption","sourcebytes":[82,117,110],"value":"Run"},
 {"hash":6822606,"name":"tfrmgraphicmenu.mnirunas.caption","sourcebytes":[82,117,110,32,97,115,46,46,46],"value":"Run as..."},
 {"hash":16495998,"name":"tfrmgraphicmenu.mnirunasadmin.caption","sourcebytes":[82,117,110,32,97,115,32,97,100,109,105,110],"value":"Run as admin"},
-{"hash":205265166,"name":"tfrmgraphicmenu.mniopenfoldersw.caption","sourcebytes":[79,112,101,110,32,102,105,108,101,32,108,111,99,97,116,105,111,110],"value":"Open file location"},
+{"hash":201801416,"name":"tfrmgraphicmenu.mniopenfoldersw.caption","sourcebytes":[79,112,101,110,32,112,97,116,104],"value":"Open path"},
 {"hash":114087587,"name":"tfrmgraphicmenu.mniproperty.caption","sourcebytes":[80,114,111,112,101,114,116,105,101,115],"value":"Properties"}
 ]}

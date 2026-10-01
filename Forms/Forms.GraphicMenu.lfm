@@ -304,7 +304,7 @@ object frmGraphicMenu: TfrmGraphicMenu
     end
     object mniOpenFolderSw: TMenuItem
       Tag = 3
-      Caption = 'Open file location'
+      Caption = 'Open path'
       OnClick = mniRunClick
     end
     object N6: TMenuItem

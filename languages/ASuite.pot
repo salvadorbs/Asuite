@@ -624,15 +624,15 @@ msgid "Max number recent items"
 msgstr ""
 
 #: tfrmadvancedpropertypage.cbdontinsertmfu.caption
-msgid "Don't insert this software in MFU"
+msgid "Don't insert this item in MFU"
 msgstr ""
 
 #: tfrmadvancedpropertypage.cbdontinsertmru.caption
-msgid "Don't insert this software in recents (MRU)"
+msgid "Don't insert this item in recents (MRU)"
 msgstr ""
 
 #: tfrmadvancedpropertypage.cbhidesoftware.caption
-msgid "Hide this software from menu"
+msgid "Hide this item from menu"
 msgstr ""
 
 #: tfrmadvancedpropertypage.cbshortcutdesktop.caption
@@ -777,11 +777,11 @@ msgid "Window State"
 msgstr ""
 
 #: tfrmcatgeneralpropertypage.grpsubitems.caption
-msgid "Software in this category"
+msgid "Items in this category"
 msgstr ""
 
 #: tfrmcatgeneralpropertypage.lblnote.caption
-msgid "Note: In this list you can find all software items of this category (only first level). Uncheck items who you don't want to start, when run this category."
+msgid "Note: In this list you can find all items of this category (only first level). Uncheck items who you don't want to start, when run this category."
 msgstr ""
 
 #: tfrmdialogbase.caption
@@ -884,7 +884,7 @@ msgstr ""
 
 #: tfrmgraphicmenu.mniopenfoldersw.caption
 msgctxt "tfrmgraphicmenu.mniopenfoldersw.caption"
-msgid "Open file location"
+msgid "Open path"
 msgstr ""
 
 #: tfrmgraphicmenu.mniproperty.caption
@@ -1026,7 +1026,7 @@ msgid "Add separator..."
 msgstr ""
 
 #: tfrmmain.actaddsoftware.caption
-msgid "Add software..."
+msgid "Add item..."
 msgstr ""
 
 #: tfrmmain.actcopy.caption
@@ -1045,7 +1045,7 @@ msgstr ""
 
 #: tfrmmain.actopenfolderitem.caption
 msgctxt "tfrmmain.actopenfolderitem.caption"
-msgid "Open file location"
+msgid "Open path"
 msgstr ""
 
 #: tfrmmain.actpaste.caption
@@ -1409,7 +1409,7 @@ msgid "Value"
 msgstr ""
 
 #: tfrmstatsoptionspage.lbsoftware.caption
-msgid "Software added"
+msgid "Items added"
 msgstr ""
 
 #: tfrmstatsoptionspage.lbsoftware.rightcaption
