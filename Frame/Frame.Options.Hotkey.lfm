@@ -153,15 +153,7 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
       DefaultNodeHeight = 32
       DragOperations = []
       Header.AutoSizeIndex = 0
-      Header.Options = [hoColumnResize, hoDblClickResize, hoDrag, hoVisible, hoHeaderClickAutoSort, hoAutoResizeInclCaption]
-      Header.ParentFont = False
-      ParentFont = False
-      PopupMenu = pmHotkey
-      TabOrder = 0
-      TreeOptions.MiscOptions = [toAcceptOLEDrop, toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
-      TreeOptions.PaintOptions = [toPopupMode, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
-      TreeOptions.SelectionOptions = [toFullRowSelect, toRightClickSelect]
-      Columns = <      
+      Header.Columns = <      
         item
           Position = 0
           Text = 'Name'
@@ -182,6 +174,14 @@ inherited frmHotkeyOptionsPage: TfrmHotkeyOptionsPage
           Text = 'Hotkey'
           Width = 200
         end>
+      Header.Options = [hoColumnResize, hoDblClickResize, hoDrag, hoVisible, hoHeaderClickAutoSort, hoAutoResizeInclCaption]
+      Header.ParentFont = False
+      ParentFont = False
+      PopupMenu = pmHotkey
+      TabOrder = 0
+      TreeOptions.MiscOptions = [toCheckSupport, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
+      TreeOptions.PaintOptions = [toPopupMode, toShowDropmark, toThemeAware, toUseBlendedImages, toUseExplorerTheme]
+      TreeOptions.SelectionOptions = [toFullRowSelect, toRightClickSelect]
     end
   end
   object pmHotkey: TPopupMenu[2]
