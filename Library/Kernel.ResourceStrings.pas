@@ -68,7 +68,7 @@ resourcestring
   msgGMDocuments = 'Documents';
   msgGMDriveName = 'Drive (%s)';
   msgGMExplore = 'Explore';
-  msgGMHardDiskSpace = '%s free of %s';
+  msgGMHardDiskSpace = '%s free | %s used';
   msgGMMusic = 'Music';
   msgGMOptions = 'Options';
   msgGMPictures = 'Pictures';
