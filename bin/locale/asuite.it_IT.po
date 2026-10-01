@@ -1,13 +1,14 @@
-# 
+#
 # Translators:
 # Matteo Salvi <salvadorbs@gmail.com>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Last-Translator: Matteo Salvi <salvadorbs@gmail.com>, 2021\n"
-"Language-Team: Italian (Italy) (https://www.transifex.com/asd-127/teams/112867/it_IT/)\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Italian (Italy) (https://www.transifex.com/asd-127/teams/"
+"112867/it_IT/)\n"
 "Language: it_IT\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: kernel.resourcestrings.cxactiononexeopt_item0
@@ -343,7 +344,7 @@ msgstr "Video"
 
 #: kernel.resourcestrings.msghotkey
 msgctxt "kernel.resourcestrings.msghotkey"
-msgid "Hotkey"
+msgid "Hotkeys"
 msgstr "Hotkey"
 
 #: kernel.resourcestrings.msghotkeynokey
@@ -558,8 +559,8 @@ msgid "%s (%s bit)"
 msgstr "%s (%s bit)"
 
 #: tfrmabout.lnklblwebsite.caption
-msgid "http://www.salvadorsoftware.com"
-msgstr "http://www.salvadorsoftware.com"
+msgid "https://github.com/salvadorbs/asuite"
+msgstr "https://github.com/salvadorbs/asuite"
 
 #: tfrmadvancedoptionspage.btnclear.caption
 msgid "Clear"
@@ -653,10 +654,6 @@ msgstr "Non inserire questo software negli elementi recenti (MRU)"
 msgid "Hide this software from menu"
 msgstr "Nascondi questo software nel menu"
 
-#: tfrmadvancedpropertypage.cbhotkey.caption
-msgid "Active hotkey"
-msgstr "Attiva hotkey"
-
 #: tfrmadvancedpropertypage.cbshortcutdesktop.caption
 msgid "Create shortcut on desktop when ASuite is running"
 msgstr "Crea shortcut sul desktop quando ASuite è in esecuzione"
@@ -684,6 +681,16 @@ msgstr "Altro"
 msgid "Scheduler"
 msgstr "Scheduler"
 
+#: tfrmautorunoptionspage.actproperties.caption
+msgctxt "tfrmautorunoptionspage.actproperties.caption"
+msgid "Properties"
+msgstr "Proprietà"
+
+#: tfrmautorunoptionspage.actremoveautorun.caption
+msgctxt "tfrmautorunoptionspage.actremoveautorun.caption"
+msgid "Remove autorun"
+msgstr "Rimuovi autorun"
+
 #: tfrmautorunoptionspage.chkshutdown.caption
 msgid "Enable shutdown autorun"
 msgstr "Abilita autorun di spegnimento"
@@ -708,15 +715,6 @@ msgstr "Ordine degli elementi da eseguire alla chiusura"
 #: tfrmautorunoptionspage.lblstartupinfo.caption
 msgid "Order of startup autorun items in ASuite"
 msgstr "Ordine degli elementi da eseguire all'avvio"
-
-#: tfrmautorunoptionspage.mniproperties.caption
-msgctxt "tfrmautorunoptionspage.mniproperties.caption"
-msgid "Properties"
-msgstr "Proprietà"
-
-#: tfrmautorunoptionspage.mniremoveautorun.caption
-msgid "Remove autorun"
-msgstr "Rimuovi autorun"
 
 #: tfrmautorunoptionspage.vstshutdownitems.header.columns[0].text
 msgctxt "tfrmautorunoptionspage.vstshutdownitems.header.columns[0].text"
@@ -852,12 +850,12 @@ msgid "Show Graphic Menu, when run another ASuite instance"
 msgstr "Mostra GraphicMenu, quando si avvia un altra istanza di ASuite"
 
 #: tfrmgeneraloptionspage.cbshowmenustartup.caption
-msgid "Show graphic menu on ASuite startup"
-msgstr "Mostra Graphic Menu all'avvio di ASuite"
+msgid "Show Graphic Menu"
+msgstr "Mostra Graphic Menu"
 
 #: tfrmgeneraloptionspage.cbshowpanelstartup.caption
-msgid "Show window on ASuite startup"
-msgstr "Mostra la finestra principale all'avvio di ASuite"
+msgid "Show main window"
+msgstr "Mostra finestra principale"
 
 #: tfrmgeneraloptionspage.cbwindowsstartup.caption
 msgid "Start ASuite on Operating System startup"
@@ -868,27 +866,28 @@ msgid "Close all process opened by ASuite at launcher shutdown"
 msgstr "Chiudi tutti i processi aperti da ASuite alla sua chiusura"
 
 #: tfrmgeneraloptionspage.chkconfirmmessagecat.caption
-msgid "Ask to confirm before run a category"
+msgid "Ask confirm before run a category"
 msgstr "Chiedi conferma prima di avviare una categoria"
 
 #: tfrmgeneraloptionspage.chkconfirmmsgcloseapp.caption
-msgid "Ask to confirm before close ASuite"
+msgid "Ask confirm before exiting"
 msgstr "Chiedi conferma prima di chiudere ASuite"
 
 #: tfrmgeneraloptionspage.chkmissedschedulertask.caption
-msgid "Check missed scheduler task at ASuite startup"
-msgstr "Controllare i task non eseguiti all'avvio di ASuite"
+msgid "Check missed scheduler task"
+msgstr "Controlla i task non eseguiti"
 
 #: tfrmgeneraloptionspage.gbexecution.caption
 msgid "Execution"
 msgstr "Esecuzione"
 
-#: tfrmgeneraloptionspage.gbother.caption
-msgid "Other"
-msgstr "Altro"
-
 #: tfrmgeneraloptionspage.gbstartup.caption
 msgctxt "tfrmgeneraloptionspage.gbstartup.caption"
+msgid "General"
+msgstr "Generale"
+
+#: tfrmgeneraloptionspage.gbstartup1.caption
+msgctxt "tfrmgeneraloptionspage.gbstartup1.caption"
 msgid "Startup"
 msgstr "Avvio"
 
@@ -933,18 +932,33 @@ msgctxt "tfrmgraphicmenu.mnirunasadmin.caption"
 msgid "Run as admin"
 msgstr "Avvia come amministratore"
 
+#: tfrmhotkeyoptionspage.actedithotkey.caption
+msgctxt "tfrmhotkeyoptionspage.actedithotkey.caption"
+msgid "Edit Hotkey"
+msgstr "Modifica hotkey"
+
+#: tfrmhotkeyoptionspage.actproperties.caption
+msgctxt "tfrmhotkeyoptionspage.actproperties.caption"
+msgid "Properties"
+msgstr "Proprietà"
+
+#: tfrmhotkeyoptionspage.actremovehotkey.caption
+msgctxt "tfrmhotkeyoptionspage.actremovehotkey.caption"
+msgid "Remove Hotkey"
+msgstr "Rimuovi Hotkey"
+
 #: tfrmhotkeyoptionspage.cbhotkey.caption
-msgid "Enable hotkey"
+msgid "Enable hotkeys"
 msgstr "Abilita hotkey"
 
 #: tfrmhotkeyoptionspage.gbhotkey.caption
 msgctxt "tfrmhotkeyoptionspage.gbhotkey.caption"
-msgid "Hotkey"
+msgid "Hotkeys"
 msgstr "Hotkey"
 
 #: tfrmhotkeyoptionspage.grpordersoftware.caption
-msgid "Hotkey list used"
-msgstr "Lista degli hotkey usati"
+msgid "Hotkeys list"
+msgstr "Lista degli hotkey"
 
 #: tfrmhotkeyoptionspage.lblhotkeycm.caption
 msgid "Show classic menu when hotkey is pressed"
@@ -957,19 +971,6 @@ msgstr "Mostra Graphic Menu all'uso del hotkey"
 #: tfrmhotkeyoptionspage.lblhotkeywindow.caption
 msgid "Show window when hotkey is pressed"
 msgstr "Mostra la finestra principale all'uso del hotkey"
-
-#: tfrmhotkeyoptionspage.mniedithotkey.caption
-msgid "Edit Hotkey"
-msgstr "Modifica hotkey"
-
-#: tfrmhotkeyoptionspage.mniproperties.caption
-msgctxt "tfrmhotkeyoptionspage.mniproperties.caption"
-msgid "Properties"
-msgstr "Proprietà"
-
-#: tfrmhotkeyoptionspage.mniremovehotkey.caption
-msgid "Remove Hotkey"
-msgstr "Rimuovi Hotkey"
 
 #: tfrmhotkeyoptionspage.vstitems.header.columns[0].text
 msgctxt "tfrmhotkeyoptionspage.vstitems.header.columns[0].text"
@@ -1235,12 +1236,12 @@ msgid "Disable delete items confirmation dialog"
 msgstr "Disabilita messaggio di conferma per eliminazione degli elementi"
 
 #: tfrmmainwindowoptionspage.cbhidesearch.caption
-msgid "Hide tab Search in main window"
-msgstr "Nascondi il tab Cerca nella finestra principale"
+msgid "Hide tab Search"
+msgstr "Nascondi il tab Cerca"
 
 #: tfrmmainwindowoptionspage.cbholdsize.caption
-msgid "Hold main window size"
-msgstr "Mantieni le dimensioni della finestra principale"
+msgid "Disable window resize"
+msgstr "Disabilita il ridimensionamento della finestra"
 
 #: tfrmmainwindowoptionspage.cbsmallicon.caption
 msgid "Small icon size in main window"
@@ -1363,8 +1364,7 @@ msgstr "Scegli hotkey..."
 
 #: tfrmshortcutgrabber.lblinfo.caption
 msgid "Select modifiers above, then enter desired key:"
-msgstr ""
-"Seleziona i modificatori qua sopra, poi inserisci il tasto desiderato:"
+msgstr "Seleziona i modificatori qua sopra, poi inserisci il tasto desiderato:"
 
 #: tfrmstatsoptionspage.gbasuite.caption
 msgctxt "tfrmstatsoptionspage.gbasuite.caption"
@@ -1495,11 +1495,13 @@ msgstr "Percorso"
 
 #: tfrmswgeneralpropertypage.lbinfo2.caption
 msgid ""
-"Note: You can use these vars (included environment variables) in relative path:\n"
+"Note: You can use these vars (included environment variables) in relative "
+"path:\n"
 "- %asuite% = ASuite folder path (\"%s\")\n"
 "- %drive% = drive path (\"%s\")"
 msgstr ""
-"Nota: Puoi utilizzare le seguenti variabili (incluso quelle d'ambiente) nei percorsi relativi:\n"
+"Nota: Puoi utilizzare le seguenti variabili (incluso quelle d'ambiente) nei "
+"percorsi relativi:\n"
 "- %asuite% = percorso della cartella di ASuite (%s)\n"
 "- %drive% = percorso del disco (%s)"
 
@@ -1543,9 +1545,13 @@ msgstr "Abilita TrayIcon"
 msgid "Active autoexpansion folder"
 msgstr "Attiva autoespansione delle cartelle"
 
-#: tfrmtrayiconoptionspage.chkautomatichidemenu.caption
-msgid "Auto-hide menu"
-msgstr "Nascondi in automatico il menu"
+#: tfrmtrayiconoptionspage.chkhideejectbutton.caption
+msgid "Hide Eject USB Disk button"
+msgstr "Nascondi il pulsante Espelli disco USB"
+
+#: tfrmtrayiconoptionspage.chkhideejectmenuitem.caption
+msgid "Hide Eject USB Disk menu item"
+msgstr "Nascondi la voce di menu Espelli disco USB"
 
 #: tfrmtrayiconoptionspage.chkuserpicture.caption
 msgid "Show user picture in menu"
