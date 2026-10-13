@@ -10,6 +10,7 @@ msgstr ""
 "Language: it_IT\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Native-Language: Italiano\n"
 
 #: kernel.resourcestrings.cxactiononexeopt_item0
 msgctxt "kernel.resourcestrings.cxactiononexeopt_item0"
