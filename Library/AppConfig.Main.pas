@@ -266,7 +266,11 @@ var
 begin   
   TVirtualTreeMethods.UpdateItemColor(ASuiteInstance.MainTree);
 
-  SetDefaultLang(FLangID, ASuiteInstance.Paths.SuitePathLocale);
+  // NOTE: the locale file name is passed explicitly (lowercase). The name
+  // derived from the exe ('ASuite...') does not match the shipped files
+  // ('asuite...') on case-sensitive filesystems (Linux), so SetDefaultLang
+  // would find nothing and the language would never change.
+  SetDefaultLang(FLangID, ASuiteInstance.Paths.SuitePathLocale, LowerCase(APP_NAME));
 
   //Update background
   sBackgroundPath := ASuiteInstance.Paths.RelativeToAbsolute(FTVBackgroundPath);
