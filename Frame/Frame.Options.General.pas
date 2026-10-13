@@ -24,7 +24,8 @@ unit Frame.Options.General;
 interface
 
 uses
-  LCLIntf, SysUtils, Dialogs, Frame.BaseEntity, StdCtrls;
+  LCLIntf, SysUtils, Classes, Dialogs, Frame.BaseEntity, StdCtrls,
+  Language.Manager;
 
 type
 
@@ -42,7 +43,7 @@ type
     cxActionOnExe: TComboBox;
     cxLanguage: TComboBox;
     gbExecution: TGroupBox;
-    
+
     gbStartup: TGroupBox;
     cbWindowsStartup: TCheckBox;
     gbStartup1: TGroupBox;
@@ -50,7 +51,12 @@ type
     lbLanguage: TLabel;
   private
     { Private declarations }
+    // Language IDs (ex. 'it_IT') matching the items shown in cxLanguage,
+    // which displays language names (ex. 'Italiano') instead of file names.
+    FLangIDs: TStringList;
     procedure AddLanguages(AComboBox: TComboBox);
+    procedure FillLanguageCombo(AComboBox: TComboBox; const Items: TLangItemArray);
+    procedure SelectLanguage(AComboBox: TComboBox);
   strict protected
     function GetTitle: string; override;
     function GetImageIndex: Integer; override;
@@ -58,6 +64,7 @@ type
     function InternalSaveData: Boolean; override;
   public
     { Public declarations }
+    destructor Destroy; override;
   end;
 
 var
@@ -66,8 +73,8 @@ var
 implementation
 
 uses
-  AppConfig.Main, Kernel.Enumerations, Kernel.ResourceStrings, FileUtil, LazFileUtils,
-  Kernel.Consts, Kernel.Instance, Kernel.Manager;
+  AppConfig.Main, Kernel.Enumerations, Kernel.ResourceStrings, Kernel.Consts,
+  Kernel.Instance, Kernel.Manager;
 
 {$R *.lfm}
 
@@ -78,41 +85,47 @@ begin
   Result := ASuiteManager.IconsManager.GetIconIndex('general');
 end;
 
+destructor TfrmGeneralOptionsPage.Destroy;
+begin
+  FreeAndNil(FLangIDs);
+  inherited Destroy;
+end;
+
 procedure TfrmGeneralOptionsPage.AddLanguages(AComboBox: TComboBox);
 var
-  SearchMask: String;
-  strID: String;
-  FileInfo: TSearchRec;
-  idxDot: Integer;
+  Items: TLangItemArray;
+begin
+  Items := FindLanguageFiles(ASuiteInstance.Paths.SuitePathLocale, APP_NAME);
+  ResolveLanguageNames(Items);
+  SortLangItems(Items);
+  FillLanguageCombo(AComboBox, Items);
+  SelectLanguage(AComboBox);
+end;
+
+procedure TfrmGeneralOptionsPage.FillLanguageCombo(AComboBox: TComboBox;
+  const Items: TLangItemArray);
+var
   I: Integer;
 begin
-  SearchMask := ASuiteInstance.Paths.SuitePathLocale + LowerCase(APP_NAME) + '.*' + EXT_PO;
-
-  if FindFirstUTF8(SearchMask, faAnyFile, FileInfo) = 0 then
-  begin
-    repeat
-      I := -1;
-      if (FileInfo.Attr and faDirectory = 0) then
-      begin
-        if (FileInfo.Name = '.') or (FileInfo.Name = '..') or (FileInfo.Name = '') then
-          continue;
-
-        strID := ExtractFileNameWithoutExt(FileInfo.Name);
-        idxDot := pos('.', strID);
-
-        if idxDot <> 0 then
-        begin
-          strID := copy(strID, idxDot + 1, Length(strID) - 1);
-          I := AComboBox.Items.Add(strID);
-        end;
-
-        if (strID = Config.LangID) and (I <> - 1 )then
-          AComboBox.ItemIndex  := I;
-      end;
-    until
-      FindNextUTF8(FileInfo) <> 0;
+  if not Assigned(FLangIDs) then
+    FLangIDs := TStringList.Create;
+  FLangIDs.Clear;
+  AComboBox.Items.BeginUpdate;
+  try
+    AComboBox.Items.Clear;
+    for I := 0 to High(Items) do
+    begin
+      FLangIDs.Add(Items[I].ID);
+      AComboBox.Items.Add(Items[I].DisplayName);
+    end;
+  finally
+    AComboBox.Items.EndUpdate;
   end;
-  FindCloseUTF8(FileInfo);
+end;
+
+procedure TfrmGeneralOptionsPage.SelectLanguage(AComboBox: TComboBox);
+begin
+  AComboBox.ItemIndex := IndexOfLangID(FLangIDs, Config.LangID);
 end;
 
 function TfrmGeneralOptionsPage.GetTitle: string;
@@ -135,10 +148,7 @@ begin
   chkMissedSchedulerTask.Checked := Config.MissedSchedulerTask;
   cbSecondInstanceGM.Checked := Config.ShowGraphicMenuAnotherInstance;
 
-  //Language
-  //Search for all languages/xxx.po files
-
-  //Search existing translations
+  //Language: list every available translation
   AddLanguages(cxLanguage);
 
   if cxLanguage.ItemIndex = -1 then
@@ -164,8 +174,9 @@ begin
   Config.ShowGraphicMenuAnotherInstance := cbSecondInstanceGM.Checked;
 
   //Language
-  if cxLanguage.ItemIndex <> -1 then
-    Config.LangID := cxLanguage.Items[cxLanguage.ItemIndex];
+  if (cxLanguage.ItemIndex <> -1) and Assigned(FLangIDs) and
+     (cxLanguage.ItemIndex < FLangIDs.Count) then
+    Config.LangID := FLangIDs[cxLanguage.ItemIndex];
 
   //Execution options
   Config.ActionOnExe    := TActionOnExecute(cxActionOnExe.ItemIndex);
