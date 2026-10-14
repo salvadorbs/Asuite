@@ -42,7 +42,7 @@ implementation
 
 uses
   VirtualTree.Methods, NodeDataTypes.Base, AppConfig.Main, Kernel.Enumerations,
-  Kernel.Logger, mormot.core.log, Kernel.Instance;
+  Kernel.Logger, mormot.core.log, Kernel.Instance, SysUtils;
 
 { TTreeIconsThread }
 
@@ -62,7 +62,13 @@ var
   {%H-}log: ISynLog;
 begin
   log := TASuiteLogger.Enter('TTreeIconsThread.Execute', Self);
-  FSenderTree.IterateSubtree(FParentNode, GetImageIndex, nil);
+  try
+    if Assigned(FSenderTree) then
+      FSenderTree.IterateSubtree(FParentNode, GetImageIndex, nil);
+  except
+    on E: Exception do
+      TASuiteLogger.Exception(E, 'TTreeIconsThread.Execute failed');
+  end;
 end;
 
 procedure TTreeIconsThread.GetImageIndex(Sender: TBaseVirtualTree;
@@ -70,11 +76,21 @@ procedure TTreeIconsThread.GetImageIndex(Sender: TBaseVirtualTree;
 var
   NodeData: TvBaseNodeData;
 begin
+  if Terminated then
+  begin
+    Abort := True;
+    Exit;
+  end;
   if (Config.ASuiteState = lsNormal) or ((Config.ASuiteState = lsImporting) and (Sender = ASuiteInstance.ImportTree)) then
   begin
-    NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
-    if Assigned(NodeData) then
-      NodeData.Icon.ImageIndex;
+    try
+      NodeData := TVirtualTreeMethods.GetNodeItemData(Node, Sender);
+      if Assigned(NodeData) then
+        NodeData.Icon.ImageIndex;
+    except
+      on E: Exception do
+        TASuiteLogger.Exception(E, 'TTreeIconsThread.GetImageIndex failed');
+    end;
   end
   else
     Abort := True;

@@ -25,7 +25,7 @@ interface
 
 uses
   SysUtils, Icons.Base, NodeDataTypes.Base, Graphics, Icons.Custom,
-  NodeDataTypes.Custom, Controls, LCLIntf;
+  NodeDataTypes.Custom, Controls, LCLIntf, Classes;
 
 type
 
@@ -35,7 +35,8 @@ type
   private
     { private declarations }
     FNodeData: TvBaseNodeData;
-    FCacheIconCRC: Integer;
+    FOnInvalidate: TNotifyEvent;
+    procedure DoInvalidateNode;
   protected
     function InternalLoadIcon: Integer; override;
     function GetName: string; override;
@@ -46,12 +47,15 @@ type
 
     function LoadIcon: Integer; override;
     procedure ResetIcon; override;
+
+    property OnInvalidate: TNotifyEvent read FOnInvalidate write FOnInvalidate;
   end;
 
 implementation
 
 uses
-  NodeDataTypes.Files, BGRABitmapTypes, Kernel.Instance, Kernel.Manager;
+  NodeDataTypes.Files, BGRABitmapTypes, Kernel.Instance, Kernel.Manager,
+  Kernel.Consts;
 
 { TNodeIcon }
 
@@ -59,7 +63,6 @@ constructor TNodeIcon.Create(ANodeData: TvBaseNodeData);
 begin
   inherited Create;
   FNodeData     := ANodeData;
-  FCacheIconCRC := 0;
   Self.TempItem := False;
 end;
 
@@ -75,6 +78,8 @@ var
   sPathAbsoluteIcon: string;
 begin
   Result := '';
+  if not Assigned(FNodeData) then
+    Exit;
 
   //Get custom icon path
   sPathAbsoluteIcon := '';
@@ -96,17 +101,19 @@ begin
   oldCacheIconCRC := Self.CacheIconCRC;
   Result := inherited;
 
-  if oldCacheIconCRC <> Self.CacheIconCRC then
+  if Assigned(FNodeData) and (oldCacheIconCRC <> Self.CacheIconCRC) then
     FNodeData.Changed := True;
 
   //If it is a category, get directly cat icon
-  if (FNodeData.IsCategoryItem) and (Result = -1) then
-    Result := ASuiteManager.IconsManager.GetIconIndex('category');
+  if Assigned(FNodeData) and (FNodeData.IsCategoryItem) and (Result = -1) then
+    Result := ASuiteManager.IconsManager.GetIconIndex(ICON_NAME_CATEGORY);
 end;
 
 function TNodeIcon.LoadIcon: Integer;
 begin
   Result := -1;
+  if not Assigned(FNodeData) then
+    Exit;
   if FNodeData.IsSeparatorItem then
     Exit;
 
@@ -114,20 +121,37 @@ begin
   if FNodeData.IsFileItem then
   begin
     if Not(TvFileNodeData(FNodeData).IsPathFileExists) then
-      Result := ASuiteManager.IconsManager.GetIconIndex('file_error');
+      Result := ASuiteManager.IconsManager.GetIconIndex(ICON_NAME_FILE_ERROR);
   end;
   //Get imageindex
   if (Result = -1) then
     Result := inherited;
 end;
 
+procedure TNodeIcon.DoInvalidateNode;
+begin
+  if Assigned(FNodeData) and Assigned(FNodeData.PNode) then
+    ASuiteInstance.MainTree.InvalidateNode(FNodeData.PNode);
+end;
+
 procedure TNodeIcon.ResetIcon;
 begin
   inherited;
 
-  //Force MainTree repaint node
-  if Assigned(FNodeData.PNode) then
-    ASuiteInstance.MainTree.InvalidateNode(FNodeData.PNode);
+  if not Assigned(FNodeData) or not Assigned(FNodeData.PNode) then
+    Exit;
+
+  if Assigned(FOnInvalidate) then
+  begin
+    FOnInvalidate(Self);
+    Exit;
+  end;
+
+  //Force MainTree repaint node without touching VCL from worker threads
+  if GetCurrentThreadId = MainThreadID then
+    DoInvalidateNode
+  else
+    TThread.Queue(nil, DoInvalidateNode);
 end;
 
 end.
