@@ -75,7 +75,7 @@ uses
    DataModules.Icons, Kernel.Consts, BGRABitmapTypes, Utility.FileFolder,
    AppConfig.Main, Kernel.Enumerations, Utility.System, Kernel.Instance,
    Kernel.Manager, LazFileUtils, HlpHashFactory, Kernel.Logger, FileUtil,
-   Kernel.ResourceStrings;
+   Kernel.ResourceStrings, Icons.CacheKey;
 
 { TBaseIcon }
 
@@ -114,6 +114,7 @@ var
 begin
   Result := -1;
   intHash := 0;
+  sTempPath := '';
 
   sDefaultPath := GetDefaultPathIcon;
 
@@ -123,7 +124,7 @@ begin
     //Check CRC for only .exe, if it fails reset cache icon
     isExeFile := (ExtractLowerFileExt(sDefaultPath) = EXT_EXE);
     sPathCacheIcon := PathCacheIcon;
-    if isExeFile and FileExists(sPathCacheIcon) then
+    if isExeFile and (sPathCacheIcon <> '') and FileExists(sPathCacheIcon) then
     begin
       intHash := GetFileXXHash32(sDefaultPath);
 
@@ -153,18 +154,13 @@ end;
 
 function TBaseIcon.GetPathCacheIcon: string;
 var
-  sExt, sNameFile: string;
+  sCacheFile: string;
 begin
   Result := '';
 
-  sExt := ExtractLowerFileExt(GetDefaultPathIcon);
-  if ((sExt = EXT_EXE) or (sExt = EXT_ICO) or (sExt = '')) then
-    sNameFile := Self.Name
-  else
-    sNameFile := Copy(sExt, 2, Length(sExt) - 1);
-
-  if (sNameFile <> '') then
-    Result := ASuiteInstance.Paths.SuitePathCache + sNameFile + EXT_ICO;
+  sCacheFile := Icons.CacheKey.BuildCacheFileName(Self.Name, GetDefaultPathIcon, FTempItem);
+  if (sCacheFile <> '') then
+    Result := ASuiteInstance.Paths.SuitePathCache + sCacheFile;
 end;
 
 procedure TBaseIcon.SetCacheIconCRC(AValue: Integer);
@@ -178,28 +174,36 @@ procedure TBaseIcon.SaveCacheIcon(const APath: string;
 var
   Icon: TBGRAIconCursor;
   bmpLargeIcon, bmpSmallIcon: TBGRABitmap;
+  sCacheFile: string;
 begin
   if (Config.Cache) and (AImageIndex <> -1) then
   begin
-    if (Self.Name <> '') and (ExtractLowerFileExt(APath) <> EXT_ICO) and
-       ((not FTempItem) or (FTempItem and (ExtractLowerFileExt(APath) <> EXT_EXE))) then
+    if Icons.CacheKey.ShouldCacheIcon(Self.Name, APath, FTempItem) then
     begin
+      sCacheFile := PathCacheIcon;
+      if sCacheFile = '' then
+        Exit;
       Icon := TBGRAIconCursor.Create(ifIco);
       try
         //Extract and insert icons in TIcon
         bmpLargeIcon := ASuiteManager.IconsManager.GetIconFromImgList(AImageIndex, True);
         bmpSmallIcon := ASuiteManager.IconsManager.GetIconFromImgList(AImageIndex, False);
+        try
+          if Assigned(bmpSmallIcon) and Assigned(bmpLargeIcon) then
+          begin
+            Icon.Add(bmpSmallIcon, 32);
+            Icon.Add(bmpLargeIcon, 32);
 
-        Icon.Add(bmpSmallIcon, 32);
-        Icon.Add(bmpLargeIcon, 32);
-
-        //Save file and get CRC from it
-        Icon.SaveToFile(PathCacheIcon);
-        FCacheIconCRC := AHash;
+            //Save file and get CRC from it
+            Icon.SaveToFile(sCacheFile);
+            FCacheIconCRC := AHash;
+          end;
+        finally
+          bmpLargeIcon.Free;
+          bmpSmallIcon.Free;
+        end;
       finally
         Icon.Free;
-        bmpLargeIcon.Free;
-        bmpSmallIcon.Free;
       end;
     end;
   end;
