@@ -23,12 +23,15 @@
       <FormatVersion Value="2"/>
       <Modes Count="0"/>
     </RunParams>
-    <RequiredPackages Count="1">
+    <RequiredPackages Count="2">
       <Item1>
         <PackageName Value="FCL"/>
       </Item1>
+      <Item2>
+        <PackageName Value="LazUtils"/>
+      </Item2>
     </RequiredPackages>
-    <Units Count="3">
+    <Units Count="4">
       <Unit0>
         <Filename Value="ASuiteTests.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -43,6 +46,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Tests.RunActionLogic"/>
       </Unit2>
+      <Unit3>
+        <Filename Value="Tests.LanguageManager.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.LanguageManager"/>
+      </Unit3>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -52,7 +60,7 @@
       <Filename Value="ASuiteTests"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir)"/>
+      <IncludeFiles Value="$(ProjOutDir);.."/>
       <OtherUnitFiles Value="../Library;../Utilities"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>

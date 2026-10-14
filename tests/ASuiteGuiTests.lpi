@@ -58,7 +58,7 @@
         <PackageName Value="LCL"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="3">
+    <Units Count="8">
       <Unit0>
         <Filename Value="ASuiteGuiTests.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -73,6 +73,31 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Tests.SortController"/>
       </Unit2>
+      <Unit3>
+        <Filename Value="Tests.LanguageCombo.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.LanguageCombo"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="Tests.ConfigPaths.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.ConfigPaths"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="Tests.Conversions.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.Conversions"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="Tests.FileFolder.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.FileFolder"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="Tests.Scheduler.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.Scheduler"/>
+      </Unit7>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

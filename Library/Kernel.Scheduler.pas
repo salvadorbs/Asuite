@@ -37,12 +37,15 @@ type
     procedure DoTimer(Sender: TObject);
     function CompareSchDates(ANodeData: TvCustomRealNodeData; ANow: TDateTime): Boolean;
     function GetSchedulerTime(ANodeData: TvCustomRealNodeData; ANow: TDateTime; ADecDay: Boolean): TDateTime;
-    function CheckOnce(ANow, ASchedDateTime: TDateTime): Boolean;
-    function CheckDaily(ANow, ASchedTime: TDateTime): Boolean;
-    function CheckHourly(ANow: TDateTime): Boolean;
   public
     constructor Create;
     destructor Destroy; override;
+
+    { Pure date checks, public so the GUI test suite can cover the
+      scheduler firing logic without timers or node data. }
+    function CheckOnce(ANow, ASchedDateTime: TDateTime): Boolean;
+    function CheckDaily(ANow, ASchedTime: TDateTime): Boolean;
+    function CheckHourly(ANow: TDateTime): Boolean;
 
     procedure CheckMissedTasks;
 
