@@ -27,7 +27,8 @@ interface
 
 uses
   SysUtils, Classes, Controls, Forms, Icons.Files, Generics.Collections, SyncObjs,
-  Kernel.Consts, LCLIntf, Icons.Base, Icons.ExtFile, Contnrs, BGRABitmap;
+  Kernel.Consts, LCLIntf, Icons.Base, Icons.ExtFile, BGRABitmap,
+  Icons.Mime;
 
 type
   TBaseIcons = class(TObjectList<TBaseIcon>);
@@ -44,9 +45,7 @@ type
     FByName: TDictionary<string, TBaseIcon>;
     FByPath: TDictionary<string, TFileIcon>;
     FByExt: TDictionary<string, TExtFileIcon>;
-    {$IFDEF UNIX}
-    FExtToMimeIconName: TFPDataHashTable;
-    {$ENDIF}
+    FMimeProvider: TMimeIconProvider;
     function GetPathTheme: string;
 
     procedure LoadAllIcons;
@@ -60,7 +59,6 @@ type
     {$IFDEF UNIX}
     procedure LoadMimeIconNames;
     function GetIconByDesktopFile(AFileName: String): String;
-    procedure ClearExtToMimeList;
     {$ENDIF}
   public
     { public declarations }
@@ -94,7 +92,7 @@ uses
   Kernel.Logger, FileUtil, LazFileUtils, Kernel.Instance, ImgList,
   Graphics, DataModules.Icons, mormot.core.log, Icons.CacheKey
   {$IFDEF UNIX}
-  , IniFiles, BaseUnix, StrUtils, Utility.FileFolder
+  , IniFiles, BaseUnix, Utility.FileFolder
     {$IFDEF QT}
       {$IFDEF LCLQT5}
       , qt5
@@ -120,27 +118,23 @@ begin
   FByName := TDictionary<string, TBaseIcon>.Create;
   FByPath := TDictionary<string, TFileIcon>.Create;
   FByExt := TDictionary<string, TExtFileIcon>.Create;
+  FMimeProvider := TMimeIconProvider.Create;
 
   {$IFDEF UNIX}
   //Get mime and icons name from all extension in system
-  FExtToMimeIconName := TFPDataHashTable.Create;
   LoadMimeIconNames;
   {$ENDIF}
 end;
 
 destructor TIconsManager.Destroy;
 begin
+  FMimeProvider.Free;
   FByName.Free;
   FByPath.Free;
   FByExt.Free;
   FItems.Free;
   FExtItems.Free;
   FLock.Free;
-
-  {$IFDEF UNIX}
-  ClearExtToMimeList;
-  FExtToMimeIconName.Free;
-  {$ENDIF}
 
   inherited;
 end;
@@ -295,15 +289,14 @@ begin
   end;
 end;
 
-{$IFDEF UNIX}     
+{$IFDEF UNIX}
 {$IFDEF QT}
 function TIconsManager.GetSystemIconName(const AFileName: String): String;
-{$ELSE}       
+{$ELSE}
 function TIconsManager.GetSystemIconName(const AFileName: AnsiString): AnsiString;
 {$ENDIF}
 var
   I: Integer;
-  node: THTDataNode;
   iconList: TStringList;
   Extension: String;
 begin
@@ -336,23 +329,21 @@ begin
   end
   else if (Extension <> '*') then
   begin
-    node := THTDataNode(FExtToMimeIconName.Find(Extension));
-    if Assigned(node) then
+    iconList := FMimeProvider.GetIconNames(Extension);
+    if Assigned(iconList) then
+    begin
+      //First valid icon wins
+      for I := 0 to iconList.Count - 1 do
       begin
-        iconList := TStringList(node.Data);
+        Result := iconList.Strings[I];
 
-        //First valid icon wins
-        for I := 0 to iconList.Count - 1 do
-          begin
-            Result := iconList.Strings[I];
-
-            {$IFDEF QT}
-            if QIcon_hasThemeIcon(@Result) then break;
-            {$ELSE}
-            if gtk_icon_theme_has_icon(gtk_icon_theme_get_default, PAnsiChar(Result)) then break;
-            {$ENDIF}
-          end;
+        {$IFDEF QT}
+        if QIcon_hasThemeIcon(@Result) then break;
+        {$ELSE}
+        if gtk_icon_theme_has_icon(gtk_icon_theme_get_default, PAnsiChar(Result)) then break;
+        {$ENDIF}
       end;
+    end;
   end
   else if FileIsExecutable(AFileName) then
   begin
@@ -532,106 +523,13 @@ begin
 end;
 {$ENDIF}
 
-procedure TIconsManager.ClearExtToMimeList;
-var
-  nodeList: TFPObjectList;
-  I, J : Integer;
-begin
-  for I := 0 to FExtToMimeIconName.HashTable.Count - 1 do
-  begin
-    begin
-      nodeList := TFPObjectList(FExtToMimeIconName.HashTable.Items[I]);
-      if Assigned(nodeList) then
-        for J := 0 to nodeList.Count - 1 do
-          TStringList(THtDataNode(nodeList.Items[J]).Data).Free;
-    end;
-  end;
-end;
-
 procedure TIconsManager.LoadMimeIconNames;
 const
   mime_globs = '/usr/share/mime/globs';
   mime_generic_icons = '/usr/share/mime/generic-icons';
-var
-  I, J: Integer;
-  globs: TStringList = nil;
-  generic_icons: THashedStringList = nil;
-  sMimeType,
-  sMimeIconName,
-  sExtension: String;
-  node: THTDataNode = nil;
-  iconsList: TStringList;
 begin
-  try
-    if FExtToMimeIconName.Count = 0 then
-    begin
-      if FpAccess(mime_globs, R_OK) = 0 then
-      begin
-        // Load mapping: MIME type -> file extension.
-        globs:= TStringList.Create;
-        globs.NameValueSeparator:= ':';
-        globs.LoadFromFile(mime_globs);
-
-        // Try to load mapping: MIME type -> generic MIME icon name.
-        if FileExists(mime_generic_icons) then
-          begin
-            generic_icons:= THashedStringList.Create;
-            generic_icons.NameValueSeparator:= ':';
-            generic_icons.LoadFromFile(mime_generic_icons);
-          end;
-
-        // Create mapping: file extension -> list of MIME icon names.
-        for I:= 0 to globs.Count - 1 do
-          if (globs.Strings[I]    <> EmptyStr) and   // bypass empty lines
-             (globs.Strings[I][1] <> '#') then // and comments
-          begin
-            sMimeType := globs.Names[I];
-            sMimeIconName:= StringReplace(sMimeType, '/', '-', []);
-            sExtension:= globs.ValueFromIndex[I];
-
-            // Support only extensions, not full file name masks.
-            if (sExtension <> EmptyStr) and (sExtension <> '.*') then
-            begin
-              node := THTDataNode(FExtToMimeIconName.Find(sExtension));
-              if not Assigned(node) then
-                begin
-                  iconsList := TStringList.Create;
-                  FExtToMimeIconName.Add(sExtension, iconsList);
-                end
-              else
-                iconsList := TStringList(node.Data);
-
-              if iconsList.IndexOf(sMimeIconName) < 0 then
-                iconsList.Add(sMimeIconName);
-
-              // Shared-mime-info spec says:
-              // "If [generic-icon] is not specified then the mimetype is used to generate the
-              // generic icon by using the top-level media type (e.g. "video" in "video/ogg")
-              // and appending "-x-generic" (i.e. "video-x-generic" in the previous example)."
-              if Assigned(generic_icons) then
-                begin
-                  J := generic_icons.IndexOfName(sMimeType);
-                  if J <> -1 then
-                    sMimeIconName := generic_icons.ValueFromIndex[J] // found generic icon
-                  else
-                    sMimeIconName := Copy2Symb(sMimeIconName, '-') + '-x-generic';
-                end
-              else
-                sMimeIconName := Copy2Symb(sMimeIconName, '-') + '-x-generic';
-
-              if iconsList.IndexOf(sMimeIconName) < 0 then
-                iconsList.Add(sMimeIconName);
-            end;
-          end;
-      end;
-    end;
-
-  finally
-    if Assigned(globs) then
-      FreeAndNil(globs);
-    if Assigned(generic_icons) then
-      FreeAndNil(generic_icons);
-  end;
+  if (FMimeProvider.Count = 0) and (FpAccess(mime_globs, R_OK) = 0) then
+    FMimeProvider.LoadFromFiles(mime_globs, mime_generic_icons);
 end;
 {$ENDIF}
 
