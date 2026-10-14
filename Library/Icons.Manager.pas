@@ -135,13 +135,13 @@ end;
 
 procedure TIconsManager.Clear(AOnlyStaticItems: Boolean);
 var
-  Item: TBaseIcon;
+  I: Integer;
 begin
   if AOnlyStaticItems then
   begin
-    for Item in FItems do
-      if Item.Static then
-        FItems.Remove(Item);
+    for I := FItems.Count - 1 downto 0 do
+      if FItems[I].Static then
+        FItems.Delete(I);
   end
   else
     FItems.Clear;
@@ -196,7 +196,7 @@ begin
     try
       Result := Icon.ImageIndex;
     finally
-      AddIcon(Icon);
+      AddExtIcon(Icon);
     end;
   end;
 end;

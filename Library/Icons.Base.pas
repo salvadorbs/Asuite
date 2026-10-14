@@ -225,12 +225,16 @@ var
 begin
   Result := nil;
 
-  if not FileExists(APathFile) and (ExtractLowerFileExt(APathFile) = EXT_ICO) then
+  if not FileExists(APathFile) or (ExtractLowerFileExt(APathFile) <> EXT_ICO) then
     Exit;
 
   Icon := TBGRAIconCursor.Create(ifIco);
   try
-    Icon.LoadFromFile(APathFile);
+    try
+      Icon.LoadFromFile(APathFile);
+    except
+      Exit;
+    end;
 
     if AWantLargeIcon then
       Result := (Icon.GetBestFitBitmap(ICON_SIZE_LARGE, ICON_SIZE_LARGE) as TBGRABitmap)
