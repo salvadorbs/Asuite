@@ -23,7 +23,8 @@ uses
   Tests.Conversions,
   Tests.FileFolder,
   Tests.Scheduler,
-  Tests.IconsManager;
+  Tests.IconsManager,
+  Tests.IconsBaseLogic;
 
 var
   Application: TTestRunner;
