@@ -22,7 +22,8 @@ uses
   Tests.ConfigPaths,
   Tests.Conversions,
   Tests.FileFolder,
-  Tests.Scheduler;
+  Tests.Scheduler,
+  Tests.IconsManager;
 
 var
   Application: TTestRunner;
