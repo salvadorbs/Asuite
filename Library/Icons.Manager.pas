@@ -54,7 +54,7 @@ type
     procedure RegisterExtIcon(ABaseIcon: TBaseIcon);
     procedure RebuildIndexes;
     {$IFDEF UNIX}
-    procedure LoadMimeIconNames;
+    procedure EnsureMimeLoaded;
     function GetIconByDesktopFile(AFileName: String): String;
     {$ENDIF}
   public
@@ -74,13 +74,8 @@ type
     function GetIconFromImgList(AImageIndex: Integer; ALargeIcon: Boolean
       ): TBGRABitmap;
     {$IFDEF UNIX}
-      {$IFDEF QT}
-      function GetSystemIconName(const AFileName: String): String;
-      function CheckSystemIconName(const AIconName: String): Boolean;
-      {$ELSE}
-      function GetSystemIconName(const AFileName: AnsiString): AnsiString;
-      function CheckSystemIconName(const AIconName: AnsiString): Boolean;
-      {$ENDIF}
+    function GetSystemIconName(const AFileName: String): String;
+    function CheckSystemIconName(const AIconName: String): Boolean;
     {$ENDIF}
 
     property PathTheme: string read GetPathTheme write SetPathTheme;
@@ -119,11 +114,8 @@ begin
   FByPath := TDictionary<string, TFileIcon>.Create;
   FByExt := TDictionary<string, TExtFileIcon>.Create;
   FMimeProvider := TMimeIconProvider.Create;
-
-  {$IFDEF UNIX}
-  //Get mime and icons name from all extension in system
-  LoadMimeIconNames;
-  {$ENDIF}
+  // MIME table is loaded lazily on first GetSystemIconName (see EnsureMimeLoaded)
+  // to keep startup and unit tests fast.
 end;
 
 destructor TIconsManager.Destroy;
@@ -290,17 +282,14 @@ begin
 end;
 
 {$IFDEF UNIX}
-{$IFDEF QT}
 function TIconsManager.GetSystemIconName(const AFileName: String): String;
-{$ELSE}
-function TIconsManager.GetSystemIconName(const AFileName: AnsiString): AnsiString;
-{$ENDIF}
 var
   I: Integer;
   iconList: TStringList;
   Extension: String;
 begin
   Result := EmptyStr;
+  EnsureMimeLoaded;
 
   //It is a link? Ok, get target file icon
   if FpReadLink(AFilename) <> EmptyStr then
@@ -340,7 +329,7 @@ begin
         {$IFDEF QT}
         if QIcon_hasThemeIcon(@Result) then break;
         {$ELSE}
-        if gtk_icon_theme_has_icon(gtk_icon_theme_get_default, PAnsiChar(Result)) then break;
+        if gtk_icon_theme_has_icon(gtk_icon_theme_get_default, PAnsiChar(UTF8Encode(Result))) then break;
         {$ENDIF}
       end;
     end;
@@ -514,22 +503,27 @@ function TIconsManager.CheckSystemIconName(const AIconName: String): Boolean;
 begin
   //QIcon_fromTheme can load icon name and absolute filepath, too
   Result := ((AIconName <> EmptyStr) and (QIcon_hasThemeIcon(@AIconName) or FileExists(AIconName)));
-end;  
-{$ELSE}  
-function TIconsManager.CheckSystemIconName(const AIconName: AnsiString): Boolean;
+end;
+{$ELSE}
+function TIconsManager.CheckSystemIconName(const AIconName: String): Boolean;
 begin
-  Result := ((AIconName <> EmptyStr) and (gtk_icon_theme_has_icon(gtk_icon_theme_get_default, PAnsiChar(AIconName)) or
-             FileExists(AIconName)));     
+  Result := ((AIconName <> EmptyStr) and (gtk_icon_theme_has_icon(gtk_icon_theme_get_default, PAnsiChar(UTF8Encode(AIconName))) or
+             FileExists(AIconName)));
 end;
 {$ENDIF}
 
-procedure TIconsManager.LoadMimeIconNames;
+procedure TIconsManager.EnsureMimeLoaded;
 const
   mime_globs = '/usr/share/mime/globs';
   mime_generic_icons = '/usr/share/mime/generic-icons';
 begin
-  if (FMimeProvider.Count = 0) and (FpAccess(mime_globs, R_OK) = 0) then
-    FMimeProvider.LoadFromFiles(mime_globs, mime_generic_icons);
+  FLock.Acquire;
+  try
+    if (FMimeProvider.Count = 0) and (FpAccess(mime_globs, R_OK) = 0) then
+      FMimeProvider.LoadFromFiles(mime_globs, mime_generic_icons);
+  finally
+    FLock.Release;
+  end;
 end;
 {$ENDIF}
 

@@ -34,7 +34,7 @@ type
   TGtkCustomIcon = class(TBaseIcon)
   private
     function PixBufToBitmap(Pixbuf: PGdkPixbuf): TBitmap;
-    function ExtractIcon(const sIconName: AnsiString; ALargeImage: Boolean
+    function ExtractIcon(const sIconName: String; ALargeImage: Boolean
       ): TBitmap;
   protected
     function GetIconFromFile(const APathFile: string;
@@ -52,7 +52,7 @@ uses
 
 {$I ../Icons.Pixbuf.inc}
 
-function TGtkCustomIcon.ExtractIcon(const sIconName: AnsiString;
+function TGtkCustomIcon.ExtractIcon(const sIconName: String;
   ALargeImage: Boolean): TBitmap;
 var
   pbPicture: PGdkPixbuf = nil;
@@ -69,9 +69,9 @@ begin
     if ASuiteManager.IconsManager.CheckSystemIconName(sIconName) then
     begin
       if FileExists(sIconName) then
-        pbPicture := gdk_pixbuf_new_from_file_at_size(PAnsiChar(sIconName), Size, Size, nil)
+        pbPicture := gdk_pixbuf_new_from_file_at_size(PAnsiChar(UTF8Encode(sIconName)), Size, Size, nil)
       else
-        pbPicture := gtk_icon_theme_load_icon(gtk_icon_theme_get_for_screen(gdk_screen_get_default), Pgchar(sIconName), Size, GTK_ICON_LOOKUP_USE_BUILTIN, nil);
+        pbPicture := gtk_icon_theme_load_icon(gtk_icon_theme_get_for_screen(gdk_screen_get_default), Pgchar(PAnsiChar(UTF8Encode(sIconName))), Size, GTK_ICON_LOOKUP_USE_BUILTIN, nil);
     end;
 
     if Assigned(pbPicture) then
@@ -86,7 +86,7 @@ end;
 function TGtkCustomIcon.GetIconFromFile(const APathFile: string;
   const AWantLargeIcon: Boolean): TBGRABitmap;
 var
-  iconName: AnsiString;
+  iconName: String;
   bmp: TBitmap;
 begin
   iconName := ASuiteManager.IconsManager.GetSystemIconName(APathFile);
