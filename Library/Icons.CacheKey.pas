@@ -53,6 +53,8 @@ begin
     Exit('');
   if (s <> '') and (s[1] <> '.') then
     s := '.' + s;
+  if s = '.*' then
+    Exit('');
   Result := LowerCase(s);
 end;
 

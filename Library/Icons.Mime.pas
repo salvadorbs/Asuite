@@ -99,7 +99,7 @@ begin
 
   oGeneric := TStringList.Create;
   try
-    oGeneric.NameValueSeparator := ':';
+    oGeneric.NameValueSeparator := '=';
     if Assigned(AGenericIcons) then
     begin
       for I := 0 to AGenericIcons.Count - 1 do
