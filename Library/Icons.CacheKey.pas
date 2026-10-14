@@ -27,8 +27,6 @@ const
   EXT_ICO_CACHE = '.ico';
   EXT_EXE_CACHE = '.exe';
 
-function NormalizeExt(const AExt: string): string;
-function NormalizeExtKey(const AExt: string): string;
 function SanitizeCacheName(const AName: string): string;
 function HashPathString(const APath: string): Cardinal;
 function ShouldCacheIcon(const AName, APath: string; ATempItem: Boolean): Boolean;
@@ -38,25 +36,6 @@ implementation
 
 uses
   SysUtils;
-
-function NormalizeExt(const AExt: string): string;
-var
-  s: string;
-begin
-  s := Trim(AExt);
-  if s = '' then
-    Exit('');
-  // Accept '*.txt', '*.', '*', 'txt', '.txt' forms
-  if (Length(s) >= 2) and (s[1] = '*') and (s[2] = '.') then
-    Delete(s, 1, 1)
-  else if (s = '*') or (s = '*.*') then
-    Exit('');
-  if (s <> '') and (s[1] <> '.') then
-    s := '.' + s;
-  if s = '.*' then
-    Exit('');
-  Result := LowerCase(s);
-end;
 
 function SanitizeCacheName(const AName: string): string;
 var
@@ -96,17 +75,6 @@ end;
 function ExtractExtLower(const APath: string): string;
 begin
   Result := LowerCase(ExtractFileExt(APath));
-end;
-
-function NormalizeExtKey(const AExt: string): string;
-var
-  sNorm: string;
-begin
-  sNorm := NormalizeExt(AExt);
-  if sNorm = '' then
-    Result := LowerCase(Trim(AExt))
-  else
-    Result := '*' + sNorm;
 end;
 
 function ShouldCacheIcon(const AName, APath: string; ATempItem: Boolean): Boolean;

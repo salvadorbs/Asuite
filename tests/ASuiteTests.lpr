@@ -16,8 +16,7 @@ uses
   Tests.AppConfigObserver,
   Tests.RunActionLogic,
   Tests.LanguageManager,
-  Tests.IconsCacheKey,
-  Tests.IconsMime;
+  Tests.IconsCacheKey;
 
 var
   Application: TTestRunner;

@@ -28,7 +28,7 @@ interface
 uses
   SysUtils, Classes, Controls, Forms, Icons.Files, Generics.Collections, SyncObjs,
   Kernel.Consts, LCLIntf, Icons.Base, Icons.ExtFile, BGRABitmap,
-  Icons.Mime;
+  SystemIcons.Mime;
 
 type
   TBaseIcons = class(TObjectList<TBaseIcon>);
@@ -85,7 +85,7 @@ implementation
 
 uses
   Kernel.Logger, FileUtil, LazFileUtils, Kernel.Instance, ImgList,
-  Graphics, DataModules.Icons, mormot.core.log, Icons.CacheKey
+  Graphics, DataModules.Icons, mormot.core.log, SystemIcons.Ext
   {$IFDEF UNIX}
   , IniFiles, BaseUnix, Utility.FileFolder
     {$IFDEF QT}
@@ -201,7 +201,7 @@ begin
   log := TASuiteLogger.Enter('TIconsManager.GetExtIconIndex', Self);
   Result := -1;
 
-  sKey := Icons.CacheKey.NormalizeExtKey(AExtension);
+  sKey := string(SystemIcons.Ext.NormalizeExtKey(AnsiString(AExtension)));
   if sKey = '' then
     Exit;
   FLock.Acquire;
@@ -326,13 +326,13 @@ begin
   end
   else if (Extension <> '*') then
   begin
-    iconList := FMimeProvider.GetIconNames(Extension);
+    iconList := FMimeProvider.GetIconNames(AnsiString(Extension));
     if Assigned(iconList) then
     begin
       //First valid icon wins
       for I := 0 to iconList.Count - 1 do
       begin
-        Result := iconList.Strings[I];
+        Result := string(iconList.Strings[I]);
 
         {$IFDEF QT}
         if QIcon_hasThemeIcon(@Result) then break;
@@ -435,7 +435,7 @@ var
   sKey: string;
 begin
   Result := nil;
-  sKey := Icons.CacheKey.NormalizeExtKey(AExtension);
+  sKey := string(SystemIcons.Ext.NormalizeExtKey(AnsiString(AExtension)));
   if sKey = '' then
     Exit;
   FLock.Acquire;

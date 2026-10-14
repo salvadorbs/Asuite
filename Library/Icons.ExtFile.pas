@@ -46,12 +46,12 @@ type
 implementation
 
 uses
-  Icons.CacheKey;
+  SystemIcons.Ext;
 
 constructor TExtFileIcon.Create(AExtFile: string);
 begin
   inherited Create;
-  FExtFile := Icons.CacheKey.NormalizeExtKey(AExtFile);
+  FExtFile := SystemIcons.Ext.NormalizeExtKey(AExtFile);
 end;
 
 function TExtFileIcon.GetName: string;
