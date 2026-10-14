@@ -93,6 +93,8 @@ var
   oGeneric: TStringList;
   iconsList: TStringList;
 begin
+  // NOTE: MIME files and icon names are ASCII; conversions between the
+  // AnsiString-based TStrings and this unit's UnicodeString are explicit below.
   Clear;
   if not Assigned(AGlobs) then
     Exit;
@@ -104,18 +106,18 @@ begin
     begin
       for I := 0 to AGenericIcons.Count - 1 do
       begin
-        sLine := AGenericIcons[I];
+        sLine := UnicodeString(AGenericIcons[I]);
         if (sLine = '') or (sLine[1] = '#') then
           Continue;
         p := Pos(':', sLine);
         if p > 0 then
-          oGeneric.Add(Copy(sLine, 1, p - 1) + '=' + Copy(sLine, p + 1, MaxInt));
+          oGeneric.Add(AnsiString(Copy(sLine, 1, p - 1) + '=' + Copy(sLine, p + 1, MaxInt)));
       end;
     end;
 
     for I := 0 to AGlobs.Count - 1 do
     begin
-      sLine := AGlobs[I];
+      sLine := UnicodeString(AGlobs[I]);
       if (sLine = '') or (sLine[1] = '#') then
         Continue;
       p := Pos(':', sLine);
@@ -136,17 +138,17 @@ begin
         FMap.Add(sExtension, iconsList);
       end;
 
-      if iconsList.IndexOf(sMimeIconName) < 0 then
-        iconsList.Add(sMimeIconName);
+      if iconsList.IndexOf(AnsiString(sMimeIconName)) < 0 then
+        iconsList.Add(AnsiString(sMimeIconName));
 
-      q := oGeneric.IndexOfName(sMimeType);
+      q := oGeneric.IndexOfName(AnsiString(sMimeType));
       if q >= 0 then
-        sGeneric := oGeneric.ValueFromIndex[q]
+        sGeneric := UnicodeString(oGeneric.ValueFromIndex[q])
       else
         sGeneric := GenericFallback(sMimeIconName);
 
-      if (sGeneric <> '') and (iconsList.IndexOf(sGeneric) < 0) then
-        iconsList.Add(sGeneric);
+      if (sGeneric <> '') and (iconsList.IndexOf(AnsiString(sGeneric)) < 0) then
+        iconsList.Add(AnsiString(sGeneric));
     end;
   finally
     oGeneric.Free;
@@ -189,7 +191,7 @@ begin
   begin
     for I := 0 to names.Count - 1 do
     begin
-      Result := names[I];
+      Result := UnicodeString(names[I]);
       if AIsAvailable(Result) then
         Exit;
     end;

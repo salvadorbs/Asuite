@@ -139,6 +139,9 @@ begin
   begin
     // Unique per item: Name is ID for nodes (stable), basename for temp files.
     // For temp items add a path hash to avoid basename collisions.
+    // NOTE: non-temp generic extensions (e.g. .lnk/.pdf nodes) previously shared
+    // a single '<ext>.ico' file; they now use '<id>.ico'. Legacy shared files may
+    // remain orphaned in the cache dir (still reused by temp items) - harmless.
     sBase := SanitizeCacheName(LowerCase(AName));
     if sBase = '' then
       Exit;
