@@ -130,7 +130,8 @@ end;
 
 procedure TNodeIcon.DoInvalidateNode;
 begin
-  if Assigned(FNodeData) and Assigned(FNodeData.PNode) then
+  if Assigned(FNodeData) and Assigned(FNodeData.PNode) and Assigned(ASuiteInstance) and
+    Assigned(ASuiteInstance.MainTree) then
     ASuiteInstance.MainTree.InvalidateNode(FNodeData.PNode);
 end;
 
