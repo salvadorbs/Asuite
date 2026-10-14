@@ -50,9 +50,6 @@ type
 
     procedure LoadAllIcons;
     procedure SetPathTheme(const Value: string);
-    function FindByPath(APathFile: String): TFileIcon;
-    function FindByName(AName: String): TBaseIcon;
-    function FindByExt(AExtension: String): TExtFileIcon;
     procedure RegisterIcon(ABaseIcon: TBaseIcon);
     procedure RegisterExtIcon(ABaseIcon: TBaseIcon);
     procedure RebuildIndexes;
@@ -70,7 +67,10 @@ type
     function GetPathIconIndex(APathIcon: string): Integer;
     function GetExtIconIndex(AExtension: string): Integer;
     procedure AddIcon(ABaseIcon: TBaseIcon);
-    procedure AddExtIcon(ABaseIcon: TBaseIcon);   
+    procedure AddExtIcon(ABaseIcon: TBaseIcon);
+    function FindByPath(APathFile: String): TFileIcon;
+    function FindByName(AName: String): TBaseIcon;
+    function FindByExt(AExtension: String): TExtFileIcon;   
     function GetIconFromImgList(AImageIndex: Integer; ALargeIcon: Boolean
       ): TBGRABitmap;
     {$IFDEF UNIX}
