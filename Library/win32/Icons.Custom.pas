@@ -84,7 +84,11 @@ begin
   Result := TBGRABitmap.Create;
 
   if Windows.GetIconInfo(AHIcon, IconInfo) = False then
+  begin
+    // Signal failure with nil so callers can fall back instead of caching blanks
+    FreeAndNil(Result);
     Exit;
+  end;
 
   try
     Result.Bitmap.LoadFromBitmapHandles(IconInfo.hbmColor, IconInfo.hbmMask);

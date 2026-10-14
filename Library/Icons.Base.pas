@@ -183,6 +183,8 @@ end;
 
 procedure TBaseIcon.SaveCacheIcon(const APath: string;
   const AImageIndex: Integer; const AHash: Integer);
+const
+  ICO_BITDEPTH = 32;
 var
   Icon: TBGRAIconCursor;
   bmpLargeIcon, bmpSmallIcon: TBGRABitmap;
@@ -203,8 +205,8 @@ begin
         try
           if Assigned(bmpSmallIcon) and Assigned(bmpLargeIcon) then
           begin
-            Icon.Add(bmpSmallIcon, 32);
-            Icon.Add(bmpLargeIcon, 32);
+            Icon.Add(bmpSmallIcon, ICO_BITDEPTH);
+            Icon.Add(bmpLargeIcon, ICO_BITDEPTH);
 
             //Save file and get CRC from it
             Icon.SaveToFile(sCacheFile);
