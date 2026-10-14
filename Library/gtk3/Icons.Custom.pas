@@ -29,9 +29,9 @@ uses
 
 type
 
-  { TGTK3CustomIcon }
+  { TGtkCustomIcon }
 
-  TGTK3CustomIcon = class(TBaseIcon)
+  TGtkCustomIcon = class(TBaseIcon)
   private
     function PixBufToBitmap(Pixbuf: PGdkPixbuf): TBitmap;
     function ExtractIcon(const sIconName: AnsiString; ALargeImage: Boolean
@@ -42,7 +42,7 @@ type
   public
   end;
 
-  TCustomIcon = TGTK3CustomIcon;
+  TCustomIcon = TGtkCustomIcon;
 
 implementation
 
@@ -50,75 +50,9 @@ uses
    Kernel.Consts, BGRABitmapTypes, Kernel.Manager, GraphType, IntfGraphics,
    lazgtk3, LazGLib2, LazGdk3, LazGObject2;
 
-{ TGTK3CustomIcon }
+{$I ../Icons.Pixbuf.inc}
 
-function TGTK3CustomIcon.PixBufToBitmap(Pixbuf: PGdkPixbuf): TBitmap;
-var
-  width, height, rowstride, n_channels, i, j: Integer;
-  pixels: ^guchar;
-  pSrc: PByte;
-  pDst: PLongWord;
-  BmpData: TLazIntfImage;
-  hasAlphaChannel: Boolean;
-  QueryFlags: TRawImageQueryFlags = [riqfRGB];
-  Description: TRawImageDescription;
-  ARawImage: TRawImage;
-begin
-  Result := nil;
-
-  n_channels:= gdk_pixbuf_get_n_channels(Pixbuf);
-
-  if ((n_channels <> 3) and (n_channels <> 4)) or  // RGB or RGBA
-     (gdk_pixbuf_get_colorspace(pixbuf) <> GDK_COLORSPACE_RGB) or
-     (gdk_pixbuf_get_bits_per_sample(pixbuf) <> 8) then Exit;
-
-  width:= gdk_pixbuf_get_width(Pixbuf);
-  height:= gdk_pixbuf_get_height(Pixbuf);
-  rowstride:= gdk_pixbuf_get_rowstride(Pixbuf);
-  pixels:= gdk_pixbuf_get_pixels(Pixbuf);
-  hasAlphaChannel:= gdk_pixbuf_get_has_alpha(Pixbuf);
-
-  if hasAlphaChannel then
-    Include(QueryFlags, riqfAlpha);
-
-  BmpData := TLazIntfImage.Create(width, height, QueryFlags);
-  try
-    BmpData.CreateData;
-    Description := BmpData.DataDescription;
-
-    pDst := PLongWord(BmpData.PixelData);
-    for j:= 0 to Height - 1 do
-    begin
-      pSrc := PByte(pixels) + j * rowstride;
-      for i:= 0 to Width - 1 do
-      begin
-        pDst^ := pSrc[0] shl Description.RedShift +
-                 pSrc[1] shl Description.GreenShift +
-                 pSrc[2] shl Description.BlueShift;
-
-        if hasAlphaChannel then
-          pDst^ := pDst^ + pSrc[3] shl Description.AlphaShift;
-
-        Inc(pSrc, n_channels);
-        Inc(pDst);
-      end;
-    end;
-
-    Result := TBitmap.Create;
-
-    BmpData.GetRawImage(ARawImage, True);
-    // Simply change raw image owner without data copy
-    Result.LoadFromRawImage(ARawImage, True);
-
-    if not hasAlphaChannel then
-      Result.Transparent := True;
-
-  finally
-    BmpData.Free;
-  end;
-end;
-
-function TGTK3CustomIcon.ExtractIcon(const sIconName: AnsiString;
+function TGtkCustomIcon.ExtractIcon(const sIconName: AnsiString;
   ALargeImage: Boolean): TBitmap;
 var
   pbPicture: PGdkPixbuf = nil;
@@ -149,7 +83,7 @@ begin
   end;
 end;
 
-function TGTK3CustomIcon.GetIconFromFile(const APathFile: string;
+function TGtkCustomIcon.GetIconFromFile(const APathFile: string;
   const AWantLargeIcon: Boolean): TBGRABitmap;
 var
   iconName: AnsiString;
