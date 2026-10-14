@@ -166,7 +166,9 @@ end;
 function TIconsManager.GetPathIconIndex(APathIcon: string): Integer;
 var
   Icon: TFileIcon;
+  {%H-}log: ISynLog;
 begin
+  log := TASuiteLogger.Enter('TIconsManager.GetPathIconIndex', Self);
   Result := -1;
 
   //Double-checked: fast lookup under lock, create placeholder if missing
@@ -194,7 +196,9 @@ function TIconsManager.GetExtIconIndex(AExtension: string): Integer;
 var
   Icon: TExtFileIcon;
   sKey: string;
+  {%H-}log: ISynLog;
 begin
+  log := TASuiteLogger.Enter('TIconsManager.GetExtIconIndex', Self);
   Result := -1;
 
   sKey := Icons.CacheKey.NormalizeExtKey(AExtension);
@@ -253,7 +257,9 @@ function TIconsManager.GetIconFromImgList(AImageIndex: Integer; ALargeIcon: Bool
 var
   Images: TCustomImageListResolution;
   bmpTemp: Graphics.TBitmap;
+  {%H-}log: ISynLog;
 begin
+  log := TASuiteLogger.Enter('TIconsManager.GetIconFromImgList', Self);
   Result := nil;
 
   if not Assigned(dmImages.ilIcons) then
@@ -287,7 +293,9 @@ var
   I: Integer;
   iconList: TStringList;
   Extension: String;
+  {%H-}log: ISynLog;
 begin
+  log := TASuiteLogger.Enter('TIconsManager.GetSystemIconName', Self);
   Result := EmptyStr;
   EnsureMimeLoaded;
 
@@ -516,7 +524,10 @@ procedure TIconsManager.EnsureMimeLoaded;
 const
   mime_globs = '/usr/share/mime/globs';
   mime_generic_icons = '/usr/share/mime/generic-icons';
+var
+  {%H-}log: ISynLog;
 begin
+  log := TASuiteLogger.Enter('TIconsManager.EnsureMimeLoaded', Self);
   FLock.Acquire;
   try
     if (FMimeProvider.Count = 0) and (FpAccess(mime_globs, R_OK) = 0) then

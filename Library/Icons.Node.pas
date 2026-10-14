@@ -55,7 +55,7 @@ implementation
 
 uses
   NodeDataTypes.Files, BGRABitmapTypes, Kernel.Instance, Kernel.Manager,
-  Kernel.Consts;
+  Kernel.Consts, Kernel.Logger, mormot.core.log;
 
 { TNodeIcon }
 
@@ -110,7 +110,10 @@ begin
 end;
 
 function TNodeIcon.LoadIcon: Integer;
+var
+  {%H-}log: ISynLog;
 begin
+  log := TASuiteLogger.Enter('TNodeIcon.LoadIcon', Self);
   Result := -1;
   if not Assigned(FNodeData) then
     Exit;

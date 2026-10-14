@@ -110,8 +110,10 @@ end;
 procedure TTreeIconsThread.SyncLoadOne;
 var
   NodeData: TvBaseNodeData;
+  {%H-}log: ISynLog;
 begin
   // Runs on the main thread via Synchronize.
+  log := TASuiteLogger.Enter('TTreeIconsThread.SyncLoadOne', Self);
   if (FIndex < 0) or (FIndex >= FItems.Count) then
     Exit;
   if not PreloadAllowed then

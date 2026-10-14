@@ -87,7 +87,7 @@ uses
    DataModules.Icons, Kernel.Consts, BGRABitmapTypes, Utility.FileFolder,
    AppConfig.Main, Kernel.Enumerations, Utility.System, Kernel.Instance,
    Kernel.Manager, LazFileUtils, HlpHashFactory, Kernel.Logger, FileUtil,
-   Kernel.ResourceStrings, Icons.CacheKey;
+   Kernel.ResourceStrings, Icons.CacheKey, mormot.core.log;
 
 { TBaseIcon }
 
@@ -123,7 +123,9 @@ var
   sTempPath, sPathCacheIcon, sDefaultPath: string;
   intHash: Integer;
   isExeFile: Boolean;
+  {%H-}log: ISynLog;
 begin
+  log := TASuiteLogger.Enter('TBaseIcon.InternalLoadIcon', Self);
   Result := -1;
   intHash := 0;
   sTempPath := '';
@@ -189,7 +191,9 @@ var
   Icon: TBGRAIconCursor;
   bmpLargeIcon, bmpSmallIcon: TBGRABitmap;
   sCacheFile: string;
+  {%H-}log: ISynLog;
 begin
+  log := TASuiteLogger.Enter('TBaseIcon.SaveCacheIcon', Self);
   if DoUseCache and (AImageIndex <> -1) then
   begin
     if Icons.CacheKey.ShouldCacheIcon(Self.Name, APath, FTempItem) then
@@ -240,7 +244,9 @@ function TBaseIcon.LoadFromFileIcon(const APathFile: string;
   const AWantLargeIcon: Boolean): TBGRABitmap;
 var
   Icon : TBGRAIconCursor;
+  {%H-}log: ISynLog;
 begin
+  log := TASuiteLogger.Enter('TBaseIcon.LoadFromFileIcon', Self);
   Result := nil;
 
   if not DoFileExists(APathFile) or (ExtractLowerFileExt(APathFile) <> EXT_ICO) then
@@ -323,7 +329,9 @@ end;
 function TBaseIcon.InternalGetImageIndex(const APathFile: string): Integer;
 var
   bmpSmallIcon, bmpLargeIcon: TBGRABitmap;
+  {%H-}log: ISynLog;
 begin
+  log := TASuiteLogger.Enter('TBaseIcon.InternalGetImageIndex', Self);
   Result := -1;
 
   //Get icon and insert it in ASuite ImageList
