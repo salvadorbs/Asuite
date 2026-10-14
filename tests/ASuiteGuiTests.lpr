@@ -11,9 +11,6 @@ program ASuiteGuiTests;
 {$mode objfpc}{$H+}
 
 uses
-  // NOTE: unit order matters with FPC 3.2.2 heaptrc. This GUI runner hangs on
-  // shutdown with cthreads first; the console runner (ASuiteTests.lpr) needs
-  // the opposite order or it prints no dump. Do not "normalize".
   heaptrc,
   {$IFDEF UNIX}
   cthreads,
