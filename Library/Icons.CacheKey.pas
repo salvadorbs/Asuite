@@ -28,6 +28,7 @@ const
   EXT_EXE_CACHE = '.exe';
 
 function NormalizeExt(const AExt: string): string;
+function NormalizeExtKey(const AExt: string): string;
 function SanitizeCacheName(const AName: string): string;
 function HashPathString(const APath: string): Cardinal;
 function ShouldCacheIcon(const AName, APath: string; ATempItem: Boolean): Boolean;
@@ -93,6 +94,17 @@ end;
 function ExtractExtLower(const APath: string): string;
 begin
   Result := LowerCase(ExtractFileExt(APath));
+end;
+
+function NormalizeExtKey(const AExt: string): string;
+var
+  sNorm: string;
+begin
+  sNorm := NormalizeExt(AExt);
+  if sNorm = '' then
+    Result := LowerCase(Trim(AExt))
+  else
+    Result := '*' + sNorm;
 end;
 
 function ShouldCacheIcon(const AName, APath: string; ATempItem: Boolean): Boolean;

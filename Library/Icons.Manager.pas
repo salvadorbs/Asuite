@@ -92,7 +92,7 @@ implementation
 
 uses
   Kernel.Logger, FileUtil, LazFileUtils, Kernel.Instance, ImgList,
-  Graphics, DataModules.Icons, mormot.core.log
+  Graphics, DataModules.Icons, mormot.core.log, Icons.CacheKey
   {$IFDEF UNIX}
   , IniFiles, BaseUnix, StrUtils, Utility.FileFolder
     {$IFDEF QT}
@@ -211,7 +211,9 @@ var
 begin
   Result := -1;
 
-  sKey := LowerCase(AExtension);
+  sKey := Icons.CacheKey.NormalizeExtKey(AExtension);
+  if sKey = '' then
+    Exit;
   FLock.Acquire;
   try
     if FByExt.TryGetValue(sKey, Icon) then
@@ -445,7 +447,9 @@ var
   sKey: string;
 begin
   Result := nil;
-  sKey := LowerCase(AExtension);
+  sKey := Icons.CacheKey.NormalizeExtKey(AExtension);
+  if sKey = '' then
+    Exit;
   FLock.Acquire;
   try
     FByExt.TryGetValue(sKey, Result);

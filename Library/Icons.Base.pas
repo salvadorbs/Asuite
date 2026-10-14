@@ -50,7 +50,7 @@ type
     function InternalLoadIcon: Integer; virtual;
     function LoadIcon: Integer; virtual;
     function GetName: string; virtual; abstract;
-    function GetDefaultPathIcon: string; virtual; abstract;
+    function GetDefaultPathIcon: string; virtual;
     function GetIconFromFile(const APathFile: string; const AWantLargeIcon: Boolean
       ): TBGRABitmap; virtual; abstract;
     function LoadFromFileIcon(const APathFile: string; const AWantLargeIcon: Boolean
@@ -311,6 +311,11 @@ end;
 function TBaseIcon.DoGetIconFromImgList(AImageIndex: Integer; ALargeIcon: Boolean): TBGRABitmap;
 begin
   Result := ASuiteManager.IconsManager.GetIconFromImgList(AImageIndex, ALargeIcon);
+end;
+
+function TBaseIcon.GetDefaultPathIcon: string;
+begin
+  Result := '';
 end;
 
 function TBaseIcon.InternalGetImageIndex(const APathFile: string): Integer;
