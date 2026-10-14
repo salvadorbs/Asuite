@@ -41,6 +41,9 @@ type
     FItems: TBaseIcons;
     FExtItems: TBaseIcons;
     FLock: SyncObjs.TCriticalSection;
+    FByName: TDictionary<string, TBaseIcon>;
+    FByPath: TDictionary<string, TFileIcon>;
+    FByExt: TDictionary<string, TExtFileIcon>;
     {$IFDEF UNIX}
     FExtToMimeIconName: TFPDataHashTable;
     {$ENDIF}
@@ -51,6 +54,9 @@ type
     function FindByPath(APathFile: String): TFileIcon;
     function FindByName(AName: String): TBaseIcon;
     function FindByExt(AExtension: String): TExtFileIcon;
+    procedure RegisterIcon(ABaseIcon: TBaseIcon);
+    procedure RegisterExtIcon(ABaseIcon: TBaseIcon);
+    procedure RebuildIndexes;
     {$IFDEF UNIX}
     procedure LoadMimeIconNames;
     function GetIconByDesktopFile(AFileName: String): String;
@@ -109,8 +115,11 @@ uses
 constructor TIconsManager.Create;
 begin
   FItems := TBaseIcons.Create(True);
-  FExtItems := TBaseIcons.Create(True);       
+  FExtItems := TBaseIcons.Create(True);
   FLock := SyncObjs.TCriticalSection.Create;
+  FByName := TDictionary<string, TBaseIcon>.Create;
+  FByPath := TDictionary<string, TFileIcon>.Create;
+  FByExt := TDictionary<string, TExtFileIcon>.Create;
 
   {$IFDEF UNIX}
   //Get mime and icons name from all extension in system
@@ -121,8 +130,11 @@ end;
 
 destructor TIconsManager.Destroy;
 begin
+  FByName.Free;
+  FByPath.Free;
+  FByExt.Free;
   FItems.Free;
-  FExtItems.Free;   
+  FExtItems.Free;
   FLock.Free;
 
   {$IFDEF UNIX}
@@ -137,14 +149,20 @@ procedure TIconsManager.Clear(AOnlyStaticItems: Boolean);
 var
   I: Integer;
 begin
-  if AOnlyStaticItems then
-  begin
-    for I := FItems.Count - 1 downto 0 do
-      if FItems[I].Static then
-        FItems.Delete(I);
-  end
-  else
-    FItems.Clear;
+  FLock.Acquire;
+  try
+    if AOnlyStaticItems then
+    begin
+      for I := FItems.Count - 1 downto 0 do
+        if FItems[I].Static then
+          FItems.Delete(I);
+    end
+    else
+      FItems.Clear;
+    RebuildIndexes;
+  finally
+    FLock.Release;
+  end;
 end;
 
 function TIconsManager.GetIconIndex(AName: string): Integer;
@@ -165,51 +183,66 @@ var
 begin
   Result := -1;
 
-  //Before find the icon, if it isn't exists yet, I will load it
-  Icon := FindByPath(APathIcon);
+  //Double-checked: fast lookup under lock, create placeholder if missing
+  //so concurrent threads do not create duplicates.
+  FLock.Acquire;
+  try
+    if FByPath.TryGetValue(APathIcon, Icon) then
+    begin
+      // Found under lock, load outside lock below
+    end
+    else begin
+      Icon := TFileIcon.Create(APathIcon);
+      FItems.Add(Icon);
+      RegisterIcon(Icon);
+    end;
+  finally
+    FLock.Release;
+  end;
 
   if Assigned(Icon) then
-    Result := Icon.ImageIndex
-  else begin
-    Icon := TFileIcon.Create(APathIcon);
-    try
-      Result := Icon.ImageIndex;
-    finally
-      AddIcon(Icon);
-    end;
-  end;
+    Result := Icon.ImageIndex;
 end;
 
 function TIconsManager.GetExtIconIndex(AExtension: string): Integer;
 var
   Icon: TExtFileIcon;
+  sKey: string;
 begin
   Result := -1;
 
-  //Before find the icon, if it isn't exists yet, I will load it
-  Icon := FindByExt(AExtension);
+  sKey := LowerCase(AExtension);
+  FLock.Acquire;
+  try
+    if FByExt.TryGetValue(sKey, Icon) then
+    begin
+      // Found, load outside lock
+    end
+    else begin
+      Icon := TExtFileIcon.Create(AExtension);
+      FExtItems.Add(Icon);
+      RegisterExtIcon(Icon);
+    end;
+  finally
+    FLock.Release;
+  end;
 
   if Assigned(Icon) then
-    Result := Icon.ImageIndex
-  else begin
-    Icon := TExtFileIcon.Create(AExtension);
-    try
-      Result := Icon.ImageIndex;
-    finally
-      AddExtIcon(Icon);
-    end;
-  end;
+    Result := Icon.ImageIndex;
 end;
 
 procedure TIconsManager.AddIcon(ABaseIcon: TBaseIcon);
 begin
   Assert(Assigned(ABaseIcon), 'ABaseIcon is not assigned!');
 
+  //Lazy: do not extract the icon here, it will be loaded on first ImageIndex
+  //access. This also keeps the lock short and avoids duplicates.
+  FLock.Acquire;
   try
-    //It is doesn't necessary load now icon (so in this way, speed up icon loading)
-    //ABaseIcon.LoadIcon;
-  finally
     FItems.Add(ABaseIcon);
+    RegisterIcon(ABaseIcon);
+  finally
+    FLock.Release;
   end;
 end;
 
@@ -217,11 +250,14 @@ procedure TIconsManager.AddExtIcon(ABaseIcon: TBaseIcon);
 begin
   Assert(Assigned(ABaseIcon), 'ABaseIcon is not assigned!');
 
+  //Lazy like AddIcon: the icon is extracted on first ImageIndex access.
+  //Previously this forced extraction here, holding no lock during I/O now.
+  FLock.Acquire;
   try
-    //Call ImageIndex, so I will extract the icon now
-    ABaseIcon.ImageIndex;
-  finally
     FExtItems.Add(ABaseIcon);
+    RegisterExtIcon(ABaseIcon);
+  finally
+    FLock.Release;
   end;
 end;
 
@@ -377,52 +413,86 @@ begin
 end;
 
 function TIconsManager.FindByPath(APathFile: String): TFileIcon;
-var
-  Item: TBaseIcon;
 begin
-  //Warning: only TFileIcon!
   Result := nil;
-
-  for Item in FItems do
-  begin
-    if (Item is TFileIcon) and (TFileIcon(Item).PathFile = APathFile) then
-    begin
-      Result := TFileIcon(Item);
-      break;
-    end;
+  FLock.Acquire;
+  try
+    FByPath.TryGetValue(APathFile, Result);
+  finally
+    FLock.Release;
   end;
 end;
 
 function TIconsManager.FindByName(AName: String): TBaseIcon;
 var
-  Item: TBaseIcon;
+  sKey: string;
 begin
   Result := nil;
-
-  for Item in FItems do
-  begin
-    if (Item.Name = AName) then
-    begin
-      Result := Item;
-      break;
-    end;
+  // Theme lookups use filename-only names; keep case-insensitive like before
+  // (TFileIcon.GetName already lowercases, be tolerant here too).
+  sKey := LowerCase(AName);
+  FLock.Acquire;
+  try
+    if not FByName.TryGetValue(sKey, Result) then
+      FByName.TryGetValue(AName, Result);
+  finally
+    FLock.Release;
   end;
 end;
 
 function TIconsManager.FindByExt(AExtension: String): TExtFileIcon;
 var
-  Item: TBaseIcon;
+  sKey: string;
 begin
   Result := nil;
-
-  for Item in FExtItems do
-  begin
-    if (Item.Name = LowerCase(AExtension)) and (Item is TExtFileIcon) then
-    begin
-      Result := TExtFileIcon(Item);
-      break;
-    end;
+  sKey := LowerCase(AExtension);
+  FLock.Acquire;
+  try
+    FByExt.TryGetValue(sKey, Result);
+  finally
+    FLock.Release;
   end;
+end;
+
+procedure TIconsManager.RegisterIcon(ABaseIcon: TBaseIcon);
+var
+  sKey: string;
+begin
+  // Caller must hold FLock
+  if ABaseIcon is TFileIcon then
+  begin
+    if TFileIcon(ABaseIcon).PathFile <> '' then
+      FByPath.AddOrSetValue(TFileIcon(ABaseIcon).PathFile, TFileIcon(ABaseIcon));
+  end;
+  sKey := LowerCase(ABaseIcon.Name);
+  if sKey <> '' then
+    FByName.AddOrSetValue(sKey, ABaseIcon);
+end;
+
+procedure TIconsManager.RegisterExtIcon(ABaseIcon: TBaseIcon);
+var
+  sKey: string;
+begin
+  // Caller must hold FLock
+  if not (ABaseIcon is TExtFileIcon) then
+    Exit;
+  sKey := LowerCase(ABaseIcon.Name);
+  if sKey <> '' then
+    FByExt.AddOrSetValue(sKey, TExtFileIcon(ABaseIcon));
+end;
+
+procedure TIconsManager.RebuildIndexes;
+var
+  Item: TBaseIcon;
+begin
+  // Caller must hold FLock
+  FByName.Clear;
+  FByPath.Clear;
+  for Item in FItems do
+    RegisterIcon(Item);
+  FByExt.Clear;
+  for Item in FExtItems do
+    RegisterExtIcon(Item);
 end;
 
 {$IFDEF UNIX}
