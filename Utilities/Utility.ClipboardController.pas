@@ -96,7 +96,7 @@ end;
 procedure TClipboardController.UpdatePasteEnabled(var Enabled: Boolean; IsActiveTree: Boolean);
 begin
   {$IFDEF MSWINDOWS}
-  Enabled := IsActiveTree and IsFormatInClipBoard(CF_VIRTUALTREE);
+  Enabled := IsActiveTree and Clipboard.HasFormat(CF_VIRTUALTREE);
   {$ELSE}
   Enabled := IsActiveTree and (Length(FTree.GetSortedCutCopySet(True)) > 0);
   {$ENDIF}
@@ -106,7 +106,7 @@ procedure TClipboardController.EmptyClipboard;
 begin
   TASuiteLogger.Enter('Clearing clipboard', Self);
   {$IFDEF MSWINDOWS}
-  if IsFormatInClipBoard(CF_VIRTUALTREE) then
+  if Clipboard.HasFormat(CF_VIRTUALTREE) then
   begin
     Windows.OpenClipboard(0);
     try
