@@ -27,8 +27,7 @@ interface
 
 uses
   SysUtils, Classes, Controls, Forms, Icons.Files, Generics.Collections, SyncObjs,
-  Kernel.Consts, LCLIntf, Icons.Base, Icons.ExtFile, BGRABitmap,
-  SystemIcons.Mime;
+  Kernel.Consts, LCLIntf, Icons.Base, Icons.ExtFile, BGRABitmap;
 
 type
   TBaseIcons = class(TObjectList<TBaseIcon>);
@@ -45,7 +44,6 @@ type
     FByName: TDictionary<string, TBaseIcon>;
     FByPath: TDictionary<string, TFileIcon>;
     FByExt: TDictionary<string, TExtFileIcon>;
-    FMimeProvider: TMimeIconProvider;
     function GetPathTheme: string;
 
     procedure LoadAllIcons;
@@ -53,9 +51,6 @@ type
     procedure RegisterIcon(ABaseIcon: TBaseIcon);
     procedure RegisterExtIcon(ABaseIcon: TBaseIcon);
     procedure RebuildIndexes;
-    {$IFDEF UNIX}
-    procedure EnsureMimeLoaded;
-    {$ENDIF}
   public
     { public declarations }
     constructor Create;
@@ -72,7 +67,6 @@ type
     function FindByExt(AExtension: String): TExtFileIcon;   
     function GetIconFromImgList(AImageIndex: Integer; ALargeIcon: Boolean
       ): TBGRABitmap;
-    function GetSystemIcon(const AFileName: string; ASize: Integer): TBGRABitmap;
 
     property PathTheme: string read GetPathTheme write SetPathTheme;
   end;
@@ -81,11 +75,7 @@ implementation
 
 uses
   Kernel.Logger, FileUtil, LazFileUtils, Kernel.Instance, ImgList,
-  Graphics, DataModules.Icons, mormot.core.log, SystemIcons.Ext,
-  SystemIcons.Platform
-  {$IFDEF UNIX}
-  , BaseUnix
-  {$ENDIF};
+  Graphics, DataModules.Icons, mormot.core.log, SystemIcons.Ext;
 
 { TIconsManager }
 
@@ -97,14 +87,10 @@ begin
   FByName := TDictionary<string, TBaseIcon>.Create;
   FByPath := TDictionary<string, TFileIcon>.Create;
   FByExt := TDictionary<string, TExtFileIcon>.Create;
-  FMimeProvider := TMimeIconProvider.Create;
-  // MIME table is loaded lazily on first GetSystemIcon (see EnsureMimeLoaded)
-  // to keep startup and unit tests fast.
 end;
 
 destructor TIconsManager.Destroy;
 begin
-  FMimeProvider.Free;
   FByName.Free;
   FByPath.Free;
   FByExt.Free;
@@ -271,17 +257,6 @@ begin
   end;
 end;
 
-function TIconsManager.GetSystemIcon(const AFileName: string; ASize: Integer): TBGRABitmap;
-var
-  {%H-}log: ISynLog;
-begin
-  log := TASuiteLogger.Enter('TIconsManager.GetSystemIcon', Self);
-  {$IFDEF UNIX}
-  EnsureMimeLoaded;
-  {$ENDIF}
-  Result := TSystemIconHelper.GetSystemIcon(AFileName, ASize, FMimeProvider);
-end;
-
 function TIconsManager.GetPathTheme: string;
 begin
   if FPathTheme <> '' then
@@ -410,24 +385,5 @@ begin
   for Item in FExtItems do
     RegisterExtIcon(Item);
 end;
-
-{$IFDEF UNIX}
-procedure TIconsManager.EnsureMimeLoaded;
-const
-  mime_globs = '/usr/share/mime/globs';
-  mime_generic_icons = '/usr/share/mime/generic-icons';
-var
-  {%H-}log: ISynLog;
-begin
-  log := TASuiteLogger.Enter('TIconsManager.EnsureMimeLoaded', Self);
-  FLock.Acquire;
-  try
-    if (FMimeProvider.Count = 0) and (FpAccess(mime_globs, R_OK) = 0) then
-      FMimeProvider.LoadFromFiles(mime_globs, mime_generic_icons);
-  finally
-    FLock.Release;
-  end;
-end;
-{$ENDIF}
 
 end.

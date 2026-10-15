@@ -24,13 +24,13 @@ unit Icons.ExtFile;
 interface
 
 uses
-  SysUtils, Classes, Icons.Base, Icons.Custom;
+  SysUtils, Classes, Icons.Base, Icons.System;
 
 type
 
   { TExtFileIcon }
 
-  TExtFileIcon = class(TCustomIcon)
+  TExtFileIcon = class(TSystemIcon)
   private
     FExtFile: string;
   protected
