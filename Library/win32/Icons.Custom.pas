@@ -24,18 +24,13 @@ unit Icons.Custom;
 interface
 
 uses
-  SysUtils, Controls, LCLIntf, LCLType, Graphics, BGRABitmap, ShellApi,
-  CommCtrl, Icons.Base;
+  SysUtils, Controls, LCLIntf, LCLType, Graphics, BGRABitmap, Icons.Base;
 
 type
 
   { TWin32CustomIcon }
 
   TWin32CustomIcon = class(TBaseIcon)
-  private
-    function BGRABitmapCreateFromHICON(AHIcon: HICON): TBGRABitmap;
-    function ExtractIconFromSysImageList(const APathFile: string;
-      const AWantLargeIcon: Boolean): TBGRABitmap;
   protected
     function GetIconFromFile(const APathFile: string;
       const AWantLargeIcon: Boolean): TBGRABitmap; override;
@@ -47,67 +42,21 @@ type
 implementation
 
 uses
-   DataModules.Icons, Kernel.Consts, BGRABitmapTypes, Utility.FileFolder, Windows;
+   Kernel.Consts, Kernel.Manager;
 
 { TWin32CustomIcon }
 
-function TWin32CustomIcon.ExtractIconFromSysImageList(const APathFile: string;
-  const AWantLargeIcon: Boolean): TBGRABitmap;
-var
-  FileInfo: TSHFileInfoW;
-  Flags: Integer;
-begin
-  Result := nil;
-
-  Assert(Assigned(dmImages));
-
-  if AWantLargeIcon then
-    Flags := SHGFI_ICON or SHGFI_LARGEICON or SHGFI_USEFILEATTRIBUTES
-  else
-    Flags := SHGFI_ICON or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES;
-
-  FillChar(FileInfo, SizeOf(TSHFileInfo), 0);
-  if SHGetFileInfoW(PChar(APathFile), 0, FileInfo{%H-}, SizeOf(TSHFileInfo), Flags) <> 0 then
-  try
-    Result := BGRABitmapCreateFromHICON(FileInfo.hIcon);
-  finally
-    DestroyIcon(FileInfo.hIcon);
-  end;
-end;
-
-function TWin32CustomIcon.BGRABitmapCreateFromHICON(AHIcon: HICON): TBGRABitmap;
-var
-  IconInfo: TIconInfo;
-begin
-  IconInfo := Default(TICONINFO);
-
-  Result := TBGRABitmap.Create;
-
-  if Windows.GetIconInfo(AHIcon, IconInfo) = False then
-  begin
-    // Signal failure with nil so callers can fall back instead of caching blanks
-    FreeAndNil(Result);
-    Exit;
-  end;
-
-  try
-    Result.Bitmap.LoadFromBitmapHandles(IconInfo.hbmColor, IconInfo.hbmMask);
-  finally
-    Windows.DeleteObject(IconInfo.hbmMask);
-    Windows.DeleteObject(IconInfo.hbmColor);
-  end;
-end;
-
 function TWin32CustomIcon.GetIconFromFile(const APathFile: string;
   const AWantLargeIcon: Boolean): TBGRABitmap;
+var
+  Size: Integer;
 begin
-  Result := nil;
-
-  if ExtractLowerFileExt(APathFile) = EXT_ICO then
-    Result := LoadFromFileIcon(APathFile, AWantLargeIcon)
+  if AWantLargeIcon then
+    Size := ICON_SIZE_LARGE
   else
-    Result := ExtractIconFromSysImageList(APathFile, AWantLargeIcon);
+    Size := ICON_SIZE_SMALL;
 
+  Result := ASuiteManager.IconsManager.GetSystemIcon(APathFile, Size);
   if Result = nil then
     Result := TBGRABitmap.Create;
 end;

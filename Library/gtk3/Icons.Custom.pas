@@ -24,18 +24,13 @@ unit Icons.Custom;
 interface
 
 uses
-  SysUtils, Controls, LCLIntf, LCLType, Graphics, BGRABitmap, Icons.Base, Types,
-  lazgdkpixbuf2;
+  SysUtils, Controls, LCLIntf, LCLType, Graphics, BGRABitmap, Icons.Base;
 
 type
 
   { TGtkCustomIcon }
 
   TGtkCustomIcon = class(TBaseIcon)
-  private
-    function PixBufToBitmap(Pixbuf: PGdkPixbuf): TBitmap;
-    function ExtractIcon(const sIconName: String; ALargeImage: Boolean
-      ): TBitmap;
   protected
     function GetIconFromFile(const APathFile: string;
       const AWantLargeIcon: Boolean): TBGRABitmap; override;
@@ -47,56 +42,23 @@ type
 implementation
 
 uses
-   Kernel.Consts, BGRABitmapTypes, Kernel.Manager, GraphType, IntfGraphics,
-   lazgtk3, LazGLib2, LazGdk3, LazGObject2;
+   Kernel.Consts, Kernel.Manager;
 
-{$I ../Icons.Pixbuf.inc}
-
-function TGtkCustomIcon.ExtractIcon(const sIconName: String;
-  ALargeImage: Boolean): TBitmap;
-var
-  pbPicture: PGdkPixbuf = nil;
-  Size: Integer;
-begin
-  Result := nil;
-
-  if ALargeImage then
-    Size := ICON_SIZE_LARGE
-  else
-    Size := ICON_SIZE_SMALL;
-
-  try
-    if ASuiteManager.IconsManager.CheckSystemIconName(sIconName) then
-    begin
-      if FileExists(sIconName) then
-        pbPicture := gdk_pixbuf_new_from_file_at_size(PAnsiChar(UTF8Encode(sIconName)), Size, Size, nil)
-      else
-        pbPicture := gtk_icon_theme_load_icon(gtk_icon_theme_get_for_screen(gdk_screen_get_default), Pgchar(PAnsiChar(UTF8Encode(sIconName))), Size, [GTK_ICON_LOOKUP_USE_BUILTIN], nil);
-    end;
-
-    if Assigned(pbPicture) then
-      Result := PixBufToBitmap(pbPicture)
-    else
-      Result := TBitmap.Create;
-  finally
-    g_object_unref(pbPicture);
-  end;
-end;
+{ TGtkCustomIcon }
 
 function TGtkCustomIcon.GetIconFromFile(const APathFile: string;
   const AWantLargeIcon: Boolean): TBGRABitmap;
 var
-  iconName: String;
-  bmp: TBitmap;
+  Size: Integer;
 begin
-  iconName := ASuiteManager.IconsManager.GetSystemIconName(APathFile);
+  if AWantLargeIcon then
+    Size := ICON_SIZE_LARGE
+  else
+    Size := ICON_SIZE_SMALL;
 
-  bmp := ExtractIcon(iconName, AWantLargeIcon);
-  try
-    Result := TBGRABitmap.Create(bmp);
-  finally
-    bmp.Free;
-  end;
+  Result := ASuiteManager.IconsManager.GetSystemIcon(APathFile, Size);
+  if Result = nil then
+    Result := TBGRABitmap.Create;
 end;
 
 end.

@@ -55,7 +55,6 @@ type
     procedure RebuildIndexes;
     {$IFDEF UNIX}
     procedure EnsureMimeLoaded;
-    function GetIconByDesktopFile(AFileName: String): String;
     {$ENDIF}
   public
     { public declarations }
@@ -73,10 +72,7 @@ type
     function FindByExt(AExtension: String): TExtFileIcon;   
     function GetIconFromImgList(AImageIndex: Integer; ALargeIcon: Boolean
       ): TBGRABitmap;
-    {$IFDEF UNIX}
-    function GetSystemIconName(const AFileName: String): String;
-    function CheckSystemIconName(const AIconName: String): Boolean;
-    {$ENDIF}
+    function GetSystemIcon(const AFileName: string; ASize: Integer): TBGRABitmap;
 
     property PathTheme: string read GetPathTheme write SetPathTheme;
   end;
@@ -85,22 +81,10 @@ implementation
 
 uses
   Kernel.Logger, FileUtil, LazFileUtils, Kernel.Instance, ImgList,
-  Graphics, DataModules.Icons, mormot.core.log, SystemIcons.Ext
+  Graphics, DataModules.Icons, mormot.core.log, SystemIcons.Ext,
+  SystemIcons.Platform
   {$IFDEF UNIX}
-  , IniFiles, BaseUnix, Utility.FileFolder
-    {$IFDEF QT}
-      {$IFDEF LCLQT5}
-      , qt5
-      {$ELSE}
-      , qt6
-      {$ENDIF}
-    {$ELSE}   
-      {$IFDEF LCLGTK2}
-      , gtk2
-      {$ELSE}
-      , lazgtk3
-      {$ENDIF}
-    {$ENDIF}
+  , BaseUnix
   {$ENDIF};
 
 { TIconsManager }
@@ -114,7 +98,7 @@ begin
   FByPath := TDictionary<string, TFileIcon>.Create;
   FByExt := TDictionary<string, TExtFileIcon>.Create;
   FMimeProvider := TMimeIconProvider.Create;
-  // MIME table is loaded lazily on first GetSystemIconName (see EnsureMimeLoaded)
+  // MIME table is loaded lazily on first GetSystemIcon (see EnsureMimeLoaded)
   // to keep startup and unit tests fast.
 end;
 
@@ -287,76 +271,16 @@ begin
   end;
 end;
 
-{$IFDEF UNIX}
-function TIconsManager.GetSystemIconName(const AFileName: String): String;
+function TIconsManager.GetSystemIcon(const AFileName: string; ASize: Integer): TBGRABitmap;
 var
-  I: Integer;
-  iconList: TStringList;
-  Extension: String;
   {%H-}log: ISynLog;
 begin
-  log := TASuiteLogger.Enter('TIconsManager.GetSystemIconName', Self);
-  Result := EmptyStr;
+  log := TASuiteLogger.Enter('TIconsManager.GetSystemIcon', Self);
+  {$IFDEF UNIX}
   EnsureMimeLoaded;
-
-  //It is a link? Ok, get target file icon
-  if FpReadLink(AFilename) <> EmptyStr then
-    Extension := '*' + ExtractFileExt(FpReadLink(AFileName))
-  else
-    Extension := '*' + ExtractFileExt(AFileName);
-
-  Extension := LowerCase(Extension);
-
-  //TODO: Special folders icon https://gitlab.gnome.org/GNOME/glib/-/commit/129eb074823101102611690f053ffa246bb7784d#3549e1301fc4c17bf0dd809eca0a36fb87aac264_1582_1582
-
-  if IsDirectory(AFileName) then
-  begin
-    if FileExists(AppendPathDelim(AFileName) + '.directory') then
-      Result := GetIconByDesktopFile(AppendPathDelim(AFileName) + '.directory')
-    else
-      Result := 'folder';
-  end
-  else if (Extension = '*.desktop') then
-  begin
-    Result := GetIconByDesktopFile(AFileName);
-  end
-  else if (Extension = '*.ico') then
-  begin
-    Result := AFileName;
-  end
-  else if (Extension <> '*') then
-  begin
-    iconList := FMimeProvider.GetIconNames(AnsiString(Extension));
-    if Assigned(iconList) then
-    begin
-      //First valid icon wins
-      for I := 0 to iconList.Count - 1 do
-      begin
-        Result := string(iconList.Strings[I]);
-
-        {$IFDEF QT}
-        if QIcon_hasThemeIcon(@Result) then break;
-        {$ELSE}
-        if gtk_icon_theme_has_icon(gtk_icon_theme_get_default, PAnsiChar(UTF8Encode(Result))) then break;
-        {$ENDIF}
-      end;
-    end;
-  end
-  else if FileIsExecutable(AFileName) then
-  begin
-    Result := 'application-x-executable';
-  end;
-
-  //Not found icon? No problem. Use generic icon
-  if (not CheckSystemIconName(Result)) or (Result = EmptyStr) then
-  begin
-    if FileIsText(AFileName) then
-      Result := 'text-x-generic'
-    else
-      Result := 'unknown';
-  end;
+  {$ENDIF}
+  Result := TSystemIconHelper.GetSystemIcon(AFileName, ASize, FMimeProvider);
 end;
-{$ENDIF}
 
 function TIconsManager.GetPathTheme: string;
 begin
@@ -488,38 +412,6 @@ begin
 end;
 
 {$IFDEF UNIX}
-function TIconsManager.GetIconByDesktopFile(AFileName: String): String;
-var
-  iniDesktop: TIniFile = nil;
-begin
-  Result := EmptyStr;
-
-  try
-    iniDesktop := TIniFile.Create(AFileName);
-    try
-      Result := iniDesktop.ReadString(DESKTOP_GROUP, DESKTOP_KEY_ICON, EmptyStr);
-    finally
-      FreeAndNil(iniDesktop);
-    end;
-  except
-    Exit;
-  end;
-end;
-                 
-{$IFDEF QT}
-function TIconsManager.CheckSystemIconName(const AIconName: String): Boolean;
-begin
-  //QIcon_fromTheme can load icon name and absolute filepath, too
-  Result := ((AIconName <> EmptyStr) and (QIcon_hasThemeIcon(@AIconName) or FileExists(AIconName)));
-end;
-{$ELSE}
-function TIconsManager.CheckSystemIconName(const AIconName: String): Boolean;
-begin
-  Result := ((AIconName <> EmptyStr) and (gtk_icon_theme_has_icon(gtk_icon_theme_get_default, PAnsiChar(UTF8Encode(AIconName))) or
-             FileExists(AIconName)));
-end;
-{$ENDIF}
-
 procedure TIconsManager.EnsureMimeLoaded;
 const
   mime_globs = '/usr/share/mime/globs';

@@ -24,17 +24,13 @@ unit Icons.Custom;
 interface
 
 uses
-  SysUtils, Controls, LCLIntf, LCLType, Graphics, BGRABitmap, Icons.Base, Types,
-  qt6, qtobjects;
+  SysUtils, Controls, LCLIntf, LCLType, Graphics, BGRABitmap, Icons.Base;
 
 type
 
   { TQtCustomIcon }
 
   TQtCustomIcon = class(TBaseIcon)
-  private
-    function QIconToHBitmap(AIcon: QIconH; ASize: Types.TSize): HBITMAP;
-    function ExtractIcon(const sIconName: WideString; ALargeImage: Boolean): TBitmap;
   protected
     function GetIconFromFile(const APathFile: string;
       const AWantLargeIcon: Boolean): TBGRABitmap; override;
@@ -46,8 +42,23 @@ type
 implementation
 
 uses
-   Kernel.Consts, BGRABitmapTypes, Utility.System, Kernel.Manager;
+   Kernel.Consts, Kernel.Manager;
 
-{$I ../Icons.Custom.Qt.inc}
+{ TQtCustomIcon }
+
+function TQtCustomIcon.GetIconFromFile(const APathFile: string;
+  const AWantLargeIcon: Boolean): TBGRABitmap;
+var
+  Size: Integer;
+begin
+  if AWantLargeIcon then
+    Size := ICON_SIZE_LARGE
+  else
+    Size := ICON_SIZE_SMALL;
+
+  Result := ASuiteManager.IconsManager.GetSystemIcon(APathFile, Size);
+  if Result = nil then
+    Result := TBGRABitmap.Create;
+end;
 
 end.
