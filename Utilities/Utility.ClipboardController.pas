@@ -24,7 +24,7 @@ implementation
 
 uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
-  Clipbrd, Kernel.Logger, VirtualTree.Methods, NodeDataTypes.Base,
+  Clipbrd, Kernel.Logger, Utility.Misc, VirtualTree.Methods, NodeDataTypes.Base,
   VirtualTrees.ClipBoard, VirtualTrees.Types, VirtualTree.Helper;
 
 constructor TClipboardController.Create(ATree: TVirtualStringTree);
@@ -96,7 +96,7 @@ end;
 procedure TClipboardController.UpdatePasteEnabled(var Enabled: Boolean; IsActiveTree: Boolean);
 begin
   {$IFDEF MSWINDOWS}
-  Enabled := IsActiveTree and Clipboard.HasFormat(CF_VIRTUALTREE);
+  Enabled := IsActiveTree and IsFormatInClipBoard(CF_VIRTUALTREE);
   {$ELSE}
   Enabled := IsActiveTree and (Length(FTree.GetSortedCutCopySet(True)) > 0);
   {$ENDIF}
@@ -106,7 +106,7 @@ procedure TClipboardController.EmptyClipboard;
 begin
   TASuiteLogger.Enter('Clearing clipboard', Self);
   {$IFDEF MSWINDOWS}
-  if Clipboard.HasFormat(CF_VIRTUALTREE) then
+  if IsFormatInClipBoard(CF_VIRTUALTREE) then
   begin
     Windows.OpenClipboard(0);
     try
