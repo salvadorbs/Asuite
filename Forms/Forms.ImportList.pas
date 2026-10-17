@@ -63,17 +63,20 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
-    function  GetNumberNodeImp(Sender: TBaseVirtualTree): Integer;
     procedure CheckAllItems(State: TCheckState);
+  public
+    { Public declarations }
+    class procedure Execute(AOwner: TComponent);
+    { Exposed for the GUI test suite (same pattern as
+      TfrmGeneralOptionsPage.FillLanguageCombo): the import logic is
+      covered without showing the wizard. }
+    function  GetNumberNodeImp(Sender: TBaseVirtualTree): Integer;
     procedure PopulateTree(Tree: TVirtualStringTree; FilePath: String);
     function  TreeImpToTree(TreeImp, Tree: TVirtualStringTree): Boolean;
     procedure MassRelativeToAbsolutePath(Sender: TBaseVirtualTree;
       Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
     procedure MassAbsoluteToRelativePath(Sender: TBaseVirtualTree;
       Node: PVirtualNode; Data: Pointer; var Abort: Boolean);
-  public
-    { Public declarations }
-    class procedure Execute(AOwner: TComponent);
   end;
 
 var

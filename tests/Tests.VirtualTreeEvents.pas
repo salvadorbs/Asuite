@@ -22,7 +22,7 @@ uses
   Classes, SysUtils, Types, Graphics, Forms, ExtCtrls, Controls, LCLProc,
   ImgList,
   fpcunit, testregistry,
-  VirtualTrees, VirtualTrees.Types,
+  VirtualTrees, VirtualTrees.Types, virtualdragmanager,
   VirtualTree.Events, VirtualTree.Methods,
   NodeDataTypes.Base, NodeDataTypes.Custom, NodeDataTypes.Files,
   NodeDataTypes.Category, NodeDataTypes.Separator,
@@ -152,6 +152,20 @@ type
     procedure TestResizeBigNodes;
     procedure TestResizeSmallNodes;
     procedure TestScrollAlignsOffset;
+  end;
+
+  { Same as above, but with fully streamed data modules: RefreshList saves
+    through the singleton database and rebuilds the real classic menu, so
+    every handler that saves the list runs end to end. }
+  TTestEventsRefresh = class(TEventsTestCase)
+  protected
+    procedure SetUp; override;
+  published
+    procedure TestDoNewTextRenames;
+    procedure TestDoDragDropCopy;
+    procedure TestDoDragDropMove;
+    procedure TestDoKeyPressEnter;
+    procedure TestDoNodeDblClickNode;
   end;
 
 implementation
@@ -1062,6 +1076,103 @@ begin
   AssertEquals('zero scroll is a no-op', 0, Tree.OffsetY);
 end;
 
+{ TTestEventsRefresh }
+
+procedure TTestEventsRefresh.SetUp;
+begin
+  inherited SetUp;
+  // Streamed modules: RefreshList saves and rebuilds the classic menu
+  FreeAndNil(dmImages);
+  FreeAndNil(dmTrayMenu);
+  dmImages := TdmImages.Create(nil);
+  dmTrayMenu := TdmTrayMenu.Create(nil);
+  FEvents.SetupVSTList(Tree);
+  NoAutoSort(Tree);
+end;
+
+procedure TTestEventsRefresh.TestDoNewTextRenames;
+var
+  Node: PVirtualNode;
+  Data: TvBaseNodeData;
+begin
+  AddFile('File', '/bin/sh');
+  Node := Tree.GetFirst;
+  Tree.OnNewText(Tree, Node, 0, 'Renamed');
+  Data := TVirtualTreeMethods.GetNodeItemData(Node, Tree);
+  AssertEquals('node renamed', 'Renamed', UTF8Encode(Data.Name));
+end;
+
+procedure TTestEventsRefresh.TestDoDragDropCopy;
+var
+  SourceNode, CatNode: PVirtualNode;
+  Effect: Integer;
+begin
+  AddFile('File', '/bin/sh');
+  SourceNode := Tree.GetFirst;
+  AddCategory('Cat');
+  CatNode := Tree.GetNextSibling(SourceNode);
+
+  Tree.Selected[SourceNode] := True;
+  Tree.DropTargetNode := CatNode;
+  Effect := DROPEFFECT_COPY;
+  Tree.OnDragDrop(Tree, Tree, nil, nil, [], Point(0, 0), Effect, dmOnNode);
+
+  AssertTrue('source stays at root', Tree.GetFirst = SourceNode);
+  AssertNotNull('copy lands under the category',
+    Tree.GetFirstChild(CatNode));
+end;
+
+procedure TTestEventsRefresh.TestDoDragDropMove;
+var
+  SourceNode, CatNode: PVirtualNode;
+  Effect: Integer;
+begin
+  AddFile('File', '/bin/sh');
+  SourceNode := Tree.GetFirst;
+  AddCategory('Cat');
+  CatNode := Tree.GetNextSibling(SourceNode);
+
+  Tree.Selected[SourceNode] := True;
+  Tree.DropTargetNode := CatNode;
+  Effect := DROPEFFECT_MOVE;
+  Tree.OnDragDrop(Tree, Tree, nil, nil, [], Point(0, 0), Effect, dmOnNode);
+
+  AssertTrue('source moved away from root',
+    Tree.GetFirst = CatNode);
+  AssertTrue('moved under the category',
+    SourceNode^.Parent = CatNode);
+end;
+
+procedure TTestEventsRefresh.TestDoKeyPressEnter;
+var
+  CatNode: PVirtualNode;
+  Key: Char;
+begin
+  // No runnable children: Enter runs nothing and never asks anything
+  AddCategory('Cat');
+  CatNode := Tree.GetFirst;
+  AddFile('Idle', '/bin/idle', CatNode);
+  Tree.Selected[CatNode] := True;
+  Key := #13;
+  Tree.OnKeyPress(Tree, Key);
+  AssertEquals('tree untouched', 1, Tree.RootNodeCount);
+end;
+
+procedure TTestEventsRefresh.TestDoNodeDblClickNode;
+var
+  CatNode: PVirtualNode;
+  HitInfo: THitInfo;
+begin
+  AddCategory('Cat');
+  CatNode := Tree.GetFirst;
+  AddFile('Idle', '/bin/idle', CatNode);
+  Tree.Selected[CatNode] := True;
+  FillChar(HitInfo, SizeOf(HitInfo), 0);
+  HitInfo.HitNode := CatNode;
+  Tree.OnNodeDblClick(Tree, HitInfo);
+  AssertEquals('tree untouched', 1, Tree.RootNodeCount);
+end;
+
 initialization
   RegisterTest(TTestEventsListText);
   RegisterTest(TTestEventsHotkey);
@@ -1070,5 +1181,6 @@ initialization
   RegisterTest(TTestEventsFrames);
   RegisterTest(TTestEventsSaveLoad);
   RegisterTest(TTestEventsMisc);
+  RegisterTest(TTestEventsRefresh);
 
 end.

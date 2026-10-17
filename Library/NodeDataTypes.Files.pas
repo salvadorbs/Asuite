@@ -320,6 +320,8 @@ begin
   end;
   FileClose(hSnapShot);
   {$ELSE}
+  Result := False;
+  Index  := 0;
   Process := TProcess.Create(nil);
   try
     Process.Executable := 'ps';

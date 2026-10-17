@@ -65,7 +65,7 @@
         <PackageName Value="LCL"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="28">
+    <Units Count="38">
       <Unit0>
         <Filename Value="ASuiteGuiTests.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -205,6 +205,56 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Tests.XmlImport"/>
       </Unit27>
+      <Unit28>
+        <Filename Value="Tests.Configuration.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.Configuration"/>
+      </Unit28>
+      <Unit29>
+        <Filename Value="Tests.ShellLink.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.ShellLink"/>
+      </Unit29>
+      <Unit30>
+        <Filename Value="Tests.FindFiles.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.FindFiles"/>
+      </Unit30>
+      <Unit31>
+        <Filename Value="Tests.ASMenuItem.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.ASMenuItem"/>
+      </Unit31>
+      <Unit32>
+        <Filename Value="Tests.Frames.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.Frames"/>
+      </Unit32>
+      <Unit33>
+        <Filename Value="Tests.ImportList.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.ImportList"/>
+      </Unit33>
+      <Unit34>
+        <Filename Value="Tests.TrayMenu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.TrayMenu"/>
+      </Unit34>
+      <Unit35>
+        <Filename Value="Tests.Execute.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.Execute"/>
+      </Unit35>
+      <Unit36>
+        <Filename Value="Tests.Settings.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.Settings"/>
+      </Unit36>
+      <Unit37>
+        <Filename Value="Tests.Instance.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.Instance"/>
+      </Unit37>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
