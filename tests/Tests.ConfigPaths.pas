@@ -97,7 +97,14 @@ procedure TTestConfigPaths.TestSuitePathsPointInsideExeFolder;
 begin
   AssertTrue('Locale', FPaths.SuitePathLocale = FTempDir + 'locale' + PathDelim);
   AssertTrue('Data', FPaths.SuitePathData = FTempDir);
+  {$IFDEF MSWINDOWS}
+  // The launcher's drive is the real drive letter on Windows
+  AssertTrue('Drive', FPaths.SuiteDrive =
+    LowerCase(ExtractFileDrive(FTempDir)));
+  {$ELSE}
+  // There is no drive on Linux: the launcher's folder is used instead
   AssertTrue('Drive', FPaths.SuiteDrive = FTempDir);
+  {$ENDIF}
 end;
 
 procedure TTestConfigPaths.TestAbsoluteToRelativeUsesAsuiteVar;
@@ -105,7 +112,8 @@ var
   Rel: String;
 begin
   Rel := FPaths.AbsoluteToRelative(FTempDir + 'sub' + PathDelim + 'app.exe');
-  AssertTrue('Portable form', Rel = '%asuite%/sub/app.exe');
+  AssertTrue('Portable form',
+    Rel = '%asuite%' + PathDelim + 'sub' + PathDelim + 'app.exe');
 end;
 
 procedure TTestConfigPaths.TestRoundTrip;
@@ -126,17 +134,28 @@ end;
 procedure TTestConfigPaths.TestLegacyDollarVarsExpanded;
 begin
   // Old '$asuite' form is still understood for backwards compatibility.
+  // Build the path with the platform delimiter: $asuite expands to the
+  // launcher's folder without a trailing separator, so the stored value
+  // must use the native one.
   AssertTrue('Legacy var',
-    FPaths.RelativeToAbsolute('$asuite/sub/app.exe') =
-    FTempDir + 'sub/app.exe');
+    FPaths.RelativeToAbsolute('$asuite' + PathDelim + 'sub' + PathDelim +
+      'app.exe') =
+    FTempDir + 'sub' + PathDelim + 'app.exe');
 end;
 
 procedure TTestConfigPaths.TestOutsidePathsStayAbsolute;
+var
+  Outside: String;
 begin
-  AssertTrue('Unchanged', FPaths.AbsoluteToRelative('/etc/hostname') =
-    '/etc/hostname');
-  AssertTrue('Unchanged', FPaths.RelativeToAbsolute('/etc/hostname') =
-    '/etc/hostname');
+  // An absolute path outside the suite folder. On Windows it is re-expressed
+  // through %drive%, but it must never collapse into the suite-relative
+  // %asuite% form; on Linux it stays literally unchanged.
+  Outside := ExtractFileDrive(FTempDir) + PathDelim +
+    'asuite_outside' + PathDelim + 'file.txt';
+  AssertTrue('not rewritten into %asuite%',
+    Pos('%asuite%', FPaths.AbsoluteToRelative(Outside)) = 0);
+  AssertTrue('already absolute stays absolute',
+    FPaths.RelativeToAbsolute(Outside) = Outside);
 end;
 
 procedure TTestConfigPaths.TestUrlPassthrough;

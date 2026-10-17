@@ -4,12 +4,13 @@ unit Tests.ClipboardController;
 
 { Behaviour tests for TClipboardController (Utility.ClipboardController).
 
-  Copy/cut only mark nodes (through the Fake* helpers on non-Windows) and
-  UpdatePasteEnabled only inspects the cut/copy set, so all of them run
-  headless on the shared tree fixture. DoPaste is deliberately excluded: on
-  success it saves the whole list through RefreshList, which needs the
-  running tray menu. EmptyClipboard is excluded too: it clears the real
-  system clipboard. Pasting itself is covered in Tests.VirtualTreeHelper. }
+  Copy/cut mark nodes and UpdatePasteEnabled only inspects the cut/copy set
+  when the controller uses the in-memory helpers; the tests force that
+  backend (UseSystemClipboard := False) so they also run in the headless
+  Windows CI, where the system clipboard is not available. DoPaste saves the
+  whole list through RefreshList, so it needs the running tray menu and is
+  covered separately. EmptyClipboard is excluded: it clears the real system
+  clipboard. Pasting itself is covered in Tests.VirtualTreeHelper. }
 
 interface
 
@@ -77,6 +78,7 @@ var
 begin
   Controller := TClipboardController.Create(Tree);
   try
+    Controller.UseSystemClipboard := False;
     AddFile('File', '/bin/sh');
     Enabled := True;
     Controller.UpdatePasteEnabled(Enabled, True);
@@ -93,6 +95,7 @@ var
 begin
   Controller := TClipboardController.Create(Tree);
   try
+    Controller.UseSystemClipboard := False;
     AddFile('File', '/bin/sh');
     Tree.Selected[Tree.GetFirst] := True;
     Controller.DoCopy;
@@ -111,6 +114,7 @@ var
 begin
   Controller := TClipboardController.Create(Tree);
   try
+    Controller.UseSystemClipboard := False;
     AddFile('File', '/bin/sh');
     Tree.Selected[Tree.GetFirst] := True;
     Controller.DoCopy;
@@ -145,6 +149,7 @@ var
 begin
   Controller := TClipboardController.Create(Tree);
   try
+    Controller.UseSystemClipboard := False;
     AddFile('File', '/bin/sh');
     Tree.Selected[Tree.GetFirst] := True;
     Controller.DoCopy;
@@ -164,6 +169,7 @@ var
 begin
   Controller := TClipboardController.Create(Tree);
   try
+    Controller.UseSystemClipboard := False;
     AddCategory('Cat');
     Tree.Selected[Tree.GetFirst] := True;
     Controller.DoCopy;
@@ -185,6 +191,7 @@ var
 begin
   Controller := TClipboardController.Create(Tree);
   try
+    Controller.UseSystemClipboard := False;
     AddFile('File', '/bin/sh');
     AssertTrue('vacuous paste succeeds', Controller.DoPaste);
     AssertTrue('mode falls back to add-child',
