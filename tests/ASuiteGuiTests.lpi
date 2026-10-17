@@ -65,7 +65,7 @@
         <PackageName Value="LCL"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="22">
+    <Units Count="28">
       <Unit0>
         <Filename Value="ASuiteGuiTests.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -175,6 +175,36 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Tests.Lists"/>
       </Unit21>
+      <Unit22>
+        <Filename Value="Tests.SystemUtils.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.SystemUtils"/>
+      </Unit22>
+      <Unit23>
+        <Filename Value="Tests.MiscUtils.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.MiscUtils"/>
+      </Unit23>
+      <Unit24>
+        <Filename Value="Tests.RunController.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.RunController"/>
+      </Unit24>
+      <Unit25>
+        <Filename Value="Tests.ClipboardController.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.ClipboardController"/>
+      </Unit25>
+      <Unit26>
+        <Filename Value="Tests.SearchController.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.SearchController"/>
+      </Unit26>
+      <Unit27>
+        <Filename Value="Tests.XmlImport.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.XmlImport"/>
+      </Unit27>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
