@@ -100,11 +100,10 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get -m -y install libgtk2.0-dev libpango1.0-dev libffi-dev libxtst-dev xvfb libdbus-1-dev
-        Xvfb :1 &
         
     - name: Install Dependencies (Ubuntu - only GTK3)
       if: (matrix.config.os == 'ubuntu-latest' || matrix.config.os == 'ubuntu-22.04') && matrix.config.build-widgetset == 'gtk3'
-      run: sudo apt-get -m -y install libgtk-3-dev libdbus-1-dev
+      run: sudo apt-get -m -y install libgtk-3-dev libdbus-1-dev xvfb
         
     - name: Install Dependencies (Ubuntu - only QT5)
       if: (matrix.config.os == 'ubuntu-latest' || matrix.config.os == 'ubuntu-22.04') && matrix.config.build-widgetset == 'qt5'
@@ -112,7 +111,7 @@ jobs:
         wget https://github.com/davidbannon/libqt5pas/releases/download/v1.2.16/libqt5pas1_2.16-4_amd64.deb
         wget https://github.com/davidbannon/libqt5pas/releases/download/v1.2.16/libqt5pas-dev_2.16-4_amd64.deb
         sudo apt-get update
-        sudo apt-get -m -y install qt5-qmake qtbase5-dev libqt5x11extras5-dev libxcb-keysyms1-dev libdbus-1-dev
+        sudo apt-get -m -y install qt5-qmake qtbase5-dev libqt5x11extras5-dev libxcb-keysyms1-dev libdbus-1-dev xvfb
         sudo apt-get -m -y install ./libqt5pas1_2.16-4_amd64.deb
         sudo apt-get -m -y install ./libqt5pas-dev_2.16-4_amd64.deb
         
@@ -122,7 +121,7 @@ jobs:
         wget https://github.com/davidbannon/libqt6pas/releases/download/v6.2.10/libqt6pas6_6.2.10-1_amd64.deb
         wget https://github.com/davidbannon/libqt6pas/releases/download/v6.2.10/libqt6pas6-dev_6.2.10-1_amd64.deb
         sudo apt-get update
-        sudo apt-get -m -y install qt6-base-dev libxcb-keysyms1-dev libgl-dev qt6-base-private-dev libdbus-1-dev
+        sudo apt-get -m -y install qt6-base-dev libxcb-keysyms1-dev libgl-dev qt6-base-private-dev libdbus-1-dev xvfb
         sudo apt-get -m -y install ./libqt6pas6_6.2.10-1_amd64.deb
         sudo apt-get -m -y install ./libqt6pas6-dev_6.2.10-1_amd64.deb
 
@@ -166,6 +165,19 @@ jobs:
     - name: Embedded debug info in asuite executable
       #if: matrix.config.build-widgetset != 'gtk2'
       run: ${{ env.ASUITE_SOURCE }}/bin/${{ matrix.config.dbg2mab }} ${{ env.ASUITE_SOURCE }}/bin/${{ matrix.config.debug_file }}
+
+    # Both suites run on every widgetset (win32, gtk2, gtk3, qt5, qt6) so the
+    # whole matrix is covered. tests/run_tests.sh builds both suites, picks
+    # xvfb-run when needed, and enforces the leak/min-test guards. The step
+    # timeout makes a blocking GUI test fail the job instead of hanging it.
+    - name: Run unit tests
+      timeout-minutes: 30
+      env:
+        WIDGETSET: ${{ matrix.config.build-widgetset }}
+        ASUITE_TEST_TIMEOUT: '600'
+      run: |
+        export LAZBUILD="$(pwd)/${{ matrix.config.lazbuild }}"
+        bash "${{ env.ASUITE_SOURCE }}/tests/run_tests.sh"
 
     - name: Upload the Build Artifact
       uses: actions/upload-artifact@v7.0.1

@@ -25,7 +25,7 @@ interface
 
 uses
   VirtualTrees, SysUtils, DateUtils, Kernel.Enumerations,
-  Icons.Custom;
+  Icons.Base;
 
 type
 
@@ -41,7 +41,7 @@ type
     FChanged     : boolean;
     FName        : String;
     FDescription : string;
-    FIcon        : TCustomIcon;
+    FIcon        : TBaseIcon;
     FDataType    : TvTreeDataType;
     FPNode       : PVirtualNode; //Self PVirtualNode
     FAddDate     : Int64;
@@ -79,7 +79,7 @@ type
     property Name: string read GetName write SetName;
     property MenuCaption: string read FMenuCaption;
     property Description: string read FDescription write FDescription;
-    property Icon: TCustomIcon read FIcon;
+    property Icon: TBaseIcon read FIcon;
     property DataType: TvTreeDataType read GetDataType write SetDataType;
     property ParentNode: PVirtualNode read GetParentNode;
     property PNode: PVirtualNode read FPNode;
@@ -106,7 +106,7 @@ begin
   FHideFromMenu := False;
   FAddDate     := DateTimeToUnix(Now);
   FEditDate    := FAddDate;
-  FIcon        := TCustomIcon(TNodeIcon.Create(Self));
+  FIcon        := TNodeIcon.Create(Self);
 end;
 
 destructor TvBaseNodeData.Destroy;

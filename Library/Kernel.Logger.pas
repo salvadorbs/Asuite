@@ -32,6 +32,11 @@ type
 
   TASuiteLogger = Class
   public
+    // Modal dialog raised while logging an exception: switched off by the
+    // automated tests, where a MessageDlg nobody can answer would hang a
+    // headless run. The exception is still logged and reported by the caller.
+    class var ShowDialogs: Boolean;
+
     class procedure Info(const AText: string; AParams: Array of const);
     class procedure Debug(const AText: string; AParams: Array of const);
     class procedure Error(const AText: string; AParams: Array of const);
@@ -97,10 +102,13 @@ end;
 class procedure TASuiteLogger.Exception(E: SysUtils.Exception;
   const AText: string);
 begin
-  if AText = '' then
-    ShowMessageFmtEx(msgErrGeneric, [E.ClassName, E.Message], True)
-  else
-    ShowMessageEx(AText, True);
+  if ShowDialogs then
+  begin
+    if AText = '' then
+      ShowMessageFmtEx(msgErrGeneric, [E.ClassName, E.Message], True)
+    else
+      ShowMessageEx(AText, True);
+  end;
 
   TSynLog.Add.Log(sllStackTrace, E.Message, E);
 end;
@@ -111,6 +119,7 @@ begin
 end;
 
 initialization
+  TASuiteLogger.ShowDialogs := True;
   SysUtils.OnShowException := HandleOnShowException;
   Application.OnException := TEventContainer(nil).HandleApplicationException;
 

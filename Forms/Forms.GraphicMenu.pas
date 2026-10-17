@@ -26,13 +26,14 @@ interface
 uses
   LCLIntf, LCLType, Classes, Forms, StdCtrls, ExtCtrls, ComCtrls, Controls,
   Graphics, Dialogs, SysUtils, VirtualTrees, Menus, Lists.Base, BCImageTab,
-  ButtonedEdit, BCImageButton, BCRoundedImage, GraphicMenu.ThemeEngine;
+  ButtonedEdit, BCImageButton, BCRoundedImage, GraphicMenu.ThemeEngine,
+  AppConfig.Observer;
 
 type
 
   { TfrmGraphicMenu }
 
-  TfrmGraphicMenu = class(TForm)
+  TfrmGraphicMenu = class(TForm, IConfigObserver)
     edtSearch: TButtonedEdit;
     imgDriveSpace: TImage;
     imgDivider2: TImage;
@@ -114,11 +115,14 @@ type
     procedure PopulateSpecialTree(const ATree: TVirtualStringTree; AList: TBaseItemsList; MaxItems: Integer);
     procedure SavePositionForm;
     procedure HandleEdge(var AEdge: Integer; ASnapToEdge: Integer; ASnapDistance: Integer = 0);
+    procedure ConfigChanged(const PropertyName: string);
   public
     { Public declarations }
     procedure OpenMenu;
     procedure CloseMenu;
     procedure LoadTheme;
+
+    procedure BeforeDestruction; override;
   end;
 
 var
@@ -132,7 +136,7 @@ implementation
 uses
   Forms.Main, Utility.System, Kernel.Consts, AppConfig.Main, DataModules.Icons,
   Forms.About, NodeDataTypes.Base, Kernel.Enumerations, Forms.Options, {%H-}LazVersion,
-  Utility.Misc, VirtualTree.Methods, Kernel.Types, VirtualTrees.Types,
+  Utility.Misc, VirtualTree.Methods, Kernel.Types, VirtualTrees.Types, Kernel.Logger,
   NodeDataTypes.Custom, Kernel.ResourceStrings, Kernel.Instance, Kernel.Manager
   {$IFDEF MSWINDOWS} , Windows {$ENDIF};
 
@@ -195,6 +199,12 @@ begin
   FThemeEngine.LoadTheme;
 end;
 
+procedure TfrmGraphicMenu.BeforeDestruction;
+begin
+  Config.RemoveObserver(Self);
+  inherited BeforeDestruction;
+end;
+
 procedure TfrmGraphicMenu.SavePositionForm;
 begin
   if (Self.Top <> Config.GMPositionTop) or (Self.Left <> Config.GMPositionLeft) then
@@ -211,6 +221,29 @@ procedure TfrmGraphicMenu.HandleEdge(var AEdge: Integer; ASnapToEdge: Integer;
 begin
   if (Abs(AEdge + ASnapDistance - ASnapToEdge) < 10) then
     AEdge := ASnapToEdge - ASnapDistance;
+end;
+
+procedure TfrmGraphicMenu.ConfigChanged(const PropertyName: string);
+begin
+  if (PropertyName = '') or (PropertyName = 'AfterUpdateConfig') then
+  begin
+    // TConfiguration.UpdateGMTheme already set SuitePathCurrentTheme and
+    // IconsManager.PathTheme before notifying observers; here we only refresh
+    // the menu itself.
+    Self.LoadTheme;
+
+    //Position
+    {$IF laz_fullversion>=2020000}
+    if Config.GMPositionTop <> -1 then
+      Self.Top  := Config.GMPositionTop
+    else
+      Self.Top  := Screen.WorkAreaRect.Bottom - Self.Scale96ToScreen(Height);
+    if Config.GMPositionLeft <> -1 then
+      Self.Left  := Config.GMPositionLeft
+    else
+      Self.Left  := Screen.WorkAreaRect.Right - Self.Scale96ToScreen(Width);
+    {$ENDIF}
+  end;
 end;
 
 procedure TfrmGraphicMenu.CheckUserPicture;
@@ -266,10 +299,10 @@ end;
 procedure TfrmGraphicMenu.FormCreate(Sender: TObject);
 begin
   ASuiteInstance.VSTEvents.SetupVSTGraphicMenu(vstList, Self);
+  Config.AddObserver(frmGraphicMenu);
 
   //Load graphics
   FThemeEngine := TThemeEngine.Create(Self);
-  FThemeEngine.LoadTheme;
 
   //Set PopUpMenu's ImageIndexes
   pmWindow.Images := dmImages.ilIcons;
@@ -278,21 +311,14 @@ begin
   mniRun.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('run');
   mniProperty.ImageIndex := ASuiteManager.IconsManager.GetIconIndex('property');
 
-  //Position
-  {$IF laz_fullversion>=2020000}
-  if Config.GMPositionTop <> -1 then
-    Self.Top  := Config.GMPositionTop
-  else
-    Self.Top  := Screen.WorkAreaRect.Bottom - Self.Scale96ToScreen(Height);
-  if Config.GMPositionLeft <> -1 then
-    Self.Left  := Config.GMPositionLeft
-  else
-    Self.Left  := Screen.WorkAreaRect.Right - Self.Scale96ToScreen(Width);
-  {$ENDIF}
-
   edtSearch.RightButton.Images := dmImages.ilIcons;
   edtSearch.RightButton.ImagesWidth := ICON_SIZE_SMALL;
   edtSearch.RightButton.ImageIndex := FThemeEngine.SearchIcon;
+
+  // frmGraphicMenu is created after Config.LoadConfig, so it missed the
+  // initial notifications: sync it so the theme is loaded and the initial
+  // position is applied when the menu is created at startup.
+  Config.SyncObserver(frmGraphicMenu);
 end;
 
 procedure TfrmGraphicMenu.FormDestroy(Sender: TObject);

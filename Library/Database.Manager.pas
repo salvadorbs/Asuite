@@ -37,6 +37,10 @@ type
 
     procedure DoBackupList;
     function GetDateTimeAsString: AnsiString;
+    //Share-friendly copy: FileUtil.CopyFile opens the source with
+    //fmShareDenyWrite, which fails on Windows while SQLite holds the
+    //database open, so SaveData silently produced no backup there
+    function CopyFileShared(const ASource, ADest: String): Boolean;
   public
     constructor Create;
     destructor Destroy; override;
@@ -61,8 +65,9 @@ type
 implementation
 
 uses
+  Classes,
   Kernel.Consts, AppConfig.Main, Utility.FileFolder,
-  Database.Version, Database.List, Kernel.Logger, FileUtil,
+  Database.Version, Database.List, Kernel.Logger,
   VirtualTree.Methods, mormot.core.log, Kernel.Instance;
 
 constructor TDBManager.Create;
@@ -72,6 +77,9 @@ end;
 
 procedure TDBManager.RemoveItem(aID: Integer);
 begin
+  //Setup has not run yet: there is no database handle to delete through
+  if not Assigned(FDatabase) then
+    Exit;
   if (aID > 0) then
     FDatabase.Delete(TSQLtbl_list, aID);
 end;
@@ -82,6 +90,10 @@ var
   {%H-}log: ISynLog;
 begin
   log := TASuiteLogger.Enter('TDBManager.DeleteItems', Self);
+  Result := False;
+  //Setup has not run yet: there is no database handle to delete through
+  if not Assigned(FDatabase) then
+    Exit;
   Result := FDatabase.TransactionBegin(TSQLtbl_list, 1);
   //Begin transaction for remove data from sqlite database
   if Result then
@@ -114,13 +126,41 @@ begin
 end;
 
 procedure TDBManager.DoBackupList;
+var
+  BackupFileName: String;
 begin
   //Backup list and old delete backup
   if FileExists(FDBFileName) and (Config.Backup) then
   begin
-    FileUtil.CopyFile(FDBFileName,
-                      Format(ASuiteInstance.Paths.SuitePathBackup + BACKUP_FILE,[GetDateTimeAsString]), False);
+    BackupFileName := Format(ASuiteInstance.Paths.SuitePathBackup + BACKUP_FILE,
+                             [GetDateTimeAsString]);
+    if not CopyFileShared(FDBFileName, BackupFileName) then
+      TASuiteLogger.Info('Unable to create backup "%s"', [BackupFileName]);
     DeleteOldBackups(Config.BackupNumber);
+  end;
+end;
+
+function TDBManager.CopyFileShared(const ASource, ADest: String): Boolean;
+var
+  Source, Dest: TFileStream;
+begin
+  Result := False;
+  if not FileExists(ASource) then
+    Exit;
+
+  //fmShareDenyNone lets the copy succeed while SQLite has the database open:
+  //fmShareDenyWrite (used by FileUtil.CopyFile) is rejected by Windows there
+  Source := TFileStream.Create(ASource, fmOpenRead or fmShareDenyNone);
+  try
+    Dest := TFileStream.Create(ADest, fmCreate);
+    try
+      Dest.CopyFrom(Source, 0);
+      Result := True;
+    finally
+      Dest.Free;
+    end;
+  finally
+    Source.Free;
   end;
 end;
 
@@ -185,6 +225,15 @@ begin
   log := TASuiteLogger.Enter('TDBManager.SaveData', Self);
   TASuiteLogger.Info('Saving ASuite SQLite Database', []);
 
+  //Result stays False when the transaction cannot run or the save raises:
+  //frmMain already branches on it to show msgErrSave instead of msgSaveCompleted
+  Result := False;
+
+  //Setup has not run yet: there is no database handle to save through,
+  //and without a save there is nothing to back up either
+  if not Assigned(FDatabase) then
+    Exit;
+
   //List & Options
   try
     //Save data and do backup
@@ -197,6 +246,7 @@ begin
         TSQLtbl_version.Save(Self);
         //Commit data in sqlite database
         FDatabase.Commit(1);
+        Result := True;
       end;
     except
       on E : Exception do begin
@@ -205,7 +255,7 @@ begin
       end;
     end;
   finally
-    Result := True;
+    //Never back up a database whose save just failed
     if Result and DoBackup then
       DoBackupList;
   end;
@@ -215,6 +265,10 @@ procedure TDBManager.Setup(const ADBFilePath: string);
 begin
   TASuiteLogger.Info('Setup DBManager using sqlite file "%s"', [ADBFilePath]);
   FDBFileName := ADBFilePath;
+
+  //Close a database opened by a previous Setup: SQLite is opened in exclusive
+  //mode, so a second handle on the same file would fail to open it
+  FreeAndNil(FDatabase);
 
   DoBackupList;
 
