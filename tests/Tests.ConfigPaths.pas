@@ -11,7 +11,7 @@ interface
 
 uses
   Classes, SysUtils, fpcunit, testregistry,
-  AppConfig.Paths;
+  AppConfig.Paths, AppConfig.PathList;
 
 type
   TTestConfigPaths = class(TTestCase)
@@ -31,6 +31,18 @@ type
     procedure TestLegacyDollarVarsExpanded;
     procedure TestOutsidePathsStayAbsolute;
     procedure TestUrlPassthrough;
+  end;
+
+  TTestPathList = class(TTestCase)
+  private
+    function NewList: TPathList;
+  published
+    procedure TestExpandKnownVar;
+    procedure TestExpandLeavesUnknownUntouched;
+    procedure TestExpandWithoutVars;
+    procedure TestAddIgnoresDuplicateKey;
+    procedure TestDeExpandRoundTrip;
+    procedure TestClearRemovesVars;
   end;
 
 implementation
@@ -134,7 +146,101 @@ begin
     'https://example.com/x');
 end;
 
+{ TTestPathList }
+
+function TTestPathList.NewList: TPathList;
+begin
+  Result := TPathList.Create('%(\w+)%');
+end;
+
+procedure TTestPathList.TestExpandKnownVar;
+var
+  L: TPathList;
+begin
+  L := NewList;
+  try
+    L.Add('ASUITE', '/opt/asuite');
+    // Matching is case-insensitive on the key, the value is inserted as-is
+    AssertEquals('var expanded', '/opt/asuite/app.exe',
+      UTF8Encode(L.ExpandVars('%asuite%/app.exe')));
+  finally
+    L.Free;
+  end;
+end;
+
+procedure TTestPathList.TestExpandLeavesUnknownUntouched;
+var
+  L: TPathList;
+begin
+  L := NewList;
+  try
+    L.Add('ASUITE', '/opt/asuite');
+    AssertEquals('unknown var kept', '%missing%/x',
+      UTF8Encode(L.ExpandVars('%missing%/x')));
+  finally
+    L.Free;
+  end;
+end;
+
+procedure TTestPathList.TestExpandWithoutVars;
+var
+  L: TPathList;
+begin
+  L := NewList;
+  try
+    AssertEquals('plain path untouched', '/usr/bin/tool',
+      UTF8Encode(L.ExpandVars('/usr/bin/tool')));
+  finally
+    L.Free;
+  end;
+end;
+
+procedure TTestPathList.TestAddIgnoresDuplicateKey;
+var
+  L: TPathList;
+begin
+  L := NewList;
+  try
+    L.Add('ASUITE', '/first');
+    L.Add('ASUITE', '/second');
+    AssertEquals('first value wins', '/first/app',
+      UTF8Encode(L.ExpandVars('%ASUITE%/app')));
+  finally
+    L.Free;
+  end;
+end;
+
+procedure TTestPathList.TestDeExpandRoundTrip;
+var
+  L: TPathList;
+begin
+  L := NewList;
+  try
+    L.Add('ASUITE', '/opt/asuite');
+    AssertEquals('value becomes var', '%asuite%/app.exe',
+      UTF8Encode(L.DeExpandVars('/opt/asuite/app.exe', 'ASUITE')));
+  finally
+    L.Free;
+  end;
+end;
+
+procedure TTestPathList.TestClearRemovesVars;
+var
+  L: TPathList;
+begin
+  L := NewList;
+  try
+    L.Add('ASUITE', '/opt/asuite');
+    L.Clear;
+    AssertEquals('no var after clear', '%ASUITE%/app',
+      UTF8Encode(L.ExpandVars('%ASUITE%/app')));
+  finally
+    L.Free;
+  end;
+end;
+
 initialization
   RegisterTest(TTestConfigPaths);
+  RegisterTest(TTestPathList);
 
 end.

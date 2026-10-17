@@ -69,7 +69,7 @@ begin
   begin
     Separator := TMenuItem.Create(nil);
     Separator.Caption := cLineCaption;
-    Self.Add(NewLine)
+    Self.Add(Separator)
   end
   else begin
     if not(Self[Self.Count - 1].IsLine()) then
