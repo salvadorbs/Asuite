@@ -17,7 +17,8 @@ type
 implementation
 
 uses
-  Utility.System, VirtualTree.Methods, NodeDataTypes.Base, NodeDataTypes.Files;
+  Utility.System, Utility.RunActionLogic, VirtualTree.Methods,
+  NodeDataTypes.Base, NodeDataTypes.Files;
 
 procedure TRunController.ExecuteRun(const Tree: TBaseVirtualTree; const RunMode: TRunMode);
 begin
@@ -29,35 +30,31 @@ procedure TRunController.UpdateRunAction(Action: TAction; const Tree: TBaseVirtu
 var
   Nodes: TNodeArray;
   NodeData: TvBaseNodeData;
+  Items: TRunActionItems;
   I: Integer;
 begin
   if not Assigned(Action) or not Assigned(Tree) then Exit;
-  Nodes := Tree.GetSortedSelection(True);
-  Action.Enabled := False;
 
+  Nodes := Tree.GetSortedSelection(True);
+  SetLength(Items, Length(Nodes));
   for I := Low(Nodes) to High(Nodes) do
   begin
+    // A node without data is treated as neutral so it never enables the action.
+    Items[I].IsSeparator := True;
     NodeData := TVirtualTreeMethods.GetNodeItemData(Nodes[I], Tree);
-    if not Assigned(NodeData) then
-      Continue;
-
-    if not (NodeData.IsSeparatorItem) then
-      Action.Enabled := True;
-
-    if ((Action.Tag = 1) or (Action.Tag = 2)) and (NodeData.IsFileItem) then
-      Action.Enabled := IsExecutableFile(TvFileNodeData(NodeData).PathAbsoluteFile);
-
-    if (Action.Tag = 3) then
+    if Assigned(NodeData) then
     begin
+      Items[I].IsSeparator  := NodeData.IsSeparatorItem;
+      Items[I].IsFileItem   := NodeData.IsFileItem;
       if NodeData.IsFileItem then
       begin
-        if IsValidURLProtocol(TvFileNodeData(NodeData).PathAbsoluteFile) then
-          Action.Enabled := False
-      end
-      else
-        Action.Enabled := False;
+        Items[I].IsExecutable  := IsExecutableFile(TvFileNodeData(NodeData).PathAbsoluteFile);
+        Items[I].IsUrlProtocol := IsValidURLProtocol(TvFileNodeData(NodeData).PathAbsoluteFile);
+      end;
     end;
   end;
+
+  Action.Enabled := IsRunActionEnabled(TRunMode(Action.Tag), Items);
 end;
 
 end.
