@@ -29,9 +29,9 @@ uses
 
 type
 
-  { TQT5CustomIcon }
+  { TQtCustomIcon }
 
-  TQT5CustomIcon = class(TBaseIcon)
+  TQtCustomIcon = class(TBaseIcon)
   private
     function QIconToHBitmap(AIcon: QIconH; ASize: Types.TSize): HBITMAP;
     function ExtractIcon(const sIconName: WideString; ALargeImage: Boolean): TBitmap;
@@ -41,70 +41,13 @@ type
   public
   end;
 
-  TCustomIcon = TQT5CustomIcon;
+  TCustomIcon = TQtCustomIcon;
 
 implementation
 
 uses
    Kernel.Consts, BGRABitmapTypes, Utility.System, Kernel.Manager;
 
-{ TQT5CustomIcon }
-
-function TQT5CustomIcon.QIconToHBitmap(AIcon: QIconH; ASize: Types.TSize
-  ): HBITMAP;
-var
-  AImage: QImageH;
-  APixmap: QPixmapH;
-begin
-  APixmap := QPixmap_create();
-  QIcon_pixmap(AIcon, APixmap, Types.PSize(@ASize));
-
-  AImage := QImage_create();
-  QPixmap_toImage(APixmap, AImage);
-  QPixmap_destroy(APixmap);
-
-  Result := HBitmap(TQtImage.Create(AImage));
-end;
-
-function TQT5CustomIcon.ExtractIcon(const sIconName: WideString;
-  ALargeImage: Boolean): TBitmap;
-var
-  QIcon: QIconH;
-  Size: Types.TSize;
-begin
-  Result := TBitmap.Create;
-
-  if ALargeImage then
-    Size := Types.Size(ICON_SIZE_LARGE, ICON_SIZE_LARGE)
-  else
-    Size := Types.Size(ICON_SIZE_SMALL, ICON_SIZE_SMALL);
-
-  QIcon := QIcon_Create();
-  try
-    if ASuiteManager.IconsManager.CheckSystemIconName(sIconName) then
-    begin
-      QIcon_fromTheme(QIcon, @sIconName);
-      Result.Handle := QIconToHBitmap(QIcon, Size);
-    end;
-  finally
-    QIcon_destroy(QIcon);
-  end;
-end;
-
-function TQT5CustomIcon.GetIconFromFile(const APathFile: string;
-  const AWantLargeIcon: Boolean): TBGRABitmap;
-var
-  iconName: String;
-  bmp: TBitmap;
-begin
-  iconName := ASuiteManager.IconsManager.GetSystemIconName(APathFile);
-
-  bmp := ExtractIcon(iconName, AWantLargeIcon);
-  try
-    Result := TBGRABitmap.Create(bmp);
-  finally
-    bmp.Free;
-  end;
-end;
+{$I ../Icons.Custom.Qt.inc}
 
 end.

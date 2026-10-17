@@ -11,10 +11,13 @@ uses
   {$IFDEF UNIX}
   cthreads,
   {$ENDIF}
+  heaptrc,
   consoletestrunner,
   Tests.AppConfigObserver,
   Tests.RunActionLogic,
-  Tests.LanguageManager;
+  Tests.LanguageManager,
+  Tests.IconsCacheKey,
+  Tests.IconsMime;
 
 var
   Application: TTestRunner;

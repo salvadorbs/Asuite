@@ -11,6 +11,7 @@ program ASuiteGuiTests;
 {$mode objfpc}{$H+}
 
 uses
+  heaptrc,
   {$IFDEF UNIX}
   cthreads,
   {$ENDIF}
@@ -22,7 +23,9 @@ uses
   Tests.ConfigPaths,
   Tests.Conversions,
   Tests.FileFolder,
-  Tests.Scheduler;
+  Tests.Scheduler,
+  Tests.IconsManager,
+  Tests.IconsBaseLogic;
 
 var
   Application: TTestRunner;

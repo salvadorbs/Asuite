@@ -25,7 +25,7 @@ interface
 
 uses
   SysUtils, Controls, SyncObjs, LCLIntf, LCLType, BGRAIconCursor,
-  BGRABitmap;
+  BGRABitmap, Icons.Services;
 
 type
   { TBaseIcon }
@@ -37,6 +37,8 @@ type
     FStatic: Boolean;
     FImageIndex: Integer;
     FTempItem: Boolean;
+    FCachePolicy: ICachePolicy;
+    FFileOps: IFileOps;
 
     function GetImageIndex: Integer;
     function GetPathCacheIcon: string;
@@ -48,11 +50,19 @@ type
     function InternalLoadIcon: Integer; virtual;
     function LoadIcon: Integer; virtual;
     function GetName: string; virtual; abstract;
-    function GetDefaultPathIcon: string; virtual; abstract;
+    function GetDefaultPathIcon: string; virtual;
     function GetIconFromFile(const APathFile: string; const AWantLargeIcon: Boolean
       ): TBGRABitmap; virtual; abstract;
     function LoadFromFileIcon(const APathFile: string; const AWantLargeIcon: Boolean
       ): TBGRABitmap;
+    // Seams for tests: defaults use Config/dmImages/ASuiteInstance globals
+    function DoUseCache: Boolean; virtual;
+    function DoIsImporting: Boolean; virtual;
+    function DoFileExists(const APath: string): Boolean; virtual;
+    function DoPathExists(const APath: string): Boolean; virtual;
+    function DoGetCacheDir: string; virtual;
+    function DoAddMultipleResolutions(const ASmall, ALarge: TBGRABitmap): Integer; virtual;
+    function DoGetIconFromImgList(AImageIndex: Integer; ALargeIcon: Boolean): TBGRABitmap; virtual;
   public
     constructor Create(AStatic: Boolean = False);
     destructor Destroy; override;
@@ -67,6 +77,8 @@ type
     property CacheIconCRC: Integer read FCacheIconCRC write SetCacheIconCRC;
     property PathCacheIcon: string read GetPathCacheIcon;
     property TempItem: Boolean read FTempItem write FTempItem;
+    property CachePolicy: ICachePolicy read FCachePolicy write FCachePolicy;
+    property FileOps: IFileOps read FFileOps write FFileOps;
   end;
 
 implementation
@@ -75,7 +87,7 @@ uses
    DataModules.Icons, Kernel.Consts, BGRABitmapTypes, Utility.FileFolder,
    AppConfig.Main, Kernel.Enumerations, Utility.System, Kernel.Instance,
    Kernel.Manager, LazFileUtils, HlpHashFactory, Kernel.Logger, FileUtil,
-   Kernel.ResourceStrings;
+   Kernel.ResourceStrings, Icons.CacheKey, mormot.core.log;
 
 { TBaseIcon }
 
@@ -111,19 +123,22 @@ var
   sTempPath, sPathCacheIcon, sDefaultPath: string;
   intHash: Integer;
   isExeFile: Boolean;
+  {%H-}log: ISynLog;
 begin
+  log := TASuiteLogger.Enter('TBaseIcon.InternalLoadIcon', Self);
   Result := -1;
   intHash := 0;
+  sTempPath := '';
 
   sDefaultPath := GetDefaultPathIcon;
 
   //Get cache icon path
-  if (Config.Cache) and (Config.ASuiteState <> lsImporting) then
+  if DoUseCache and not DoIsImporting then
   begin
     //Check CRC for only .exe, if it fails reset cache icon
     isExeFile := (ExtractLowerFileExt(sDefaultPath) = EXT_EXE);
     sPathCacheIcon := PathCacheIcon;
-    if isExeFile and FileExists(sPathCacheIcon) then
+    if isExeFile and (sPathCacheIcon <> '') and DoFileExists(sPathCacheIcon) then
     begin
       intHash := GetFileXXHash32(sDefaultPath);
 
@@ -137,34 +152,29 @@ begin
   end;
 
   //Icon or exe
-  if Not FileExists(sTempPath) then
+  if not DoFileExists(sTempPath) then
     sTempPath := sDefaultPath;
 
   //Get image index
   if (sTempPath <> '') then
   begin
-    if IsPathExists(sTempPath) then
+    if DoPathExists(sTempPath) then
       Result := InternalGetImageIndex(sTempPath);
     //Save icon cache
-    if (Config.ASuiteState <> lsImporting) then
+    if not DoIsImporting then
       SaveCacheIcon(sTempPath, Result, intHash);
   end;
 end;
 
 function TBaseIcon.GetPathCacheIcon: string;
 var
-  sExt, sNameFile: string;
+  sCacheFile: string;
 begin
   Result := '';
 
-  sExt := ExtractLowerFileExt(GetDefaultPathIcon);
-  if ((sExt = EXT_EXE) or (sExt = EXT_ICO) or (sExt = '')) then
-    sNameFile := Self.Name
-  else
-    sNameFile := Copy(sExt, 2, Length(sExt) - 1);
-
-  if (sNameFile <> '') then
-    Result := ASuiteInstance.Paths.SuitePathCache + sNameFile + EXT_ICO;
+  sCacheFile := Icons.CacheKey.BuildCacheFileName(Self.Name, GetDefaultPathIcon, FTempItem);
+  if (sCacheFile <> '') then
+    Result := DoGetCacheDir + sCacheFile;
 end;
 
 procedure TBaseIcon.SetCacheIconCRC(AValue: Integer);
@@ -175,31 +185,43 @@ end;
 
 procedure TBaseIcon.SaveCacheIcon(const APath: string;
   const AImageIndex: Integer; const AHash: Integer);
+const
+  ICO_BITDEPTH = 32;
 var
   Icon: TBGRAIconCursor;
   bmpLargeIcon, bmpSmallIcon: TBGRABitmap;
+  sCacheFile: string;
+  {%H-}log: ISynLog;
 begin
-  if (Config.Cache) and (AImageIndex <> -1) then
+  log := TASuiteLogger.Enter('TBaseIcon.SaveCacheIcon', Self);
+  if DoUseCache and (AImageIndex <> -1) then
   begin
-    if (Self.Name <> '') and (ExtractLowerFileExt(APath) <> EXT_ICO) and
-       ((not FTempItem) or (FTempItem and (ExtractLowerFileExt(APath) <> EXT_EXE))) then
+    if Icons.CacheKey.ShouldCacheIcon(Self.Name, APath, FTempItem) then
     begin
+      sCacheFile := PathCacheIcon;
+      if sCacheFile = '' then
+        Exit;
       Icon := TBGRAIconCursor.Create(ifIco);
       try
         //Extract and insert icons in TIcon
-        bmpLargeIcon := ASuiteManager.IconsManager.GetIconFromImgList(AImageIndex, True);
-        bmpSmallIcon := ASuiteManager.IconsManager.GetIconFromImgList(AImageIndex, False);
+        bmpLargeIcon := DoGetIconFromImgList(AImageIndex, True);
+        bmpSmallIcon := DoGetIconFromImgList(AImageIndex, False);
+        try
+          if Assigned(bmpSmallIcon) and Assigned(bmpLargeIcon) then
+          begin
+            Icon.Add(bmpSmallIcon, ICO_BITDEPTH);
+            Icon.Add(bmpLargeIcon, ICO_BITDEPTH);
 
-        Icon.Add(bmpSmallIcon, 32);
-        Icon.Add(bmpLargeIcon, 32);
-
-        //Save file and get CRC from it
-        Icon.SaveToFile(PathCacheIcon);
-        FCacheIconCRC := AHash;
+            //Save file and get CRC from it
+            Icon.SaveToFile(sCacheFile);
+            FCacheIconCRC := AHash;
+          end;
+        finally
+          bmpLargeIcon.Free;
+          bmpSmallIcon.Free;
+        end;
       finally
         Icon.Free;
-        bmpLargeIcon.Free;
-        bmpSmallIcon.Free;
       end;
     end;
   end;
@@ -210,7 +232,7 @@ begin
   Result := 0;
 
   try
-    if (FileName <> '') and not IsUNCPath(FileName) and FileExists(FileName) and (FileUtil.FileSize(FileName) > 0) then
+    if (FileName <> '') and not IsUNCPath(FileName) and DoFileExists(FileName) and (FileUtil.FileSize(FileName) > 0) then
       Result := THashFactory.THash32.CreateXXHash32().ComputeFile(FileName).GetInt32();
   except
     on E : Exception do
@@ -222,15 +244,21 @@ function TBaseIcon.LoadFromFileIcon(const APathFile: string;
   const AWantLargeIcon: Boolean): TBGRABitmap;
 var
   Icon : TBGRAIconCursor;
+  {%H-}log: ISynLog;
 begin
+  log := TASuiteLogger.Enter('TBaseIcon.LoadFromFileIcon', Self);
   Result := nil;
 
-  if not FileExists(APathFile) and (ExtractLowerFileExt(APathFile) = EXT_ICO) then
+  if not DoFileExists(APathFile) or (ExtractLowerFileExt(APathFile) <> EXT_ICO) then
     Exit;
 
   Icon := TBGRAIconCursor.Create(ifIco);
   try
-    Icon.LoadFromFile(APathFile);
+    try
+      Icon.LoadFromFile(APathFile);
+    except
+      Exit;
+    end;
 
     if AWantLargeIcon then
       Result := (Icon.GetBestFitBitmap(ICON_SIZE_LARGE, ICON_SIZE_LARGE) as TBGRABitmap)
@@ -246,17 +274,72 @@ begin
   Result := FImageIndex <> -1;
 end;
 
+function TBaseIcon.DoUseCache: Boolean;
+begin
+  if Assigned(FCachePolicy) then
+    Result := FCachePolicy.UseCache
+  else
+    Result := Config.Cache;
+end;
+
+function TBaseIcon.DoIsImporting: Boolean;
+begin
+  if Assigned(FCachePolicy) then
+    Result := FCachePolicy.IsImporting
+  else
+    Result := Config.ASuiteState = lsImporting;
+end;
+
+function TBaseIcon.DoFileExists(const APath: string): Boolean;
+begin
+  if Assigned(FFileOps) then
+    Result := FFileOps.FileExists(APath)
+  else
+    Result := SysUtils.FileExists(APath);
+end;
+
+function TBaseIcon.DoPathExists(const APath: string): Boolean;
+begin
+  if Assigned(FFileOps) then
+    Result := FFileOps.PathExists(APath)
+  else
+    Result := IsPathExists(APath);
+end;
+
+function TBaseIcon.DoGetCacheDir: string;
+begin
+  Result := ASuiteInstance.Paths.SuitePathCache;
+end;
+
+function TBaseIcon.DoAddMultipleResolutions(const ASmall, ALarge: TBGRABitmap): Integer;
+begin
+  Result := dmImages.AddMultipleResolutions([ASmall.Bitmap, ALarge.Bitmap]);
+end;
+
+function TBaseIcon.DoGetIconFromImgList(AImageIndex: Integer; ALargeIcon: Boolean): TBGRABitmap;
+begin
+  Result := ASuiteManager.IconsManager.GetIconFromImgList(AImageIndex, ALargeIcon);
+end;
+
+function TBaseIcon.GetDefaultPathIcon: string;
+begin
+  Result := '';
+end;
+
 function TBaseIcon.InternalGetImageIndex(const APathFile: string): Integer;
 var
   bmpSmallIcon, bmpLargeIcon: TBGRABitmap;
+  {%H-}log: ISynLog;
 begin
+  log := TASuiteLogger.Enter('TBaseIcon.InternalGetImageIndex', Self);
   Result := -1;
 
   //Get icon and insert it in ASuite ImageList
   bmpLargeIcon := GetIconFromFile(APathFile, True);
   bmpSmallIcon := GetIconFromFile(APathFile, False);
   try
-    Result := dmImages.AddMultipleResolutions([bmpSmallIcon.Bitmap, bmpLargeIcon.Bitmap]);
+    if Assigned(bmpSmallIcon) and Assigned(bmpLargeIcon) then
+      Result := DoAddMultipleResolutions(bmpSmallIcon, bmpLargeIcon);
   finally
     FreeAndNil(bmpLargeIcon);
     FreeAndNil(bmpSmallIcon);
@@ -284,7 +367,7 @@ begin
   TASuiteLogger.Debug('Reset cache icon %s', [strPathCacheIcon]);
 
   //Small icon cache
-  if FileExists(strPathCacheIcon) then
+  if (strPathCacheIcon <> '') and DoFileExists(strPathCacheIcon) then
     SysUtils.DeleteFile(strPathCacheIcon);
 
   FCacheIconCRC := 0;
