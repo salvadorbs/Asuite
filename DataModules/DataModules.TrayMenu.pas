@@ -1082,8 +1082,8 @@ begin
   if (PropertyName = '') or (PropertyName = 'TrayIcon') then
   begin
     //Workaround for bug in GTK3 (unit gtk3wstrayicon - line 128)
-    if (dmTrayMenu.tiTrayMenu.Icon.Handle <> 0) then
-      dmTrayMenu.tiTrayMenu.Visible := Config.TrayIcon;
+    if (tiTrayMenu.Icon.Handle <> 0) then
+      tiTrayMenu.Visible := Config.TrayIcon;
   end;
 end;
 
