@@ -24,13 +24,13 @@ unit Icons.ExtFile;
 interface
 
 uses
-  SysUtils, Classes, Icons.Base, Icons.Custom;
+  SysUtils, Classes, Icons.Base, Icons.System;
 
 type
 
   { TExtFileIcon }
 
-  TExtFileIcon = class(TCustomIcon)
+  TExtFileIcon = class(TSystemIcon)
   private
     FExtFile: string;
   protected
@@ -46,12 +46,12 @@ type
 implementation
 
 uses
-  Icons.CacheKey;
+  SystemIcons.Ext;
 
 constructor TExtFileIcon.Create(AExtFile: string);
 begin
   inherited Create;
-  FExtFile := Icons.CacheKey.NormalizeExtKey(AExtFile);
+  FExtFile := SystemIcons.Ext.NormalizeExtKey(AExtFile);
 end;
 
 function TExtFileIcon.GetName: string;

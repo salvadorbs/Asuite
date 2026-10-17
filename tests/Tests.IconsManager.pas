@@ -9,6 +9,16 @@ uses
   Icons.Manager, Icons.Files, Icons.ExtFile, Icons.Base;
 
 type
+  TAddThread = class(TThread)
+  private
+    FMgr: TIconsManager;
+    FTag, FCount: Integer;
+  protected
+    procedure Execute; override;
+  public
+    constructor Create(AMgr: TIconsManager; ATag, ACount: Integer);
+  end;
+
   TTestIconsManagerRegistry = class(TTestCase)
   private
     FMgr: TIconsManager;
@@ -22,9 +32,30 @@ type
     procedure TestExtNormalize;
     procedure TestExtSeparateLists;
     procedure TestMissingNameReturnsMinusOne;
+    procedure TestConcurrentAddAndClear;
   end;
 
 implementation
+
+constructor TAddThread.Create(AMgr: TIconsManager; ATag, ACount: Integer);
+begin
+  inherited Create(True);
+  FMgr := AMgr;
+  FTag := ATag;
+  FCount := ACount;
+  FreeOnTerminate := False;
+end;
+
+procedure TAddThread.Execute;
+var
+  I: Integer;
+begin
+  for I := 0 to FCount - 1 do
+  begin
+    FMgr.AddIcon(TFileIcon.Create(Format('/tmp/ct%d_%d.pdf', [FTag, I])));
+    FMgr.FindByName(Format('ct%d_%d', [FTag, I]));
+  end;
+end;
 
 procedure TTestIconsManagerRegistry.SetUp;
 begin
@@ -109,6 +140,28 @@ end;
 procedure TTestIconsManagerRegistry.TestMissingNameReturnsMinusOne;
 begin
   AssertEquals(-1, FMgr.GetIconIndex('nonexistent_xyz_123'));
+end;
+
+procedure TTestIconsManagerRegistry.TestConcurrentAddAndClear;
+var
+  Threads: array[0..3] of TAddThread;
+  I: Integer;
+begin
+  for I := 0 to 3 do
+  begin
+    Threads[I] := TAddThread.Create(FMgr, I, 25);
+    Threads[I].Start;
+  end;
+  for I := 0 to 3 do
+  begin
+    Threads[I].WaitFor;
+    Threads[I].Free;
+  end;
+  AssertNotNull(FMgr.FindByName('ct2_10'));
+  AssertNotNull(FMgr.FindByPath('/tmp/ct3_5.pdf'));
+  FMgr.Clear(False);
+  AssertNull(FMgr.FindByName('ct0_0'));
+  AssertNull(FMgr.FindByPath('/tmp/ct1_1.pdf'));
 end;
 
 initialization

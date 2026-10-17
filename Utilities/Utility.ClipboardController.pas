@@ -24,7 +24,7 @@ implementation
 
 uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
-  Clipbrd, Kernel.Logger, VirtualTree.Methods, NodeDataTypes.Base,
+  Clipbrd, Kernel.Logger, Utility.Misc, VirtualTree.Methods, NodeDataTypes.Base,
   VirtualTrees.ClipBoard, VirtualTrees.Types, VirtualTree.Helper;
 
 constructor TClipboardController.Create(ATree: TVirtualStringTree);

@@ -28,6 +28,7 @@ type
   private
     FUseCache: Boolean;
     FImporting: Boolean;
+    FCacheDir: UnicodeString;
     FRequestedPaths: TStringList;
     FAddedCount: Integer;
     FImgListCalls: Integer;
@@ -50,6 +51,7 @@ type
     property RequestedPaths: TStringList read FRequestedPaths;
     property AddedCount: Integer read FAddedCount;
     property ImgListCalls: Integer read FImgListCalls;
+    property CacheDir: UnicodeString read FCacheDir write FCacheDir;
   end;
 
   { Real .ico parsing through TFileIcon, but ImageList insert stubbed. }
@@ -76,6 +78,8 @@ type
     procedure TestCacheHitUsesCachePath;
     procedure TestImportingSkipsCache;
     procedure TestRealIcoFixtureLoads;
+    procedure TestSaveCacheRoundTrip;
+    procedure TestResetCacheIcon;
   end;
 
   { Lifecycle only: with no app globals the preload is a safe no-op, but the
@@ -101,6 +105,18 @@ begin
     Exit(base);
   Result := ExpandFileName('bin' + PathDelim + 'themes' + PathDelim + 'default' +
     PathDelim + 'icons' + PathDelim + 'accept.ico');
+end;
+
+function TempCacheDir(const AName: string): string;
+begin
+  Result := IncludeTrailingPathDelimiter(GetTempDir) + AName;
+  ForceDirectories(Result);
+end;
+
+procedure CleanCacheDir(const ADir, AFile: string);
+begin
+  DeleteFile(ADir + PathDelim + AFile);
+  RemoveDir(ADir);
 end;
 
 { TCountingIcon }
@@ -135,6 +151,7 @@ begin
   FUseCache := AUseCache;
   FImporting := AImporting;
   FRequestedPaths := TStringList.Create;
+  FCacheDir := '/cache/';
   TempItem := False;
 end;
 
@@ -176,8 +193,10 @@ end;
 
 function TStubCacheIcon.DoFileExists(const APath: UnicodeString): Boolean;
 begin
-  // Fake FS: source exe and its cache file both "exist"
-  Result := (APath = '/docs/app.exe') or (APath = '/cache/stub.ico');
+  // Fake FS: source exe and its legacy cache file both "exist";
+  // anything else falls through to the real FS (temp dirs for save tests)
+  Result := (APath = '/docs/app.exe') or (APath = '/cache/stub.ico') or
+    FileExists(APath);
 end;
 
 function TStubCacheIcon.DoPathExists(const APath: UnicodeString): Boolean;
@@ -187,7 +206,7 @@ end;
 
 function TStubCacheIcon.DoGetCacheDir: UnicodeString;
 begin
-  Result := '/cache/';
+  Result := FCacheDir;
 end;
 
 function TStubCacheIcon.DoAddMultipleResolutions(const ASmall,
@@ -319,6 +338,53 @@ begin
     AssertTrue(Icon.LargeW > 0);
   finally
     Icon.Free;
+  end;
+end;
+
+procedure TTestIconsBaseLogic.TestSaveCacheRoundTrip;
+var
+  Icon: TStubCacheIcon;
+  dir, cached: string;
+begin
+  dir := TempCacheDir('icons-savetest');
+  cached := dir + PathDelim + 'stub.ico';
+  DeleteFile(cached);
+  Icon := TStubCacheIcon.Create(True, False);
+  try
+    Icon.CacheDir := dir + PathDelim;
+    Icon.CacheIconCRC := 12345; // mismatch vs hash 0 -> cache miss -> reload+save
+    AssertEquals(42, Icon.ImageIndex);
+    AssertTrue('cache file written: ' + cached, FileExists(cached));
+    AssertEquals(0, Icon.CacheIconCRC);
+    AssertEquals(2, Icon.ImgListCalls);
+  finally
+    Icon.Free;
+    CleanCacheDir(dir, 'stub.ico');
+  end;
+end;
+
+procedure TTestIconsBaseLogic.TestResetCacheIcon;
+var
+  Icon: TStubCacheIcon;
+  dir, cached: string;
+  f: TextFile;
+begin
+  dir := TempCacheDir('icons-resetest');
+  cached := dir + PathDelim + 'stub.ico';
+  AssignFile(f, cached);
+  Rewrite(f);
+  Write(f, 'stale');
+  CloseFile(f);
+  Icon := TStubCacheIcon.Create(True, False);
+  try
+    Icon.CacheDir := dir + PathDelim;
+    Icon.CacheIconCRC := 99;
+    Icon.ResetCacheIcon;
+    AssertFalse('cache file removed: ' + cached, FileExists(cached));
+    AssertEquals(0, Icon.CacheIconCRC);
+  finally
+    Icon.Free;
+    CleanCacheDir(dir, 'stub.ico');
   end;
 end;
 
