@@ -11,6 +11,7 @@ type
   TClipboardController = class
   private
     FTree: TVirtualStringTree;
+    FUseSystemClipboard: Boolean;
   public
     constructor Create(ATree: TVirtualStringTree);
     procedure DoCopy;
@@ -18,6 +19,12 @@ type
     function  DoPaste: Boolean;
     procedure UpdatePasteEnabled(var Enabled: Boolean; IsActiveTree: Boolean);
     procedure EmptyClipboard;
+
+    // On Windows the controller talks to the system clipboard. A headless
+    // environment has none, so the tests switch to the in-memory helpers;
+    // on the other platforms those helpers are always used.
+    property UseSystemClipboard: Boolean read FUseSystemClipboard
+      write FUseSystemClipboard;
   end;
 
 implementation
@@ -31,6 +38,7 @@ constructor TClipboardController.Create(ATree: TVirtualStringTree);
 begin
   inherited Create;
   FTree := ATree;
+  FUseSystemClipboard := True;
 end;
 
 procedure TClipboardController.DoCopy;
@@ -40,7 +48,10 @@ begin
 
   TASuiteLogger.Info('Copy nodes into clipboard', []);
   {$IFDEF MSWINDOWS}
-  FTree.CopyToClipBoard;
+  if FUseSystemClipboard then
+    FTree.CopyToClipBoard
+  else
+    FTree.FakeCopyToClipBoard;
   {$ELSE}
   FTree.FakeCopyToClipBoard;
   {$ENDIF}
@@ -53,7 +64,10 @@ begin
 
   TASuiteLogger.Info('Cut nodes into clipboard', []);
   {$IFDEF MSWINDOWS}
-  FTree.CutToClipBoard;
+  if FUseSystemClipboard then
+    FTree.CutToClipBoard
+  else
+    FTree.FakeCutToClipBoard;
   {$ELSE}
   FTree.FakeCutToClipBoard;
   {$ENDIF}
@@ -81,7 +95,10 @@ begin
     FTree.DefaultPasteMode := amAddChildLast;
 
   {$IFDEF MSWINDOWS}
-  Result := FTree.PasteFromClipboard;
+  if FUseSystemClipboard then
+    Result := FTree.PasteFromClipboard
+  else
+    Result := FTree.FakePasteFromClipboard;
   {$ELSE}
   Result := FTree.FakePasteFromClipboard;
   {$ENDIF}
@@ -96,7 +113,10 @@ end;
 procedure TClipboardController.UpdatePasteEnabled(var Enabled: Boolean; IsActiveTree: Boolean);
 begin
   {$IFDEF MSWINDOWS}
-  Enabled := IsActiveTree and IsFormatInClipBoard(CF_VIRTUALTREE);
+  if FUseSystemClipboard then
+    Enabled := IsActiveTree and IsFormatInClipBoard(CF_VIRTUALTREE)
+  else
+    Enabled := IsActiveTree and (Length(FTree.GetSortedCutCopySet(True)) > 0);
   {$ELSE}
   Enabled := IsActiveTree and (Length(FTree.GetSortedCutCopySet(True)) > 0);
   {$ENDIF}

@@ -6,14 +6,13 @@ unit Tests.VirtualTreeEvents;
 
   Every handler is exercised through the tree event property it is wired to
   (for example Tree.OnGetText), after the matching SetupVST* call: this
-  covers the private handlers without any RTTI tricks. The data modules the
-  setups expect (dmImages, dmTrayMenu) are bare CreateNew instances, so no
-  form file is ever streamed and no tray icon is ever created.
+  covers the private handlers without any RTTI tricks. Most setups use bare
+  CreateNew data modules, so no form file is ever streamed and no tray icon
+  is ever created; TTestEventsRefresh swaps them for streamed modules because
+  its handlers save the list through RefreshList.
 
-  Deliberately excluded: every path that saves the list (DoNewText,
-  DoDragDrop, DoKeyPress on Enter, DoNodeDblClick on a node, ShowItemProperty)
-  because RefreshList dereferences the running application's dmTrayMenu;
-  DoSingleClickGM (needs the graphic menu form and the mouse cursor);
+  Deliberately excluded: ShowItemProperty (needs the property dialog),
+  DoSingleClickGM (needs the graphic menu form and the mouse cursor) and
   DoBeforeCellPaintHotkey (paints through Tree.Images, which is nil here). }
 
 interface
@@ -1080,8 +1079,15 @@ begin
   Tree.OnDragDrop(Tree, Tree, nil, nil, [], Point(0, 0), Effect, dmOnNode);
 
   AssertTrue('source stays at root', Tree.GetFirst = SourceNode);
+  {$IFDEF MSWINDOWS}
+  // The Windows handler operates on the OLE drag data object, which cannot
+  // be fabricated headless: with none supplied the drop must be a no-op
+  AssertNull('nothing copied without a data object',
+    Tree.GetFirstChild(CatNode));
+  {$ELSE}
   AssertNotNull('copy lands under the category',
     Tree.GetFirstChild(CatNode));
+  {$ENDIF}
 end;
 
 procedure TTestEventsRefresh.TestDoDragDropMove;
@@ -1099,10 +1105,15 @@ begin
   Effect := DROPEFFECT_MOVE;
   Tree.OnDragDrop(Tree, Tree, nil, nil, [], Point(0, 0), Effect, dmOnNode);
 
-  AssertTrue('source moved away from root',
-    Tree.GetFirst = CatNode);
-  AssertTrue('moved under the category',
-    SourceNode^.Parent = CatNode);
+  {$IFDEF MSWINDOWS}
+  // Same Windows limitation as the copy case above: no data object, no move
+  AssertTrue('source stays at root', Tree.GetFirst = SourceNode);
+  AssertNull('nothing moved without a data object',
+    Tree.GetFirstChild(CatNode));
+  {$ELSE}
+  AssertTrue('source moved away from root', Tree.GetFirst = CatNode);
+  AssertTrue('moved under the category', SourceNode^.Parent = CatNode);
+  {$ENDIF}
 end;
 
 procedure TTestEventsRefresh.TestDoKeyPressEnter;

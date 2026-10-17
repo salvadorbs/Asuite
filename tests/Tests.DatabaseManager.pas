@@ -130,6 +130,7 @@ begin
     try
       AssertTrue('SaveData with backup succeeds', DB.SaveData(Tree, True));
 
+      Names.Clear;
       CollectBackups(Names);
       AssertTrue('a backup file was created', Names.Count >= 1);
     finally

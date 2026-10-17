@@ -105,7 +105,18 @@ tests' control. Leak checking stays enabled on the GTK runners.
   and keep dangling pointers after the tree is freed.
 - Backup tests write to `tests/backup/` (gitignored) because
   `ASuiteInstance.Paths.SuitePathBackup` cannot be redirected from the test
-  binary; each test cleans up the files it created.
+  binary; each test cleans up the files it created. `DoBackupList` copies the
+  database through a share-deny-none stream, so the backup also succeeds on
+  Windows while SQLite holds the file open (the previous `FileUtil.CopyFile`
+  opened it share-deny-write and silently produced nothing there).
+- Some behaviour is platform-specific and the tests assert it explicitly
+  instead of assuming a POSIX environment: `Tests.ConfigPaths` builds paths
+  with `PathDelim` and a platform drive, `Tests.NodeDataTypesFiles` uses a
+  real temp file for the existence flag, `Tests.VirtualTreeEvents` treats a
+  drop without an OLE data object as a no-op on Windows, and
+  `Tests.ClipboardController` switches the controller to the in-memory
+  clipboard (`UseSystemClipboard := False`) because the headless Windows CI
+  has no system clipboard.
 - The tree fixture (`Tests.Helpers.Tree`) switches `toAutoSort` off: the
   default tree options re-sort on every insert once `OnCompareNodes` is
   wired, which would reorder nodes under test and run the production

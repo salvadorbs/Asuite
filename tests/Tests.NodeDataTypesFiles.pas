@@ -43,19 +43,26 @@ implementation
 procedure TTestFileNodeData.TestFileDefaults;
 var
   Node: TvFileNodeData;
+  Tmp: string;
 begin
-  Node := AddFile('File', '/bin/sh');
-  AssertEquals('no path by default after overwrite', '/bin/sh', UTF8Encode(Node.PathFile));
-  AssertEquals('no parameters by default', '', UTF8Encode(Node.Parameters));
-  AssertEquals('no working dir by default', '', UTF8Encode(Node.WorkingDir));
-  AssertEquals('no clicks by default', 0, Node.ClickCount);
-  AssertFalse('in MRU by default', Node.NoMRU);
-  AssertFalse('in MFU by default', Node.NoMFU);
-  AssertFalse('no desktop shortcut by default', Node.ShortcutDesktop);
-  AssertFalse('not run from category by default', Node.RunFromCategory);
-  AssertNotNull('environment list always assigned', Node.EnvironmentVars);
-  AssertEquals('environment list starts empty', 0, Node.EnvironmentVars.Count);
-  AssertTrue('path assumed to exist until checked', Node.IsPathFileExists);
+  // A path that exists on every platform, so IsPathFileExists is deterministic
+  Tmp := WriteTempFile('asuite_test_defaults.tmp');
+  try
+    Node := AddFile('File', Tmp);
+    AssertEquals('path stored as given', Tmp, UTF8Encode(Node.PathFile));
+    AssertEquals('no parameters by default', '', UTF8Encode(Node.Parameters));
+    AssertEquals('no working dir by default', '', UTF8Encode(Node.WorkingDir));
+    AssertEquals('no clicks by default', 0, Node.ClickCount);
+    AssertFalse('in MRU by default', Node.NoMRU);
+    AssertFalse('in MFU by default', Node.NoMFU);
+    AssertFalse('no desktop shortcut by default', Node.ShortcutDesktop);
+    AssertFalse('not run from category by default', Node.RunFromCategory);
+    AssertNotNull('environment list always assigned', Node.EnvironmentVars);
+    AssertEquals('environment list starts empty', 0, Node.EnvironmentVars.Count);
+    AssertTrue('existing path flagged as existing', Node.IsPathFileExists);
+  finally
+    DeleteFile(Tmp);
+  end;
 end;
 
 procedure TTestFileNodeData.TestPathAbsoluteFileEmpty;
