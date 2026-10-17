@@ -16,11 +16,10 @@ type
   published
     procedure TestColorRoundTrip;
     procedure TestKnownCssName;
-    procedure TestGarbageColorDoesNotRaise;
     procedure TestFontParse;
     procedure TestFontEmptyLeavesUnchanged;
     procedure TestFontWrongFieldCountLeavesUnchanged;
-    procedure TestFontNilIsSafe;
+    procedure TestInvalidInputIsSafe;
   end;
 
 implementation
@@ -42,12 +41,6 @@ procedure TTestConversions.TestKnownCssName;
 begin
   AssertTrue('Non empty', ColorToHtml(clRed) <> '');
   AssertTrue('Named color', HtmlToColor('red') = clRed);
-end;
-
-procedure TTestConversions.TestGarbageColorDoesNotRaise;
-begin
-  // Must not raise; the value is the BGRA fallback.
-  HtmlToColor('not-a-color');
 end;
 
 procedure TTestConversions.TestFontParse;
@@ -94,9 +87,10 @@ begin
   end;
 end;
 
-procedure TTestConversions.TestFontNilIsSafe;
+procedure TTestConversions.TestInvalidInputIsSafe;
 begin
-  // Must not raise.
+  // Neither must raise; the color falls back to the BGRA default.
+  HtmlToColor('not-a-color');
   StrToFont('Arial|12|red|1', nil);
 end;
 

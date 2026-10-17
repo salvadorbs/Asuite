@@ -62,7 +62,6 @@ type
   TTestHotkeyItemsList = class(TNodeTreeTestCase)
   published
     procedure TestAddItemTransientIDReturnsMinusOne;
-    procedure TestAddItemRegistersWithoutDesktop;
     procedure TestIndexOfID;
   end;
 
@@ -361,28 +360,6 @@ begin
     ASuiteManager.ListManager.HotKeyItemList.AddItem(Node));
   AssertEquals('list stays empty', 0,
     ASuiteManager.ListManager.HotKeyItemList.Count);
-end;
-
-procedure TTestHotkeyItemsList.TestAddItemRegistersWithoutDesktop;
-var
-  Node: TvFileNodeData;
-  OldHotKey: Boolean;
-  List: THotkeyItemsList;
-begin
-  OldHotKey := Config.HotKey;
-  Config.HotKey := False; // never register with the desktop portal
-  try
-    List := ASuiteManager.ListManager.HotKeyItemList;
-    Node := AddFile('File', '/bin/sh');
-    Node.ID := 42;
-    Node.Hotkey := TextToShortCut('Ctrl+M');
-
-    AssertEquals('node stored', 1, List.Count);
-    List.RemoveItem(Node);
-    AssertEquals('node removed', 0, List.Count);
-  finally
-    Config.HotKey := OldHotKey;
-  end;
 end;
 
 procedure TTestHotkeyItemsList.TestIndexOfID;

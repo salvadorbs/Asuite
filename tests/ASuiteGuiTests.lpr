@@ -51,18 +51,22 @@ uses
   Tests.Execute,
   Tests.Settings,
   Tests.Instance,
+  Utility.Misc,
   Tests.Helpers.Tree,
   Tests.Helpers.Database,
   Tests.DatabaseVersion,
   Tests.DatabaseList,
-  Tests.DatabaseManager,
-  Tests.DatabaseSpike;
+  Tests.DatabaseManager;
 
 {$R *.res}
 
 var
   Application: TTestRunner;
 begin
+  // Failure paths must never open a modal dialog: on Windows ExecWithShell
+  // reports a missing launcher that way and the test would block forever.
+  ShowMessageDialogs := False;
+
   Application := TTestRunner.Create(nil);
   try
     Application.Run;

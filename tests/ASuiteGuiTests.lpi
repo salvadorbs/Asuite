@@ -115,11 +115,6 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Tests.IconsBaseLogic"/>
       </Unit9>
-      <Unit10>
-        <Filename Value="Tests.DatabaseSpike.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="Tests.DatabaseSpike"/>
-      </Unit10>
       <Unit11>
         <Filename Value="Tests.Helpers.Database.pas"/>
         <IsPartOfProject Value="True"/>

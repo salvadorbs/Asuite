@@ -155,6 +155,10 @@ begin
     AssertTrue('folder branch yields a file node', Data is TvFileNodeData);
     AssertEquals('folder nodes get the folder icon', CONST_PATH_FOLDERICON,
       UTF8Encode(TvCustomRealNodeData(Data).PathIcon));
+    // Characterization: the constructor always passes vtdtFile up, so even
+    // folder nodes report the file data type
+    AssertTrue('folder nodes report the file data type',
+      Data.DataType = vtdtFile);
   finally
     Data.Free;
   end;

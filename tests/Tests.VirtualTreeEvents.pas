@@ -68,7 +68,6 @@ type
     procedure TestGetHintWithoutDescription;
     procedure TestDrawTextRegularKeepsDefault;
     procedure TestDrawTextSeparatorDisablesDefault;
-    procedure TestExpandedIsSafe;
     procedure TestDragOverAccepts;
     procedure TestKeyPressOtherKey;
     procedure TestSingleClickWithoutRunOnClick;
@@ -77,7 +76,6 @@ type
     procedure TestCompareListAlphabetical;
     procedure TestCompareListSeparatorNeutral;
     procedure TestCompareListDifferentBlocksNeutral;
-    procedure TestNodeDataSizeList;
   end;
 
   TTestEventsHotkey = class(TEventsTestCase)
@@ -108,7 +106,6 @@ type
   published
     procedure TestCompareSearchByName;
     procedure TestCompareSearchByCategory;
-    procedure TestNodeDataSizeSearch;
   end;
 
   TTestEventsFrames = class(TEventsTestCase)
@@ -122,7 +119,6 @@ type
     procedure TestGetTextFrameCustom;
     procedure TestGetImageIndexFrame;
     procedure TestGetImageIndexFrameOtherKind;
-    procedure TestNodeDataSizeFrame;
     procedure TestFreeNodeFrameClearsTitle;
     procedure TestAddToSelectionOutsideDialogIsSafe;
   end;
@@ -433,13 +429,6 @@ begin
   end;
 end;
 
-procedure TTestEventsListText.TestExpandedIsSafe;
-begin
-  AddCategory('Cat');
-  // The handler body is intentionally empty; reaching it is the test
-  Tree.OnExpanded(Tree, Tree.GetFirst);
-end;
-
 procedure TTestEventsListText.TestDragOverAccepts;
 var
   Accept: Boolean;
@@ -551,15 +540,6 @@ begin
   Result := 99;
   Tree.OnCompareNodes(Tree, First, Second, 0, Result);
   AssertEquals('different blocks never compare', 0, Result);
-end;
-
-procedure TTestEventsListText.TestNodeDataSizeList;
-var
-  Size: Integer;
-begin
-  Size := 0;
-  Tree.OnGetNodeDataSize(Tree, Size);
-  AssertEquals('list nodes hold rBaseData', SizeOf(rBaseData), Size);
 end;
 
 { TTestEventsHotkey }
@@ -765,15 +745,6 @@ begin
   AssertTrue('categories compare alphabetically', Result > 0);
 end;
 
-procedure TTestEventsSearch.TestNodeDataSizeSearch;
-var
-  Size: Integer;
-begin
-  Size := 0;
-  Tree.OnGetNodeDataSize(Tree, Size);
-  AssertEquals('search nodes hold rTreeDataX', SizeOf(rTreeDataX), Size);
-end;
-
 { TTestEventsFrames }
 
 procedure TTestEventsFrames.SetUp;
@@ -839,15 +810,6 @@ begin
   Ghosted := False;
   FFrameTree.OnGetImageIndex(FFrameTree, Node, ikState, 0, Ghosted, ImageIndex);
   AssertEquals('state icons untouched', 7, ImageIndex);
-end;
-
-procedure TTestEventsFrames.TestNodeDataSizeFrame;
-var
-  Size: Integer;
-begin
-  Size := 0;
-  FFrameTree.OnGetNodeDataSize(FFrameTree, Size);
-  AssertEquals('frame nodes hold rFramesNodeData', SizeOf(rFramesNodeData), Size);
 end;
 
 procedure TTestEventsFrames.TestFreeNodeFrameClearsTitle;

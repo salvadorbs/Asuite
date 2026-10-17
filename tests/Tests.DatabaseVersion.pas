@@ -4,10 +4,9 @@ unit Tests.DatabaseVersion;
 
 { Round-trip tests for TSQLtbl_version through the singleton TDBManager.
 
-  The spike (Tests.DatabaseSpike) proved the layer is testable with a local
-  TDBManager; these tests cover the branches the spike could not reach:
-  the Update path of TSQLtbl_version.Save (a second Save must not insert a
-  second row) and the empty-table guard of TSQLtbl_version.Load. }
+  Cover the version resource read at startup, the Insert path of Save and its
+  Update path (a second Save must not insert a second row), plus the
+  empty-table guard and the restore path of Load. }
 
 interface
 
@@ -19,6 +18,7 @@ uses
 type
   TTestDatabaseVersion = class(TDatabaseTestCase)
   published
+    procedure TestAppVersionIsReadable;
     procedure TestVersionSaveInsertsSingleRow;
     procedure TestVersionSaveTwiceUpdatesSameRow;
     procedure TestVersionLoadOnEmptyTableKeepsVersion;
@@ -26,6 +26,17 @@ type
   end;
 
 implementation
+
+procedure TTestDatabaseVersion.TestAppVersionIsReadable;
+var
+  Version: TProgramVersion;
+begin
+  // TSQLtbl_version.Save calls this inside a try/except that logs through
+  // TASuiteLogger.Exception (modal dialog): it must not raise here.
+  Version := TASuiteInstance.GetASuiteVersion;
+  AssertEquals('Major', 2, Version.Major);
+  AssertEquals('Minor', 1, Version.Minor);
+end;
 
 procedure TTestDatabaseVersion.TestVersionSaveInsertsSingleRow;
 var

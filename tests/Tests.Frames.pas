@@ -70,7 +70,6 @@ type
   TTestAutorunFrame = class(TNodeTreeTestCase)
   published
     procedure TestLoadPopulatesStartupList;
-    procedure TestLoadLeavesShutdownEmpty;
   end;
 
   TTestBehaviorFrame = class(TNodeTreeTestCase)
@@ -285,57 +284,49 @@ procedure TTestAutorunFrame.TestLoadPopulatesStartupList;
 var
   Page: TfrmAutorunOptionsPage;
   Node: TvFileNodeData;
+
+  { Headless frames have no parent window, and SetupVSTAutorun sets
+    DefaultNodeHeight (which needs a handle while toAutoChangeScale is on):
+    drop the flag first, like the setup itself does right after. Same for the
+    display-only columns (AutoFitColumns needs a canvas). }
+  procedure Prepare(const APage: TfrmAutorunOptionsPage);
+  begin
+    APage.vstStartupItems.TreeOptions.AutoOptions :=
+      APage.vstStartupItems.TreeOptions.AutoOptions - [toAutoChangeScale];
+    APage.vstShutdownItems.TreeOptions.AutoOptions :=
+      APage.vstShutdownItems.TreeOptions.AutoOptions - [toAutoChangeScale];
+    APage.vstStartupItems.Header.Columns.Clear;
+    APage.vstShutdownItems.Header.Columns.Clear;
+  end;
+
 begin
   dmImages := TdmImages.CreateNew(nil);
   try
+    // Empty main tree: both mirrors stay empty
+    Page := TfrmAutorunOptionsPage.Create(nil);
+    try
+      Prepare(Page);
+      AssertTrue('load succeeds', Page.LoadData);
+      AssertEquals('startup tree empty', 0,
+        Page.vstStartupItems.RootNodeCount);
+      AssertEquals('shutdown tree empty', 0,
+        Page.vstShutdownItems.RootNodeCount);
+    finally
+      Page.Free;
+    end;
+
+    // A startup item lands in the startup mirror only, linking the node
     Node := AddFile('Tool', '/bin/tool');
     Node.Autorun := atAlwaysOnStart;
     Page := TfrmAutorunOptionsPage.Create(nil);
     try
-      // Headless frames have no parent window, and SetupVSTAutorun sets
-      // DefaultNodeHeight (which needs a handle while toAutoChangeScale is
-      // on): drop the flag first, like the setup itself does right after.
-      // Same for the display-only columns (AutoFitColumns needs a canvas).
-      Page.vstStartupItems.TreeOptions.AutoOptions :=
-        Page.vstStartupItems.TreeOptions.AutoOptions - [toAutoChangeScale];
-      Page.vstShutdownItems.TreeOptions.AutoOptions :=
-        Page.vstShutdownItems.TreeOptions.AutoOptions - [toAutoChangeScale];
-      Page.vstStartupItems.Header.Columns.Clear;
-      Page.vstShutdownItems.Header.Columns.Clear;
+      Prepare(Page);
       AssertTrue('load succeeds', Page.LoadData);
       AssertEquals('startup tree populated', 1,
         Page.vstStartupItems.RootNodeCount);
       AssertTrue('mirror links the main node',
         PTreeDataX(Page.vstStartupItems.GetNodeData(
           Page.vstStartupItems.GetFirst))^.pNodeList = Node.PNode);
-      AssertEquals('shutdown tree empty', 0,
-        Page.vstShutdownItems.RootNodeCount);
-    finally
-      Page.Free;
-    end;
-  finally
-    FreeAndNil(dmImages);
-  end;
-end;
-
-procedure TTestAutorunFrame.TestLoadLeavesShutdownEmpty;
-var
-  Page: TfrmAutorunOptionsPage;
-begin
-  dmImages := TdmImages.CreateNew(nil);
-  try
-    Page := TfrmAutorunOptionsPage.Create(nil);
-    try
-      // See above: no canvas without a parent window
-      Page.vstStartupItems.TreeOptions.AutoOptions :=
-        Page.vstStartupItems.TreeOptions.AutoOptions - [toAutoChangeScale];
-      Page.vstShutdownItems.TreeOptions.AutoOptions :=
-        Page.vstShutdownItems.TreeOptions.AutoOptions - [toAutoChangeScale];
-      Page.vstStartupItems.Header.Columns.Clear;
-      Page.vstShutdownItems.Header.Columns.Clear;
-      AssertTrue('load succeeds', Page.LoadData);
-      AssertEquals('startup tree empty', 0,
-        Page.vstStartupItems.RootNodeCount);
       AssertEquals('shutdown tree empty', 0,
         Page.vstShutdownItems.RootNodeCount);
     finally

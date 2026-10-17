@@ -59,8 +59,7 @@ type
     procedure TestNestedBatchDefersUntilOuterEnd;
     procedure TestBatchDuplicatePropertyNotifiedOnce;
     procedure TestBatchEmptyNameIsNotBatched;
-    procedure TestEndUpdateWithoutBeginIsNoop;
-    procedure TestExtraEndUpdateIsNoop;
+    procedure TestStrayEndUpdateIsNoop;
 
     // Groups
     procedure TestGroupCollapsesMembers;
@@ -276,16 +275,15 @@ begin
   AssertEquals('', NamesOf(FO1));
 end;
 
-procedure TTestConfigNotifier.TestEndUpdateWithoutBeginIsNoop;
+procedure TTestConfigNotifier.TestStrayEndUpdateIsNoop;
 begin
   FNotifier.AddObserver(FO1);
+
+  // EndUpdate without a matching BeginUpdate is a no-op.
   FNotifier.EndUpdate;
   AssertEquals('', NamesOf(FO1));
-end;
 
-procedure TTestConfigNotifier.TestExtraEndUpdateIsNoop;
-begin
-  FNotifier.AddObserver(FO1);
+  // A balanced batch with one extra EndUpdate still delivers once.
   FNotifier.BeginUpdate;
   FNotifier.Notify('A');
   FNotifier.EndUpdate;

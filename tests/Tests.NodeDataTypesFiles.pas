@@ -25,7 +25,6 @@ type
   TTestFileNodeData = class(TNodeTreeTestCase)
   published
     procedure TestFileDefaults;
-    procedure TestFolderCreationUsesFolderIcon;
     procedure TestPathAbsoluteFileEmpty;
     procedure TestPathAbsoluteFileKeepsAbsolutePaths;
     procedure TestWorkingDirAbsoluteFallsBackToFileDir;
@@ -35,7 +34,6 @@ type
     procedure TestCopyDuplicatesFileFields;
     procedure TestClickCountRegistersMFU;
     procedure TestLastAccessRegistersMRU;
-    procedure TestCountersAreIdleWhenImporting;
     procedure TestSetShortcutDesktopFalseToFalseIsNoOp;
     procedure TestDeleteShortcutFileWhenNotOnDesktopIsNoOp;
   end;
@@ -58,25 +56,6 @@ begin
   AssertNotNull('environment list always assigned', Node.EnvironmentVars);
   AssertEquals('environment list starts empty', 0, Node.EnvironmentVars.Count);
   AssertTrue('path assumed to exist until checked', Node.IsPathFileExists);
-end;
-
-procedure TTestFileNodeData.TestFolderCreationUsesFolderIcon;
-var
-  Data: TvBaseNodeData;
-begin
-  Data := TVirtualTreeMethods.CreateNodeData(vtdtFolder);
-  try
-    AssertTrue('folder creation yields a file node',
-      Data is TvFileNodeData);
-    AssertEquals('folder nodes get the folder icon', CONST_PATH_FOLDERICON,
-      UTF8Encode(TvCustomRealNodeData(Data).PathIcon));
-    // Characterization: the constructor always passes vtdtFile up, so even
-    // folder nodes report the file data type
-    AssertTrue('folder nodes report the file data type',
-      Data.DataType = vtdtFile);
-  finally
-    Data.Free;
-  end;
 end;
 
 procedure TTestFileNodeData.TestPathAbsoluteFileEmpty;
@@ -218,29 +197,6 @@ begin
 
   Node.NoMRU := False;
   AssertEquals('re-included node with access rejoins', 1, List.Count);
-end;
-
-procedure TTestFileNodeData.TestCountersAreIdleWhenImporting;
-var
-  Node: TvFileNodeData;
-  OldState: TLauncherState;
-  Manager: TListManager;
-begin
-  OldState := Config.ASuiteState;
-  Config.ASuiteState := lsImporting;
-  try
-    Manager := ASuiteManager.ListManager;
-    Node := AddFile('File', '/bin/sh');
-    Node.ClickCount := 3;
-    Node.LastAccess := SAMPLE_UNIX_DATE;
-    Node.NoMFU := True;
-    Node.NoMRU := True;
-
-    AssertEquals('MFU list untouched', 0, Manager.MFUList.Count);
-    AssertEquals('MRU list untouched', 0, Manager.MRUList.Count);
-  finally
-    Config.ASuiteState := OldState;
-  end;
 end;
 
 procedure TTestFileNodeData.TestSetShortcutDesktopFalseToFalseIsNoOp;

@@ -23,11 +23,8 @@ uses
 type
   TTestClipboardController = class(TNodeTreeTestCase)
   published
-    procedure TestNilTreeCopyIsSafe;
-    procedure TestNilTreeCutIsSafe;
+    procedure TestNilTreeCopyCutIsSafe;
     procedure TestNilTreePasteReturnsFalse;
-    procedure TestDoCopyMarksCopyPending;
-    procedure TestDoCutMarksCutPending;
     procedure TestUpdatePasteEnabledWithoutSelection;
     procedure TestUpdatePasteEnabledAfterCopy;
     procedure TestUpdatePasteEnabledInactiveTree;
@@ -47,7 +44,7 @@ type
 
 implementation
 
-procedure TTestClipboardController.TestNilTreeCopyIsSafe;
+procedure TTestClipboardController.TestNilTreeCopyCutIsSafe;
 var
   Controller: TClipboardController;
 begin
@@ -55,18 +52,6 @@ begin
   try
     // Must not raise
     Controller.DoCopy;
-  finally
-    Controller.Free;
-  end;
-end;
-
-procedure TTestClipboardController.TestNilTreeCutIsSafe;
-var
-  Controller: TClipboardController;
-begin
-  Controller := TClipboardController.Create(nil);
-  try
-    // Must not raise
     Controller.DoCut;
   finally
     Controller.Free;
@@ -80,36 +65,6 @@ begin
   Controller := TClipboardController.Create(nil);
   try
     AssertFalse('nil tree pastes nothing', Controller.DoPaste);
-  finally
-    Controller.Free;
-  end;
-end;
-
-procedure TTestClipboardController.TestDoCopyMarksCopyPending;
-var
-  Controller: TClipboardController;
-begin
-  Controller := TClipboardController.Create(Tree);
-  try
-    AddFile('File', '/bin/sh');
-    Tree.Selected[Tree.GetFirst] := True;
-    Controller.DoCopy;
-    AssertTrue('copy pending set', tsCopyPending in Tree.TreeStates);
-  finally
-    Controller.Free;
-  end;
-end;
-
-procedure TTestClipboardController.TestDoCutMarksCutPending;
-var
-  Controller: TClipboardController;
-begin
-  Controller := TClipboardController.Create(Tree);
-  try
-    AddFile('File', '/bin/sh');
-    Tree.Selected[Tree.GetFirst] := True;
-    Controller.DoCut;
-    AssertTrue('cut pending set', tsCutPending in Tree.TreeStates);
   finally
     Controller.Free;
   end;

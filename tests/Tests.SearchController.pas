@@ -31,11 +31,10 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
-    procedure TestExecuteOnFindsByName;
+    procedure TestExecuteOnFindsAndTargetsGivenTree;
     procedure TestExecuteOnEmptyKeywordClears;
     procedure TestExecuteOnNilTreeIsSafe;
     procedure TestExecuteOnNoMatchLeavesEmpty;
-    procedure TestExecuteOnSearchesGivenTree;
     procedure TestExecuteSearchesOwnedTree;
     procedure TestExecuteOnLowercasesKeyword;
     procedure TestOnTextChangeNilEditIsSafe;
@@ -46,8 +45,7 @@ type
     procedure TestOnLeftButtonClickNilMenuIsSafe;
     procedure TestOnKeyPressOtherKeyIsSafe;
     procedure TestOnKeyPressEnterDelegates;
-    procedure TestInitIconsNilEditIsSafe;
-    procedure TestInitIconsRealEditIsSafe;
+    procedure TestInitIconsIsSafe;
   end;
 
 implementation
@@ -91,7 +89,7 @@ begin
   inherited TearDown;
 end;
 
-procedure TTestSearchController.TestExecuteOnFindsByName;
+procedure TTestSearchController.TestExecuteOnFindsAndTargetsGivenTree;
 var
   Controller: TSearchController;
   Found: PVirtualNode;
@@ -101,9 +99,10 @@ begin
   try
     Controller.ExecuteOn(FSearchB, 'myapp', stName);
     Found := FSearchB.GetFirst;
-    AssertNotNull('match found', Found);
+    AssertNotNull('given tree populated', Found);
     AssertTrue('search node links the main node',
       PTreeDataX(FSearchB.GetNodeData(Found))^.pNodeList = Tree.GetFirst);
+    AssertTrue('owned tree untouched', FSearchA.GetFirst = nil);
   finally
     Controller.Free;
   end;
@@ -147,21 +146,6 @@ begin
   try
     Controller.ExecuteOn(FSearchA, 'zzz-no-match', stName);
     AssertTrue('no match, no nodes', FSearchA.GetFirst = nil);
-  finally
-    Controller.Free;
-  end;
-end;
-
-procedure TTestSearchController.TestExecuteOnSearchesGivenTree;
-var
-  Controller: TSearchController;
-begin
-  AddFile('MyApp', '/bin/other');
-  Controller := NewController(FSearchA, nil, nil);
-  try
-    Controller.ExecuteOn(FSearchB, 'myapp', stName);
-    AssertNotNull('given tree populated', FSearchB.GetFirst);
-    AssertTrue('owned tree untouched', FSearchA.GetFirst = nil);
   finally
     Controller.Free;
   end;
@@ -360,9 +344,10 @@ begin
   end;
 end;
 
-procedure TTestSearchController.TestInitIconsNilEditIsSafe;
+procedure TTestSearchController.TestInitIconsIsSafe;
 var
   Controller: TSearchController;
+  Edit: TButtonedEdit;
 begin
   Controller := NewController(FSearchA, nil, nil);
   try
@@ -371,13 +356,7 @@ begin
   finally
     Controller.Free;
   end;
-end;
 
-procedure TTestSearchController.TestInitIconsRealEditIsSafe;
-var
-  Controller: TSearchController;
-  Edit: TButtonedEdit;
-begin
   Edit := TButtonedEdit.Create(nil);
   Controller := NewController(FSearchA, Edit, nil);
   try

@@ -31,7 +31,6 @@ type
   published
     procedure TestRefreshBuildsMenu;
     procedure TestRefreshEmptyTreeBuildsFrame;
-    procedure TestRefreshListsSpecialItems;
   end;
 
 implementation
@@ -56,9 +55,13 @@ end;
 procedure TTestTrayMenu.TestRefreshBuildsMenu;
 var
   Menu: TPopupMenu;
+  Tool: TvFileNodeData;
 begin
   AddCategory('Cat');
-  AddFile('Tool', '/bin/tool', Tree.GetFirst);
+  Tool := AddFile('Tool', '/bin/tool', Tree.GetFirst);
+  // Exercise the special items (most-used / last-access) too
+  Tool.ClickCount := 5;
+  Tool.LastAccess := 2000000000;
 
   dmTrayMenu.RefreshClassicMenu;
 
@@ -75,19 +78,6 @@ begin
 
   Menu := dmTrayMenu.pmTrayicon;
   AssertTrue('header/footer still built', Menu.Items.Count > 0);
-end;
-
-procedure TTestTrayMenu.TestRefreshListsSpecialItems;
-var
-  Node: TvFileNodeData;
-begin
-  Node := AddFile('Tool', '/bin/tool');
-  Node.ClickCount := 5;
-  Node.LastAccess := 2000000000;
-
-  dmTrayMenu.RefreshClassicMenu;
-
-  AssertTrue('menu populated', dmTrayMenu.pmTrayicon.Items.Count > 2);
 end;
 
 initialization
