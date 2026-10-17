@@ -24,7 +24,6 @@ uses
 type
   TTestDatabaseList = class(TDatabaseTestCase)
   published
-    procedure TestSavePersistsOneRowPerNode;
     procedure TestSaveReloadKeepsEveryField;
     procedure TestLoadOrdersSiblingsByPosition;
     procedure TestSaveUpdatesOnlyChangedOrMovedNodes;
@@ -53,19 +52,6 @@ begin
   end;
 end;
 
-procedure TTestDatabaseList.TestSavePersistsOneRowPerNode;
-begin
-  AddCategory('Cat');
-  AddFile('File A', '/bin/a');
-  AddSeparator('---');
-  AddFile('Loose', '/bin/loose');
-
-  AssertTrue('SaveData succeeds', DB.SaveData(Tree, False));
-
-  AssertEquals('one list row per tree node', 4, CountRows(TSQLtbl_list));
-  AssertEquals('version row written by SaveData', 1, CountRows(TSQLtbl_version));
-end;
-
 procedure TTestDatabaseList.TestSaveReloadKeepsEveryField;
 var
   CatNode: PVirtualNode;
@@ -90,6 +76,8 @@ begin
   AddFile('Loose', '/bin/loose');
 
   AssertTrue('SaveData succeeds', DB.SaveData(Tree, False));
+  AssertEquals('one list row per tree node', 5, CountRows(TSQLtbl_list));
+  AssertEquals('version row written by SaveData', 1, CountRows(TSQLtbl_version));
   // Save stamps Now into every in-memory edit date (see RestoreEditDates);
   // re-stamp the build-time value so the snapshot matches the reloaded tree
   RestoreEditDates;

@@ -15,18 +15,40 @@ units run with a display server.
 | `Tests.MenuUtils.pas` | `Utility.MenuUtils` |
 | `Tests.SortController.pas` | `Utility.SortController` |
 | `Tests.LanguageCombo.pas` | Language combo fill on the general options page |
-| `Tests.ConfigPaths.pas` | `TConfigPaths` layout and absolute/relative conversions |
+| `Tests.ConfigPaths.pas` | `TConfigPaths` layout and absolute/relative conversions, `TPathList` variable expansion |
 | `Tests.Conversions.pas` | `Utility.Conversions` color/font serialization |
 | `Tests.FileFolder.pas` | Side-effect-free helpers in `Utility.FileFolder` |
 | `Tests.Scheduler.pas` | `TScheduler` firing logic (`CheckOnce/Daily/Hourly`) |
 | `Tests.IconsManager.pas` | `Icons.Manager` registry, extension lists, concurrent add/clear |
 | `Tests.IconsBaseLogic.pas` | `Icons.Base` lazy load/cache, `Icons.Thread` lifecycle |
 | `Tests.IconsCacheKey.pas` | `Icons.CacheKey`: sanitizing, hashing, cache file names |
+| `Tests.Helpers.Tree.pas` | Shared base fixture: tree as `MainTree`, node ownership, list cleanup, `Config` snapshot |
+| `Tests.NodeDataTypes.pas` | `TvBaseNodeData`, `TvCustomRealNodeData` (via a test double), separators, categories |
+| `Tests.NodeDataTypesFiles.pas` | `TvFileNodeData`: paths, working dir, MRU/MFU registration |
+| `Tests.VirtualTreeMethods.pas` | `TVirtualTreeMethods`: creation, lookup, search, callbacks |
+| `Tests.VirtualTreeEvents.pas` | `TVirtualTreeEvents` handlers, save/load round-trip |
+| `Tests.VirtualTreeHelper.pas` | `VirtualTreeHelper` copy/cut/paste, every `SetupVST*` wiring |
+| `Tests.Lists.pas` | `TBaseItemsList`, `TSpecialItemsList`, `TListManager`, `THotkeyItemsList` (no desktop) |
+| `Tests.SystemUtils.pas` | `Utility.System` checks, `Utility.XML` hotkey tables |
+| `Tests.MiscUtils.pas` | `Utility.Misc` pure helpers |
+| `Tests.RunController.pas` | `TRunController` run-action enablement |
+| `Tests.ClipboardController.pas` | `TClipboardController` marking and paste state |
+| `Tests.SearchController.pas` | `TSearchController` search execution and events |
+| `Tests.XmlImport.pas` | XML getters and legacy list importers |
+| `Tests.Configuration.pas` | `TConfiguration` setters and batching |
+| `Tests.ShellLink.pas` | `TShellLinkFile` link files |
+| `Tests.FindFiles.pas` | `TFindFiles` directory scanner thread |
+| `Tests.ASMenuItem.pas` | `TASMenuItem` node references and separators |
+| `Tests.Frames.pas` | Option/property page load/save round-trips |
+| `Tests.ImportList.pas` | Import form: counting, XML populate, path conversion |
+| `Tests.TrayMenu.pas` | Tray menu building from `dmTrayMenu` (classic and graphic menus) |
+| `Tests.Execute.pas` | Real node execution (platform "true" binary), single-instance probe (`/bin/sleep`), autorun lists, `RunFile` |
+| `Tests.Settings.pas` | `LoadXMLSettings` legacy settings mapping and defaults |
 | `Tests.Helpers.Database.pas` | Shared fixture for the SQLite suites: temp DB, tree as `MainTree`, deterministic dates |
-| `Tests.DatabaseSpike.pas` | Fase 0 spike: layer feasibility with a local `TDBManager` |
-| `Tests.DatabaseVersion.pas` | `TSQLtbl_version` save/load round-trip, Update branch, empty-table guard |
+| `Tests.DatabaseVersion.pas` | `TSQLtbl_version` version resource, save/load round-trip, Update branch, empty-table guard |
 | `Tests.DatabaseList.pas` | `TSQLtbl_list` tree round-trip, ordering by position, update on `Changed`/`Position`/`ParentID`, import mode, Unicode |
 | `Tests.DatabaseManager.pas` | `TDBManager`: idempotent `Setup`, `SaveData` result, backup creation/pruning, `RemoveItem`, `DeleteItems`, `ClearTable` |
+| `Tests.Instance.pas` | `TASuiteInstance.HandleParam` command-line (`-list`) parsing |
 | `run_tests.sh` | Build + run helper used locally and by CI |
 
 ## Run locally
@@ -36,7 +58,7 @@ units run with a display server.
 ```
 
 Set `ASUITE_MIN_TESTS` to change the minimum total number of tests required
-(default 150); the script fails if the suites shrink below it.
+(default 470); the script fails if the suites shrink below it.
 
 GUI control tests need a display server on Linux. If `DISPLAY` is not set
 and `xvfb-run` is available, the script re-executes the GUI binary under
@@ -44,8 +66,22 @@ and `xvfb-run` is available, the script re-executes the GUI binary under
 
 ## Run in CI
 
-`.github/workflows/main.yml` and `main_release.yml` run both suites on the
-Linux GTK2 job (`Xvfb :1`, `DISPLAY=:1`) before uploading the build.
+`.github/workflows/main.yml` and `main_release.yml` run both suites on every
+matrix entry (Windows `win32` and Linux `gtk2`/`gtk3`/`qt5`/`qt6`) before
+uploading the build. The jobs call `tests/run_tests.sh` with an absolute
+`LAZBUILD`, so local and CI runs share the same build, timeout and leak
+logic. On Linux the GUI suite runs under `xvfb-run` (`xvfb` is installed per
+job); on Windows it uses the runner's desktop session.
+
+The CI step has `timeout-minutes: 30` and the script applies the
+`ASUITE_TEST_TIMEOUT` limit (600s per suite) when GNU `timeout` is available.
+A blocking GUI test therefore fails the job with the last test printed in the
+log instead of keeping the runner busy until the 6-hour job limit.
+
+`HEAPTRC` is disabled on `qt5`/`qt6`/`win32`: on Qt the LCL teardown runs
+after heaptrc starts dumping and can abort the process (exit 217) even when
+all tests passed, and on win32 COM/widgetset allocations are outside the
+tests' control. Leak checking stays enabled on the GTK runners.
 
 ## Notes
 
@@ -70,8 +106,47 @@ Linux GTK2 job (`Xvfb :1`, `DISPLAY=:1`) before uploading the build.
 - Backup tests write to `tests/backup/` (gitignored) because
   `ASuiteInstance.Paths.SuitePathBackup` cannot be redirected from the test
   binary; each test cleans up the files it created.
-- Deliberately NOT covered (they need the running application singletons
-  `Config`/`ASuiteInstance`/`ASuiteManager`):
-  - `THotkeyItemsList` (`Lists.HotKey`) and the `HotkeyTriggerChangedEx`
-    callback,
-  - `ExtractFileNameEx` / `DeleteOldBackups` (same reason).
+- The tree fixture (`Tests.Helpers.Tree`) switches `toAutoSort` off: the
+  default tree options re-sort on every insert once `OnCompareNodes` is
+  wired, which would reorder nodes under test and run the production
+  compare on half-initialized nodes (their `PNode` is set only after
+  `AddChild` returns). Comparisons are covered with explicit node pairs.
+- The save/load round-trip loads into a separate tree whose `OnNewText` is
+  silenced and whose `OnFreeNode` frees through a direct cast: the
+  production handlers assume the main/import tree (node resolution) and
+  the running application (list save, tray menu).
+- `Tests.Execute` runs real processes so the launch path is exercised end to
+  end: `/bin/true` on Unix and `%SystemRoot%\System32\whoami.exe` on Windows
+  (both exit immediately). The single-instance probe uses `/bin/sleep` and is
+  Unix-only. Missing-file launches fail on every platform; `ASuiteGuiTests`
+  sets `ShowMessageDialogs := False` (see `Utility.Misc`) so the modal error
+  dialog that `ExecWithShell` shows on Windows cannot block the run. Errors
+  are still written to the log.
+- `Tests.Settings` drives `LoadXMLSettings` with `Config.HotKey` off (the
+  legacy loader replays the hotkey setters) and snapshots/restores every
+  touched `Config` property. It never enables `StartOnWindowsStartup`
+  (that writes an OS autostart entry) and only writes to the gitignored
+  `backup/`/`cache/` folders.
+- Deliberately NOT covered:
+  - `THotkeyItemsList.Clear` and the desktop `HotkeyTriggerChangedEx`
+    callback (they register/unregister real shortcuts; add/remove/lookup
+    are covered with `Config.HotKey` off),
+  - graphic-menu handlers (`DoSingleClickGM`) and image painting
+    (`DoBeforeCellPaintHotkey`): they need the running menu form and the
+    image lists,
+  - documents and admin launches (`ExecuteAsAdmin`, URL/document open),
+    `ExplorePath`, desktop-shortcut/autostart writes, and clipboard
+    clearing,
+  - icon extraction on real files (`GetAllIcons`, `TNodeIcon.LoadIcon`) and
+    the icon thread (`TTreeIconsThread`),
+  - `TConfiguration.RestoreSettings`/`SaveConfig`/`LoadConfig`,
+    `SetCache`, `SetStartWithWindows`, the hotkey-string setters and
+    `SetTrayIcon` (real files, cache folders, desktop registration,
+    tray availability),
+  - `LoadDatabaseFromXML` (it rewrites large parts of `Config` and the
+    database), `XMLToTree` with `ltASuite2` (the dispatch has no branch
+    for it, so the converter stays nil),
+  - `TThemeEngine` getters (private), `Forms.Main`, `Forms.GraphicMenu`,
+    `Forms.ScanFolder`, the modal dialogs (`Forms.About`,
+    `Forms.UILogin`, `Forms.PropertyItem`, `Forms.PropertySeparator`,
+    `Forms.Dialog.BaseEntity`) and the hotkey/trayicon frames.

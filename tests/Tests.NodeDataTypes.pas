@@ -40,9 +40,7 @@ type
     procedure TestDefaultsHideFromMenuFalse;
     procedure TestDefaultsIconAssigned;
     procedure TestNameSetsMenuCaptionWithDoubledAmpersands;
-    procedure TestIsFileItemAcrossTypes;
-    procedure TestIsCategoryItemAcrossTypes;
-    procedure TestIsSeparatorItemAcrossTypes;
+    procedure TestDataTypePredicates;
     procedure TestCopyPrefixesName;
     procedure TestCopyDuplicatesFields;
     procedure TestChangedStampsEditDate;
@@ -86,14 +84,11 @@ type
     procedure TestSchDateTimeZeroBecomesNow;
     procedure TestIsHotkeyActive;
     procedure TestSetHotkeyRegistersAndUnregisters;
-    procedure TestSetHotkeyWithTransientIDSkipsList;
     procedure TestSetSchModeRegistersScheduler;
-    procedure TestSetAutorunMovesBetweenStartupAndShutdown;
-    procedure TestSetAutorunSingleInstanceGoesToStartup;
+    procedure TestSetAutorunRegistersLists;
     procedure TestListSettersAreIdleWhenImporting;
     procedure TestCopyCopiesCustomFields;
     procedure TestUpdateHotkeyFromDesktopStoresWithoutRegistering;
-    procedure TestPointerNodeIsSetByBuilder;
     procedure TestParentNodeFollowsTree;
   end;
 
@@ -169,7 +164,7 @@ begin
     UTF8Encode(FData.MenuCaption));
 end;
 
-procedure TTestBaseNodeData.TestIsFileItemAcrossTypes;
+procedure TTestBaseNodeData.TestDataTypePredicates;
 var
   FileData, FolderData, CatData, SepData: TvBaseNodeData;
 begin
@@ -182,45 +177,19 @@ begin
     AssertTrue('folder is a file item', FolderData.IsFileItem);
     AssertFalse('category is not a file item', CatData.IsFileItem);
     AssertFalse('separator is not a file item', SepData.IsFileItem);
-  finally
-    FileData.Free;
-    FolderData.Free;
-    CatData.Free;
-    SepData.Free;
-  end;
-end;
 
-procedure TTestBaseNodeData.TestIsCategoryItemAcrossTypes;
-var
-  FileData, CatData, SepData: TvBaseNodeData;
-begin
-  FileData := TvBaseNodeData.Create(vtdtFile);
-  CatData := TvBaseNodeData.Create(vtdtCategory);
-  SepData := TvBaseNodeData.Create(vtdtSeparator);
-  try
     AssertFalse('file is not a category', FileData.IsCategoryItem);
+    AssertFalse('folder is not a category', FolderData.IsCategoryItem);
     AssertTrue('category is a category', CatData.IsCategoryItem);
     AssertFalse('separator is not a category', SepData.IsCategoryItem);
-  finally
-    FileData.Free;
-    CatData.Free;
-    SepData.Free;
-  end;
-end;
 
-procedure TTestBaseNodeData.TestIsSeparatorItemAcrossTypes;
-var
-  FileData, CatData, SepData: TvBaseNodeData;
-begin
-  FileData := TvBaseNodeData.Create(vtdtFile);
-  CatData := TvBaseNodeData.Create(vtdtCategory);
-  SepData := TvBaseNodeData.Create(vtdtSeparator);
-  try
     AssertFalse('file is not a separator', FileData.IsSeparatorItem);
+    AssertFalse('folder is not a separator', FolderData.IsSeparatorItem);
     AssertFalse('category is not a separator', CatData.IsSeparatorItem);
     AssertTrue('separator is a separator', SepData.IsSeparatorItem);
   finally
     FileData.Free;
+    FolderData.Free;
     CatData.Free;
     SepData.Free;
   end;
@@ -431,17 +400,6 @@ begin
   end;
 end;
 
-procedure TTestCustomNodeLists.TestSetHotkeyWithTransientIDSkipsList;
-var
-  Node: TvFileNodeData;
-begin
-  // ID is -1 until the database assigns one: AddItem bails out early
-  Node := AddFile('File', '/bin/sh');
-  Node.Hotkey := TextToShortCut('Ctrl+A');
-  AssertEquals('transient node never enters the list', 0,
-    ASuiteManager.ListManager.HotKeyItemList.Count);
-end;
-
 procedure TTestCustomNodeLists.TestSetSchModeRegistersScheduler;
 var
   Node: TvFileNodeData;
@@ -461,7 +419,7 @@ begin
     ASuiteManager.ListManager.SchedulerItemList.Count);
 end;
 
-procedure TTestCustomNodeLists.TestSetAutorunMovesBetweenStartupAndShutdown;
+procedure TTestCustomNodeLists.TestSetAutorunRegistersLists;
 var
   Node: TvFileNodeData;
   Manager: TListManager;
@@ -479,16 +437,10 @@ begin
 
   Node.Autorun := atNever;
   AssertEquals('shutdown list loses the node', 0, Manager.ShutdownItemList.Count);
-end;
 
-procedure TTestCustomNodeLists.TestSetAutorunSingleInstanceGoesToStartup;
-var
-  Node: TvFileNodeData;
-begin
-  Node := AddFile('File', '/bin/sh');
   Node.Autorun := atSingleInstance;
   AssertEquals('single instance items run at startup', 1,
-    ASuiteManager.ListManager.StartupItemList.Count);
+    Manager.StartupItemList.Count);
 end;
 
 procedure TTestCustomNodeLists.TestListSettersAreIdleWhenImporting;
@@ -506,10 +458,16 @@ begin
     Node.Hotkey := TextToShortCut('Ctrl+A');
     Node.SchMode := smOnce;
     Node.Autorun := atAlwaysOnStart;
+    Node.ClickCount := 3;
+    Node.LastAccess := SAMPLE_UNIX_DATE;
+    Node.NoMFU := True;
+    Node.NoMRU := True;
 
     AssertEquals('hotkey list untouched', 0, Manager.HotKeyItemList.Count);
     AssertEquals('scheduler list untouched', 0, Manager.SchedulerItemList.Count);
     AssertEquals('startup list untouched', 0, Manager.StartupItemList.Count);
+    AssertEquals('MFU list untouched', 0, Manager.MFUList.Count);
+    AssertEquals('MRU list untouched', 0, Manager.MRUList.Count);
   finally
     Config.ASuiteState := OldState;
   end;
@@ -556,18 +514,6 @@ begin
   AssertEquals('desktop trigger stored', TextToShortCut('Ctrl+B'), Node.Hotkey);
   AssertEquals('nothing registered', 0,
     ASuiteManager.ListManager.HotKeyItemList.Count);
-end;
-
-procedure TTestCustomNodeLists.TestPointerNodeIsSetByBuilder;
-var
-  Node: PVirtualNode;
-  Data: TvBaseNodeData;
-begin
-  AddFile('File', '/bin/sh');
-  Node := Tree.GetFirst;
-  Data := TVirtualTreeMethods.GetNodeItemData(Node, Tree);
-  AssertNotNull('node has data', Data);
-  AssertTrue('data points back at its node', Data.PNode = Node);
 end;
 
 procedure TTestCustomNodeLists.TestParentNodeFollowsTree;

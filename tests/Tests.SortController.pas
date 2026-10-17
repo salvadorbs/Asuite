@@ -26,8 +26,7 @@ type
     procedure TestDisabledWithASingleChild;
     procedure TestDisabledWithNoChildren;
     procedure TestDisabledWhenListIsNotActiveTree;
-    procedure TestNilActionIsSafe;
-    procedure TestNilListTreeIsSafe;
+    procedure TestNilArgumentsAreSafe;
   end;
 
 implementation
@@ -116,15 +115,10 @@ begin
   AssertFalse('Disabled', FAction.Enabled);
 end;
 
-procedure TTestSortController.TestNilActionIsSafe;
+procedure TTestSortController.TestNilArgumentsAreSafe;
 begin
   // Must not raise.
   FController.UpdateSortListAction(nil, FListTree, FListTree);
-end;
-
-procedure TTestSortController.TestNilListTreeIsSafe;
-begin
-  // Must not raise.
   FController.UpdateSortListAction(FAction, nil, FListTree);
 end;
 

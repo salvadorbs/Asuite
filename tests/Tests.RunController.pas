@@ -31,8 +31,7 @@ type
   private
     function NewAction(AMode: TRunMode): TAction;
   published
-    procedure TestNilActionIsSafe;
-    procedure TestNilTreeIsSafe;
+    procedure TestNilArgumentsAreSafe;
     procedure TestEmptySelectionIsDisabled;
     procedure TestSeparatorIsDisabled;
     procedure TestCategoryIsEnabled;
@@ -60,21 +59,7 @@ begin
   Result.Tag := Ord(AMode);
 end;
 
-procedure TTestRunController.TestNilActionIsSafe;
-var
-  Controller: TRunController;
-begin
-  Controller := TRunController.Create;
-  try
-    AddFile('File', '/bin/sh');
-    // Must not raise
-    Controller.UpdateRunAction(nil, Tree);
-  finally
-    Controller.Free;
-  end;
-end;
-
-procedure TTestRunController.TestNilTreeIsSafe;
+procedure TTestRunController.TestNilArgumentsAreSafe;
 var
   Controller: TRunController;
   Action: TAction;
@@ -82,7 +67,9 @@ begin
   Controller := TRunController.Create;
   Action := NewAction(rmNormal);
   try
+    AddFile('File', '/bin/sh');
     // Must not raise
+    Controller.UpdateRunAction(nil, Tree);
     Controller.UpdateRunAction(Action, nil);
   finally
     Action.Free;
@@ -276,7 +263,8 @@ procedure TTestRunControllerExecute.TestExecuteRunSkipsIdleCategory;
 var
   Controller: TRunController;
 begin
-  // No runnable children anywhere: nothing launches on any platform
+  // No runnable children anywhere: nothing launches. On Windows the failure
+  // would normally show a dialog, but the test runner suppresses it.
   AddCategory('Cat');
   AddFile('Idle', '/bin/idle', Tree.GetFirst);
   Tree.Selected[Tree.GetFirst] := True;

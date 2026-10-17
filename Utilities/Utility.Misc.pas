@@ -37,6 +37,10 @@ function RemoveAllQuotes(const S: string): string;
 function DoubleAmpersands(const str: string): string;
 
 { Dialogs }
+var
+  { The test runners set this to False: a modal dialog would block a headless
+    run. Errors are still written to the log. }
+  ShowMessageDialogs: Boolean = True;
 procedure ShowMessageEx(const Msg: string; Error: boolean = False);
 procedure ShowMessageFmtEx(const Msg: string; Params: array of const; Error: boolean = False);
 function AskUserWarningMessage(const AMsg: string; Params: array of const): Boolean;
@@ -119,7 +123,8 @@ procedure ShowMessageFmtEx(const Msg: string; Params: array of const; Error: boo
 const
   DlgType: array[boolean] of TMsgDlgType = (mtInformation, mtError);
 begin
-  MessageDlg(Format(Msg, Params), DlgType[Error], [mbOK], 0);
+  if ShowMessageDialogs then
+    MessageDlg(Format(Msg, Params), DlgType[Error], [mbOK], 0);
 
   if Error then
     TASuiteLogger.Error(Msg, Params);
@@ -127,12 +132,18 @@ end;
 
 function AskUserWarningMessage(const AMsg: string; Params: array of const): Boolean;
 begin
+  if not ShowMessageDialogs then
+    Exit(False);
+
   //Returns true if user clicks on mbYes
   Result := (MessageDlg(Format(AMsg, Params), mtWarning, [mbYes, mbNo], 0) = mrYes);
 end;
 
 function AskUserCloseApp: Boolean;
 begin
+  if not ShowMessageDialogs then
+    Exit(True);
+
   if Config.ConfirmMsgCloseApp then
     Result := AskUserWarningMessage(msgConfirm, [])
   else
