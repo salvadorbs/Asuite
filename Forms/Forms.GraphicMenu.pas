@@ -316,9 +316,9 @@ begin
   edtSearch.RightButton.ImageIndex := FThemeEngine.SearchIcon;
 
   // frmGraphicMenu is created after Config.LoadConfig, so it missed the
-  // initial 'AfterUpdateConfig' notification. Replay it so the theme is loaded
-  // and the initial position is applied when the menu is created at startup.
-  ConfigChanged('AfterUpdateConfig');
+  // initial notifications: sync it so the theme is loaded and the initial
+  // position is applied when the menu is created at startup.
+  Config.SyncObserver(frmGraphicMenu);
 end;
 
 procedure TfrmGraphicMenu.FormDestroy(Sender: TObject);
