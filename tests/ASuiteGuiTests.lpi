@@ -65,7 +65,7 @@
         <PackageName Value="LCL"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="15">
+    <Units Count="22">
       <Unit0>
         <Filename Value="ASuiteGuiTests.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -140,6 +140,41 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Tests.DatabaseManager"/>
       </Unit14>
+      <Unit15>
+        <Filename Value="Tests.Helpers.Tree.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.Helpers.Tree"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="Tests.NodeDataTypes.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.NodeDataTypes"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="Tests.NodeDataTypesFiles.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.NodeDataTypesFiles"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="Tests.VirtualTreeMethods.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.VirtualTreeMethods"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="Tests.VirtualTreeEvents.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.VirtualTreeEvents"/>
+      </Unit19>
+      <Unit20>
+        <Filename Value="Tests.VirtualTreeHelper.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.VirtualTreeHelper"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="Tests.Lists.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.Lists"/>
+      </Unit21>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
