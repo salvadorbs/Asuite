@@ -47,8 +47,8 @@ fi
 printf '%s\n' "$GUI_OUT"
 
 # Guard against a silently shrinking suite: fail when fewer than
-# ASUITE_MIN_TESTS (default 100) tests actually run in total.
-MIN_TESTS="${ASUITE_MIN_TESTS:-100}"
+# ASUITE_MIN_TESTS (default 150) tests actually run in total.
+MIN_TESTS="${ASUITE_MIN_TESTS:-150}"
 CONSOLE_N="$(count_tests "$CONSOLE_OUT")"
 GUI_N="$(count_tests "$GUI_OUT")"
 TOTAL=$(( ${CONSOLE_N:-0} + ${GUI_N:-0} ))

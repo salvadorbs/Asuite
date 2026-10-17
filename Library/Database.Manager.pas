@@ -72,6 +72,9 @@ end;
 
 procedure TDBManager.RemoveItem(aID: Integer);
 begin
+  //Setup has not run yet: there is no database handle to delete through
+  if not Assigned(FDatabase) then
+    Exit;
   if (aID > 0) then
     FDatabase.Delete(TSQLtbl_list, aID);
 end;
@@ -82,6 +85,10 @@ var
   {%H-}log: ISynLog;
 begin
   log := TASuiteLogger.Enter('TDBManager.DeleteItems', Self);
+  Result := False;
+  //Setup has not run yet: there is no database handle to delete through
+  if not Assigned(FDatabase) then
+    Exit;
   Result := FDatabase.TransactionBegin(TSQLtbl_list, 1);
   //Begin transaction for remove data from sqlite database
   if Result then
@@ -185,6 +192,15 @@ begin
   log := TASuiteLogger.Enter('TDBManager.SaveData', Self);
   TASuiteLogger.Info('Saving ASuite SQLite Database', []);
 
+  //Result stays False when the transaction cannot run or the save raises:
+  //frmMain already branches on it to show msgErrSave instead of msgSaveCompleted
+  Result := False;
+
+  //Setup has not run yet: there is no database handle to save through,
+  //and without a save there is nothing to back up either
+  if not Assigned(FDatabase) then
+    Exit;
+
   //List & Options
   try
     //Save data and do backup
@@ -197,6 +213,7 @@ begin
         TSQLtbl_version.Save(Self);
         //Commit data in sqlite database
         FDatabase.Commit(1);
+        Result := True;
       end;
     except
       on E : Exception do begin
@@ -205,7 +222,7 @@ begin
       end;
     end;
   finally
-    Result := True;
+    //Never back up a database whose save just failed
     if Result and DoBackup then
       DoBackupList;
   end;
@@ -215,6 +232,10 @@ procedure TDBManager.Setup(const ADBFilePath: string);
 begin
   TASuiteLogger.Info('Setup DBManager using sqlite file "%s"', [ADBFilePath]);
   FDBFileName := ADBFilePath;
+
+  //Close a database opened by a previous Setup: SQLite is opened in exclusive
+  //mode, so a second handle on the same file would fail to open it
+  FreeAndNil(FDatabase);
 
   DoBackupList;
 
