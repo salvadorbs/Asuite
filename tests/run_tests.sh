@@ -4,6 +4,8 @@
 #   ASuiteTests     : FPCUnit console tests, no display or widgetset required.
 #   ASuiteGuiTests  : FPCUnit tests that build LCL controls; need a display
 #                     server (xvfb-run is used automatically when available).
+# Both runners link heaptrc, so any "N unfreed memory blocks" with N > 0 in
+# their output fails this script (see check_leaks below).
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -55,3 +57,15 @@ if (( TOTAL < MIN_TESTS )); then
   echo "ERROR: expected at least $MIN_TESTS tests, got $TOTAL" >&2
   exit 1
 fi
+
+check_leaks() {
+  # Fails when heaptrc reports unfreed blocks in a suite's captured output.
+  if printf '%s\n' "$2" | grep -Eq '[1-9][0-9]* unfreed memory blocks'; then
+    echo "ERROR: memory leaks detected in $1 (see 'unfreed memory blocks' above)" >&2
+    return 1
+  fi
+}
+
+check_leaks "ASuiteTests" "$CONSOLE_OUT"
+check_leaks "ASuiteGuiTests" "$GUI_OUT"
+echo "=== No memory leaks detected ==="

@@ -31,7 +31,7 @@
         <PackageName Value="LazUtils"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="4">
+    <Units Count="6">
       <Unit0>
         <Filename Value="ASuiteTests.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -51,6 +51,16 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Tests.LanguageManager"/>
       </Unit3>
+      <Unit4>
+        <Filename Value="Tests.IconsCacheKey.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.IconsCacheKey"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="Tests.IconsMime.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.IconsMime"/>
+      </Unit5>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

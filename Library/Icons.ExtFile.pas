@@ -36,7 +36,7 @@ type
   protected
     function GetName: string; override;
     function LoadIcon: Integer; override;
-    function GetDefaultPathIcon: string; override;
+    // Inherits default GetDefaultPathIcon = '' (no cache file for ext icons)
   public
     constructor Create(AExtFile: string);
 
@@ -45,15 +45,18 @@ type
 
 implementation
 
+uses
+  Icons.CacheKey;
+
 constructor TExtFileIcon.Create(AExtFile: string);
 begin
   inherited Create;
-  FExtFile := AExtFile;
+  FExtFile := Icons.CacheKey.NormalizeExtKey(AExtFile);
 end;
 
 function TExtFileIcon.GetName: string;
 begin
-  Result := LowerCase(FExtFile);
+  Result := FExtFile;
 end;
 
 function TExtFileIcon.LoadIcon: Integer;
@@ -63,12 +66,4 @@ begin
     Result := InternalGetImageIndex(FExtFile);
 end;
 
-function TExtFileIcon.GetDefaultPathIcon: string;
-begin
-  raise ENotImplemented.Create('This class does not need default path icon');
-
-  Result := '';
-end;
-
 end.
-
