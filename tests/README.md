@@ -78,10 +78,12 @@ The CI step has `timeout-minutes: 30` and the script applies the
 A blocking GUI test therefore fails the job with the last test printed in the
 log instead of keeping the runner busy until the 6-hour job limit.
 
-`HEAPTRC` is disabled on `qt5`/`qt6`/`win32`: on Qt the LCL teardown runs
-after heaptrc starts dumping and can abort the process (exit 217) even when
-all tests passed, and on win32 COM/widgetset allocations are outside the
-tests' control. Leak checking stays enabled on the GTK runners.
+`HEAPTRC` is disabled on `win32` only: there COM/widgetset allocations are
+outside the tests' control. On Qt the leak gate stays enabled — CI runs the
+suite under Xvfb (`xcb`), where heaptrc reports 0 unfreed blocks and exits 0.
+Only the Qt `offscreen` platform plugin keeps allocations referenced at exit
+and aborts the dump (exit 217); the CI never uses that plugin. Leak checking
+is enabled on the GTK runners too.
 
 ## Notes
 
