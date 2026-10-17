@@ -24,13 +24,13 @@ unit Icons.Files;
 interface
 
 uses
-  SysUtils, Classes, Icons.Base, Icons.Custom;
+  SysUtils, Classes, Icons.Base, Icons.System;
 
 type
 
   { TFileIcon }
 
-  TFileIcon = class(TCustomIcon)
+  TFileIcon = class(TSystemIcon)
   private
     FPathFile: string;
   protected

@@ -27,8 +27,7 @@ interface
 
 uses
   SysUtils, Classes, Controls, Forms, Icons.Files, Generics.Collections, SyncObjs,
-  Kernel.Consts, LCLIntf, Icons.Base, Icons.ExtFile, BGRABitmap,
-  Icons.Mime;
+  Kernel.Consts, LCLIntf, Icons.Base, Icons.ExtFile, BGRABitmap;
 
 type
   TBaseIcons = class(TObjectList<TBaseIcon>);
@@ -45,7 +44,6 @@ type
     FByName: TDictionary<string, TBaseIcon>;
     FByPath: TDictionary<string, TFileIcon>;
     FByExt: TDictionary<string, TExtFileIcon>;
-    FMimeProvider: TMimeIconProvider;
     function GetPathTheme: string;
 
     procedure LoadAllIcons;
@@ -53,10 +51,6 @@ type
     procedure RegisterIcon(ABaseIcon: TBaseIcon);
     procedure RegisterExtIcon(ABaseIcon: TBaseIcon);
     procedure RebuildIndexes;
-    {$IFDEF UNIX}
-    procedure EnsureMimeLoaded;
-    function GetIconByDesktopFile(AFileName: String): String;
-    {$ENDIF}
   public
     { public declarations }
     constructor Create;
@@ -73,10 +67,6 @@ type
     function FindByExt(AExtension: String): TExtFileIcon;   
     function GetIconFromImgList(AImageIndex: Integer; ALargeIcon: Boolean
       ): TBGRABitmap;
-    {$IFDEF UNIX}
-    function GetSystemIconName(const AFileName: String): String;
-    function CheckSystemIconName(const AIconName: String): Boolean;
-    {$ENDIF}
 
     property PathTheme: string read GetPathTheme write SetPathTheme;
   end;
@@ -85,23 +75,7 @@ implementation
 
 uses
   Kernel.Logger, FileUtil, LazFileUtils, Kernel.Instance, ImgList,
-  Graphics, DataModules.Icons, mormot.core.log, Icons.CacheKey
-  {$IFDEF UNIX}
-  , IniFiles, BaseUnix, Utility.FileFolder
-    {$IFDEF QT}
-      {$IFDEF LCLQT5}
-      , qt5
-      {$ELSE}
-      , qt6
-      {$ENDIF}
-    {$ELSE}   
-      {$IFDEF LCLGTK2}
-      , gtk2
-      {$ELSE}
-      , lazgtk3
-      {$ENDIF}
-    {$ENDIF}
-  {$ENDIF};
+  Graphics, DataModules.Icons, mormot.core.log, SystemIcons.Ext;
 
 { TIconsManager }
 
@@ -113,14 +87,10 @@ begin
   FByName := TDictionary<string, TBaseIcon>.Create;
   FByPath := TDictionary<string, TFileIcon>.Create;
   FByExt := TDictionary<string, TExtFileIcon>.Create;
-  FMimeProvider := TMimeIconProvider.Create;
-  // MIME table is loaded lazily on first GetSystemIconName (see EnsureMimeLoaded)
-  // to keep startup and unit tests fast.
 end;
 
 destructor TIconsManager.Destroy;
 begin
-  FMimeProvider.Free;
   FByName.Free;
   FByPath.Free;
   FByExt.Free;
@@ -201,7 +171,7 @@ begin
   log := TASuiteLogger.Enter('TIconsManager.GetExtIconIndex', Self);
   Result := -1;
 
-  sKey := Icons.CacheKey.NormalizeExtKey(AExtension);
+  sKey := string(SystemIcons.Ext.NormalizeExtKey(AnsiString(AExtension)));
   if sKey = '' then
     Exit;
   FLock.Acquire;
@@ -287,77 +257,6 @@ begin
   end;
 end;
 
-{$IFDEF UNIX}
-function TIconsManager.GetSystemIconName(const AFileName: String): String;
-var
-  I: Integer;
-  iconList: TStringList;
-  Extension: String;
-  {%H-}log: ISynLog;
-begin
-  log := TASuiteLogger.Enter('TIconsManager.GetSystemIconName', Self);
-  Result := EmptyStr;
-  EnsureMimeLoaded;
-
-  //It is a link? Ok, get target file icon
-  if FpReadLink(AFilename) <> EmptyStr then
-    Extension := '*' + ExtractFileExt(FpReadLink(AFileName))
-  else
-    Extension := '*' + ExtractFileExt(AFileName);
-
-  Extension := LowerCase(Extension);
-
-  //TODO: Special folders icon https://gitlab.gnome.org/GNOME/glib/-/commit/129eb074823101102611690f053ffa246bb7784d#3549e1301fc4c17bf0dd809eca0a36fb87aac264_1582_1582
-
-  if IsDirectory(AFileName) then
-  begin
-    if FileExists(AppendPathDelim(AFileName) + '.directory') then
-      Result := GetIconByDesktopFile(AppendPathDelim(AFileName) + '.directory')
-    else
-      Result := 'folder';
-  end
-  else if (Extension = '*.desktop') then
-  begin
-    Result := GetIconByDesktopFile(AFileName);
-  end
-  else if (Extension = '*.ico') then
-  begin
-    Result := AFileName;
-  end
-  else if (Extension <> '*') then
-  begin
-    iconList := FMimeProvider.GetIconNames(Extension);
-    if Assigned(iconList) then
-    begin
-      //First valid icon wins
-      for I := 0 to iconList.Count - 1 do
-      begin
-        Result := iconList.Strings[I];
-
-        {$IFDEF QT}
-        if QIcon_hasThemeIcon(@Result) then break;
-        {$ELSE}
-        if gtk_icon_theme_has_icon(gtk_icon_theme_get_default, PAnsiChar(UTF8Encode(Result))) then break;
-        {$ENDIF}
-      end;
-    end;
-  end
-  else if FileIsExecutable(AFileName) then
-  begin
-    Result := 'application-x-executable';
-  end;
-
-  //Not found icon? No problem. Use generic icon
-  if (not CheckSystemIconName(Result)) or (Result = EmptyStr) then
-  begin
-    if FileIsText(AFileName) then
-      Result := 'text-x-generic'
-    else
-      Result := 'unknown';
-  end;
-end;
-{$ENDIF}
-
 function TIconsManager.GetPathTheme: string;
 begin
   if FPathTheme <> '' then
@@ -435,7 +334,7 @@ var
   sKey: string;
 begin
   Result := nil;
-  sKey := Icons.CacheKey.NormalizeExtKey(AExtension);
+  sKey := string(SystemIcons.Ext.NormalizeExtKey(AnsiString(AExtension)));
   if sKey = '' then
     Exit;
   FLock.Acquire;
@@ -486,56 +385,5 @@ begin
   for Item in FExtItems do
     RegisterExtIcon(Item);
 end;
-
-{$IFDEF UNIX}
-function TIconsManager.GetIconByDesktopFile(AFileName: String): String;
-var
-  iniDesktop: TIniFile = nil;
-begin
-  Result := EmptyStr;
-
-  try
-    iniDesktop := TIniFile.Create(AFileName);
-    try
-      Result := iniDesktop.ReadString(DESKTOP_GROUP, DESKTOP_KEY_ICON, EmptyStr);
-    finally
-      FreeAndNil(iniDesktop);
-    end;
-  except
-    Exit;
-  end;
-end;
-                 
-{$IFDEF QT}
-function TIconsManager.CheckSystemIconName(const AIconName: String): Boolean;
-begin
-  //QIcon_fromTheme can load icon name and absolute filepath, too
-  Result := ((AIconName <> EmptyStr) and (QIcon_hasThemeIcon(@AIconName) or FileExists(AIconName)));
-end;
-{$ELSE}
-function TIconsManager.CheckSystemIconName(const AIconName: String): Boolean;
-begin
-  Result := ((AIconName <> EmptyStr) and (gtk_icon_theme_has_icon(gtk_icon_theme_get_default, PAnsiChar(UTF8Encode(AIconName))) or
-             FileExists(AIconName)));
-end;
-{$ENDIF}
-
-procedure TIconsManager.EnsureMimeLoaded;
-const
-  mime_globs = '/usr/share/mime/globs';
-  mime_generic_icons = '/usr/share/mime/generic-icons';
-var
-  {%H-}log: ISynLog;
-begin
-  log := TASuiteLogger.Enter('TIconsManager.EnsureMimeLoaded', Self);
-  FLock.Acquire;
-  try
-    if (FMimeProvider.Count = 0) and (FpAccess(mime_globs, R_OK) = 0) then
-      FMimeProvider.LoadFromFiles(mime_globs, mime_generic_icons);
-  finally
-    FLock.Release;
-  end;
-end;
-{$ENDIF}
 
 end.

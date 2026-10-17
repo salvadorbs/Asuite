@@ -11,8 +11,6 @@ uses
 type
   TTestIconsCacheKey = class(TTestCase)
   published
-    procedure TestNormalizeExt;
-    procedure TestNormalizeExtKey;
     procedure TestSanitizeCacheName;
     procedure TestHashDeterministic;
     procedure TestShouldCacheIcon;
@@ -21,26 +19,6 @@ type
   end;
 
 implementation
-
-procedure TTestIconsCacheKey.TestNormalizeExt;
-begin
-  AssertEquals('.txt', NormalizeExt('.TXT'));
-  AssertEquals('.txt', NormalizeExt('txt'));
-  AssertEquals('.txt', NormalizeExt('*.txt'));
-  AssertEquals('', NormalizeExt('*'));
-  AssertEquals('', NormalizeExt('*.*'));
-  AssertEquals('', NormalizeExt(''));
-  AssertEquals('.pdf', NormalizeExt('  .Pdf  '));
-end;
-
-procedure TTestIconsCacheKey.TestNormalizeExtKey;
-begin
-  AssertEquals('*.txt', NormalizeExtKey('.txt'));
-  AssertEquals('*.txt', NormalizeExtKey('txt'));
-  AssertEquals('*.txt', NormalizeExtKey('*.txt'));
-  AssertEquals('*.txt', NormalizeExtKey('*.TXT'));
-  AssertEquals('', NormalizeExtKey(''));
-end;
 
 procedure TTestIconsCacheKey.TestSanitizeCacheName;
 begin

@@ -24,14 +24,14 @@ unit Icons.Node;
 interface
 
 uses
-  SysUtils, Icons.Base, NodeDataTypes.Base, Graphics, Icons.Custom,
+  SysUtils, Icons.Base, NodeDataTypes.Base, Graphics, Icons.System,
   NodeDataTypes.Custom, Controls, LCLIntf, Classes;
 
 type
 
   { TNodeIcon }
 
-  TNodeIcon = class(Icons.Custom.TCustomIcon)
+  TNodeIcon = class(TSystemIcon)
   private
     { private declarations }
     FNodeData: TvBaseNodeData;

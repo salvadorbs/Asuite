@@ -188,7 +188,7 @@
         <PackageName Value="LCL"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="81">
+    <Units Count="82">
       <Unit0>
         <Filename Value="ASuite.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -594,6 +594,10 @@
         <Filename Value="Utilities/Utility.RunActionLogic.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit80>
+      <Unit81>
+        <Filename Value="Library/Icons.System.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit81>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
