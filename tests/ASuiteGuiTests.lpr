@@ -16,6 +16,9 @@ uses
   cthreads,
   {$ENDIF}
   Interfaces,
+  // Static SQLite3 engine, exactly like ASuite.lpr: without it every
+  // TSQLRestServerDB raises "No SQLite3 libray available"
+  mormot.db.raw.sqlite3.static,
   consoletestrunner,
   Tests.MenuUtils,
   Tests.SortController,
@@ -25,7 +28,14 @@ uses
   Tests.FileFolder,
   Tests.Scheduler,
   Tests.IconsManager,
-  Tests.IconsBaseLogic;
+  Tests.IconsBaseLogic,
+  Tests.Helpers.Database,
+  Tests.DatabaseVersion,
+  Tests.DatabaseList,
+  Tests.DatabaseManager,
+  Tests.DatabaseSpike;
+
+{$R *.res}
 
 var
   Application: TTestRunner;

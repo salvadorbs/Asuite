@@ -19,6 +19,14 @@ units run with a display server.
 | `Tests.Conversions.pas` | `Utility.Conversions` color/font serialization |
 | `Tests.FileFolder.pas` | Side-effect-free helpers in `Utility.FileFolder` |
 | `Tests.Scheduler.pas` | `TScheduler` firing logic (`CheckOnce/Daily/Hourly`) |
+| `Tests.IconsManager.pas` | `Icons.Manager` registry, extension lists, concurrent add/clear |
+| `Tests.IconsBaseLogic.pas` | `Icons.Base` lazy load/cache, `Icons.Thread` lifecycle |
+| `Tests.IconsCacheKey.pas` | `Icons.CacheKey`: sanitizing, hashing, cache file names |
+| `Tests.Helpers.Database.pas` | Shared fixture for the SQLite suites: temp DB, tree as `MainTree`, deterministic dates |
+| `Tests.DatabaseSpike.pas` | Fase 0 spike: layer feasibility with a local `TDBManager` |
+| `Tests.DatabaseVersion.pas` | `TSQLtbl_version` save/load round-trip, Update branch, empty-table guard |
+| `Tests.DatabaseList.pas` | `TSQLtbl_list` tree round-trip, ordering by position, update on `Changed`/`Position`/`ParentID`, import mode, Unicode |
+| `Tests.DatabaseManager.pas` | `TDBManager`: idempotent `Setup`, `SaveData` result, backup creation/pruning, `RemoveItem`, `DeleteItems`, `ClearTable` |
 | `run_tests.sh` | Build + run helper used locally and by CI |
 
 ## Run locally
@@ -28,7 +36,7 @@ units run with a display server.
 ```
 
 Set `ASUITE_MIN_TESTS` to change the minimum total number of tests required
-(default 100); the script fails if the suites shrink below it.
+(default 150); the script fails if the suites shrink below it.
 
 GUI control tests need a display server on Linux. If `DISPLAY` is not set
 and `xvfb-run` is available, the script re-executes the GUI binary under
@@ -51,10 +59,19 @@ Linux GTK2 job (`Xvfb :1`, `DISPLAY=:1`) before uploading the build.
   and leaves corrupt `.ppu` files behind, breaking later incremental builds
   deterministically. `run_tests.sh` wipes `tests/lib` and retries the GUI
   build once on failure.
+- The SQLite suites (`Tests.Database*.pas`) run inside the GUI runner because
+  the database layer is wired to LCL/`VirtualTrees`: `TVirtualTreeMethods`
+  resolves node data against `ASuiteInstance.MainTree`, and
+  `TDBManager.DeleteItems` deletes rows through the singleton
+  `ASuiteManager.DBManager`, never through a local instance.
+- `Config.ASuiteState` is `lsImporting` for the whole database test run: node
+  setters would otherwise register in the singleton lists of `TListManager`
+  and keep dangling pointers after the tree is freed.
+- Backup tests write to `tests/backup/` (gitignored) because
+  `ASuiteInstance.Paths.SuitePathBackup` cannot be redirected from the test
+  binary; each test cleans up the files it created.
 - Deliberately NOT covered (they need the running application singletons
   `Config`/`ASuiteInstance`/`ASuiteManager`):
   - `THotkeyItemsList` (`Lists.HotKey`) and the `HotkeyTriggerChangedEx`
     callback,
-  - `TDBManager` save/load round-trip (`Database.Manager`, `Database.List`:
-    `TSQLtbl_list.Load` registers hotkeys via the list manager),
   - `ExtractFileNameEx` / `DeleteOldBackups` (same reason).

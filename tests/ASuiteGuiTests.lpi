@@ -12,6 +12,13 @@
       <UseXPManifest Value="True"/>
       <UseAppBundle Value="False"/>
     </General>
+    <VersionInfo>
+      <UseVersionInfo Value="True"/>
+      <AutoIncrementBuild Value="False"/>
+      <MajorVersionNr Value="2"/>
+      <MinorVersionNr Value="1"/>
+      <BuildNr Value="1"/>
+    </VersionInfo>
     <BuildModes Count="1">
       <Item1 Name="Default" Default="True"/>
     </BuildModes>
@@ -58,7 +65,7 @@
         <PackageName Value="LCL"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="10">
+    <Units Count="15">
       <Unit0>
         <Filename Value="ASuiteGuiTests.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -108,6 +115,31 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Tests.IconsBaseLogic"/>
       </Unit9>
+      <Unit10>
+        <Filename Value="Tests.DatabaseSpike.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.DatabaseSpike"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="Tests.Helpers.Database.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.Helpers.Database"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="Tests.DatabaseVersion.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.DatabaseVersion"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="Tests.DatabaseList.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.DatabaseList"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="Tests.DatabaseManager.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.DatabaseManager"/>
+      </Unit14>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
