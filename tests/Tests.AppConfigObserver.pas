@@ -73,8 +73,22 @@ type
     procedure TestRemoveOtherObserverDuringNotification;
     procedure TestAddObserverDuringNotificationAppliesToNextNotification;
 
+    // Direct (single observer) notification
+    procedure TestNotifyObserverReachesOnlyTarget;
+    procedure TestNotifyObserverNilIsSafe;
+    procedure TestNotifyObserverWithEmptyName;
+    procedure TestNotifyWithoutObserversIsSafe;
+
     // Error handling
     procedure TestExceptionInCallbackDoesNotLeakBatch;
+  end;
+
+  TTestConfigNotificationGroup = class(TTestCase)
+  published
+    procedure TestHasMember;
+    procedure TestMemberCountAndAccess;
+    procedure TestAnyMemberBatched;
+    procedure TestAnyMemberBatchedWithNilList;
   end;
 
 implementation
@@ -364,6 +378,33 @@ begin
   AssertEquals('X', NamesOf(FO2));
 end;
 
+procedure TTestConfigNotifier.TestNotifyObserverReachesOnlyTarget;
+begin
+  FNotifier.AddObserver(FO2);
+  FNotifier.NotifyObserver(FO1, 'AfterUpdateConfig');
+  AssertEquals('AfterUpdateConfig', NamesOf(FO1));
+  AssertEquals('', NamesOf(FO2));
+end;
+
+procedure TTestConfigNotifier.TestNotifyObserverNilIsSafe;
+begin
+  // Must not raise.
+  FNotifier.NotifyObserver(nil, 'X');
+end;
+
+procedure TTestConfigNotifier.TestNotifyObserverWithEmptyName;
+begin
+  FNotifier.NotifyObserver(FO1);
+  AssertEquals(1, FO1.Names.Count);
+  AssertEquals('', FO1.Names[0]);
+end;
+
+procedure TTestConfigNotifier.TestNotifyWithoutObserversIsSafe;
+begin
+  // Must not raise.
+  FNotifier.Notify('X');
+end;
+
 procedure TTestConfigNotifier.TestExceptionInCallbackDoesNotLeakBatch;
 begin
   FNotifier.AddObserver(FO1);
@@ -388,7 +429,73 @@ begin
   AssertEquals('B', NamesOf(FO1));
 end;
 
+{ TTestConfigNotificationGroup }
+
+procedure TTestConfigNotificationGroup.TestHasMember;
+var
+  Group: TConfigNotificationGroup;
+begin
+  Group := TConfigNotificationGroup.Create('Grp', ['A', 'B']);
+  try
+    AssertTrue(Group.HasMember('A'));
+    AssertTrue(Group.HasMember('B'));
+    AssertFalse(Group.HasMember('C'));
+  finally
+    Group.Free;
+  end;
+end;
+
+procedure TTestConfigNotificationGroup.TestMemberCountAndAccess;
+var
+  Group: TConfigNotificationGroup;
+begin
+  Group := TConfigNotificationGroup.Create('Grp', ['A', 'B']);
+  try
+    AssertEquals('Grp', Group.Name);
+    AssertEquals(2, Group.MemberCount);
+    AssertEquals('A', Group.Members[0]);
+    AssertEquals('B', Group.Members[1]);
+  finally
+    Group.Free;
+  end;
+end;
+
+procedure TTestConfigNotificationGroup.TestAnyMemberBatched;
+var
+  Group: TConfigNotificationGroup;
+  Batched: TStringList;
+begin
+  Group := TConfigNotificationGroup.Create('Grp', ['A', 'B']);
+  Batched := TStringList.Create;
+  try
+    AssertFalse(Group.AnyMemberBatched(Batched));
+
+    Batched.Add('C');
+    AssertFalse(Group.AnyMemberBatched(Batched));
+
+    Batched.Add('B');
+    AssertTrue(Group.AnyMemberBatched(Batched));
+  finally
+    Batched.Free;
+    Group.Free;
+  end;
+end;
+
+procedure TTestConfigNotificationGroup.TestAnyMemberBatchedWithNilList;
+var
+  Group: TConfigNotificationGroup;
+begin
+  Group := TConfigNotificationGroup.Create('Grp', ['A']);
+  try
+    // Must not raise.
+    AssertFalse(Group.AnyMemberBatched(nil));
+  finally
+    Group.Free;
+  end;
+end;
+
 initialization
   RegisterTest(TTestConfigNotifier);
+  RegisterTest(TTestConfigNotificationGroup);
 
 end.

@@ -131,7 +131,6 @@ type
     FScanFolderExcludeNames: TStringList;
     FNotifier: TConfigNotifier;
 
-    function LoadPngAndConvertBMP(const APath: String): TBitmap;
     procedure RestoreSettings(AJSONConfig: TJSONConfig);
     procedure SaveSettings(AJSONConfig: TJSONConfig);
     procedure SetHoldSize(value: Boolean);
@@ -323,6 +322,10 @@ type
     procedure SaveConfig;
     procedure AddObserver(const Observer: IConfigObserver);
     procedure RemoveObserver(const Observer: IConfigObserver);
+    { Notifies a single observer with the current state. Call it right after
+      AddObserver for observers created after LoadConfig, so they apply the
+      configuration they missed. }
+    procedure SyncObserver(const Observer: IConfigObserver);
     procedure BeginUpdate;
     procedure EndUpdate;
   end;
@@ -339,6 +342,11 @@ uses
   TypInfo, Kernel.ResourceStrings, AppConfig.Consts, BGRABitmapTypes,
   Utility.Conversions, Hotkeys.Manager.Platform, Kernel.Instance, Kernel.Manager,
   ShortcutGrabber;
+
+const
+  MAINFORM_BOUNDS_GROUP = 'MainFormBounds';
+  MAINFORM_BOUNDS_PROPERTIES: array[0..3] of string =
+    ('MainFormLeft', 'MainFormTop', 'MainFormWidth', 'MainFormHeight');
 
 procedure TConfiguration.AfterUpdateConfig;
 var
@@ -491,8 +499,7 @@ begin
   FScanFolderExcludeNames.Add('uninstall');
 
   FNotifier := TConfigNotifier.Create;
-  FNotifier.AddGroup('MainFormBounds', ['MainFormLeft', 'MainFormTop',
-    'MainFormWidth', 'MainFormHeight']);
+  FNotifier.AddGroup(MAINFORM_BOUNDS_GROUP, MAINFORM_BOUNDS_PROPERTIES);
 end;
 
 destructor TConfiguration.Destroy;
@@ -894,6 +901,8 @@ begin
     Self.AfterUpdateConfig;
   finally
     Self.EndUpdate;
+    // Loading the configuration is not a change: start with a clean flag.
+    Self.Changed := False;
   end;
 end;
 
@@ -1061,21 +1070,6 @@ procedure TConfiguration.SetTVBackground(value: Boolean);
 begin
   FTVBackground := value;
   NotifyObservers('TVBackground');
-end;
-
-function TConfiguration.LoadPngAndConvertBMP(const APath: String): TBitmap;
-var
-  BackgroundPNG: TPortableNetworkGraphic;
-begin
-  Result := Graphics.TBitmap.Create;
-
-  BackgroundPNG := TPortableNetworkGraphic.Create;
-  try
-    BackgroundPNG.LoadFromFile(APath);
-    Result.Assign(BackgroundPNG);
-  finally
-    BackgroundPNG.Free;
-  end;
 end;
 
 procedure TConfiguration.SetTVFont(value: Graphics.TFont);
@@ -1265,6 +1259,11 @@ begin
   FNotifier.AddObserver(Observer);
 end;
 
+procedure TConfiguration.SyncObserver(const Observer: IConfigObserver);
+begin
+  FNotifier.NotifyObserver(Observer, '');
+end;
+
 procedure TConfiguration.RemoveObserver(const Observer: IConfigObserver);
 begin
   FNotifier.RemoveObserver(Observer);
@@ -1272,6 +1271,13 @@ end;
 
 procedure TConfiguration.NotifyObservers(const PropertyName: string = '');
 begin
+  // Any persisted property change marks the configuration dirty; saving no
+  // longer depends on every caller remembering to set Config.Changed.
+  // Transient (ASuiteState) and meta (AfterUpdateConfig) notifications do not.
+  if (PropertyName <> '') and (PropertyName <> 'ASuiteState') and
+     (PropertyName <> 'AfterUpdateConfig') then
+    FChanged := True;
+
   FNotifier.Notify(PropertyName);
 end;
 
