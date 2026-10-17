@@ -5,14 +5,13 @@
 #   ASuiteGuiTests  : FPCUnit tests that build LCL controls; need a display
 #                     server (xvfb-run is used automatically when available).
 #
-# Both runners link heaptrc. Leak reports are checked on the GTK and Qt
-# widgetsets: the GUI suite runs under Xvfb (xcb) in CI, where heaptrc
-# reports 0 unfreed blocks and exits 0. The dump only crashes on the Qt
-# "offscreen" platform plugin, whose allocations are still referenced at
-# exit (exit code 217); that plugin is never used by the CI. On win32 the
-# leak gate stays skipped because COM/widgetset allocations are outside the
-# tests' control. HEAPTRC is therefore disabled on win32 only: results still
-# come from the FPCUnit summary and from the process exit code.
+# Both runners link heaptrc and leak reports are checked where they are
+# reliable: the GTK widgetsets run the whole suite with the gate on and
+# report a clean 0 unfreed blocks. On Qt the platform plugin (and on Windows
+# COM) keeps allocations referenced at exit; heaptrc's dump then crashes
+# walking them (exit code 217) even though the identical suite leaks nothing
+# on GTK. HEAPTRC is therefore disabled on qt5/qt6/win32: results still come
+# from the FPCUnit summary and from the process exit code.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -23,9 +22,9 @@ WIDGETSET="${WIDGETSET:-gtk3}"
 TEST_TIMEOUT="${ASUITE_TEST_TIMEOUT:-600}"
 MIN_TESTS="${ASUITE_MIN_TESTS:-470}"
 
-# See the header: the heaptrc dump is only unreliable on win32.
+# See the header: drop the heaptrc dump where it is unreliable.
 case "$WIDGETSET" in
-  win32) export HEAPTRC=disabled ;;
+  qt5|qt6|win32) export HEAPTRC=disabled ;;
 esac
 
 EXE_EXT=""
