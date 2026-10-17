@@ -17,7 +17,12 @@ uses
   Interfaces,
   consoletestrunner,
   Tests.MenuUtils,
-  Tests.SortController;
+  Tests.SortController,
+  Tests.LanguageCombo,
+  Tests.ConfigPaths,
+  Tests.Conversions,
+  Tests.FileFolder,
+  Tests.Scheduler;
 
 var
   Application: TTestRunner;

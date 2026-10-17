@@ -13,7 +13,8 @@ uses
   {$ENDIF}
   consoletestrunner,
   Tests.AppConfigObserver,
-  Tests.RunActionLogic;
+  Tests.RunActionLogic,
+  Tests.LanguageManager;
 
 var
   Application: TTestRunner;

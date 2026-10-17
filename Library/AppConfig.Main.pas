@@ -338,7 +338,7 @@ implementation
 uses
   Utility.System, Kernel.Consts, Utility.Misc, DataModules.TrayMenu,
   VirtualTree.Methods, Utility.FileFolder, mormot.core.log,
-  LCLProc, Process,
+  LCLProc, Process, LCLTranslator,
   TypInfo, Kernel.ResourceStrings, AppConfig.Consts, BGRABitmapTypes,
   Utility.Conversions, Hotkeys.Manager.Platform, Kernel.Instance, Kernel.Manager,
   ShortcutGrabber;

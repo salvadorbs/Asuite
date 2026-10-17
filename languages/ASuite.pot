@@ -1273,7 +1273,7 @@ msgstr ""
 
 #: tfrmpropertyitem.caption
 msgctxt "tfrmpropertyitem.caption"
-msgid "Property"
+msgid "Properties"
 msgstr ""
 
 #: tfrmpropertyseparator.btncancel.caption
