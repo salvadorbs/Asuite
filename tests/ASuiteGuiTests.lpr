@@ -35,6 +35,7 @@ uses
   Tests.VirtualTreeEvents,
   Tests.VirtualTreeHelper,
   Tests.Lists,
+  Tests.SystemIcons,
   Tests.SystemUtils,
   Tests.MiscUtils,
   Tests.RunController,

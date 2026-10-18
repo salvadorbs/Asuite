@@ -65,7 +65,7 @@
         <PackageName Value="LCL"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="38">
+    <Units Count="39">
       <Unit0>
         <Filename Value="ASuiteGuiTests.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -250,6 +250,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Tests.Instance"/>
       </Unit37>
+      <Unit38>
+        <Filename Value="Tests.SystemIcons.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Tests.SystemIcons"/>
+      </Unit38>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

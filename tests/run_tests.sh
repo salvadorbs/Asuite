@@ -5,12 +5,10 @@
 #   ASuiteGuiTests  : FPCUnit tests that build LCL controls; need a display
 #                     server (xvfb-run is used automatically when available).
 #
-# Both runners link heaptrc. Leak reports are checked on the GTK widgetsets.
-# On Qt the LCL teardown runs after heaptrc starts dumping and can crash the
-# process (exit code 217) even when every test passed. On win32 the leak gate
-# is skipped because COM/widgetset allocations are outside the tests' control.
-# HEAPTRC is therefore disabled on qt5/qt6/win32: results still come from the
-# FPCUnit summary and from the process exit code.
+# Both runners link heaptrc and leak reports are checked on every widgetset.
+# The only exception is Windows: COM keeps allocations referenced at exit and
+# heaptrc's dump walks them, so HEAPTRC is disabled on win32 and results there
+# still come from the FPCUnit summary and from the process exit code.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -21,9 +19,9 @@ WIDGETSET="${WIDGETSET:-gtk3}"
 TEST_TIMEOUT="${ASUITE_TEST_TIMEOUT:-600}"
 MIN_TESTS="${ASUITE_MIN_TESTS:-470}"
 
-# See the header: drop the unreliable heaptrc dump on these widgetsets.
+# See the header: drop the heaptrc dump where it is unreliable.
 case "$WIDGETSET" in
-  qt5|qt6|win32) export HEAPTRC=disabled ;;
+  win32) export HEAPTRC=disabled ;;
 esac
 
 EXE_EXT=""

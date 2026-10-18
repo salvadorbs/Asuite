@@ -78,10 +78,18 @@ The CI step has `timeout-minutes: 30` and the script applies the
 A blocking GUI test therefore fails the job with the last test printed in the
 log instead of keeping the runner busy until the 6-hour job limit.
 
-`HEAPTRC` is disabled on `qt5`/`qt6`/`win32`: on Qt the LCL teardown runs
-after heaptrc starts dumping and can abort the process (exit 217) even when
-all tests passed, and on win32 COM/widgetset allocations are outside the
-tests' control. Leak checking stays enabled on the GTK runners.
+`HEAPTRC` runs on every widgetset, including `qt5`/`qt6`; only `win32` keeps
+it disabled, because COM and widgetset allocations there are outside the
+tests' control and heaptrc's dump walks them.
+
+Qt needed a crash in the LCL `QIcon_fromTheme` binding fixed first. The
+binding exposes the fallback icon with a `nil` default and the C side
+dereferences it unconditionally, so any icon name missing from the theme
+(a minimal icon theme, or the `offscreen` plugin, where no icon exists at
+all) segfaulted and aborted the run, leaving the allocations of the
+still-running suite unreleased. `SystemIcons.Platform` now passes an
+explicit empty fallback and `Tests.SystemIcons` covers the missing-name
+path.
 
 ## Notes
 
