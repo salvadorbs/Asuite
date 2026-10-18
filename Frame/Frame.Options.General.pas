@@ -55,7 +55,6 @@ type
     // which displays language names (ex. 'Italiano') instead of file names.
     FLangIDs: TStringList;
     procedure AddLanguages(AComboBox: TComboBox);
-    procedure FillLanguageCombo(AComboBox: TComboBox; const Items: TLangItemArray);
     procedure SelectLanguage(AComboBox: TComboBox);
   strict protected
     function GetTitle: string; override;
@@ -64,6 +63,9 @@ type
     function InternalSaveData: Boolean; override;
   public
     { Public declarations }
+    { Fills the combo from already resolved and sorted items; public so the
+      GUI test suite can cover the language combo without globals. }
+    procedure FillLanguageCombo(AComboBox: TComboBox; const Items: TLangItemArray);
     destructor Destroy; override;
   end;
 

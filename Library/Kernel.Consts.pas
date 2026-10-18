@@ -39,6 +39,7 @@ const
   MENUTHEMES_DIR = 'themes';
   ICONS_DIR      = 'icons';
   BUTTONS_DIR    = 'buttons';
+  DOCS_DIR       = 'docs';
 
   //FileSystem
   DriveLetters      = ['a'..'z', 'A'..'Z'];
@@ -106,6 +107,10 @@ const
   //ASuite filename icons
   FILEICON_Folder = 'folder';
   FILEICON_Url    = 'page_url';
+
+  //Fallback theme icons for nodes
+  ICON_NAME_CATEGORY = 'category';
+  ICON_NAME_FILE_ERROR = 'file_error';
 
   //ASuite files
   SETTINGS_FILENAME = 'settings.json';
