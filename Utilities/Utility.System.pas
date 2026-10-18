@@ -116,10 +116,14 @@ var
   var
     I: Integer;
   begin
+    //RunFile can be called without an environment list (AEnvironmentVars
+    //defaults to nil): there is nothing to set or restore in that case
+    if not Assigned(AStringList) then
+      Exit;
     for I := 0 to AStringList.Count - 1 do
     begin
       str := AStringList[I];
-      if str[1] <> '=' then
+      if (str <> '') and (str[1] <> '=') then
       begin
         arrString := str.Split('=', 2);
         if Length(arrString) = 2 then
