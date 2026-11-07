@@ -43,12 +43,38 @@
 * Import list from PStart 2.* , wPPLauncher 1.* e ASuite 1.*
 
 ## Download
-You can [download](https://github.com/salvadorbs/asuite/releases/tag/v2.0.0) the latest installable version of ASuite. If you prefer using command-line installer (APT style), you can use <a href="https://github.com/lukesampson/scoop#installation">Scoop</a>. To install ASuite using Scoop, you must add the bucket Extras:
+You can [download](https://github.com/salvadorbs/asuite/releases) the latest version of ASuite.
+
+On Windows, releases include a portable zip archive and an Inno Setup
+installer (`asuite-<version>-setup.exe`). If you prefer a command-line
+installer (APT style), you can use <a href="https://github.com/lukesampson/scoop#installation">Scoop</a>. To install ASuite using Scoop, you must add the bucket Extras:
 
 ```powershell
 scoop bucket add extras
 scoop install asuite
 ```
+
+On Linux, releases include `.deb`, `.rpm`, `.AppImage` and `.tar.gz` packages for
+the GTK3, Qt5 and Qt6 widgetsets; the GTK2 build is still distributed as a zip
+archive only. Only one system package can be installed at a time because they
+share the same desktop entry and resources. The AppImage and tar.gz builds can
+be used side by side with an installed package. For example:
+
+```bash
+sudo apt install ./asuite_2.1.0_amd64.deb
+# or
+sudo dnf install ./asuite-2.1.0-1.x86_64.rpm
+# or
+chmod +x asuite-2.1.0-linux-x86_64.AppImage
+./asuite-2.1.0-linux-x86_64.AppImage
+```
+
+Every release also publishes a `SHA256SUMS` file; verify a download with
+`sha256sum -c SHA256SUMS --ignore-missing`.
+
+System packages and the AppImage store the configuration in `~/.config/ASuite`
+(or `$XDG_CONFIG_HOME/ASuite`). The portable zip/tar.gz builds keep the
+configuration next to the executable instead.
 
 ## Contribute
 
