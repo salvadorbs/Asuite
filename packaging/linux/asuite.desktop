@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=ASuite
+GenericName=Application Launcher
+Comment=A simple open source portable launcher
+Exec=asuite
+TryExec=asuite
+Icon=asuite
+StartupWMClass=asuite
+Terminal=false
+Categories=Utility;FileTools;
+Keywords=launcher;portable;menu;appimage;
+StartupNotify=false
