@@ -1,0 +1,101 @@
+name: Build and test Linux portable zip
+description: Build the GTK2 portable zip and smoke-test it
+
+inputs:
+  source:
+    description: Path to the ASuite checkout, relative to the workspace
+    required: true
+  widgetset:
+    description: Widgetset to package (currently gtk2)
+    required: false
+    default: gtk2
+  output:
+    description: Package output directory, relative to the checkout
+    required: false
+    default: dist
+
+runs:
+  using: composite
+  steps:
+    - name: Resolve package version
+      id: version
+      shell: bash
+      run: |
+        set -euo pipefail
+        if [[ "${GITHUB_REF_NAME}" == v* ]]; then
+          echo "value=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+        else
+          echo "value=0.0.0+${GITHUB_SHA::8}" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Install packaging tools
+      shell: bash
+      run: sudo apt-get update && sudo apt-get install -y zip xvfb xauth
+
+    - name: Build package
+      shell: bash
+      run: |
+        set -euo pipefail
+        SRC="${GITHUB_WORKSPACE}/${{ inputs.source }}"
+        "$SRC/utils/build-linux-packages.sh" \
+          --version "${{ steps.version.outputs.value }}" \
+          --widgetset "${{ inputs.widgetset }}" \
+          --formats zip \
+          --binary "$SRC/bin/ASuite" \
+          --output "$SRC/${{ inputs.output }}"
+
+    - name: Validate package
+      shell: bash
+      run: |
+        set -euo pipefail
+        SRC="${GITHUB_WORKSPACE}/${{ inputs.source }}"
+        DIST="$SRC/${{ inputs.output }}"
+
+        shopt -s nullglob
+        zips=("$DIST"/*.zip)
+        [ "${#zips[@]}" -eq 1 ] || {
+          echo "::error::expected one zip in $DIST, found ${#zips[@]}"
+          exit 1
+        }
+        zipfile="${zips[0]}"
+        listing=$(unzip -Z1 "$zipfile")
+        for entry in ASuite docs/license.txt locale/asuite.en_EN.po \
+                     themes/default/theme.ini; do
+          echo "$listing" | grep -q "/$entry$" || {
+            echo "::error::portable zip is missing $entry"
+            exit 1
+          }
+        done
+        if echo "$listing" | grep -qE '/(ASuite\.dbg|ASuite\.mab|ASuite\.sqlite|settings\.json)$'; then
+          echo "::error::portable zip contains build or runtime artifacts"
+          exit 1
+        fi
+
+        workdir=$(mktemp -d)
+        trap 'rm -rf "$workdir"' EXIT
+        unzip -q "$zipfile" -d "$workdir"
+        app=$(find "$workdir" -maxdepth 2 -type f -name ASuite -print -quit)
+        [ -n "$app" ] || {
+          echo "::error::ASuite binary not found in the portable zip"
+          exit 1
+        }
+        [ -x "$app" ] || {
+          echo "::error::ASuite is not executable in the portable zip"
+          exit 1
+        }
+
+        mkdir -p "$workdir/home"
+        rc=0
+        timeout 20 env HOME="$workdir/home" xvfb-run -a "$app" \
+          >/tmp/portable-zip.log 2>&1 || rc=$?
+        if [ "$rc" -ne 124 ]; then
+          echo "portable zip app exited with $rc"
+          cat /tmp/portable-zip.log
+          exit 1
+        fi
+        if grep -q -E '\[heaptrc\]' /tmp/portable-zip.log; then
+          echo "::error::portable zip app emitted heaptrc warnings"
+          cat /tmp/portable-zip.log
+          exit 1
+        fi
+        echo "portable zip built, validated and started"
