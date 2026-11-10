@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.salvadorsoftware.asuite</id>
+
+  <name>ASuite</name>
+  <summary>A simple open source portable launcher</summary>
+
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+
+  <description>
+    <p>
+      ASuite is a simple, fast and lightweight launcher for portable and
+      installed applications, documents and folders.
+    </p>
+    <p>It can:</p>
+    <ul>
+      <li>organize items in a hierarchical tree</li>
+      <li>run applications with relative paths</li>
+      <li>show tray icon menus and an optional graphic menu</li>
+      <li>schedule items, create hotkeys and import lists from other launchers</li>
+    </ul>
+  </description>
+
+  <launchable type="desktop-id">asuite.desktop</launchable>
+
+  <url type="homepage">https://github.com/salvadorbs/Asuite</url>
+  <url type="bugtracker">https://github.com/salvadorbs/Asuite/issues</url>
+
+  <developer_name>SalvadorSoftware</developer_name>
+
+  <categories>
+    <category>Utility</category>
+  </categories>
+
+  <screenshots>
+    <screenshot type="default">
+      <caption>The ASuite main window</caption>
+      <image>https://i.imgur.com/dKCmMWl.png</image>
+    </screenshot>
+  </screenshots>
+
+  <releases>
+    <release version="2.1.0" date="2026-11-06">
+      <description>
+        <p>First release with Linux packages and XDG configuration support.</p>
+      </description>
+    </release>
+  </releases>
+
+  <content_rating type="oars-1.1"/>
+</component>

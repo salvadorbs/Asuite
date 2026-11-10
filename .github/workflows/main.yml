@@ -171,9 +171,34 @@ jobs:
       #if: matrix.config.build-widgetset != 'gtk2'
       run: ${{ env.ASUITE_SOURCE }}/bin/${{ matrix.config.dbg2mab }} ${{ env.ASUITE_SOURCE }}/bin/${{ matrix.config.debug_file }}
 
+    - name: Build and test Linux packages
+      if: matrix.config.build-os == 'linux' && matrix.config.build-widgetset != 'gtk2'
+      uses: ./asuite_src/.github/actions/linux-packages
+      with:
+        source: ${{ env.ASUITE_SOURCE }}
+        widgetset: ${{ matrix.config.build-widgetset }}
+
+    - name: Build and test GTK2 portable zip
+      if: matrix.config.build-os == 'linux' && matrix.config.build-widgetset == 'gtk2'
+      uses: ./asuite_src/.github/actions/linux-portable-zip
+      with:
+        source: ${{ env.ASUITE_SOURCE }}
+
+    - name: Build and test Windows packages
+      if: matrix.config.build-os == 'win64'
+      uses: ./asuite_src/.github/actions/windows-packages
+      with:
+        source: ${{ env.ASUITE_SOURCE }}
+
     - name: Upload the Build Artifact
       uses: actions/upload-artifact@v7.0.1
       with:
         name: ASuite ${{ env.BUILD_MODE }} build - ${{ matrix.config.name }}
         path: |
           ${{ env.ASUITE_SOURCE}}/bin
+          ${{ env.ASUITE_SOURCE}}/dist/*.deb
+          ${{ env.ASUITE_SOURCE}}/dist/*.rpm
+          ${{ env.ASUITE_SOURCE}}/dist/*.tar.gz
+          ${{ env.ASUITE_SOURCE}}/dist/*.AppImage
+          ${{ env.ASUITE_SOURCE}}/dist/*.zip
+          ${{ env.ASUITE_SOURCE}}/dist/*setup*.exe

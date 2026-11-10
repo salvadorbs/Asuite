@@ -1,0 +1,54 @@
+#!/bin/sh
+# AppRun for the ASuite AppImage.
+#
+# The AppImage mounts read-only, so resources are resolved from the bundled
+# share/asuite directory and the user configuration is stored under XDG.
+
+set -e
+
+if [ -n "${APPDIR:-}" ]; then
+  HERE="$APPDIR"
+else
+  HERE=$(dirname "$(readlink -f "$0")")
+fi
+
+ASUITE_DATA_DIR="${ASUITE_DATA_DIR:-$HERE/usr/share/asuite}"
+export ASUITE_DATA_DIR
+
+# The Qt runtime and the Lazarus bindings live in different directories:
+# linuxdeploy puts the Qt libraries in usr/lib, while the packages ship
+# libQt5Pas/libQt6Pas in usr/lib/asuite. Both must be searched before the
+# system libraries, otherwise libQtXPas can pull in a different Qt version
+# than the one bundled with the AppImage.
+if [ -d "$HERE/usr/lib/asuite" ]; then
+  LD_LIBRARY_PATH="$HERE/usr/lib/asuite${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+  export LD_LIBRARY_PATH
+fi
+if [ -d "$HERE/usr/lib" ]; then
+  LD_LIBRARY_PATH="$HERE/usr/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+  export LD_LIBRARY_PATH
+fi
+
+# Point Qt at the deployed plugins explicitly. qt.conf already does this for
+# the bundled Qt, but exporting the paths also covers libQtXPas loading a
+# system Qt and keeps the platform plugin lookup independent of the cwd.
+if [ -d "$HERE/usr/plugins" ]; then
+  QT_PLUGIN_PATH="$HERE/usr/plugins${QT_PLUGIN_PATH:+:$QT_PLUGIN_PATH}"
+  export QT_PLUGIN_PATH
+  if [ -d "$HERE/usr/plugins/platforms" ]; then
+    QT_QPA_PLATFORM_PLUGIN_PATH="$HERE/usr/plugins/platforms"
+    export QT_QPA_PLATFORM_PLUGIN_PATH
+  fi
+fi
+
+# The AppImage bundles the XCB platform plugin but not the Qt Wayland one.
+# ASuite's tray icon and global hotkeys also rely on X11, so when an XWayland
+# display is available prefer xcb instead of letting Qt try (and warn about)
+# the missing wayland plugin. An explicit QT_QPA_PLATFORM still wins.
+if [ -n "${WAYLAND_DISPLAY:-}" ] && [ -n "${DISPLAY:-}" ] && \
+   ! ls "$HERE"/usr/plugins/platforms/libqwayland*.so >/dev/null 2>&1; then
+  QT_QPA_PLATFORM="${QT_QPA_PLATFORM:-xcb}"
+  export QT_QPA_PLATFORM
+fi
+
+exec "$HERE/usr/bin/asuite" "$@"

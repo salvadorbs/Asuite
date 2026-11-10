@@ -36,6 +36,7 @@ type
     FSuitePathList       : String;
     FSuiteDrive          : String;
     FSuitePathData       : String;
+    FSuitePathResources  : String;
     FSuitePathSettings: String;
     FSuitePathWorking    : String;
 
@@ -43,10 +44,13 @@ type
     FASuiteVars      : TPathList;
 
     function DeQuotedStr(AVar: AnsiString): AnsiString;
+    function FindResourcesDir: String;
     function GetSuitePathBackup: String;
     function GetSuitePathCache: String;
+    function GetSuitePathDocs: String;
     function GetSuitePathLocale: String;
     function GetSuitePathMenuThemes: String;
+    function GetUserDataDir: String;
     procedure SetSuitePathCurrentTheme(AValue: String);
     procedure UpdateEnvironmentVars;
     procedure UpdateASuiteVars;
@@ -68,6 +72,8 @@ type
     property SuiteDrive: String read FSuiteDrive write FSuiteDrive;
     property SuitePathData: String read FSuitePathData write FSuitePathData;
     property SuitePathWorking: String read FSuitePathWorking write FSuitePathWorking;
+    property SuitePathResources: String read FSuitePathResources write FSuitePathResources;
+    property SuitePathDocs: String read GetSuitePathDocs;
     property SuitePathLocale: String read GetSuitePathLocale;
     property SuitePathCache: String read GetSuitePathCache;
     property SuitePathBackup: String read GetSuitePathBackup;
@@ -154,6 +160,76 @@ begin
   Result := AnsiDequotedStr(Result, '%');
 end;
 
+function TConfigPaths.FindResourcesDir: String;
+
+  function CandidateHasResources(const ACandidate: String): Boolean;
+  var
+    Dir: String;
+  begin
+    if ACandidate = '' then
+      Exit(False);
+
+    Dir := AppendPathDelim(ACandidate);
+    Result := DirectoryExists(Dir + LOCALE_DIR) or
+              DirectoryExists(Dir + MENUTHEMES_DIR);
+  end;
+
+var
+  DataDirs, Candidate: String;
+  I: Integer;
+begin
+  //Portable layout: resources live next to the executable (zip and tar builds)
+  if CandidateHasResources(FSuitePathWorking) then
+    Exit(FSuitePathWorking);
+
+  //Explicit override used by custom installations and AppImage launchers
+  Candidate := GetEnvironmentVariable('ASUITE_DATA_DIR');
+  if CandidateHasResources(Candidate) then
+    Exit(AppendPathDelim(ExpandFileName(Candidate)));
+
+  //Installed layout: <prefix>/bin/ASuite and <prefix>/share/asuite
+  Candidate := ExpandFileName(ExcludeTrailingPathDelimiter(FSuitePathWorking) +
+    PathDelim + '..' + PathDelim + 'share' + PathDelim + LowerCase(APP_NAME));
+  if CandidateHasResources(Candidate) then
+    Exit(AppendPathDelim(Candidate));
+
+  {$IFDEF UNIX}
+  Candidate := '/usr/local/share/' + LowerCase(APP_NAME);
+  if CandidateHasResources(Candidate) then
+    Exit(AppendPathDelim(Candidate));
+
+  Candidate := '/usr/share/' + LowerCase(APP_NAME);
+  if CandidateHasResources(Candidate) then
+    Exit(AppendPathDelim(Candidate));
+
+  //Honor the XDG data directories (colon-separated on Unix)
+  DataDirs := GetEnvironmentVariable('XDG_DATA_DIRS');
+  while DataDirs <> '' do
+  begin
+    I := Pos(':', DataDirs);
+    if I = 0 then
+    begin
+      Candidate := DataDirs;
+      DataDirs := '';
+    end
+    else begin
+      Candidate := Copy(DataDirs, 1, I - 1);
+      Delete(DataDirs, 1, I);
+    end;
+
+    if Candidate <> '' then
+    begin
+      Candidate := IncludeTrailingPathDelimiter(Candidate) + LowerCase(APP_NAME);
+      if CandidateHasResources(Candidate) then
+        Exit(AppendPathDelim(Candidate));
+    end;
+  end;
+  {$ENDIF}
+
+  //No system resources found: keep the old behavior
+  Result := FSuitePathWorking;
+end;
+
 function TConfigPaths.GetSuitePathBackup: String;
 begin
   Result := AppendPathDelim(FSuitePathData + BACKUP_DIR);
@@ -164,14 +240,46 @@ begin
   Result := AppendPathDelim(FSuitePathData + CACHE_DIR);
 end;
 
+function TConfigPaths.GetSuitePathDocs: String;
+begin
+  Result := AppendPathDelim(FSuitePathResources + DOCS_DIR);
+end;
+
 function TConfigPaths.GetSuitePathLocale: String;
 begin
-  Result := AppendPathDelim(FSuitePathWorking + LOCALE_DIR);
+  Result := AppendPathDelim(FSuitePathResources + LOCALE_DIR);
 end;
 
 function TConfigPaths.GetSuitePathMenuThemes: String;
 begin
-  Result := AppendPathDelim(FSuitePathWorking + MENUTHEMES_DIR);
+  Result := AppendPathDelim(FSuitePathResources + MENUTHEMES_DIR);
+end;
+
+function TConfigPaths.GetUserDataDir: String;
+var
+  BaseDir: String;
+begin
+  BaseDir := GetAppConfigDir(False);
+  if BaseDir = '' then
+  begin
+    {$IFDEF UNIX}
+    BaseDir := AppendPathDelim(GetUserDir + '.config');
+    {$ELSE}
+    BaseDir := FSuitePathWorking;
+    {$ENDIF}
+  end;
+
+  //Application.Title is still empty when this object is created during unit
+  //initialization, so GetAppConfigDir may fall back to the executable name
+  //and return a lower-case folder. Always use the canonical application name.
+  BaseDir := ExcludeTrailingPathDelimiter(BaseDir);
+  if SameText(ExtractFileName(BaseDir), APP_NAME) then
+    BaseDir := IncludeTrailingPathDelimiter(ExtractFileDir(BaseDir)) + APP_NAME
+  else
+    BaseDir := IncludeTrailingPathDelimiter(BaseDir) + APP_NAME;
+
+  Result := IncludeTrailingPathDelimiter(BaseDir);
+  SysUtils.ForceDirectories(Result);
 end;
 
 procedure TConfigPaths.UpdateASuiteVars;
@@ -202,6 +310,7 @@ begin
   //Default paths
   strPathExe := Application.ExeName;
   FSuitePathWorking  := ExtractFilePath(strPathExe);
+  FSuitePathResources := FindResourcesDir;
 
   strFileListSql := ExtractFileNameOnly(strPathExe) + EXT_SQL;
   strFileListXml := ExtractFileNameOnly(strPathExe) + EXT_XML;
@@ -223,9 +332,10 @@ begin
     FSuitePathData := FSuitePathWorking
   else begin
     //FSuitePathWorking = ASuite.exe folder (ex C:\path\to\asuite_folder\)
-    //FSuitePathData    = ASuite config folder (ex. C:\Users\user\AppData\Roaming\asuite\)
-    FSuitePathData := GetAppConfigDir(True);
-    SysUtils.ForceDirectories(FSuitePathData);
+    //FSuitePathData    = ASuite config folder (ex. C:\Users\user\AppData\Local\ASuite\)
+    //Use the per-user folder (GetAppConfigDir(False)): the global one is not
+    //writable for normal users on Unix and is shared by every user on Windows.
+    FSuitePathData := GetUserDataDir;
   end;
 
   //Check if xml list exists, else get sqlite list

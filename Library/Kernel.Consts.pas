@@ -35,6 +35,7 @@ const
 
   BACKUP_DIR     = 'backup';
   CACHE_DIR      = 'cache';
+  DOCS_DIR       = 'docs';
   LOCALE_DIR     = 'locale';
   MENUTHEMES_DIR = 'themes';
   ICONS_DIR      = 'icons';

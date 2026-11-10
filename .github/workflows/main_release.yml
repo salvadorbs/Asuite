@@ -18,7 +18,7 @@ env:
   LAZ_BRANCH: 'lazarus_4_0'
   LAZ_REVISION_2_4: ''
   LAZ_DIR: 'fpcLaz'
-  BUILD_MODE: 'Debug_GH_Action'   
+  BUILD_MODE: 'Release_GH_Action'   
   FPCUP_OPT: ''
   LAZ_PATCH: '' #'/3p/patch/lazarus_popupmenu_click.patch' #For Lazarus 2.2
   ASUITE_SOURCE: 'asuite_src'
@@ -167,9 +167,76 @@ jobs:
       #if: matrix.config.build-widgetset != 'gtk2'
       run: ${{ env.ASUITE_SOURCE }}/bin/${{ matrix.config.dbg2mab }} ${{ env.ASUITE_SOURCE }}/bin/${{ matrix.config.debug_file }}
 
+    - name: Build and test Linux packages
+      if: matrix.config.build-os == 'linux' && matrix.config.build-widgetset != 'gtk2'
+      uses: ./asuite_src/.github/actions/linux-packages
+      with:
+        source: ${{ env.ASUITE_SOURCE }}
+        widgetset: ${{ matrix.config.build-widgetset }}
+
+    - name: Build and test GTK2 portable zip
+      if: matrix.config.build-os == 'linux' && matrix.config.build-widgetset == 'gtk2'
+      uses: ./asuite_src/.github/actions/linux-portable-zip
+      with:
+        source: ${{ env.ASUITE_SOURCE }}
+
+    - name: Build and test Windows packages
+      if: matrix.config.build-os == 'win64'
+      uses: ./asuite_src/.github/actions/windows-packages
+      with:
+        source: ${{ env.ASUITE_SOURCE }}
+
     - name: Upload the Build Artifact
       uses: actions/upload-artifact@v7.0.1
       with:
         name: ASuite ${{ env.BUILD_MODE }} build - ${{ matrix.config.name }}
         path: |
           ${{ env.ASUITE_SOURCE}}/bin
+          ${{ env.ASUITE_SOURCE}}/dist/*.deb
+          ${{ env.ASUITE_SOURCE}}/dist/*.rpm
+          ${{ env.ASUITE_SOURCE}}/dist/*.tar.gz
+          ${{ env.ASUITE_SOURCE}}/dist/*.AppImage
+          ${{ env.ASUITE_SOURCE}}/dist/*.zip
+          ${{ env.ASUITE_SOURCE}}/dist/*setup*.exe
+
+  publish:
+    name: Publish release assets
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v8
+        with:
+          path: artifacts
+
+      - name: Collect assets and generate checksums
+        run: |
+          set -euo pipefail
+          mkdir -p release
+          rm -f release/*
+          for file in artifacts/*/dist/*.deb artifacts/*/dist/*.rpm \
+                      artifacts/*/dist/*.tar.gz artifacts/*/dist/*.AppImage \
+                      artifacts/*/dist/*.zip artifacts/*/dist/*setup*.exe; do
+            [ -f "$file" ] || continue
+            name=$(basename "$file")
+            [ ! -e "release/$name" ] || {
+              echo "duplicate release asset: $name" >&2
+              exit 1
+            }
+            cp -f "$file" "release/$name"
+          done
+          ( cd release && sha256sum -- * > SHA256SUMS )
+          ls -l release
+          cat release/SHA256SUMS
+
+      - name: Publish release assets
+        uses: softprops/action-gh-release@v3
+        with:
+          files: |
+            release/*
+          fail_on_unmatched_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

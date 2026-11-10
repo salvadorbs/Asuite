@@ -29,18 +29,22 @@ var
   hash, identifier: string;
 
 begin
+  {$IFDEF DEBUG}
   globalSkipIfNoLeaks := True;
+  {$ENDIF}
 
   hash := THashFactory.THash32.CreateXXHash32().ComputeString(Application.ExeName, TEncoding.UTF8).ToString();
   identifier := 'ASuite.SingleInstance.' + hash;
 
   if not(InstanceRunning(identifier, True)) then
   begin
-    // Set up -gh output for the Leakview package:
-    if FileExists('heap.trc') then
-      DeleteFile('heap.trc');
-    SetHeapTraceOutput('heap.trc');
-                                    
+    // Set up -gh output for the Leakview package. AppImages and installed
+    // packages may run with a read-only working directory, so write the trace
+    // to the temporary directory instead of the current one.
+    {$IFDEF DEBUG}
+    SetHeapTraceOutput(IncludeTrailingPathDelimiter(GetTempDir) + 'ASuite-heap.trc');
+    {$ENDIF}
+
     Application.Scaled := True;
     Application.Initialize;
     Application.Title := APP_TITLE;

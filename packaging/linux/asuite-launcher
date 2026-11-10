@@ -1,0 +1,26 @@
+#!/bin/sh
+# ASuite launcher used by the Linux packages.
+#
+# The real executable lives in <prefix>/lib/asuite so that the package can ship
+# private libraries (for example libQt5Pas/libQt6Pas, which are not available in
+# every distribution repository) without polluting the system library folders.
+
+set -e
+
+HERE=$(dirname "$(readlink -f "$0")")
+PREFIX=$(dirname "$HERE")
+BINDIR="$PREFIX/lib/asuite"
+DATADIR="$PREFIX/share/asuite"
+
+if [ -d "$BINDIR" ]; then
+  LD_LIBRARY_PATH="$BINDIR${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+  export LD_LIBRARY_PATH
+fi
+
+if [ -d "$DATADIR" ]; then
+  # Let an explicit override win (useful for custom resource trees).
+  ASUITE_DATA_DIR="${ASUITE_DATA_DIR:-$DATADIR}"
+  export ASUITE_DATA_DIR
+fi
+
+exec "$BINDIR/asuite" "$@"

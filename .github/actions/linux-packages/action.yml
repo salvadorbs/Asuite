@@ -1,0 +1,307 @@
+name: Build and test Linux packages
+description: Build the deb/rpm/AppImage/tar.gz packages and smoke-test them
+
+inputs:
+  source:
+    description: Path to the ASuite checkout, relative to the workspace
+    required: true
+  widgetset:
+    description: Widgetset to package (gtk3, qt5 or qt6)
+    required: true
+  output:
+    description: Package output directory, relative to the checkout
+    required: false
+    default: dist
+
+runs:
+  using: composite
+  steps:
+    - name: Resolve package version
+      id: version
+      shell: bash
+      run: |
+        set -euo pipefail
+        if [[ "${GITHUB_REF_NAME}" == v* ]]; then
+          echo "value=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+        else
+          echo "value=0.0.0+${GITHUB_SHA::8}" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Install packaging tools
+      shell: bash
+      run: |
+        set -euo pipefail
+        TOOLS="${RUNNER_TEMP}/packaging-tools"
+        mkdir -p "$TOOLS"
+
+        download() {
+          local url="$1" dest="$2" sha256="$3"
+          curl -fsSL --retry 5 --retry-connrefused -o "$dest" "$url"
+          echo "${sha256}  ${dest}" | sha256sum -c -
+        }
+
+        # Versions and checksums are pinned on purpose: the previous
+        # "continuous"/"master" URLs could change (or return an HTML error page)
+        # between two runs of the same tag.
+        download \
+          "https://github.com/goreleaser/nfpm/releases/download/v2.43.0/nfpm_2.43.0_Linux_x86_64.tar.gz" \
+          "$TOOLS/nfpm.tar.gz" \
+          "a80d5f724ed70b192ffa8a2bde469c013cef559c8afa3441eb51dd9a918beb6b"
+        tar -xzf "$TOOLS/nfpm.tar.gz" -C "$TOOLS" nfpm
+
+        download \
+          "https://github.com/linuxdeploy/linuxdeploy/releases/download/1-alpha-20251107-1/linuxdeploy-x86_64.AppImage" \
+          "$TOOLS/linuxdeploy" \
+          "c20cd71e3a4e3b80c3483cef793cda3f4e990aca14014d23c544ca3ce1270b4d"
+        download \
+          "https://github.com/AppImage/appimagetool/releases/download/1.9.1/appimagetool-x86_64.AppImage" \
+          "$TOOLS/appimagetool" \
+          "ed4ce84f0d9caff66f50bcca6ff6f35aae54ce8135408b3fa33abfc3cb384eb0"
+        download \
+          "https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/7a3fbc31a9e5075073ff8790f26effbac5f84453/linuxdeploy-plugin-gtk.sh" \
+          "$TOOLS/linuxdeploy-plugin-gtk" \
+          "b0f4cbc684a0103a9651f0955b635eaea0096b3a66c0f5a2c2aa337960375171"
+
+        if [ "${{ inputs.widgetset }}" != "gtk3" ]; then
+          download \
+            "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/1-alpha-20250213-1/linuxdeploy-plugin-qt-x86_64.AppImage" \
+            "$TOOLS/linuxdeploy-plugin-qt" \
+            "15106be885c1c48a021198e7e1e9a48ce9d02a86dd0a1848f00bdbf3c1c92724"
+          chmod +x "$TOOLS/linuxdeploy-plugin-qt"
+        fi
+
+        chmod +x "$TOOLS/nfpm" "$TOOLS/linuxdeploy" "$TOOLS/appimagetool" \
+          "$TOOLS/linuxdeploy-plugin-gtk"
+        echo "$TOOLS" >> "$GITHUB_PATH"
+
+        sudo apt-get update
+        sudo apt-get install -y desktop-file-utils appstream rpm xvfb patchelf \
+          libgtk-3-bin libgdk-pixbuf2.0-bin librsvg2-bin libglib2.0-bin
+
+    - name: Build packages
+      shell: bash
+      env:
+        APPIMAGE_EXTRACT_AND_RUN: 1
+      run: |
+        set -euo pipefail
+        SRC="${GITHUB_WORKSPACE}/${{ inputs.source }}"
+        "$SRC/utils/build-linux-packages.sh" \
+          --version "${{ steps.version.outputs.value }}" \
+          --widgetset "${{ inputs.widgetset }}" \
+          --binary "$SRC/bin/ASuite" \
+          --output "$SRC/${{ inputs.output }}"
+
+    - name: Validate package metadata
+      shell: bash
+      run: |
+        set -euo pipefail
+        SRC="${GITHUB_WORKSPACE}/${{ inputs.source }}"
+        DIST="$SRC/${{ inputs.output }}"
+
+        desktop-file-validate "$SRC/packaging/linux/asuite.desktop"
+        appstreamcli validate --no-net \
+          "$SRC/packaging/linux/com.salvadorsoftware.asuite.metainfo.xml"
+        appstreamcli validate --no-net \
+          "$DIST/stage-${{ inputs.widgetset }}/usr/share/metainfo/com.salvadorsoftware.asuite.metainfo.xml"
+
+        shopt -s nullglob
+        debs=("$DIST"/*.deb)
+        rpms=("$DIST"/*.rpm)
+        tarballs=("$DIST"/*.tar.gz)
+        appimages=("$DIST"/*.AppImage)
+        [ "${#debs[@]}" -gt 0 ] || { echo "::error::no .deb package built"; exit 1; }
+        [ "${#rpms[@]}" -gt 0 ] || { echo "::error::no .rpm package built"; exit 1; }
+        [ "${#tarballs[@]}" -gt 0 ] || { echo "::error::no .tar.gz package built"; exit 1; }
+        [ "${#appimages[@]}" -gt 0 ] || { echo "::error::no .AppImage built"; exit 1; }
+
+        for pkg in "${debs[@]}"; do
+          dpkg-deb -I "$pkg" >/dev/null
+        done
+        if command -v rpm >/dev/null 2>&1; then
+          for pkg in "${rpms[@]}"; do
+            rpm -qpi "$pkg" >/dev/null
+          done
+        fi
+
+    - name: Smoke test packages
+      shell: bash
+      run: |
+        set -euo pipefail
+        SRC="${GITHUB_WORKSPACE}/${{ inputs.source }}"
+        DIST="$SRC/${{ inputs.output }}"
+        export APPIMAGE_EXTRACT_AND_RUN=1
+        export DISPLAY=:99
+
+        # Start a local X server for the GUI smoke tests. Xvfb is used in the
+        # containers too, so we do not depend on xauth.
+        Xvfb :99 -screen 0 1024x768x24 >/tmp/xvfb.log 2>&1 &
+        sleep 2
+
+        run_until_timeout() {
+          local log="$1"; shift
+          local rc=0
+          timeout 25 "$@" >"$log" 2>&1 || rc=$?
+          if [ "$rc" -ne 124 ]; then
+            echo "::error::process exited with $rc instead of staying alive"
+            cat "$log"
+            return 1
+          fi
+        }
+
+        check_libraries() {
+          local binary="$1"
+          if ldd "$binary" | grep -q 'not found'; then
+            echo "::error::missing shared libraries for $binary"
+            ldd "$binary" | grep 'not found'
+            return 1
+          fi
+        }
+
+        echo "== AppImage =="
+        appimage=$(find "$DIST" -maxdepth 1 -name '*.AppImage' -print -quit)
+        [ -n "$appimage" ] || { echo "::error::AppImage not found"; exit 1; }
+        chmod +x "$appimage"
+
+        # Inspect the embedded metadata: .DirIcon must resolve to a real PNG
+        # (a symlink chain into hicolor is not enough for every desktop) and
+        # the desktop entry must advertise the application version.
+        appimage_dir=$(mktemp -d)
+        ( cd "$appimage_dir" && "$appimage" --appimage-extract >/dev/null )
+        [ -s "$appimage_dir/squashfs-root/.DirIcon" ] || {
+          echo "::error::AppImage has no usable root icon (.DirIcon)"
+          exit 1
+        }
+        grep -q '^X-AppImage-Version=' "$appimage_dir/squashfs-root/asuite.desktop" || {
+          echo "::error::AppImage desktop entry has no X-AppImage-Version"
+          exit 1
+        }
+        grep -q '^StartupWMClass=asuite$' "$appimage_dir/squashfs-root/asuite.desktop" || {
+          echo "::error::AppImage desktop entry has no StartupWMClass"
+          exit 1
+        }
+        # AppImage integrators such as Shelly search the bundle for an icon
+        # named after the desktop Icon=. A theme asset with the same name
+        # (the old graphic-menu glyph) would win over the real application
+        # icon, so make sure no such stray file is shipped.
+        stray_icon=$(find "$appimage_dir/squashfs-root" -name 'asuite.svg' \
+          -not -path '*/usr/share/icons/*' -print -quit)
+        [ -z "$stray_icon" ] || {
+          echo "::error::AppImage contains a non-theme icon that shadows the app icon: $stray_icon"
+          exit 1
+        }
+        rm -rf "$appimage_dir"
+
+        # Run in a clean container without any Qt/GTK packages: a missing
+        # bundled library or plugin must not be masked by the runner host.
+        # Only the host runtime (X11, OpenGL, fonts) is installed; the
+        # toolkits themselves must come from the AppImage.
+        docker run --rm -v "$DIST:/pkg:ro" ubuntu:24.04 bash -euc '
+          export DEBIAN_FRONTEND=noninteractive
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends \
+            xvfb fonts-dejavu-core \
+            libegl1 libgl1 libopengl0 \
+            libfontconfig1 libfreetype6 libharfbuzz0b libfribidi0 \
+            libx11-xcb1 libsm6 libice6 libwayland-client0 \
+            libgmp10 libgpg-error0 libcom-err2
+          cp /pkg/*.AppImage /tmp/asuite.AppImage
+          chmod +x /tmp/asuite.AppImage
+          useradd -m -s /bin/bash tester
+          Xvfb :99 -screen 0 1024x768x24 >/tmp/xvfb.log 2>&1 &
+          sleep 2
+          rc=0
+          # Pretend to be a Wayland session with XWayland: AppRun must fall
+          # back to the bundled xcb plugin instead of warning about the
+          # missing wayland plugin. GTK3 has its own backend selection, so
+          # only simulate Wayland for the Qt builds.
+          wayland_env=""
+          if [ "${{ inputs.widgetset }}" != "gtk3" ]; then
+            wayland_env="WAYLAND_DISPLAY=wayland-1"
+          fi
+          timeout 25 runuser -u tester -- env HOME=/home/tester DISPLAY=:99 \
+            $wayland_env APPIMAGE_EXTRACT_AND_RUN=1 /tmp/asuite.AppImage \
+            >/tmp/appimage.log 2>&1 || rc=$?
+          if [ "$rc" -ne 124 ]; then
+            echo "AppImage exited with $rc"
+            cat /tmp/appimage.log
+            exit 1
+          fi
+          if grep -q -E "qt\.qpa\.plugin|\[heaptrc\]" /tmp/appimage.log; then
+            echo "AppImage emitted Qt/heaptrc startup warnings"
+            cat /tmp/appimage.log
+            exit 1
+          fi
+        '
+        echo "AppImage started in a clean container without host Qt/GTK"
+
+        echo "== tar.gz =="
+        tmpdir=$(mktemp -d)
+        tar -xzf "$DIST"/*.tar.gz -C "$tmpdir"
+        binary=$(find "$tmpdir" -maxdepth 2 -type f -name ASuite -print -quit)
+        [ -n "$binary" ] || { echo "::error::ASuite binary not found in tarball"; exit 1; }
+        rundir=$(dirname "$binary")
+        check_libraries "$binary"
+        ( cd "$rundir" && run_until_timeout /tmp/tarball.log ./ASuite )
+        test -f "$rundir/ASuite.log" || {
+          echo "::error::portable log was not created next to the binary"
+          exit 1
+        }
+        rm -rf "$tmpdir"
+        echo "tarball started and wrote its configuration in the portable folder"
+
+        echo "== deb =="
+        docker run --rm -v "$DIST:/pkg:ro" ubuntu:24.04 bash -euc '
+          export DEBIAN_FRONTEND=noninteractive
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends xvfb fonts-dejavu-core
+          apt-get install -y -qq --no-install-recommends /pkg/*.deb
+          if LD_LIBRARY_PATH=/usr/lib/asuite ldd /usr/lib/asuite/asuite | grep -q "not found"; then
+            LD_LIBRARY_PATH=/usr/lib/asuite ldd /usr/lib/asuite/asuite | grep "not found"
+            exit 1
+          fi
+
+          # Run as an unprivileged user: as root the package directory would
+          # be writable and ASuite would use the portable layout instead of
+          # the per-user configuration directory.
+          useradd -m -s /bin/bash tester
+          Xvfb :99 -screen 0 1024x768x24 >/tmp/xvfb.log 2>&1 &
+          sleep 2
+          rc=0
+          timeout 25 runuser -u tester -- env HOME=/home/tester DISPLAY=:99 \
+            asuite >/tmp/app.log 2>&1 || rc=$?
+          if [ "$rc" -ne 124 ]; then
+            echo "deb app exited with $rc"
+            cat /tmp/app.log
+            exit 1
+          fi
+          test -d /home/tester/.config/ASuite
+        '
+        echo "deb installed, started and used ~/.config/ASuite"
+
+        echo "== rpm =="
+        docker run --rm -v "$DIST:/pkg:ro" fedora:latest bash -euc '
+          dnf install -y -q --setopt=install_weak_deps=False \
+            xorg-x11-server-Xvfb dejavu-sans-fonts
+          dnf install -y -q --setopt=install_weak_deps=False --nogpgcheck \
+            /pkg/*.rpm
+          if LD_LIBRARY_PATH=/usr/lib/asuite ldd /usr/lib/asuite/asuite | grep -q "not found"; then
+            LD_LIBRARY_PATH=/usr/lib/asuite ldd /usr/lib/asuite/asuite | grep "not found"
+            exit 1
+          fi
+
+          # See the deb test above: use a normal user so that ASuite does not
+          # mistake the root-owned installation directory for a portable one.
+          useradd -m -s /bin/bash tester
+          Xvfb :99 -screen 0 1024x768x24 >/tmp/xvfb.log 2>&1 &
+          sleep 2
+          rc=0
+          timeout 25 runuser -u tester -- env HOME=/home/tester DISPLAY=:99 \
+            asuite >/tmp/app.log 2>&1 || rc=$?
+          if [ "$rc" -ne 124 ]; then
+            echo "rpm app exited with $rc"
+            cat /tmp/app.log
+            exit 1
+          fi
+          test -d /home/tester/.config/ASuite
+        '
+        echo "rpm installed, started and used ~/.config/ASuite"
