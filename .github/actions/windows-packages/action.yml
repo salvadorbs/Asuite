@@ -1,0 +1,150 @@
+name: Build and test Windows packages
+description: Build the portable zip and the Inno Setup installer, then smoke-test them
+
+inputs:
+  source:
+    description: Path to the ASuite checkout, relative to the workspace
+    required: true
+  output:
+    description: Package output directory, relative to the checkout
+    required: false
+    default: dist
+
+runs:
+  using: composite
+  steps:
+    - name: Resolve package version
+      id: version
+      shell: pwsh
+      run: |
+        if ($env:GITHUB_REF_NAME -like 'v*') {
+          $version = $env:GITHUB_REF_NAME.Substring(1)
+        } else {
+          $version = "0.0.0+$($env:GITHUB_SHA.Substring(0, 8))"
+        }
+        "value=$version" >> $env:GITHUB_OUTPUT
+
+    - name: Build portable zip
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = 'Stop'
+        $src = Join-Path $env:GITHUB_WORKSPACE '${{ inputs.source }}'
+        $out = Join-Path $src '${{ inputs.output }}'
+        $version = '${{ steps.version.outputs.value }}'
+        $stage = Join-Path $env:RUNNER_TEMP "asuite-$version-windows-x86_64"
+        $zip = Join-Path $out "asuite-$version-windows-x86_64.zip"
+
+        New-Item -ItemType Directory -Force -Path $out | Out-Null
+        Remove-Item -Recurse -Force $stage -ErrorAction SilentlyContinue
+        New-Item -ItemType Directory -Force -Path $stage | Out-Null
+
+        # Keep the portable archive to the files ASuite needs at runtime: the
+        # debug database, settings and cache are build/run artifacts.
+        Copy-Item (Join-Path $src 'bin\ASuite.exe') $stage
+        foreach ($dir in 'docs', 'locale', 'themes') {
+          Copy-Item (Join-Path $src "bin\$dir") $stage -Recurse
+        }
+
+        Remove-Item -Force $zip -ErrorAction SilentlyContinue
+        Compress-Archive -Path (Join-Path $stage '*') -DestinationPath $zip `
+          -CompressionLevel Optimal
+        Write-Host "creating $zip"
+
+        $check = Join-Path $env:RUNNER_TEMP 'asuite-zip-check'
+        Remove-Item -Recurse -Force $check -ErrorAction SilentlyContinue
+        Expand-Archive -Path $zip -DestinationPath $check
+        foreach ($file in 'ASuite.exe', 'docs\license.txt',
+                         'locale\asuite.en_EN.po', 'themes\default\theme.ini') {
+          if (-not (Test-Path (Join-Path $check $file))) {
+            throw "portable zip is missing $file"
+          }
+        }
+
+    - name: Install Inno Setup
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = 'Stop'
+        $installer = Join-Path $env:RUNNER_TEMP 'innosetup-6.7.4.exe'
+        Invoke-WebRequest -UseBasicParsing `
+          -Uri 'https://github.com/jrsoftware/issrc/releases/download/is-6_7_4/innosetup-6.7.4.exe' `
+          -OutFile $installer
+        $hash = (Get-FileHash -Algorithm SHA256 $installer).Hash.ToLower()
+        if ($hash -ne 'a549929319f9120716677c685535ca4671e4b937b5fdc87e2585f32d8eb30e8c') {
+          throw "unexpected Inno Setup checksum: $hash"
+        }
+        $proc = Start-Process -FilePath $installer -Wait -PassThru -ArgumentList @(
+          '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-'
+        )
+        if ($proc.ExitCode -ne 0) {
+          throw "Inno Setup installer exited with $($proc.ExitCode)"
+        }
+
+    - name: Build installer
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = 'Stop'
+        $src = Join-Path $env:GITHUB_WORKSPACE '${{ inputs.source }}'
+        $out = Join-Path $src '${{ inputs.output }}'
+        $version = '${{ steps.version.outputs.value }}'
+        $iscc = 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe'
+        if (-not (Test-Path $iscc)) {
+          $iscc = 'C:\Program Files\Inno Setup 6\ISCC.exe'
+        }
+        if (-not (Test-Path $iscc)) {
+          throw 'ISCC.exe not found after installing Inno Setup'
+        }
+
+        & $iscc "/DMyAppVersion=$version" "/O$out" `
+          (Join-Path $src 'utils\setup.iss')
+        if ($LASTEXITCODE -ne 0) { throw "ISCC exited with $LASTEXITCODE" }
+
+        $installer = Join-Path $out "asuite-$version-setup.exe"
+        if (-not (Test-Path $installer)) { throw "installer not found: $installer" }
+        if ((Get-Item $installer).Length -lt 1MB) {
+          throw "installer is suspiciously small: $installer"
+        }
+
+    - name: Smoke test installer
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = 'Stop'
+        $src = Join-Path $env:GITHUB_WORKSPACE '${{ inputs.source }}'
+        $out = Join-Path $src '${{ inputs.output }}'
+        $version = '${{ steps.version.outputs.value }}'
+        $installer = Join-Path $out "asuite-$version-setup.exe"
+        $installDir = Join-Path $env:RUNNER_TEMP 'asuite-installed'
+
+        Remove-Item -Recurse -Force $installDir -ErrorAction SilentlyContinue
+        $proc = Start-Process -FilePath $installer -Wait -PassThru -ArgumentList @(
+          '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/NOICONS',
+          "/DIR=$installDir"
+        )
+        if ($proc.ExitCode -ne 0) {
+          throw "installer exited with $($proc.ExitCode)"
+        }
+
+        foreach ($file in 'ASuite.exe', 'docs\license.txt',
+                         'locale\asuite.en_EN.po', 'themes\default\theme.ini') {
+          if (-not (Test-Path (Join-Path $installDir $file))) {
+            throw "installed files are missing $file"
+          }
+        }
+
+        $uninstaller = Join-Path $installDir 'unins000.exe'
+        if (-not (Test-Path $uninstaller)) { throw 'uninstaller not found' }
+        $proc = Start-Process -FilePath $uninstaller -Wait -PassThru -ArgumentList @(
+          '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART'
+        )
+        if ($proc.ExitCode -ne 0) {
+          throw "uninstaller exited with $($proc.ExitCode)"
+        }
+
+        # The uninstaller can remove the files just after the process exits.
+        for ($i = 0; $i -lt 10; $i++) {
+          if (-not (Test-Path (Join-Path $installDir 'ASuite.exe'))) { break }
+          Start-Sleep -Seconds 1
+        }
+        if (Test-Path (Join-Path $installDir 'ASuite.exe')) {
+          throw 'uninstaller left ASuite.exe behind'
+        }
+        Write-Host 'installer installed and removed the expected files'
